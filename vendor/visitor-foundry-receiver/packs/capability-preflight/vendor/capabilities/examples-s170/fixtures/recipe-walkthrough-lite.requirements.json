@@ -1,0 +1,32 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "s170-walkthrough-lite-req",
+  "title": "Customer recipe: walkthrough-lite requirements",
+  "summary": "Thin S170 Cap08 walkthrough input. Synthetic fixture only.",
+  "demo": true,
+  "sourceLabel": "s170-walkthrough-lite",
+  "artifact": {
+    "format": "json",
+    "maxBytes": 4096,
+    "requiredFields": ["sourceUrl", "observedAt", "changed", "summary", "evidenceDigest"]
+  },
+  "objectiveCriteria": [
+    {
+      "id": "source_https",
+      "description": "sourceUrl must be an https URL",
+      "check": { "kind": "https_url_shape", "path": "sourceUrl" }
+    },
+    {
+      "id": "changed_bool",
+      "description": "changed must be boolean",
+      "check": { "kind": "json_path_type", "path": "changed", "type": "boolean" }
+    },
+    {
+      "id": "digest_hex",
+      "description": "evidenceDigest must be sha256 hex",
+      "check": { "kind": "sha256_hex", "path": "evidenceDigest" }
+    }
+  ],
+  "subjectiveCriteria": [],
+  "bounds": { "notes": "S170 example only." }
+}

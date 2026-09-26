@@ -1,0 +1,15 @@
+{
+  "name": "r2-capabilities-04-cost-dry-run-comparison",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "R2-CAPABILITIES-04 cost-aware dry-run comparison (quotes vs free alternatives; no paid calls)",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node src/cli.mjs demo",
+    "compare": "node src/cli.mjs compare"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

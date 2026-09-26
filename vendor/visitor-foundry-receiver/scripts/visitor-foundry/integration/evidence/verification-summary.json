@@ -1,0 +1,87 @@
+{
+  "purpose": "owner_qa",
+  "recordedAt": "2026-09-26T13:56:55.067411+00:00",
+  "node": "v22.22.2",
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "suites": [
+    {
+      "name": "vf01-focused",
+      "path": "vf01-focused.tap",
+      "tests": 50,
+      "pass": 50,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 1087.375909
+    },
+    {
+      "name": "vf02-focused",
+      "path": "vf02-focused.tap",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 5724.920902
+    },
+    {
+      "name": "vf03-focused",
+      "path": "vf03-focused.tap",
+      "tests": 62,
+      "pass": 62,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 499.600148
+    },
+    {
+      "name": "integration-06",
+      "path": "integration-06.tap",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 7164.206811
+    },
+    {
+      "name": "correspondence-regression",
+      "path": "correspondence-regression.tap",
+      "tests": 53,
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 4635.282192
+    },
+    {
+      "name": "capability-market",
+      "path": "capability-market.tap",
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 94.555083
+    },
+    {
+      "name": "preflight",
+      "path": "preflight.tap",
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 735.479715
+    },
+    {
+      "name": "exchange",
+      "path": "exchange.tap",
+      "tests": 107,
+      "pass": 107,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 926.964456
+    }
+  ],
+  "builds": [
+    "service-build.log",
+    "root-build.log"
+  ],
+  "actualProviderCost": null,
+  "passingTests": 363,
+  "privateClustersRemaining": []
+}

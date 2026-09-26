@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s138.partial-composition.v1",
+  "title": "Partial delivery composition",
+  "type": "object",
+  "required": ["schema", "capabilityId", "status", "gaps", "holes"],
+  "properties": {
+    "schema": { "const": "s138.partial-composition.v1" },
+    "capabilityId": { "const": "R2-CAPABILITIES-06" },
+    "status": { "enum": ["complete", "partial", "empty"] },
+    "acceptedParts": { "type": "array" },
+    "rejectedParts": { "type": "array" },
+    "gaps": { "type": "array" },
+    "holes": { "type": "array" }
+  }
+}

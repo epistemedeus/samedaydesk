@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "./scripts/visitor-foundry/validation/.local/test-tools/node_modules/tsx/dist/loader.mjs",
+    "--test",
+    "--test-concurrency=1",
+    "packs/terms-lifecycle/tests/cli.test.ts",
+    "packs/terms-lifecycle/tests/e01-pin.test.ts",
+    "packs/terms-lifecycle/tests/honesty.test.ts",
+    "packs/terms-lifecycle/tests/journey.test.ts",
+    "packs/terms-lifecycle/tests/seeded-failures.test.ts"
+  ],
+  "cwd": "/tmp/pilot-visitor-foundry-20260926/VF03/repo",
+  "startedAt": "2026-09-26T13:03:14.667Z",
+  "endedAt": "2026-09-26T13:03:15.593Z",
+  "elapsedMs": 926,
+  "exitCode": 1,
+  "signal": null,
+  "node": "v22.22.2",
+  "cpuMs": null,
+  "totalCost": null
+}

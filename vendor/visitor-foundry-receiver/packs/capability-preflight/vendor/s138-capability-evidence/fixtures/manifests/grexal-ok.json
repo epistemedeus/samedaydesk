@@ -1,0 +1,5 @@
+{
+  "manifest_version": 3,
+  "entrypoint": "agent/qualify.js",
+  "runtime": { "language": "typescript", "memory_mb": 512, "timeout_seconds": 120 }
+}

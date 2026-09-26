@@ -1,0 +1,12 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "demo-partial-criteria",
+  "title": "Partial criteria only (synthetic)",
+  "summary": "Has identity but no criteria arrays — envelope should be partial_input or rejected with missingInputs listing criteria.",
+  "demo": true,
+  "sourceLabel": "synthetic-partial",
+  "artifact": {
+    "format": "json",
+    "maxBytes": 2048
+  }
+}

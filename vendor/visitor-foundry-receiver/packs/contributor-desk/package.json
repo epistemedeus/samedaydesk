@@ -1,0 +1,24 @@
+{
+  "name": "contributor-desk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "W0-R3-05 walletless public contributor desk: browse, claim, status, appeal, owed-versus-paid. Fixture adapter plus HTTP public/contributor adapter. Desk refuses EARNED_WORK secrets. Contributor payout keys kill.",
+  "bin": {
+    "contributor-desk": "./bin/desk.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "cli": "node ./bin/desk.mjs",
+    "journey": "node ./bin/desk.mjs journey",
+    "lifecycle": "node ./bin/lifecycle.mjs --help",
+    "browse": "node ./bin/desk.mjs browse"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

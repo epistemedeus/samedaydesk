@@ -1,0 +1,38 @@
+# Contributor session grant — source notice
+
+Pilot-authored files in this pack are MIT-licensed (see LICENSE). Extracted
+OpenAPI, env examples, CX contract, the I01 journey-task fixture, and the E02
+method-map row remain copyright of their source trees. They are copied
+read-only for a checkout where those pins are not on `main`. This is not a
+competing earned-work kernel and does not relicense I01, F01, F04, F17, E02,
+E03, or the Neomorphic website.
+
+## Pilot-authored (MIT)
+
+- LICENSE
+- README.md
+- FEATURE-MAP.md
+- SOURCE-NOTICE.txt
+- package.json
+- bin/**
+- src/**
+- tests/**
+- pins/PIN.json
+- pins/e02-createContributorToken.json
+
+## Read-only extracted pins (not relicensed)
+
+| File | Source |
+| --- | --- |
+| `pins/i01-earned-work.openapi.json` | Neo PR54 `fable/integration-earned-work` `346bbd3cbe6943a83b2077c455174d74b7a493ad` `services/earned-work/openapi.json` (git blob `4261ecfa9608da61b5f03cb5c4ec2ee0561cf0ec`) |
+| `pins/f01-s275.openapi.json` | `fable/f01-s275-kernel` `51d149a923978dfb7827d1b96d0b042304edd150` (comparison only) |
+| `pins/f01.env.example` / `pins/i01.env.example` | same SHAs, `services/earned-work/.env.example` |
+| `pins/f04-walletless-payout-ledger.openapi.json` | `fable/f04-walletless-payout-ledger` `280310d769de0ca4c4b21633a8da7ba6bbc943b0` |
+| `pins/earned-work-cx.v1.json` | Pilot `codex/w4-plan-exchange-20260911` `54cbdf443db9251993a1b9089c653a1dabe2bed6` |
+| `fixtures/i01-journey-task.json` | I01 `services/earned-work/fixtures/journey-task.json` |
+| `pins/e02-createContributorToken.json` | Wave4 Ex13 `50f605e6ef459a500bd3a643165f16b5fbb5d680` method-map row only (git blob `bcce2978c0f38d17ee61d331d1284fc5489a3017` for `packs/earned-work-sdk/src/method-map.mjs`) |
+
+Zero npm production dependencies. Node 22. This receiving checkout does not
+boot PR109. `src/missing-acceptance.mjs` names that gap. `packs/earned-work-sdk`
+and `packs/job-resume` are not copied into this pack. The historical
+`RECEIPT.md` is not copied onto the product branch.

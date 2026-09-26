@@ -1,0 +1,40 @@
+{
+  "schema": "neomorphic.foundry.work-cell-demo.v1",
+  "evidenceClass": "owner-controlled-local-fixture",
+  "trace": [
+    {
+      "stage": "visitor-a-handoff",
+      "revision": 4,
+      "fence": 2,
+      "checkpointRevision": 3,
+      "fundingKind": "unfunded-request"
+    },
+    {
+      "stage": "cold-visitor-b-after-process-restart",
+      "newProcess": true,
+      "checkpointSummary": "synthetic failure isolated",
+      "transcriptRequired": false
+    },
+    {
+      "stage": "submission",
+      "status": "submitted",
+      "artifactFetched": false,
+      "artifactExecuted": false
+    },
+    {
+      "stage": "synthetic-trusted-receipt",
+      "status": "accepted",
+      "relationship": "owner-controlled",
+      "limitations": "Synthetic receipt; does not establish external verification or useful reuse."
+    },
+    {
+      "stage": "bounded-replay",
+      "receipts": 3,
+      "hasMore": true
+    }
+  ],
+  "noPaymentPromise": true,
+  "contributionOptional": true,
+  "gapFundingUnchanged": "unfunded-request",
+  "remainingIntegration": "Real VF01 gap provenance and VF03 trusted receipt admission; no hosted deployment or capability publication."
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "neomorphic.foundry.verification-target.v1",
+  "snapshotId": "sha256:c986462851abfbe2389799ba2173dbf1139ffe87ca1d6d70f224606afef86359",
+  "target": {
+    "capabilityId": "npm:s180-capability-consumer-kit",
+    "version": "0.1.0+git.28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+    "contentId": "sha256:b53bb0d1568b16dbebd1cf8ec5d94b235d76931d44960898c7647b80e23fa545"
+  },
+  "source": {
+    "repository": "https://github.com/epistemedeus/neomorphic-io",
+    "revision": "28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+    "path": "packs/capability-preflight"
+  },
+  "input": {
+    "type": "object",
+    "required": [
+      "range",
+      "nodeVersion"
+    ],
+    "properties": {
+      "range": {
+        "type": "string"
+      },
+      "nodeVersion": {
+        "type": "string"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": [
+      "status"
+    ],
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "compatible",
+          "incompatible",
+          "unknown"
+        ]
+      }
+    }
+  },
+  "outcomes": [
+    "node-engine-compatibility"
+  ],
+  "dependencies": [],
+  "environment": {
+    "nodeMajor": [
+      22
+    ],
+    "platform": [
+      "linux"
+    ]
+  },
+  "rights": {
+    "status": "allowed",
+    "license": "MIT",
+    "ref": "source:packs/capability-preflight/LICENSE"
+  },
+  "provenanceRefs": [
+    "git:28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+    "source:packs/capability-preflight/SOURCE.txt"
+  ],
+  "admissionRequired": true,
+  "proposedTestsExecutable": false
+}

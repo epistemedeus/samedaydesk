@@ -1,0 +1,17 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=read-bench
+TAP version 13
+# Subtest: measured portable reads with growing unrelated inventory and real mixed publication traffic
+ok 1 - measured portable reads with growing unrelated inventory and real mixed publication traffic
+  ---
+  duration_ms: 33721.4873
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33833.707188

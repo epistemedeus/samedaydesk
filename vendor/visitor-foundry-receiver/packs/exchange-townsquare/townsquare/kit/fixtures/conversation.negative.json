@@ -1,0 +1,17 @@
+{
+  "demo": false,
+  "threadId": "t",
+  "taskId": "x",
+  "messages": [
+    {
+      "id": "m",
+      "text": "hi"
+    }
+  ],
+  "question": {
+    "id": "q",
+    "taskId": "x",
+    "text": "hi"
+  },
+  "capabilities": []
+}

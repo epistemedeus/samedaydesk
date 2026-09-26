@@ -1,0 +1,363 @@
+VF02 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=regression
+
+> @neomorphic/correspondence@0.1.0 test
+> node --import tsx --test --test-concurrency=1 tests/*.test.ts
+
+TAP version 13
+# Subtest: API contract: auth, grants, events, pagination, conflicts
+ok 1 - API contract: auth, grants, events, pagination, conflicts
+  ---
+  duration_ms: 82.678789
+  type: 'test'
+  ...
+# Subtest: expired grants cannot read
+ok 2 - expired grants cannot read
+  ---
+  duration_ms: 9.75578
+  type: 'test'
+  ...
+# Subtest: body over 32KiB is rejected
+ok 3 - body over 32KiB is rejected
+  ---
+  duration_ms: 5.74691
+  type: 'test'
+  ...
+# Subtest: browser workbench CORS allows only configured canonical origins and always Varies
+ok 4 - browser workbench CORS allows only configured canonical origins and always Varies
+  ---
+  duration_ms: 7.055239
+  type: 'test'
+  ...
+# Subtest: browser workbench CORS allows loopback only when that origin is configured
+ok 5 - browser workbench CORS allows loopback only when that origin is configured
+  ---
+  duration_ms: 3.604898
+  type: 'test'
+  ...
+# Subtest: empty CORS allowlist rejects the public site and loopback
+ok 6 - empty CORS allowlist rejects the public site and loopback
+  ---
+  duration_ms: 3.388295
+  type: 'test'
+  ...
+# Subtest: cursor binds project and rejects unsafe sequence/foreign cursor
+ok 7 - cursor binds project and rejects unsafe sequence/foreign cursor
+  ---
+  duration_ms: 0.804095
+  type: 'test'
+  ...
+# Subtest: rate buckets are bounded/expire, and bearer rotation cannot bypass source limit
+ok 8 - rate buckets are bounded/expire, and bearer rotation cannot bypass source limit
+  ---
+  duration_ms: 28.957807
+  type: 'test'
+  ...
+# Subtest: forwarded client IP is ignored by default and used only at the configured proxy hop
+ok 9 - forwarded client IP is ignored by default and used only at the configured proxy hop
+  ---
+  duration_ms: 10.668944
+  type: 'test'
+  ...
+# Subtest: real Postgres: create replay hashes only, concurrent events, scoped continuation, expiry
+ok 10 - real Postgres: create replay hashes only, concurrent events, scoped continuation, expiry
+  ---
+  duration_ms: 207.871542
+  type: 'test'
+  ...
+# Subtest: unset CORS allowlist is the documented HTTPS site origin only
+ok 11 - unset CORS allowlist is the documented HTTPS site origin only
+  ---
+  duration_ms: 0.963614
+  type: 'test'
+  ...
+# Subtest: CORS origins must be canonical http(s) origins
+ok 12 - CORS origins must be canonical http(s) origins
+  ---
+  duration_ms: 0.467212
+  type: 'test'
+  ...
+# Subtest: allowCorsOrigin never implies loopback and rejects null or path origins
+ok 13 - allowCorsOrigin never implies loopback and rejects null or path origins
+  ---
+  duration_ms: 0.132556
+  type: 'test'
+  ...
+# Subtest: memory HTTP + CorrespondenceClient: expired grants cannot read, write, or mint
+ok 14 - memory HTTP + CorrespondenceClient: expired grants cannot read, write, or mint
+  ---
+  duration_ms: 84.703616
+  type: 'test'
+  ...
+# Subtest: real Postgres HTTP + CorrespondenceClient: grant expiry is durable and enforced after expires_at elapses
+ok 15 - real Postgres HTTP + CorrespondenceClient: grant expiry is durable and enforced after expires_at elapses
+  ---
+  duration_ms: 141.863918
+  type: 'test'
+  ...
+# Subtest: writer grant cannot resolve or reopen; writer delivery still works
+ok 16 - writer grant cannot resolve or reopen; writer delivery still works
+  ---
+  duration_ms: 44.42299
+  type: 'test'
+  ...
+# Subtest: OpenAPI documents the implemented correspondence routes
+ok 17 - OpenAPI documents the implemented correspondence routes
+  ---
+  duration_ms: 1.208823
+  type: 'test'
+  ...
+# Subtest: ported client talks to the accepted correspondence service over loopback HTTP
+ok 18 - ported client talks to the accepted correspondence service over loopback HTTP
+  ---
+  duration_ms: 48.209054
+  type: 'test'
+  ...
+# {
+#   "ok": true,
+#   "replayed": true,
+#   "projectId": "project-1",
+#   "version": 1,
+#   "status": "open",
+#   "idempotencyKey": "s29-trial-vsJjQl7INcNtVMpORfNOkA",
+#   "ownerTokenFile": "/tmp/correspondence-create-NWORBS/owner.token",
+#   "stateFile": "/tmp/correspondence-create-NWORBS/trial.json"
+# }
+# {
+#   "ok": true,
+#   "replayed": false,
+#   "projectId": "project-locked",
+#   "version": 1,
+#   "status": "open",
+#   "idempotencyKey": "s29-trial-ivgF9V8zuYFENCPYBrQJSA",
+#   "ownerTokenFile": "/tmp/correspondence-lock-lkk35o/owner.token",
+#   "stateFile": "/tmp/correspondence-lock-lkk35o/trial.json"
+# }
+# Subtest: create-trial persists immutable intent before POST and reuses it after a lost response
+ok 19 - create-trial persists immutable intent before POST and reuses it after a lost response
+  ---
+  duration_ms: 31.011909
+  type: 'test'
+  ...
+# Subtest: create-trial lock prevents concurrent duplicate POSTs
+ok 20 - create-trial lock prevents concurrent duplicate POSTs
+  ---
+  duration_ms: 10.576043
+  type: 'test'
+  ...
+# Subtest: saved origin is checked before an owner secret can be read or transmitted
+ok 21 - saved origin is checked before an owner secret can be read or transmitted
+  ---
+  duration_ms: 0.566169
+  type: 'test'
+  ...
+# Subtest: unknown grant outcome is not retried into a duplicate grant
+ok 22 - unknown grant outcome is not retried into a duplicate grant
+  ---
+  duration_ms: 14.462038
+  type: 'test'
+  ...
+# Subtest: private-file and HTTP boundaries reject symlinks, unsafe URLs, oversized and arbitrary bodies
+ok 23 - private-file and HTTP boundaries reject symlinks, unsafe URLs, oversized and arbitrary bodies
+  ---
+  duration_ms: 24.271655
+  type: 'test'
+  ...
+# Subtest: canonicalOperatorOrigin keeps standalone origin and optional path prefix
+ok 24 - canonicalOperatorOrigin keeps standalone origin and optional path prefix
+  ---
+  duration_ms: 0.947317
+  type: 'test'
+  ...
+# Subtest: boundedApi concatenates a path-prefixed baseUrl onto /v1 routes
+ok 25 - boundedApi concatenates a path-prefixed baseUrl onto /v1 routes
+  ---
+  duration_ms: 11.927644
+  type: 'test'
+  ...
+# Subtest: two clients against a prefixed base URL construct /api/correspondence/v1/... URLs
+ok 26 - two clients against a prefixed base URL construct /api/correspondence/v1/... URLs
+  ---
+  duration_ms: 4.242445
+  type: 'test'
+  ...
+# Subtest: checkpoint and workbench keep a prefixed address and refuse origin-only or another path
+ok 27 - checkpoint and workbench keep a prefixed address and refuse origin-only or another path
+  ---
+  duration_ms: 3.439008
+  type: 'test'
+  ...
+# Subtest: package entry re-exports SDS mount symbols without listening
+ok 28 - package entry re-exports SDS mount symbols without listening
+  ---
+  duration_ms: 0.079518
+  type: 'test'
+  ...
+# {
+#   "ok": true,
+#   "replayed": false,
+#   "projectId": "project-prefix",
+#   "version": 1,
+#   "status": "open",
+#   "idempotencyKey": "s29-trial-_bBTPi77LdmtdyNf48_ugA",
+#   "ownerTokenFile": "/tmp/correspondence-prefix-create-C8TExY/owner.token",
+#   "stateFile": "/tmp/correspondence-prefix-create-C8TExY/trial.json"
+# }
+# Subtest: canonical service address keeps a configured prefix and rejects silent rebinds
+ok 29 - canonical service address keeps a configured prefix and rejects silent rebinds
+  ---
+  duration_ms: 0.845486
+  type: 'test'
+  ...
+# Subtest: boundedApi concatenates /v1 onto the prefixed base URL
+ok 30 - boundedApi concatenates /v1 onto the prefixed base URL
+  ---
+  duration_ms: 13.42726
+  type: 'test'
+  ...
+# Subtest: saved prefix is checked before an owner secret can be read or transmitted
+ok 31 - saved prefix is checked before an owner secret can be read or transmitted
+  ---
+  duration_ms: 1.120041
+  type: 'test'
+  ...
+# Subtest: create-trial persists the prefixed address as the immutable service address
+ok 32 - create-trial persists the prefixed address as the immutable service address
+  ---
+  duration_ms: 13.624132
+  type: 'test'
+  ...
+# Subtest: memory store HTTP state does not survive a process-like restart
+ok 33 - memory store HTTP state does not survive a process-like restart
+  ---
+  duration_ms: 55.261542
+  type: 'test'
+  ...
+# Subtest: postgres HTTP restart + fresh-client reload resume is PG-backed
+ok 34 - postgres HTTP restart + fresh-client reload resume is PG-backed
+  ---
+  duration_ms: 89.350645
+  type: 'test'
+  ...
+# Subtest: S58 dedicated database selection cannot inherit public or unrelated schemas
+ok 35 - S58 dedicated database selection cannot inherit public or unrelated schemas
+  ---
+  duration_ms: 0.938048
+  type: 'test'
+  ...
+# Subtest: S58 failed migration closes the pool and idle errors have a handler
+ok 36 - S58 failed migration closes the pool and idle errors have a handler
+  ---
+  duration_ms: 0.667484
+  type: 'test'
+  ...
+# Subtest: S58 migration scopes one transaction and rolls back failures (query fixture)
+ok 37 - S58 migration scopes one transaction and rolls back failures (query fixture)
+  ---
+  duration_ms: 0.715094
+  type: 'test'
+  ...
+# Subtest: schema and pool config stay bounded and standalone-default public
+ok 38 - schema and pool config stay bounded and standalone-default public
+  ---
+  duration_ms: 0.751644
+  type: 'test'
+  ...
+# Subtest: namespaced migrate leaves sentinel schema/table untouched and is re-runnable
+ok 39 - namespaced migrate leaves sentinel schema/table untouched and is re-runnable
+  ---
+  duration_ms: 82.762919
+  type: 'test'
+  ...
+# Subtest: shared task reconnect clears prior tenant display, cursor, and proposal reference
+ok 40 - shared task reconnect clears prior tenant display, cursor, and proposal reference
+  ---
+  duration_ms: 69.807384
+  type: 'test'
+  ...
+# Subtest: Disconnect wins over a pending authenticated connection and clears input credentials
+ok 41 - Disconnect wins over a pending authenticated connection and clears input credentials
+  ---
+  duration_ms: 15.616913
+  type: 'test'
+  ...
+# Subtest: latest connect wins when earlier connection completes last
+ok 42 - latest connect wins when earlier connection completes last
+  ---
+  duration_ms: 11.414255
+  type: 'test'
+  ...
+# Subtest: late history and export cannot repaint data after disconnect
+ok 43 - late history and export cannot repaint data after disconnect
+  ---
+  duration_ms: 14.147057
+  type: 'test'
+  ...
+# Subtest: shared mutation with lost response reconciles once with the same key
+ok 44 - shared mutation with lost response reconciles once with the same key
+  ---
+  duration_ms: 13.803766
+  type: 'test'
+  ...
+# Subtest: revoked grant during export is handled and clears authenticated mode
+ok 45 - revoked grant during export is handled and clears authenticated mode
+  ---
+  duration_ms: 15.687064
+  type: 'test'
+  ...
+# Subtest: lost bootstrap response reuses its key when the same connection is retried
+ok 46 - lost bootstrap response reuses its key when the same connection is retried
+  ---
+  duration_ms: 10.147966
+  type: 'test'
+  ...
+# Subtest: SQL migration names the required durable tables and constraints
+ok 47 - SQL migration names the required durable tables and constraints
+  ---
+  duration_ms: 0.615369
+  type: 'test'
+  ...
+# Subtest: memory store persists across logical restart within process boundary only as volatile state
+ok 48 - memory store persists across logical restart within process boundary only as volatile state
+  ---
+  duration_ms: 0.732115
+  type: 'test'
+  ...
+# Subtest: postgres store integration when DATABASE_URL is provided
+ok 49 - postgres store integration when DATABASE_URL is provided
+  ---
+  duration_ms: 49.486637
+  type: 'test'
+  ...
+# Subtest: memory: reject foreign workspace token and foreign cursor
+ok 50 - memory: reject foreign workspace token and foreign cursor
+  ---
+  duration_ms: 72.466954
+  type: 'test'
+  ...
+# Subtest: postgres: reject foreign workspace token and foreign cursor over real HTTP
+ok 51 - postgres: reject foreign workspace token and foreign cursor over real HTTP
+  ---
+  duration_ms: 86.944276
+  type: 'test'
+  ...
+# Subtest: trust proxy defaults to 0 and accepts hop counts 0–5
+ok 52 - trust proxy defaults to 0 and accepts hop counts 0–5
+  ---
+  duration_ms: 0.703012
+  type: 'test'
+  ...
+# Subtest: trust proxy rejects boolean true and out-of-range values
+ok 53 - trust proxy rejects boolean true and out-of-range values
+  ---
+  duration_ms: 0.369802
+  type: 'test'
+  ...
+1..53
+# tests 53
+# suites 0
+# pass 53
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4635.282192

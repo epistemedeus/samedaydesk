@@ -1,0 +1,4104 @@
+{
+  "purpose": "owner_qa",
+  "samples": [
+    {
+      "inventory": 0,
+      "resolveMs": 152.30348800000002,
+      "invokeMs": 470.397594
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 103.4728640000003,
+      "invokeMs": 489.8496789999999
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 41.1947339999997,
+      "invokeMs": 450.1785980000004
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 42.4019700000008,
+      "invokeMs": 460.53526799999963
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 39.486235999999735,
+      "invokeMs": 447.5107390000003
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 41.778809999999794,
+      "invokeMs": 448.0395950000002
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 38.524585000000116,
+      "invokeMs": 450.8444559999998
+    },
+    {
+      "inventory": 0,
+      "resolveMs": 41.518324000000575,
+      "invokeMs": 453.2431980000001
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 168.99822099999983,
+      "invokeMs": 508.8879620000007
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 58.767814000000726,
+      "invokeMs": 511.6367570000002
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 49.103799999998955,
+      "invokeMs": 503.1490300000005
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 41.351214000000255,
+      "invokeMs": 455.54725999999937
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 56.834216999999626,
+      "invokeMs": 482.7743439999995
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 40.619024999999965,
+      "invokeMs": 469.2598689999995
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 53.08824300000015,
+      "invokeMs": 483.12025600000015
+    },
+    {
+      "inventory": 32,
+      "resolveMs": 43.81257199999891,
+      "invokeMs": 472.2302210000016
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 235.98186700000042,
+      "invokeMs": 610.3451989999994
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 65.41847800000141,
+      "invokeMs": 604.5019940000002
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 75.59502099999918,
+      "invokeMs": 576.981302000002
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 58.942707999998674,
+      "invokeMs": 554.7378680000002
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 55.45752200000061,
+      "invokeMs": 580.0118829999992
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 58.17846500000087,
+      "invokeMs": 536.1096429999998
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 58.14149499999985,
+      "invokeMs": 552.3657019999991
+    },
+    {
+      "inventory": 128,
+      "resolveMs": 59.13171399999919,
+      "invokeMs": 609.4164149999997
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 411.8329989999984,
+      "invokeMs": 934.0694730000032
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 147.79395699999804,
+      "invokeMs": 933.9146089999995
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 125.02423099999942,
+      "invokeMs": 946.7443499999972
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 120.91129199999705,
+      "invokeMs": 930.1836690000018
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 120.5966690000023,
+      "invokeMs": 940.2382949999992
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 120.4208699999981,
+      "invokeMs": 962.8306330000014
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 140.68642300000283,
+      "invokeMs": 927.1382239999984
+    },
+    {
+      "inventory": 512,
+      "resolveMs": 119.56144399999903,
+      "invokeMs": 959.8019309999981
+    }
+  ],
+  "runs": [
+    {
+      "inventory": 0,
+      "published": 2,
+      "elapsedMs": 4282.726468999999,
+      "metrics": [
+        {
+          "kind": "lockQuery",
+          "ms": 0.32134499999983746,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.592431999999917,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.647921000000224,
+          "records": 5
+        },
+        {
+          "kind": "journalReplay",
+          "ms": 2.6908410000000913,
+          "events": 11
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.132144000000153,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2465420000003178,
+          "records": 14
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.20661399999971763,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.7341229999997267,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 78.45353999999998,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 2.8151310000002923,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13010399999984656,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12387699999999313,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11454199999980119,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 30.453648000000157,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.5201010000000679,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 36.122468000000026,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2438640000000305,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.20577500000035798,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.2206479999995281,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.456254000000627,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.463249999999789,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.866713999999774,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.4033019999997123,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.24857599999995728,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19014100000003964,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13266999999996187,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.51289999999972,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0560009999999238,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.813820999999734,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9420959999997649,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12303700000029494,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.735955000000104,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2557489999999234,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.137431000000106,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11508899999989808,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08733500000016647,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.26015499999994,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1585570000006555,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.15162700000019,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.941171999999824,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1389049999997951,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12767400000029738,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.22862200000054,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9815330000001268,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.585621999999603,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.93688899999961,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.2486800000006042,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1659639999998035,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16186000000016065,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.61562200000026,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.3061939999997776,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.0721709999998,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.8977210000002742,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14397399999961635,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.72085900000002,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0326510000004419,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12881000000015774,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10268699999960518,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08318599999984144,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.412078000000292,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.061004000000139,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.216617000000042,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2507619999996678,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13637400000061461,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17665799999940646,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.041691000000355,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2679349999998522,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.97367800000029,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9438660000005257,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1893079999999827,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.24840000000040163,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1173239999998259,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.63982300000043,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.3413250000003245,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.316584999999577,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9458920000006401,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12184199999956036,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.869071000000076,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.3001060000005964,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1165659999996933,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1122960000002422,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08847199999945587,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.541557999999895,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9984349999995175,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.394984000000477,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1437080000005153,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1338869999999588,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09669300000041403,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.09008199999971,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9846189999998387,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.320130000000063,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.8825090000000273,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19527199999993172,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17544900000029884,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16816000000017084,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.31672199999957,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0204980000007708,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.91585799999939,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1139279999997598,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 106.11815800000022,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 29.141829000000143,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.7864830000003167,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11102600000003804,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09378399999968678,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08337600000004386,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.64193299999988,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.489227000000028,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.051222000000053,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0151369999998678,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12015100000007806,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09206600000015897,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.300943999999618,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.03000800000018,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.081166999999823,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9376999999999498,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18074599999999919,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18013299999984156,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11193300000013551,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.08938500000022,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0239260000003014,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.955909999999676,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9330519999998614,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12024300000030053,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.80597200000011,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0049749999998312,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12438800000018091,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09462600000006205,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07319099999949685,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.24460799999997,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1241760000002614,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.36279800000011,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9727370000000519,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17002299999967363,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17249300000003132,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.325079000000187,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.2511430000004111,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.59465799999998,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1514729999998963,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.328548999999839,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.3128789999991568,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14767399999982445,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.29855700000007,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9740889999993669,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.795203000000583,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1603119999999763,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12220799999977316,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.187889000000723,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.3206880000007004,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1042250000000422,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0893740000001344,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07166899999992893,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.701852000000144,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.060475000000224,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.647602000000006,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.1322289999998247,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1359999999995125,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09205699999984063,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.839218999999503,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0170519999992393,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.382024999999885,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9262810000000172,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16045200000007753,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16215900000042893,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11822700000084296,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.68545499999982,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.024930999999924,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.25743700000021,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9203630000001795,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10965999999916676,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.694117000000006,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0031550000003335,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1450750000003609,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16654000000016822,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07746199999928649,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.115837999999712,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9861900000005335,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.88698999999997,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.193134999999529,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.5007100000002538,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16026199999942037,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.61854999999923,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9668130000000019,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.236018999999942,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 0.9056650000002264,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16518299999916053,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16333699999995588,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.4037220000000161,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.6555129999997,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0813349999998536,
+          "records": 10
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.194675000000643,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.094745999999759,
+          "records": 10
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 71.07204000000002,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.952511999999842,
+          "publications": 2
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 1.0480889999998908,
+          "records": 10
+        }
+      ],
+      "controlledHoldMs": 60,
+      "observedPostgresWaits": [
+        {
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        }
+      ]
+    },
+    {
+      "inventory": 32,
+      "published": 3,
+      "elapsedMs": 4512.391611999999,
+      "metrics": [
+        {
+          "kind": "lockQuery",
+          "ms": 0.13419099999919126,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.741997999999512,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.723500000000058,
+          "records": 42
+        },
+        {
+          "kind": "journalReplay",
+          "ms": 3.0444119999992836,
+          "events": 14
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.773677999999563,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.037433999999848,
+          "records": 51
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19086299999980838,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14305400000012014,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 29.125326999999743,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 11.46709700000065,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11730400000124064,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10021699999924749,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08216100000026927,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.20248999999967,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 7.600302999999258,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.119885000000068,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.277550000000701,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17383999999947264,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1647400000001653,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.426360999999815,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.463781000000381,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.32225599999947,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.15552899999966,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16521500000089873,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18607000000156404,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11942500000077416,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 37.63740399999915,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.897375000000466,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 29.676778999999442,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.649987000000692,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12342899999930523,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.308106000000407,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.1421900000004825,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11885000000074797,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10411999999996624,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10838300000068557,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.364010999999664,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.047303000001193,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.501490000000558,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.001443000001018,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14737499999864667,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08912200000122539,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.758781999998973,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.052948999998989,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.9775720000016,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.953086999999869,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 1.6217310000010912,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 1.7704450000001088,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12461599999915052,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.02113599999939,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.09421199999997,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.05134199999884,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.051601999999548,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12270700000044599,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.18018800000027,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.035219000001234,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11090399999920919,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09844499999962864,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0785520000008546,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.818268999999418,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.902614999999059,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.843469999999797,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.914260999999897,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19622600000002421,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18724399999882735,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.826006999999663,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.026560000000245,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.873100999999224,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 8.974632999999812,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.2842290000007779,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.24048299999958545,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19046399999933783,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.477764999999636,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.559139000000869,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.38834400000087,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.223638999999821,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19341999999960535,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.081333000000086,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.976655000000392,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12151099999937287,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13724699999875156,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08359100000052422,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.497566000000006,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.986066999999821,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.52026300000034,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.007132000000638,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11055400000077498,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08289300000069488,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.375404999998864,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.540124999999534,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.426658999998835,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.234433999999965,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1969939999999042,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15175900000031106,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10656899999958114,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.15128000000004,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.018889999999374,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.718861999999717,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 8.882551999999123,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 104.47556299999997,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 40.40058599999975,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.997615000000224,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11346000000048662,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08923999999933585,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07564699999966251,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.805075000000215,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.860830999999962,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.694251999999324,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.3411919999998645,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 1.3399090000002616,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.2777750000004744,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.21312200000102,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.476571000001059,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.186789999999746,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.193341999998665,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15452600000025996,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15423899999950663,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11773100000027625,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.91931899999872,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 8.261042000000089,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.58471599999939,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.099941000000399,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11967600000025413,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.503271999999924,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.337722000000213,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10837199999878067,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11520199999904435,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.2606390000000829,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.02392300000065,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.269338000000062,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.951301999999487,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.051317000001291,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17751999999927648,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15676400000120339,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.436549000000014,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.222599999999147,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.159201999998913,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.263217000001532,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.20192999999926542,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.4426920000005339,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0938239999995858,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.61883300000045,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 11.476033999999345,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.296894000000975,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 8.717079000000012,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11384399999951711,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.543477999999595,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.226549000000887,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11776600000121107,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09915800000089803,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0738839999994525,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.369015000000218,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.238433000000441,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.227865999999267,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.156408000000738,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.22924499999862746,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10428900000079011,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.091678999999203,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.989260000000286,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.67229099999895,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.953373999998803,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.219890000000305,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16268200000013167,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11449700000048324,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.581468000000314,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.0744109999996,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.837464000000182,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.82397200000014,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.26175400000101945,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.14534100000128,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.714233000000604,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1124149999996007,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0939330000001064,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07164800000100513,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.018245999999635,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.081758000000264,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.99171000000024,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 9.432448999999906,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1566049999983079,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16348800000014307,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.84170400000039,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 6.095864999999321,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.72901599999932,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.8494620000001305,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14569499999925029,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18196999999963737,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11829900000157068,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 35.22165200000018,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.9220470000000205,
+          "records": 47
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 29.72167300000001,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 5.801798999998937,
+          "records": 47
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 62.67620700000043,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.898083999998562,
+          "publications": 3
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 8.873905000000377,
+          "records": 47
+        }
+      ],
+      "controlledHoldMs": 60,
+      "observedPostgresWaits": [
+        {
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        }
+      ]
+    },
+    {
+      "inventory": 128,
+      "published": 4,
+      "elapsedMs": 5411.591312999999,
+      "metrics": [
+        {
+          "kind": "lockQuery",
+          "ms": 0.15645299999960116,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.671798999999737,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 23.828105000000505,
+          "records": 143
+        },
+        {
+          "kind": "journalReplay",
+          "ms": 4.598104000000603,
+          "events": 17
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.805417999999918,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.18300900000031,
+          "records": 152
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17692199999873992,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12909100000069884,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.88143400000081,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 24.704877000000124,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13418500000079803,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12974799999938114,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09339499999987311,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.250458000000435,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 22.672694999999294,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.53223000000071,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 22.243342000001576,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11012200000004668,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08234099999936006,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.11913099999947,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.10052900000119,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.277626999999484,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.021237999999357,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16501500000049418,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1821089999994001,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1235129999986384,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.53709399999934,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 37.7604080000001,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.632057000000714,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 34.23291000000063,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12860400000135996,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.90446299999894,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.472780000000057,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11524500000086846,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12202699999761535,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1619780000000901,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.780253999997512,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.32171599999856,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.07607199999984,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.298297000001185,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11485700000048382,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08110400000077789,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.449861000000965,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.746264999997948,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.164221999999427,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.65296700000181,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1589300000014191,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16641399999934947,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10303899999780697,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.04530599999998,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.63608600000225,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.141336000000592,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.493235000001732,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12879899999825284,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.114332999997714,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.310991999998805,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1452930000014021,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1714159999974072,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07670900000084657,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.72754899999927,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.135591999998724,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.520370999998704,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.468275999999605,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11208499999702326,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08020100000067032,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.583572999999888,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.71445600000152,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.94479400000273,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.79049699999814,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14840499999991152,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17905199999950128,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11452599999756785,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 31.875488000001496,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.053134999998292,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.83678300000247,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.62783599999966,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1238660000017262,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.606212999999116,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.88732499999969,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11555299999963609,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10118399999919347,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07615499999883468,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.12528899999961,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.863524999997026,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.69084600000133,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.845460000000458,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11973499999658088,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09746000000086497,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.786611999999877,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 24.30623800000103,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.95359599999938,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.399703999999474,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15604800000073737,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16211000000112108,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11794699999882141,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.05202300000019,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.123192999999446,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.662603999997373,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 34.05333899999823,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 150.4095320000015,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.81867499999862,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 36.88753799999904,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16679299999850628,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10609899999872141,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09369800000058603,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.82649499999934,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 35.86946999999964,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.585907999999108,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.65759799999978,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18449499999951513,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1103370000000723,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.00301799999943,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 23.870222999999896,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.06901199999993,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.370683999999528,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.4931450000003679,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15920999999980268,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10676600000078906,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.172569000000294,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.20278900000085,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.961350999999922,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.351912999998603,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15034000000014203,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.985888999999588,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.95260099999905,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1028489999989688,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0977229999989504,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07226499999887892,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.699220000000423,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.339819999999236,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.417500999999902,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.29318199999943,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1557539999994333,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09990699999980279,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.70860299999913,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 24.175451999999495,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.27997200000027,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.208316000000195,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1386899999997695,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.22117200000138837,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11170700000002398,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.202119999998104,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.00671599999987,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.954588000000513,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.64728699999978,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1166929999999411,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.56259399999908,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.172717999997985,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09822500000154832,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0833520000014687,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0672420000009879,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.359309999999823,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.067728999998508,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.327221999999892,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.078371999999945,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10876199999984237,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08592800000042189,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.971698999997898,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.975758000000496,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.433320000000094,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 33.46700000000055,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19383000000016182,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15917500000068685,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1345499999988533,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.649773000001005,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.079609000000346,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.314480000000913,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 32.952219999999215,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10707499999989523,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.944077000000107,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.23163299999942,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10713400000167894,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09699600000021746,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0693280000014056,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.1270059999988,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.62665399999969,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.53401600000143,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.675310999999056,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1053619999984221,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07416699999885168,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.7163049999981,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.341671999998653,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.81880900000033,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.97566000000006,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16069900000002235,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16030200000022887,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11593899999934365,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.523449999996956,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.571893000000273,
+          "records": 148
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.25752000000284,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 20.642964999999094,
+          "records": 148
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 60.25105099999928,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.62207500000295,
+          "publications": 4
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 21.292731000001368,
+          "records": 148
+        }
+      ],
+      "controlledHoldMs": 60,
+      "observedPostgresWaits": [
+        {
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        }
+      ]
+    },
+    {
+      "inventory": 512,
+      "published": 5,
+      "elapsedMs": 9031.951766000002,
+      "metrics": [
+        {
+          "kind": "lockQuery",
+          "ms": 0.14813999999751104,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.442996000001585,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 80.29630499999985,
+          "records": 532
+        },
+        {
+          "kind": "journalReplay",
+          "ms": 5.5924229999982344,
+          "events": 20
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.378375000000233,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 98.63101500000266,
+          "records": 541
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.17309899999963818,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12248199999885401,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 30.599750999997923,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 100.56664399999863,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11520499999824096,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10185600000113482,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07484599999952479,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.315236999998888,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 80.00400299999819,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.9714120000026,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 98.11000799999965,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11005000000295695,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14207700000042678,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.87094900000011,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.10974499999793,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.386413000000175,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.1022550000016,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14780999999857158,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.19299700000192388,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10691699999733828,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.92710100000113,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.55332000000271,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.224888000000647,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.74099500000011,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12042700000165496,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.328095000000758,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 80.1023810000006,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11820799999986775,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09799899999779882,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07946800000354415,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.094951999999466,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.22700099999929,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.20918900000106,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.97524899999917,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12953899999774876,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08113199999934295,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.162725999998656,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 98.13700900000185,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.82059599999775,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.4989510000014,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15091300000131014,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16341299999839975,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10260800000105519,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.35427999999956,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.88421599999856,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.16193900000144,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.87896199999886,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11874399999942398,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.60160999999789,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.92171099999905,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11625599999752012,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08972599999833619,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11891000000105123,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.04181400000016,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.8739179999975,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.926997999999003,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.22533900000053,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.3091569999996864,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09898899999825517,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.50040799999988,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 101.3165399999998,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.435058999999455,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 97.85511300000144,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1586989999996149,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.16269399999873713,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11304100000052131,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.40999000000011,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.58162900000025,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.13231000000087,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.10049300000173,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1240990000005695,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.311228999999003,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.59703299999819,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11423599999761791,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09422899999844958,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07198799999969197,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.379053000000567,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.97538300000087,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.19103499999983,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.17226100000335,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.13434300000153598,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08270499999707681,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.39596000000165,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 100.71844699999929,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.946630999998888,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 97.8849220000011,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1577660000002652,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.18884800000159885,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11541800000122748,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 33.054151000000275,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.18485399999918,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.31417599999986,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.93317299999762,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 290.5045280000013,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.478040999998484,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.04941499999768,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10080499999821768,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09825999999884516,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.06954300000143121,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 29.41989900000044,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.98798199999874,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.088959000000614,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.19651700000031,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10290900000109104,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07685499999934109,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.12377800000104,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 97.83180399999765,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.86360600000262,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.14035499999954,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1735309999967285,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14835499999753665,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10171700000137207,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.51947100000325,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.81975299999976,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.115654999997787,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.49530400000003,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.12288099999932456,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.956037999996624,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 85.57381499999974,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11296600000059698,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.09933300000193412,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.0678120000011404,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.364690999998857,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 98.64032900000166,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.182964000003267,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.4719010000008,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10864000000219676,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08641200000056415,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.305881000000227,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.97055100000216,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.644466999998258,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.50436199999967,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15704200000254787,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14386300000114716,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10451800000009825,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.23431999999957,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.06783899999937,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.102044999999634,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 97.89926600000035,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.5938989999995101,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.126404999999068,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.36522599999807,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11382900000171503,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08259799999723327,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.06561599999986356,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.982511999998678,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.58375700000033,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.639015000000654,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.02468600000066,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.1045879999983299,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.07333700000162935,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.83614999999918,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.6748860000007,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.00958399999945,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.83036199999697,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14850899999873945,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15705999999772757,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10997499999939464,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.864636000002065,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 100.38955899999928,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.95739599999797,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.35252400000172,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11509699999805889,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.61648200000127,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 98.77821100000074,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10172599999714294,
+          "exclusive": false
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08324699999866425,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.06567200000063167,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.43856500000038,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.47472299999936,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 27.381537999997818,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 97.65459499999997,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.10272600000098464,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.08102700000017649,
+          "exclusive": true
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.950935000000754,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.3236169999982,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 26.49694200000158,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 78.09942900000169,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.15161900000020978,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.14782100000229548,
+          "exclusive": true
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 0.11026700000002165,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 32.6175230000008,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.60082899999907,
+          "records": 537
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 25.88180800000191,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 77.80764899999849,
+          "records": 537
+        },
+        {
+          "kind": "lockQuery",
+          "ms": 69.01356700000179,
+          "exclusive": false
+        },
+        {
+          "kind": "profileChecks",
+          "ms": 28.16809000000285,
+          "publications": 5
+        },
+        {
+          "kind": "graphBuild",
+          "ms": 79.2589229999976,
+          "records": 537
+        }
+      ],
+      "controlledHoldMs": 60,
+      "observedPostgresWaits": [
+        {
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        }
+      ]
+    }
+  ],
+  "measurement": "loopback HTTP; graphBuild and journalReplay synchronous elapsed; profileChecks elapsed; lockQuery includes SQL roundtrip and row-lock wait; controlled wait measured separately; no demand or economic inference"
+}

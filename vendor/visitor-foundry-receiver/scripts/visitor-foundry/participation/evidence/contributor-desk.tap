@@ -1,0 +1,368 @@
+
+> contributor-desk@0.1.0 test
+> node --test --test-concurrency=1 tests/*.test.mjs
+
+TAP version 13
+# Subtest: Node engine is 22+
+ok 1 - Node engine is 22+
+  ---
+  duration_ms: 0.72412
+  type: 'test'
+  ...
+# Subtest: CLI browse is walletless and redacts owner internals
+ok 2 - CLI browse is walletless and redacts owner internals
+  ---
+  duration_ms: 31.253591
+  type: 'test'
+  ...
+# Subtest: CLI claim then status without a wallet
+ok 3 - CLI claim then status without a wallet
+  ---
+  duration_ms: 3.023213
+  type: 'test'
+  ...
+# Subtest: CLI journey covers browse, claim, status, appeal, owed-versus-paid
+ok 4 - CLI journey covers browse, claim, status, appeal, owed-versus-paid
+  ---
+  duration_ms: 30.667524
+  type: 'test'
+  ...
+# Subtest: unfunded listing is visible and not claimable
+ok 5 - unfunded listing is visible and not claimable
+  ---
+  duration_ms: 1.932564
+  type: 'test'
+  ...
+# Subtest: exclusive reservation rejects a second contributor
+ok 6 - exclusive reservation rejects a second contributor
+  ---
+  duration_ms: 0.677728
+  type: 'test'
+  ...
+# Subtest: integer termsVersion is rejected as a start-work key
+ok 7 - integer termsVersion is rejected as a start-work key
+  ---
+  duration_ms: 0.551752
+  type: 'test'
+  ...
+# Subtest: wallet fields are refused
+ok 8 - wallet fields are refused
+  ---
+  duration_ms: 0.489863
+  type: 'test'
+  ...
+# Subtest: I01 hash of canonical terms is stable
+ok 9 - I01 hash of canonical terms is stable
+  ---
+  duration_ms: 0.222249
+  type: 'test'
+  ...
+# Subtest: late allowlisted address is not a payout key
+ok 10 - late allowlisted address is not a payout key
+  ---
+  duration_ms: 0.876165
+  type: 'test'
+  ...
+# Subtest: seeded failure: desk holds EARNED_WORK_OWNER_TOKEN and is rejected
+ok 11 - seeded failure: desk holds EARNED_WORK_OWNER_TOKEN and is rejected
+  ---
+  duration_ms: 32.620767
+  type: 'test'
+  ...
+# Subtest: seeded failure: --owner-token is the same refusal
+ok 12 - seeded failure: --owner-token is the same refusal
+  ---
+  duration_ms: 29.630275
+  type: 'test'
+  ...
+# Subtest: inspectDeskAuthority names the env key and not the secret
+ok 13 - inspectDeskAuthority names the env key and not the secret
+  ---
+  duration_ms: 0.878953
+  type: 'test'
+  ...
+# Subtest: kill: contributor holds payout key
+ok 14 - kill: contributor holds payout key
+  ---
+  duration_ms: 31.088858
+  type: 'test'
+  ...
+# Subtest: kill: 64-hex destination is treated as a key, not a late address
+ok 15 - kill: 64-hex destination is treated as a key, not a late address
+  ---
+  duration_ms: 2.003732
+  type: 'test'
+  ...
+# Subtest: PAYOUT_KEY in env kills before browse
+ok 16 - PAYOUT_KEY in env kills before browse
+  ---
+  duration_ms: 31.554059
+  type: 'test'
+  ...
+# Subtest: holdsPayoutKey flag kills
+ok 17 - holdsPayoutKey flag kills
+  ---
+  duration_ms: 0.149204
+  type: 'test'
+  ...
+# Subtest: empty env is admitted
+ok 18 - empty env is admitted
+  ---
+  duration_ms: 0.092267
+  type: 'test'
+  ...
+# Subtest: thirteen-word English appeal reason is not a seed-phrase kill
+ok 19 - thirteen-word English appeal reason is not a seed-phrase kill
+  ---
+  duration_ms: 1.85665
+  type: 'test'
+  ...
+# Subtest: appeal prose mentioning payout-key does not kill the session
+ok 20 - appeal prose mentioning payout-key does not kill the session
+  ---
+  duration_ms: 0.582075
+  type: 'test'
+  ...
+# Subtest: a 64-hex appeal reason is still a payout-key kill
+ok 21 - a 64-hex appeal reason is still a payout-key kill
+  ---
+  duration_ms: 0.408118
+  type: 'test'
+  ...
+# Subtest: twelve-word mnemonic as payout destination still kills
+ok 22 - twelve-word mnemonic as payout destination still kills
+  ---
+  duration_ms: 0.315925
+  type: 'test'
+  ...
+# Subtest: openAdapter defaults to process.env and refuses a desk-held secret
+ok 23 - openAdapter defaults to process.env and refuses a desk-held secret
+  ---
+  duration_ms: 0.256838
+  type: 'test'
+  ...
+# Subtest: owed-versus-paid never confirms settlement
+ok 24 - owed-versus-paid never confirms settlement
+  ---
+  duration_ms: 2.63971
+  type: 'test'
+  ...
+# Subtest: R3-09 settlement receipt view stays disjoint
+ok 25 - R3-09 settlement receipt view stays disjoint
+  ---
+  duration_ms: 0.09946
+  type: 'test'
+  ...
+# Subtest: owed-versus-paid pins paid/settled/transfer even when the task record lies
+ok 26 - owed-versus-paid pins paid/settled/transfer even when the task record lies
+  ---
+  duration_ms: 0.139566
+  type: 'test'
+  ...
+# Subtest: seeded failure: forged paid=false, settled=false, transfer=null is rejected without mutation
+ok 27 - seeded failure: forged paid=false, settled=false, transfer=null is rejected without mutation
+  ---
+  duration_ms: 32.035435
+  type: 'test'
+  ...
+# Subtest: HTTP browse uses public GET and never an owner bearer
+ok 28 - HTTP browse uses public GET and never an owner bearer
+  ---
+  duration_ms: 1.307115
+  type: 'test'
+  ...
+# Subtest: HTTP claim refuses to mint a contributor token with an owner secret
+ok 29 - HTTP claim refuses to mint a contributor token with an owner secret
+  ---
+  duration_ms: 0.552515
+  type: 'test'
+  ...
+# Subtest: HTTP owed-versus-paid does not call owner /payout
+ok 30 - HTTP owed-versus-paid does not call owner /payout
+  ---
+  duration_ms: 0.401979
+  type: 'test'
+  ...
+# Subtest: HTTP appeal is not mapped onto owner accept
+ok 31 - HTTP appeal is not mapped onto owner accept
+  ---
+  duration_ms: 0.227707
+  type: 'test'
+  ...
+# Subtest: HTTP adapter refuses non-http origins and embedded credentials
+ok 32 - HTTP adapter refuses non-http origins and embedded credentials
+  ---
+  duration_ms: 0.132903
+  type: 'test'
+  ...
+# Subtest: HTTP fetch does not follow redirects, times out, and pins paid/settled
+ok 33 - HTTP fetch does not follow redirects, times out, and pins paid/settled
+  ---
+  duration_ms: 0.266903
+  type: 'test'
+  ...
+# Subtest: HTTP adapter refuses 3xx redirects instead of following them to owner routes
+ok 34 - HTTP adapter refuses 3xx redirects instead of following them to owner routes
+  ---
+  duration_ms: 0.203784
+  type: 'test'
+  ...
+# Subtest: HTTP claim refuses a wallet field
+ok 35 - HTTP claim refuses a wallet field
+  ---
+  duration_ms: 0.331755
+  type: 'test'
+  ...
+# Subtest: HTTP adapter refuses an oversized origin body
+ok 36 - HTTP adapter refuses an oversized origin body
+  ---
+  duration_ms: 0.334712
+  type: 'test'
+  ...
+# Subtest: help exits 0 and does not write a receipt
+ok 37 - help exits 0 and does not write a receipt
+  ---
+  duration_ms: 143.303601
+  type: 'test'
+  ...
+# Subtest: cold cwd happy path inspects terms, grants, submits, and keeps dispute separate
+ok 38 - cold cwd happy path inspects terms, grants, submits, and keeps dispute separate
+  ---
+  duration_ms: 307.851258
+  type: 'test'
+  ...
+# Subtest: overturned dispute stays unpaid and separate
+ok 39 - overturned dispute stays unpaid and separate
+  ---
+  duration_ms: 242.271262
+  type: 'test'
+  ...
+# Subtest: grant expiry writes nothing
+ok 40 - grant expiry writes nothing
+  ---
+  duration_ms: 153.072078
+  type: 'test'
+  ...
+# Subtest: grant revocation writes nothing
+ok 41 - grant revocation writes nothing
+  ---
+  duration_ms: 153.696288
+  type: 'test'
+  ...
+# Subtest: double earning is refused and not persisted
+ok 42 - double earning is refused and not persisted
+  ---
+  duration_ms: 151.514436
+  type: 'test'
+  ...
+# Subtest: a different principal cannot submit
+ok 43 - a different principal cannot submit
+  ---
+  duration_ms: 151.803593
+  type: 'test'
+  ...
+# Subtest: a changed terms version is refused
+ok 44 - a changed terms version is refused
+  ---
+  duration_ms: 149.282763
+  type: 'test'
+  ...
+# Subtest: untrusted origin is refused before any request
+ok 45 - untrusted origin is refused before any request
+  ---
+  duration_ms: 145.730316
+  type: 'test'
+  ...
+# Subtest: public http origin and embedded credentials are refused
+ok 46 - public http origin and embedded credentials are refused
+  ---
+  duration_ms: 291.141123
+  type: 'test'
+  ...
+# Subtest: redirects are refused and a loopback origin is still not contacted
+ok 47 - redirects are refused and a loopback origin is still not contacted
+  ---
+  duration_ms: 283.019404
+  type: 'test'
+  ...
+# Subtest: https origin is syntactically trusted and still not contacted
+ok 48 - https origin is syntactically trusted and still not contacted
+  ---
+  duration_ms: 144.981878
+  type: 'test'
+  ...
+# Subtest: ambient earned-work secret is refused and is not echoed
+ok 49 - ambient earned-work secret is refused and is not echoed
+  ---
+  duration_ms: 140.429668
+  type: 'test'
+  ...
+# Subtest: payout key kills before a grant
+ok 50 - payout key kills before a grant
+  ---
+  duration_ms: 142.755162
+  type: 'test'
+  ...
+# Subtest: requesting payment authority is refused
+ok 51 - requesting payment authority is refused
+  ---
+  duration_ms: 427.002893
+  type: 'test'
+  ...
+# Subtest: seeded failure: forged paid=false, settled=false, transfer=null writes nothing
+ok 52 - seeded failure: forged paid=false, settled=false, transfer=null writes nothing
+  ---
+  duration_ms: 433.093108
+  type: 'test'
+  ...
+# Subtest: malformed JSON, URL input, integer terms, and a bad digest write nothing
+ok 53 - malformed JSON, URL input, integer terms, and a bad digest write nothing
+  ---
+  duration_ms: 844.843155
+  type: 'test'
+  ...
+# Subtest: missing requester-decision pin is named and not invented
+ok 54 - missing requester-decision pin is named and not invented
+  ---
+  duration_ms: 150.957008
+  type: 'test'
+  ...
+# Subtest: unknown flag and a missing file write nothing
+ok 55 - unknown flag and a missing file write nothing
+  ---
+  duration_ms: 277.023142
+  type: 'test'
+  ...
+# Subtest: lab page exists inside the write boundary and stays noindex
+ok 56 - lab page exists inside the write boundary and stays noindex
+  ---
+  duration_ms: 0.899197
+  type: 'test'
+  ...
+# Subtest: page does not claim settlement or owner accept
+ok 57 - page does not claim settlement or owner accept
+  ---
+  duration_ms: 0.909005
+  type: 'test'
+  ...
+# Subtest: browser projection drops internal budget and still runs the fixture desk
+ok 58 - browser projection drops internal budget and still runs the fixture desk
+  ---
+  duration_ms: 3.120049
+  type: 'test'
+  ...
+# Subtest: built contributor desk page does not embed internal budget
+ok 59 - built contributor desk page does not embed internal budget
+  ---
+  duration_ms: 0.30056
+  type: 'test'
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6520.28329

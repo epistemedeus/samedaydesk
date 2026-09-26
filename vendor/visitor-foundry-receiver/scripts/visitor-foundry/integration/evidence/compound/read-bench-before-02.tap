@@ -1,0 +1,27 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=read-bench
+TAP version 13
+# Subtest: measured portable reads with growing unrelated inventory and real mixed publication traffic
+not ok 1 - measured portable reads with growing unrelated inventory and real mixed publication traffic
+  ---
+  duration_ms: 2259.809085
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/compound.test.mjs:192:27'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'proposalRef')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/compound.test.mjs:205:68)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2363.692393

@@ -1,0 +1,156 @@
+{
+  "kind": "owner_qa",
+  "externalAdoption": false,
+  "identityIndependence": "unknown",
+  "tests": [
+    "cold_prepare_register_real_event_restart_resume",
+    "proof_request_terms_profile_authority_decline",
+    "32_concurrent_identical_attempts",
+    "restart_recovery_after_createProject",
+    "restart_recovery_after_createGrant",
+    "restart_recovery_after_reply",
+    "actual_store_roles_private_projects_and_event_budget",
+    "expiry_same_scope_renewal_revocation_deadline",
+    "durable_internal_receiver_fixture_pending_unknown_readback_no_repeat",
+    "global_exhaustion_aliases_secret_rotation_immutable_installation",
+    "capacity_1",
+    "capacity_8",
+    "capacity_32",
+    "capacity_128",
+    "event_reservation_before_unknown_mutation_and_exact_recovery",
+    "typed_parser_and_body_limit_refusals",
+    "receiver_timeout_bounds_wait_without_repeating_unknown_mutation",
+    "two_server_processes_one_budget_one_recovery_scope",
+    "actual_vf02_router_retains_entry_scope_case_insensitively"
+  ],
+  "capacity": [
+    {
+      "offeredClients": 1,
+      "offeredHttpConcurrency": 1,
+      "finiteEnrollmentBudget": 1,
+      "elapsedMs": 23,
+      "p95Ms": 23,
+      "statuses": {
+        "200": 1,
+        "409": 0,
+        "503": 0
+      },
+      "reconciliationCalls": 0,
+      "jsonRequestBytes": 214,
+      "jsonResponseBytes": 695,
+      "actualRows": {
+        "registrations": 1,
+        "projects": 1,
+        "grants": 3,
+        "charged": 1
+      },
+      "peakPending": 1,
+      "peakActive": 1,
+      "peakRegistrationRequests": 1,
+      "receivedHttpBytes": 816,
+      "emittedHttpBytes": 2362,
+      "correspondencePoolMax": 1,
+      "entryPoolMax": 2
+    },
+    {
+      "offeredClients": 8,
+      "offeredHttpConcurrency": 8,
+      "finiteEnrollmentBudget": 8,
+      "elapsedMs": 94,
+      "p95Ms": 94,
+      "statuses": {
+        "200": 8,
+        "409": 0,
+        "503": 0
+      },
+      "reconciliationCalls": 0,
+      "jsonRequestBytes": 1712,
+      "jsonResponseBytes": 5560,
+      "actualRows": {
+        "registrations": 8,
+        "projects": 8,
+        "grants": 24,
+        "charged": 8
+      },
+      "peakPending": 8,
+      "peakActive": 2,
+      "peakRegistrationRequests": 8,
+      "receivedHttpBytes": 5093,
+      "emittedHttpBytes": 9159,
+      "correspondencePoolMax": 1,
+      "entryPoolMax": 2
+    },
+    {
+      "offeredClients": 32,
+      "offeredHttpConcurrency": 32,
+      "finiteEnrollmentBudget": 32,
+      "elapsedMs": 362,
+      "p95Ms": 354,
+      "statuses": {
+        "200": 32,
+        "409": 0,
+        "503": 0
+      },
+      "reconciliationCalls": 0,
+      "jsonRequestBytes": 6848,
+      "jsonResponseBytes": 22240,
+      "actualRows": {
+        "registrations": 32,
+        "projects": 32,
+        "grants": 96,
+        "charged": 32
+      },
+      "peakPending": 32,
+      "peakActive": 2,
+      "peakRegistrationRequests": 32,
+      "receivedHttpBytes": 19757,
+      "emittedHttpBytes": 32465,
+      "correspondencePoolMax": 1,
+      "entryPoolMax": 2
+    },
+    {
+      "offeredClients": 128,
+      "offeredHttpConcurrency": 128,
+      "finiteEnrollmentBudget": 32,
+      "elapsedMs": 537,
+      "p95Ms": 507,
+      "statuses": {
+        "200": 32,
+        "409": 96,
+        "503": 0
+      },
+      "reconciliationCalls": 0,
+      "jsonRequestBytes": 27392,
+      "jsonResponseBytes": 33088,
+      "actualRows": {
+        "registrations": 32,
+        "projects": 32,
+        "grants": 96,
+        "charged": 32
+      },
+      "peakPending": 128,
+      "peakActive": 2,
+      "peakRegistrationRequests": 128,
+      "receivedHttpBytes": 78413,
+      "emittedHttpBytes": 70289,
+      "correspondencePoolMax": 1,
+      "entryPoolMax": 2
+    }
+  ],
+  "coldJourney": {
+    "coldEntryCalls": 2,
+    "entryOverheadBeyondExistingOperation": 2,
+    "returningReadCalls": 1,
+    "explicitRecoveryCalls": 1,
+    "secretFreePersistedBytes": 1220,
+    "privateSecretFileBytes": 44,
+    "secretFreeFiles": [
+      "attempt.json",
+      "continuation.json",
+      "event-intent.json"
+    ],
+    "serverRestarted": true,
+    "independentCliProcesses": 8,
+    "prefix": "/api/correspondence"
+  }
+}

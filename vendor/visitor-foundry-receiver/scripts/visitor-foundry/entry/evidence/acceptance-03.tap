@@ -1,0 +1,116 @@
+
+> test
+> node tests/disposable-pg.mjs
+
+TAP version 13
+# Subtest: cold CLI persists proof before HTTP, uses actual correspondence, restarts and resumes without transcript
+ok 1 - cold CLI persists proof before HTTP, uses actual correspondence, restarts and resumes without transcript
+  ---
+  duration_ms: 1082.674758
+  type: 'test'
+  ...
+# Subtest: proof, exact request/profile/terms binding; anonymous browse/decline; public authority cannot be chosen
+ok 2 - proof, exact request/profile/terms binding; anonymous browse/decline; public authority cannot be chosen
+  ---
+  duration_ms: 248.45094
+  type: 'test'
+  ...
+# Subtest: same-attempt concurrency produces one charged scope and exact tokens
+ok 3 - same-attempt concurrency produces one charged scope and exact tokens
+  ---
+  duration_ms: 347.62646
+  type: 'test'
+  ...
+# Subtest: lost createProject commit acknowledgment reconciles after process death
+ok 4 - lost createProject commit acknowledgment reconciles after process death
+  ---
+  duration_ms: 345.115648
+  type: 'test'
+  ...
+# Subtest: lost createGrant commit acknowledgment reconciles after process death
+ok 5 - lost createGrant commit acknowledgment reconciles after process death
+  ---
+  duration_ms: 332.24065
+  type: 'test'
+  ...
+# Subtest: lost reply commit acknowledgment reconciles after process death
+ok 6 - lost reply commit acknowledgment reconciles after process death
+  ---
+  duration_ms: 327.711877
+  type: 'test'
+  ...
+# Subtest: real reader/writer roles, private messages, foreign project denial and bounded event rows
+ok 7 - real reader/writer roles, private messages, foreign project denial and bounded event rows
+  ---
+  duration_ms: 295.085613
+  type: 'test'
+  ...
+# Subtest: finite expiry, authorized renewal in same rows, revocation and workspace deadline
+ok 8 - finite expiry, authorized renewal in same rows, revocation and workspace deadline
+  ---
+  duration_ms: 261.996736
+  type: 'test'
+  ...
+# Subtest: unknown receiving commit is not retried, readback reconciles without granting runtime authority
+ok 9 - unknown receiving commit is not retried, readback reconciles without granting runtime authority
+  ---
+  duration_ms: 374.82362
+  type: 'test'
+  ...
+# Subtest: finite installed budget cannot reset on aliases/new secrets/new keys or configuration change
+ok 10 - finite installed budget cannot reset on aliases/new secrets/new keys or configuration change
+  ---
+  duration_ms: 370.911719
+  type: 'test'
+  ...
+# Subtest: bounded owner-QA load: 1 independent offered HTTP clients
+ok 11 - bounded owner-QA load: 1 independent offered HTTP clients
+  ---
+  duration_ms: 187.9609
+  type: 'test'
+  ...
+# Subtest: bounded owner-QA load: 8 independent offered HTTP clients
+ok 12 - bounded owner-QA load: 8 independent offered HTTP clients
+  ---
+  duration_ms: 219.340631
+  type: 'test'
+  ...
+# Subtest: bounded owner-QA load: 32 independent offered HTTP clients
+ok 13 - bounded owner-QA load: 32 independent offered HTTP clients
+  ---
+  duration_ms: 421.768699
+  type: 'test'
+  ...
+# Subtest: bounded owner-QA load: 128 independent offered HTTP clients
+ok 14 - bounded owner-QA load: 128 independent offered HTTP clients
+  ---
+  duration_ms: 549.133563
+  type: 'test'
+  ...
+# Subtest: event capacity remains charged across both sides of an unknown correspondence commit
+ok 15 - event capacity remains charged across both sides of an unknown correspondence commit
+  ---
+  duration_ms: 201.876875
+  type: 'test'
+  ...
+# Subtest: malformed/oversized public requests return typed refusal without echo
+ok 16 - malformed/oversized public requests return typed refusal without echo
+  ---
+  duration_ms: 209.642318
+  type: 'test'
+  ...
+# Subtest: unresponsive receiver returns bounded partial state; future readback never repeats begin
+ok 17 - unresponsive receiver returns bounded partial state; future readback never repeats begin
+  ---
+  duration_ms: 1358.818843
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7240.137248

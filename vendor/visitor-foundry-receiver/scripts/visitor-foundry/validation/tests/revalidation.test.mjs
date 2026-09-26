@@ -1,0 +1,41 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {harness,candidate,defaultPolicy} from '../fixtures/example-config.mjs';
+const ok=r=>{assert.equal(r.ok,true,JSON.stringify(r));return r.result;};
+test('installed operator revalidates exact candidate under new policy; historical receipt cannot finish new generation',()=>{
+  const h=harness(),first=h.accept();
+  assert.equal(h.command('contributor','configurePolicy',{...defaultPolicy,revision:'fixture:v2'}).code,'forbidden');
+  ok(h.command('operator','configurePolicy',{...defaultPolicy,revision:'fixture:v2'}));
+  const body={candidateId:first.candidate.id,expectedGeneration:1,reason:'expired evidence'};
+  assert.equal(h.command('contributor','revalidate',body).code,'forbidden');
+  const renewal=ok(h.command('operator','revalidate',body,{id:'command:renew'}));assert.equal(renewal.generation,2);
+  assert.equal(ok(h.command('operator','revalidate',body,{id:'command:renew',expectedRevision:0})).generation,2);
+  const second=ok(h.command('operator','assign',{})).assignment;
+  assert.notEqual(second.id,first.assignment.id);assert.deepEqual(second.capability,first.assignment.capability);
+  assert.equal(h.command('runner','receipt',first.receipt).code,'stale_assignment');
+  assert.equal(h.service.snapshot().candidates[first.candidate.id].roundPolicy.revision,'fixture:v2');
+  ok(h.command('runner','receipt',h.receipt(second)));
+  assert.equal(h.service.snapshot().candidates[first.candidate.id].promotion,'not_promoted');
+  assert.deepEqual(h.service.snapshot().receipts[first.receipt.id].receipt,first.receipt);
+  assert.equal(h.service.snapshot().charged.costUnits,'2000');
+});
+test('unknown generation is terminal without refund; revalidation retains finite aggregate budget and revocation gates',()=>{
+  const h=harness({limits:{maxCost:{currency:'USD_MICROS',units:'1000'}}});
+  ok(h.command('contributor','submit',candidate()));const a=ok(h.command('operator','assign',{})).assignment;
+  ok(h.command('operator','finishUnknown',{candidateId:candidate().id,assignmentId:a.id,reason:'witnessed exit without receipt',evidence:{ref:'supervisor:exit',revision:'fixture:1'}}));
+  assert.equal(h.service.snapshot().candidates[candidate().id].usability,'unknown');
+  assert.equal(h.command('operator','revalidate',{candidateId:candidate().id,expectedGeneration:1,reason:'retry unknown'}).code,'budget_exhausted');
+  const q=harness(),accepted=q.accept();
+  ok(q.command('operator','invalidate',{scope:'scope:demo',target:'candidate',candidateId:accepted.candidate.id,receiptId:null,dependency:null,reason:'revoked',evidence:{ref:'operator:revoke',revision:'fixture:1'}}));
+  assert.equal(q.command('operator','revalidate',{candidateId:accepted.candidate.id,expectedGeneration:1,reason:'try revoked'}).code,'candidate_ineligible');
+});
+test('policy update does not mutate an in-flight generation policy; queued supersession requires explicit closure',()=>{
+  const h=harness();ok(h.command('contributor','submit',candidate()));const a=ok(h.command('operator','assign',{})).assignment;
+  ok(h.command('operator','configurePolicy',{...defaultPolicy,revision:'fixture:v2',risk:'high'}));
+  ok(h.command('runner','receipt',h.receipt(a)));
+  assert.equal(h.service.snapshot().candidates[candidate().id].acceptance,'accepted');
+  ok(h.command('contributor','submit',candidate('b')));
+  assert.equal(h.command('operator','revalidate',{candidateId:'candidate:b',expectedGeneration:1,reason:'policy evolution'}).code,'revalidation_not_ready');
+  ok(h.command('operator','finishUnknown',{candidateId:'candidate:b',assignmentId:null,reason:'not launched; queued policy superseded',evidence:{ref:'operator:policy',revision:'fixture:v2'}}));
+  assert.equal(ok(h.command('operator','revalidate',{candidateId:'candidate:b',expectedGeneration:1,reason:'policy evolution'})).generation,2);
+});

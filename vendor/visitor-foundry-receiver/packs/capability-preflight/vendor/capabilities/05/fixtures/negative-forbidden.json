@@ -1,0 +1,14 @@
+{
+  "schema": "pilot.r2.capabilities.failure_outcome.v1",
+  "capabilityId": "extract_batch_json",
+  "attemptId": "attempt-forbidden-004",
+  "failureClass": "timeout",
+  "mutationState": "none",
+  "observedState": {
+    "summary": "timed out with no mutation"
+  },
+  "rankingScore": 0.99,
+  "providerBrand": "AcmePaidVendor",
+  "notes": "Synthetic fixture \u2014 forbidden fields must reject.",
+  "demo": true
+}

@@ -1,0 +1,271 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=entry
+TAP version 13
+# Subtest: cold entry A contributes actual code; restarted fresh B independently enrolls and uses exact verified output
+not ok 1 - cold entry A contributes actual code; restarted fresh B independently enrolls and uses exact verified output
+  ---
+  duration_ms: 2581.441121
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'accepted'
+    - 'verified'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'verified'
+  actual: 'accepted'
+  operator: 'strictEqual'
+  stack: |-
+    complete (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:13:253)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:20:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: v1 upgrade preserves charged rows, grant identities, exact retries and private-only scope
+ok 2 - v1 upgrade preserves charged rows, grant identities, exact retries and private-only scope
+  ---
+  duration_ms: 849.753768
+  type: 'test'
+  ...
+# Subtest: two real hosts share aggregate admission reservations; aliases and excess registrations retain private service
+not ok 3 - two real hosts share aggregate admission reservations; aliases and excess registrations retain private service
+  ---
+  duration_ms: 928.541895
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:56:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        allocations: 3,
+        charged: 8,
+    +   grants: 24,
+    -   grants: 16,
+        pools: 3,
+        projects: 8,
+        registrations: 8
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    registrations: 8
+    charged: 8
+    projects: 8
+    grants: 16
+    allocations: 3
+    pools: 3
+  actual:
+    registrations: 8
+    charged: 8
+    projects: 8
+    grants: 24
+    allocations: 3
+    pools: 3
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:61:39)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at entry:before recovers one exact registration and finite allowance
+not ok 4 - actual SIGKILL at entry:before recovers one exact registration and finite allowance
+  ---
+  duration_ms: 710.662042
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at entry:reserved recovers one exact registration and finite allowance
+not ok 5 - actual SIGKILL at entry:reserved recovers one exact registration and finite allowance
+  ---
+  duration_ms: 719.74072
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at createProject recovers one exact registration and finite allowance
+not ok 6 - actual SIGKILL at createProject recovers one exact registration and finite allowance
+  ---
+  duration_ms: 674.424638
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at createGrant recovers one exact registration and finite allowance
+not ok 7 - actual SIGKILL at createGrant recovers one exact registration and finite allowance
+  ---
+  duration_ms: 674.684959
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at receiver:marker recovers one exact registration and finite allowance
+not ok 8 - actual SIGKILL at receiver:marker recovers one exact registration and finite allowance
+  ---
+  duration_ms: 759.185035
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at receiver:reserved recovers one exact registration and finite allowance
+not ok 9 - actual SIGKILL at receiver:reserved recovers one exact registration and finite allowance
+  ---
+  duration_ms: 812.293642
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at receiver:completed recovers one exact registration and finite allowance
+not ok 10 - actual SIGKILL at receiver:completed recovers one exact registration and finite allowance
+  ---
+  duration_ms: 706.030692
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual SIGKILL at entry:reply recovers one exact registration and finite allowance
+not ok 11 - actual SIGKILL at entry:reply recovers one exact registration and finite allowance
+  ---
+  duration_ms: 774.944353
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:69:157'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:81:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 1
+# fail 10
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10321.181516

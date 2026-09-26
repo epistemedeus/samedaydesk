@@ -1,0 +1,6 @@
+{
+  "sourceUrl": "http://insecure.example/docs",
+  "observedAt": "not-a-timestamp",
+  "changed": "yes",
+  "summary": "bad"
+}

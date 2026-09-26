@@ -1,0 +1,138 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=entry
+TAP version 13
+# Subtest: cold entry A contributes actual code; restarted fresh B independently enrolls and uses exact verified output
+ok 1 - cold entry A contributes actual code; restarted fresh B independently enrolls and uses exact verified output
+  ---
+  duration_ms: 5931.516188
+  type: 'test'
+  ...
+# Subtest: v1 upgrade preserves charged rows, grant identities, exact retries and private-only scope
+ok 2 - v1 upgrade preserves charged rows, grant identities, exact retries and private-only scope
+  ---
+  duration_ms: 768.944516
+  type: 'test'
+  ...
+# Subtest: two real hosts share aggregate admission reservations; aliases and excess registrations retain private service
+ok 3 - two real hosts share aggregate admission reservations; aliases and excess registrations retain private service
+  ---
+  duration_ms: 932.413524
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at entry:before recovers one exact registration and finite allowance
+ok 4 - actual SIGKILL at entry:before recovers one exact registration and finite allowance
+  ---
+  duration_ms: 849.605842
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at entry:reserved recovers one exact registration and finite allowance
+ok 5 - actual SIGKILL at entry:reserved recovers one exact registration and finite allowance
+  ---
+  duration_ms: 853.99721
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at createProject recovers one exact registration and finite allowance
+ok 6 - actual SIGKILL at createProject recovers one exact registration and finite allowance
+  ---
+  duration_ms: 808.098568
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at createGrant recovers one exact registration and finite allowance
+ok 7 - actual SIGKILL at createGrant recovers one exact registration and finite allowance
+  ---
+  duration_ms: 821.691204
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at receiver:marker recovers one exact registration and finite allowance
+ok 8 - actual SIGKILL at receiver:marker recovers one exact registration and finite allowance
+  ---
+  duration_ms: 752.924856
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at receiver:reserved recovers one exact registration and finite allowance
+ok 9 - actual SIGKILL at receiver:reserved recovers one exact registration and finite allowance
+  ---
+  duration_ms: 869.479784
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at receiver:completed recovers one exact registration and finite allowance
+ok 10 - actual SIGKILL at receiver:completed recovers one exact registration and finite allowance
+  ---
+  duration_ms: 790.529694
+  type: 'test'
+  ...
+# Subtest: actual SIGKILL at entry:reply recovers one exact registration and finite allowance
+ok 11 - actual SIGKILL at entry:reply recovers one exact registration and finite allowance
+  ---
+  duration_ms: 891.485179
+  type: 'test'
+  ...
+# Subtest: entry-derived VF05 intents survive each real commit-before-ACK death and reject foreign continuation
+ok 12 - entry-derived VF05 intents survive each real commit-before-ACK death and reject foreign continuation
+  ---
+  duration_ms: 6805.145022
+  type: 'test'
+  ...
+# Subtest: both exact terms, grant expiry/revocation, denied authority and original use remain separated
+ok 13 - both exact terms, grant expiry/revocation, denied authority and original use remain separated
+  ---
+  duration_ms: 1388.238864
+  type: 'test'
+  ...
+# Subtest: global physical reservation covers different entry pools across hosts and retains unknown launch uncertainty
+ok 14 - global physical reservation covers different entry pools across hosts and retains unknown launch uncertainty
+  ---
+  duration_ms: 4472.704426
+  type: 'test'
+  ...
+# Subtest: explicit evidence renewal keeps identity/history; terminal withdrawal remains available after public command exhaustion
+ok 15 - explicit evidence renewal keeps identity/history; terminal withdrawal remains available after public command exhaustion
+  ---
+  duration_ms: 6554.725406
+  type: 'test'
+  ...
+# Subtest: nested submit/admit receipts cannot overrun a finite journal; actual cell and candidate changes roll back together
+not ok 16 - nested submit/admit receipts cannot overrun a finite journal; actual cell and candidate changes roll back together
+  ---
+  duration_ms: 1417.203806
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:173:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'leased'
+    - 'checkpointed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'checkpointed'
+  actual: 'leased'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/entry.test.mjs:176:199)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: current exact pool proof is required for ready readback, and expired pending reservations remain charged
+ok 17 - current exact pool proof is required for ready readback, and expired pending reservations remain charged
+  ---
+  duration_ms: 1506.45235
+  type: 'test'
+  ...
+# Subtest: terms and grant expiry after real lock waiting cannot commit sharing or submit changes
+ok 18 - terms and grant expiry after real lock waiting cannot commit sharing or submit changes
+  ---
+  duration_ms: 809.241884
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 17
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37350.150789

@@ -1,0 +1,187 @@
+{
+  "schema": "neomorphic.foundry.vf09-verification.v1",
+  "at": "2026-09-26T16:05:54.549321+00:00",
+  "receivingParent": "ca638c7ef552ebb1c55cce77f13e1c7162a29fbb",
+  "freezeCheckpoint": "581470574579fc2c627227821a42e8b518ce16bb",
+  "branch": "codex/visitor-foundry-integration-20260926",
+  "node": "v22.22.2",
+  "purpose": "owner_qa",
+  "tests": [
+    {
+      "name": "compound",
+      "command": "node scripts/visitor-foundry/integration/run-local.mjs compound",
+      "exitCode": 0,
+      "tests": 14,
+      "passCount": 14,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/integration-final-05.tap",
+      "sha256": "f8c0283d911c9e4f0e146ee549ea0aeb4854580c5b8f79ff2b62b9a152641972"
+    },
+    {
+      "name": "legacy-integration-lifecycle",
+      "command": "VF04_EVIDENCE_DIR=<isolated-dir> node scripts/visitor-foundry/integration/run-local.mjs test",
+      "exitCode": 0,
+      "tests": 29,
+      "passCount": 29,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/legacy-integration-final-02.tap",
+      "sha256": "d67f4d0d07fea10635af31dd1f5be26ac680c6ebfddcd79aa60c6a1224d30c4c"
+    },
+    {
+      "name": "F93-wire",
+      "command": "node --test scripts/visitor-foundry/integration/tests/wire.test.mjs",
+      "exitCode": 0,
+      "tests": 6,
+      "passCount": 6,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/f93-wire.tap",
+      "sha256": "5138e2aecacde7dc635207f270004e5475d8c1c8229eb9ad1a765ed1f4f24c19"
+    },
+    {
+      "name": "VF01",
+      "command": "npm test --prefix scripts/visitor-foundry/capabilities",
+      "exitCode": 0,
+      "tests": 50,
+      "passCount": 50,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/capabilities.tap",
+      "sha256": "d3efb673fa274f8e631a85299a6857f5d47237b0815dcccb65840723de97aad6"
+    },
+    {
+      "name": "VF02-PG",
+      "command": "node scripts/visitor-foundry/work-cells/run-local.mjs test",
+      "exitCode": 0,
+      "tests": 15,
+      "passCount": 15,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/work-cells.tap",
+      "sha256": "63af1b58f93f6c404a79df3a8725860aab53061082d52d704839e3a5eccec3b8"
+    },
+    {
+      "name": "VF03",
+      "command": "npm test --prefix scripts/visitor-foundry/validation",
+      "exitCode": 0,
+      "tests": 65,
+      "passCount": 65,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/validation.tap",
+      "sha256": "e1fcbe3c4904d12650aae1729d534c724f396526b41adcb9eb856b1126838dae"
+    },
+    {
+      "name": "correspondence-PG",
+      "command": "node scripts/visitor-foundry/work-cells/run-local.mjs regression",
+      "exitCode": 0,
+      "tests": 53,
+      "passCount": 53,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/correspondence-pg.tap",
+      "sha256": "bd2446d43d1c114a2185ac65982e98452b2443837f05c1ae80cb97d65c51bf69"
+    },
+    {
+      "name": "VF05",
+      "command": "npm test --prefix scripts/visitor-foundry/participation",
+      "exitCode": 0,
+      "tests": 46,
+      "passCount": 46,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/participation-final.tap",
+      "sha256": "fcb6bc0ce3535ee06dc7bd6a59d452201c1dba04689ebec42a921cf30d1812f9"
+    },
+    {
+      "name": "VF05-PG",
+      "command": "VF05_PG_BIN=<owned-PG16-bin> LD_LIBRARY_PATH=<owned-libpq-dir> npm run test:pg --prefix scripts/visitor-foundry/participation",
+      "exitCode": 0,
+      "tests": 3,
+      "passCount": 3,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/participation-pg-final.tap",
+      "sha256": "0aa7286970560062bc7a2766ac5927ab7e1d59159be45d4a9731731c22530cc2"
+    },
+    {
+      "name": "VF08",
+      "command": "npm test --prefix scripts/visitor-foundry/execution",
+      "exitCode": 0,
+      "tests": 25,
+      "passCount": 25,
+      "fail": 0,
+      "skip": 0,
+      "receipt": "scripts/visitor-foundry/integration/evidence/compound/execution.tap",
+      "sha256": "69f437071592e5c1cfec51a224593d97440e965b7b47664223bd8f6311b908a2"
+    }
+  ],
+  "totalPassingTests": 306,
+  "changedImplementationSha256": {
+    "scripts/visitor-foundry/execution/src/ports.mjs": "fd4f4771216345d58f23f404588fc88f47884b91ed9974c912dd294f2ce4be0f",
+    "scripts/visitor-foundry/integration/compound/client.mjs": "672a23bc6ee14f5e8446090663a7575c6ed95732b279f7ed95d6ca12a51f2b17",
+    "scripts/visitor-foundry/integration/compound/visitor.mjs": "5da7ffa20a22a7bd2d383544bc55b26909e791473b9ceec94f2b74eb1a85a69e",
+    "scripts/visitor-foundry/integration/run-local.mjs": "9d54df20e874ec2932560b9baf9b5588fcde8680bd33ef60915277e33ca3b517",
+    "scripts/visitor-foundry/integration/src/extension.mjs": "82225d3be1bae9180c06bc7976581cd58e8a86ba0d820d4c9fbd2b7964c67f0a",
+    "scripts/visitor-foundry/integration/src/manifest.mjs": "f391746cc7344e34a7117457e35773919454880c3c802b437127f36ebff56b3b",
+    "scripts/visitor-foundry/integration/src/portable-profile.mjs": "1229ae12e0d454d98dc4cdc91d7cd114a68e3397697cf8b2b9486f6843848a2d",
+    "scripts/visitor-foundry/integration/src/portable-store.mjs": "3635fa66cb0b61bcfcd12626927eb076f150a3168f496f8ee07314b05d7e39a7",
+    "scripts/visitor-foundry/integration/src/portable-supervisor.mjs": "702ffa12667b1d09e41b05fa497a7d3b8849b8eff0ab8af4049e3504cba0c8cb",
+    "scripts/visitor-foundry/integration/src/recover.mjs": "b6e64fedf97ed2f94d6a69592cea213bd290d85c6ab12c50fcb704b4db2eb6f5",
+    "scripts/visitor-foundry/integration/src/router.mjs": "4b4e5f17afd4c7861f544f4f6b4022cdab437f9d9d5f355392413fe012737184",
+    "scripts/visitor-foundry/integration/src/store.mjs": "46178c55fbfecd00cfd1b48dc065f2960305cf8537624ad7807fc2bd953454bc",
+    "scripts/visitor-foundry/integration/src/supervisor.mjs": "0cbcd69d4318a7587ec2d391f3686be425c6476adff651a7f1cdbcb6d513a7a6",
+    "scripts/visitor-foundry/integration/src/verification.mjs": "94aecd4b49a493dca60a6a17f828e453a6e296f2bdd435e473d374b4a3358e07",
+    "scripts/visitor-foundry/integration/tests/compound.test.mjs": "b21667a33f3352a2f37e8e9dd9dd1962d94ce018b7eeebeb92ccb5c9b95277d8",
+    "scripts/visitor-foundry/integration/tests/fixture-host.mjs": "0a4a74af513966dbb316768876bbb57b3810b8662b8dc732115cb97d670cb82e",
+    "scripts/visitor-foundry/integration/tests/integration.test.mjs": "09f7b52f98fd635124b886938db67a03ecd37d32564ead414a3f871656026000",
+    "scripts/visitor-foundry/participation/cli.mjs": "4cf2e7fc2adfd058a55f7c1fce3d4d506a150ffd455a3ac89fbeddc65f361500",
+    "scripts/visitor-foundry/participation/src/vf04-port.mjs": "cf8792f1c6a5338236ad2a4926dd9f861eb59980a8eb0e78fdb1ab1fce1b8a0b",
+    "scripts/visitor-foundry/participation/tests/core.test.mjs": "a25fe27c31e9428fbc9e98392f860f47a0f747974734ad1c67031a0523d5ea02",
+    "scripts/visitor-foundry/participation/tests/pg/integration.test.mjs": "99abef30b740496d07e60472514378df182e0d66739594332693597bbb9329ca",
+    "scripts/visitor-foundry/participation/tests/port.test.mjs": "83afa609dc3a1734b3e4392da39b3283cbaca7e76729beb50224d820e2fcb8c1",
+    "services/correspondence/migrations/visitor-foundry/004_vf09_portable.down.sql": "94c2e6b751e278893a2fb28d3ab78e85a9d072c4c1c4add3d5664297e1ba628f",
+    "services/correspondence/migrations/visitor-foundry/004_vf09_portable.sql": "2b53fe10a0269245800aa202a14e52794cddb5df304c7f16f02d6f728b92e419",
+    "services/correspondence/src/visitor-foundry/boundary.ts": "99f41c01a683d82ce811bab284bd8d4469fff0253664390bbc01f5ff0dc610f5",
+    "services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8"
+  },
+  "builds": [
+    {
+      "command": "npm run build --prefix services/correspondence",
+      "exitCode": 0,
+      "receipt": "correspondence-build-final.log"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "receipt": "site-build.log",
+      "pages": 81
+    }
+  ],
+  "checks": [
+    "wire-export-check.log",
+    "participation-check.log",
+    "validation-check.log",
+    "oracle-replay.json"
+  ],
+  "benchmarks": {
+    "before": "read-bench-before-03.tap",
+    "after": "read-bench-after-final.tap",
+    "summary": "read-bench-summary.json",
+    "passed": true,
+    "independentDemand": false
+  },
+  "limitations": [
+    "owner-controlled synthetic tasks",
+    "exact four input qualification",
+    "unknown actual spend",
+    "current-host note not supplied",
+    "no public entry or deployment"
+  ],
+  "finalAuditFixes": [
+    "live oracle/corpus/evaluator-port pin checks",
+    "digest-only invocation request persistence"
+  ]
+}

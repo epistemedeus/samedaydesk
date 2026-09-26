@@ -1,27 +1,59 @@
-import { prepareFoundryHost, foundryHostOptIn } from "@neomorphic/correspondence";
-import { loadFoundryExtension } from "./layout.js";
+import { ENTRY_MOUNT_URL } from "./paths.js";
+import { hostInputsFromEnv } from "./private-files.js";
 
-export async function composeFoundryOnStore({ store, env, config, createFoundryExtension }) {
-  const optedIn = foundryHostOptIn(env);
-  let create = null;
-  let reason = optedIn ? "layout_unavailable" : "opt_in_unset";
-  let missing = [];
-  if (optedIn && typeof createFoundryExtension === "function") {
-    create = createFoundryExtension;
-    reason = "injected";
-  } else if (optedIn && env.FOUNDRY_F93_ROOT) {
-    const loaded = await loadFoundryExtension(env.FOUNDRY_F93_ROOT, config);
-    if (loaded.ok) {
-      create = loaded.create;
-      reason = "export";
-    } else {
-      reason = loaded.reason || "layout_unavailable";
-      missing = loaded.missing || [];
-    }
+export async function loadCreateEntryReuseMount() {
+  const mod = await import(ENTRY_MOUNT_URL);
+  if (typeof mod.createEntryReuseMount !== "function") {
+    throw new Error("canonical entry mount is missing createEntryReuseMount");
   }
-  const lifecycle = await prepareFoundryHost(store, {
-    enabled: create != null,
-    create: create ?? undefined,
+  return mod.createEntryReuseMount;
+}
+
+// Bind the store's current checkReady before replacing it. The facade's own
+// checkReady must keep using that binding; calling the replaced method would recurse.
+export async function openEntryFacade({
+  store,
+  config,
+  env = process.env,
+  createEntryReuseMount,
+  hostProfile,
+  participationKey,
+}) {
+  let profile = hostProfile;
+  let key = participationKey;
+  if (!profile || !key) {
+    const loaded = hostInputsFromEnv(env);
+    if (!loaded.ok) {
+      const error = new Error(loaded.reason);
+      error.code = loaded.reason;
+      throw error;
+    }
+    profile = loaded.hostProfile;
+    key = loaded.participationKey;
+  }
+  const create = createEntryReuseMount || await loadCreateEntryReuseMount();
+  const mounted = await create({
+    enabled: true,
+    databaseUrl: config.databaseUrl,
+    schema: config.pgSchema,
+    correspondence: store,
+    config,
+    hostProfile: profile,
+    participationKey: key,
+    poolMax: 2,
   });
-  return { lifecycle, optedIn, extension: create != null, reason, missing };
+  const baseReady = typeof store.checkReady === "function" ? store.checkReady.bind(store) : async () => {};
+  store.checkReady = async () => {
+    await baseReady();
+    await mounted.checkReady();
+  };
+  return { mounted, baseReady };
+}
+
+export async function closeEntryThenBase(entry, store) {
+  try {
+    if (entry?.close) await entry.close();
+  } finally {
+    if (store?.close) await store.close();
+  }
 }

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "neomorphic.foundry.participation-negotiation.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "accepts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 256
+      },
+      "maxItems": 8
+    },
+    "modes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "report-gap",
+          "counterexample",
+          "adapt-artifact",
+          "maintain-cell"
+        ]
+      },
+      "maxItems": 4
+    },
+    "budgetSeconds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400
+    }
+  }
+}

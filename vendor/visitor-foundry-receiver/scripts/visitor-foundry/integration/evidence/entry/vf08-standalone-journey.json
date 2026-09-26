@@ -1,0 +1,1571 @@
+{
+  "schema": "neomorphic.foundry.portable-execution.owner-qa-journey.v1",
+  "sourceHead": "089d52861841b58aae7aa4895ae7f776b682217a",
+  "machine": {
+    "hostname": "cursor",
+    "node": "v22.22.2",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "build": {
+    "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+    "bytes": 3356,
+    "sourceDigest": "sha256:e278017956465f0665dceb138ea1e666591ded14b4a7cda36bd6f2e0995f8114",
+    "compiler": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin",
+    "linkerDigest": "sha256:f3818329769274079601a74a4c5e503ad1c3029bb6b9a65436105787e92301c2",
+    "linkArgs": [
+      "--no-entry",
+      "--export-memory",
+      "--initial-memory=262144",
+      "--max-memory=262144",
+      "-z",
+      "stack-size=32768",
+      "<execution>/.build/structured-result.o",
+      "-o",
+      "<execution>/.build/structured-result.wasm"
+    ],
+    "args": [
+      "--target=wasm32",
+      "-O2",
+      "-nostdlib",
+      "-fno-builtin",
+      "-c",
+      "<execution>/example/structured-result.c",
+      "-o",
+      "<execution>/.build/structured-result.o"
+    ]
+  },
+  "artifact": {
+    "capability": {
+      "schema": "neomorphic.foundry.capability-version.v1",
+      "capabilityId": "source:correspondence-structured-result",
+      "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+      "source": {
+        "repository": "https://github.com/epistemedeus/neomorphic-io",
+        "revision": "089d52861841b58aae7aa4895ae7f776b682217a",
+        "path": "scripts/visitor-foundry/execution/example/structured-result.c"
+      },
+      "outcomes": [
+        "compact-correspondence-structured-result"
+      ],
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "outcome",
+          "payload"
+        ],
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "unknown",
+              "error",
+              "unsupported"
+            ]
+          }
+        }
+      },
+      "dependencies": [],
+      "rights": {
+        "status": "allowed",
+        "license": "MIT",
+        "ref": "source:vf08-owner-qa"
+      },
+      "environment": {
+        "platform": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "executionProfile": [
+          "vf08.wasmtime49-linux-x64-fixed.v1"
+        ]
+      },
+      "provenance": {
+        "refs": [
+          "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+        ],
+        "origin": "operator:owner-qa-a",
+        "maintainer": "operator:neomorphic",
+        "classification": "demo",
+        "funding": "voluntary",
+        "actionability": "not-actionable",
+        "original": {
+          "purpose": "owner_qa",
+          "relationship": "owner",
+          "inputFormat": "tools/correspondence-mcp/src/tools/write.mjs#toolText,toolError"
+        }
+      },
+      "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+    },
+    "module": {
+      "digest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+      "bytes": 3356
+    },
+    "abi": "vf08.transform-buffer.v1",
+    "input": {
+      "encoding": "json",
+      "shape": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    "output": {
+      "encoding": "json",
+      "shape": {
+        "type": "object",
+        "required": [
+          "outcome",
+          "payload"
+        ],
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "unknown",
+              "error",
+              "unsupported"
+            ]
+          }
+        }
+      }
+    },
+    "profile": {
+      "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+      "runtime": "wasmtime-py",
+      "version": "49.0.0",
+      "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+      "license": "Apache-2.0 WITH LLVM-exception",
+      "platform": "linux",
+      "arch": "x64",
+      "imports": "none",
+      "memory": "fixed-wasm32",
+      "tables": "fixed-funcref",
+      "nan": "canonical",
+      "parallelCompilation": false
+    },
+    "limits": {
+      "moduleBytes": 262144,
+      "inputBytes": 16384,
+      "outputBytes": 32768,
+      "memoryBytes": 262144,
+      "tableElements": 128,
+      "stackBytes": 65536,
+      "fuel": 1000000,
+      "compileMs": 1500,
+      "instantiateMs": 500,
+      "executeMs": 500,
+      "wallMs": 4000,
+      "addressSpaceBytes": 536870912,
+      "cpuSeconds": 2,
+      "hostStackBytes": 8388608,
+      "fileBytes": 1048576,
+      "openFiles": 32
+    },
+    "evaluation": {
+      "id": "evaluator:structured-result-owner-qa",
+      "revision": "vf08.oracle.v1",
+      "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+    },
+    "schema": "neomorphic.foundry.portable-execution.artifact.v1",
+    "id": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3"
+  },
+  "packaged": {
+    "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+    "module": {
+      "digest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+      "bytes": 3356
+    }
+  },
+  "verification": {
+    "schema": "neomorphic.foundry.portable-execution.verification.v1",
+    "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+    "binding": {
+      "assignmentId": "assignment:journey-1",
+      "candidateId": "candidate:journey-a",
+      "fence": "owned-assignment-fence-1",
+      "capability": {
+        "capabilityId": "source:correspondence-structured-result",
+        "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+        "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+      },
+      "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+      "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+      "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+      "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "evaluator": {
+        "id": "evaluator:structured-result-owner-qa",
+        "revision": "vf08.oracle.v1",
+        "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+      },
+      "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+      "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+    },
+    "evaluator": {
+      "id": "evaluator:structured-result-owner-qa",
+      "revision": "vf08.oracle.v1",
+      "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+    },
+    "environment": {
+      "platform": "linux",
+      "arch": "x64",
+      "purpose": "owner_qa"
+    },
+    "oraclePin": "sha256:ad8f1cbaba98a8e325b991c29f451188b3caefe0f78f738d2cccf99a4e665123",
+    "checks": [
+      {
+        "id": "case:reply",
+        "inputDigest": "sha256:a54e1e4943227bb9c61872cd68300577b64c00df9cb40ff5d8bd14e5b305ffd8",
+        "executionInputDigest": "sha256:a5b64a544c9f4d8405e131e1bbbe5f36f142682d783f01a66a3a599d429ac193",
+        "status": "pass",
+        "observationId": "sha256:a23e9330f9cbf95e4c9bc693f3bdf9f82c1347a9024452c85aa8ded5eb255acc"
+      },
+      {
+        "id": "case:uncertain-write",
+        "inputDigest": "sha256:2767d845716dbb3dbf7dca94614f3dbf8c52a035540539b06b19bbd4f6569efc",
+        "executionInputDigest": "sha256:a1255688b9d4d05f492236c9eb50dfe9247debb8c565ae9e367cdebf3c6f84f1",
+        "status": "pass",
+        "observationId": "sha256:5f3e23169a43a7b4bbf0c278d609fe02a51ca5ede389a4de494bbeea59717b81"
+      },
+      {
+        "id": "case:denied",
+        "inputDigest": "sha256:a251fa441a87b0d38d23fe1a74a4f12a2aadb40189e7b6c460b7e8da11e0575c",
+        "executionInputDigest": "sha256:d9d9e11cb52599d298d25320f21f17582caa9441a8c81f45e6047e156b614231",
+        "status": "pass",
+        "observationId": "sha256:066afb4953217723f8ae91e15df081862fef18d49576b84d1ff36c31ca84db1c"
+      },
+      {
+        "id": "case:text-only",
+        "inputDigest": "sha256:62e74363d6ba267c59d1024e5736e16d4102da82ae415b650970d0966cf131e4",
+        "executionInputDigest": "sha256:055ab7f1d06abb33539d8559f1a8c25d21244eb0641129a9586b6e896e91fbb1",
+        "status": "pass",
+        "observationId": "sha256:651d1345a56ff8f04b66b309962982dce4bbdbeb896a6f9f942ebd098737c39e"
+      },
+      {
+        "id": "case:nested-unicode",
+        "inputDigest": "sha256:bee7c3c226524b891b888984f70bd39372c94f37e307436337ad1aedb03a1992",
+        "executionInputDigest": "sha256:fbfedaa4ced7d227ba827ea32d9b1f252b345c4ee51d326f71c65729441cd06f",
+        "status": "pass",
+        "observationId": "sha256:7f039ffd52210d4412f4ef0317f0c000caf16d00f79e21a5c71da2cfcd15eb47"
+      },
+      {
+        "id": "case:unknown-without-flag",
+        "inputDigest": "sha256:d6b017254664c70182cb9fbebd5846ccebcb6a5b497449c6387969e182b81393",
+        "executionInputDigest": "sha256:d6b017254664c70182cb9fbebd5846ccebcb6a5b497449c6387969e182b81393",
+        "status": "pass",
+        "observationId": "sha256:ac3be3e43ce31e91804a78fa184429fcdb657835602f0909a9338c8a9f0065af"
+      }
+    ],
+    "observations": [
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:a5b64a544c9f4d8405e131e1bbbe5f36f142682d783f01a66a3a599d429ac193",
+        "outputDigest": "sha256:9077b99552d1f1598328dfc2d76240e4ebd9e16b5c05c7663d09cf50fbf7f156",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 58.513283
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 63.86388600000001
+          },
+          {
+            "phase": "execute",
+            "wallMs": 63.99310700000001
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341442,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700257"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 77.165551,
+          "cpuMs": 61.656,
+          "peakRssBytes": 45686784,
+          "fuelUsed": 14258,
+          "compileMs": 5.403680999734206,
+          "instantiateMs": 0.162934997206321,
+          "executeMs": 0.2482249983586371,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.023Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:a23e9330f9cbf95e4c9bc693f3bdf9f82c1347a9024452c85aa8ded5eb255acc"
+      },
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:a1255688b9d4d05f492236c9eb50dfe9247debb8c565ae9e367cdebf3c6f84f1",
+        "outputDigest": "sha256:4c926dc05883d918ddee443ddec54b5dd83985add7770ffd1db9d40923e8e281",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 61.78328700000003
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 67.95378299999999
+          },
+          {
+            "phase": "execute",
+            "wallMs": 68.03231700000003
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341472,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700268"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 82.126578,
+          "cpuMs": 67.002,
+          "peakRssBytes": 45625344,
+          "fuelUsed": 12966,
+          "compileMs": 5.939448001299752,
+          "instantiateMs": 0.1761780004017055,
+          "executeMs": 0.27660399791784585,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.142Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:5f3e23169a43a7b4bbf0c278d609fe02a51ca5ede389a4de494bbeea59717b81"
+      },
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:d9d9e11cb52599d298d25320f21f17582caa9441a8c81f45e6047e156b614231",
+        "outputDigest": "sha256:f3e91a7a8ee08528a1392aa719010aa5f5472fdafca68031364ddd37cee14db2",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 57.02846199999999
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 62.640829999999994
+          },
+          {
+            "phase": "execute",
+            "wallMs": 62.778407000000016
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341483,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700280"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 76.00865499999998,
+          "cpuMs": 62.035999999999994,
+          "peakRssBytes": 78606336,
+          "fuelUsed": 9419,
+          "compileMs": 5.489666000357829,
+          "instantiateMs": 0.16861399853951298,
+          "executeMs": 0.2623610016598832,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.256Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:066afb4953217723f8ae91e15df081862fef18d49576b84d1ff36c31ca84db1c"
+      },
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:055ab7f1d06abb33539d8559f1a8c25d21244eb0641129a9586b6e896e91fbb1",
+        "outputDigest": "sha256:dc79d4d5a8e43080f7ff2770d5201735e16b04ec4c0586402d89931701988679",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 56.04261699999995
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 61.595482999999945
+          },
+          {
+            "phase": "execute",
+            "wallMs": 61.65013499999998
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341498,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700291"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 74.3342419999999,
+          "cpuMs": 60.878,
+          "peakRssBytes": 78610432,
+          "fuelUsed": 2497,
+          "compileMs": 5.374843996833079,
+          "instantiateMs": 0.16122000306495465,
+          "executeMs": 0.2479760005371645,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.364Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:651d1345a56ff8f04b66b309962982dce4bbdbeb896a6f9f942ebd098737c39e"
+      },
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:fbfedaa4ced7d227ba827ea32d9b1f252b345c4ee51d326f71c65729441cd06f",
+        "outputDigest": "sha256:9a6cb70c297f71ff23a733d59f6c372cf1c7c5d74351d8e3863bcf7d0fcad983",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 59.01865400000008
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 64.70879200000002
+          },
+          {
+            "phase": "execute",
+            "wallMs": 64.87174600000003
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341506,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700302"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 78.80756000000008,
+          "cpuMs": 63.349000000000004,
+          "peakRssBytes": 80031744,
+          "fuelUsed": 11504,
+          "compileMs": 5.574958999204682,
+          "instantiateMs": 0.1719009997032117,
+          "executeMs": 0.2733469991653692,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.478Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:7f039ffd52210d4412f4ef0317f0c000caf16d00f79e21a5c71da2cfcd15eb47"
+      },
+      {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:journey-1",
+          "candidateId": "candidate:journey-a",
+          "fence": "owned-assignment-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:d6b017254664c70182cb9fbebd5846ccebcb6a5b497449c6387969e182b81393",
+        "outputDigest": "sha256:75a120925a357e93c37b9c6fd2cc1163f7857177705c6362d5e2ebb8fe9d036c",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 56.57659699999999
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 62.12790600000005
+          },
+          {
+            "phase": "execute",
+            "wallMs": 62.240954999999985
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341514,
+          "supervisorPid": 1341353,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700313"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 74.47642099999996,
+          "cpuMs": 61.58,
+          "peakRssBytes": 80031744,
+          "fuelUsed": 10179,
+          "compileMs": 5.387166998843895,
+          "instantiateMs": 0.16898800095077604,
+          "executeMs": 0.25688199821161106,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.585Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:ac3be3e43ce31e91804a78fa184429fcdb657835602f0909a9338c8a9f0065af"
+      }
+    ],
+    "outcome": "sample_checks_passed",
+    "applicability": {
+      "kind": "exact-inputs-only",
+      "inputDigests": [
+        "sha256:a54e1e4943227bb9c61872cd68300577b64c00df9cb40ff5d8bd14e5b305ffd8",
+        "sha256:2767d845716dbb3dbf7dca94614f3dbf8c52a035540539b06b19bbd4f6569efc",
+        "sha256:a251fa441a87b0d38d23fe1a74a4f12a2aadb40189e7b6c460b7e8da11e0575c",
+        "sha256:62e74363d6ba267c59d1024e5736e16d4102da82ae415b650970d0966cf131e4",
+        "sha256:bee7c3c226524b891b888984f70bd39372c94f37e307436337ad1aedb03a1992",
+        "sha256:d6b017254664c70182cb9fbebd5846ccebcb6a5b497449c6387969e182b81393"
+      ]
+    },
+    "authority": "receiver-admission-required",
+    "purpose": "owner_qa",
+    "relationship": "owner",
+    "limitations": [
+      "Finite installed tests do not establish whole-domain compatibility.",
+      "No promotion, independent organization or useful external task is established."
+    ],
+    "id": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c"
+  },
+  "receipt": {
+    "schema": "neomorphic.foundry.verification_receipt.v1",
+    "id": "receipt:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+    "assignmentId": "assignment:journey-1",
+    "candidateId": "candidate:journey-a",
+    "capability": {
+      "id": "source:correspondence-structured-result",
+      "revision": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+    },
+    "sourceRevision": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+    "artifactDigest": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+    "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "evaluator": {
+      "id": "evaluator:structured-result-owner-qa",
+      "revision": "vf08.oracle.v1"
+    },
+    "environmentDigest": "sha256:114f8b865999baebc208d9602d7a5e0639092acfbd085f06009c5eb16133e879",
+    "observedAt": "2026-09-26T16:46:51.588Z",
+    "observed": {
+      "checks": [
+        {
+          "id": "case:reply",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        },
+        {
+          "id": "case:uncertain-write",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        },
+        {
+          "id": "case:denied",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        },
+        {
+          "id": "case:text-only",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        },
+        {
+          "id": "case:nested-unicode",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        },
+        {
+          "id": "case:unknown-without-flag",
+          "status": "pass",
+          "evidence": {
+            "ref": "sha256:29ef733cc01874b13342836a419cb73446f16c113fd91860c82bd57e7513ba3c",
+            "revision": "vf08.oracle.v1"
+          }
+        }
+      ],
+      "limitations": [
+        "Finite installed tests do not establish whole-domain compatibility.",
+        "No promotion, independent organization or useful external task is established.",
+        "Exact-input observations only; retain the VF08 record and fence."
+      ]
+    },
+    "usage": {
+      "cpuMs": 377,
+      "wallMs": 463,
+      "cost": null
+    }
+  },
+  "verifierWallMs": 711.9794430000001,
+  "cold": [
+    {
+      "caseId": "case:reply",
+      "taskId": "task:b:case:reply",
+      "cliPid": 1341522,
+      "output": {
+        "outcome": "observed",
+        "payload": {
+          "event": {
+            "id": "evt_synthetic_2",
+            "kind": "reply"
+          },
+          "replayed": false
+        }
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 182.81778199999997,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:a5b64a544c9f4d8405e131e1bbbe5f36f142682d783f01a66a3a599d429ac193",
+        "outputDigest": "sha256:9077b99552d1f1598328dfc2d76240e4ebd9e16b5c05c7663d09cf50fbf7f156",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 56.284374
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 61.583229
+          },
+          {
+            "phase": "execute",
+            "wallMs": 61.74652200000001
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341536,
+          "supervisorPid": 1341522,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700331"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 73.994233,
+          "cpuMs": 60.867999999999995,
+          "peakRssBytes": 44326912,
+          "fuelUsed": 14258,
+          "compileMs": 5.377304998546606,
+          "instantiateMs": 0.15900499784038402,
+          "executeMs": 0.25050100157386623,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.768Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:b47e25088d15d1fce19853e3a54adfd1ac9b4fa433a36991f83df8f7256d98c2"
+      }
+    },
+    {
+      "caseId": "case:uncertain-write",
+      "taskId": "task:b:case:uncertain-write",
+      "cliPid": 1341538,
+      "output": {
+        "outcome": "unknown",
+        "payload": {
+          "error": {
+            "code": "unknown_outcome",
+            "retryable": false,
+            "reconcile": true,
+            "operation": "post_artifact"
+          }
+        }
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 182.063578,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:a1255688b9d4d05f492236c9eb50dfe9247debb8c565ae9e367cdebf3c6f84f1",
+        "outputDigest": "sha256:4c926dc05883d918ddee443ddec54b5dd83985add7770ffd1db9d40923e8e281",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 55.30428499999999
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 60.66678400000001
+          },
+          {
+            "phase": "execute",
+            "wallMs": 60.83069800000001
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341555,
+          "supervisorPid": 1341538,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700350"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 73.26189200000002,
+          "cpuMs": 59.782999999999994,
+          "peakRssBytes": 44277760,
+          "fuelUsed": 12966,
+          "compileMs": 5.423410002549645,
+          "instantiateMs": 0.16800899902591482,
+          "executeMs": 0.24872300127753988,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:51.951Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:37a316db2abd799bba7bdfc64ce60fea0fd8e0ae9df997e6e57180eaeb9beb3e"
+      }
+    },
+    {
+      "caseId": "case:denied",
+      "taskId": "task:b:case:denied",
+      "cliPid": 1341569,
+      "output": {
+        "outcome": "error",
+        "payload": {
+          "error": {
+            "code": "forbidden",
+            "status": 403,
+            "retryable": false
+          }
+        }
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 183.4066929999999,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:d9d9e11cb52599d298d25320f21f17582caa9441a8c81f45e6047e156b614231",
+        "outputDigest": "sha256:f3e91a7a8ee08528a1392aa719010aa5f5472fdafca68031364ddd37cee14db2",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 56.46189699999999
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 61.68237099999999
+          },
+          {
+            "phase": "execute",
+            "wallMs": 62.099819
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341583,
+          "supervisorPid": 1341569,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700368"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 75.006595,
+          "cpuMs": 60.967999999999996,
+          "peakRssBytes": 44335104,
+          "fuelUsed": 9419,
+          "compileMs": 5.473001001519151,
+          "instantiateMs": 0.17871599993668497,
+          "executeMs": 0.28546600151457824,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:52.133Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:693043363c53204333bf3364a61fb2ddaa7a907dc11fa139b3a59d392cdafc24"
+      }
+    },
+    {
+      "caseId": "case:text-only",
+      "taskId": "task:b:case:text-only",
+      "cliPid": 1341590,
+      "output": {
+        "outcome": "unsupported",
+        "payload": {}
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 183.1481789999998,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:055ab7f1d06abb33539d8559f1a8c25d21244eb0641129a9586b6e896e91fbb1",
+        "outputDigest": "sha256:dc79d4d5a8e43080f7ff2770d5201735e16b04ec4c0586402d89931701988679",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 55.71170500000001
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 61.11850399999999
+          },
+          {
+            "phase": "execute",
+            "wallMs": 61.27865899999999
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341605,
+          "supervisorPid": 1341590,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700386"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 73.988962,
+          "cpuMs": 60.17,
+          "peakRssBytes": 44195840,
+          "fuelUsed": 2497,
+          "compileMs": 5.47803399967961,
+          "instantiateMs": 0.1537509997433517,
+          "executeMs": 0.2511689999664668,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:52.317Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:8f292501ee826d4741d8497538b5b951a567fb87df75d71323573e5c10167947"
+      }
+    },
+    {
+      "caseId": "case:nested-unicode",
+      "taskId": "task:b:case:nested-unicode",
+      "cliPid": 1341611,
+      "output": {
+        "outcome": "observed",
+        "payload": {
+          "text": "escapes \" \\ \n 🌱",
+          "nested": [
+            {
+              "isError": true
+            },
+            null,
+            3
+          ]
+        }
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 179.80164000000013,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:fbfedaa4ced7d227ba827ea32d9b1f252b345c4ee51d326f71c65729441cd06f",
+        "outputDigest": "sha256:9a6cb70c297f71ff23a733d59f6c372cf1c7c5d74351d8e3863bcf7d0fcad983",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 55.41577600000001
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 60.59650900000001
+          },
+          {
+            "phase": "execute",
+            "wallMs": 60.797149000000005
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341632,
+          "supervisorPid": 1341611,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700404"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 73.819314,
+          "cpuMs": 59.903,
+          "peakRssBytes": 44265472,
+          "fuelUsed": 11504,
+          "compileMs": 5.315433001669589,
+          "instantiateMs": 0.16208300075959414,
+          "executeMs": 0.2570789984019939,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:52.497Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:742ab70a53f0ce4b05dbc42ba966a1d99c0e4d5bfa737e1d40b300cb7fbb57ef"
+      }
+    },
+    {
+      "caseId": "case:unknown-without-flag",
+      "taskId": "task:b:case:unknown-without-flag",
+      "cliPid": 1341640,
+      "output": {
+        "outcome": "unknown",
+        "payload": {
+          "error": {
+            "code": "unknown_outcome",
+            "retryable": false
+          }
+        }
+      },
+      "expectedMatch": true,
+      "endToEndWallMs": 180.0105460000002,
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:38cfe9c30269c8a1e5d43d54bd6664c64e9fce2233bbdffd0677b2bbbf782eb4"
+          },
+          "sourceDigest": "sha256:61fad5fb0de928fd22198af61d9ace934b33b6fa6edb002d5b3feaf6830efba7",
+          "artifactId": "sha256:1c6e8bb75b3e4f2afea71760fade59e04cfbaa3c909bf1cc7c9128052a4944f3",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:structured-result-owner-qa",
+            "revision": "vf08.oracle.v1",
+            "suiteDigest": "sha256:68621448a8b6c0c1bbe2cb53e74f66c672f9db526d122c4328b86171bec407be"
+          },
+          "environmentDigest": "sha256:9ea4f0b58852087f2daebe5f464be7d8f8f8a36e8cc18677ed978c26c293cffc",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:d6b017254664c70182cb9fbebd5846ccebcb6a5b497449c6387969e182b81393",
+        "outputDigest": "sha256:75a120925a357e93c37b9c6fd2cc1163f7857177705c6362d5e2ebb8fe9d036c",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 56.510523000000006
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 61.75300100000001
+          },
+          {
+            "phase": "execute",
+            "wallMs": 61.919820000000016
+          }
+        ],
+        "processIdentity": {
+          "pid": 1341654,
+          "supervisorPid": 1341640,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2700422"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 74.461525,
+          "cpuMs": 60.883,
+          "peakRssBytes": 44347392,
+          "fuelUsed": 10179,
+          "compileMs": 5.406514999776846,
+          "instantiateMs": 0.16120799773489125,
+          "executeMs": 0.29698700018343516,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:46:52.677Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:c65db34641cdf6c9c6941f700c588f9708f8c523c267d623eabc4bc86b03db08"
+      }
+    }
+  ],
+  "evaluatorControls": [
+    {
+      "evaluator": "independent-exact-output",
+      "goodAccepted": 6,
+      "faultyAccepted": 0,
+      "denominator": 6
+    },
+    {
+      "evaluator": "always-pass",
+      "goodAccepted": 6,
+      "faultyAccepted": 6,
+      "denominator": 6
+    },
+    {
+      "evaluator": "always-fail",
+      "goodAccepted": 0,
+      "faultyAccepted": 0,
+      "denominator": 6
+    }
+  ],
+  "relationship": "owner",
+  "purpose": "owner_qa",
+  "independence": "not_established",
+  "commercialUplift": null,
+  "tokenSavings": null,
+  "limitations": [
+    "Owner-controlled packaging and later-process reuse, not durable VF04A discovery/admission.",
+    "Missing implementation is the portable compact/status-preserving adapter; existing MCP production wrappers remain unchanged.",
+    "Expected unsupported/unknown outputs are correct behavior, not successful external tasks. Costs and sharing effort unknown."
+  ]
+}

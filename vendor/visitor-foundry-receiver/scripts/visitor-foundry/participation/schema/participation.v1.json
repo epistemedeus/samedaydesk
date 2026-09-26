@@ -1,0 +1,185 @@
+{
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "neomorphic.foundry.participation.v1"
+    },
+    "status": {
+      "enum": [
+        "known-hit",
+        "genuine-miss",
+        "incomplete-coverage",
+        "unknown",
+        "auth-failure",
+        "temporary-outage",
+        "quota-pressure",
+        "declined"
+      ]
+    },
+    "optional": {
+      "const": true
+    },
+    "originalAccess": {
+      "const": "unconditional"
+    },
+    "actionability": {
+      "enum": [
+        "actionable",
+        "not-actionable",
+        "unknown"
+      ]
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "allowed",
+            "denied",
+            "unknown"
+          ]
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9:._/-]{0,159}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "ref"
+      ],
+      "additionalProperties": false
+    },
+    "funding": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "voluntary",
+            "unfunded-request",
+            "funded",
+            "unknown"
+          ]
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9:._/-]{0,159}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "funded"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ref": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9:._/-]{0,159}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "cost": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "units": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9:._/-]{0,159}$"
+            }
+          },
+          "required": [
+            "units",
+            "currency"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "termsVersion": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "modes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "report-gap",
+          "counterexample",
+          "adapt-artifact",
+          "maintain-cell"
+        ]
+      },
+      "maxItems": 4
+    },
+    "costKnown": {
+      "type": "boolean"
+    },
+    "authority": {
+      "const": "host-owned"
+    },
+    "contributionState": {
+      "const": "not-started"
+    }
+  },
+  "required": [
+    "schema",
+    "status",
+    "optional",
+    "originalAccess",
+    "actionability",
+    "rights",
+    "funding",
+    "cost",
+    "termsVersion",
+    "modes",
+    "costKnown",
+    "authority",
+    "contributionState"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "neomorphic.foundry.participation.v1"
+}

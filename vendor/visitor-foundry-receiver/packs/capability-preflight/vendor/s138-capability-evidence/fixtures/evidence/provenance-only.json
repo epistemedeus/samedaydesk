@@ -1,0 +1,4 @@
+{
+  "signer": "example-not-authority",
+  "attestation": "detached-label-only"
+}

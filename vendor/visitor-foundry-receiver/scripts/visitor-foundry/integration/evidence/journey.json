@@ -1,0 +1,302 @@
+{
+  "purpose": "owner_qa",
+  "relationship": "owner",
+  "externalUsefulTasks": 0,
+  "tests": [],
+  "costs": {
+    "originalTask": null,
+    "contributionEffort": null,
+    "validation": null,
+    "adaptation": null,
+    "maintenance": null
+  },
+  "journey": {
+    "projectId": "prj_eMKfCeg-GNLrWzlx",
+    "initial": "missing",
+    "crashPoints": [
+      "admit",
+      "reserve",
+      "reconcile",
+      "publish"
+    ],
+    "restarts": [
+      621892,
+      621906,
+      621921,
+      621943,
+      621957,
+      621983,
+      621997
+    ],
+    "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+    "receiptId": "receipt:988b07722b6ac480d8d953c32ec1d8e7a7f3829805cda2bc3a186b789d698445",
+    "coldResults": [
+      {
+        "arm": "reuse_only",
+        "caseId": "case:minor-below",
+        "taskId": "task:reuse_only-case:minor-below",
+        "output": {
+          "status": "incompatible"
+        },
+        "manifestId": "sha256:d31527c3baf7060a09308c96be7d2e9c250139995662d074ede38591e3907007"
+      },
+      {
+        "arm": "reuse_only",
+        "caseId": "case:minor-equal",
+        "taskId": "task:reuse_only-case:minor-equal",
+        "output": {
+          "status": "compatible"
+        },
+        "manifestId": "sha256:ae2ce267c9fb252a86ba35b8c17008c870dd23437f7f94aec87cb50170fe45c2"
+      },
+      {
+        "arm": "reuse_only",
+        "caseId": "case:unsupported-grammar",
+        "taskId": "task:reuse_only-case:unsupported-grammar",
+        "output": {
+          "status": "unknown"
+        },
+        "manifestId": "sha256:b6a2802c9cb9a9a1efb8388b219494f906a368761f8fd2ee5b45670a239f358b"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:minor-below",
+        "taskId": "task:contribution-case:minor-below",
+        "output": {
+          "status": "incompatible"
+        },
+        "manifestId": "sha256:b08ea81b67446b2d6bc4db9979735508bf18f176d97650e158f728744a1d3289"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:minor-equal",
+        "taskId": "task:contribution-case:minor-equal",
+        "output": {
+          "status": "compatible"
+        },
+        "manifestId": "sha256:7675afa830709bb36373edb45ce44f3f1d7b02239e7f1ed43eb72cd21237e24a"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:unsupported-grammar",
+        "taskId": "task:contribution-case:unsupported-grammar",
+        "output": {
+          "status": "unknown"
+        },
+        "manifestId": "sha256:73c93df86c91e194074cfe387fb2e1cc646317169584d3481d28b1ba6bbeb379"
+      }
+    ],
+    "baseline": [
+      {
+        "caseId": "case:minor-below",
+        "inputDigest": "sha256:3a7c633f3e3db1df818a760f6ff1a98c81cc3f7d8b2bb69b90ca6d224664eaa2",
+        "actual": "compatible",
+        "expected": "incompatible",
+        "success": false,
+        "cost": null,
+        "effortMs": null
+      },
+      {
+        "caseId": "case:minor-equal",
+        "inputDigest": "sha256:42c5b49dc5ae090c5c0e1c3ec236ab04b04127397ec2aee9d14d4a3a36c26662",
+        "actual": "compatible",
+        "expected": "compatible",
+        "success": true,
+        "cost": null,
+        "effortMs": null
+      },
+      {
+        "caseId": "case:unsupported-grammar",
+        "inputDigest": "sha256:e52abf327232a78cb888f1daf94ef4864fa78874fa00e4a5540a784df0c7ed40",
+        "actual": "compatible",
+        "expected": "unknown",
+        "success": false,
+        "cost": null,
+        "effortMs": null
+      }
+    ],
+    "decline": {
+      "taskId": "task:decliner",
+      "contribution": "declined",
+      "reason": "Use existing service without contributing",
+      "purpose": "owner_qa",
+      "cost": null,
+      "replayed": false
+    },
+    "unrelated": "unknown",
+    "reuse": {
+      "schema": "neomorphic.foundry.reuse_projection.v1",
+      "snapshotRevision": 9,
+      "mode": "fixture",
+      "cohorts": [
+        {
+          "key": "sha256:1c69979847ba2726b442678cc303848c4446f92157f0a2f784eb4ea3b409fa08",
+          "capability": {
+            "id": "npm:s180-capability-consumer-kit",
+            "revision": "sha256:bf5653ce313b19e1930b3b56af2aa2fe66ff177c8ba933a0cd564360d477c35a"
+          },
+          "environmentDigest": "sha256:e083e1b265680c38dceb5305604690d01ea306001441dcdea2a1b258f670e39e",
+          "taskClass": "task-class:engine-boundary",
+          "purpose": "owner_qa",
+          "declaredRelationship": "owner",
+          "mode": "fixture",
+          "distinctLaterTasks": 6,
+          "declaredUsefulTasks": 4,
+          "establishedUsefulExternalTasks": 0,
+          "independence": {
+            "established": 0,
+            "notIndependent": 0,
+            "unknown": 6
+          },
+          "observedEnvironmentCoveredByVerification": true,
+          "effort": {
+            "knownMs": 0,
+            "unknownCount": 6
+          },
+          "costs": {
+            "knownUnitsByCurrency": {},
+            "unknownCount": 6,
+            "complete": false
+          },
+          "timeToReuseMs": [
+            393,
+            473,
+            552,
+            633,
+            714,
+            792
+          ],
+          "byContribution": {
+            "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13": {
+              "laterTasks": 6,
+              "declaredUsefulTasks": 4,
+              "establishedUsefulExternalTasks": 0
+            }
+          },
+          "evidenceRefs": [
+            {
+              "observationId": "reuse:b1d3b70dc78c7ba046a29cc90005c1344941a90da52c922b279530ff78f3933f",
+              "digest": "sha256:73b9c9eed6811b4b2b0a7781c0c61e21a4f4fa807ccf8f2161277e17fd48d3cd",
+              "taskId": "task:reuse_only-case:minor-below",
+              "source": {
+                "ref": "invocation:42e714ac6f223de51979fbee9eeca9e82a53c8f2814fd38748f7468efd2176a0",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:a0cfa1b7dbe05af5d3cecf860f027df140104eec92a3b1bdff025822f39d8bce",
+              "digest": "sha256:88086533b7e0e4340ede7b335eccddb3b0b1256330920e6f88659ec6b8e2ec1c",
+              "taskId": "task:reuse_only-case:minor-equal",
+              "source": {
+                "ref": "invocation:1a74ea6d0e76f56ad4eddae861fcc785deb7f9dab4691e522d561f3318c092c0",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:34c9ed7cb9ff5294bb8dcbc01319ce836ea087db680017c7aece51f00ecd1963",
+              "digest": "sha256:cf08ebd617cdfd97ec73a73c2351537ae324b2f6e164e35cea927d7eba0a4b99",
+              "taskId": "task:reuse_only-case:unsupported-grammar",
+              "source": {
+                "ref": "invocation:839933b5471882525c6ff15eba5884b21137c073885fb3dd8bdef20ee2e81339",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:fc09a6e28e14ead9b91a55ab359105aecd4f514d4670f960eb4af6503a9abbe6",
+              "digest": "sha256:f850e9e004a8438a4973aa3f8ceb98b2ca44edcd6cecbdb76206d89399be225f",
+              "taskId": "task:contribution-case:minor-below",
+              "source": {
+                "ref": "invocation:80fd3e1beb6f62c058bce50b3f2d34c729c1c3b1829daaf67b20389d10dc5288",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:cf3deb5eba078a5ad8027e80298232b68684b44e9dd2f7c132f1ff2cfa57a14c",
+              "digest": "sha256:b3917079fef9f3d1b4a3184c711ac5e20674b2c05e7ed78d50df90e8327833e5",
+              "taskId": "task:contribution-case:minor-equal",
+              "source": {
+                "ref": "invocation:162143fd3ee2280b46166655f00646fe3d46dce27a84612c8838833e27ba1dd8",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:f07b8cb6c747f065e25cae7f19c258e8a99abc36e704e4a418a8dedb203da359",
+              "digest": "sha256:e2e810b19dcee1c7e30e3ce50145a4a9355817e315d66b53ff210162ff41a3eb",
+              "taskId": "task:contribution-case:unsupported-grammar",
+              "source": {
+                "ref": "invocation:c98f1abdaaf525a94ace1b84498037db0bc521c7a9a419e937fc2bf9be2c25fe",
+                "revision": "vf04:v1"
+              }
+            }
+          ],
+          "settledPayment": {
+            "status": "unestablished",
+            "reason": "reuse_is_not_settlement_evidence"
+          }
+        }
+      ],
+      "excluded": [],
+      "acceptedContributionInventory": [
+        {
+          "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+          "capability": {
+            "id": "npm:s180-capability-consumer-kit",
+            "revision": "sha256:bf5653ce313b19e1930b3b56af2aa2fe66ff177c8ba933a0cd564360d477c35a"
+          },
+          "verifiedEnvironmentDigest": "sha256:e083e1b265680c38dceb5305604690d01ea306001441dcdea2a1b258f670e39e",
+          "acceptedAt": "2026-09-26T13:56:07.184Z",
+          "distinctLaterTasks": 6,
+          "declaredUsefulTasks": 4
+        }
+      ],
+      "validationCapacityCharged": {
+        "cpuMs": 2000,
+        "wallMs": 15000,
+        "costUnits": "1000",
+        "reviewMs": 0,
+        "reviews": 0
+      },
+      "actualValidationCost": {
+        "knownUnitsByCurrency": {},
+        "unknownCount": 1,
+        "complete": false,
+        "runnerAttempts": 1,
+        "unmeteredAttempts": 0,
+        "reviewDecisions": 0
+      },
+      "note": "Declared relationships, wallets, downloaded artifacts and fixture attestations do not prove independent demand. Reserved capacity is not measured spend."
+    }
+  },
+  "withheld": {
+    "stateBefore": "unknown",
+    "stateAfter": "timed_out",
+    "reservation": {
+      "cpuMs": 2000,
+      "wallMs": 1200,
+      "costUnits": "1000",
+      "reviewMs": 0,
+      "reviews": 0
+    },
+    "actualCost": {
+      "knownUnitsByCurrency": {},
+      "unknownCount": 1,
+      "complete": false,
+      "runnerAttempts": 1,
+      "unmeteredAttempts": 1,
+      "reviewDecisions": 0
+    }
+  },
+  "acceptedWithZeroReuse": [
+    {
+      "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+      "capability": {
+        "id": "npm:s180-capability-consumer-kit",
+        "revision": "sha256:bf5653ce313b19e1930b3b56af2aa2fe66ff177c8ba933a0cd564360d477c35a"
+      },
+      "verifiedEnvironmentDigest": "sha256:e083e1b265680c38dceb5305604690d01ea306001441dcdea2a1b258f670e39e",
+      "acceptedAt": "2026-09-26T13:56:10.015Z",
+      "distinctLaterTasks": 0,
+      "declaredUsefulTasks": 0
+    }
+  ]
+}

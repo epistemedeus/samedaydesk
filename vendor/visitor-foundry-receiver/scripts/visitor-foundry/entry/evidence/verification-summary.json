@@ -1,0 +1,34 @@
+{
+  "testedSourceCommit": "a27e9e499b2bb77a68b30257537b84e8f11053b6",
+  "node": "v22.22.2",
+  "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "entryAcceptance": {
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "log": "acceptance-final.tap"
+  },
+  "correspondenceRegression": {
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0,
+    "log": "correspondence-regression-01.tap"
+  },
+  "rootBuild": "passed",
+  "serviceBuild": "passed",
+  "scope": "owner-controlled real disposable PG / independent local HTTP processes",
+  "fileSha256": {
+    "cli.mjs": "cb56d8bc44ab61ed8858960cf0a013a61bad81c7759b40acd7922b8df9157505",
+    "migrate.mjs": "0555968437cee713f6ecbd13c56b7baad8b79c26ed7928b116b7c5a701ed63eb",
+    "migrations/001_entry.sql": "be954b396f3d0c9ba90d1d1e40affad0156c07b89f1d1deb76104073e584fe4c",
+    "src/client.mjs": "996e178725d14f21f7a61dfd1e3f64e1638b8a9e96caf201803ad33929814ac6",
+    "src/contract.mjs": "9fcd76e9d61f3da97ece27948f291169f051fa5c247d4bdfcf3c258592aef6f0",
+    "src/deps.mjs": "37bea5d3879b0ed0736a0f2064741afe2750f78f94f625ed9695a64ddeda12ed",
+    "src/mount.mjs": "a365a711277c5932ff83a4ff6344e454de57b90fed56894aa807d7d72b788802",
+    "src/store.mjs": "a7297e656769ab3fcea23f093c67d6768c95ffa987c15f8550cd5955228e949c",
+    "tests/disposable-pg.mjs": "4a8e0a303da68b6e29ca1d85b8f66deb3a7362531be151297121893f7c3036ad",
+    "tests/entry.test.mjs": "ffaeb1da4851166f771f3e7ef67f3bc142205694448fd498b97f9a42c9ba9d4c",
+    "tests/helpers.mjs": "91ce6b125a6b128aca6a6ccd809a6952af034d6af0a5034f626f37e50db1e6bd",
+    "tests/host.mjs": "d4b6c307586cb3d5a9798ba285b0bb8a09f17fadaf49dd4714c1a7b5c9ef393b"
+  }
+}

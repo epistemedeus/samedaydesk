@@ -1,0 +1,45 @@
+{
+  "schema": "pilot.r2.capabilities.cost_dry_run_input.v1",
+  "taskId": "cap04-demo-external-cost",
+  "capabilityId": "paid_resource_fetch",
+  "demo": true,
+  "notes": "Quoted amount excludes network/settlement external cost; plus stale fixture source.",
+  "quotes": [
+    {
+      "id": "quote-external",
+      "label": "Quote with external settlement cost",
+      "amountAtomic": "15000",
+      "currency": "USDC",
+      "priceSource": "caller.supplied.quote",
+      "externalCosts": [
+        {
+          "label": "network_gas_estimate",
+          "amountAtomic": "1200",
+          "note": "Outside quoted amount; not included in amountAtomic"
+        }
+      ]
+    },
+    {
+      "id": "quote-stale-fixture",
+      "label": "Fixture-labelled stale source",
+      "amountAtomic": "9000",
+      "currency": "USDC",
+      "priceSource": "fixture.demo.not-a-live-offer",
+      "stale": true
+    }
+  ],
+  "freeAlternatives": [
+    {
+      "id": "free-public-mirror",
+      "label": "Public mirror checked",
+      "state": "not_equivalent",
+      "basis": "free_public_mirror_checked_v1"
+    },
+    {
+      "id": "local-replay",
+      "label": "Local replay fixture",
+      "state": "equivalent",
+      "basis": "local_replay_fixture_v1"
+    }
+  ]
+}

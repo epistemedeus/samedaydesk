@@ -25,7 +25,8 @@
     "test:checkout-idempotency": "node --test server/scripts/test-payment-attempt-idempotency.js server/scripts/test-checkout-http-lifecycle.js client/scripts/checkoutAttemptNavigation.test.ts",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:correspondence-mount": "node --test server/scripts/test-correspondence-mount-disabled.js server/scripts/test-correspondence-shared-host-negative.js server/scripts/test-correspondence-shared-host-accept.js server/scripts/test-correspondence-s58.js",
-    "correspondence:migrate": "node vendor/neomorphic-correspondence/dist/migrate.js",
+    "correspondence:migrate": "node server/foundry/install.mjs --migrate",
+    "foundry:install": "node server/foundry/install.mjs --migrate --install",
     "test:foundry-host": "node --test server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js",
     "foundry:migrate": "node server/foundry/migrate.mjs --apply",
     "foundry:probe": "node server/foundry/probe.mjs",
@@ -73,7 +74,7 @@
     "replay:pr18": "node tools/lqtrack1/replay-pr18-disposition.mjs"
   },
   "dependencies": {
-    "@neomorphic/correspondence": "file:./vendor/neomorphic-correspondence",
+    "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
     "@supabase/supabase-js": "^2.108.2",
     "express": "^5.2.1",
     "jose": "^6.2.3",

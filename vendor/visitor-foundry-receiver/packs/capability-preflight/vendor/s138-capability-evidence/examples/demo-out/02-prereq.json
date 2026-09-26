@@ -1,0 +1,63 @@
+{
+  "schema": "s138.prereq-report.v1",
+  "capabilityId": "R2-CAPABILITIES-02",
+  "manifestKind": "package.json",
+  "catalogListed": true,
+  "readiness": "ready",
+  "steps": [
+    {
+      "id": "ignore-catalog-appearance",
+      "action": "Do not treat catalog appearance as install readiness",
+      "from": "catalogListed=true"
+    },
+    {
+      "id": "check-node-engine",
+      "action": "Verify Node satisfies engines.node (>=20)",
+      "from": "package.json#engines.node"
+    },
+    {
+      "id": "install-bin-capability-evidence",
+      "action": "Ensure package file ./bin/capability-evidence.mjs is present for CLI capability-evidence",
+      "from": "package.json#bin"
+    },
+    {
+      "id": "esm-module",
+      "action": "Package declares type:module (ESM)",
+      "from": "package.json#type"
+    },
+    {
+      "id": "pack-files",
+      "action": "Distribute only allowlisted files: bin, src, schemas, README.md, LICENSE",
+      "from": "package.json#files"
+    }
+  ],
+  "prerequisites": [
+    {
+      "id": "node-engine",
+      "state": "satisfied",
+      "evidenceClass": "runtime-probe",
+      "note": "engines.node=>=20"
+    },
+    {
+      "id": "bin:capability-evidence",
+      "state": "satisfied",
+      "evidenceClass": "filesystem-probe",
+      "note": "bin capability-evidence -> ./bin/capability-evidence.mjs"
+    },
+    {
+      "id": "module-type",
+      "state": "satisfied",
+      "evidenceClass": "manifest",
+      "note": "type=module"
+    }
+  ],
+  "gaps": [],
+  "notes": [
+    "Catalog appearance is never executable readiness.",
+    "Empty prerequisites/gaps never imply ready.",
+    "Non-boolean probes are ignored and do not manufacture observed readiness.",
+    "ready requires ≥1 satisfied runtime-probe or filesystem-probe; manifest/accepted-contract alone never suffice.",
+    "Caller observation remains caller-supplied data, not remote attestation.",
+    "No invented SDK support: only fields present in the supplied manifest/probe are used."
+  ]
+}

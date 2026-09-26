@@ -8,4 +8,4 @@ Root amended the host adapter over Heavy export `1e71d73d37d9f3f83c42bfab12e503e
 
 Remote verification: `node --test server/scripts/test-foundry-host.js server/scripts/test-foundry-drain.js server/scripts/test-foundry-probe.js`: 19 passed, 0 failed/skipped, 10.9 seconds. Includes a healthy ten-second child surviving shutdown, cleanup failures, and propagation of phase errors.
 
-This is focused wrapper evidence, not proof of SIGTERM during an actual claimed Postgres assignment. That integrated check belongs with the current VF12 receiver join. This branch still pins the earlier F93/VF08 receiver and is not yet a production deployment or Hostinger runtime acceptance.
+This is focused wrapper evidence. The VF12 join keeps this drain behavior and adds the claimed-assignment SIGTERM check. Readiness close now comes from the canonical correspondence `prepareFoundryHost` at receiver `1652533b1823ac33b86591ec4e931a8c4ea4aa97`, which closes the extension and the base once. The SDS mount closes the entry facade before the base store and binds the original `checkReady` before composing it. This branch is not a production deployment or Hostinger runtime acceptance.

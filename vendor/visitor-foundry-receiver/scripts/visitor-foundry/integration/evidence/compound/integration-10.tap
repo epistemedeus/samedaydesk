@@ -1,0 +1,83 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=compound
+TAP version 13
+# Subtest: actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+ok 1 - actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+  ---
+  duration_ms: 5081.933667
+  type: 'test'
+  ...
+# Subtest: all VF05 mutations survive commit-before-ACK SIGKILL at a stable origin with exact fresh-session replay
+ok 2 - all VF05 mutations survive commit-before-ACK SIGKILL at a stable origin with exact fresh-session replay
+  ---
+  duration_ms: 1138.472096
+  type: 'test'
+  ...
+# Subtest: proposal duplicates coalesce, terms are transactional, and revoked/expired/foreign/reader grants cannot reuse intent
+ok 3 - proposal duplicates coalesce, terms are transactional, and revoked/expired/foreign/reader grants cannot reuse intent
+  ---
+  duration_ms: 568.274817
+  type: 'test'
+  ...
+# Subtest: portable expiry and explicit renewal preserve identity and history; old receipt cannot publish the new generation
+ok 4 - portable expiry and explicit renewal preserve identity and history; old receipt cannot publish the new generation
+  ---
+  duration_ms: 4642.638885
+  type: 'test'
+  ...
+# Subtest: failed real component is rejected, dependency execution is explicitly unsupported, and accepted zero-use/decline remain visible
+ok 5 - failed real component is rejected, dependency execution is explicitly unsupported, and accepted zero-use/decline remain visible
+  ---
+  duration_ms: 2402.421374
+  type: 'test'
+  ...
+# Subtest: invocation commit-before-ACK and concurrent retries do not repeat physical work; finite invocation budget remains charged
+ok 6 - invocation commit-before-ACK and concurrent retries do not repeat physical work; finite invocation budget remains charged
+  ---
+  duration_ms: 2816.537017
+  type: 'test'
+  ...
+# Subtest: withdrawal between actual verifier samples prevents further launch and publication without inventing child exit
+ok 7 - withdrawal between actual verifier samples prevents further launch and publication without inventing child exit
+  ---
+  duration_ms: 704.362702
+  type: 'test'
+  ...
+# Subtest: multi-child launch/identity/result lost acknowledgements retain uncertainty, while all durable exits recover without rerunning
+ok 8 - multi-child launch/identity/result lost acknowledgements retain uncertainty, while all durable exits recover without rerunning
+  ---
+  duration_ms: 3544.323476
+  type: 'test'
+  ...
+# Subtest: a live cancelled portable child retains charge until witnessed exit; authorized retry and finite verification cost cap
+ok 9 - a live cancelled portable child retains charge until witnessed exit; authorized retry and finite verification cost cap
+  ---
+  duration_ms: 2206.313573
+  type: 'test'
+  ...
+# Subtest: F93 full coordinates reach the actual portable verifier losslessly; source/module substitution and public authority are refused
+ok 10 - F93 full coordinates reach the actual portable verifier losslessly; source/module substitution and public authority are refused
+  ---
+  duration_ms: 1220.700757
+  type: 'test'
+  ...
+# Subtest: actual installed wrapper drift invalidates discovery; output observed before retraction remains audit data and cannot be reused
+ok 11 - actual installed wrapper drift invalidates discovery; output observed before retraction remains audit data and cannot be reused
+  ---
+  duration_ms: 1786.487773
+  type: 'test'
+  ...
+# Subtest: additive portable migration refuses to discard execution/package/terms history
+ok 12 - additive portable migration refuses to discard execution/package/terms history
+  ---
+  duration_ms: 4.157712
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26229.151147

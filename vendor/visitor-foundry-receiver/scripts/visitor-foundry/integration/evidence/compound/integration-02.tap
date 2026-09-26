@@ -1,0 +1,31 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=compound
+TAP version 13
+# Subtest: actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+not ok 1 - actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+  ---
+  duration_ms: 817.483204
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/compound.test.mjs:20:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Command failed: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node scripts/visitor-foundry/integration/compound/visitor.mjs contribute /tmp/vf09-owned-lbmupY/83730d3d-b8c3-4dea-a229-11c0e36077b8.json /tmp/vf09-owned-lbmupY/83730d3d-b8c3-4dea-a229-11c0e36077b8.request
+    {"error":"Cannot assign to read only property 'ref' of object '#<Object>'"}
+    
+  code: 1
+  stack: |-
+    genericNodeError (node:internal/errors:983:15)
+    wrappedFn (node:internal/errors:537:14)
+    ChildProcess.exithandler (node:child_process:417:12)
+    ChildProcess.emit (node:events:519:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:304:5)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 902.286858

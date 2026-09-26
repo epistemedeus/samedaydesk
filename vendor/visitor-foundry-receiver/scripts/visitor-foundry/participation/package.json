@@ -1,0 +1,10 @@
+{
+  "name": "@neomorphic/foundry-participation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": { "types": "./src/index.d.mts", "default": "./src/index.mjs" } },
+  "bin": { "foundry-participation": "./cli.mjs" },
+  "scripts": { "test": "node --test --test-concurrency=1 tests/*.test.mjs", "test:pg": "node scripts/disposable-pg.mjs", "examples": "node examples/run.mjs", "check": "node scripts/check.mjs" },
+  "engines": { "node": ">=22" }
+}

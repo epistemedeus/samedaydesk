@@ -1,0 +1,8 @@
+{
+  "demo": true,
+  "files": [
+    { "path": "../secret.json", "byteLength": 10, "format": "json" },
+    { "path": "/etc/passwd", "byteLength": 10, "format": "txt" },
+    { "path": "note/artifact.json", "byteLength": 10, "format": "json" }
+  ]
+}

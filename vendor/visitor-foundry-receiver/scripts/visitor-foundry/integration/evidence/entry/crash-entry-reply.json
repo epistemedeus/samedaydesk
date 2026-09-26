@@ -1,0 +1,21 @@
+{
+  "phase": "entry:reply",
+  "signal": "SIGKILL",
+  "killed": {
+    "registrations": 1,
+    "charged": 1,
+    "projects": 1,
+    "grants": 3,
+    "allocations": 1,
+    "pools": 1
+  },
+  "recovered": {
+    "registrations": 1,
+    "charged": 1,
+    "projects": 1,
+    "grants": 3,
+    "allocations": 1,
+    "pools": 1
+  },
+  "state": "ready"
+}

@@ -1,0 +1,286 @@
+TAP version 13
+# Subtest: malformed JSON-like inputs reject prototypes, accessors, cycles, symbols and non-finite values
+ok 1 - malformed JSON-like inputs reject prototypes, accessors, cycles, symbols and non-finite values
+  ---
+  duration_ms: 1.185987
+  type: 'test'
+  ...
+# Subtest: JSON nesting and record-count bounds reject adversarial payloads
+ok 2 - JSON nesting and record-count bounds reject adversarial payloads
+  ---
+  duration_ms: 108.825028
+  type: 'test'
+  ...
+# Subtest: missing fields and unsupported schemas do not normalize into hits
+ok 3 - missing fields and unsupported schemas do not normalize into hits
+  ---
+  duration_ms: 0.504037
+  type: 'test'
+  ...
+# Subtest: invalid dates, negative lifetimes and malformed evidence cannot be admitted
+ok 4 - invalid dates, negative lifetimes and malformed evidence cannot be admitted
+  ---
+  duration_ms: 1.686544
+  type: 'test'
+  ...
+# Subtest: invalid source and unsupported input semantics are rejected instead of loosened
+ok 5 - invalid source and unsupported input semantics are rejected instead of loosened
+  ---
+  duration_ms: 1.003357
+  type: 'test'
+  ...
+# Subtest: unknown correction target, replacement reuse, content mismatch and forks are rejected
+ok 6 - unknown correction target, replacement reuse, content mismatch and forks are rejected
+  ---
+  duration_ms: 1.38344
+  type: 'test'
+  ...
+# Subtest: correction cycles are rejected even at identical timestamps
+ok 7 - correction cycles are rejected even at identical timestamps
+  ---
+  duration_ms: 0.689537
+  type: 'test'
+  ...
+# Subtest: unadmitted negative cannot poison a compatible result
+ok 8 - unadmitted negative cannot poison a compatible result
+  ---
+  duration_ms: 1.751159
+  type: 'test'
+  ...
+# Subtest: dependency pin change requires fresh parent evidence and preserves old parent
+ok 9 - dependency pin change requires fresh parent evidence and preserves old parent
+  ---
+  duration_ms: 2.178415
+  type: 'test'
+  ...
+# Subtest: S04 adapter preserves original unfunded/historical/demo/actionable disclosures and stale quotes
+not ok 10 - S04 adapter preserves original unfunded/historical/demo/actionable disclosures and stale quotes
+  ---
+  duration_ms: 1.356264
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/tests/adversarial.test.mjs:70:1'
+  failureType: 'testCodeFailure'
+  error: 'output.quote.required must be a bounded array'
+  code: 'INVALID_INPUT'
+  stack: |-
+    fail (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:11:59)
+    check (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:12:71)
+    array (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:32:47)
+    strings (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:34:3)
+    validateShape (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:100:5)
+    validateShape (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:103:92)
+    validateVersion (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:140:89)
+    createVersion (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:161:49)
+    adaptS04 (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/adapters.mjs:20:19)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/tests/adversarial.test.mjs:74:15)
+  ...
+# Subtest: S04 version identity is clock independent; diagnostics reuse original input checks
+not ok 11 - S04 version identity is clock independent; diagnostics reuse original input checks
+  ---
+  duration_ms: 1.027363
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/tests/adversarial.test.mjs:83:1'
+  failureType: 'testCodeFailure'
+  error: 'output.quote.required must be a bounded array'
+  code: 'INVALID_INPUT'
+  stack: |-
+    fail (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:11:59)
+    check (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:12:71)
+    array (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:32:47)
+    strings (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:34:3)
+    validateShape (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:100:5)
+    validateShape (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:103:92)
+    validateVersion (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:140:89)
+    createVersion (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:161:49)
+    adaptS04 (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/src/adapters.mjs:20:19)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF01/repo/scripts/visitor-foundry/capabilities/tests/adversarial.test.mjs:85:13)
+  ...
+# Subtest: malformed/deceptive S04 records and unsupported constraints are refused
+ok 12 - malformed/deceptive S04 records and unsupported constraints are refused
+  ---
+  duration_ms: 1.017985
+  type: 'test'
+  ...
+# Subtest: preflight content binding and claimed accepted/executed flags never create admissible evidence
+ok 13 - preflight content binding and claimed accepted/executed flags never create admissible evidence
+  ---
+  duration_ms: 0.907573
+  type: 'test'
+  ...
+# Subtest: package identity reuses npm coordinate plus full source pin; manifest scripts stay data
+ok 14 - package identity reuses npm coordinate plus full source pin; manifest scripts stay data
+  ---
+  duration_ms: 1.249056
+  type: 'test'
+  ...
+# Subtest: frozen synthetic holdouts report measured tasks and unknown costs without independence claims
+ok 15 - frozen synthetic holdouts report measured tasks and unknown costs without independence claims
+  ---
+  duration_ms: 8.980867
+  type: 'test'
+  ...
+# Subtest: cold CLI demo and holdouts execute without npm install/network
+ok 16 - cold CLI demo and holdouts execute without npm install/network
+  ---
+  duration_ms: 206.896726
+  type: 'test'
+  ...
+# Subtest: cold JSON export/import resolves explicit policy, defaults to unknown without it
+ok 17 - cold JSON export/import resolves explicit policy, defaults to unknown without it
+  ---
+  duration_ms: 203.155735
+  type: 'test'
+  ...
+# Subtest: CLI rejects malformed files, unknown flags, duplicate flags and unsupported commands
+ok 18 - CLI rejects malformed files, unknown flags, duplicate flags and unsupported commands
+  ---
+  duration_ms: 237.160869
+  type: 'test'
+  ...
+# Subtest: contributed commands remain inert JSON; input mutation cannot falsify snapshot digest
+ok 19 - contributed commands remain inert JSON; input mutation cannot falsify snapshot digest
+  ---
+  duration_ms: 38.745738
+  type: 'test'
+  ...
+# Subtest: immutable content identity, deep freeze and snapshot round-trip
+ok 20 - immutable content identity, deep freeze and snapshot round-trip
+  ---
+  duration_ms: 6.670367
+  type: 'test'
+  ...
+# Subtest: stable deduplication and immutable identity conflict fail closed
+ok 21 - stable deduplication and immutable identity conflict fail closed
+  ---
+  duration_ms: 4.035822
+  type: 'test'
+  ...
+# Subtest: append requires compare-and-swap and idempotent retry retains identity
+ok 22 - append requires compare-and-swap and idempotent retry retains identity
+  ---
+  duration_ms: 3.726676
+  type: 'test'
+  ...
+# Subtest: compatible requires admitted observation; contributor claims cannot supply policy
+ok 23 - compatible requires admitted observation; contributor claims cannot supply policy
+  ---
+  duration_ms: 2.036735
+  type: 'test'
+  ...
+# Subtest: unknown environment is distinct from unsupported environment
+ok 24 - unknown environment is distinct from unsupported environment
+  ---
+  duration_ms: 1.504735
+  type: 'test'
+  ...
+# Subtest: a genuine miss requires complete declared scope; unknown cannot create gap
+ok 25 - a genuine miss requires complete declared scope; unknown cannot create gap
+  ---
+  duration_ms: 1.180088
+  type: 'test'
+  ...
+# Subtest: gap carries resolver pin and cleared reference without caller private inputs
+ok 26 - gap carries resolver pin and cleared reference without caller private inputs
+  ---
+  duration_ms: 0.543898
+  type: 'test'
+  ...
+# Subtest: typed applicability validates nested arrays, objects, boolean, integer, null, enums and zero maxItems
+ok 27 - typed applicability validates nested arrays, objects, boolean, integer, null, enums and zero maxItems
+  ---
+  duration_ms: 1.963343
+  type: 'test'
+  ...
+# Subtest: required output guarantee mismatch cannot be a hit
+ok 28 - required output guarantee mismatch cannot be a hit
+  ---
+  duration_ms: 1.442873
+  type: 'test'
+  ...
+# Subtest: negative is scoped to exact version, environment, outcome and input digest
+ok 29 - negative is scoped to exact version, environment, outcome and input digest
+  ---
+  duration_ms: 2.242748
+  type: 'test'
+  ...
+# Subtest: conflict stays unknown regardless observation order; no latest-wins voting
+ok 30 - conflict stays unknown regardless observation order; no latest-wins voting
+  ---
+  duration_ms: 4.52739
+  type: 'test'
+  ...
+# Subtest: expiry boundary and future evidence remain auditable and do not cause incompatibility
+ok 31 - expiry boundary and future evidence remain auditable and do not cause incompatibility
+  ---
+  duration_ms: 1.205356
+  type: 'test'
+  ...
+# Subtest: correction and retraction preserve history and unrelated version
+ok 32 - correction and retraction preserve history and unrelated version
+  ---
+  duration_ms: 2.973639
+  type: 'test'
+  ...
+# Subtest: correction cannot widen version, scope, dates or use revision forks
+ok 33 - correction cannot widen version, scope, dates or use revision forks
+  ---
+  duration_ms: 1.516851
+  type: 'test'
+  ...
+# Subtest: revoked dependency propagates transitively, leaves other dependency pins usable
+ok 34 - revoked dependency propagates transitively, leaves other dependency pins usable
+  ---
+  duration_ms: 2.802446
+  type: 'test'
+  ...
+# Subtest: missing dependency is unknown and mismatched dependency digest is rejected
+ok 35 - missing dependency is unknown and mismatched dependency digest is rejected
+  ---
+  duration_ms: 1.419186
+  type: 'test'
+  ...
+# Subtest: deprecation is exact version and terminal revocation cannot be silently restored
+ok 36 - deprecation is exact version and terminal revocation cannot be silently restored
+  ---
+  duration_ms: 2.207577
+  type: 'test'
+  ...
+# Subtest: rights uncertainty does not become evidence-based permission
+ok 37 - rights uncertainty does not become evidence-based permission
+  ---
+  duration_ms: 1.176278
+  type: 'test'
+  ...
+# Subtest: deterministic multipage resolution deduplicates and selection is independent of page size/order
+ok 38 - deterministic multipage resolution deduplicates and selection is independent of page size/order
+  ---
+  duration_ms: 696.671405
+  type: 'test'
+  ...
+# Subtest: cursor binds snapshot, query, clock and admission policy; malformed cursors fail
+ok 39 - cursor binds snapshot, query, clock and admission policy; malformed cursors fail
+  ---
+  duration_ms: 2.990736
+  type: 'test'
+  ...
+# Subtest: list pages are bounded and empty pages never pretend catalog completeness
+ok 40 - list pages are bounded and empty pages never pretend catalog completeness
+  ---
+  duration_ms: 0.589093
+  type: 'test'
+  ...
+# Subtest: executable acceptance journey preserves fixture and stale-price distinctions
+ok 41 - executable acceptance journey preserves fixture and stale-price distinctions
+  ---
+  duration_ms: 10.696663
+  type: 'test'
+  ...
+1..41
+# tests 41
+# suites 0
+# pass 39
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 824.445723

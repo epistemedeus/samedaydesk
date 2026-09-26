@@ -1,0 +1,27 @@
+Exchange × TownSquare composed lab pack — SOURCE NOTICE
+
+Product composition for Neomorphic S181 on branch
+codex/s181-exchange-real-input-20260910.
+
+S177 freeze (prior composed demo, not rewritten as this product):
+91bbc48d77278ab4d5941496bbc56e49376be77f
+
+Immutable input pins (do not rewrite):
+- Exchange S171: 1e65dabe93af8cf8de0df43511fe844aa53489bd
+- TownSquare first-run S172: 25c9040eaf20d83a577d1fc3d49313a50e2938e1
+- TownSquare kit S170: 8760ee4dc4b65641dafa7067bd0e153cafdd71c8
+
+S166 intake product head 2a65a2d7a5a59c5e9a4743e9770f11db9e88e0f5 remains a
+separate review candidate. This pack may cite its contract id only; it does
+not duplicate intake adapters.
+
+demo command: bundled fixtures, label fixture_demo even when local gates pass.
+run/import: caller-supplied JSON only; never load exchange/01 or /02 fixtures.
+TownSquare kit remains synthetic (conversation.demo:true). This pack does not
+claim arbitrary conversation extraction.
+
+Local gate pass is local_run_ok — not actual_completion, external completion, or
+customer adoption.
+
+No escrow, token, payment backend, private worktree paths, or raw transcripts.
+claimAuthority: none

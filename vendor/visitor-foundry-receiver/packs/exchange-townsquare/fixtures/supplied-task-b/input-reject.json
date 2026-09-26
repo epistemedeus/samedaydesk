@@ -1,0 +1,201 @@
+{
+  "schema": "neomorphic.r2.exchange_townsquare.supplied_input.v1",
+  "provenance": "supplied_local",
+  "source": {
+    "kind": "structured_task",
+    "identity": {
+      "operatorLabel": "operator-b-local",
+      "taskId": "supplied-b-capability-card-02"
+    }
+  },
+  "requirements": {
+    "schema": "neomorphic.r2.exchange.task_requirements.v1",
+    "taskId": "supplied-b-capability-card-02",
+    "title": "Supplied capability card",
+    "summary": "Caller-supplied capability card. Wholly objective — distinct from task A and from exchange/01 fixtures.",
+    "sourceLabel": "supplied_local:operator-b-local",
+    "artifact": {
+      "format": "json",
+      "maxBytes": 4096,
+      "requiredFields": [
+        "name",
+        "status",
+        "tags",
+        "blurb"
+      ]
+    },
+    "objectiveCriteria": [
+      {
+        "id": "name_present",
+        "description": "artifact includes name",
+        "check": {
+          "kind": "json_path_exists",
+          "path": "name"
+        }
+      },
+      {
+        "id": "status_present",
+        "description": "artifact includes status",
+        "check": {
+          "kind": "json_path_exists",
+          "path": "status"
+        }
+      },
+      {
+        "id": "tags_present",
+        "description": "artifact includes tags",
+        "check": {
+          "kind": "json_path_exists",
+          "path": "tags"
+        }
+      },
+      {
+        "id": "blurb_present",
+        "description": "artifact includes blurb",
+        "check": {
+          "kind": "json_path_exists",
+          "path": "blurb"
+        }
+      },
+      {
+        "id": "card_name",
+        "description": "name must be a string",
+        "check": {
+          "kind": "json_path_type",
+          "path": "name",
+          "type": "string"
+        }
+      },
+      {
+        "id": "card_status",
+        "description": "status must be ready or draft",
+        "check": {
+          "kind": "enum_in",
+          "path": "status",
+          "values": [
+            "ready",
+            "draft"
+          ]
+        }
+      },
+      {
+        "id": "card_tags",
+        "description": "tags must have at least two entries",
+        "check": {
+          "kind": "array_min_length",
+          "path": "tags",
+          "min": 2
+        }
+      },
+      {
+        "id": "card_blurb",
+        "description": "blurb must be a short string",
+        "check": {
+          "kind": "string_max_length",
+          "path": "blurb",
+          "max": 240
+        }
+      }
+    ],
+    "subjectiveCriteria": [],
+    "bounds": {
+      "notes": "Caller-supplied task B. Wholly objective. No custody or payment."
+    }
+  },
+  "proposals": [
+    {
+      "schema": "neomorphic.r2.exchange.proposal.v1",
+      "id": "prop-b-beta-complete",
+      "proposerLabel": "agent-beta-local",
+      "summary": "Supplies a complete capability card for task B.",
+      "terms": {
+        "priceAmount": "0",
+        "currency": "USDC",
+        "deliveryNotes": "Unfunded local demonstration."
+      },
+      "claimedRequirements": [
+        {
+          "criterionId": "name_present",
+          "claim": "name present",
+          "evidenceRef": "artifact.name"
+        },
+        {
+          "criterionId": "status_present",
+          "claim": "status present",
+          "evidenceRef": "artifact.status"
+        },
+        {
+          "criterionId": "tags_present",
+          "claim": "tags present",
+          "evidenceRef": "artifact.tags"
+        },
+        {
+          "criterionId": "blurb_present",
+          "claim": "blurb present",
+          "evidenceRef": "artifact.blurb"
+        },
+        {
+          "criterionId": "card_name",
+          "claim": "string name",
+          "evidenceRef": "artifact.name"
+        },
+        {
+          "criterionId": "card_status",
+          "claim": "enum status",
+          "evidenceRef": "artifact.status"
+        },
+        {
+          "criterionId": "card_tags",
+          "claim": "tags array",
+          "evidenceRef": "artifact.tags"
+        },
+        {
+          "criterionId": "card_blurb",
+          "claim": "bounded blurb",
+          "evidenceRef": "artifact.blurb"
+        }
+      ],
+      "artifact": {
+        "name": "capability-card-beta",
+        "status": "ready",
+        "tags": [
+          "local",
+          "supplied",
+          "card"
+        ],
+        "blurb": "Caller-supplied capability card for lab task B."
+      }
+    },
+    {
+      "schema": "neomorphic.r2.exchange.proposal.v1",
+      "id": "prop-b-beta-weak",
+      "proposerLabel": "agent-beta-weak",
+      "summary": "Does not claim task B criteria.",
+      "terms": {
+        "deliveryNotes": "Wrong task claims."
+      },
+      "claimedRequirements": [
+        {
+          "criterionId": "page_https",
+          "claim": "https from another task",
+          "evidenceRef": "artifact.pageUrl"
+        }
+      ]
+    }
+  ],
+  "chosenProposalId": "prop-b-beta-complete",
+  "artifact": {
+    "name": "capability-card-beta",
+    "status": "ready",
+    "tags": [
+      "local",
+      "supplied",
+      "card"
+    ],
+    "blurb": "Caller-supplied capability card for lab task B."
+  },
+  "requesterDecision": {
+    "decision": "reject",
+    "artifactSha256": "4a11069108921979267879192c789a6427775a54ecd912727f19901303f885a8"
+  }
+}

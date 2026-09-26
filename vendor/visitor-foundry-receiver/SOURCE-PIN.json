@@ -1,0 +1,9 @@
+{
+  "sourceRepo": "epistemedeus/neomorphic-io",
+  "branch": "codex/visitor-foundry-integration-20260926",
+  "head": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "tree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+  "module": "@neomorphic/correspondence",
+  "layout": "vendor/visitor-foundry-receiver mirrors the canonical repo root for relative imports",
+  "note": "One correspondence module. SDS does not carry a second F93 or VF08 checkout. Worker drain remains in server/foundry. Canonical host.ts closes extension then base."
+}

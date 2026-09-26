@@ -1,0 +1,42 @@
+VF05 isolated disposable PostgreSQL; loopback; 24 connections; fsync=on; separate HTTP server processes
+TAP version 13
+# Subtest: separate real HTTP/PG server, VF01 miss, lost ack, cold CLI replay, restart, submission, scoped readback
+not ok 1 - separate real HTTP/PG server, VF01 miss, lost ack, cold CLI replay, restart, submission, scoped readback
+  ---
+  duration_ms: 507.503548
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'committed'
+    - 'stale-revision'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'stale-revision'
+  actual: 'committed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:59:129)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: two authenticated clients, concurrent claims, stale fence, reader denial, revoked grant
+ok 2 - two authenticated clients, concurrent claims, stale fence, reader denial, revoked grant
+  ---
+  duration_ms: 211.970732
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 828.282077

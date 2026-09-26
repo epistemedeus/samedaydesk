@@ -1,0 +1,3 @@
+# Pin the deployed Node engine to match package.json engines (22.x).
+# Railway Nixpacks reads this when railway.json uses the NIXPACKS builder.
+nodejs = "22"

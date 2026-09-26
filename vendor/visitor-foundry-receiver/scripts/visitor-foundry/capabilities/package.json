@@ -1,0 +1,14 @@
+{
+  "name": "@neomorphic/visitor-foundry-capabilities",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.mjs",
+  "bin": { "foundry-capabilities": "./src/cli.mjs" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node src/cli.mjs demo",
+    "holdouts": "node src/cli.mjs holdouts"
+  },
+  "engines": { "node": ">=22" }
+}

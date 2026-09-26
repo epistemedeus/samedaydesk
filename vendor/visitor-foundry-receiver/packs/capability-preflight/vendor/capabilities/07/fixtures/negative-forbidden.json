@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.r2.capabilities.buyer_context_pack_input.v1",
+  "taskId": "demo-buyer-pack-forbidden",
+  "demo": true,
+  "buyerCount": 42,
+  "revenue": "999",
+  "capabilityContract": {
+    "id": "bad-contract.v1",
+    "inputs": [
+      {
+        "id": "query",
+        "name": "Query",
+        "kind": "string",
+        "required": true
+      }
+    ]
+  },
+  "callerProvided": {
+    "query": "should-not-pack"
+  },
+  "endpointScope": {
+    "method": "POST",
+    "url": "https://example.com/api/v1/x",
+    "allowedHeaders": ["Content-Type"]
+  }
+}

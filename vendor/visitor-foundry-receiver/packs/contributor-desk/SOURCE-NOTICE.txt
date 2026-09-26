@@ -1,0 +1,23 @@
+Contributor-desk source extract — SOURCE NOTICE
+
+Wave: W0-R3-05
+Surface: walletless public contributor desk (browse, claim, status, appeal, owed-versus-paid)
+
+This pack is Pilot-authored adapter code. It cites, and does not copy:
+
+- I01 earned-work hash terms (PR 54, sha 346bbd3cbe6943a83b2077c455174d74b7a493ad)
+- F01 S275 HTTP shape (PR 39, branch fable/f01-s275-kernel) — kernel is not on main
+- F04 walletless late-address rule (PR 45) — destination string, never a payout key
+
+It does not contain services/earned-work/. It does not implement R3-09
+settlement-receipt-view. Integer F01 termsVersion is rejected as a start-work key.
+
+## Sample license (this directory only)
+
+MIT applies to Pilot-authored files in this directory (LICENSE, README.md,
+SOURCE-NOTICE.txt, FEATURE-MAP.md, package.json, bin/, src/, tests/, schema/,
+fixtures/). It does not relicense the Neomorphic website, company assets, or
+unowned engines.
+
+No production secrets are included. Fixture owner-token strings appear only as
+names of refused environment keys, never as committed credentials.

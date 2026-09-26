@@ -1,0 +1,6 @@
+{
+  "demo": true,
+  "files": [
+    { "path": "note/artifact.json", "byteLength": 50, "format": "json" }
+  ]
+}

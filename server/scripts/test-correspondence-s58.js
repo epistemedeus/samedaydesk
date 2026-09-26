@@ -96,12 +96,11 @@ test("S58 actual SDS mount preserves CORS, body limit and store readiness (memor
 
 
 test("S58 shipped migration/package entrypoints reject generic DB before connecting", () => {
-  const root = fileURLToPath(new URL("../../vendor/neomorphic-correspondence/", import.meta.url));
+  const root = fileURLToPath(new URL("../../vendor/visitor-foundry-receiver/services/correspondence/", import.meta.url));
   const pkg = JSON.parse(readFileSync(root + "package.json", "utf8"));
-  for (const command of Object.values(pkg.scripts)) {
-    assert.match(command, /^node dist\//);
-    assert.equal(existsSync(root + command.slice(5)), true);
-  }
+  assert.equal(pkg.name, "@neomorphic/correspondence");
+  assert.equal(existsSync(root + "dist/migrate.js"), true);
+  assert.equal(existsSync(root + "dist/index.js"), true);
   const result = spawnSync(process.execPath, [root + "dist/migrate.js"], {
     encoding: "utf8", env: { PATH: process.env.PATH, DATABASE_URL: "postgres://127.0.0.1:1/unrelated" }, timeout: 5000,
   });

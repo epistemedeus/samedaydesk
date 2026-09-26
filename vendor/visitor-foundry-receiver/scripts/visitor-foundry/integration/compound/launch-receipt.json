@@ -1,0 +1,35 @@
+{
+  "schema": "neomorphic.foundry.vf09-launch.v1",
+  "at": "2026-09-26T15:23:25.137076+00:00",
+  "receivingHead": "ca638c7ef552ebb1c55cce77f13e1c7162a29fbb",
+  "inputHeads": {
+    "VF04A": {
+      "head": "ca638c7ef552ebb1c55cce77f13e1c7162a29fbb",
+      "branch": "codex/visitor-foundry-integration-20260926"
+    },
+    "VF05": {
+      "head": "6324f34e2bab109b5babee7ceb9e147f114719ba",
+      "branch": "codex/visitor-participation-20260926"
+    },
+    "VF06": {
+      "head": "69619166a105c6e2c0153f9082b900a9177d8431",
+      "branch": "codex/visitor-composition-20260926"
+    },
+    "VF08": {
+      "head": "f489aca31b6670f8e4c7e3b0b73db19dede670ed",
+      "branch": "codex/visitor-portable-execution-20260926"
+    },
+    "VF07": {
+      "head": "b10a1720a93a3414f4ec122c64a5bc2448b3392f",
+      "branch": "codex/visitor-contribution-allocation-20260926"
+    }
+  },
+  "method": "Exact Git object fetch through existing account; owned VF05 participation and VF08 execution subtrees only, no source from worker checkouts",
+  "optional": "VF06/VF07 fetched for source review; not imported or required by the one-component task",
+  "heldoutsSha256": "6b0549005fbbbbba7328877061f7a734d59dbdc1ae6d422030266d878e04a4ed",
+  "oracleSha256": "032eb90ca472b38193f0908a45fc31c5a54709288aed58ccf4dab164c3cd10e6",
+  "purpose": "owner_qa",
+  "independentOperator": false,
+  "frozenBeforeCandidate": true,
+  "hostingNote": "Requested separately from Root; no deployment implied"
+}

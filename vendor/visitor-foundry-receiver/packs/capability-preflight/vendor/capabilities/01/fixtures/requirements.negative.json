@@ -1,0 +1,15 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "demo-forbidden",
+  "title": "Forbidden revenue claim",
+  "summary": "Synthetic negative fixture that must be rejected for invented demand fields.",
+  "demo": true,
+  "revenue": 99,
+  "objectiveCriteria": [
+    {
+      "id": "a",
+      "description": "exists",
+      "check": { "kind": "json_path_exists", "path": "a" }
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+
+> @neomorphic/terms-lifecycle@0.1.0 test
+> node --import tsx --test --test-concurrency=1 tests/*.test.ts
+
+TAP version 13
+# Subtest: CLI journey --fixture prints hashes, versions, and earned-survives-cancel true
+ok 1 - CLI journey --fixture prints hashes, versions, and earned-survives-cancel true
+  ---
+  duration_ms: 192.332268
+  type: 'test'
+  ...
+# Subtest: CLI rejects missing --fixture
+ok 2 - CLI rejects missing --fixture
+  ---
+  duration_ms: 149.413823
+  type: 'test'
+  ...
+# Subtest: CLI journey on float-reward fixture is rejected
+ok 3 - CLI journey on float-reward fixture is rejected
+  ---
+  duration_ms: 145.097006
+  type: 'test'
+  ...
+# Subtest: src does not eval, fetch, or spawn artifact bytes
+ok 4 - src does not eval, fetch, or spawn artifact bytes
+  ---
+  duration_ms: 0.526198
+  type: 'test'
+  ...
+# Subtest: PIN-MANIFEST pins current E01 c4048401, not I01
+ok 5 - PIN-MANIFEST pins current E01 c4048401, not I01
+  ---
+  duration_ms: 0.789255
+  type: 'test'
+  ...
+# Subtest: prepare-e01-worktree rejects I01 pin with pin_mismatch
+ok 6 - prepare-e01-worktree rejects I01 pin with pin_mismatch
+  ---
+  duration_ms: 2.693756
+  type: 'test'
+  ...
+# Subtest: prepare-e01-worktree rejects alternate I01 pin 346bbd3c
+ok 7 - prepare-e01-worktree rejects alternate I01 pin 346bbd3c
+  ---
+  duration_ms: 2.0666
+  type: 'test'
+  ...
+# Subtest: product tree has no earned-work kernel; pack kernel-tests are not a substitute acceptance
+ok 8 - product tree has no earned-work kernel; pack kernel-tests are not a substitute acceptance
+  ---
+  duration_ms: 0.342093
+  type: 'test'
+  ...
+# Subtest: forbidden completion label matches packs/exchange-townsquare
+ok 9 - forbidden completion label matches packs/exchange-townsquare
+  ---
+  duration_ms: 0.435993
+  type: 'test'
+  ...
+# Subtest: literal journey: create → earn → propose → old terms bind → assent → cancel preserves earned
+ok 10 - literal journey: create → earn → propose → old terms bind → assent → cancel preserves earned
+  ---
+  duration_ms: 4.408215
+  type: 'test'
+  ...
+# Subtest: createAgreement returns frozen snapshot { termsVersion, hash, agreedAt, status: active }
+ok 11 - createAgreement returns frozen snapshot { termsVersion, hash, agreedAt, status: active }
+  ---
+  duration_ms: 0.46795
+  type: 'test'
+  ...
+# Subtest: without assent the old terms still bind after a larger-scope proposal
+ok 12 - without assent the old terms still bind after a larger-scope proposal
+  ---
+  duration_ms: 0.622334
+  type: 'test'
+  ...
+# Subtest: original terms remain readable after cancel and a correction
+ok 13 - original terms remain readable after cancel and a correction
+  ---
+  duration_ms: 0.727537
+  type: 'test'
+  ...
+# Subtest: ok fixture termsVersion matches canonical content hash
+ok 14 - ok fixture termsVersion matches canonical content hash
+  ---
+  duration_ms: 0.19268
+  type: 'test'
+  ...
+# Subtest: ok fixture is labelled fixture, not production
+ok 15 - ok fixture is labelled fixture, not production
+  ---
+  duration_ms: 0.093957
+  type: 'test'
+  ...
+# Subtest: mutating frozen terms in place is rejected (new version + assent required)
+ok 16 - mutating frozen terms in place is rejected (new version + assent required)
+  ---
+  duration_ms: 2.280569
+  type: 'test'
+  ...
+# Subtest: contributor cannot forge requester assent
+ok 17 - contributor cannot forge requester assent
+  ---
+  duration_ms: 1.129129
+  type: 'test'
+  ...
+# Subtest: contributor cannot propose a scope change as the requester
+ok 18 - contributor cannot propose a scope change as the requester
+  ---
+  duration_ms: 0.474774
+  type: 'test'
+  ...
+# Subtest: cancel does not wipe an earned award
+ok 19 - cancel does not wipe an earned award
+  ---
+  duration_ms: 0.783658
+  type: 'test'
+  ...
+# Subtest: extra corrections beyond the single bounded window are rejected
+ok 20 - extra corrections beyond the single bounded window are rejected
+  ---
+  duration_ms: 0.642739
+  type: 'test'
+  ...
+# Subtest: float reward is rejected
+ok 21 - float reward is rejected
+  ---
+  duration_ms: 0.174641
+  type: 'test'
+  ...
+# Subtest: missing termsVersion is rejected
+ok 22 - missing termsVersion is rejected
+  ---
+  duration_ms: 0.216729
+  type: 'test'
+  ...
+# Subtest: unbounded corrections (absent maxCorrections) are rejected
+ok 23 - unbounded corrections (absent maxCorrections) are rejected
+  ---
+  duration_ms: 0.127402
+  type: 'test'
+  ...
+# Subtest: negative maxCorrections (unlimited) is rejected
+ok 24 - negative maxCorrections (unlimited) is rejected
+  ---
+  duration_ms: 0.214022
+  type: 'test'
+  ...
+# Subtest: applying a refused scope change is rejected
+ok 25 - applying a refused scope change is rejected
+  ---
+  duration_ms: 1.17405
+  type: 'test'
+  ...
+# Subtest: applying an expired scope change is rejected
+ok 26 - applying an expired scope change is rejected
+  ---
+  duration_ms: 0.731752
+  type: 'test'
+  ...
+# Subtest: labelling a fixture agreement production is rejected
+ok 27 - labelling a fixture agreement production is rejected
+  ---
+  duration_ms: 0.707871
+  type: 'test'
+  ...
+# Subtest: labelling a fixture agreement actual_completion is rejected
+ok 28 - labelling a fixture agreement actual_completion is rejected
+  ---
+  duration_ms: 0.238301
+  type: 'test'
+  ...
+# Subtest: events are append-only after cancel
+ok 29 - events are append-only after cancel
+  ---
+  duration_ms: 0.414839
+  type: 'test'
+  ...
+# Subtest: double-earn against the same reservation is rejected
+ok 30 - double-earn against the same reservation is rejected
+  ---
+  duration_ms: 0.4829
+  type: 'test'
+  ...
+# Subtest: award amount must match the reservation amount
+ok 31 - award amount must match the reservation amount
+  ---
+  duration_ms: 0.343751
+  type: 'test'
+  ...
+# Subtest: cannot earn a reservation after its termsVersion is superseded
+ok 32 - cannot earn a reservation after its termsVersion is superseded
+  ---
+  duration_ms: 0.666669
+  type: 'test'
+  ...
+# Subtest: unparseable expiresAt cannot be assented later as if it never expires
+ok 33 - unparseable expiresAt cannot be assented later as if it never expires
+  ---
+  duration_ms: 0.445274
+  type: 'test'
+  ...
+# Subtest: already-elapsed expiresAt is rejected at propose time
+ok 34 - already-elapsed expiresAt is rejected at propose time
+  ---
+  duration_ms: 0.369541
+  type: 'test'
+  ...
+# Subtest: overflowing duration is a lifecycle error, not RangeError
+ok 35 - overflowing duration is a lifecycle error, not RangeError
+  ---
+  duration_ms: 0.098927
+  type: 'test'
+  ...
+# Subtest: assent does not invent a reservation for unfunded terms
+ok 36 - assent does not invent a reservation for unfunded terms
+  ---
+  duration_ms: 0.659319
+  type: 'test'
+  ...
+# Subtest: contributor cannot cancel (owner-only, matching E01 reject)
+ok 37 - contributor cannot cancel (owner-only, matching E01 reject)
+  ---
+  duration_ms: 0.342542
+  type: 'test'
+  ...
+# Subtest: non-finite maxCorrections is unbounded and rejected
+ok 38 - non-finite maxCorrections is unbounded and rejected
+  ---
+  duration_ms: 0.152816
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1230.004948

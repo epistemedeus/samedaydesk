@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { prepareFoundryHost } from "@neomorphic/correspondence";
+import { prepareFoundryHost } from "../../vendor/visitor-foundry-receiver/services/correspondence/dist/visitor-foundry/host.js";
 import { runPhasedWorker } from "../foundry/lifecycle.js";
 
 test("readiness failure closes extension and base once, retaining original error", async () => {

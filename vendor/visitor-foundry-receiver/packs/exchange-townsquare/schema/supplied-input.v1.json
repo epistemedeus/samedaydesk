@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "neomorphic.r2.exchange_townsquare.supplied_input.v1",
+  "title": "neomorphic.r2.exchange_townsquare.supplied_input.v1",
+  "description": "Caller-supplied Exchange × TownSquare run/import contract. Requirements, proposals, and artifacts must be provided by the caller. This pack never substitutes exchange/01 or exchange/02 fixture values. TownSquare conversation linking is synthetic-kit only (demo:true) and does not extract exchange criteria. Provenance must be supplied_local. fixture_demo belongs on the demo command. external_discovery is reserved and refused. Local gate pass is local_run_ok, never actual_completion.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["requirements", "proposals", "artifact"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "neomorphic.r2.exchange_townsquare.supplied_input.v1"
+    },
+    "provenance": {
+      "type": "string",
+      "const": "supplied_local",
+      "description": "run/import only. fixture_demo is refused here. external_discovery is reserved."
+    },
+    "requirements": {
+      "type": "object",
+      "description": "Exchange task requirements as provided. Objective and subjective criteria must be supplied or the run stops as unresolved. Never replaced with fixture criteria.",
+      "required": ["taskId", "title", "summary"],
+      "properties": {
+        "schema": { "type": "string" },
+        "taskId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "artifact": {
+          "type": "object",
+          "properties": {
+            "format": { "type": "string" },
+            "maxBytes": { "type": "integer", "minimum": 1 },
+            "requiredFields": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "objectiveCriteria": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "subjectiveCriteria": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "criteria": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "bounds": { "type": "object" },
+        "sourceLabel": { "type": "string" }
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Caller-supplied proposals. Not loaded from exchange/02 fixtures.",
+      "items": {
+        "type": "object",
+        "required": ["id", "proposerLabel"],
+        "properties": {
+          "id": { "type": "string" },
+          "proposerLabel": { "type": "string" },
+          "summary": { "type": "string" },
+          "claimedRequirements": { "type": "array" },
+          "artifact": { "type": "object" },
+          "terms": { "type": "object" }
+        }
+      }
+    },
+    "chosenProposalId": { "type": "string" },
+    "artifact": {
+      "description": "Caller-supplied deliverable JSON. Not loaded from exchange/01 fixtures."
+    },
+    "correctedArtifact": {
+      "description": "Optional corrected deliverable after an amend path."
+    },
+    "fileSubmission": { "type": "object" },
+    "correctedFileSubmission": { "type": "object" },
+    "fileSetContract": { "type": "object" },
+    "lifecycleEvents": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "requesterDecision": {
+      "type": "object",
+      "description": "Optional explicit counterparty decision. Never synthesized on run/import. When present, decision must be accept or reject — malformed values stop rather than falling through to automatic objective evidence. Accept must bind artifactSha256 and revisionSha256. Reject remains terminal even if objective evidence would pass. Omitted subjective decision yields needs_review.",
+      "required": ["decision"],
+      "additionalProperties": true,
+      "properties": {
+        "decision": { "type": "string", "enum": ["accept", "reject"] },
+        "artifactSha256": { "type": "string" },
+        "revisionSha256": { "type": "string" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "structured_task (default) or townsquare_synthetic_conversation (kit demo:true only).",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["structured_task", "townsquare_synthetic_conversation"]
+        },
+        "identity": {
+          "type": "object",
+          "properties": {
+            "operatorLabel": { "type": "string" },
+            "taskId": { "type": "string" }
+          }
+        },
+        "conversation": {
+          "type": "object",
+          "description": "Required when kind is townsquare_synthetic_conversation. Must set demo:true. Kit will not extract exchange criteria."
+        }
+      }
+    },
+    "allowWeakProposal": { "type": "boolean" },
+    "allowPartialAdmission": { "type": "boolean" },
+    "includeDispute": { "type": "boolean" },
+    "requesterStatement": { "type": "string" },
+    "workerStatement": { "type": "string" },
+    "sources": { "type": "array" }
+  }
+}

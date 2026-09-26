@@ -1,0 +1,682 @@
+TAP version 13
+# Subtest: malformed JSON-like inputs reject prototypes, accessors, cycles, symbols and non-finite values
+ok 1 - malformed JSON-like inputs reject prototypes, accessors, cycles, symbols and non-finite values
+  ---
+  duration_ms: 1.122132
+  type: 'test'
+  ...
+# Subtest: JSON nesting and record-count bounds reject adversarial payloads
+ok 2 - JSON nesting and record-count bounds reject adversarial payloads
+  ---
+  duration_ms: 132.002887
+  type: 'test'
+  ...
+# Subtest: missing fields and unsupported schemas do not normalize into hits
+ok 3 - missing fields and unsupported schemas do not normalize into hits
+  ---
+  duration_ms: 0.50144
+  type: 'test'
+  ...
+# Subtest: invalid dates, negative lifetimes and malformed evidence cannot be admitted
+ok 4 - invalid dates, negative lifetimes and malformed evidence cannot be admitted
+  ---
+  duration_ms: 1.918655
+  type: 'test'
+  ...
+# Subtest: invalid source and unsupported input semantics are rejected instead of loosened
+ok 5 - invalid source and unsupported input semantics are rejected instead of loosened
+  ---
+  duration_ms: 1.032867
+  type: 'test'
+  ...
+# Subtest: unknown correction target, replacement reuse, content mismatch and forks are rejected
+ok 6 - unknown correction target, replacement reuse, content mismatch and forks are rejected
+  ---
+  duration_ms: 1.435917
+  type: 'test'
+  ...
+# Subtest: correction cycles are rejected even at identical timestamps
+ok 7 - correction cycles are rejected even at identical timestamps
+  ---
+  duration_ms: 0.713473
+  type: 'test'
+  ...
+# Subtest: unadmitted negative cannot poison a compatible result
+ok 8 - unadmitted negative cannot poison a compatible result
+  ---
+  duration_ms: 1.727426
+  type: 'test'
+  ...
+# Subtest: dependency pin change requires fresh parent evidence and preserves old parent
+ok 9 - dependency pin change requires fresh parent evidence and preserves old parent
+  ---
+  duration_ms: 2.888866
+  type: 'test'
+  ...
+# Subtest: S04 adapter preserves original unfunded/historical/demo/actionable disclosures and stale quotes
+ok 10 - S04 adapter preserves original unfunded/historical/demo/actionable disclosures and stale quotes
+  ---
+  duration_ms: 11.994006
+  type: 'test'
+  ...
+# Subtest: S04 version identity is clock independent; diagnostics reuse original input checks
+ok 11 - S04 version identity is clock independent; diagnostics reuse original input checks
+  ---
+  duration_ms: 1.616889
+  type: 'test'
+  ...
+# Subtest: malformed/deceptive S04 records and unsupported constraints are refused
+ok 12 - malformed/deceptive S04 records and unsupported constraints are refused
+  ---
+  duration_ms: 0.823814
+  type: 'test'
+  ...
+# Subtest: preflight content binding and claimed accepted/executed flags never create admissible evidence
+ok 13 - preflight content binding and claimed accepted/executed flags never create admissible evidence
+  ---
+  duration_ms: 0.744824
+  type: 'test'
+  ...
+# Subtest: package identity reuses npm coordinate plus full source pin; manifest scripts stay data
+ok 14 - package identity reuses npm coordinate plus full source pin; manifest scripts stay data
+  ---
+  duration_ms: 1.529843
+  type: 'test'
+  ...
+# Subtest: frozen synthetic holdouts report measured tasks and unknown costs without independence claims
+ok 15 - frozen synthetic holdouts report measured tasks and unknown costs without independence claims
+  ---
+  duration_ms: 6.85035
+  type: 'test'
+  ...
+# Subtest: a sparse array decorated to match its length is still rejected
+ok 16 - a sparse array decorated to match its length is still rejected
+  ---
+  duration_ms: 0.154899
+  type: 'test'
+  ...
+# Subtest: preflight cost shape and fractional money fail closed without running proposals
+ok 17 - preflight cost shape and fractional money fail closed without running proposals
+  ---
+  duration_ms: 0.449693
+  type: 'test'
+  ...
+# Subtest: many input type failures remain bounded without argument-list overflow
+ok 18 - many input type failures remain bounded without argument-list overflow
+  ---
+  duration_ms: 16.835901
+  type: 'test'
+  ...
+# Subtest: cold CLI demo and holdouts execute without npm install/network
+ok 19 - cold CLI demo and holdouts execute without npm install/network
+  ---
+  duration_ms: 216.334859
+  type: 'test'
+  ...
+# Subtest: cold JSON export/import resolves explicit policy, defaults to unknown without it
+ok 20 - cold JSON export/import resolves explicit policy, defaults to unknown without it
+  ---
+  duration_ms: 254.482116
+  type: 'test'
+  ...
+# Subtest: CLI rejects malformed files, unknown flags, duplicate flags and unsupported commands
+ok 21 - CLI rejects malformed files, unknown flags, duplicate flags and unsupported commands
+  ---
+  duration_ms: 262.852706
+  type: 'test'
+  ...
+# Subtest: contributed commands remain inert JSON; input mutation cannot falsify snapshot digest
+ok 22 - contributed commands remain inert JSON; input mutation cannot falsify snapshot digest
+  ---
+  duration_ms: 54.150865
+  type: 'test'
+  ...
+# Subtest: immutable content identity, deep freeze and snapshot round-trip
+ok 23 - immutable content identity, deep freeze and snapshot round-trip
+  ---
+  duration_ms: 7.769707
+  type: 'test'
+  ...
+# Subtest: stable deduplication and immutable identity conflict fail closed
+ok 24 - stable deduplication and immutable identity conflict fail closed
+  ---
+  duration_ms: 3.815725
+  type: 'test'
+  ...
+# Subtest: append requires compare-and-swap and idempotent retry retains identity
+ok 25 - append requires compare-and-swap and idempotent retry retains identity
+  ---
+  duration_ms: 6.827085
+  type: 'test'
+  ...
+# Subtest: compatible requires admitted observation; contributor claims cannot supply policy
+ok 26 - compatible requires admitted observation; contributor claims cannot supply policy
+  ---
+  duration_ms: 4.44879
+  type: 'test'
+  ...
+# Subtest: unknown environment is distinct from unsupported environment
+ok 27 - unknown environment is distinct from unsupported environment
+  ---
+  duration_ms: 5.674324
+  type: 'test'
+  ...
+# Subtest: a genuine miss requires complete declared scope; unknown cannot create gap
+ok 28 - a genuine miss requires complete declared scope; unknown cannot create gap
+  ---
+  duration_ms: 1.18269
+  type: 'test'
+  ...
+# Subtest: gap carries resolver pin and cleared reference without caller private inputs
+ok 29 - gap carries resolver pin and cleared reference without caller private inputs
+  ---
+  duration_ms: 0.456791
+  type: 'test'
+  ...
+# Subtest: typed applicability validates nested arrays, objects, boolean, integer, null, enums and zero maxItems
+ok 30 - typed applicability validates nested arrays, objects, boolean, integer, null, enums and zero maxItems
+  ---
+  duration_ms: 7.292011
+  type: 'test'
+  ...
+# Subtest: required output guarantee mismatch cannot be a hit
+ok 31 - required output guarantee mismatch cannot be a hit
+  ---
+  duration_ms: 1.054453
+  type: 'test'
+  ...
+# Subtest: negative is scoped to exact version, environment, outcome and input digest
+ok 32 - negative is scoped to exact version, environment, outcome and input digest
+  ---
+  duration_ms: 6.791869
+  type: 'test'
+  ...
+# Subtest: conflict stays unknown regardless observation order; no latest-wins voting
+ok 33 - conflict stays unknown regardless observation order; no latest-wins voting
+  ---
+  duration_ms: 2.170549
+  type: 'test'
+  ...
+# Subtest: expiry boundary and future evidence remain auditable and do not cause incompatibility
+ok 34 - expiry boundary and future evidence remain auditable and do not cause incompatibility
+  ---
+  duration_ms: 11.525794
+  type: 'test'
+  ...
+# Subtest: correction and retraction preserve history and unrelated version
+ok 35 - correction and retraction preserve history and unrelated version
+  ---
+  duration_ms: 6.230799
+  type: 'test'
+  ...
+# Subtest: correction cannot widen version, scope, dates or use revision forks
+ok 36 - correction cannot widen version, scope, dates or use revision forks
+  ---
+  duration_ms: 3.451024
+  type: 'test'
+  ...
+# Subtest: revoked dependency propagates transitively, leaves other dependency pins usable
+ok 37 - revoked dependency propagates transitively, leaves other dependency pins usable
+  ---
+  duration_ms: 7.436006
+  type: 'test'
+  ...
+# Subtest: missing dependency is unknown and mismatched dependency digest is rejected
+ok 38 - missing dependency is unknown and mismatched dependency digest is rejected
+  ---
+  duration_ms: 2.240742
+  type: 'test'
+  ...
+# Subtest: deprecation is exact version and terminal revocation cannot be silently restored
+ok 39 - deprecation is exact version and terminal revocation cannot be silently restored
+  ---
+  duration_ms: 4.836159
+  type: 'test'
+  ...
+# Subtest: rights uncertainty does not become evidence-based permission
+ok 40 - rights uncertainty does not become evidence-based permission
+  ---
+  duration_ms: 1.215514
+  type: 'test'
+  ...
+# Subtest: deterministic multipage resolution deduplicates and selection is independent of page size/order
+ok 41 - deterministic multipage resolution deduplicates and selection is independent of page size/order
+  ---
+  duration_ms: 877.290538
+  type: 'test'
+  ...
+# Subtest: cursor binds snapshot, query, clock and admission policy; malformed cursors fail
+ok 42 - cursor binds snapshot, query, clock and admission policy; malformed cursors fail
+  ---
+  duration_ms: 3.144553
+  type: 'test'
+  ...
+# Subtest: list pages are bounded and empty pages never pretend catalog completeness
+ok 43 - list pages are bounded and empty pages never pretend catalog completeness
+  ---
+  duration_ms: 0.589362
+  type: 'test'
+  ...
+# Subtest: executable acceptance journey preserves fixture and stale-price distinctions
+ok 44 - executable acceptance journey preserves fixture and stale-price distinctions
+  ---
+  duration_ms: 11.248909
+  type: 'test'
+  ...
+# Subtest: shared dependency DAG keeps diagnostic expansion bounded and propagates invalidation
+ok 45 - shared dependency DAG keeps diagnostic expansion bounded and propagates invalidation
+  ---
+  duration_ms: 16.839234
+  type: 'test'
+  ...
+# Subtest: incomplete catalog cannot export a genuine gap even when known candidates fail
+ok 46 - incomplete catalog cannot export a genuine gap even when known candidates fail
+  ---
+  duration_ms: 0.704737
+  type: 'test'
+  ...
+# Subtest: new scoped dependency negative requires later composition replay without invalidating other pins
+ok 47 - new scoped dependency negative requires later composition replay without invalidating other pins
+  ---
+  duration_ms: 2.919521
+  type: 'test'
+  ...
+# Subtest: dependency expiry/retraction propagates unknown and never borrows unrelated environment evidence
+ok 48 - dependency expiry/retraction propagates unknown and never borrows unrelated environment evidence
+  ---
+  duration_ms: 2.414125
+  type: 'test'
+  ...
+# Subtest: verification target binds exact artifact contract and keeps test proposals inert
+ok 49 - verification target binds exact artifact contract and keeps test proposals inert
+  ---
+  duration_ms: 0.771144
+  type: 'test'
+  ...
+# Subtest: expiry of already corrected dependency evidence cannot stale a later composition replay
+ok 50 - expiry of already corrected dependency evidence cannot stale a later composition replay
+  ---
+  duration_ms: 1.08539
+  type: 'test'
+  ...
+# Subtest: only host-installed opaque handles authenticate; passing-looking contributor JSON never promotes
+ok 51 - only host-installed opaque handles authenticate; passing-looking contributor JSON never promotes
+  ---
+  duration_ms: 6.658186
+  type: 'test'
+  ...
+# Subtest: same organizational identity cannot be assigned even with a distinct runner handle
+ok 52 - same organizational identity cannot be assigned even with a distinct runner handle
+  ---
+  duration_ms: 0.765633
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in capability
+ok 53 - exact receipt binding rejects drift in capability
+  ---
+  duration_ms: 1.297339
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in sourceRevision
+ok 54 - exact receipt binding rejects drift in sourceRevision
+  ---
+  duration_ms: 1.414538
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in artifactDigest
+ok 55 - exact receipt binding rejects drift in artifactDigest
+  ---
+  duration_ms: 1.007998
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in dependencyDigest
+ok 56 - exact receipt binding rejects drift in dependencyDigest
+  ---
+  duration_ms: 1.559582
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in evaluator
+ok 57 - exact receipt binding rejects drift in evaluator
+  ---
+  duration_ms: 1.225158
+  type: 'test'
+  ...
+# Subtest: exact receipt binding rejects drift in environmentDigest
+ok 58 - exact receipt binding rejects drift in environmentDigest
+  ---
+  duration_ms: 1.132487
+  type: 'test'
+  ...
+# Subtest: idempotent commands, natural candidate dedup, and renamed receipt replay consume one reservation
+ok 59 - idempotent commands, natural candidate dedup, and renamed receipt replay consume one reservation
+  ---
+  duration_ms: 6.957081
+  type: 'test'
+  ...
+# Subtest: stale aggregate revisions fail atomically and valid retry is allowed
+ok 60 - stale aggregate revisions fail atomically and valid retry is allowed
+  ---
+  duration_ms: 2.877173
+  type: 'test'
+  ...
+# Subtest: ambiguous risk cannot auto accept and independent review consumes bounded budget
+ok 61 - ambiguous risk cannot auto accept and independent review consumes bounded budget
+  ---
+  duration_ms: 3.705622
+  type: 'test'
+  ...
+# Subtest: high risk cannot auto accept and independent review consumes bounded budget
+ok 62 - high risk cannot auto accept and independent review consumes bounded budget
+  ---
+  duration_ms: 7.5375
+  type: 'test'
+  ...
+# Subtest: runner limitations require review even on a low-risk deterministic policy
+ok 63 - runner limitations require review even on a low-risk deterministic policy
+  ---
+  duration_ms: 0.882697
+  type: 'test'
+  ...
+# Subtest: fail observation never counts as passing acceptance
+ok 64 - fail observation never counts as passing acceptance
+  ---
+  duration_ms: 2.269492
+  type: 'test'
+  ...
+# Subtest: skip observation never counts as passing acceptance
+ok 65 - skip observation never counts as passing acceptance
+  ---
+  duration_ms: 0.764541
+  type: 'test'
+  ...
+# Subtest: incomplete observation never counts as passing acceptance
+ok 66 - incomplete observation never counts as passing acceptance
+  ---
+  duration_ms: 0.731906
+  type: 'test'
+  ...
+# Subtest: empty/missing/duplicated checks cannot pass and budget breach is retained as failed evidence
+ok 67 - empty/missing/duplicated checks cannot pass and budget breach is retained as failed evidence
+  ---
+  duration_ms: 4.063275
+  type: 'test'
+  ...
+# Subtest: candidate revocation fences in-flight receipts and withdraws promotion
+ok 68 - candidate revocation fences in-flight receipts and withdraws promotion
+  ---
+  duration_ms: 1.227639
+  type: 'test'
+  ...
+# Subtest: receipt revocation invalidates exact dependencies transitively while unrelated versions stay usable
+ok 69 - receipt revocation invalidates exact dependencies transitively while unrelated versions stay usable
+  ---
+  duration_ms: 24.943576
+  type: 'test'
+  ...
+# Subtest: explicit external dependency invalidation cancels assigned work
+ok 70 - explicit external dependency invalidation cancels assigned work
+  ---
+  duration_ms: 0.930095
+  type: 'test'
+  ...
+# Subtest: new revision correction retains old receipt, invalidates dependents, and requires fresh independent replay
+ok 71 - new revision correction retains old receipt, invalidates dependents, and requires fresh independent replay
+  ---
+  duration_ms: 3.434679
+  type: 'test'
+  ...
+# Subtest: bounded outstanding backlog includes pending reviews and per-scope limits
+ok 72 - bounded outstanding backlog includes pending reviews and per-scope limits
+  ---
+  duration_ms: 1.29815
+  type: 'test'
+  ...
+# Subtest: resource/cost cap prevents dispatch {"maxCpuMs":999}
+ok 73 - resource/cost cap prevents dispatch {"maxCpuMs":999}
+  ---
+  duration_ms: 2.608855
+  type: 'test'
+  ...
+# Subtest: resource/cost cap prevents dispatch {"maxWallMs":9999}
+ok 74 - resource/cost cap prevents dispatch {"maxWallMs":9999}
+  ---
+  duration_ms: 3.837094
+  type: 'test'
+  ...
+# Subtest: resource/cost cap prevents dispatch {"maxMemoryMb":63}
+ok 75 - resource/cost cap prevents dispatch {"maxMemoryMb":63}
+  ---
+  duration_ms: 0.37903
+  type: 'test'
+  ...
+# Subtest: resource/cost cap prevents dispatch {"maxCost":{"currency":"USD_MICROS","units":"999"}}
+ok 76 - resource/cost cap prevents dispatch {"maxCost":{"currency":"USD_MICROS","units":"999"}}
+  ---
+  duration_ms: 0.360724
+  type: 'test'
+  ...
+# Subtest: timeouts charge original cap, retries have a fresh fence, and attempt limit is terminal
+ok 77 - timeouts charge original cap, retries have a fresh fence, and attempt limit is terminal
+  ---
+  duration_ms: 1.831662
+  type: 'test'
+  ...
+# Subtest: retry cannot bypass a finite window budget
+ok 78 - retry cannot bypass a finite window budget
+  ---
+  duration_ms: 8.410177
+  type: 'test'
+  ...
+# Subtest: round-robin eligible scope scheduling and FIFO survive one busy scope
+ok 79 - round-robin eligible scope scheduling and FIFO survive one busy scope
+  ---
+  duration_ms: 4.087394
+  type: 'test'
+  ...
+# Subtest: scoped host principals cannot submit to, schedule, review or invalidate foreign scope
+ok 80 - scoped host principals cannot submit to, schedule, review or invalidate foreign scope
+  ---
+  duration_ms: 0.602494
+  type: 'test'
+  ...
+# Subtest: schema bounds, numeric cost rejection, input mutation isolation and journal limit
+ok 81 - schema bounds, numeric cost rejection, input mutation isolation and journal limit
+  ---
+  duration_ms: 1.154216
+  type: 'test'
+  ...
+# Subtest: clocks reject future evidence and backwards host time
+ok 82 - clocks reject future evidence and backwards host time
+  ---
+  duration_ms: 5.592643
+  type: 'test'
+  ...
+# Subtest: external source pins cannot be shadowed by new candidates or used to create dependency cycles
+ok 83 - external source pins cannot be shadowed by new candidates or used to create dependency cycles
+  ---
+  duration_ms: 0.359
+  type: 'test'
+  ...
+# Subtest: aggregate memory reservation bounds concurrent assignments across scopes
+ok 84 - aggregate memory reservation bounds concurrent assignments across scopes
+  ---
+  duration_ms: 1.650531
+  type: 'test'
+  ...
+# Subtest: three cold CLI processes produce candidate, independent replay fixture receipt and later reuse evidence
+ok 85 - three cold CLI processes produce candidate, independent replay fixture receipt and later reuse evidence
+  ---
+  duration_ms: 267.474582
+  type: 'test'
+  ...
+# Subtest: fixture runner refuses arbitrary regex and artifact drift and cannot masquerade as production
+ok 86 - fixture runner refuses arbitrary regex and artifact drift and cannot masquerade as production
+  ---
+  duration_ms: 4.918524
+  type: 'test'
+  ...
+# Subtest: CLI rejects authority/payment/code-execution flags
+ok 87 - CLI rejects authority/payment/code-execution flags
+  ---
+  duration_ms: 178.369282
+  type: 'test'
+  ...
+# Subtest: unknown relationship/cost stay unknown; owner QA and sponsored evaluation never become independent useful external outcomes
+ok 88 - unknown relationship/cost stay unknown; owner QA and sponsored evaluation never become independent useful external outcomes
+  ---
+  duration_ms: 12.065665
+  type: 'test'
+  ...
+# Subtest: independent label alone and fixture attestations never establish independent demand
+ok 89 - independent label alone and fixture attestations never establish independent demand
+  ---
+  duration_ms: 2.010754
+  type: 'test'
+  ...
+# Subtest: trusted evidence port can bind useful external outcome; settlement remains disjoint (host simulation)
+ok 90 - trusted evidence port can bind useful external outcome; settlement remains disjoint (host simulation)
+  ---
+  duration_ms: 3.563254
+  type: 'test'
+  ...
+# Subtest: a fixture observation cannot add paid/wallet fields to gain independence
+ok 91 - a fixture observation cannot add paid/wallet fields to gain independence
+  ---
+  duration_ms: 1.882419
+  type: 'test'
+  ...
+# Subtest: later task must be distinct, after acceptance and bound to the exact capability revision
+ok 92 - later task must be distinct, after acceptance and bound to the exact capability revision
+  ---
+  duration_ms: 8.318843
+  type: 'test'
+  ...
+# Subtest: duplicate and renamed repeated reuse cannot enlarge the denominator; correction replaces rather than adds
+ok 93 - duplicate and renamed repeated reuse cannot enlarge the denominator; correction replaces rather than adds
+  ---
+  duration_ms: 3.268788
+  type: 'test'
+  ...
+# Subtest: retractions and revoked dependencies remove current reuse projection but preserve historical observations
+ok 94 - retractions and revoked dependencies remove current reuse projection but preserve historical observations
+  ---
+  duration_ms: 2.457927
+  type: 'test'
+  ...
+# Subtest: other environments remain separate and do not silently extend verification coverage
+ok 95 - other environments remain separate and do not silently extend verification coverage
+  ---
+  duration_ms: 2.051005
+  type: 'test'
+  ...
+# Subtest: exact integer costs keep currencies separate without invented token estimates
+ok 96 - exact integer costs keep currencies separate without invented token estimates
+  ---
+  duration_ms: 2.449368
+  type: 'test'
+  ...
+# Subtest: frozen no-network denominator compares matching rows and leaves missing effort/cost unknown
+ok 97 - frozen no-network denominator compares matching rows and leaves missing effort/cost unknown
+  ---
+  duration_ms: 4.557405
+  type: 'test'
+  ...
+# Subtest: cohort holdoutRevision mismatch refuses comparison
+ok 98 - cohort holdoutRevision mismatch refuses comparison
+  ---
+  duration_ms: 3.465007
+  type: 'test'
+  ...
+# Subtest: cohort taskClass mismatch refuses comparison
+ok 99 - cohort taskClass mismatch refuses comparison
+  ---
+  duration_ms: 3.942796
+  type: 'test'
+  ...
+# Subtest: cohort metricVersion mismatch refuses comparison
+ok 100 - cohort metricVersion mismatch refuses comparison
+  ---
+  duration_ms: 1.415164
+  type: 'test'
+  ...
+# Subtest: cohort experimentId mismatch refuses comparison
+ok 101 - cohort experimentId mismatch refuses comparison
+  ---
+  duration_ms: 7.383292
+  type: 'test'
+  ...
+# Subtest: incompatible cohort binding capability has no pooled denominator
+ok 102 - incompatible cohort binding capability has no pooled denominator
+  ---
+  duration_ms: 1.784137
+  type: 'test'
+  ...
+# Subtest: incompatible cohort binding environmentDigest has no pooled denominator
+ok 103 - incompatible cohort binding environmentDigest has no pooled denominator
+  ---
+  duration_ms: 1.260232
+  type: 'test'
+  ...
+# Subtest: incompatible cohort binding relationship has no pooled denominator
+ok 104 - incompatible cohort binding relationship has no pooled denominator
+  ---
+  duration_ms: 1.637232
+  type: 'test'
+  ...
+# Subtest: incompatible cohort binding purpose has no pooled denominator
+ok 105 - incompatible cohort binding purpose has no pooled denominator
+  ---
+  duration_ms: 1.142405
+  type: 'test'
+  ...
+# Subtest: missing, duplicate, extra holdout cases and reused task IDs never shrink denominator to a favorable intersection
+ok 106 - missing, duplicate, extra holdout cases and reused task IDs never shrink denominator to a favorable intersection
+  ---
+  duration_ms: 2.385564
+  type: 'test'
+  ...
+# Subtest: separate contribution and reuse-only arms with unknown outcomes keep unknown success rates
+ok 107 - separate contribution and reuse-only arms with unknown outcomes keep unknown success rates
+  ---
+  duration_ms: 1.544188
+  type: 'test'
+  ...
+# Subtest: evidence join is preserved byte-for-byte in canonical content; reuse cannot alter accounting or upgrade flags
+ok 108 - evidence join is preserved byte-for-byte in canonical content; reuse cannot alter accounting or upgrade flags
+  ---
+  duration_ms: 1.874042
+  type: 'test'
+  ...
+# Subtest: accepted contributions with zero subsequent reuse remain in the inventory denominator
+ok 109 - accepted contributions with zero subsequent reuse remain in the inventory denominator
+  ---
+  duration_ms: 2.235614
+  type: 'test'
+  ...
+# Subtest: declared owner/affiliation cannot be silently overridden into independent evidence
+ok 110 - declared owner/affiliation cannot be silently overridden into independent evidence
+  ---
+  duration_ms: 1.856348
+  type: 'test'
+  ...
+# Subtest: same case name with a different task input digest cannot pass the frozen denominator
+ok 111 - same case name with a different task input digest cannot pass the frozen denominator
+  ---
+  duration_ms: 1.215294
+  type: 'test'
+  ...
+# Subtest: timed-out attempts and unmetered reviews remain unknown actual validation costs
+ok 112 - timed-out attempts and unmetered reviews remain unknown actual validation costs
+  ---
+  duration_ms: 3.272521
+  type: 'test'
+  ...
+1..112
+# tests 112
+# suites 0
+# pass 112
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1081.95857

@@ -1,0 +1,64 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "supplied-a-changelog-watch-01",
+  "title": "Supplied changelog watch note",
+  "summary": "Caller-supplied JSON changelog note. Criteria are not the exchange/01 fixture set.",
+  "sourceLabel": "supplied_local:operator-a-local",
+  "artifact": {
+    "format": "json",
+    "maxBytes": 2048,
+    "requiredFields": ["pageUrl", "capturedAt", "kind", "digest"]
+  },
+  "objectiveCriteria": [
+    {
+      "id": "pageUrl_present",
+      "description": "artifact includes pageUrl",
+      "check": { "kind": "json_path_exists", "path": "pageUrl" }
+    },
+    {
+      "id": "capturedAt_present",
+      "description": "artifact includes capturedAt",
+      "check": { "kind": "json_path_exists", "path": "capturedAt" }
+    },
+    {
+      "id": "kind_present",
+      "description": "artifact includes kind",
+      "check": { "kind": "json_path_exists", "path": "kind" }
+    },
+    {
+      "id": "digest_present",
+      "description": "artifact includes digest",
+      "check": { "kind": "json_path_exists", "path": "digest" }
+    },
+    {
+      "id": "page_https",
+      "description": "pageUrl must be an https URL",
+      "check": { "kind": "https_url_shape", "path": "pageUrl" }
+    },
+    {
+      "id": "captured_iso",
+      "description": "capturedAt must look like an ISO-8601 timestamp",
+      "check": { "kind": "regex_match", "path": "capturedAt", "pattern": "^\\d{4}-\\d{2}-\\d{2}T" }
+    },
+    {
+      "id": "kind_changelog",
+      "description": "kind must equal changelog",
+      "check": { "kind": "json_path_equals", "path": "kind", "equals": "changelog" }
+    },
+    {
+      "id": "digest_hex",
+      "description": "digest must be sha256 hex",
+      "check": { "kind": "sha256_hex", "path": "digest" }
+    }
+  ],
+  "subjectiveCriteria": [
+    {
+      "id": "readable_to_operator",
+      "description": "Operator A finds the note readable enough to keep",
+      "reviewHint": "Unresolved until operator A accepts or rejects; runner never auto-passes."
+    }
+  ],
+  "bounds": {
+    "notes": "Caller-supplied task A. No custody or payment."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "request": {
+    "outcomes": ["batch_extraction"],
+    "inputs": { "urls": "not-an-array" }
+  },
+  "expectRefusal": "incompatible_input"
+}

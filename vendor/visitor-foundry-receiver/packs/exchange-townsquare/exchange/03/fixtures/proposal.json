@@ -1,0 +1,11 @@
+{
+  "schema": "neomorphic.r2.exchange.proposal.v1",
+  "id": "prop-rev-demo",
+  "proposerLabel": "fixture-agent-rev",
+  "demo": true,
+  "summary": "Proposal bound to acceptance brief revision.",
+  "terms": { "priceAmount": "0", "currency": "USDC", "deliveryNotes": "Unfunded demonstration." },
+  "claimedRequirements": [
+    { "criterionId": "source_https", "claim": "https", "evidenceRef": "artifact.sourceUrl" }
+  ]
+}

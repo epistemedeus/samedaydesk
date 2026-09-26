@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neomorphic.io/schema/contributor-desk/owed-versus-paid.v1.json",
+  "title": "neomorphic.contributor_desk.owed_versus_paid.v1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "taskId", "owed", "paid", "settled", "transfer", "settlementReceiptView"],
+  "properties": {
+    "schema": { "const": "neomorphic.contributor_desk.owed_versus_paid.v1" },
+    "taskId": { "type": "string" },
+    "owed": { "type": "boolean" },
+    "paid": { "const": false },
+    "settled": { "const": false },
+    "transfer": { "type": "null" },
+    "adapter": { "const": "null_nonpaying_v0" },
+    "settlementReceiptView": {
+      "type": "object",
+      "required": ["owner", "relation", "rendersSettlementReceipt"],
+      "properties": {
+        "owner": { "const": "R3-09" },
+        "relation": { "const": "disjoint" },
+        "rendersSettlementReceipt": { "const": false }
+      }
+    }
+  }
+}

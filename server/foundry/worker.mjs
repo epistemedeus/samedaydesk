@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import path from "node:path";
-import { foundryHostOptIn } from "@neomorphic/correspondence";
+import { foundryHostOptIn } from "./opt-in.js";
+import { CANONICAL_WORKER } from "./paths.js";
 import { runPhasedWorker } from "./lifecycle.js";
 
 function redact(text) {
@@ -16,10 +16,7 @@ function fail(code, error) {
 
 function resolvePass(env) {
   if (env.FOUNDRY_WORKER_PASS && existsSync(env.FOUNDRY_WORKER_PASS)) return env.FOUNDRY_WORKER_PASS;
-  if (env.FOUNDRY_F93_ROOT) {
-    const candidate = path.join(env.FOUNDRY_F93_ROOT, "scripts/visitor-foundry/integration/worker.mjs");
-    if (existsSync(candidate)) return candidate;
-  }
+  if (existsSync(CANONICAL_WORKER)) return CANONICAL_WORKER;
   return null;
 }
 
@@ -37,6 +34,9 @@ function childEnv(env) {
     CORRESPONDENCE_POOL_MAX: "2",
     FOUNDRY_WORKER_TRACE: env.FOUNDRY_WORKER_TRACE || "",
     FOUNDRY_WORKER_HOLD: env.FOUNDRY_WORKER_HOLD || "",
+    FOUNDRY_CLAIM_PROJECT: env.FOUNDRY_CLAIM_PROJECT || "",
+    FOUNDRY_CLAIM_ASSIGNMENT: env.FOUNDRY_CLAIM_ASSIGNMENT || "",
+    FOUNDRY_WORKER_HOLD_MS: env.FOUNDRY_WORKER_HOLD_MS || "",
   };
 }
 

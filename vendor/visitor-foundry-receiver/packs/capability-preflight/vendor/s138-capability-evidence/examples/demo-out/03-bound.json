@@ -1,0 +1,77 @@
+{
+  "schema": "s138.evidence-binding.v1",
+  "capabilityId": "R2-CAPABILITIES-03",
+  "declaration": {
+    "capabilityId": "R2-CAPABILITIES-02",
+    "claim": "resolve prerequisites from real manifests",
+    "revision": "s138-local"
+  },
+  "status": "content_bound",
+  "executionVerified": false,
+  "claimed": {
+    "capabilityId": "R2-CAPABILITIES-02",
+    "claim": "resolve prerequisites from real manifests",
+    "revision": "s138-local",
+    "sourcePath": "/workspace/experiments/s138-capability-evidence/src/resolve-prerequisites.mjs",
+    "sourceSha256": null,
+    "testSha256": null,
+    "parsedTestFacts": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "source": "imported_content"
+    }
+  },
+  "observed": {
+    "sourceRevision": null,
+    "sourceSha256": "6c2e1548d94b15de0b2863dd529b25bb8ac3f7561e2bd721622eea0c294b36b3",
+    "testExitCode": 0,
+    "testPassedHeuristic": true,
+    "testSha256": "4bfa25d75306eee99867bd46c604ea262b6c0b62ca7d554776a68f4e5a99ad81",
+    "parsedTestFacts": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "source": "imported_content"
+    },
+    "contentBytesOnly": true
+  },
+  "verified": {
+    "sourceDigestMatchesContent": true,
+    "testDigestMatchesContent": true,
+    "revisionAligned": null,
+    "testPassConsistent": true
+  },
+  "bindings": [
+    {
+      "kind": "source",
+      "path": "/workspace/experiments/s138-capability-evidence/src/resolve-prerequisites.mjs",
+      "sha256": "6c2e1548d94b15de0b2863dd529b25bb8ac3f7561e2bd721622eea0c294b36b3",
+      "revisionClaimed": "s138-local",
+      "revisionObserved": null
+    },
+    {
+      "kind": "test-output",
+      "path": "/workspace/experiments/s138-capability-evidence/fixtures/evidence/sample-tap-pass.txt",
+      "sha256": "4bfa25d75306eee99867bd46c604ea262b6c0b62ca7d554776a68f4e5a99ad81",
+      "exitCode": 0,
+      "summary": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0
+      },
+      "passed": true
+    }
+  ],
+  "provenanceConsidered": false,
+  "provenanceSufficientAlone": false,
+  "gaps": [],
+  "notes": [
+    "content_bound means verified digests of supplied source/test bytes + passing TAP text shape; executionVerified is always false.",
+    "Claimed sha256 must match content when both are supplied; mismatch is untested_declaration (not bound).",
+    "Hashing imported output does not prove those tests ran against the claimed source revision.",
+    "claimed/observed parsed TAP facts are imported text parses, not library observations of a live run.",
+    "No caller-set executionVerified:true trust field is honored.",
+    "signer labels alone never suffice."
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "policyRef": "policy:owner-controlled-fixture-v1",
+  "admittedObservationIds": [
+    "fixture:package-engine-probe"
+  ]
+}

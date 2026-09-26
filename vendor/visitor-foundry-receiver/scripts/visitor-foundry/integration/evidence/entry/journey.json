@@ -1,0 +1,2131 @@
+{
+  "purpose": "owner_qa",
+  "independence": "unknown",
+  "entryTerms": "sha256:7e36630f421101eda67cee19e015d642fc21b9c688ae7b06515d0cbd5573e0ab",
+  "hostConfigId": "sha256:ba51a08d4df1886a50c74ae077b49b4845694d4562c157255a3bb8436963b0fc",
+  "contribution": {
+    "purpose": "owner_qa",
+    "original": {
+      "resolution": {
+        "schema": "neomorphic.foundry.capability-resolution.v1",
+        "snapshotId": "sha256:af36e62de6f86d5d41eac443b86f88e9ab7384398ab0de4d63d6bbdb155f1491",
+        "requestId": "sha256:dd34af944e0685a989c16bcda7de528dcd61192abab2894ac8019bb6e5a264d8",
+        "taskId": "task:visitor-a",
+        "now": "2026-09-26T16:47:37.385Z",
+        "policyId": "sha256:8184edb01e9f794870afcc516695488b6cd604ebd69f50177fbf2cd84a1d976e",
+        "policyRef": "policy:vf09:sha256:325e574ead1e4e596008db2c2a66ae2c9f1f7671f94b4a8e8fe433b15039336b",
+        "status": "missing",
+        "selected": null,
+        "reasons": [
+          "no_candidate_in_complete_snapshot_scope"
+        ],
+        "coverage": {
+          "outcomes": [
+            "compact-correspondence-structured-result"
+          ],
+          "complete": true,
+          "sourceRefs": [
+            "source:installed-preflight-pool"
+          ],
+          "asOf": "2026-09-26T00:00:00.000Z"
+        },
+        "candidates": [],
+        "boundaries": {
+          "registryAcceptance": "not-decided",
+          "promotion": "not-decided",
+          "invocation": false,
+          "usefulOutcome": "unknown",
+          "payment": "not-decided"
+        },
+        "resolutionId": "sha256:5e7848984e21003f2e176c20f0c828f58f07c66d66270de9e98dfd796bc28e89"
+      },
+      "manifest": null
+    },
+    "privateResult": {
+      "output": {
+        "outcome": "observed",
+        "payload": {
+          "event": {
+            "id": "evt_original",
+            "kind": "artifact"
+          },
+          "replayed": false
+        }
+      },
+      "observation": {
+        "schema": "neomorphic.foundry.portable-execution.observation.v1",
+        "binding": {
+          "assignmentId": "assignment:owner-qa",
+          "candidateId": "candidate:owner-qa",
+          "fence": "fixture-fence-1",
+          "capability": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca"
+          },
+          "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+          "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "evaluator": {
+            "id": "evaluator:vf09-structured-result",
+            "revision": "vf09.oracle.v1",
+            "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+          },
+          "environmentDigest": "sha256:3a1aa1b98c5e3ac9ca129c3141815cfb9fbedbd764d11a6f6d68a7b70e498a62",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+        },
+        "inputDigest": "sha256:e0ceb49c0350f24ed75ed08bf3467058b71feac392c20c7cac9d627d8105efcf",
+        "outputDigest": "sha256:622eaf86aeceb05babdd240973f228e8104e8716c65b4755a9ac9f588d2ec2dd",
+        "status": "ok",
+        "code": null,
+        "phase": "execute",
+        "phasesObserved": [
+          {
+            "phase": "compile",
+            "wallMs": 55.36737199999999
+          },
+          {
+            "phase": "instantiate",
+            "wallMs": 60.80889100000002
+          },
+          {
+            "phase": "execute",
+            "wallMs": 60.972711000000004
+          }
+        ],
+        "processIdentity": {
+          "pid": 1345340,
+          "supervisorPid": 1345314,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2704924"
+        },
+        "termination": {
+          "exited": true,
+          "noLaunch": false,
+          "code": 0,
+          "signal": null
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "limits": {
+          "moduleBytes": 262144,
+          "inputBytes": 16384,
+          "outputBytes": 32768,
+          "memoryBytes": 262144,
+          "tableElements": 128,
+          "stackBytes": 65536,
+          "fuel": 1000000,
+          "compileMs": 1500,
+          "instantiateMs": 500,
+          "executeMs": 500,
+          "wallMs": 4000,
+          "addressSpaceBytes": 536870912,
+          "cpuSeconds": 2,
+          "hostStackBytes": 8388608,
+          "fileBytes": 1048576,
+          "openFiles": 32
+        },
+        "usage": {
+          "wallMs": 73.59461599999997,
+          "cpuMs": 60.101,
+          "peakRssBytes": 50352128,
+          "fuelUsed": 12199,
+          "compileMs": 5.441575998702319,
+          "instantiateMs": 0.16319099813699722,
+          "executeMs": 0.25056000231415965,
+          "cost": null
+        },
+        "observedAt": "2026-09-26T16:47:37.696Z",
+        "outcome": "observed_execution",
+        "compatibility": "unqualified",
+        "id": "sha256:09d9656a607c53f7ac68f11cf3dd016642bd91f3fb7c75180d2dc22d1706fb79"
+      }
+    },
+    "submission": {
+      "schema": "neomorphic.foundry.participation-receipt.v1",
+      "requestId": "vf05_e6b7c6758aa20b1b506af2f456dcc6c98637ef551c6fc4e7f9001bfe2c57b380",
+      "operation": "submit",
+      "termsVersion": "sha256:10b8b4a99aaf3fa4772356e813f5e1d278bdc6323f0fabc284a2997b367e693d",
+      "cellId": "wcl_1e0abbee9848a9649aaaf8a743cf9d5bbe504874708627bd608df005e1d0342a",
+      "revision": 4,
+      "replayed": false,
+      "admission": {
+        "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+        "identity": {
+          "schema": "neomorphic.foundry.candidate-identity.v1",
+          "target": {
+            "capabilityId": "source:correspondence-structured-result",
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca"
+          },
+          "dependencies": []
+        },
+        "duplicate": false,
+        "nextAction": "Await assigned installed verification; contribution is voluntary and nonfinancial.",
+        "replayed": false
+      }
+    },
+    "continuation": {
+      "schema": "neomorphic.foundry.participation-hint.v1",
+      "cellId": "wcl_1e0abbee9848a9649aaaf8a743cf9d5bbe504874708627bd608df005e1d0342a"
+    },
+    "moduleBytes": 3356,
+    "sourceBytes": 2456,
+    "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+    "build": {
+      "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+      "bytes": 3356,
+      "sourceDigest": "sha256:e278017956465f0665dceb138ea1e666591ded14b4a7cda36bd6f2e0995f8114",
+      "compiler": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin",
+      "linkerDigest": "sha256:f3818329769274079601a74a4c5e503ad1c3029bb6b9a65436105787e92301c2",
+      "linkArgs": [
+        "--no-entry",
+        "--export-memory",
+        "--initial-memory=262144",
+        "--max-memory=262144",
+        "-z",
+        "stack-size=32768",
+        "<execution>/.build/structured-result.o",
+        "-o",
+        "<execution>/.build/structured-result.wasm"
+      ],
+      "args": [
+        "--target=wasm32",
+        "-O2",
+        "-nostdlib",
+        "-fno-builtin",
+        "-c",
+        "<execution>/example/structured-result.c",
+        "-o",
+        "<execution>/.build/structured-result.o"
+      ]
+    },
+    "metrics": {
+      "requests": 16,
+      "requestBytes": 13211,
+      "responseBytes": 15220
+    },
+    "elapsedMs": 564.876969
+  },
+  "verification": {
+    "state": "reconciled",
+    "children": [
+      {
+        "caseId": "case:project-created",
+        "sample": {
+          "output": {
+            "outcome": "observed",
+            "payload": {
+              "project": {
+                "id": "prj_later_alpha",
+                "status": "open",
+                "version": 1
+              },
+              "nextAction": null
+            }
+          },
+          "observation": {
+            "id": "sha256:61f444ca811c3aca6a7e72c6c49bedcd0ccc9d6e20396a32ecfed396eea5ed6c",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 61.75499999999999,
+              "wallMs": 75.88102099999992,
+              "fuelUsed": 14630,
+              "compileMs": 5.376082001021132,
+              "executeMs": 0.2552979967731517,
+              "peakRssBytes": 82808832,
+              "instantiateMs": 0.1640150003368035
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "assignment:1",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:38.323Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:40f276155bf5384f07c0963469ce796015b9f5cdad03d489cf6d2dbbcfc5448d",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:2a45139ac76364f19afe5556f3227d6a07e4637682df9f21d1e121fd9e97ec8b",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 57.50886000000014
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 63.06928300000004
+              },
+              {
+                "phase": "execute",
+                "wallMs": 63.14609799999994
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345342,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2704987",
+              "supervisorPid": 1345262
+            }
+          }
+        },
+        "planned": true,
+        "identity": {
+          "pid": 1345342,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2704987",
+          "supervisorPid": 1345262
+        }
+      },
+      {
+        "caseId": "case:lost-artifact-ack",
+        "sample": {
+          "output": {
+            "outcome": "unknown",
+            "payload": {
+              "error": {
+                "code": "unknown_outcome",
+                "reconcile": true,
+                "requestId": "later-artifact-7",
+                "retryable": false
+              }
+            }
+          },
+          "observation": {
+            "id": "sha256:0df2a06cb0782420b95de6ea76b173c5f2834ab87f622670d13824cdc38b82d7",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 63.79,
+              "wallMs": 79.11071899999979,
+              "fuelUsed": 16397,
+              "compileMs": 5.710547000489896,
+              "executeMs": 0.28644099802477285,
+              "peakRssBytes": 82993152,
+              "instantiateMs": 0.17791500067687593
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "assignment:1",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:38.485Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:394ddb48e458695ba1e87a36d013049d8153232a857c5486e0cc5ee6424ee200",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:d7239f4f05bafe04381d4b44ce8ae2974cd0697bc219971ccc9d964982b712da",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 60.397598000000016
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 66.27847799999972
+              },
+              {
+                "phase": "execute",
+                "wallMs": 66.34694499999978
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345343,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705003",
+              "supervisorPid": 1345262
+            }
+          }
+        },
+        "planned": true,
+        "identity": {
+          "pid": 1345343,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705003",
+          "supervisorPid": 1345262
+        }
+      },
+      {
+        "caseId": "case:grant-denied",
+        "sample": {
+          "output": {
+            "outcome": "error",
+            "payload": {
+              "error": {
+                "code": "forbidden",
+                "status": 403
+              },
+              "nextAction": "request-scoped-access"
+            }
+          },
+          "observation": {
+            "id": "sha256:90f0eb56e273832dc2c36bdf5fd1c527b6edf68b3fdf6870207014bd2c7928be",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 60.58399999999999,
+              "wallMs": 73.71722600000021,
+              "fuelUsed": 9692,
+              "compileMs": 5.416580999735743,
+              "executeMs": 0.25071400159504265,
+              "peakRssBytes": 83935232,
+              "instantiateMs": 0.16104399765026756
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "assignment:1",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:38.641Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:0af0f35cf9ea24e23cec7744ca0831a7dc3f38ed407c168f48e713626921805a",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 55.611095000000205
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 61.07263600000033
+              },
+              {
+                "phase": "execute",
+                "wallMs": 61.252242000000024
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345344,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705019",
+              "supervisorPid": 1345262
+            }
+          }
+        },
+        "planned": true,
+        "identity": {
+          "pid": 1345344,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705019",
+          "supervisorPid": 1345262
+        }
+      },
+      {
+        "caseId": "case:unsupported-prose",
+        "sample": {
+          "output": {
+            "outcome": "unsupported",
+            "payload": {}
+          },
+          "observation": {
+            "id": "sha256:9fb969cbc01e710bf4066c396effd371dde144a4612927d81020ba366d8c9ea4",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 62.035999999999994,
+              "wallMs": 75.54929900000025,
+              "fuelUsed": 3085,
+              "compileMs": 5.36761700277566,
+              "executeMs": 0.2542449983593542,
+              "peakRssBytes": 84324352,
+              "instantiateMs": 0.1636160013731569
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "assignment:1",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:38.795Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:77f26c50f04b492e89aa8af3e302792a4e209157bbdfc6265beac64c7c3c2ec0",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:dc79d4d5a8e43080f7ff2770d5201735e16b04ec4c0586402d89931701988679",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 57.139826000000085
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 62.73046999999997
+              },
+              {
+                "phase": "execute",
+                "wallMs": 62.79445200000009
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345345,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705034",
+              "supervisorPid": 1345262
+            }
+          }
+        },
+        "planned": true,
+        "identity": {
+          "pid": 1345345,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705034",
+          "supervisorPid": 1345262
+        }
+      }
+    ],
+    "portable_result": {
+      "id": "sha256:8fbd1bec6d2ca9fd7b4c4b24ba35e0397117e950bfb59f3cdc9b22658766f6d5",
+      "checks": [
+        {
+          "id": "case:project-created",
+          "status": "pass",
+          "inputDigest": "sha256:f50af18114919fde1d7e4fd335e6f0a8bffca8dae326eb7224898c94ac7f9726",
+          "observationId": "sha256:61f444ca811c3aca6a7e72c6c49bedcd0ccc9d6e20396a32ecfed396eea5ed6c",
+          "executionInputDigest": "sha256:40f276155bf5384f07c0963469ce796015b9f5cdad03d489cf6d2dbbcfc5448d"
+        },
+        {
+          "id": "case:lost-artifact-ack",
+          "status": "pass",
+          "inputDigest": "sha256:0325bfe3f1a2c0391c400f59c38d78d2fd922acd9ed098726c4ac63b2f3376e3",
+          "observationId": "sha256:0df2a06cb0782420b95de6ea76b173c5f2834ab87f622670d13824cdc38b82d7",
+          "executionInputDigest": "sha256:394ddb48e458695ba1e87a36d013049d8153232a857c5486e0cc5ee6424ee200"
+        },
+        {
+          "id": "case:grant-denied",
+          "status": "pass",
+          "inputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+          "observationId": "sha256:90f0eb56e273832dc2c36bdf5fd1c527b6edf68b3fdf6870207014bd2c7928be",
+          "executionInputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a"
+        },
+        {
+          "id": "case:unsupported-prose",
+          "status": "pass",
+          "inputDigest": "sha256:068ba1c95216d8496f5d8bc7a2a255a104e9fa43edc28b883780f0b0bf8de22b",
+          "observationId": "sha256:9fb969cbc01e710bf4066c396effd371dde144a4612927d81020ba366d8c9ea4",
+          "executionInputDigest": "sha256:77f26c50f04b492e89aa8af3e302792a4e209157bbdfc6265beac64c7c3c2ec0"
+        }
+      ],
+      "schema": "neomorphic.foundry.portable-execution.verification.v1",
+      "binding": {
+        "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+        "evaluator": {
+          "id": "evaluator:vf09-structured-result",
+          "revision": "vf09.oracle.v1",
+          "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+        },
+        "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+        "capability": {
+          "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "capabilityId": "source:correspondence-structured-result"
+        },
+        "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+        "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+        "assignmentId": "assignment:1",
+        "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+        "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+        "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+      },
+      "outcome": "sample_checks_passed",
+      "purpose": "owner_qa",
+      "authority": "receiver-admission-required",
+      "evaluator": {
+        "id": "evaluator:vf09-structured-result",
+        "revision": "vf09.oracle.v1",
+        "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+      },
+      "oraclePin": "sha256:ad8f1cbaba98a8e325b991c29f451188b3caefe0f78f738d2cccf99a4e665123",
+      "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+      "environment": {
+        "arch": "x64",
+        "platform": "linux",
+        "executionProfile": "vf08.wasmtime49-linux-x64-fixed.v1"
+      },
+      "limitations": [
+        "Finite installed tests do not establish whole-domain compatibility.",
+        "No promotion, independent organization or useful external task is established."
+      ],
+      "observations": [
+        {
+          "id": "sha256:61f444ca811c3aca6a7e72c6c49bedcd0ccc9d6e20396a32ecfed396eea5ed6c",
+          "code": null,
+          "phase": "execute",
+          "usage": {
+            "cost": null,
+            "cpuMs": 61.75499999999999,
+            "wallMs": 75.88102099999992,
+            "fuelUsed": 14630,
+            "compileMs": 5.376082001021132,
+            "executeMs": 0.2552979967731517,
+            "peakRssBytes": 82808832,
+            "instantiateMs": 0.1640150003368035
+          },
+          "limits": {
+            "fuel": 1000000,
+            "wallMs": 4000,
+            "compileMs": 1500,
+            "executeMs": 500,
+            "fileBytes": 1048576,
+            "openFiles": 32,
+            "cpuSeconds": 2,
+            "inputBytes": 16384,
+            "stackBytes": 65536,
+            "memoryBytes": 262144,
+            "moduleBytes": 262144,
+            "outputBytes": 32768,
+            "instantiateMs": 500,
+            "tableElements": 128,
+            "hostStackBytes": 8388608,
+            "addressSpaceBytes": 536870912
+          },
+          "schema": "neomorphic.foundry.portable-execution.observation.v1",
+          "status": "ok",
+          "binding": {
+            "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1",
+              "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+            },
+            "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+            "capability": {
+              "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+              "capabilityId": "source:correspondence-structured-result"
+            },
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+            "assignmentId": "assignment:1",
+            "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+            "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "outcome": "observed_execution",
+          "observedAt": "2026-09-26T16:47:38.323Z",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "inputDigest": "sha256:40f276155bf5384f07c0963469ce796015b9f5cdad03d489cf6d2dbbcfc5448d",
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          },
+          "outputDigest": "sha256:2a45139ac76364f19afe5556f3227d6a07e4637682df9f21d1e121fd9e97ec8b",
+          "compatibility": "unqualified",
+          "phasesObserved": [
+            {
+              "phase": "compile",
+              "wallMs": 57.50886000000014
+            },
+            {
+              "phase": "instantiate",
+              "wallMs": 63.06928300000004
+            },
+            {
+              "phase": "execute",
+              "wallMs": 63.14609799999994
+            }
+          ],
+          "processIdentity": {
+            "pid": 1345342,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2704987",
+            "supervisorPid": 1345262
+          }
+        },
+        {
+          "id": "sha256:0df2a06cb0782420b95de6ea76b173c5f2834ab87f622670d13824cdc38b82d7",
+          "code": null,
+          "phase": "execute",
+          "usage": {
+            "cost": null,
+            "cpuMs": 63.79,
+            "wallMs": 79.11071899999979,
+            "fuelUsed": 16397,
+            "compileMs": 5.710547000489896,
+            "executeMs": 0.28644099802477285,
+            "peakRssBytes": 82993152,
+            "instantiateMs": 0.17791500067687593
+          },
+          "limits": {
+            "fuel": 1000000,
+            "wallMs": 4000,
+            "compileMs": 1500,
+            "executeMs": 500,
+            "fileBytes": 1048576,
+            "openFiles": 32,
+            "cpuSeconds": 2,
+            "inputBytes": 16384,
+            "stackBytes": 65536,
+            "memoryBytes": 262144,
+            "moduleBytes": 262144,
+            "outputBytes": 32768,
+            "instantiateMs": 500,
+            "tableElements": 128,
+            "hostStackBytes": 8388608,
+            "addressSpaceBytes": 536870912
+          },
+          "schema": "neomorphic.foundry.portable-execution.observation.v1",
+          "status": "ok",
+          "binding": {
+            "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1",
+              "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+            },
+            "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+            "capability": {
+              "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+              "capabilityId": "source:correspondence-structured-result"
+            },
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+            "assignmentId": "assignment:1",
+            "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+            "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "outcome": "observed_execution",
+          "observedAt": "2026-09-26T16:47:38.485Z",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "inputDigest": "sha256:394ddb48e458695ba1e87a36d013049d8153232a857c5486e0cc5ee6424ee200",
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          },
+          "outputDigest": "sha256:d7239f4f05bafe04381d4b44ce8ae2974cd0697bc219971ccc9d964982b712da",
+          "compatibility": "unqualified",
+          "phasesObserved": [
+            {
+              "phase": "compile",
+              "wallMs": 60.397598000000016
+            },
+            {
+              "phase": "instantiate",
+              "wallMs": 66.27847799999972
+            },
+            {
+              "phase": "execute",
+              "wallMs": 66.34694499999978
+            }
+          ],
+          "processIdentity": {
+            "pid": 1345343,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705003",
+            "supervisorPid": 1345262
+          }
+        },
+        {
+          "id": "sha256:90f0eb56e273832dc2c36bdf5fd1c527b6edf68b3fdf6870207014bd2c7928be",
+          "code": null,
+          "phase": "execute",
+          "usage": {
+            "cost": null,
+            "cpuMs": 60.58399999999999,
+            "wallMs": 73.71722600000021,
+            "fuelUsed": 9692,
+            "compileMs": 5.416580999735743,
+            "executeMs": 0.25071400159504265,
+            "peakRssBytes": 83935232,
+            "instantiateMs": 0.16104399765026756
+          },
+          "limits": {
+            "fuel": 1000000,
+            "wallMs": 4000,
+            "compileMs": 1500,
+            "executeMs": 500,
+            "fileBytes": 1048576,
+            "openFiles": 32,
+            "cpuSeconds": 2,
+            "inputBytes": 16384,
+            "stackBytes": 65536,
+            "memoryBytes": 262144,
+            "moduleBytes": 262144,
+            "outputBytes": 32768,
+            "instantiateMs": 500,
+            "tableElements": 128,
+            "hostStackBytes": 8388608,
+            "addressSpaceBytes": 536870912
+          },
+          "schema": "neomorphic.foundry.portable-execution.observation.v1",
+          "status": "ok",
+          "binding": {
+            "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1",
+              "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+            },
+            "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+            "capability": {
+              "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+              "capabilityId": "source:correspondence-structured-result"
+            },
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+            "assignmentId": "assignment:1",
+            "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+            "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "outcome": "observed_execution",
+          "observedAt": "2026-09-26T16:47:38.641Z",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "inputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          },
+          "outputDigest": "sha256:0af0f35cf9ea24e23cec7744ca0831a7dc3f38ed407c168f48e713626921805a",
+          "compatibility": "unqualified",
+          "phasesObserved": [
+            {
+              "phase": "compile",
+              "wallMs": 55.611095000000205
+            },
+            {
+              "phase": "instantiate",
+              "wallMs": 61.07263600000033
+            },
+            {
+              "phase": "execute",
+              "wallMs": 61.252242000000024
+            }
+          ],
+          "processIdentity": {
+            "pid": 1345344,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705019",
+            "supervisorPid": 1345262
+          }
+        },
+        {
+          "id": "sha256:9fb969cbc01e710bf4066c396effd371dde144a4612927d81020ba366d8c9ea4",
+          "code": null,
+          "phase": "execute",
+          "usage": {
+            "cost": null,
+            "cpuMs": 62.035999999999994,
+            "wallMs": 75.54929900000025,
+            "fuelUsed": 3085,
+            "compileMs": 5.36761700277566,
+            "executeMs": 0.2542449983593542,
+            "peakRssBytes": 84324352,
+            "instantiateMs": 0.1636160013731569
+          },
+          "limits": {
+            "fuel": 1000000,
+            "wallMs": 4000,
+            "compileMs": 1500,
+            "executeMs": 500,
+            "fileBytes": 1048576,
+            "openFiles": 32,
+            "cpuSeconds": 2,
+            "inputBytes": 16384,
+            "stackBytes": 65536,
+            "memoryBytes": 262144,
+            "moduleBytes": 262144,
+            "outputBytes": 32768,
+            "instantiateMs": 500,
+            "tableElements": 128,
+            "hostStackBytes": 8388608,
+            "addressSpaceBytes": 536870912
+          },
+          "schema": "neomorphic.foundry.portable-execution.observation.v1",
+          "status": "ok",
+          "binding": {
+            "fence": "fd531160-bdcb-4eee-9c9e-5f68db03f2ff",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1",
+              "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+            },
+            "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+            "capability": {
+              "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+              "capabilityId": "source:correspondence-structured-result"
+            },
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+            "assignmentId": "assignment:1",
+            "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+            "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "outcome": "observed_execution",
+          "observedAt": "2026-09-26T16:47:38.795Z",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "inputDigest": "sha256:77f26c50f04b492e89aa8af3e302792a4e209157bbdfc6265beac64c7c3c2ec0",
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          },
+          "outputDigest": "sha256:dc79d4d5a8e43080f7ff2770d5201735e16b04ec4c0586402d89931701988679",
+          "compatibility": "unqualified",
+          "phasesObserved": [
+            {
+              "phase": "compile",
+              "wallMs": 57.139826000000085
+            },
+            {
+              "phase": "instantiate",
+              "wallMs": 62.73046999999997
+            },
+            {
+              "phase": "execute",
+              "wallMs": 62.79445200000009
+            }
+          ],
+          "processIdentity": {
+            "pid": 1345345,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705034",
+            "supervisorPid": 1345262
+          }
+        }
+      ],
+      "relationship": "owner",
+      "applicability": {
+        "kind": "exact-inputs-only",
+        "inputDigests": [
+          "sha256:f50af18114919fde1d7e4fd335e6f0a8bffca8dae326eb7224898c94ac7f9726",
+          "sha256:0325bfe3f1a2c0391c400f59c38d78d2fd922acd9ed098726c4ac63b2f3376e3",
+          "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+          "sha256:068ba1c95216d8496f5d8bc7a2a255a104e9fa43edc28b883780f0b0bf8de22b"
+        ]
+      }
+    },
+    "termination": {
+      "proof": "all_planned_children_witnessed",
+      "exited": true,
+      "children": [
+        {
+          "caseId": "case:project-created",
+          "identity": {
+            "pid": 1345342,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2704987",
+            "supervisorPid": 1345262
+          },
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          }
+        },
+        {
+          "caseId": "case:lost-artifact-ack",
+          "identity": {
+            "pid": 1345343,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705003",
+            "supervisorPid": 1345262
+          },
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          }
+        },
+        {
+          "caseId": "case:grant-denied",
+          "identity": {
+            "pid": 1345344,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705019",
+            "supervisorPid": 1345262
+          },
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          }
+        },
+        {
+          "caseId": "case:unsupported-prose",
+          "identity": {
+            "pid": 1345345,
+            "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+            "startTicks": "2705034",
+            "supervisorPid": 1345262
+          },
+          "termination": {
+            "code": 0,
+            "exited": true,
+            "signal": null,
+            "noLaunch": false
+          }
+        }
+      ],
+      "noLaunch": false,
+      "observedAt": "2026-09-26T16:47:38.803Z",
+      "errorReason": null,
+      "witnessedBy": "supervisor:af009131-852f-493e-a3f8-eaa1f302fa34"
+    }
+  },
+  "reuse": [
+    {
+      "caseId": "case:project-created",
+      "output": {
+        "outcome": "observed",
+        "payload": {
+          "project": {
+            "id": "prj_later_alpha",
+            "status": "open",
+            "version": 1
+          },
+          "nextAction": null
+        }
+      }
+    },
+    {
+      "caseId": "case:lost-artifact-ack",
+      "output": {
+        "outcome": "unknown",
+        "payload": {
+          "error": {
+            "code": "unknown_outcome",
+            "reconcile": true,
+            "requestId": "later-artifact-7",
+            "retryable": false
+          }
+        }
+      }
+    },
+    {
+      "caseId": "case:grant-denied",
+      "output": {
+        "outcome": "error",
+        "payload": {
+          "error": {
+            "code": "forbidden",
+            "status": 403
+          },
+          "nextAction": "request-scoped-access"
+        }
+      }
+    },
+    {
+      "caseId": "case:unsupported-prose",
+      "output": {
+        "outcome": "unsupported",
+        "payload": {}
+      }
+    }
+  ],
+  "invocations": [
+    {
+      "task_id": "task:222a1b46-63f1-40f1-9098-088c2b12ff90",
+      "state": "completed",
+      "execution": {
+        "id": "invocation:05603327-36be-4f17-bc69-81220c547f7d",
+        "fence": "0827ba05-879d-44fe-a313-376c1bbded39",
+        "sample": {
+          "output": {
+            "outcome": "error",
+            "payload": {
+              "error": {
+                "code": "forbidden",
+                "status": 403
+              },
+              "nextAction": "request-scoped-access"
+            }
+          },
+          "observation": {
+            "id": "sha256:71373fe638114866c6e76892285c5aa3532565bcaa4ca64cafca6bacb62bcf11",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 64.59700000000001,
+              "wallMs": 79.59762899999987,
+              "fuelUsed": 9692,
+              "compileMs": 5.5955739990167785,
+              "executeMs": 0.2682590020413045,
+              "peakRssBytes": 82337792,
+              "instantiateMs": 0.17108300016843714
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "0827ba05-879d-44fe-a313-376c1bbded39",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "invocation:05603327-36be-4f17-bc69-81220c547f7d",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:41.272Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:0af0f35cf9ea24e23cec7744ca0831a7dc3f38ed407c168f48e713626921805a",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 60.56665899999962
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 66.43780799999968
+              },
+              {
+                "phase": "execute",
+                "wallMs": 66.49694399999998
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345403,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705281",
+              "supervisorPid": 1345346
+            }
+          }
+        },
+        "binding": {
+          "fence": "0827ba05-879d-44fe-a313-376c1bbded39",
+          "evaluator": {
+            "id": "evaluator:vf09-structured-result",
+            "revision": "vf09.oracle.v1",
+            "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+          },
+          "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+          "capability": {
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+            "capabilityId": "source:correspondence-structured-result"
+          },
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+          "assignmentId": "invocation:05603327-36be-4f17-bc69-81220c547f7d",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+        },
+        "grantId": "grn_8G193xHJl__F2oCS",
+        "identity": {
+          "pid": 1345403,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705281",
+          "supervisorPid": 1345346
+        },
+        "requestId": "sha256:c8c4ee775072becc9382345060e8ba3057d5db5ca2a4a8060f3d1415624e461c",
+        "generation": 1,
+        "supervisor": "supervisor:d822907e-853a-4457-ad7e-54e29de19b33",
+        "reservation": {
+          "cpuMs": 2000,
+          "wallMs": 4000,
+          "memoryMb": 512,
+          "maxRecords": 8,
+          "maxRunning": 1,
+          "costCapUsdMicros": "1000"
+        },
+        "verification": {
+          "id": "sha256:4a2a2082373072c67cd229453ff888b227d835dcf8c8cab7e6c7e83d1e6f3b37",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_1taL7dIWdnijmNUw",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:v1",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_1taL7dIWdnijmNUw",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "sourceProject": "prj_1taL7dIWdnijmNUw"
+      },
+      "result": {
+        "cost": null,
+        "output": {
+          "outcome": "error",
+          "payload": {
+            "error": {
+              "code": "forbidden",
+              "status": 403
+            },
+            "nextAction": "request-scoped-access"
+          }
+        },
+        "schema": "neomorphic.foundry.invocation.v1",
+        "target": {
+          "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "capabilityId": "source:correspondence-structured-result"
+        },
+        "taskId": "task:222a1b46-63f1-40f1-9098-088c2b12ff90",
+        "outcome": "observed_output",
+        "purpose": "owner_qa",
+        "effortMs": null,
+        "invokedAt": "2026-09-26T16:47:41.272Z",
+        "manifestId": "sha256:aa461443997a0ebc493f8edae01f6b1faf4ac80f6ba940e42edc250f53b00913",
+        "inputDigest": "sha256:52033cc1f637c73a0394b528de121f0ae7198aa9a4ed60ee86a8c08842ad106a",
+        "relationship": "owner",
+        "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9",
+        "beneficiaryGrantId": "grn_8G193xHJl__F2oCS",
+        "executionObservation": "sha256:71373fe638114866c6e76892285c5aa3532565bcaa4ca64cafca6bacb62bcf11"
+      }
+    },
+    {
+      "task_id": "task:2907c40b-577c-459a-a9dd-ea27a094beb5",
+      "state": "completed",
+      "execution": {
+        "id": "invocation:d681fa6b-0209-42a8-be1d-ef7bcfdfda60",
+        "fence": "d955ca99-b0dd-4d05-9144-1481252c2213",
+        "sample": {
+          "output": {
+            "outcome": "unknown",
+            "payload": {
+              "error": {
+                "code": "unknown_outcome",
+                "reconcile": true,
+                "requestId": "later-artifact-7",
+                "retryable": false
+              }
+            }
+          },
+          "observation": {
+            "id": "sha256:3c2925b3662f4ac2821fb7b70eb0310aa3280ee753317fe2ecc9f9ee7785e34e",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 62.415,
+              "wallMs": 75.8890879999999,
+              "fuelUsed": 16397,
+              "compileMs": 5.376809000154026,
+              "executeMs": 0.2578649982751813,
+              "peakRssBytes": 50724864,
+              "instantiateMs": 0.16869299724930897
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "d955ca99-b0dd-4d05-9144-1481252c2213",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "invocation:d681fa6b-0209-42a8-be1d-ef7bcfdfda60",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:40.652Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:394ddb48e458695ba1e87a36d013049d8153232a857c5486e0cc5ee6424ee200",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:d7239f4f05bafe04381d4b44ce8ae2974cd0697bc219971ccc9d964982b712da",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 57.725431999999955
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 63.41417200000001
+              },
+              {
+                "phase": "execute",
+                "wallMs": 63.47916999999984
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345394,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705220",
+              "supervisorPid": 1345346
+            }
+          }
+        },
+        "binding": {
+          "fence": "d955ca99-b0dd-4d05-9144-1481252c2213",
+          "evaluator": {
+            "id": "evaluator:vf09-structured-result",
+            "revision": "vf09.oracle.v1",
+            "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+          },
+          "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+          "capability": {
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+            "capabilityId": "source:correspondence-structured-result"
+          },
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+          "assignmentId": "invocation:d681fa6b-0209-42a8-be1d-ef7bcfdfda60",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+        },
+        "grantId": "grn_8G193xHJl__F2oCS",
+        "identity": {
+          "pid": 1345394,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705220",
+          "supervisorPid": 1345346
+        },
+        "requestId": "sha256:791f776a35d9e4e19cd363b38d5e283ba2f23fbf3898e8c50479659e21710592",
+        "generation": 1,
+        "supervisor": "supervisor:38799916-3ca7-4fa4-9189-244b03819a4d",
+        "reservation": {
+          "cpuMs": 2000,
+          "wallMs": 4000,
+          "memoryMb": 512,
+          "maxRecords": 8,
+          "maxRunning": 1,
+          "costCapUsdMicros": "1000"
+        },
+        "verification": {
+          "id": "sha256:4a2a2082373072c67cd229453ff888b227d835dcf8c8cab7e6c7e83d1e6f3b37",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_1taL7dIWdnijmNUw",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:v1",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_1taL7dIWdnijmNUw",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "sourceProject": "prj_1taL7dIWdnijmNUw"
+      },
+      "result": {
+        "cost": null,
+        "output": {
+          "outcome": "unknown",
+          "payload": {
+            "error": {
+              "code": "unknown_outcome",
+              "reconcile": true,
+              "requestId": "later-artifact-7",
+              "retryable": false
+            }
+          }
+        },
+        "schema": "neomorphic.foundry.invocation.v1",
+        "target": {
+          "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "capabilityId": "source:correspondence-structured-result"
+        },
+        "taskId": "task:2907c40b-577c-459a-a9dd-ea27a094beb5",
+        "outcome": "observed_output",
+        "purpose": "owner_qa",
+        "effortMs": null,
+        "invokedAt": "2026-09-26T16:47:40.652Z",
+        "manifestId": "sha256:1f9772c05cd625fa538d3d3d0a3a1e2adf381ea8696a4fd2bdcb1484402c87e1",
+        "inputDigest": "sha256:0325bfe3f1a2c0391c400f59c38d78d2fd922acd9ed098726c4ac63b2f3376e3",
+        "relationship": "owner",
+        "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9",
+        "beneficiaryGrantId": "grn_8G193xHJl__F2oCS",
+        "executionObservation": "sha256:3c2925b3662f4ac2821fb7b70eb0310aa3280ee753317fe2ecc9f9ee7785e34e"
+      }
+    },
+    {
+      "task_id": "task:d1a3f5c9-8b84-4265-a972-b2626f9e1fa5",
+      "state": "completed",
+      "execution": {
+        "id": "invocation:e3426e61-f039-4766-b196-234d34f6d5b2",
+        "fence": "e3aa769b-584a-4024-b174-82387e3679a1",
+        "sample": {
+          "output": {
+            "outcome": "unsupported",
+            "payload": {}
+          },
+          "observation": {
+            "id": "sha256:58516ae941ed403abb25cc992da30b7e02ab3986c06e2176f979c87a975a29b9",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 63.819,
+              "wallMs": 79.63529200000039,
+              "fuelUsed": 3085,
+              "compileMs": 5.443408001156058,
+              "executeMs": 0.26420400172355585,
+              "peakRssBytes": 82337792,
+              "instantiateMs": 0.17115000082412735
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "e3aa769b-584a-4024-b174-82387e3679a1",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "invocation:e3426e61-f039-4766-b196-234d34f6d5b2",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:41.893Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:77f26c50f04b492e89aa8af3e302792a4e209157bbdfc6265beac64c7c3c2ec0",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:dc79d4d5a8e43080f7ff2770d5201735e16b04ec4c0586402d89931701988679",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 60.563202000000274
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 66.26038500000004
+              },
+              {
+                "phase": "execute",
+                "wallMs": 66.32105000000001
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345412,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705343",
+              "supervisorPid": 1345346
+            }
+          }
+        },
+        "binding": {
+          "fence": "e3aa769b-584a-4024-b174-82387e3679a1",
+          "evaluator": {
+            "id": "evaluator:vf09-structured-result",
+            "revision": "vf09.oracle.v1",
+            "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+          },
+          "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+          "capability": {
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+            "capabilityId": "source:correspondence-structured-result"
+          },
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+          "assignmentId": "invocation:e3426e61-f039-4766-b196-234d34f6d5b2",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+        },
+        "grantId": "grn_8G193xHJl__F2oCS",
+        "identity": {
+          "pid": 1345412,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705343",
+          "supervisorPid": 1345346
+        },
+        "requestId": "sha256:04f576d73c8fe55efc530c7c8fc99a7b8e8694da2cf6f44845ea2f43042d09a2",
+        "generation": 1,
+        "supervisor": "supervisor:c33e71eb-39bb-4d26-a18b-bdc9aeeab6bb",
+        "reservation": {
+          "cpuMs": 2000,
+          "wallMs": 4000,
+          "memoryMb": 512,
+          "maxRecords": 8,
+          "maxRunning": 1,
+          "costCapUsdMicros": "1000"
+        },
+        "verification": {
+          "id": "sha256:4a2a2082373072c67cd229453ff888b227d835dcf8c8cab7e6c7e83d1e6f3b37",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_1taL7dIWdnijmNUw",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:v1",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_1taL7dIWdnijmNUw",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "sourceProject": "prj_1taL7dIWdnijmNUw"
+      },
+      "result": {
+        "cost": null,
+        "output": {
+          "outcome": "unsupported",
+          "payload": {}
+        },
+        "schema": "neomorphic.foundry.invocation.v1",
+        "target": {
+          "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "capabilityId": "source:correspondence-structured-result"
+        },
+        "taskId": "task:d1a3f5c9-8b84-4265-a972-b2626f9e1fa5",
+        "outcome": "observed_output",
+        "purpose": "owner_qa",
+        "effortMs": null,
+        "invokedAt": "2026-09-26T16:47:41.893Z",
+        "manifestId": "sha256:647fad1aed129d755ea1001e6c9fbf6d26af36760114bedd830fe9376eb82e65",
+        "inputDigest": "sha256:068ba1c95216d8496f5d8bc7a2a255a104e9fa43edc28b883780f0b0bf8de22b",
+        "relationship": "owner",
+        "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9",
+        "beneficiaryGrantId": "grn_8G193xHJl__F2oCS",
+        "executionObservation": "sha256:58516ae941ed403abb25cc992da30b7e02ab3986c06e2176f979c87a975a29b9"
+      }
+    },
+    {
+      "task_id": "task:f5c711e2-e1bc-41e9-b64e-b79f465e6119",
+      "state": "completed",
+      "execution": {
+        "id": "invocation:aeb11de6-6155-4844-bd0b-2e20c8f74825",
+        "fence": "b143b2cd-3cc7-4400-a8a4-1c2dce3a389a",
+        "sample": {
+          "output": {
+            "outcome": "observed",
+            "payload": {
+              "project": {
+                "id": "prj_later_alpha",
+                "status": "open",
+                "version": 1
+              },
+              "nextAction": null
+            }
+          },
+          "observation": {
+            "id": "sha256:f3ae5e75d8ae5301f2c88a54b8d897bae42da72aed5df455cd6871037c79da87",
+            "code": null,
+            "phase": "execute",
+            "usage": {
+              "cost": null,
+              "cpuMs": 62.248,
+              "wallMs": 76.40157299999998,
+              "fuelUsed": 14630,
+              "compileMs": 5.396832999394974,
+              "executeMs": 0.2683849997993093,
+              "peakRssBytes": 50171904,
+              "instantiateMs": 0.16761900042183697
+            },
+            "limits": {
+              "fuel": 1000000,
+              "wallMs": 4000,
+              "compileMs": 1500,
+              "executeMs": 500,
+              "fileBytes": 1048576,
+              "openFiles": 32,
+              "cpuSeconds": 2,
+              "inputBytes": 16384,
+              "stackBytes": 65536,
+              "memoryBytes": 262144,
+              "moduleBytes": 262144,
+              "outputBytes": 32768,
+              "instantiateMs": 500,
+              "tableElements": 128,
+              "hostStackBytes": 8388608,
+              "addressSpaceBytes": 536870912
+            },
+            "schema": "neomorphic.foundry.portable-execution.observation.v1",
+            "status": "ok",
+            "binding": {
+              "fence": "b143b2cd-3cc7-4400-a8a4-1c2dce3a389a",
+              "evaluator": {
+                "id": "evaluator:vf09-structured-result",
+                "revision": "vf09.oracle.v1",
+                "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+              },
+              "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+              "capability": {
+                "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "capabilityId": "source:correspondence-structured-result"
+              },
+              "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+              "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+              "assignmentId": "invocation:aeb11de6-6155-4844-bd0b-2e20c8f74825",
+              "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+              "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+              "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+            },
+            "outcome": "observed_execution",
+            "observedAt": "2026-09-26T16:47:40.064Z",
+            "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+            "inputDigest": "sha256:40f276155bf5384f07c0963469ce796015b9f5cdad03d489cf6d2dbbcfc5448d",
+            "termination": {
+              "code": 0,
+              "exited": true,
+              "signal": null,
+              "noLaunch": false
+            },
+            "outputDigest": "sha256:2a45139ac76364f19afe5556f3227d6a07e4637682df9f21d1e121fd9e97ec8b",
+            "compatibility": "unqualified",
+            "phasesObserved": [
+              {
+                "phase": "compile",
+                "wallMs": 58.174985999999876
+              },
+              {
+                "phase": "instantiate",
+                "wallMs": 63.62134299999991
+              },
+              {
+                "phase": "execute",
+                "wallMs": 63.68552800000009
+              }
+            ],
+            "processIdentity": {
+              "pid": 1345385,
+              "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+              "startTicks": "2705161",
+              "supervisorPid": 1345346
+            }
+          }
+        },
+        "binding": {
+          "fence": "b143b2cd-3cc7-4400-a8a4-1c2dce3a389a",
+          "evaluator": {
+            "id": "evaluator:vf09-structured-result",
+            "revision": "vf09.oracle.v1",
+            "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+          },
+          "artifactId": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e",
+          "capability": {
+            "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+            "capabilityId": "source:correspondence-structured-result"
+          },
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+          "assignmentId": "invocation:aeb11de6-6155-4844-bd0b-2e20c8f74825",
+          "moduleDigest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "sourceDigest": "sha256:bcc44cc040659f307fe18cc3ee0d95f2220ba624fd0ba0e484005a2a1e9791f7",
+          "dependencyDigest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+        },
+        "grantId": "grn_8G193xHJl__F2oCS",
+        "identity": {
+          "pid": 1345385,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2705161",
+          "supervisorPid": 1345346
+        },
+        "requestId": "sha256:b5fa55383e4348b0e4ed239f2e17380fa6f3fc094fabb3667002f16ef7d20fff",
+        "generation": 1,
+        "supervisor": "supervisor:75fae54d-b64d-4b33-ac45-14ba8ee6580f",
+        "reservation": {
+          "cpuMs": 2000,
+          "wallMs": 4000,
+          "memoryMb": 512,
+          "maxRecords": 8,
+          "maxRunning": 1,
+          "costCapUsdMicros": "1000"
+        },
+        "verification": {
+          "id": "sha256:4a2a2082373072c67cd229453ff888b227d835dcf8c8cab7e6c7e83d1e6f3b37",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_1taL7dIWdnijmNUw",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:v1",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_1taL7dIWdnijmNUw",
+          "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "sourceProject": "prj_1taL7dIWdnijmNUw"
+      },
+      "result": {
+        "cost": null,
+        "output": {
+          "outcome": "observed",
+          "payload": {
+            "project": {
+              "id": "prj_later_alpha",
+              "status": "open",
+              "version": 1
+            },
+            "nextAction": null
+          }
+        },
+        "schema": "neomorphic.foundry.invocation.v1",
+        "target": {
+          "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "capabilityId": "source:correspondence-structured-result"
+        },
+        "taskId": "task:f5c711e2-e1bc-41e9-b64e-b79f465e6119",
+        "outcome": "observed_output",
+        "purpose": "owner_qa",
+        "effortMs": null,
+        "invokedAt": "2026-09-26T16:47:40.064Z",
+        "manifestId": "sha256:8d8f8706eb41d90651f4ffa869631c707c7ac1eef2e51411bf97501c128a8912",
+        "inputDigest": "sha256:f50af18114919fde1d7e4fd335e6f0a8bffca8dae326eb7224898c94ac7f9726",
+        "relationship": "owner",
+        "environmentDigest": "sha256:7562efba38ab8d1c01b54bb08fd42ef7efa9deeb99082edc8dd04667ef7f9be9",
+        "beneficiaryGrantId": "grn_8G193xHJl__F2oCS",
+        "executionObservation": "sha256:f3ae5e75d8ae5301f2c88a54b8d897bae42da72aed5df455cd6871037c79da87"
+      }
+    }
+  ],
+  "accounting": {
+    "registrations": 2,
+    "charged": 2,
+    "projects": 2,
+    "grants": 6,
+    "allocations": 2,
+    "pools": 2
+  },
+  "allocated": {
+    "gaps": 32,
+    "reviews": 8,
+    "httpKeys": 96,
+    "packages": 32,
+    "reviewMs": 8000,
+    "manifests": 96,
+    "workCells": 8,
+    "candidates": 8,
+    "cellCommands": 56,
+    "registrations": 2,
+    "invocationRows": 16,
+    "nativeCommands": 256,
+    "invocationCpuMs": 32000,
+    "maintenanceKeys": 256,
+    "invocationWallMs": 64000,
+    "verificationCpuMs": 64000,
+    "verificationWallMs": 128000,
+    "invocationCostUsdMicros": 16000,
+    "verificationCostUsdMicros": 32000
+  },
+  "aggregate": {
+    "gaps": 64,
+    "reviews": 16,
+    "httpKeys": 192,
+    "packages": 64,
+    "reviewMs": 16000,
+    "manifests": 192,
+    "workCells": 16,
+    "candidates": 16,
+    "cellCommands": 112,
+    "registrations": 4,
+    "invocationRows": 32,
+    "nativeCommands": 512,
+    "invocationCpuMs": 64000,
+    "maintenanceKeys": 512,
+    "invocationWallMs": 128000,
+    "verificationCpuMs": 128000,
+    "verificationWallMs": 256000,
+    "invocationCostUsdMicros": 32000,
+    "verificationCostUsdMicros": 64000
+  },
+  "elapsedMs": 5281.145692,
+  "actualSpend": null
+}

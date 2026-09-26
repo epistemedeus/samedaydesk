@@ -1,0 +1,19 @@
+{
+  "provenance": "fixture",
+  "label": "S275 curl-journey fixture — not production, not a hosted exchange, not settlement",
+  "title": "Bounded proof-of-execution note",
+  "summary": "fixture provenance. Deliver artifact metadata for the public proof-of-execution example. Do not execute the artifact. Reward 0.10 USDC is a disclosed hypothesis.",
+  "reward": { "amount": "0.10", "asset": "USDC", "network": "base" },
+  "budget": { "amount": "0.10", "asset": "USDC", "network": "base" },
+  "correctionPolicy": { "maxRevisions": 1 },
+  "terms": {
+    "claimTtlSeconds": 3600,
+    "maxArtifactBytes": 65536,
+    "allowedMediaTypes": ["text/plain", "application/json"],
+    "slotLimit": 1
+  },
+  "artifact": {
+    "ref": "fixture:s275-curl-journey-not-fetched",
+    "note": "Metadata only. The kernel must not fetch or execute this ref."
+  }
+}

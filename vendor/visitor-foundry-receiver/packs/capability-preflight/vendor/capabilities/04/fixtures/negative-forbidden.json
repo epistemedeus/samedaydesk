@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.r2.capabilities.cost_dry_run_input.v1",
+  "taskId": "cap04-bad-input",
+  "demo": true,
+  "notes": "Malformed — forbidden investment / revenue fields.",
+  "quotes": [
+    {
+      "id": "quote-bad",
+      "label": "Should reject",
+      "amountAtomic": "1",
+      "currency": "USDC",
+      "priceSource": "caller.supplied.quote",
+      "investmentRecommendation": "buy"
+    }
+  ],
+  "freeAlternatives": [
+    {
+      "id": "free-none",
+      "label": "None",
+      "state": "unavailable",
+      "basis": "none_checked_v1"
+    }
+  ],
+  "revenue": 999,
+  "buyerCount": 42
+}

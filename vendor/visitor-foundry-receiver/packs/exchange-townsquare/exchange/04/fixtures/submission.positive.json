@@ -1,0 +1,8 @@
+{
+  "schema": "neomorphic.r2.exchange.file_set_submission.v1",
+  "demo": true,
+  "files": [
+    { "path": "note/artifact.json", "byteLength": 420, "format": "json" },
+    { "path": "note/README.md", "byteLength": 180, "format": "md" }
+  ]
+}

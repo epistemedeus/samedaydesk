@@ -1,0 +1,8 @@
+{
+  "id": "prop-dispute-demo",
+  "proposerLabel": "fixture-worker",
+  "terms": {"priceAmount": "0", "currency": "USDC"},
+  "claimedRequirements": [
+    {"criterionId": "digest_hex", "claim": "digest present", "evidenceRef": "artifact.evidenceDigest"}
+  ]
+}

@@ -1,0 +1,129 @@
+
+> @neomorphic/visitor-portable-execution@0.1.0 test
+> node --test --test-concurrency=1 tests/*.test.mjs
+
+TAP version 13
+# Subtest: real C transformation on frozen unseen cases; fresh guest and process each time
+ok 1 - real C transformation on frozen unseen cases; fresh guest and process each time
+  ---
+  duration_ms: 829.211108
+  type: 'test'
+  ...
+# Subtest: opaque byte ABI preserves input including zero bytes
+ok 2 - opaque byte ABI preserves input including zero bytes
+  ---
+  duration_ms: 164.942059
+  type: 'test'
+  ...
+# Subtest: truncated/malformed/native/AOT/text inputs never compile as submitted native code
+ok 3 - truncated/malformed/native/AOT/text inputs never compile as submitted native code
+  ---
+  duration_ms: 406.383892
+  type: 'test'
+  ...
+# Subtest: all host imports, WASI env/filesystem and socket access are refused
+not ok 4 - all host imports, WASI env/filesystem and socket access are refused
+  ---
+  duration_ms: 37.304224
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/tests/runtime.test.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+      File "/tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/.runtime/lib/python3.12/site-packages/wasmtime/_wat2wasm.py", line 32, in wat2wasm
+        raise WasmtimeError._from_ptr(error)
+    wasmtime._error.WasmtimeError: import after memory
+         --> <anon>:1:41
+          |
+        1 | (module (memory (export "memory") 1 1) (import "wasi_snapshot_preview1" "environ_get" (func)) (func (export "alloc") (param i32) (result i32) i32.const 4096) (func (export "transform") (param i32 i32) (result i64) i64.const 0))
+          |                                         ^
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    wat (file:///tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/tests/helpers.mjs:10:29)
+    wasm (file:///tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/tests/helpers.mjs:13:3)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/tests/runtime.test.mjs:32:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unsupported features and mutable/unbounded resources are explicit admission failures
+ok 5 - unsupported features and mutable/unbounded resources are explicit admission failures
+  ---
+  duration_ms: 1299.318952
+  type: 'test'
+  ...
+# Subtest: fuel covers infinite transform and start function during instantiation
+ok 6 - fuel covers infinite transform and start function during instantiation
+  ---
+  duration_ms: 327.108399
+  type: 'test'
+  ...
+# Subtest: fixed memory/table grow cannot exceed deterministic capacity
+ok 7 - fixed memory/table grow cannot exceed deterministic capacity
+  ---
+  duration_ms: 483.893015
+  type: 'test'
+  ...
+# Subtest: output/input pointers and unsigned lengths are checked without truncation
+ok 8 - output/input pointers and unsigned lengths are checked without truncation
+  ---
+  duration_ms: 805.797756
+  type: 'test'
+  ...
+# Subtest: traps, stack exhaustion and malformed JSON output cannot pass
+ok 9 - traps, stack exhaustion and malformed JSON output cannot pass
+  ---
+  duration_ms: 485.775549
+  type: 'test'
+  ...
+# Subtest: global guest state never persists across invocations
+ok 10 - global guest state never persists across invocations
+  ---
+  duration_ms: 288.236504
+  type: 'test'
+  ...
+# Subtest: parent environment/private sentinel are absent; only explicit guest input enters memory
+ok 11 - parent environment/private sentinel are absent; only explicit guest input enters memory
+  ---
+  duration_ms: 163.406194
+  type: 'test'
+  ...
+# Subtest: bounded compilation timeout and address-space failure witness actual child exit
+ok 12 - bounded compilation timeout and address-space failure witness actual child exit
+  ---
+  duration_ms: 334.348987
+  type: 'test'
+  ...
+# Subtest: cancellation kills a real child and waits for exit; pre-abort never launches
+ok 13 - cancellation kills a real child and waits for exit; pre-abort never launches
+  ---
+  duration_ms: 190.073755
+  type: 'test'
+  ...
+# Subtest: result without exit times out; an unwitnessed kill remains unknown
+not ok 14 - result without exit times out; an unwitnessed kill remains unknown
+  ---
+  duration_ms: 265.730102
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF08/repo/scripts/visitor-foundry/execution/tests/runtime.test.mjs:101:1'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 12
+# fail 1
+# cancelled 1
+# skipped 0
+# todo 0
+# duration_ms 6135.269677

@@ -1,0 +1,170 @@
+
+> neomorphic-io@1.1.0 test:capability-market
+> node --test scripts/scale-lab/capability-market/tests/*.test.mjs tests/capability-market.test.mjs
+
+TAP version 13
+# Subtest: seed catalog reuses SameDayDesk and lab offerings with declared price sources
+ok 1 - seed catalog reuses SameDayDesk and lab offerings with declared price sources
+  ---
+  duration_ms: 1.164325
+  type: 'test'
+  ...
+# Subtest: rejects malformed capabilities
+ok 2 - rejects malformed capabilities
+  ---
+  duration_ms: 0.396371
+  type: 'test'
+  ...
+# Subtest: rejects deceptive capabilities with reviews, rank, or fake customers
+ok 3 - rejects deceptive capabilities with reviews, rank, or fake customers
+  ---
+  duration_ms: 0.321014
+  type: 'test'
+  ...
+# Subtest: flags stale prices and keeps them out of preferred match order
+ok 4 - flags stale prices and keeps them out of preferred match order
+  ---
+  duration_ms: 1.378978
+  type: 'test'
+  ...
+# Subtest: rejects incompatible inputs
+ok 5 - rejects incompatible inputs
+  ---
+  duration_ms: 0.551368
+  type: 'test'
+  ...
+# Subtest: returns no_result for unmatched outcomes
+ok 6 - returns no_result for unmatched outcomes
+  ---
+  duration_ms: 0.302654
+  type: 'test'
+  ...
+# Subtest: correction supersedes without silent rewrite
+ok 7 - correction supersedes without silent rewrite
+  ---
+  duration_ms: 0.27836
+  type: 'test'
+  ...
+# Subtest: distinguishes advertised, runnable adapter, and delivered evidence
+ok 8 - distinguishes advertised, runnable adapter, and delivered evidence
+  ---
+  duration_ms: 0.406498
+  type: 'test'
+  ...
+# Subtest: batch fixture adapter never fetches URLs and refuses bad inputs
+ok 9 - batch fixture adapter never fetches URLs and refuses bad inputs
+  ---
+  duration_ms: 0.491774
+  type: 'test'
+  ...
+# Subtest: URL safety boundary blocks unsafe completion links
+ok 10 - URL safety boundary blocks unsafe completion links
+  ---
+  duration_ms: 0.307959
+  type: 'test'
+  ...
+# Subtest: deterministic match order is stable across repeats
+ok 11 - deterministic match order is stable across repeats
+  ---
+  duration_ms: 5.865499
+  type: 'test'
+  ...
+# Subtest: directory disclosure labels fixture sellers and omits forbidden ranking fields
+ok 12 - directory disclosure labels fixture sellers and omits forbidden ranking fields
+  ---
+  duration_ms: 1.882713
+  type: 'test'
+  ...
+# Subtest: match journey selects SameDayDesk batch extract and discloses HTTPS completion without fetching
+ok 13 - match journey selects SameDayDesk batch extract and discloses HTTPS completion without fetching
+  ---
+  duration_ms: 1.465031
+  type: 'test'
+  ...
+# Subtest: disclosure journey keeps advertised, runnable, and delivered layers distinct
+ok 14 - disclosure journey keeps advertised, runnable, and delivered layers distinct
+  ---
+  duration_ms: 0.737566
+  type: 'test'
+  ...
+# Subtest: advertised-only seller conformance discloses missing local adapter
+ok 15 - advertised-only seller conformance discloses missing local adapter
+  ---
+  duration_ms: 0.410996
+  type: 'test'
+  ...
+# Subtest: stale prices remain visible, disclosed as stale, and demoted after fresh matches
+ok 16 - stale prices remain visible, disclosed as stale, and demoted after fresh matches
+  ---
+  duration_ms: 0.570043
+  type: 'test'
+  ...
+# Subtest: deceptive, malformed, incompatible, and unmatched outcomes are first-class refusals
+ok 17 - deceptive, malformed, incompatible, and unmatched outcomes are first-class refusals
+  ---
+  duration_ms: 0.96553
+  type: 'test'
+  ...
+# Subtest: correction journey keeps the prior record and posts a correction body
+ok 18 - correction journey keeps the prior record and posts a correction body
+  ---
+  duration_ms: 0.527365
+  type: 'test'
+  ...
+# Subtest: HTTPS-only artifact mapping refuses relative lab completion links
+ok 19 - HTTPS-only artifact mapping refuses relative lab completion links
+  ---
+  duration_ms: 0.211825
+  type: 'test'
+  ...
+# Subtest: persistCapabilityJourney posts bodies in order through the supplied transport
+ok 20 - persistCapabilityJourney posts bodies in order through the supplied transport
+  ---
+  duration_ms: 0.315863
+  type: 'test'
+  ...
+# Subtest: built catalog snapshot is disclosed over real loopback HTTP
+ok 21 - built catalog snapshot is disclosed over real loopback HTTP
+  ---
+  duration_ms: 20.575495
+  type: 'test'
+  ...
+# Subtest: capability market page keeps honesty boundaries and isolated /lab route
+ok 22 - capability market page keeps honesty boundaries and isolated /lab route
+  ---
+  duration_ms: 0.726552
+  type: 'test'
+  ...
+# Subtest: UI script does not fetch arbitrary imported URLs
+ok 23 - UI script does not fetch arbitrary imported URLs
+  ---
+  duration_ms: 0.155279
+  type: 'test'
+  ...
+# Subtest: site wires isolated lab route and API module without publicRoutes promotion
+ok 24 - site wires isolated lab route and API module without publicRoutes promotion
+  ---
+  duration_ms: 0.288851
+  type: 'test'
+  ...
+# Subtest: homepage files are untouched by this experiment path
+ok 25 - homepage files are untouched by this experiment path
+  ---
+  duration_ms: 0.647224
+  type: 'test'
+  ...
+# Subtest: seed matching remains available to the site test runner
+ok 26 - seed matching remains available to the site test runner
+  ---
+  duration_ms: 1.192572
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 94.555083

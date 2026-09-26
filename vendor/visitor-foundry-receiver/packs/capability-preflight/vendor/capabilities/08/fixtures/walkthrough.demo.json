@@ -1,0 +1,15 @@
+{
+  "taskId": "cap08-demo-install-first-result",
+  "requirements": {
+    "$ref": "./requirements.json"
+  },
+  "costInput": {
+    "$ref": "./cost-input.json"
+  },
+  "artifact": {
+    "$ref": "./artifact.good.json"
+  },
+  "discovery": { "capabilityId": "extract_batch_json" },
+  "prerequisites": { "prerequisites": ["node20", "offline_fixtures"] },
+  "note": "CLI demo loads sibling fixture files directly; this file documents the composed input shape."
+}

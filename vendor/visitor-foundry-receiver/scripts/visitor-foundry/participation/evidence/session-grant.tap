@@ -1,0 +1,218 @@
+
+> @neomorphic/contributor-session-grant@0.2.0 test
+> node --test --test-concurrency=1 tests/*.test.mjs
+
+TAP version 13
+# Subtest: actual CLI: response body loss keeps the grant unknown and never reposts
+ok 1 - actual CLI: response body loss keeps the grant unknown and never reposts
+  ---
+  duration_ms: 231.711331
+  type: 'test'
+  ...
+# Subtest: actual CLI: unknown claim refuses changed origin and preserves exact replay
+ok 2 - actual CLI: unknown claim refuses changed origin and preserves exact replay
+  ---
+  duration_ms: 292.731526
+  type: 'test'
+  ...
+# Subtest: actual CLI: fresh claim cannot erase an unresolved attempt
+ok 3 - actual CLI: fresh claim cannot erase an unresolved attempt
+  ---
+  duration_ms: 94.840483
+  type: 'test'
+  ...
+# Subtest: actual concurrent CLI claims reserve the state file once before dispatch
+ok 4 - actual concurrent CLI claims reserve the state file once before dispatch
+  ---
+  duration_ms: 76.259841
+  type: 'test'
+  ...
+# Subtest: unexpected success status and stalled response body remain unknown
+ok 5 - unexpected success status and stalled response body remain unknown
+  ---
+  duration_ms: 59.01064
+  type: 'test'
+  ...
+# Subtest: E01 is not booted from this checkout and the wave5 consumer is not copied
+ok 6 - E01 is not booted from this checkout and the wave5 consumer is not copied
+  ---
+  duration_ms: 0.613489
+  type: 'test'
+  ...
+# Subtest: classifyHttpSuccess: empty or non-object 2xx is unknown, not success
+ok 7 - classifyHttpSuccess: empty or non-object 2xx is unknown, not success
+  ---
+  duration_ms: 0.765412
+  type: 'test'
+  ...
+# Subtest: HTTP 201 contributor-tokens object without token is unknown
+ok 8 - HTTP 201 contributor-tokens object without token is unknown
+  ---
+  duration_ms: 2.288578
+  type: 'test'
+  ...
+# Subtest: empty 201 on contributor-tokens is unknown, not success
+ok 9 - empty 201 on contributor-tokens is unknown, not success
+  ---
+  duration_ms: 195.450753
+  type: 'test'
+  ...
+# Subtest: owner issue does not send a made-up Idempotency-Key
+ok 10 - owner issue does not send a made-up Idempotency-Key
+  ---
+  duration_ms: 112.702945
+  type: 'test'
+  ...
+# Subtest: non-idempotent grant reconciles from the token file without owner credentials
+ok 11 - non-idempotent grant reconciles from the token file without owner credentials
+  ---
+  duration_ms: 161.141228
+  type: 'test'
+  ...
+# Subtest: empty 201 on claim is unknown, then contributor reconcile replays the stored key
+ok 12 - empty 201 on claim is unknown, then contributor reconcile replays the stored key
+  ---
+  duration_ms: 352.16171
+  type: 'test'
+  ...
+# Subtest: help names empty-201 unknown and grant reconcile
+ok 13 - help names empty-201 unknown and grant reconcile
+  ---
+  duration_ms: 5.058605
+  type: 'test'
+  ...
+# Subtest: fixture journey: owner issues token, contributor claims reserved task (evidenceClass=fixture)
+ok 14 - fixture journey: owner issues token, contributor claims reserved task (evidenceClass=fixture)
+  ---
+  duration_ms: 198.774727
+  type: 'test'
+  ...
+# Subtest: PR109 is not accepted here and local-runtime does not boot it
+ok 15 - PR109 is not accepted here and local-runtime does not boot it
+  ---
+  duration_ms: 0.66335
+  type: 'test'
+  ...
+# Subtest: e01 pin is PR109 c4048401 tree 1a5dad77; I01 pins are rejected
+ok 16 - e01 pin is PR109 c4048401 tree 1a5dad77; I01 pins are rejected
+  ---
+  duration_ms: 0.626148
+  type: 'test'
+  ...
+# Subtest: prepare script that checks out 819fa637 exits non-zero with pin_mismatch
+ok 17 - prepare script that checks out 819fa637 exits non-zero with pin_mismatch
+  ---
+  duration_ms: 7.875379
+  type: 'test'
+  ...
+# Subtest: prepare script that checks out 346bbd3c exits non-zero with pin_mismatch
+ok 18 - prepare script that checks out 346bbd3c exits non-zero with pin_mismatch
+  ---
+  duration_ms: 8.299255
+  type: 'test'
+  ...
+# Subtest: prepare script that is asked for integer termsVersion exits non-zero with pin_mismatch
+ok 19 - prepare script that is asked for integer termsVersion exits non-zero with pin_mismatch
+  ---
+  duration_ms: 4.615638
+  type: 'test'
+  ...
+# Subtest: README does not instruct a rejected I01 checkout as the live kernel
+ok 20 - README does not instruct a rejected I01 checkout as the live kernel
+  ---
+  duration_ms: 0.254549
+  type: 'test'
+  ...
+# Subtest: help names split-process public interface
+ok 21 - help names split-process public interface
+  ---
+  duration_ms: 0.991735
+  type: 'test'
+  ...
+# Subtest: PIN.json matches the E01 pin SHA; I01 OpenAPI remains comparison-only
+ok 22 - PIN.json matches the E01 pin SHA; I01 OpenAPI remains comparison-only
+  ---
+  duration_ms: 0.599827
+  type: 'test'
+  ...
+# Subtest: parseCli --role owner issue
+ok 23 - parseCli --role owner issue
+  ---
+  duration_ms: 0.172833
+  type: 'test'
+  ...
+# Subtest: parseCli accepts --task-file on prepare-and-issue
+ok 24 - parseCli accepts --task-file on prepare-and-issue
+  ---
+  duration_ms: 0.082507
+  type: 'test'
+  ...
+# Subtest: I01 pin OpenAPI documents POST /v1/contributor-tokens
+ok 25 - I01 pin OpenAPI documents POST /v1/contributor-tokens
+  ---
+  duration_ms: 0.397662
+  type: 'test'
+  ...
+# Subtest: original F01 OpenAPI is comparison-only and lacks TermsVersion hash schema
+ok 26 - original F01 OpenAPI is comparison-only and lacks TermsVersion hash schema
+  ---
+  duration_ms: 0.209948
+  type: 'test'
+  ...
+# Subtest: hashToken matches I01 utf8 SHA-256, not F07 prefix
+ok 27 - hashToken matches I01 utf8 SHA-256, not F07 prefix
+  ---
+  duration_ms: 0.151426
+  type: 'test'
+  ...
+# Subtest: parseClaimTermsVersion rejects original F01 integer residual
+ok 28 - parseClaimTermsVersion rejects original F01 integer residual
+  ---
+  duration_ms: 0.492402
+  type: 'test'
+  ...
+# Subtest: contributor process started with EARNED_WORK_OWNER_TOKEN set is rejected
+ok 29 - contributor process started with EARNED_WORK_OWNER_TOKEN set is rejected
+  ---
+  duration_ms: 38.163709
+  type: 'test'
+  ...
+# Subtest: token plaintext in usability/state logs is rejected
+ok 30 - token plaintext in usability/state logs is rejected
+  ---
+  duration_ms: 173.055403
+  type: 'test'
+  ...
+# Subtest: retrying grant issuance as automatic contributor retry is rejected
+ok 31 - retrying grant issuance as automatic contributor retry is rejected
+  ---
+  duration_ms: 140.826307
+  type: 'test'
+  ...
+# Subtest: F1: HTTP 503 and redirect after dispatch are unknown, not refused
+ok 32 - F1: HTTP 503 and redirect after dispatch are unknown, not refused
+  ---
+  duration_ms: 14.57317
+  type: 'test'
+  ...
+# Subtest: F2: reconcile requires stored attempt; foreign credential and changed target make zero HTTP
+ok 33 - F2: reconcile requires stored attempt; foreign credential and changed target make zero HTTP
+  ---
+  duration_ms: 1.460179
+  type: 'test'
+  ...
+# Subtest: F1 commit-then-503 is not booted against PR109
+ok 34 - F1 commit-then-503 is not booted against PR109
+  ---
+  duration_ms: 0.172188
+  type: 'test'
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2627.949563

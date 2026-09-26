@@ -1,0 +1,51 @@
+{
+  "schema": "s138.partial-composition.v1",
+  "capabilityId": "R2-CAPABILITIES-06",
+  "job": {
+    "schema": "demo.job.v1",
+    "scope": "neo-labs",
+    "freshnessRequired": "fresh",
+    "requiredFields": [
+      "title",
+      "status"
+    ]
+  },
+  "status": "partial",
+  "acceptedParts": [
+    "a",
+    "c"
+  ],
+  "rejectedParts": [
+    {
+      "id": "b-stale",
+      "reasons": [
+        "required fresh, got stale"
+      ]
+    }
+  ],
+  "payload": {
+    "title": "Example",
+    "status": "partial-ready"
+  },
+  "gaps": [
+    {
+      "kind": "part-rejected",
+      "id": "b-stale",
+      "reasons": [
+        "required fresh, got stale"
+      ]
+    }
+  ],
+  "holes": [
+    "b-stale"
+  ],
+  "notes": [
+    "Gaps are retained; composition does not invent fill.",
+    "part.status must be explicit complete; absent/unknown/running/failed/partial/completed/typos remain holes.",
+    "part.status failed|partial|rejected is excluded.",
+    "Explicit complete is a supplied assertion, not attested execution.",
+    "null/undefined required fields are missing; prototype keys are ignored.",
+    "Missing or whitespace-only job.schema/job.scope is diagnostic missing, not universal compatibility.",
+    "Missing job.schema or job.scope is not universal compatibility."
+  ]
+}

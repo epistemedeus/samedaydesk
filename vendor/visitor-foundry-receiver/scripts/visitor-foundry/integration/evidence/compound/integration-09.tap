@@ -1,0 +1,67 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=compound
+TAP version 13
+# Subtest: actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+ok 1 - actual A contribution through VF05, assigned portable verifier, host restart and cold B discovery/invocation
+  ---
+  duration_ms: 4896.146074
+  type: 'test'
+  ...
+# Subtest: all VF05 mutations survive commit-before-ACK SIGKILL at a stable origin with exact fresh-session replay
+ok 2 - all VF05 mutations survive commit-before-ACK SIGKILL at a stable origin with exact fresh-session replay
+  ---
+  duration_ms: 1120.680311
+  type: 'test'
+  ...
+# Subtest: proposal duplicates coalesce, terms are transactional, and revoked/expired/foreign/reader grants cannot reuse intent
+not ok 3 - proposal duplicates coalesce, terms are transactional, and revoked/expired/foreign/reader grants cannot reuse intent
+  ---
+  duration_ms: 246.507924
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/compound.test.mjs:69:1'
+  failureType: 'testCodeFailure'
+  error: '{"status":204,"body":""}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    ok (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/helpers.mjs:20:32)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/compound.test.mjs:79:2)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: portable expiry and explicit renewal preserve identity and history; old receipt cannot publish the new generation
+ok 4 - portable expiry and explicit renewal preserve identity and history; old receipt cannot publish the new generation
+  ---
+  duration_ms: 4646.896089
+  type: 'test'
+  ...
+# Subtest: failed real component is rejected, dependency execution is explicitly unsupported, and accepted zero-use/decline remain visible
+ok 5 - failed real component is rejected, dependency execution is explicitly unsupported, and accepted zero-use/decline remain visible
+  ---
+  duration_ms: 2386.867936
+  type: 'test'
+  ...
+# Subtest: invocation commit-before-ACK and concurrent retries do not repeat physical work; finite invocation budget remains charged
+ok 6 - invocation commit-before-ACK and concurrent retries do not repeat physical work; finite invocation budget remains charged
+  ---
+  duration_ms: 2741.972927
+  type: 'test'
+  ...
+# Subtest: withdrawal between actual verifier samples prevents further launch and publication without inventing child exit
+ok 7 - withdrawal between actual verifier samples prevents further launch and publication without inventing child exit
+  ---
+  duration_ms: 708.014938
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16859.320476

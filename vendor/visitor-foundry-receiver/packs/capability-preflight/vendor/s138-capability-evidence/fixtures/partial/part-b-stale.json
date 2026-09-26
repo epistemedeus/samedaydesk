@@ -1,0 +1,10 @@
+{
+  "id": "b-stale",
+  "schema": "demo.job.v1",
+  "scope": "neo-labs",
+  "freshness": "stale",
+  "payload": {
+    "status": "should-not-win"
+  },
+  "status": "complete"
+}

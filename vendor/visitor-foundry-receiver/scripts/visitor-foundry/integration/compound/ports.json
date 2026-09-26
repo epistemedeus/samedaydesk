@@ -1,0 +1,31 @@
+{
+  "schema": "neomorphic.foundry.vf09-receiving-ports.v1",
+  "canonicalWire": "../src/wire.mjs (F93, unchanged)",
+  "profile": "portable-structured-result-v1",
+  "outcome": "compact-correspondence-structured-result",
+  "environment": {"platform":"linux","arch":"x64","executionProfile":"vf08.wasmtime49-linux-x64-fixed.v1"},
+  "authority": "Existing correspondence project grants; installed operator/runner/reviewer object handles only; no public maintenance route",
+  "httpPrefix": "/v1/projects/:projectId/foundry",
+  "routes": {
+    "GET participation/terms": "Current immutable terms id, voluntary scope/rights and evaluator metadata; no heldout inputs",
+    "POST task": {"fields":["request","negotiation","sharing"],"request":"canonical capability-request.v1","sharing":"null or explicit {scope:synthetic-reusable-components,termsVersion}","result":"Original resolution plus optional VF05 participation envelope and exact continuation artifact refs; no cell/lease on discovery"},
+    "POST components": {"fields":["artifact","termsVersion"],"key":"Idempotency-Key","artifactFields":["kind","descriptor","moduleBase64","sourceText"],"descriptor":"VF08 portable-execution.artifact.v1; original full VF01 reference retained","result":"immutable componentRef, original identity and module byte count"},
+    "POST participation": {"fields":["operation","cellId","requestId","termsVersion","body"],"key":"Idempotency-Key must equal requestId","operations":{"create":["proposalRef","resolverRef","reproducerRef","fundingKind"],"claim":["expectedRevision","ttlSeconds","voluntaryOptIn"],"checkpoint":["expectedRevision","fence","checkpointRef"],"submit":["expectedRevision","fence","contributionRef"]},"result":"participation-receipt.v1 with exact request/operation/terms/cell/revision/replayed; submit also returns canonical admission; coalesced create retains revision=1 historical receipt and currentRevision separately"},
+    "GET participation/cells/:cellId":"Authenticated existing VF02 cell and current revision; a hint is not a credential",
+    "POST invoke":"Existing {manifestId,request}; current grant, exact input/evidence/source/profile checks plus durable portable reservation; no caller-supplied executable",
+    "POST observe":"Existing {taskId,experimentId,caseId,arm}; actual beneficiary invocation and frozen bytes; owner QA; unknown usefulness remains unknown"
+  },
+  "installedPorts": {
+    "enrollPortable":"projectId + optional validityMs(100..3600000), maxInvocations(1..64), maxValidationCostUnits(<=256000); immutable finite pool config",
+    "configureParticipation":"projectId, {expectedTerms,revision}, persisted command key; current terms CAS, no visitor route",
+    "verification":"existing reserve, supervise, reconcile, publish(projectId,candidateId,generation) and recoverPool",
+    "renewal":"existing lifecycle configureVerification/requestRevalidation; preserve candidate/artifact/manifest and old evidence; four generations maximum",
+    "noLaunchRecovery":"reconcileUnlaunchedInvocation(projectId,taskId) only for durable reserved/unclaimed state; closes physical reservation without output or budget refund",
+    "VF08":"createReceivingPorts with trusted F93 toNativeRef and durable load/case-start/identity/sample callbacks; full result retained beside native receipt"
+  },
+  "bounds": {"packageCountPerProject":256,"packageJsonBytes":490000,"sourceUtf8Bytes":32768,"moduleBytes":262144,"inputBytes":16384,"outputBytes":32768,"guestMemoryBytes":262144,"guestFuel":1000000,"compileMs":1500,"instantiateMs":500,"executeMs":500,"physicalChildrenPerProject":1,"verificationCases":4,"verificationCostCapUsdMicros":"4000","invocationRowsPerProject":64,"httpKeysPerProject":4096},
+  "evidence": "Four exact-input observations only; host-owned independent expected-output implementation; distinct budgeted machine scope review; owner-controlled relationship; actual spend unknown",
+  "unsupported": "Dependencies/composition: explicit 422 unsupported.v1 retaining full identity, accepted=false, no truncation or manufactured execution",
+  "storage": "Additive migration004 in existing PG host; bounded immutable package bytes plus per-child/invocation columns; existing canonical cells/journal/outbox retained",
+  "currentHost": "Heavy current-host note must identify actual receiving runtime; not supplied with assignment, requested separately; public-entry adapter is specified in Heavy plan, not deployed"
+}

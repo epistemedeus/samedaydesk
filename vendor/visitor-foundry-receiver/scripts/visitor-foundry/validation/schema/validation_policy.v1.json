@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "neomorphic.foundry.validation_policy.v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "neomorphic.foundry.validation_policy.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._/-]*:[a-zA-Z0-9._:/@+-]+$"
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._/-]*:[a-zA-Z0-9._:/@+-]+$"
+    },
+    "evaluator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._/-]*:[a-zA-Z0-9._:/@+-]+$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "environmentDigest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "ambiguous",
+        "high"
+      ]
+    },
+    "deterministic": {
+      "type": "boolean"
+    },
+    "requiredChecks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._/-]*:[a-zA-Z0-9._:/@+-]+$"
+      },
+      "maxItems": 32
+    },
+    "attempt": {
+      "type": "object",
+      "properties": {
+        "cpuMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "wallMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "memoryMb": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "cost": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            "units": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]{0,77})$"
+            }
+          },
+          "required": [
+            "currency",
+            "units"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cpuMs",
+        "wallMs",
+        "memoryMb",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
+    "maxAttempts": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "retryDelayMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400000
+    },
+    "reviewMs": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 86400000
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "revision",
+    "scope",
+    "evaluator",
+    "environmentDigest",
+    "risk",
+    "deterministic",
+    "requiredChecks",
+    "attempt",
+    "maxAttempts",
+    "retryDelayMs",
+    "reviewMs"
+  ],
+  "additionalProperties": false
+}

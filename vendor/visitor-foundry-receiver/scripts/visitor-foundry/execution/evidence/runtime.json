@@ -1,0 +1,26 @@
+{
+  "pins": {
+    "profile": {
+      "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+      "runtime": "wasmtime-py",
+      "version": "49.0.0",
+      "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+      "license": "Apache-2.0 WITH LLVM-exception",
+      "platform": "linux",
+      "arch": "x64",
+      "imports": "none",
+      "memory": "fixed-wasm32",
+      "tables": "fixed-funcref",
+      "nan": "canonical",
+      "parallelCompilation": false
+    },
+    "node": "v22.22.2",
+    "python": "sha256:e1efa562c2cc2e35521a5c9c9b9939921001ff8ca9708a13ef15ace68cc2ccd7",
+    "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+    "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+    "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+    "supervisor": "sha256:bd69a81c569f0322f2f06901218d4f016ae8e5543cd360106d2627428e5444b2",
+    "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5"
+  },
+  "runtimePin": "sha256:0976396810b16ed76f9b8c46a132936a20c1d2d2b2da118cd88e2df252973103"
+}

@@ -1,0 +1,759 @@
+import {PORTABLE_KIND,PORTABLE_ENV,PORTABLE_OUTCOME,PORTABLE_RIGHTS,portableArtifact,portableMatches,portablePolicy} from './portable-profile.mjs';
+import {portableMethods} from './portable-store.mjs';
+import { randomUUID, createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { FoundryBoundary, IntegrationError } from '../../../../services/correspondence/dist/visitor-foundry/boundary.js';
+import { ValidationService, digest, schemaId, projectReuse, requireThat as need, jsonBounded } from '../../validation/src/index.mjs';
+import { createGap, refOf, hash, versionKey, createSnapshot } from '../../capabilities/src/index.mjs';
+import { capabilityFor, semanticKey, evaluator, environmentDigest, requiredChecks, ENV, invokeRecipe, matchesInstalledManifest, runtimePin } from './recipe.mjs';
+import { identity, toValidationIdentity, fromValidationIdentity, coordinateKey, toNativeRef, toGapBinding, validateAdmission, validateEnvironmentEvidence, wireSchema, UnsupportedWire, WIRE_LIMITS, ensurePostgresJson } from './wire.mjs';
+import { verificationFor, checkInstalledVerification, MAX_GENERATIONS } from './verification.mjs';
+import { graphFromRows, resolutionManifest, recheckManifest } from './manifest.mjs';
+
+const operator = { subject: 'operator:installed-host', group: 'group:host', roles: ['operator'], scopes: [] };
+const runner = { subject: 'runner:installed-owner-qa', group: 'group:assigned-owner-qa', roles: ['runner'], scopes: [],
+  evaluators: [evaluator], assignmentEvidence: 'assignment:owner-qa-installed-runner-v1' };
+const portableReviewer={subject:'reviewer:installed-portable-scope',group:'group:scope-review',roles:['reviewer'],scopes:[]};
+const grantActor = (g, projectId) => ({ subject: `grant:${g.id}`, group: `group:${projectId}`, roles: ['contributor', 'beneficiary'], scopes: [] });
+const keyId = value => `command:${digest(value).slice(7)}`;
+const receiptReference = receipt => ({ uri: `https://foundry.invalid/receipts/${digest(receipt).slice(7)}`, digest: digest(receipt) });
+
+export function poolConfig(projectId, options = {}) {
+  const scope = `project:${projectId}`;
+  need(!options.maxValidationCostUnits || /^(0|[1-9][0-9]*)$/.test(options.maxValidationCostUnits)&&BigInt(options.maxValidationCostUnits)<=256000n,'invalid_budget_cap');
+  return { scope, mode: 'fixture', purpose: 'owner_qa', dependencies: [],
+    policies: [{ schema: schemaId('validation_policy'), id: 'policy:installed-preflight', revision: 'vf04:v1', scope,
+      evaluator, environmentDigest, risk: 'low', deterministic: true, requiredChecks,
+      attempt: { cpuMs: 2000, wallMs: options.wallMs ?? 15000, memoryMb: 128, cost: { currency: 'USD_MICROS', units: '1000' } },
+      maxAttempts: 1, retryDelayMs: 1000, reviewMs: 1000 }],
+    limits: { maxOutstanding: 16, maxPerScope: 16, maxRunning: 1, maxRunningPerScope: 1,
+      maxRecords: 256, maxCommands: 4096, maxCpuMs: 512000, maxWallMs: 10000000,
+      maxMemoryMb: 128, maxCost: { currency: 'USD_MICROS', units: options.maxValidationCostUnits??'256000' }, maxReviewMs: 0, maxReviews: 0 } };
+}
+
+export class IntegrationStore {
+  constructor(url, options) { this.db = new FoundryBoundary(url, options); }
+  metric(kind,started,fields={}) { this.onMetric?.({kind,ms:performance.now()-started,...fields}); }
+  migrate() { return this.db.migrate(); }
+  async checkReady() {
+    await this.db.checkReady();
+    await this.db.tx(async c => {
+      for (const row of (await c.query('SELECT config,verification FROM correspondence_vf04_pools')).rows) {
+        if(row.config.kind===PORTABLE_KIND)checkInstalledVerification(row.verification,row.config);
+      }
+    });
+  }
+  close() { return this.db.close(); }
+
+  // Trusted host installation only; deliberately absent from public HTTP routes.
+  async enroll(projectId, frozenExperiment, options = {}) {
+    jsonBounded(frozenExperiment);
+    need(frozenExperiment.purpose === 'owner_qa' && Array.isArray(frozenExperiment.cases) && frozenExperiment.cases.length > 0, 'experiment_required');
+    need(frozenExperiment.baselineDigest === `sha256:${createHash('sha256').update(readFileSync(new URL('./baseline.mjs',import.meta.url))).digest('hex')}`, 'baseline_source_drift');
+    const config = poolConfig(projectId, options);
+    const verification=verificationFor(config,{validityMs:options.evidenceValidityMs??3600000});
+    await this.db.tx(async c => {
+      await c.query('INSERT INTO correspondence_vf04_pools(project_id,config,verification) VALUES($1,$2,$3) ON CONFLICT DO NOTHING', [projectId, config,verification]);
+      const existing = (await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1 FOR UPDATE', [projectId])).rows[0];
+      need(digest(existing.config) === digest(config), 'immutable_pool_configuration');
+      const previousExperiment = (await c.query('SELECT id FROM correspondence_vf04_experiments WHERE project_id=$1 AND id=$2', [projectId,frozenExperiment.id])).rows[0];
+      if (!previousExperiment) need(!(await c.query('SELECT id FROM correspondence_vf04_candidates WHERE project_id=$1 LIMIT 1',[projectId])).rows.length, 'experiment_after_evaluation');
+      await c.query('INSERT INTO correspondence_vf04_experiments(project_id,id,digest,record) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',
+        [projectId, frozenExperiment.id, digest(frozenExperiment), frozenExperiment]);
+      const frozen = (await c.query('SELECT digest FROM correspondence_vf04_experiments WHERE project_id=$1 AND id=$2', [projectId, frozenExperiment.id])).rows[0];
+      need(frozen.digest === digest(frozenExperiment), 'experiment_already_frozen');
+    });
+  }
+  async lock(c, projectId, write = true) {
+    const own=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[projectId])).rows[0];
+    if(own?.config.entryHost){const host=(await c.query(`SELECT config FROM correspondence_vf12_host WHERE singleton FOR ${write?'UPDATE':'SHARE'}`)).rows[0];need(host?.config.configId===own.config.entryHost,'entry_host_binding_mismatch');const admission=(await c.query('SELECT state,charged,pool_config_digest FROM correspondence_vf12_admissions WHERE project_id=$1',[projectId])).rows[0];need(admission?.state==='ready'&&admission.charged&&admission.pool_config_digest===hash(own.config),'entry_pool_binding_mismatch');}
+    const shares = (await c.query('SELECT source FROM correspondence_vf04_shares WHERE consumer=$1 ORDER BY source', [projectId])).rows.map(r => r.source);
+    let config,verification;
+    // Sorted exact source locks retain shared-dependency invalidation ordering.
+    for (const id of [...new Set([projectId, ...shares])].sort()) {
+      const lockStart=performance.now();
+      const row = (await c.query(`SELECT config,verification FROM correspondence_vf04_pools WHERE project_id=$1 FOR ${write && id === projectId ? 'UPDATE' : 'SHARE'}`, [id])).rows[0];
+      this.metric('lockQuery',lockStart,{exclusive:write&&id===projectId});
+      if (!row) throw new IntegrationError(404, 'pool_not_enrolled');
+      if (id === projectId) {config = row.config;verification=row.verification;}
+    }
+    return { config,verification,sources: [projectId, ...shares] };
+  }
+  async graph(c, sources) {
+    const rows=(await c.query('SELECT kind,id,record,authority FROM correspondence_vf04_graph WHERE project_id=ANY($1) ORDER BY kind,id', [sources])).rows;
+    // Cancellation can arrive via VF02 between worker passes. Derive an exact
+    // revocation from that durable cell row so discovery fails closed immediately.
+    const withdrawn=(await c.query(`SELECT x.manifest,w.state FROM correspondence_vf04_candidates x
+      JOIN correspondence_vf02_work_cells w ON w.project_id=x.project_id AND w.id=x.cell_id
+      WHERE x.project_id=ANY($1) AND w.state->>'status' IN ('cancelled','rejected')`,[sources])).rows;
+    for(const entry of withdrawn){
+      const target=refOf(entry.manifest);
+      if(!rows.some(r=>r.kind==='version'&&digest(refOf(r.record))===digest(target)))continue;
+      const old=rows.filter(r=>r.kind==='mutation'&&digest(r.record.target)===digest(target)).sort((a,b)=>b.record.revision-a.record.revision)[0]?.record;
+      if(old)continue; // Either lifecycle mutation already makes this version unusable.
+      const record={schema:'neomorphic.foundry.capability-mutation.v1',id:`mutation:cell-${hash({target,cell:entry.state.id}).slice(7)}`,
+        kind:'revoke-version',target,replacementId:null,revision:1,previousId:null,at:entry.state.updatedAt,
+        reason:'Durable VF02 contribution withdrawal',provenanceRef:`cell:${entry.state.id}`};
+      rows.push({kind:'mutation',id:record.id,record});
+    }
+    const publications=(await c.query(`SELECT p.*,x.generation AS current_generation,v.verification AS current_verification,v.config
+      FROM correspondence_vf04_publications p JOIN correspondence_vf04_candidates x ON x.project_id=p.project_id AND x.id=p.candidate_id
+      JOIN correspondence_vf04_pools v ON v.project_id=p.project_id WHERE p.project_id=ANY($1)`,[sources])).rows;
+    const managed=new Set(publications.map(p=>p.receipt.id));
+    const profileStart=performance.now();
+    // One fresh integrity check per exact profile/configuration in this graph read.
+    // No time cache: later reads and each physical launch validate installed bytes again.
+    const checkedProfiles=new Map();
+    const eligible=new Set(publications.filter(p=>{
+      try {const key=digest([p.verification,p.config]);
+        if(!checkedProfiles.has(key)){let valid=false;try{checkInstalledVerification(p.verification,p.config);valid=true;}catch{}checkedProfiles.set(key,valid);}
+        need(checkedProfiles.get(key),'installed_verification_changed');return p.generation===p.current_generation&&p.state==='published'
+        &&p.verification.id===p.current_verification?.id&&p.receipt.environmentDigest===p.verification.policy.environmentDigest;}
+      catch{return false;}
+    }).map(p=>p.receipt.id));
+    this.metric('profileChecks',profileStart,{publications:publications.length});
+    const now=await this.db.now(c);
+    // Never remove historical admitted evidence from dependency-health input:
+    // doing so could hide its expiry/retraction and revive a stale composition.
+    // Durable maintenance writes retirements below. An uninstalled runtime or
+    // legacy profile also fails closed at read time without claiming replay.
+    for(const row of rows.filter(r=>r.kind==='observation'&&managed.has(r.record.receiptRef)&&!eligible.has(r.record.receiptRef))) {
+      if(rows.some(r=>r.kind==='mutation'&&r.record.target===row.id))continue;
+      rows.push({kind:'mutation',id:`mutation:admission-${hash([row.id,runtimePin]).slice(7)}`,record:{
+        schema:'neomorphic.foundry.capability-mutation.v1',id:`mutation:admission-${hash([row.id,runtimePin]).slice(7)}`,
+        kind:'retract-observation',target:row.id,replacementId:null,revision:1,previousId:null,at:now,
+        reason:'Receipt is outside the current installed verification generation',provenanceRef:'operator:installed-verification-admission'}});
+    }
+    const pools=(await c.query('SELECT config,verification FROM correspondence_vf04_pools WHERE project_id=ANY($1)',[sources])).rows;
+    const portable=pools.some(p=>p.config.kind===PORTABLE_KIND);
+    const graphStart=performance.now();
+    const result=graphFromRows(rows,now,portable?{outcomes:[...new Set(pools.map(p=>p.config.kind===PORTABLE_KIND?PORTABLE_OUTCOME:'node-engine-compatibility'))],policyRef:`policy:vf09:${hash(pools.map(p=>p.verification?.id).sort())}`} : undefined);
+    this.metric('graphBuild',graphStart,{records:rows.length});return result;
+  }
+  async entryPhysicalCapacity(c,projectId,config){
+    if(!config.entryHost)return;
+    const host=(await c.query('SELECT config FROM correspondence_vf12_host WHERE singleton')).rows[0].config;
+    const n=(await c.query(`SELECT count(*)::int AS n FROM (
+      SELECT a.id FROM correspondence_vf04_attempts a JOIN correspondence_vf12_admissions e ON e.project_id=a.project_id WHERE a.state<>'reconciled'
+      UNION ALL SELECT i.task_id FROM correspondence_vf04_invocations i JOIN correspondence_vf12_admissions e ON e.project_id=i.project_id WHERE i.state<>'completed') busy`)).rows[0].n;
+    need(n<host.maxPhysical,'host_physical_reservation_held');
+  }
+  async entryCellCapacity(c,projectId,config,action){
+    if(!config.entryBounds||action==='cancel')return;
+    const commands=(await c.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE project_id=$1 AND scope LIKE 'vf02:cell:%'",[projectId])).rows[0].n;
+    need(commands<config.entryBounds.maxCellCommands,'entry_cell_command_capacity');
+    if(action==='create')need((await c.query('SELECT count(*)::int AS n FROM correspondence_vf02_work_cells WHERE project_id=$1',[projectId])).rows[0].n<config.entryBounds.maxWorkCells,'entry_cell_capacity');
+  }
+  async saveManifest(c,projectId,manifest,config){
+    if(config.entryBounds){
+      await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`vf12:manifest:${projectId}`]);
+      const old=(await c.query('SELECT 1 FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[projectId,manifest.id])).rows.length;
+      if(!old)need((await c.query('SELECT count(*)::int AS n FROM correspondence_vf04_manifests WHERE project_id=$1',[projectId])).rows[0].n<config.entryBounds.maxManifests,'entry_manifest_capacity');
+    }
+    await c.query('INSERT INTO correspondence_vf04_manifests(project_id,id,record) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',[projectId,manifest.id,manifest]);
+  }
+  async withdraw(ctx,raw,key){
+    const body=jsonBounded(raw,4096);need(['cellId,expectedRevision,reason','cellId,expectedRevision,fence,reason'].includes(Object.keys(body).sort().join(',')),'invalid_withdrawal');
+    return this.authenticated(ctx,true,async(c,g,{config})=>{
+      // VF02 already retains the exact cancellation receipt. Each cell can only
+      // cancel once; a fresh key after terminal cancellation creates no row.
+      const command={schema:'neomorphic.foundry.work-cell-command.v1',action:'cancel',expectedRevision:body.expectedRevision,reason:body.reason,...(body.fence?{fence:body.fence}:{})};
+      return this.workCells.mutate(ctx,body.cellId,command,key,c);
+    });
+  }
+  async refreshCells(c, projectId, engine) {
+    const withdrawn=(await c.query(`SELECT x.id FROM correspondence_vf04_candidates x
+      JOIN correspondence_vf02_work_cells w ON w.project_id=x.project_id AND w.id=x.cell_id
+      WHERE x.project_id=$1 AND (w.state->>'status' IN ('cancelled','rejected') OR EXISTS(
+        SELECT 1 FROM correspondence_vf04_graph m WHERE m.project_id=x.project_id AND m.kind='mutation'
+        AND m.record->>'kind' IN ('revoke-version','deprecate-version') AND m.record->'target'=jsonb_build_object(
+          'capabilityId',x.manifest->>'capabilityId','version',x.manifest->>'version','contentId',x.manifest->>'contentId'))) FOR SHARE OF w`,[projectId])).rows;
+    for(const row of withdrawn){
+      const state=engine.service.snapshot().candidates[row.id];
+      if(state?.active)await engine.apply(operator,'invalidate',{scope:state.candidate.scope,target:'candidate',candidateId:row.id,
+        receiptId:null,dependency:null,reason:'work_cell_withdrawn',evidence:{ref:'correspondence:work-cell',revision:'vf02:v1'}});
+    }
+    if(withdrawn.length)await this.withdrawInactive(c,projectId,engine);
+    return withdrawn.length;
+  }
+  async withdrawInactive(c,projectId,engine) {
+    const all=(await c.query('SELECT id,manifest FROM correspondence_vf04_candidates WHERE project_id=$1',[projectId])).rows;
+    for(const row of all.filter(r=>!engine.service.snapshot().candidates[r.id].active)){
+      const published=(await c.query("SELECT state FROM correspondence_vf04_publications WHERE project_id=$1 AND candidate_id=$2 AND state='published'",[projectId,row.id])).rows[0];
+      if(published)await this.mutation(c,projectId,'revoke-version',refOf(row.manifest),'Candidate withdrawn');
+      await c.query("UPDATE correspondence_vf04_publications SET state='withdrawn' WHERE project_id=$1 AND candidate_id=$2",[projectId,row.id]);
+    }
+  }
+  async replay(c, projectId, config, additional = []) {
+    // Journal aliases must still bind to the retained complete immutable manifest.
+    for(const row of (await c.query('SELECT candidate,manifest FROM correspondence_vf04_candidates WHERE project_id=$1',[projectId])).rows) {
+      const binding={schema:wireSchema('validation-identity-binding'),original:identity(row.manifest,row.manifest.dependencies),
+        native:{capability:row.candidate.capability,dependencies:row.candidate.dependencies}};
+      fromValidationIdentity(binding);
+      await this.identities(c,projectId,binding.original,false,true);
+    }
+    const events = (await c.query("SELECT response_json FROM correspondence_idempotency WHERE project_id=$1 AND scope='vf04:transition' ORDER BY (response_json->>'revision')::integer", [projectId])).rows.map(r => r.response_json);
+    need(events.length <= config.limits.maxCommands, 'journal_capacity');
+    const installedRunner=config.kind===PORTABLE_KIND?{...runner,evaluators:[{id:portablePolicy().evaluator.id,revision:portablePolicy().evaluator.revision}]}:runner;
+    const actors = new Map([operator, installedRunner, ...(config.kind===PORTABLE_KIND?[portableReviewer]:[]), ...events.map(e => e.actor), ...additional].map(a => [a.subject, { ...a, scopes: [config.scope] }]));
+    const handles = new Map([...actors.keys()].map(s => [s, Object.freeze({ subject: s })]));
+    let now = events.at(-1)?.at ?? await this.db.now(c);
+    const replayStart=performance.now();
+    const service = ValidationService.replay({ ...config,
+      principals: [...actors.values()].map(a => ({ ...a, handle: handles.get(a.subject) })), clock: () => now },
+      events.map(event => ({ handle: handles.get(event.actor.subject), command: event.command, at: event.at, response: event.response })));
+    this.metric('journalReplay',replayStart,{events:events.length});
+    return { service, async apply(actor, type, payload, id = keyId(randomUUID())) {
+      now = (await c.query('SELECT clock_timestamp() AS now')).rows[0].now.toISOString();
+      const command = { schema: schemaId('validation_command'), id, expectedRevision: service.snapshot().revision, type, payload };
+      const result = service.dispatch(handles.get(actor.subject), command);
+      if (!result.ok) throw new IntegrationError(409, result.code, result.nextAction);
+      if (!result.duplicate) {
+        await c.query(`INSERT INTO correspondence_idempotency(scope,project_id,key,request_hash,status_code,response_json,created_at)
+          VALUES('vf04:transition',$1,$2,$3,200,$4,$5)`, [projectId, `${actor.subject}:${id}`, digest(command),
+          { revision: result.revision, actor: actors.get(actor.subject), command, at: now, response: result }, now]);
+      }
+      return result.result;
+    } };
+  }
+  async authenticated(ctx, write, fn, writeLock=write) {
+    return this.db.tx(async c => {
+      const grant = await this.db.authorize(c, ctx, write);
+      const locked = await this.lock(c, ctx.projectId, writeLock);
+      const result = await fn(c, grant, locked);
+      // Expiry is rechecked after waits/work, before commit. Revocation is ordered
+      // by the grant FOR SHARE lock held throughout this transaction.
+      await this.db.authorize(c, ctx, write);
+      return result;
+    });
+  }
+  async once(c, projectId, actor, key, body, fn) {
+    need(typeof key === 'string' && key.length >= 8 && key.length <= 200, 'idempotency_key_required');
+    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`vf04:http:${projectId}`]);
+    const signature = digest({ actor: actor.id, body });
+    const old = (await c.query("SELECT * FROM correspondence_idempotency WHERE scope='vf04:http' AND project_id=$1 AND key=$2", [projectId, key])).rows[0];
+    if (old) { need(old.request_hash === signature, 'idempotency_conflict'); return { ...old.response_json, replayed: true }; }
+    const used=(await c.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE project_id=$1 AND scope='vf04:http'",[projectId])).rows[0].n;
+    const cfg=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[projectId])).rows[0].config;
+    need(used<(cfg.entryBounds?.maxHttpKeys??4096),'http_journal_capacity');
+    const result = await fn();
+    if(cfg.entryBounds)need((await c.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE project_id=$1 AND scope='vf04:http'",[projectId])).rows[0].n<cfg.entryBounds.maxHttpKeys,'http_journal_capacity');
+    await c.query(`INSERT INTO correspondence_idempotency(scope,project_id,key,request_hash,status_code,response_json,created_at)
+      VALUES('vf04:http',$1,$2,$3,200,$4,clock_timestamp())`, [projectId, key, signature, result]);
+    return { ...result, replayed: false };
+  }
+  async identities(c,projectId,original,write=false,required=false) {
+    ensurePostgresJson(original);
+    for(const r of [original.target,...original.dependencies]) {
+      const key=coordinateKey(r), native=toNativeRef(r);
+      const row=(await c.query('SELECT original,native FROM correspondence_vf04_identities WHERE project_id=$1 AND coordinate_key=$2',[projectId,key])).rows[0];
+      if(row) {
+        need(versionKey(row.original)===versionKey(r),'identity_hash_collision');
+        need(row.original.contentId===r.contentId,'coordinate_content_conflict');
+        need(digest(row.native)===digest(native),'identity_binding_mismatch');
+      } else {
+        need(!required,'identity_binding_missing');
+        if(write) await c.query('INSERT INTO correspondence_vf04_identities(project_id,coordinate_key,original,native) VALUES($1,$2,$3,$4)',[projectId,key,r,native]);
+      }
+    }
+  }
+  async maintenanceOnce(c,projectId,key,body,fn) {
+    need(typeof key==='string'&&key.length>=8&&key.length<=200,'idempotency_key_required');
+    const project=(await c.query('SELECT status FROM correspondence_projects WHERE id=$1 FOR SHARE',[projectId])).rows[0];
+    need(project&&project.status!=='resolved','project_resolved');
+    const signature=digest({actor:operator.subject,body});
+    const old=(await c.query("SELECT request_hash,response_json FROM correspondence_idempotency WHERE project_id=$1 AND scope='vf04:maintenance' AND key=$2",[projectId,key])).rows[0];
+    if(old){need(old.request_hash===signature,'idempotency_conflict');return {...old.response_json,replayed:true};}
+    const used=(await c.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE project_id=$1 AND scope='vf04:maintenance'",[projectId])).rows[0].n;
+    const cap=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[projectId])).rows[0].config.limits.maxCommands;
+    need(used<cap,'maintenance_journal_capacity');
+    const result=await fn();
+    await c.query("INSERT INTO correspondence_idempotency(scope,project_id,key,request_hash,status_code,response_json,created_at) VALUES('vf04:maintenance',$1,$2,$3,200,$4,clock_timestamp())",[projectId,key,signature,result]);
+    return {...result,replayed:false};
+  }
+  // Private installed operator port. Callers cannot provide executable policies,
+  // evaluator identities, source pins or refill the immutable aggregate budget.
+  async configureVerification(projectId,raw,key) {
+    const body=jsonBounded(raw);
+    need(Object.keys(body).sort().join(',')==='expectedVerificationId,revision,validityMs','invalid_verification_change');
+    return this.db.tx(async c=>{
+      const {config,verification}=await this.lock(c,projectId);
+      return this.maintenanceOnce(c,projectId,key,{type:'configureVerification',...body},async()=>{
+        need(body.expectedVerificationId===(verification?.id??null),'verification_revision_conflict');
+        const next=verificationFor(config,body),engine=await this.replay(c,projectId,config);
+        await engine.apply(operator,'configurePolicy',next.policy);
+        if(next.id!==verification?.id)for(const p of (await c.query("SELECT receipt FROM correspondence_vf04_publications WHERE project_id=$1 AND state='published'",[projectId])).rows)
+          await this.retireEvidence(c,projectId,p.receipt,'Installed verification policy/runtime changed');
+        await c.query('UPDATE correspondence_vf04_pools SET verification=$2 WHERE project_id=$1',[projectId,next]);
+        return {verification:next};
+      });
+    });
+  }
+  async retireEvidence(c,projectId,receipt,reason) {
+    const observations=(await c.query("SELECT id FROM correspondence_vf04_graph WHERE project_id=$1 AND kind='observation' AND record->>'receiptRef'=$2",[projectId,receipt.id])).rows;
+    for(const {id} of observations)if(!(await c.query("SELECT 1 FROM correspondence_vf04_graph WHERE project_id=$1 AND kind='mutation' AND record->>'target'=$2",[projectId,id])).rows.length)
+      await this.mutation(c,projectId,'retract-observation',id,reason);
+  }
+  async eligibleForVerification(c,projectId,candidate,sources) {
+    need(candidate&&(candidate.artifact.kind===PORTABLE_KIND?portableMatches(candidate.manifest,candidate.artifact):matchesInstalledManifest(candidate.manifest,candidate.artifact)),'installed_source_changed');
+    const cell=(await c.query('SELECT state FROM correspondence_vf02_work_cells WHERE project_id=$1 AND id=$2 FOR SHARE',[projectId,candidate.cell_id])).rows[0]?.state;
+    need(cell&&['submitted','accepted'].includes(cell.status),'source_withdrawn');
+    const {snapshot}=await this.graph(c,sources);
+    need(!snapshot.mutations.some(m=>['revoke-version','deprecate-version'].includes(m.kind)&&digest(m.target)===digest(refOf(candidate.manifest))),'source_revoked');
+  }
+  async requestRevalidation(projectId,raw,key) {
+    const body=jsonBounded(raw);
+    need(Object.keys(body).sort().join(',')==='candidateId,expectedGeneration,expectedVerificationId,reason','invalid_revalidation');
+    need(Number.isInteger(body.expectedGeneration)&&body.expectedGeneration>=1&&body.expectedGeneration<=MAX_GENERATIONS,'invalid_generation');
+    need(['expiry','evidence_retracted','verification_changed','retry_failure'].includes(body.reason),'invalid_revalidation_reason');
+    return this.db.tx(async c=>{
+      const {config,verification,sources}=await this.lock(c,projectId);
+      checkInstalledVerification(verification,config);
+      return this.maintenanceOnce(c,projectId,key,{type:'revalidate',...body},async()=>{
+        need(body.expectedVerificationId===verification.id,'verification_revision_conflict');
+        const candidate=(await c.query('SELECT * FROM correspondence_vf04_candidates WHERE project_id=$1 AND id=$2',[projectId,body.candidateId])).rows[0];
+        await this.eligibleForVerification(c,projectId,candidate,sources);
+        const engine=await this.replay(c,projectId,config),state=engine.service.snapshot().candidates[body.candidateId];
+        need(state?.active,'candidate_ineligible');
+        if(candidate.generation===body.expectedGeneration+1&&candidate.verification?.id===verification.id)
+          return {candidateId:candidate.id,generation:candidate.generation,verificationId:verification.id,coalesced:true};
+        need(candidate.generation===body.expectedGeneration,'generation_conflict');
+        need(candidate.generation<MAX_GENERATIONS,'generation_capacity');
+        need(!(await c.query("SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND candidate_id=$2 AND state<>'reconciled'",[projectId,candidate.id])).rows.length,'physical_reservation_held');
+        const pub=(await c.query('SELECT * FROM correspondence_vf04_publications WHERE project_id=$1 AND candidate_id=$2 AND generation=$3',[projectId,candidate.id,candidate.generation])).rows[0];
+        const now=await this.db.now(c);
+        if(body.reason==='expiry')need(pub&&['pending','published'].includes(pub.state)&&Date.parse(pub.receipt.observedAt)+(pub.verification?.validityMs??3600000)<=Date.parse(now),'evidence_not_expired');
+        if(body.reason==='verification_changed')need(candidate.verification?.id!==verification.id,'verification_unchanged');
+        if(body.reason==='retry_failure')need(['verification_failed','timed_out'].includes(state.stage),'no_failed_round');
+        if(body.reason==='evidence_retracted') {
+          need(pub,'publication_not_ready');
+          need((await c.query("SELECT 1 FROM correspondence_vf04_graph WHERE project_id=$1 AND kind='mutation' AND record->>'target' IN (SELECT id FROM correspondence_vf04_graph WHERE project_id=$1 AND kind='observation' AND record->>'receiptRef'=$2)",[projectId,pub.receipt.id])).rows.length,'evidence_not_retracted');
+        }
+        if(pub)await this.retireEvidence(c,projectId,pub.receipt,'Explicit verification generation requested');
+        if(state.stage==='queued'&&body.reason==='verification_changed')await engine.apply(operator,'finishUnknown',{
+          candidateId:candidate.id,assignmentId:null,reason:'queued_verification_superseded',evidence:{ref:'operator:maintenance',revision:verification.id}});
+        const renewed=await engine.apply(operator,'revalidate',{candidateId:candidate.id,expectedGeneration:candidate.generation,reason:body.reason});
+        need(digest(engine.service.snapshot().candidates[candidate.id].roundPolicy)===digest(verification.policy),'policy_journal_mismatch');
+        await c.query('UPDATE correspondence_vf04_candidates SET generation=$3,verification=$4 WHERE project_id=$1 AND id=$2',[projectId,candidate.id,renewed.generation,verification]);
+        return {candidateId:candidate.id,generation:renewed.generation,verificationId:verification.id,coalesced:false};
+      });
+    });
+  }
+  async admit(ctx, raw, key, installedTransaction=null) {
+    const body = validateAdmission(raw);
+    const run=(c, grant, { config, sources, verification }) => this.once(c, ctx.projectId, grant, key, body, async () => {
+      checkInstalledVerification(verification,config);
+      await this.identities(c,ctx.projectId,body.identity);
+      if(body.identity.dependencies.length>WIRE_LIMITS.installedDependencies)
+        throw new UnsupportedWire('installed_dependency_limit',body.identity,{field:'dependencies',maximum:WIRE_LIMITS.installedDependencies,requested:body.identity.dependencies.length});
+      const cell = (await c.query('SELECT state FROM correspondence_vf02_work_cells WHERE project_id=$1 AND id=$2 FOR SHARE', [ctx.projectId, body.cellId])).rows[0]?.state;
+      need(cell?.status === 'submitted' && cell.revision === body.workflowRevision && cell.fence === body.fence, 'stale_cell_fence');
+      need(cell.submission.grantId === grant.id, 'submission_authority');
+      let manifest;
+      const portable=config.kind===PORTABLE_KIND;
+      try { manifest = portable ? portableArtifact(body.artifact).descriptor.capability : capabilityFor(body.artifact, body.identity.dependencies); }
+      catch(e) { if(e.code==='unsupported_recipe')throw new UnsupportedWire('installed_recipe_unavailable',body.identity); throw e; }
+      const prior=(await c.query('SELECT manifest FROM correspondence_vf04_candidates WHERE project_id=$1 AND semantic_key=$2',[ctx.projectId,semanticKey(manifest,body.artifact)])).rows[0];
+      if(!portable&&prior&&matchesInstalledManifest(prior.manifest,body.artifact))manifest=prior.manifest;
+      const contribution = cell.submission.contribution;
+      const gap = (await c.query('SELECT record FROM correspondence_vf04_gaps WHERE project_id=$1 AND id=$2', [ctx.projectId, cell.gap.id])).rows[0]?.record;
+      need(gap && gap.contentId === cell.gap.contentId, 'unbound_gap');
+      need(digest(toGapBinding(gap,cell.gap.reproducer).cellGap)===digest(cell.gap),'gap_projection_mismatch');
+      need(contribution.artifact.digest === (portable?body.artifact.descriptor.id:digest(body.artifact)) && contribution.sourceRevision === hash(manifest.source), 'submission_content_mismatch');
+      need(contribution.rights === (portable?PORTABLE_RIGHTS:'MIT sample allowlist; owner-authorized JSON recipe'), 'rights_mismatch');
+      if(digest(identity(manifest,manifest.dependencies))!==digest(body.identity))
+        throw new UnsupportedWire('installed_capability_identity_unavailable',body.identity);
+      const binding=toValidationIdentity(body.identity);
+
+      const semantic = semanticKey(manifest, body.artifact);
+      const old = (await c.query('SELECT id FROM correspondence_vf04_candidates WHERE project_id=$1 AND semantic_key=$2', [ctx.projectId, semantic])).rows[0];
+      if (old) return { candidateId: old.id, identity: body.identity, duplicate: true, nextAction: 'Read the canonical candidate; no new verification was reserved.' };
+      const { snapshot, options } = await this.graph(c, sources);
+      // No implicit acceptance of external dependencies; current exact evidence
+      // must exist. Composition itself is still a separate installed check.
+      for (const dep of manifest.dependencies) {
+        const v = snapshot.versions.find(v => digest(refOf(v)) === digest(dep));
+        need(v, 'dependency_unavailable');
+        const qualified = resolutionManifest(snapshot, { schema: 'neomorphic.foundry.capability-request.v1', taskId: 'task:dependency-check',
+          outcome: v.outcomes[0], input: { range: '>=22', nodeVersion: '22.0.0' }, environment: ENV, output: null, capabilityId: v.capabilityId }, options);
+        need(qualified.resolution.candidates.some(c => c.status === 'compatible' && digest(c.target) === digest(dep)), 'dependency_unavailable');
+      }
+      const candidate = { schema: schemaId('candidate'), id: `candidate:${semantic.slice(7)}`, scope: config.scope,
+        capability: binding.native.capability, sourceRevision: contribution.sourceRevision, artifactDigest: contribution.artifact.digest,
+        artifactRef: contribution.artifact.uri, taskId: `task:${hash([gap.id,gap.taskId]).slice(7)}`, dependencies: binding.native.dependencies,
+        rights: { license: manifest.rights.license, permissionRef: manifest.rights.ref },
+        claimed: { summary: contribution.testProposal, evidenceRefs: [], limitations: contribution.limitations ? [contribution.limitations] : [] }, supersedes: null };
+      await this.identities(c,ctx.projectId,body.identity,true);
+      const actor = grantActor(grant, ctx.projectId);
+      const engine = await this.replay(c, ctx.projectId, config, [actor]);
+      await engine.apply(actor, 'submit', candidate);
+      await c.query(`INSERT INTO correspondence_vf04_candidates(project_id,id,semantic_key,cell_id,submission_id,candidate,manifest,artifact,verification)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [ctx.projectId, candidate.id, semantic, cell.id, cell.submission.id, candidate, manifest, body.artifact,verification]);
+      return { candidateId: candidate.id, identity: body.identity, duplicate: false, nextAction: 'Await assigned installed verification; contribution is voluntary and nonfinancial.' };
+    });
+    return installedTransaction ? run(installedTransaction.c,installedTransaction.grant,installedTransaction.locked) : this.authenticated(ctx,true,run);
+  }
+  async reserve(projectId, commandId = keyId(randomUUID())) {
+    return this.db.tx(async c => {
+      const { config,verification,sources } = await this.lock(c, projectId);
+      checkInstalledVerification(verification,config);
+      const engine = await this.replay(c, projectId, config);
+      // Journal replay first allows an exact lost-ack retry, then durable physical
+      // reservations gate every NEW assignment regardless of VF03 logical stage.
+      const prior = engine.service.snapshot().idempotency[`${operator.subject}|${commandId}`];
+      if (prior) return prior.result;
+      need(!(await c.query("SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1",[projectId])).rows.length,'physical_reservation_held');
+      const busy = (await c.query("SELECT id FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled' LIMIT 1", [projectId])).rows[0];
+      if (busy) throw new IntegrationError(409, 'physical_reservation_held', 'Reconcile termination and outcome of the existing attempt; a deadline is not cancellation.');
+      const withdrawn=await this.refreshCells(c,projectId,engine);
+      if(withdrawn&&!Object.values(engine.service.snapshot().candidates).some(x=>x.active&&x.stage==='queued'))return {code:'queue_empty',nextAction:'Withdrawn cells were invalidated; no runner was launched.'};
+      await this.entryPhysicalCapacity(c,projectId,config);
+      const result = await engine.apply(operator, 'assign', {}, commandId);
+      const a = result.assignment;
+      const candidate=(await c.query('SELECT * FROM correspondence_vf04_candidates WHERE project_id=$1 AND id=$2',[projectId,a.candidateId])).rows[0];
+      await this.eligibleForVerification(c,projectId,candidate,sources);
+      need(candidate.verification?.id===verification.id&&a.environmentDigest===verification.policy.environmentDigest,'round_verification_stale');
+      await c.query(`INSERT INTO correspondence_vf04_attempts(project_id,id,candidate_id,assignment,fence,state,generation,verification)
+        VALUES($1,$2,$3,$4,$5,'reserved',$6,$7)`, [projectId, a.id, a.candidateId, a, randomUUID(),candidate.generation,verification]);
+      return result;
+    });
+  }
+  async claimAttempt(projectId, assignmentId, supervisor) {
+    return this.db.tx(async c => {
+      const {config,verification,sources}=await this.lock(c,projectId);
+      const engine=await this.replay(c,projectId,config);await this.refreshCells(c,projectId,engine);
+      const current=(await c.query('SELECT * FROM correspondence_vf04_attempts WHERE project_id=$1 AND id=$2',[projectId,assignmentId])).rows[0];
+      need(current?.state==='reserved','attempt_already_claimed');
+      const candidate=(await c.query('SELECT * FROM correspondence_vf04_candidates WHERE project_id=$1 AND id=$2',[projectId,current.candidate_id])).rows[0];
+      need(candidate.generation===current.generation,'stale_attempt_generation');
+      let noLaunchReason=null;
+      try {
+        checkInstalledVerification(current.verification,config);
+        need(current.verification.id===verification?.id,'round_verification_stale');
+        need(engine.service.snapshot().candidates[current.candidate_id].active,'candidate_ineligible');
+        await this.eligibleForVerification(c,projectId,candidate,sources);
+      }catch(e){noLaunchReason=e.code??'installed_verification_unavailable';}
+      if(noLaunchReason){
+        await c.query("UPDATE correspondence_vf04_attempts SET state='result',termination=$3 WHERE project_id=$1 AND id=$2",[projectId,assignmentId,
+          {exited:true,noLaunch:true,proof:'durable_unclaimed_reservation',reason:noLaunchReason,observedAt:await this.db.now(c)}]);
+        return {notLaunched:true};
+      }
+      const row=(await c.query("UPDATE correspondence_vf04_attempts SET state='running',supervisor=$3 WHERE project_id=$1 AND id=$2 AND state='reserved' AND (assignment->>'deadline')::timestamptz>clock_timestamp() RETURNING *",[projectId,assignmentId,supervisor])).rows[0];
+      need(row,'attempt_already_claimed');
+      return {...row,artifact:candidate.artifact,manifest:candidate.manifest};
+    });
+  }
+  async runnerWrite(projectId, id, supervisor, fence, { processIdentity, result, termination }) {
+    return this.db.tx(async c => {
+      await this.lock(c, projectId);
+      const row = (await c.query('SELECT * FROM correspondence_vf04_attempts WHERE project_id=$1 AND id=$2 FOR UPDATE', [projectId, id])).rows[0];
+      need(row && row.supervisor === supervisor && row.fence === fence && ['running', 'unknown', 'result'].includes(row.state), 'stale_attempt_fence');
+      if (row.result) need(!result || digest(result) === digest(row.result), 'runner_result_conflict');
+      if (row.termination) need(!termination || digest(termination) === digest(row.termination), 'termination_conflict');
+      await c.query(`UPDATE correspondence_vf04_attempts SET process_identity=COALESCE(process_identity,$3),
+        result=COALESCE(result,$4),termination=COALESCE(termination,$5),state=CASE WHEN $5::jsonb IS NOT NULL THEN 'result' ELSE state END
+        WHERE project_id=$1 AND id=$2`, [projectId, id, processIdentity ?? null, result ?? null, termination ?? null]);
+    });
+  }
+  async markUnknown(projectId) {
+    return this.db.tx(async c => {
+      await this.lock(c, projectId);
+      const rows = await c.query(`UPDATE correspondence_vf04_attempts SET state='unknown'
+        WHERE project_id=$1 AND state IN ('reserved','running') AND (assignment->>'deadline')::timestamptz<=clock_timestamp() RETURNING id`, [projectId]);
+      return { unknown: rows.rows.map(r => r.id), nextAction: 'Keep physical capacity reserved until the assigned supervisor proves termination.' };
+    });
+  }
+  async reconcile(projectId, id) {
+    return this.db.tx(async c => {
+      const { config,verification } = await this.lock(c, projectId);
+      const row = (await c.query('SELECT * FROM correspondence_vf04_attempts WHERE project_id=$1 AND id=$2 FOR UPDATE', [projectId, id])).rows[0];
+      need(row, 'attempt_not_found');
+      if (row.state === 'reconciled') return { state: 'reconciled', duplicate: true };
+      need(row.termination?.exited === true, 'termination_unknown');
+      const engine = await this.replay(c, projectId, config);
+      await this.refreshCells(c,projectId,engine);
+      const current=(await c.query('SELECT generation FROM correspondence_vf04_candidates WHERE project_id=$1 AND id=$2',[projectId,row.candidate_id])).rows[0];
+      need(current.generation===row.generation,'stale_attempt_generation');
+      const state=engine.service.snapshot().candidates[row.candidate_id];
+      need(state.assignment?.id===row.id,'stale_assignment');
+      let currentProfile=true;
+      try {checkInstalledVerification(row.verification,config);need(row.verification.id===verification?.id,'round_verification_stale');}
+      catch{currentProfile=false;}
+      const now = await this.db.now(c); let result;
+      if (!engine.service.snapshot().candidates[row.candidate_id]?.active) {
+        result = { state: 'reconciled', candidate: 'invalidated', receiptAdmitted: false };
+      } else if(!currentProfile) {
+        result=await engine.apply(operator,'finishUnknown',{candidateId:row.candidate_id,assignmentId:row.id,reason:'installed_verification_changed',evidence:{ref:'supervisor:termination',revision:row.fence}});
+      } else if (Date.parse(now) >= Date.parse(row.assignment.deadline)) {
+        // maxAttempts=1. Never call VF03 expiry while any overdue runner is alive.
+        result = await engine.apply(operator, 'expire', {});
+      } else if (row.result) {
+        result = await engine.apply(runner, 'receipt', row.result);
+        if(config.kind===PORTABLE_KIND&&result.stage==='awaiting_review'){
+          const r=row.portable_result;need(r?.outcome==='sample_checks_passed'&&r.applicability.kind==='exact-inputs-only'
+            &&hash(r.applicability.inputDigests)===hash(portablePolicy().cases.map(c=>hash(c.input)))
+            &&r.observations.every(o=>o.status==='ok'&&o.termination.exited&&o.binding.runtimePin===verification.runtimePin),'portable_scope_review_failed');
+          result=await engine.apply(portableReviewer,'review',{candidateId:row.candidate_id,receiptId:row.result.id,decision:'accept',evidence:{ref:r.id,revision:'vf09.exact-scope-review.v1'}});
+        }
+        if (result.stage === 'accepted') {
+          await c.query('INSERT INTO correspondence_vf04_publications(project_id,candidate_id,receipt,generation,verification) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING', [projectId, row.candidate_id, row.result,row.generation,row.verification]);
+        }
+      } else {
+        // Physical termination is known; missing evidence stays unknown and
+        // consumes its reservation. This is not permanent source revocation.
+        result=await engine.apply(operator,'finishUnknown',{candidateId:row.candidate_id,assignmentId:row.id,
+          reason:'installed_runner_terminated_without_receipt',evidence:{ref:'supervisor:termination',revision:row.fence}});
+      }
+      await c.query("UPDATE correspondence_vf04_attempts SET state='reconciled' WHERE project_id=$1 AND id=$2", [projectId, id]);
+      return result;
+    });
+  }
+  async reconcileUnlaunched(projectId, id) {
+    await this.db.tx(async c => {
+      await this.lock(c, projectId);
+      const row = (await c.query('SELECT * FROM correspondence_vf04_attempts WHERE project_id=$1 AND id=$2 FOR UPDATE', [projectId,id])).rows[0];
+      need(row && ['reserved','unknown'].includes(row.state) && row.supervisor === null && row.process_identity === null, 'launch_outcome_unknown');
+      // claimAttempt commits a supervisor before any spawn; lock + CAS means
+      // this reservation has never authorized execution, even after a crash.
+      await c.query("UPDATE correspondence_vf04_attempts SET state='result',termination=$3 WHERE project_id=$1 AND id=$2", [projectId,id,
+        {exited:true,noLaunch:true,proof:'durable_unclaimed_reservation',observedAt:await this.db.now(c)}]);
+    });
+    return this.reconcile(projectId,id);
+  }
+  async appendGraph(c, projectId, kind, record, authority) {
+    const id = kind === 'version' ? versionKey(record) : record.id;
+    const old = (await c.query('SELECT record FROM correspondence_vf04_graph WHERE project_id=$1 AND kind=$2 AND id=$3', [projectId, kind, id])).rows[0];
+    if (old) { need(digest(old.record) === digest(record), 'immutable_graph_record'); return; }
+    await c.query('INSERT INTO correspondence_vf04_graph(project_id,kind,id,record,authority) VALUES($1,$2,$3,$4,$5)', [projectId, kind, id, record, authority]);
+  }
+  async publish(projectId, candidateId, generation=1) {
+    return this.db.tx(async c => {
+      const { config, sources,verification } = await this.lock(c, projectId);
+      const pub = (await c.query('SELECT * FROM correspondence_vf04_publications WHERE project_id=$1 AND candidate_id=$2 AND generation=$3 FOR UPDATE', [projectId, candidateId,generation])).rows[0];
+      need(pub, 'publication_not_ready');
+      checkInstalledVerification(pub.verification,config);
+      need(pub.verification.id===verification?.id,'round_verification_stale');
+      const candidate=(await c.query('SELECT * FROM correspondence_vf04_candidates WHERE project_id=$1 AND id=$2',[projectId,candidateId])).rows[0];
+      need(candidate.generation===generation,'stale_publication_generation');
+      await this.eligibleForVerification(c,projectId,candidate,sources);
+      const engine = await this.replay(c, projectId, config);
+      await this.refreshCells(c,projectId,engine);
+      const state = engine.service.snapshot().candidates[candidateId];
+      if(!state?.active)return {published:false,code:'candidate_withdrawn'};
+      need(state.acceptance === 'accepted'&&state.receiptId===pub.receipt.id&&state.assignment?.id===pub.receipt.assignmentId, 'publication_invalidated');
+      need(Date.parse(pub.receipt.observedAt)+pub.verification.validityMs>Date.parse(await this.db.now(c)),'publication_evidence_expired');
+      if (pub.state === 'published') return { published: true, duplicate: true };
+      need(pub.state === 'pending', 'publication_withdrawn');
+      const manifest = candidate.manifest;
+      const observation = { schema: 'neomorphic.foundry.compatibility-observation.v1', id: `observation:${digest(pub.receipt).slice(7)}`,
+        target: refOf(manifest), scope: { outcome: manifest.outcomes[0], environment: ENV, inputDigest: null }, verdict: 'compatible',
+        observedAt: pub.receipt.observedAt, expiresAt: new Date(Date.parse(pub.receipt.observedAt) + pub.verification.validityMs).toISOString(),
+        observerId: runner.subject, receiptRef: pub.receipt.id };
+      // Admission covers this installed bounded interpreter, including unknown
+      // outputs. Enumerated probe cases are not exhaustive domain testing and
+      // cannot justify coverage for another source, runtime or executor.
+      await this.appendGraph(c, projectId, 'version', manifest, pub.receipt.id);
+      if(candidate.artifact.kind===PORTABLE_KIND){
+        const run=(await c.query('SELECT portable_result FROM correspondence_vf04_attempts WHERE project_id=$1 AND id=$2',[projectId,pub.receipt.assignmentId])).rows[0]?.portable_result;
+        need(run?.outcome==='sample_checks_passed','portable_evidence_missing');
+        for(const check of run.checks)await this.appendGraph(c,projectId,'observation',{...observation,id:`observation:${hash([pub.receipt.id,check.inputDigest]).slice(7)}`,scope:{outcome:PORTABLE_OUTCOME,environment:PORTABLE_ENV,inputDigest:check.inputDigest}},pub.receipt.id);
+      }else await this.appendGraph(c, projectId, 'observation', observation, pub.receipt.id);
+      await this.graph(c, sources); // validate full composition before commit
+      await c.query("UPDATE correspondence_vf04_publications SET state='published',published_at=clock_timestamp() WHERE project_id=$1 AND candidate_id=$2 AND generation=$3", [projectId, candidateId,generation]);
+      return { published: true, generation, target: refOf(manifest), receipt: receiptReference(pub.receipt), promotion: 'not_promoted' };
+    });
+  }
+  async resolve(ctx, request) {
+    jsonBounded(request, 16384); ensurePostgresJson(request);
+    return this.authenticated(ctx, false, async (c, _grant, { sources,config }) => {
+      const { snapshot, options } = await this.graph(c, sources);
+      const result = resolutionManifest(snapshot, request, options);
+      if (result.manifest) {
+        await this.saveManifest(c,ctx.projectId,result.manifest,config);
+      }
+      return result;
+    });
+  }
+  async gap(ctx, request) {
+    jsonBounded(request,16384); ensurePostgresJson(request);
+    return this.authenticated(ctx, false, async (c, _grant, { sources }) => {
+      const { snapshot, options } = await this.graph(c, sources);
+      const gap = createGap(snapshot, request, options, { gapId: `gap:${hash(request).slice(7)}`,
+        reproducer: { ref: `synthetic:${hash(request.input).slice(7)}`, permission: 'synthetic' }, funding: { kind: 'voluntary', ref: null } });
+      const experiments = (await c.query('SELECT record FROM correspondence_vf04_experiments WHERE project_id=$1', [ctx.projectId])).rows;
+      need(experiments.some(e => hash(e.record.originalTask.input) === hash(request.input)), 'cleared_original_task_required');
+      await c.query('INSERT INTO correspondence_vf04_gaps(project_id,id,record) VALUES($1,$2,$3) ON CONFLICT DO NOTHING', [ctx.projectId, gap.id, gap]);
+      const storedGap = (await c.query('SELECT record FROM correspondence_vf04_gaps WHERE project_id=$1 AND id=$2', [ctx.projectId, gap.id])).rows[0].record;
+      // The first resolver evidence stays immutable across exact request retries.
+      return toGapBinding(storedGap,{uri:`https://foundry.invalid/synthetic/${hash(request.input).slice(7)}`,digest:hash(request.input)});
+    });
+  }
+  async submitEnvironmentEvidence(ctx,raw,key) {
+    const body=validateEnvironmentEvidence(raw);
+    return this.authenticated(ctx,true,(c,grant,{config})=>this.once(c,ctx.projectId,grant,key,body,async()=>{
+      const record={schema:wireSchema('environment-evidence-observation'),id:`evidence:${hash({body,grant:grant.id}).slice(7)}`,
+        submission:body,grantId:grant.id,receivedAt:await this.db.now(c),
+        replay:{status:'not-replayed',assignmentId:null,receiptId:null},review:{status:'unreviewed',reviewer:null,note:null}};
+      const existing=(await c.query('SELECT record FROM correspondence_vf04_environment_evidence WHERE project_id=$1 AND id=$2',[ctx.projectId,record.id])).rows[0];
+      if(existing)return existing.record;
+      const count=(await c.query('SELECT count(*)::int AS n FROM correspondence_vf04_environment_evidence WHERE project_id=$1',[ctx.projectId])).rows[0].n;
+      if(count>=config.limits.maxRecords)throw new UnsupportedWire('environment_evidence_capacity',body,{field:'observations',maximum:config.limits.maxRecords});
+      await c.query('INSERT INTO correspondence_vf04_environment_evidence(project_id,id,record) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',[ctx.projectId,record.id,record]);
+      return (await c.query('SELECT record FROM correspondence_vf04_environment_evidence WHERE project_id=$1 AND id=$2',[ctx.projectId,record.id])).rows[0].record;
+    }));
+  }
+  async environmentEvidence(ctx) {
+    return this.authenticated(ctx,false,async c=>({observations:(await c.query('SELECT record FROM correspondence_vf04_environment_evidence WHERE project_id=$1 ORDER BY id',[ctx.projectId])).rows.map(r=>r.record)}));
+  }
+  // Installed review port: reviewing supplied logs never creates an assignment,
+  // execution receipt, graph observation, or compatibility expansion.
+  async reviewEnvironmentEvidence(projectId,id,note) {
+    need(typeof note==='string'&&note.length>0&&note.length<=2000,'invalid_review');
+    return this.db.tx(async c=>{
+      await this.lock(c,projectId);
+      const row=(await c.query('SELECT record FROM correspondence_vf04_environment_evidence WHERE project_id=$1 AND id=$2 FOR UPDATE',[projectId,id])).rows[0];
+      need(row,'evidence_not_found');
+      row.record.review={status:'supplied-evidence-reviewed',reviewer:operator.subject,note,at:await this.db.now(c)};
+      await c.query('UPDATE correspondence_vf04_environment_evidence SET record=$3 WHERE project_id=$1 AND id=$2',[projectId,id,row.record]);
+      return row.record;
+    });
+  }
+  async invoke(ctx, raw) {
+    const portable=await this.authenticated(ctx,false,async (_c,_g,{config})=>config.kind===PORTABLE_KIND);
+    if(portable)return this.invokePortable(ctx,raw);
+    const body = jsonBounded(raw, 16384);
+    need(Object.keys(body).sort().join(',') === 'manifestId,request', 'invalid_invocation');
+    return this.authenticated(ctx, false, async (c, grant, { sources }) => {
+      const manifest = (await c.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2', [ctx.projectId, body.manifestId])).rows[0]?.record;
+      need(manifest && manifest.requestId === hash(body.request), 'manifest_request_mismatch');
+      const { snapshot, options } = await this.graph(c, sources);
+      recheckManifest(manifest, snapshot, options.now, options.policy, body.request);
+      const candidate = (await c.query('SELECT * FROM correspondence_vf04_candidates WHERE project_id=ANY($1) AND manifest->>\'contentId\'=$2', [sources, manifest.target.contentId])).rows[0];
+      need(candidate && candidate.manifest.dependencies.length === 0, 'installed_invocation_unavailable');
+      const cell=(await c.query('SELECT state FROM correspondence_vf02_work_cells WHERE project_id=$1 AND id=$2 FOR SHARE',[candidate.project_id,candidate.cell_id])).rows[0]?.state;
+      need(cell&&['submitted','accepted'].includes(cell.status),'contribution_withdrawn');
+      const admitted = (await c.query("SELECT receipt FROM correspondence_vf04_publications WHERE project_id=$1 AND candidate_id=$2 AND generation=$3 AND state='published'", [candidate.project_id,candidate.id,candidate.generation])).rows[0]?.receipt;
+      need(admitted?.environmentDigest === environmentDigest, 'installed_runtime_changed');
+      const old = (await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2', [ctx.projectId, body.request.taskId])).rows[0];
+      if (old) { need(old.manifest_id === body.manifestId && old.input_digest === hash(body.request.input), 'task_reuse_conflict'); return { ...old.result, replayed: true }; }
+      const output = invokeRecipe(candidate.artifact, body.request.input);
+      const result = { schema: 'neomorphic.foundry.invocation.v1', target: manifest.target, taskId: body.request.taskId,
+        manifestId: manifest.id, inputDigest: hash(body.request.input), output, invokedAt: options.now,
+        outcome: 'observed_output', purpose: 'owner_qa', relationship: 'owner', cost: null, effortMs: null, beneficiaryGrantId: grant.id };
+      // Installed pure bounded invocation occurs while exact dependency/source
+      // share locks are held. No network side effect can escape this transaction.
+      await c.query('INSERT INTO correspondence_vf04_invocations(project_id,task_id,manifest_id,input_digest,result) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING', [ctx.projectId, body.request.taskId, manifest.id, result.inputDigest, result]);
+      const stored = (await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2', [ctx.projectId, body.request.taskId])).rows[0];
+      need(stored.manifest_id === manifest.id && stored.input_digest === result.inputDigest, 'task_reuse_conflict');
+      return stored.result;
+    });
+  }
+  async status(ctx) {
+    return this.authenticated(ctx, false, async (c, _g, { config,verification }) => {
+      const engine = await this.replay(c, ctx.projectId, config);
+      const state = engine.service.snapshot();
+      const attempts = (await c.query('SELECT id,candidate_id,generation,verification,state,assignment,termination FROM correspondence_vf04_attempts WHERE project_id=$1 ORDER BY id', [ctx.projectId])).rows;
+      const invocations=(await c.query('SELECT task_id,state,execution FROM correspondence_vf04_invocations WHERE project_id=$1 AND execution IS NOT NULL ORDER BY task_id',[ctx.projectId])).rows;
+      return { revision: state.revision, verification, portableExecution:{invocationCap:config.invocationLimits??null,chargedInvocations:invocations.length,invocations:invocations.map(i=>({taskId:i.task_id,state:i.state,observationId:i.execution.sample?.observation.id??null,termination:i.execution.sample?.observation.termination??null,usage:i.execution.sample?.observation.usage??null}))}, candidates: Object.values(state.candidates).map(c => ({ id: c.candidate.id, generation:c.generation??1, stage: c.stage, active: c.active, acceptance: c.acceptance })),
+        attempts, reuse: projectReuse(state), publications: (await c.query('SELECT candidate_id,generation,state FROM correspondence_vf04_publications WHERE project_id=$1 ORDER BY candidate_id,generation', [ctx.projectId])).rows };
+    });
+  }
+  async observe(ctx, raw, key) {
+    const body = jsonBounded(raw, 4096);
+    need(Object.keys(body).sort().join(',') === 'arm,caseId,experimentId,taskId', 'invalid_observation');
+    return this.authenticated(ctx, true, (c, grant, { config }) => this.once(c, ctx.projectId, grant, key, body, async () => {
+      const experiment = (await c.query('SELECT record FROM correspondence_vf04_experiments WHERE project_id=$1 AND id=$2', [ctx.projectId, body.experimentId])).rows[0]?.record;
+      const heldout = experiment?.cases.find(x => x.id === body.caseId);
+      const invocation = (await c.query('SELECT result FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2', [ctx.projectId, body.taskId])).rows[0]?.result;
+      need(heldout && invocation && invocation.beneficiaryGrantId === grant.id && invocation.inputDigest === hash(heldout.input), 'frozen_case_binding');
+      need(['reuse_only', 'contribution'].includes(body.arm), 'invalid_arm');
+      const candidate = (await c.query("SELECT candidate FROM correspondence_vf04_candidates WHERE project_id=$1 AND manifest->>'contentId'=$2", [ctx.projectId, invocation.target.contentId])).rows[0]?.candidate;
+      need(candidate, 'local_candidate_required_for_cohort');
+      const actor = grantActor(grant, ctx.projectId); const engine = await this.replay(c, ctx.projectId, config, [actor]);
+      const now = await this.db.now(c);
+      const observation = { schema: schemaId('reuse_observation'), id: `reuse:${hash({ taskId: body.taskId, target: invocation.target }).slice(7)}`,
+        scope: config.scope, candidateId: candidate.id, capability: candidate.capability, taskId: body.taskId,
+        environmentDigest:invocation.environmentDigest??environmentDigest, taskInputDigest: invocation.inputDigest, occurredAt: now, relationship: 'owner', purpose: 'owner_qa',
+        outcome: config.kind===PORTABLE_KIND ? (hash(invocation.output)!==hash(heldout.expected)?'failed':invocation.output.outcome==='observed'?'useful':'unknown') : invocation.output.status === 'unknown' ? 'unknown' : invocation.output.status === heldout.expected ? 'useful' : 'failed',
+        outcomeSource: { ref: `invocation:${digest(invocation).slice(7)}`, revision: 'vf04:v1' },
+        adaptation: config.kind===PORTABLE_KIND?'No adaptation after freeze; actual portable component invocation.':'No adaptation after freeze; installed bounded recipe.', effortMs: null, cost: null,
+        cohort: { experimentId: experiment.id, holdoutRevision: digest(experiment), taskClass: config.kind===PORTABLE_KIND?'task-class:structured-result':'task-class:engine-boundary',
+          metricVersion: config.kind===PORTABLE_KIND?'metric:exact-output-and-observed-v1':'metric:frozen-expected-status-v1', arm: body.arm, caseId: body.caseId }, supersedes: null };
+      return engine.apply(actor, 'observe', observation);
+    }));
+  }
+  async decline(ctx, raw, key) {
+    const body = jsonBounded(raw, 4096);
+    need(Object.keys(body).sort().join(',') === 'reason,taskId' && typeof body.reason === 'string' && body.reason.length <= 512, 'invalid_decline');
+    // Readers can decline; no work cell or candidate is created.
+    return this.authenticated(ctx, false, (c, grant) => this.once(c, ctx.projectId, grant, key, body,
+      async () => ({ taskId: body.taskId, contribution: 'declined', reason: body.reason, purpose: 'owner_qa', cost: null })));
+  }
+  async invalidate(projectId, candidateId, reason = 'owner_qa_retraction') {
+    return this.db.tx(async c => {
+      const { config } = await this.lock(c, projectId);
+      const engine = await this.replay(c, projectId, config);
+      await engine.apply(operator, 'invalidate', { scope: config.scope, target: 'candidate', candidateId, receiptId: null, dependency: null,
+        reason, evidence: { ref: 'operator:maintenance', revision: 'vf04:v1' } });
+      await this.withdrawInactive(c,projectId,engine);
+      return { invalidated: candidateId };
+    });
+  }
+  async mutation(c, projectId, kind, target, reason) {
+    const previous = (await c.query("SELECT record FROM correspondence_vf04_graph WHERE project_id=$1 AND kind='mutation' AND record->'target'=$2::jsonb ORDER BY (record->>'revision')::integer DESC LIMIT 1", [projectId, JSON.stringify(target)])).rows[0]?.record;
+    const record = { schema: 'neomorphic.foundry.capability-mutation.v1', id: `mutation:${randomUUID()}`, kind, target,
+      replacementId: null, revision: (previous?.revision ?? 0) + 1, previousId: previous?.id ?? null,
+      at: await this.db.now(c), reason, provenanceRef: 'operator:owner-qa-maintenance' };
+    await this.appendGraph(c, projectId, 'mutation', record, 'operator:host');
+    return record;
+  }
+  async retract(projectId, observationId) {
+    return this.db.tx(async c => {
+      const { sources } = await this.lock(c, projectId);
+      await this.mutation(c, projectId, 'retract-observation', observationId, 'Owner QA evidence retracted');
+      await this.graph(c, sources);
+    });
+  }
+  // Private operator QA evidence port, not a client snapshot restore. Enrolled
+  // host authority supplies explicit records; snapshot validation is mandatory.
+  async installOwnerQAEvidence(projectId, records) {
+    return this.db.tx(async c => {
+      const { sources } = await this.lock(c, projectId);
+      for (const [kind, values] of Object.entries(records)) {
+        need(['version', 'observation', 'mutation'].includes(kind), 'invalid_record_kind');
+        for (const record of values) await this.appendGraph(c, projectId, kind, record, 'operator:owned-evidence-fixture');
+      }
+      await this.graph(c, sources);
+    });
+  }
+  async shareOwnerQA(source, consumer) {
+    need(source !== consumer, 'invalid_share');
+    await this.db.tx(async c => {
+      for (const id of [source, consumer].sort()) await c.query('SELECT project_id FROM correspondence_vf04_pools WHERE project_id=$1 FOR UPDATE', [id]);
+      await c.query('INSERT INTO correspondence_vf04_shares(consumer,source) VALUES($1,$2) ON CONFLICT DO NOTHING', [consumer, source]);
+    });
+  }
+  // Trusted adapter for VF02. No URL fetching and no contributed JSON receipts.
+  async resolveReceipt({ projectId, cellId, submission, reference, signal }) {
+    if (signal.aborted) throw new Error('aborted');
+    const result = await this.db.tx(async c => {
+      const row = (await c.query(`SELECT p.receipt,p.verification,a.assignment,v.config,v.verification AS current_verification FROM correspondence_vf04_candidates c
+        JOIN correspondence_vf04_publications p ON p.project_id=c.project_id AND p.candidate_id=c.id
+        JOIN correspondence_vf04_attempts a ON a.project_id=c.project_id AND a.id=p.receipt->>'assignmentId'
+        JOIN correspondence_vf04_pools v ON v.project_id=c.project_id
+        WHERE c.project_id=$1 AND c.cell_id=$2 AND c.submission_id=$3 AND p.state='published' AND p.generation=c.generation AND a.generation=c.generation AND a.state='reconciled'`, [projectId, cellId, submission.id])).rows[0];
+      need(row && digest(receiptReference(row.receipt)) === digest(reference), 'receipt_not_admitted');
+      checkInstalledVerification(row.verification,row.config);
+      need(row.verification.id===row.current_verification?.id&&Date.parse(row.receipt.observedAt)+row.verification.validityMs>Date.parse(await this.db.now(c)),'receipt_not_current');
+      return { schema: 'neomorphic.foundry.verification-receipt.v1', id: row.receipt.id, projectId, cellId, submissionId: submission.id,
+        candidateRevision: row.receipt.sourceRevision, artifactDigest: row.receipt.artifactDigest,
+        executionIdentity: row.assignment.runner, evaluatorPolicy: { uri: 'https://foundry.invalid/policies/installed-preflight-v1', digest: digest(row.verification.policy) },
+        environment: row.receipt.environmentDigest, independentlyAssigned: true, contributorRelationship: 'owner-controlled', outcome: 'accepted',
+        limitations: 'Owner QA installed evaluator; exact declared applicability, no external independence, promotion or payment.', nextStep: 'Resolve current evidence before invocation.' };
+    });
+    if (signal.aborted) throw new Error('aborted');
+    return result;
+  }
+}
+
+Object.assign(IntegrationStore.prototype,portableMethods);

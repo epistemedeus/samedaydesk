@@ -2,8 +2,9 @@
 // Unconfigured: truthful disabled healthz only. Never takes down SDS routes.
 // No host-global CORS, no memory store outside NODE_ENV=test, no retry loop.
 import express from "express";
-import { foundryHostOptIn, parseFoundryBodyLimit } from "@neomorphic/correspondence";
-import { composeFoundryOnStore } from "../foundry/compose.js";
+import { foundryHostOptIn, parseFoundryBodyLimit } from "../foundry/opt-in.js";
+import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
+import { hostInputsFromEnv } from "../foundry/private-files.js";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
 export const MOUNTED_PG_SCHEMA = "pilot_correspondence";
@@ -74,20 +75,6 @@ export function inspectCorrespondenceEnv(env = process.env) {
   return { kind: "configured", url, token, schema, poolMax, store, foundryOptIn };
 }
 
-function mountFoundryReceiver(app, foundry, config) {
-  app.get("/foundry-receiver", (_req, res) => {
-    res.status(200).json({
-      optIn: true,
-      extension: foundry.extension,
-      reason: foundry.extension ? "ready" : foundry.reason,
-      bodyLimitBytes: config.bodyLimitBytes,
-      schema: "pilot_correspondence",
-      vf09: "waiting_for_export",
-      wholeHostSandbox: false,
-    });
-  });
-}
-
 function disabledRouter(state) {
   const router = express.Router();
   router.get("/healthz", (_req, res) => {
@@ -119,7 +106,8 @@ export function mountCorrespondence(app, options = {}) {
     inFlight: null,
     retried: false,
     closed: false,
-    foundry: { optIn: false, extension: false, reason: "opt_in_unset" },
+    foundry: { optIn: false, extension: false, reason: "opt_in_unset", facade: false, rawMounted: false },
+    entryReuseMount: null,
   };
   const disabled = disabledRouter(state);
 
@@ -135,7 +123,17 @@ export function mountCorrespondence(app, options = {}) {
       state.reason = "invalid_config";
       return;
     }
+    if (inspected.foundryOptIn && !options.createEntryReuseMount && !options.hostProfile) {
+      const inputs = hostInputsFromEnv(env);
+      if (!inputs.ok) {
+        state.status = "disabled";
+        state.reason = "invalid_config";
+        state.foundry = { optIn: true, extension: false, reason: inputs.reason, facade: false, rawMounted: false };
+        return;
+      }
+    }
     state.lastAttempt = now();
+    let mounted = null;
     try {
       const service = loadService
         ? await loadService()
@@ -153,31 +151,58 @@ export function mountCorrespondence(app, options = {}) {
         ...service.loadConfig(configEnv),
         bodyLimitBytes: parseFoundryBodyLimit(env),
       };
-      const store = await service.createPostgresStore(config.databaseUrl, {
-        schema: config.pgSchema || inspected.schema,
-        poolMax: config.poolMax || inspected.poolMax,
-      });
+      // Opt-in serving does not migrate. createPostgresStore applies the base
+      // schema as a side effect, so the installed facade opens the class directly.
+      const store = inspected.foundryOptIn && !loadService
+        ? new service.PostgresStore(config.databaseUrl, {
+          schema: config.pgSchema || inspected.schema,
+          poolMax: config.poolMax || inspected.poolMax,
+        })
+        : await service.createPostgresStore(config.databaseUrl, {
+          schema: config.pgSchema || inspected.schema,
+          poolMax: config.poolMax || inspected.poolMax,
+        });
       state.store = store;
-      if (state.closed) { await store.close(); state.store = null; return; }
-      const foundry = await composeFoundryOnStore({
-        store,
-        env,
-        config,
-        createFoundryExtension: options.createFoundryExtension,
-      });
-      state.foundry = {
-        optIn: foundry.optedIn,
-        extension: foundry.extension,
-        reason: foundry.reason,
-        missing: foundry.missing,
-      };
-      state.app = service.createApp(store, config);
-      foundry.lifecycle.mount(state.app);
-      if (foundry.optedIn) mountFoundryReceiver(state.app, state.foundry, config);
+      if (state.closed) {
+        await store.close();
+        state.store = null;
+        return;
+      }
+      if (!inspected.foundryOptIn) {
+        state.app = service.createApp(store, config);
+        state.foundry = { optIn: false, extension: false, reason: "opt_in_unset", facade: false, rawMounted: false };
+      } else {
+        const opened = await openEntryFacade({
+          store,
+          config,
+          env,
+          createEntryReuseMount: options.createEntryReuseMount,
+          hostProfile: options.hostProfile,
+          participationKey: options.participationKey,
+        });
+        mounted = opened.mounted;
+        state.entryReuseMount = mounted;
+        if (state.closed) {
+          await closeEntryThenBase(mounted, store);
+          state.entryReuseMount = null;
+          state.store = null;
+          return;
+        }
+        await store.checkReady();
+        state.app = mounted.app;
+        state.foundry = {
+          optIn: true,
+          extension: true,
+          reason: "ready",
+          facade: true,
+          rawMounted: false,
+        };
+      }
       state.status = "ready";
       state.reason = "ready";
     } catch (error) {
-      if (state.store?.close) await state.store.close().catch(() => {});
+      await closeEntryThenBase(mounted || state.entryReuseMount, state.store).catch(() => {});
+      state.entryReuseMount = null;
       state.store = null;
       state.app = null;
       state.status = "disabled";
@@ -190,6 +215,20 @@ export function mountCorrespondence(app, options = {}) {
 
   function dispatch(req, res, next) {
     const proceed = () => {
+      if (req.path === "/foundry-receiver" && state.foundry?.optIn && state.status === "ready") {
+        return res.status(200).json({
+          optIn: true,
+          extension: state.foundry.extension,
+          reason: state.foundry.reason,
+          bodyLimitBytes: parseFoundryBodyLimit(env),
+          schema: "pilot_correspondence",
+          facade: true,
+          rawMounted: false,
+          vf09: "private_loader",
+          publicExecution: false,
+          wholeHostSandbox: false,
+        });
+      }
       if (state.app) return state.app(req, res, next);
       return disabled(req, res, next);
     };
@@ -219,9 +258,12 @@ export function mountCorrespondence(app, options = {}) {
       await state.inFlight;
       state.status = "disabled";
       state.reason = "store_unavailable";
-      if (state.store?.close) await state.store.close();
+      const entry = state.entryReuseMount;
+      const store = state.store;
+      state.entryReuseMount = null;
       state.store = null;
       state.app = null;
+      await closeEntryThenBase(entry, store);
     },
   };
 }

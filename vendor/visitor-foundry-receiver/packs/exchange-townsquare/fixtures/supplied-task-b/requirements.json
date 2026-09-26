@@ -1,0 +1,58 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "supplied-b-capability-card-02",
+  "title": "Supplied capability card",
+  "summary": "Caller-supplied capability card. Wholly objective — distinct from task A and from exchange/01 fixtures.",
+  "sourceLabel": "supplied_local:operator-b-local",
+  "artifact": {
+    "format": "json",
+    "maxBytes": 4096,
+    "requiredFields": ["name", "status", "tags", "blurb"]
+  },
+  "objectiveCriteria": [
+    {
+      "id": "name_present",
+      "description": "artifact includes name",
+      "check": { "kind": "json_path_exists", "path": "name" }
+    },
+    {
+      "id": "status_present",
+      "description": "artifact includes status",
+      "check": { "kind": "json_path_exists", "path": "status" }
+    },
+    {
+      "id": "tags_present",
+      "description": "artifact includes tags",
+      "check": { "kind": "json_path_exists", "path": "tags" }
+    },
+    {
+      "id": "blurb_present",
+      "description": "artifact includes blurb",
+      "check": { "kind": "json_path_exists", "path": "blurb" }
+    },
+    {
+      "id": "card_name",
+      "description": "name must be a string",
+      "check": { "kind": "json_path_type", "path": "name", "type": "string" }
+    },
+    {
+      "id": "card_status",
+      "description": "status must be ready or draft",
+      "check": { "kind": "enum_in", "path": "status", "values": ["ready", "draft"] }
+    },
+    {
+      "id": "card_tags",
+      "description": "tags must have at least two entries",
+      "check": { "kind": "array_min_length", "path": "tags", "min": 2 }
+    },
+    {
+      "id": "card_blurb",
+      "description": "blurb must be a short string",
+      "check": { "kind": "string_max_length", "path": "blurb", "max": 240 }
+    }
+  ],
+  "subjectiveCriteria": [],
+  "bounds": {
+    "notes": "Caller-supplied task B. Wholly objective. No custody or payment."
+  }
+}

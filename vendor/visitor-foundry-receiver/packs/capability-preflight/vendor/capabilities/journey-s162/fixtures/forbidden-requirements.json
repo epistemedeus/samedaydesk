@@ -1,0 +1,24 @@
+{
+  "schema": "neomorphic.r2.exchange.task_requirements.v1",
+  "taskId": "journey-s155-forbidden",
+  "title": "Forbidden fields must reject",
+  "summary": "Synthetic negative — invented demand fields must be rejected.",
+  "demo": true,
+  "sourceLabel": "synthetic-fixture",
+  "buyerCount": 99,
+  "revenue": 1000,
+  "artifact": {
+    "format": "json",
+    "maxBytes": 1024,
+    "requiredFields": ["ok"]
+  },
+  "objectiveCriteria": [
+    {
+      "id": "ok_bool",
+      "description": "ok must be boolean",
+      "check": { "kind": "json_path_type", "path": "ok", "type": "boolean" }
+    }
+  ],
+  "subjectiveCriteria": [],
+  "bounds": { "notes": "Forbidden fields present intentionally." }
+}

@@ -1,0 +1,129 @@
+{
+  "schema": "pilot.r2.capabilities.source_map_s180.v1",
+  "kitBranch": "codex/s180-capability-consumer-kit-20260910",
+  "heavyPin": "8a6716482b2f240078f7b17a3cf5547f1d122302",
+  "kitSourceRevision": "0df011c5354c9041675333045d8c6d01530e602e",
+  "layout": "repository",
+  "tips": {
+    "s164": "8a6716482b2f240078f7b17a3cf5547f1d122302",
+    "firstRun": "de2061337100c177f0f123b970431e4e9b9a9e10",
+    "examples": "72feb5bbbb1722c3ad349ccbc420a9ebc6555e22",
+    "journey": "d3e6febd284e24e547ac2249b4adba96a058e746"
+  },
+  "mapping": [
+    {
+      "kitPath": "vendor/s138-capability-evidence",
+      "upstream": "experiments/s138-capability-evidence",
+      "tip": "8a6716482b2f240078f7b17a3cf5547f1d122302",
+      "caps": [
+        "02",
+        "03",
+        "06"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/01",
+      "upstream": "experiments/scale-r2-20260910/capabilities/01",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10",
+      "caps": [
+        "01"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/04",
+      "upstream": "experiments/scale-r2-20260910/capabilities/04",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10",
+      "caps": [
+        "04"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/05",
+      "upstream": "experiments/scale-r2-20260910/capabilities/05",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10",
+      "caps": [
+        "05"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/07",
+      "upstream": "experiments/scale-r2-20260910/capabilities/07",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10",
+      "caps": [
+        "07"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/08",
+      "upstream": "experiments/scale-r2-20260910/capabilities/08",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10",
+      "caps": [
+        "08"
+      ]
+    },
+    {
+      "kitPath": "vendor/capabilities/first-run-s172",
+      "upstream": "experiments/scale-r2-20260910/capabilities/first-run-s172",
+      "tip": "de2061337100c177f0f123b970431e4e9b9a9e10"
+    },
+    {
+      "kitPath": "vendor/capabilities/journey-s162",
+      "upstream": "experiments/scale-r2-20260910/capabilities/journey-s162",
+      "tip": "d3e6febd284e24e547ac2249b4adba96a058e746"
+    },
+    {
+      "kitPath": "vendor/capabilities/examples-s170",
+      "upstream": "experiments/scale-r2-20260910/capabilities/examples-s170",
+      "tip": "72feb5bbbb1722c3ad349ccbc420a9ebc6555e22"
+    }
+  ],
+  "importRelocation": [
+    {
+      "from": "../../../s138-capability-evidence/src/index.mjs",
+      "to": "../../vendor/s138-capability-evidence/src/index.mjs"
+    },
+    {
+      "from": "../vendor/s138-capability-evidence/src/index.mjs",
+      "to": "../vendor/s138-capability-evidence/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/01/src/index.mjs",
+      "to": "../vendor/capabilities/01/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/04/src/index.mjs",
+      "to": "../vendor/capabilities/04/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/05/src/index.mjs",
+      "to": "../vendor/capabilities/05/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/07/src/index.mjs",
+      "to": "../vendor/capabilities/07/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/08/src/index.mjs",
+      "to": "../vendor/capabilities/08/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/first-run-s172/src/index.mjs",
+      "to": "../vendor/capabilities/first-run-s172/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/journey-s162/src/index.mjs",
+      "to": "../vendor/capabilities/journey-s162/src/index.mjs"
+    },
+    {
+      "from": "../vendor/capabilities/examples-s170/src/index.mjs",
+      "to": "../vendor/capabilities/examples-s170/src/index.mjs"
+    }
+  ],
+  "notes": [
+    "Archive is offline/dry-run only. No payment, publish, or deploy.",
+    "After unpack, run: node bin/capability-consumer-kit.mjs cold-start --probe",
+    "Consumer suite: node --test --test-concurrency=1 tests/*.test.mjs",
+    "Repository packing tests (tests/pack-repository.test.mjs) are not shipped in the archive.",
+    "Imports inside the archive are rewritten to vendor/* relative paths (documented importRelocation)."
+  ]
+}

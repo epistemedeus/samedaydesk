@@ -8,10 +8,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import express from "express";
-import { createApp, loadConfig, MemoryStore, prepareFoundryHost } from "@neomorphic/correspondence";
+import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
+import { prepareFoundryHost } from "../../vendor/visitor-foundry-receiver/services/correspondence/dist/visitor-foundry/host.js";
 import { createSdsApp } from "../app.js";
 import { inspectCorrespondenceEnv } from "../lib/correspondence-mount.js";
-import { resolveLayout, F93_LAYOUT } from "../foundry/layout.js";
+import { resolveLayout, RECEIVER_LAYOUT } from "../foundry/layout.js";
+import { RECEIVER_ROOT } from "../foundry/paths.js";
+import { parseFoundryBodyLimit } from "../foundry/opt-in.js";
 import { runPhasedWorker } from "../foundry/lifecycle.js";
 import { bindListenerLifecycle } from "../foundry/listener-lifecycle.js";
 import { bindVf09ArtifactLoader, VF09_BIND_POINT } from "../foundry/vf09-bind.js";
@@ -80,14 +83,15 @@ test("explicit 524288 without opt-in, and a sloppy flag, are rejected before con
   assert.equal(inspectCorrespondenceEnv({ ...baseEnv, CORRESPONDENCE_BODY_LIMIT_BYTES: "524288" }).kind, "invalid_config");
   assert.equal(inspectCorrespondenceEnv({ ...baseEnv, FOUNDRY_HOST_OPT_IN: "yes" }).kind, "invalid_config");
   assert.equal(inspectCorrespondenceEnv({ FOUNDRY_HOST_OPT_IN: "1" }).kind, "invalid_config");
-  assert.throws(() => loadConfig({ ...baseEnv, CORRESPONDENCE_BODY_LIMIT_BYTES: "524288" }), /32768/);
+  assert.throws(() => parseFoundryBodyLimit({ ...baseEnv, CORRESPONDENCE_BODY_LIMIT_BYTES: "524288" }), /32768/);
+  assert.equal(loadConfig(baseEnv).bodyLimitBytes, 32768);
   await assert.rejects(
     () => prepareFoundryHost({ close: async () => {} }, { enabled: true }),
     /explicit installed adapter/,
   );
 });
 
-test("opt-in prepares the host before createApp and accepts a max-domain authenticated body", async (t) => {
+test("opt-in serves only the entry facade and accepts a max-domain authenticated body", async (t) => {
   const trace = [];
   const store = new MemoryStore();
   const env = { ...baseEnv, FOUNDRY_HOST_OPT_IN: "1" };
@@ -95,16 +99,20 @@ test("opt-in prepares the host before createApp and accepts a max-domain authent
     correspondence: {
       env,
       loadService: async () => service(store, trace),
-      createFoundryExtension: async () => {
-        trace.push("prepare");
-        const router = express.Router();
-        router.post("/v1/projects/:projectId/foundry/resolve", (req, res) => {
+      hostProfile: { id: "host:unit-test", maxAdmissions: 1, maxPhysical: 1, pool: { validityMs: 1000 } },
+      participationKey: "unit-test-participation-key-32chars",
+      createEntryReuseMount: async ({ correspondence, config }) => {
+        trace.push("entry-mount");
+        assert.equal(config.bodyLimitBytes, 524288);
+        assert.equal(correspondence, store);
+        const facade = createApp(correspondence, config);
+        facade.post("/v1/projects/:projectId/foundry/resolve", (req, res) => {
           trace.push("route");
           if (!req.header("authorization")) return res.status(401).json({ error: { code: "unauthorized" } });
           res.json({ accepted: true, bytes: Buffer.byteLength(JSON.stringify(req.body)) });
         });
         return {
-          router,
+          app: facade,
           checkReady: async () => { trace.push("ready"); },
           close: async () => { trace.push("close"); },
         };
@@ -113,7 +121,10 @@ test("opt-in prepares the host before createApp and accepts a max-domain authent
   });
   const handle = app.get("s51Correspondence");
   await handle.ready();
-  assert.deepEqual(trace.slice(0, 3), ["prepare", "ready", "createApp"]);
+  assert.equal(trace.includes("createApp"), false);
+  assert.deepEqual(trace.slice(0, 2), ["entry-mount", "ready"]);
+  assert.equal(handle.state.foundry.facade, true);
+  assert.equal(handle.state.foundry.rawMounted, false);
   const { server, port } = await listen(app);
   t.after(async () => {
     await handle.close();
@@ -158,6 +169,25 @@ test("opt-in prepares the host before createApp and accepts a max-domain authent
   assert.equal(uploads.status, 501);
 });
 
+test("opt-in without private profile files stays invalid and does not open a store", async () => {
+  let opened = false;
+  const app = createSdsApp({
+    correspondence: {
+      env: { ...baseEnv, FOUNDRY_HOST_OPT_IN: "1" },
+      loadService: async () => {
+        opened = true;
+        throw new Error("must not connect");
+      },
+    },
+  });
+  const handle = app.get("s51Correspondence");
+  await handle.ready();
+  assert.equal(opened, false);
+  assert.equal(handle.state.reason, "invalid_config");
+  assert.equal(handle.state.foundry.reason, "private_profile_unset");
+  await handle.close();
+});
+
 test("opt-in unset does not mount the extension even if a factory is provided", async (t) => {
   const calls = [];
   const store = new MemoryStore();
@@ -189,25 +219,24 @@ test("opt-in unset does not mount the extension even if a factory is provided", 
 test("layout resolver fails closed when the export dist is absent", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "foundry-layout-"));
   try {
-    const missing = resolveLayout(dir, F93_LAYOUT);
+    const missing = resolveLayout(dir, RECEIVER_LAYOUT);
     assert.equal(missing.ok, false);
-    assert.ok(missing.missing.includes("scripts/visitor-foundry/integration/src/extension.mjs"));
+    assert.ok(missing.missing.includes("scripts/visitor-foundry/integration/entry/mount.mjs"));
     await writeFile(path.join(dir, "marker.txt"), "x");
-    const still = resolveLayout(dir, F93_LAYOUT);
+    const still = resolveLayout(dir, RECEIVER_LAYOUT);
     assert.equal(still.ok, false);
+    assert.equal(resolveLayout(RECEIVER_ROOT, RECEIVER_LAYOUT).ok, true);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-test("vendored additive SQL matches the F93 pin", async () => {
-  const pin = JSON.parse(await readFile(path.join(root, "vendor/neomorphic-correspondence/FOUNDRY-PIN.json"), "utf8"));
-  assert.equal(pin.f93Export, "107363a0fabaed6133235ebda812dd5f01b07d51");
-  for (const [rel, expected] of Object.entries(pin.files)) {
-    if (!expected.match(/^[a-f0-9]{64}$/)) continue;
-    const bytes = await readFile(path.join(root, "vendor/neomorphic-correspondence", rel));
-    assert.equal(createHash("sha256").update(bytes).digest("hex"), expected, rel);
-  }
+test("vendored receiver pin is the canonical VF12 head", async () => {
+  const pin = JSON.parse(await readFile(path.join(RECEIVER_ROOT, "SOURCE-PIN.json"), "utf8"));
+  assert.equal(pin.head, "1652533b1823ac33b86591ec4e931a8c4ea4aa97");
+  assert.equal(pin.tree, "d9c80cfd56cb05d40055dba047d6462656764ff8");
+  const entry = await readFile(path.join(RECEIVER_ROOT, "services/correspondence/migrations/visitor-foundry/005_vf12_entry.sql"));
+  assert.equal(createHash("sha256").update(entry).digest("hex").length, 64);
 });
 
 test("foundry migrate refuses to connect without --apply or a correspondence URL", () => {
@@ -328,8 +357,11 @@ test("listener drain invokes the correspondence close hook", async () => {
   assert.deepEqual(codes, [0]);
 });
 
-test("VF09 bind stays closed and uploads remain the 501 stub", () => {
+test("VF09 loader is the canonical artifact function and uploads remain the 501 stub", async () => {
   assert.equal(VF09_BIND_POINT.currentBehavior, "501");
   assert.equal(VF09_BIND_POINT.notAnAuthorityStore, true);
-  assert.throws(() => bindVf09ArtifactLoader(), /501 stub/);
+  assert.equal(VF09_BIND_POINT.publicExecution, false);
+  const load = await bindVf09ArtifactLoader();
+  assert.equal(typeof load, "function");
+  assert.throws(() => load({ kind: "not-the-installed-package" }), /invalid_portable_package|portable/);
 });

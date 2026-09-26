@@ -1,0 +1,78 @@
+{
+  "recordedAt": "2026-09-26T13:15:26Z",
+  "sourcePin": "28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+  "node": "v22.22.2",
+  "npm": "10.9.7",
+  "checks": [
+    {
+      "command": "node --test scripts/visitor-foundry/capabilities/tests/*.test.mjs",
+      "exitCode": 0,
+      "log": "focused-final.tap",
+      "tests": 50,
+      "pass": 50,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run test:capability-market",
+      "exitCode": 0,
+      "log": "s04-rerun.tap",
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm test --prefix packs/capability-preflight",
+      "exitCode": 0,
+      "log": "preflight-rerun.tap",
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run test:scale-compose",
+      "exitCode": 0,
+      "log": "composition-rerun.tap",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test --test-concurrency=1 tests/capability-preflight*.test.mjs",
+      "exitCode": 1,
+      "log": "preflight-public-rerun.tap",
+      "tests": 12,
+      "pass": 11,
+      "fail": 1,
+      "skipped": 0
+    },
+    {
+      "command": "NEO_CHROMIUM_EXECUTABLE=/usr/bin/google-chrome-stable node --test tests/capability-preflight-layout.test.mjs",
+      "exitCode": 1,
+      "log": "preflight-layout-direct.tap",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0
+    }
+  ],
+  "sourceDigests": {
+    "examples/export.mjs": "sha256:eed83bb7d2a1dafa26557e99d41284e3d34d820215a1fd051d80533890862993",
+    "examples/fixtures.mjs": "sha256:a285e067186917ecd5e132cfc3feadf4abab7085bfd6d10d4d662a20491d14da",
+    "examples/holdouts.json": "sha256:91e0fd63dbd6b7a28df7a71ba66e49c988284b53633bcc27cfbf9cb01e630d3c",
+    "examples/holdouts.mjs": "sha256:c512d98c126f45811d6c128c2d97fbc06a06ca3c81ea8987af82db7018641d0e",
+    "src/adapters.mjs": "sha256:76041a666e1269cf7bc4515181aabceb663439618fc812afe867039840548e49",
+    "src/cli.mjs": "sha256:678aef194eb859da6ddc689dd8445c0cd62661e9ec0b4b6cd46d7546265480ab",
+    "src/contracts.mjs": "sha256:e7381622085569f9d8f52ea0a8ea60d0d141852a80d382e8f0885d57a8667123",
+    "src/graph.mjs": "sha256:80537cd5b0ce1b9b693991089909d921ed712bd5dc66486c843f0a56221a7b90",
+    "src/index.mjs": "sha256:2093ede058b28915534d0970910cc947b4aa78877bd2772aef3bd233420de142",
+    "src/resolve.mjs": "sha256:5e81a61374625fe023a993cd930d408ba3ab104961cdf95f02bbdb53fe893069",
+    "tests/adversarial.test.mjs": "sha256:0709ab7fc588e61795e6688be035a949e8a3abc2c58ab29dc0772afe2c512c2b",
+    "tests/cli.test.mjs": "sha256:e624f8485fd6e53af159fbca3dd8f1441702ae08c5157cb9c1f73b413014df41",
+    "tests/resolution.test.mjs": "sha256:0e624b10333b9a4c28482ffed1f352cfa396c0760a0de69c20808a87a98ae906"
+  },
+  "remainingFailure": "Installed Chrome exits SIGTRAP before unchanged layout assertions; source/build suites pass."
+}

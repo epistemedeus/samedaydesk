@@ -1,0 +1,12 @@
+{
+  "schema": "neomorphic.foundry.synthetic-holdouts.v1",
+  "datasetId": "fixture:engine-boundaries-heldout-v1",
+  "cases": [
+    { "id": "fixture:later-major-ok", "range": ">=20", "nodeVersion": "22.3.0", "expected": "compatible" },
+    { "id": "fixture:later-major-low", "range": ">=24", "nodeVersion": "22.3.0", "expected": "incompatible" },
+    { "id": "fixture:later-minor-ok", "range": ">=22.2", "nodeVersion": "22.3.0", "expected": "compatible" },
+    { "id": "fixture:later-minor-low", "range": ">=22.4", "nodeVersion": "22.3.0", "expected": "incompatible" },
+    { "id": "fixture:later-compound-unknown", "range": ">=22 <23", "nodeVersion": "22.3.0", "expected": "unknown" },
+    { "id": "fixture:later-caret-unknown", "range": "^22.0.0", "nodeVersion": "22.3.0", "expected": "unknown" }
+  ]
+}

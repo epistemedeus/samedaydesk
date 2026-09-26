@@ -1,0 +1,58 @@
+{
+  "schema": "pilot.r2.capabilities.buyer_context_pack_input.v1",
+  "taskId": "s170-customer-context-pack",
+  "demo": true,
+  "notes": "S170 thin recipe — Cap07 pack + dry-run readback with redaction. Synthetic; no live calls.",
+  "capabilityContract": {
+    "id": "s170-public-observe.v1",
+    "path": "experiments/scale-r2-20260910/capabilities/examples-s170",
+    "inputs": [
+      {
+        "id": "Authorization",
+        "name": "Bearer token header",
+        "kind": "secret",
+        "required": true,
+        "secret": true,
+        "place": "header",
+        "notes": "Caller-supplied; must redact in dry-run readback"
+      },
+      {
+        "id": "Content-Type",
+        "name": "Content type",
+        "kind": "header",
+        "required": true,
+        "place": "header"
+      },
+      {
+        "id": "source_uri",
+        "name": "Public source URI",
+        "kind": "https_url",
+        "required": true,
+        "place": "body"
+      },
+      {
+        "id": "label",
+        "name": "Observation label",
+        "kind": "string",
+        "required": false,
+        "place": "body"
+      }
+    ]
+  },
+  "callerProvided": {
+    "source_uri": "https://example.com/docs/s170-changelog",
+    "label": "s170-changelog-observe",
+    "noise_field": "must-be-excluded"
+  },
+  "headerValues": {
+    "Authorization": "Bearer sk-s170-synthetic-not-real",
+    "Content-Type": "application/json",
+    "X-Extra-Debug": "drop-me"
+  },
+  "endpointScope": {
+    "method": "POST",
+    "url": "https://example.com/api/v1/s170-observe",
+    "path": "/api/v1/s170-observe",
+    "allowedHeaders": ["Authorization", "Content-Type"]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "schema": "neomorphic.contributor-session-grant.pins.v1",
+  "note": "Live local-runtime boots compiled dist/index.js from E01 PR109 c4048401 (tree 1a5dad77). Historical I01 346bbd3c OpenAPI remains the extracted comparison pin. Original F01 is comparison only. Do not send integer termsVersion. Do not send Idempotency-Key on contributor-tokens.",
+  "inTreeKernel": {
+    "label": "E01 compiled kernel (PR109)",
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "codex/w5-earnedwork-final-readiness-20260912",
+    "sha": "c4048401fa42e1272e61edf983afbf39a3e04555",
+    "tree": "1a5dad7755fb81c75564dbc9d3667ab16db9bbcd",
+    "sourceSha": "c4048401fa42e1272e61edf983afbf39a3e04555",
+    "kernelRetryAuthority": "c4048401fa42e1272e61edf983afbf39a3e04555",
+    "pr": 109,
+    "entry": "services/earned-work/dist/index.js",
+    "note": "Read-only worktree of c4048401. npm ci && npm run build in services/earned-work. Boot node dist/index.js. Not tsx. Not 346bbd3c. Not 819fa637."
+  },
+  "authoritativeRuntime": {
+    "label": "E01 earned-work kernel",
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "codex/w5-earnedwork-final-readiness-20260912",
+    "sha": "c4048401fa42e1272e61edf983afbf39a3e04555",
+    "tree": "1a5dad7755fb81c75564dbc9d3667ab16db9bbcd",
+    "pr": "https://github.com/epistemedeus/neomorphic-io/pull/109",
+    "openapiPath": "services/earned-work/openapi.json",
+    "extracted": "pins/i01-earned-work.openapi.json",
+    "gitBlobSha": "4261ecfa9608da61b5f03cb5c4ec2ee0561cf0ec",
+    "termsVersion": {
+      "kind": "content-hash",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "integerRejected": true
+    },
+    "contributorTokens": {
+      "method": "POST",
+      "path": "/v1/contributor-tokens",
+      "security": "OwnerBearer",
+      "idempotencyKey": false,
+      "plaintextReturned": "once",
+      "atRest": "token_hash SHA-256 of utf8 plaintext (I01 hashToken)",
+      "empty201": "unknown_outcome, not success"
+    },
+    "claims": {
+      "method": "POST",
+      "path": "/v1/tasks/{taskId}/claims",
+      "security": "ContributorBearer",
+      "idempotencyKey": true,
+      "empty201": "unknown_outcome; replay stored Idempotency-Key",
+      "publicGetTask": "redacted; no reservation id without owner bearer"
+    }
+  },
+  "e02SdkMethodMap": {
+    "label": "Wave4 Ex13 SDK pin consumed as method-map only",
+    "extracted": "pins/e02-createContributorToken.json",
+    "sha": "50f605e6ef459a500bd3a643165f16b5fbb5d680",
+    "note": "createContributorToken idempotency:false. Remaining binding: a later E02 export may add typed unknown-outcome envelopes. This pack classifies empty 201 locally."
+  },
+  "e03JobResume": {
+    "label": "Wave4 Ex08 job-resume pin",
+    "sha": "037fbd0138de3a237536b006d51de89b48e015ad",
+    "note": "Claim resume stays on I01 Idempotency-Key. This pack stores that key and replays it. This pack does not copy packs/job-resume."
+  },
+  "comparisonOnly": {
+    "label": "original F01 S275 kernel",
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "fable/f01-s275-kernel",
+    "sha": "51d149a923978dfb7827d1b96d0b042304edd150",
+    "extracted": "pins/f01-s275.openapi.json",
+    "gitBlobSha": "1e3857a00ab33f6fa224c05857262c1dc4f61211",
+    "incompatibleClaimKey": "validation.ts claimBodySchema termsVersion is z.number().int().positive(); I01 rejects that. This pack never sends an integer termsVersion."
+  },
+  "ledgerLaterBinding": {
+    "label": "F04 walletless payout ledger",
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "fable/f04-walletless-payout-ledger",
+    "sha": "280310d769de0ca4c4b21633a8da7ba6bbc943b0",
+    "extracted": "pins/f04-walletless-payout-ledger.openapi.json",
+    "gitBlobSha": "01c1de536aaf00eaa6271ab8b38967709d6554f0",
+    "issuePath": "POST /v1/grants",
+    "contributorBody": { "role": "contributor", "contributorPublicId": "required" },
+    "note": "Ledger grants are not earned-work claim credentials. Owner may issue a ledger contributor grant through the injected ledger adapter. Contributor claim still uses I01 POST /v1/contributor-tokens."
+  },
+  "cxContract": {
+    "repo": "epistemedeus/pilot",
+    "ref": "codex/w4-plan-exchange-20260911",
+    "sha": "54cbdf443db9251993a1b9089c653a1dabe2bed6",
+    "extracted": "pins/earned-work-cx.v1.json"
+  },
+  "firstJobGrantRules": {
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "main",
+    "sha": "45391e02fb97ee1eed0a050a12a94d540e9eb495",
+    "path": "packs/outside-operator-first-job/README.md",
+    "rules": [
+      "Grant creation has no idempotency key: never automatically retry an unknown grant.",
+      "--out-dir must be empty before a fresh attempt.",
+      "Preserve the attempt directory for operator reconciliation."
+    ]
+  },
+  "correspondenceHonesty": {
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "fable/w2-12-i05-zero-account-usability",
+    "sha": "c16de8facdd51d656b73124ce682d93b92728732",
+    "path": "packs/zero-account-usability/FEATURE-MAP.md",
+    "rule": "Secret-free usability/state logs. Planted secrets must not appear. This pack does not log bearer plaintext."
+  },
+  "startingRef": {
+    "repo": "epistemedeus/neomorphic-io",
+    "sha": "c13a1665f819ca3854884dda3a05e83f9de09eb6",
+    "note": "W5-E07 pack start (W4-exchange-06 source). Not origin/main 45391e02."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "neomorphic.foundry.participation-reuse-receipt.v1",
+  "tasksDigest": "sha256:0751f73f7c1fa59978a0dc5bcf2768e10ff226bd95ad6a60ffd1910d73014fee",
+  "freezeCommit": "cbb3d9e",
+  "originalTaskSuccess": {
+    "preflight": "unresolved-unsupported-range",
+    "desk": "claimability-disclosed-funding-freshness-unresolved"
+  },
+  "laterChecks": {
+    "preflight": true,
+    "desk": true
+  },
+  "assets": [
+    {
+      "path": "packs/capability-preflight/src/probes.mjs",
+      "sourceRevision": "28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+      "bytes": 6934,
+      "contentDigest": "sha256:85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
+      "reuse": "imported and invoked by example host"
+    },
+    {
+      "path": "packs/contributor-desk/src/public-view.mjs",
+      "sourceRevision": "28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+      "bytes": 2226,
+      "contentDigest": "sha256:6abed79879692f443114796e00d7d1e4322cc8a68c27be8f46b61b7f53d86fa3",
+      "reuse": "imported and invoked by example host"
+    }
+  ],
+  "sharing": {
+    "preflight": {
+      "decisions": 2,
+      "projectedBytes": 242,
+      "fields": 2
+    },
+    "desk": {
+      "decisions": 1,
+      "projectedBytes": 173,
+      "fields": 0
+    }
+  },
+  "sharingMeasurement": "scripted explicit choices and serialized projection bytes; excludes service result, transport, consent UI time and artifact storage",
+  "humanEffortMs": null,
+  "validationCost": null,
+  "maintenanceCost": null,
+  "relationship": "owner-controlled",
+  "independentVisitors": 0,
+  "publication": "not-performed"
+}

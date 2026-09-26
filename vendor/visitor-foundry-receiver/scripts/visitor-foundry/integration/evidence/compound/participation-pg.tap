@@ -1,0 +1,57 @@
+
+> @neomorphic/foundry-participation@0.1.0 test:pg
+> node scripts/disposable-pg.mjs
+
+VF05 isolated disposable PostgreSQL; loopback; 24 connections; fsync=on; separate HTTP server processes
+TAP version 13
+# Subtest: separate real HTTP/PG server, VF01 miss, lost ack, cold CLI replay, restart, submission, scoped readback
+ok 1 - separate real HTTP/PG server, VF01 miss, lost ack, cold CLI replay, restart, submission, scoped readback
+  ---
+  duration_ms: 996.100768
+  type: 'test'
+  ...
+# Subtest: two authenticated clients, concurrent claims, stale fence, reader denial, revoked grant
+not ok 2 - two authenticated clients, concurrent claims, stale fence, reader denial, revoked grant
+  ---
+  duration_ms: 157.619551
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:105:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_terms'
+  code: 'invalid_terms'
+  name: 'ParticipationError'
+  stack: |-
+    requireValue (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/src/safe.mjs:6:75)
+    ParticipationSession.prepare (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/src/session.mjs:25:5)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:111:21)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: every mutation reconciles a lost ack with one durable transition and fresh client
+not ok 3 - every mutation reconciles a lost ack with one durable transition and fresh client
+  ---
+  duration_ms: 137.334758
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:123:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_terms'
+  code: 'invalid_terms'
+  name: 'ParticipationError'
+  stack: |-
+    requireValue (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/src/safe.mjs:6:75)
+    ParticipationSession.prepare (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/src/session.mjs:25:5)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/participation/tests/pg/integration.test.mjs:140:22)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 1
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1414.878798

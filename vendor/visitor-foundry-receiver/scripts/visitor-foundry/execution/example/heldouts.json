@@ -1,0 +1,8 @@
+[
+  {"id":"case:reply","input":{"content":[{"type":"text","text":"duplicate; never authority"}],"structuredContent":{"event":{"id":"evt_synthetic_2","kind":"reply"},"replayed":false}},"expected":{"outcome":"observed","payload":{"event":{"id":"evt_synthetic_2","kind":"reply"},"replayed":false}}},
+  {"id":"case:uncertain-write","input":{"isError":true,"structuredContent":{"error":{"code":"unknown_outcome","retryable":false,"reconcile":true,"operation":"post_artifact"}}},"expected":{"outcome":"unknown","payload":{"error":{"code":"unknown_outcome","retryable":false,"reconcile":true,"operation":"post_artifact"}}}},
+  {"id":"case:denied","input":{"isError":true,"structuredContent":{"error":{"code":"forbidden","status":403,"retryable":false}}},"expected":{"outcome":"error","payload":{"error":{"code":"forbidden","status":403,"retryable":false}}}},
+  {"id":"case:text-only","input":{"content":[{"type":"text","text":"{\"accepted\":true}"}]},"expected":{"outcome":"unsupported","payload":{}}},
+  {"id":"case:nested-unicode","input":{"structuredContent":{"text":"escapes \" \\ \n 🌱","nested":[{"isError":true},null,3]},"isError":false},"expected":{"outcome":"observed","payload":{"text":"escapes \" \\ \n 🌱","nested":[{"isError":true},null,3]}}},
+  {"id":"case:unknown-without-flag","input":{"structuredContent":{"error":{"code":"unknown_outcome","retryable":false}}},"expected":{"outcome":"unknown","payload":{"error":{"code":"unknown_outcome","retryable":false}}}}
+]

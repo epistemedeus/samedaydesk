@@ -1,0 +1,22 @@
+{
+  "schema": "neomorphic.e01-kernel-pin.v1",
+  "label": "current E01 earned-work kernel",
+  "repo": "epistemedeus/neomorphic-io",
+  "ref": "codex/w5-earnedwork-final-readiness-20260912",
+  "pr": 109,
+  "sha": "c4048401fa42e1272e61edf983afbf39a3e04555",
+  "tree": "1a5dad7755fb81c75564dbc9d3667ab16db9bbcd",
+  "treePath": "services/earned-work",
+  "openapiPath": "services/earned-work/openapi.json",
+  "entry": "services/earned-work/dist/index.js",
+  "termsVersion": {
+    "kind": "content-hash",
+    "pattern": "^sha256:[0-9a-f]{64}$",
+    "integerRejected": true
+  },
+  "rejectedI01": [
+    "819fa637ecf5e5177c84efc16fcaa18d57017631",
+    "346bbd3cbe6943a83b2077c455174d74b7a493ad"
+  ],
+  "note": "Live HTTP+Postgres tests boot this SHA as a read-only worktree. Do not copy services/earned-work into this pack. Old I01 pins are pin_mismatch."
+}

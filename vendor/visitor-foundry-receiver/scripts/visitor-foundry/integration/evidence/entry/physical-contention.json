@@ -1,0 +1,22 @@
+{
+  "maxPhysical": 1,
+  "liveChildObserved": true,
+  "unlaunchedInvocationRefunded": false,
+  "unknownChild": {
+    "state": "running",
+    "children": [
+      {
+        "caseId": "case:project-created",
+        "sample": null,
+        "planned": true,
+        "identity": {
+          "pid": 1346253,
+          "bootId": "a457452b-4729-49b0-b31f-caed8035ae90",
+          "startTicks": "2707536",
+          "supervisorPid": 1346224
+        }
+      }
+    ]
+  },
+  "afterRecovery": "capacity held pending full exit evidence"
+}

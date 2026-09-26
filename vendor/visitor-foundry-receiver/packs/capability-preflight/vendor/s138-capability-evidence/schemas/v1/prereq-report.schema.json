@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s138.prereq-report.v1",
+  "title": "Installation prerequisite report",
+  "type": "object",
+  "required": ["schema", "capabilityId", "readiness", "steps", "prerequisites", "gaps"],
+  "properties": {
+    "schema": { "const": "s138.prereq-report.v1" },
+    "capabilityId": { "const": "R2-CAPABILITIES-02" },
+    "readiness": { "enum": ["ready", "partial", "not_ready"] },
+    "catalogListed": { "type": "boolean" },
+    "steps": { "type": "array" },
+    "prerequisites": { "type": "array" },
+    "gaps": { "type": "array" }
+  }
+}

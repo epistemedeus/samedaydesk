@@ -1,0 +1,36 @@
+{
+  "schema": "neomorphic.foundry.fixture_bundle.v1",
+  "provenance": "owner_controlled_fixture",
+  "candidate": {
+    "schema": "neomorphic.foundry.candidate.v1",
+    "id": "candidate:a",
+    "scope": "scope:demo",
+    "capability": {
+      "id": "capability:card-a",
+      "revision": "sha256:e343394b1fd55a6e8aed1e3e5b05a43f233da873e4f6e0698690bdc8953f81de"
+    },
+    "sourceRevision": "fixture:card-r1",
+    "artifactDigest": "sha256:e343394b1fd55a6e8aed1e3e5b05a43f233da873e4f6e0698690bdc8953f81de",
+    "artifactRef": "fixture:card-rule.json",
+    "taskId": "task:author-a",
+    "dependencies": [],
+    "rights": {
+      "license": "MIT",
+      "permissionRef": "fixture:owner-authorized-synthetic-data"
+    },
+    "claimed": {
+      "summary": "Contributor says all checks pass; this is not observed verification.",
+      "evidenceRefs": [],
+      "limitations": []
+    },
+    "supersedes": null
+  },
+  "artifact": {
+    "kind": "capability-card-check",
+    "requiredFields": [
+      "name",
+      "description"
+    ],
+    "maxDescriptionLength": 240
+  }
+}

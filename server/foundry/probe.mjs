@@ -339,7 +339,7 @@ export async function runProbe(options = {}) {
     probe: "vf08-host-capability",
     notProduction: true,
     wholeHostSandbox: false,
-    pins: { vf08Export: pins.vf08Export, f93Export: pins.f93Export },
+    pins: { receiverHead: pins.receiverHead, wasmtimeVersion: pins.wasmtimeVersion },
     failed,
     ok: failed.length === 0,
     checks,

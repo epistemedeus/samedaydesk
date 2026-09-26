@@ -1,0 +1,19 @@
+{
+  "name": "exchange-townsquare",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Neomorphic composed Exchange × TownSquare lab pack (S181 real input; fixture demo isolated; no payment backend).",
+  "bin": {
+    "exchange-townsquare": "./src/cli.mjs"
+  },
+  "scripts": {
+    "preflight": "node src/cli.mjs preflight",
+    "demo": "node src/cli.mjs demo --mode happy",
+    "run": "node src/cli.mjs run",
+    "test": "node --test tests/*.test.mjs exchange/*/tests/*.test.mjs townsquare/kit/tests/*.test.mjs townsquare/first-run/tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

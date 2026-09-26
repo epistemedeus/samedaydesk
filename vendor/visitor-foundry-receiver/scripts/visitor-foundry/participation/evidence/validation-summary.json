@@ -1,0 +1,108 @@
+{
+  "schema": "neomorphic.foundry.participation-validation-summary.v1",
+  "runtime": {
+    "host": "cursor",
+    "node": "v22.22.2",
+    "execution": "native Astra on remote Cursor VM; no subordinate workers"
+  },
+  "branch": "codex/visitor-participation-20260926",
+  "assembledBase": "bb5e61a",
+  "checkpoints": [
+    "cbb3d9e5e99384c1f00ec2cb26015a1d863b6334",
+    "50389a2848f42c5754d25431d10cb71e34db59cb"
+  ],
+  "suites": {
+    "focused-final": {
+      "tests": 46,
+      "pass": 46,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 303.046918
+    },
+    "pg-final": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 1384.364407
+    },
+    "session-grant": {
+      "tests": 34,
+      "pass": 34,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 2627.949563
+    },
+    "contributor-desk": {
+      "tests": 59,
+      "pass": 59,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 6520.28329
+    },
+    "terms-lifecycle": {
+      "tests": 38,
+      "pass": 38,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 1230.004948
+    },
+    "preflight": {
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 865.658369
+    },
+    "capability-market": {
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 138.658838
+    },
+    "vf01": {
+      "tests": 50,
+      "pass": 50,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 1240.502963
+    }
+  },
+  "totalPass": 291,
+  "siteBuild": {
+    "exitCode": 0,
+    "pages": 81
+  },
+  "serviceBuildExitCode": 0,
+  "declarationCheckExitCode": 0,
+  "syntaxCheckExitCode": 0,
+  "privacyCheck": {
+    "schema": "neomorphic.foundry.participation-privacy-check.v1",
+    "passed": true,
+    "scenarios": [
+      "metadata-before-input",
+      "allowlisted-reproducer",
+      "nested-original-error-kept-local",
+      "cold-cli-metadata-no-file-read",
+      "cold-cli-authorized-projection",
+      "transport-error",
+      "request-url",
+      "opaque-idempotency"
+    ],
+    "inspectedOutputRecords": 6,
+    "inspectedCliStreams": 4,
+    "requestUrls": 1,
+    "unlistedGettersInvoked": 0
+  },
+  "schemaCheck": {
+    "schema": "neomorphic.foundry.participation-schema-check.v1",
+    "validatedEnvelopes": 5,
+    "validatedDeclinedEnvelopes": 5,
+    "closedFieldAndIntegerCostRejections": 10,
+    "negotiationValidated": true
+  },
+  "trackedOwnership": "only scripts/visitor-foundry/participation/",
+  "vf04": "proposed injected port contract only; no combined rollout",
+  "productionChanges": false
+}

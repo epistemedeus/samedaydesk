@@ -1,0 +1,277 @@
+TAP version 13
+# Subtest: real maintained assets: genuine miss, qualified hit, and different later consumer needs
+ok 1 - real maintained assets: genuine miss, qualified hit, and different later consumer needs
+  ---
+  duration_ms: 17.79675
+  type: 'test'
+  ...
+# Subtest: ordinary cold discovery is usable with no grant, config, negotiation or contribution
+ok 2 - ordinary cold discovery is usable with no grant, config, negotiation or contribution
+  ---
+  duration_ms: 34.996628
+  type: 'test'
+  ...
+# Subtest: unknown or unsupported versions return original service objects without traversal
+ok 3 - unknown or unsupported versions return original service objects without traversal
+  ---
+  duration_ms: 0.231119
+  type: 'test'
+  ...
+# Subtest: negotiated adapters preserve exact original response/error reference, decline does too
+ok 4 - negotiated adapters preserve exact original response/error reference, decline does too
+  ---
+  duration_ms: 0.197552
+  type: 'test'
+  ...
+# Subtest: HTTP 401 has distinct supplied condition auth-failure, never inferred demand
+ok 5 - HTTP 401 has distinct supplied condition auth-failure, never inferred demand
+  ---
+  duration_ms: 2.291914
+  type: 'test'
+  ...
+# Subtest: HTTP 403 has distinct supplied condition auth-failure, never inferred demand
+ok 6 - HTTP 403 has distinct supplied condition auth-failure, never inferred demand
+  ---
+  duration_ms: 1.52558
+  type: 'test'
+  ...
+# Subtest: HTTP 429 has distinct supplied condition quota-pressure, never inferred demand
+ok 7 - HTTP 429 has distinct supplied condition quota-pressure, never inferred demand
+  ---
+  duration_ms: 1.680317
+  type: 'test'
+  ...
+# Subtest: HTTP 503 has distinct supplied condition temporary-outage, never inferred demand
+ok 8 - HTTP 503 has distinct supplied condition temporary-outage, never inferred demand
+  ---
+  duration_ms: 1.464942
+  type: 'test'
+  ...
+# Subtest: HTTP 404 has distinct supplied condition unknown, never inferred demand
+ok 9 - HTTP 404 has distinct supplied condition unknown, never inferred demand
+  ---
+  duration_ms: 1.923786
+  type: 'test'
+  ...
+# Subtest: HTTP 200 has distinct supplied condition unknown, never inferred demand
+ok 10 - HTTP 200 has distinct supplied condition unknown, never inferred demand
+  ---
+  duration_ms: 1.540447
+  type: 'test'
+  ...
+# Subtest: forged serialized resolver status cannot create an offer
+ok 11 - forged serialized resolver status cannot create an offer
+  ---
+  duration_ms: 0.18089
+  type: 'test'
+  ...
+# Subtest: incomplete coverage never becomes a genuine gap even if known candidates fail
+not ok 12 - incomplete coverage never becomes a genuine gap even if known candidates fail
+  ---
+  duration_ms: 1.282574
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/participation/tests/core.test.mjs:55:1'
+  failureType: 'testCodeFailure'
+  error: 'only JSON data is accepted'
+  code: 'INVALID_INPUT'
+  stack: |-
+    fail (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:11:59)
+    check (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:12:71)
+    visit (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:48:5)
+    visit (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:55:7)
+    safeData (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:61:3)
+    copy (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:76:27)
+    createSnapshot (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/capabilities/src/graph.mjs:17:16)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF05/repo/scripts/visitor-foundry/participation/tests/core.test.mjs:57:20)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+  ...
+# Subtest: unknown admission remains unknown, not a contribution trigger
+ok 13 - unknown admission remains unknown, not a contribution trigger
+  ---
+  duration_ms: 1.501439
+  type: 'test'
+  ...
+# Subtest: rights, funding, actionability and unknown cost stay distinct; funded does not downgrade to voluntary
+ok 14 - rights, funding, actionability and unknown cost stay distinct; funded does not downgrade to voluntary
+  ---
+  duration_ms: 2.520748
+  type: 'test'
+  ...
+# Subtest: four optional time budgets and machine-selected subset are deterministic
+ok 15 - four optional time budgets and machine-selected subset are deterministic
+  ---
+  duration_ms: 1.742867
+  type: 'test'
+  ...
+# Subtest: metadata scope is chosen before inputs: cyclic, getter-bearing, secret-bearing input never touched
+ok 16 - metadata scope is chosen before inputs: cyclic, getter-bearing, secret-bearing input never touched
+  ---
+  duration_ms: 0.442465
+  type: 'test'
+  ...
+# Subtest: allowlists drop unlisted nested values without getters; provenance is explicit
+ok 17 - allowlists drop unlisted nested values without getters; provenance is explicit
+  ---
+  duration_ms: 0.317357
+  type: 'test'
+  ...
+# Subtest: nested declarative object and bounded array reproducer
+ok 18 - nested declarative object and bounded array reproducer
+  ---
+  duration_ms: 0.219407
+  type: 'test'
+  ...
+# Subtest: semantic equality is stable across object key order, distinct across tenant/key/proposal
+ok 19 - semantic equality is stable across object key order, distinct across tenant/key/proposal
+  ---
+  duration_ms: 0.382205
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 20 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.232658
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 21 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.287209
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 22 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.045725
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 23 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.077748
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 24 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.040047
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 25 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.055165
+  type: 'test'
+  ...
+# Subtest: hostile supplied context is rejected by static bounded diagnostics
+ok 26 - hostile supplied context is rejected by static bounded diagnostics
+  ---
+  duration_ms: 0.03645
+  type: 'test'
+  ...
+# Subtest: getters, cyclic/deep/sparse payloads do not stringify secret-bearing exceptions
+ok 27 - getters, cyclic/deep/sparse payloads do not stringify secret-bearing exceptions
+  ---
+  duration_ms: 0.27461
+  type: 'test'
+  ...
+# Subtest: VF04 narrow contract runs create/claim/checkpoint/submit with unchanged exact references
+ok 28 - VF04 narrow contract runs create/claim/checkpoint/submit with unchanged exact references
+  ---
+  duration_ms: 3.458375
+  type: 'test'
+  ...
+# Subtest: no auto submit: prepare/decline do not send, consent is required, funded command is rejected
+ok 29 - no auto submit: prepare/decline do not send, consent is required, funded command is rejected
+  ---
+  duration_ms: 0.541651
+  type: 'test'
+  ...
+# Subtest: lost acknowledgement remains unknown, same exact request is replayed after a fresh session
+ok 30 - lost acknowledgement remains unknown, same exact request is replayed after a fresh session
+  ---
+  duration_ms: 0.612004
+  type: 'test'
+  ...
+# Subtest: changed tenant, origin, grant, key or command cannot replay a sealed intent; zero HTTP
+ok 31 - changed tenant, origin, grant, key or command cannot replay a sealed intent; zero HTTP
+  ---
+  duration_ms: 0.915254
+  type: 'test'
+  ...
+# Subtest: stale terms are separate from stale revision/grant/fence and never dispatch
+ok 32 - stale terms are separate from stale revision/grant/fence and never dispatch
+  ---
+  duration_ms: 1.083182
+  type: 'test'
+  ...
+# Subtest: public hint resumes by authenticated read only and cannot smuggle a command
+ok 33 - public hint resumes by authenticated read only and cannot smuggle a command
+  ---
+  duration_ms: 0.385281
+  type: 'test'
+  ...
+# Subtest: server URLs and test proposals are data, no automatic followup execution
+ok 34 - server URLs and test proposals are data, no automatic followup execution
+  ---
+  duration_ms: 0.408298
+  type: 'test'
+  ...
+# Subtest: VF04 wrong request/terms/operation/target or empty success is unknown outcome
+ok 35 - VF04 wrong request/terms/operation/target or empty success is unknown outcome
+  ---
+  duration_ms: 1.388208
+  type: 'test'
+  ...
+# Subtest: VF02 transport permits only bound origin, correct schema and fixed routes
+ok 36 - VF02 transport permits only bound origin, correct schema and fixed routes
+  ---
+  duration_ms: 15.561206
+  type: 'test'
+  ...
+# Subtest: VF02 empty response stays bounded and unknown after mutation
+ok 37 - VF02 empty response stays bounded and unknown after mutation
+  ---
+  duration_ms: 0.848664
+  type: 'test'
+  ...
+# Subtest: VF02 redirect response stays bounded and unknown after mutation
+ok 38 - VF02 redirect response stays bounded and unknown after mutation
+  ---
+  duration_ms: 0.63731
+  type: 'test'
+  ...
+# Subtest: VF02 hostile response stays bounded and unknown after mutation
+ok 39 - VF02 hostile response stays bounded and unknown after mutation
+  ---
+  duration_ms: 0.432319
+  type: 'test'
+  ...
+# Subtest: VF02 oversized response stays bounded and unknown after mutation
+ok 40 - VF02 oversized response stays bounded and unknown after mutation
+  ---
+  duration_ms: 0.447034
+  type: 'test'
+  ...
+# Subtest: VF02 wrong-cell response stays bounded and unknown after mutation
+ok 41 - VF02 wrong-cell response stays bounded and unknown after mutation
+  ---
+  duration_ms: 0.448583
+  type: 'test'
+  ...
+# Subtest: VF02 timeout response stays bounded and unknown after mutation
+ok 42 - VF02 timeout response stays bounded and unknown after mutation
+  ---
+  duration_ms: 24.74757
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 41
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 290.545299

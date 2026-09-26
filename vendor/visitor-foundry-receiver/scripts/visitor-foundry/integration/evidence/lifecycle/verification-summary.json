@@ -1,0 +1,114 @@
+{
+  "schema": "neomorphic.foundry.lifecycle-verification.v1",
+  "at": "2026-09-26T15:11:39.771000+00:00",
+  "receivingParent": "107363a0fabaed6133235ebda812dd5f01b07d51",
+  "branch": "codex/visitor-foundry-integration-20260926",
+  "node": "v22.22.2",
+  "postgres": "16.15 private loopback clusters with fsync/synchronous_commit on",
+  "purpose": "owner_qa",
+  "checks": [
+    {
+      "name": "VF01",
+      "file": "vf01-01.tap",
+      "passed": 50,
+      "failed": 0,
+      "sha256": "b0c89138a295f38c85a55eac9db8e8dddc42062bce96d443ff4f6988e3932ebf"
+    },
+    {
+      "name": "VF02 real PostgreSQL",
+      "file": "vf02-01.tap",
+      "passed": 15,
+      "failed": 0,
+      "sha256": "c93c63d3331b7e8d9bb8157ca566c3e6f84edea1745588fc4719cf5f3c069619"
+    },
+    {
+      "name": "VF03 including generation transitions",
+      "file": "vf03-02.tap",
+      "passed": 65,
+      "failed": 0,
+      "sha256": "3438709ce7903ee9531a5bc36a2589138ff48a7f634543dcc115bc578ba38021"
+    },
+    {
+      "name": "F93 exact wire",
+      "file": "f93-wire-01.tap",
+      "passed": 6,
+      "failed": 0,
+      "sha256": "71ecd10a4d97d7f45114a7fa8e8ea3f132ab5fc64213e448e1ebd2d26859892e"
+    },
+    {
+      "name": "Integration including durable revalidation",
+      "file": "integration-05.tap",
+      "passed": 29,
+      "failed": 0,
+      "sha256": "589db4d5a69c2802d70266d2f8490eb61c0bb972c632fabe4f6fd0757d379ace"
+    },
+    {
+      "name": "Correspondence real PostgreSQL",
+      "file": "correspondence-regression.tap",
+      "passed": 53,
+      "failed": 0,
+      "sha256": "4f31d9c88b22a8d14d9906bad239c2a0d43e8b39e0386c6e89e2dfb20c9d1663"
+    }
+  ],
+  "totalPassing": 218,
+  "builds": [
+    "correspondence-build-02.log",
+    "root-build.log"
+  ],
+  "contractChecks": [
+    "schema-check.log",
+    "schema-conformance.log",
+    "f93-vectors-check.log"
+  ],
+  "installation": {
+    "sourcePin": "28924aac2a33cdf58bc9049a2198ab1ce9866f0f",
+    "sourceProbeDigest": "sha256:85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
+    "runtimePin": "sha256:47b5279e628a0a14a40cf64edc08723ec31be8a09c7d0933be80973e8d50b051",
+    "pins": {
+      "probe": "sha256:85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
+      "evaluator": "sha256:f96a63a1fc98ccfada6c31194c9d2a6f921e3d3ffb3d367a8387ec87400749a4",
+      "wire": "sha256:4fafa72189f16a43516d5da2cde7036330d7293edc40312cd09090beb632fab5",
+      "verification": "sha256:ac78f186f4641e6b98556f9d3f113466c77d7a86584d0da9de39dc57359533f9",
+      "node": "v22.22.2",
+      "arch": "x64",
+      "platform": "linux"
+    }
+  },
+  "retainedFailure": {
+    "file": "dependency-retirement-before.tap",
+    "failingTest": "historical dependency expiry stays authoritative while renewal is pending and after fresh component evidence",
+    "cause": "Filtering historical receipt IDs hid expired dependency evidence and revived a stale parent composition.",
+    "repair": "Keep historical admitted evidence and append explicit retirement mutations; derive fail-closed admission withdrawal on unavailable runtime/profile.",
+    "focusedPassingReceipt": "dependency-retirement-after.tap",
+    "harnessNote": "The initial name-filter run also kept the entirely filtered original file fixture hooks alive; only its two owned fixture hosts were stopped. Focused mode now selects the lifecycle file only."
+  },
+  "bounds": {
+    "receiverGenerations": 4,
+    "nativeGenerations": 8,
+    "attemptsPerGeneration": 1,
+    "maintenanceKeys": 4096,
+    "nativeCommands": 4096,
+    "validityMs": [
+      100,
+      3600000
+    ],
+    "defaultCostCapUsdMicros": "256000",
+    "actualCost": null
+  },
+  "load": {
+    "offered": 507,
+    "counts": {
+      "admitted": 214,
+      "duplicate": 165,
+      "backlog_full": 128
+    },
+    "firstRoundEvaluations": 33,
+    "maxReservationsPerBudget": 1,
+    "actualSpend": null
+  },
+  "faultInjection": "Runtime profile metadata drift and mismatched child manifest are explicit boundary/failure tests; no different Node runtime or portable-code/composition executor was deployed.",
+  "independentUsefulTasks": 0,
+  "independentJobs": "VF05/VF06/VF07/VF08 untouched and not imported",
+  "oldEvidence": "Original and F93 evidence and exports preserved",
+  "migrationGuard": "Actual PG rollback/reapply for pre-execution schema; downgrade refuses generation-1 recorded execution profile/validity, maintained rounds, or maintenance decisions."
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "neomorphic.r2.townsquare.first_conversation_task_kit.v1",
+  "packageId": "R2-TOWNSQUARE-KIT-S170",
+  "status": "ready",
+  "demo": true,
+  "fabricatedUsers": false,
+  "inventedRevenue": false,
+  "execute": false,
+  "generatedAt": "2026-09-10T12:40:00.000Z",
+  "threadId": "thread-first-public-demo-01",
+  "task": {
+    "id": "task-fictional-page-refresh-01",
+    "title": "Fictional page refresh (demo)",
+    "summary": "Synthetic demo task — not live demand.",
+    "scope": "townsquare",
+    "capabilityIds": [
+      "cap-page-diff-demo",
+      "cap-page-change-only"
+    ],
+    "adoptionRequired": true,
+    "sources": [
+      {
+        "id": "card-from-conversation",
+        "sourceStatus": "present",
+        "claim": "FICTIONAL ANSWER: Prefer the page-change watcher. Next you should draft a page-change note. Please verify fixture labels remain demo-only."
+      }
+    ],
+    "proposedActions": [
+      {
+        "id": "next-you-should-draft-a-page-change-note",
+        "statement": "Next you should draft a page-change note",
+        "adoption": "required",
+        "execute": false
+      },
+      {
+        "id": "please-verify-fixture-labels-remain-demo-only",
+        "statement": "Please verify fixture labels remain demo-only",
+        "adoption": "required",
+        "execute": false
+      }
+    ],
+    "contextExport": {
+      "includedCount": 3,
+      "truncated": false,
+      "instructionsAreData": true
+    },
+    "writeControls": {
+      "admittedCount": 1,
+      "rejectedCount": 1,
+      "preservedCorrections": []
+    },
+    "contradictionPreserved": true
+  },
+  "stages": [
+    {
+      "packageId": "R2-TOWNSQUARE-06",
+      "status": "ready",
+      "summary": "included=3"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-01",
+      "status": "routed",
+      "summary": "matches=2"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-05",
+      "status": "ready",
+      "summary": "cards=1"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-02",
+      "status": "ready",
+      "summary": "actions=2"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-03",
+      "status": "ready",
+      "summary": "conflicts=0"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-07",
+      "status": "ready",
+      "summary": "admitted=1"
+    },
+    {
+      "packageId": "R2-TOWNSQUARE-04",
+      "status": "ready",
+      "summary": "matched=1"
+    }
+  ],
+  "consumerInstructions": "Unpack the zip, then: node src/cli.mjs demo  OR  node src/cli.mjs run fixtures/conversation.positive.json. Requires Node 18+. Synthetic/demo only — fabricatedUsers=false, execute=false, adoptionRequired on proposed actions. Root owns merge/publish/paid.",
+  "modulesIntegrated": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07"
+  ]
+}

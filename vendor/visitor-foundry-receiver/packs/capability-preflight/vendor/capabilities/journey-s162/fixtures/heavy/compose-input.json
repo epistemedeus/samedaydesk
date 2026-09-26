@@ -1,0 +1,33 @@
+{
+  "job": {
+    "schema": "demo.job.v1",
+    "scope": "neo-labs",
+    "freshnessRequired": "fresh",
+    "requiredFields": [
+      "title",
+      "status"
+    ]
+  },
+  "parts": [
+    {
+      "id": "a",
+      "schema": "demo.job.v1",
+      "scope": "neo-labs",
+      "freshness": "fresh",
+      "payload": {
+        "title": "Example"
+      },
+      "status": "complete"
+    },
+    {
+      "id": "c",
+      "schema": "demo.job.v1",
+      "scope": "neo-labs",
+      "freshness": "fresh",
+      "payload": {
+        "status": "partial-ready"
+      },
+      "status": "complete"
+    }
+  ]
+}

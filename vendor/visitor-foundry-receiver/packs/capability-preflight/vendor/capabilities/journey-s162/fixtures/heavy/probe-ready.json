@@ -1,0 +1,4 @@
+{
+  "nodeVersionSatisfies": true,
+  "binExists": ["capability-evidence"]
+}

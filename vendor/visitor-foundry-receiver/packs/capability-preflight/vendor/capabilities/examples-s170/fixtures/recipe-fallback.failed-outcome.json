@@ -1,0 +1,14 @@
+{
+  "schema": "pilot.r2.capabilities.failure_outcome.v1",
+  "capabilityId": "observe_public_docs_json",
+  "attemptId": "s170-attempt-ambiguous-001",
+  "failureClass": "partial_delivery",
+  "mutationState": "ambiguous",
+  "observedState": {
+    "summary": "Truncated JSON body; remote write commit evidence missing.",
+    "commitEvidence": "missing"
+  },
+  "errorCode": "PARTIAL_BODY",
+  "notes": "S170 thin recipe — Cap05 from failed outcome. Ambiguous mutation must stay honest (no rolled_back / sideEffectsClean invent).",
+  "demo": true
+}

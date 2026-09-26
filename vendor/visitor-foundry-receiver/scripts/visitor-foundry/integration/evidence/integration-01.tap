@@ -1,0 +1,75 @@
+VF04 private PostgreSQL: postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1); max_connections=24; shared_buffers=32MB; fsync=on; mode=test
+TAP version 13
+# Subtest: real cold A→B: checkpoint restart, crash at admission/reservation/receipt/publication acknowledgement, one logical result
+not ok 1 - real cold A→B: checkpoint restart, crash at admission/reservation/receipt/publication acknowledgement, one logical result
+  ---
+  duration_ms: 441.682251
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/integration.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'id')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/integration.test.mjs:43:98)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: withheld runner exit retains physical reservation after deadline; late result cannot promote; later witnessed reconciliation
+ok 2 - withheld runner exit retains physical reservation after deadline; late result cannot promote; later witnessed reconciliation
+  ---
+  duration_ms: 1539.731936
+  type: 'test'
+  ...
+# Subtest: new-command semantic duplicates race across hosts; tenant/reader/auth/fence/receipt boundaries
+ok 3 - new-command semantic duplicates race across hosts; tenant/reader/auth/fence/receipt boundaries
+  ---
+  duration_ms: 316.770617
+  type: 'test'
+  ...
+# Subtest: retraction between resolution and invocation fails; shared evidence invalidation is live and unrelated tenant stays usable
+ok 4 - retraction between resolution and invocation fails; shared evidence invalidation is live and unrelated tenant stays usable
+  ---
+  duration_ms: 307.185456
+  type: 'test'
+  ...
+# Subtest: exact transitive manifest edges, dependency expiry and retraction require replay, unrelated branch retained
+not ok 5 - exact transitive manifest edges, dependency expiry and retraction require replay, unrelated branch retained
+  ---
+  duration_ms: 107.581049
+  type: 'test'
+  location: '/tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/integration.test.mjs:158:1'
+  failureType: 'testCodeFailure'
+  error: 'snapshot input has unknown fields'
+  code: 'INVALID_INPUT'
+  stack: |-
+    fail (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:11:59)
+    check (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:12:71)
+    object (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/capabilities/src/contracts.mjs:17:3)
+    createSnapshot (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/capabilities/src/graph.mjs:17:29)
+    TestContext.<anonymous> (file:///tmp/pilot-visitor-foundry-20260926/VF04A/repo/scripts/visitor-foundry/integration/tests/integration.test.mjs:169:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: individually accepted components do not pass an unsupported composition
+ok 6 - individually accepted components do not pass an unsupported composition
+  ---
+  duration_ms: 215.747158
+  type: 'test'
+  ...
+# Subtest: pool locks are tenant-local, cell writes independent, freeze immutable, receipt outbox atomic
+ok 7 - pool locks are tenant-local, cell writes independent, freeze immutable, receipt outbox atomic
+  ---
+  duration_ms: 85.058581
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 5
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3098.150415

@@ -1,0 +1,10 @@
+{
+  "id": "a",
+  "schema": "demo.job.v1",
+  "scope": "neo-labs",
+  "freshness": "fresh",
+  "payload": {
+    "title": "Example"
+  },
+  "status": "complete"
+}

@@ -1,0 +1,1532 @@
+{
+  "schema": "neomorphic.foundry.work-cell-benchmark.v1",
+  "recordedAt": "2026-09-26T13:01:50.115Z",
+  "sourceCommit": "e74c7eb816d45f32121bcc2e8217fe463d97a5f0",
+  "evidenceClass": "owner-controlled-loopback-mechanics; not demand, independent operators, or production capacity",
+  "conditions": {
+    "node": "v22.22.2",
+    "kernel": "6.12.94+",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "memoryTotalBytes": 16791945216,
+    "memoryFreeBeforeBytes": 6890971136,
+    "loadBefore": [
+      0.52,
+      0.43,
+      0.38
+    ],
+    "hosts": 2,
+    "vf02PoolMaxPerHost": 2,
+    "basePoolMaxPerHost": 1,
+    "pgMaxConnections": 24,
+    "pgSharedBuffers": "32MB",
+    "fsync": true,
+    "synchronousCommit": true,
+    "requestTimeoutMs": 10000,
+    "lockTimeoutMs": 1500,
+    "poolAcquireTimeoutMs": 3000,
+    "repeats": 3,
+    "ticksPerSecond": 100,
+    "payloadBytes": 128,
+    "setupExcluded": true,
+    "sharedVm": true,
+    "syntheticGap": true,
+    "hostsBefore": [
+      {
+        "pid": 408079,
+        "cpuTicks": 12,
+        "rssKiB": 70552,
+        "highWaterRssKiB": 70552
+      },
+      {
+        "pid": 408092,
+        "cpuTicks": 11,
+        "rssKiB": 68248,
+        "highWaterRssKiB": 68884
+      }
+    ],
+    "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+    "hostsAfter": [
+      {
+        "pid": 408079,
+        "cpuTicks": 134,
+        "rssKiB": 116404,
+        "highWaterRssKiB": 116708
+      },
+      {
+        "pid": 408092,
+        "cpuTicks": 131,
+        "rssKiB": 116468,
+        "highWaterRssKiB": 117656
+      }
+    ],
+    "memoryFreeAfterBytes": 6672453632,
+    "loadAfter": [
+      0.52,
+      0.43,
+      0.38
+    ],
+    "connectionsAtEnd": 7
+  },
+  "runs": [
+    {
+      "offeredClients": 1,
+      "pattern": "independent",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 5.372082000000034,
+      "acceptedPerSecond": 186.14756811232473,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 5.307312999999965,
+        "p50": 5.307312999999965,
+        "p95": 5.307312999999965,
+        "max": 5.307312999999965
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6825005056,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 12,
+          "rssKiB": 71124,
+          "highWaterRssKiB": 71124
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "independent",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 5.232056,
+      "acceptedPerSecond": 191.12945274286056,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 5.226202999999998,
+        "p50": 5.226202999999998,
+        "p95": 5.226202999999998,
+        "max": 5.226202999999998
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6825005056,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 13,
+          "rssKiB": 71564,
+          "highWaterRssKiB": 71564
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "independent",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 5.992728999999997,
+      "acceptedPerSecond": 166.86888394252443,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 5.9876520000000255,
+        "p50": 5.9876520000000255,
+        "p95": 5.9876520000000255,
+        "max": 5.9876520000000255
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6820913152,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 14,
+          "rssKiB": 72820,
+          "highWaterRssKiB": 72820
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "contended",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 5.054385000000025,
+      "acceptedPerSecond": 197.84800722540825,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 5.048645000000022,
+        "p50": 5.048645000000022,
+        "p95": 5.048645000000022,
+        "max": 5.048645000000022
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816821248,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 14,
+          "rssKiB": 73032,
+          "highWaterRssKiB": 73032
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "contended",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 3.0256519999999796,
+      "acceptedPerSecond": 330.5072757871714,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 3.019060999999965,
+        "p50": 3.019060999999965,
+        "p95": 3.019060999999965,
+        "max": 3.019060999999965
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816604160,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 15,
+          "rssKiB": 73096,
+          "highWaterRssKiB": 73096
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "contended",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 4.541649000000007,
+      "acceptedPerSecond": 220.18434273542462,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.534148000000016,
+        "p50": 4.534148000000016,
+        "p95": 4.534148000000016,
+        "max": 4.534148000000016
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816530432,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 15,
+          "rssKiB": 73112,
+          "highWaterRssKiB": 73112
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "duplicate",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 4.485484999999983,
+      "acceptedPerSecond": 222.9413318738116,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.478334999999959,
+        "p50": 4.478334999999959,
+        "p95": 4.478334999999959,
+        "max": 4.478334999999959
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816436224,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 15,
+          "rssKiB": 73132,
+          "highWaterRssKiB": 73132
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "duplicate",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 3.8661690000000135,
+      "acceptedPerSecond": 258.6539802062446,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 3.8579129999999964,
+        "p50": 3.8579129999999964,
+        "p95": 3.8579129999999964,
+        "max": 3.8579129999999964
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816436224,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 15,
+          "rssKiB": 73196,
+          "highWaterRssKiB": 73196
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 1,
+      "pattern": "duplicate",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 4.872253999999998,
+      "acceptedPerSecond": 205.2438152854922,
+      "statuses": {
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.8001859999999965,
+        "p50": 4.8001859999999965,
+        "p95": 4.8001859999999965,
+        "max": 4.8001859999999965
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6816436224,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 16,
+          "rssKiB": 73244,
+          "highWaterRssKiB": 73244
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 11,
+          "rssKiB": 68248,
+          "highWaterRssKiB": 68884
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "independent",
+      "repeat": 0,
+      "accepted": 8,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 16.30766799999992,
+      "acceptedPerSecond": 490.5667689580165,
+      "statuses": {
+        "201": 8
+      },
+      "latencyMs": {
+        "min": 7.626754000000005,
+        "p50": 12.315132999999946,
+        "p95": 15.451368000000002,
+        "max": 15.451368000000002
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6813147136,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 19,
+          "rssKiB": 74440,
+          "highWaterRssKiB": 74440
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 13,
+          "rssKiB": 72236,
+          "highWaterRssKiB": 72236
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "independent",
+      "repeat": 1,
+      "accepted": 8,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 10.862987999999973,
+      "acceptedPerSecond": 736.4456261941945,
+      "statuses": {
+        "201": 8
+      },
+      "latencyMs": {
+        "min": 5.0410080000000335,
+        "p50": 6.872017000000028,
+        "p95": 10.405533999999989,
+        "max": 10.405533999999989
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6809853952,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 20,
+          "rssKiB": 74524,
+          "highWaterRssKiB": 74524
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 15,
+          "rssKiB": 72752,
+          "highWaterRssKiB": 72752
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "independent",
+      "repeat": 2,
+      "accepted": 8,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 15.126270999999974,
+      "acceptedPerSecond": 528.8811763322245,
+      "statuses": {
+        "201": 8
+      },
+      "latencyMs": {
+        "min": 7.647961000000009,
+        "p50": 11.814970000000017,
+        "p95": 14.574491999999964,
+        "max": 14.574491999999964
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6809878528,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 22,
+          "rssKiB": 74896,
+          "highWaterRssKiB": 74896
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 18,
+          "rssKiB": 74184,
+          "highWaterRssKiB": 74184
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "contended",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 7,
+      "failed": 0,
+      "elapsedMs": 10.383471999999983,
+      "acceptedPerSecond": 96.30690004268337,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 7
+      },
+      "latencyMs": {
+        "min": 4.659138999999982,
+        "p50": 6.702710999999908,
+        "p95": 9.86715300000003,
+        "max": 9.86715300000003
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6809948160,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 22,
+          "rssKiB": 75684,
+          "highWaterRssKiB": 75684
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 19,
+          "rssKiB": 74372,
+          "highWaterRssKiB": 74372
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "contended",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 7,
+      "failed": 0,
+      "elapsedMs": 11.191967999999974,
+      "acceptedPerSecond": 89.34979085000978,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 7
+      },
+      "latencyMs": {
+        "min": 5.548658000000046,
+        "p50": 8.189228999999955,
+        "p95": 10.771357999999964,
+        "max": 10.771357999999964
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6809948160,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 24,
+          "rssKiB": 76864,
+          "highWaterRssKiB": 76936
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 19,
+          "rssKiB": 74388,
+          "highWaterRssKiB": 74388
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "contended",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 7,
+      "failed": 0,
+      "elapsedMs": 9.213708999999994,
+      "acceptedPerSecond": 108.53392482875253,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 7
+      },
+      "latencyMs": {
+        "min": 4.548921000000064,
+        "p50": 5.911013000000025,
+        "p95": 8.780087999999978,
+        "max": 8.780087999999978
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6808805376,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 24,
+          "rssKiB": 77616,
+          "highWaterRssKiB": 77616
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 20,
+          "rssKiB": 74428,
+          "highWaterRssKiB": 74428
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "duplicate",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 7,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 13.558750999999916,
+      "acceptedPerSecond": 73.75310601986911,
+      "statuses": {
+        "200": 7,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.065813000000048,
+        "p50": 7.735372999999981,
+        "p95": 13.117334999999912,
+        "max": 13.117334999999912
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6808182784,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 25,
+          "rssKiB": 78628,
+          "highWaterRssKiB": 78628
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 20,
+          "rssKiB": 74448,
+          "highWaterRssKiB": 74448
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "duplicate",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 7,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 13.15751499999999,
+      "acceptedPerSecond": 76.00219342330226,
+      "statuses": {
+        "200": 7,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.451174000000037,
+        "p50": 8.180327000000034,
+        "p95": 12.757722999999942,
+        "max": 12.757722999999942
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6808186880,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 26,
+          "rssKiB": 79016,
+          "highWaterRssKiB": 79016
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 21,
+          "rssKiB": 74464,
+          "highWaterRssKiB": 74464
+        }
+      ]
+    },
+    {
+      "offeredClients": 8,
+      "pattern": "duplicate",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 7,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 13.207114000000047,
+      "acceptedPerSecond": 75.71676900797527,
+      "statuses": {
+        "200": 7,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 4.071164999999951,
+        "p50": 8.289921999999933,
+        "p95": 12.76245199999994,
+        "max": 12.76245199999994
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6808186880,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 27,
+          "rssKiB": 79016,
+          "highWaterRssKiB": 79016
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 21,
+          "rssKiB": 74572,
+          "highWaterRssKiB": 74572
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "independent",
+      "repeat": 0,
+      "accepted": 32,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 41.81183299999998,
+      "acceptedPerSecond": 765.3335839163046,
+      "statuses": {
+        "201": 32
+      },
+      "latencyMs": {
+        "min": 9.555573999999979,
+        "p50": 24.10675900000001,
+        "p95": 39.564482999999996,
+        "max": 40.26976500000001
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6796017664,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 33,
+          "rssKiB": 83300,
+          "highWaterRssKiB": 83300
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 28,
+          "rssKiB": 78744,
+          "highWaterRssKiB": 79208
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "independent",
+      "repeat": 1,
+      "accepted": 32,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 34.86166700000001,
+      "acceptedPerSecond": 917.91364996975,
+      "statuses": {
+        "201": 32
+      },
+      "latencyMs": {
+        "min": 7.51435099999992,
+        "p50": 20.21921800000007,
+        "p95": 32.56828400000006,
+        "max": 33.24768900000004
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6790283264,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 39,
+          "rssKiB": 84144,
+          "highWaterRssKiB": 84144
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 34,
+          "rssKiB": 82872,
+          "highWaterRssKiB": 83716
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "independent",
+      "repeat": 2,
+      "accepted": 32,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 30.882871000000023,
+      "acceptedPerSecond": 1036.1730941401133,
+      "statuses": {
+        "201": 32
+      },
+      "latencyMs": {
+        "min": 6.524279999999862,
+        "p50": 17.765720999999985,
+        "p95": 29.55356800000004,
+        "max": 29.626848999999993
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6784327680,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 44,
+          "rssKiB": 85008,
+          "highWaterRssKiB": 85008
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 39,
+          "rssKiB": 84960,
+          "highWaterRssKiB": 84960
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "contended",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 31,
+      "failed": 0,
+      "elapsedMs": 31.08115100000009,
+      "acceptedPerSecond": 32.17384066632529,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 31
+      },
+      "latencyMs": {
+        "min": 8.241747000000032,
+        "p50": 20.33109599999989,
+        "p95": 29.135113000000047,
+        "max": 29.676015000000007
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6780837888,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 47,
+          "rssKiB": 86204,
+          "highWaterRssKiB": 86204
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 40,
+          "rssKiB": 85140,
+          "highWaterRssKiB": 85140
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "contended",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 31,
+      "failed": 0,
+      "elapsedMs": 25.261798,
+      "acceptedPerSecond": 39.58546418588257,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 31
+      },
+      "latencyMs": {
+        "min": 7.248230000000149,
+        "p50": 14.728528000000097,
+        "p95": 23.63201799999979,
+        "max": 23.967658999999912
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6779748352,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 49,
+          "rssKiB": 86604,
+          "highWaterRssKiB": 86688
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 43,
+          "rssKiB": 85096,
+          "highWaterRssKiB": 85144
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "contended",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 31,
+      "failed": 0,
+      "elapsedMs": 31.667022999999972,
+      "acceptedPerSecond": 31.578592026159225,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 31
+      },
+      "latencyMs": {
+        "min": 8.775955000000067,
+        "p50": 19.40597200000002,
+        "p95": 29.907335999999987,
+        "max": 30.31894999999986
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6775435264,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 51,
+          "rssKiB": 87804,
+          "highWaterRssKiB": 87804
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 46,
+          "rssKiB": 85880,
+          "highWaterRssKiB": 86492
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "duplicate",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 31,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 51.706717000000026,
+      "acceptedPerSecond": 19.339847084083864,
+      "statuses": {
+        "200": 31,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 8.034061000000065,
+        "p50": 29.21851800000013,
+        "p95": 49.05485799999997,
+        "max": 50.47076399999992
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6772838400,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 54,
+          "rssKiB": 87680,
+          "highWaterRssKiB": 89088
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 48,
+          "rssKiB": 86064,
+          "highWaterRssKiB": 86592
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "duplicate",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 31,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 49.27390300000002,
+      "acceptedPerSecond": 20.294718687090803,
+      "statuses": {
+        "200": 31,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 5.9665520000000924,
+        "p50": 29.23002499999984,
+        "p95": 47.035453999999845,
+        "max": 47.93555100000003
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6771806208,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 57,
+          "rssKiB": 88004,
+          "highWaterRssKiB": 89088
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 50,
+          "rssKiB": 86004,
+          "highWaterRssKiB": 86592
+        }
+      ]
+    },
+    {
+      "offeredClients": 32,
+      "pattern": "duplicate",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 31,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 58.08117500000003,
+      "acceptedPerSecond": 17.217282536036837,
+      "statuses": {
+        "200": 31,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 8.416701000000103,
+        "p50": 31.901587000000063,
+        "p95": 55.69877200000019,
+        "max": 56.452888999999914
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6763053056,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 58,
+          "rssKiB": 88788,
+          "highWaterRssKiB": 89088
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 54,
+          "rssKiB": 88552,
+          "highWaterRssKiB": 89948
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "independent",
+      "repeat": 0,
+      "accepted": 128,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 180.72754699999996,
+      "acceptedPerSecond": 708.248422140096,
+      "statuses": {
+        "201": 128
+      },
+      "latencyMs": {
+        "min": 94.285889,
+        "p50": 124.39136500000018,
+        "p95": 167.2636849999999,
+        "max": 170.75284999999985
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6713946112,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 76,
+          "rssKiB": 105676,
+          "highWaterRssKiB": 105676
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 72,
+          "rssKiB": 100724,
+          "highWaterRssKiB": 100724
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "independent",
+      "repeat": 1,
+      "accepted": 128,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 129.6197430000002,
+      "acceptedPerSecond": 987.5038866571414,
+      "statuses": {
+        "201": 128
+      },
+      "latencyMs": {
+        "min": 21.560018000000127,
+        "p50": 69.55993799999987,
+        "p95": 122.01200300000028,
+        "max": 124.65149500000007
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6694977536,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 92,
+          "rssKiB": 107708,
+          "highWaterRssKiB": 110372
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 86,
+          "rssKiB": 107612,
+          "highWaterRssKiB": 107612
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "independent",
+      "repeat": 2,
+      "accepted": 128,
+      "replayed": 0,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 93.95809099999997,
+      "acceptedPerSecond": 1362.309500306898,
+      "statuses": {
+        "201": 128
+      },
+      "latencyMs": {
+        "min": 14.212582999999995,
+        "p50": 50.593327000000045,
+        "p95": 86.86180599999989,
+        "max": 90.11048600000004
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6682902528,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 105,
+          "rssKiB": 111096,
+          "highWaterRssKiB": 111096
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 101,
+          "rssKiB": 109100,
+          "highWaterRssKiB": 110048
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "contended",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 127,
+      "failed": 0,
+      "elapsedMs": 76.06177600000001,
+      "acceptedPerSecond": 13.147208132505344,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 127
+      },
+      "latencyMs": {
+        "min": 13.666811999999936,
+        "p50": 42.863155000000006,
+        "p95": 69.92264100000011,
+        "max": 72.19378300000017
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6683017216,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 109,
+          "rssKiB": 111292,
+          "highWaterRssKiB": 111292
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 105,
+          "rssKiB": 110384,
+          "highWaterRssKiB": 110384
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "contended",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 127,
+      "failed": 0,
+      "elapsedMs": 90.3982890000002,
+      "acceptedPerSecond": 11.062156275988784,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 127
+      },
+      "latencyMs": {
+        "min": 15.768484000000171,
+        "p50": 55.84758799999963,
+        "p95": 82.30891100000008,
+        "max": 86.515402
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6679212032,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 114,
+          "rssKiB": 113184,
+          "highWaterRssKiB": 113184
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 111,
+          "rssKiB": 112692,
+          "highWaterRssKiB": 112776
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "contended",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 0,
+      "conflicted": 127,
+      "failed": 0,
+      "elapsedMs": 78.75071500000013,
+      "acceptedPerSecond": 12.698297405934644,
+      "statuses": {
+        "201": 1,
+        "revision_conflict": 127
+      },
+      "latencyMs": {
+        "min": 12.882512000000133,
+        "p50": 46.46584999999959,
+        "p95": 73.91955199999984,
+        "max": 75.27393699999993
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6677975040,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 120,
+          "rssKiB": 115504,
+          "highWaterRssKiB": 115504
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 115,
+          "rssKiB": 113024,
+          "highWaterRssKiB": 113024
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "duplicate",
+      "repeat": 0,
+      "accepted": 1,
+      "replayed": 127,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 143.4011290000003,
+      "acceptedPerSecond": 6.9734457948374855,
+      "statuses": {
+        "200": 127,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 12.78684099999964,
+        "p50": 79.61105799999996,
+        "p95": 135.32657199999994,
+        "max": 140.18025399999988
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6678478848,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 125,
+          "rssKiB": 114856,
+          "highWaterRssKiB": 116708
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 121,
+          "rssKiB": 114200,
+          "highWaterRssKiB": 114408
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "duplicate",
+      "repeat": 1,
+      "accepted": 1,
+      "replayed": 127,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 146.1029480000002,
+      "acceptedPerSecond": 6.844488860005745,
+      "statuses": {
+        "200": 127,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 12.990040000000135,
+        "p50": 75.30140200000005,
+        "p95": 135.78351299999986,
+        "max": 142.6225669999999
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6677348352,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 129,
+          "rssKiB": 116212,
+          "highWaterRssKiB": 116708
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 125,
+          "rssKiB": 114220,
+          "highWaterRssKiB": 114408
+        }
+      ]
+    },
+    {
+      "offeredClients": 128,
+      "pattern": "duplicate",
+      "repeat": 2,
+      "accepted": 1,
+      "replayed": 127,
+      "conflicted": 0,
+      "failed": 0,
+      "elapsedMs": 139.87285900000006,
+      "acceptedPerSecond": 7.149349824900622,
+      "statuses": {
+        "200": 127,
+        "201": 1
+      },
+      "latencyMs": {
+        "min": 13.225792000000183,
+        "p50": 76.58084999999983,
+        "p95": 131.15127800000027,
+        "max": 136.62844799999993
+      },
+      "loadAverage": [
+        0.52,
+        0.43,
+        0.38
+      ],
+      "freeMemoryBytes": 6672453632,
+      "hosts": [
+        {
+          "pid": 408079,
+          "cpuTicks": 134,
+          "rssKiB": 116404,
+          "highWaterRssKiB": 116708
+        },
+        {
+          "pid": 408092,
+          "cpuTicks": 131,
+          "rssKiB": 116468,
+          "highWaterRssKiB": 117656
+        }
+      ]
+    }
+  ],
+  "complete": true
+}

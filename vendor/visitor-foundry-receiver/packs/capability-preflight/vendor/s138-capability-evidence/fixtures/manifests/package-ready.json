@@ -1,0 +1,8 @@
+{
+  "name": "s138-capability-evidence",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "bin": { "capability-evidence": "./bin/capability-evidence.mjs" },
+  "files": ["bin", "src", "schemas", "README.md", "LICENSE"]
+}

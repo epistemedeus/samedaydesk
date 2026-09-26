@@ -1,0 +1,20 @@
+{
+  "id": "hostile-stale-price",
+  "title": "Stale price declaration",
+  "summary": "Otherwise well-formed capability with an expired price observation.",
+  "layer": "advertised",
+  "outcomes": ["batch_extraction"],
+  "inputRequirements": { "required": ["urls"], "properties": { "urls": { "type": "array", "maxItems": 5 } } },
+  "outputRequirements": { "required": ["sources"], "properties": {} },
+  "price": {
+    "amount": "0.01",
+    "currency": "USDC",
+    "source": "samedaydesk.extract-batch.quote",
+    "observedAt": "2026-08-01T00:00:00.000Z",
+    "freshnessMaxAgeSec": 3600
+  },
+  "executionRoute": { "kind": "external_completion_link", "href": "https://samedaydesk.com/", "label": "SameDayDesk" },
+  "completionLink": { "href": "https://samedaydesk.com/", "label": "SameDayDesk" },
+  "seller": { "class": "operator", "label": "SameDayDesk (Neomorphic LLC merchant brand)" },
+  "demo": false
+}

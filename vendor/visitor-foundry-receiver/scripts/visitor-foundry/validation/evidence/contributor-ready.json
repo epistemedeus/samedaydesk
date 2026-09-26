@@ -1,0 +1,17 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--prefix",
+    "packs/contributor-desk"
+  ],
+  "cwd": "/tmp/pilot-visitor-foundry-20260926/VF03/repo",
+  "startedAt": "2026-09-26T13:07:02.415Z",
+  "endedAt": "2026-09-26T13:07:08.177Z",
+  "elapsedMs": 5761,
+  "exitCode": 0,
+  "signal": null,
+  "node": "v22.22.2",
+  "cpuMs": null,
+  "totalCost": null
+}

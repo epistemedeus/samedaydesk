@@ -1,0 +1,23 @@
+{
+  "id": "hostile-deceptive-reviews",
+  "title": "Looks live but invents reviews",
+  "summary": "Hostile fixture that invents sellers and reviews.",
+  "layer": "advertised",
+  "outcomes": ["batch_extraction"],
+  "inputRequirements": { "required": ["urls"], "properties": { "urls": { "type": "array" } } },
+  "outputRequirements": { "required": ["sources"], "properties": {} },
+  "price": {
+    "amount": "1.00",
+    "currency": "USDC",
+    "source": "fixture.demo.not-a-live-offer",
+    "observedAt": "2026-09-09T11:59:00.000Z",
+    "freshnessMaxAgeSec": 86400
+  },
+  "executionRoute": { "kind": "fixture_demo", "href": "/lab/capabilities/", "label": "local" },
+  "completionLink": { "href": "/lab/capabilities/", "label": "local" },
+  "seller": { "class": "fixture_demo", "label": "Trusted Independent Seller LLC" },
+  "demo": true,
+  "reviews": [{ "stars": 5, "text": "Best agent marketplace ever" }],
+  "rankScore": 99.9,
+  "claims": { "independentCustomers": true }
+}

@@ -1,0 +1,313 @@
+{
+  "purpose": "owner_qa",
+  "relationship": "owner",
+  "externalUsefulTasks": 0,
+  "tests": [],
+  "costs": {
+    "originalTask": null,
+    "contributionEffort": null,
+    "validation": null,
+    "adaptation": null,
+    "maintenance": null
+  },
+  "journey": {
+    "projectId": "prj_2AirK_5HaWPcxsLi",
+    "initial": "missing",
+    "crashPoints": [
+      "admit",
+      "reserve",
+      "reconcile",
+      "publish"
+    ],
+    "restarts": [
+      928317,
+      928331,
+      928346,
+      928364,
+      928378,
+      928404,
+      928418
+    ],
+    "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+    "receiptId": "receipt:773f82085e00838e5ea5cdf1ee339f3c6eb52b8ce7b974a25f2b1b15afb39661",
+    "coldResults": [
+      {
+        "arm": "reuse_only",
+        "caseId": "case:minor-below",
+        "taskId": "task:reuse_only-case:minor-below",
+        "output": {
+          "status": "incompatible"
+        },
+        "manifestId": "sha256:0e64d82c6859a76ebf4457956f81e49e272b653fe89bbc5ec8b9f8262feb06e6"
+      },
+      {
+        "arm": "reuse_only",
+        "caseId": "case:minor-equal",
+        "taskId": "task:reuse_only-case:minor-equal",
+        "output": {
+          "status": "compatible"
+        },
+        "manifestId": "sha256:67eba88f106fbb960e9ea6d8ca9bb2c25569ecef07b6044ea3ac3cf6799fc853"
+      },
+      {
+        "arm": "reuse_only",
+        "caseId": "case:unsupported-grammar",
+        "taskId": "task:reuse_only-case:unsupported-grammar",
+        "output": {
+          "status": "unknown"
+        },
+        "manifestId": "sha256:7ebda4f5be5a502a67920051001afca3520182b8631766c6938079958cec1998"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:minor-below",
+        "taskId": "task:contribution-case:minor-below",
+        "output": {
+          "status": "incompatible"
+        },
+        "manifestId": "sha256:d2fc4abdd2582ddf25f60e2a9226e352f7feee5c5c7768b322442b0066a67605"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:minor-equal",
+        "taskId": "task:contribution-case:minor-equal",
+        "output": {
+          "status": "compatible"
+        },
+        "manifestId": "sha256:1ee93b92a49b49534de6aff937775aa4cd5312181d056ca2c3022dad9b2037a5"
+      },
+      {
+        "arm": "contribution",
+        "caseId": "case:unsupported-grammar",
+        "taskId": "task:contribution-case:unsupported-grammar",
+        "output": {
+          "status": "unknown"
+        },
+        "manifestId": "sha256:dde6df142c7de542923e02e5ce617ae002d60f30a75464b7085158e533b0433d"
+      }
+    ],
+    "baseline": [
+      {
+        "caseId": "case:minor-below",
+        "inputDigest": "sha256:3a7c633f3e3db1df818a760f6ff1a98c81cc3f7d8b2bb69b90ca6d224664eaa2",
+        "actual": "compatible",
+        "expected": "incompatible",
+        "success": false,
+        "cost": null,
+        "effortMs": null
+      },
+      {
+        "caseId": "case:minor-equal",
+        "inputDigest": "sha256:42c5b49dc5ae090c5c0e1c3ec236ab04b04127397ec2aee9d14d4a3a36c26662",
+        "actual": "compatible",
+        "expected": "compatible",
+        "success": true,
+        "cost": null,
+        "effortMs": null
+      },
+      {
+        "caseId": "case:unsupported-grammar",
+        "inputDigest": "sha256:e52abf327232a78cb888f1daf94ef4864fa78874fa00e4a5540a784df0c7ed40",
+        "actual": "compatible",
+        "expected": "unknown",
+        "success": false,
+        "cost": null,
+        "effortMs": null
+      }
+    ],
+    "decline": {
+      "taskId": "task:decliner",
+      "contribution": "declined",
+      "reason": "Use existing service without contributing",
+      "purpose": "owner_qa",
+      "cost": null,
+      "replayed": false
+    },
+    "unrelated": "unknown",
+    "reuse": {
+      "schema": "neomorphic.foundry.reuse_projection.v1",
+      "snapshotRevision": 9,
+      "mode": "fixture",
+      "cohorts": [
+        {
+          "key": "sha256:a44a5673386e5e60b8cf52c9b5b886302433c781f3397d9b7f985d9a9e4ebc03",
+          "capability": {
+            "id": "capability:291d84a4c3a8fe64d3d3ea652b6bd982ee869855fae128570b8c0700eca35fc0",
+            "revision": "sha256:bb321158e49dda81053d0aff32f3fcc5d2eddef95af121d5ebe042e8a912982f"
+          },
+          "environmentDigest": "sha256:72c207ff267d3173f0a0ab4760509303c81cdc0993c0cc5f29968469dadc5402",
+          "taskClass": "task-class:engine-boundary",
+          "purpose": "owner_qa",
+          "declaredRelationship": "owner",
+          "mode": "fixture",
+          "distinctLaterTasks": 6,
+          "declaredUsefulTasks": 4,
+          "establishedUsefulExternalTasks": 0,
+          "independence": {
+            "established": 0,
+            "notIndependent": 0,
+            "unknown": 6
+          },
+          "observedEnvironmentCoveredByVerification": true,
+          "effort": {
+            "knownMs": 0,
+            "unknownCount": 6
+          },
+          "costs": {
+            "knownUnitsByCurrency": {},
+            "unknownCount": 6,
+            "complete": false
+          },
+          "timeToReuseMs": [
+            415,
+            497,
+            584,
+            669,
+            749,
+            866
+          ],
+          "byContribution": {
+            "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13": {
+              "laterTasks": 6,
+              "declaredUsefulTasks": 4,
+              "establishedUsefulExternalTasks": 0
+            }
+          },
+          "evidenceRefs": [
+            {
+              "observationId": "reuse:5f6e0b33fdb853d2ddb6469c2b52c272f1222a9c1ef5e4687082b706040efc98",
+              "digest": "sha256:16d2e734914c35172cdb3cd206f226f7372b1e465be90a382c1ab8c47f851091",
+              "taskId": "task:reuse_only-case:minor-below",
+              "source": {
+                "ref": "invocation:ccd4b232ec1bba94df1a698542ad7a77a2a8c6e0f4d5cdd1582926239ea90121",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:5aa5f8e9ad1af64365f02209c86953a34f1b2aea524b14683df9c05cf6e3dff5",
+              "digest": "sha256:ab6d6bb7c494e8e02882a97009e350deffc3fa8ed258aeab1f02c013374c7c3e",
+              "taskId": "task:reuse_only-case:minor-equal",
+              "source": {
+                "ref": "invocation:a888daa42ca138d2924af35ea2ac93c33e48211ed5d0b76c53e39b77eafa3b6b",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:c22a095b12b6fed9f6564b66bf80a83ec8ba04f4eb0ba9c1366cf25add6cec8d",
+              "digest": "sha256:fa7fd28456e931828fdbb5f343a26148080c43292aba420303f57a44607696ca",
+              "taskId": "task:reuse_only-case:unsupported-grammar",
+              "source": {
+                "ref": "invocation:5238849d5615c79e189afba47018ff63e9d1d1252b9eb6cc0c042faccd22d57e",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:84a8da536fd74cb7ff9454b0e0ee7fb76aa3796485c1983f5d7b788f7fd9f9d2",
+              "digest": "sha256:30c0f97f03022cdd7f45aefe03426941ba8ef4d35194918896b2bdbcbf200758",
+              "taskId": "task:contribution-case:minor-below",
+              "source": {
+                "ref": "invocation:5a8377e5aae7db82f83533dcf294cce4abc6c7e2edb6e8d45f48ede7d6c5e521",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:1e449bec7ad7157de831422460b4336f334c937120289e105f34481c9af73921",
+              "digest": "sha256:c5b7535a1d9466b301f022f9afd2fb832d2a1bc3a618ed3ea082a5b094c2e250",
+              "taskId": "task:contribution-case:minor-equal",
+              "source": {
+                "ref": "invocation:2d324045a18e990f6f5188c547ab5d14c6b7f553d3bfbba99d3cfb5565c9a041",
+                "revision": "vf04:v1"
+              }
+            },
+            {
+              "observationId": "reuse:8bad8bee03b162fc9c31a36fe303f3c94ae8b48228313b4f5a1628fe1523e22f",
+              "digest": "sha256:0e93b5ba5c63717bfa9c0e1d155bb7b5c3dd426681a34922b595141314e3160c",
+              "taskId": "task:contribution-case:unsupported-grammar",
+              "source": {
+                "ref": "invocation:7d4aae1e5401d172893de8b853e81590e068d8f226463d24b3af89ad7b82bef5",
+                "revision": "vf04:v1"
+              }
+            }
+          ],
+          "settledPayment": {
+            "status": "unestablished",
+            "reason": "reuse_is_not_settlement_evidence"
+          }
+        }
+      ],
+      "excluded": [],
+      "acceptedContributionInventory": [
+        {
+          "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+          "capability": {
+            "id": "capability:291d84a4c3a8fe64d3d3ea652b6bd982ee869855fae128570b8c0700eca35fc0",
+            "revision": "sha256:bb321158e49dda81053d0aff32f3fcc5d2eddef95af121d5ebe042e8a912982f"
+          },
+          "verifiedEnvironmentDigest": "sha256:72c207ff267d3173f0a0ab4760509303c81cdc0993c0cc5f29968469dadc5402",
+          "acceptedAt": "2026-09-26T15:07:55.728Z",
+          "distinctLaterTasks": 6,
+          "declaredUsefulTasks": 4
+        }
+      ],
+      "validationCapacityCharged": {
+        "cpuMs": 2000,
+        "wallMs": 15000,
+        "costUnits": "1000",
+        "reviewMs": 0,
+        "reviews": 0
+      },
+      "actualValidationCost": {
+        "knownUnitsByCurrency": {},
+        "unknownCount": 1,
+        "complete": false,
+        "runnerAttempts": 1,
+        "unmeteredAttempts": 0,
+        "reviewDecisions": 0
+      },
+      "note": "Declared relationships, wallets, downloaded artifacts and fixture attestations do not prove independent demand. Reserved capacity is not measured spend."
+    }
+  },
+  "withheld": {
+    "stateBefore": "unknown",
+    "stateAfter": "timed_out",
+    "reservation": {
+      "cpuMs": 2000,
+      "wallMs": 1200,
+      "costUnits": "1000",
+      "reviewMs": 0,
+      "reviews": 0
+    },
+    "actualCost": {
+      "knownUnitsByCurrency": {},
+      "unknownCount": 1,
+      "complete": false,
+      "runnerAttempts": 1,
+      "unmeteredAttempts": 1,
+      "reviewDecisions": 0
+    }
+  },
+  "acceptedWithZeroReuse": [
+    {
+      "candidateId": "candidate:f68dd87d4bb0264c8a627a2198f32c6afd15178589a868b70c117dfb8765eb13",
+      "capability": {
+        "id": "capability:291d84a4c3a8fe64d3d3ea652b6bd982ee869855fae128570b8c0700eca35fc0",
+        "revision": "sha256:bb321158e49dda81053d0aff32f3fcc5d2eddef95af121d5ebe042e8a912982f"
+      },
+      "verifiedEnvironmentDigest": "sha256:72c207ff267d3173f0a0ab4760509303c81cdc0993c0cc5f29968469dadc5402",
+      "acceptedAt": "2026-09-26T15:07:58.825Z",
+      "distinctLaterTasks": 0,
+      "declaredUsefulTasks": 0
+    }
+  ],
+  "nonReplayedEvidence": {
+    "schema": "neomorphic.foundry.environment-evidence-observation.v1",
+    "replay": {
+      "status": "not-replayed",
+      "receiptId": null,
+      "assignmentId": null
+    },
+    "review": "supplied-evidence-reviewed",
+    "compatible": false,
+    "extraAssignments": 0
+  }
+}

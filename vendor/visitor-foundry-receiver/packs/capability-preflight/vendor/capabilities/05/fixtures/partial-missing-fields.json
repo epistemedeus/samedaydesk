@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.r2.capabilities.failure_outcome.v1",
+  "capabilityId": "extract_batch_json",
+  "attemptId": "attempt-partial-input-003",
+  "notes": "Synthetic fixture \u2014 missing failureClass, mutationState, observedState.",
+  "demo": true
+}

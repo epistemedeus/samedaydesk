@@ -1,0 +1,68 @@
+
+> neomorphic-io@1.1.0 test:scale-compose
+> node --test scripts/scale-lab/shared/tests/*.test.mjs tests/scale-compose.test.mjs
+
+TAP version 13
+# Subtest: correspondence kinds mirror the service vocabulary
+ok 1 - correspondence kinds mirror the service vocabulary
+  ---
+  duration_ms: 1.862477
+  type: 'test'
+  ...
+# Subtest: brief export is unfunded and correspondence-shaped
+ok 2 - brief export is unfunded and correspondence-shaped
+  ---
+  duration_ms: 0.928367
+  type: 'test'
+  ...
+# Subtest: capability selection refuses when no overlap
+ok 3 - capability selection refuses when no overlap
+  ---
+  duration_ms: 1.250907
+  type: 'test'
+  ...
+# Subtest: composeScalePacket keeps one envelope over three surfaces
+ok 4 - composeScalePacket keeps one envelope over three surfaces
+  ---
+  duration_ms: 0.999082
+  type: 'test'
+  ...
+# Subtest: runScaleJourney links brief, evidence ingest, and capability delivery
+ok 5 - runScaleJourney links brief, evidence ingest, and capability delivery
+  ---
+  duration_ms: 36.70351
+  type: 'test'
+  ...
+# Subtest: runScaleJourney rejects hostile partial observation without throwing
+ok 6 - runScaleJourney rejects hostile partial observation without throwing
+  ---
+  duration_ms: 1.351049
+  type: 'test'
+  ...
+# Subtest: scale lab routes build and carry noindex robots labels
+ok 7 - scale lab routes build and carry noindex robots labels
+  ---
+  duration_ms: 3.877673
+  type: 'test'
+  ...
+# Subtest: capabilities JSON snapshot builds without claiming hosted execution
+ok 8 - capabilities JSON snapshot builds without claiming hosted execution
+  ---
+  duration_ms: 0.551013
+  type: 'test'
+  ...
+# Subtest: labs index links to scale hub without touching homepage frontispiece
+ok 9 - labs index links to scale hub without touching homepage frontispiece
+  ---
+  duration_ms: 0.420346
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 175.56253
