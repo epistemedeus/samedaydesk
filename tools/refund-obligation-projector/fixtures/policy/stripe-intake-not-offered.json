@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.refund-policy.v1",
+  "policyId": "sdd-stripe-intake-not-offered",
+  "termsVersion": null,
+  "defaultClaim": "unknown",
+  "rules": [
+    {
+      "claim": "not-offered",
+      "match": {
+        "delivery": "intake_required"
+      }
+    }
+  ]
+}
