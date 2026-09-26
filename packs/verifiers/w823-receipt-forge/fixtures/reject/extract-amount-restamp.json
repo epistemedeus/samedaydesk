@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "samedaydesk.receipt-forge.claim.v1",
+  "claimId": "rf_w823_extract_amount_restamp",
+  "receiptId": "cr_w823_extract_amount_restamp",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:03:06.000Z",
+  "completeness": "truncated",
+  "authorityClass": "seller_observed",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https://example.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "1",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    }
+  ],
+  "joinKeys": [
+    "receipt_id",
+    "resource",
+    "amount",
+    "pay_to"
+  ],
+  "source": {
+    "kind": "live_unpaid_402",
+    "note": "Extract amount restamped to 1 after an honest digest. Pin is 5000."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "facilitator_settlement"
+  ],
+  "prohibitedInferences": [
+    "receipt_forged",
+    "copied_settlement",
+    "fabricated_settlement",
+    "receipt_replay",
+    "payment_header_forge",
+    "http_402_is_delivery"
+  ],
+  "integrity": {
+    "alg": "sha256",
+    "claimedDigest": "sha256:aec44460b30b6df5120d7528dd65498bc8eb47e9c12034a4fb49a5b5ea9036e3"
+  }
+}
