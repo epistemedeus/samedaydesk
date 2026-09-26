@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "live-origin",
+  "mode": "read_only",
+  "origin": "https://samedaydesk.com",
+  "live": true,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "class": "read_only",
+      "readOnly": true
+    }
+  ]
+}
