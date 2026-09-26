@@ -1,8 +1,0 @@
-{
-  "name": "s172-first-run-cli",
-  "bin": "./cli.js",
-  "type": "module",
-  "engines": {
-    "node": ">=22"
-  }
-}

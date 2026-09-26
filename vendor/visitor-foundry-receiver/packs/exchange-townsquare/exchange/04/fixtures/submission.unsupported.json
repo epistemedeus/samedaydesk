@@ -1,8 +1,0 @@
-{
-  "demo": true,
-  "files": [
-    { "path": "note/artifact.json", "byteLength": 10, "format": "json" },
-    { "path": "note/README.md", "byteLength": 10, "format": "md" },
-    { "path": "note/payload.exe", "byteLength": 10, "format": "exe" }
-  ]
-}

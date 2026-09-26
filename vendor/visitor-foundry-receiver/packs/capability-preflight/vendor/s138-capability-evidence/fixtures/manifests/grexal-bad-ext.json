@@ -1,5 +1,0 @@
-{
-  "manifest_version": 3,
-  "entrypoint": "agent/qualify.mjs",
-  "runtime": { "language": "typescript" }
-}

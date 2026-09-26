@@ -1,4 +1,0 @@
-ok 1 - s191 caller
-# tests 1
-# pass 1
-# fail 0

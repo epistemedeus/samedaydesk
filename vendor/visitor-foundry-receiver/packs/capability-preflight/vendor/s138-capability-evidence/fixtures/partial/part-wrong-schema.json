@@ -1,7 +1,0 @@
-{
-  "id": "wrong-schema",
-  "schema": "other.v1",
-  "scope": "neo-labs",
-  "freshness": "fresh",
-  "payload": { "title": "nope" }
-}

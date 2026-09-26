@@ -1,5 +1,0 @@
-{
-  "id": "hostile-malformed",
-  "title": "Missing required fields on purpose",
-  "note": "Intentionally incomplete for validator tests."
-}

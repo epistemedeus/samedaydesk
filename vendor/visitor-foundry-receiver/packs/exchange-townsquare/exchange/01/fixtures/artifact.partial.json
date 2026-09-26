@@ -1,7 +1,0 @@
-{
-  "sourceUrl": "https://example.com/docs/changelog",
-  "observedAt": "2026-09-10T12:00:00.000Z",
-  "changed": true,
-  "summary": "Partial fixture: digest missing so objective layer fails while other fields pass.",
-  "evidenceDigest": "not-a-digest"
-}

@@ -1,5 +1,0 @@
-W5-E07 contributor-session-grant imported into W5-E01 at SHA
-b3c8d4cd0efbfb2b3e5402a75fae6341f61d962e (selected path packs/contributor-session-grant/).
-License retained. Runtime rebound to the in-tree kernel. Grant POST remains
-non-idempotent: an unknown 201 is not an issued grant and must not replay as
-if Idempotency-Key applied.

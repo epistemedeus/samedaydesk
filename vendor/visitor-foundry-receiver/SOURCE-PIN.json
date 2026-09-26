@@ -4,6 +4,6 @@
   "head": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
   "tree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
   "module": "@neomorphic/correspondence",
-  "layout": "vendor/visitor-foundry-receiver mirrors the canonical repo root for relative imports",
-  "note": "One correspondence module. SDS does not carry a second F93 or VF08 checkout. Worker drain remains in server/foundry. Canonical host.ts closes extension then base."
+  "layout": "vendor/visitor-foundry-receiver keeps repo-relative paths for the import closure only",
+  "note": "Subset of Neo 1652533b, byte-identical for paths that remain. One correspondence module (src, dist, migrations, bin). Script and pack files are the static import closure of the entry mount, visitor CLI, worker, portable loader, execution example build, and the SDS acceptance helpers, plus dynamically loaded migrations, oracle, and held-out files. Not the whole Neo tree. No node_modules, .runtime, or .build. Worker drain remains in server/foundry. Canonical host.ts closes extension then base."
 }

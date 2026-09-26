@@ -1,7 +1,0 @@
-{
-  "provenance": "owner_controlled_fixture",
-  "id": "task:cold-b",
-  "caseId": "case:long-description",
-  "card": { "name": "Cold second visitor card", "description": "This description deliberately repeats the same sentence to exceed the maintained capability card boundary. This description deliberately repeats the same sentence to exceed the maintained capability card boundary. This description deliberately repeats the same sentence to exceed the maintained capability card boundary." },
-  "expectedIssues": ["description_too_long"]
-}

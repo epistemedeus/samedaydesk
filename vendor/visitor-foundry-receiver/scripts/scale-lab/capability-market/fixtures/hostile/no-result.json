@@ -1,7 +1,0 @@
-{
-  "request": {
-    "outcomes": ["teleportation", "alchemy"],
-    "inputs": {}
-  },
-  "expectRefusal": "no_result"
-}

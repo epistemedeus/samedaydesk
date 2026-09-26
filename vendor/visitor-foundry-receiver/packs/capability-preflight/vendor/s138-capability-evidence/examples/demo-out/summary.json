@@ -1,9 +1,0 @@
-{
-  "schema": "s138.demo.v1",
-  "outDir": "/workspace/experiments/s138-capability-evidence/examples/demo-out",
-  "artifacts": [
-    "02-prereq.json",
-    "03-bound.json",
-    "06-partial.json"
-  ]
-}

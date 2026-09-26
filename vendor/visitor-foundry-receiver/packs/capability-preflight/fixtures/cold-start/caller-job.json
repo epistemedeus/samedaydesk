@@ -1,6 +1,0 @@
-{
-  "schema": "demo.job.v1",
-  "scope": "neo-labs",
-  "freshnessRequired": "fresh",
-  "requiredFields": ["title", "status"]
-}

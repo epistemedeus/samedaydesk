@@ -1,8 +1,0 @@
-{
-  "capabilityId": "extract_batch_json",
-  "sourceUrl": "https://example.com/docs/changelog",
-  "observedAt": "2026-09-10T18:00:00.000Z",
-  "changed": true,
-  "summary": "Synthetic observation: public docs section heading updated (fixture only).",
-  "evidenceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-}

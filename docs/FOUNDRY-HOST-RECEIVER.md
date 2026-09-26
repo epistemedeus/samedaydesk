@@ -10,7 +10,7 @@ Production Hostinger is unchanged until Root sets env, runs the installer, and r
 | Neo receiver | `1652533b1823ac33b86591ec4e931a8c4ea4aa97` |
 | Neo tree | `d9c80cfd56cb05d40055dba047d6462656764ff8` |
 
-The tree lives at `vendor/visitor-foundry-receiver/` and is the only correspondence module (`@neomorphic/correspondence`). There is no second F93 or VF08 checkout. `SOURCE-PIN.json` records the head.
+The receiver lives at `vendor/visitor-foundry-receiver/` and is the only correspondence module (`@neomorphic/correspondence`). The scripts and packs there are the import closure of Neo `1652533b`, not the rest of that repository. There is no second F93 or VF08 checkout. `SOURCE-PIN.json` records the head.
 
 ## Host order
 
