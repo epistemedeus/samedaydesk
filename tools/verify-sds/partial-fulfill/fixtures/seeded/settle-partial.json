@@ -1,0 +1,8 @@
+{
+  "seededId": "settle-partial",
+  "claim": {
+    "settled": true,
+    "delivery": "in_full"
+  },
+  "note": "Lie: incomplete-failed-extract.json (partial:true, 3 failed sources) is delivered in full."
+}
