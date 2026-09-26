@@ -1,0 +1,31 @@
+{
+  "id": "missing-as-zero-then-demand",
+  "surface": "market-observations",
+  "class": "absence-as-zero",
+  "expectReject": true,
+  "cite": "server/lib/market-observations/normalize-market-stats.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "missing_as_zero_demand"
+  ],
+  "defect": "Missing metrics treated as proven zero demand (unavailable is not zeros).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "market-observations",
+    "missingMetrics": true,
+    "missingAsZero": true,
+    "missingMetricsAsZero": true,
+    "absenceProvesZeroDemand": true,
+    "provenNoDemand": true,
+    "demandCount": 0,
+    "metrics": [
+      {
+        "key": "jobCount",
+        "value": null,
+        "state": "missing"
+      }
+    ],
+    "message": "missing metrics treated as proven zero demand"
+  }
+}
