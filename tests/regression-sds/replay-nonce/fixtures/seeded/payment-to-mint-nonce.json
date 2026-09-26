@@ -1,0 +1,8 @@
+{
+  "id": "payment-to-mint-nonce",
+  "defect": "Open checkout or send payment to mint or reset a pulse flush-id nonce.",
+  "action": "checkout",
+  "payment": true,
+  "checkout": true,
+  "flushId": "a0000000-0000-4000-8000-000000000099"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "sds-regression-replay-nonce",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Cold-run regression fixtures for SameDayDesk pulse flush-id replay nonces. Owner QA; not a payment, checkout, publish, or neo change.",
+  "scripts": {
+    "cold": "node run.mjs cold",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "seeded-failure": "node run.mjs --seeded-failure replay-as-fresh-apply"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "empty-nonce",
+  "kind": "wal-entry",
+  "flushId": "",
+  "delta": { "total": 1, "humans": 1 },
+  "expect": {
+    "ok": false,
+    "error": "pulse_wal_invalid:flush_id"
+  }
+}
