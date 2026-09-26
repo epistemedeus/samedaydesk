@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "feature": "double-charge-guard",
+  "command": "cold",
+  "offer": "agent_mcp_server",
+  "stripe": "fixture",
+  "cases": [
+    "retry-same-attempt",
+    "concurrent-creates",
+    "duplicate-fulfill",
+    "changed-facts-blocked",
+    "uncertain-retrieve",
+    "quarantine-stale",
+    "repeat-after-success-is-new-attempt"
+  ],
+  "expectExit": 0,
+  "paymentSent": false
+}

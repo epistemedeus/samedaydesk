@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "double-charge-guard",
+  "seeds": [
+    {
+      "id": "second-charge",
+      "why": "A claim that retrying the same attempt mints a second PaymentIntent is refused; published createOfferPaymentIntent reuses one PI.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "second-charge",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "DOUBLE_CHARGE_CLAIM_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "retrieve-fail-recreate",
+      "why": "Uncertain Stripe retrieve must not mint a second charge.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "retrieve-fail-recreate",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "RETRIEVE_RECREATE_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "changed-facts-bypass",
+      "why": "Changed upload/facts cannot bypass an open attempt to create a second charge.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "changed-facts-bypass",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "FACTS_BYPASS_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "live-stripe",
+      "why": "Unpaid harness never calls api.stripe.com.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "live-stripe",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "LIVE_STRIPE_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "checkout-path",
+      "why": "This verifier does not open /api/checkout.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "checkout-path",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "CHECKOUT_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "payment-signature",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "neo",
+      "why": "neomorphic/neo-kernel-vendor is out of scope for SDS double-charge-guard.",
+      "command": [
+        "node",
+        "tools/verify-sds/double-charge-guard/cli.mjs",
+        "--seeded-failure",
+        "neo",
+        "--json"
+      ],
+      "expectExit": 1,
+      "errorCode": "NEO_VENDOR_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false, "neoPublished": false }
+    }
+  ]
+}
