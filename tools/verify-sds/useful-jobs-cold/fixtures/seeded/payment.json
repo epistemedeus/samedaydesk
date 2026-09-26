@@ -1,0 +1,7 @@
+{
+  "id": "payment",
+  "seededId": "payment",
+  "command": "seeded",
+  "feature": "useful-jobs-cold",
+  "expectCode": "PAYMENT_REFUSE"
+}

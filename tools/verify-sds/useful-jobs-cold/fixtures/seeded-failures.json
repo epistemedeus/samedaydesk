@@ -1,0 +1,3 @@
+{
+  "seeds": ["wrong-sha", "wrong-bytes", "sha-mismatch", "live", "payment"]
+}
