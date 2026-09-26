@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_pricing_js",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "server/pricing.js",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "bytes": 1
+  },
+  "claims": {
+    "recordId": "evr_not_a_pin",
+    "sourceKind": "operator_validation",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "unknown",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_this_file_is_unpaid_evidence"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}

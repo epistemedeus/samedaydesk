@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_stripe_event",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "tools/evidence-records/fixtures/valid/stripe-event.json",
+    "sha256": "4b19f47e1780b4f0617dd59505e55165e0626e03b18c6762ba186bdf87998f8c",
+    "bytes": 1069
+  },
+  "claims": {
+    "recordId": "evr_stripe_event_20260901",
+    "sourceKind": "stripe_event",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "provider_authoritative",
+  "unknownWhenAbsent": [
+    "onchain_settlement_state"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}

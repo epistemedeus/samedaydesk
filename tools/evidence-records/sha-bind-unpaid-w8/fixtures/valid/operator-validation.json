@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_operator_validation",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "tools/evidence-records/fixtures/valid/operator-validation.json",
+    "sha256": "415c499728fb59de0686f9be8ce67f929180f81aa99b086efa0578c0cb92b44f",
+    "bytes": 1130
+  },
+  "claims": {
+    "recordId": "evr_operator_validation_20260901",
+    "sourceKind": "operator_validation",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_any_non_operator_caller_used_the_same_routes"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}
