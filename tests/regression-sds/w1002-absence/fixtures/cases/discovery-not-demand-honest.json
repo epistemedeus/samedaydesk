@@ -1,0 +1,23 @@
+{
+  "id": "discovery-not-demand-honest",
+  "surface": "discovery",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "client/src/data/machineEntry.mjs",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "discovery",
+    "discovery": true,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": [
+      "demand"
+    ],
+    "sourceNote": "Discovery is not authorization, settlement, demand, or revenue.",
+    "message": "discovery snapshot recorded; demand withheld"
+  }
+}
