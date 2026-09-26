@@ -1,0 +1,12 @@
+{
+  "sourceRepo": "epistemedeus/neomorphic-io",
+  "f93Export": "107363a0fabaed6133235ebda812dd5f01b07d51",
+  "f93Implementation": "a7fe9f508f58d25312c64e11b4e6e3d258fbb975",
+  "files": {
+    "migrations/visitor-foundry/001_vf04_integration.sql": "1d5b8bd21f01835afd4ce0ed88508ebee3e9c5cfea72c5bff2d7babd6dfba029",
+    "migrations/visitor-foundry/002_vf04_wire.sql": "c770c5cfb70206730020d5b26e0628cd7b4b7c022bef7dd84335a95aeb9815d5",
+    "migrations/visitor-work-cells/001_vf02_work_cells.sql": "5f5baf07727bb129507cd0d1708cbf89122c8057b6182e78c15248b9301ff6e8",
+    "dist/visitor-foundry/host.js": "packaged from services/correspondence/src/visitor-foundry/host.ts at f93Export; SDS local delta closes extension and base on readiness failure and makes cleanup idempotent"
+  },
+  "note": "Additive SQL and the prepareFoundryHost hook only. VF04A store, supervisor, and VF09 artifact loading stay with their owners."
+}

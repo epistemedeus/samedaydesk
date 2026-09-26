@@ -4,9 +4,10 @@ import { createApp } from "./app.js";
 import { MemoryStore } from "./store/memory.js";
 import { createPostgresStore } from "./store/postgres.js";
 export { createApp } from "./app.js";
-export { loadConfig, parsePgSchema, parsePoolMax, MOUNTED_PG_SCHEMA } from "./config.js";
+export { loadConfig, parsePgSchema, parsePoolMax, parseMountedDatabaseUrl, parseMountedPgSchema, quoteIdent, MOUNTED_PG_SCHEMA, parseFoundryBodyLimit, foundryHostOptIn, DEFAULT_BODY_LIMIT_BYTES, FOUNDRY_OPT_IN_BODY_LIMIT_BYTES } from "./config.js";
 export { createPostgresStore, PostgresStore } from "./store/postgres.js";
 export { MemoryStore } from "./store/memory.js";
+export { prepareFoundryHost } from "./visitor-foundry/host.js";
 export async function buildStoreFromEnv(env = process.env) {
     const config = loadConfig(env);
     if (config.store === "memory") {

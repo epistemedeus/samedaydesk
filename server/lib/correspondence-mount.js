@@ -2,6 +2,8 @@
 // Unconfigured: truthful disabled healthz only. Never takes down SDS routes.
 // No host-global CORS, no memory store outside NODE_ENV=test, no retry loop.
 import express from "express";
+import { foundryHostOptIn, parseFoundryBodyLimit } from "@neomorphic/correspondence";
+import { composeFoundryOnStore } from "../foundry/compose.js";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
 export const MOUNTED_PG_SCHEMA = "pilot_correspondence";
@@ -21,12 +23,22 @@ function readinessBody(state) {
 }
 
 export function inspectCorrespondenceEnv(env = process.env) {
+  let foundryOptIn = false;
+  try {
+    foundryOptIn = foundryHostOptIn(env);
+    parseFoundryBodyLimit(env);
+  } catch {
+    return { kind: "invalid_config", detail: "foundry opt-in" };
+  }
   const url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
   const token = String(env.CORRESPONDENCE_ADMIN_TOKEN || "").trim();
   const store = String(env.CORRESPONDENCE_STORE || "postgres").toLowerCase();
   if (store !== "postgres" && store !== "memory") return { kind: "invalid_config", detail: "invalid store" };
   const nodeEnv = env.NODE_ENV || "production";
-  if (!url && !token) return { kind: "unconfigured" };
+  if (!url && !token) {
+    if (foundryOptIn) return { kind: "invalid_config", detail: "foundry opt-in requires database url and admin token" };
+    return { kind: "unconfigured" };
+  }
   if (store === "memory" && nodeEnv !== "test") {
     return { kind: "invalid_config", detail: "memory store refused outside test" };
   }
@@ -59,7 +71,21 @@ export function inspectCorrespondenceEnv(env = process.env) {
   } catch {
     return { kind: "invalid_config", detail: "invalid trust proxy" };
   }
-  return { kind: "configured", url, token, schema, poolMax, store };
+  return { kind: "configured", url, token, schema, poolMax, store, foundryOptIn };
+}
+
+function mountFoundryReceiver(app, foundry, config) {
+  app.get("/foundry-receiver", (_req, res) => {
+    res.status(200).json({
+      optIn: true,
+      extension: foundry.extension,
+      reason: foundry.extension ? "ready" : foundry.reason,
+      bodyLimitBytes: config.bodyLimitBytes,
+      schema: "pilot_correspondence",
+      vf09: "waiting_for_export",
+      wholeHostSandbox: false,
+    });
+  });
 }
 
 function disabledRouter(state) {
@@ -93,6 +119,7 @@ export function mountCorrespondence(app, options = {}) {
     inFlight: null,
     retried: false,
     closed: false,
+    foundry: { optIn: false, extension: false, reason: "opt_in_unset" },
   };
   const disabled = disabledRouter(state);
 
@@ -122,14 +149,31 @@ export function mountCorrespondence(app, options = {}) {
         CORRESPONDENCE_POOL_MAX: String(inspected.poolMax),
         CORRESPONDENCE_STORE: inspected.store,
       };
-      const config = service.loadConfig(configEnv);
+      const config = {
+        ...service.loadConfig(configEnv),
+        bodyLimitBytes: parseFoundryBodyLimit(env),
+      };
       const store = await service.createPostgresStore(config.databaseUrl, {
         schema: config.pgSchema || inspected.schema,
         poolMax: config.poolMax || inspected.poolMax,
       });
       state.store = store;
       if (state.closed) { await store.close(); state.store = null; return; }
+      const foundry = await composeFoundryOnStore({
+        store,
+        env,
+        config,
+        createFoundryExtension: options.createFoundryExtension,
+      });
+      state.foundry = {
+        optIn: foundry.optedIn,
+        extension: foundry.extension,
+        reason: foundry.reason,
+        missing: foundry.missing,
+      };
       state.app = service.createApp(store, config);
+      foundry.lifecycle.mount(state.app);
+      if (foundry.optedIn) mountFoundryReceiver(state.app, state.foundry, config);
       state.status = "ready";
       state.reason = "ready";
     } catch (error) {
