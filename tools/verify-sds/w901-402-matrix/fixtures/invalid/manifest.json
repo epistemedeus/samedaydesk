@@ -1,0 +1,35 @@
+{
+  "stale-listed-amount.json": {
+    "code": "stale_listed_amount",
+    "seed": "bad-amount"
+  },
+  "http-200-as-unpaid.json": {
+    "code": "bad_status",
+    "seed": "bad-status"
+  },
+  "forged-settle.json": {
+    "code": "forged_settle",
+    "seed": "forged-settle"
+  },
+  "wrong-units-5000-as-dollars.json": {
+    "code": "wrong_units"
+  },
+  "decimal-as-atomic.json": {
+    "code": "wrong_units"
+  },
+  "extract-amount-mismatch.json": {
+    "code": "amount_mismatch"
+  },
+  "paid-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "charged-true-as-unpaid.json": {
+    "code": "paid_as_unpaid"
+  },
+  "live-price-edit.json": {
+    "code": "live_price_edit"
+  },
+  "settlement-null.json": {
+    "code": "forged_settle"
+  }
+}
