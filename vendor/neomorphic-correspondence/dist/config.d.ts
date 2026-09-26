@@ -26,6 +26,10 @@ export declare function parsePgSchema(raw: string | undefined, fallback?: string
 export declare function parseMountedDatabaseUrl(raw: string): string;
 export declare function parseMountedPgSchema(raw: string | undefined): string;
 export declare function parsePoolMax(raw: string | undefined, fallback?: number): number;
+export declare const DEFAULT_BODY_LIMIT_BYTES = 32768;
+export declare const FOUNDRY_OPT_IN_BODY_LIMIT_BYTES = 524288;
+export declare function foundryHostOptIn(env?: NodeJS.ProcessEnv): boolean;
+export declare function parseFoundryBodyLimit(env?: NodeJS.ProcessEnv): number;
 export declare function parseTrustProxyHops(raw: string | undefined): number;
 export declare function loadConfig(env?: NodeJS.ProcessEnv): ServiceConfig;
 export declare function canonicalizeCorsOrigin(raw: string): string;

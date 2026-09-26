@@ -1,0 +1,16 @@
+{
+  "sdsBase": "8c7968360d64cc36f3b89486e01293c6553927cc",
+  "f93Export": "107363a0fabaed6133235ebda812dd5f01b07d51",
+  "f93Implementation": "a7fe9f508f58d25312c64e11b4e6e3d258fbb975",
+  "vf08Export": "f489aca31b6670f8e4c7e3b0b73db19dede670ed",
+  "vf08Implementation": "24d4d1c02abc633f9d56c9613d29dde99a7ba2a3",
+  "schema": "pilot_correspondence",
+  "bodyLimitDefault": 32768,
+  "bodyLimitOptIn": 524288,
+  "wasmtimeVersion": "49.0.0",
+  "wasmtimeWheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+  "fixtures": {
+    "answer.wasm": "ccf59f0f7a7625ee380ed228905aadfa11072ac14cea1c53d1e7f3953d4d48c6",
+    "bounded-child.mjs": "890e9e27f84bd7f2b803e520612e6e74115ef04031c46405f60aa49b87c90ec1"
+  }
+}

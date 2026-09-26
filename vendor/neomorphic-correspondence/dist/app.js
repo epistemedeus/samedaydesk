@@ -180,7 +180,7 @@ export function createApp(store, config) {
             error &&
             "type" in error &&
             error.type === "entity.too.large") {
-            res.status(413).json(errorBody(new ApiError(413, "payload_too_large", "request body exceeds 32KiB")));
+            res.status(413).json(errorBody(new ApiError(413, "payload_too_large", `request body exceeds ${config.bodyLimitBytes} bytes`)));
             return;
         }
         if (error instanceof ApiError) {
