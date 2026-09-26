@@ -40,7 +40,7 @@ function childEnv(env) {
   };
 }
 
-function spawnPass(pass, phase, projectId, shouldStop) {
+function spawnPass(pass, phase, projectId) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [pass, phase, projectId], {
       env: childEnv(process.env),
@@ -49,19 +49,13 @@ function spawnPass(pass, phase, projectId, shouldStop) {
     let stderr = "";
     child.stderr.on("data", (buf) => { stderr = (stderr + redact(buf.toString())).slice(-2000); });
     child.stdout.on("data", (buf) => process.stdout.write(buf));
-    const watch = setInterval(() => {
-      if (shouldStop()) child.kill("SIGTERM");
-    }, 30);
-    const grace = setTimeout(() => child.kill("SIGKILL"), 8000);
+    // The receiver owns assignment timeouts and durable termination receipts.
+    // Drain the bounded current pass; shutdown only prevents the next phase.
+    // Killing its supervisor would strand a claimed execution as unknown.
     child.once("error", (error) => {
-      clearInterval(watch);
-      clearTimeout(grace);
       reject(error);
     });
-    child.once("exit", (code, signal) => {
-      clearInterval(watch);
-      clearTimeout(grace);
-      if (shouldStop()) return resolve({ code, signal, stopped: true });
+    child.once("close", (code, signal) => {
       if (code === 0) return resolve({ code, signal, stopped: false });
       const error = new Error(stderr || `worker ${phase} exited ${code ?? signal}`);
       error.code = "worker_failed";
@@ -98,10 +92,10 @@ try {
         process.off("SIGINT", handler);
       };
     },
-    runPhase: (phase, ctx) => spawnPass(pass, phase, projectId, ctx.shouldStop),
+    runPhase: (phase) => spawnPass(pass, phase, projectId),
   });
   console.log(JSON.stringify({ ok: true, ...result }));
-  process.exit(result.stopped ? 0 : 0);
+  process.exit(0);
 } catch (error) {
   const code = error.code === "worker_usage" ? 2 : 1;
   fail(code, error.code || "worker_failed");

@@ -279,6 +279,8 @@ test("worker CLI skips dispatch when SIGTERM arrives during recover", async () =
   assert.equal(code, 0);
   const lines = (await readFile(trace, "utf8")).trim().split("\n");
   assert.deepEqual(lines, ["recover"]);
+  assert.match(stdout, /recover-done/);
+  assert.match(stdout, /shutdown_after_recover/);
   await rm(dir, { recursive: true, force: true });
 });
 

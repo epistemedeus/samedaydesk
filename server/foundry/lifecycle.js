@@ -12,12 +12,8 @@ export async function runPhasedWorker({ mode, projectId, runPhase, close, notify
   try {
     for (const phase of phases) {
       if (stop) return { phase: `shutdown_before_${phase}`, ran, stopped: true };
-      try {
-        await runPhase(phase, { shouldStop: () => stop });
-      } catch (error) {
-        if (stop) return { phase: `shutdown_during_${phase}`, ran, stopped: true };
-        throw error;
-      }
+      // A stop request does not turn a failed current pass into success.
+      await runPhase(phase, { shouldStop: () => stop });
       ran.push(phase);
       if (stop) return { phase: `shutdown_after_${phase}`, ran, stopped: true };
     }
