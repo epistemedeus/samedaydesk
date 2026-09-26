@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "wave": "w800",
+  "feature": "w800-mcp-unpaid",
+  "protocol": "2024-11-05",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "paidTool": "generate_complete_fix_pack",
+  "unpaidCallTool": "check_ai_readiness",
+  "note": "Paid Fix Pack is listed on tools/list; unpaid harness never tools/call it and never sends PAYMENT-SIGNATURE. Safe unpaid call of check_ai_readiness without url returns isError.",
+  "apexUrl": "https://samedaydesk.com/mcp",
+  "cite": {
+    "inventory": "server/lib/mcp-tool-inventory.js",
+    "route": "server/routes/mcp.js",
+    "negotiation": "server/scripts/test-mcp-protocol-negotiation.js",
+    "toolsBlockSha256": "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf"
+  }
+}
