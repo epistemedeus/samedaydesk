@@ -6,11 +6,18 @@ import { dirname, join } from "node:path";
 import test, { after, before } from "node:test";
 import { fileURLToPath } from "node:url";
 import express from "express";
-import mcpRouter from "../routes/mcp.js";
+import mcpRouter, { SUPPORTED_PROTOCOL_VERSIONS, negotiateProtocolVersion } from "../routes/mcp.js";
 import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
 
-const IMPLEMENTED_PROTOCOL = "2024-11-05";
+const LATEST_PROTOCOL = "2025-11-25";
 const APEX_SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
+const EXPECTED_ANNOTATIONS = {
+  check_ai_readiness: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+  generate_complete_fix_pack: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  plan_taskmarket_delegation: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  browse_taskmarket_tasks: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+  track_taskmarket_task: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+};
 const EXPECTED_TOOL_NAMES = [
   "check_ai_readiness",
   "generate_complete_fix_pack",
@@ -19,7 +26,7 @@ const EXPECTED_TOOL_NAMES = [
   "track_taskmarket_task",
 ];
 // Byte-semantic pin of the five-tool apex surface definitions.
-const FROZEN_TOOLS_BLOCK_SHA256 = "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf";
+const FROZEN_TOOLS_BLOCK_SHA256 = "444168f9278e735cc8755a332ae554b280a7dd9aa245545110d6385aa928b4ac";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
@@ -81,23 +88,34 @@ async function postMcp(body) {
   return { response, json };
 }
 
-async function initialize(params, id = 1) {
+async function initialize(params, expectedVersion, id = 1) {
   const { response, json } = await postMcp(rpcPayload("initialize", params, id));
   assert.equal(response.status, 200);
+  assert.equal(response.headers.get("access-control-allow-origin"), "*");
   assert.equal(json.jsonrpc, "2.0");
   assert.equal(json.id, id);
   assert.equal(json.error, undefined);
-  assert.equal(json.result.protocolVersion, IMPLEMENTED_PROTOCOL);
+  assert.equal(json.result.protocolVersion, expectedVersion);
   assert.deepEqual(json.result.serverInfo, APEX_SERVER_INFO);
   assert.deepEqual(json.result.capabilities, { tools: {} });
   return json;
 }
 
-test("MCP source implements only 2024-11-05 and does not echo offered versions", () => {
-  assert.match(MCP_SOURCE, /const PROTOCOL_VERSION = "2024-11-05"/);
-  assert.match(MCP_SOURCE, /protocolVersion:\s*PROTOCOL_VERSION/);
-  assert.equal(MCP_SOURCE.includes("params?.protocolVersion || PROTOCOL_VERSION"), false);
-  assert.equal(MCP_SOURCE.includes("2025-11-25"), false);
+test("negotiation echoes only the four supported versions and otherwise returns the latest", () => {
+  assert.deepEqual(SUPPORTED_PROTOCOL_VERSIONS, [
+    "2025-11-25",
+    "2025-06-18",
+    "2025-03-26",
+    "2024-11-05",
+  ]);
+  assert.equal(negotiateProtocolVersion("2025-11-25"), "2025-11-25");
+  assert.equal(negotiateProtocolVersion("2025-06-18"), "2025-06-18");
+  assert.equal(negotiateProtocolVersion("2025-03-26"), "2025-03-26");
+  assert.equal(negotiateProtocolVersion("2024-11-05"), "2024-11-05");
+  assert.equal(negotiateProtocolVersion("2026-07-28"), LATEST_PROTOCOL);
+  assert.equal(negotiateProtocolVersion("2999-01-01"), LATEST_PROTOCOL);
+  assert.equal(negotiateProtocolVersion(undefined), LATEST_PROTOCOL);
+  assert.equal(MCP_SOURCE.includes("params?.protocolVersion || "), false);
   assert.equal(MCP_SOURCE.includes("2026-07-28"), false);
   assert.equal(MCP_SOURCE.includes("2999-01-01"), false);
 });
@@ -125,52 +143,66 @@ test("five apex tools remain listed; tools/call still serves readiness, Fix Pack
 });
 
 const initializeCases = [
-  { name: "missing params", params: undefined },
+  { name: "missing params", params: undefined, expected: LATEST_PROTOCOL },
   {
     name: "missing protocolVersion",
     params: { capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: LATEST_PROTOCOL,
   },
   {
-    name: "exact 2024-11-05",
-    params: {
-      protocolVersion: "2024-11-05",
-      capabilities: {},
-      clientInfo: { name: "apex-mcp-gate", version: "0" },
-    },
+    name: "2025-11-25",
+    params: { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: "2025-11-25",
   },
   {
-    name: "2025-11-25 fail closed",
-    params: {
-      protocolVersion: "2025-11-25",
-      capabilities: {},
-      clientInfo: { name: "apex-mcp-gate", version: "0" },
-    },
+    name: "2025-06-18",
+    params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: "2025-06-18",
   },
   {
-    name: "2026-07-28 fail closed",
-    params: {
-      protocolVersion: "2026-07-28",
-      capabilities: {},
-      clientInfo: { name: "apex-mcp-gate", version: "0" },
-    },
+    name: "2025-03-26",
+    params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: "2025-03-26",
   },
   {
-    name: "2999-01-01 fail closed",
-    params: {
-      protocolVersion: "2999-01-01",
-      capabilities: {},
-      clientInfo: { name: "apex-mcp-gate", version: "0" },
-    },
+    name: "2024-11-05",
+    params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: "2024-11-05",
+  },
+  {
+    name: "2026-07-28 rejected",
+    params: { protocolVersion: "2026-07-28", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: LATEST_PROTOCOL,
+  },
+  {
+    name: "2999-01-01 rejected",
+    params: { protocolVersion: "2999-01-01", capabilities: {}, clientInfo: { name: "apex-mcp-gate", version: "0" } },
+    expected: LATEST_PROTOCOL,
   },
 ];
 
-for (const { name, params } of initializeCases) {
-  test(`initialize ${name} returns ${IMPLEMENTED_PROTOCOL}`, async () => {
-    await initialize(params);
+for (const { name, params, expected } of initializeCases) {
+  test(`initialize ${name} returns ${expected}`, async () => {
+    const json = await initialize(params, expected);
+    if (params?.protocolVersion && !SUPPORTED_PROTOCOL_VERSIONS.includes(params.protocolVersion)) {
+      assert.notEqual(json.result.protocolVersion, params.protocolVersion);
+    }
   });
 }
 
-test("tools/list exposes the same five apex tools without tools/call", async () => {
+test("a 2024-11-05-only client still lists five tools after initialize", async () => {
+  await initialize({
+    protocolVersion: "2024-11-05",
+    capabilities: {},
+    clientInfo: { name: "legacy-2024-11-05", version: "1" },
+  }, "2024-11-05", 11);
+  const { response, json } = await postMcp(rpcPayload("tools/list", {}, 12));
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("access-control-allow-origin"), "*");
+  assert.deepEqual(json.result.tools.map((tool) => tool.name), EXPECTED_TOOL_NAMES);
+});
+
+test("tools/list exposes annotations on all five tools", async () => {
   const { response, json } = await postMcp(rpcPayload("tools/list", {}, 7));
   assert.equal(response.status, 200);
   assert.equal(json.id, 7);
@@ -179,4 +211,58 @@ test("tools/list exposes the same five apex tools without tools/call", async () 
   assert.deepEqual(listed.map((tool) => tool.name), EXPECTED_TOOL_NAMES);
   assert.deepEqual(listed, toolsFromSource(MCP_SOURCE));
   assert.equal(JSON.stringify(json).includes("tools/call"), false);
+  for (const tool of listed) {
+    assert.deepEqual(tool.annotations, EXPECTED_ANNOTATIONS[tool.name]);
+    if (tool.name === "check_ai_readiness" || tool.name === "browse_taskmarket_tasks" || tool.name === "track_taskmarket_task") {
+      assert.equal(tool.annotations.readOnlyHint, true);
+    }
+  }
+  assert.equal(listed.find((tool) => tool.name === "plan_taskmarket_delegation").annotations.openWorldHint, false);
+  assert.equal(listed.find((tool) => tool.name === "generate_complete_fix_pack").annotations.idempotentHint, true);
+});
+
+test("unknown tool is JSON-RPC -32602 and execution errors are isError results", async () => {
+  const unknown = await fetch(mcpUrl, {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 21, method: "tools/call", params: { name: "not_a_real_tool", arguments: {} } }),
+  });
+  const unknownJson = await unknown.json();
+  assert.equal(unknown.status, 200);
+  assert.equal(unknown.headers.get("access-control-allow-origin"), "*");
+  assert.equal(unknownJson.error.code, -32602);
+  assert.equal(unknownJson.result, undefined);
+
+  const broken = await fetch(mcpUrl, {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 22,
+      method: "tools/call",
+      params: { name: "plan_taskmarket_delegation", arguments: {} },
+    }),
+  });
+  const brokenJson = await broken.json();
+  assert.equal(broken.status, 200);
+  assert.equal(brokenJson.error, undefined);
+  assert.equal(brokenJson.result.isError, true);
+  assert.match(brokenJson.result.content[0].text, /request is required/);
+});
+
+test("server.json names the unpublished apex remote and keeps CORS star", () => {
+  const registryPath = join(dirname(fileURLToPath(import.meta.url)), "../../server.json");
+  const registry = JSON.parse(readFileSync(registryPath, "utf8"));
+  assert.equal(registry.name, "io.github.epistemedeus/samedaydesk");
+  assert.equal(registry.description.length <= 100, true);
+  assert.deepEqual(registry.remotes, [{ type: "streamable-http", url: "https://samedaydesk.com/mcp" }]);
+  assert.equal(JSON.stringify(registry).includes("registry.modelcontextprotocol.io"), false);
+  assert.match(MCP_SOURCE, /"Access-Control-Allow-Origin": "\*"/);
+});
+
+test("seeded unsupported protocol is rejected instead of echoed", () => {
+  const seeded = "1999-01-01";
+  assert.equal(SUPPORTED_PROTOCOL_VERSIONS.includes(seeded), false);
+  assert.equal(negotiateProtocolVersion(seeded), LATEST_PROTOCOL);
+  assert.notEqual(negotiateProtocolVersion(seeded), seeded);
 });
