@@ -1,0 +1,8 @@
+{
+  "id": "tools-call",
+  "seededId": "tools-call",
+  "feature": "mcp-skills-list",
+  "opts": { "tool": "generate_complete_fix_pack" },
+  "expectExit": 1,
+  "errorCode": "TOOLS_CALL_REFUSE"
+}

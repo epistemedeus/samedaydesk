@@ -1,0 +1,10 @@
+{
+  "id": "protocol-2026-07-28-only",
+  "seededId": "protocol-2026-07-28-only",
+  "feature": "mcp-skills-list",
+  "protocolVersion": "2026-07-28",
+  "only": true,
+  "note": "Not a transport migration. SDS apex initialize fail-closes to 2024-11-05. This seed must not be treated as a successful skills/list handshake.",
+  "expectExit": 1,
+  "errorCode": "PROTOCOL_REFUSE"
+}

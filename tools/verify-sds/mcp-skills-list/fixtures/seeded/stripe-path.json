@@ -1,0 +1,8 @@
+{
+  "id": "stripe-path",
+  "seededId": "stripe-path",
+  "feature": "mcp-skills-list",
+  "opts": { "path": "/api/checkout" },
+  "expectExit": 1,
+  "errorCode": "STRIPE_PATH_REFUSE"
+}

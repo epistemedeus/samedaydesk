@@ -1,0 +1,9 @@
+{
+  "id": "digest-mismatch",
+  "seededId": "digest-mismatch",
+  "feature": "mcp-skills-list",
+  "uri": "skill://web-extract/SKILL.md",
+  "forgedDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "expectExit": 1,
+  "errorCode": "DIGEST_MISMATCH"
+}
