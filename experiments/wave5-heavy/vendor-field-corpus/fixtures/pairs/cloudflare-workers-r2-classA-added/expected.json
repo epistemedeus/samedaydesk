@@ -1,0 +1,11 @@
+{
+  "status": "actionable",
+  "counts": {
+    "added": 1,
+    "removed": 0,
+    "fieldChanges": 0,
+    "unitChanges": 0
+  },
+  "actionKinds": ["no-budget-delta"],
+  "wrapperDefect": "added-sku-reported-as-no-budget-delta"
+}

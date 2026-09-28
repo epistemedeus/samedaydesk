@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.vendor-field-corpus.ledger.v1",
+  "engine": "vendor-budget-impact",
+  "kit": {
+    "version": "1.4.0",
+    "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+    "bytes": 2575215,
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "source": "git origin/main ad9bc7b448cf1f635ff1488affbe206aaf981ac0 (PR115 merge). Hostinger HTTPS to samedaydesk.com failed TLS EOF; git blob matched published provenance."
+  },
+  "pairs": [
+    "openai-gpt35-turbo-20230613-20240125",
+    "openai-embedding-3-small-added-20240125",
+    "anthropic-sonnet35-prompt-cache-20241217",
+    "cloudflare-workers-r2-classA-added",
+    "anthropic-haiku3-unchanged-20240304-20241217",
+    "control-unit-label-unconverted"
+  ],
+  "structures": ["usd-per-1k-tokens", "usd-per-mtok", "usd-per-million-requests"],
+  "purchaseAuthority": false
+}

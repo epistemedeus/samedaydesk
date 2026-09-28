@@ -1,0 +1,35 @@
+{
+  "id": "cloudflare-workers-r2-classA-added",
+  "kind": "added-sku",
+  "structure": "usd-per-million-requests",
+  "decisionQuestion": "Did an R2 Class A per-million-request list price appear next to an unchanged Workers Paid request overage?",
+  "before": {
+    "url": "https://raw.githubusercontent.com/cloudflare/cloudflare-docs/e1336efcfee9/src/content/docs/workers/platform/pricing.mdx",
+    "date": "2024-09-19",
+    "publisher": "Cloudflare",
+    "git": {
+      "repo": "cloudflare/cloudflare-docs",
+      "commit": "e1336efcfee9",
+      "message": "remove legacy pricing docs (#16950)"
+    },
+    "quote": "Standard | 10 million included per month +$0.30 per additional million | ... | 30 million CPU milliseconds included per month +$0.02 per additional million CPU milliseconds",
+    "extraction": "Official docs git blob. Before-rows are the Workers Paid overage rates only: $0.30 per additional million requests and $0.02 per additional million CPU milliseconds. Included 10 million requests and 30 million CPU-ms are free allowances, not overage rates, so they are not numeric rows."
+  },
+  "after": {
+    "url": "https://raw.githubusercontent.com/cloudflare/cloudflare-docs/8a7f8097e3/src/content/docs/workers/platform/pricing.mdx",
+    "date": "2026-02-27",
+    "publisher": "Cloudflare",
+    "git": {
+      "repo": "cloudflare/cloudflare-docs",
+      "commit": "8a7f8097e3",
+      "message": "Add R2 and Containers pricing to Workers pricing page (#27483)"
+    },
+    "quote": "Class A Operations | 1 million requests / month | $4.50 / million requests | $9.00 / million requests",
+    "extraction": "Official docs git blob that first adds the R2 table to this Workers pricing page. After-rows keep the Workers Paid overage rates and add R2 Standard storage Class A at $4.50 / million requests. Infrequent Access $9.00 is a different storage class and is not mixed into that field."
+  },
+  "limits": [
+    "Second pricing structure: per-million-requests, not per-token.",
+    "Included monthly free operations are not converted into a fake unit price.",
+    "Containers GiB-second prices on the same after page are omitted (different unit)."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "informational",
+  "counts": {
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 0,
+    "unitChanges": 0
+  },
+  "actionKinds": ["no-budget-delta"]
+}

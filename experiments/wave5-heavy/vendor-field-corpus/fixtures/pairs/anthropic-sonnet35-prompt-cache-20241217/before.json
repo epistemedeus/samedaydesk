@@ -1,0 +1,15 @@
+{
+  "note": "Official Anthropic Claude 3.5 Sonnet base list, 2024-06-21.",
+  "rows": [
+    {
+      "field": "claude-3.5-sonnet-input",
+      "value": 3,
+      "unit": "USD/MTok"
+    },
+    {
+      "field": "claude-3.5-sonnet-output",
+      "value": 15,
+      "unit": "USD/MTok"
+    }
+  ]
+}
