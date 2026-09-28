@@ -1,0 +1,53 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.export.v1",
+  "kit": {
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "sourceCommit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "urls": [
+      "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "https://samedaydesk.com/kit/useful-jobs-1.4.0.tar.gz",
+      "https://github.com/epistemedeus/samedaydesk/raw/ad9bc7b448cf1f635ff1488affbe206aaf981ac0/client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "https://raw.githubusercontent.com/epistemedeus/samedaydesk/ad9bc7b448cf1f635ff1488affbe206aaf981ac0/client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz"
+    ]
+  },
+  "candidate141": {
+    "version": "1.4.1",
+    "status": "draft-pr-not-deployed",
+    "pr": 119,
+    "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+    "bytes": 2575456
+  },
+  "openai": {
+    "schema": "samedaydesk.hg04.vendor-change-ci.action.v1",
+    "kind": "review-list-price-fields",
+    "ci": "pass",
+    "updateBaseline": false,
+    "purchaseAuthority": false,
+    "invoiceClaim": false,
+    "forecast": false,
+    "wrapperStatus": "actionable",
+    "kitStatus": "actionable",
+    "baselineMatched": true,
+    "baselineUpdated": false
+  },
+  "hostile": {
+    "schema": "samedaydesk.hg04.vendor-change-ci.action.v1",
+    "kind": "resolve-partial-capture",
+    "ci": "fail",
+    "updateBaseline": false,
+    "purchaseAuthority": false,
+    "invoiceClaim": false,
+    "forecast": false,
+    "wrapperStatus": "partial",
+    "kitStatus": "actionable",
+    "baselineMatched": true,
+    "baselineUpdated": false
+  },
+  "invoiceClaim": false,
+  "forecast": false,
+  "purchaseAuthority": false,
+  "autoUpdateBaselineOnFailure": false,
+  "exportedAt": "2026-09-12T06:31:14.072Z"
+}

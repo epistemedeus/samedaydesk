@@ -1,0 +1,17 @@
+{
+  "sourceId": "hostile-partial-capture",
+  "asOf": "2024-01-25",
+  "sourceUrl": "https://openai.com/index/new-embedding-models-and-api-updates/",
+  "capture": {
+    "complete": false,
+    "method": "truncated-html-extract",
+    "note": "Only the input dollar figure was kept. Output from the same official sentence was dropped."
+  },
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0005,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}

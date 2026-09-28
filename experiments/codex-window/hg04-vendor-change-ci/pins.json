@@ -1,0 +1,55 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.pins.v1",
+  "job": "vendor-budget-impact",
+  "defaultVersion": "1.4.0",
+  "released": {
+    "version": "1.4.0",
+    "status": "released",
+    "archive": "useful-jobs-1.4.0.tar.gz",
+    "bytes": 2575215,
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "urls": [
+      "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "https://samedaydesk.com/kit/useful-jobs-1.4.0.tar.gz",
+      "https://github.com/epistemedeus/samedaydesk/raw/ad9bc7b448cf1f635ff1488affbe206aaf981ac0/client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+      "https://raw.githubusercontent.com/epistemedeus/samedaydesk/ad9bc7b448cf1f635ff1488affbe206aaf981ac0/client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz"
+    ],
+    "sha256Url": "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.0.sha256.json",
+    "discoveryUrl": "https://samedaydesk.com/discovery/useful-jobs.json",
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+    "archiveFreeze": "817a00ca226a94b0e198b29fcd06245b2a92adec",
+    "inTreeArchive": "client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz",
+    "inTreePin": "client/public/for-agents/useful-jobs/useful-jobs-1.4.0.sha256.json",
+    "rootName": "useful-jobs-1.4.0",
+    "node": ">=22"
+  },
+  "candidate": {
+    "version": "1.4.1",
+    "status": "draft-pr-not-deployed",
+    "pr": 119,
+    "prUrl": "https://github.com/epistemedeus/samedaydesk/pull/119",
+    "branch": "codex/vendor-row-publication-v141-20260912",
+    "archive": "useful-jobs-1.4.1.tar.gz",
+    "bytes": 2575456,
+    "sha256": "b365d95c8fb7695f96248433a7d440c9917b4d5085b1ce71b3982e4291e1bc3d",
+    "urls": [
+      "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz",
+      "https://samedaydesk.com/kit/useful-jobs-1.4.1.tar.gz",
+      "https://github.com/epistemedeus/samedaydesk/raw/codex/vendor-row-publication-v141-20260912/client/public/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz"
+    ],
+    "sourceRepo": "epistemedeus/samedaydesk",
+    "sourceCommit": "87aab8943ec96c6b0f77b8da73641f1633c21a68",
+    "rootName": "useful-jobs-1.4.1",
+    "node": ">=22",
+    "note": "PR 119 is a draft publication candidate. Use 1.4.1 only when a fetched URL verifies these bytes and sha256. Do not treat the candidate as a live public release."
+  },
+  "honesty": {
+    "purchaseAuthority": false,
+    "schedulerDaemon": false,
+    "invoiceClaimWithoutUsage": false,
+    "forecastWithoutUsage": false,
+    "autoUpdateBaselineOnFailure": false,
+    "engineChanges": false
+  }
+}

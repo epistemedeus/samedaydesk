@@ -1,0 +1,18 @@
+{
+  "sourceId": "hostile-partial-capture",
+  "asOf": "2023-06-13",
+  "sourceUrl": "https://openai.com/index/function-calling-and-other-api-updates/",
+  "capture": { "complete": true },
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0015,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "value": 0.002,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}

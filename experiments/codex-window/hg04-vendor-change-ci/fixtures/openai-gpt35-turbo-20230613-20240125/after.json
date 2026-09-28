@@ -1,0 +1,17 @@
+{
+  "sourceId": "openai-gpt35-turbo-20230613-20240125",
+  "asOf": "2024-01-25",
+  "sourceUrl": "https://openai.com/index/new-embedding-models-and-api-updates/",
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0005,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "value": 0.0015,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}

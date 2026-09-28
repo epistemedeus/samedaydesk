@@ -1,0 +1,97 @@
+# Example workflow for a caller who already holds dated pricing-row snapshots.
+# Copy into .github/workflows/ if you want GitHub to run this consumer.
+# It downloads the released useful-jobs 1.4.0 archive from an explicit public URL,
+# verifies bytes+sha256, then runs vendor-budget-impact through the SDK-free wrapper.
+# 1.4.1 (PR 119) is recorded as a draft candidate pin only; do not use it until a
+# fetched URL matches pins.json candidate.bytes and candidate.sha256.
+name: vendor-change-ci
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "experiments/codex-window/hg04-vendor-change-ci/**"
+      - ".github/workflows/vendor-change-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vendor-change-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_OPTIONS: --max-old-space-size=768
+      FORCE_COLOR: "0"
+    defaults:
+      run:
+        working-directory: experiments/codex-window/hg04-vendor-change-ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Obtain released useful-jobs 1.4.0 (pinned URL + sha256)
+        run: |
+          node bin/obtain-kit.mjs \
+            --version 1.4.0 \
+            --from https://github.com/epistemedeus/samedaydesk/raw/ad9bc7b448cf1f635ff1488affbe206aaf981ac0/client/public/for-agents/useful-jobs/useful-jobs-1.4.0.tar.gz \
+            --dest "$RUNNER_TEMP/useful-jobs-1.4.0.tar.gz" \
+            --extract-dir "$RUNNER_TEMP/useful-jobs"
+          python3 - <<'PY'
+          import hashlib, pathlib
+          p = pathlib.Path("${{ runner.temp }}/useful-jobs-1.4.0.tar.gz")
+          b = p.read_bytes()
+          assert len(b) == 2575215, len(b)
+          assert hashlib.sha256(b).hexdigest() == "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f"
+          print("pin ok", len(b))
+          PY
+
+      - name: Public OpenAI revision fixture (must pass)
+        run: |
+          node bin/vendor-change-ci.mjs run \
+            --fixture openai-gpt35-turbo-20230613-20240125 \
+            --kit-archive "$RUNNER_TEMP/useful-jobs-1.4.0.tar.gz" \
+            --out-dir "$RUNNER_TEMP/out-openai"
+
+      - name: Hostile partial capture (must fail CI, must not rewrite baseline)
+        run: |
+          set +e
+          BEFORE=$(sha256sum fixtures/hostile-partial-capture/expected.json | awk '{print $1}')
+          node bin/vendor-change-ci.mjs run \
+            --fixture hostile-partial-capture \
+            --kit-archive "$RUNNER_TEMP/useful-jobs-1.4.0.tar.gz" \
+            --out-dir "$RUNNER_TEMP/out-hostile"
+          STATUS=$?
+          AFTER=$(sha256sum fixtures/hostile-partial-capture/expected.json | awk '{print $1}')
+          python3 - <<PY
+          import json, pathlib, sys
+          action = json.loads(pathlib.Path("${{ runner.temp }}/out-hostile/machine-action.json").read_text())
+          assert action["kind"] == "resolve-partial-capture", action
+          assert action["ci"] == "fail"
+          assert action["updateBaseline"] is False
+          assert action["invoiceClaim"] is False
+          assert action["baselineUpdated"] is False
+          print("hostile action ok", action["kind"])
+          PY
+          test "$STATUS" -eq 2
+          test "$BEFORE" = "$AFTER"
+
+      - name: Unit tests (serial, 768MB heap)
+        run: node --test --test-concurrency=1 --test-timeout=120000 test/*.test.mjs
+
+      - name: Upload reviewable artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor-change-ci-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/out-openai/**
+            ${{ runner.temp }}/out-hostile/**
+          if-no-files-found: warn

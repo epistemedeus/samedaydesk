@@ -1,0 +1,119 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.result.v1",
+  "ok": false,
+  "wrapperStatus": "partial",
+  "kitStatus": "actionable",
+  "summary": "Capture or unit evidence is non-final. Do not treat missing fields as retirements or bills.",
+  "kit": {
+    "version": "1.4.0",
+    "status": "released",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "inputs": {
+    "before": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/hostile-partial-capture/before.json",
+    "after": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/hostile-partial-capture/after.json",
+    "source": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/hostile-partial-capture/SOURCE.json",
+    "usage": null
+  },
+  "truth": {
+    "schema": {
+      "ok": true,
+      "errors": []
+    },
+    "unit": {
+      "comparable": [
+        {
+          "field": "gpt-3.5-turbo-input",
+          "unit": "USD/1K-tokens"
+        }
+      ],
+      "mismatches": [],
+      "unitComparable": true
+    },
+    "coverage": {
+      "complete": false,
+      "captureComplete": false,
+      "declaredFields": [
+        "gpt-3.5-turbo-input",
+        "gpt-3.5-turbo-output"
+      ],
+      "missingDeclared": [
+        "gpt-3.5-turbo-output"
+      ],
+      "note": "After snapshot is an incomplete capture; missing fields are coverage holes, not retirements."
+    },
+    "membership": {
+      "added": [],
+      "removed": [
+        "gpt-3.5-turbo-output"
+      ],
+      "shared": [
+        "gpt-3.5-turbo-input"
+      ]
+    },
+    "conflicts": []
+  },
+  "independentArithmetic": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "before": 0.0015,
+      "after": 0.0005,
+      "delta": -0.001,
+      "unit": "USD/1K-tokens"
+    }
+  ],
+  "kitReceipt": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "37eba5d1990fa366",
+    "outDir": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/artifact/hostile/kit",
+    "purchaseAuthority": false
+  },
+  "kitActions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "gpt-3.5-turbo-input",
+      "note": "Price/field delta in curated fixture rows - not a live quote."
+    }
+  ],
+  "kitCounts": {
+    "beforeRows": 2,
+    "afterRows": 1,
+    "added": 0,
+    "removed": 1,
+    "fieldChanges": 1,
+    "unitChanges": 0,
+    "conflicting": 0,
+    "unchanged": 0,
+    "unknown": 0
+  },
+  "kitDigest": "37eba5d1990fa366",
+  "invoiceClaim": false,
+  "forecast": false,
+  "purchaseAuthority": false,
+  "billingNote": "No measured usage. List-price field deltas are not a bill, invoice, or forecast.",
+  "baseline": {
+    "compared": true,
+    "matched": true,
+    "path": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/hostile-partial-capture/expected.json",
+    "updated": false,
+    "reason": null
+  },
+  "baselineUpdate": {
+    "updated": false,
+    "allowed": false,
+    "note": "Baselines are reviewable files. This runner never writes expected.json, including on mismatch."
+  },
+  "machineAction": {
+    "kind": "resolve-partial-capture",
+    "ci": "fail",
+    "updateBaseline": false,
+    "purchaseAuthority": false,
+    "invoiceClaim": false,
+    "forecast": false
+  },
+  "generatedAt": "2026-09-12T06:31:14.055Z"
+}
