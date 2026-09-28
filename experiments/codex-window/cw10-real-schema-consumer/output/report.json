@@ -1,0 +1,110 @@
+{
+  "schema": "cw10.real-schema-consumer.report.v1",
+  "ok": true,
+  "source": {
+    "repository": "octokit/webhooks",
+    "license": "MIT",
+    "path": "payload-schemas/api.github.com/organization/renamed.schema.json",
+    "beforeCommit": "237b6924bcbfd2d0d36e7233d36c2c6bc21fa2a2",
+    "changeCommit": "e69d6eca4e5f1505afacd0677c4303877caca0d6",
+    "afterCommit": "7dd7fa56498a827a08b71919fae89428f5e8e283",
+    "sha256": {
+      "beforeSchema": "a4279b20ad344c45a6cc0e918e22a813f941299385a1a29d57828425ab3cffeb",
+      "afterSchema": "6b2c35a130ca405175f00b33529bed54bbe810ac76009dc2cf9cec217d137323",
+      "currentRenamedExample": "6ab3231816d7c1999b4a514b750103c29eaeba020aa712c94c6a2f7a7fec6ee2",
+      "currentMemberAddedExample": "5b41fd635f3c3d4afaf2ca11fb391eed4267894066f41bf576b2b885876a680d"
+    }
+  },
+  "archive": {
+    "version": "1.4.0",
+    "cli": "bin/useful-jobs.mjs",
+    "result": {
+      "status": "informational",
+      "breaking": 0,
+      "compatible": 0,
+      "unknown": 0,
+      "termsVersion": "sha256:ae032bc37975a67bd5978d6c6836a399665b4e101b06e98f082f1e6cb91eb3c8"
+    }
+  },
+  "witness": {
+    "saved-membership.json": {
+      "beforeValid": true,
+      "afterValid": false,
+      "beforeErrors": null,
+      "afterErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "changes"
+          },
+          "message": "must have required property 'changes'"
+        },
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "membership"
+          },
+          "message": "must NOT have additional properties"
+        }
+      ]
+    },
+    "migrated-changes.json": {
+      "beforeValid": false,
+      "afterValid": true,
+      "beforeErrors": [
+        {
+          "instancePath": "",
+          "schemaPath": "#/required",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "membership"
+          },
+          "message": "must have required property 'membership'"
+        },
+        {
+          "instancePath": "",
+          "schemaPath": "#/additionalProperties",
+          "keyword": "additionalProperties",
+          "params": {
+            "additionalProperty": "changes"
+          },
+          "message": "must NOT have additional properties"
+        }
+      ],
+      "afterErrors": null
+    }
+  },
+  "decision": {
+    "stoppedWorking": [
+      "saved-membership.json"
+    ],
+    "minimalMigration": {
+      "jsonPatch": [
+        {
+          "op": "add",
+          "path": "/changes",
+          "value": {
+            "login": {
+              "from": "Octocoders"
+            }
+          }
+        },
+        {
+          "op": "remove",
+          "path": "/membership"
+        }
+      ]
+    },
+    "effect": "The before-valid payload becomes current-valid after replacing membership with changes.login.from.",
+    "engineDisposition": "confirmed-false-negative: released 1.4.0 reports informational with zero breaking rows"
+  },
+  "coverage": {
+    "engine": "Version 1.4.0 fingerprints /required as only an array value and therefore misses required-member additions. Selecting the root instead refuses on this official schema's relative references. The additionalProperties pointer is a same-value control. This fixture is a bounded false-negative counterexample, not a claim of broader dialect coverage.",
+    "witness": "AJV validates complete fixtures under JSON Schema Draft 7 with the checked-in transitive local references. The old fixture is composed from official Octokit payload examples and is not asserted to be a captured customer delivery.",
+    "formats": "AJV formats are enabled; the SameDayDesk classification is not used to claim format compatibility."
+  }
+}
