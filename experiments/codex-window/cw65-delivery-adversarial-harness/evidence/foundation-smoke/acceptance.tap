@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: d16-current-vendor
+not ok 1 - d16-current-vendor
+  ---
+  duration_ms: 490.72756
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs:11:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - '4ad52f15-fcc0-4f96-8666-681cede5051f'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '4ad52f15-fcc0-4f96-8666-681cede5051f'
+  operator: 'strictEqual'
+  stack: |-
+    assertComplete (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/lib/oracle.mjs:30:10)
+    Context.verify (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/lib/context.mjs:104:12)
+    fixture.jobId (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/wave5/d16/current.mjs:8:43)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/test/acceptance.test.mjs:14:11)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 615.152668

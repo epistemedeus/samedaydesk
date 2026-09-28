@@ -1,0 +1,37 @@
+{
+  "id": "W5-D19",
+  "outcome": "Multi-process order/ledger tests, not sequential mocks",
+  "proof": "Simultaneous updates preserve both jobs and intended single reservation",
+  "integrationOwner": "W5-D01",
+  "siblings": {
+    "D04": "codex/w5-d04-20260911",
+    "D13": "codex/w5-d13-20260911"
+  },
+  "tested": {
+    "sds52": {
+      "repo": "epistemedeus/samedaydesk",
+      "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+      "ref": "fable/f08-paid-wrappers",
+      "pr": 52
+    },
+    "co20": {
+      "id": "W4-commerce-20",
+      "sha": "13d1fc023ce235b1611dc868caf5dd84fe5f11c7",
+      "path": "tools/managed-useful-jobs-order/",
+      "cli": "bin/orders.mjs",
+      "listenPath": "/managed/useful-jobs/v1/orders"
+    },
+    "co16": {
+      "id": "W4-commerce-16",
+      "sha": "aa306e291adfdd499ca971af01625ccc4bfee5c4",
+      "path": "tools/buyer-value-ledger/",
+      "cli": "bin/value.mjs",
+      "ledgerLib": "lib/ledger.mjs"
+    }
+  },
+  "unlikeTerms": {
+    "orderTermsSchema": "samedaydesk.useful-jobs-order-terms.v1",
+    "ledgerRowSchema": "samedaydesk.buyer-value-ledger.row.v1",
+    "forcedEquality": false
+  }
+}

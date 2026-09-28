@@ -1,0 +1,15 @@
+{
+  "pid": 281339,
+  "command": "/workspace/pilot/toolchain/node-v22.23.2-linux-x64/bin/node",
+  "args": [
+    "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/wave5/d16/fixtures/broken-engines/decoy-json.mjs"
+  ],
+  "cwd": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src",
+  "heapMB": 768,
+  "tmpdir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/control-decoy-json",
+  "startedAt": "2026-09-12T09:15:28.904Z",
+  "endedAt": "2026-09-12T09:15:28.955Z",
+  "status": 0,
+  "signal": null,
+  "timedOut": false
+}

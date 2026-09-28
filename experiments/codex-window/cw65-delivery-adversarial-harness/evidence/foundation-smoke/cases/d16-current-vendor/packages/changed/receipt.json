@@ -1,0 +1,103 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "vendor-budget-impact",
+  "engine": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "purchaseAuthority": false,
+    "cli": "node bin/useful-jobs.mjs run <id>",
+    "archiveSha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "archiveBytes": 2522418,
+    "sourceRepo": "epistemedeus/pilot",
+    "sourceCommit": "0e473974554de9bfdba90676b6d3d710c10a2671",
+    "archiveFreeze": "318130daaf19490e2f8af7c23131b42fe20e6cde",
+    "reviewedSource": "318130daaf19490e2f8af7c23131b42fe20e6cde"
+  },
+  "inputsDigest": "de290f0ef8bc625b0ec1d73856f015ed1893cac7598374e51425701445f08b27",
+  "outputsDigest": "bb86a68aac65b1ba401307cef7bbac7092b2e695cb5decad09dadcef4a51644c",
+  "inputs": [
+    {
+      "name": "before",
+      "kind": "file",
+      "bytes": 144,
+      "sha256": "8ef418369feac302eb049682092e9a869442d143337d3fb0bc05d2ddc6f59694"
+    },
+    {
+      "name": "after",
+      "kind": "file",
+      "bytes": 144,
+      "sha256": "098438ee31220846a47963b494cbe9d907a6084ccc67822044f28334c063572a"
+    }
+  ],
+  "inputRoot": null,
+  "outputs": [
+    {
+      "name": "budget-impact.json",
+      "path": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-out-3UTQpS/budget-impact.json",
+      "bytes": 1429,
+      "sha256": "8c8e0cccf3c657d263bd264f2f63e2dd948966ca9e3fbb1f0358ecb4bb972569"
+    },
+    {
+      "name": "budget-impact.md",
+      "path": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-out-3UTQpS/budget-impact.md",
+      "bytes": 355,
+      "sha256": "dbb0629650af74dbbc78cf494e6bc8827c7f578d877c597aa3de85233304f2a5"
+    }
+  ],
+  "fundingState": "unfunded",
+  "sold": false,
+  "sample": false,
+  "sampleReasons": [],
+  "purchaseAuthority": false,
+  "liveSettlement": "out-of-scope",
+  "fixturePrice": {
+    "labelled": true,
+    "live": false,
+    "publishedToLiveCatalog": false,
+    "jobId": "vendor-budget-impact",
+    "amountUsdc": "0.02",
+    "amountAtomic": "20000",
+    "payTo": "0x0000000000000000000000000000000000000F08",
+    "note": "Non-live labelled fixture. Not extract $0.005 or seller-integrity-audit $0.01."
+  },
+  "payment": {
+    "fixture": false,
+    "purchaseAuthority": false,
+    "liveSettleAttempted": false,
+    "liveSettleAllowed": false,
+    "fundingState": "unfunded"
+  },
+  "continuity": null,
+  "engineResult": {
+    "ok": true,
+    "status": "actionable",
+    "digest": "1747449c724a81d5",
+    "refused": false,
+    "identityVerified": null
+  },
+  "outDir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-out-3UTQpS",
+  "publishedDir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/foundation-smoke/cases/d16-current-vendor/published/changed",
+  "contract": "samedaydesk.paid-useful-jobs.execution.v1",
+  "transport": "ok",
+  "analysis": {
+    "status": "actionable",
+    "outcome": "actionable",
+    "identityVerified": null
+  },
+  "delivery": {
+    "status": "complete",
+    "complete": true,
+    "expected": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "present": [
+      "budget-impact.json",
+      "budget-impact.md"
+    ],
+    "missing": [],
+    "unexpected": [],
+    "publishedDir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/src/experiments/codex-window/cw65-delivery-adversarial-harness/evidence/foundation-smoke/cases/d16-current-vendor/published/changed"
+  },
+  "runOutDir": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-out-3UTQpS"
+}

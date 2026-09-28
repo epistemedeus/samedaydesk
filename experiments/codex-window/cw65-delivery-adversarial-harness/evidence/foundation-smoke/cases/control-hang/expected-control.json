@@ -1,0 +1,12 @@
+{
+  "expected": "rejected",
+  "observed": {
+    "kind": "engine-timeout",
+    "accepted": false,
+    "hiddenByWrapperSuccess": false,
+    "domainOutcome": null,
+    "signal": "SIGTERM",
+    "errorCode": null
+  },
+  "readinessEvidence": false
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "actionable",
+  "summary": "Budget-impact scan: fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "vendor-input",
+      "note": "Price/field delta in curated fixture rows - not a live quote."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-ajaqE5/inputs/before.json",
+    "after": "/workspace/pilot/tmp/cw65-astra-delivery-adversarial-harness-20260912/scratch-closeout/cw65-owned-lgYH2q/d16-current-vendor/puj-vendor-budget-impact-ajaqE5/inputs/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 1,
+      "afterRows": 1,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 0,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-09-12T09:15:30.103Z",
+  "purchaseAuthority": false,
+  "digest": "1747449c724a81d5"
+}
