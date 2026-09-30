@@ -10,6 +10,7 @@
 - x402 and native MPP Payment Route: $499.
 - Agent Commerce Storefront: $999.
 - [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): Check crawler access, metadata, structured data, sitemap, and llms.txt.
+- [Free agent-readiness check](https://samedaydesk.com/tools/agent-readiness): Discovery files, MCP handshake and tools/list, cross-surface identity, CORS, x402 manifest shape, and the agent card. Wrong-shaped documents fail closed. No payment.
 - [Resources](https://samedaydesk.com/resources.html): Original research, practical guides, and free AI-search tools.
 
 ## Agent interfaces

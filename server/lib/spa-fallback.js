@@ -11,6 +11,7 @@ import { NOT_FOUND_SHELL, shellFilePath } from "./spa-route-shells.js";
 export const SPA_HISTORY_ROUTES = Object.freeze([
   "/",
   "/tools/ai-readiness",
+  "/tools/agent-readiness",
   "/x402",
   "/x402/seller-conformance",
   "/x402/verified",

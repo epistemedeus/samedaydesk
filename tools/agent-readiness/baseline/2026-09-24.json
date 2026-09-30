@@ -1,0 +1,127 @@
+{
+  "auditDate": "2026-09-24",
+  "observedAt": "2026-09-30",
+  "coverageRows": 136,
+  "heldOutDiffers": true,
+  "note": "Structural conformance pin. No separate 2026-09-24 audit file was in the clone. Rules are the baseline: discovery shape, MCP handshake and tools/list, cross-surface identity, CORS, x402 manifest shape, and agent card shape. Captures are reduced from the 2026-09-30 public read plus the 2026-09-03 presence pin. x402 item count and gateway server patch version are evidence, not score inputs (presence pin 23 items / 1.23.40; 2026-09-30 read 25 items / 1.23.49). The checker does not follow POST redirects. neomorphic.io /mcp is HTTP 301, and its x402 document uses version/resources rather than x402Version/items, so that host fails closed.",
+  "known": [
+    {
+      "hostId": "samedaydesk-apex",
+      "label": "SameDayDesk apex",
+      "origin": "https://samedaydesk.com",
+      "role": "apex",
+      "heldOut": false,
+      "score": 91,
+      "grade": "A",
+      "earned": 83,
+      "applicable": 91,
+      "verdict": "gap",
+      "failClosed": []
+    },
+    {
+      "hostId": "agents-gateway",
+      "label": "SameDayDesk machine gateway",
+      "origin": "https://agents.samedaydesk.com",
+      "role": "gateway",
+      "heldOut": false,
+      "score": 92,
+      "grade": "A",
+      "earned": 88,
+      "applicable": 96,
+      "verdict": "gap",
+      "failClosed": []
+    },
+    {
+      "hostId": "ein-llc",
+      "label": "EIN.LLC",
+      "origin": "https://ein.llc",
+      "role": "portfolio",
+      "heldOut": false,
+      "score": 100,
+      "grade": "A",
+      "earned": 10,
+      "applicable": 10,
+      "verdict": "pass",
+      "failClosed": []
+    },
+    {
+      "hostId": "neomorphic-io",
+      "label": "Neomorphic.io",
+      "origin": "https://neomorphic.io",
+      "role": "portfolio",
+      "heldOut": false,
+      "score": 67,
+      "grade": "C",
+      "earned": 10,
+      "applicable": 15,
+      "verdict": "reject",
+      "failClosed": [
+        "AG6_X402_WRONG_SHAPE"
+      ]
+    }
+  ],
+  "seeded": [
+    {
+      "hostId": "held-out-seed",
+      "label": "Held-out fixture host",
+      "origin": "https://held-out.fixture.invalid",
+      "role": "apex",
+      "heldOut": true,
+      "score": 71,
+      "grade": "C",
+      "earned": 59,
+      "applicable": 83,
+      "verdict": "reject",
+      "failClosed": [
+        "AG6_HANDSHAKE_VERSION_UNSUPPORTED",
+        "AG6_TOOLS_LIST_ID_MISMATCH"
+      ]
+    },
+    {
+      "hostId": "malformed-discovery",
+      "label": "Malformed discovery fixture",
+      "origin": "https://malformed-discovery.fixture.invalid",
+      "role": "apex",
+      "heldOut": true,
+      "score": 86,
+      "grade": "B",
+      "earned": 78,
+      "applicable": 91,
+      "verdict": "reject",
+      "failClosed": [
+        "AG6_DISCOVERY_NOT_JSON",
+        "AG6_DISCOVERY_NOT_OBJECT"
+      ]
+    },
+    {
+      "hostId": "malformed-handshake",
+      "label": "Malformed handshake fixture",
+      "origin": "https://malformed-handshake.fixture.invalid",
+      "role": "apex",
+      "heldOut": true,
+      "score": 77,
+      "grade": "B",
+      "earned": 55,
+      "applicable": 71,
+      "verdict": "reject",
+      "failClosed": [
+        "AG6_HANDSHAKE_NOT_JSONRPC"
+      ]
+    },
+    {
+      "hostId": "identity-conflict",
+      "label": "Cross-surface identity fixture",
+      "origin": "https://samedaydesk.com",
+      "role": "apex",
+      "heldOut": true,
+      "score": 88,
+      "grade": "B",
+      "earned": 88,
+      "applicable": 100,
+      "verdict": "reject",
+      "failClosed": [
+        "AG6_IDENTITY_CONFLICT"
+      ]
+    }
+  ]
+}

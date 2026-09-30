@@ -14,6 +14,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const AiReadiness = lazy(() => import("./pages/AiReadiness"));
+const AgentReadiness = lazy(() => import("./pages/AgentReadiness"));
 const Mcp = lazy(() => import("./pages/Mcp"));
 const ForAgents = lazy(() => import("./pages/ForAgents"));
 const RecordRepeat = lazy(() => import("./pages/RecordRepeat"));
@@ -37,6 +38,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/tools/ai-readiness" element={<AiReadiness />} />
+          <Route path="/tools/agent-readiness" element={<AgentReadiness />} />
           <Route path="/x402" element={<Mcp />} />
           <Route path="/x402/seller-conformance" element={<SellerConformance />} />
           <Route path="/x402/verified" element={<VerifiedRoutes />} />
