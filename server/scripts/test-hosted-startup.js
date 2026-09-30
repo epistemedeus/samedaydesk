@@ -4,6 +4,7 @@ import { once } from "node:events";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { probeFamily4Surface, startupGate } from "../lib/hosted-family4.js";
+import { ciHealthObligation, rejectUnexecutedHealthPass } from "../lib/hosted-gates.js";
 import { executeHostedStartup } from "./hosted-startup-actual.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
@@ -55,23 +56,35 @@ for (const [name, args] of [
   test(name + " actually listens and serves health", async () => {
     const surface = await surfacePromise;
     const gate = startupGate(surface);
-    if (!gate.runHealth) {
-      assert.equal(gate.cause, "surface-incapable");
-      assert.notEqual(surface.code, "ECONNREFUSED");
-      assert.equal(gate.ipv6DualStackExplains, false);
-      assert.equal(surface.capable, false);
-      assert.equal(surface.stage, "connect");
-      assert.equal(surface.host, "127.0.0.1");
-      assert.equal(surface.family, 4);
-      assert.equal(surface.address.family, "IPv4");
-      assert.ok(surface.code);
-      return;
+    const obligation = ciHealthObligation(gate);
+    if (obligation.executed !== true) {
+      const forged = {
+        ...obligation,
+        accepted: true,
+        passedAsHealth: true,
+        runtimeSocketHealth: "pass",
+        gateResult: "accepted",
+        cause: "reachable",
+      };
+      assert.equal(rejectUnexecutedHealthPass(forged).ok, false);
+      assert.equal(obligation.gate, "ci");
+      assert.equal(obligation.accepted, false);
+      assert.equal(obligation.passedAsHealth, false);
+      assert.equal(obligation.runtimeSocketHealth, "not-executed");
+      assert.equal(obligation.productionActivate, "HOLD");
+      assert.fail("ci runtime socket health was not executed; not a pass");
     }
     const report = await executeHostedStartup({ args, seed: "healthy" });
     assert.equal(report.accepted, true, JSON.stringify(report));
     assert.equal(report.cause, "reachable");
     assert.equal(report.ipv6DualStackExplains, false);
     assert.equal(report.productionActivate, "HOLD");
+    assert.equal(report.gate, "ci");
+    assert.equal(report.executed, true);
+    assert.equal(report.runtimeSocketHealth, "executed");
+    assert.equal(report.gateResult, "accepted");
+    assert.equal(report.passedAsHealth, true);
+    assert.equal(report.activatesProduction, false);
     assert.equal(report.acceptedReceipt, true);
     assert.equal(report.sameChild.ok, true);
     assert.equal(report.sameChild.status, 200);
@@ -103,6 +116,10 @@ test("seeded child exit after accept is not a passing startup", async () => {
   assert.equal(report.ok, true, JSON.stringify(report));
   assert.equal(report.accepted, false);
   assert.equal(report.cause, "child-exit");
+  assert.equal(report.gate, "ci");
+  assert.equal(report.executed, true);
+  assert.equal(report.passedAsHealth, false);
+  assert.equal(report.activatesProduction, false);
   assert.equal(report.ipv6DualStackExplains, false);
   assert.equal(report.sameChild.ok, true);
   assert.equal(report.parent.code, "ECONNREFUSED");
@@ -116,6 +133,9 @@ test("seeded SIGKILL before the parent probe is not a passing startup", async ()
   assert.equal(report.ok, true, JSON.stringify(report));
   assert.equal(report.accepted, false);
   assert.equal(report.cause, "child-exit");
+  assert.equal(report.gate, "ci");
+  assert.equal(report.executed, true);
+  assert.equal(report.passedAsHealth, false);
   assert.equal(report.parent.code, "ECONNREFUSED");
   assert.equal(report.childExit.signal, "SIGKILL");
   assert.equal(report.sameChild.ok, true);
@@ -126,6 +146,9 @@ test("seeded close before accept is not a passing startup", async () => {
   assert.equal(report.ok, true, JSON.stringify(report));
   assert.equal(report.accepted, false);
   assert.equal(report.cause, "never-accepted");
+  assert.equal(report.gate, "ci");
+  assert.equal(report.executed, true);
+  assert.equal(report.passedAsHealth, false);
   assert.equal(report.ipv6DualStackExplains, false);
   assert.equal(report.acceptedReceipt, false);
   assert.equal(report.sameChild.ok, false);
@@ -139,6 +162,11 @@ test("stamped ECONNREFUSED success is rejected", async () => {
   assert.equal(report.ok, true, JSON.stringify(report));
   assert.equal(report.accepted, false);
   assert.equal(report.cause, "false-green");
+  assert.equal(report.gate, "ci");
+  assert.equal(report.executed, true);
+  assert.equal(report.gateResult, "false-green");
+  assert.equal(report.passedAsHealth, false);
+  assert.equal(report.activatesProduction, false);
   assert.equal(report.stampRejected, true);
   assert.equal(report.underlying, "child-exit");
   assert.equal(report.parent.code, "ECONNREFUSED");

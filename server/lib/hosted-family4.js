@@ -13,8 +13,9 @@ export function startupGate(surface) {
   if (surface?.capable === true && surface.host === PROBE_HOST && surface.family === 4) {
     return { runHealth: true, cause: "capable", ipv6DualStackExplains: false };
   }
-  // ECONNREFUSED on a finished IPv4 bind is the live Hostinger class. Health
-  // still runs. Skipping it would stamp a refused loopback as a pass.
+  // Family-4 ECONNREFUSED is the Hostinger build 01a0f343 class. CI still runs
+  // health. The build sandbox does not run this probe. Skipping it here would
+  // stamp a refused loopback as a pass.
   if (surface?.stage === "connect" && surface.code === "ECONNREFUSED" && surface.host === PROBE_HOST && surface.family === 4 && isIpv4TcpAddress(surface.address)) {
     return { runHealth: true, cause: "econnrefused", ipv6DualStackExplains: false };
   }

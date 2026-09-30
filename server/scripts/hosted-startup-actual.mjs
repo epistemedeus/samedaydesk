@@ -114,9 +114,16 @@ function afterExit(started) {
 }
 
 function reportOf(mode, evidence, classified, extra = {}, ok = null) {
+  const accepted = classified.accepted === true && classified.cause === "reachable";
   return {
-    ok: ok == null ? classified.accepted === true && classified.cause === "reachable" : ok,
+    ok: ok == null ? accepted : ok,
     mode,
+    gate: "ci",
+    executed: true,
+    runtimeSocketHealth: "executed",
+    gateResult: accepted ? "accepted" : classified.cause,
+    passedAsHealth: accepted,
+    activatesProduction: false,
     productionActivate: "HOLD",
     ...classified,
     bound: evidence.bound ?? null,
@@ -186,6 +193,12 @@ export async function executeHostedStartup({ args = ["server/index.js"], seed = 
         return {
           ok: matched && verdict.ok === false && classified.accepted === false && parent.code === "ECONNREFUSED",
           mode: "seed-false-green",
+          gate: "ci",
+          executed: true,
+          runtimeSocketHealth: "executed",
+          gateResult: "false-green",
+          passedAsHealth: false,
+          activatesProduction: false,
           productionActivate: "HOLD",
           accepted: false,
           cause: "false-green",
