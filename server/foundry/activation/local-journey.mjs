@@ -211,6 +211,7 @@ export async function runLocalJourney() {
     if (setup.status !== 0) throw fail(1, `wasmtime runtime setup failed: ${redact(setup.stderr || "")}`);
   }
   const seeded = seededFalseGreen();
+  process.stderr.write("phase seeded-false-green rejected\n");
   const expected = cases[0].expected;
   const heldoutCase = cases[0].id;
   const pgCluster = await startDisposablePg();
@@ -223,6 +224,7 @@ export async function runLocalJourney() {
     server = await boot(baseEnv());
     const disabledObs = await observeOrigin(server.origin);
     phases.disabled = acceptPhase(disabledObs, "disabled");
+    process.stderr.write("phase disabled-mount\n");
     if (phases.disabled.facts.hostedDiscovery || phases.disabled.facts.taskResult || phases.disabled.facts.durableRetrieval) {
       throw fail(2, "disabled mount classified as foundry success");
     }
@@ -258,6 +260,7 @@ export async function runLocalJourney() {
     server = await boot(optedEnv(pgCluster.url, files, adminToken));
     const discoveryObs = await observeOrigin(server.origin);
     phases.discovery = acceptPhase(discoveryObs, "discovery");
+    process.stderr.write("phase hosted-discovery\n");
     if (phases.discovery.facts.taskResult || phases.discovery.facts.durableRetrieval || phases.discovery.facts.disabledOptionalMount) {
       throw fail(2, "discovery phase collapsed into another state");
     }
@@ -268,6 +271,7 @@ export async function runLocalJourney() {
     if (registered.body?.receiver?.state !== "ready" || typeof projectId !== "string") {
       throw fail(1, "cold visitor did not receive a ready receiver");
     }
+    process.stderr.write("phase cold-visitor\n");
     const taskPath = path.join(dir, "contribute-task.json");
     await writeFile(taskPath, JSON.stringify(original()), { mode: 0o600 });
     const contributed = await runNode(
@@ -313,6 +317,7 @@ export async function runLocalJourney() {
       task: { published: true, candidateId, output, expected },
       retrieval: null,
     };
+    process.stderr.write("phase task-result\n");
     phases.task = {
       ...acceptPhase(taskObs, "task"),
       heldoutCase,
@@ -345,6 +350,7 @@ export async function runLocalJourney() {
       },
     };
     phases.retrieval = acceptPhase(retrievalObs, "durable");
+    process.stderr.write("phase durable-retrieval\n");
     if (!phases.retrieval.facts.hostedDiscovery || !phases.retrieval.facts.taskResult) {
       throw fail(2, "durable retrieval dropped discovery or task result");
     }
@@ -363,6 +369,7 @@ export async function runLocalJourney() {
     phases.rollback.rowsRetained = true;
     phases.rollback.schemaDropped = false;
     phases.rollback.httpServesFoundry = false;
+    process.stderr.write("phase rollback-disabled\n");
     await server.stop();
     server = null;
 
