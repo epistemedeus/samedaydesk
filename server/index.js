@@ -2,11 +2,12 @@
 // Import server/app.js when a caller needs an unbound application factory.
 import { createSdsApp } from "./app.js";
 import { bindListenerLifecycle } from "./foundry/listener-lifecycle.js";
+import { listenHosted } from "./lib/hosted-listen.js";
 
 const app = createSdsApp();
 const port = process.env.PORT || 3000;
-const server = app.listen(port, "0.0.0.0", () => {
-  console.log(`[samedaydesk] listening on :${port}  (${process.env.NODE_ENV === "production" ? "production" : "development"})`);
+const server = listenHosted(app, port, (bound) => {
+  console.log(`[samedaydesk] listening on :${bound.port}  (${process.env.NODE_ENV === "production" ? "production" : "development"})`);
 });
 bindListenerLifecycle(server, async () => {
   const handle = app.get("s51Correspondence");

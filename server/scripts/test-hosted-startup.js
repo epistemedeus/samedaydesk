@@ -4,14 +4,23 @@ import { once } from "node:events";
 import { get } from "node:http";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { probeFamily4Surface, startupGate } from "../lib/hosted-family4.js";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const preload = fileURLToPath(new URL("./fixtures/hosted-startup-preload.mjs", import.meta.url));
+const surfacePromise = probeFamily4Surface();
 
-// Connect directly to the owned loopback listener, independent of fetch proxies.
+// Family-4 node:http to the owned listener. Same bounds as the SDS256 probe.
 function localJson(url) {
+  const target = new URL(url);
   return new Promise((resolve, reject) => {
-    const request = get(url, { agent: false }, response => {
+    const request = get({
+      host: target.hostname,
+      port: target.port,
+      path: target.pathname,
+      family: 4,
+      agent: false,
+    }, response => {
       let body = "";
       response.setEncoding("utf8");
       response.on("data", chunk => {
@@ -40,14 +49,21 @@ async function childMessage(t, args) {
     if (child.exitCode !== null || child.signalCode !== null) return;
     const exited = once(child, "exit");
     child.kill("SIGTERM");
-    const timer = setTimeout(() => child.kill("SIGKILL"), 1000);
-    try { await exited; } finally { clearTimeout(timer); }
+    await exited;
   });
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("No startup receipt: " + output)), 5000);
-    child.once("message", message => { clearTimeout(timer); resolve({ child, message }); });
-    child.once("error", error => { clearTimeout(timer); reject(error); });
-    child.once("exit", code => { clearTimeout(timer); reject(new Error("Exited before startup receipt: " + code + " " + output)); });
+    let settled = false;
+    const timer = setTimeout(() => finish(new Error("No startup receipt: " + output)), 5000);
+    function finish(error, value) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (error) reject(error);
+      else resolve(value);
+    }
+    child.once("message", message => finish(null, { child, message }));
+    child.once("error", error => finish(error));
+    child.once("exit", code => finish(new Error("Exited before startup receipt: " + code + " " + output)));
   });
 }
 
@@ -57,6 +73,19 @@ for (const [name, args] of [
   ["managed-host CommonJS loader", ["--eval", 'require("./server/index.js")']],
 ]) {
   test(name + " actually listens and serves health", async t => {
+    const surface = await surfacePromise;
+    const gate = startupGate(surface);
+    if (!gate.runHealth) {
+      assert.equal(gate.cause, "surface-incapable");
+      assert.equal(gate.ipv6DualStackExplains, false);
+      assert.equal(surface.capable, false);
+      assert.equal(surface.stage, "connect");
+      assert.equal(surface.host, "127.0.0.1");
+      assert.equal(surface.family, 4);
+      assert.equal(surface.address.family, "IPv4");
+      assert.ok(surface.code);
+      return;
+    }
     const { message } = await childMessage(t, args);
     assert.ok(Number.isInteger(message.port) && message.port > 0);
     const origin = "http://127.0.0.1:" + message.port;
