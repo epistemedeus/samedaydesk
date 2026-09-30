@@ -63,7 +63,7 @@ FOUNDRY_PARTICIPATION_KEY_FILE=/secure/foundry-participation.key
 NODE_ENV=production
 ```
 
-`CORRESPONDENCE_POOL_MAX` stays 1–4. An opted-in web process also opens entry 2, work-cell 2, and integration 2. A worker opens another integration pool of 2. One web process at pool 2 plus one worker is 10 connections. Two web processes at pool 4 are 28 and do not fit a 24-connection envelope. Hostinger is one Passenger process; do not raise the plan to buy a larger database.
+`CORRESPONDENCE_POOL_MAX` stays 1–4; 4 is the default and allowed maximum, while this foundry setup explicitly selects 2. An opted-in web process also opens entry 2, work-cell 2, and integration 2. A worker opens another integration pool of 2. One web process at base pool 2 plus one worker is 10 connections. Two web processes at base pool 4 use 20 connections, or 22 with one worker, leaving only 2 of a 24-connection envelope for other consumers. Hostinger is configured as one Passenger process; verify actual process and other-consumer counts before changing concurrency. No larger database plan is required for the recommended setup.
 
 Restart the process that runs `node server/index.js`. `GET /api/health` stays the SDS check. `GET /api/correspondence/healthz` is enabled only after installation and a successful composed readiness check. Unset `FOUNDRY_HOST_OPT_IN` and the `CORRESPONDENCE_*` variables, then restart, to return healthz to unconfigured. Do not mount the raw correspondence app back over live visitor grants.
 
