@@ -108,6 +108,17 @@ test("classifier rejects an address-null probe and an incapable startup gate", (
   assert.equal(gate.runHealth, false);
   assert.equal(gate.cause, "surface-incapable");
   assert.equal(gate.ipv6DualStackExplains, false);
+  const refused = startupGate({
+    capable: false,
+    host: "127.0.0.1",
+    family: 4,
+    stage: "connect",
+    code: "ECONNREFUSED",
+    address: { address: "0.0.0.0", family: "IPv4", port: 9 },
+  });
+  assert.equal(refused.runHealth, true);
+  assert.equal(refused.cause, "econnrefused");
+  assert.equal(refused.ipv6DualStackExplains, false);
   const bindFailed = startupGate({ capable: false, host: "127.0.0.1", family: 4, stage: "bind", code: "EADDRINUSE", address: null });
   assert.equal(bindFailed.runHealth, true);
   assert.equal(bindFailed.cause, "probe-inconclusive");

@@ -13,12 +13,57 @@ export function startupGate(surface) {
   if (surface?.capable === true && surface.host === PROBE_HOST && surface.family === 4) {
     return { runHealth: true, cause: "capable", ipv6DualStackExplains: false };
   }
-  // Only a finished IPv4 bind whose family-4 connect to 127.0.0.1 failed is an
-  // incapable surface. A bind error still has to run the real listen assertion.
+  // ECONNREFUSED on a finished IPv4 bind is the live Hostinger class. Health
+  // still runs. Skipping it would stamp a refused loopback as a pass.
+  if (surface?.stage === "connect" && surface.code === "ECONNREFUSED" && surface.host === PROBE_HOST && surface.family === 4 && isIpv4TcpAddress(surface.address)) {
+    return { runHealth: true, cause: "econnrefused", ipv6DualStackExplains: false };
+  }
+  // A finished IPv4 bind whose family-4 connect failed for another reason
+  // (for example ENETUNREACH) is an incapable surface. A bind error still
+  // has to run the real listen assertion.
   if (surface?.stage === "connect" && surface.host === PROBE_HOST && surface.family === 4 && isIpv4TcpAddress(surface.address)) {
     return { runHealth: false, cause: "surface-incapable", ipv6DualStackExplains: false };
   }
   return { runHealth: true, cause: "probe-inconclusive", ipv6DualStackExplains: false };
+}
+
+function childHasExited(childExit) {
+  return childExit != null && (childExit.code !== null || childExit.signal != null);
+}
+
+export function classifyHostedStartup(evidence) {
+  const probed = evidence?.probed;
+  if (!probed || probed.host !== PROBE_HOST || probed.family !== 4) {
+    return { cause: "not-family-4", accepted: false, ipv6DualStackExplains: false };
+  }
+  const exited = childHasExited(evidence.childExit);
+  const parentOk = evidence.parent?.ok === true;
+  const childAccepted = evidence.sameChild?.ok === true;
+  if (!parentOk && exited) {
+    return { cause: "child-exit", accepted: false, ipv6DualStackExplains: false };
+  }
+  if (!childAccepted && !parentOk) {
+    return { cause: "never-accepted", accepted: false, ipv6DualStackExplains: false };
+  }
+  if (childAccepted && !parentOk) {
+    return { cause: "probe-race", accepted: false, ipv6DualStackExplains: false };
+  }
+  if (childAccepted && parentOk && !exited) {
+    return { cause: "reachable", accepted: true, ipv6DualStackExplains: false };
+  }
+  return { cause: "unclassified", accepted: false, ipv6DualStackExplains: false };
+}
+
+// A report that marks success while 127.0.0.1 refused, or the child has
+// already exited, is a false green. Honest refusals are left alone.
+export function rejectFalseGreen(report) {
+  const refused = report?.parent?.code === "ECONNREFUSED";
+  const exited = childHasExited(report?.childExit);
+  const claimsSuccess = report?.accepted === true || report?.cause === "reachable";
+  if (claimsSuccess && (refused || exited)) {
+    return { ok: false, cause: "false-green" };
+  }
+  return { ok: true, cause: report?.cause ?? "ok" };
 }
 
 function classifyUnderlying(evidence) {
@@ -101,6 +146,7 @@ export function probeFamily4Health(port) {
       port,
       path: "/api/health",
       family: 4,
+      autoSelectFamily: false,
       agent: false,
       signal: AbortSignal.timeout(5000),
     }, (response) => {

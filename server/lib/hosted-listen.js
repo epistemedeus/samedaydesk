@@ -1,6 +1,5 @@
 // Bind IPv4 0.0.0.0. Read server.address() only in the listening callback.
-// A later family-4 miss of 127.0.0.1 is a surface, child-exit, or netns fact.
-// Binding :: does not explain that miss, so this helper does not.
+// A later family-4 ECONNREFUSED to 127.0.0.1 is a missed accept or a dead child.
 
 export function isIpv4TcpAddress(address) {
   return Boolean(
