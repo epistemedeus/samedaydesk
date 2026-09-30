@@ -1,0 +1,12 @@
+{
+  "name": "@neomorphic/visitor-portable-execution",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "python3 setup-runtime.py",
+    "build": "node example/build.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "demo": "node example/journey.mjs"
+  }
+}

@@ -6,6 +6,8 @@ client/node_modules/
 client/dist/
 /dist/
 vendor/**/node_modules/
+vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/
+vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.build/
 
 # env / secrets — NEVER commit
 .env
