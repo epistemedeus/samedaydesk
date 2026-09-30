@@ -27,6 +27,18 @@ export function createRepairApp(target, context) {
     return res.json(state.diagnosis);
   });
 
+  // Applies the disposable repair. The handoff file is written by the cold client.
+  app.post("/v1/repair", (req, res) => {
+    const denied = denyForeignOrigin(req.body, target.origin);
+    if (denied) return res.status(400).json(denied);
+    if (!state.before || !state.diagnosis) return res.status(409).json({ error: "diagnose_first" });
+    if (state.diagnosis.finding?.status !== "fail") {
+      return res.status(409).json({ error: "diagnosis_not_fail", findingId: FINDING_ID });
+    }
+    target.setMode("fixed");
+    return res.json({ applied: true, mode: target.mode, findingId: FINDING_ID });
+  });
+
   app.post("/v1/regress", async (req, res) => {
     const denied = denyForeignOrigin(req.body, target.origin);
     if (denied) return res.status(400).json(denied);
@@ -77,6 +89,7 @@ export async function startRepairService(target, context) {
     close() {
       return new Promise((resolve, reject) => {
         server.close((err) => (err ? reject(err) : resolve()));
+        server.closeAllConnections();
       });
     },
   };

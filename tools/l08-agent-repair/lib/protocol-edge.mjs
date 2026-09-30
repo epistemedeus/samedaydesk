@@ -1,33 +1,8 @@
 // One unresolved MCP edge: the protocol-version header on requests after initialize.
 // Observed on the received apex router. This module does not change that router.
-import { execFileSync } from "node:child_process";
 import http from "node:http";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import express from "express";
 import { createSdsApp } from "../../../server/app.js";
-import { SELLER_REPAIR_PIN } from "./handoff.mjs";
-
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-
-function objectExists(rev) {
-  try {
-    execFileSync("git", ["cat-file", "-e", `${rev}^{commit}`], { cwd: repoRoot, stdio: "ignore" });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function worktreeClean(paths) {
-  try {
-    execFileSync("git", ["diff", "--quiet", "HEAD", "--", ...paths], { cwd: repoRoot, stdio: "ignore" });
-    return true;
-  } catch (err) {
-    if (err.status === 1) return false;
-    throw err;
-  }
-}
+import { observeSellerRepairCold } from "./seller-repair-cold.mjs";
 
 export const UNSUPPORTED_PROTOCOL_HEADER = "1999-01-01";
 export const PROTOCOL_EDGE_ID = "mcp-protocol-version-header";
@@ -42,6 +17,7 @@ function listen(server) {
 function close(server) {
   return new Promise((resolve, reject) => {
     server.close((err) => (err ? reject(err) : resolve()));
+    server.closeAllConnections();
   });
 }
 
@@ -111,48 +87,7 @@ export async function observeApexProtocolEdge() {
 }
 
 export async function receiveSellerRepairRoute() {
-  const [{ default: checkoutRouter }, { isStripeConfigured }, { isValidSellerRepairFindingId, SELLER_CONTRACT_REPAIR_SLUG }, { sellerRepairFindingIds }] = await Promise.all([
-    import("../../../server/routes/checkout.js"),
-    import("../../../server/lib/stripe.js"),
-    import("../../../server/lib/seller-repair-checkout.js"),
-    import("../../../server/lib/pulse.js"),
-  ]);
-  const { createHash } = await import("node:crypto");
-  const app = express();
-  app.use(express.json());
-  app.use("/api/checkout", checkoutRouter);
-  const server = http.createServer(app);
-  const port = await listen(server);
-  try {
-    const response = await fetch(`http://127.0.0.1:${port}/api/checkout/seller-repair-session`, {
-      method: "POST",
-      headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify({ finding_id: "not-a-catalog-id" }),
-    });
-    const body = await response.json();
-    const catalogIds = [...sellerRepairFindingIds].sort();
-    return {
-      access: "read-only",
-      pin: SELLER_REPAIR_PIN,
-      pinInClone: objectExists(SELLER_REPAIR_PIN),
-      route: "POST /api/checkout/seller-repair-session",
-      slug: SELLER_CONTRACT_REPAIR_SLUG,
-      stripeConfigured: isStripeConfigured(),
-      invalidFindingHttpStatus: response.status,
-      invalidFindingError: body?.error ?? null,
-      allowlistRejectsUnknown: isValidSellerRepairFindingId("not-a-catalog-id") === false,
-      findingIsSellerBrief: isValidSellerRepairFindingId("mcp.unknownTool") === true,
-      catalogCount: catalogIds.length,
-      catalogSha256: createHash("sha256").update(catalogIds.join("\n")).digest("hex"),
-      catalogUntouched: worktreeClean([
-        "server/lib/seller-repair-checkout.js",
-        "server/lib/pulse.js",
-        "client/src/data/sellerRepairBriefs.ts",
-      ]),
-    };
-  } finally {
-    await close(server);
-  }
+  return observeSellerRepairCold();
 }
 
 export function protocolEdgeDocument({ apex, disposable }) {

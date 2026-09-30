@@ -1,10 +1,10 @@
 // Reproduce a disposable MCP defect, repair it, and hand the transition to MAINT.
-import { spawnSync } from "node:child_process";
+import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { startDisposableTarget } from "./lib/disposable-target.mjs";
-import { validateMaintHandoff } from "./lib/handoff.mjs";
+import { PRIOR_SEAL, validateMaintHandoff } from "./lib/handoff.mjs";
 import { postToolsList, protocolEdgeDocument, receiveSellerRepairRoute, observeApexProtocolEdge, UNSUPPORTED_PROTOCOL_HEADER } from "./lib/protocol-edge.mjs";
 import { startRepairService } from "./lib/service.mjs";
 
@@ -12,6 +12,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../..");
 const defaultHandoffPath = join(here, "MAINT-HANDOFF.json");
 const scoredFixture = join(here, "fixtures/scored-handoff.json");
+const coldClientPath = join(here, "cold-client.mjs");
 
 function say(line) {
   process.stdout.write(`${line}\n`);
@@ -33,13 +34,67 @@ async function postJson(url, body) {
   return { status: response.status, json };
 }
 
+function priorSealExists() {
+  try {
+    execFileSync("git", ["cat-file", "-e", `${PRIOR_SEAL}^{commit}`], { cwd: repoRoot, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function spawnCold(args) {
+  return spawnSync(process.execPath, [coldClientPath, ...args], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+}
+
+// The listener serves HTTP on this event loop. spawnSync would block it and the client would wait forever.
+function spawnColdAsync(args) {
+  return new Promise((resolveSpawn) => {
+    const child = spawn(process.execPath, [coldClientPath, ...args], {
+      cwd: repoRoot,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+    child.on("error", (err) => {
+      resolveSpawn({ status: 1, stdout, stderr: `${stderr}${err.message}\n` });
+    });
+    child.on("close", (status) => {
+      resolveSpawn({ status: status ?? 1, stdout, stderr });
+    });
+  });
+}
+
+function writeChild(child) {
+  if (child.stdout) process.stdout.write(child.stdout.endsWith("\n") || child.stdout === "" ? child.stdout : `${child.stdout}\n`);
+  if (child.stderr) process.stderr.write(child.stderr);
+}
+
 async function receiveContext() {
+  if (!priorSealExists()) throw new Error(`prior seal missing ${PRIOR_SEAL}`);
   const sellerRepair = await receiveSellerRepairRoute();
-  if (sellerRepair.invalidFindingHttpStatus === 200 || sellerRepair.invalidFindingError == null) {
+  if (sellerRepair.invalidFindingHttpStatus === 200 || sellerRepair.invalidFindingError == null || sellerRepair.hasUrl) {
     throw new Error("seller-repair receive created or hid a checkout response");
   }
   if (!sellerRepair.allowlistRejectsUnknown || sellerRepair.findingIsSellerBrief !== false) {
     throw new Error("seller-repair allowlist did not match the received catalog");
+  }
+  if (sellerRepair.catalogMutated !== false || sellerRepair.catalogUntouched !== true) {
+    throw new Error("seller-repair catalog changed");
+  }
+  if (sellerRepair.gate !== "503-before-allowlist" && sellerRepair.gate !== "allowlist-reject") {
+    throw new Error(`seller-repair gate ${sellerRepair.gate} status ${sellerRepair.invalidFindingHttpStatus}`);
   }
   if (sellerRepair.stripeConfigured) {
     if (sellerRepair.invalidFindingHttpStatus !== 400) {
@@ -48,7 +103,7 @@ async function receiveContext() {
   } else if (sellerRepair.invalidFindingHttpStatus !== 503) {
     throw new Error(`seller-repair unconfigured route returned ${sellerRepair.invalidFindingHttpStatus}`);
   }
-  say(`receive seller-repair ${sellerRepair.route} invalid finding_id -> ${sellerRepair.invalidFindingHttpStatus} allowlist-reject`);
+  say(`receive seller-repair ${sellerRepair.route} invalid finding_id -> ${sellerRepair.invalidFindingHttpStatus} gate ${sellerRepair.gate} catalog-untouched`);
   const apex = await observeApexProtocolEdge();
   if (apex.followUp.observedStatus !== 200 || apex.followUp.requiredStatus !== 400) {
     throw new Error(`protocol edge no longer matches the received server (${apex.followUp.observedStatus})`);
@@ -109,7 +164,90 @@ export async function runRejectScored() {
   return 1;
 }
 
+async function listenBroken(sellerRepair, apex) {
+  const target = await startDisposableTarget("broken");
+  try {
+    const disposable = await postToolsList(target.origin, UNSUPPORTED_PROTOCOL_HEADER);
+    if (disposable.observedStatus !== 200) {
+      await target.close();
+      return { error: disposable.observedStatus };
+    }
+    const service = await startRepairService(target, {
+      protocolEdge: protocolEdgeDocument({ apex, disposable }),
+      sellerRepair,
+    });
+    return { target, service };
+  } catch (err) {
+    await target.close();
+    throw err;
+  }
+}
+
+async function closePair(pair) {
+  if (!pair) return;
+  if (pair.service) await pair.service.close();
+  if (pair.target) await pair.target.close();
+}
+
+export async function runCold(outPath = defaultHandoffPath) {
+  if (!priorSealExists()) {
+    say(`prior-seal ${PRIOR_SEAL} missing`);
+    return 2;
+  }
+  say(`prior-seal ${PRIOR_SEAL} present`);
+  const { sellerRepair, apex } = await receiveContext();
+  const pair = await listenBroken(sellerRepair, apex);
+  if (pair.error) {
+    say(`protocol-edge disposable observed ${pair.error}`);
+    return 2;
+  }
+  let runStatus = 1;
+  try {
+    say(`owner listen ${pair.service.origin}`);
+    const child = await spawnColdAsync(["run", "--origin", pair.service.origin, "--out", outPath]);
+    writeChild(child);
+    say(`cold-client run exit ${child.status}`);
+    runStatus = child.status ?? 1;
+    if (runStatus !== 0) return runStatus;
+    const written = JSON.parse(readFileSync(outPath, "utf8"));
+    const verdict = validateMaintHandoff(written);
+    if (!verdict.ok) {
+      say(`cold handoff ${verdict.error}`);
+      return 1;
+    }
+  } finally {
+    await closePair(pair);
+  }
+
+  const unchangedPair = await listenBroken(sellerRepair, apex);
+  if (unchangedPair.error) {
+    say(`protocol-edge disposable observed ${unchangedPair.error}`);
+    return 2;
+  }
+  let unchanged;
+  try {
+    unchanged = await spawnColdAsync(["reject-unchanged", "--origin", unchangedPair.service.origin]);
+  } finally {
+    await closePair(unchangedPair);
+  }
+  const scored = spawnCold(["reject-scored"]);
+  const seller = spawnCold(["seller-repair"]);
+  say(`seeded reject-unchanged exit ${unchanged.status}`);
+  writeChild(unchanged);
+  say(`seeded reject-scored exit ${scored.status}`);
+  writeChild(scored);
+  say(`seller-repair exit ${seller.status}`);
+  writeChild(seller);
+  if (unchanged.status !== 1 || scored.status !== 1 || seller.status !== 0) return 1;
+  return 0;
+}
+
 export async function runProve(outPath = defaultHandoffPath) {
+  if (!priorSealExists()) {
+    say(`prior-seal ${PRIOR_SEAL} missing`);
+    return 2;
+  }
+  say(`prior-seal ${PRIOR_SEAL} present`);
   const { sellerRepair, apex } = await receiveContext();
   const target = await startDisposableTarget("broken");
   let service;
@@ -168,11 +306,17 @@ export async function runProve(outPath = defaultHandoffPath) {
 
 const command = process.argv[2] || "prove";
 let exit = 2;
-if (command === "prove") exit = await runProve(process.argv[3] ? resolve(process.argv[3]) : defaultHandoffPath);
-else if (command === "reject-unchanged") exit = await runRejectUnchanged();
-else if (command === "reject-scored") exit = await runRejectScored();
-else {
-  say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | reject-unchanged | reject-scored");
+try {
+  if (command === "prove") exit = await runProve(process.argv[3] ? resolve(process.argv[3]) : defaultHandoffPath);
+  else if (command === "cold") exit = await runCold(process.argv[3] ? resolve(process.argv[3]) : defaultHandoffPath);
+  else if (command === "reject-unchanged") exit = await runRejectUnchanged();
+  else if (command === "reject-scored") exit = await runRejectScored();
+  else {
+    say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | cold [out.json] | reject-unchanged | reject-scored");
+    exit = 2;
+  }
+} catch (err) {
+  say(`owner error ${err instanceof Error ? err.message : "failed"}`);
   exit = 2;
 }
 process.exit(exit);

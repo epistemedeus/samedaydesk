@@ -25,3 +25,7 @@ The apex endpoint is stateless. The header is the only version signal the spec g
 `node tools/l08-agent-repair/cli.mjs prove` mounts the received app and records the follow-up status on `POST /mcp`. The handoff field `protocolEdge.apex.observedStatus` is 200 and `requiredStatus` is 400. The disposable target leaves the same header unenforced in both its broken and fixed modes, so the unknown-tool repair is not a fix for this edge.
 
 Owned paths for that repair stay under `tools/l08-agent-repair/`. `server/routes/mcp.js` and `server/lib/agent-readiness/` stay as received from `9cc816e13bfea448d68a26380efe2a91c88773dd`.
+
+## Continuation
+
+`L08-MAINT-093083` leaves this edge unresolved. Prior seal `ac7e0c75c224a062d9ed4e58332e9c2f34b90895`. The cold client records the same 200-versus-400 evidence on `protocolEdge` and does not patch the apex router or the readiness probe.

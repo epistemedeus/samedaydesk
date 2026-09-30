@@ -147,6 +147,7 @@ export async function startDisposableTarget(mode = "broken") {
     close() {
       return new Promise((resolve, reject) => {
         server.close((err) => (err ? reject(err) : resolve()));
+        server.closeAllConnections();
       });
     },
   };

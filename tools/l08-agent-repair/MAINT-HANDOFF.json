@@ -3,6 +3,22 @@
   "job": "L08-AGENT-REPAIR-093076",
   "consumer": "MAINT",
   "sourceCommit": "9cc816e13bfea448d68a26380efe2a91c88773dd",
+  "priorSeal": "ac7e0c75c224a062d9ed4e58332e9c2f34b90895",
+  "continuation": {
+    "job": "L08-MAINT-093083",
+    "operationId": "6dd8b73d-e58c-47c7-b2cb-e630167d21f1",
+    "priorSession": "0936c075-cc31-4d98-8300-f8231baafc59",
+    "priorHead": "ac7e0c75c224a062d9ed4e58332e9c2f34b90895"
+  },
+  "coldClient": {
+    "command": "node tools/l08-agent-repair/cold-client.mjs run",
+    "drives": [
+      "POST /v1/diagnose",
+      "POST /v1/repair",
+      "POST /v1/regress"
+    ],
+    "liveWriterTwin": false
+  },
   "ownedEndpoints": [
     {
       "method": "POST",
@@ -88,7 +104,7 @@
     }
   },
   "regression": {
-    "command": "node tools/l08-agent-repair/cli.mjs prove",
+    "command": "node tools/l08-agent-repair/cold-client.mjs run",
     "findingId": "mcp.unknownTool",
     "before": "fail",
     "after": "pass",
@@ -100,7 +116,7 @@
       }
     ],
     "seededRejection": {
-      "command": "node tools/l08-agent-repair/cli.mjs reject-unchanged",
+      "command": "node tools/l08-agent-repair/cold-client.mjs reject-unchanged",
       "expectsExit": 1
     }
   },
@@ -138,12 +154,22 @@
     "route": "POST /api/checkout/seller-repair-session",
     "slug": "seller_contract_repair",
     "stripeConfigured": false,
+    "invalidFindingId": "not-a-catalog-id",
     "invalidFindingHttpStatus": 503,
     "invalidFindingError": "Payments not configured",
     "allowlistRejectsUnknown": true,
     "findingIsSellerBrief": false,
+    "gate": "503-before-allowlist",
+    "comparedFindingId": "402-com-tr-morpho-health-20260830",
+    "comparedFindingHttpStatus": 503,
+    "comparedFindingError": "Payments not configured",
+    "comparedHasUrl": false,
+    "hasUrl": false,
     "catalogCount": 10,
     "catalogSha256": "1a886fd363e54273dcf9608a5e52ca44cac7166a41f220de9f3e741ecf17f1bc",
-    "catalogUntouched": true
+    "catalogFileSha256": "b2785b943e939c5d032b72d95af806470baf059c92d9592f04fb98ca6da5fe16",
+    "catalogUntouched": true,
+    "catalogMutated": false,
+    "coldCommand": "node tools/l08-agent-repair/cold-client.mjs seller-repair"
   }
 }

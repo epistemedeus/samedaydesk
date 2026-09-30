@@ -2,6 +2,10 @@
 
 Consumer: MAINT. This is a diagnosis, a repair, and a regression. It is not a score.
 
+Continuation `L08-MAINT-093083` reuses operation `6dd8b73d-e58c-47c7-b2cb-e630167d21f1`.
+Prior session `0936c075-cc31-4d98-8300-f8231baafc59`.
+Prior seal `ac7e0c75c224a062d9ed4e58332e9c2f34b90895` (draft PR #263 on this same branch).
+
 ## Read
 
 `tools/l08-agent-repair/MAINT-HANDOFF.json`
@@ -9,6 +13,8 @@ Consumer: MAINT. This is a diagnosis, a repair, and a regression. It is not a sc
 Schema: `samedaydesk.maint.agent-repair.handoff.v1`.
 
 Reject the file if it contains `score`, `grade`, `scoreDelta`, `points`, `ratio`, or `weight`. The checker that produced the finding still knows how to score a host. That number is not this handoff.
+
+The listener returns the handoff JSON from `POST /v1/regress`. It does not write the file. The cold client is the writer. There is no second writer process.
 
 ## What failed
 
@@ -22,30 +28,36 @@ Disposable loopback target, mode `broken`.
 
 Same target, mode `fixed`. The handler for an unknown tool name returns JSON-RPC error `-32602` and no `result`. The method `tools/call` still exists. A known tool name is unchanged.
 
-The repair is the fixed branch in `tools/l08-agent-repair/lib/disposable-target.mjs`. It does not edit the SDS255 checker, the apex MCP route, the seller-repair catalog, or `experiments/s260-useful-jobs-public-integration/`.
+The repair is the fixed branch in `tools/l08-agent-repair/lib/disposable-target.mjs`. The cold client reaches it through `POST /v1/repair` on the owned listener. It does not edit the SDS255 checker, the apex MCP route, the seller-repair catalog, or `experiments/s260-useful-jobs-public-integration/`.
 
 ## Prove
 
-From the repo root:
+From the repo root, one owner listener and a separate cold client:
 
 ```
-node tools/l08-agent-repair/cli.mjs prove
+node tools/l08-agent-repair/cli.mjs cold
 ```
 
-Exit 0 means both owned endpoints ran:
+Exit 0 means the cold client, not the listener, did all of the following:
 
 1. `POST /v1/diagnose` reproduced `mcp.unknownTool` = `fail`.
-2. The disposable mode was switched to `fixed`.
-3. `POST /v1/regress` showed that finding, and only that finding, move `fail` → `pass`.
+2. `POST /v1/repair` switched the disposable target to `fixed`.
+3. `POST /v1/regress` showed that finding, and only that finding, move `fail` → `pass`, and the client wrote `tools/l08-agent-repair/MAINT-HANDOFF.json`.
 
-Seeded failures the same command must reject:
+The same command then runs the seeded failures. `reject-unchanged` and `reject-scored` exit 1. `seller-repair` exits 0.
+
+Run the client commands themselves when a listener is already up, or for the checks that need no listener:
 
 ```
-node tools/l08-agent-repair/cli.mjs reject-unchanged
-node tools/l08-agent-repair/cli.mjs reject-scored
+node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT --out tools/l08-agent-repair/MAINT-HANDOFF.json
+node tools/l08-agent-repair/cold-client.mjs reject-unchanged --origin http://127.0.0.1:PORT
+node tools/l08-agent-repair/cold-client.mjs reject-scored
+node tools/l08-agent-repair/cold-client.mjs seller-repair
 ```
 
-Both exit 1. `reject-unchanged` calls `POST /v1/regress` while the target is still broken and gets HTTP 409 `finding_unchanged`. `reject-scored` refuses `fixtures/scored-handoff.json` because it carries a score.
+`run` exits 0. `reject-unchanged` exits 1: `POST /v1/regress` while the target is still broken returns HTTP 409 `finding_unchanged`. `reject-scored` exits 1: `fixtures/scored-handoff.json` carries a score. The origin must be `http://127.0.0.1`. Any other host exits 2.
+
+`node tools/l08-agent-repair/cli.mjs prove` is the in-process owner check from the prior seal. It writes the same handoff document. Use `cli.mjs cold` when MAINT consumes the file, so the listener and the writer are not the same process.
 
 ## Left unresolved
 
@@ -53,4 +65,12 @@ Both exit 1. `reject-unchanged` calls `POST /v1/regress` while the target is sti
 
 ## Seller-repair API
 
-Received read-only. Pin `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` is not in this clone. The in-tree route `POST /api/checkout/seller-repair-session` was called with `finding_id` `not-a-catalog-id` only. `mcp.unknownTool` is not one of the catalog briefs. The catalog was not extended.
+Received read-only. Pin `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` is not in this clone. The catalog was not extended. `mcp.unknownTool` is not one of the catalog briefs.
+
+```
+node tools/l08-agent-repair/cold-client.mjs seller-repair
+```
+
+Exit 0 in this clone means `POST /api/checkout/seller-repair-session` with `finding_id` `not-a-catalog-id` returned HTTP 503 `Payments not configured`, and one real catalog id returned the same 503. The route reads Stripe before it reads the finding id, so the 503 is before the allowlist. Neither response contains a checkout URL. The catalog files are unchanged before and after the calls.
+
+When Stripe is configured, the same command sends only `not-a-catalog-id`, expects HTTP 400 `Invalid finding ID`, and does not send a catalog id.
