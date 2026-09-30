@@ -1,0 +1,7 @@
+{
+  "schema": "samedaydesk.maint.agent-repair.handoff.v1",
+  "job": "L08-AGENT-REPAIR-093076",
+  "consumer": "MAINT",
+  "score": 100,
+  "note": "Seeded failure. A numeric score is not a MAINT handoff."
+}

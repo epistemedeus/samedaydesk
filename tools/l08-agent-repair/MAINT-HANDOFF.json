@@ -1,0 +1,149 @@
+{
+  "schema": "samedaydesk.maint.agent-repair.handoff.v1",
+  "job": "L08-AGENT-REPAIR-093076",
+  "consumer": "MAINT",
+  "sourceCommit": "9cc816e13bfea448d68a26380efe2a91c88773dd",
+  "ownedEndpoints": [
+    {
+      "method": "POST",
+      "path": "/v1/diagnose",
+      "role": "reproduce"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/regress",
+      "role": "reprove"
+    }
+  ],
+  "diagnosis": {
+    "schema": "samedaydesk.maint.agent-repair.diagnosis.v1",
+    "target": "disposable-loopback",
+    "finding": {
+      "id": "mcp.unknownTool",
+      "title": "Unknown tool returns JSON-RPC -32602",
+      "status": "fail",
+      "reason": "Calling an unknown tool returned no JSON-RPC error."
+    },
+    "exchange": {
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "__definitely_not_a_tool__",
+          "arguments": {}
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "isError": true,
+          "content": [
+            {
+              "type": "text",
+              "text": "unknown tool"
+            }
+          ]
+        }
+      },
+      "httpStatus": 200
+    },
+    "disposableEndpoints": [
+      {
+        "method": "GET",
+        "path": "/llms.txt",
+        "httpStatus": 200
+      },
+      {
+        "method": "POST",
+        "path": "/mcp",
+        "httpStatus": 200
+      }
+    ]
+  },
+  "repair": {
+    "applied": true,
+    "summary": "An unknown tools/call name returns JSON-RPC error -32602 and no result.",
+    "before": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "isError": true,
+        "content": [
+          {
+            "type": "text",
+            "text": "unknown tool"
+          }
+        ]
+      }
+    },
+    "after": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "error": {
+        "code": -32602,
+        "message": "Unknown tool: __definitely_not_a_tool__"
+      }
+    }
+  },
+  "regression": {
+    "command": "node tools/l08-agent-repair/cli.mjs prove",
+    "findingId": "mcp.unknownTool",
+    "before": "fail",
+    "after": "pass",
+    "changed": [
+      {
+        "id": "mcp.unknownTool",
+        "before": "fail",
+        "after": "pass"
+      }
+    ],
+    "seededRejection": {
+      "command": "node tools/l08-agent-repair/cli.mjs reject-unchanged",
+      "expectsExit": 1
+    }
+  },
+  "protocolEdge": {
+    "id": "mcp-protocol-version-header",
+    "status": "unresolved",
+    "notRepairedHere": true,
+    "spec": "MCP 2025-11-25 Streamable HTTP requires HTTP 400 when MCP-Protocol-Version is invalid or unsupported. A stateless server that omits the header should assume 2025-03-26.",
+    "apex": {
+      "endpoint": "POST /mcp",
+      "negotiated": "2025-11-25",
+      "header": "MCP-Protocol-Version: 1999-01-01",
+      "observedStatus": 200,
+      "requiredStatus": 400,
+      "hasResult": true,
+      "hasError": false
+    },
+    "disposable": {
+      "endpoint": "POST /mcp",
+      "header": "MCP-Protocol-Version: 1999-01-01",
+      "observedStatus": 200,
+      "requiredStatus": 400,
+      "hasResult": true,
+      "hasError": false
+    },
+    "probeGap": "server/lib/agent-readiness/probe.js rpc() does not send MCP-Protocol-Version after initialize.",
+    "serverGap": "server/routes/mcp.js allows the header in CORS and does not reject an unsupported value.",
+    "checkerGap": "mcp.version compares initialize result.protocolVersion only.",
+    "document": "tools/l08-agent-repair/research/mcp-protocol-version-header.md"
+  },
+  "sellerRepair": {
+    "access": "read-only",
+    "pin": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "pinInClone": false,
+    "route": "POST /api/checkout/seller-repair-session",
+    "slug": "seller_contract_repair",
+    "stripeConfigured": false,
+    "invalidFindingHttpStatus": 503,
+    "invalidFindingError": "Payments not configured",
+    "allowlistRejectsUnknown": true,
+    "findingIsSellerBrief": false,
+    "catalogCount": 10,
+    "catalogSha256": "1a886fd363e54273dcf9608a5e52ca44cac7166a41f220de9f3e741ecf17f1bc",
+    "catalogUntouched": true
+  }
+}
