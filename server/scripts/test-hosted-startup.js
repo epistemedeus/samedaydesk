@@ -49,7 +49,8 @@ async function childMessage(t, args) {
     if (child.exitCode !== null || child.signalCode !== null) return;
     const exited = once(child, "exit");
     child.kill("SIGTERM");
-    await exited;
+    const timer = setTimeout(() => child.kill("SIGKILL"), 1000);
+    try { await exited; } finally { clearTimeout(timer); }
   });
   return new Promise((resolve, reject) => {
     let settled = false;
