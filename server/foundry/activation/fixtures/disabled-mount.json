@@ -1,0 +1,20 @@
+{
+  "productionActivate": "HOLD",
+  "sdsHealth": { "status": 200, "service": "samedaydesk", "ok": true },
+  "correspondenceHealthz": {
+    "status": 200,
+    "body": { "ok": false, "enabled": false, "reason": "unconfigured", "store": null }
+  },
+  "foundryReceiver": { "status": 503, "body": null },
+  "visitorEntry": { "status": 503, "hasProfile": false },
+  "uploads": { "status": 501 },
+  "publicCatalog": { "status": 200 },
+  "task": null,
+  "retrieval": null,
+  "claims": {
+    "disabledOptionalMount": true,
+    "hostedDiscovery": false,
+    "taskResult": false,
+    "durableRetrieval": false
+  }
+}

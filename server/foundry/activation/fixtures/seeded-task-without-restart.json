@@ -1,0 +1,41 @@
+{
+  "productionActivate": "HOLD",
+  "sdsHealth": { "status": 200, "service": "samedaydesk", "ok": true },
+  "correspondenceHealthz": {
+    "status": 200,
+    "body": { "ok": true, "enabled": true, "reason": null, "store": "postgres" }
+  },
+  "foundryReceiver": {
+    "status": 200,
+    "body": {
+      "optIn": true,
+      "facade": true,
+      "rawMounted": false,
+      "publicExecution": false,
+      "extension": true,
+      "schema": "pilot_correspondence",
+      "wholeHostSandbox": false
+    }
+  },
+  "visitorEntry": { "status": 200, "hasProfile": true },
+  "uploads": { "status": 501 },
+  "publicCatalog": { "status": 200 },
+  "task": {
+    "published": true,
+    "candidateId": "cand-local",
+    "output": { "outcome": "observed", "payload": { "project": { "id": "prj_later_alpha", "status": "open", "version": 1 } } },
+    "expected": { "outcome": "observed", "payload": { "project": { "id": "prj_later_alpha", "status": "open", "version": 1 } } }
+  },
+  "retrieval": {
+    "processRestarted": false,
+    "databaseSurvived": true,
+    "sameCandidate": true,
+    "output": { "outcome": "observed", "payload": { "project": { "id": "prj_later_alpha", "status": "open", "version": 1 } } }
+  },
+  "claims": {
+    "disabledOptionalMount": false,
+    "hostedDiscovery": true,
+    "taskResult": true,
+    "durableRetrieval": true
+  }
+}
