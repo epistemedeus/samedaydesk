@@ -1,0 +1,12 @@
+{
+  "jobId": "S08-VF17-RECOVER-0930",
+  "attemptOf": "VF17-HOST-QUALIFICATION-0926",
+  "operationId": "b01f46c8-7045-4edc-b6db-1f224b5aae5c",
+  "sds254": "39a1ed7ceff813e9f490bd399fcea30f3451a53b",
+  "neoReceiver": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "vf11Export": "14fef551e4d13e2ccd95d0fb049c19d13404a5ac",
+  "vf11Pattern": "neomorphic-io scripts/visitor-foundry/scale/src/pg.mjs privatePG",
+  "repoBase": "622d82e50dd4430610e92138f1d3b3aa69fd8ac4",
+  "offeredClients": [1, 8, 32, 128],
+  "axes": ["concurrency", "corpus", "backlog"]
+}

@@ -1,0 +1,459 @@
+{
+  "schema": "sds.vf17.host-qualification.sds254-intake.v1",
+  "jobId": "S08-VF17-RECOVER-0930",
+  "attemptOf": "VF17-HOST-QUALIFICATION-0926",
+  "operationId": "b01f46c8-7045-4edc-b6db-1f224b5aae5c",
+  "measuredAt": "2026-09-30T18:44:13.516Z",
+  "receivingOwner": {
+    "role": "SDS254",
+    "pin": "39a1ed7ceff813e9f490bd399fcea30f3451a53b",
+    "repository": "epistemedeus/samedaydesk",
+    "intakeOnly": true,
+    "branchEdits": false
+  },
+  "neoReceiver": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "vf11": {
+    "export": "14fef551e4d13e2ccd95d0fb049c19d13404a5ac",
+    "pattern": "neomorphic-io scripts/visitor-foundry/scale/src/pg.mjs privatePG"
+  },
+  "repoBase": "622d82e50dd4430610e92138f1d3b3aa69fd8ac4",
+  "measuredAtHead": "622d82e50dd4430610e92138f1d3b3aa69fd8ac4",
+  "traffic": "synthetic",
+  "hostingerMeasured": false,
+  "silentReduction": false,
+  "workloadPlan": {
+    "offeredClients": [
+      1,
+      8,
+      32,
+      128
+    ],
+    "axes": [
+      "concurrency",
+      "corpus",
+      "backlog"
+    ],
+    "corpusRowsPerClient": 8,
+    "corpusBodyBytes": 256,
+    "backlogItemsPerClient": 4,
+    "traffic": "synthetic",
+    "cluster": {
+      "maxConnections": 24,
+      "sharedBuffers": "32MB",
+      "workMem": "2MB",
+      "fsync": true,
+      "synchronousCommit": true,
+      "listenHost": "127.0.0.1"
+    }
+  },
+  "budgets": {
+    "schema": "sds.vf17.host-qualification-budget.v1",
+    "purpose": "Review triggers for this disposable cluster. Not a production SLA.",
+    "unknownOutcomePolicy": "reconcile; never count as success",
+    "setupRefusalPolicy": "retain requested and actual sizes; do not silently reduce workload",
+    "poisonRejectionBudget": 0,
+    "semanticMismatchBudget": 0,
+    "traffic": "synthetic"
+  },
+  "cluster": {
+    "version": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "listen": {
+      "host": "127.0.0.1",
+      "port": 42463
+    },
+    "settings": {
+      "fsync": "on",
+      "listen_addresses": "127.0.0.1",
+      "max_connections": "24",
+      "port": "42463",
+      "shared_buffers": "4096",
+      "superuser_reserved_connections": "3",
+      "synchronous_commit": "on",
+      "work_mem": "2048"
+    },
+    "roles": {
+      "ownerIsSuperuser": true,
+      "clientIsSuperuser": false
+    }
+  },
+  "citedFoundryEnvelope": {
+    "source": "server/foundry/PINS.json",
+    "document": "docs/FOUNDRY-HOST-RECEIVER.md",
+    "pools": {
+      "entry": 2,
+      "workCells": 2,
+      "integration": 2,
+      "worker": 2,
+      "baseMax": 4
+    },
+    "recommendedBasePool": 2,
+    "oneWebPlusWorker": 10,
+    "twoWebAtBaseMax": 20,
+    "twoWebAtBaseMaxPlusWorker": 22,
+    "connectionEnvelope": 24,
+    "note": "Cited from the receiving owner documents on this repo base. Not a Hostinger measurement."
+  },
+  "seededRejections": [
+    {
+      "label": "empty-corpus-body",
+      "rejected": true,
+      "sqlstate": "23514"
+    },
+    {
+      "label": "negative-corpus-slot",
+      "rejected": true,
+      "sqlstate": "23514"
+    },
+    {
+      "label": "backlog-state-live",
+      "rejected": true,
+      "sqlstate": "23514"
+    }
+  ],
+  "limits": {
+    "observedMaxConnections": 24,
+    "observedSuperuserReservedConnections": 3,
+    "ownerSessionDuringFanout": 1,
+    "predictedNonSuperuserSlots": 21,
+    "predictedWhileOwnerHeld": 20,
+    "maxAcquiredOnConcurrencyAxis": 20,
+    "cappedAcquiredMin": 20,
+    "cappedAcquiredMax": 20,
+    "offeredCountsWithRefusals": [
+      32,
+      128
+    ]
+  },
+  "cells": [
+    {
+      "id": "concurrency:1",
+      "axis": "concurrency",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 1,
+      "actualUnits": 1,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 16,
+      "p50Ms": 0,
+      "p95Ms": 0,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "corpus:1",
+      "axis": "corpus",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 8,
+      "actualUnits": 8,
+      "actualBytes": 2048,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 23,
+      "p50Ms": 2,
+      "p95Ms": 2,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "backlog:1",
+      "axis": "backlog",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 4,
+      "actualUnits": 4,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 29,
+      "p50Ms": 5,
+      "p95Ms": 5,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "concurrency:8",
+      "axis": "concurrency",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 8,
+      "actualUnits": 8,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 55,
+      "p50Ms": 0,
+      "p95Ms": 1,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "corpus:8",
+      "axis": "corpus",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 64,
+      "actualUnits": 64,
+      "actualBytes": 16384,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 67,
+      "p50Ms": 5,
+      "p95Ms": 5,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "backlog:8",
+      "axis": "backlog",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 32,
+      "actualUnits": 32,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 79,
+      "p50Ms": 8,
+      "p95Ms": 11,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "concurrency:32",
+      "axis": "concurrency",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 32,
+      "actualUnits": 20,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 181,
+      "p50Ms": 0,
+      "p95Ms": 1,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "corpus:32",
+      "axis": "corpus",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 256,
+      "actualUnits": 160,
+      "actualBytes": 40960,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 182,
+      "p50Ms": 7,
+      "p95Ms": 8,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "backlog:32",
+      "axis": "backlog",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 128,
+      "actualUnits": 128,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 190,
+      "p50Ms": 15,
+      "p95Ms": 21,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "concurrency:128",
+      "axis": "concurrency",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 128,
+      "actualUnits": 20,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 536,
+      "p50Ms": 0,
+      "p95Ms": 5,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "corpus:128",
+      "axis": "corpus",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 1024,
+      "actualUnits": 160,
+      "actualBytes": 40960,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 527,
+      "p50Ms": 5,
+      "p95Ms": 6,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "backlog:128",
+      "axis": "backlog",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 512,
+      "actualUnits": 512,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 602,
+      "p50Ms": 59,
+      "p95Ms": 66,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    }
+  ],
+  "byOfferedClients": {
+    "1": {
+      "concurrency": "qualified",
+      "corpus": "qualified",
+      "backlog": "qualified"
+    },
+    "8": {
+      "concurrency": "qualified",
+      "corpus": "qualified",
+      "backlog": "qualified"
+    },
+    "32": {
+      "concurrency": "limited",
+      "corpus": "limited",
+      "backlog": "limited"
+    },
+    "128": {
+      "concurrency": "limited",
+      "corpus": "limited",
+      "backlog": "limited"
+    }
+  },
+  "admissibleOfferedClients": [
+    1,
+    8
+  ],
+  "limitedOfferedClients": [
+    32,
+    128
+  ],
+  "failedOfferedClients": [],
+  "recommendations": [
+    "Measured concurrency peak 20. max_connections 24, superuser_reserved_connections 3, owner sessions held during fanout 1, predicted non-superuser ceiling while that owner session is open 20.",
+    "Offered counts qualified on every axis: 1, 8.",
+    "Offered counts recorded as limited, with requested and actual sizes both retained: 32, 128.",
+    "Synthetic clients only. Intake for the existing SDS254 receiving owner. No branch edit and no database plan change."
+  ],
+  "recommendedNextOwner": "existing SDS254 receiving owner",
+  "artifacts": {
+    "report": "experiments/vf17-host-qualification/evidence/qualification.json",
+    "intake": "experiments/vf17-host-qualification/aggregate/sds254-owner-intake.json"
+  }
+}
