@@ -19,6 +19,7 @@ test("SPA history authority is the explicit App.tsx list, not any extensionless 
   assert.deepEqual(SPA_HISTORY_ROUTES, [
     "/",
     "/tools/ai-readiness",
+    "/tools/agent-readiness",
     "/x402",
     "/x402/seller-conformance",
     "/x402/verified",

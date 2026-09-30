@@ -36,6 +36,7 @@ import {
 const DECLARED_REACT_ROUTES = Object.freeze([
   "/",
   "/tools/ai-readiness",
+  "/tools/agent-readiness",
   "/x402",
   "/x402/seller-conformance",
   "/x402/verified",
@@ -175,7 +176,7 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
   assert.deepEqual(
     SPA_ROUTE_SHELLS.map((route) => route.path),
     [
-      "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/for-agents",
+      "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/tools/agent-readiness", "/for-agents",
       "/for-agents/record-repeat",
       "/for-agents/distribution-repair",
       "/for-agents/consumer-repeat",

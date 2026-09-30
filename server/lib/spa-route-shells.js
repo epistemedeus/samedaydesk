@@ -154,6 +154,25 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </p>
     `,
   }),
+  Object.freeze({
+    path: "/tools/agent-readiness",
+    title: "Free agent-readiness check | SameDayDesk",
+    description:
+      "Free agent-readiness check for discovery files, MCP handshake and tools/list, cross-surface identity, CORS, x402, and the agent card. Wrong-shaped documents fail closed.",
+    canonical: `${SITE_ORIGIN}/tools/agent-readiness`,
+    crawlerHtml: `
+      <h1>Can an agent actually connect?</h1>
+      <p>
+        This free check reads public discovery files, the MCP handshake and tools/list, CORS, the x402
+        manifest, and the agent card. A document that comes back in the wrong shape fails closed with
+        a stable code. It does not pay and it does not call a paid route.
+      </p>
+      <p>
+        Known hosts are scored against the 2026-09-24 structural baseline. One held-out fixture host
+        scores differently and is rejected.
+      </p>
+    `,
+  }),
   ...PUBLIC_SHELLS.map(Object.freeze),
   ...ACCOUNT_SHELLS.map(Object.freeze),
 ]);
