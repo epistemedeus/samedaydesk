@@ -98,4 +98,4 @@ node vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/v
 
 ## Activation package
 
-`server/foundry/activation/ACTIVATION.md` is the reversible checklist. `productionActivate` stays `HOLD`. The listener does not migrate, and this tree does not change hosted environment variables. Local proof is `node server/foundry/activation/cold-job.mjs`. Postdeploy classification is `node server/foundry/activation/postdeploy-accept.mjs`. `node server/foundry/activation/rollback.mjs` prints the unset-and-restart procedure and refuses `--apply`.
+`server/foundry/activation/ACTIVATION.md` is the reversible checklist. `server/foundry/activation/DELTA.md` is the production delta against the enrolled Hostinger app and its product data service. `productionActivate` stays `HOLD`. The listener does not migrate, and this tree does not change hosted environment variables. Local proof is `node server/foundry/activation/cold-job.mjs`. Postdeploy classification is `node server/foundry/activation/postdeploy-accept.mjs`. `node server/foundry/activation/rollback.mjs` prints the unset-and-restart procedure and refuses `--apply`.

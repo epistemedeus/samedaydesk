@@ -1,0 +1,10 @@
+{
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "secretsCopied": false,
+  "panelEnvRead": false,
+  "hostingerApiReread": false,
+  "hostingerChanged": false,
+  "launchedService": false,
+  "correspondenceDatabaseUrl": "postgres://db.arvmcttdegqwiwdaembr.supabase.co:5432/postgres"
+}

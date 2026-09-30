@@ -18,6 +18,17 @@ async function getJson(origin, path) {
   return { status: response.status, body: await readJson(response) };
 }
 
+async function postJson(origin, path, body) {
+  const response = await fetch(`${origin}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify(body),
+    redirect: "error",
+    signal: AbortSignal.timeout(8000),
+  });
+  return { status: response.status, body: await readJson(response) };
+}
+
 function facadeBody(body) {
   if (!body || typeof body !== "object") return null;
   return {
@@ -41,14 +52,31 @@ export async function observeOrigin(origin) {
     redirect: "error",
     signal: AbortSignal.timeout(8000),
   });
+  const mcp = await postJson(origin, "/mcp", {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: "2025-11-25",
+      capabilities: {},
+      clientInfo: { name: "sds-foundry-activation", version: "0" },
+    },
+  });
   const hz = healthz.body || {};
+  const configured = health.body?.configured || {};
   const profileId = entry.body?.profile?.profileId;
+  const serverInfo = mcp.body?.result?.serverInfo || {};
   return {
     productionActivate: PRODUCTION_ACTIVATE,
     sdsHealth: {
       status: health.status,
       service: health.body?.service ?? null,
       ok: health.body?.ok === true,
+      configured: {
+        supabase: configured.supabase,
+        stripe: configured.stripe,
+        email: configured.email,
+      },
     },
     correspondenceHealthz: {
       status: healthz.status,
@@ -68,6 +96,13 @@ export async function observeOrigin(origin) {
       hasProfile: typeof profileId === "string" && profileId.length > 0,
     },
     uploads: { status: uploads.status },
+    mcp: {
+      status: mcp.status,
+      protocolVersion: mcp.body?.result?.protocolVersion ?? null,
+      serverName: typeof serverInfo.name === "string" ? serverInfo.name : null,
+      serverVersion: typeof serverInfo.version === "string" ? serverInfo.version : null,
+      toolsCalled: false,
+    },
     publicCatalog: null,
     task: null,
     retrieval: null,

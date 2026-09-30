@@ -10,8 +10,10 @@ import pg from "pg";
 import { startDisposablePg } from "../../scripts/fixtures/disposable-pg.mjs";
 import { cases, original, task } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs";
 import { judge, requireFact } from "./classify.mjs";
+import { clientSurfaces, reusesProductDataService } from "./client-contract.mjs";
 import { assessPreconditions } from "./preconditions.mjs";
 import { observeOrigin } from "./observe.mjs";
+import { PROFILE } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
 import evidence from "./EVIDENCE.json" with { type: "json" };
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -215,14 +217,23 @@ export async function runLocalJourney() {
   const expected = cases[0].expected;
   const heldoutCase = cases[0].id;
   const pgCluster = await startDisposablePg();
+  if (reusesProductDataService(pgCluster.url)) throw fail(2, "correspondence reused product data service");
   const dir = await mkdtemp(path.join(tmpdir(), "sds-foundry-activate-"));
   const adminToken = `local-${randomBytes(18).toString("hex")}`;
   let server = null;
   const phases = {};
+  const surfaceStamps = [];
+  function rememberClient(observation, label) {
+    const surfaces = clientSurfaces(observation);
+    if (!surfaces.ok) throw fail(1, `${label} client ${surfaces.reasons.join(",")}`);
+    surfaceStamps.push(surfaces.stamp);
+    return surfaces;
+  }
   try {
     const files = await writeInputs(dir);
     server = await boot(baseEnv());
     const disabledObs = await observeOrigin(server.origin);
+    const disabledSurfaces = rememberClient(disabledObs, "disabled");
     phases.disabled = acceptPhase(disabledObs, "disabled");
     process.stderr.write("phase disabled-mount\n");
     if (phases.disabled.facts.hostedDiscovery || phases.disabled.facts.taskResult || phases.disabled.facts.durableRetrieval) {
@@ -259,6 +270,7 @@ export async function runLocalJourney() {
 
     server = await boot(optedEnv(pgCluster.url, files, adminToken));
     const discoveryObs = await observeOrigin(server.origin);
+    rememberClient(discoveryObs, "discovery");
     phases.discovery = acceptPhase(discoveryObs, "discovery");
     process.stderr.write("phase hosted-discovery\n");
     if (phases.discovery.facts.taskResult || phases.discovery.facts.durableRetrieval || phases.discovery.facts.disabledOptionalMount) {
@@ -330,6 +342,7 @@ export async function runLocalJourney() {
     const retained = await retention(pgCluster.url, candidateId);
     server = await boot(optedEnv(pgCluster.url, files, adminToken));
     const afterRestart = await observeOrigin(server.origin);
+    rememberClient(afterRestart, "retrieval");
     const visitorB = path.join(dir, "visitor-b");
     const second = await registerVisitor(server.origin, visitorB, authority);
     if (second.body?.receiver?.state !== "ready" || second.body.projectId === projectId) {
@@ -359,6 +372,7 @@ export async function runLocalJourney() {
 
     server = await boot(baseEnv());
     const rolled = await observeOrigin(server.origin);
+    rememberClient(rolled, "rollback");
     phases.rollback = acceptPhase(rolled, "disabled");
     const afterRollback = await retention(pgCluster.url, candidateId);
     const rowsRetained = afterRollback.published === 1 && afterRollback.charged >= 2 && afterRollback.projects >= 2;
@@ -381,6 +395,41 @@ export async function runLocalJourney() {
     if (preconditions.productionReady !== false || preconditions.productionActivate !== "HOLD") {
       throw fail(2, "local journey reported production ready");
     }
+    const stamp = JSON.stringify(disabledSurfaces.stamp);
+    if (surfaceStamps.length !== 4 || surfaceStamps.some((item) => JSON.stringify(item) !== stamp)) {
+      throw fail(2, "client contract changed across foundry phases");
+    }
+    const clientCompatibility = {
+      ok: true,
+      productionActivate: "HOLD",
+      productionReady: false,
+      officialMcp: { stable: true, ...disabledSurfaces.stamp.mcp },
+      productDataService: {
+        stableConfigured: true,
+        configured: disabledSurfaces.stamp.configured,
+        separateFromCorrespondence: true,
+      },
+      uploadsStatus: disabledSurfaces.stamp.uploads,
+      officialVisitorClient: {
+        program: "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs",
+        modes: ["register", "contribute", "use"],
+        visitors: 2,
+        distinctProjects: true,
+        heldoutCase,
+        outputMatched: true,
+      },
+      portableKit: {
+        profileId: PROFILE.id,
+        runtime: PROFILE.runtime,
+        version: PROFILE.version,
+        outcome: phases.task.outputOutcome,
+        matchedHeldOut: true,
+        restarted: true,
+      },
+    };
+    if (clientCompatibility.portableKit.version !== "49.0.0" || clientCompatibility.portableKit.outcome !== "observed") {
+      throw fail(1, "portable kit did not return the held-out observed result");
+    }
     return {
       ok: true,
       productionActivate: "HOLD",
@@ -390,6 +439,7 @@ export async function runLocalJourney() {
       serviceClass: "local-disposable",
       startupMigrates: false,
       schemaDropped: false,
+      clientCompatibility,
       evidence: {
         i23: evidence.i23ClientEvidence,
         receiverHead: evidence.canonicalRuntime.receiverHead,

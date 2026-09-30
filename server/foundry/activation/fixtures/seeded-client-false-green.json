@@ -1,0 +1,30 @@
+{
+  "productionActivate": "HOLD",
+  "sdsHealth": {
+    "status": 200,
+    "service": "samedaydesk",
+    "ok": true,
+    "configured": { "supabase": true, "stripe": true, "email": true }
+  },
+  "correspondenceHealthz": {
+    "status": 200,
+    "body": { "ok": false, "enabled": false, "reason": "unconfigured", "store": null }
+  },
+  "foundryReceiver": { "status": 503, "body": null },
+  "visitorEntry": { "status": 503, "hasProfile": false },
+  "uploads": { "status": 501 },
+  "mcp": {
+    "status": 200,
+    "protocolVersion": "2025-11-25",
+    "serverName": "samedaydesk-agent-tools",
+    "serverVersion": "1.2.0",
+    "toolsCalled": false
+  },
+  "task": null,
+  "retrieval": null,
+  "claims": {
+    "portableKitInterop": true,
+    "officialClientInterop": true,
+    "productionReady": true
+  }
+}

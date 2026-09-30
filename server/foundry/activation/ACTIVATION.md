@@ -96,4 +96,12 @@ node server/foundry/activation/rollback.mjs --apply
 
 The first command prints the procedure and changes nothing. The second exits 2 with `production_activate_not_hold`.
 
+## Production delta and client compatibility
+
+`DELTA.md` records the live Hostinger app: foundry unconfigured, product Supabase/Stripe/email configured, MCP initialize unchanged, correspondence URL not enrolled. `node server/foundry/activation/delta.mjs` prints that delta with `productionReady` false. `node server/foundry/activation/delta.mjs --live` remeasures the public origin and exits 1 if the snapshot drifted. Neither command reads panel environment values or copies secrets.
+
+`node server/foundry/activation/client-compat.mjs --origin https://samedaydesk.com` exits 0 only while that origin is still a disabled mount whose existing client matches the official MCP server. It does not report production activation. A claim that this health and MCP response is portable-kit interoperability exits 2.
+
+The cold job records the same client surfaces across the disabled mount, hosted discovery, restart, and rollback. The official visitor client is `visitor.mjs`. The portable kit is Wasmtime 49.0.0. Those two agree on the held-out output after the HTTP process restarts, on a private Postgres cluster, not on the product Supabase project.
+
 Root rollback, when a hosted opt-in has already happened, is: unset `FOUNDRY_HOST_OPT_IN` and the `CORRESPONDENCE_*` variables, unset the profile and key paths, and restart `node server/index.js`. Health stays the SDS check. Healthz returns `enabled: false` and `reason: unconfigured`. Do not drop `pilot_correspondence`.

@@ -1,4 +1,5 @@
 import { foundryHostOptIn, parseFoundryBodyLimit, DEFAULT_BODY_LIMIT_BYTES, FOUNDRY_OPT_IN_BODY_LIMIT_BYTES } from "../opt-in.js";
+import { reusesProductDataService } from "./client-contract.mjs";
 
 const SCHEMA = "pilot_correspondence";
 
@@ -27,6 +28,8 @@ export function assessPreconditions(env = {}, evidence = {}) {
       const parsed = new URL(url);
       if (!["postgres:", "postgresql:"].includes(parsed.protocol) || !parsed.hostname || parsed.pathname.length < 2) {
         shapeBlockers.push("database_url_not_postgres");
+      } else if (reusesProductDataService(url)) {
+        shapeBlockers.push("correspondence_reuses_product_data_service");
       }
     } catch {
       shapeBlockers.push("database_url_invalid");
