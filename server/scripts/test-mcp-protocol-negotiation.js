@@ -13,20 +13,15 @@ const LATEST_PROTOCOL = "2025-11-25";
 const APEX_SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 const EXPECTED_ANNOTATIONS = {
   check_ai_readiness: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+  check_agent_readiness: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   generate_complete_fix_pack: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   plan_taskmarket_delegation: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   browse_taskmarket_tasks: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
   track_taskmarket_task: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
 };
-const EXPECTED_TOOL_NAMES = [
-  "check_ai_readiness",
-  "generate_complete_fix_pack",
-  "plan_taskmarket_delegation",
-  "browse_taskmarket_tasks",
-  "track_taskmarket_task",
-];
-// Byte-semantic pin of the five-tool apex surface definitions.
-const FROZEN_TOOLS_BLOCK_SHA256 = "444168f9278e735cc8755a332ae554b280a7dd9aa245545110d6385aa928b4ac";
+const EXPECTED_TOOL_NAMES = [...MCP_TOOL_NAMES];
+// Byte-semantic pin of the apex tool surface definitions. Recomputed when TOOLS changes.
+const FROZEN_TOOLS_BLOCK_SHA256 = "1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e8839aeb07f357d041c14d9";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
@@ -120,7 +115,7 @@ test("negotiation echoes only the four supported versions and otherwise returns 
   assert.equal(MCP_SOURCE.includes("2999-01-01"), false);
 });
 
-test("five apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket", () => {
+test("apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket", () => {
   const toolsBlock = extractBlock(MCP_SOURCE, "const TOOLS = [", "const okMsg");
   assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
 
@@ -133,13 +128,19 @@ test("five apex tools remain listed; tools/call still serves readiness, Fix Pack
   assert.match(callBlock, /generateStarterFixPack/);
   assert.match(callBlock, /generateCompleteFixPack/);
   assert.match(callBlock, /check_ai_readiness/);
+  assert.match(callBlock, /check_agent_readiness/);
+  assert.match(callBlock, /runAgentReadinessCheck/);
   assert.match(callBlock, /plan_taskmarket_delegation/);
   assert.equal(callBlock.includes("FIXPACK_MIN_CENTS"), false);
   assert.equal(callBlock.includes("amount_total || 0) >="), false);
 
   const tools = toolsFromSource(MCP_SOURCE);
   assert.deepEqual(tools.map((tool) => tool.name), EXPECTED_TOOL_NAMES);
-  assert.equal(tools.length, 5);
+  assert.equal(tools.length, MCP_TOOL_NAMES.length);
+  const agent = tools.find((tool) => tool.name === "check_agent_readiness");
+  assert.equal(agent.annotations.readOnlyHint, true);
+  assert.equal(agent.outputSchema.required.includes("score"), true);
+  assert.equal(agent.description.startsWith("Free."), true);
 });
 
 const initializeCases = [
@@ -190,7 +191,7 @@ for (const { name, params, expected } of initializeCases) {
   });
 }
 
-test("a 2024-11-05-only client still lists five tools after initialize", async () => {
+test("a 2024-11-05-only client still lists the apex inventory after initialize", async () => {
   await initialize({
     protocolVersion: "2024-11-05",
     capabilities: {},
@@ -202,7 +203,7 @@ test("a 2024-11-05-only client still lists five tools after initialize", async (
   assert.deepEqual(json.result.tools.map((tool) => tool.name), EXPECTED_TOOL_NAMES);
 });
 
-test("tools/list exposes annotations on all five tools", async () => {
+test("tools/list exposes annotations on every apex tool", async () => {
   const { response, json } = await postMcp(rpcPayload("tools/list", {}, 7));
   assert.equal(response.status, 200);
   assert.equal(json.id, 7);

@@ -71,7 +71,7 @@ test("judge accepts the apex five, protocol 2024-11-05, and absent -32602", () =
   assert.equal(verdict.ok, true);
   assert.deepEqual(verdict.detail.actual, [...APEX_TOOLS]);
   assert.equal(verdict.detail.protocol, "2024-11-05");
-  assert.equal(verdict.detail.toolCount, 5);
+  assert.equal(verdict.detail.toolCount, APEX_TOOLS.length);
 });
 
 test("judge rejects an absent tool that is not JSON-RPC -32602", () => {
@@ -191,7 +191,7 @@ test("shipped server/index.js lists the apex five on protocol 2024-11-05", async
   assert.equal(result.json.ok, true);
   assert.equal(result.json.result.protocol, "2024-11-05");
   assert.deepEqual(result.json.result.tools, [...APEX_TOOLS]);
-  assert.equal(result.json.result.toolCount, 5);
+  assert.equal(result.json.result.toolCount, APEX_TOOLS.length);
   assert.equal(result.json.result.absentTool.errorCode, -32602);
   assert.equal(result.json.result.absentTool.jsonrpc32602, true);
   assert.equal(result.json.result.checks.negative.twentyFourToolListAccepted, false);
@@ -250,7 +250,7 @@ test("bound initialize, tools/list, and absent -32602 still pass", () => {
   const session = sessionFromProbeResponses(messages.initialize, messages.listed, messages.absent);
   assert.equal(session.protocol, "2024-11-05");
   assert.equal(session.serverInfo.name, "samedaydesk-agent-tools");
-  assert.equal(session.tools.length, 5);
+  assert.equal(session.tools.length, APEX_TOOLS.length);
   const verdict = judgeApexSession(session);
   assert.equal(verdict.ok, true);
   assert.equal(verdict.code, null);

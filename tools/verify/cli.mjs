@@ -17,7 +17,7 @@ export function usageText() {
     "  node tools/verify/cli.mjs --seeded-failure gateway-24-tool-list --json",
     "  node tools/verify/cli.mjs --seeded-failure absent-32602-wrong-id --json",
     "",
-    "Pass requires tools/list exactly the five apex tools and protocol 2024-11-05,",
+    "Pass requires tools/list exactly the apex tool inventory and protocol 2024-11-05,",
     "and an absent tools/call of JSON-RPC -32602. Each response must be JSON-RPC 2.0",
     "and echo its probe id (initialize 1, tools/list 2, absent 3). A 24-tool list is rejected.",
     "Named tools/call, cite-pilot, and non-loopback origins are refused.",

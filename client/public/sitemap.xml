@@ -79,6 +79,12 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://samedaydesk.com/agent-readiness</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html</loc>
     <lastmod>2026-06-23</lastmod>
     <changefreq>monthly</changefreq>

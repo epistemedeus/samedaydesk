@@ -462,7 +462,7 @@ test("production Express serves exact route shells, 200s every declared React ro
   assert.match(skillguard.body, /SkillGuard/);
 });
 
-test("production entrypoint redirects the apex A2A card before static and SPA routing", async (t) => {
+test("production entrypoint serves the apex A2A card from the tool inventory", async (t) => {
   const dist = mkdtempSync(join(tmpdir(), "route-shells-entrypoint-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   writeFileSync(join(dist, "index.html"), asBuiltIndex());
@@ -488,7 +488,11 @@ test("production entrypoint redirects the apex A2A card before static and SPA ro
   await waitForServer(child, `[samedaydesk] listening on :${port}`);
 
   const card = await request(port, "/.well-known/agent-card.json");
-  assert.equal(card.status, 308);
-  assert.equal(card.location, "https://agents.samedaydesk.com/.well-known/agent-card.json");
+  assert.equal(card.status, 200);
+  const body = JSON.parse(card.body);
+  const { MCP_TOOL_NAMES } = await import("../lib/mcp-tool-inventory.js");
+  assert.deepEqual(body.skills.map((skill) => skill.id), [...MCP_TOOL_NAMES]);
+  assert.equal(body.skills.some((skill) => skill.id === "check_agent_readiness"), true);
   assert.equal(card.body.includes('"skills":[]'), false);
+  assert.match(body.description, /agents\.samedaydesk\.com\/\.well-known\/agent-card\.json/);
 });

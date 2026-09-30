@@ -17,6 +17,8 @@ import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
+import agentReadinessRouter from "./routes/agent-readiness.js";
+import { apexAgentCard } from "./lib/apex-agent-card.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
@@ -105,17 +107,21 @@ app.use("/scan", scanRouter);
 // Remote (Streamable HTTP) MCP server at /mcp (before the SPA fallback).
 app.use("/mcp", mcpRouter);
 
+// Free agent-readiness page. HTML for people, JSON with ?format=json.
+app.use("/agent-readiness", agentReadinessRouter);
+
 // Domain-ownership proof for the MCP registry (lets us list the remote MCP
 // server under the com.samedaydesk namespace).
 app.get("/.well-known/mcp-registry-auth", (_req, res) =>
   res.type("text/plain").send("v=MCPv1; k=ed25519; p=j1v9MjBVY0nqrVTwoNqXomOhEAisPObP5Fnq+J7Zc88="),
 );
 
-// The maintained A2A card lives on the machine-commerce host. Keep the apex
-// discovery path stable without retaining a second, stale copy of that card.
-app.get("/.well-known/agent-card.json", (_req, res) =>
-  res.redirect(308, "https://agents.samedaydesk.com/.well-known/agent-card.json"),
-);
+// Apex skills are generated from the MCP tool inventory. The paid gateway card
+// stays on agents.samedaydesk.com and is named in the description, not copied.
+app.get("/.well-known/agent-card.json", (_req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.type("application/json").send(apexAgentCard());
+});
 
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.

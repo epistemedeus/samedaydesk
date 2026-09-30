@@ -1,4 +1,5 @@
-// Pinned apex MCP identity. The machine-commerce gateway is a different host.
+// Pinned apex MCP identity. Tool names come from the server inventory.
+import { MCP_TOOL_NAMES } from "../../../server/lib/mcp-tool-inventory.js";
 
 export const MCP_PROTOCOL = "2024-11-05";
 
@@ -9,13 +10,7 @@ export const APEX_SERVER_INFO = Object.freeze({
   version: "1.2.0",
 });
 
-export const APEX_TOOLS = Object.freeze([
-  "check_ai_readiness",
-  "generate_complete_fix_pack",
-  "plan_taskmarket_delegation",
-  "browse_taskmarket_tasks",
-  "track_taskmarket_task",
-]);
+export const APEX_TOOLS = MCP_TOOL_NAMES;
 
 // Sent only as an absent name. It must stay off APEX_TOOLS.
 export const ABSENT_TOOL_NAME = "absent_tool_not_on_apex_host";

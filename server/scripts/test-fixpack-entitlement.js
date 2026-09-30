@@ -310,13 +310,10 @@ test("MCP route still lists free readiness and TaskMarket tools", async () => {
   });
   const json = await response.json();
   const names = json.result.tools.map((tool) => tool.name);
-  assert.deepEqual(names, [
-    "check_ai_readiness",
-    "generate_complete_fix_pack",
-    "plan_taskmarket_delegation",
-    "browse_taskmarket_tasks",
-    "track_taskmarket_task",
-  ]);
+  const { MCP_TOOL_NAMES } = await import("../lib/mcp-tool-inventory.js");
+  assert.deepEqual(names, [...MCP_TOOL_NAMES]);
+  assert.equal(names.includes("check_agent_readiness"), true);
+  assert.equal(names.includes("check_ai_readiness"), true);
 });
 
 test("transient Payment Link lookup failure recovers without process restart", async () => {
