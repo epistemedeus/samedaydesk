@@ -25,6 +25,8 @@
     "test:checkout-idempotency": "node --test server/scripts/test-payment-attempt-idempotency.js server/scripts/test-checkout-http-lifecycle.js client/scripts/checkoutAttemptNavigation.test.ts",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:correspondence-mount": "node --test server/scripts/test-correspondence-mount-disabled.js server/scripts/test-correspondence-shared-host-negative.js server/scripts/test-correspondence-shared-host-accept.js server/scripts/test-correspondence-s58.js",
+    "test:earned-work-receiving": "node --test --test-concurrency=1 server/scripts/test-earned-work-receiving.js",
+    "earned-work:migrate": "node server/earned-work/migrate.mjs",
     "correspondence:migrate": "node server/foundry/install.mjs --migrate",
     "foundry:install": "node server/foundry/install.mjs --migrate --install",
     "test:foundry-host": "node --test server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js",
@@ -83,6 +85,7 @@
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
+    "@neomorphic/earned-work-host": "file:./vendor/neomorphic-earned-work-host",
     "@supabase/supabase-js": "^2.108.2",
     "express": "^5.2.1",
     "jose": "^6.2.3",

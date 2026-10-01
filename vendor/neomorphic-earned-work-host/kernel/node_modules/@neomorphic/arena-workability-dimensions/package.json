@@ -1,0 +1,27 @@
+{
+  "name": "@neomorphic/arena-workability-dimensions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Arena arm A3: eligibility / funding / effort as separate workability dimensions. Not a mixed-score pack replacement. claimAuthority defaults to none.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "workability-dimensions": "./bin/workability-dimensions.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./f01": {
+      "types": "./src/f01-bridge.d.ts",
+      "import": "./dist/f01-bridge.js",
+      "default": "./dist/f01-bridge.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning --test-concurrency=1 tests/*.test.ts",
+    "example": "node --experimental-strip-types --disable-warning=ExperimentalWarning examples/score-s282-fixtures.ts",
+    "cli": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts"
+  }
+}

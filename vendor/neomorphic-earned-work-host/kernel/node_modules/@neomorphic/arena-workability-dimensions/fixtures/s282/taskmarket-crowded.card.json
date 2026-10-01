@@ -1,0 +1,47 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-taskmarket-crowded",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:48:00.000Z",
+  "notes": "TaskMarket public tasks can show platformFeeBps=750 and high submission counts (S282 pin 87–96; later probes 92–119). Crowding is known. Win probability stays unknown. 0xabc is not a 32-byte escrow hash.",
+  "source": {
+    "name": "taskmarket",
+    "adapter": "job-card",
+    "nativeId": "taskmarket-2usdc-crowded",
+    "url": "https://api.taskmarket.dev/api/tasks",
+    "publicGetUrl": "https://api.taskmarket.dev/api/tasks",
+    "publicGetStatus": 200,
+    "sourceKind": "job_api"
+  },
+  "listing": {
+    "id": "taskmarket-2usdc-crowded",
+    "title": "TaskMarket 2 USDC public bounty",
+    "status": "OPEN",
+    "funded": true,
+    "fundingClass": "escrow",
+    "escrowTxHash": "0xabc",
+    "agentAccess": "AGENT_ALLOWED",
+    "deadlineAt": "2026-12-01T00:00:00.000Z",
+    "createdAt": "2026-09-01T00:00:00.000Z",
+    "updatedAt": "2026-09-11T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": "2",
+    "net": "1.85",
+    "feeBps": "750",
+    "asset": "USDC"
+  },
+  "competition": {
+    "submissions": 90,
+    "winnerOnly": true
+  },
+  "claim": {
+    "available": false,
+    "state": "unknown"
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}

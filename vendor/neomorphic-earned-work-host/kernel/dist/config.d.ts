@@ -1,0 +1,45 @@
+export declare const DEFAULT_CORS_ORIGIN = "https://neomorphic.io";
+export type VerifierMode = "default" | "reproduction";
+export type ReproductionConfig = {
+    root: string;
+    specPath: string;
+    executable: string;
+    timeoutMs: number;
+};
+export type ListenHost = "127.0.0.1" | "0.0.0.0" | "::1";
+export type ServiceConfig = {
+    port: number;
+    listenHost: ListenHost;
+    shutdownTimeoutMs: number;
+    ownerToken: string;
+    ownerTokenHash: string;
+    databaseUrl: string;
+    bodyLimitBytes: number;
+    rateLimitWindowMs: number;
+    rateLimitMax: number;
+    corsOrigins: string[];
+    trustProxyHops: number;
+    pgSchema: string;
+    poolMax: number;
+    verifierMode: VerifierMode;
+    reproduction: ReproductionConfig | null;
+};
+export declare const PG_SCHEMA_RE: RegExp;
+export declare const DEFAULT_PG_SCHEMA = "public";
+export declare function quoteIdent(name: string): string;
+export declare function parsePgSchema(raw: string | undefined, fallback?: string): string;
+export declare function parseDatabaseUrl(raw: string): string;
+export declare function parsePoolMax(raw: string | undefined, fallback?: number): number;
+/** Default loopback. Hostinger (or any public bind) must set 0.0.0.0 explicitly. */
+export declare function parseListenHost(raw: string | undefined): ListenHost;
+export declare function listenHostFromEnv(env: NodeJS.ProcessEnv): ListenHost;
+export declare function parseShutdownTimeoutMs(raw: string | undefined, fallback?: number): number;
+export declare function parseTrustProxyHops(raw: string | undefined): number;
+export declare function canonicalizeCorsOrigin(raw: string): string;
+export declare function parseCorsOrigins(raw: string | undefined): string[];
+export declare function allowCorsOrigin(origin: string | undefined, allowed: string[]): string | null;
+export declare function parseVerifierMode(raw: string | undefined): VerifierMode;
+export declare function parseReproductionTimeoutMs(raw: string | undefined, fallback?: number): number;
+export declare function parseReproductionConfig(env: NodeJS.ProcessEnv, mode: VerifierMode): ReproductionConfig | null;
+export declare function loadConfig(env?: NodeJS.ProcessEnv): ServiceConfig;
+export declare function assertOwner(token: string | undefined, config: ServiceConfig): void;
