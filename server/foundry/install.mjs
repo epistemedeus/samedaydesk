@@ -4,6 +4,7 @@ import { PostgresStore } from "@neomorphic/correspondence";
 import { parseMountedDatabaseUrl, parseMountedPgSchema } from "../../vendor/visitor-foundry-receiver/services/correspondence/dist/config.js";
 import { openEntryFacade, closeEntryThenBase } from "./compose.js";
 import { readPrivateJson } from "./private-files.js";
+import { REUSE_CLASS, reusesProductDataService } from "./product-isolation.js";
 
 function redact(text) {
   return String(text).replace(/postgres(?:ql)?:\/\/\S+/gi, "postgres://<redacted>");
@@ -20,6 +21,7 @@ if (!migrate) fail(1, "explicit --migrate required; the listener and worker do n
 
 const databaseUrl = process.env.CORRESPONDENCE_DATABASE_URL;
 if (!databaseUrl) fail(1, "CORRESPONDENCE_DATABASE_URL is required for namespaced migration");
+if (reusesProductDataService(databaseUrl, { supabaseUrl: process.env.SUPABASE_URL })) fail(2, REUSE_CLASS);
 
 let url;
 let schema;

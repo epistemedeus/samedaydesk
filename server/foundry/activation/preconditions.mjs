@@ -1,5 +1,5 @@
 import { foundryHostOptIn, parseFoundryBodyLimit, DEFAULT_BODY_LIMIT_BYTES, FOUNDRY_OPT_IN_BODY_LIMIT_BYTES } from "../opt-in.js";
-import { reusesProductDataService } from "./client-contract.mjs";
+import { reusesProductDataService } from "../product-isolation.js";
 
 const SCHEMA = "pilot_correspondence";
 
@@ -24,15 +24,17 @@ export function assessPreconditions(env = {}, evidence = {}) {
   const url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
   if (!url) shapeBlockers.push("database_url_absent");
   else {
-    try {
-      const parsed = new URL(url);
-      if (!["postgres:", "postgresql:"].includes(parsed.protocol) || !parsed.hostname || parsed.pathname.length < 2) {
-        shapeBlockers.push("database_url_not_postgres");
-      } else if (reusesProductDataService(url)) {
-        shapeBlockers.push("correspondence_reuses_product_data_service");
+    if (reusesProductDataService(url, { supabaseUrl: env.SUPABASE_URL })) {
+      shapeBlockers.push("correspondence_reuses_product_data_service");
+    } else {
+      try {
+        const parsed = new URL(url);
+        if (!["postgres:", "postgresql:"].includes(parsed.protocol) || !parsed.hostname || parsed.pathname.length < 2) {
+          shapeBlockers.push("database_url_not_postgres");
+        }
+      } catch {
+        shapeBlockers.push("database_url_invalid");
       }
-    } catch {
-      shapeBlockers.push("database_url_invalid");
     }
   }
   if (String(env.CORRESPONDENCE_PG_SCHEMA || "").trim() !== SCHEMA) shapeBlockers.push("schema_not_pilot_correspondence");

@@ -23,5 +23,16 @@
     "detail": "server/foundry/activation/enrolled-public.json",
     "panelEnvRead": false,
     "secretsCopied": false
+  },
+  "activationAmend": {
+    "productionActivate": "HOLD",
+    "productionReady": false,
+    "classes": [
+      "correspondence_reuses_product_data_service",
+      "host_configuration_withheld",
+      "hosted_success_without_enrolled_store",
+      "false_green_rejected"
+    ],
+    "laterRetrieval": "server/foundry/activation/LATER.md"
   }
 }

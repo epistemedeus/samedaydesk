@@ -3,6 +3,7 @@
 // No host-global CORS, no memory store outside NODE_ENV=test, no retry loop.
 import express from "express";
 import { foundryHostOptIn, parseFoundryBodyLimit } from "../foundry/opt-in.js";
+import { REUSE_CLASS, reusesProductDataService } from "../foundry/product-isolation.js";
 import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
 
@@ -33,6 +34,9 @@ export function inspectCorrespondenceEnv(env = process.env) {
   }
   const url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
   const token = String(env.CORRESPONDENCE_ADMIN_TOKEN || "").trim();
+  if (url && reusesProductDataService(url, { supabaseUrl: env.SUPABASE_URL })) {
+    return { kind: "invalid_config", detail: REUSE_CLASS };
+  }
   const store = String(env.CORRESPONDENCE_STORE || "postgres").toLowerCase();
   if (store !== "postgres" && store !== "memory") return { kind: "invalid_config", detail: "invalid store" };
   const nodeEnv = env.NODE_ENV || "production";

@@ -1,0 +1,28 @@
+{
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "launchedService": false,
+  "hostConfiguration": {
+    "FOUNDRY_HOST_OPT_IN": null,
+    "CORRESPONDENCE_DATABASE_URL": null,
+    "CORRESPONDENCE_ADMIN_TOKEN": null
+  },
+  "sdsHealth": { "status": 200, "service": "samedaydesk", "ok": true },
+  "correspondenceHealthz": {
+    "status": 200,
+    "body": { "ok": false, "enabled": false, "reason": "unconfigured", "store": null }
+  },
+  "foundryReceiver": { "status": 503, "body": null },
+  "visitorEntry": { "status": 503, "hasProfile": false },
+  "uploads": { "status": 501 },
+  "task": null,
+  "retrieval": null,
+  "claims": {
+    "disabledOptionalMount": false,
+    "hostedDiscovery": true,
+    "taskResult": true,
+    "durableRetrieval": true,
+    "launchedService": true,
+    "productionReady": true
+  }
+}

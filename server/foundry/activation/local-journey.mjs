@@ -1,7 +1,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { randomBytes } from "node:crypto";
-import { chmod, copyFile, mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { chmod, copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -11,6 +11,7 @@ import { startDisposablePg } from "../../scripts/fixtures/disposable-pg.mjs";
 import { cases, original, task } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs";
 import { judge, requireFact } from "./classify.mjs";
 import { clientSurfaces, reusesProductDataService } from "./client-contract.mjs";
+import { judgeHostLaunch } from "./host-config.mjs";
 import { assessPreconditions } from "./preconditions.mjs";
 import { observeOrigin } from "./observe.mjs";
 import { PROFILE } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
@@ -22,6 +23,26 @@ const preload = path.join(repoRoot, "server/scripts/fixtures/hosted-startup-prel
 const visitor = path.join(receiverRoot, "scripts/visitor-foundry/integration/entry/visitor.mjs");
 const acceptCli = fileURLToPath(new URL("./postdeploy-accept.mjs", import.meta.url));
 const falseGreen = fileURLToPath(new URL("./fixtures/seeded-false-green.json", import.meta.url));
+const productReuse = fileURLToPath(new URL("./fixtures/seeded-product-reuse.json", import.meta.url));
+const secretMetadata = fileURLToPath(new URL("./fixtures/seeded-secret-metadata.json", import.meta.url));
+const hostWithhold = fileURLToPath(new URL("./fixtures/seeded-host-withhold.json", import.meta.url));
+const unenrolledSuccess = fileURLToPath(new URL("./fixtures/seeded-unenrolled-hosted-success.json", import.meta.url));
+const deltaCli = fileURLToPath(new URL("./delta.mjs", import.meta.url));
+const REQUIRED_TABLES = [
+  "correspondence_projects",
+  "correspondence_grants",
+  "correspondence_events",
+  "correspondence_idempotency",
+  "correspondence_vf02_work_cells",
+  "correspondence_vf04_candidates",
+  "correspondence_vf04_publications",
+  "correspondence_vf04_invocations",
+  "correspondence_vf04_packages",
+  "correspondence_vf10_installation",
+  "correspondence_vf10_registrations",
+  "correspondence_vf12_host",
+  "correspondence_vf12_admissions",
+];
 const runtimePython = path.join(receiverRoot, "scripts/visitor-foundry/execution/.runtime/bin/python");
 
 export function redact(text) {
@@ -84,6 +105,7 @@ async function boot(env) {
     child.once("exit", (code) => { clearTimeout(timer); reject(fail(1, `server exited ${code}: ${stderr}`)); });
   });
   return {
+    port: message.port,
     origin: `http://127.0.0.1:${message.port}`,
     async stop() {
       if (child.exitCode !== null || child.signalCode !== null) return child.exitCode;
@@ -96,6 +118,10 @@ async function boot(env) {
       return code;
     },
   };
+}
+
+export async function bootFoundryServer(env) {
+  return boot(env);
 }
 
 async function writeInputs(dir) {
@@ -166,18 +192,26 @@ async function retention(databaseUrl, candidateId) {
   const client = new pg.Client({ connectionString: databaseUrl });
   await client.connect();
   try {
+    const tables = await client.query(
+      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'pilot_correspondence'",
+    );
+    const present = new Set(tables.rows.map((row) => row.table_name));
+    const missingTables = REQUIRED_TABLES.filter((name) => !present.has(name));
     const row = await client.query(
       `SELECT
          (SELECT charged FROM pilot_correspondence.correspondence_vf10_installation) AS charged,
          (SELECT count(*)::int FROM pilot_correspondence.correspondence_projects) AS projects,
          (SELECT count(*)::int FROM pilot_correspondence.correspondence_vf04_publications
-           WHERE state = 'published' AND candidate_id = $1) AS published`,
+           WHERE state = 'published' AND candidate_id = $1) AS published,
+         (SELECT count(*)::int FROM pilot_correspondence.correspondence_vf12_admissions) AS admissions`,
       [candidateId],
     );
     return {
       charged: row.rows[0].charged,
       projects: row.rows[0].projects,
       published: row.rows[0].published,
+      admissions: row.rows[0].admissions,
+      missingTables,
     };
   } finally {
     await client.end();
@@ -190,17 +224,20 @@ function acceptPhase(observation, requirement) {
   return { requirement, exitCode: judged.exitCode, code: judged.code, facts: judged.facts };
 }
 
-function seededFalseGreen() {
-  const ran = spawnSync(process.execPath, [acceptCli, "--fixture", falseGreen], {
+function seededCommand(script, fixture, code, reason) {
+  const ran = spawnSync(process.execPath, [script, "--fixture", fixture], {
     encoding: "utf8",
     cwd: repoRoot,
   });
   let body = null;
   try { body = JSON.parse(ran.stdout); } catch { body = null; }
-  if (ran.status !== 2 || body?.code !== "false_green_rejected") {
-    throw fail(1, `seeded false green was not rejected: exit ${ran.status}`);
+  if (ran.stdout.includes("not-a-real-secret") || ran.stderr.includes("not-a-real-secret")) {
+    throw fail(1, "seeded negative printed secret material");
   }
-  return { exitCode: ran.status, code: body.code, reason: body.reason };
+  if (ran.status !== 2 || body?.code !== code || (reason && body?.reason !== reason) || body?.productionReady === true || body?.productionActivate !== "HOLD") {
+    throw fail(1, `seeded ${code} was not rejected: exit ${ran.status} ${body?.code || ""}`);
+  }
+  return { exitCode: ran.status, code: body.code, reason: body.reason, productionActivate: body.productionActivate, productionReady: false };
 }
 
 export async function runLocalJourney() {
@@ -212,8 +249,21 @@ export async function runLocalJourney() {
     });
     if (setup.status !== 0) throw fail(1, `wasmtime runtime setup failed: ${redact(setup.stderr || "")}`);
   }
-  const seeded = seededFalseGreen();
-  process.stderr.write("phase seeded-false-green rejected\n");
+  const seeded = {
+    falseGreen: seededCommand(acceptCli, falseGreen, "false_green_rejected", "durable_claim_without_retrieval"),
+    productReuse: seededCommand(deltaCli, productReuse, "correspondence_reuses_product_data_service"),
+    secretMetadata: seededCommand(deltaCli, secretMetadata, "false_green_rejected", "secret_material"),
+    hostWithhold: seededCommand(acceptCli, hostWithhold, "host_configuration_withheld"),
+    unenrolled: seededCommand(acceptCli, unenrolledSuccess, "hosted_success_without_enrolled_store"),
+  };
+  process.stderr.write("phase seeded-negatives rejected\n");
+  const catalog = JSON.parse(await readFile(new URL("../../../client/public/for-agents/useful-jobs/catalog.json", import.meta.url), "utf8"));
+  if (catalog.jobs?.[0]?.id !== "lockfile-pin-delta") throw fail(1, "useful job catalog missing lockfile-pin-delta");
+  const dirtyPages = spawnSync("git", ["diff", "--name-only", "--", "client/src/data/machineEntry.mjs", "client/src/data/usefulJobsKit.json", "client/public/for-agents/useful-jobs/catalog.json", "client/public/discovery/useful-jobs.json", "client/src/pages"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  if (dirtyPages.stdout.trim()) throw fail(2, "human pages changed");
   const expected = cases[0].expected;
   const heldoutCase = cases[0].id;
   const pgCluster = await startDisposablePg();
@@ -235,6 +285,15 @@ export async function runLocalJourney() {
     const disabledObs = await observeOrigin(server.origin);
     const disabledSurfaces = rememberClient(disabledObs, "disabled");
     phases.disabled = acceptPhase(disabledObs, "disabled");
+    const launch = judgeHostLaunch({
+      ...disabledObs,
+      claims: { hostedDiscovery: true, launchedService: true, productionReady: true, durableRetrieval: true },
+    }, baseEnv());
+    if (!launch.rejected || launch.code !== "host_configuration_withheld" || launch.productionReady !== false) {
+      throw fail(2, "disabled mount did not withhold launch");
+    }
+    phases.disabled.launchWithheld = true;
+    phases.disabled.missing = launch.missing;
     process.stderr.write("phase disabled-mount\n");
     if (phases.disabled.facts.hostedDiscovery || phases.disabled.facts.taskResult || phases.disabled.facts.durableRetrieval) {
       throw fail(2, "disabled mount classified as foundry success");
@@ -375,13 +434,25 @@ export async function runLocalJourney() {
     rememberClient(rolled, "rollback");
     phases.rollback = acceptPhase(rolled, "disabled");
     const afterRollback = await retention(pgCluster.url, candidateId);
-    const rowsRetained = afterRollback.published === 1 && afterRollback.charged >= 2 && afterRollback.projects >= 2;
-    if (!rowsRetained) throw fail(1, "rollback dropped correspondence rows");
+    const rowsRetained = afterRollback.published === 1
+      && afterRollback.charged >= 2
+      && afterRollback.projects >= 2
+      && afterRollback.admissions >= 2
+      && afterRollback.missingTables.length === 0;
+    if (!rowsRetained) {
+      throw fail(1, `rollback dropped correspondence rows missing=${afterRollback.missingTables.join(",")} published=${afterRollback.published} projects=${afterRollback.projects} charged=${afterRollback.charged} admissions=${afterRollback.admissions}`);
+    }
     if (phases.rollback.facts.hostedDiscovery || phases.rollback.facts.durableRetrieval) {
       throw fail(2, "rolled-back mount still serves foundry success");
     }
     phases.rollback.rowsRetained = true;
     phases.rollback.schemaDropped = false;
+    phases.rollback.requiredTablesPresent = true;
+    phases.rollback.missingTables = [];
+    phases.rollback.published = afterRollback.published;
+    phases.rollback.projects = afterRollback.projects;
+    phases.rollback.charged = afterRollback.charged;
+    phases.rollback.admissions = afterRollback.admissions;
     phases.rollback.httpServesFoundry = false;
     process.stderr.write("phase rollback-disabled\n");
     await server.stop();
@@ -455,7 +526,32 @@ export async function runLocalJourney() {
         destructiveDownMigration: false,
         schema: preconditions.schema,
       },
-      seededFalseGreen: seeded,
+      seededFalseGreen: seeded.falseGreen,
+      seededNegatives: seeded,
+      hostConfigurationWithheld: phases.disabled.launchWithheld === true,
+      rollback: {
+        schemaDropped: false,
+        requiredTablesPresent: true,
+        rowsRetained: true,
+        productionActivate: "HOLD",
+        productionReady: false,
+      },
+      hostedUsefulJob: {
+        path: "/for-agents/useful-jobs/catalog.json",
+        jobId: catalog.jobs[0].id,
+        privatePortableCase: heldoutCase,
+        retrievedAfterRestart: true,
+        visitorOutputMatched: true,
+        wasmtimeVersion: PROFILE.version,
+        humanPagesChanged: false,
+        productionActivate: "HOLD",
+        productionReady: false,
+        becomesTrueOnlyAfterRootActivation: [
+          "public_correspondence_healthz_enabled",
+          "public_foundry_facade",
+          "public_visitor_restart_retrieval_on_enrolled_store",
+        ],
+      },
       phases,
       demonstrated: {
         disabledOptionalMount: phases.disabled.facts.disabledOptionalMount === true && phases.rollback.facts.disabledOptionalMount === true,

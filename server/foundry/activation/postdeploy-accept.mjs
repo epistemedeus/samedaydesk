@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
 import { judge, requireFact } from "./classify.mjs";
+import { judgeHostLaunch, judgeUnenrolledHostedSuccess } from "./host-config.mjs";
 import { observeOrigin } from "./observe.mjs";
 
 function argument(name) {
@@ -32,5 +33,9 @@ if (fixture) {
   observation = await observeOrigin(origin);
 }
 
+const withheld = judgeHostLaunch(observation);
+if (withheld.rejected) emit(withheld);
+const unenrolled = judgeUnenrolledHostedSuccess(observation);
+if (unenrolled.rejected) emit(unenrolled);
 if (requireName) emit(requireFact(observation, requireName));
 emit(judge(observation));

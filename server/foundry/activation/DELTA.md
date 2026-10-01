@@ -34,7 +34,7 @@ The cited Hostinger build, from the SDS261 acceptance record and not reread by t
 5. Set these names on the existing Hostinger app, then restart `node server/index.js`: `FOUNDRY_HOST_OPT_IN`, `CORRESPONDENCE_DATABASE_URL`, `CORRESPONDENCE_ADMIN_TOKEN`, `CORRESPONDENCE_PG_SCHEMA`, `CORRESPONDENCE_POOL_MAX`, `CORRESPONDENCE_STORE`, `CORRESPONDENCE_TRUST_PROXY`, `CORRESPONDENCE_CORS_ORIGINS`, `CORRESPONDENCE_BODY_LIMIT_BYTES`, `FOUNDRY_HOST_PROFILE_FILE`, `FOUNDRY_PARTICIPATION_KEY_FILE`.
 6. Leave `FOUNDRY_PRODUCTION_ACTIVATE` unset or `HOLD`. Leave `SUPABASE_*`, `STRIPE_*`, `RESEND_*`, and `PULSE_TOKEN` as they are.
 
-A health body, an MCP initialize, or a configured Supabase flag is not a foundry task result and is not production activation.
+A health body, an MCP initialize, a public useful-jobs catalog, or a configured Supabase flag is not a foundry task result and is not production activation. Correspondence must not reuse the product Supabase project. That rejection class is `correspondence_reuses_product_data_service`. Missing `FOUNDRY_HOST_OPT_IN`, `CORRESPONDENCE_DATABASE_URL`, or `CORRESPONDENCE_ADMIN_TOKEN` withholds launch claims (`host_configuration_withheld`). `LATER.md` lists what the public useful-jobs path already returns, and what the hosted foundry returns only after Root activation.
 
 ## Client compatibility while that is pending
 

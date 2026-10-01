@@ -33,6 +33,8 @@
     "foundry:client-compat": "node server/foundry/activation/client-compat.mjs",
     "foundry:accept": "node server/foundry/activation/postdeploy-accept.mjs",
     "foundry:cold": "node server/foundry/activation/cold-job.mjs",
+    "foundry:negatives": "node server/foundry/activation/real-store-negatives.mjs --case prove",
+    "foundry:later": "node server/foundry/activation/later-retrieval.mjs",
     "foundry:rollback": "node server/foundry/activation/rollback.mjs",
     "foundry:migrate": "node server/foundry/migrate.mjs --apply",
     "foundry:probe": "node server/foundry/probe.mjs",

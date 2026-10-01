@@ -36,7 +36,7 @@ Shape required before Root opts in, checked by `assessPreconditions` without pri
 | Private profile | set for the installer only |
 | Installer evidence | `{ installed: true, schema: "pilot_correspondence", startupMigrates: false }` |
 
-A complete shape still leaves `productionReady` false.
+A complete shape still leaves `productionReady` false. A correspondence URL that contains the product Supabase project ref, matches `SUPABASE_URL`, or sets `reusedForCorrespondence` is class `correspondence_reuses_product_data_service`. The installer, the worker, and the mount refuse that URL before opening a connection. Missing `FOUNDRY_HOST_OPT_IN`, `CORRESPONDENCE_DATABASE_URL`, or `CORRESPONDENCE_ADMIN_TOKEN` is class `host_configuration_withheld` and cannot support a launch claim. A launch claim without an enrolled real store is class `hosted_success_without_enrolled_store`.
 
 Serving process after that evidence exists:
 
@@ -83,7 +83,11 @@ On this machine, before any hosted change:
 node server/foundry/activation/cold-job.mjs
 ```
 
-The command starts a private PostgreSQL 16 cluster, boots `node server/index.js`, proves the disabled mount, runs the installer, proves hosted discovery, runs one cold visitor contribution and portable invocation, restarts the HTTP process, proves a second visitor still receives that output, then boots again with foundry variables unset. The schema is not dropped. The receipt has `productionActivate: "HOLD"`, `productionReady: false`, `hostingerMeasured: false`, and `launchedService: false`. The same command rejects `fixtures/seeded-false-green.json` before Postgres starts.
+The command starts a private PostgreSQL 16 cluster, boots `node server/index.js`, proves the disabled mount, runs the installer, proves hosted discovery, runs one cold visitor contribution and portable invocation, restarts the HTTP process, proves a second visitor still receives that output, then boots again with foundry variables unset. The schema is not dropped. The receipt has `productionActivate: "HOLD"`, `productionReady: false`, `hostingerMeasured: false`, and `launchedService: false`. The same command rejects seeded false-green, product-data reuse, secret metadata, host-configuration withhold, and unenrolled-store claims before Postgres starts. After rollback it checks that the required `pilot_correspondence` tables and the published, project, charged, and admission rows are still present.
+
+`node server/foundry/activation/real-store-negatives.mjs --case prove` exits 0 only when every negative case itself exits 2. Direct cases include `--case product-reuse-runtime`, `--case host-withhold`, and `--case unenrolled-store`. None of them print a database URL or the seeded password.
+
+`server/foundry/activation/LATER.md` states which useful-jobs retrieval is already true, and which foundry facts become true only after Root activation. `node server/foundry/activation/later-retrieval.mjs` re-reads the live catalog and the human page.
 
 The portable worker uses the pinned Wasmtime 49.0.0 interpreter installed by `vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/setup-runtime.py` into the gitignored `.runtime` directory.
 

@@ -22,7 +22,19 @@ try {
     && compat.officialVisitorClient?.distinctProjects === true
     && compat.portableKit?.matchedHeldOut === true
     && compat.portableKit?.restarted === true
-    && compat.portableKit?.version === "49.0.0";
+    && compat.portableKit?.version === "49.0.0"
+    && receipt.hostConfigurationWithheld === true
+    && receipt.rollback?.schemaDropped === false
+    && receipt.rollback?.requiredTablesPresent === true
+    && receipt.rollback?.rowsRetained === true
+    && receipt.hostedUsefulJob?.retrievedAfterRestart === true
+    && receipt.hostedUsefulJob?.jobId === "lockfile-pin-delta"
+    && receipt.hostedUsefulJob?.humanPagesChanged === false
+    && receipt.hostedUsefulJob?.productionReady === false
+    && receipt.seededNegatives?.productReuse?.code === "correspondence_reuses_product_data_service"
+    && receipt.seededNegatives?.hostWithhold?.code === "host_configuration_withheld"
+    && receipt.seededNegatives?.unenrolled?.code === "hosted_success_without_enrolled_store"
+    && receipt.seededNegatives?.secretMetadata?.reason === "secret_material";
   if (receipt.ok !== true || receipt.productionActivate !== "HOLD" || receipt.productionReady !== false || !proved) {
     process.exit(receipt.ok === true ? 1 : 2);
   }

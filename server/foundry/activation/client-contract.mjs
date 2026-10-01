@@ -1,7 +1,21 @@
 import { factsFrom } from "./classify.mjs";
+import { judgeHostLaunch, judgeUnenrolledHostedSuccess } from "./host-config.mjs";
+import {
+  correspondenceReuseSignals,
+  isolationSignals,
+  PRODUCT_DATA_HOST,
+  PRODUCT_DATA_PROJECT_REF,
+  REUSE_CLASS,
+  reusesProductDataService,
+} from "../product-isolation.js";
 
-export const PRODUCT_DATA_PROJECT_REF = "arvmcttdegqwiwdaembr";
-export const PRODUCT_DATA_HOST = `${PRODUCT_DATA_PROJECT_REF}.supabase.co`;
+export {
+  isolationSignals,
+  PRODUCT_DATA_HOST,
+  PRODUCT_DATA_PROJECT_REF,
+  REUSE_CLASS,
+  reusesProductDataService,
+};
 export const OFFICIAL_MCP = Object.freeze({
   protocolVersion: "2025-11-25",
   serverName: "samedaydesk-agent-tools",
@@ -19,11 +33,12 @@ const SECRET_PATTERNS = [
   /sb_secret_/i,
 ];
 
-function rejected(reason) {
+function rejected(reason, code = "false_green_rejected") {
   return {
     ok: false,
     exitCode: 2,
-    code: "false_green_rejected",
+    code,
+    class: code,
     reason,
     productionActivate: "HOLD",
     productionReady: false,
@@ -41,18 +56,8 @@ export function findSecret(value) {
   return false;
 }
 
-export function reusesProductDataService(databaseUrl) {
-  const text = String(databaseUrl || "").trim();
-  return text.length > 0 && text.includes(PRODUCT_DATA_PROJECT_REF);
-}
-
 export function correspondenceReuse(metadata) {
-  const candidates = [
-    metadata?.correspondenceDatabaseUrl,
-    metadata?.correspondenceDataService?.url,
-    metadata?.env?.CORRESPONDENCE_DATABASE_URL,
-  ];
-  return candidates.some((item) => reusesProductDataService(item));
+  return correspondenceReuseSignals(metadata);
 }
 
 export function clientSurfaces(observation) {
@@ -126,13 +131,14 @@ export function validateMetadata(metadata) {
   if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return rejected("metadata_missing");
   if (findSecret(metadata) || metadata.secretsCopied === true) return rejected("secret_material");
   if (metadata.productionActivate !== "HOLD") return rejected("production_activate_not_hold");
+  const reuse = correspondenceReuse(metadata);
+  if (reuse.length) return { ...rejected(REUSE_CLASS, REUSE_CLASS), signals: reuse };
   if (metadata.productionReady === true || metadata.hostingerChanged === true || metadata.launchedService === true) {
     return rejected("production_ready_claim");
   }
   if (metadata.hostingerApiReread === true || metadata.citedBuild?.apiReread === true || metadata.panelEnvRead === true) {
     return rejected("panel_read_not_evidenced");
   }
-  if (correspondenceReuse(metadata)) return rejected("correspondence_reuses_product_data_service");
   return null;
 }
 
@@ -148,6 +154,12 @@ function interopEarned(observation, surfaces) {
 
 export function judgeClient(observation) {
   if (findSecret(observation)) return rejected("secret_material");
+  const withheld = judgeHostLaunch(observation);
+  if (withheld.rejected) return withheld;
+  const unenrolled = judgeUnenrolledHostedSuccess(observation);
+  if (unenrolled.rejected) return unenrolled;
+  const reuse = correspondenceReuse(observation);
+  if (reuse.length) return { ...rejected(REUSE_CLASS, REUSE_CLASS), signals: reuse };
   if (!observation || observation.productionActivate !== "HOLD") return rejected("production_activate_not_hold");
   if (observation.productionReady === true) return rejected("production_ready_claim");
   const surfaces = clientSurfaces(observation);
