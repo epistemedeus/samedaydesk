@@ -18,6 +18,14 @@ The cold job records visitor A's canonical readback and stdout on the task, then
 
 Wrong candidate id, wrong generation, wrong manifest, wrong content, wrong module digest, canned `sampleOutput`, mismatched observation id, an invocation that is not the canonical envelope, and equal output with no readback. `fixtures/seeded-unbound-task.json` claims `taskResult` without a readback and exits 2 `task_claim_without_result`. A bound task that has not restarted still exits 0 for `--require task` and fails `--require durable`.
 
+## Measured on this amend
+
+`npm run foundry:cold` exited 0. Visitor A task acceptance exited 0 with `taskResult` true and `durableRetrieval` false. After the HTTP restart, visitor B's durable acceptance exited 0 with both true. The later readback selected candidate `candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546`, generation 1, manifest `sha256:ad300dc8fc60bd865447116966a8f4239d1124c98cfae317ef3f34775c8f7bec`. Wasmtime was `49.0.0`, held-out case `case:project-created`, outcome `observed`. Rollback kept the schema and the published row. The seeded unbound task inside that command exited 2 `task_claim_without_result`.
+
+`node server/foundry/activation/postdeploy-accept.mjs --fixture server/foundry/activation/fixtures/seeded-unbound-task.json --require task` exited 2. `hostedDiscovery` was true, `taskResult` was false, and `durableRetrieval` was false.
+
+`node server/foundry/activation/delta.mjs --live` exited 0 with `liveAgrees` true, `currentPublicState` `disabled_optional_mount`, and `activationPackageOnMain` false. `client-compat.mjs --origin https://samedaydesk.com` exited 0 as `public_client_compatible_foundry_inactive`.
+
 ## Host delta
 
 This amend does not set Hostinger variables, enroll a correspondence Postgres URL, migrate production, restart the hosted process, or change routes, copy, or prices. The public mount remains the disabled optional mount in `DELTA.md`. Root still authorizes a separate Postgres URL, runs `server/foundry/install.mjs`, sets the serving names, and restarts `node server/index.js`. `FOUNDRY_PRODUCTION_ACTIVATE` stays unset or `HOLD`.
