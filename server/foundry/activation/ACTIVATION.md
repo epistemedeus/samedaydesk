@@ -64,8 +64,8 @@ Restart `node server/index.js`. Do not mount the raw correspondence app over the
 | --- | --- | --- |
 | Disabled optional mount | `GET /api/health` is 200 `samedaydesk`, and `GET /api/correspondence/healthz` is `enabled: false` with reason exactly `unconfigured`. `invalid_config` and `store_unavailable` are degraded misses | A 200 health body, a degraded reason, or a public catalog response |
 | Hosted discovery | Healthz is `enabled: true` and `store: postgres`. The facade is opt-in (`facade: true`, `rawMounted: false`, `publicExecution: false`). Its `schema` value `pilot_correspondence` is the database namespace, not the wire schema. `GET /api/correspondence/v1/visitor-entry` validates as `neomorphic.foundry.entry.v1` with contribution binding `neomorphic.foundry.entry-receiver-binding.v1`. Uploads stay 501 | Healthz alone, a profile id, or `/for-agents` |
-| Successful task result | Discovery is true, a candidate is published, and the invocation envelope is `neomorphic.foundry.invocation.v1` for a `neomorphic.foundry.capability-request.v1` whose output equals the held-out portable result | Discovery, or a copy of the health JSON |
-| Durable retrieval | After the HTTP process restarts, visitor B's canonical invocation readback binds manifest, target, task, and content identity to the candidate visitor A contributed | A retained publication row plus equal output |
+| Successful task result | Discovery is true, the candidate is published, and `task.readback` selects that candidate: generation, manifest, content, module digest, request, Wasmtime sample status `ok`, sample output, and observation id. `task.invocation` is that canonical envelope, and its output equals the held-out portable result. When `task.clientWire` is present, that stdout invocation is the same envelope | Equal portable output, a request-matching invocation from another candidate or module, a canned sample, or a mismatched observation id |
+| Durable retrieval | The task result above is true, the HTTP process has restarted, the database survived, and visitor B's own canonical readback selects the same contributed candidate. When visitor B's stdout is present, it selects that later readback | A bound task result from before the restart, a retained publication row, or equal output from a different candidate |
 
 ```sh
 node server/foundry/activation/postdeploy-accept.mjs --fixture server/foundry/activation/fixtures/seeded-false-green.json
@@ -73,7 +73,7 @@ node server/foundry/activation/postdeploy-accept.mjs --origin http://127.0.0.1:<
 node server/foundry/activation/postdeploy-accept.mjs --origin http://127.0.0.1:<port> --require discovery
 ```
 
-`--require task` and `--require durable` need the task and retrieval fields recorded by the cold job. A health GET cannot satisfy them.
+`--require task` needs the cold job's task fields, including `task.readback`. Equal output without that readback exits nonzero. `--require durable` additionally needs the restarted retrieval readback. A health GET cannot satisfy either.
 
 ## Local cold job
 

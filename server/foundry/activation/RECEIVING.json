@@ -17,6 +17,7 @@
   "findings": {
     "A-01": "Only reason unconfigured is a successful disabled mount. invalid_config and store_unavailable exit 1 as degraded_mount.",
     "A-02": "Visitor use selects the contributed candidate. Equal output without that candidate, or without the Wasmtime sample, is not durable retrieval.",
+    "A-06": "taskResult requires the same candidate, generation, manifest, content, module, request, Wasmtime sample, and observation binding as durable retrieval. Equal output with a wrong candidate or module is not a task result. Restart remains a separate later fact.",
     "A-03": "Visitor entry, contribution binding, request, and invocation use the pinned receiver schemas. pilot_correspondence is the database namespace and fails as a wire schema.",
     "A-04": "Opaque nested credential names are rejected as secret_material and are not copied into the command output.",
     "A-05": "stableConfigured is the comparison with the enrolled true/true/true baseline. Local evidence uses non-secret stubs. Each true-to-false change fails on its own. Product-data reuse is refused before connect."
@@ -65,6 +66,16 @@
       "PULSE_TOKEN"
     ],
     "rollback": "node server/foundry/activation/rollback.mjs"
+  },
+  "amendment": {
+    "id": "FOUNDRY-BOUND-EXECUTION-100102",
+    "review": "control/review-returns/COHORT6-RECEIVING-093121.md",
+    "reviewedHead": "ccd685d028ae05cb6936e2d9e95f8d087110004f",
+    "finding": "classify.mjs taskResult was true for equal portable output and a request-matching invocation when invocationSelectsCandidate was false.",
+    "fix": "taskResult requires task.readback to select the contributed candidate and requires task.invocation to be that canonical envelope. task.clientWire and retrieval.clientWire are checked when present. durableRetrieval still requires process restart, database survival, and a later readback that selects the same candidate.",
+    "hostDelta": "productionActivate stays HOLD. No Hostinger variable, migration, or process restart is performed. The public mount stays disabled until Root enrolls a separate Postgres URL.",
+    "productionActivate": "HOLD",
+    "hostingerChanged": false
   },
   "unresolved": [
     "No separate correspondence Postgres URL is enrolled.",

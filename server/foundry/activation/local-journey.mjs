@@ -30,6 +30,7 @@ const secretMetadata = fileURLToPath(new URL("./fixtures/seeded-secret-metadata.
 const secretNested = fileURLToPath(new URL("./fixtures/seeded-secret-nested-opaque.json", import.meta.url));
 const hostWithhold = fileURLToPath(new URL("./fixtures/seeded-host-withhold.json", import.meta.url));
 const unenrolledSuccess = fileURLToPath(new URL("./fixtures/seeded-unenrolled-hosted-success.json", import.meta.url));
+const unboundTask = fileURLToPath(new URL("./fixtures/seeded-unbound-task.json", import.meta.url));
 const deltaCli = fileURLToPath(new URL("./delta.mjs", import.meta.url));
 const REQUIRED_TABLES = [
   "correspondence_projects",
@@ -355,6 +356,7 @@ export async function runLocalJourney() {
     secretNested: seededCommand(deltaCli, secretNested, "false_green_rejected", "secret_material"),
     hostWithhold: seededCommand(acceptCli, hostWithhold, "host_configuration_withheld"),
     unenrolled: seededCommand(acceptCli, unenrolledSuccess, "hosted_success_without_enrolled_store"),
+    unboundTask: seededCommand(acceptCli, unboundTask, "false_green_rejected", "task_claim_without_result"),
   };
   process.stderr.write("phase seeded-negatives rejected\n");
   const catalog = JSON.parse(await readFile(new URL("../../../client/public/for-agents/useful-jobs/catalog.json", import.meta.url), "utf8"));
@@ -499,6 +501,8 @@ export async function runLocalJourney() {
         expected,
         request: useRequest,
         invocation: contributedRow.invocation,
+        readback: contributedRow,
+        clientWire: usedWire,
       },
       retrieval: null,
     };
@@ -528,7 +532,7 @@ export async function runLocalJourney() {
       taskId: useRequest.taskId,
       candidateId,
     });
-    clientWire(retrieved.stdout, readback, useRequest, candidateId, "visitor B");
+    const retrievedWire = clientWire(retrieved.stdout, readback, useRequest, candidateId, "visitor B");
     const still = await retention(pgCluster.url, candidateId);
     const retrievalObs = {
       ...afterRestart,
@@ -538,6 +542,7 @@ export async function runLocalJourney() {
         databaseSurvived: still.published === 1 && still.charged >= 1 && still.projects >= 1,
         output: readback.invocation.output,
         readback,
+        clientWire: retrievedWire,
       },
     };
     phases.retrieval = {

@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { hash } from "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/contracts.mjs";
@@ -26,10 +28,22 @@ const accept = fileURLToPath(new URL("../foundry/activation/postdeploy-accept.mj
 const rollback = fileURLToPath(new URL("../foundry/activation/rollback.mjs", import.meta.url));
 const falseGreen = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-false-green.json", import.meta.url));
 const noRestart = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-task-without-restart.json", import.meta.url));
+const unboundTask = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-unbound-task.json", import.meta.url));
 const disabled = fileURLToPath(new URL("../foundry/activation/fixtures/disabled-mount.json", import.meta.url));
 
 function cli(script, args) {
   return spawnSync(process.execPath, [script, ...args], { encoding: "utf8" });
+}
+
+function requireCli(observation, requirement) {
+  const dir = mkdtempSync(path.join(tmpdir(), "foundry-task-"));
+  const file = path.join(dir, "observation.json");
+  writeFileSync(file, JSON.stringify(observation));
+  try {
+    return cli(accept, ["--fixture", file, "--require", requirement]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 function canonicalEntry() {
@@ -110,6 +124,16 @@ function readbackFor(task, candidateId, contentHex) {
   };
 }
 
+function boundTask(candidateId = "candidate:original", contentHex = "ab") {
+  const task = portableTask(candidateId);
+  const readback = readbackFor(task, candidateId, contentHex);
+  return { ...task, invocation: readback.invocation, readback };
+}
+
+function observationWith(task, retrieval = null) {
+  return { ...discovery, task, retrieval };
+}
+
 const discovery = {
   productionActivate: "HOLD",
   sdsHealth: { status: 200, service: "samedaydesk", ok: true },
@@ -187,7 +211,7 @@ test("classifier keeps the four states distinct", () => {
   assert.equal(found.taskResult, false);
   assert.equal(found.disabledOptionalMount, false);
 
-  const earned = portableTask("candidate:original");
+  const earned = boundTask();
   const taskOnly = factsFrom({
     ...discovery,
     task: earned,
@@ -214,7 +238,7 @@ test("classifier keeps the four states distinct", () => {
       processRestarted: true,
       databaseSurvived: true,
       output: portable,
-      readback: readbackFor(earned, "candidate:original", "ab"),
+      readback: earned.readback,
     },
   });
   assert.equal(durable.durableRetrieval, true);
@@ -242,6 +266,15 @@ test("seeded false green is rejected by the acceptance command", () => {
   const held = cli(accept, ["--fixture", disabled, "--require", "disabled"]);
   assert.equal(held.status, 0, held.stdout);
   assert.equal(JSON.parse(held.stdout).facts.disabledOptionalMount, true);
+
+  const unbound = cli(accept, ["--fixture", unboundTask, "--require", "task"]);
+  assert.equal(unbound.status, 2, unbound.stdout + unbound.stderr);
+  const unboundBody = JSON.parse(unbound.stdout);
+  assert.equal(unboundBody.code, "false_green_rejected");
+  assert.equal(unboundBody.reason, "task_claim_without_result");
+  assert.equal(unboundBody.facts.taskResult, false);
+  assert.equal(unboundBody.facts.durableRetrieval, false);
+  assert.equal(unboundBody.productionActivate, "HOLD");
 
   const activated = judge({ ...discovery, productionActivate: "GO", claims: {
     disabledOptionalMount: false, hostedDiscovery: true, taskResult: false, durableRetrieval: false,
@@ -335,35 +368,22 @@ test("database namespace and equivalent output do not prove wire identity", () =
     && JSON.stringify(substitute.invocation.output) === JSON.stringify(earned.expected);
   assert.equal(oldGreen, true);
   assert.equal(invocationSelectsCandidate(substitute, earned.request, "candidate:original"), false);
-  const substituted = factsFrom({
-    ...discovery,
-    task: earned,
-    retrieval: {
-      processRestarted: true,
-      databaseSurvived: true,
-      sameCandidate: true,
-      output: portable,
-      readback: substitute,
-    },
-  });
-  assert.equal(substituted.taskResult, true);
+  const substituted = factsFrom(observationWith({
+    ...earned,
+    readback: substitute,
+    invocation: substitute.invocation,
+  }, {
+    processRestarted: true,
+    databaseSurvived: true,
+    sameCandidate: true,
+    output: portable,
+    readback: substitute,
+  }));
+  assert.equal(substituted.taskResult, false);
   assert.equal(substituted.durableRetrieval, false);
-  const unmet = requireFact({
-    ...discovery,
-    task: earned,
-    retrieval: substituted.durableRetrieval ? null : {
-      processRestarted: true,
-      databaseSurvived: true,
-      sameCandidate: true,
-      output: portable,
-      readback: substitute,
-    },
-  }, "durable");
-  assert.equal(unmet.ok, false);
-  assert.equal(unmet.code, "acceptance_unmet");
 
-  const earnedWire = portableTask("candidate:original");
-  const bound = readbackFor(earnedWire, "candidate:original", "ab");
+  const earnedWire = boundTask();
+  const bound = earnedWire.readback;
   assert.equal(clientInvocationSelects(
     { discovery: null, invocation: bound.invocation },
     bound,
@@ -402,6 +422,117 @@ test("database namespace and equivalent output do not prove wire identity", () =
   const otherModule = readbackFor(earnedWire, "candidate:original", "ab");
   otherModule.contributed.moduleDigest = `sha256:${"22".repeat(32)}`;
   assert.equal(invocationSelectsCandidate(otherModule, earnedWire.request, "candidate:original"), false);
+  assert.equal(cannedFacts.taskResult, true);
+});
+
+test("task acceptance fails unless the canonical readback selected the contribution", () => {
+  const earned = boundTask();
+  const bound = earned.readback;
+  function rejected(label, task, retrieval = null) {
+    const observation = observationWith(task, retrieval);
+    const facts = factsFrom(observation);
+    assert.equal(facts.taskResult, false, label);
+    assert.equal(facts.durableRetrieval, false, label);
+    const ran = requireCli(observation, "task");
+    assert.equal(ran.status, 1, `${label}\n${ran.stdout}${ran.stderr}`);
+    const body = JSON.parse(ran.stdout);
+    assert.equal(body.code, "acceptance_unmet", label);
+    assert.equal(body.reason, "taskResult", label);
+    assert.equal(body.facts.taskResult, false, label);
+    assert.equal(body.productionActivate, "HOLD", label);
+  }
+
+  const sameOutputWrongCandidate = readbackFor(portableTask(), "candidate:substitute", "ab");
+  assert.equal(JSON.stringify(sameOutputWrongCandidate.invocation.output), JSON.stringify(portable));
+  assert.equal(invocationSelectsCandidate(sameOutputWrongCandidate, earned.request, "candidate:original"), false);
+  rejected("wrong candidate", {
+    ...portableTask(),
+    invocation: sameOutputWrongCandidate.invocation,
+    readback: sameOutputWrongCandidate,
+  });
+
+  const wrongGeneration = structuredClone(bound);
+  wrongGeneration.executionGeneration = 2;
+  rejected("wrong generation", { ...earned, readback: wrongGeneration });
+
+  const wrongManifest = structuredClone(bound);
+  wrongManifest.manifestId = `sha256:${"ff".repeat(32)}`;
+  rejected("wrong manifest", { ...earned, readback: wrongManifest });
+
+  const wrongContent = structuredClone(bound);
+  wrongContent.contributed.contentId = `sha256:${"cc".repeat(32)}`;
+  wrongContent.contributed.target = { ...wrongContent.contributed.target, contentId: wrongContent.contributed.contentId };
+  rejected("wrong content", { ...earned, readback: wrongContent });
+
+  const wrongModule = structuredClone(bound);
+  wrongModule.contributed.moduleDigest = `sha256:${"22".repeat(32)}`;
+  rejected("wrong module", { ...earned, readback: wrongModule });
+
+  const canned = structuredClone(bound);
+  canned.sampleOutput = { outcome: "observed", payload: { canned: true } };
+  rejected("canned sample", { ...earned, readback: canned });
+
+  const otherObservation = structuredClone(bound);
+  otherObservation.observationId = "observation:other";
+  rejected("mismatched observation", { ...earned, readback: otherObservation });
+
+  const drifted = structuredClone(earned);
+  drifted.invocation = structuredClone(bound.invocation);
+  drifted.invocation.manifestId = `sha256:${"ff".repeat(32)}`;
+  rejected("invocation is not the canonical envelope", drifted);
+
+  rejected("output-only client wire", {
+    ...earned,
+    clientWire: { invocation: { output: portable } },
+  });
+
+  rejected("equal output without a readback", portableTask());
+
+  const accepted = requireCli(observationWith(earned, {
+    processRestarted: false,
+    databaseSurvived: true,
+    output: portable,
+  }), "task");
+  assert.equal(accepted.status, 0, accepted.stdout + accepted.stderr);
+  const acceptedBody = JSON.parse(accepted.stdout);
+  assert.equal(acceptedBody.facts.taskResult, true);
+  assert.equal(acceptedBody.facts.durableRetrieval, false);
+  assert.equal(acceptedBody.productionActivate, "HOLD");
+
+  const withClient = requireCli(observationWith({
+    ...earned,
+    clientWire: { invocation: bound.invocation },
+  }), "task");
+  assert.equal(withClient.status, 0, withClient.stdout);
+
+  const laterMismatch = observationWith(earned, {
+    processRestarted: true,
+    databaseSurvived: true,
+    output: portable,
+    readback: sameOutputWrongCandidate,
+  });
+  const laterFacts = factsFrom(laterMismatch);
+  assert.equal(laterFacts.taskResult, true);
+  assert.equal(laterFacts.durableRetrieval, false);
+  const laterTask = requireCli(laterMismatch, "task");
+  assert.equal(laterTask.status, 0, laterTask.stdout);
+  const laterDurable = requireCli(laterMismatch, "durable");
+  assert.equal(laterDurable.status, 1, laterDurable.stdout);
+  assert.equal(JSON.parse(laterDurable.stdout).reason, "durableRetrieval");
+
+  const restarted = observationWith(earned, {
+    processRestarted: true,
+    databaseSurvived: true,
+    output: portable,
+    readback: bound,
+    clientWire: { invocation: bound.invocation },
+  });
+  const restartedFacts = factsFrom(restarted);
+  assert.equal(restartedFacts.taskResult, true);
+  assert.equal(restartedFacts.durableRetrieval, true);
+  const durableCli = requireCli(restarted, "durable");
+  assert.equal(durableCli.status, 0, durableCli.stdout + durableCli.stderr);
+  assert.equal(JSON.parse(durableCli.stdout).facts.durableRetrieval, true);
 });
 
 test("live disabled acceptance distinguishes unconfigured from degraded mounts", async () => {

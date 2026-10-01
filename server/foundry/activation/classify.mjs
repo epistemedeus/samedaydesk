@@ -1,5 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
 import {
+  clientInvocationSelects,
   invocationMatchesRequest,
   invocationSelectsCandidate,
   validateVisitorEntry,
@@ -15,6 +16,27 @@ function portableOutput(value) {
   if (!PORTABLE_OUTCOMES.has(value.outcome)) return false;
   if (!value.payload || typeof value.payload !== "object" || Array.isArray(value.payload)) return false;
   return true;
+}
+
+function clientAgrees(wire, readback, request, candidateId) {
+  if (wire == null) return true;
+  return clientInvocationSelects(wire, readback, request, candidateId);
+}
+
+// Equal portable output is an input, not execution. The readback is the
+// canonical candidate, generation, manifest, content, module, request, sample,
+// and observation. Visitor stdout is checked only when the observation has it.
+function executedContribution(task) {
+  if (!task || task.published !== true) return false;
+  if (typeof task.candidateId !== "string" || task.candidateId.length < 1) return false;
+  if (!portableOutput(task.output) || !portableOutput(task.expected)) return false;
+  if (!isDeepStrictEqual(task.output, task.expected)) return false;
+  if (!invocationMatchesRequest(task.invocation, task.request)) return false;
+  if (!isDeepStrictEqual(task.invocation?.output, task.expected)) return false;
+  const readback = task.readback;
+  if (!invocationSelectsCandidate(readback, task.request, task.candidateId)) return false;
+  if (!isDeepStrictEqual(task.invocation, readback.invocation)) return false;
+  return clientAgrees(task.clientWire, readback, task.request, task.candidateId);
 }
 
 function readyFacade(receiver) {
@@ -56,15 +78,7 @@ export function factsFrom(observation) {
     && entry
     && uploadsHold;
   const task = observation?.task;
-  const taskResult = hostedDiscovery
-    && task?.published === true
-    && typeof task?.candidateId === "string"
-    && task.candidateId.length > 0
-    && portableOutput(task.output)
-    && portableOutput(task.expected)
-    && isDeepStrictEqual(task.output, task.expected)
-    && invocationMatchesRequest(task.invocation, task.request)
-    && isDeepStrictEqual(task.invocation.output, task.expected);
+  const taskResult = hostedDiscovery && executedContribution(task);
   const retrieval = observation?.retrieval;
   const durableRetrieval = taskResult
     && retrieval?.processRestarted === true
@@ -72,7 +86,8 @@ export function factsFrom(observation) {
     && invocationSelectsCandidate(retrieval.readback, task.request, task.candidateId)
     && portableOutput(retrieval.output)
     && isDeepStrictEqual(retrieval.output, task.expected)
-    && isDeepStrictEqual(retrieval.readback?.invocation?.output, task.expected);
+    && isDeepStrictEqual(retrieval.readback?.invocation?.output, task.expected)
+    && clientAgrees(retrieval.clientWire, retrieval.readback, task.request, task.candidateId);
   const disabledOptionalMount = sdsOk && disabledBody && !facade && !hostedDiscovery && !taskResult && !durableRetrieval;
   const degradedMount = sdsOk && degradedBody && !facade && !hostedDiscovery && !disabledOptionalMount;
   return {

@@ -205,80 +205,6 @@
       "beneficiaryGrantId": "grant:fixture",
       "environmentDigest": "sha256:efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
       "executionObservation": "observation:fixture"
-    },
-    "readback": {
-      "invocation": {
-        "schema": "neomorphic.foundry.invocation.v1",
-        "target": {
-          "capabilityId": "capability:fixture",
-          "version": "1",
-          "contentId": "sha256:abababababababababababababababababababababababababababababababab"
-        },
-        "taskId": "task:visitor-a",
-        "manifestId": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
-        "inputDigest": "sha256:1f86792de98f4287b26b47c45d0308e166ddf21317e586f167e8d88e853db97b",
-        "output": {
-          "outcome": "observed",
-          "payload": {
-            "project": {
-              "id": "prj_later_alpha",
-              "status": "open",
-              "version": 1
-            }
-          }
-        },
-        "invokedAt": "2026-09-30T23:04:53.000Z",
-        "outcome": "observed_output",
-        "purpose": "owner_qa",
-        "relationship": "owner",
-        "cost": null,
-        "effortMs": null,
-        "beneficiaryGrantId": "grant:fixture",
-        "environmentDigest": "sha256:efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
-        "executionObservation": "observation:fixture"
-      },
-      "manifestId": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
-      "manifestTarget": {
-        "capabilityId": "capability:fixture",
-        "version": "1",
-        "contentId": "sha256:abababababababababababababababababababababababababababababababab"
-      },
-      "manifestRequestId": "sha256:dd34af944e0685a989c16bcda7de528dcd61192abab2894ac8019bb6e5a264d8",
-      "taskId": "task:visitor-a",
-      "inputDigest": "sha256:1f86792de98f4287b26b47c45d0308e166ddf21317e586f167e8d88e853db97b",
-      "requestDigest": "sha256:dd34af944e0685a989c16bcda7de528dcd61192abab2894ac8019bb6e5a264d8",
-      "executionCandidateId": "cand-local",
-      "executionGeneration": 1,
-      "executionTarget": {
-        "capabilityId": "capability:fixture",
-        "version": "1",
-        "contentId": "sha256:abababababababababababababababababababababababababababababababab"
-      },
-      "moduleDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
-      "sampleOutput": {
-        "outcome": "observed",
-        "payload": {
-          "project": {
-            "id": "prj_later_alpha",
-            "status": "open",
-            "version": 1
-          }
-        }
-      },
-      "sampleStatus": "ok",
-      "observationId": "observation:fixture",
-      "sampleModuleDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
-      "contributed": {
-        "candidateId": "cand-local",
-        "generation": 1,
-        "contentId": "sha256:abababababababababababababababababababababababababababababababab",
-        "moduleDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
-        "target": {
-          "capabilityId": "capability:fixture",
-          "version": "1",
-          "contentId": "sha256:abababababababababababababababababababababababababababababababab"
-        }
-      }
     }
   },
   "retrieval": {
@@ -300,6 +226,6 @@
     "disabledOptionalMount": false,
     "hostedDiscovery": true,
     "taskResult": true,
-    "durableRetrieval": true
+    "durableRetrieval": false
   }
 }
