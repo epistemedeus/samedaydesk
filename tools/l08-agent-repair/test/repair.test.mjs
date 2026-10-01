@@ -147,6 +147,12 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.match(result.stdout, /contract-repair-limits exit 0/);
     assert.match(result.stdout, /contract-repair limit null-pair.json suggestion type null/);
     assert.match(result.stdout, /seeded contract-repair-negative exit 1/);
+    assert.match(result.stdout, /task-readiness exit 0/);
+    assert.match(result.stdout, /adapter repair-add-required exit 1/);
+    assert.match(result.stdout, /adapter contract-absent exit 1/);
+    assert.match(result.stdout, /semantic shape string value fail packet refused semantic_mismatch/);
+    assert.match(result.stdout, /unsupported_era fail repaired false/);
+    assert.match(result.stdout, /seeded task-readiness-negative exit 1/);
     assert.match(result.stdout, /contract-repair negative repair_unchanged exit 1/);
     assert.match(result.stdout, /contract-repair negative repair_incorrect exit 1/);
     assert.match(result.stdout, /contract-repair negative secret_redacted exit 0/);

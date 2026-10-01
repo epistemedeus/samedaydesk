@@ -17,6 +17,7 @@ import {
 } from "./lib/contract-repair.mjs";
 import { ORDINARY_CALLERS, scoreProductPaths, validateMaintHandoff } from "./lib/handoff.mjs";
 import { evaluateJourneyRequest, loadSellerRepairBriefs, observeSellerRepairJourney, seededJourneyRejections } from "./lib/journey.mjs";
+import { retestOrigin, runTaskReadiness, runTaskReadinessNegative, sayReceipt, writeReceipt } from "./lib/task-readiness.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../..");
@@ -29,7 +30,7 @@ function say(line) {
 }
 
 function usage() {
-  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair | journey [--finding id] [--wallet create] [--echo-header] [--disposable-only] | journey-negative | contract-repair --in file --out dir | contract-repair-limits | contract-repair-negative");
+  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair | journey [--finding id] [--wallet create] [--echo-header] [--disposable-only] | journey-negative | contract-repair --in file --out dir | contract-repair-limits | contract-repair-negative | task-readiness | task-readiness-negative | task-readiness-retest --origin http://127.0.0.1:PORT");
 }
 
 function loopbackOrigin(value) {
@@ -517,6 +518,43 @@ if (commandLine) {
         exit = 2;
       } else {
         exit = runContractRepairNegative();
+      }
+    } else if (parsed.command === "task-readiness") {
+      if (parsed.origin != null || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client task-readiness takes no arguments");
+        exit = 2;
+      } else {
+        const receipt = await runTaskReadiness();
+        writeReceipt(receipt);
+        sayReceipt(receipt, say);
+        exit = 0;
+      }
+    } else if (parsed.command === "task-readiness-negative") {
+      if (parsed.origin != null || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client task-readiness-negative takes no arguments");
+        exit = 2;
+      } else {
+        const negative = await runTaskReadinessNegative();
+        say(`task-readiness negative semantic_not_ready exit ${negative.shaped ? 1 : 2}`);
+        say(`task-readiness negative demand_not_from_probe exit ${negative.demandDistinct ? 1 : 2}`);
+        say(`task-readiness negative stale_sibling exit ${negative.stale ? 1 : 2}`);
+        say(`task-readiness negative pin_mismatch exit ${negative.mismatch ? 1 : 2}`);
+        say(`task-readiness negative private_not_availability exit ${negative.privateDistinct ? 1 : 2}`);
+        exit = negative.exit;
+      }
+    } else if (parsed.command === "task-readiness-retest") {
+      const origin = loopbackOrigin(parsed.origin);
+      if (!origin || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client task-readiness-retest takes --origin http://127.0.0.1:PORT");
+        exit = 2;
+      } else {
+        const result = await retestOrigin(origin);
+        if (result.exit === 0) {
+          say(`task-readiness retest POST /quote repair-complete adapter exit ${result.consumed.status} semantic pass`);
+        } else {
+          say(`task-readiness retest refused ${result.reason ?? "adapter"}`);
+        }
+        exit = result.exit;
       }
     } else if (parsed.command === "journey-negative") {
       if (parsed.origin != null || parsed.out != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {

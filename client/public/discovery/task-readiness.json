@@ -1,0 +1,30 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "task-readiness",
+  "title": "Free task-specific readiness check",
+  "summary": "One supplied success contract, one HTTP method, and one path. A concrete finding can authorize a repair packet the maintained adapter already consumes. A failed probe is not demand.",
+  "page": null,
+  "invokesPricedExecution": false,
+  "runsOffline": true,
+  "productionAcquisition": false,
+  "paid": false,
+  "humanPageAdded": false,
+  "coldStart": [
+    "node tools/l08-agent-repair/cold-client.mjs task-readiness"
+  ],
+  "pins": {
+    "neo230": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+    "s14": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96"
+  },
+  "canonical": {
+    "method": "POST",
+    "path": "/mcp",
+    "header": "MCP-Protocol-Version",
+    "unsupportedValue": "1999-01-01",
+    "requiredStatus": 400,
+    "repaired": false,
+    "note": "The live handler still answers HTTP 200. This catalog does not say that gap is closed."
+  },
+  "materialLimit": "Unsupported MCP-Protocol-Version on POST /mcp is unresolved. Absence of demand is only a caller-supplied empty ledger."
+}

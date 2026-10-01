@@ -249,6 +249,8 @@ export async function runCold(outPath = defaultHandoffPath) {
   const journeyNegative = spawnCold(["journey-negative"]);
   const contractLimits = spawnCold(["contract-repair-limits"]);
   const contractNegative = spawnCold(["contract-repair-negative"]);
+  const taskReadiness = spawnCold(["task-readiness"]);
+  const taskNegative = spawnCold(["task-readiness-negative"]);
   say(`seeded reject-unchanged exit ${unchanged.status}`);
   writeChild(unchanged);
   say(`seeded reject-scored exit ${scored.status}`);
@@ -263,9 +265,14 @@ export async function runCold(outPath = defaultHandoffPath) {
   writeChild(contractLimits);
   say(`seeded contract-repair-negative exit ${contractNegative.status}`);
   writeChild(contractNegative);
+  say(`task-readiness exit ${taskReadiness.status}`);
+  writeChild(taskReadiness);
+  say(`seeded task-readiness-negative exit ${taskNegative.status}`);
+  writeChild(taskNegative);
   if (unchanged.status !== 1 || scored.status !== 1 || seller.status !== 0) return 1;
   if (journeyPositive.status !== 0 || journeyNegative.status !== 1) return 1;
   if (contractLimits.status !== 0 || contractNegative.status !== 1) return 1;
+  if (taskReadiness.status !== 0 || taskNegative.status !== 1) return 1;
   return 0;
 }
 

@@ -115,3 +115,23 @@ node tools/l08-agent-repair/cold-client.mjs contract-repair-negative
 `contract-repair` exits 0 for those two callers. `contract-repair-limits` exits 0. It asks a concrete question for one sample, conflicting object/array types, null mixed with an object, a declared branch that was not supplied, empty arrays, empty objects, `oneOf`, and a non-local `$ref`. Two null bodies produce a `{ "type": "null" }` suggestion. `contract-repair-negative` exits 1. It rejects an unchanged schema, an incorrect submitted schema, a second wallet, checkout, malformed input, oversized input, and a tampered regression. Supplied secrets and example values stay out of the patch, the regression, and the handoff.
 
 Schema checks use `client/scripts/validateJsonSchema.mjs`. OpenAPI success lookup follows the local `$ref` and `application/json` rules in `experiments/s134-record-jobs/modules/openapi-impact/cli.mjs`. The patch does not close `additionalProperties` and does not copy `const`, `enum`, or examples from the supplied bodies. Fields present in every supplied body are required. Fields present in only some bodies stay optional. The owner confirms that intersection before applying it.
+
+## Task-specific readiness
+
+Free. No new payment route. The cold client reads maintained Neo `de9c23b5d19de30874e432e7ef1193d0d02d6702` and S14 `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` as pins. It does not edit those checkouts. An unqualified sibling directory named `s14` or `neo` is refused, including stale neo `259ea74da295f12d64e2aae9cb2042c4a14c6b96`.
+
+Two local targets, `POST /quote`, serve the pinned catalog rows. A supplied success contract requires `data.quote` to be a decimal string.
+
+1. `repair-add-required` declares `quote` and does not require it. The maintained adapter consumes `action/fixtures/catalog-row-repair-add-required.json` and exits 1 with `seller_response_required_path_missing:data.quote`.
+2. `contract-absent` has no success schema. The same adapter consumes `action/fixtures/catalog-row-contract-absent.json` and exits 1 with `seller_response_contract_absent` and `seller_response_required_path_missing:data.quote`.
+
+Applying the complete schema on the live target and retesting from a second process authorizes `catalog-row-repair-complete.json`. The adapter exits 0. `{ "data": { "quote": "soon" } }` matches that schema's string shape and is refused. It does not become a repair packet.
+
+`POST /mcp` on the canonical router with `MCP-Protocol-Version: 1999-01-01` still returns HTTP 200. Required status is 400. That slot stays `unsupported_era` and is not repaired here. `GET /api/health` is a separate canonical read. A closed port is `availability`. An empty caller ledger is `absence_of_demand`. A failed probe does not fill that slot. `http://127.0.0.1/` and a redirect onto a private address are `security`. Caller `authorization`, `cookie`, and `origin` are not forwarded, including onto another origin.
+
+```
+node tools/l08-agent-repair/cold-client.mjs task-readiness
+node tools/l08-agent-repair/cold-client.mjs task-readiness-negative
+```
+
+`task-readiness` exits 0 and writes `tools/l08-agent-repair/TASK-READINESS-RECEIPT.json`. `task-readiness-negative` exits 1. The machine catalog is `client/public/discovery/task-readiness.json`. It has no human page and does not say the protocol-header gap is closed.

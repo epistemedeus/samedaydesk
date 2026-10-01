@@ -1,0 +1,294 @@
+{
+  "schema": "samedaydesk.task-readiness.receipt.v1",
+  "job": "READINESS-DELIVERY-100119",
+  "consumer": "MAINT",
+  "neo": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+  "s14": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+  "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96",
+  "paymentSent": false,
+  "paymentSigned": false,
+  "credentialsUsed": false,
+  "newPaymentRail": false,
+  "catalog": {
+    "schema": "samedaydesk.acquisition-discovery.v1",
+    "packageId": "task-readiness",
+    "title": "Free task-specific readiness check",
+    "summary": "One supplied success contract, one HTTP method, and one path. A concrete finding can authorize a repair packet the maintained adapter already consumes. A failed probe is not demand.",
+    "page": null,
+    "invokesPricedExecution": false,
+    "runsOffline": true,
+    "productionAcquisition": false,
+    "paid": false,
+    "humanPageAdded": false,
+    "coldStart": [
+      "node tools/l08-agent-repair/cold-client.mjs task-readiness"
+    ],
+    "pins": {
+      "neo230": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+      "s14": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+      "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96"
+    },
+    "canonical": {
+      "method": "POST",
+      "path": "/mcp",
+      "header": "MCP-Protocol-Version",
+      "unsupportedValue": "1999-01-01",
+      "requiredStatus": 400,
+      "repaired": false,
+      "note": "The live handler still answers HTTP 200. This catalog does not say that gap is closed."
+    },
+    "materialLimit": "Unsupported MCP-Protocol-Version on POST /mcp is unresolved. Absence of demand is only a caller-supplied empty ledger."
+  },
+  "canonical": {
+    "health": {
+      "method": "GET",
+      "path": "/api/health",
+      "httpStatus": 200,
+      "semantic": "pass",
+      "availability": "pass"
+    },
+    "era": {
+      "method": "POST",
+      "path": "/mcp",
+      "header": "MCP-Protocol-Version: 1999-01-01",
+      "observedStatus": 200,
+      "requiredStatus": 400,
+      "hasResult": true,
+      "hasError": false,
+      "state": "fail",
+      "repaired": false
+    }
+  },
+  "targets": [
+    {
+      "id": "repair-add-required",
+      "method": "POST",
+      "route": "/quote",
+      "before": {
+        "classes": {
+          "availability": {
+            "state": "pass",
+            "code": null
+          },
+          "absentSchema": {
+            "state": "pass",
+            "code": null
+          },
+          "unsupportedEra": {
+            "state": "not_observed",
+            "code": null
+          },
+          "absenceOfDemand": {
+            "state": "not_observed",
+            "code": null
+          },
+          "security": {
+            "state": "pass",
+            "code": null
+          },
+          "semantic": {
+            "state": "pass",
+            "code": null,
+            "pointer": "data.quote",
+            "shape": "string"
+          }
+        },
+        "schemaFinding": {
+          "state": "fail",
+          "code": "seller_response_required_path_missing:data.quote"
+        },
+        "packet": {
+          "authorized": true,
+          "reason": null,
+          "sha256": "8600aa1fb979f7017da8b4f0e2de64c8524a7f6970834a68f8033875fef11354",
+          "source": "action/fixtures/catalog-row-repair-add-required.json"
+        },
+        "adapter": {
+          "status": 1,
+          "json": {
+            "id": "repair-add-required",
+            "ok": false,
+            "findings": [
+              "seller_response_required_path_missing:data.quote"
+            ],
+            "decision": "admissible",
+            "repairComplete": false,
+            "repairActions": [
+              "add_property_to_required"
+            ],
+            "paymentSent": false,
+            "paymentSigned": false,
+            "credentialsUsed": false
+          }
+        }
+      },
+      "retest": {
+        "status": 0,
+        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n"
+      }
+    },
+    {
+      "id": "contract-absent",
+      "method": "POST",
+      "route": "/quote",
+      "before": {
+        "classes": {
+          "availability": {
+            "state": "pass",
+            "code": null
+          },
+          "absentSchema": {
+            "state": "fail",
+            "code": "seller_response_contract_absent"
+          },
+          "unsupportedEra": {
+            "state": "not_observed",
+            "code": null
+          },
+          "absenceOfDemand": {
+            "state": "not_observed",
+            "code": null
+          },
+          "security": {
+            "state": "pass",
+            "code": null
+          },
+          "semantic": {
+            "state": "pass",
+            "code": null,
+            "pointer": "data.quote",
+            "shape": "string"
+          }
+        },
+        "schemaFinding": {
+          "state": "fail",
+          "code": "seller_response_contract_absent"
+        },
+        "packet": {
+          "authorized": true,
+          "reason": null,
+          "sha256": "72dc4a5f4bb1df8324cc04bbd02c97f579d6f2c883f653fb1043bac4ab087d45",
+          "source": "action/fixtures/catalog-row-contract-absent.json"
+        },
+        "adapter": {
+          "status": 1,
+          "json": {
+            "id": "contract-absent",
+            "ok": false,
+            "findings": [
+              "seller_response_contract_absent",
+              "seller_response_required_path_missing:data.quote"
+            ],
+            "decision": "absent",
+            "repairComplete": false,
+            "repairActions": [
+              "define_nested_property_path"
+            ],
+            "paymentSent": false,
+            "paymentSigned": false,
+            "credentialsUsed": false
+          }
+        }
+      },
+      "retest": {
+        "status": 0,
+        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n"
+      }
+    }
+  ],
+  "semantic": {
+    "shape": "string",
+    "semantic": {
+      "state": "fail",
+      "code": "value_mismatch",
+      "pointer": "data.quote",
+      "shape": "string"
+    },
+    "schemaFinding": {
+      "state": "pass",
+      "code": null
+    },
+    "packet": {
+      "authorized": false,
+      "reason": "semantic_mismatch"
+    }
+  },
+  "availability": {
+    "availability": {
+      "state": "fail",
+      "code": "unreachable"
+    },
+    "absentSchema": {
+      "state": "not_observed",
+      "code": null
+    },
+    "unsupportedEra": {
+      "state": "not_observed",
+      "code": null
+    },
+    "absenceOfDemand": {
+      "state": "not_observed",
+      "code": "probe_failure_is_not_demand"
+    },
+    "security": {
+      "state": "not_observed",
+      "code": null
+    },
+    "semantic": {
+      "state": "not_observed",
+      "code": null
+    }
+  },
+  "demand": {
+    "availability": {
+      "state": "pass",
+      "code": null
+    },
+    "absentSchema": {
+      "state": "not_observed",
+      "code": null
+    },
+    "unsupportedEra": {
+      "state": "not_observed",
+      "code": null
+    },
+    "absenceOfDemand": {
+      "state": "fail",
+      "code": "no_demand_records"
+    },
+    "security": {
+      "state": "not_observed",
+      "code": null
+    },
+    "semantic": {
+      "state": "not_observed",
+      "code": null
+    }
+  },
+  "security": [
+    {
+      "url": "http://127.0.0.1/secret",
+      "state": "fail",
+      "code": "private_address",
+      "fetched": false
+    },
+    {
+      "url": "http://169.254.169.254/latest",
+      "state": "fail",
+      "code": "private_address",
+      "fetched": false
+    },
+    {
+      "url": "http://example.com/start",
+      "state": "pass",
+      "code": "headers_confined",
+      "hops": 2
+    },
+    {
+      "url": "http://example.com/bounce",
+      "state": "fail",
+      "code": "redirect_private",
+      "fetched": false
+    }
+  ]
+}
