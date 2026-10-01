@@ -269,9 +269,10 @@ export async function auditSuppliedRow(body) {
   let checker;
   try {
     checker = await loadChecker();
-  } catch (error) {
-    if (error.code === "checker_unavailable" || error.code === "provenance_mismatch") throw fail("checker_unavailable", "public checker is unavailable");
-    throw error;
+  } catch {
+    // All failures here belong to loading our checker, not to the visitor's
+    // validated input. Do not expose loader codes or private filesystem paths.
+    throw fail("checker_unavailable", "public checker is unavailable");
   }
   try {
     checker.normalizeOrigin(prepared.origin);
