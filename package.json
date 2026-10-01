@@ -22,6 +22,8 @@
     "test:pulse": "node --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-s125-replay.js server/scripts/test-pulse-postgres-real.js",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
     "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js server/scripts/test-fixpack-entitlement.js",
+    "test:agent-readiness": "node --test server/scripts/agent-readiness/*.test.js",
+    "test:l08-agent-repair": "node --test --test-concurrency=1 tools/l08-agent-repair/test/repair.test.mjs tools/l08-agent-repair/test/task-readiness.test.mjs tools/l08-agent-repair/test/public-install.test.mjs server/scripts/test-public-readiness-mount.js server/scripts/test-public-readiness-supplied.js",
     "test:checkout-idempotency": "node --test server/scripts/test-payment-attempt-idempotency.js server/scripts/test-checkout-http-lifecycle.js client/scripts/checkoutAttemptNavigation.test.ts",
     "test:spa-fallback": "node --test server/scripts/test-spa-fallback.js",
     "test:correspondence-mount": "node --test server/scripts/test-correspondence-mount-disabled.js server/scripts/test-correspondence-shared-host-negative.js server/scripts/test-correspondence-shared-host-accept.js server/scripts/test-correspondence-s58.js",

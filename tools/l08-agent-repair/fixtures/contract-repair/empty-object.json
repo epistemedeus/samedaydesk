@@ -1,0 +1,8 @@
+{
+  "callerId": "local-empty-object",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/no-fields",
+  "contract": { "kind": "json-schema" },
+  "observations": [{}, {}]
+}

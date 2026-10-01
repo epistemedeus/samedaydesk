@@ -10,6 +10,7 @@
 // License authority is a bearer checkout-session id bound to the merchant Fix Pack
 // Payment Link / product — not an amount-only threshold and not a customer login.
 import { Router } from "express";
+import { clientKey } from "../lib/agent-readiness/rate-limit.js";
 import { runCheck } from "./tools.js";
 import {
   browseTaskMarketTasks,
@@ -17,6 +18,7 @@ import {
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
 import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
+import { formatAgentReadiness, runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 import {
   FIXPACK_MCP_BUY_URL,
   validateFixPackLicense,
@@ -67,6 +69,57 @@ export const TOOLS = [
     name: MCP_TOOL_NAMES[1],
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
     description:
+      "Free. Check whether agents can discover and call a public website. Fetches discovery files, follows MCP links " +
+      "named by those files, and runs only initialize, tools/list, and one unknown-tool call. Never executes a real tool. " +
+      "Returns a 0-100 score, every check with an evidence URL, and the top fixes. No license.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        host: { type: "string", description: "Public host to score, for example example.com" },
+      },
+      required: ["host"],
+    },
+    outputSchema: {
+      type: "object",
+      properties: {
+        host: { type: "string" },
+        score: { type: "number" },
+        free: { type: "boolean" },
+        checks: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              title: { type: "string" },
+              status: { type: "string" },
+              reason: { type: "string" },
+              fix: { type: "string" },
+              evidenceUrl: { type: "string" },
+            },
+            required: ["id", "title", "status", "reason", "fix"],
+          },
+        },
+        topFixes: { type: "array" },
+        evidence: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              url: { type: "string" },
+              status: { type: "number" },
+            },
+            required: ["url"],
+          },
+        },
+      },
+      required: ["host", "score", "checks", "topFixes", "evidence"],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES[2],
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+    description:
       "PAID. Returns the complete, ready-to-paste AI-readiness Fix Pack for a site: tailored Organization + FAQPage " +
       "JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license` — the " +
       `checkout-session id you receive after buying the $39 Fix Pack at ${FIXPACK_LINK} (after paying you're shown ` +
@@ -81,7 +134,7 @@ export const TOOLS = [
     },
   },
   {
-    name: MCP_TOOL_NAMES[2],
+    name: MCP_TOOL_NAMES[3],
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     description:
       "Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. " +
@@ -103,7 +156,7 @@ export const TOOLS = [
     },
   },
   {
-    name: MCP_TOOL_NAMES[3],
+    name: MCP_TOOL_NAMES[4],
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
     description:
       "Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, " +
@@ -121,7 +174,7 @@ export const TOOLS = [
     },
   },
   {
-    name: MCP_TOOL_NAMES[4],
+    name: MCP_TOOL_NAMES[5],
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
     description:
       "Track one public TaskMarket task through the official read API. Returns status, deadline, submissions, artifact " +
@@ -156,7 +209,7 @@ function formatReport(r) {
   return lines.join("\n");
 }
 
-async function handle(msg) {
+async function handle(msg, ctx = {}) {
   const { id, method, params } = msg || {};
   switch (method) {
     case "initialize":
@@ -188,6 +241,21 @@ async function handle(msg) {
           });
         } catch (e) {
           return okMsg(id, { content: [{ type: "text", text: `TaskMarket tool error: ${e.message}` }], isError: true });
+        }
+      }
+
+      if (name === "check_agent_readiness") {
+        const host = String(args.host || args.url || "").trim();
+        if (!host) return okMsg(id, { content: [{ type: "text", text: "Provide a host, e.g. example.com" }], isError: true });
+        try {
+          const { payload } = await runAgentReadinessCheck(host, { clientKey: ctx.clientKey });
+          return okMsg(id, {
+            content: [{ type: "text", text: formatAgentReadiness(payload) }],
+            structuredContent: payload,
+          });
+        } catch (e) {
+          const safe = e.status === 400 || e.status === 429 ? e.message : `Could not check ${host}`;
+          return okMsg(id, { content: [{ type: "text", text: safe }], isError: true });
         }
       }
 
@@ -259,19 +327,47 @@ router.get("/", (req, res) => {
   res.type("text/plain").send(
     "samedaydesk agent tools MCP server (Streamable HTTP).\n" +
       'Add to a remote-MCP-capable client: { "mcpServers": { "samedaydesk": { "url": "https://samedaydesk.com/mcp" } } }\n' +
-      "Tools: AI-readiness check and Fix Pack, plus free TaskMarket delegation planning, task browsing, and task tracking.\n" +
+      "Tools: free AI-readiness and agent-readiness checks, a paid Fix Pack, plus free TaskMarket delegation planning, task browsing, and task tracking.\n" +
       "TaskMarket integration: https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md\n",
   );
 });
 
+// Streamable HTTP and the TypeScript SDK: a present MCP-Protocol-Version that
+// this server does not implement is HTTP 400 on requests after initialize.
+// Initialize negotiates the version in the JSON-RPC body. A missing header
+// stays accepted for clients that predate the header, including this probe.
+export function protocolHeaderValue(req) {
+  const raw = req.headers["mcp-protocol-version"];
+  if (raw == null) return null;
+  return Array.isArray(raw) ? raw.join(", ") : String(raw);
+}
+
+function messageList(msg) {
+  if (Array.isArray(msg)) return msg;
+  return msg && typeof msg === "object" ? [msg] : [];
+}
+
+export function isInitializationRequest(msg) {
+  return messageList(msg).some((entry) => entry?.method === "initialize");
+}
+
+export function unsupportedProtocolMessage(version) {
+  return `Bad Request: Unsupported protocol version: ${version} (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`;
+}
+
 router.post("/", async (req, res) => {
   const msg = req.body;
+  const headerVersion = protocolHeaderValue(req);
+  if (!isInitializationRequest(msg) && headerVersion !== null && !SUPPORTED_PROTOCOL_VERSIONS.includes(headerVersion)) {
+    return res.status(400).json(errMsg(null, -32000, unsupportedProtocolMessage(headerVersion)));
+  }
+  const ctx = { clientKey: clientKey(req) };
   try {
     if (Array.isArray(msg)) {
-      const out = (await Promise.all(msg.map(handle))).filter(Boolean);
+      const out = (await Promise.all(msg.map((entry) => handle(entry, ctx)))).filter(Boolean);
       return out.length ? res.json(out) : res.status(202).end();
     }
-    const out = await handle(msg);
+    const out = await handle(msg, ctx);
     if (!out) return res.status(202).end();
     return res.json(out);
   } catch (e) {

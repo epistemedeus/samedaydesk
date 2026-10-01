@@ -1,0 +1,19 @@
+{
+  "callerId": "local-paid-post-array",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/search",
+  "contract": {
+    "kind": "json-schema",
+    "schema": { "type": "object" }
+  },
+  "observations": [
+    [
+      { "id": "alpha-one", "ok": true, "note": "sometimes" },
+      { "id": "alpha-two", "ok": false }
+    ],
+    [
+      { "id": "beta-one", "ok": true }
+    ]
+  ]
+}

@@ -126,7 +126,7 @@ function reject(code, message, detail) {
 
 /**
  * Accept this host only when the three probe responses are JSON-RPC 2.0
- * bound to request ids 1, 2, and 3, tools/list is exactly the apex five,
+ * bound to request ids 1, 2, and 3, tools/list is exactly the apex inventory,
  * and the protocol is 2024-11-05. Reject a 24-tool list. Reject an absent
  * tool whose body is not JSON-RPC -32602 for id 3.
  */
@@ -186,7 +186,7 @@ export function judgeApexSession(session) {
   if (!sameToolNames(names, APEX_TOOLS)) {
     return reject(
       "HOST_MISMATCH",
-      "tools/list is not exactly the apex five",
+      "tools/list is not exactly the apex inventory",
       base,
     );
   }

@@ -1,0 +1,35 @@
+{
+  "callerId": "local-paid-get-object",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/quote",
+  "contract": {
+    "kind": "openapi",
+    "document": {
+      "openapi": "3.0.3",
+      "info": { "title": "local-quote", "version": "0" },
+      "paths": {
+        "/local/desk/quote": {
+          "get": {
+            "responses": {
+              "200": { "description": "OK" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "observations": [
+    {
+      "symbol": "UNIQUEVALUEZZ",
+      "price": 101,
+      "venue": "east",
+      "apiKey": "sk_live_L08CONTRACTSECRET",
+      "contact": "buyer@example.test"
+    },
+    {
+      "symbol": "OTHERVALUEZZ",
+      "price": 7
+    }
+  ]
+}

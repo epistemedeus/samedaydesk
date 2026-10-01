@@ -1,0 +1,57 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "task-readiness",
+  "title": "Free task-specific readiness check",
+  "summary": "One supplied success contract, one HTTP method, and one path. A concrete finding can authorize a repair packet the in-repo public adapter consumes. A failed probe is not demand.",
+  "page": null,
+  "invokesPricedExecution": false,
+  "runsOffline": true,
+  "offlineAfterPublicInstall": true,
+  "productionAcquisition": false,
+  "privateGitRequired": false,
+  "paid": false,
+  "humanPageAdded": false,
+  "coldStart": [
+    "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
+    "node tools/l08-agent-repair/cold-client.mjs task-readiness"
+  ],
+  "pins": {
+    "neo230": {
+      "commit": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+      "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+      "acquired": false,
+      "reason": "private"
+    },
+    "s14": {
+      "commit": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+      "repository": "https://github.com/epistemedeus/agent-payment-integrity.git",
+      "license": "MIT",
+      "acquired": "vendored",
+      "path": "vendor/agent-payment-integrity"
+    },
+    "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96",
+    "fixtures": [
+      "catalog-row-repair-add-required.json",
+      "catalog-row-contract-absent.json",
+      "catalog-row-repair-complete.json"
+    ],
+    "install": "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity"
+  },
+  "canonical": {
+    "method": "POST",
+    "path": "/mcp",
+    "header": "MCP-Protocol-Version",
+    "version": "2025-11-25",
+    "unsupportedValue": "1999-01-01",
+    "requiredStatus": 400,
+    "missingHeader": "accepted",
+    "repaired": true,
+    "repairScope": "compiled-process",
+    "note": "A follow-up POST with an unsupported MCP-Protocol-Version returns HTTP 400 and no result on this process. A missing header stays HTTP 200. Initialize negotiates the body version. This is the compiled repair, not a public-host readback."
+  },
+  "publicDeployment": {
+    "activated": false,
+    "readback": null
+  },
+  "materialLimit": "Absence of demand is only a caller-supplied empty ledger. The canonical protocol version this server speaks is 2025-11-25."
+}

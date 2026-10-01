@@ -1,0 +1,8 @@
+{
+  "callerId": "local-empty-array",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/no-items",
+  "contract": { "kind": "json-schema" },
+  "observations": [[], []]
+}

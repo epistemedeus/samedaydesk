@@ -1,0 +1,12 @@
+{
+  "callerId": "local-unchanged-submitted",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/same",
+  "contract": { "kind": "json-schema", "schema": { "type": "object" } },
+  "submittedRepair": { "schema": { "type": "object" } },
+  "observations": [
+    [{ "id": "a", "ok": true }],
+    [{ "id": "b", "ok": false }]
+  ]
+}

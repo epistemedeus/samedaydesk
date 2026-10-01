@@ -1,0 +1,82 @@
+{
+  "schema": "samedaydesk.public-readiness.provenance.v1",
+  "checker": {
+    "name": "agent-payment-integrity",
+    "version": "0.1.0-candidate.12",
+    "commit": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "repository": "https://github.com/epistemedeus/agent-payment-integrity.git",
+    "visibility": "public",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2026 SameDayDesk contributors",
+    "files": {
+      "LICENSE": "f88d13600ac46303290befd2872388c31a2bac94b5b92c33f2f4dab428eff38b",
+      "package.json": "2304aabf7b8c86f5bc0abebac3233239ecd43c1c7c28e3d7416c12c01791d59a",
+      "package-lock.json": "b7363dd702f13e22651af7af6f746df317d7a024a08f3da0de366f03c6056bd9",
+      "integrity.mjs": "b3b5b060dd2f257ee2972a21fdef20c4e8bff13167ac5f251a1adc7e444868fd",
+      "integrity.catalog-repair.test.mjs": "25ca33c53417aab0774c87eba3379b5b31248aa67e2d202aaa6d7de0a2ae0aaf",
+      "action/fixtures/catalog-row-repair-add-required.json": "8600aa1fb979f7017da8b4f0e2de64c8524a7f6970834a68f8033875fef11354",
+      "action/fixtures/catalog-row-contract-absent.json": "72dc4a5f4bb1df8324cc04bbd02c97f579d6f2c883f653fb1043bac4ab087d45",
+      "action/fixtures/catalog-row-repair-complete.json": "d960ebb77c193d1526042711add6fc0093d55190751d11bd6985a591ed6c6dfa"
+    },
+    "omitted": "Upstream files other than this list are not required for the catalog-row entry. integrity.mjs and integrity.catalog-repair.test.mjs are unmodified copies."
+  },
+  "dependencies": {
+    "@x402/core": {
+      "version": "2.16.0",
+      "resolved": "https://registry.npmjs.org/@x402/core/-/core-2.16.0.tgz",
+      "integrity": "sha512-7MjwOEiE6ICAYtOsK9vQl66Ho4jERDuuoRg/No2Nc2GQ7y/M/yu4DJ65LzeBycQE+Qrg2RqQG7KR51tyT+hzjQ==",
+      "license": "Apache-2.0"
+    },
+    "@x402/extensions": {
+      "version": "2.16.0",
+      "resolved": "https://registry.npmjs.org/@x402/extensions/-/extensions-2.16.0.tgz",
+      "integrity": "sha512-LHh5QrvB1QwiPr2zFqzpJonmMGxqJq1nDHifihyqNx1lJvU3DQgYGxPuHXE2l6nxGG0chF0alA/BsidDHFie/A==",
+      "license": "Apache-2.0"
+    },
+    "agent-payment-policy": {
+      "version": "0.12.0",
+      "resolved": "https://registry.npmjs.org/agent-payment-policy/-/agent-payment-policy-0.12.0.tgz",
+      "integrity": "sha512-CHJKxphBvrzQRfvUXC5xJoEeDT2hmDbicZ2JaCzaErr/HBhKoynScwdoeBwPbXJiBH3ds1ItDG4SAaOnqunMCQ==",
+      "license": "MIT"
+    },
+    "ajv": {
+      "version": "8.20.0",
+      "resolved": "https://registry.npmjs.org/ajv/-/ajv-8.20.0.tgz",
+      "integrity": "sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==",
+      "license": "MIT"
+    },
+    "ajv-formats": {
+      "version": "3.0.1",
+      "resolved": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-3.0.1.tgz",
+      "integrity": "sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==",
+      "license": "MIT"
+    },
+    "ipaddr.js": {
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-2.5.0.tgz",
+      "integrity": "sha512-aq+t5NAc+cS6rZQQVWC2x98CPqGtKKTMDd4Gaodv0wShnItdKg/51djkGJ1hqH+Oy0ivDftCbSLCQob8zso01w==",
+      "license": "MIT"
+    }
+  },
+  "lockfileLicenseCounts": {
+    "MIT": 25,
+    "Apache-2.0": 4,
+    "BSD-2-Clause": 1,
+    "BSD-3-Clause": 1,
+    "Unlicense": 1
+  },
+  "adapter": {
+    "replaces": "neomorphic-io experiments/s19-receipt-referral/src/receiving/engines.mjs function runS14",
+    "neoCommitInspected": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+    "neoRepository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "neoVisibility": "private",
+    "neoLicense": "The repository is private and has no root license granting redistribution. No Neo source, owner state, or credential was copied.",
+    "privateFilesCopied": false,
+    "credentialsCopied": false,
+    "ownerStateCopied": false
+  },
+  "deployment": {
+    "publicHostActivated": false,
+    "readback": null
+  }
+}

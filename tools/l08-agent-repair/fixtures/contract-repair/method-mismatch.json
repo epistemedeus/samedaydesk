@@ -1,0 +1,8 @@
+{
+  "callerId": "local-method-mismatch",
+  "routeClass": "paid_get",
+  "method": "POST",
+  "path": "/local/desk/quote",
+  "contract": { "kind": "json-schema" },
+  "observations": [{ "symbol": "s" }, { "symbol": "t" }]
+}

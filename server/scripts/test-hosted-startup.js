@@ -66,6 +66,11 @@ for (const [name, args] of [
     const disabled = await localJson(origin + "/api/correspondence/healthz");
     assert.equal(disabled.status, 200);
     assert.deepEqual(disabled.body, { ok: false, enabled: false, reason: "unconfigured" });
+    const readiness = await localJson(origin + "/api/public-readiness/healthz");
+    assert.equal(readiness.status, 200);
+    assert.equal(readiness.body.compiledRepair.scope, "this-process");
+    assert.equal(readiness.body.publicDeployment.activated, false);
+    assert.equal(readiness.body.privateGitRequired, false);
   });
 }
 

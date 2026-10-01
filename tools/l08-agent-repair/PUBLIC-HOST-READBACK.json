@@ -1,0 +1,20 @@
+{
+  "schema": "samedaydesk.public-readiness.readback.v1",
+  "deployedByThisJob": false,
+  "merged": false,
+  "host": "Existing SameDayDesk Node process: server/index.js calling createSdsApp.",
+  "notHost": "Neomorphic static hosting. It cannot start this Node checker.",
+  "mount": "/api/public-readiness",
+  "install": "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
+  "privateGitRequired": false,
+  "afterTheExistingHostRunsThisCommit": [
+    "GET /api/health returns 200 and service samedaydesk.",
+    "GET /api/correspondence/healthz stays the existing optional correspondence mount.",
+    "GET /api/public-readiness/healthz returns compiledRepair.scope this-process, unsupportedStatus 400, unsupportedCode -32000, and publicDeployment.activated false.",
+    "POST /mcp initialize and tools/call plan_taskmarket_delegation with MCP-Protocol-Version 2025-11-25 return 200.",
+    "POST /mcp tools/list with MCP-Protocol-Version 1999-01-01 returns 400 and error.code -32000.",
+    "POST /mcp tools/list with no MCP-Protocol-Version header returns 200.",
+    "POST /api/public-readiness/catalog-row with catalog-row-repair-add-required.json returns decision.ok false. The same call with catalog-row-repair-complete.json returns decision.ok true.",
+    "Compare the serving commit with this branch head before recording a public-origin readback. This process never sets publicDeployment.activated."
+  ]
+}

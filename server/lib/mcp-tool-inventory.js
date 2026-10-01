@@ -1,5 +1,6 @@
 export const MCP_TOOL_NAMES = Object.freeze([
   "check_ai_readiness",
+  "check_agent_readiness",
   "generate_complete_fix_pack",
   "plan_taskmarket_delegation",
   "browse_taskmarket_tasks",

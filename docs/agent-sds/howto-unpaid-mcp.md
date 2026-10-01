@@ -70,22 +70,24 @@ metadata, not a bill.
 | MCP Registry publish / `version=latest` write | Publish | Refuse |
 | `vendor/neomorphic*` / neo-kernel-vendor | Other product | Refuse |
 
-Speak the implemented protocol **`2024-11-05`**. Apex `initialize` is
-fail-closed: it does not echo `2025-11-25`, `2026-07-28`, or a client-offered
-version. Do not send `PAYMENT-SIGNATURE`, `X-PAYMENT`, `stripe-signature`,
+Apex `initialize` echoes `2025-11-25`, `2025-06-18`, `2025-03-26`, or
+`2024-11-05` when the client offers one of them, and returns `2025-11-25`
+otherwise. It does not echo `2026-07-28` or any other unknown version.
+Do not send `PAYMENT-SIGNATURE`, `X-PAYMENT`, `stripe-signature`,
 or `Authorization`. Do not send `Mcp-Method`.
 
-Five apex tools (order is load-bearing; pin is
+Apex tools (order is load-bearing; pin is
 `server/lib/mcp-tool-inventory.js`):
 
 1. `check_ai_readiness` — free
-2. `generate_complete_fix_pack` — **PAID** (listed, never called here)
-3. `plan_taskmarket_delegation` — free plan only; does not create or fund a task
-4. `browse_taskmarket_tasks` — free public read
-5. `track_taskmarket_task` — free public read
+2. `check_agent_readiness` — free (listed here; this cold path does not call it)
+3. `generate_complete_fix_pack` — **PAID** (listed, never called here)
+4. `plan_taskmarket_delegation` — free plan only; does not create or fund a task
+5. `browse_taskmarket_tasks` — free public read
+6. `track_taskmarket_task` — free public read
 
 The byte pin of the `TOOLS` block in `server/routes/mcp.js` is SHA-256
-`068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf`
+`1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e8839aeb07f357d041c14d9`
 (same pin as `server/scripts/test-mcp-protocol-negotiation.js`). Drift
 is a stop, not a reason to invent names.
 
@@ -111,7 +113,7 @@ const PAID_TOOL = "generate_complete_fix_pack";
 const PROTOCOL = "2024-11-05";
 const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 const FROZEN_TOOLS_BLOCK_SHA256 =
-  "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf";
+  "1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e8839aeb07f357d041c14d9";
 const FORBIDDEN_HEADERS = [
   "PAYMENT-SIGNATURE",
   "X-PAYMENT",
@@ -120,6 +122,7 @@ const FORBIDDEN_HEADERS = [
 ];
 const EXPECTED_NAMES = [
   "check_ai_readiness",
+  "check_agent_readiness",
   "generate_complete_fix_pack",
   "plan_taskmarket_delegation",
   "browse_taskmarket_tasks",
@@ -142,12 +145,13 @@ function extractBlock(src, startMarker, endMarker) {
 }
 
 assert.deepEqual([...MCP_TOOL_NAMES], EXPECTED_NAMES);
-assert.match(mcpSource, /const PROTOCOL_VERSION = "2024-11-05"/);
-assert.match(mcpSource, /protocolVersion:\s*PROTOCOL_VERSION/);
-assert.equal(mcpSource.includes("2025-11-25"), false);
+assert.match(mcpSource, /export function negotiateProtocolVersion/);
+assert.match(mcpSource, /"2025-11-25"/);
+assert.match(mcpSource, /"2024-11-05"/);
+assert.equal(mcpSource.includes("const PROTOCOL_VERSION = "), false);
 assert.equal(mcpSource.includes("2026-07-28"), false);
 assert.equal(mcpSource.includes("2999-01-01"), false);
-assert.equal(mcpSource.includes("params?.protocolVersion || PROTOCOL_VERSION"), false);
+assert.equal(mcpSource.includes("params?.protocolVersion || "), false);
 assert.match(mcpSource, /name: "samedaydesk-agent-tools"/);
 assert.match(mcpSource, /Unknown tool:/);
 assert.match(mcpSource, /No license provided/);
@@ -166,14 +170,20 @@ const tools = new Function(
 assert.deepEqual(tools.map((tool) => tool.name), EXPECTED_NAMES);
 assert.match(tools.find((tool) => tool.name === PAID_TOOL).description, /^PAID\./);
 
+const SUPPORTED_PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
+function negotiateProtocolVersion(offered) {
+  if (typeof offered === "string" && SUPPORTED_PROTOCOL_VERSIONS.includes(offered)) return offered;
+  return SUPPORTED_PROTOCOL_VERSIONS[0];
+}
+
 function handle(msg) {
-  const { id, method } = msg || {};
+  const { id, method, params } = msg || {};
   if (method === "initialize") {
     return {
       jsonrpc: "2.0",
       id,
       result: {
-        protocolVersion: PROTOCOL,
+        protocolVersion: negotiateProtocolVersion(params?.protocolVersion),
         capabilities: { tools: {} },
         serverInfo: SERVER_INFO,
       },
@@ -278,7 +288,16 @@ const initOfferedNewer = await rpc("initialize", {
   clientInfo: { name: "sds-howto-unpaid-mcp", version: "0" },
 }, 2);
 assert.equal(initOfferedNewer.status, 200);
-assert.equal(initOfferedNewer.json.result.protocolVersion, PROTOCOL);
+assert.equal(initOfferedNewer.json.result.protocolVersion, "2025-11-25");
+
+const initUnsupported = await rpc("initialize", {
+  protocolVersion: "2026-07-28",
+  capabilities: {},
+  clientInfo: { name: "sds-howto-unpaid-mcp", version: "0" },
+}, 3);
+assert.equal(initUnsupported.status, 200);
+assert.equal(initUnsupported.json.result.protocolVersion, "2025-11-25");
+assert.notEqual(initUnsupported.json.result.protocolVersion, "2026-07-28");
 
 const listed = await rpc("tools/list", {}, 7);
 assert.equal(listed.status, 200);
@@ -531,9 +550,9 @@ curl -sS -H 'content-type: application/json' -H 'accept: application/json' \
   https://samedaydesk.com/mcp
 ```
 
-Expect HTTP 200, protocol `2024-11-05`, server `samedaydesk-agent-tools`
-`1.2.0`, and the same five tool names. `generate_complete_fix_pack`
-description starts with `PAID.`. Then stop.
+Expect HTTP 200, protocol `2024-11-05` (the version this request offered),
+server `samedaydesk-agent-tools` `1.2.0`, and the same six tool names.
+`generate_complete_fix_pack` description starts with `PAID.`. Then stop.
 
 If dependencies are already installed, the in-repo gate is the same list-only
 contract (it asserts the request must not include `tools/call`):

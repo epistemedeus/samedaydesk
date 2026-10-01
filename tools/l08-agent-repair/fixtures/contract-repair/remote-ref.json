@@ -1,0 +1,14 @@
+{
+  "callerId": "local-remote-ref",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/ref",
+  "contract": {
+    "kind": "json-schema",
+    "schema": { "$ref": "https://example.test/schemas/quote.json" }
+  },
+  "observations": [
+    { "symbol": "one", "price": 1 },
+    { "symbol": "two", "price": 2 }
+  ]
+}

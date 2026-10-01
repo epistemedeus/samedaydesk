@@ -1,0 +1,12 @@
+{
+  "callerId": "local-branches",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/branches",
+  "coverage": { "declaredBranches": 2 },
+  "contract": { "kind": "json-schema" },
+  "observations": [
+    { "symbol": "one", "price": 1 },
+    { "symbol": "two", "price": 2 }
+  ]
+}

@@ -1,5 +1,8 @@
 # deps
 node_modules/
+
+# Exact pin checkouts acquired by tools/l08-agent-repair. Not sibling names.
+tools/l08-agent-repair/.pin-cache/
 client/node_modules/
 
 # build output (root/client only; vendored correspondence dist is committed)
