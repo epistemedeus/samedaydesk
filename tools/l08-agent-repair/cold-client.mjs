@@ -17,7 +17,7 @@ import {
 } from "./lib/contract-repair.mjs";
 import { ORDINARY_CALLERS, scoreProductPaths, validateMaintHandoff } from "./lib/handoff.mjs";
 import { evaluateJourneyRequest, loadSellerRepairBriefs, observeSellerRepairJourney, seededJourneyRejections } from "./lib/journey.mjs";
-import { acquirePins } from "./lib/pins.mjs";
+import { NEO230, S14_PIN, acquirePins } from "./lib/pins.mjs";
 import { retestEra, retestOrigin, runTaskReadiness, runTaskReadinessNegative, sayReceipt, writeReceipt } from "./lib/task-readiness.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -526,9 +526,9 @@ if (commandLine) {
         exit = 2;
       } else {
         const pins = acquirePins();
-        say(`acquire-pins neo ${pins.neo.head} exact ${pins.neo.acquired}`);
-        say(`acquire-pins s14 ${pins.s14.head} exact ${pins.s14.acquired}`);
-        exit = pins.neo.head && pins.s14.head ? 0 : 1;
+        say(`acquire-pins private-git refused neo ${NEO230}`);
+        say(`acquire-pins public-adapter vendored ${pins.s14.head} exact ${pins.s14.acquired}`);
+        exit = pins.neo.acquired === "refused" && pins.s14.head === S14_PIN && pins.s14.acquired === "vendored" ? 0 : 1;
       }
     } else if (parsed.command === "task-readiness") {
       if (parsed.origin != null || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
@@ -550,6 +550,7 @@ if (commandLine) {
         say(`task-readiness negative demand_not_from_probe exit ${negative.demandDistinct ? 1 : 2}`);
         say(`task-readiness negative stale_sibling exit ${negative.stale ? 1 : 2}`);
         say(`task-readiness negative pin_mismatch exit ${negative.mismatch ? 1 : 2}`);
+        say(`task-readiness negative private_acquisition exit ${negative.privateRefused ? 1 : 2}`);
         say(`task-readiness negative private_not_availability exit ${negative.privateDistinct ? 1 : 2}`);
         exit = negative.exit;
       }
@@ -566,6 +567,9 @@ if (commandLine) {
         say(`task-readiness era-retest initialize ${result.checks.initialize ? 200 : "fail"}`);
         say(`task-readiness era-retest batch ${result.checks.batch ? 400 : "fail"}`);
         say(`task-readiness era-retest method-not-found ${result.checks.methodNotFound ? 200 : "fail"}`);
+        say(`task-readiness era-retest tools ${result.checks.toolsPresent ? "present" : "fail"}`);
+        say(`task-readiness era-retest tools-call supported ${result.checks.toolsCallSupported ? 200 : "fail"}`);
+        say(`task-readiness era-retest tools-call unsupported ${result.checks.toolsCallUnsupported ? "400/-32000" : "fail"}`);
         exit = result.exit;
       }
     } else if (parsed.command === "task-readiness-retest") {

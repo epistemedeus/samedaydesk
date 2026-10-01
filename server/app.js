@@ -24,6 +24,7 @@ import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
+import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -97,6 +98,9 @@ app.use("/api/stripe", stripeWebhookRouter);
 app.use("/api/webhooks/resend", resendWebhookRouter);
 app.use("/api/market-observations", marketObservationsRouter);
 app.use("/api/observatory", observatoryRouter);
+// Optional public-readiness adapter. Vendored MIT checker, no private Git.
+// A disabled checker answers healthz and leaves every other route up.
+mountPublicReadiness(app, options.publicReadiness || {});
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));

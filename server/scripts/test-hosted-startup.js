@@ -43,6 +43,12 @@ for (const [name, args] of [
     assert.equal((await health.json()).service, "samedaydesk");
     const disabled = await fetch(origin + "/api/correspondence/healthz");
     assert.deepEqual(await disabled.json(), { ok: false, enabled: false, reason: "unconfigured" });
+    const readiness = await fetch(origin + "/api/public-readiness/healthz");
+    const readinessJson = await readiness.json();
+    assert.equal(readiness.status, 200);
+    assert.equal(readinessJson.compiledRepair.scope, "this-process");
+    assert.equal(readinessJson.publicDeployment.activated, false);
+    assert.equal(readinessJson.privateGitRequired, false);
   });
 }
 

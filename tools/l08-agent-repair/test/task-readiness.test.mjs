@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createServer } from "node:http";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test, { before } from "node:test";
@@ -15,7 +15,8 @@ import {
   readFixture,
   semanticResult,
 } from "../lib/task-readiness.mjs";
-import { NEO230, S14_PIN, acquirePins, exactFetchArgs, gitHead, resolvePin, repoRoot } from "../lib/pins.mjs";
+import { NEO230, S14_PIN, acquirePins, gitHead, resolvePin, repoRoot } from "../lib/pins.mjs";
+import { runPublicAdapter } from "../lib/public-adapter.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cold = join(here, "../cold-client.mjs");
@@ -23,9 +24,11 @@ const pinsSource = readFileSync(join(here, "../lib/pins.mjs"), "utf8");
 
 before(() => {
   const pins = acquirePins();
-  assert.equal(pins.neo.head, NEO230);
+  assert.equal(pins.neo.acquired, "refused");
+  assert.equal(pins.neo.commit, NEO230);
   assert.equal(pins.s14.head, S14_PIN);
-}, { timeout: 180_000 });
+  assert.equal(pins.s14.acquired, "vendored");
+});
 
 test("committed task-readiness catalog matches the generator and stays truthful", () => {
   const committed = readFileSync(join(repoRoot, "client/public/discovery/task-readiness.json"), "utf8");
@@ -36,16 +39,19 @@ test("committed task-readiness catalog matches the generator and stays truthful"
   assert.equal(doc.invokesPricedExecution, false);
   assert.equal(doc.humanPageAdded, false);
   assert.equal(doc.canonical.repaired, true);
+  assert.equal(doc.canonical.repairScope, "compiled-process");
   assert.equal(doc.canonical.requiredStatus, 400);
   assert.equal(doc.canonical.missingHeader, "accepted");
   assert.equal(doc.canonical.version, "2025-11-25");
-  assert.equal(doc.pins.acquire, "node tools/l08-agent-repair/cold-client.mjs acquire-pins");
+  assert.equal(doc.privateGitRequired, false);
+  assert.equal(doc.pins.neo230.acquired, false);
+  assert.equal(doc.pins.s14.acquired, "vendored");
+  assert.equal(doc.publicDeployment.activated, false);
   assert.equal(JSON.stringify(doc).includes("score"), false);
 });
 
 test("a correctly shaped string quote is not a ready repair", () => {
-  const s14 = resolvePin("s14");
-  const fixture = readFixture(s14.root, "catalog-row-repair-complete.json");
+  const fixture = readFixture("catalog-row-repair-complete.json");
   const semantic = semanticResult({ data: { quote: "soon" } });
   assert.equal(semantic.shape, "string");
   assert.equal(semantic.state, "fail");
@@ -181,12 +187,11 @@ test("caller fetch stops at the byte cap and the time cap", async () => {
 
 test("unqualified sibling pins and a wrong checkout are refused without moving HEAD", () => {
   assert.throws(() => resolvePin("s14", join(repoRoot, "..", "pins", "s14")), (err) => err.code === "stale_sibling");
-  assert.throws(() => resolvePin("neo", repoRoot), (err) => err.code === "pin_mismatch" || err.code === "stale_sibling");
-  assert.deepEqual(exactFetchArgs(S14_PIN), ["fetch", "--depth", "1", "origin", S14_PIN]);
+  assert.throws(() => resolvePin("neo", repoRoot), (err) => err.code === "private_acquisition");
   assert.equal(pinsSource.includes("git pull"), false);
   assert.equal(pinsSource.includes("git clone"), false);
-  assert.equal(pinsSource.includes('["fetch", "--depth", "1", "origin", commit]'), true);
-  assert.equal(pinsSource.includes("exactFetchArgs(spec.commit)"), true);
+  assert.equal(pinsSource.includes("git fetch"), false);
+  assert.equal(pinsSource.includes("neomorphic-io.git"), true);
   const wrong = mkdtempSync(join(tmpdir(), "l08-wrong-pin-"));
   try {
     spawnSync("git", ["init", "-q"], { cwd: wrong });
@@ -202,8 +207,25 @@ test("unqualified sibling pins and a wrong checkout are refused without moving H
   }
 });
 
-test("cold task-readiness reaches the maintained adapter and the negative exits 1", { timeout: 120_000 }, () => {
-  const positive = spawnSync(process.execPath, [cold, "task-readiness"], { cwd: repoRoot, encoding: "utf8" });
+test("cold task-readiness reaches the public adapter without private git and the negative exits 1", { timeout: 120_000 }, () => {
+  const bin = mkdtempSync(join(tmpdir(), "l08-git-stub-"));
+  const log = join(bin, "git.log");
+  writeFileSync(join(bin, "git"), `#!/bin/sh\necho "$@" >> "$GIT_STUB_LOG"\ncase "$1" in\n  rev-parse|status|cat-file) exec /usr/bin/git "$@" ;;\n  *) echo "refused git $*" >&2; exit 128 ;;\nesac\n`);
+  chmodSync(join(bin, "git"), 0o755);
+  const env = {
+    ...process.env,
+    PATH: `${bin}:${process.env.PATH}`,
+    GIT_STUB_LOG: log,
+    GIT_TERMINAL_PROMPT: "0",
+    GH_TOKEN: "",
+    GITHUB_TOKEN: "",
+    GH_ENTERPRISE_TOKEN: "",
+    NPM_TOKEN: "",
+  };
+  let positive;
+  let negative;
+  try {
+  positive = spawnSync(process.execPath, [cold, "task-readiness"], { cwd: repoRoot, encoding: "utf8", env });
   assert.equal(positive.status, 0, `${positive.stdout}\n${positive.stderr}`);
   assert.match(positive.stdout, /adapter repair-add-required exit 1 finding seller_response_required_path_missing:data\.quote/);
   assert.match(positive.stdout, /adapter contract-absent exit 1 finding seller_response_contract_absent,seller_response_required_path_missing:data\.quote/);
@@ -217,6 +239,12 @@ test("cold task-readiness reaches the maintained adapter and the negative exits 
   assert.match(positive.stdout, /dns_private/);
   assert.match(positive.stdout, /budget_time/);
   assert.match(positive.stdout, /public-readback client\/public\/discovery\/task-readiness.json repaired true/);
+  assert.match(positive.stdout, /compiled-repair scope this-process protocol-header repaired true/);
+  assert.match(positive.stdout, /public-deployment activated false readback none/);
+  assert.match(positive.stdout, /private-git acquired false/);
+  assert.match(positive.stdout, /era-retest tools present/);
+  assert.match(positive.stdout, /era-retest tools-call supported 200/);
+  assert.match(positive.stdout, /era-retest tools-call unsupported 400\/-32000/);
   assert.match(positive.stdout, /demand not_observed probe_failure_is_not_demand/);
   assert.match(positive.stdout, /empty-ledger fail no_demand_records/);
   assert.match(positive.stdout, /private_address/);
@@ -230,13 +258,37 @@ test("cold task-readiness reaches the maintained adapter and the negative exits 
   assert.equal(receipt.targets[0].claimedBecausePacket, false);
   assert.equal(receipt.targets[0].retest.complete, true);
   assert.equal(receipt.publicReadback.repaired, true);
+  assert.equal(receipt.publicDeployment.activated, false);
+  assert.equal(receipt.privateGit.acquired, false);
+  assert.equal(receipt.compiledRepair.scope, "this-process");
   assert.equal(receipt.targets.length, 2);
   assert.equal(receipt.targets[0].before.adapter.json.credentialsUsed, false);
   assert.notEqual(receipt.targets[0].id, receipt.targets[1].id);
-  const negative = spawnSync(process.execPath, [cold, "task-readiness-negative"], { cwd: repoRoot, encoding: "utf8" });
+  negative = spawnSync(process.execPath, [cold, "task-readiness-negative"], { cwd: repoRoot, encoding: "utf8", env });
   assert.equal(negative.status, 1, `${negative.stdout}\n${negative.stderr}`);
   assert.match(negative.stdout, /semantic_not_ready exit 1/);
   assert.match(negative.stdout, /demand_not_from_probe exit 1/);
   assert.match(negative.stdout, /stale_sibling exit 1/);
+  assert.match(negative.stdout, /private_acquisition exit 1/);
   assert.match(negative.stdout, /private_not_availability exit 1/);
+  const gitLog = readFileSync(log, "utf8");
+  assert.match(gitLog, /rev-parse/);
+  assert.doesNotMatch(gitLog, /\bfetch\b|\bclone\b|\bpull\b|ls-remote/);
+  } finally {
+    rmSync(bin, { recursive: true, force: true });
+  }
+});
+
+test("seeded catalog defect is repaired only after the changed target", () => {
+  const defect = runPublicAdapter("action/fixtures/catalog-row-repair-add-required.json");
+  assert.equal(defect.status, 1);
+  assert.equal(defect.json.ok, false);
+  assert.equal(defect.json.repairComplete, false);
+  assert.deepEqual(defect.json.findings, ["seller_response_required_path_missing:data.quote"]);
+  const changed = runPublicAdapter("action/fixtures/catalog-row-repair-complete.json");
+  assert.equal(changed.status, 0);
+  assert.equal(changed.json.ok, true);
+  assert.equal(changed.json.repairComplete, true);
+  assert.equal(changed.json.paymentSent, false);
+  assert.throws(() => runPublicAdapter("../package.json"), (err) => err.code === "fixture_refused");
 });

@@ -118,17 +118,18 @@ Schema checks use `client/scripts/validateJsonSchema.mjs`. OpenAPI success looku
 
 ## Task-specific readiness
 
-Free. No new payment route. A bare checkout acquires the declared commits. It does not look for a sibling directory named `s14` or `neo`, and it does not follow a branch tip.
+Free. No new payment route. The ordinary caller does not fetch private Neo `de9c23b5d19de30874e432e7ef1193d0d02d6702`. That repository stays private and its source is not in this tree. The public MIT checker from `https://github.com/epistemedeus/agent-payment-integrity.git` at `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` is vendored at `vendor/agent-payment-integrity`. `integrity.mjs` is unmodified. Install its public registry dependencies once:
 
 ```
+npm ci --ignore-scripts --prefix vendor/agent-payment-integrity
 node tools/l08-agent-repair/cold-client.mjs acquire-pins
 ```
 
-That command fetches Neo `https://github.com/epistemedeus/neomorphic-io.git` at `de9c23b5d19de30874e432e7ef1193d0d02d6702` and S14 `https://github.com/epistemedeus/agent-payment-integrity.git` at `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` into `tools/l08-agent-repair/.pin-cache/<commit>`. The fetch argument is that commit. A wrong or stale checkout is deleted and replaced with the same commit, never with the remote tip. Stale neo `259ea74da295f12d64e2aae9cb2042c4a14c6b96` is refused. An unqualified directory named `s14`, `neo`, or `neomorphic-io` is refused. The checkouts are not edited. S14 dependencies come from its lockfile with `npm ci --ignore-scripts`.
+`acquire-pins` does not run git. It refuses Neo and reports the vendored S14 commit. A directory named `s14`, `neo`, or `neomorphic-io` is still refused. Stale neo `259ea74da295f12d64e2aae9cb2042c4a14c6b96` is still refused. The existing SameDayDesk process mounts `GET /api/public-readiness/healthz` and `POST /api/public-readiness/catalog-row`. `compiledRepair` describes this process. `publicDeployment.activated` stays false until Root records a public-origin readback. The checklist is `tools/l08-agent-repair/PUBLIC-HOST-READBACK.json`.
 
 Two local targets, `POST /quote`, serve the pinned catalog rows. A supplied success contract requires `data.quote` to be a decimal string.
 
-1. `repair-add-required` declares `quote` and does not require it. The maintained adapter consumes `action/fixtures/catalog-row-repair-add-required.json` and exits 1 with `seller_response_required_path_missing:data.quote`.
+1. `repair-add-required` declares `quote` and does not require it. The public adapter consumes `action/fixtures/catalog-row-repair-add-required.json` and exits 1 with `seller_response_required_path_missing:data.quote`.
 2. `contract-absent` has no success schema. The same adapter consumes `action/fixtures/catalog-row-contract-absent.json` and exits 1 with `seller_response_contract_absent` and `seller_response_required_path_missing:data.quote`.
 
 Applying the complete schema on the live target and retesting from a second process authorizes `catalog-row-repair-complete.json`. The adapter exits 0. `{ "data": { "quote": "soon" } }` matches that schema's string shape and is refused. It does not become a repair packet.
@@ -140,4 +141,4 @@ node tools/l08-agent-repair/cold-client.mjs task-readiness
 node tools/l08-agent-repair/cold-client.mjs task-readiness-negative
 ```
 
-`task-readiness` exits 0 and writes `tools/l08-agent-repair/TASK-READINESS-RECEIPT.json`. `task-readiness-negative` exits 1. The machine catalog is `client/public/discovery/task-readiness.json`. It has no human page and does not say the protocol-header gap is closed.
+`task-readiness` exits 0 and writes `tools/l08-agent-repair/TASK-READINESS-RECEIPT.json`. `task-readiness-negative` exits 1. The machine catalog is `client/public/discovery/task-readiness.json`. It has no human page. `canonical.repaired` is this compiled process. `publicDeployment.activated` is false.

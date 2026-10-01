@@ -1,18 +1,17 @@
 // Task-specific readiness. One method, one path, one supplied success contract.
-// Findings stay in separate slots. The maintained adapter consumes an authorized packet.
+// Findings stay in separate slots. The in-repo public adapter consumes an authorized packet.
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import express from "express";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
-import { pathToFileURL } from "node:url";
 import { fileURLToPath } from "node:url";
-import healthRouter from "../../../server/routes/health.js";
-import mcpRouter from "../../../server/routes/mcp.js";
+import { createSdsApp } from "../../../server/app.js";
+import { MCP_TOOL_NAMES } from "../../../server/lib/mcp-tool-inventory.js";
 import { PublicHostError, fetchBounded } from "./bounded-fetch.mjs";
+import { checkerRoot, runPublicAdapter } from "./public-adapter.mjs";
 import { catalogDocument, catalogText } from "./task-catalog.mjs";
-import { S14_PIN, STALE_NEO, acquirePins, resolvePin, repoRoot } from "./pins.mjs";
+import { NEO230, S14_PIN, STALE_NEO, resolvePin, repoRoot } from "./pins.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const coldClient = join(here, "../cold-client.mjs");
@@ -66,8 +65,11 @@ export function semanticResult(body) {
   };
 }
 
-export function readFixture(s14Root, name) {
-  const path = join(s14Root, "action/fixtures", name);
+export function readFixture(name) {
+  if (typeof name !== "string" || !/^[A-Za-z0-9._-]+\.json$/.test(name)) {
+    throw Object.assign(new Error("fixture name refused"), { code: "fixture_refused" });
+  }
+  const path = join(checkerRoot, "action/fixtures", name);
   const raw = readFileSync(path, "utf8");
   return { raw, row: JSON.parse(raw), sha256: createHash("sha256").update(raw).digest("hex") };
 }
@@ -221,22 +223,18 @@ export function observeTarget(live, source) {
   };
 }
 
-export async function consumePacket(neoRoot, s14Root, sourceRelative) {
-  const href = pathToFileURL(join(neoRoot, "experiments/s19-receipt-referral/src/receiving/engines.mjs")).href;
-  const { runS14 } = await import(href);
-  const ran = runS14(s14Root, sourceRelative);
+export async function consumePacket(sourceRelative) {
+  const ran = runPublicAdapter(sourceRelative);
   return {
     status: ran.status ?? 1,
     json: ran.json,
     stderr: ran.stderr,
+    privateGit: false,
   };
 }
 
 export async function startCanonical() {
-  const app = express();
-  app.use(express.json({ limit: "1mb" }));
-  app.use("/api", healthRouter);
-  app.use("/mcp", mcpRouter);
+  const app = createSdsApp();
   const server = createServer(app);
   const port = await listen(server);
   return { origin: `http://127.0.0.1:${port}`, close: () => closeServer(server) };
@@ -279,6 +277,10 @@ export async function observeCanonical(origin) {
     },
   }, "1999-01-01");
   const repaired = unsupported.status === 400 && unsupported.json?.result === undefined && unsupported.json?.error?.code === -32000;
+  const readinessRes = await fetch(`${origin}/api/public-readiness/healthz`);
+  const readiness = await readinessRes.json();
+  const correspondenceRes = await fetch(`${origin}/api/correspondence/healthz`);
+  const correspondence = await correspondenceRes.json();
   return {
     health: {
       method: "GET",
@@ -312,6 +314,16 @@ export async function observeCanonical(origin) {
       httpStatus: initialize.status,
       protocolVersion: initialize.json?.result?.protocolVersion ?? null,
     },
+    readiness: {
+      httpStatus: readinessRes.status,
+      compiledScope: readiness.compiledRepair?.scope ?? null,
+      publicDeploymentActivated: readiness.publicDeployment?.activated ?? null,
+    },
+    correspondence: {
+      httpStatus: correspondenceRes.status,
+      enabled: correspondence.enabled ?? null,
+      reason: correspondence.reason ?? null,
+    },
   };
 }
 
@@ -322,6 +334,28 @@ export async function retestEra(origin) {
     { jsonrpc: "2.0", id: 4, method: "tools/list", params: {} },
   ], "1999-01-01");
   const method = await postCanonical(origin, { jsonrpc: "2.0", id: 9, method: "no-such-method" });
+  const toolCall = {
+    jsonrpc: "2.0",
+    id: 7,
+    method: "tools/call",
+    params: {
+      name: "plan_taskmarket_delegation",
+      arguments: {
+        request: "Describe the public readiness boundary",
+        deliverable: "One paragraph",
+        reward_usdc: "0.10",
+        max_spend_usdc: "0.10",
+        deadline_hours: 24,
+      },
+    },
+  };
+  const callSupported = await postCanonical(origin, toolCall, "2025-11-25");
+  const callOlder = await postCanonical(origin, toolCall, "2024-11-05");
+  const callMissing = await postCanonical(origin, toolCall);
+  const callBad = await postCanonical(origin, toolCall, "1999-01-01");
+  const listed = await postCanonical(origin, { jsonrpc: "2.0", id: 8, method: "tools/list", params: {} }, "2025-06-18");
+  const names = (listed.json?.result?.tools || []).map((tool) => tool.name);
+  const callOk = (res) => res.status === 200 && res.json?.result?.isError !== true && res.json?.error == null && res.json?.result?.structuredContent != null;
   const checks = {
     unsupported: observed.era.repaired === true,
     missingHeader: observed.missingHeader.httpStatus === 200 && observed.missingHeader.hasResult === true,
@@ -329,6 +363,9 @@ export async function retestEra(origin) {
     initialize: observed.initialize.httpStatus === 200 && observed.initialize.protocolVersion === "2025-11-25",
     batch: batch.status === 400 && batch.json?.error?.code === -32000 && batch.json?.result === undefined,
     methodNotFound: method.status === 200 && method.json?.error?.code === -32601,
+    toolsPresent: listed.status === 200 && names.length === MCP_TOOL_NAMES.length && MCP_TOOL_NAMES.every((name) => names.includes(name)),
+    toolsCallSupported: callOk(callSupported) && callOk(callOlder) && callOk(callMissing),
+    toolsCallUnsupported: callBad.status === 400 && callBad.json?.error?.code === -32000 && callBad.json?.result === undefined,
   };
   const ok = Object.values(checks).every(Boolean);
   return { exit: ok ? 0 : 1, checks, observed };
@@ -511,10 +548,15 @@ export async function securityProbes() {
 }
 
 export async function runTaskReadiness() {
-  const acquired = acquirePins();
-  const neo = resolvePin("neo");
   const s14 = resolvePin("s14");
-  if (neo.head !== acquired.neo.head || s14.head !== S14_PIN) throw new Error("s14 pin drifted");
+  if (s14.acquired !== "vendored" || s14.head !== S14_PIN) throw new Error("public checker pin drifted");
+  let privateRefused = false;
+  try {
+    resolvePin("neo");
+  } catch (err) {
+    privateRefused = err.code === "private_acquisition";
+  }
+  if (!privateRefused) throw new Error("private Neo acquisition was not refused");
   const canonical = await startCanonical();
   let canon;
   let eraRetest;
@@ -530,13 +572,19 @@ export async function runTaskReadiness() {
   if (canon.missingHeader.httpStatus !== 200 || canon.canonicalVersion.httpStatus !== 200 || canon.initialize.httpStatus !== 200) {
     throw new Error("missing-header, canonical version, or initialize client broke");
   }
+  if (canon.readiness.httpStatus !== 200 || canon.readiness.compiledScope !== "this-process" || canon.readiness.publicDeploymentActivated !== false) {
+    throw new Error("public-readiness mount did not distinguish compiled repair from deployment");
+  }
+  if (canon.correspondence.httpStatus !== 200 || canon.correspondence.enabled !== false) {
+    throw new Error("existing correspondence mount changed");
+  }
   if ((eraRetest?.status ?? 1) !== 0) {
     throw new Error(`era retest exit ${eraRetest?.status ?? 1}: ${eraRetest?.stdout || ""} ${eraRetest?.stderr || ""}`);
   }
   const targets = [];
   for (const spec of USEFUL_TARGETS) {
-    const fixture = readFixture(s14.root, spec.fixture);
-    const complete = readFixture(s14.root, "catalog-row-repair-complete.json");
+    const fixture = readFixture(spec.fixture);
+    const complete = readFixture("catalog-row-repair-complete.json");
     fixture.repairedSchema = complete.row.schema;
     const server = await startFixtureTarget(fixture, { data: { quote: "1.25" } });
     try {
@@ -544,7 +592,7 @@ export async function runTaskReadiness() {
       const observation = observeTarget(live, spec.source);
       const packet = authorizePacket(observation, fixture);
       if (!packet.authorized) throw new Error(`${spec.id} packet refused ${packet.reason}`);
-      const consumed = await consumePacket(neo.root, s14.root, spec.source);
+      const consumed = await consumePacket(spec.source);
       if (!consumed.json) throw new Error(`${spec.id} adapter returned no JSON`);
       if (consumed.status !== 1 || consumed.json.repairComplete !== false || consumed.json.ok !== false) {
         throw new Error(`${spec.id} adapter exit ${consumed.status} is the finding, not completion`);
@@ -582,7 +630,7 @@ export async function runTaskReadiness() {
       await server.close();
     }
   }
-  const semanticFixture = readFixture(s14.root, "catalog-row-repair-complete.json");
+  const semanticFixture = readFixture("catalog-row-repair-complete.json");
   semanticFixture.repairedSchema = semanticFixture.row.schema;
   const semanticServer = await startFixtureTarget(semanticFixture, { data: { quote: "soon" } });
   let semantic;
@@ -603,10 +651,19 @@ export async function runTaskReadiness() {
   const closed = await probeClosedPort();
   const receipt = {
     schema: "samedaydesk.task-readiness.receipt.v1",
-    job: "READINESS-REPAIR-INTEGRATION-100129",
+    job: "PUBLIC-READINESS-100138",
     consumer: "MAINT",
-    neo: neo.head,
+    neo: { commit: NEO230, acquired: false, reason: "private_git" },
     s14: s14.head,
+    privateGit: { acquired: false, reason: "private_git" },
+    compiledRepair: {
+      scope: "this-process",
+      protocolHeader: canon.era.repaired === true,
+    },
+    publicDeployment: {
+      activated: false,
+      readback: null,
+    },
     staleNeoRefused: STALE_NEO,
     paymentSent: false,
     paymentSigned: false,
@@ -637,6 +694,9 @@ export async function runTaskReadiness() {
   if (receipt.publicReadback.matchesCommitted !== true || receipt.publicReadback.repaired !== true) {
     throw new Error("public readback does not match the repaired catalog");
   }
+  if (receipt.publicDeployment.activated !== false || receipt.privateGit.acquired !== false) {
+    throw new Error("compiled repair was reported as a public deployment or a private fetch");
+  }
   if (semantic.packet.authorized !== false || semantic.semantic.state !== "fail" || semantic.shape !== "string") {
     throw new Error("semantic case was treated as ready");
   }
@@ -650,16 +710,14 @@ export async function runTaskReadiness() {
 }
 
 export async function retestOrigin(origin) {
-  const neo = resolvePin("neo");
-  const s14 = resolvePin("s14");
-  const complete = readFixture(s14.root, "catalog-row-repair-complete.json");
+  const complete = readFixture("catalog-row-repair-complete.json");
   const live = await readTarget(origin);
   const observation = observeTarget(live, "action/fixtures/catalog-row-repair-complete.json");
   const packet = authorizePacket(observation, complete);
   if (!packet.authorized) {
     return { exit: 1, reason: packet.reason, observation };
   }
-  const consumed = await consumePacket(neo.root, s14.root, "action/fixtures/catalog-row-repair-complete.json");
+  const consumed = await consumePacket("action/fixtures/catalog-row-repair-complete.json");
   const good = consumed.status === 0
     && consumed.json?.ok === true
     && consumed.json?.repairComplete === true
@@ -685,8 +743,7 @@ export function catalogMatchesCommitted() {
 }
 
 export async function runTaskReadinessNegative() {
-  acquirePins();
-  const semanticFixture = readFixture(resolvePin("s14").root, "catalog-row-repair-complete.json");
+  const semanticFixture = readFixture("catalog-row-repair-complete.json");
   const observation = {
     method: "POST",
     route: "/quote",
@@ -710,9 +767,15 @@ export async function runTaskReadinessNegative() {
   }
   let mismatch = false;
   try {
+    resolvePin("s14", repoRoot);
+  } catch (err) {
+    mismatch = err.code === "pin_mismatch";
+  }
+  let privateRefused = false;
+  try {
     resolvePin("neo", repoRoot);
   } catch (err) {
-    mismatch = err.code === "pin_mismatch" || err.code === "stale_sibling";
+    privateRefused = err.code === "private_acquisition";
   }
   let privateCode = null;
   try {
@@ -722,12 +785,13 @@ export async function runTaskReadinessNegative() {
   }
   const privateDistinct = privateCode === "private_address";
   return {
-    exit: shaped && demandDistinct && stale && mismatch && privateDistinct ? 1 : 2,
+    exit: shaped && demandDistinct && stale && mismatch && privateDistinct && privateRefused ? 1 : 2,
     shaped,
     demandDistinct,
     stale,
     mismatch,
     privateDistinct,
+    privateRefused,
   };
 }
 
@@ -743,6 +807,9 @@ export function sayReceipt(receipt, say) {
   say(`task-readiness semantic shape ${receipt.semantic.shape} value ${receipt.semantic.semantic.state} packet ${receipt.semantic.packet.authorized ? "authorized" : "refused"} ${receipt.semantic.packet.reason}`);
   say(`task-readiness canonical POST /mcp ${receipt.canonical.era.header} observed ${receipt.canonical.era.observedStatus} required ${receipt.canonical.era.requiredStatus} unsupported_era ${receipt.canonical.era.state} repaired ${receipt.canonical.era.repaired}`);
   say(`task-readiness era-retest exit ${receipt.eraRetest.status}`);
+  for (const line of String(receipt.eraRetest.stdout || "").split("\n")) {
+    if (line.startsWith("task-readiness era-retest ")) say(line);
+  }
   say(`task-readiness public-readback ${receipt.publicReadback.path} repaired ${receipt.publicReadback.repaired} required ${receipt.publicReadback.requiredStatus}`);
   say(`task-readiness canonical GET /api/health semantic ${receipt.canonical.health.semantic} availability ${receipt.canonical.health.availability}`);
   say(`task-readiness availability ${receipt.availability.availability.state} demand ${receipt.availability.absenceOfDemand.state} ${receipt.availability.absenceOfDemand.code}`);
@@ -751,5 +818,8 @@ export function sayReceipt(receipt, say) {
     say(`task-readiness security ${probe.code} ${probe.state}`);
   }
   say(`task-readiness catalog ${catalogMatchesCommitted() ? "matches committed" : "drift"} repaired-era`);
+  say(`task-readiness compiled-repair scope ${receipt.compiledRepair.scope} protocol-header repaired ${receipt.compiledRepair.protocolHeader}`);
+  say(`task-readiness public-deployment activated ${receipt.publicDeployment.activated} readback ${receipt.publicDeployment.readback ?? "none"}`);
+  say(`task-readiness private-git acquired ${receipt.privateGit.acquired}`);
   say("task-readiness paymentSent false");
 }
