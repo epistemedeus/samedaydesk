@@ -74,3 +74,20 @@ node tools/l08-agent-repair/cold-client.mjs seller-repair
 Exit 0 in this clone means `POST /api/checkout/seller-repair-session` with `finding_id` `not-a-catalog-id` returned HTTP 503 `Payments not configured`, and one real catalog id returned the same 503. The route reads Stripe before it reads the finding id, so the 503 is before the allowlist. Neither response contains a checkout URL. The catalog files are unchanged before and after the calls.
 
 When Stripe is configured, the same command sends only `not-a-catalog-id`, expects HTTP 400 `Invalid finding ID`, and does not send a catalog id.
+
+## Seller-repair journey
+
+Two ordinary callers, one `paid_get` and one `paid_post`, receive the catalog brief's maintenance scope. The result is not the MCP protocol header, not the disposable unknown-tool repair, and not a second wallet.
+
+```
+node tools/l08-agent-repair/cold-client.mjs journey
+node tools/l08-agent-repair/cold-client.mjs journey --finding hypernatt-liq-radar-20260830
+node tools/l08-agent-repair/cold-client.mjs journey --finding blockrun-exa-search-20260830
+node tools/l08-agent-repair/cold-client.mjs journey-negative
+```
+
+`journey` exits 0. Each caller line is `useful maintenance-scope` and includes the brief's first required-contract sentence. Neither caller gets a checkout URL. When Stripe is unset, each real catalog id is posted and returns HTTP 503 `Payments not configured`. When Stripe is configured, those ids are not posted.
+
+`journey-negative` exits 1. It refuses `not-a-catalog-id` (`unknown_finding`), `--wallet create` (`second_wallet_refused`), `--echo-header` (`echo_header_refused`), `--disposable-only` (`disposable_only_refused`), and `mcp.unknownTool` (`disposable_finding_refused`). None of those commands write `MAINT-HANDOFF.json`.
+
+`node tools/l08-agent-repair/cli.mjs cold` runs `journey` and `journey-negative` after the disposable repair. The listener still does not write the handoff. The cold client writes the journey onto the same file.

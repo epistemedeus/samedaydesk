@@ -1,10 +1,12 @@
 // Reproduce a disposable MCP defect, repair it, and hand the transition to MAINT.
 import { execFileSync, spawn, spawnSync } from "node:child_process";
+import { runJourneyArgv, runJourneyNegative } from "./cold-client.mjs";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { startDisposableTarget } from "./lib/disposable-target.mjs";
 import { PRIOR_SEAL, validateMaintHandoff } from "./lib/handoff.mjs";
+import { observeSellerRepairJourney } from "./lib/journey.mjs";
 import { postToolsList, protocolEdgeDocument, receiveSellerRepairRoute, observeApexProtocolEdge, UNSUPPORTED_PROTOCOL_HEADER } from "./lib/protocol-edge.mjs";
 import { startRepairService } from "./lib/service.mjs";
 
@@ -84,8 +86,15 @@ function writeChild(child) {
 async function receiveContext() {
   if (!priorSealExists()) throw new Error(`prior seal missing ${PRIOR_SEAL}`);
   const sellerRepair = await receiveSellerRepairRoute();
+  const journey = await observeSellerRepairJourney();
   if (sellerRepair.invalidFindingHttpStatus === 200 || sellerRepair.invalidFindingError == null || sellerRepair.hasUrl) {
     throw new Error("seller-repair receive created or hid a checkout response");
+  }
+  if (journey.catalogMutated !== false || journey.catalogUntouched !== true || journey.callers?.length !== 2) {
+    throw new Error("seller-repair journey did not produce two ordinary callers");
+  }
+  if (journey.secondWallet !== false || journey.disposableOnly !== false) {
+    throw new Error("seller-repair journey returned a wallet or disposable-only result");
   }
   if (!sellerRepair.allowlistRejectsUnknown || sellerRepair.findingIsSellerBrief !== false) {
     throw new Error("seller-repair allowlist did not match the received catalog");
@@ -104,6 +113,8 @@ async function receiveContext() {
     throw new Error(`seller-repair unconfigured route returned ${sellerRepair.invalidFindingHttpStatus}`);
   }
   say(`receive seller-repair ${sellerRepair.route} invalid finding_id -> ${sellerRepair.invalidFindingHttpStatus} gate ${sellerRepair.gate} catalog-untouched`);
+  const callerLine = journey.callers.map((caller) => `${caller.findingId} ${caller.routeClass}`).join(", ");
+  say(`journey callers ${callerLine} maintenance-scope catalog-untouched`);
   const apex = await observeApexProtocolEdge();
   if (apex.followUp.observedStatus !== 200 || apex.followUp.requiredStatus !== 400) {
     throw new Error(`protocol edge no longer matches the received server (${apex.followUp.observedStatus})`);
@@ -117,7 +128,7 @@ async function receiveContext() {
   say(`receive agent-readiness GET /agent-readiness ${apex.agentReadinessStatus}`);
   say(`receive apex POST /mcp initialize ${apex.initializeStatus} negotiated ${apex.negotiated}`);
   say(`protocol-edge ${apex.followUp.header} observed ${apex.followUp.observedStatus} required ${apex.followUp.requiredStatus} unresolved`);
-  return { sellerRepair, apex };
+  return { sellerRepair, apex, journey };
 }
 
 async function withTarget(mode, fn) {
@@ -131,11 +142,12 @@ async function withTarget(mode, fn) {
 
 export async function runRejectUnchanged() {
   return withTarget("broken", async (target) => {
-    const { sellerRepair, apex } = await receiveContext();
+    const { sellerRepair, apex, journey } = await receiveContext();
     const disposable = await postToolsList(target.origin, UNSUPPORTED_PROTOCOL_HEADER);
     const service = await startRepairService(target, {
       protocolEdge: protocolEdgeDocument({ apex, disposable }),
       sellerRepair,
+      journey,
     });
     try {
       const diagnosis = await postJson(`${service.origin}/v1/diagnose`);
@@ -164,7 +176,7 @@ export async function runRejectScored() {
   return 1;
 }
 
-async function listenBroken(sellerRepair, apex) {
+async function listenBroken(sellerRepair, apex, journey) {
   const target = await startDisposableTarget("broken");
   try {
     const disposable = await postToolsList(target.origin, UNSUPPORTED_PROTOCOL_HEADER);
@@ -175,6 +187,7 @@ async function listenBroken(sellerRepair, apex) {
     const service = await startRepairService(target, {
       protocolEdge: protocolEdgeDocument({ apex, disposable }),
       sellerRepair,
+      journey,
     });
     return { target, service };
   } catch (err) {
@@ -195,8 +208,8 @@ export async function runCold(outPath = defaultHandoffPath) {
     return 2;
   }
   say(`prior-seal ${PRIOR_SEAL} present`);
-  const { sellerRepair, apex } = await receiveContext();
-  const pair = await listenBroken(sellerRepair, apex);
+  const { sellerRepair, apex, journey } = await receiveContext();
+  const pair = await listenBroken(sellerRepair, apex, journey);
   if (pair.error) {
     say(`protocol-edge disposable observed ${pair.error}`);
     return 2;
@@ -219,7 +232,7 @@ export async function runCold(outPath = defaultHandoffPath) {
     await closePair(pair);
   }
 
-  const unchangedPair = await listenBroken(sellerRepair, apex);
+  const unchangedPair = await listenBroken(sellerRepair, apex, journey);
   if (unchangedPair.error) {
     say(`protocol-edge disposable observed ${unchangedPair.error}`);
     return 2;
@@ -232,13 +245,20 @@ export async function runCold(outPath = defaultHandoffPath) {
   }
   const scored = spawnCold(["reject-scored"]);
   const seller = spawnCold(["seller-repair"]);
+  const journeyPositive = spawnCold(["journey"]);
+  const journeyNegative = spawnCold(["journey-negative"]);
   say(`seeded reject-unchanged exit ${unchanged.status}`);
   writeChild(unchanged);
   say(`seeded reject-scored exit ${scored.status}`);
   writeChild(scored);
   say(`seller-repair exit ${seller.status}`);
   writeChild(seller);
+  say(`journey exit ${journeyPositive.status}`);
+  writeChild(journeyPositive);
+  say(`seeded journey-negative exit ${journeyNegative.status}`);
+  writeChild(journeyNegative);
   if (unchanged.status !== 1 || scored.status !== 1 || seller.status !== 0) return 1;
+  if (journeyPositive.status !== 0 || journeyNegative.status !== 1) return 1;
   return 0;
 }
 
@@ -248,7 +268,7 @@ export async function runProve(outPath = defaultHandoffPath) {
     return 2;
   }
   say(`prior-seal ${PRIOR_SEAL} present`);
-  const { sellerRepair, apex } = await receiveContext();
+  const { sellerRepair, apex, journey } = await receiveContext();
   const target = await startDisposableTarget("broken");
   let service;
   try {
@@ -260,6 +280,7 @@ export async function runProve(outPath = defaultHandoffPath) {
     service = await startRepairService(target, {
       protocolEdge: protocolEdgeDocument({ apex, disposable }),
       sellerRepair,
+      journey,
     });
     const diagnosis = await postJson(`${service.origin}/v1/diagnose`);
     if (diagnosis.status !== 200 || diagnosis.json?.finding?.id !== "mcp.unknownTool" || diagnosis.json?.finding?.status !== "fail") {
@@ -311,8 +332,10 @@ try {
   else if (command === "cold") exit = await runCold(process.argv[3] ? resolve(process.argv[3]) : defaultHandoffPath);
   else if (command === "reject-unchanged") exit = await runRejectUnchanged();
   else if (command === "reject-scored") exit = await runRejectScored();
+  else if (command === "journey") exit = await runJourneyArgv(process.argv.slice(3));
+  else if (command === "journey-negative") exit = await runJourneyNegative();
   else {
-    say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | cold [out.json] | reject-unchanged | reject-scored");
+    say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | cold [out.json] | reject-unchanged | reject-scored | journey | journey-negative");
     exit = 2;
   }
 } catch (err) {

@@ -33,6 +33,7 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
     assert.match(result.stdout, /prior-seal ac7e0c75c224a062d9ed4e58332e9c2f34b90895 present/);
     assert.match(result.stdout, /gate 503-before-allowlist catalog-untouched/);
+    assert.match(result.stdout, /journey callers hypernatt-liq-radar-20260830 paid_get, blockrun-exa-search-20260830 paid_post maintenance-scope catalog-untouched/);
     assert.match(result.stdout, /owned-endpoint POST \/v1\/diagnose exit 0 finding mcp\.unknownTool status fail/);
     assert.match(result.stdout, /owned-endpoint POST \/v1\/regress exit 0 finding mcp\.unknownTool fail -> pass/);
     assert.match(result.stdout, /seeded reject-unchanged exit 1/);
@@ -42,6 +43,14 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.deepEqual(validateMaintHandoff(handoff), { ok: true });
     assert.equal(handoff.regression.changed.length, 1);
     assert.equal(handoff.priorSeal, PRIOR_SEAL);
+    assert.equal(handoff.journey.job, "L08-JOURNEY-RECV-093093");
+    assert.equal(handoff.journey.priorHead, "fdd65c5f11d336183e038ef8582c0aa07fa81495");
+    assert.equal(handoff.journey.callers.length, 2);
+    assert.equal(handoff.journey.callers[0].resultKind, "maintenance-scope");
+    assert.equal(handoff.journey.callers[1].findingId, "blockrun-exa-search-20260830");
+    assert.equal(handoff.journey.coldClientWritesHandoff, true);
+    assert.equal(handoff.journey.listenerWritesHandoff, false);
+    assert.equal(handoff.journey.catalogMutated, false);
     assert.equal(Object.hasOwn(handoff, "score"), false);
   });
 
@@ -67,6 +76,45 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.match(result.stdout, /loopback/);
   });
 
+  await t.test("two ordinary seller-repair callers receive maintenance scope", () => {
+    const before = readFileSync(handoffPath, "utf8");
+    const getCaller = runCold(["journey", "--finding", "hypernatt-liq-radar-20260830"]);
+    assert.equal(getCaller.status, 0, `${getCaller.stdout}\n${getCaller.stderr}`);
+    assert.match(getCaller.stdout, /journey caller hypernatt-liq-radar-20260830 paid_get useful maintenance-scope no-url no-wallet/);
+    assert.match(getCaller.stdout, /Declare the successful application\/json response schema for the exact route\./);
+    const postCaller = runCold(["journey", "--finding", "blockrun-exa-search-20260830"]);
+    assert.equal(postCaller.status, 0, `${postCaller.stdout}\n${postCaller.stderr}`);
+    assert.match(postCaller.stdout, /journey caller blockrun-exa-search-20260830 paid_post useful maintenance-scope no-url no-wallet/);
+    assert.match(postCaller.stdout, /Declare the successful application\/json envelope and require results when every successful search returns it\./);
+    assert.doesNotMatch(`${getCaller.stdout}\n${postCaller.stdout}`, /https?:\/\//);
+    assert.doesNotMatch(`${getCaller.stdout}\n${postCaller.stdout}`, /plink_/);
+    assert.equal(readFileSync(handoffPath, "utf8"), before);
+  });
+
+  await t.test("journey negatives reject a second wallet, a header echo, and a disposable-only result", () => {
+    const before = readFileSync(handoffPath, "utf8");
+    const result = runCold(["journey-negative"]);
+    assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
+    assert.match(result.stdout, /journey negative unknown_finding exit 1/);
+    assert.match(result.stdout, /journey negative second_wallet_refused exit 1/);
+    assert.match(result.stdout, /journey negative echo_header_refused exit 1/);
+    assert.match(result.stdout, /journey negative disposable_only_refused exit 1/);
+    assert.match(result.stdout, /journey negative disposable_finding_refused exit 1/);
+    const wallet = runCold(["journey", "--finding", "hypernatt-liq-radar-20260830", "--wallet", "create"]);
+    assert.equal(wallet.status, 1, `${wallet.stdout}\n${wallet.stderr}`);
+    assert.match(wallet.stdout, /second_wallet_refused/);
+    const echo = runCold(["journey", "--finding", "hypernatt-liq-radar-20260830", "--echo-header"]);
+    assert.equal(echo.status, 1, `${echo.stdout}\n${echo.stderr}`);
+    assert.match(echo.stdout, /echo_header_refused/);
+    const disposable = runCold(["journey", "--disposable-only"]);
+    assert.equal(disposable.status, 1, `${disposable.stdout}\n${disposable.stderr}`);
+    assert.match(disposable.stdout, /disposable_only_refused/);
+    const unknown = runCold(["journey", "--finding", "not-a-catalog-id"]);
+    assert.equal(unknown.status, 1, `${unknown.stdout}\n${unknown.stderr}`);
+    assert.match(unknown.stdout, /unknown_finding/);
+    assert.equal(readFileSync(handoffPath, "utf8"), before);
+  });
+
   await t.test("seller-repair cold path stops before the allowlist and leaves the catalog", () => {
     const result = runCold(["seller-repair"]);
     assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
@@ -87,6 +135,11 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.match(result.stdout, /cold-client POST \/v1\/regress exit 1 finding mcp\.unknownTool unchanged fail/);
     assert.match(result.stdout, /seeded reject-scored exit 1/);
     assert.match(result.stdout, /seller-repair exit 0/);
+    assert.match(result.stdout, /journey exit 0/);
+    assert.match(result.stdout, /journey caller hypernatt-liq-radar-20260830 paid_get useful maintenance-scope no-url no-wallet/);
+    assert.match(result.stdout, /journey caller blockrun-exa-search-20260830 paid_post useful maintenance-scope no-url no-wallet/);
+    assert.match(result.stdout, /seeded journey-negative exit 1/);
+    assert.match(result.stdout, /journey negative second_wallet_refused exit 1/);
     assert.match(result.stdout, /protocol-edge MCP-Protocol-Version: 1999-01-01 observed 200 required 400 unresolved/);
     const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
     assert.deepEqual(validateMaintHandoff(handoff), { ok: true });
@@ -104,6 +157,17 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.equal(handoff.sellerRepair.catalogSha256, "1a886fd363e54273dcf9608a5e52ca44cac7166a41f220de9f3e741ecf17f1bc");
     assert.equal(handoff.sellerRepair.findingIsSellerBrief, false);
     assert.equal(handoff.protocolEdge.status, "unresolved");
+    assert.equal(handoff.journey.priorJob, "L08-MAINT-093083");
+    assert.equal(handoff.journey.operationId, "6dd8b73d-e58c-47c7-b2cb-e630167d21f1");
+    assert.equal(handoff.journey.catalogSha256, handoff.sellerRepair.catalogSha256);
+    assert.equal(handoff.journey.catalogFileSha256, handoff.sellerRepair.catalogFileSha256);
+    assert.equal(handoff.journey.callers[0].checkout.url, null);
+    assert.equal(handoff.journey.callers[0].checkout.httpStatus, 503);
+    assert.equal(handoff.journey.callers[1].checkout.httpStatus, 503);
+    assert.equal(handoff.journey.callers[0].maintenance.requiredContract[0], "Declare the successful application/json response schema for the exact route.");
+    assert.equal(handoff.journey.callers[1].maintenance.scope[0], "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing Exa search route.");
+    assert.equal(JSON.stringify(handoff.journey).includes("https://"), false);
+    assert.equal(JSON.stringify(handoff.journey).includes("plink_"), false);
     assert.equal(Object.hasOwn(handoff, "score"), false);
   });
 
@@ -116,6 +180,12 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     const scored = structuredClone(handoff);
     scored.sellerRepair.score = 1;
     assert.equal(validateMaintHandoff(scored).error, "score_product");
+    const wallet = structuredClone(handoff);
+    wallet.journey.secondWallet = true;
+    assert.equal(validateMaintHandoff(wallet).ok, false);
+    const echo = structuredClone(handoff);
+    echo.journey.callers[0].resultKind = "echo-header";
+    assert.equal(validateMaintHandoff(echo).error, "journey_result");
   });
 
   await t.test("SDS255, seller-repair, and SDS260 paths stay untouched", () => {

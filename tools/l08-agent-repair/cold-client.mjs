@@ -3,7 +3,8 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { scoreProductPaths, validateMaintHandoff } from "./lib/handoff.mjs";
+import { ORDINARY_CALLERS, scoreProductPaths, validateMaintHandoff } from "./lib/handoff.mjs";
+import { evaluateJourneyRequest, loadSellerRepairBriefs, observeSellerRepairJourney, seededJourneyRejections } from "./lib/journey.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const defaultOut = join(here, "MAINT-HANDOFF.json");
@@ -14,7 +15,7 @@ function say(line) {
 }
 
 function usage() {
-  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair");
+  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair | journey [--finding id] [--wallet create] [--echo-header] [--disposable-only] | journey-negative");
 }
 
 function loopbackOrigin(value) {
@@ -34,7 +35,7 @@ function loopbackOrigin(value) {
 
 function parseArgs(argv) {
   const [command, ...rest] = argv;
-  const opts = { command, origin: null, out: null };
+  const opts = { command, origin: null, out: null, finding: null, wallet: null, echoHeader: false, disposableOnly: false };
   for (let i = 0; i < rest.length; i += 1) {
     const arg = rest[i];
     if (arg === "--origin") {
@@ -43,6 +44,16 @@ function parseArgs(argv) {
     } else if (arg === "--out") {
       opts.out = rest[i + 1] ?? "";
       i += 1;
+    } else if (arg === "--finding") {
+      opts.finding = rest[i + 1] ?? "";
+      i += 1;
+    } else if (arg === "--wallet") {
+      opts.wallet = rest[i + 1] ?? "";
+      i += 1;
+    } else if (arg === "--echo-header") {
+      opts.echoHeader = true;
+    } else if (arg === "--disposable-only") {
+      opts.disposableOnly = true;
     } else {
       return { error: `unknown argument ${arg}` };
     }
@@ -110,6 +121,14 @@ export async function runColdClient(origin, outPath) {
   say("cold-client POST /v1/regress exit 0 finding mcp.unknownTool fail -> pass");
   say(`cold-client prior-seal ${regress.json.priorSeal}`);
   say(`cold-client continuation ${regress.json.continuation.job} operation ${regress.json.continuation.operationId}`);
+  const callers = regress.json.journey?.callers;
+  if (!Array.isArray(callers) || callers.length !== 2) {
+    say("cold-client journey exit 1 callers absent");
+    return 1;
+  }
+  for (const caller of callers) {
+    say(`cold-client journey ${caller.findingId} ${caller.routeClass} maintenance-scope`);
+  }
   writeFileSync(outPath, `${JSON.stringify(regress.json, null, 2)}\n`);
   const roundTrip = validateMaintHandoff(JSON.parse(readFileSync(outPath, "utf8")));
   if (!roundTrip.ok) {
@@ -138,6 +157,78 @@ export function runColdRejectScored() {
   }
   say("cold-client handoff rejected score_product");
   return 1;
+}
+
+function sayCaller(caller) {
+  const maintenance = caller.maintenance?.requiredContract?.[0];
+  if (typeof maintenance !== "string" || maintenance.length === 0) return false;
+  say(`journey caller ${caller.findingId} ${caller.routeClass} useful maintenance-scope no-url no-wallet`);
+  say(`journey maintenance ${caller.findingId} ${maintenance}`);
+  return true;
+}
+
+export async function runJourneyArgv(rest) {
+  const parsed = parseArgs(["journey", ...rest]);
+  if (parsed.error || parsed.origin != null || parsed.out != null) {
+    say(parsed.error ? `cold-client ${parsed.error}` : "cold-client journey takes no origin");
+    return 2;
+  }
+  const selective = parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly;
+  if (selective) {
+    const briefs = loadSellerRepairBriefs();
+    const verdict = evaluateJourneyRequest({
+      findingId: parsed.finding ?? "",
+      wallet: parsed.wallet,
+      echoHeader: parsed.echoHeader,
+      disposableOnly: parsed.disposableOnly,
+    }, briefs);
+    if (!verdict.ok) {
+      say(`journey negative ${verdict.error} exit 1`);
+      return 1;
+    }
+    if (!ORDINARY_CALLERS.some((pin) => pin.findingId === parsed.finding)) {
+      say("journey finding is not one of the two ordinary callers");
+      return 2;
+    }
+  }
+  const observed = await observeSellerRepairJourney();
+  if (observed.catalogMutated !== false || observed.catalogUntouched !== true) {
+    say("journey catalog-mutated");
+    return 1;
+  }
+  const selected = selective
+    ? observed.callers.filter((caller) => caller.findingId === parsed.finding)
+    : observed.callers;
+  if (selected.length !== (selective ? 1 : ORDINARY_CALLERS.length)) {
+    say("journey caller absent");
+    return 1;
+  }
+  for (const caller of selected) {
+    if (!sayCaller(caller) || caller.checkout?.url != null || caller.checkoutUrl != null) {
+      say("journey caller missing maintenance");
+      return 1;
+    }
+    if (caller.checkout.sent === true && (caller.checkout.httpStatus !== 503 || caller.checkout.error !== "Payments not configured")) {
+      say(`journey caller ${caller.findingId} checkout ${caller.checkout.httpStatus}`);
+      return 1;
+    }
+    if (caller.checkout.sent === false && caller.checkout.withheld !== "stripe_configured") {
+      say(`journey caller ${caller.findingId} checkout withheld`);
+      return 1;
+    }
+  }
+  say("journey catalog-untouched");
+  return 0;
+}
+
+export function runJourneyNegative() {
+  const seeded = seededJourneyRejections();
+  let ok = true;
+  for (const row of seeded) {
+    say(`journey negative ${row.id} exit ${row.rejected ? 1 : 2}`);
+    if (!row.rejected || row.expectsExit !== 1) ok = false;
+  }
+  return ok ? 1 : 2;
 }
 
 export async function runColdSellerRepair() {
@@ -183,18 +274,27 @@ if (commandLine) {
         exit = await runColdRejectUnchanged(origin);
       }
     } else if (parsed.command === "reject-scored") {
-      if (parsed.origin != null || parsed.out != null) {
+      if (parsed.origin != null || parsed.out != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
         say("cold-client reject-scored takes no origin");
         exit = 2;
       } else {
         exit = runColdRejectScored();
       }
     } else if (parsed.command === "seller-repair") {
-      if (parsed.origin != null || parsed.out != null) {
+      if (parsed.origin != null || parsed.out != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
         say("cold-client seller-repair takes no origin");
         exit = 2;
       } else {
         exit = await runColdSellerRepair();
+      }
+    } else if (parsed.command === "journey") {
+      exit = await runJourneyArgv(process.argv.slice(3));
+    } else if (parsed.command === "journey-negative") {
+      if (parsed.origin != null || parsed.out != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client journey-negative takes no arguments");
+        exit = 2;
+      } else {
+        exit = runJourneyNegative();
       }
     } else {
       usage();

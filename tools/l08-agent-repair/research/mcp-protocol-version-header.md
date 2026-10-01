@@ -29,3 +29,5 @@ Owned paths for that repair stay under `tools/l08-agent-repair/`. `server/routes
 ## Continuation
 
 `L08-MAINT-093083` leaves this edge unresolved. Prior seal `ac7e0c75c224a062d9ed4e58332e9c2f34b90895`. The cold client records the same 200-versus-400 evidence on `protocolEdge` and does not patch the apex router or the readiness probe.
+
+`L08-JOURNEY-RECV-093093` does not repair this header. The seller-repair journey's useful result is the catalog maintenance scope for two ordinary callers. A request that asks for this header as the result is refused with `echo_header_refused`.

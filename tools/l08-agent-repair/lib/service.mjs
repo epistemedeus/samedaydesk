@@ -64,6 +64,7 @@ export function createRepairApp(target, context) {
       changed,
       protocolEdge: context.protocolEdge,
       sellerRepair: context.sellerRepair,
+      journey: context.journey,
     });
     const verdict = validateMaintHandoff(handoff);
     if (!verdict.ok) return res.status(500).json({ error: "handoff_rejected", reason: verdict.error });

@@ -171,5 +171,124 @@
     "catalogUntouched": true,
     "catalogMutated": false,
     "coldCommand": "node tools/l08-agent-repair/cold-client.mjs seller-repair"
+  },
+  "journey": {
+    "schema": "samedaydesk.maint.seller-repair.journey.v1",
+    "job": "L08-JOURNEY-RECV-093093",
+    "operationId": "6dd8b73d-e58c-47c7-b2cb-e630167d21f1",
+    "priorJob": "L08-MAINT-093083",
+    "priorHead": "fdd65c5f11d336183e038ef8582c0aa07fa81495",
+    "coldClientWritesHandoff": true,
+    "listenerWritesHandoff": false,
+    "stripeConfigured": false,
+    "catalogCount": 10,
+    "catalogSha256": "1a886fd363e54273dcf9608a5e52ca44cac7166a41f220de9f3e741ecf17f1bc",
+    "catalogFileSha256": "b2785b943e939c5d032b72d95af806470baf059c92d9592f04fb98ca6da5fe16",
+    "catalogUntouched": true,
+    "catalogMutated": false,
+    "secondWallet": false,
+    "disposableOnly": false,
+    "callers": [
+      {
+        "role": "ordinary",
+        "findingId": "hypernatt-liq-radar-20260830",
+        "routeClass": "paid_get",
+        "seller": "HyperNatt Terminal",
+        "method": "GET",
+        "route": "/api/m2m/liq-radar",
+        "useful": true,
+        "resultKind": "maintenance-scope",
+        "echoHeader": false,
+        "disposableOnly": false,
+        "secondWallet": false,
+        "wallet": "none",
+        "checkoutUrl": null,
+        "maintenance": {
+          "summary": "The live Base and Solana offer describes a detailed liquidation-radar payload, but the formal success contracts do not guarantee those fields before payment.",
+          "requiredContract": [
+            "Declare the successful application/json response schema for the exact route.",
+            "Require a stable handler-owned core and recursively require every buyer-critical path.",
+            "Keep variable arrays and optional market observations optional unless runtime behavior guarantees them."
+          ],
+          "scope": [
+            "One truthful OpenAPI 200 schema and matching Bazaar projection.",
+            "Credential-free contract, parity, and live unpaid-402 tests.",
+            "No handler, price, rail, wallet, recipient, or payment-middleware change."
+          ],
+          "boundaries": [
+            "No credential, signature, target request, wallet action, or target payment was used to reproduce this finding.",
+            "The seller confirms the real runtime types and semantics before any schema repair is merged."
+          ]
+        },
+        "checkout": {
+          "sent": true,
+          "httpStatus": 503,
+          "error": "Payments not configured",
+          "url": null,
+          "withheld": null
+        }
+      },
+      {
+        "role": "ordinary",
+        "findingId": "blockrun-exa-search-20260830",
+        "routeClass": "paid_post",
+        "seller": "BlockRun",
+        "method": "POST",
+        "route": "/api/v1/exa/search",
+        "useful": true,
+        "resultKind": "maintenance-scope",
+        "echoHeader": false,
+        "disposableOnly": false,
+        "secondWallet": false,
+        "wallet": "none",
+        "checkoutUrl": null,
+        "maintenance": {
+          "summary": "The live Exa route has a well-defined request and active catalog record, but neither OpenAPI nor Bazaar formally guarantees a returned application field before payment.",
+          "requiredContract": [
+            "Declare the successful application/json envelope and require results when every successful search returns it.",
+            "Require only result fields the live handler guarantees on every item; the seller-owned skill suggests title and url as the first contract candidates to verify.",
+            "Project the same success contract through OpenAPI and Bazaar and keep the public example schema-valid."
+          ],
+          "scope": [
+            "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing Exa search route.",
+            "Credential-free request, fixture, recursive-required-path, OpenAPI/Bazaar parity, and unchanged live-offer tests.",
+            "No handler, request, price, rail, recipient, wallet, payment middleware, or other-route change."
+          ],
+          "boundaries": [
+            "No credential, signature, target paid request, wallet action, or target payment was used to reproduce this finding.",
+            "The seller confirms the real success envelope, item branches, runtime types, and guarantees before any schema repair is merged."
+          ]
+        },
+        "checkout": {
+          "sent": true,
+          "httpStatus": 503,
+          "error": "Payments not configured",
+          "url": null,
+          "withheld": null
+        }
+      }
+    ],
+    "seededRejections": [
+      {
+        "id": "unknown_finding",
+        "expectsExit": 1
+      },
+      {
+        "id": "second_wallet_refused",
+        "expectsExit": 1
+      },
+      {
+        "id": "echo_header_refused",
+        "expectsExit": 1
+      },
+      {
+        "id": "disposable_only_refused",
+        "expectsExit": 1
+      },
+      {
+        "id": "disposable_finding_refused",
+        "expectsExit": 1
+      }
+    ]
   }
 }

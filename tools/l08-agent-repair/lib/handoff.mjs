@@ -14,6 +14,37 @@ export const INVALID_SELLER_FINDING_ID = "not-a-catalog-id";
 export const COLD_CLIENT_RUN = "node tools/l08-agent-repair/cold-client.mjs run";
 export const COLD_CLIENT_REJECT_UNCHANGED = "node tools/l08-agent-repair/cold-client.mjs reject-unchanged";
 export const COLD_CLIENT_SELLER_REPAIR = "node tools/l08-agent-repair/cold-client.mjs seller-repair";
+export const JOURNEY_SCHEMA = "samedaydesk.maint.seller-repair.journey.v1";
+export const RECEIVING_JOB = "L08-JOURNEY-RECV-093093";
+export const RECEIVING_PRIOR_JOB = "L08-MAINT-093083";
+export const RECEIVING_PRIOR_HEAD = "fdd65c5f11d336183e038ef8582c0aa07fa81495";
+export const ORDINARY_CALLERS = [
+  {
+    findingId: "hypernatt-liq-radar-20260830",
+    routeClass: "paid_get",
+    method: "GET",
+    route: "/api/m2m/liq-radar",
+    seller: "HyperNatt Terminal",
+    requiredFirst: "Declare the successful application/json response schema for the exact route.",
+    scopeFirst: "One truthful OpenAPI 200 schema and matching Bazaar projection.",
+  },
+  {
+    findingId: "blockrun-exa-search-20260830",
+    routeClass: "paid_post",
+    method: "POST",
+    route: "/api/v1/exa/search",
+    seller: "BlockRun",
+    requiredFirst: "Declare the successful application/json envelope and require results when every successful search returns it.",
+    scopeFirst: "One truthful OpenAPI 200 schema and matching Bazaar projection for the existing Exa search route.",
+  },
+];
+export const SEEDED_JOURNEY_REJECTIONS = [
+  "unknown_finding",
+  "second_wallet_refused",
+  "echo_header_refused",
+  "disposable_only_refused",
+  "disposable_finding_refused",
+];
 
 const SCORE_KEYS = new Set(["score", "grade", "scoreDelta", "points", "ratio", "weight"]);
 
@@ -42,7 +73,7 @@ export function buildDiagnosis(observed) {
   };
 }
 
-export function buildHandoff({ diagnosis, afterExchange, changed, protocolEdge, sellerRepair }) {
+export function buildHandoff({ diagnosis, afterExchange, changed, protocolEdge, sellerRepair, journey }) {
   return {
     schema: HANDOFF_SCHEMA,
     job: JOB_ID,
@@ -84,7 +115,69 @@ export function buildHandoff({ diagnosis, afterExchange, changed, protocolEdge, 
     },
     protocolEdge,
     sellerRepair,
+    journey,
   };
+}
+
+function stringList(value) {
+  return Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === "string" && item.length > 0);
+}
+
+function checkoutOk(checkout, stripeConfigured) {
+  if (!checkout || checkout.url !== null) return false;
+  if (stripeConfigured === false) {
+    return checkout.sent === true
+      && checkout.httpStatus === 503
+      && checkout.error === "Payments not configured"
+      && checkout.withheld === null;
+  }
+  if (stripeConfigured === true) {
+    return checkout.sent === false
+      && checkout.httpStatus === null
+      && checkout.error === null
+      && checkout.withheld === "stripe_configured";
+  }
+  return false;
+}
+
+function journeyError(journey, seller) {
+  if (!journey || journey.schema !== JOURNEY_SCHEMA) return "journey_schema";
+  if (journey.job !== RECEIVING_JOB) return "journey_job";
+  if (journey.operationId !== OPERATION_ID) return "journey_operation";
+  if (journey.priorJob !== RECEIVING_PRIOR_JOB) return "journey_prior_job";
+  if (journey.priorHead !== RECEIVING_PRIOR_HEAD) return "journey_prior_head";
+  if (journey.coldClientWritesHandoff !== true || journey.listenerWritesHandoff !== false) return "journey_writer";
+  if (journey.secondWallet !== false || journey.disposableOnly !== false) return "journey_shape";
+  if (journey.catalogMutated !== false || journey.catalogUntouched !== true) return "journey_catalog";
+  if (!seller || journey.catalogCount !== seller.catalogCount) return "journey_catalog_count";
+  if (journey.catalogSha256 !== seller.catalogSha256) return "journey_catalog_hash";
+  if (journey.catalogFileSha256 !== seller.catalogFileSha256) return "journey_catalog_file";
+  if (journey.stripeConfigured !== seller.stripeConfigured) return "journey_stripe";
+  if (!Array.isArray(journey.callers) || journey.callers.length !== ORDINARY_CALLERS.length) return "journey_callers";
+  for (let i = 0; i < ORDINARY_CALLERS.length; i += 1) {
+    const caller = journey.callers[i];
+    const pin = ORDINARY_CALLERS[i];
+    if (!caller || caller.role !== "ordinary") return "journey_caller_role";
+    if (caller.findingId !== pin.findingId || caller.routeClass !== pin.routeClass) return "journey_caller_id";
+    if (caller.seller !== pin.seller || caller.method !== pin.method || caller.route !== pin.route) return "journey_caller_route";
+    if (caller.useful !== true || caller.resultKind !== "maintenance-scope") return "journey_result";
+    if (caller.echoHeader !== false || caller.disposableOnly !== false || caller.secondWallet !== false) return "journey_result";
+    if (caller.wallet !== "none" || caller.checkoutUrl !== null) return "journey_checkout";
+    const maintenance = caller.maintenance;
+    if (!maintenance || typeof maintenance.summary !== "string" || maintenance.summary.length < 40) return "journey_maintenance";
+    if (!stringList(maintenance.requiredContract) || maintenance.requiredContract[0] !== pin.requiredFirst) return "journey_maintenance";
+    if (!stringList(maintenance.scope) || maintenance.scope[0] !== pin.scopeFirst) return "journey_maintenance";
+    if (!stringList(maintenance.boundaries) || !maintenance.boundaries.some((line) => line.includes("wallet"))) return "journey_boundaries";
+    if (!checkoutOk(caller.checkout, journey.stripeConfigured)) return "journey_checkout";
+  }
+  if (!Array.isArray(journey.seededRejections) || journey.seededRejections.length !== SEEDED_JOURNEY_REJECTIONS.length) {
+    return "journey_seeded";
+  }
+  for (let i = 0; i < SEEDED_JOURNEY_REJECTIONS.length; i += 1) {
+    const row = journey.seededRejections[i];
+    if (row?.id !== SEEDED_JOURNEY_REJECTIONS[i] || row?.expectsExit !== 1) return "journey_seeded";
+  }
+  return null;
 }
 
 function sellerRepairError(seller) {
@@ -189,5 +282,7 @@ export function validateMaintHandoff(doc) {
   }
   const sellerError = sellerRepairError(doc.sellerRepair);
   if (sellerError) return { ok: false, error: sellerError };
+  const journeyFailure = journeyError(doc.journey, doc.sellerRepair);
+  if (journeyFailure) return { ok: false, error: journeyFailure };
   return { ok: true };
 }
