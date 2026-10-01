@@ -1,0 +1,38 @@
+{
+  "productionActivate": "HOLD",
+  "canonicalRuntime": {
+    "repo": "epistemedeus/samedaydesk",
+    "sourceCommit": "a51110ab6ede18658cac816042edc491b34e0a5e",
+    "receiverRepo": "epistemedeus/neomorphic-io",
+    "receiverHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "receiverTree": "d9c80cfd56cb05d40055dba047d6462656764ff8"
+  },
+  "i23ClientEvidence": {
+    "repo": "epistemedeus/neomorphic-io",
+    "ref": "heavy/s07-vf16-recover-0930",
+    "commit": "89fa38bdefe067c7c88d02549cb649c1f3c33c97",
+    "consumed": "read-only",
+    "edited": false,
+    "usedFor": "Client A then client B after HTTP restart, seeded refusal of a success claim that the service did not earn, and a disposable correspondence service that is not hosted activation."
+  },
+  "publicHostObservation": {
+    "origin": "https://samedaydesk.com",
+    "measuredAt": "2026-09-30T23:04:53Z",
+    "foundry": "unconfigured",
+    "productionActivate": "HOLD",
+    "detail": "server/foundry/activation/enrolled-public.json",
+    "panelEnvRead": false,
+    "secretsCopied": false
+  },
+  "activationAmend": {
+    "productionActivate": "HOLD",
+    "productionReady": false,
+    "classes": [
+      "correspondence_reuses_product_data_service",
+      "host_configuration_withheld",
+      "hosted_success_without_enrolled_store",
+      "false_green_rejected"
+    ],
+    "laterRetrieval": "server/foundry/activation/LATER.md"
+  }
+}

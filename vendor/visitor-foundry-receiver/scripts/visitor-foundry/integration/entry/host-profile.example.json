@@ -1,0 +1,17 @@
+{
+  "id": "host:vf12-qa",
+  "maxAdmissions": 4,
+  "maxPhysical": 1,
+  "pool": {
+    "validityMs": 3600000,
+    "maxInvocations": 8,
+    "maxValidationCostUnits": "16000",
+    "maxCandidates": 4,
+    "maxPackages": 16,
+    "maxWorkCells": 4,
+    "maxCellCommands": 24,
+    "maxHttpKeys": 48,
+    "maxNativeCommands": 128,
+    "maxManifests": 48
+  }
+}

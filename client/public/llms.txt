@@ -10,12 +10,11 @@
 - x402 and native MPP Payment Route: $499.
 - Agent Commerce Storefront: $999.
 - [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): Check crawler access, metadata, structured data, sitemap, and llms.txt.
-- [Free Agent Readiness Checker](https://samedaydesk.com/agent-readiness): Score discovery files, MCP, the agent card, cross-surface identity, CORS, and x402. Humans read the page. Agents get the same result with `?format=json&host=example.com`, or by calling the free MCP tool `check_agent_readiness`.
 - [Resources](https://samedaydesk.com/resources.html): Original research, practical guides, and free AI-search tools.
 
 ## Agent interfaces
 
-- [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface. `tools/list` is the tool inventory. This file names the same tools: `check_ai_readiness` (free), `check_agent_readiness` (free), `generate_complete_fix_pack` (paid license), `plan_taskmarket_delegation` (free plan, does not create a task), `browse_taskmarket_tasks` (free read), `track_taskmarket_task` (free read). This is separate from the paid gateway.
+- [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
 - [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway. Live MCP inventory is authoritative.
 - Practical paid job: `POST https://agents.samedaydesk.com/extract/batch` (1 to 5 public HTTPS URLs, 0.01 USDC bounded attempt). Backward-compatible `GET https://agents.samedaydesk.com/extract?url=https://example.com` remains available.
 - [Practical agent jobs](https://samedaydesk.com/for-agents): Obtain a bounded batch extraction, then offline comparison or record mapping of already-held JSON, optionally export a reuse reference, or run one-shot recurring recipes (`source-change-alert`, `issue-to-work-brief`, `buyer-setup-trace`) against an immutable prior. A schema-valid export is user-selected unverified evidence, not automatic public-safe certification. Purchasing never requires publishing. Copyable no-key commands are in the initial HTML.

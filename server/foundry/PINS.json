@@ -1,0 +1,23 @@
+{
+  "sdsBase": "8c7968360d64cc36f3b89486e01293c6553927cc",
+  "receiverRepo": "epistemedeus/neomorphic-io",
+  "receiverBranch": "codex/visitor-foundry-integration-20260926",
+  "receiverHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "receiverTree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+  "schema": "pilot_correspondence",
+  "bodyLimitDefault": 32768,
+  "bodyLimitOptIn": 524288,
+  "wasmtimeVersion": "49.0.0",
+  "wasmtimeWheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+  "fixtures": {
+    "answer.wasm": "ccf59f0f7a7625ee380ed228905aadfa11072ac14cea1c53d1e7f3953d4d48c6",
+    "bounded-child.mjs": "890e9e27f84bd7f2b803e520612e6e74115ef04031c46405f60aa49b87c90ec1"
+  },
+  "pools": {
+    "entry": 2,
+    "workCells": 2,
+    "integration": 2,
+    "worker": 2,
+    "baseMax": 4
+  }
+}

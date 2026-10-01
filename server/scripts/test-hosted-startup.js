@@ -1,11 +1,33 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
+import { get } from "node:http";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const preload = fileURLToPath(new URL("./fixtures/hosted-startup-preload.mjs", import.meta.url));
+
+// Connect directly to the owned loopback listener, independent of fetch proxies.
+function localJson(url) {
+  return new Promise((resolve, reject) => {
+    const request = get(url, { agent: false }, response => {
+      let body = "";
+      response.setEncoding("utf8");
+      response.on("data", chunk => {
+        body += chunk;
+        if (body.length > 16384) request.destroy(new Error("Startup response exceeds 16KiB"));
+      });
+      response.on("error", reject);
+      response.on("end", () => {
+        try { resolve({ status: response.statusCode, body: JSON.parse(body) }); }
+        catch (error) { reject(error); }
+      });
+    });
+    request.setTimeout(5000, () => request.destroy(new Error("Startup HTTP probe timed out")));
+    request.on("error", reject);
+  });
+}
 
 async function childMessage(t, args) {
   const child = spawn(process.execPath, ["--import", preload, ...args], {
@@ -38,17 +60,17 @@ for (const [name, args] of [
     const { message } = await childMessage(t, args);
     assert.ok(Number.isInteger(message.port) && message.port > 0);
     const origin = "http://127.0.0.1:" + message.port;
-    const health = await fetch(origin + "/api/health");
+    const health = await localJson(origin + "/api/health");
     assert.equal(health.status, 200);
-    assert.equal((await health.json()).service, "samedaydesk");
-    const disabled = await fetch(origin + "/api/correspondence/healthz");
-    assert.deepEqual(await disabled.json(), { ok: false, enabled: false, reason: "unconfigured" });
-    const readiness = await fetch(origin + "/api/public-readiness/healthz");
-    const readinessJson = await readiness.json();
+    assert.equal(health.body.service, "samedaydesk");
+    const disabled = await localJson(origin + "/api/correspondence/healthz");
+    assert.equal(disabled.status, 200);
+    assert.deepEqual(disabled.body, { ok: false, enabled: false, reason: "unconfigured" });
+    const readiness = await localJson(origin + "/api/public-readiness/healthz");
     assert.equal(readiness.status, 200);
-    assert.equal(readinessJson.compiledRepair.scope, "this-process");
-    assert.equal(readinessJson.publicDeployment.activated, false);
-    assert.equal(readinessJson.privateGitRequired, false);
+    assert.equal(readiness.body.compiledRepair.scope, "this-process");
+    assert.equal(readiness.body.publicDeployment.activated, false);
+    assert.equal(readiness.body.privateGitRequired, false);
   });
 }
 

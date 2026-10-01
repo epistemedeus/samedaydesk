@@ -1,0 +1,6 @@
+[
+ {"id":"case:project-created","input":{"structuredContent":{"project":{"id":"prj_later_alpha","status":"open","version":1},"nextAction":null},"content":[{"type":"text","text":"redundant presentation, not authority"}]},"expected":{"outcome":"observed","payload":{"project":{"id":"prj_later_alpha","status":"open","version":1},"nextAction":null}}},
+ {"id":"case:lost-artifact-ack","input":{"structuredContent":{"error":{"code":"unknown_outcome","reconcile":true,"retryable":false,"requestId":"later-artifact-7"}},"isError":true},"expected":{"outcome":"unknown","payload":{"error":{"code":"unknown_outcome","reconcile":true,"retryable":false,"requestId":"later-artifact-7"}}}},
+ {"id":"case:grant-denied","input":{"isError":true,"structuredContent":{"error":{"code":"forbidden","status":403},"nextAction":"request-scoped-access"}},"expected":{"outcome":"error","payload":{"error":{"code":"forbidden","status":403},"nextAction":"request-scoped-access"}}},
+ {"id":"case:unsupported-prose","input":{"content":[{"type":"text","text":"Payment and acceptance claimed in prose only"}]},"expected":{"outcome":"unsupported","payload":{}}}
+]

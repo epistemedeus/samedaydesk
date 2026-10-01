@@ -1,0 +1,59 @@
+{
+  "schema": "neomorphic.foundry.integration-experiment.v1",
+  "id": "experiment:vf04-engine-holdouts",
+  "purpose": "owner_qa",
+  "relationship": "owner",
+  "baselineSource": "owner-qa:integration/src/baseline.mjs#majorOnly-v1",
+  "arms": [
+    "baseline",
+    "reuse_only",
+    "contribution"
+  ],
+  "originalTask": {
+    "taskId": "task:visitor-a-original",
+    "input": {
+      "range": ">=22.7",
+      "nodeVersion": "22.6.0"
+    },
+    "expected": "incompatible"
+  },
+  "cases": [
+    {
+      "id": "case:minor-below",
+      "input": {
+        "range": ">=22.9",
+        "nodeVersion": "22.8.0"
+      },
+      "expected": "incompatible"
+    },
+    {
+      "id": "case:minor-equal",
+      "input": {
+        "range": ">=22.3",
+        "nodeVersion": "22.3.0"
+      },
+      "expected": "compatible"
+    },
+    {
+      "id": "case:unsupported-grammar",
+      "input": {
+        "range": ">=22 <24",
+        "nodeVersion": "22.8.0"
+      },
+      "expected": "unknown"
+    }
+  ],
+  "costs": {
+    "originalTask": null,
+    "contributionEffort": null,
+    "validation": null,
+    "adaptation": null,
+    "maintenance": null
+  },
+  "limitations": [
+    "Prespecified owned fixtures, not a blind benchmark",
+    "Unknown outcomes remain unknown",
+    "No external operators or revenue"
+  ],
+  "baselineDigest": "sha256:6144e7157d56670f1e4f2dd756db8a7dbb886a99720c44acd6dcaa234e21d8f2"
+}

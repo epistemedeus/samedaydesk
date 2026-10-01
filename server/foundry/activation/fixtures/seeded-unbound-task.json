@@ -1,0 +1,231 @@
+{
+  "productionActivate": "HOLD",
+  "sdsHealth": {
+    "status": 200,
+    "service": "samedaydesk",
+    "ok": true
+  },
+  "correspondenceHealthz": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "enabled": true,
+      "reason": null,
+      "store": "postgres"
+    }
+  },
+  "foundryReceiver": {
+    "status": 200,
+    "body": {
+      "optIn": true,
+      "facade": true,
+      "rawMounted": false,
+      "publicExecution": false,
+      "extension": true,
+      "schema": "pilot_correspondence",
+      "wholeHostSandbox": false
+    }
+  },
+  "visitorEntry": {
+    "status": 200,
+    "schema": "neomorphic.foundry.entry.v1",
+    "bindingSchema": "neomorphic.foundry.entry-receiver-binding.v1",
+    "body": {
+      "schema": "neomorphic.foundry.entry.v1",
+      "profile": {
+        "schema": "neomorphic.foundry.entry.v1",
+        "profileId": "vf10:contribution-v2",
+        "fundingKind": "voluntary",
+        "capabilities": [
+          "private_correspondence_read",
+          "private_correspondence_write",
+          "bounded_foundry_use",
+          "voluntary_reusable_contribution"
+        ],
+        "excludedAuthority": [
+          "owner",
+          "funding",
+          "verification",
+          "configuration",
+          "publication"
+        ],
+        "contributionRequired": false,
+        "identityProofRequired": false,
+        "sharingAuthorized": false,
+        "decline": {
+          "nextAction": "continue_original",
+          "createsWorkspace": false
+        },
+        "limits": {
+          "id": "vf10:contribution-v2",
+          "maxEnrollments": 12,
+          "maxEvents": 3,
+          "grantSeconds": 3600,
+          "workspaceSeconds": 86400
+        },
+        "eventBudget": "distinct_event_intents_including_unknown_or_failed_outcomes",
+        "grantRoles": [
+          "reader",
+          "writer"
+        ],
+        "renewal": "same_grants_same_project_until_workspace_deadline_unless_revoked",
+        "independence": "unknown",
+        "originalUse": "original_task_remains_available_outside_entry",
+        "contribution": {
+          "standingScopeRequired": true,
+          "scope": "synthetic-reusable-components",
+          "binding": {
+            "schema": "neomorphic.foundry.entry-receiver-binding.v1",
+            "receiverId": "host:vf12-canonical-portable-v1",
+            "hostConfigId": "sha256:cf062def7a5e17f0afc9b9cd71bc0278132d36005da4471164d4daf7a34ab3d9",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1",
+              "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+            },
+            "environmentDigest": "sha256:26846713c537d623b0ab7635de3be6fb014d35183adb187a0b6d17b6f81b0601",
+            "contributionTerms": "sha256:10b8b4a99aaf3fa4772356e813f5e1d278bdc6323f0fabc284a2997b367e693d",
+            "scope": "synthetic-reusable-components",
+            "aggregate": {
+              "registrations": 4,
+              "candidates": 16,
+              "packages": 64,
+              "gaps": 64,
+              "workCells": 16,
+              "cellCommands": 112,
+              "httpKeys": 192,
+              "nativeCommands": 512,
+              "maintenanceKeys": 512,
+              "manifests": 192,
+              "verificationCpuMs": 128000,
+              "verificationWallMs": 256000,
+              "verificationCostUsdMicros": 64000,
+              "reviewMs": 16000,
+              "reviews": 16,
+              "invocationRows": 32,
+              "invocationCpuMs": 64000,
+              "invocationWallMs": 128000,
+              "invocationCostUsdMicros": 32000
+            },
+            "maxPhysical": 1,
+            "sharing": "accepted reusable code/evidence within this installed cohort; private correspondence excluded"
+          }
+        },
+        "termsHash": "sha256:e6d934a3a6807948a0cd9f304b877c67830acc4f890eb39ec27d3a978b0ad337"
+      },
+      "availability": "available",
+      "remainingEnrollments": 11,
+      "receiver": "host:vf12-canonical-portable-v1",
+      "clientContract": "neomorphic.foundry.entry.v1",
+      "nextAction": "persist_attempt_then_register"
+    }
+  },
+  "uploads": {
+    "status": 501
+  },
+  "publicCatalog": {
+    "status": 200
+  },
+  "task": {
+    "published": true,
+    "candidateId": "cand-local",
+    "output": {
+      "outcome": "observed",
+      "payload": {
+        "project": {
+          "id": "prj_later_alpha",
+          "status": "open",
+          "version": 1
+        }
+      }
+    },
+    "expected": {
+      "outcome": "observed",
+      "payload": {
+        "project": {
+          "id": "prj_later_alpha",
+          "status": "open",
+          "version": 1
+        }
+      }
+    },
+    "request": {
+      "schema": "neomorphic.foundry.capability-request.v1",
+      "taskId": "task:visitor-a",
+      "outcome": "compact-correspondence-structured-result",
+      "input": {
+        "structuredContent": {
+          "event": {
+            "id": "evt_original",
+            "kind": "artifact"
+          },
+          "replayed": false
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "redundant rendering"
+          }
+        ]
+      },
+      "environment": {
+        "platform": "linux",
+        "arch": "x64",
+        "executionProfile": "vf08.wasmtime49-linux-x64-fixed.v1"
+      },
+      "output": null,
+      "capabilityId": null
+    },
+    "invocation": {
+      "schema": "neomorphic.foundry.invocation.v1",
+      "target": {
+        "capabilityId": "capability:fixture",
+        "version": "1",
+        "contentId": "sha256:abababababababababababababababababababababababababababababababab"
+      },
+      "taskId": "task:visitor-a",
+      "manifestId": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+      "inputDigest": "sha256:1f86792de98f4287b26b47c45d0308e166ddf21317e586f167e8d88e853db97b",
+      "output": {
+        "outcome": "observed",
+        "payload": {
+          "project": {
+            "id": "prj_later_alpha",
+            "status": "open",
+            "version": 1
+          }
+        }
+      },
+      "invokedAt": "2026-09-30T23:04:53.000Z",
+      "outcome": "observed_output",
+      "purpose": "owner_qa",
+      "relationship": "owner",
+      "cost": null,
+      "effortMs": null,
+      "beneficiaryGrantId": "grant:fixture",
+      "environmentDigest": "sha256:efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "executionObservation": "observation:fixture"
+    }
+  },
+  "retrieval": {
+    "processRestarted": false,
+    "databaseSurvived": true,
+    "sameCandidate": true,
+    "output": {
+      "outcome": "observed",
+      "payload": {
+        "project": {
+          "id": "prj_later_alpha",
+          "status": "open",
+          "version": 1
+        }
+      }
+    }
+  },
+  "claims": {
+    "disabledOptionalMount": false,
+    "hostedDiscovery": true,
+    "taskResult": true,
+    "durableRetrieval": false
+  }
+}

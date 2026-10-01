@@ -27,7 +27,6 @@ export default function Footer() {
         <nav className={styles.col} aria-label="Free tools & resources">
           <h3 className={styles.colhead}>Free tools</h3>
           <Link to="/tools/ai-readiness" viewTransition>AI visibility checker</Link>
-          <a href="/agent-readiness">Agent readiness checker</a>
           <Link to="/x402" viewTransition>x402 data gateway</Link>
           {/* Static pages served outside the SPA router: plain <a> so the browser
               does a full navigation instead of React Router hitting the fallback. */}

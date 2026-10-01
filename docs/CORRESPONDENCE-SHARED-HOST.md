@@ -34,10 +34,12 @@ NODE_ENV=production
 ```
 export CORRESPONDENCE_DATABASE_URL=postgres://…
 export CORRESPONDENCE_PG_SCHEMA=pilot_correspondence
-node vendor/neomorphic-correspondence/dist/migrate.js
+node vendor/visitor-foundry-receiver/services/correspondence/dist/migrate.js
 ```
 
-   Re-run is `CREATE IF NOT EXISTS` in the namespaced schema only.
+   Re-run is `CREATE IF NOT EXISTS` in the namespaced schema only. Foundry
+   opt-in is a separate explicit installer, `node server/foundry/install.mjs --migrate`,
+   and is not applied by process startup. See `docs/FOUNDRY-HOST-RECEIVER.md`.
 
 5. Restart the existing SDS Node app. `GET /api/health` must stay 200.
    `GET /api/correspondence/healthz` should report `enabled: true`.
