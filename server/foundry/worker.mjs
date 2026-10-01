@@ -2,6 +2,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { foundryHostOptIn } from "./opt-in.js";
+import { REUSE_CLASS, reusesProductDataService } from "./product-isolation.js";
 import { CANONICAL_WORKER } from "./paths.js";
 import { runPhasedWorker } from "./lifecycle.js";
 
@@ -75,6 +76,9 @@ if (!optedIn) fail(2, "foundry_opt_in_required");
 const [mode, projectId] = process.argv.slice(2);
 if (!process.env.CORRESPONDENCE_DATABASE_URL || !process.env.CORRESPONDENCE_PG_SCHEMA) {
   fail(2, "database_and_schema_required");
+}
+if (reusesProductDataService(process.env.CORRESPONDENCE_DATABASE_URL, { supabaseUrl: process.env.SUPABASE_URL })) {
+  fail(2, REUSE_CLASS);
 }
 const pass = resolvePass(process.env);
 if (!pass) fail(3, "layout_unavailable");

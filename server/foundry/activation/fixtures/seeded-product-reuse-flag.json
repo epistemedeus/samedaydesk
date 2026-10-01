@@ -1,0 +1,20 @@
+{
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "secretsCopied": false,
+  "panelEnvRead": false,
+  "hostingerApiReread": false,
+  "hostingerChanged": false,
+  "launchedService": false,
+  "productDataService": {
+    "kind": "supabase",
+    "host": "arvmcttdegqwiwdaembr.supabase.co",
+    "reusedForCorrespondence": true
+  },
+  "correspondenceDataService": {
+    "enrolled": false,
+    "schema": "pilot_correspondence",
+    "separateFromProduct": false,
+    "host": "arvmcttdegqwiwdaembr.supabase.co"
+  }
+}

@@ -1,0 +1,179 @@
+import { isDeepStrictEqual } from "node:util";
+import {
+  clientInvocationSelects,
+  invocationMatchesRequest,
+  invocationSelectsCandidate,
+  validateVisitorEntry,
+} from "./wire-contract.mjs";
+
+export const PRODUCTION_ACTIVATE = "HOLD";
+
+const DEGRADED_REASONS = new Set(["invalid_config", "store_unavailable"]);
+const PORTABLE_OUTCOMES = new Set(["observed", "unknown", "error", "unsupported"]);
+
+function portableOutput(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  if (!PORTABLE_OUTCOMES.has(value.outcome)) return false;
+  if (!value.payload || typeof value.payload !== "object" || Array.isArray(value.payload)) return false;
+  return true;
+}
+
+function clientAgrees(wire, readback, request, candidateId) {
+  if (wire == null) return true;
+  return clientInvocationSelects(wire, readback, request, candidateId);
+}
+
+// Equal portable output is an input, not execution. The readback is the
+// canonical candidate, generation, manifest, content, module, request, sample,
+// and observation. Visitor stdout is checked only when the observation has it.
+function executedContribution(task) {
+  if (!task || task.published !== true) return false;
+  if (typeof task.candidateId !== "string" || task.candidateId.length < 1) return false;
+  if (!portableOutput(task.output) || !portableOutput(task.expected)) return false;
+  if (!isDeepStrictEqual(task.output, task.expected)) return false;
+  if (!invocationMatchesRequest(task.invocation, task.request)) return false;
+  if (!isDeepStrictEqual(task.invocation?.output, task.expected)) return false;
+  const readback = task.readback;
+  if (!invocationSelectsCandidate(readback, task.request, task.candidateId)) return false;
+  if (!isDeepStrictEqual(task.invocation, readback.invocation)) return false;
+  return clientAgrees(task.clientWire, readback, task.request, task.candidateId);
+}
+
+function readyFacade(receiver) {
+  const body = receiver?.body;
+  // The facade reports the database namespace. Wire identity is the visitor
+  // entry, contribution binding, request, and invocation schemas.
+  return receiver?.status === 200
+    && body?.optIn === true
+    && body?.facade === true
+    && body?.rawMounted === false
+    && body?.publicExecution === false
+    && body?.extension === true
+    && body?.schema === "pilot_correspondence"
+    && body?.wholeHostSandbox === false;
+}
+
+export function factsFrom(observation) {
+  const health = observation?.sdsHealth || {};
+  const healthz = observation?.correspondenceHealthz || {};
+  const hz = healthz.body || {};
+  const sdsOk = health.status === 200 && health.service === "samedaydesk" && health.ok === true;
+  const facade = readyFacade(observation?.foundryReceiver);
+  const entry = observation?.visitorEntry?.status === 200 && validateVisitorEntry(observation?.visitorEntry?.body) !== null;
+  const uploadsHold = observation?.uploads?.status === 501;
+  const disabledBody = healthz.status === 200
+    && hz.ok === false
+    && hz.enabled === false
+    && hz.reason === "unconfigured";
+  const degradedBody = healthz.status === 200
+    && hz.ok === false
+    && hz.enabled === false
+    && DEGRADED_REASONS.has(hz.reason);
+  const hostedDiscovery = sdsOk
+    && healthz.status === 200
+    && hz.ok === true
+    && hz.enabled === true
+    && hz.store === "postgres"
+    && facade
+    && entry
+    && uploadsHold;
+  const task = observation?.task;
+  const taskResult = hostedDiscovery && executedContribution(task);
+  const retrieval = observation?.retrieval;
+  const durableRetrieval = taskResult
+    && retrieval?.processRestarted === true
+    && retrieval?.databaseSurvived === true
+    && invocationSelectsCandidate(retrieval.readback, task.request, task.candidateId)
+    && portableOutput(retrieval.output)
+    && isDeepStrictEqual(retrieval.output, task.expected)
+    && isDeepStrictEqual(retrieval.readback?.invocation?.output, task.expected)
+    && clientAgrees(retrieval.clientWire, retrieval.readback, task.request, task.candidateId);
+  const disabledOptionalMount = sdsOk && disabledBody && !facade && !hostedDiscovery && !taskResult && !durableRetrieval;
+  const degradedMount = sdsOk && degradedBody && !facade && !hostedDiscovery && !disabledOptionalMount;
+  return {
+    disabledOptionalMount,
+    degradedMount,
+    degradedReason: degradedMount ? hz.reason : null,
+    hostedDiscovery,
+    taskResult,
+    durableRetrieval,
+  };
+}
+
+function rejected(reason, facts = null) {
+  return {
+    ok: false,
+    exitCode: 2,
+    code: "false_green_rejected",
+    reason,
+    facts,
+    productionActivate: PRODUCTION_ACTIVATE,
+  };
+}
+
+export function judge(observation) {
+  if (!observation || typeof observation !== "object" || Array.isArray(observation)) {
+    return rejected("observation_missing");
+  }
+  if (observation.productionActivate !== PRODUCTION_ACTIVATE) {
+    return rejected("production_activate_not_hold");
+  }
+  const facts = factsFrom(observation);
+  const claims = observation.claims;
+  if (claims) {
+    for (const key of ["disabledOptionalMount", "hostedDiscovery", "taskResult", "durableRetrieval"]) {
+      if (typeof claims[key] !== "boolean") return rejected("claim_not_boolean", facts);
+    }
+    if (claims.durableRetrieval && !facts.durableRetrieval) return rejected("durable_claim_without_retrieval", facts);
+    if (claims.taskResult && !facts.taskResult) return rejected("task_claim_without_result", facts);
+    if (claims.hostedDiscovery && !facts.hostedDiscovery) return rejected("discovery_claim_without_facade", facts);
+    if ((claims.hostedDiscovery || claims.taskResult || claims.durableRetrieval) && facts.disabledOptionalMount) {
+      return rejected("disabled_mount_is_not_success", facts);
+    }
+    for (const key of ["disabledOptionalMount", "hostedDiscovery", "taskResult", "durableRetrieval"]) {
+      if (claims[key] !== facts[key]) return rejected(`claim_${key}`, facts);
+    }
+  }
+  return {
+    ok: true,
+    exitCode: 0,
+    code: "classified",
+    facts,
+    productionActivate: PRODUCTION_ACTIVATE,
+  };
+}
+
+const REQUIREMENTS = {
+  disabled: "disabledOptionalMount",
+  discovery: "hostedDiscovery",
+  task: "taskResult",
+  durable: "durableRetrieval",
+};
+
+export function requireFact(observation, name) {
+  const judged = judge(observation);
+  if (!judged.ok) return judged;
+  const key = REQUIREMENTS[name];
+  if (!key) return rejected("unknown_requirement", judged.facts);
+  if (name === "disabled" && judged.facts.degradedMount) {
+    return {
+      ok: false,
+      exitCode: 1,
+      code: "degraded_mount",
+      reason: judged.facts.degradedReason,
+      facts: judged.facts,
+      productionActivate: PRODUCTION_ACTIVATE,
+    };
+  }
+  if (!judged.facts[key]) {
+    return {
+      ok: false,
+      exitCode: 1,
+      code: "acceptance_unmet",
+      reason: key,
+      facts: judged.facts,
+      productionActivate: PRODUCTION_ACTIVATE,
+    };
+  }
+  return judged;
+}

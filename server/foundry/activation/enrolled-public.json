@@ -1,0 +1,52 @@
+{
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "secretsCopied": false,
+  "panelEnvRead": false,
+  "hostingerApiReread": false,
+  "hostingerChanged": false,
+  "launchedService": false,
+  "measuredAt": "2026-09-30T23:04:53Z",
+  "origin": "https://samedaydesk.com",
+  "platform": "hostinger",
+  "githubMain": "a51110ab6ede18658cac816042edc491b34e0a5e",
+  "citedBuild": {
+    "source": "SDS261 hosted acceptance completed 2026-09-30T21:56:55Z. This job did not reread the Hostinger API.",
+    "buildId": "01a0f451-7f50-7318-8ce6-d3835d24b89f",
+    "commit": "a51110ab6ede18658cac816042edc491b34e0a5e",
+    "node": "22",
+    "framework": "express",
+    "entry": "server/index.js",
+    "apiReread": false
+  },
+  "public": {
+    "health": {
+      "status": 200,
+      "service": "samedaydesk",
+      "ok": true,
+      "configured": { "supabase": true, "stripe": true, "email": true }
+    },
+    "correspondenceHealthz": { "status": 200, "enabled": false, "reason": "unconfigured" },
+    "foundryReceiverStatus": 503,
+    "visitorEntryStatus": 503,
+    "uploadsStatus": 501,
+    "mcp": {
+      "status": 200,
+      "protocolVersion": "2025-11-25",
+      "serverName": "samedaydesk-agent-tools",
+      "serverVersion": "1.2.0",
+      "toolsCalled": false
+    }
+  },
+  "productDataService": {
+    "kind": "supabase",
+    "host": "arvmcttdegqwiwdaembr.supabase.co",
+    "configured": true,
+    "secretCopied": false
+  },
+  "correspondenceDataService": {
+    "enrolled": false,
+    "schema": "pilot_correspondence",
+    "separateFromProduct": true
+  }
+}

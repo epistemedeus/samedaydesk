@@ -95,3 +95,7 @@ node vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/v
 ```
 
 `CONFIG.json` is mode `0600` and names the existing `/api/correspondence` base URL plus a private continuation directory.
+
+## Activation package
+
+`server/foundry/activation/ACTIVATION.md` is the reversible checklist. `server/foundry/activation/DELTA.md` is the production delta against the enrolled Hostinger app and its product data service. `productionActivate` stays `HOLD`. The listener does not migrate, and this tree does not change hosted environment variables. Local proof is `node server/foundry/activation/cold-job.mjs`. Postdeploy classification is `node server/foundry/activation/postdeploy-accept.mjs`. `node server/foundry/activation/rollback.mjs` prints the unset-and-restart procedure and refuses `--apply`. `node server/foundry/activation/real-store-negatives.mjs --case prove` rejects product-data reuse, secret metadata, false-green client surfaces, missing host configuration, and an unenrolled private store. `node server/foundry/activation/later-retrieval.mjs` re-reads the public useful-jobs path while `productionActivate` stays `HOLD`. The installer and the mount refuse a correspondence URL that reuses the product Supabase project before connecting.

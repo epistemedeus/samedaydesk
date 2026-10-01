@@ -1,0 +1,13 @@
+{
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "secretsCopied": false,
+  "panelEnvRead": false,
+  "hostingerApiReread": false,
+  "hostingerChanged": false,
+  "launchedService": false,
+  "env": {
+    "SUPABASE_URL": "https://arvmcttdegqwiwdaembr.supabase.co",
+    "CORRESPONDENCE_DATABASE_URL": "https://arvmcttdegqwiwdaembr.supabase.co"
+  }
+}
