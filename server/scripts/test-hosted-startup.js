@@ -66,6 +66,9 @@ for (const [name, args] of [
     const disabled = await localJson(origin + "/api/correspondence/healthz");
     assert.equal(disabled.status, 200);
     assert.deepEqual(disabled.body, { ok: false, enabled: false, reason: "unconfigured" });
+    const earned = await localJson(origin + "/api/earned-work/healthz");
+    assert.equal(earned.status, 200);
+    assert.deepEqual(earned.body, { ok: false, enabled: false, reason: "unconfigured" });
   });
 }
 

@@ -1,0 +1,68 @@
+{
+  "id": "neomorphic.earned-work.kernel.v1",
+  "package": "@neomorphic/earned-work",
+  "owner": "W5-E01",
+  "startingRef": "346bbd3cbe6943a83b2077c455174d74b7a493ad",
+  "note": "Interface of the current booted kernel. A hash of this file is not conformance of a dynamically loaded runtime. Consumers pin the git SHA they actually import and test.",
+  "terms": {
+    "earnedWorkSchema": "neomorphic.earned-work.terms.v1",
+    "fundedTaskTermsSchema": "neomorphic.funded-task-terms.v1",
+    "hashFunction": "@neomorphic/funded-task-terms/hash#hashTermsVersion",
+    "unlikeSchemasAreNotEqual": true,
+    "claimKey": "sha256:<64 lowercase hex>",
+    "integerTermsVersion": "rejected"
+  },
+  "mutations": {
+    "header": "Idempotency-Key",
+    "requiredOn": [
+      "POST /v1/tasks",
+      "POST /v1/tasks/{id}/terms",
+      "POST /v1/tasks/{id}/funding/reserve",
+      "POST /v1/tasks/{id}/claims",
+      "POST /v1/tasks/{id}/submissions",
+      "POST /v1/tasks/{id}/verdicts",
+      "POST /v1/tasks/{id}/accept",
+      "POST /v1/tasks/{id}/reject"
+    ],
+    "unknownOutcome": "replay the original Idempotency-Key and body; never mint a default key",
+    "changedBodySameKey": "409 idempotency_conflict",
+    "contributorTokenGrant": "POST /v1/contributor-tokens is non-idempotent. Do not invent an Idempotency-Key. 201 without a JSON object is unknown, not an issued grant. The secret is returned once."
+  },
+  "payout": {
+    "adapter": "null_nonpaying_v0",
+    "emptyProjectionIsNotOwed": true,
+    "owedRequiresObligationId": true,
+    "sale": false,
+    "paid": false,
+    "settled": false,
+    "transfer": null,
+    "healthIsNotAcceptance": true
+  },
+  "correctionPolicy": {
+    "maxRevisionsMinimum": 0,
+    "maxRevisionsMaximum": 1,
+    "defaultWhenOmitted": 1,
+    "disclosedZeroStaysZero": true
+  },
+  "journey": {
+    "positive": "discover open task → assent → reserve → claim current termsVersion → submit useful bounded evidence → pass verdict → owner accept bound to verdict id → contributor reads owed IOU",
+    "owedIsNotPaid": true,
+    "claimableFalseIsNotAClaim": true,
+    "contributorObligationReadback": "GET /v1/tasks/{id}/contributor-obligation; none|unknown|owed; accepted is not owed",
+    "acceptBindsVerdictId": true,
+    "publicIdIsNotPrincipal": true
+  },
+  "verifier": {
+    "default": "earned-work.default-verifier.v1",
+    "ownerExplicit": "earned-work.owner-explicit.v1",
+    "reproduction": "neomorphic.wave5.e18.reproduction-verifier.v1",
+    "defaultIsNotReproduction": true,
+    "injection": "EARNED_WORK_VERIFIER=default|reproduction and createApp(..., { verifier }). Owner POST /verdicts with outcome remains explicit.",
+    "artifactRefNeverExecuted": true,
+    "specDigestIsNotTermsVersion": true,
+    "evidenceIntake": "optional evidenceBase64 on POST /submissions; decoded bytes bounded (16384); digest/length/mediaType bound to reservation/principal/terms; host E18 verifies staged received bytes, not a fixture catalog",
+    "catalogIsNotEvidence": true,
+    "metadataOnlyIsNotReproduction": true,
+    "copiedLabelsAreNotReproduction": true
+  }
+}

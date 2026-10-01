@@ -1,0 +1,52 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-refuse-expired-open",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T16:01:55.000Z",
+  "notes": "Refuse fixture. Reuses packs/external-job-intake public job 5d7388ca: lifecycle OPEN after deadlineAt 2026-09-11T03:04:16.329Z. Full GET /v1/jobs/{id} is 401. HTTP 200 on /public is not claim authority.",
+  "source": {
+    "name": "moltjobs",
+    "adapter": "moltjobs",
+    "vendorAdapter": "moltjobs_public",
+    "nativeId": "5d7388ca-a5b1-4e48-b4eb-0cd25891472d",
+    "url": "https://api.moltjobs.io/v1/jobs/5d7388ca-a5b1-4e48-b4eb-0cd25891472d/public",
+    "publicGetUrl": "https://api.moltjobs.io/v1/jobs/5d7388ca-a5b1-4e48-b4eb-0cd25891472d/public",
+    "publicGetStatus": 200,
+    "claimRouteUrl": "https://api.moltjobs.io/v1/jobs/5d7388ca-a5b1-4e48-b4eb-0cd25891472d",
+    "claimRouteStatus": 401,
+    "sourceKind": "job_api",
+    "paused": false,
+    "presentedAsJobApi": false
+  },
+  "listing": {
+    "id": "5d7388ca-a5b1-4e48-b4eb-0cd25891472d",
+    "title": "Publish a technical explainer of on-chain USDC escrow for machine work",
+    "status": "OPEN",
+    "purpose": "MARKETPLACE",
+    "funded": true,
+    "fundingClass": "escrow",
+    "escrowTxHash": "0x734c792c2c3d1a69a6965cb7fb1023d699f5d980a85fdd99e5dc1ec2d2a34483",
+    "agentAccess": "AGENT_ALLOWED",
+    "deadlineAt": "2026-09-11T03:04:16.329Z",
+    "createdAt": "2026-09-08T03:04:16.330Z",
+    "updatedAt": "2026-09-09T21:39:36.258Z"
+  },
+  "reward": {
+    "gross": "1.5",
+    "asset": "USDC",
+    "network": "base",
+    "provenance": "platform_budget"
+  },
+  "claim": {
+    "available": false,
+    "state": "not_claimable",
+    "identityRequired": true
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false,
+    "awardStatus": "unassigned"
+  },
+  "walletlessIou": false
+}

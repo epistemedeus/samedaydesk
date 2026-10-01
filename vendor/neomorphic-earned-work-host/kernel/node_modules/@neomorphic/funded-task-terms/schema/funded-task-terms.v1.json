@@ -1,0 +1,276 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "neomorphic.funded-task-terms.v1",
+  "title": "neomorphic.funded-task-terms.v1",
+  "description": "Immutable funded-task terms. Artifact is metadata only and must never be launched in a credentialed worker. An LLM verdict alone is not authority to transfer funds. termsVersion is a sha256 content hash of the canonical body (this object without termsVersion), not an integer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "taskId",
+    "fundingState",
+    "provenance",
+    "execute",
+    "reward",
+    "artifact",
+    "acceptanceCriterion",
+    "verifierVersion",
+    "effort",
+    "contributorLicense",
+    "reservationDuration",
+    "correctionPolicy",
+    "paymentTiming",
+    "fundTransferAuthority",
+    "failureAppealRoute"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "neomorphic.funded-task-terms.v1"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Integer schema-shape version. Distinct from termsVersion (content hash)."
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Opaque task identifier. Not a URL, grant, or capability."
+    },
+    "termsVersion": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Immutable content hash. Kind: content-hash, not integer."
+    },
+    "fundingState": {
+      "type": "string",
+      "enum": [
+        "unfunded",
+        "reserved",
+        "funded",
+        "released",
+        "expired",
+        "cancelled",
+        "failed"
+      ]
+    },
+    "provenance": {
+      "type": "string",
+      "enum": ["test", "fixture", "production"]
+    },
+    "execute": {
+      "type": "boolean",
+      "const": false
+    },
+    "reward": { "$ref": "#/definitions/reward" },
+    "artifact": { "$ref": "#/definitions/artifact" },
+    "acceptanceCriterion": { "$ref": "#/definitions/acceptanceCriterion" },
+    "verifierVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "effort": { "$ref": "#/definitions/effort" },
+    "contributorLicense": { "$ref": "#/definitions/contributorLicense" },
+    "reservationDuration": { "$ref": "#/definitions/duration" },
+    "reservationExpiresAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correctionPolicy": { "$ref": "#/definitions/correctionPolicy" },
+    "paymentTiming": { "$ref": "#/definitions/paymentTiming" },
+    "fundTransferAuthority": { "$ref": "#/definitions/fundTransferAuthority" },
+    "failureAppealRoute": { "$ref": "#/definitions/failureAppealRoute" }
+  },
+  "definitions": {
+    "duration": {
+      "description": "Positive integer seconds or a positive ISO-8601 duration.",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 315360000
+        },
+        {
+          "type": "string",
+          "pattern": "^P(?!$)(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?$"
+        }
+      ]
+    },
+    "reward": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "asset", "network"],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)(\\.\\d+)?$",
+          "description": "Decimal string. JSON numbers (IEEE float / JS number money) are rejected."
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "network": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "amountAtomic": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)$"
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18,
+          "description": "USDC must be 6."
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "digestSha256", "mediaType", "bytes"],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "digestSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 128
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "text": { "type": "string", "minLength": 1, "maxLength": 8000 }
+      }
+    },
+    "effort": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "value", "unit"],
+          "properties": {
+            "kind": { "type": "string", "const": "expected" },
+            "value": { "type": "integer", "minimum": 1, "maximum": 100000 },
+            "unit": { "type": "string", "enum": ["minutes", "hours", "days", "weeks"] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "type": "string", "const": "unknown" }
+          }
+        }
+      ]
+    },
+    "contributorLicense": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "spdxId"],
+          "properties": {
+            "kind": { "type": "string", "const": "spdx" },
+            "spdxId": { "type": "string", "minLength": 1, "maxLength": 128 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "text"],
+          "properties": {
+            "kind": { "type": "string", "const": "custom" },
+            "text": { "type": "string", "minLength": 8, "maxLength": 8000 }
+          }
+        }
+      ]
+    },
+    "correctionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxCorrections"],
+      "properties": {
+        "maxCorrections": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16,
+          "description": "One bounded policy. Absent or negative is rejected as unlimited."
+        },
+        "window": { "$ref": "#/definitions/duration" }
+      }
+    },
+    "paymentTiming": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligationBecomesOwed", "railMayPay"],
+      "properties": {
+        "obligationBecomesOwed": {
+          "type": "string",
+          "const": "on_requester_accept",
+          "description": "When the obligation becomes owed. Distinct from later rail settlement."
+        },
+        "railMayPay": {
+          "type": "string",
+          "const": "outside_this_pack",
+          "description": "This pack does not pay. A later rail (F04) may settle."
+        }
+      }
+    },
+    "fundTransferAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requesterAcceptRequired", "llmVerdictAlone"],
+      "properties": {
+        "requesterAcceptRequired": { "type": "boolean", "const": true },
+        "llmVerdictAlone": {
+          "type": "boolean",
+          "const": false,
+          "description": "An LLM verdict alone is not authority to transfer funds."
+        }
+      }
+    },
+    "failureAppealRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "decider", "boundTo"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "decider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Opaque who-decides descriptor."
+        },
+        "boundTo": {
+          "type": "string",
+          "const": "requester_only_accept"
+        }
+      }
+    }
+  }
+}

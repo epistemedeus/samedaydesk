@@ -1,0 +1,18 @@
+{
+  "name": "@neomorphic/earned-work-host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional SameDayDesk mount and ordinary-contributor client for the existing earned-work kernel. No payout.",
+  "type": "module",
+  "exports": {
+    ".": "./dist/host-mount.js",
+    "./contributor": "./dist/ordinary-contributor.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@neomorphic/earned-work": "file:./kernel",
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "package": "@neomorphic/earned-work-host",
+  "version": "0.1.0",
+  "hostCommit": "fa21b1b77c7aba5c6a8ccbbfb7eae8ce6d404ec2",
+  "hostBranch": "heavy/i28-heavy-remainder-093090",
+  "kernelTree": "1a5dad7755fb81c75564dbc9d3667ab16db9bbcd",
+  "kernelPackage": "@neomorphic/earned-work",
+  "kernelRewritten": false,
+  "licenses": {
+    "@neomorphic/earned-work-host": "package.json has no license field (private)",
+    "@neomorphic/earned-work": "package.json has no license field (private)",
+    "@neomorphic/funded-task-terms": "MIT",
+    "@neomorphic/arena-workability-dimensions": "MIT LICENSE file; package.json has no license field"
+  },
+  "note": "Packed from the received host commit. The kernel tree was not rewritten. This pin is not a public reachability claim."
+}

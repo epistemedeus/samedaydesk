@@ -22,6 +22,7 @@ import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
+import { mountEarnedWork } from "./lib/earned-work-mount.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -75,6 +76,11 @@ app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captu
 //     besides a truthful disabled healthz under the prefix.
 const correspondence = mountCorrespondence(app, options.correspondence || {});
 app.set("s51Correspondence", correspondence);
+
+// 1c) Optional earned-work mount. Disabled unless EARNED_WORK_MOUNT=1
+//     with a dedicated URL. Disabling keeps the schema and evidence.
+const earnedWork = mountEarnedWork(app, options.earnedWork || {});
+app.set("earnedWorkMount", earnedWork);
 
 // 2) Everything else parses JSON normally.
 app.use(express.json({ limit: "1mb" }));

@@ -9,6 +9,8 @@ const server = app.listen(port, "0.0.0.0", () => {
   console.log(`[samedaydesk] listening on :${port}  (${process.env.NODE_ENV === "production" ? "production" : "development"})`);
 });
 bindListenerLifecycle(server, async () => {
-  const handle = app.get("s51Correspondence");
-  if (handle?.close) await handle.close();
+  const correspondence = app.get("s51Correspondence");
+  if (correspondence?.close) await correspondence.close();
+  const earnedWork = app.get("earnedWorkMount");
+  if (earnedWork?.close) await earnedWork.close();
 });

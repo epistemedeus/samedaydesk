@@ -1,0 +1,41 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "synthetic-edge",
+  "fixtureKind": "hostile-list-get-200-as-agent",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "notes": "Seeded failure: a list GET 200 plus OPEN plus budget must not mint claimAuthority=agent.",
+  "claimAuthority": "agent",
+  "source": {
+    "name": "moltjobs",
+    "adapter": "moltjobs",
+    "nativeId": "hostile-list-200",
+    "publicGetUrl": "https://api.moltjobs.io/v1/jobs?status=OPEN&limit=20",
+    "publicGetStatus": 200,
+    "claimRouteStatus": 401,
+    "sourceKind": "job_api"
+  },
+  "listing": {
+    "id": "hostile-list-200",
+    "title": "Hostile: treat list GET 200 as agent claim",
+    "status": "OPEN",
+    "purpose": "PLATFORM_REFERRAL",
+    "funded": true,
+    "fundingClass": "escrow",
+    "escrowTxHash": "0x0ac4d196bf815c91bd05ec65d3b99c543d52b92bd59a9097e861d5b7518fc549",
+    "agentAccess": "AGENT_ALLOWED",
+    "deadlineAt": "2020-01-01T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": "0.2",
+    "asset": "USDC"
+  },
+  "claim": {
+    "available": true,
+    "agentAccess": "AGENT_ALLOWED"
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}

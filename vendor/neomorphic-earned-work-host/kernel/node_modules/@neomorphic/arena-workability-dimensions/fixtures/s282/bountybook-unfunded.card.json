@@ -1,0 +1,40 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-bountybook-unfunded-open",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:48:00.000Z",
+  "notes": "BountyBook open listings can carry payout_status=none. That is unfunded/promised, not escrowed.",
+  "source": {
+    "name": "bountybook",
+    "adapter": "job-card",
+    "nativeId": "734626a0-26b5-478b-b9cf-fb575aea8adc",
+    "url": "https://api.bountybook.ai/jobs?status=open&limit=5",
+    "publicGetUrl": "https://api.bountybook.ai/jobs?status=open&limit=5",
+    "publicGetStatus": 200,
+    "sourceKind": "job_api"
+  },
+  "listing": {
+    "id": "734626a0-26b5-478b-b9cf-fb575aea8adc",
+    "title": "BountyBook open kata",
+    "status": "open",
+    "funded": false,
+    "fundingClass": "promised",
+    "payoutStatus": "none",
+    "agentAccess": "AGENT_ALLOWED",
+    "deadlineAt": null,
+    "createdAt": "2026-09-01T00:00:00.000Z",
+    "updatedAt": "2026-09-01T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": "5",
+    "asset": "USDC"
+  },
+  "claim": {
+    "available": false
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}

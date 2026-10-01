@@ -6,6 +6,9 @@ client/node_modules/
 client/dist/
 /dist/
 vendor/**/node_modules/
+# Packed earned-work kernel resolves two private MIT libraries from here.
+!vendor/neomorphic-earned-work-host/kernel/node_modules/
+!vendor/neomorphic-earned-work-host/kernel/node_modules/**
 vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/
 vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.build/
 
