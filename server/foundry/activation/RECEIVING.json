@@ -1,0 +1,75 @@
+{
+  "packet": "FOUNDRY-RECEIVING-093115",
+  "sourcePr": 262,
+  "sourceBranch": "heavy/a-hosted-foundry-093071",
+  "sourceHead": "0111e432d5ee8317247b0f4665723c1f5408f332",
+  "priorReview": {
+    "commit": "6bca7e9d154131179138bbe5adc16145bebf2098",
+    "path": "control/review-returns/A-FOUNDRY-ACTIVATE-SDS262.md",
+    "reviewedHead": "5e0e384c475cd39c2208881218bd5ac4a1e5a948",
+    "recommendation": "fix-then-merge",
+    "appliesToSourceHead": false
+  },
+  "productionActivate": "HOLD",
+  "productionReady": false,
+  "productionEnrollmentInspected": false,
+  "hostingerChanged": false,
+  "findings": {
+    "A-01": "Only reason unconfigured is a successful disabled mount. invalid_config and store_unavailable exit 1 as degraded_mount.",
+    "A-02": "Visitor use selects the contributed candidate. Equal output without that candidate, or without the Wasmtime sample, is not durable retrieval.",
+    "A-03": "Visitor entry, contribution binding, request, and invocation use the pinned receiver schemas. pilot_correspondence is the database namespace and fails as a wire schema.",
+    "A-04": "Opaque nested credential names are rejected as secret_material and are not copied into the command output.",
+    "A-05": "stableConfigured is the comparison with the enrolled true/true/true baseline. Local evidence uses non-secret stubs. Each true-to-false change fails on its own. Product-data reuse is refused before connect."
+  },
+  "localExecution": {
+    "serviceClass": "local-disposable",
+    "heldoutCase": "case:project-created",
+    "outcome": "observed",
+    "wasmtime": "49.0.0",
+    "profileId": "vf08.wasmtime49-linux-x64-fixed.v1",
+    "visitors": 2,
+    "distinctProjects": true,
+    "retrievedAfterRestart": true,
+    "rollbackRowsRetained": true,
+    "schemaDropped": false,
+    "usefulJob": "lockfile-pin-delta"
+  },
+  "activationDelta": {
+    "currentPublicState": "disabled_optional_mount",
+    "liveAgrees": true,
+    "origin": "https://samedaydesk.com",
+    "deployedCommit": "a51110ab6ede18658cac816042edc491b34e0a5e",
+    "rootSetsAfterSeparateInstaller": [
+      "FOUNDRY_HOST_OPT_IN",
+      "CORRESPONDENCE_DATABASE_URL",
+      "CORRESPONDENCE_ADMIN_TOKEN",
+      "CORRESPONDENCE_PG_SCHEMA",
+      "CORRESPONDENCE_POOL_MAX",
+      "CORRESPONDENCE_STORE",
+      "CORRESPONDENCE_TRUST_PROXY",
+      "CORRESPONDENCE_CORS_ORIGINS",
+      "CORRESPONDENCE_BODY_LIMIT_BYTES",
+      "FOUNDRY_HOST_PROFILE_FILE",
+      "FOUNDRY_PARTICIPATION_KEY_FILE"
+    ],
+    "installerOnly": ["FOUNDRY_PRIVATE_PROFILE_FILE"],
+    "rootLeaves": [
+      "FOUNDRY_PRODUCTION_ACTIVATE",
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_BUCKET",
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET",
+      "RESEND_API_KEY",
+      "RESEND_WEBHOOK_SECRET",
+      "PULSE_TOKEN"
+    ],
+    "rollback": "node server/foundry/activation/rollback.mjs"
+  },
+  "unresolved": [
+    "No separate correspondence Postgres URL is enrolled.",
+    "CORRESPONDENCE_ADMIN_TOKEN and the mode 0600 profile files are provider-held and are not in this tree.",
+    "Hostinger env, migration, and process restart remain with Root.",
+    "productionActivate stays HOLD."
+  ]
+}

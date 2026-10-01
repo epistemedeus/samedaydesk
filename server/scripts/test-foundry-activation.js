@@ -11,7 +11,7 @@ import { judgePublicClient } from "../foundry/activation/client-contract.mjs";
 import { bootFoundryServer } from "../foundry/activation/local-journey.mjs";
 import { observeOrigin } from "../foundry/activation/observe.mjs";
 import { assessPreconditions } from "../foundry/activation/preconditions.mjs";
-import { invocationSelectsCandidate } from "../foundry/activation/wire-contract.mjs";
+import { clientInvocationSelects, invocationSelectsCandidate } from "../foundry/activation/wire-contract.mjs";
 
 const runtimePython = fileURLToPath(new URL("../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/bin/python", import.meta.url));
 if (!existsSync(runtimePython)) {
@@ -87,6 +87,7 @@ function portableTask(candidateId = "candidate:original") {
 
 function readbackFor(task, candidateId, contentHex) {
   const contentId = `sha256:${contentHex.repeat(32)}`;
+  const moduleDigest = `sha256:${"11".repeat(32)}`;
   const target = { ...task.invocation.target, contentId };
   const invocation = { ...task.invocation, target, output: portable };
   return {
@@ -100,7 +101,12 @@ function readbackFor(task, candidateId, contentHex) {
     executionCandidateId: candidateId,
     executionGeneration: 1,
     executionTarget: target,
-    contributed: { candidateId, generation: 1, contentId, target },
+    moduleDigest,
+    sampleOutput: portable,
+    sampleStatus: "ok",
+    observationId: invocation.executionObservation,
+    sampleModuleDigest: moduleDigest,
+    contributed: { candidateId, generation: 1, contentId, target, moduleDigest },
   };
 }
 
@@ -355,6 +361,47 @@ test("database namespace and equivalent output do not prove wire identity", () =
   }, "durable");
   assert.equal(unmet.ok, false);
   assert.equal(unmet.code, "acceptance_unmet");
+
+  const earnedWire = portableTask("candidate:original");
+  const bound = readbackFor(earnedWire, "candidate:original", "ab");
+  assert.equal(clientInvocationSelects(
+    { discovery: null, invocation: bound.invocation },
+    bound,
+    earnedWire.request,
+    "candidate:original",
+  ), true);
+  assert.equal(clientInvocationSelects(
+    { invocation: { output: earnedWire.expected } },
+    bound,
+    earnedWire.request,
+    "candidate:original",
+  ), false);
+  const wrongManifest = structuredClone(bound.invocation);
+  wrongManifest.manifestId = `sha256:${"ff".repeat(32)}`;
+  assert.equal(clientInvocationSelects(
+    { invocation: wrongManifest },
+    bound,
+    earnedWire.request,
+    "candidate:original",
+  ), false);
+
+  const canned = readbackFor(earnedWire, "candidate:original", "ab");
+  canned.sampleOutput = { outcome: "observed", payload: { canned: true } };
+  assert.equal(invocationSelectsCandidate(canned, earnedWire.request, "candidate:original"), false);
+  const cannedFacts = factsFrom({
+    ...discovery,
+    task: earnedWire,
+    retrieval: {
+      processRestarted: true,
+      databaseSurvived: true,
+      output: portable,
+      readback: canned,
+    },
+  });
+  assert.equal(cannedFacts.durableRetrieval, false);
+  const otherModule = readbackFor(earnedWire, "candidate:original", "ab");
+  otherModule.contributed.moduleDigest = `sha256:${"22".repeat(32)}`;
+  assert.equal(invocationSelectsCandidate(otherModule, earnedWire.request, "candidate:original"), false);
 });
 
 test("live disabled acceptance distinguishes unconfigured from degraded mounts", async () => {

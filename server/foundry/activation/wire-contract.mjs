@@ -83,6 +83,7 @@ const INVOCATION_KEYS = [
 ];
 const TERMS_HASH = /^sha256:[a-f0-9]{64}$/;
 const PROFILE_ID = /^vf10:[a-z0-9-]{1,64}$/;
+const SHA256 = /^sha256:[a-f0-9]{64}$/;
 
 function termsMatch(profile) {
   if (!TERMS_HASH.test(profile?.termsHash || "")) return false;
@@ -187,5 +188,20 @@ export function invocationSelectsCandidate(readback, request, contributedCandida
   if (readback.taskId !== request.taskId) return false;
   if (readback.inputDigest !== hash(request.input)) return false;
   if (readback.requestDigest !== hash(request) || readback.manifestRequestId !== hash(request)) return false;
+  // Equal output is not execution. The sample is the Wasmtime observation of this module.
+  if (readback.sampleStatus !== "ok") return false;
+  if (!isDeepStrictEqual(readback.sampleOutput, readback.invocation.output)) return false;
+  if (readback.observationId !== readback.invocation.executionObservation) return false;
+  if (!SHA256.test(readback.moduleDigest || "")) return false;
+  if (readback.moduleDigest !== readback.contributed.moduleDigest) return false;
+  if (readback.sampleModuleDigest !== readback.moduleDigest) return false;
   return true;
+}
+
+// The visitor client's stdout invocation must be the canonical envelope, not an output-only stub.
+export function clientInvocationSelects(wire, readback, request, contributedCandidateId) {
+  if (!wire || typeof wire !== "object" || Array.isArray(wire)) return false;
+  if (!invocationMatchesRequest(wire.invocation, request)) return false;
+  if (!isDeepStrictEqual(wire.invocation, readback?.invocation)) return false;
+  return invocationSelectsCandidate(readback, request, contributedCandidateId);
 }

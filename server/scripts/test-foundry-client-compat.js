@@ -18,6 +18,7 @@ import { assessPreconditions } from "../foundry/activation/preconditions.mjs";
 const deltaCli = fileURLToPath(new URL("../foundry/activation/delta.mjs", import.meta.url));
 const compatCli = fileURLToPath(new URL("../foundry/activation/client-compat.mjs", import.meta.url));
 const secret = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-secret-metadata.json", import.meta.url));
+const secretNested = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-secret-nested-opaque.json", import.meta.url));
 const reuse = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-product-reuse.json", import.meta.url));
 const clientGreen = fileURLToPath(new URL("../foundry/activation/fixtures/seeded-client-false-green.json", import.meta.url));
 const enrolled = fileURLToPath(new URL("../foundry/activation/enrolled-public.json", import.meta.url));
@@ -241,6 +242,20 @@ test("opaque secret-bearing names are rejected and never reflected", () => {
     assert.equal(body.productionActivate, "HOLD");
     assert.equal(ran.stdout.includes(value), false, key);
     assert.equal(ran.stderr.includes(value), false, key);
+  }
+  const nested = JSON.parse(readFileSync(secretNested, "utf8"));
+  const nestedJudged = validateMetadata(nested);
+  assert.equal(nestedJudged.reason, "secret_material");
+  const nestedText = JSON.stringify(nestedJudged);
+  for (const marker of ["opaque-nested-admin-token", "opaque-nested-participation-key", "opaque-nested-private-profile"]) {
+    assert.equal(nestedText.includes(marker), false);
+  }
+  const nestedRun = cli(deltaCli, ["--fixture", secretNested]);
+  assert.equal(nestedRun.status, 2);
+  assert.equal(JSON.parse(nestedRun.stdout).reason, "secret_material");
+  for (const marker of ["opaque-nested-admin-token", "opaque-nested-participation-key", "opaque-nested-private-profile"]) {
+    assert.equal(nestedRun.stdout.includes(marker), false);
+    assert.equal(nestedRun.stderr.includes(marker), false);
   }
   const extra = { ...metadata, note: "opaque-admin-token-value" };
   const shaped = validateMetadata(extra);

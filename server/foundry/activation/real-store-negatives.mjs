@@ -18,6 +18,11 @@ const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const receiverRoot = path.join(repoRoot, "vendor/visitor-foundry-receiver");
 const selfPath = fileURLToPath(import.meta.url);
 const SENTINEL = "not-a-real-secret";
+const OPAQUE_MARKERS = [
+  "opaque-nested-admin-token",
+  "opaque-nested-participation-key",
+  "opaque-nested-private-profile",
+];
 const PRODUCT_URL = `postgres://pilot:${SENTINEL}@db.arvmcttdegqwiwdaembr.supabase.co:5432/postgres`;
 
 const FIXTURES = {
@@ -27,6 +32,7 @@ const FIXTURES = {
   "product-reuse-supabase-url": ["server/foundry/activation/delta.mjs", "server/foundry/activation/fixtures/seeded-product-reuse-supabase-url.json", REUSE_CLASS],
   "secret-metadata": ["server/foundry/activation/delta.mjs", "server/foundry/activation/fixtures/seeded-secret-metadata.json", "false_green_rejected", "secret_material"],
   "secret-nested": ["server/foundry/activation/delta.mjs", "server/foundry/activation/fixtures/seeded-secret-nested.json", "false_green_rejected", "secret_material"],
+  "secret-nested-opaque": ["server/foundry/activation/delta.mjs", "server/foundry/activation/fixtures/seeded-secret-nested-opaque.json", "false_green_rejected", "secret_material"],
   "client-false-green": ["server/foundry/activation/client-compat.mjs", "server/foundry/activation/fixtures/seeded-client-false-green.json", "false_green_rejected", "client_surfaces_are_not_portable_interop"],
   "client-catalog-false-green": ["server/foundry/activation/client-compat.mjs", "server/foundry/activation/fixtures/seeded-client-catalog-false-green.json", "false_green_rejected", "client_surfaces_are_not_portable_interop"],
   "host-withhold-fixture": ["server/foundry/activation/postdeploy-accept.mjs", "server/foundry/activation/fixtures/seeded-host-withhold.json", HOST_WITHHOLD_CLASS],
@@ -41,7 +47,7 @@ function argument(name) {
 
 function emit(result) {
   const text = JSON.stringify(result);
-  if (text.includes(SENTINEL) || /postgres(?:ql)?:\/\//i.test(text)) {
+  if (text.includes(SENTINEL) || OPAQUE_MARKERS.some((marker) => text.includes(marker)) || /postgres(?:ql)?:\/\//i.test(text)) {
     process.stdout.write(`${JSON.stringify({
       ok: false,
       exitCode: 1,
@@ -96,7 +102,9 @@ function fixtureCase(name) {
   const [script, fixture, code, reason] = FIXTURES[name];
   const ran = runNode([script, "--fixture", fixture], cleanEnv());
   const combined = `${ran.stdout || ""}${ran.stderr || ""}`;
-  if (combined.includes(SENTINEL)) return hold("secret_in_stdout", "secret_in_stdout", { exitCode: 1 });
+  if (combined.includes(SENTINEL) || OPAQUE_MARKERS.some((marker) => combined.includes(marker))) {
+    return hold("secret_in_stdout", "secret_in_stdout", { exitCode: 1 });
+  }
   let body = null;
   try { body = JSON.parse(ran.stdout); } catch { body = null; }
   if (ran.status !== 2 || body?.code !== code || (reason && body?.reason !== reason)) {
@@ -309,7 +317,7 @@ function proveAll() {
       env: cleanEnv(),
     });
     const combined = `${ran.stdout || ""}${ran.stderr || ""}`;
-    if (combined.includes(SENTINEL) || /postgres(?:ql)?:\/\/\S+@/i.test(combined)) {
+    if (combined.includes(SENTINEL) || OPAQUE_MARKERS.some((marker) => combined.includes(marker)) || /postgres(?:ql)?:\/\/\S+@/i.test(combined)) {
       emit(hold("secret_in_stdout", name, { exitCode: 1 }));
     }
     let body = null;

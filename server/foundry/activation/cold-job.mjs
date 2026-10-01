@@ -36,7 +36,8 @@ try {
     && receipt.seededNegatives?.productReuse?.code === "correspondence_reuses_product_data_service"
     && receipt.seededNegatives?.hostWithhold?.code === "host_configuration_withheld"
     && receipt.seededNegatives?.unenrolled?.code === "hosted_success_without_enrolled_store"
-    && receipt.seededNegatives?.secretMetadata?.reason === "secret_material";
+    && receipt.seededNegatives?.secretMetadata?.reason === "secret_material"
+    && receipt.seededNegatives?.secretNested?.reason === "secret_material";
   if (receipt.ok !== true || receipt.productionActivate !== "HOLD" || receipt.productionReady !== false || !proved) {
     process.exit(receipt.ok === true ? 1 : 2);
   }

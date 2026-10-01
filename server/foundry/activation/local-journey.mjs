@@ -13,7 +13,7 @@ import { cases, original, task } from "../../../vendor/visitor-foundry-receiver/
 import { judge, requireFact } from "./classify.mjs";
 import { ENROLLED_PRODUCT_BASELINE, clientSurfaces, reusesProductDataService, stableProductConfiguration } from "./client-contract.mjs";
 import { judgeHostLaunch } from "./host-config.mjs";
-import { invocationSelectsCandidate, validateVisitorEntry } from "./wire-contract.mjs";
+import { clientInvocationSelects, validateVisitorEntry } from "./wire-contract.mjs";
 import { assessPreconditions } from "./preconditions.mjs";
 import { observeOrigin } from "./observe.mjs";
 import { PROFILE } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
@@ -27,6 +27,7 @@ const acceptCli = fileURLToPath(new URL("./postdeploy-accept.mjs", import.meta.u
 const falseGreen = fileURLToPath(new URL("./fixtures/seeded-false-green.json", import.meta.url));
 const productReuse = fileURLToPath(new URL("./fixtures/seeded-product-reuse.json", import.meta.url));
 const secretMetadata = fileURLToPath(new URL("./fixtures/seeded-secret-metadata.json", import.meta.url));
+const secretNested = fileURLToPath(new URL("./fixtures/seeded-secret-nested-opaque.json", import.meta.url));
 const hostWithhold = fileURLToPath(new URL("./fixtures/seeded-host-withhold.json", import.meta.url));
 const unenrolledSuccess = fileURLToPath(new URL("./fixtures/seeded-unenrolled-hosted-success.json", import.meta.url));
 const deltaCli = fileURLToPath(new URL("./delta.mjs", import.meta.url));
@@ -46,6 +47,12 @@ const REQUIRED_TABLES = [
   "correspondence_vf12_admissions",
 ];
 const runtimePython = path.join(receiverRoot, "scripts/visitor-foundry/execution/.runtime/bin/python");
+const LEAKED_MARKERS = [
+  "not-a-real-secret",
+  "opaque-nested-admin-token",
+  "opaque-nested-participation-key",
+  "opaque-nested-private-profile",
+];
 
 export function redact(text) {
   return String(text)
@@ -222,14 +229,17 @@ async function canonicalReadback(databaseUrl, { projectId, taskId, candidateId }
     );
     if (manifest.rows.length !== 1) throw fail(1, "manifest readback missing");
     const candidate = await client.query(
-      `SELECT id, generation, manifest
+      `SELECT id, generation, manifest, artifact
          FROM pilot_correspondence.correspondence_vf04_candidates
         WHERE id = $1`,
       [candidateId],
     );
     if (candidate.rows.length !== 1) throw fail(1, "candidate readback missing");
     const version = candidate.rows[0].manifest;
-    if (!row.result || !row.execution?.binding || !version) throw fail(1, "canonical binding fields missing");
+    const storedArtifact = candidate.rows[0].artifact;
+    const sample = row.execution?.sample;
+    if (!row.result || !row.execution?.binding || !version || !sample) throw fail(1, "canonical binding fields missing");
+    const contributedModule = storedArtifact?.descriptor?.module?.digest ?? storedArtifact?.module?.digest ?? null;
     return {
       invocation: row.result,
       manifestId: row.manifest_id,
@@ -241,10 +251,16 @@ async function canonicalReadback(databaseUrl, { projectId, taskId, candidateId }
       executionCandidateId: row.execution.binding.candidateId ?? null,
       executionGeneration: row.execution.binding.generation ?? row.execution.generation ?? null,
       executionTarget: row.execution.binding.capability ?? null,
+      moduleDigest: row.execution.binding.moduleDigest ?? null,
+      sampleOutput: sample.output ?? null,
+      sampleStatus: sample.observation?.status ?? null,
+      observationId: sample.observation?.id ?? null,
+      sampleModuleDigest: sample.observation?.binding?.moduleDigest ?? null,
       contributed: {
         candidateId: candidate.rows[0].id,
         generation: candidate.rows[0].generation,
         contentId: version.contentId ?? null,
+        moduleDigest: contributedModule,
         target: {
           capabilityId: version.capabilityId,
           version: version.version,
@@ -287,6 +303,19 @@ async function retention(databaseUrl, candidateId) {
   }
 }
 
+function clientWire(stdout, readback, request, candidateId, label) {
+  let body;
+  try {
+    body = JSON.parse(stdout);
+  } catch {
+    throw fail(1, `${label} client wire was not json`);
+  }
+  if (!clientInvocationSelects(body, readback, request, candidateId)) {
+    throw fail(1, `${label} client wire did not select the contributed candidate`);
+  }
+  return body;
+}
+
 function acceptPhase(observation, requirement) {
   const judged = requireFact(observation, requirement);
   if (!judged.ok) throw fail(judged.exitCode, `${requirement} ${judged.code} ${judged.reason}`);
@@ -300,7 +329,8 @@ function seededCommand(script, fixture, code, reason) {
   });
   let body = null;
   try { body = JSON.parse(ran.stdout); } catch { body = null; }
-  if (ran.stdout.includes("not-a-real-secret") || ran.stderr.includes("not-a-real-secret")) {
+  const printed = `${ran.stdout}\n${ran.stderr}`;
+  if (LEAKED_MARKERS.some((marker) => printed.includes(marker))) {
     throw fail(1, "seeded negative printed secret material");
   }
   if (ran.status !== 2 || body?.code !== code || (reason && body?.reason !== reason) || body?.productionReady === true || body?.productionActivate !== "HOLD") {
@@ -322,6 +352,7 @@ export async function runLocalJourney() {
     falseGreen: seededCommand(acceptCli, falseGreen, "false_green_rejected", "durable_claim_without_retrieval"),
     productReuse: seededCommand(deltaCli, productReuse, "correspondence_reuses_product_data_service"),
     secretMetadata: seededCommand(deltaCli, secretMetadata, "false_green_rejected", "secret_material"),
+    secretNested: seededCommand(deltaCli, secretNested, "false_green_rejected", "secret_material"),
     hostWithhold: seededCommand(acceptCli, hostWithhold, "host_configuration_withheld"),
     unenrolled: seededCommand(acceptCli, unenrolledSuccess, "hosted_success_without_enrolled_store"),
   };
@@ -457,13 +488,8 @@ export async function runLocalJourney() {
       taskId: useRequest.taskId,
       candidateId,
     });
-    if (!invocationSelectsCandidate(contributedRow, useRequest, candidateId)) {
-      throw fail(1, "visitor A invocation did not select the contributed candidate");
-    }
-    const output = JSON.parse(used.stdout)?.invocation?.output;
-    if (!isDeepStrictEqual(output, contributedRow.invocation.output)) {
-      throw fail(1, "visitor A output diverged from canonical readback");
-    }
+    const usedWire = clientWire(used.stdout, contributedRow, useRequest, candidateId, "visitor A");
+    const output = usedWire.invocation.output;
     const taskObs = {
       ...discoveryObs,
       task: {
@@ -497,18 +523,12 @@ export async function runLocalJourney() {
     }
     const retrieved = await runNode([visitor, "use", `${visitorB}.json`, usePath], baseEnv(), receiverRoot);
     if (retrieved.code !== 0) throw fail(1, `durable use failed: ${retrieved.stderr}`);
-    const retrievedOutput = JSON.parse(retrieved.stdout)?.invocation?.output;
     const readback = await canonicalReadback(pgCluster.url, {
       projectId: second.body.projectId,
       taskId: useRequest.taskId,
       candidateId,
     });
-    if (!isDeepStrictEqual(retrievedOutput, readback.invocation.output)) {
-      throw fail(1, "visitor B output diverged from canonical readback");
-    }
-    if (!invocationSelectsCandidate(readback, useRequest, candidateId)) {
-      throw fail(1, "visitor B invocation did not select the contributed candidate");
-    }
+    clientWire(retrieved.stdout, readback, useRequest, candidateId, "visitor B");
     const still = await retention(pgCluster.url, candidateId);
     const retrievalObs = {
       ...afterRestart,
