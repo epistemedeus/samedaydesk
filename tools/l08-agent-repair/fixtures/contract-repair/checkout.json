@@ -1,0 +1,9 @@
+{
+  "callerId": "local-checkout",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/search",
+  "checkout": true,
+  "contract": { "kind": "json-schema" },
+  "observations": [{ "symbol": "s" }, { "symbol": "t" }]
+}

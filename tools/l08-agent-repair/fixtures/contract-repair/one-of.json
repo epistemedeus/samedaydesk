@@ -1,0 +1,19 @@
+{
+  "callerId": "local-one-of",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/union",
+  "contract": {
+    "kind": "json-schema",
+    "schema": {
+      "oneOf": [
+        { "type": "object" },
+        { "type": "array" }
+      ]
+    }
+  },
+  "observations": [
+    { "symbol": "one" },
+    { "symbol": "two" }
+  ]
+}

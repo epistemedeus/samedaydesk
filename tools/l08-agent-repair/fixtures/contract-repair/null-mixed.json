@@ -1,0 +1,8 @@
+{
+  "callerId": "local-null-mixed",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/mixed",
+  "contract": { "kind": "json-schema" },
+  "observations": [null, { "symbol": "one" }]
+}

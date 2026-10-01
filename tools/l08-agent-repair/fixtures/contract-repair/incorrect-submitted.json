@@ -1,0 +1,12 @@
+{
+  "callerId": "local-incorrect-submitted",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/wrong",
+  "contract": { "kind": "json-schema", "schema": { "type": "object" } },
+  "submittedRepair": { "schema": { "type": "string" } },
+  "observations": [
+    [{ "id": "a", "ok": true }],
+    [{ "id": "b", "ok": false }]
+  ]
+}

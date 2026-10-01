@@ -1,0 +1,8 @@
+{
+  "callerId": "local-conflict-types",
+  "routeClass": "paid_post",
+  "method": "POST",
+  "path": "/local/desk/conflict",
+  "contract": { "kind": "json-schema", "schema": { "type": "object" } },
+  "observations": [{ "symbol": "one" }, ["symbol"]]
+}

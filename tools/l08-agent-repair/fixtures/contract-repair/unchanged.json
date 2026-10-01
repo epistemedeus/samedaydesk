@@ -1,0 +1,22 @@
+{
+  "callerId": "local-unchanged",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/stable",
+  "contract": {
+    "kind": "json-schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "price": { "type": "number" },
+        "symbol": { "type": "string" },
+        "venue": { "type": "string" }
+      },
+      "required": ["price", "symbol"]
+    }
+  },
+  "observations": [
+    { "symbol": "s", "price": 1, "venue": "east" },
+    { "symbol": "s", "price": 2 }
+  ]
+}

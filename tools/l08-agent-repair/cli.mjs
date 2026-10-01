@@ -1,6 +1,6 @@
 // Reproduce a disposable MCP defect, repair it, and hand the transition to MAINT.
 import { execFileSync, spawn, spawnSync } from "node:child_process";
-import { runJourneyArgv, runJourneyNegative } from "./cold-client.mjs";
+import { runContractRepairLimits, runContractRepairNegative, runJourneyArgv, runJourneyNegative } from "./cold-client.mjs";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -247,6 +247,8 @@ export async function runCold(outPath = defaultHandoffPath) {
   const seller = spawnCold(["seller-repair"]);
   const journeyPositive = spawnCold(["journey"]);
   const journeyNegative = spawnCold(["journey-negative"]);
+  const contractLimits = spawnCold(["contract-repair-limits"]);
+  const contractNegative = spawnCold(["contract-repair-negative"]);
   say(`seeded reject-unchanged exit ${unchanged.status}`);
   writeChild(unchanged);
   say(`seeded reject-scored exit ${scored.status}`);
@@ -257,8 +259,13 @@ export async function runCold(outPath = defaultHandoffPath) {
   writeChild(journeyPositive);
   say(`seeded journey-negative exit ${journeyNegative.status}`);
   writeChild(journeyNegative);
+  say(`contract-repair-limits exit ${contractLimits.status}`);
+  writeChild(contractLimits);
+  say(`seeded contract-repair-negative exit ${contractNegative.status}`);
+  writeChild(contractNegative);
   if (unchanged.status !== 1 || scored.status !== 1 || seller.status !== 0) return 1;
   if (journeyPositive.status !== 0 || journeyNegative.status !== 1) return 1;
+  if (contractLimits.status !== 0 || contractNegative.status !== 1) return 1;
   return 0;
 }
 
@@ -334,8 +341,10 @@ try {
   else if (command === "reject-scored") exit = await runRejectScored();
   else if (command === "journey") exit = await runJourneyArgv(process.argv.slice(3));
   else if (command === "journey-negative") exit = await runJourneyNegative();
+  else if (command === "contract-repair-limits") exit = runContractRepairLimits();
+  else if (command === "contract-repair-negative") exit = runContractRepairNegative();
   else {
-    say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | cold [out.json] | reject-unchanged | reject-scored | journey | journey-negative");
+    say("usage: node tools/l08-agent-repair/cli.mjs prove [out.json] | cold [out.json] | reject-unchanged | reject-scored | journey | journey-negative | contract-repair-limits | contract-repair-negative");
     exit = 2;
   }
 } catch (err) {

@@ -1,0 +1,9 @@
+{
+  "callerId": "local-wallet",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/quote",
+  "wallet": "create",
+  "contract": { "kind": "json-schema" },
+  "observations": [{ "symbol": "s" }, { "symbol": "t" }]
+}

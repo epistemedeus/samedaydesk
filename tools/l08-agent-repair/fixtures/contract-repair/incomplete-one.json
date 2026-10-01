@@ -1,0 +1,8 @@
+{
+  "callerId": "local-incomplete-one",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/one",
+  "contract": { "kind": "json-schema" },
+  "observations": [{ "symbol": "once", "price": 1 }]
+}

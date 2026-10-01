@@ -91,3 +91,27 @@ node tools/l08-agent-repair/cold-client.mjs journey-negative
 `journey-negative` exits 1. It refuses `not-a-catalog-id` (`unknown_finding`), `--wallet create` (`second_wallet_refused`), `--echo-header` (`echo_header_refused`), `--disposable-only` (`disposable_only_refused`), and `mcp.unknownTool` (`disposable_finding_refused`). None of those commands write `MAINT-HANDOFF.json`.
 
 `node tools/l08-agent-repair/cli.mjs cold` runs `journey` and `journey-negative` after the disposable repair. The listener still does not write the handoff. The cold client writes the journey onto the same file.
+
+## Success-contract repair
+
+Offline. No checkout, no charge, and no request to a seller endpoint. A suggestion is not an owner-applied verified repair. The cold client still writes `MAINT-HANDOFF.json`. The listener does not.
+
+Two independent callers submit different local contracts and redacted success bodies. The catalog briefs stay input examples. These callers are not those briefs:
+
+1. `local-paid-get-object` — OpenAPI `GET /local/desk/quote` has no success schema. Two object bodies. The patch requires `price` and `symbol` and leaves `venue` optional.
+2. `local-paid-post-array` — JSON Schema `{ "type": "object" }` does not match array bodies. The patch is an array of objects that requires `id` and `ok` and leaves `note` optional.
+
+Each caller writes a patch and a regression under its own directory. The regression applies the patch in memory and shows the prior mismatch, the new accept, and a decoy the new schema rejects. `ownerApplied` and `verifiedRepair` stay false.
+
+```
+node tools/l08-agent-repair/cold-client.mjs contract-repair --in tools/l08-agent-repair/fixtures/contract-repair/paid-get-object.json --out /tmp/l08-paid-get
+node /tmp/l08-paid-get/regression.mjs
+node tools/l08-agent-repair/cold-client.mjs contract-repair --in tools/l08-agent-repair/fixtures/contract-repair/paid-post-array.json --out /tmp/l08-paid-post
+node /tmp/l08-paid-post/regression.mjs
+node tools/l08-agent-repair/cold-client.mjs contract-repair-limits
+node tools/l08-agent-repair/cold-client.mjs contract-repair-negative
+```
+
+`contract-repair` exits 0 for those two callers. `contract-repair-limits` exits 0. It asks a concrete question for one sample, conflicting object/array types, null mixed with an object, a declared branch that was not supplied, empty arrays, empty objects, `oneOf`, and a non-local `$ref`. Two null bodies produce a `{ "type": "null" }` suggestion. `contract-repair-negative` exits 1. It rejects an unchanged schema, an incorrect submitted schema, a second wallet, checkout, malformed input, oversized input, and a tampered regression. Supplied secrets and example values stay out of the patch, the regression, and the handoff.
+
+Schema checks use `client/scripts/validateJsonSchema.mjs`. OpenAPI success lookup follows the local `$ref` and `application/json` rules in `experiments/s134-record-jobs/modules/openapi-impact/cli.mjs`. The patch does not close `additionalProperties` and does not copy `const`, `enum`, or examples from the supplied bodies. Fields present in every supplied body are required. Fields present in only some bodies stay optional. The owner confirms that intersection before applying it.

@@ -290,5 +290,135 @@
         "expectsExit": 1
       }
     ]
+  },
+  "contractRepair": {
+    "schema": "samedaydesk.maint.contract-repair.handoff.v1",
+    "job": "L08-REAL-REPAIR-093097",
+    "priorHead": "33022efda1168a918fe4170840b46a2752e256a4",
+    "offline": true,
+    "checkoutRequired": false,
+    "charge": false,
+    "ownerApplied": false,
+    "verifiedRepair": false,
+    "coldClientWritesHandoff": true,
+    "listenerWritesHandoff": false,
+    "secondWallet": false,
+    "externalSellerMutated": false,
+    "catalogExamplesAreInputsOnly": true,
+    "reused": [
+      "client/scripts/validateJsonSchema.mjs",
+      "experiments/s134-record-jobs/modules/openapi-impact/cli.mjs"
+    ],
+    "callers": [
+      {
+        "callerId": "local-paid-get-object",
+        "routeClass": "paid_get",
+        "method": "GET",
+        "path": "/local/desk/quote",
+        "findingClass": "missing_response_schema",
+        "shape": "object",
+        "sourceId": "c6591125b5659e330f9f2e5a71c764cb76de887a82953c3d6f422ac316c74f6c",
+        "disposition": "suggestion",
+        "ownerApplied": false,
+        "verifiedRepair": false,
+        "confirmation": "Required fields are the intersection of the supplied success bodies. The owner confirms them before applying this patch.",
+        "requiredPaths": [
+          "$.price",
+          "$.symbol"
+        ],
+        "optionalPaths": [
+          "$.apiKey",
+          "$.contact",
+          "$.venue"
+        ],
+        "patch": {
+          "op": "add",
+          "pointer": "/paths/~1local~1desk~1quote/get/responses/200/content",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "apiKey": {
+                "type": "string"
+              },
+              "contact": {
+                "type": "string"
+              },
+              "price": {
+                "type": "number"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "venue": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "price",
+              "symbol"
+            ]
+          }
+        },
+        "regression": {
+          "priorMismatch": true,
+          "reason": "missing_schema",
+          "proposedAcceptsAll": true,
+          "proposedRejectsDecoy": true,
+          "exit": 0
+        }
+      },
+      {
+        "callerId": "local-paid-post-array",
+        "routeClass": "paid_post",
+        "method": "POST",
+        "path": "/local/desk/search",
+        "findingClass": "incorrect_response_schema",
+        "shape": "array",
+        "sourceId": "cad6e0549b48725e68024045d26a546b8520df9a82bddfb792bd9062be1074e1",
+        "disposition": "suggestion",
+        "ownerApplied": false,
+        "verifiedRepair": false,
+        "confirmation": "Required fields are the intersection of the supplied success bodies. The owner confirms them before applying this patch.",
+        "requiredPaths": [
+          "$[].id",
+          "$[].ok"
+        ],
+        "optionalPaths": [
+          "$[].note"
+        ],
+        "patch": {
+          "op": "replace",
+          "pointer": "/schema",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "ok": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "ok"
+              ]
+            }
+          }
+        },
+        "regression": {
+          "priorMismatch": true,
+          "reason": "validation",
+          "proposedAcceptsAll": true,
+          "proposedRejectsDecoy": true,
+          "exit": 0
+        }
+      }
+    ]
   }
 }

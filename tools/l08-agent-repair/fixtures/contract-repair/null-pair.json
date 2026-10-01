@@ -1,0 +1,19 @@
+{
+  "callerId": "local-null-pair",
+  "routeClass": "paid_get",
+  "method": "GET",
+  "path": "/local/desk/empty",
+  "contract": {
+    "kind": "openapi",
+    "document": {
+      "openapi": "3.0.3",
+      "info": { "title": "local-empty", "version": "0" },
+      "paths": {
+        "/local/desk/empty": {
+          "get": { "responses": { "200": { "description": "OK" } } }
+        }
+      }
+    }
+  },
+  "observations": [null, null]
+}

@@ -1,5 +1,7 @@
 // Portable diagnosis → repair → regression document for MAINT.
 // A score, grade, or points field is a different product and is rejected.
+import { validateContractRepairSection } from "./contract-repair.mjs";
+
 export const FINDING_ID = "mcp.unknownTool";
 export const HANDOFF_SCHEMA = "samedaydesk.maint.agent-repair.handoff.v1";
 export const DIAGNOSIS_SCHEMA = "samedaydesk.maint.agent-repair.diagnosis.v1";
@@ -284,5 +286,9 @@ export function validateMaintHandoff(doc) {
   if (sellerError) return { ok: false, error: sellerError };
   const journeyFailure = journeyError(doc.journey, doc.sellerRepair);
   if (journeyFailure) return { ok: false, error: journeyFailure };
+  if (doc.contractRepair) {
+    const contractError = validateContractRepairSection(doc.contractRepair);
+    if (contractError) return { ok: false, error: contractError };
+  }
   return { ok: true };
 }
