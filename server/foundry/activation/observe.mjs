@@ -64,7 +64,7 @@ export async function observeOrigin(origin) {
   });
   const hz = healthz.body || {};
   const configured = health.body?.configured || {};
-  const profileId = entry.body?.profile?.profileId;
+  const binding = entry.body?.profile?.contribution?.binding;
   const serverInfo = mcp.body?.result?.serverInfo || {};
   return {
     productionActivate: PRODUCTION_ACTIVATE,
@@ -93,7 +93,11 @@ export async function observeOrigin(origin) {
     },
     visitorEntry: {
       status: entry.status,
-      hasProfile: typeof profileId === "string" && profileId.length > 0,
+      schema: typeof entry.body?.schema === "string" ? entry.body.schema : null,
+      bindingSchema: typeof binding?.schema === "string" ? binding.schema : null,
+      body: entry.status === 200 && entry.body && typeof entry.body === "object" && !Array.isArray(entry.body)
+        ? entry.body
+        : null,
     },
     uploads: { status: uploads.status },
     mcp: {

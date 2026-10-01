@@ -1,9 +1,17 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import express from "express";
+import {
+  ENROLLED_PRODUCT_BASELINE,
+  findSecret,
+  stableProductConfiguration,
+  validateMetadata,
+} from "../foundry/activation/client-contract.mjs";
 import { buildDelta } from "../foundry/activation/delta.mjs";
 import { assessPreconditions } from "../foundry/activation/preconditions.mjs";
 
@@ -200,4 +208,74 @@ test("seeded health and MCP success is not portable-kit interoperability", () =>
   assert.equal(catalogBody.reason, "client_surfaces_are_not_portable_interop");
   assert.equal(catalogBody.productionReady, false);
   assert.equal(catalogBody.launchedService, false);
+});
+
+test("opaque secret-bearing names are rejected and never reflected", () => {
+  assert.equal(findSecret("store_unavailable"), false);
+  assert.equal(findSecret("invalid_config"), false);
+  assert.equal(findSecret("re_opaquekey1"), true);
+  const metadata = JSON.parse(readFileSync(enrolled, "utf8"));
+  const sentinels = {
+    CORRESPONDENCE_ADMIN_TOKEN: "opaque-admin-token-value",
+    participationKey: "opaque-participation-key-value",
+    privateProfile: "opaque-private-profile-value",
+    serviceRole: "opaque-service-role-value",
+    productServiceSecret: "opaque-product-service-secret-value",
+  };
+  assert.equal(validateMetadata(metadata), null);
+  const resendLike = validateMetadata({ ...metadata, note: "re_opaquekey1" });
+  assert.equal(resendLike.reason, "secret_material");
+  assert.equal(JSON.stringify(resendLike).includes("re_opaquekey1"), false);
+  const dir = mkdtempSync(path.join(tmpdir(), "sds-opaque-"));
+  for (const [key, value] of Object.entries(sentinels)) {
+    const planted = { ...metadata, [key]: value };
+    const judged = validateMetadata(planted);
+    assert.equal(judged.reason, "secret_material", key);
+    assert.equal(JSON.stringify(judged).includes(value), false, key);
+    const file = path.join(dir, `${key}.json`);
+    writeFileSync(file, JSON.stringify(planted));
+    const ran = cli(deltaCli, ["--fixture", file]);
+    assert.equal(ran.status, 2, ran.stdout + ran.stderr);
+    const body = JSON.parse(ran.stdout);
+    assert.equal(body.reason, "secret_material", key);
+    assert.equal(body.productionActivate, "HOLD");
+    assert.equal(ran.stdout.includes(value), false, key);
+    assert.equal(ran.stderr.includes(value), false, key);
+  }
+  const extra = { ...metadata, note: "opaque-admin-token-value" };
+  const shaped = validateMetadata(extra);
+  assert.equal(shaped.reason, "metadata_shape");
+  assert.notEqual(shaped.reason, "secret_material");
+  const extraFile = path.join(dir, "extra.json");
+  writeFileSync(extraFile, JSON.stringify(extra));
+  const extraRun = cli(deltaCli, ["--fixture", extraFile]);
+  assert.equal(extraRun.status, 2, extraRun.stdout);
+  assert.equal(JSON.parse(extraRun.stdout).reason, "metadata_shape");
+  assert.equal(extraRun.stdout.includes("opaque-admin-token-value"), false);
+});
+
+test("enrolled product baseline rejects each true-to-false change on its own", () => {
+  const base = JSON.parse(readFileSync(clientGreen, "utf8"));
+  delete base.claims;
+  const enrolledFlags = { supabase: true, stripe: true, email: true };
+  assert.deepEqual(ENROLLED_PRODUCT_BASELINE, enrolledFlags);
+  assert.equal(stableProductConfiguration([enrolledFlags, enrolledFlags, enrolledFlags, enrolledFlags]), true);
+  const absent = { supabase: false, stripe: false, email: false };
+  assert.equal(stableProductConfiguration([absent, absent, absent, absent]), false);
+  assert.equal(stableProductConfiguration([absent, enrolledFlags]), false);
+  const dir = mkdtempSync(path.join(tmpdir(), "sds-baseline-"));
+  for (const key of ["supabase", "stripe", "email"]) {
+    const observation = structuredClone(base);
+    observation.sdsHealth.configured = { ...enrolledFlags, [key]: false };
+    const file = path.join(dir, `${key}.json`);
+    writeFileSync(file, JSON.stringify(observation));
+    const ran = cli(compatCli, ["--fixture", file]);
+    assert.equal(ran.status, 1, ran.stdout + ran.stderr);
+    const body = JSON.parse(ran.stdout);
+    assert.equal(body.code, "product_configuration_changed");
+    assert.deepEqual(body.reasons, [`configured_${key}_changed`]);
+    assert.equal(body.productionEnrollmentInspected, false);
+    assert.equal(body.productionActivate, "HOLD");
+    assert.equal(body.productionReady, false);
+  }
 });

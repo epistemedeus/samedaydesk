@@ -62,10 +62,10 @@ Restart `node server/index.js`. Do not mount the raw correspondence app over the
 
 | State | What is true | What is not enough |
 | --- | --- | --- |
-| Disabled optional mount | `GET /api/health` is 200 `samedaydesk`, and `GET /api/correspondence/healthz` is `enabled: false` with reason `unconfigured`, `invalid_config`, or `store_unavailable` | A 200 health body, or a public catalog response |
-| Hosted discovery | Healthz is `enabled: true` and `store: postgres`. `GET /api/correspondence/foundry-receiver` is the opt-in facade (`facade: true`, `rawMounted: false`, `publicExecution: false`, schema `pilot_correspondence`). `GET /api/correspondence/v1/visitor-entry` has a profile. Uploads stay 501 | Healthz alone, or `/for-agents` |
-| Successful task result | Discovery is true, a candidate is published, and the cold visitor invocation output equals the held-out portable result | Discovery, or a copy of the health JSON |
-| Durable retrieval | The task result is still published after the HTTP process restarts, and a second visitor reads the same output | A task result from the process that produced it |
+| Disabled optional mount | `GET /api/health` is 200 `samedaydesk`, and `GET /api/correspondence/healthz` is `enabled: false` with reason exactly `unconfigured`. `invalid_config` and `store_unavailable` are degraded misses | A 200 health body, a degraded reason, or a public catalog response |
+| Hosted discovery | Healthz is `enabled: true` and `store: postgres`. The facade is opt-in (`facade: true`, `rawMounted: false`, `publicExecution: false`). Its `schema` value `pilot_correspondence` is the database namespace, not the wire schema. `GET /api/correspondence/v1/visitor-entry` validates as `neomorphic.foundry.entry.v1` with contribution binding `neomorphic.foundry.entry-receiver-binding.v1`. Uploads stay 501 | Healthz alone, a profile id, or `/for-agents` |
+| Successful task result | Discovery is true, a candidate is published, and the invocation envelope is `neomorphic.foundry.invocation.v1` for a `neomorphic.foundry.capability-request.v1` whose output equals the held-out portable result | Discovery, or a copy of the health JSON |
+| Durable retrieval | After the HTTP process restarts, visitor B's canonical invocation readback binds manifest, target, task, and content identity to the candidate visitor A contributed | A retained publication row plus equal output |
 
 ```sh
 node server/foundry/activation/postdeploy-accept.mjs --fixture server/foundry/activation/fixtures/seeded-false-green.json

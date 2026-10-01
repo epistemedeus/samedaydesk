@@ -18,6 +18,8 @@ try {
     && compat.officialMcp?.toolsCalled === false
     && compat.productDataService?.stableConfigured === true
     && compat.productDataService?.separateFromCorrespondence === true
+    && compat.productDataService?.evidence === "local-nonsecret-stubs"
+    && compat.productDataService?.productionEnrollmentInspected === false
     && compat.officialVisitorClient?.outputMatched === true
     && compat.officialVisitorClient?.distinctProjects === true
     && compat.portableKit?.matchedHeldOut === true

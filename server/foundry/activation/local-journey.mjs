@@ -6,12 +6,14 @@ import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import pg from "pg";
 import { startDisposablePg } from "../../scripts/fixtures/disposable-pg.mjs";
 import { cases, original, task } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs";
 import { judge, requireFact } from "./classify.mjs";
-import { clientSurfaces, reusesProductDataService } from "./client-contract.mjs";
+import { ENROLLED_PRODUCT_BASELINE, clientSurfaces, reusesProductDataService, stableProductConfiguration } from "./client-contract.mjs";
 import { judgeHostLaunch } from "./host-config.mjs";
+import { invocationSelectsCandidate, validateVisitorEntry } from "./wire-contract.mjs";
 import { assessPreconditions } from "./preconditions.mjs";
 import { observeOrigin } from "./observe.mjs";
 import { PROFILE } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
@@ -84,6 +86,17 @@ function baseEnv() {
   };
 }
 
+const PRODUCT_STUBS = {
+  SUPABASE_URL: "https://local-baseline.example",
+  SUPABASE_SERVICE_ROLE_KEY: "local-baseline-stub",
+  STRIPE_SECRET_KEY: "local-baseline-stub",
+  RESEND_API_KEY: "local-baseline-stub",
+};
+
+function serverEnv(extra = {}) {
+  return { ...baseEnv(), ...PRODUCT_STUBS, ...extra };
+}
+
 function assertHold() {
   const raw = process.env.FOUNDRY_PRODUCTION_ACTIVATE;
   if (raw != null && String(raw).trim() !== "" && String(raw).trim() !== "HOLD") {
@@ -149,7 +162,7 @@ function installEnv(databaseUrl, files) {
 
 function optedEnv(databaseUrl, files, adminToken) {
   return {
-    ...baseEnv(),
+    ...serverEnv(),
     FOUNDRY_HOST_OPT_IN: "1",
     CORRESPONDENCE_DATABASE_URL: databaseUrl,
     CORRESPONDENCE_ADMIN_TOKEN: adminToken,
@@ -179,13 +192,69 @@ async function registerVisitor(origin, directory, authority) {
 async function authorityFrom(origin) {
   const response = await fetch(`${origin}/api/correspondence/v1/visitor-entry`, { signal: AbortSignal.timeout(8000) });
   const body = await response.json();
-  if (response.status !== 200 || !body?.profile?.profileId) throw fail(1, "visitor entry profile missing");
+  const entry = validateVisitorEntry(body);
+  if (response.status !== 200 || !entry) throw fail(1, "visitor entry schema rejected");
+  const binding = entry.profile.contribution.binding;
   return {
-    profileId: body.profile.profileId,
-    entryTerms: body.profile.termsHash,
-    contributionTerms: body.profile.contribution.binding.contributionTerms,
-    scope: "synthetic-reusable-components",
+    profileId: entry.profile.profileId,
+    entryTerms: entry.profile.termsHash,
+    contributionTerms: binding.contributionTerms,
+    scope: binding.scope,
   };
+}
+
+async function canonicalReadback(databaseUrl, { projectId, taskId, candidateId }) {
+  const client = new pg.Client({ connectionString: databaseUrl });
+  await client.connect();
+  try {
+    const invocation = await client.query(
+      `SELECT task_id, manifest_id, input_digest, result, execution
+         FROM pilot_correspondence.correspondence_vf04_invocations
+        WHERE project_id = $1 AND task_id = $2`,
+      [projectId, taskId],
+    );
+    if (invocation.rows.length !== 1) throw fail(1, "invocation readback missing");
+    const row = invocation.rows[0];
+    const manifest = await client.query(
+      `SELECT record FROM pilot_correspondence.correspondence_vf04_manifests
+        WHERE project_id = $1 AND id = $2`,
+      [projectId, row.manifest_id],
+    );
+    if (manifest.rows.length !== 1) throw fail(1, "manifest readback missing");
+    const candidate = await client.query(
+      `SELECT id, generation, manifest
+         FROM pilot_correspondence.correspondence_vf04_candidates
+        WHERE id = $1`,
+      [candidateId],
+    );
+    if (candidate.rows.length !== 1) throw fail(1, "candidate readback missing");
+    const version = candidate.rows[0].manifest;
+    if (!row.result || !row.execution?.binding || !version) throw fail(1, "canonical binding fields missing");
+    return {
+      invocation: row.result,
+      manifestId: row.manifest_id,
+      manifestTarget: manifest.rows[0].record?.target ?? null,
+      manifestRequestId: manifest.rows[0].record?.requestId ?? null,
+      taskId: row.task_id,
+      inputDigest: row.input_digest,
+      requestDigest: row.execution.requestId ?? null,
+      executionCandidateId: row.execution.binding.candidateId ?? null,
+      executionGeneration: row.execution.binding.generation ?? row.execution.generation ?? null,
+      executionTarget: row.execution.binding.capability ?? null,
+      contributed: {
+        candidateId: candidate.rows[0].id,
+        generation: candidate.rows[0].generation,
+        contentId: version.contentId ?? null,
+        target: {
+          capabilityId: version.capabilityId,
+          version: version.version,
+          contentId: version.contentId,
+        },
+      },
+    };
+  } finally {
+    await client.end();
+  }
 }
 
 async function retention(databaseUrl, candidateId) {
@@ -281,7 +350,7 @@ export async function runLocalJourney() {
   }
   try {
     const files = await writeInputs(dir);
-    server = await boot(baseEnv());
+    server = await boot(serverEnv());
     const disabledObs = await observeOrigin(server.origin);
     const disabledSurfaces = rememberClient(disabledObs, "disabled");
     phases.disabled = acceptPhase(disabledObs, "disabled");
@@ -379,13 +448,32 @@ export async function runLocalJourney() {
     if (published.code !== 0) throw fail(1, `publish failed: ${published.stderr}`);
     if (JSON.parse(published.stdout).published !== true) throw fail(1, "candidate was not published");
     const usePath = path.join(dir, "use-task.json");
-    await writeFile(usePath, JSON.stringify(task(cases[0].input)), { mode: 0o600 });
+    const useRequest = task(cases[0].input);
+    await writeFile(usePath, JSON.stringify(useRequest), { mode: 0o600 });
     const used = await runNode([visitor, "use", `${visitorA}.json`, usePath], baseEnv(), receiverRoot);
     if (used.code !== 0) throw fail(1, `cold use failed: ${used.stderr}`);
+    const contributedRow = await canonicalReadback(pgCluster.url, {
+      projectId,
+      taskId: useRequest.taskId,
+      candidateId,
+    });
+    if (!invocationSelectsCandidate(contributedRow, useRequest, candidateId)) {
+      throw fail(1, "visitor A invocation did not select the contributed candidate");
+    }
     const output = JSON.parse(used.stdout)?.invocation?.output;
+    if (!isDeepStrictEqual(output, contributedRow.invocation.output)) {
+      throw fail(1, "visitor A output diverged from canonical readback");
+    }
     const taskObs = {
       ...discoveryObs,
-      task: { published: true, candidateId, output, expected },
+      task: {
+        published: true,
+        candidateId,
+        output: contributedRow.invocation.output,
+        expected,
+        request: useRequest,
+        invocation: contributedRow.invocation,
+      },
       retrieval: null,
     };
     process.stderr.write("phase task-result\n");
@@ -410,6 +498,17 @@ export async function runLocalJourney() {
     const retrieved = await runNode([visitor, "use", `${visitorB}.json`, usePath], baseEnv(), receiverRoot);
     if (retrieved.code !== 0) throw fail(1, `durable use failed: ${retrieved.stderr}`);
     const retrievedOutput = JSON.parse(retrieved.stdout)?.invocation?.output;
+    const readback = await canonicalReadback(pgCluster.url, {
+      projectId: second.body.projectId,
+      taskId: useRequest.taskId,
+      candidateId,
+    });
+    if (!isDeepStrictEqual(retrievedOutput, readback.invocation.output)) {
+      throw fail(1, "visitor B output diverged from canonical readback");
+    }
+    if (!invocationSelectsCandidate(readback, useRequest, candidateId)) {
+      throw fail(1, "visitor B invocation did not select the contributed candidate");
+    }
     const still = await retention(pgCluster.url, candidateId);
     const retrievalObs = {
       ...afterRestart,
@@ -417,11 +516,21 @@ export async function runLocalJourney() {
       retrieval: {
         processRestarted: true,
         databaseSurvived: still.published === 1 && still.charged >= 1 && still.projects >= 1,
-        sameCandidate: still.published === 1 && retained.published === 1,
-        output: retrievedOutput,
+        output: readback.invocation.output,
+        readback,
       },
     };
-    phases.retrieval = acceptPhase(retrievalObs, "durable");
+    phases.retrieval = {
+      ...acceptPhase(retrievalObs, "durable"),
+      binding: {
+        candidateId: readback.executionCandidateId,
+        generation: readback.executionGeneration,
+        manifestId: readback.manifestId,
+        taskId: readback.taskId,
+        contentId: readback.contributed.contentId,
+        requestDigest: readback.requestDigest,
+      },
+    };
     process.stderr.write("phase durable-retrieval\n");
     if (!phases.retrieval.facts.hostedDiscovery || !phases.retrieval.facts.taskResult) {
       throw fail(2, "durable retrieval dropped discovery or task result");
@@ -429,7 +538,7 @@ export async function runLocalJourney() {
     await server.stop();
     server = null;
 
-    server = await boot(baseEnv());
+    server = await boot(serverEnv());
     const rolled = await observeOrigin(server.origin);
     rememberClient(rolled, "rollback");
     phases.rollback = acceptPhase(rolled, "disabled");
@@ -470,15 +579,23 @@ export async function runLocalJourney() {
     if (surfaceStamps.length !== 4 || surfaceStamps.some((item) => JSON.stringify(item) !== stamp)) {
       throw fail(2, "client contract changed across foundry phases");
     }
+    const configuredStamps = surfaceStamps.map((item) => item.configured);
+    const stableConfigured = stableProductConfiguration(configuredStamps);
+    if (!stableConfigured || !isDeepStrictEqual(configuredStamps[0], ENROLLED_PRODUCT_BASELINE)) {
+      throw fail(2, "product configuration changed from the enrolled baseline");
+    }
     const clientCompatibility = {
       ok: true,
       productionActivate: "HOLD",
       productionReady: false,
       officialMcp: { stable: true, ...disabledSurfaces.stamp.mcp },
       productDataService: {
-        stableConfigured: true,
+        stableConfigured,
         configured: disabledSurfaces.stamp.configured,
+        baseline: ENROLLED_PRODUCT_BASELINE,
         separateFromCorrespondence: true,
+        evidence: "local-nonsecret-stubs",
+        productionEnrollmentInspected: false,
       },
       uploadsStatus: disabledSurfaces.stamp.uploads,
       officialVisitorClient: {

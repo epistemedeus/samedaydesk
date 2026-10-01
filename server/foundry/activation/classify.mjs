@@ -1,8 +1,13 @@
 import { isDeepStrictEqual } from "node:util";
+import {
+  invocationMatchesRequest,
+  invocationSelectsCandidate,
+  validateVisitorEntry,
+} from "./wire-contract.mjs";
 
 export const PRODUCTION_ACTIVATE = "HOLD";
 
-const DISABLED_REASONS = new Set(["unconfigured", "invalid_config", "store_unavailable"]);
+const DEGRADED_REASONS = new Set(["invalid_config", "store_unavailable"]);
 const PORTABLE_OUTCOMES = new Set(["observed", "unknown", "error", "unsupported"]);
 
 function portableOutput(value) {
@@ -14,6 +19,8 @@ function portableOutput(value) {
 
 function readyFacade(receiver) {
   const body = receiver?.body;
+  // The facade reports the database namespace. Wire identity is the visitor
+  // entry, contribution binding, request, and invocation schemas.
   return receiver?.status === 200
     && body?.optIn === true
     && body?.facade === true
@@ -30,12 +37,16 @@ export function factsFrom(observation) {
   const hz = healthz.body || {};
   const sdsOk = health.status === 200 && health.service === "samedaydesk" && health.ok === true;
   const facade = readyFacade(observation?.foundryReceiver);
-  const entry = observation?.visitorEntry?.status === 200 && observation?.visitorEntry?.hasProfile === true;
+  const entry = observation?.visitorEntry?.status === 200 && validateVisitorEntry(observation?.visitorEntry?.body) !== null;
   const uploadsHold = observation?.uploads?.status === 501;
   const disabledBody = healthz.status === 200
     && hz.ok === false
     && hz.enabled === false
-    && DISABLED_REASONS.has(hz.reason);
+    && hz.reason === "unconfigured";
+  const degradedBody = healthz.status === 200
+    && hz.ok === false
+    && hz.enabled === false
+    && DEGRADED_REASONS.has(hz.reason);
   const hostedDiscovery = sdsOk
     && healthz.status === 200
     && hz.ok === true
@@ -51,17 +62,23 @@ export function factsFrom(observation) {
     && task.candidateId.length > 0
     && portableOutput(task.output)
     && portableOutput(task.expected)
-    && isDeepStrictEqual(task.output, task.expected);
+    && isDeepStrictEqual(task.output, task.expected)
+    && invocationMatchesRequest(task.invocation, task.request)
+    && isDeepStrictEqual(task.invocation.output, task.expected);
   const retrieval = observation?.retrieval;
   const durableRetrieval = taskResult
     && retrieval?.processRestarted === true
     && retrieval?.databaseSurvived === true
-    && retrieval?.sameCandidate === true
+    && invocationSelectsCandidate(retrieval.readback, task.request, task.candidateId)
     && portableOutput(retrieval.output)
-    && isDeepStrictEqual(retrieval.output, task.expected);
+    && isDeepStrictEqual(retrieval.output, task.expected)
+    && isDeepStrictEqual(retrieval.readback?.invocation?.output, task.expected);
   const disabledOptionalMount = sdsOk && disabledBody && !facade && !hostedDiscovery && !taskResult && !durableRetrieval;
+  const degradedMount = sdsOk && degradedBody && !facade && !hostedDiscovery && !disabledOptionalMount;
   return {
     disabledOptionalMount,
+    degradedMount,
+    degradedReason: degradedMount ? hz.reason : null,
     hostedDiscovery,
     taskResult,
     durableRetrieval,
@@ -123,6 +140,16 @@ export function requireFact(observation, name) {
   if (!judged.ok) return judged;
   const key = REQUIREMENTS[name];
   if (!key) return rejected("unknown_requirement", judged.facts);
+  if (name === "disabled" && judged.facts.degradedMount) {
+    return {
+      ok: false,
+      exitCode: 1,
+      code: "degraded_mount",
+      reason: judged.facts.degradedReason,
+      facts: judged.facts,
+      productionActivate: PRODUCTION_ACTIVATE,
+    };
+  }
   if (!judged.facts[key]) {
     return {
       ok: false,
