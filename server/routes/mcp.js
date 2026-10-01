@@ -332,8 +332,35 @@ router.get("/", (req, res) => {
   );
 });
 
+// Streamable HTTP and the TypeScript SDK: a present MCP-Protocol-Version that
+// this server does not implement is HTTP 400 on requests after initialize.
+// Initialize negotiates the version in the JSON-RPC body. A missing header
+// stays accepted for clients that predate the header, including this probe.
+export function protocolHeaderValue(req) {
+  const raw = req.headers["mcp-protocol-version"];
+  if (raw == null) return null;
+  return Array.isArray(raw) ? raw.join(", ") : String(raw);
+}
+
+function messageList(msg) {
+  if (Array.isArray(msg)) return msg;
+  return msg && typeof msg === "object" ? [msg] : [];
+}
+
+export function isInitializationRequest(msg) {
+  return messageList(msg).some((entry) => entry?.method === "initialize");
+}
+
+export function unsupportedProtocolMessage(version) {
+  return `Bad Request: Unsupported protocol version: ${version} (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`;
+}
+
 router.post("/", async (req, res) => {
   const msg = req.body;
+  const headerVersion = protocolHeaderValue(req);
+  if (!isInitializationRequest(msg) && headerVersion !== null && !SUPPORTED_PROTOCOL_VERSIONS.includes(headerVersion)) {
+    return res.status(400).json(errMsg(null, -32000, unsupportedProtocolMessage(headerVersion)));
+  }
   const ctx = { clientKey: clientKey(req) };
   try {
     if (Array.isArray(msg)) {

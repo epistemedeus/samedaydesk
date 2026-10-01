@@ -17,7 +17,8 @@ import {
 } from "./lib/contract-repair.mjs";
 import { ORDINARY_CALLERS, scoreProductPaths, validateMaintHandoff } from "./lib/handoff.mjs";
 import { evaluateJourneyRequest, loadSellerRepairBriefs, observeSellerRepairJourney, seededJourneyRejections } from "./lib/journey.mjs";
-import { retestOrigin, runTaskReadiness, runTaskReadinessNegative, sayReceipt, writeReceipt } from "./lib/task-readiness.mjs";
+import { acquirePins } from "./lib/pins.mjs";
+import { retestEra, retestOrigin, runTaskReadiness, runTaskReadinessNegative, sayReceipt, writeReceipt } from "./lib/task-readiness.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../..");
@@ -30,7 +31,7 @@ function say(line) {
 }
 
 function usage() {
-  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair | journey [--finding id] [--wallet create] [--echo-header] [--disposable-only] | journey-negative | contract-repair --in file --out dir | contract-repair-limits | contract-repair-negative | task-readiness | task-readiness-negative | task-readiness-retest --origin http://127.0.0.1:PORT");
+  say("usage: node tools/l08-agent-repair/cold-client.mjs run --origin http://127.0.0.1:PORT [--out file] | reject-unchanged --origin http://127.0.0.1:PORT | reject-scored | seller-repair | journey [--finding id] [--wallet create] [--echo-header] [--disposable-only] | journey-negative | contract-repair --in file --out dir | contract-repair-limits | contract-repair-negative | acquire-pins | task-readiness | task-readiness-negative | task-readiness-retest --origin http://127.0.0.1:PORT | task-readiness-era-retest --origin http://127.0.0.1:PORT");
 }
 
 function loopbackOrigin(value) {
@@ -519,6 +520,16 @@ if (commandLine) {
       } else {
         exit = runContractRepairNegative();
       }
+    } else if (parsed.command === "acquire-pins") {
+      if (parsed.origin != null || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client acquire-pins takes no arguments");
+        exit = 2;
+      } else {
+        const pins = acquirePins();
+        say(`acquire-pins neo ${pins.neo.head} exact ${pins.neo.acquired}`);
+        say(`acquire-pins s14 ${pins.s14.head} exact ${pins.s14.acquired}`);
+        exit = pins.neo.head && pins.s14.head ? 0 : 1;
+      }
     } else if (parsed.command === "task-readiness") {
       if (parsed.origin != null || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
         say("cold-client task-readiness takes no arguments");
@@ -541,6 +552,21 @@ if (commandLine) {
         say(`task-readiness negative pin_mismatch exit ${negative.mismatch ? 1 : 2}`);
         say(`task-readiness negative private_not_availability exit ${negative.privateDistinct ? 1 : 2}`);
         exit = negative.exit;
+      }
+    } else if (parsed.command === "task-readiness-era-retest") {
+      const origin = loopbackOrigin(parsed.origin);
+      if (!origin || parsed.out != null || parsed.in != null || parsed.finding != null || parsed.wallet != null || parsed.echoHeader || parsed.disposableOnly) {
+        say("cold-client task-readiness-era-retest takes --origin http://127.0.0.1:PORT");
+        exit = 2;
+      } else {
+        const result = await retestEra(origin);
+        say(`task-readiness era-retest unsupported ${result.checks.unsupported ? 400 : "fail"}`);
+        say(`task-readiness era-retest missing-header ${result.checks.missingHeader ? 200 : "fail"}`);
+        say(`task-readiness era-retest canonical 2025-11-25 ${result.checks.canonical ? 200 : "fail"}`);
+        say(`task-readiness era-retest initialize ${result.checks.initialize ? 200 : "fail"}`);
+        say(`task-readiness era-retest batch ${result.checks.batch ? 400 : "fail"}`);
+        say(`task-readiness era-retest method-not-found ${result.checks.methodNotFound ? 200 : "fail"}`);
+        exit = result.exit;
       }
     } else if (parsed.command === "task-readiness-retest") {
       const origin = loopbackOrigin(parsed.origin);

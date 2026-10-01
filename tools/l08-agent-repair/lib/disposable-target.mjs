@@ -119,8 +119,8 @@ export async function startDisposableTarget(mode = "broken") {
         } catch {
           msg = {};
         }
-        // The protocol-version header is intentionally ignored in both modes.
-        // That edge is researched, not repaired, on this target.
+        // This disposable target still ignores MCP-Protocol-Version.
+        // The apex router is the header repair. This fixture is not.
         const body = handleMcpMessage(msg, current);
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify(body));

@@ -1,33 +1,27 @@
-# Unresolved protocol edge: MCP-Protocol-Version
+# Protocol edge: MCP-Protocol-Version
 
-Status: unresolved. This package does not patch it.
+Status: repaired on `server/routes/mcp.js`. The disposable unknown-tool target still ignores the header.
 
-Spec: Model Context Protocol, revision 2025-11-25, Streamable HTTP, “Protocol Version Header”.
+## What the current transport requires
 
-- After initialize, an HTTP client must send `MCP-Protocol-Version` on later requests. The value should be the version negotiated at initialize.
-- If that header is missing and the server has no other way to know the version, a stateless server should assume `2025-03-26`.
-- An invalid or unsupported header must be answered with HTTP 400.
+Model Context Protocol, Streamable HTTP, revision 2025-11-25, “Protocol Version Header”, and revision 2026-07-28, “Protocol Version Header” and “Backward Compatibility”:
 
-## What the received code does
+- After initialize, an HTTP client sends `MCP-Protocol-Version`. The value should be the version negotiated at initialize.
+- A server that receives an invalid or unsupported `MCP-Protocol-Version` responds with HTTP 400.
+- A server that still supports clients earlier than 2025-06-18 may treat a missing header as `2025-03-26`. This server supports `2024-11-05` and `2025-03-26`, so a missing header stays accepted.
+- Initialize negotiates `protocolVersion` in the JSON-RPC body. An unsupported body version is answered with a supported version. It is not an HTTP 400.
 
-`server/routes/mcp.js` negotiates `protocolVersion` inside the initialize JSON-RPC body (`negotiateProtocolVersion`). The same router lists `MCP-Protocol-Version` in `Access-Control-Allow-Headers` and then never reads the header. A follow-up `tools/list` with `MCP-Protocol-Version: 1999-01-01` returns HTTP 200 and a normal tool list. The apex server stores no session, so a missing header is not treated as `2025-03-26` either. Every later request is handled as the current tool surface.
+The TypeScript SDK `validateProtocolVersion` matches that split. It returns HTTP 400 and JSON-RPC `-32000` when the header is present and not in the server's supported list, and it skips that check on an initialize request. A missing header is accepted.
 
-`server/lib/agent-readiness/probe.js` `rpc()` posts initialize, `tools/list`, and the unknown-tool call with `content-type` and `accept` only. It does not send `MCP-Protocol-Version`.
+## What this server does
 
-`mcp.version` in `server/lib/agent-readiness/checks.js` compares `initialize.result.protocolVersion` to the offered version. It does not look at the header on the later calls. A server that returns 400 for a missing or bad header, or that changes `tools/list` because it assumed `2025-03-26`, is recorded as a tools failure rather than a version-header failure.
+Supported versions, newest first: `2025-11-25`, `2025-06-18`, `2025-03-26`, `2024-11-05`. `2025-11-25` is the canonical version this server speaks.
 
-## Why it matters
+- `tools/list` with `MCP-Protocol-Version: 2025-11-25` returns HTTP 200 and the tool list.
+- The same call with the header omitted returns HTTP 200. The readiness probe sends no protocol header.
+- `tools/list` or a batch with `MCP-Protocol-Version: 1999-01-01` returns HTTP 400, JSON-RPC `-32000`, and no `result`.
+- `initialize` still echoes a supported body version, including when the header is `1999-01-01`.
+- A JSON-RPC method that is not implemented stays HTTP 200 and `-32601`.
+- `GET /mcp` is unchanged.
 
-The apex endpoint is stateless. The header is the only version signal the spec gives that server after initialize. Clients that negotiated `2025-11-25` and then omit the header are served the newest tool surface, including fields older clients do not understand. Clients that send a version this server does not implement are not rejected. The readiness probe has the same hole, so it will mis-label a strict peer.
-
-## Evidence
-
-`node tools/l08-agent-repair/cli.mjs prove` mounts the received app and records the follow-up status on `POST /mcp`. The handoff field `protocolEdge.apex.observedStatus` is 200 and `requiredStatus` is 400. The disposable target leaves the same header unenforced in both its broken and fixed modes, so the unknown-tool repair is not a fix for this edge.
-
-Owned paths for that repair stay under `tools/l08-agent-repair/`. `server/routes/mcp.js` and `server/lib/agent-readiness/` stay as received from `9cc816e13bfea448d68a26380efe2a91c88773dd`.
-
-## Continuation
-
-`L08-MAINT-093083` leaves this edge unresolved. Prior seal `ac7e0c75c224a062d9ed4e58332e9c2f34b90895`. The cold client records the same 200-versus-400 evidence on `protocolEdge` and does not patch the apex router or the readiness probe.
-
-`L08-JOURNEY-RECV-093093` does not repair this header. The seller-repair journey's useful result is the catalog maintenance scope for two ordinary callers. A request that asks for this header as the result is refused with `echo_header_refused`.
+This server does not implement the later stateless request shape. A header naming a version outside the four above is unsupported and is HTTP 400. That is the same rule as an unknown date. It is not a second protocol implementation.

@@ -28,7 +28,7 @@ Disposable loopback target, mode `broken`.
 
 Same target, mode `fixed`. The handler for an unknown tool name returns JSON-RPC error `-32602` and no `result`. The method `tools/call` still exists. A known tool name is unchanged.
 
-The repair is the fixed branch in `tools/l08-agent-repair/lib/disposable-target.mjs`. The cold client reaches it through `POST /v1/repair` on the owned listener. It does not edit the SDS255 checker, the apex MCP route, the seller-repair catalog, or `experiments/s260-useful-jobs-public-integration/`.
+The unknown-tool repair is the fixed branch in `tools/l08-agent-repair/lib/disposable-target.mjs`. The cold client reaches it through `POST /v1/repair` on the owned listener. It does not edit the SDS255 checker, the seller-repair catalog, or `experiments/s260-useful-jobs-public-integration/`. The protocol-version header is a separate addition on `server/routes/mcp.js`, described under Protocol header.
 
 ## Prove
 
@@ -59,9 +59,9 @@ node tools/l08-agent-repair/cold-client.mjs seller-repair
 
 `node tools/l08-agent-repair/cli.mjs prove` is the in-process owner check from the prior seal. It writes the same handoff document. Use `cli.mjs cold` when MAINT consumes the file, so the listener and the writer are not the same process.
 
-## Left unresolved
+## Protocol header
 
-`protocolEdge` in the handoff. Unsupported `MCP-Protocol-Version` on the received `POST /mcp` returns 200. The spec requires 400. See `research/mcp-protocol-version-header.md`. Do not treat the unknown-tool repair as a fix for that header.
+`POST /mcp` after initialize rejects an unsupported `MCP-Protocol-Version` with HTTP 400 and JSON-RPC `-32000`. A missing header stays HTTP 200 so existing clients, including the readiness probe, keep working. `initialize` negotiates `protocolVersion` in the body and does not reject the header. The disposable unknown-tool target still ignores the header. That fixture is not this repair. See `research/mcp-protocol-version-header.md`.
 
 ## Seller-repair API
 
@@ -118,7 +118,13 @@ Schema checks use `client/scripts/validateJsonSchema.mjs`. OpenAPI success looku
 
 ## Task-specific readiness
 
-Free. No new payment route. The cold client reads maintained Neo `de9c23b5d19de30874e432e7ef1193d0d02d6702` and S14 `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` as pins. It does not edit those checkouts. An unqualified sibling directory named `s14` or `neo` is refused, including stale neo `259ea74da295f12d64e2aae9cb2042c4a14c6b96`.
+Free. No new payment route. A bare checkout acquires the declared commits. It does not look for a sibling directory named `s14` or `neo`, and it does not follow a branch tip.
+
+```
+node tools/l08-agent-repair/cold-client.mjs acquire-pins
+```
+
+That command fetches Neo `https://github.com/epistemedeus/neomorphic-io.git` at `de9c23b5d19de30874e432e7ef1193d0d02d6702` and S14 `https://github.com/epistemedeus/agent-payment-integrity.git` at `00267aeb03c3ce01b9b318f5ee0172aee34d7e34` into `tools/l08-agent-repair/.pin-cache/<commit>`. The fetch argument is that commit. A wrong or stale checkout is deleted and replaced with the same commit, never with the remote tip. Stale neo `259ea74da295f12d64e2aae9cb2042c4a14c6b96` is refused. An unqualified directory named `s14`, `neo`, or `neomorphic-io` is refused. The checkouts are not edited. S14 dependencies come from its lockfile with `npm ci --ignore-scripts`.
 
 Two local targets, `POST /quote`, serve the pinned catalog rows. A supplied success contract requires `data.quote` to be a decimal string.
 
@@ -127,7 +133,7 @@ Two local targets, `POST /quote`, serve the pinned catalog rows. A supplied succ
 
 Applying the complete schema on the live target and retesting from a second process authorizes `catalog-row-repair-complete.json`. The adapter exits 0. `{ "data": { "quote": "soon" } }` matches that schema's string shape and is refused. It does not become a repair packet.
 
-`POST /mcp` on the canonical router with `MCP-Protocol-Version: 1999-01-01` still returns HTTP 200. Required status is 400. That slot stays `unsupported_era` and is not repaired here. `GET /api/health` is a separate canonical read. A closed port is `availability`. An empty caller ledger is `absence_of_demand`. A failed probe does not fill that slot. `http://127.0.0.1/` and a redirect onto a private address are `security`. Caller `authorization`, `cookie`, and `origin` are not forwarded, including onto another origin.
+`POST /mcp` on the canonical router with `MCP-Protocol-Version: 1999-01-01` returns HTTP 400 and no result. A missing header and the canonical `2025-11-25` header return HTTP 200. `initialize` with an unsupported header still negotiates the body version. Adapter exit 1 is the finding. It is not completion. Completion is the separate-process retest after the target changes. `GET /api/health` is a separate canonical read. The public readback is `client/public/discovery/task-readiness.json`. A closed port is `availability`. An empty caller ledger is `absence_of_demand`. A failed probe does not fill that slot. `file:`, credentials in the URL, a private address, a DNS answer that includes a private address, a redirect onto a private or metadata name, and the time budget are enforced by `fetchBounded`. Caller `authorization`, `cookie`, and `origin` are not forwarded, including onto another origin.
 
 ```
 node tools/l08-agent-repair/cold-client.mjs task-readiness

@@ -39,7 +39,7 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.match(result.stdout, /owned-endpoint POST \/v1\/regress exit 0 finding mcp\.unknownTool fail -> pass/);
     assert.match(result.stdout, /seeded reject-unchanged exit 1/);
     assert.match(result.stdout, /seeded reject-scored exit 1/);
-    assert.match(result.stdout, /protocol-edge MCP-Protocol-Version: 1999-01-01 observed 200 required 400 unresolved/);
+    assert.match(result.stdout, /protocol-edge MCP-Protocol-Version: 1999-01-01 observed 400 required 400 repaired/);
     const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
     assert.deepEqual(validateMaintHandoff(handoff), { ok: true });
     assert.equal(handoff.regression.changed.length, 1);
@@ -151,13 +151,13 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.match(result.stdout, /adapter repair-add-required exit 1/);
     assert.match(result.stdout, /adapter contract-absent exit 1/);
     assert.match(result.stdout, /semantic shape string value fail packet refused semantic_mismatch/);
-    assert.match(result.stdout, /unsupported_era fail repaired false/);
+    assert.match(result.stdout, /unsupported_era pass repaired true/);
     assert.match(result.stdout, /seeded task-readiness-negative exit 1/);
     assert.match(result.stdout, /contract-repair negative repair_unchanged exit 1/);
     assert.match(result.stdout, /contract-repair negative repair_incorrect exit 1/);
     assert.match(result.stdout, /contract-repair negative secret_redacted exit 0/);
     assert.match(result.stdout, /contract-repair negative tampered_regression exit 1/);
-    assert.match(result.stdout, /protocol-edge MCP-Protocol-Version: 1999-01-01 observed 200 required 400 unresolved/);
+    assert.match(result.stdout, /protocol-edge MCP-Protocol-Version: 1999-01-01 observed 400 required 400 repaired/);
     const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
     assert.deepEqual(validateMaintHandoff(handoff), { ok: true });
     assert.equal(handoff.priorSeal, PRIOR_SEAL);
@@ -173,7 +173,11 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.equal(handoff.sellerRepair.catalogCount, 10);
     assert.equal(handoff.sellerRepair.catalogSha256, "1a886fd363e54273dcf9608a5e52ca44cac7166a41f220de9f3e741ecf17f1bc");
     assert.equal(handoff.sellerRepair.findingIsSellerBrief, false);
-    assert.equal(handoff.protocolEdge.status, "unresolved");
+    assert.equal(handoff.protocolEdge.status, "repaired");
+    assert.equal(handoff.protocolEdge.repairedBy, "server/routes/mcp.js");
+    assert.equal(handoff.protocolEdge.apex.observedStatus, 400);
+    assert.equal(handoff.protocolEdge.missingHeader, "accepted");
+    assert.equal(handoff.protocolEdge.disposable.observedStatus, 200);
     assert.equal(handoff.journey.priorJob, "L08-MAINT-093083");
     assert.equal(handoff.journey.operationId, "6dd8b73d-e58c-47c7-b2cb-e630167d21f1");
     assert.equal(handoff.journey.catalogSha256, handoff.sellerRepair.catalogSha256);
@@ -238,7 +242,6 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
       "9cc816e13bfea448d68a26380efe2a91c88773dd",
       "--",
       "server/lib/agent-readiness",
-      "server/routes/mcp.js",
       "server/routes/agent-readiness.js",
       "server/lib/seller-repair-checkout.js",
       "server/lib/pulse.js",
@@ -247,5 +250,18 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     ], { cwd: repoRoot, encoding: "utf8" });
     assert.equal(diff.status, 0, diff.stderr);
     assert.equal(diff.stdout.trim(), "");
+    const mcp = spawnSync("git", [
+      "diff",
+      "-U0",
+      "9cc816e13bfea448d68a26380efe2a91c88773dd",
+      "--",
+      "server/routes/mcp.js",
+    ], { cwd: repoRoot, encoding: "utf8" });
+    assert.equal(mcp.status, 0, mcp.stderr);
+    const removed = mcp.stdout.split("\n").filter((line) => line.startsWith("-") && !line.startsWith("---"));
+    assert.deepEqual(removed, []);
+    assert.match(mcp.stdout, /protocolHeaderValue/);
+    assert.match(mcp.stdout, /Unsupported protocol version/);
+    assert.doesNotMatch(mcp.stdout, /const TOOLS/);
   });
 });

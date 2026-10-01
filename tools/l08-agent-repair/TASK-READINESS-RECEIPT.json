@@ -1,6 +1,6 @@
 {
   "schema": "samedaydesk.task-readiness.receipt.v1",
-  "job": "READINESS-DELIVERY-100119",
+  "job": "READINESS-REPAIR-INTEGRATION-100129",
   "consumer": "MAINT",
   "neo": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
   "s14": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
@@ -21,23 +21,31 @@
     "paid": false,
     "humanPageAdded": false,
     "coldStart": [
+      "node tools/l08-agent-repair/cold-client.mjs acquire-pins",
       "node tools/l08-agent-repair/cold-client.mjs task-readiness"
     ],
     "pins": {
       "neo230": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
       "s14": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
-      "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96"
+      "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96",
+      "repositories": {
+        "neo230": "https://github.com/epistemedeus/neomorphic-io.git",
+        "s14": "https://github.com/epistemedeus/agent-payment-integrity.git"
+      },
+      "acquire": "node tools/l08-agent-repair/cold-client.mjs acquire-pins"
     },
     "canonical": {
       "method": "POST",
       "path": "/mcp",
       "header": "MCP-Protocol-Version",
+      "version": "2025-11-25",
       "unsupportedValue": "1999-01-01",
       "requiredStatus": 400,
-      "repaired": false,
-      "note": "The live handler still answers HTTP 200. This catalog does not say that gap is closed."
+      "missingHeader": "accepted",
+      "repaired": true,
+      "note": "A follow-up POST with an unsupported MCP-Protocol-Version returns HTTP 400 and no result. A missing header stays HTTP 200. Initialize negotiates the body version."
     },
-    "materialLimit": "Unsupported MCP-Protocol-Version on POST /mcp is unresolved. Absence of demand is only a caller-supplied empty ledger."
+    "materialLimit": "Absence of demand is only a caller-supplied empty ledger. The canonical protocol version this server speaks is 2025-11-25."
   },
   "canonical": {
     "health": {
@@ -51,13 +59,38 @@
       "method": "POST",
       "path": "/mcp",
       "header": "MCP-Protocol-Version: 1999-01-01",
-      "observedStatus": 200,
+      "observedStatus": 400,
       "requiredStatus": 400,
-      "hasResult": true,
-      "hasError": false,
-      "state": "fail",
-      "repaired": false
+      "hasResult": false,
+      "hasError": true,
+      "errorCode": -32000,
+      "state": "pass",
+      "repaired": true
+    },
+    "missingHeader": {
+      "httpStatus": 200,
+      "hasResult": true
+    },
+    "canonicalVersion": {
+      "version": "2025-11-25",
+      "httpStatus": 200,
+      "hasResult": true
+    },
+    "initialize": {
+      "httpStatus": 200,
+      "protocolVersion": "2025-11-25"
     }
+  },
+  "eraRetest": {
+    "status": 0,
+    "stdout": "task-readiness era-retest unsupported 400\ntask-readiness era-retest missing-header 200\ntask-readiness era-retest canonical 2025-11-25 200\ntask-readiness era-retest initialize 200\ntask-readiness era-retest batch 400\ntask-readiness era-retest method-not-found 200\n",
+    "source": "separate-process-retest"
+  },
+  "publicReadback": {
+    "path": "client/public/discovery/task-readiness.json",
+    "repaired": true,
+    "requiredStatus": 400,
+    "matchesCommitted": true
   },
   "targets": [
     {
@@ -119,12 +152,17 @@
             "paymentSent": false,
             "paymentSigned": false,
             "credentialsUsed": false
-          }
+          },
+          "means": "repair-needed",
+          "complete": false
         }
       },
+      "claimedBecausePacket": false,
       "retest": {
         "status": 0,
-        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n"
+        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n",
+        "source": "separate-process-retest",
+        "complete": true
       }
     },
     {
@@ -187,12 +225,17 @@
             "paymentSent": false,
             "paymentSigned": false,
             "credentialsUsed": false
-          }
+          },
+          "means": "repair-needed",
+          "complete": false
         }
       },
+      "claimedBecausePacket": false,
       "retest": {
         "status": 0,
-        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n"
+        "stdout": "task-readiness retest POST /quote repair-complete adapter exit 0 semantic pass\n",
+        "source": "separate-process-retest",
+        "complete": true
       }
     }
   ],
@@ -266,6 +309,36 @@
     }
   },
   "security": [
+    {
+      "url": "file:///etc/passwd",
+      "state": "fail",
+      "code": "malicious_source",
+      "fetched": false
+    },
+    {
+      "url": "javascript:alert(1)",
+      "state": "fail",
+      "code": "malicious_source",
+      "fetched": false
+    },
+    {
+      "url": "http://user:secret@example.com/x",
+      "state": "fail",
+      "code": "malicious_source",
+      "fetched": false
+    },
+    {
+      "url": "http://example.com/dns",
+      "state": "fail",
+      "code": "dns_private",
+      "fetched": false
+    },
+    {
+      "url": "http://example.com/budget",
+      "state": "pass",
+      "code": "budget_time",
+      "hops": 1
+    },
     {
       "url": "http://127.0.0.1/secret",
       "state": "fail",

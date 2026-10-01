@@ -122,28 +122,34 @@
   },
   "protocolEdge": {
     "id": "mcp-protocol-version-header",
-    "status": "unresolved",
-    "notRepairedHere": true,
-    "spec": "MCP 2025-11-25 Streamable HTTP requires HTTP 400 when MCP-Protocol-Version is invalid or unsupported. A stateless server that omits the header should assume 2025-03-26.",
+    "status": "repaired",
+    "notRepairedHere": false,
+    "repairedBy": "server/routes/mcp.js",
+    "missingHeader": "accepted",
+    "canonicalVersion": "2025-11-25",
+    "spec": "An unsupported MCP-Protocol-Version on a request after initialize is HTTP 400. A missing header stays accepted. Initialize negotiates the body version. The TypeScript SDK validates the header the same way.",
     "apex": {
       "endpoint": "POST /mcp",
       "negotiated": "2025-11-25",
+      "repaired": true,
       "header": "MCP-Protocol-Version: 1999-01-01",
-      "observedStatus": 200,
+      "observedStatus": 400,
       "requiredStatus": 400,
-      "hasResult": true,
-      "hasError": false
+      "hasResult": false,
+      "hasError": true
     },
     "disposable": {
       "endpoint": "POST /mcp",
+      "ignoresHeader": true,
       "header": "MCP-Protocol-Version: 1999-01-01",
       "observedStatus": 200,
       "requiredStatus": 400,
       "hasResult": true,
       "hasError": false
     },
-    "probeGap": "server/lib/agent-readiness/probe.js rpc() does not send MCP-Protocol-Version after initialize.",
-    "serverGap": "server/routes/mcp.js allows the header in CORS and does not reject an unsupported value.",
+    "disposableIgnoresHeader": true,
+    "probeGap": "server/lib/agent-readiness/probe.js rpc() does not send MCP-Protocol-Version after initialize. A missing header remains valid for that client.",
+    "serverGap": null,
     "checkerGap": "mcp.version compares initialize result.protocolVersion only.",
     "document": "tools/l08-agent-repair/research/mcp-protocol-version-header.md"
   },

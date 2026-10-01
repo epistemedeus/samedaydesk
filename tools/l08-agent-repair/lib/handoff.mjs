@@ -277,11 +277,16 @@ export function validateMaintHandoff(doc) {
     return { ok: false, error: "cold_client_drives" };
   }
   if (doc.protocolEdge?.id !== "mcp-protocol-version-header") return { ok: false, error: "protocol_edge_id" };
-  if (doc.protocolEdge?.status !== "unresolved") return { ok: false, error: "protocol_edge_status" };
-  if (doc.protocolEdge?.notRepairedHere !== true) return { ok: false, error: "protocol_edge_repaired" };
-  if (doc.protocolEdge?.apex?.observedStatus !== 200 || doc.protocolEdge?.apex?.requiredStatus !== 400) {
+  if (doc.protocolEdge?.status !== "repaired") return { ok: false, error: "protocol_edge_status" };
+  if (doc.protocolEdge?.notRepairedHere !== false) return { ok: false, error: "protocol_edge_repaired" };
+  if (doc.protocolEdge?.repairedBy !== "server/routes/mcp.js") return { ok: false, error: "protocol_edge_owner" };
+  if (doc.protocolEdge?.missingHeader !== "accepted") return { ok: false, error: "protocol_edge_missing_header" };
+  if (doc.protocolEdge?.apex?.observedStatus !== 400 || doc.protocolEdge?.apex?.requiredStatus !== 400) {
     return { ok: false, error: "protocol_edge_evidence" };
   }
+  if (doc.protocolEdge?.apex?.hasResult !== false) return { ok: false, error: "protocol_edge_result" };
+  if (doc.protocolEdge?.disposableIgnoresHeader !== true) return { ok: false, error: "protocol_edge_disposable" };
+  if (doc.protocolEdge?.disposable?.observedStatus !== 200) return { ok: false, error: "protocol_edge_disposable" };
   const sellerError = sellerRepairError(doc.sellerRepair);
   if (sellerError) return { ok: false, error: sellerError };
   const journeyFailure = journeyError(doc.journey, doc.sellerRepair);

@@ -116,8 +116,8 @@ async function receiveContext() {
   const callerLine = journey.callers.map((caller) => `${caller.findingId} ${caller.routeClass}`).join(", ");
   say(`journey callers ${callerLine} maintenance-scope catalog-untouched`);
   const apex = await observeApexProtocolEdge();
-  if (apex.followUp.observedStatus !== 200 || apex.followUp.requiredStatus !== 400) {
-    throw new Error(`protocol edge no longer matches the received server (${apex.followUp.observedStatus})`);
+  if (apex.followUp.observedStatus !== 400 || apex.followUp.requiredStatus !== 400 || apex.followUp.hasResult !== false) {
+    throw new Error(`protocol edge was not repaired (${apex.followUp.observedStatus})`);
   }
   if (apex.negotiated !== "2025-11-25") {
     throw new Error(`initialize negotiated ${apex.negotiated}`);
@@ -127,7 +127,7 @@ async function receiveContext() {
   }
   say(`receive agent-readiness GET /agent-readiness ${apex.agentReadinessStatus}`);
   say(`receive apex POST /mcp initialize ${apex.initializeStatus} negotiated ${apex.negotiated}`);
-  say(`protocol-edge ${apex.followUp.header} observed ${apex.followUp.observedStatus} required ${apex.followUp.requiredStatus} unresolved`);
+  say(`protocol-edge ${apex.followUp.header} observed ${apex.followUp.observedStatus} required ${apex.followUp.requiredStatus} repaired`);
   return { sellerRepair, apex, journey };
 }
 

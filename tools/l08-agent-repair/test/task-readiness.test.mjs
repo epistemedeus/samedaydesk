@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import test from "node:test";
+import test, { before } from "node:test";
 import { fileURLToPath } from "node:url";
 import { boundedTransport, fetchBounded, outboundHeaders, PublicHostError, MAX_REDIRECTS } from "../lib/bounded-fetch.mjs";
 import { catalogText } from "../lib/task-catalog.mjs";
@@ -14,10 +15,17 @@ import {
   readFixture,
   semanticResult,
 } from "../lib/task-readiness.mjs";
-import { resolvePin, repoRoot } from "../lib/pins.mjs";
+import { NEO230, S14_PIN, acquirePins, exactFetchArgs, gitHead, resolvePin, repoRoot } from "../lib/pins.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cold = join(here, "../cold-client.mjs");
+const pinsSource = readFileSync(join(here, "../lib/pins.mjs"), "utf8");
+
+before(() => {
+  const pins = acquirePins();
+  assert.equal(pins.neo.head, NEO230);
+  assert.equal(pins.s14.head, S14_PIN);
+}, { timeout: 180_000 });
 
 test("committed task-readiness catalog matches the generator and stays truthful", () => {
   const committed = readFileSync(join(repoRoot, "client/public/discovery/task-readiness.json"), "utf8");
@@ -27,8 +35,11 @@ test("committed task-readiness catalog matches the generator and stays truthful"
   assert.equal(doc.paid, false);
   assert.equal(doc.invokesPricedExecution, false);
   assert.equal(doc.humanPageAdded, false);
-  assert.equal(doc.canonical.repaired, false);
+  assert.equal(doc.canonical.repaired, true);
   assert.equal(doc.canonical.requiredStatus, 400);
+  assert.equal(doc.canonical.missingHeader, "accepted");
+  assert.equal(doc.canonical.version, "2025-11-25");
+  assert.equal(doc.pins.acquire, "node tools/l08-agent-repair/cold-client.mjs acquire-pins");
   assert.equal(JSON.stringify(doc).includes("score"), false);
 });
 
@@ -79,6 +90,33 @@ test("caller headers do not cross origins and private redirects are refused", as
   assert.equal(calls[1].headers["content-type"], undefined);
   await assert.rejects(
     () => fetchBounded("http://127.0.0.1/secret"),
+    (err) => err instanceof PublicHostError,
+  );
+  await assert.rejects(
+    () => fetchBounded("file:///etc/passwd"),
+    (err) => err instanceof PublicHostError,
+  );
+  await assert.rejects(
+    () => fetchBounded("http://user:secret@example.com/x"),
+    (err) => err instanceof PublicHostError,
+  );
+  let dnsCalls = 0;
+  await assert.rejects(
+    () => fetchBounded("http://example.com/dns", {
+      lookup: async () => [{ address: "10.1.2.3", family: 4 }, { address: "93.184.216.34", family: 4 }],
+      transport: async () => {
+        dnsCalls += 1;
+        return { status: 200, headers: {}, body: "" };
+      },
+    }),
+    (err) => err instanceof PublicHostError,
+  );
+  assert.equal(dnsCalls, 0);
+  await assert.rejects(
+    () => fetchBounded("http://example.com/bounce", {
+      lookup: async () => [{ address: "93.184.216.34", family: 4 }],
+      transport: async () => ({ status: 302, headers: { location: "http://metadata.google.internal/computeMetadata/v1/" }, body: "" }),
+    }),
     (err) => err instanceof PublicHostError,
   );
   await assert.rejects(
@@ -141,9 +179,27 @@ test("caller fetch stops at the byte cap and the time cap", async () => {
   }
 });
 
-test("unqualified sibling pins are refused", () => {
+test("unqualified sibling pins and a wrong checkout are refused without moving HEAD", () => {
   assert.throws(() => resolvePin("s14", join(repoRoot, "..", "pins", "s14")), (err) => err.code === "stale_sibling");
   assert.throws(() => resolvePin("neo", repoRoot), (err) => err.code === "pin_mismatch" || err.code === "stale_sibling");
+  assert.deepEqual(exactFetchArgs(S14_PIN), ["fetch", "--depth", "1", "origin", S14_PIN]);
+  assert.equal(pinsSource.includes("git pull"), false);
+  assert.equal(pinsSource.includes("git clone"), false);
+  assert.equal(pinsSource.includes('["fetch", "--depth", "1", "origin", commit]'), true);
+  assert.equal(pinsSource.includes("exactFetchArgs(spec.commit)"), true);
+  const wrong = mkdtempSync(join(tmpdir(), "l08-wrong-pin-"));
+  try {
+    spawnSync("git", ["init", "-q"], { cwd: wrong });
+    spawnSync("git", ["config", "user.email", "pin@example.invalid"], { cwd: wrong });
+    spawnSync("git", ["config", "user.name", "pin"], { cwd: wrong });
+    spawnSync("git", ["commit", "--allow-empty", "-m", "wrong"], { cwd: wrong });
+    const before = gitHead(wrong);
+    assert.throws(() => resolvePin("s14", wrong), (err) => err.code === "pin_mismatch");
+    assert.equal(gitHead(wrong), before);
+    assert.notEqual(before, S14_PIN);
+  } finally {
+    rmSync(wrong, { recursive: true, force: true });
+  }
 });
 
 test("cold task-readiness reaches the maintained adapter and the negative exits 1", { timeout: 120_000 }, () => {
@@ -154,7 +210,13 @@ test("cold task-readiness reaches the maintained adapter and the negative exits 
   assert.match(positive.stdout, /semantic shape string value fail packet refused semantic_mismatch/);
   assert.match(positive.stdout, /retest repair-add-required exit 0/);
   assert.match(positive.stdout, /retest contract-absent exit 0/);
-  assert.match(positive.stdout, /observed 200 required 400 unsupported_era fail repaired false/);
+  assert.match(positive.stdout, /observed 400 required 400 unsupported_era pass repaired true/);
+  assert.match(positive.stdout, /means repair-needed/);
+  assert.match(positive.stdout, /era-retest exit 0/);
+  assert.match(positive.stdout, /malicious_source/);
+  assert.match(positive.stdout, /dns_private/);
+  assert.match(positive.stdout, /budget_time/);
+  assert.match(positive.stdout, /public-readback client\/public\/discovery\/task-readiness.json repaired true/);
   assert.match(positive.stdout, /demand not_observed probe_failure_is_not_demand/);
   assert.match(positive.stdout, /empty-ledger fail no_demand_records/);
   assert.match(positive.stdout, /private_address/);
@@ -162,7 +224,12 @@ test("cold task-readiness reaches the maintained adapter and the negative exits 
   const receipt = JSON.parse(readFileSync(join(here, "../TASK-READINESS-RECEIPT.json"), "utf8"));
   assert.equal(receipt.paymentSent, false);
   assert.equal(receipt.newPaymentRail, false);
-  assert.equal(receipt.canonical.era.repaired, false);
+  assert.equal(receipt.canonical.era.repaired, true);
+  assert.equal(receipt.eraRetest.status, 0);
+  assert.equal(receipt.targets[0].before.adapter.complete, false);
+  assert.equal(receipt.targets[0].claimedBecausePacket, false);
+  assert.equal(receipt.targets[0].retest.complete, true);
+  assert.equal(receipt.publicReadback.repaired, true);
   assert.equal(receipt.targets.length, 2);
   assert.equal(receipt.targets[0].before.adapter.json.credentialsUsed, false);
   assert.notEqual(receipt.targets[0].id, receipt.targets[1].id);

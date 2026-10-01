@@ -12,7 +12,7 @@ import healthRouter from "../../../server/routes/health.js";
 import mcpRouter from "../../../server/routes/mcp.js";
 import { PublicHostError, fetchBounded } from "./bounded-fetch.mjs";
 import { catalogDocument, catalogText } from "./task-catalog.mjs";
-import { S14_PIN, STALE_NEO, resolvePin, repoRoot } from "./pins.mjs";
+import { S14_PIN, STALE_NEO, acquirePins, resolvePin, repoRoot } from "./pins.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const coldClient = join(here, "../cold-client.mjs");
@@ -113,14 +113,9 @@ function closeServer(server) {
 
 // The fixture listener and this caller share one event loop. spawnSync would
 // freeze that loop, so the retest's fetch of the live origin would never return.
-function spawnRetest(origin) {
+function spawnColdArgs(args) {
   return new Promise((resolveSpawn) => {
-    const child = spawn(process.execPath, [
-      coldClient,
-      "task-readiness-retest",
-      "--origin",
-      origin,
-    ], {
+    const child = spawn(process.execPath, [coldClient, ...args], {
       cwd: repoRoot,
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -247,20 +242,43 @@ export async function startCanonical() {
   return { origin: `http://127.0.0.1:${port}`, close: () => closeServer(server) };
 }
 
+async function postCanonical(origin, body, header) {
+  const headers = { "content-type": "application/json", accept: "application/json, text/event-stream" };
+  if (header !== undefined) headers["mcp-protocol-version"] = header;
+  const response = await fetch(`${origin}/mcp`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+  const text = await response.text();
+  let json = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    json = null;
+  }
+  return { status: response.status, json, text };
+}
+
 export async function observeCanonical(origin) {
   const healthRes = await fetch(`${origin}/api/health`);
   const health = await healthRes.json();
   const healthSemantic = health?.ok === true && health?.service === "samedaydesk";
-  const mcpRes = await fetch(`${origin}/mcp`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json",
-      "mcp-protocol-version": "1999-01-01",
+  const toolsList = { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} };
+  const unsupported = await postCanonical(origin, toolsList, "1999-01-01");
+  const missing = await postCanonical(origin, toolsList);
+  const canonical = await postCanonical(origin, toolsList, "2025-11-25");
+  const initialize = await postCanonical(origin, {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: "2025-11-25",
+      capabilities: {},
+      clientInfo: { name: "task-readiness", version: "0" },
     },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} }),
-  });
-  const mcp = await mcpRes.json();
+  }, "1999-01-01");
+  const repaired = unsupported.status === 400 && unsupported.json?.result === undefined && unsupported.json?.error?.code === -32000;
   return {
     health: {
       method: "GET",
@@ -273,14 +291,47 @@ export async function observeCanonical(origin) {
       method: "POST",
       path: "/mcp",
       header: "MCP-Protocol-Version: 1999-01-01",
-      observedStatus: mcpRes.status,
+      observedStatus: unsupported.status,
       requiredStatus: 400,
-      hasResult: mcp?.result !== undefined,
-      hasError: mcp?.error !== undefined,
-      state: mcpRes.status === 400 ? "pass" : "fail",
-      repaired: false,
+      hasResult: unsupported.json?.result !== undefined,
+      hasError: unsupported.json?.error !== undefined,
+      errorCode: unsupported.json?.error?.code ?? null,
+      state: repaired ? "pass" : "fail",
+      repaired,
+    },
+    missingHeader: {
+      httpStatus: missing.status,
+      hasResult: missing.json?.result !== undefined,
+    },
+    canonicalVersion: {
+      version: "2025-11-25",
+      httpStatus: canonical.status,
+      hasResult: canonical.json?.result !== undefined,
+    },
+    initialize: {
+      httpStatus: initialize.status,
+      protocolVersion: initialize.json?.result?.protocolVersion ?? null,
     },
   };
+}
+
+export async function retestEra(origin) {
+  const observed = await observeCanonical(origin);
+  const batch = await postCanonical(origin, [
+    { jsonrpc: "2.0", id: 3, method: "ping" },
+    { jsonrpc: "2.0", id: 4, method: "tools/list", params: {} },
+  ], "1999-01-01");
+  const method = await postCanonical(origin, { jsonrpc: "2.0", id: 9, method: "no-such-method" });
+  const checks = {
+    unsupported: observed.era.repaired === true,
+    missingHeader: observed.missingHeader.httpStatus === 200 && observed.missingHeader.hasResult === true,
+    canonical: observed.canonicalVersion.httpStatus === 200 && observed.canonicalVersion.hasResult === true,
+    initialize: observed.initialize.httpStatus === 200 && observed.initialize.protocolVersion === "2025-11-25",
+    batch: batch.status === 400 && batch.json?.error?.code === -32000 && batch.json?.result === undefined,
+    methodNotFound: method.status === 200 && method.json?.error?.code === -32601,
+  };
+  const ok = Object.values(checks).every(Boolean);
+  return { exit: ok ? 0 : 1, checks, observed };
 }
 
 export function demandFromLedger(records) {
@@ -323,6 +374,69 @@ export async function probeClosedPort() {
 
 export async function securityProbes() {
   const probes = [];
+  for (const url of ["file:///etc/passwd", "javascript:alert(1)"]) {
+    try {
+      await fetchBounded(url);
+      probes.push({ url, state: "fail", code: "fetched_malicious", fetched: true });
+    } catch (err) {
+      probes.push({
+        url,
+        state: "fail",
+        code: err instanceof PublicHostError ? "malicious_source" : "unexpected",
+        fetched: false,
+      });
+    }
+  }
+  try {
+    await fetchBounded("http://user:secret@example.com/x");
+    probes.push({ url: "http://user:secret@example.com/x", state: "fail", code: "fetched_malicious", fetched: true });
+  } catch (err) {
+    probes.push({
+      url: "http://user:secret@example.com/x",
+      state: "fail",
+      code: err instanceof PublicHostError ? "malicious_source" : "unexpected",
+      fetched: false,
+    });
+  }
+  let dnsFetched = false;
+  try {
+    await fetchBounded("http://example.com/dns", {
+      lookup: async () => [{ address: "10.1.2.3", family: 4 }, { address: "93.184.216.34", family: 4 }],
+      transport: async () => {
+        dnsFetched = true;
+        return { status: 200, headers: {}, body: "" };
+      },
+    });
+    probes.push({ url: "http://example.com/dns", state: "fail", code: "dns_private_fetched", fetched: true });
+  } catch (err) {
+    probes.push({
+      url: "http://example.com/dns",
+      state: "fail",
+      code: err instanceof PublicHostError && !dnsFetched ? "dns_private" : "unexpected",
+      fetched: dnsFetched,
+    });
+  }
+  let budgetHops = 0;
+  try {
+    await fetchBounded("http://example.com/budget", {
+      lookup: async () => [{ address: "93.184.216.34", family: 4 }],
+      timeoutMs: 40,
+      maxBytes: 32,
+      transport: async () => {
+        budgetHops += 1;
+        await new Promise((resolveDelay) => setTimeout(resolveDelay, 50));
+        return { status: 302, headers: { location: "http://example.com/next" }, body: "" };
+      },
+    });
+    probes.push({ url: "http://example.com/budget", state: "fail", code: "budget_not_enforced", hops: budgetHops });
+  } catch (err) {
+    probes.push({
+      url: "http://example.com/budget",
+      state: err instanceof PublicHostError && budgetHops === 1 ? "pass" : "fail",
+      code: err instanceof PublicHostError && budgetHops === 1 ? "budget_time" : "unexpected",
+      hops: budgetHops,
+    });
+  }
   for (const url of ["http://127.0.0.1/secret", "http://169.254.169.254/latest"]) {
     try {
       await fetchBounded(url);
@@ -397,18 +511,27 @@ export async function securityProbes() {
 }
 
 export async function runTaskReadiness() {
+  const acquired = acquirePins();
   const neo = resolvePin("neo");
   const s14 = resolvePin("s14");
-  if (s14.head !== S14_PIN) throw new Error("s14 pin drifted");
+  if (neo.head !== acquired.neo.head || s14.head !== S14_PIN) throw new Error("s14 pin drifted");
   const canonical = await startCanonical();
   let canon;
+  let eraRetest;
   try {
     canon = await observeCanonical(canonical.origin);
+    eraRetest = await spawnColdArgs(["task-readiness-era-retest", "--origin", canonical.origin]);
   } finally {
     await canonical.close();
   }
-  if (canon.era.observedStatus !== 200 || canon.era.requiredStatus !== 400 || canon.era.hasResult !== true) {
-    throw new Error(`canonical era observation changed (${canon.era.observedStatus})`);
+  if (canon.era.observedStatus !== 400 || canon.era.requiredStatus !== 400 || canon.era.hasResult !== false || canon.era.repaired !== true) {
+    throw new Error(`canonical era was not repaired (${canon.era.observedStatus})`);
+  }
+  if (canon.missingHeader.httpStatus !== 200 || canon.canonicalVersion.httpStatus !== 200 || canon.initialize.httpStatus !== 200) {
+    throw new Error("missing-header, canonical version, or initialize client broke");
+  }
+  if ((eraRetest?.status ?? 1) !== 0) {
+    throw new Error(`era retest exit ${eraRetest?.status ?? 1}: ${eraRetest?.stdout || ""} ${eraRetest?.stderr || ""}`);
   }
   const targets = [];
   for (const spec of USEFUL_TARGETS) {
@@ -423,12 +546,15 @@ export async function runTaskReadiness() {
       if (!packet.authorized) throw new Error(`${spec.id} packet refused ${packet.reason}`);
       const consumed = await consumePacket(neo.root, s14.root, spec.source);
       if (!consumed.json) throw new Error(`${spec.id} adapter returned no JSON`);
+      if (consumed.status !== 1 || consumed.json.repairComplete !== false || consumed.json.ok !== false) {
+        throw new Error(`${spec.id} adapter exit ${consumed.status} is the finding, not completion`);
+      }
       const repairRes = await fetch(`${server.origin}/repair`, {
         method: "POST",
         signal: AbortSignal.timeout(5_000),
       });
       if (repairRes.status !== 200) throw new Error(`${spec.id} repair did not apply`);
-      const child = await spawnRetest(server.origin);
+      const child = await spawnColdArgs(["task-readiness-retest", "--origin", server.origin]);
       targets.push({
         id: spec.id,
         method: observation.method,
@@ -437,11 +563,19 @@ export async function runTaskReadiness() {
           classes: observation.classes,
           schemaFinding: observation.schemaFinding,
           packet,
-          adapter: { status: consumed.status, json: consumed.json },
+          adapter: {
+            status: consumed.status,
+            json: consumed.json,
+            means: "repair-needed",
+            complete: false,
+          },
         },
+        claimedBecausePacket: false,
         retest: {
           status: child.status ?? 1,
           stdout: child.stdout,
+          source: "separate-process-retest",
+          complete: (child.status ?? 1) === 0,
         },
       });
     } finally {
@@ -469,7 +603,7 @@ export async function runTaskReadiness() {
   const closed = await probeClosedPort();
   const receipt = {
     schema: "samedaydesk.task-readiness.receipt.v1",
-    job: "READINESS-DELIVERY-100119",
+    job: "READINESS-REPAIR-INTEGRATION-100129",
     consumer: "MAINT",
     neo: neo.head,
     s14: s14.head,
@@ -480,14 +614,28 @@ export async function runTaskReadiness() {
     newPaymentRail: false,
     catalog: catalogDocument(),
     canonical: canon,
+    eraRetest: {
+      status: eraRetest.status ?? 1,
+      stdout: eraRetest.stdout,
+      source: "separate-process-retest",
+    },
+    publicReadback: {
+      path: "client/public/discovery/task-readiness.json",
+      repaired: catalogDocument().canonical.repaired,
+      requiredStatus: catalogDocument().canonical.requiredStatus,
+      matchesCommitted: catalogMatchesCommitted(),
+    },
     targets,
     semantic,
     availability: closed.classes,
     demand: demandFromLedger([]),
     security,
   };
-  if (receipt.targets.some((target) => target.retest.status !== 0)) {
+  if (receipt.targets.some((target) => target.retest.status !== 0 || target.before.adapter.complete !== false || target.claimedBecausePacket !== false)) {
     throw new Error("independent retest failed");
+  }
+  if (receipt.publicReadback.matchesCommitted !== true || receipt.publicReadback.repaired !== true) {
+    throw new Error("public readback does not match the repaired catalog");
   }
   if (semantic.packet.authorized !== false || semantic.semantic.state !== "fail" || semantic.shape !== "string") {
     throw new Error("semantic case was treated as ready");
@@ -537,6 +685,7 @@ export function catalogMatchesCommitted() {
 }
 
 export async function runTaskReadinessNegative() {
+  acquirePins();
   const semanticFixture = readFixture(resolvePin("s14").root, "catalog-row-repair-complete.json");
   const observation = {
     method: "POST",
@@ -587,17 +736,20 @@ export function sayReceipt(receipt, say) {
     const finding = target.before.schemaFinding;
     const adapter = target.before.adapter;
     say(`task-readiness target ${target.id} ${target.method} ${target.route} schema ${finding.code ?? "pass"} semantic ${target.before.classes.semantic.state} packet authorized`);
-    say(`task-readiness adapter ${target.id} exit ${adapter.status} finding ${(adapter.json.findings || []).join(",") || "none"} repair ${(adapter.json.repairActions || []).join(",") || "none"} paymentSent ${adapter.json.paymentSent}`);
+    say(`task-readiness adapter ${target.id} exit ${adapter.status} finding ${(adapter.json.findings || []).join(",") || "none"} repair ${(adapter.json.repairActions || []).join(",") || "none"} paymentSent ${adapter.json.paymentSent} means repair-needed`);
+    say(`task-readiness completion ${target.id} separate-process retest exit ${target.retest.status}`);
     say(`task-readiness retest ${target.id} exit ${target.retest.status}`);
   }
   say(`task-readiness semantic shape ${receipt.semantic.shape} value ${receipt.semantic.semantic.state} packet ${receipt.semantic.packet.authorized ? "authorized" : "refused"} ${receipt.semantic.packet.reason}`);
   say(`task-readiness canonical POST /mcp ${receipt.canonical.era.header} observed ${receipt.canonical.era.observedStatus} required ${receipt.canonical.era.requiredStatus} unsupported_era ${receipt.canonical.era.state} repaired ${receipt.canonical.era.repaired}`);
+  say(`task-readiness era-retest exit ${receipt.eraRetest.status}`);
+  say(`task-readiness public-readback ${receipt.publicReadback.path} repaired ${receipt.publicReadback.repaired} required ${receipt.publicReadback.requiredStatus}`);
   say(`task-readiness canonical GET /api/health semantic ${receipt.canonical.health.semantic} availability ${receipt.canonical.health.availability}`);
   say(`task-readiness availability ${receipt.availability.availability.state} demand ${receipt.availability.absenceOfDemand.state} ${receipt.availability.absenceOfDemand.code}`);
   say(`task-readiness demand empty-ledger ${receipt.demand.absenceOfDemand.state} ${receipt.demand.absenceOfDemand.code}`);
   for (const probe of receipt.security) {
     say(`task-readiness security ${probe.code} ${probe.state}`);
   }
-  say(`task-readiness catalog ${catalogMatchesCommitted() ? "matches committed" : "drift"} unrepaired-era`);
+  say(`task-readiness catalog ${catalogMatchesCommitted() ? "matches committed" : "drift"} repaired-era`);
   say("task-readiness paymentSent false");
 }
