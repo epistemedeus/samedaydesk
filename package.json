@@ -12,6 +12,7 @@
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client install --include=dev && npm --prefix client run build",
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
+    "test:hosted-econnrefused": "node --test server/scripts/test-hosted-econnrefused.js",
     "start": "node server/index.js",
     "lint": "npm --prefix client run lint",
     "test:seller-repair-briefs": "node --test client/scripts/sellerRepairBriefs.test.ts client/scripts/sellerResolvedCases.test.ts",
