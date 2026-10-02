@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ROOT-SOL-WORKSPACE-PORTABILITY-100352",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "4e3c386960219909e118b95cfd3ca24d7dcf4d01",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-workspace-portability-100352",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-WORKSPACE-PORTABILITY-100352",
+    "worktree": "/home/ubuntu/root-sol-352",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-WORKSPACE-PORTABILITY-100352.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  },
+  {
+    "id": "ROOT-SOL-ACTIVATION-RELEASE-100353",
+    "repository": "https://github.com/epistemedeus/ein-llc-lean.git",
+    "base": "e57bee961c41bebc12a2bd3be91d7294663e344a",
+    "effort": "xhigh",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-activation-release-100353",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-ACTIVATION-RELEASE-100353",
+    "worktree": "/home/ubuntu/root-sol-353",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-ACTIVATION-RELEASE-100353.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  }
+]
