@@ -1,0 +1,9 @@
+{
+  "schema": "sds.vf17.host-qualification-budget.v1",
+  "purpose": "Review triggers for this disposable cluster. Not a production SLA.",
+  "unknownOutcomePolicy": "reconcile; never count as success",
+  "setupRefusalPolicy": "retain requested and actual sizes; do not silently reduce workload",
+  "poisonRejectionBudget": 0,
+  "semanticMismatchBudget": 0,
+  "traffic": "synthetic"
+}
