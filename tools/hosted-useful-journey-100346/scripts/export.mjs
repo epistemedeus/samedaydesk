@@ -8,7 +8,7 @@ import { createHash } from "node:crypto";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
-const version = "0.1.0";
+const version = "0.1.1";
 const name = `hosted-useful-journey-${version}`;
 const dir = await mkdtemp(join(tmpdir(), "sds-useful-export-"));
 const out = join(root, "successors", version);
@@ -34,9 +34,17 @@ try {
     const sealed = JSON.parse(await readFile(join(out, "release.json"), "utf8"));
     if (sealed.version !== version || !/^[a-f0-9]{40}$/.test(sealed.sourceHead)) throw Error("invalid sealed source pin");
     sourceHead = sealed.sourceHead;
+    for (const entry of inventory.filter(entry => entry.path !== "COLD-CLIENT.md")) {
+      let pinned;
+      try { pinned = execFileSync("git", ["show", `${sourceHead}:tools/hosted-useful-journey-100346/${entry.path}`], { cwd: repo, timeout: 2000, stdio: ["ignore", "pipe", "ignore"] }); }
+      catch { pinned = execFileSync("tar", ["-xOf", join(out, sealed.archive), `${name}/${entry.path}`], { timeout: 2000, maxBuffer: 65_536 }); }
+      if (digest(pinned) !== entry.sha256) throw Error("sealed client source changed; create a successor version");
+    }
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    sourceHead = execFileSync("git", ["log", "-1", "--format=%H", "--", ...files.filter(file => file !== "COLD-CLIENT.md").map(file => `tools/hosted-useful-journey-100346/${file}`)], { cwd: repo, encoding: "utf8", timeout: 2000 }).trim();
+    try { execFileSync("git", ["diff", "--quiet", "HEAD", "--", ...files.map(file => `tools/hosted-useful-journey-100346/${file}`)], { cwd: repo, timeout: 2000 }); }
+    catch { throw Error("commit the exact client source before sealing a new version"); }
+    sourceHead = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8", timeout: 2000 }).trim();
   }
   await writeFile(join(kit, "package.json"), `${JSON.stringify({ name: "@samedaydesk/hosted-useful-journey-client", version, private: true,
     type: "module", license: "MIT", engines: { node: "22.x" }, scripts: { start: "node cold-client.mjs" } }, null, 2)}\n`);

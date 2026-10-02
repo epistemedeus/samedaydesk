@@ -12,8 +12,8 @@ import { Budget, readFileBounded } from "../lib/budget.mjs";
 const digest = bytes => createHash("sha256").update(bytes).digest("hex");
 
 test("licensed exact-byte client export runs two stripped cold tasks and a useful negative with no repo modules", { timeout: 20_000 }, async t => {
-  const release = JSON.parse(await readFile(new URL("../successors/0.1.0/release.json", import.meta.url), "utf8"));
-  const archivePath = fileURLToPath(new URL(`../successors/0.1.0/${release.archive}`, import.meta.url));
+  const release = JSON.parse(await readFile(new URL("../successors/0.1.1/release.json", import.meta.url), "utf8"));
+  const archivePath = fileURLToPath(new URL(`../successors/0.1.1/${release.archive}`, import.meta.url));
   const bytes = await readFileBounded(archivePath, new Budget(), 65_536);
   assert.equal(bytes.length, release.bytes); assert.equal(digest(bytes), release.sha256);
   assert.equal(release.publicationVerified, false); assert.equal(release.productionReady, false);
@@ -21,7 +21,7 @@ test("licensed exact-byte client export runs two stripped cold tasks and a usefu
   assert.notEqual(digest(corrupted), release.sha256);
   const dir = await mkdtemp(join(tmpdir(), "sds-useful-acquired-client-")); t.after(() => rm(dir, { recursive: true, force: true }));
   execFileSync("tar", ["-xzf", archivePath, "-C", dir], { timeout: 2000 });
-  const kit = join(dir, "hosted-useful-journey-0.1.0");
+  const kit = join(dir, "hosted-useful-journey-0.1.1");
   const inventory = JSON.parse(await readFile(join(kit, "inventory.json"), "utf8"));
   const repo = fileURLToPath(new URL("../../../", import.meta.url));
   let nativePinPresent = false;
@@ -31,7 +31,7 @@ test("licensed exact-byte client export runs two stripped cold tasks and a usefu
     assert.equal(digest(acquired), entry.sha256);
     assert.equal(entry.license, "MIT");
     if (entry.path !== "COLD-CLIENT.md") {
-      const owning = execFileSync("git", ["show", `HEAD:tools/hosted-useful-journey-100346/${entry.path}`], { cwd: repo, timeout: 2000 });
+      const owning = await readFile(join(repo, "tools/hosted-useful-journey-100346", entry.path));
       assert.deepEqual(acquired, owning);
       if (nativePinPresent) assert.deepEqual(acquired, execFileSync("git", ["show", `${release.sourceHead}:tools/hosted-useful-journey-100346/${entry.path}`], { cwd: repo, timeout: 2000 }));
     }
@@ -39,6 +39,15 @@ test("licensed exact-byte client export runs two stripped cold tasks and a usefu
   assert.match(await readFile(join(kit, "LICENSE"), "utf8"), /MIT License/);
   await assert.rejects(stat(join(kit, "node_modules")), { code: "ENOENT" });
   const f = await fixture(); t.after(() => f.close());
+  const catalog = await fetch(`${f.origin}/api/hosted-useful/recipes`).then(r => r.json());
+  const acquiredEntry = await fetch(`${f.origin}${catalog.clientEntry}`).then(r => r.json());
+  assert.equal(acquiredEntry.sha256, release.sha256);
+  assert.equal(acquiredEntry.publicationVerified, false);
+  const acquired = await fetch(`${f.origin}${acquiredEntry.archiveUrl}`);
+  assert.equal(acquired.status, 200);
+  assert.deepEqual(Buffer.from(await acquired.arrayBuffer()), bytes);
+  const frozen = execFileSync("git", ["show", "685f90f6:tools/hosted-useful-journey-100346/successors/0.1.0/hosted-useful-journey-0.1.0.tar.gz"], { cwd: repo, timeout: 2000 });
+  assert.deepEqual(await readFile(new URL("../successors/0.1.0/hosted-useful-journey-0.1.0.tar.gz", import.meta.url)), frozen);
   async function cold(name) {
     return await new Promise(resolve => {
       const child = spawn(process.execPath, [join(kit, "cold-client.mjs"), "run", "--origin", f.origin, "--project", f.a.projectId,

@@ -68,6 +68,7 @@ export function taskId(raw) {
 export const hash = value => `sha256:${hashRequest(value)}`;
 export function recipeCatalog() {
   return { schema: "samedaydesk.useful-journey-entry.v1", recipes: RECIPE_IDS, suppliedSnapshotsOnly: true,
+    clientEntry: `${PREFIX}/client`,
     publicEvaluation: true, admission: "existing project-scoped writer or owner grant",
     sourceAcceptance: "pending Root receiving", publicationVerified: false, productionReady: false,
     earnedWorkAcceptance: false, paymentAttempted: false, outsideUsefulUse: "unobserved", limits: DEFAULT_LIMITS };

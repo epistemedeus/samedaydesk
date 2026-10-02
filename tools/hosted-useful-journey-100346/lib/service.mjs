@@ -11,6 +11,7 @@ import { executeRecipe, failedExecution } from "./executor.mjs";
 const ADMISSION = "sds:useful:admission:v1";
 const REQUEST = "sds:useful:request:v1";
 const RESULT = "sds:useful:result:v1";
+const EXECUTION = "sds:useful:execution:v1";
 const CANCEL = "sds:useful:cancel:v1";
 const COMMAND = "neomorphic.foundry.work-cell-command.v1";
 
@@ -81,15 +82,16 @@ export class UsefulJourneyService {
     const cell = (await c.query("SELECT state FROM correspondence_vf02_work_cells WHERE project_id=$1 AND id=$2 FOR UPDATE", [context.projectId, id])).rows[0]?.state;
     if (!cell) throw new JourneyError(404, "not_found");
     const stored = (await receipt(c, RESULT, context.projectId, id))?.response_json;
+    const execution = (await receipt(c, EXECUTION, context.projectId, id))?.response_json;
     const now = Date.parse(await this.db.now(c));
     const leaseGrant = cell.lease ? (await c.query("SELECT role,expires_at,revoked_at FROM correspondence_grants WHERE project_id=$1 AND id=$2", [context.projectId, cell.lease.grantId])).rows[0] : null;
     const live = Boolean(cell.lease && Date.parse(cell.lease.expiresAt) > now && leaseGrant && !leaseGrant.revoked_at && (!leaseGrant.expires_at || +leaseGrant.expires_at > now) && leaseGrant.role !== "reader");
-    return { grant, record, cell, stored, live, now };
+    return { grant, record, cell, stored, execution, live, now };
   }
   view(id, bound) {
-    const { cell, record, stored, live, now } = bound;
+    const { cell, record, stored, execution, live, now } = bound;
     const state = cell.status === "cancelled" ? "cancelled" : stored ? (stored.result.execution === "failed" ? "failed" : "completed")
-      : live ? "running" : now >= record.deadlineAt ? "expired" : "ready";
+      : live ? "running" : now >= record.deadlineAt ? "expired" : execution ? "outcome_unknown" : "ready";
     return { schema: "samedaydesk.hosted-useful-status.v1", jobId: id, taskId: record.request.taskId,
       recipeId: record.request.recipeId, state, revision: cell.revision, fence: cell.fence,
       leaseExpiresAt: cell.lease?.expiresAt || null, deadlineAt: new Date(record.deadlineAt).toISOString(),
@@ -140,8 +142,15 @@ export class UsefulJourneyService {
         status: `${PREFIX}/projects/${encodeURIComponent(context.projectId)}/jobs/${id}?taskId=${encodeURIComponent(request.taskId)}`,
         result: `${PREFIX}/projects/${encodeURIComponent(context.projectId)}/jobs/${id}/result?taskId=${encodeURIComponent(request.taskId)}`,
         deadlineAt: new Date(budget.deadlineAt).toISOString(), replayed: false, paymentAttempted: false, earnedWorkAccepted: false };
+      // A recovered command must retain the cost of the final receipt writes,
+      // authorization recheck and admission output even if its reply was lost.
+      // Reserve a conservative bound for these fixed-shape remaining operations.
+      const budgetLimits = { totalBytes: budget.totalBytes, outputBytes: budget.outputBytes };
+      const admissionBytes = budget.used + Buffer.byteLength(JSON.stringify(executionRequest))
+        + 2 * Buffer.byteLength(JSON.stringify(admission)) + 4096;
+      if (admissionBytes > budget.totalBytes) throw new JourneyError(413, "allowance_exceeded");
       await append(c, REQUEST, context.projectId, id, requestHash, { grantId: grant.id, request: executionRequest,
-        requestDigest: hash(request), deadlineAt: budget.deadlineAt, admissionBytes: budget.used });
+        requestDigest: hash(request), deadlineAt: budget.deadlineAt, admissionBytes, budgetLimits });
       await append(c, ADMISSION, context.projectId, key, requestHash, admission);
       return admission;
     });
@@ -164,10 +173,18 @@ export class UsefulJourneyService {
       const status = this.view(id, bound);
       if (["completed", "failed", "running"].includes(status.state)) return { status };
       if (status.state === "cancelled" || status.state === "expired") throw new JourneyError(410, `job_${status.state}`, status.nextAction);
+      if (status.state === "outcome_unknown") throw new JourneyError(409, "execution_outcome_unknown", "The original execution reserved this job's allowance. Retrieve any committed result; review an interrupted operation before creating a new intent.");
       budget.tighten(bound.record.request.limits, bound.record.deadlineAt);
-      budget.spend(bound.record.admissionBytes, "prior-admission");
+      budget.tighten(bound.record.budgetLimits || {});
+      budget.inherit(bound.record.admissionBytes, "prior-admission");
       const claimedCell = await this.cells.mutate(context, id, { schema: COMMAND, action: "claim", expectedRevision: bound.cell.revision,
         ttlSeconds: Math.max(1, Math.ceil(budget.remaining() / 1000)), voluntaryOptIn: true }, `run:${randomUUID()}`, c);
+      // Physical child work may have consumed the whole allowance before a
+      // process/reply loss. Reserve it durably in the existing receipt table;
+      // recovery can read a committed result but cannot start a second child.
+      await append(c, EXECUTION, context.projectId, id, hash({ fence: claimedCell.receipt.cell.fence }), {
+        fence: claimedCell.receipt.cell.fence, deadlineAt: budget.deadlineAt, totalBytes: budget.totalBytes,
+      });
       return { request: bound.record.request, cell: claimedCell.receipt.cell };
     });
     if (claimed.status) return claimed.status;

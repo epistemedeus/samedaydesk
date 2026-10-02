@@ -1,4 +1,4 @@
-# Hosted useful journey client 0.1.0
+# Hosted useful journey client 0.1.1
 
 MIT; Node 22.x (tested v22.22.2); no dependencies or npm install. This is a
 minimal client successor alongside the sealed offline useful-jobs archives.
@@ -38,8 +38,14 @@ requires `optIn: true`, `purpose: "later-task-reuse"`, `taskId`, `resultDigest`,
 `subject`, positive `sequence` and UTC `clock`. It is a customer-held unverified
 task-memory observation; it does not publish, contribute, accept or settle work.
 
-All file/stdin intake, journal writes, HTTP bodies, responses and stdout share
-one deadline/allowance. The remaining absolute deadline is passed to the server.
+All file/stdin intake, journal writes, HTTP bodies, backend PG, owned recipe
+children, responses and stdout share one deadline/allowance. Each request sends
+the original deadline, byte cap and consumed bytes; the backend returns its
+cumulative charge before the client reads output. A successful response without
+that receipt is refused. Original admitted execution limits survive recovery.
+Each later retrieval/recovery command has its own bounded read allowance; it
+cannot extend the admitted execution deadline or byte cap. A lost reply keeps
+its commit outcome unknown until current-authority recovery.
 Defaults: 30s, 64KiB input, 64KiB output, 512KiB aggregate. `--deadline-ms`,
 `--total-bytes` and `--output-bytes` can reduce these. Symlinks/FIFOs are refused.
 Server execution reserves time for fenced durable completion; insufficient

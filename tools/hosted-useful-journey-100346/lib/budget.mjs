@@ -35,12 +35,16 @@ export class Budget {
     if (this.remaining(reserve) < 1) throw new JourneyError(408, "deadline_exceeded", "Reload durable job status; do not assume the operation failed or create a new key.");
   }
   tighten(limits, deadlineAt = Infinity) {
-    this.duration = Math.min(this.duration, limits.deadlineMs, deadlineAt - this.startedAt);
+    this.duration = Math.min(this.duration, limits.deadlineMs ?? Infinity, deadlineAt - this.startedAt);
     this.deadlineAt = this.startedAt + this.duration;
-    this.totalBytes = Math.min(this.totalBytes, limits.totalBytes);
-    this.outputBytes = Math.min(this.outputBytes, limits.outputBytes);
+    this.totalBytes = Math.min(this.totalBytes, limits.totalBytes ?? Infinity);
+    this.outputBytes = Math.min(this.outputBytes, limits.outputBytes ?? Infinity);
     this.check();
     if (this.used > this.totalBytes) throw new JourneyError(413, "allowance_exceeded");
+  }
+  inherit(bytes, stage = "hosted-work") {
+    if (!Number.isSafeInteger(bytes) || bytes < 0) throw new JourneyError(502, "invalid_budget_receipt");
+    if (bytes > this.used) this.spend(bytes - this.used, stage);
   }
   spend(bytes, stage) {
     this.check();
@@ -66,7 +70,7 @@ export async function within(promise, budget, reserve = 0, onTimeout = () => {})
   } finally { clearTimeout(timer); }
 }
 
-export async function readNodeStream(stream, budget, maxBytes = INPUT_MAX_BYTES, stage = "intake") {
+export async function readNodeStream(stream, budget, maxBytes = INPUT_MAX_BYTES, stage = "intake", { destroyOnError = true } = {}) {
   const chunks = [];
   let size = 0;
   const iterator = stream[Symbol.asyncIterator]();
@@ -82,7 +86,8 @@ export async function readNodeStream(stream, budget, maxBytes = INPUT_MAX_BYTES,
     }
     return Buffer.concat(chunks, size);
   } catch (error) {
-    stream.destroy?.();
+    if (destroyOnError) stream.destroy?.();
+    else stream.pause?.();
     throw error;
   }
 }

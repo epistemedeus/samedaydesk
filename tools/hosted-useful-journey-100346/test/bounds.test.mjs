@@ -139,3 +139,23 @@ test("aggregate allowance is not reset between input and later output", () => {
   budget.spend(70, "intake");
   assert.throws(() => budget.spend(31, "output"), { code: "allowance_exceeded" });
 });
+
+test("anonymous execution inherits bytes already consumed by the caller", async t => {
+  const app = express(); app.use("/api/hosted-useful", createJourneyRouter());
+  const origin = await server(t, app);
+  const response = await fetch(`${origin}/api/hosted-useful/evaluate`, { method: "POST", headers: {
+    "content-type": "application/json", "x-useful-total-bytes": "4096", "x-useful-used-bytes": "4000",
+    "x-useful-output-bytes": "2048" }, body: JSON.stringify(await example("page-watch")) });
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).error.code, "allowance_exceeded");
+});
+
+test("backend work and response intake debit the caller's same byte ledger", async t => {
+  const origin = await server(t, (_req, res) => {
+    res.setHeader("x-useful-used-bytes", "1020");
+    res.setHeader("content-type", "application/json");
+    res.end('{"value":"delivered"}');
+  });
+  const budget = new Budget({ totalBytes: 1024 });
+  await assert.rejects(new UsefulJourneyClient({ origin, budget }).call("GET", "/work", undefined, undefined, true), { code: "allowance_exceeded" });
+});

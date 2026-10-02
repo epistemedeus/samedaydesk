@@ -80,6 +80,46 @@ test("real PG authority, actual recipes and restarted HTTP processes deliver and
     const rows = await f.sql.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE scope='sds:useful:result:v1' AND key=$1", [a.json.jobId]);
     assert.equal(rows.rows[0].n, 1);
   });
+  await t.test("client requests, backend PG and child output use one cumulative byte allowance", async () => {
+    const input = structuredClone(pageRequest); input.taskId = "shared-budget-watch";
+    const budget = new Budget();
+    const exchanges = [];
+    const client = new UsefulJourneyClient({ origin: f.origin, ...f.a, budget, fetchImpl: async (url, options) => {
+      const response = await fetch(url, options);
+      exchanges.push({ used: Number(options.headers["x-useful-used-bytes"]),
+        charged: Number(response.headers.get("x-useful-used-bytes")), deadline: options.headers["x-useful-deadline-at"] });
+      return response;
+    } });
+    const result = await client.run(input, "shared-budget-operation", join(f.dir, "shared-budget.json"));
+    assert.equal(result.state, "completed");
+    assert.ok(exchanges.length >= 4);
+    assert.ok(exchanges.every(x => x.charged > x.used && x.deadline === String(budget.deadlineAt)));
+    assert.ok(exchanges.slice(1).every((x, i) => x.used > exchanges[i].charged));
+    assert.ok(budget.counts["hosted-work"] > 0);
+    assert.equal(budget.used, Object.values(budget.counts).reduce((a, b) => a + b, 0));
+    assert.ok(budget.used < budget.totalBytes);
+    const reduced = new Budget({ totalBytes: 16_384 });
+    const service = new UsefulJourneyService(f.cluster.url); t.after(() => service.close());
+    const small = structuredClone(input); small.taskId = "durable-reduced-budget";
+    const admitted = await service.admit(f.a, small, "reduced-budget-operation", reduced);
+    await assert.rejects(service.run(f.a, admitted.jobId, small.taskId, new Budget()), { code: "allowance_exceeded" });
+    assert.equal((await f.sql.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE scope='sds:useful:result:v1' AND key=$1", [admitted.jobId])).rows[0].n, 0);
+  });
+  await t.test("result receipt, checkpoint and release roll back together on release failure", async () => {
+    const service = new UsefulJourneyService(f.cluster.url); t.after(() => service.close());
+    const input = structuredClone(pageRequest); input.taskId = "atomic-release-failure";
+    const admitted = await service.admit(f.a, input, "atomic-release-operation");
+    const mutate = service.cells.mutate.bind(service.cells);
+    service.cells.mutate = async (...args) => {
+      if (args[2].action === "release") throw Object.assign(Error("QA release interruption"), { code: "qa_release_interrupted" });
+      return mutate(...args);
+    };
+    await assert.rejects(service.run(f.a, admitted.jobId, input.taskId), { code: "qa_release_interrupted" });
+    assert.equal((await f.sql.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE scope='sds:useful:result:v1' AND key=$1", [admitted.jobId])).rows[0].n, 0);
+    const cell = (await f.sql.query("SELECT state FROM correspondence_vf02_work_cells WHERE id=$1", [admitted.jobId])).rows[0].state;
+    assert.equal(cell.checkpoint, null); assert.equal(cell.revision, 2); assert.equal(cell.fence, 1);
+    assert.ok(cell.lease);
+  });
   await t.test("post-commit admission/run reply loss recovers the same operation after process restart", async () => {
     const proxy = await lossyProxy(f.origin); t.after(() => proxy.close());
     const supplied = structuredClone(pageRequest); supplied.taskId = "lost-reply-watch";
@@ -160,6 +200,28 @@ test("real PG authority, actual recipes and restarted HTTP processes deliver and
     release();
     await assert.rejects(running, error => ["revision_conflict", "terminal_cell", "stale_fence"].includes(error.code));
     assert.equal((await f.sql.query("SELECT count(*)::int AS n FROM correspondence_idempotency WHERE scope='sds:useful:result:v1' AND key=$1", [admitted.jobId])).rows[0].n, 0);
+  });
+  await t.test("revocation fences an in-flight result and cannot replenish its reserved execution allowance", async () => {
+    const writer = { projectId: f.a.projectId, token: "qa-reserved-writer-only-for-disposable-store" };
+    const { grant } = await f.base.createGrant({ projectId: writer.projectId, role: "writer", tokenHash: hashToken(writer.token), expiresAt: null });
+    const service = new UsefulJourneyService(f.cluster.url); t.after(() => service.close());
+    const input = structuredClone(pageRequest); input.taskId = "reserved-revocation-watch";
+    const admitted = await service.admit(writer, input, "reserved-revocation-operation");
+    let release, entered;
+    const gate = new Promise(resolve => { release = resolve; });
+    const reached = new Promise(resolve => { entered = resolve; });
+    const original = service.db.tx.bind(service.db);
+    service.db.tx = async fn => { const value = await original(fn); if (value?.request && value?.cell) { entered(); await gate; } return value; };
+    const running = service.run(writer, admitted.jobId, input.taskId);
+    await reached;
+    await f.base.revokeGrant(writer.projectId, grant.id);
+    const owner = new UsefulJourneyService(f.cluster.url); t.after(() => owner.close());
+    assert.equal((await owner.status(f.a, admitted.jobId, input.taskId)).state, "outcome_unknown");
+    await assert.rejects(owner.run(f.a, admitted.jobId, input.taskId), { code: "execution_outcome_unknown" });
+    release();
+    await assert.rejects(running, { code: "unauthorized" });
+    const rows = await f.sql.query("SELECT scope FROM correspondence_idempotency WHERE key=$1 AND scope IN ('sds:useful:execution:v1','sds:useful:result:v1')", [admitted.jobId]);
+    assert.deepEqual(rows.rows.map(row => row.scope), ["sds:useful:execution:v1"]);
   });
   await t.test("actual expired lease takeover rejects the predecessor fence", async () => {
     const service = new UsefulJourneyService(f.cluster.url); t.after(() => service.close());

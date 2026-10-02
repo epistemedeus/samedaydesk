@@ -3,6 +3,7 @@ import { Budget, JourneyError, INPUT_MAX_BYTES, readNodeStream, parseJson } from
 import { PREFIX, recipeCatalog, validateRequest } from "./contracts.mjs";
 import { executeRecipe } from "./executor.mjs";
 import { openJourneyFromEnv } from "./service.mjs";
+import { clientEntry, clientArchive } from "./client-entry.mjs";
 
 function errorBody(error) {
   return { error: { code: error.code || "store_unavailable_or_outcome_unknown", nextAction: error.nextAction || error.nextStep || "Reload current job with the same operation/body/grant. Commit outcome may be unknown." } };
@@ -16,7 +17,7 @@ export function createJourneyRouter({ service = null, reason = "unconfigured", m
   router.get("/healthz", (_req, res) => res.json({ enabled: !!service, store: service ? "postgres" : null,
     reason: service ? null : reason, publicEvaluation: true, publicationVerified: false, productionReady: false }));
 
-  function handler(fn, { publicCall = false } = {}) {
+  function handler(fn, { publicCall = false, binary = false } = {}) {
     return async (req, res) => {
       const declaredDeadline = req.get("x-useful-deadline-at");
       const budget = new Budget({ ...(declaredDeadline && /^\d{13}$/.test(declaredDeadline)
@@ -24,6 +25,14 @@ export function createJourneyRouter({ service = null, reason = "unconfigured", m
       let counted = false;
       try {
         if (declaredDeadline && !/^\d{13}$/.test(declaredDeadline)) throw new JourneyError(400, "invalid_deadline");
+        const total = req.get("x-useful-total-bytes"), used = req.get("x-useful-used-bytes"), output = req.get("x-useful-output-bytes");
+        if ([total, used, output].some(v => v !== undefined)) {
+          if (![total, used, output].every(v => typeof v === "string" && /^\d{1,9}$/.test(v))
+              || Number(total) < 4096 || Number(total) > budget.totalBytes
+              || Number(output) < 1024 || Number(output) > budget.outputBytes || Number(used) > Number(total)) throw new JourneyError(400, "invalid_budget");
+          budget.tighten({ totalBytes: Number(total), outputBytes: Number(output) });
+          budget.inherit(Number(used), "caller-io");
+        }
         budget.check();
         if (active >= maxInFlight) throw new JourneyError(429, "busy", "Retry the same operation with jitter after current work completes.");
         active++; counted = true;
@@ -37,20 +46,30 @@ export function createJourneyRouter({ service = null, reason = "unconfigured", m
           if (!req.is("application/json") || req.get("content-encoding")) throw new JourneyError(415, "json_required");
           if (req.body !== undefined) throw new JourneyError(500, "mount_before_json_parser", "Apply the provided shared mount patch before the global JSON parser.");
           if (Number(req.get("content-length")) > INPUT_MAX_BYTES) throw new JourneyError(413, "input_too_large");
-          body = parseJson(await readNodeStream(req, budget));
+          body = parseJson(await readNodeStream(req, budget, INPUT_MAX_BYTES, "http-intake", { destroyOnError: false }));
         }
         const result = await fn({ context: { projectId: req.params.projectId, token }, body, req, budget });
-        const text = JSON.stringify(result);
+        const text = binary ? result : JSON.stringify(result);
         if (Buffer.byteLength(text) > budget.outputBytes) throw new JourneyError(413, "output_too_large");
         budget.spend(Buffer.byteLength(text), "http-output");
-        return res.status(result.state === "running" ? 202 : result.admitted && !result.replayed ? 201 : 200).type("application/json").send(text);
+        res.set("x-useful-used-bytes", String(budget.used));
+        return res.status(result.state === "running" ? 202 : result.admitted && !result.replayed ? 201 : 200).type(binary ? "application/gzip" : "application/json").send(text);
       } catch (error) {
         if (res.destroyed) return;
+        if (!req.complete) res.set("connection", "close");
         const status = Number.isInteger(error.status) && error.status >= 400 && error.status < 600 ? error.status : 503;
-        return res.status(status).json(errorBody(error));
+        let text = JSON.stringify(errorBody(error));
+        try { budget.spend(Buffer.byteLength(text), "http-error"); }
+        catch {
+          text = JSON.stringify({ error: { code: error.code || "outcome_unknown" } });
+          try { budget.spend(Buffer.byteLength(text), "http-error"); } catch { text = ""; }
+        }
+        return res.status(status).set("x-useful-used-bytes", String(budget.used)).type("application/json").send(text);
       } finally { if (counted) active--; }
     };
   }
+  router.get("/client", handler(({ budget }) => clientEntry(budget), { publicCall: true }));
+  router.get("/client/archive", handler(({ budget }) => clientArchive(budget), { publicCall: true, binary: true }));
   router.post("/evaluate", handler(async ({ body, budget }) => {
     const request = validateRequest(body);
     if (request.input.priorResult) throw new JourneyError(400, "authenticated_prior_required");

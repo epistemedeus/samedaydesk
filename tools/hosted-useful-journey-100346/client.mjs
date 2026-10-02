@@ -62,11 +62,22 @@ export class UsefulJourneyClient {
       headers["content-type"] = "application/json";
     }
     if (key) headers["idempotency-key"] = key;
+    headers["x-useful-total-bytes"] = String(this.budget.totalBytes);
+    headers["x-useful-used-bytes"] = String(this.budget.used);
+    headers["x-useful-output-bytes"] = String(this.budget.outputBytes);
     try {
       const response = await within(this.fetchImpl(`${this.origin}${path}`, { method, headers, body: bytes,
         redirect: "manual", signal: controller.signal }), this.budget, 0, () => controller.abort());
       if (response.status >= 300 && response.status < 400) throw new JourneyError(502, "redirect_refused");
-      const json = parseJson(await readResponse(response, this.budget));
+      const charged = response.headers.get("x-useful-used-bytes");
+      if (charged !== null) {
+        if (!/^\d{1,9}$/.test(charged) || Number(charged) < this.budget.used) throw new JourneyError(502, "invalid_budget_receipt");
+        this.budget.inherit(Number(charged));
+      }
+      const received = await readResponse(response, this.budget);
+      if (response.ok && charged === null) throw new JourneyError(502, "budget_receipt_required");
+      if (!response.ok && !received.length) throw new JourneyError(response.status, response.status === 413 ? "allowance_exceeded" : "request_outcome_unknown");
+      const json = parseJson(received);
       if (!response.ok) throw new JourneyError(response.status, json.error?.code || "request_failed", json.error?.nextAction);
       return json;
     } catch (error) {
@@ -74,7 +85,10 @@ export class UsefulJourneyClient {
       throw new JourneyError(503, "transport_outcome_unknown", "Recover using the same saved journal, origin, project, task, body and operation key. Do not create a new operation to hide reply loss.");
     } finally { controller.abort(); }
   }
-  async evaluate(request) { return await this.call("POST", `${prefix}/evaluate`, request, undefined, true); }
+  async evaluate(request) {
+    this.budget.tighten(request.limits || {});
+    return await this.call("POST", `${prefix}/evaluate`, request, undefined, true);
+  }
   async status(jobId, taskId) { return await this.call("GET", `${this.jobs()}/${encodeURIComponent(jobId)}?taskId=${encodeURIComponent(taskId)}`); }
   async result(jobId, taskId) { return await this.call("GET", `${this.jobs()}/${encodeURIComponent(jobId)}/result?taskId=${encodeURIComponent(taskId)}`); }
   async cancel(jobId, taskId, reason, key) {
@@ -105,6 +119,7 @@ export class UsefulJourneyClient {
       } catch (error) { if (error.code !== "ENOENT") throw error; }
       await saveJournal(journalPath, journal, this.budget);
     }
+    this.budget.tighten(request.limits || {});
     // Even a locally retained job id is a hint. Rebind to the owning server's
     // exact operation/body/grant before trusting it after a cold restart.
     const admitted = await this.call("POST", this.jobs(), request, operationKey);

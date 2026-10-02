@@ -18,6 +18,10 @@ test("Root patch applies and actual SDS app/index mount evaluation before raw in
   await cp(join(root, "package.json"), join(dir, "package.json"));
   for (const path of ["tools", "vendor", "node_modules", "client"]) await symlink(join(root, path), join(dir, path));
   const patch = fileURLToPath(new URL("../patches/ROOT-MOUNT.patch", import.meta.url));
+  // Receiving has installed the patch. Reconstruct its exact unchanged input
+  // and reapply it, while all journey tests now run the actual mounted SDS app.
+  execFileSync("git", ["apply", "--reverse", "--check", patch], { cwd: dir, timeout: 2000 });
+  execFileSync("git", ["apply", "--reverse", patch], { cwd: dir, timeout: 2000 });
   execFileSync("git", ["apply", "--check", patch], { cwd: dir, timeout: 2000 });
   execFileSync("git", ["apply", patch], { cwd: dir, timeout: 2000 });
   const portServer = net.createServer();
@@ -50,5 +54,6 @@ test("Root patch applies and actual SDS app/index mount evaluation before raw in
   assert.equal(initialize.status, 200);
   assert.equal((await fetch(`${origin}/api/public-readiness/healthz`)).status, 200);
   assert.equal((await fetch(`${origin}/api/uploads/signed-url`, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" })).status, 501);
-  assert.deepEqual(await readFile(join(root, "server/app.js")), await readFile(new URL("../../../server/app.js", import.meta.url)));
+  assert.deepEqual(await readFile(join(dir, "server/app.js")), await readFile(join(root, "server/app.js")));
+  assert.deepEqual(await readFile(join(dir, "server/index.js")), await readFile(join(root, "server/index.js")));
 });
