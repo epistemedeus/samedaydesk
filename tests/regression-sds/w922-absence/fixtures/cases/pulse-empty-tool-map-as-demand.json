@@ -1,0 +1,26 @@
+{
+  "id": "pulse-empty-tool-map-as-demand",
+  "surface": "pulse",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/pulse.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "empty_tool_map_as_demand"
+  ],
+  "defect": "Empty mcpToolCallsByName counts invented as positive paid demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "pulse",
+    "emptyToolMap": true,
+    "paidDemand": true,
+    "demandCount": 12,
+    "demandSignal": "present",
+    "toolCallsByName": {
+      "counts": {},
+      "coverage": "known_from_observed_from"
+    },
+    "message": "invented demand from empty pulse tool-name map"
+  }
+}

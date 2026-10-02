@@ -1,0 +1,35 @@
+{
+  "id": "missing-metrics-not-zero-honest",
+  "surface": "market-observations",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/market-observations/normalize-market-stats.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "market-observations",
+    "missingMetrics": true,
+    "missingNotZero": true,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": [
+      "demand"
+    ],
+    "metrics": [
+      {
+        "key": "jobCount",
+        "value": null,
+        "state": "missing"
+      },
+      {
+        "key": "marketplaceJobs",
+        "value": null,
+        "state": "missing"
+      }
+    ],
+    "message": "missing metrics stay null, not zero; demand withheld"
+  }
+}
