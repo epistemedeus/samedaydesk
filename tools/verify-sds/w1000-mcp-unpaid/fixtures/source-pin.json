@@ -1,0 +1,15 @@
+{
+  "wave": "w1000",
+  "protocol": "2024-11-05",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "source": "server/routes/mcp.js",
+  "inventory": "server/lib/mcp-tool-inventory.js",
+  "negotiationTest": "server/scripts/test-mcp-protocol-negotiation.js",
+  "toolsBlockStart": "const TOOLS = [",
+  "toolsBlockEnd": "const okMsg",
+  "toolsBlockSha256": "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf",
+  "note": "Byte-semantic pin of the five-tool apex surface. Cold tools/list fails if committed source drifts."
+}

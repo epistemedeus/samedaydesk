@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "w1000-mcp-unpaid",
+  "window": "w1000",
+  "seeds": [
+    {
+      "id": "paid-tool-call",
+      "why": "tools/call of generate_complete_fix_pack is the Stripe Fix Pack path; harness must refuse without POSTing call or payment.",
+      "command": ["node", "tools/verify-sds/w1000-mcp-unpaid/cli.mjs", "--seeded-failure", "paid-tool-call", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAID_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+      "command": ["node", "tools/verify-sds/w1000-mcp-unpaid/cli.mjs", "--seeded-failure", "payment-signature", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "stripe-path",
+      "why": "Stripe checkout / webhook / cs_ license redemption paths are out of unpaid scope.",
+      "command": ["node", "tools/verify-sds/w1000-mcp-unpaid/cli.mjs", "--seeded-failure", "stripe-path", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "cs-query",
+      "why": "GET/POST /mcp?cs= is the Stripe Fix Pack license redirect; unpaid harness must refuse before any socket.",
+      "command": ["node", "tools/verify-sds/w1000-mcp-unpaid/cli.mjs", "--seeded-failure", "cs-query", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "tools-sha-mismatch",
+      "why": "Naive accept would treat any sha as the pin. Honest verdict is reject against committed server/routes/mcp.js.",
+      "command": ["node", "tools/verify-sds/w1000-mcp-unpaid/cli.mjs", "--seeded-failure", "tools-sha-mismatch", "--json"],
+      "expectExit": 1,
+      "errorCode": "TOOLS_SHA_MISMATCH",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    }
+  ]
+}
