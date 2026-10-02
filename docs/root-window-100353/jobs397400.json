@@ -1,0 +1,54 @@
+[
+  {
+    "id": "ROOT-SOL-INTEGRATED-DELIVERY-SUCCESSOR-100397",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "d5f448b56a7839bb46c7cdc27c705660b130a981",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-integrated-delivery-successor-100397",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-INTEGRATED-DELIVERY-SUCCESSOR-100397",
+    "worktree": "/home/ubuntu/root-sol-397",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-INTEGRATED-DELIVERY-SUCCESSOR-100397.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex",
+    "host": "cloud-c"
+  },
+  {
+    "id": "ROOT-SOL-SCOPED-REPAIR-RECEIVING-100398",
+    "repository": "https://github.com/epistemedeus/x402-url-extractor.git",
+    "base": "d9f8f0ac82b14ead8ecac4748640c2396b93192d",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-scoped-repair-receiving-100398",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-SCOPED-REPAIR-RECEIVING-100398",
+    "worktree": "/home/ubuntu/root-sol-398",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-SCOPED-REPAIR-RECEIVING-100398.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex",
+    "host": "cloud-c"
+  },
+  {
+    "id": "ROOT-SOL-CONTRIBUTOR-OPERATIONS-RECEIVING-100399",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "e8181a7c52895f1b4d569d87afd19bd45c03526d",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-contributor-operations-receiving-100399",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-CONTRIBUTOR-OPERATIONS-RECEIVING-100399",
+    "worktree": "/home/ubuntu/root-sol-399",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-CONTRIBUTOR-OPERATIONS-RECEIVING-100399.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex",
+    "host": "cloud-c"
+  },
+  {
+    "id": "ROOT-SOL-MAINTAINED-NETWORK-CONSUMER-100400",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "e75024c29e7fcee3b5ea3782c118139099567922",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-maintained-network-consumer-100400",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-MAINTAINED-NETWORK-CONSUMER-100400",
+    "worktree": "/home/ubuntu/root-sol-400",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-MAINTAINED-NETWORK-CONSUMER-100400.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex",
+    "host": "cloud-c"
+  }
+]
