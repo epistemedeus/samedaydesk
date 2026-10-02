@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.hosted-useful-github-readback.v1",
+  "observedAt": "2026-10-02T15:37:27.957Z",
+  "sourceCommit": "8002046a21994c74be6f9951f3e4008374614804",
+  "sourceTree": "d3ceedd78963e8d0a0ec509c712daaaa75c09df7",
+  "nativeHead": "faa7a082bce938a5e66d1623493cb7dc2f7ca08d",
+  "branch": "codex/sol-hosted-useful-jobs-100346",
+  "coldClone": "/tmp/sol346-github-receive-kSVD3m",
+  "nativeCheckpointObjectInClone": false,
+  "archiveSha256": "5726bcb576445d8f32c698d9ac5cad9eb7b36907d689d4a2a7085683ab09adbd",
+  "coldClientTasks": 2,
+  "usefulNegative": true,
+  "restartRetrieval": true,
+  "reproducibleExport": true,
+  "receivingTreeUnchanged": true,
+  "logSha256": "f41f46634ac2154b58d126d48f7671daa491d28aaf1ace15b98ba169e899f33e",
+  "productionHostingVerified": false,
+  "sourceAcceptedByRoot": false,
+  "outsideUsefulUse": "unobserved",
+  "settledPayment": "unobserved"
+}

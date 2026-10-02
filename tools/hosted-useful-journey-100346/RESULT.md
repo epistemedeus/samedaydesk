@@ -56,6 +56,11 @@ Native checkpoints/worktree and sealed client provenance remain preserved;
 a different Git commit wrapper does not retarget the archive. Source
 acceptance, production enrollment, hosting,
 outside useful use and settled payment remain separate and unverified.
+[`GITHUB-READBACK.json`](GITHUB-READBACK.json) records remote source commit
+`8002046a21994c74be6f9951f3e4008374614804`, exact native tree equality and a
+fresh shallow receiving clone: stripped two tasks/negative/restart, reproducible
+archive and clean receiving bytes. That Git readback verifies source transfer;
+production route/archive hosting remains unverified.
 
 **Next owner: Root** — receive source/export, apply shared backend mount and
 machine entry, verify the recorded existing Postgres enrollment, then independently

@@ -118,7 +118,7 @@ rewrite them; current authority and correction/revocation remain owning facts.
 
 Unset `HOSTED_USEFUL_JOURNEY_OPT_IN`, restart SDS, and retain the existing schema,
 grants, cells and receipts. Public evaluation stays available, admission returns
-503. Revert the two-line shared mount integration if the whole adapter must be
+503. Revert the shared mount integration in both files if the whole adapter must be
 removed; do not drop data or modify human pages/prices. Existing foundry rollback
 is separate and remains Root's operation.
 
