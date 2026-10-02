@@ -1,0 +1,15 @@
+[
+  {
+    "id": "ROOT-SOL-FREE-USE-CAUSAL-BRIDGE-100421",
+    "repository": "https://github.com/epistemedeus/x402-url-extractor.git",
+    "base": "519645af3a2fa36f745d59f08aab4008776a4aa6",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-free-use-causal-bridge-100421",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-FREE-USE-CAUSAL-BRIDGE-100421",
+    "worktree": "/home/ubuntu/root-sol-421",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-FREE-USE-CAUSAL-BRIDGE-100421.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex",
+    "host": "cloud-c"
+  }
+]
