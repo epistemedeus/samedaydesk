@@ -62,6 +62,9 @@ test("real PG authority, actual recipes and restarted HTTP processes deliver and
     assert.equal((await request(f.origin, { projectId: f.a.projectId, token: f.b.token }, `/${page.jobId}?taskId=${page.taskId}`)).status, 404);
     assert.equal((await request(f.origin, f.reader, "", { method: "POST", body: pageRequest, key: "reader-operation-1" })).status, 403);
     assert.equal((await request(f.origin, f.reader, `/${page.jobId}/result?taskId=${page.taskId}`)).status, 200);
+    const foreignWriter = await request(f.origin, f.writer, `/${page.jobId}/run`, { method: "POST", body: { taskId: page.taskId } });
+    assert.equal(foreignWriter.status, 403);
+    assert.equal(foreignWriter.json.error.code, "job_grant_mismatch");
     const anonymous = await fetch(`${f.origin}/api/hosted-useful/projects/${f.a.projectId}/jobs`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(pageRequest) });
     assert.equal(anonymous.status, 401);
   });

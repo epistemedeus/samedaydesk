@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdtemp, readFile, rm, writeFile, stat, mkdir, cp } from "node:fs/promises";
+import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -10,6 +10,24 @@ import { fixture } from "./support.mjs";
 import { Budget, readFileBounded } from "../lib/budget.mjs";
 
 const digest = bytes => createHash("sha256").update(bytes).digest("hex");
+
+test("a new export refuses uncommitted client bytes instead of borrowing an older source pin", async t => {
+  const repo = await mkdtemp(join(tmpdir(), "sds-useful-source-pin-"));
+  t.after(() => rm(repo, { recursive: true, force: true }));
+  const root = join(repo, "tools/hosted-useful-journey-100346");
+  for (const path of ["LICENSE", "COLD-CLIENT.md", "client.mjs", "cold-client.mjs", "lib/budget.mjs",
+    "examples/page-watch.json", "examples/issue-brief.json", "examples/useful-negative.json", "scripts/export.mjs"]) {
+    await mkdir(dirname(join(root, path)), { recursive: true });
+    await cp(new URL(`../${path}`, import.meta.url), join(root, path));
+  }
+  execFileSync("git", ["init", "-q"], { cwd: repo, timeout: 2000 });
+  execFileSync("git", ["add", "."], { cwd: repo, timeout: 2000 });
+  execFileSync("git", ["-c", "user.name=QA", "-c", "user.email=qa@example.invalid", "commit", "-qm", "immutable QA source"], { cwd: repo, timeout: 2000 });
+  await writeFile(join(root, "client.mjs"), "\n// uncommitted caller source\n", { flag: "a" });
+  assert.throws(() => execFileSync(process.execPath, [join(root, "scripts/export.mjs")], { cwd: repo, timeout: 4000, stdio: ["ignore", "pipe", "pipe"] }),
+    error => /commit the exact client source/.test(String(error.stderr)));
+  await assert.rejects(stat(join(root, "successors/0.1.1/release.json")), { code: "ENOENT" });
+});
 
 test("licensed exact-byte client export runs two stripped cold tasks and a useful negative with no repo modules", { timeout: 20_000 }, async t => {
   const release = JSON.parse(await readFile(new URL("../successors/0.1.1/release.json", import.meta.url), "utf8"));
@@ -68,7 +86,9 @@ test("licensed exact-byte client export runs two stripped cold tasks and a usefu
   const negative = await cold("useful-negative");
   assert.equal(negative.code, 0, negative.stdout); assert.equal(negative.result.result.recipe.evidence.rows[0].error.code, "empty_extract");
   assert.equal(page.stdout.includes(f.a.token), false); assert.equal(issue.stderr, "");
-  await f.restart();
+  const previousPid = f.processId;
+  await f.restart({ crash: true });
+  assert.notEqual(f.processId, previousPid);
   const restarted = execFileSync(process.execPath, [join(kit, "cold-client.mjs"), "recover", "--origin", f.origin, "--project", f.a.projectId,
     "--journal", join(dir, "page-watch-journal.json")], { cwd: dir, env: { USEFUL_JOURNEY_TOKEN: f.a.token }, timeout: 10_000, maxBuffer: 65_536 });
   assert.equal(JSON.parse(restarted).resultDigest, page.result.resultDigest);

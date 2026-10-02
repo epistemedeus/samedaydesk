@@ -32,7 +32,7 @@ export async function boot(databaseUrl, port = 0) {
   });
   const message = await started;
   return { child, origin: message.origin, async close() {
-    if (child.exitCode !== null) return;
+    if (child.exitCode !== null || child.signalCode !== null) return;
     await new Promise(resolve => {
       const timer = setTimeout(() => { try { process.kill(-child.pid, "SIGKILL"); } catch {} }, 3000);
       child.once("exit", () => { clearTimeout(timer); resolve(); });
@@ -65,7 +65,16 @@ export async function fixture() {
   server = await boot(cluster.url);
   return { dir, cluster, base, cells, sql, a, b, writer, reader,
     get origin() { return server.origin; },
-    async restart() { const port = new URL(server.origin).port; await server.close(); server = await boot(cluster.url, port); },
+    get processId() { return server.child.pid; },
+    async restart({ crash = false } = {}) {
+      const port = new URL(server.origin).port;
+      if (crash) {
+        const exited = new Promise(resolve => server.child.once("exit", resolve));
+        process.kill(-server.child.pid, "SIGKILL");
+        await exited;
+      } else await server.close();
+      server = await boot(cluster.url, port);
+    },
     async close() { await server?.close(); await sql.end(); await cells.close(); await base.close(); await cluster.stop(); await rm(dir, { recursive: true, force: true }); },
   };
 }

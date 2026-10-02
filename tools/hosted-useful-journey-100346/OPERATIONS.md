@@ -12,6 +12,8 @@ It creates no table/database, signer, payment route or reward/acceptance record.
    mount before global JSON intake, register the handle for existing shutdown.
    Tests apply this exact patch in a disposable source tree and start the actual
    SDS index, MCP initialize, readiness and uploads routes.
+   Receiving379 has applied it to this branch already. Its tests reverse-check,
+   reconstruct and reapply the exact patch; do not apply it a second time.
 3. Confirm the existing recorded Postgres enrollment. The staged production
    condition remains absent/unverified here. `SUPABASE_SERVICE_ROLE_KEY` and a
    Supabase HTTP URL cannot supply `CORRESPONDENCE_DATABASE_URL`. Do not obtain
@@ -63,7 +65,7 @@ npm run test:l08-agent-repair
 npm run test:hosted-startup
 npm run build
 node tools/hosted-useful-journey-100346/scripts/measure-qa.mjs
-git apply --check tools/hosted-useful-journey-100346/patches/ROOT-MOUNT.patch
+git apply --reverse --check tools/hosted-useful-journey-100346/patches/ROOT-MOUNT.patch
 node tools/hosted-useful-journey-100346/scripts/export.mjs
 ```
 
@@ -72,12 +74,14 @@ all migrated projects/grants/cells/receipts are in that disposable store. Tests
 use real adjacent merchant services and canonical PG/work-cell logic. No public
 writes, paid calls, live participant records or real reward ledger mutations.
 
-Known receiving baseline: `test:agent-readiness` is 126/127 on this branch.
+Historical346 receiving baseline: `test:agent-readiness` was 126/127.
 `server/scripts/agent-readiness/http-mcp.test.js:35` expects literal MCP tool
 names in existing `client/public/llms.txt`; the same assertion fails at unchanged
 base `1f333f3` (that file's suite is 3/4 there). Human copy and the shared owning
-test remain unchanged. Root must reconcile that discovery contract separately;
-do not report a fully green readiness suite or silently update human copy.
+test were unchanged at346. Receiving379 reproduced the failure at unchanged
+`685f90f6`, then corrected the owning test to check actual live MCP names and
+existing discovery links. Human files remain unchanged; readiness is now127/127.
+See `docs/reviews/sol379-hosted-delivery/TEST-RECEIPT.json`.
 
 ## Route and lifecycle contract
 
@@ -97,13 +101,21 @@ lease. The same operation has one retained result; a changed input needs a new
 operation. Result insertion, checkpoint and release commit atomically in the
 same installed transaction. A valid recipe negative has `state: completed` and
 `recipe.ok: false`; executor failure is `state: failed`. Neither proves
-acceptance or usefulness. Crash-before-result leaves a live/expired lease;
-takeover uses a new fence only while the original deadline remains. An expired
+acceptance or usefulness. Crash-before-result leaves a live/expired lease and
+unknown physical consumption. A previously unexecuted VF lease can be taken over
+with a new fence while the original deadline remains; a journey execution
+reservation cannot start a second child. An expired
 job requires review and a new operation. Crash-after-commit/reply-loss recovers
 the immutable result without rerunning. Cancellation records actual VF02 state,
 aborts a child on the serving process, and fences all processes' late results.
 A worker on another process remains bounded by the original execution deadline;
 its cancelled/expired/revoked fence cannot persist output.
+Receiving379 also reserves one physical execution in the existing receipt table.
+If that execution loses its process without a retained result, recovery reports
+unknown/expired instead of replenishing its bytes for a second child. A committed
+result still recovers normally. The original reduced caps and conservative final
+admission charge survive reply/process loss. Client and server exchange cumulative
+byte usage as well as the original deadline.
 
 Existing current owner/creator writer controls run/cancel/export; project readers
 can retrieve retained results. Every transaction rechecks current grant expiry
@@ -122,7 +134,10 @@ grants, cells and receipts. Public evaluation stays available, admission returns
 removed; do not drop data or modify human pages/prices. Existing foundry rollback
 is separate and remains Root's operation.
 
-`successors/0.1.0` is a licensed minimal client candidate, not deployed bytes.
+`successors/0.1.0` remains immutable with its original native source pin.
+Receiving379 seals `successors/0.1.1` for the cumulative budget protocol and serves
+its checked bytes through the new machine API. These are source/loopback-hosted
+bytes; public production hosting remains unverified.
 Root can place the exact received archive at a new machine download path and
 link it from a new agent entry without replacing the offline catalog or its
 publication flags. The isolated `entry.json` states that both archive hosting

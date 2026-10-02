@@ -46,9 +46,12 @@ try {
   for (const [i, request] of [page, issue, negative].entries()) hosted.push(await timed(() => client().run(request, `measured-operation-${i}`, join(f.dir, `journal-${i}.json`))));
   assert.deepEqual(hosted[0].value.result.recipe.evidence.changed, direct[0].value.evidence.changed);
   assert.deepEqual(hosted[1].value.result.recipe.evidence.brief.actions, direct[1].value.evidence.brief.actions);
+  assert.equal(hosted[1].value.result.recipe.evidence.brief.actions.length, 2);
   assert.deepEqual(hosted[2].value.result.recipe.evidence.rows[0].missing, direct[2].value.evidence.rows[0].missing);
   const retained = hosted[0].value;
-  await f.restart();
+  const originalProcessId = f.processId;
+  await f.restart({ crash: true });
+  assert.notEqual(f.processId, originalProcessId);
   const retrieval = await timed(() => client().result(retained.jobId, retained.taskId));
   assert.equal(retrieval.value.resultDigest, retained.resultDigest);
   const adaptation = await timed(async () => {
@@ -71,6 +74,7 @@ try {
   const record = { schema: "samedaydesk.hosted-useful-qa-measurement.v1", observedAt: new Date().toISOString(), runtime: process.version,
     source: "actual recurring recipes + VF1652533 correspondence/VF02 Postgres adapters on a disposable local cluster",
     client: { stripped: true, version: release.version, archiveSha256: release.sha256, dependencies: [] },
+    restart: { signal: "SIGKILL", originalProcessId, receivingProcessId: f.processId, databaseSurvived: true },
     tasks: [page, issue, negative].map((r, i) => ({ taskId: r.taskId, recipeId: r.recipeId, directModuleMs: direct[i].elapsedMs,
       hostedClientMs: hosted[i].elapsedMs, retainedOutputBytes: Buffer.byteLength(JSON.stringify(hosted[i].value.result)),
       outcome: hosted[i].value.result.recipe.outcome, ok: hosted[i].value.result.recipe.ok,
