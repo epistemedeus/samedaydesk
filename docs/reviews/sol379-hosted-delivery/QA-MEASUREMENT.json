@@ -1,0 +1,1737 @@
+{
+  "schema": "samedaydesk.hosted-useful-qa-measurement.v1",
+  "observedAt": "2026-10-02T16:21:23.976Z",
+  "runtime": "v22.22.2",
+  "source": "actual recurring recipes + VF1652533 correspondence/VF02 Postgres adapters on a disposable local cluster",
+  "client": {
+    "stripped": true,
+    "version": "0.1.1",
+    "archiveSha256": "84cbb35758e8466cf36dd99d804b0b4c09251b9dc4c2820239c98568b494323d",
+    "dependencies": []
+  },
+  "restart": {
+    "signal": "SIGKILL",
+    "originalProcessId": 559695,
+    "receivingProcessId": 559743,
+    "databaseSurvived": true
+  },
+  "tasks": [
+    {
+      "taskId": "receiving-sdk-release-watch",
+      "recipeId": "source-change-alert",
+      "directModuleMs": 0.962,
+      "hostedClientMs": 142.508,
+      "retainedOutputBytes": 4718,
+      "outcome": "changed",
+      "ok": true,
+      "callerInput": {
+        "schema": "samedaydesk.useful-recipe-request.v1",
+        "taskId": "receiving-sdk-release-watch",
+        "recipeId": "source-change-alert",
+        "input": {
+          "clock": "2026-10-02T14:00:00.000Z",
+          "fields": [
+            "title",
+            "h1"
+          ],
+          "prior": {
+            "schema": "samedaydesk.recurring-job-prior.v1",
+            "recipeId": "source-change-alert",
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "sequence": 1,
+            "immutable": true,
+            "payload": {
+              "fields": {
+                "title": "SDK 1.0",
+                "h1": "Stable API"
+              }
+            },
+            "payment": {
+              "attempted": false
+            }
+          },
+          "current": {
+            "id": "caller-sdk-page",
+            "kind": "html",
+            "data": "<title>SDK 4.0</title><h1>Pagination contract v4</h1>"
+          }
+        }
+      },
+      "resultDigest": "sha256:35fb4048d011ed6708cad896111a4bd93d22d247927fe64025d21f829f24a62c",
+      "directRecipeResult": {
+        "ok": true,
+        "schema": "samedaydesk.recurring-job-recipe-result.v1",
+        "recipeId": "source-change-alert",
+        "meta": {
+          "recipeId": "source-change-alert",
+          "userBenefit": "Know when a watched public page's selected fields change since your immutable prior, without buying a subscription or leaving a daemon running.",
+          "operatorSupplies": [
+            "priorPath",
+            "scheduleHint",
+            "fields",
+            "clock",
+            "horizonHours",
+            "current fixture or --live-safe"
+          ],
+          "acceptedContracts": [
+            "pilot.task-commons.page-change-result.v1",
+            "pilot/page-change-brief/v1"
+          ]
+        },
+        "cost": {
+          "primary": {
+            "kind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+            "examples": [
+              {
+                "item": "local page-change compare",
+                "amount": "costs_unknown",
+                "note": "no merchant charge; operator compute not priced here"
+              }
+            ]
+          },
+          "related": [
+            {
+              "kind": "costs_unknown",
+              "asOf": "2026-09-09",
+              "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+              "examples": [
+                {
+                  "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                  "amount": "costs_unknown",
+                  "note": "no merchant fee; operator egress/CPU not priced here"
+                }
+              ]
+            },
+            {
+              "kind": "sourced",
+              "asOf": "2026-09-09",
+              "source": "https://samedaydesk.com/for-agents",
+              "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+              "examples": [
+                {
+                  "item": "POST /extract/batch",
+                  "amount": "0.01 USDC listed",
+                  "note": "sourced list price only; not invoked by these recipes"
+                }
+              ]
+            }
+          ]
+        },
+        "recovery": {
+          "action": "review_and_sequence",
+          "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.",
+          "detail": {
+            "kind": "field_diff",
+            "source": {
+              "kind": "fixture",
+              "path": "/tmp/sds-useful-journey-qa-MixO34/page.html"
+            },
+            "contentHash": "sha256:c644a3862a41c875a66a01c624a9450c0c9009c0805b3fe01456cb82b0580d29",
+            "status": 200,
+            "changed": [
+              {
+                "field": "title",
+                "before": "SDK 1.0",
+                "after": "SDK 4.0"
+              },
+              {
+                "field": "h1",
+                "before": "Stable API",
+                "after": "Pagination contract v4"
+              }
+            ],
+            "unchanged": [],
+            "retriesUsed": 0,
+            "attempts": [
+              {
+                "attempt": 1,
+                "ok": true
+              }
+            ]
+          }
+        },
+        "outcome": "changed",
+        "clock": "2026-10-02T14:00:00.000Z",
+        "scheduleHint": null,
+        "fields": [
+          "title",
+          "h1"
+        ],
+        "prior": {
+          "path": "/tmp/sds-useful-journey-qa-MixO34/page-prior.json",
+          "sha256": "ff50377d76233d8081dcbc4229167e39249a4c072bc47e6307af5de48c744462",
+          "sequence": 1,
+          "createdAt": "2026-10-02T13:00:00.000Z",
+          "immutable": true
+        },
+        "payment": {
+          "ok": true,
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "stale": {
+          "stale": false,
+          "reason": "horizon_not_supplied"
+        },
+        "evidence": {
+          "kind": "field_diff",
+          "source": {
+            "kind": "fixture",
+            "path": "/tmp/sds-useful-journey-qa-MixO34/page.html"
+          },
+          "contentHash": "sha256:c644a3862a41c875a66a01c624a9450c0c9009c0805b3fe01456cb82b0580d29",
+          "status": 200,
+          "changed": [
+            {
+              "field": "title",
+              "before": "SDK 1.0",
+              "after": "SDK 4.0"
+            },
+            {
+              "field": "h1",
+              "before": "Stable API",
+              "after": "Pagination contract v4"
+            }
+          ],
+          "unchanged": [],
+          "retriesUsed": 0,
+          "attempts": [
+            {
+              "attempt": 1,
+              "ok": true
+            }
+          ]
+        }
+      },
+      "retainedResult": {
+        "facts": {
+          "qa": "caller-input execution",
+          "settledPayment": "unobserved",
+          "sourceAccepted": false,
+          "paymentAttempted": false,
+          "earnedWorkAccepted": false,
+          "independentlyUseful": "unobserved",
+          "publicationVerified": false
+        },
+        "recipe": {
+          "ok": true,
+          "cost": {
+            "primary": {
+              "asOf": "2026-09-09",
+              "kind": "costs_unknown",
+              "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+              "examples": [
+                {
+                  "item": "local page-change compare",
+                  "note": "no merchant charge; operator compute not priced here",
+                  "amount": "costs_unknown"
+                }
+              ]
+            },
+            "related": [
+              {
+                "asOf": "2026-09-09",
+                "kind": "costs_unknown",
+                "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+                "examples": [
+                  {
+                    "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                    "note": "no merchant fee; operator egress/CPU not priced here",
+                    "amount": "costs_unknown"
+                  }
+                ]
+              },
+              {
+                "asOf": "2026-09-09",
+                "kind": "sourced",
+                "source": "https://samedaydesk.com/for-agents",
+                "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+                "examples": [
+                  {
+                    "item": "POST /extract/batch",
+                    "note": "sourced list price only; not invoked by these recipes",
+                    "amount": "0.01 USDC listed"
+                  }
+                ]
+              }
+            ]
+          },
+          "meta": {
+            "recipeId": "source-change-alert",
+            "userBenefit": "Know when a watched public page's selected fields change since your immutable prior, without buying a subscription or leaving a daemon running.",
+            "operatorSupplies": [
+              "priorPath",
+              "scheduleHint",
+              "fields",
+              "clock",
+              "horizonHours",
+              "current fixture or --live-safe"
+            ],
+            "acceptedContracts": [
+              "pilot.task-commons.page-change-result.v1",
+              "pilot/page-change-brief/v1"
+            ]
+          },
+          "clock": "2026-10-02T14:00:00.000Z",
+          "prior": {
+            "path": "caller-snapshot:prior",
+            "sha256": "ff50377d76233d8081dcbc4229167e39249a4c072bc47e6307af5de48c744462",
+            "sequence": 1,
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "immutable": true
+          },
+          "stale": {
+            "stale": false,
+            "reason": "horizon_not_supplied"
+          },
+          "fields": [
+            "title",
+            "h1"
+          ],
+          "schema": "samedaydesk.recurring-job-recipe-result.v1",
+          "outcome": "changed",
+          "payment": {
+            "ok": true,
+            "attempted": false,
+            "replayBlocked": true,
+            "hasPriorReceipt": false
+          },
+          "evidence": {
+            "kind": "field_diff",
+            "source": {
+              "kind": "fixture",
+              "path": "caller-snapshot:current"
+            },
+            "status": 200,
+            "changed": [
+              {
+                "after": "SDK 4.0",
+                "field": "title",
+                "before": "SDK 1.0"
+              },
+              {
+                "after": "Pagination contract v4",
+                "field": "h1",
+                "before": "Stable API"
+              }
+            ],
+            "attempts": [
+              {
+                "ok": true,
+                "attempt": 1
+              }
+            ],
+            "unchanged": [],
+            "contentHash": "sha256:c644a3862a41c875a66a01c624a9450c0c9009c0805b3fe01456cb82b0580d29",
+            "retriesUsed": 0
+          },
+          "recipeId": "source-change-alert",
+          "recovery": {
+            "action": "review_and_sequence",
+            "detail": {
+              "kind": "field_diff",
+              "source": {
+                "kind": "fixture",
+                "path": "caller-snapshot:current"
+              },
+              "status": 200,
+              "changed": [
+                {
+                  "after": "SDK 4.0",
+                  "field": "title",
+                  "before": "SDK 1.0"
+                },
+                {
+                  "after": "Pagination contract v4",
+                  "field": "h1",
+                  "before": "Stable API"
+                }
+              ],
+              "attempts": [
+                {
+                  "ok": true,
+                  "attempt": 1
+                }
+              ],
+              "unchanged": [],
+              "contentHash": "sha256:c644a3862a41c875a66a01c624a9450c0c9009c0805b3fe01456cb82b0580d29",
+              "retriesUsed": 0
+            },
+            "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior."
+          },
+          "scheduleHint": null
+        },
+        "schema": "samedaydesk.hosted-useful-job.v1",
+        "source": {
+          "kind": "caller_supplied_snapshots",
+          "trusted": false,
+          "inputDigest": "sha256:58a58a1a4b6def18d636830bf6ac651e9b1c1da50d792552dd4fea2d092f97ae",
+          "networkUsed": false,
+          "paymentAttempted": false,
+          "independentlyFetched": false
+        },
+        "taskId": "receiving-sdk-release-watch",
+        "recipeId": "source-change-alert",
+        "execution": "completed",
+        "nextPrior": {
+          "schema": "samedaydesk.recurring-job-prior.v1",
+          "sha256": "1563dac1407fd3de27ffd6332985da05a5427295028cbcc25d6cbcf6c1c31406",
+          "payload": {
+            "fields": {
+              "h1": "Pagination contract v4",
+              "title": "SDK 4.0"
+            }
+          },
+          "payment": {
+            "attempted": false
+          },
+          "recipeId": "source-change-alert",
+          "sequence": 2,
+          "createdAt": "2026-10-02T14:00:00.000Z",
+          "immutable": true
+        },
+        "inputDigest": "sha256:58a58a1a4b6def18d636830bf6ac651e9b1c1da50d792552dd4fea2d092f97ae",
+        "measurement": {
+          "child": {
+            "bytes": 1289,
+            "limits": {
+              "deadlineMs": 25386,
+              "totalBytes": 499633,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "intake": 707,
+              "source-read": 291,
+              "materialized-input": 291
+            },
+            "elapsedMs": 6
+          },
+          "owner": {
+            "bytes": 28785,
+            "limits": {
+              "deadlineMs": 29934,
+              "totalBytes": 524288,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "caller-io": 15560,
+              "child-stdin": 707,
+              "http-intake": 40,
+              "child-stdout": 3548,
+              "postgres-read": 4050,
+              "child-source-io": 582,
+              "postgres-write-arguments": 4298
+            },
+            "elapsedMs": 59
+          },
+          "reviewMs": null,
+          "adaptationMs": null,
+          "inferenceCost": null,
+          "cashMarginalCost": null,
+          "includedQuotaOpportunityCost": null
+        }
+      },
+      "directOutputMatched": true
+    },
+    {
+      "taskId": "receiving-pagination-brief",
+      "recipeId": "issue-to-work-brief",
+      "directModuleMs": 1.297,
+      "hostedClientMs": 113.117,
+      "retainedOutputBytes": 12582,
+      "outcome": "changed",
+      "ok": true,
+      "callerInput": {
+        "schema": "samedaydesk.useful-recipe-request.v1",
+        "taskId": "receiving-pagination-brief",
+        "recipeId": "issue-to-work-brief",
+        "input": {
+          "clock": "2026-10-02T14:00:00.000Z",
+          "prior": {
+            "schema": "samedaydesk.recurring-job-prior.v1",
+            "recipeId": "issue-to-work-brief",
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "sequence": 1,
+            "immutable": true,
+            "payload": {
+              "fingerprint": "caller-previous-revision"
+            },
+            "payment": {
+              "attempted": false
+            }
+          },
+          "issue": {
+            "number": 42,
+            "title": "Update pagination contract",
+            "owner": "caller",
+            "repo": "sdk",
+            "url": "https://github.com/caller/sdk/issues/42",
+            "state": "open",
+            "labels": [
+              "integration"
+            ],
+            "body": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+            "updatedAt": "2026-10-02T13:45:00.000Z",
+            "createdAt": "2026-10-01T00:00:00.000Z",
+            "author": "caller",
+            "comments": 0
+          }
+        }
+      },
+      "resultDigest": "sha256:00ab1ac0f801ebadfa1673979638f6d932edc42259942154d9c83a5031d5d1cf",
+      "directRecipeResult": {
+        "ok": true,
+        "schema": "samedaydesk.recurring-job-recipe-result.v1",
+        "recipeId": "issue-to-work-brief",
+        "meta": {
+          "recipeId": "issue-to-work-brief",
+          "userBenefit": "Turn a public GitHub issue into a direct-use work brief and detect when the issue fingerprint changes since an immutable prior.",
+          "operatorSupplies": [
+            "priorPath",
+            "issueUrl or --issue-fixture",
+            "scheduleHint",
+            "clock",
+            "horizonHours"
+          ],
+          "acceptedContracts": [
+            "samedaydesk.work-brief.v1",
+            "samedaydesk.recurring-job-prior.v1"
+          ]
+        },
+        "cost": {
+          "primary": {
+            "kind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+            "examples": [
+              {
+                "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                "amount": "costs_unknown",
+                "note": "no merchant fee; operator egress/CPU not priced here"
+              }
+            ]
+          },
+          "related": [
+            {
+              "kind": "costs_unknown",
+              "asOf": "2026-09-09",
+              "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+              "examples": [
+                {
+                  "item": "local page-change compare",
+                  "amount": "costs_unknown",
+                  "note": "no merchant charge; operator compute not priced here"
+                }
+              ]
+            }
+          ]
+        },
+        "recovery": {
+          "action": "review_and_sequence",
+          "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.",
+          "detail": {
+            "kind": "issue_work_brief",
+            "source": {
+              "kind": "fixture",
+              "path": "/tmp/sds-useful-journey-qa-MixO34/issue.json"
+            },
+            "transport": {
+              "status": 200,
+              "bytes": 459,
+              "elapsedMs": 0
+            },
+            "issue": {
+              "owner": "caller",
+              "repo": "sdk",
+              "number": 42,
+              "url": "https://github.com/caller/sdk/issues/42",
+              "title": "Update pagination contract",
+              "state": "open",
+              "labels": [
+                "integration"
+              ],
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "createdAt": "2026-10-01T00:00:00.000Z",
+              "author": "caller",
+              "comments": 0
+            },
+            "fingerprint": {
+              "owner": "caller",
+              "repo": "sdk",
+              "url": "https://github.com/caller/sdk/issues/42",
+              "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e",
+              "number": 42,
+              "state": "open",
+              "title": "Update pagination contract",
+              "labels": [
+                "integration"
+              ],
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "bodyBytes": 169
+            },
+            "brief": {
+              "schema": "samedaydesk.work-brief.v1",
+              "kind": "issue_to_work_brief",
+              "source": {
+                "kind": "fixture",
+                "path": "/tmp/sds-useful-journey-qa-MixO34/issue.json"
+              },
+              "clock": "2026-10-02T14:00:00.000Z",
+              "issue": {
+                "owner": "caller",
+                "repo": "sdk",
+                "number": 42,
+                "url": "https://github.com/caller/sdk/issues/42",
+                "title": "Update pagination contract",
+                "state": "open",
+                "labels": [
+                  "integration"
+                ],
+                "updatedAt": "2026-10-02T13:45:00.000Z",
+                "createdAt": "2026-10-01T00:00:00.000Z",
+                "author": "caller",
+                "comments": 0
+              },
+              "fingerprint": {
+                "owner": "caller",
+                "repo": "sdk",
+                "url": "https://github.com/caller/sdk/issues/42",
+                "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e",
+                "number": 42,
+                "state": "open",
+                "title": "Update pagination contract",
+                "labels": [
+                  "integration"
+                ],
+                "updatedAt": "2026-10-02T13:45:00.000Z",
+                "bodyBytes": 169
+              },
+              "sourceBody": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+              "summary": "The caller needs cursor pagination in the SDK.",
+              "actions": [
+                {
+                  "kind": "implement",
+                  "text": "Update src/pagination.ts to parse next_cursor from the response."
+                },
+                {
+                  "kind": "implement",
+                  "text": "Add a regression for the final page with no next_cursor."
+                }
+              ],
+              "fileRefs": [
+                "src/pagination.ts"
+              ],
+              "claims": {
+                "ownerQaOnly": true,
+                "notDemand": true,
+                "paymentImpliesUsefulOutput": false,
+                "automaticPaymentReplay": false
+              },
+              "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3"
+            },
+            "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+            "changed": true,
+            "corrections": [],
+            "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+            "claims": {
+              "ownerQaOnly": true,
+              "notDemand": true,
+              "paymentImpliesUsefulOutput": false,
+              "automaticPaymentReplay": false
+            }
+          }
+        },
+        "outcome": "changed",
+        "clock": "2026-10-02T14:00:00.000Z",
+        "scheduleHint": null,
+        "prior": {
+          "path": "/tmp/sds-useful-journey-qa-MixO34/issue-prior.json",
+          "sha256": "78ebf43910be6e8392f44f595376fe3d88f5a74d2e6d22dc1920d7c79176fa2a",
+          "sequence": 1,
+          "createdAt": "2026-10-02T13:00:00.000Z",
+          "immutable": true
+        },
+        "payment": {
+          "ok": true,
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "stale": {
+          "stale": false,
+          "reason": "horizon_not_supplied"
+        },
+        "evidence": {
+          "kind": "issue_work_brief",
+          "source": {
+            "kind": "fixture",
+            "path": "/tmp/sds-useful-journey-qa-MixO34/issue.json"
+          },
+          "transport": {
+            "status": 200,
+            "bytes": 459,
+            "elapsedMs": 0
+          },
+          "issue": {
+            "owner": "caller",
+            "repo": "sdk",
+            "number": 42,
+            "url": "https://github.com/caller/sdk/issues/42",
+            "title": "Update pagination contract",
+            "state": "open",
+            "labels": [
+              "integration"
+            ],
+            "updatedAt": "2026-10-02T13:45:00.000Z",
+            "createdAt": "2026-10-01T00:00:00.000Z",
+            "author": "caller",
+            "comments": 0
+          },
+          "fingerprint": {
+            "owner": "caller",
+            "repo": "sdk",
+            "url": "https://github.com/caller/sdk/issues/42",
+            "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e",
+            "number": 42,
+            "state": "open",
+            "title": "Update pagination contract",
+            "labels": [
+              "integration"
+            ],
+            "updatedAt": "2026-10-02T13:45:00.000Z",
+            "bodyBytes": 169
+          },
+          "brief": {
+            "schema": "samedaydesk.work-brief.v1",
+            "kind": "issue_to_work_brief",
+            "source": {
+              "kind": "fixture",
+              "path": "/tmp/sds-useful-journey-qa-MixO34/issue.json"
+            },
+            "clock": "2026-10-02T14:00:00.000Z",
+            "issue": {
+              "owner": "caller",
+              "repo": "sdk",
+              "number": 42,
+              "url": "https://github.com/caller/sdk/issues/42",
+              "title": "Update pagination contract",
+              "state": "open",
+              "labels": [
+                "integration"
+              ],
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "createdAt": "2026-10-01T00:00:00.000Z",
+              "author": "caller",
+              "comments": 0
+            },
+            "fingerprint": {
+              "owner": "caller",
+              "repo": "sdk",
+              "url": "https://github.com/caller/sdk/issues/42",
+              "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e",
+              "number": 42,
+              "state": "open",
+              "title": "Update pagination contract",
+              "labels": [
+                "integration"
+              ],
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "bodyBytes": 169
+            },
+            "sourceBody": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+            "summary": "The caller needs cursor pagination in the SDK.",
+            "actions": [
+              {
+                "kind": "implement",
+                "text": "Update src/pagination.ts to parse next_cursor from the response."
+              },
+              {
+                "kind": "implement",
+                "text": "Add a regression for the final page with no next_cursor."
+              }
+            ],
+            "fileRefs": [
+              "src/pagination.ts"
+            ],
+            "claims": {
+              "ownerQaOnly": true,
+              "notDemand": true,
+              "paymentImpliesUsefulOutput": false,
+              "automaticPaymentReplay": false
+            },
+            "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3"
+          },
+          "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+          "changed": true,
+          "corrections": [],
+          "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+          "claims": {
+            "ownerQaOnly": true,
+            "notDemand": true,
+            "paymentImpliesUsefulOutput": false,
+            "automaticPaymentReplay": false
+          }
+        },
+        "directUse": {
+          "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+          "briefPathHint": "write brief JSON via --out-dir --write-artifact"
+        }
+      },
+      "retainedResult": {
+        "facts": {
+          "qa": "caller-input execution",
+          "settledPayment": "unobserved",
+          "sourceAccepted": false,
+          "paymentAttempted": false,
+          "earnedWorkAccepted": false,
+          "independentlyUseful": "unobserved",
+          "publicationVerified": false
+        },
+        "recipe": {
+          "ok": true,
+          "cost": {
+            "primary": {
+              "asOf": "2026-09-09",
+              "kind": "costs_unknown",
+              "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+              "examples": [
+                {
+                  "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                  "note": "no merchant fee; operator egress/CPU not priced here",
+                  "amount": "costs_unknown"
+                }
+              ]
+            },
+            "related": [
+              {
+                "asOf": "2026-09-09",
+                "kind": "costs_unknown",
+                "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+                "examples": [
+                  {
+                    "item": "local page-change compare",
+                    "note": "no merchant charge; operator compute not priced here",
+                    "amount": "costs_unknown"
+                  }
+                ]
+              }
+            ]
+          },
+          "meta": {
+            "recipeId": "issue-to-work-brief",
+            "userBenefit": "Turn a public GitHub issue into a direct-use work brief and detect when the issue fingerprint changes since an immutable prior.",
+            "operatorSupplies": [
+              "priorPath",
+              "issueUrl or --issue-fixture",
+              "scheduleHint",
+              "clock",
+              "horizonHours"
+            ],
+            "acceptedContracts": [
+              "samedaydesk.work-brief.v1",
+              "samedaydesk.recurring-job-prior.v1"
+            ]
+          },
+          "clock": "2026-10-02T14:00:00.000Z",
+          "prior": {
+            "path": "caller-snapshot:prior",
+            "sha256": "78ebf43910be6e8392f44f595376fe3d88f5a74d2e6d22dc1920d7c79176fa2a",
+            "sequence": 1,
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "immutable": true
+          },
+          "stale": {
+            "stale": false,
+            "reason": "horizon_not_supplied"
+          },
+          "schema": "samedaydesk.recurring-job-recipe-result.v1",
+          "outcome": "changed",
+          "payment": {
+            "ok": true,
+            "attempted": false,
+            "replayBlocked": true,
+            "hasPriorReceipt": false
+          },
+          "evidence": {
+            "kind": "issue_work_brief",
+            "brief": {
+              "kind": "issue_to_work_brief",
+              "clock": "2026-10-02T14:00:00.000Z",
+              "issue": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "author": "caller",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "comments": 0,
+                "createdAt": "2026-10-01T00:00:00.000Z",
+                "updatedAt": "2026-10-02T13:45:00.000Z"
+              },
+              "claims": {
+                "notDemand": true,
+                "ownerQaOnly": true,
+                "automaticPaymentReplay": false,
+                "paymentImpliesUsefulOutput": false
+              },
+              "schema": "samedaydesk.work-brief.v1",
+              "source": {
+                "kind": "fixture",
+                "path": "caller-snapshot:issue"
+              },
+              "actions": [
+                {
+                  "kind": "implement",
+                  "text": "Update src/pagination.ts to parse next_cursor from the response."
+                },
+                {
+                  "kind": "implement",
+                  "text": "Add a regression for the final page with no next_cursor."
+                }
+              ],
+              "summary": "The caller needs cursor pagination in the SDK.",
+              "fileRefs": [
+                "src/pagination.ts"
+              ],
+              "sourceBody": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+              "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+              "fingerprint": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "bodyBytes": 169,
+                "updatedAt": "2026-10-02T13:45:00.000Z",
+                "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+              }
+            },
+            "issue": {
+              "url": "https://github.com/caller/sdk/issues/42",
+              "repo": "sdk",
+              "owner": "caller",
+              "state": "open",
+              "title": "Update pagination contract",
+              "author": "caller",
+              "labels": [
+                "integration"
+              ],
+              "number": 42,
+              "comments": 0,
+              "createdAt": "2026-10-01T00:00:00.000Z",
+              "updatedAt": "2026-10-02T13:45:00.000Z"
+            },
+            "claims": {
+              "notDemand": true,
+              "ownerQaOnly": true,
+              "automaticPaymentReplay": false,
+              "paymentImpliesUsefulOutput": false
+            },
+            "source": {
+              "kind": "fixture",
+              "path": "caller-snapshot:issue"
+            },
+            "changed": true,
+            "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+            "transport": {
+              "bytes": 459,
+              "status": 200,
+              "elapsedMs": 0
+            },
+            "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+            "corrections": [],
+            "fingerprint": {
+              "url": "https://github.com/caller/sdk/issues/42",
+              "repo": "sdk",
+              "owner": "caller",
+              "state": "open",
+              "title": "Update pagination contract",
+              "labels": [
+                "integration"
+              ],
+              "number": 42,
+              "bodyBytes": 169,
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+            }
+          },
+          "recipeId": "issue-to-work-brief",
+          "recovery": {
+            "action": "review_and_sequence",
+            "detail": {
+              "kind": "issue_work_brief",
+              "brief": {
+                "kind": "issue_to_work_brief",
+                "clock": "2026-10-02T14:00:00.000Z",
+                "issue": {
+                  "url": "https://github.com/caller/sdk/issues/42",
+                  "repo": "sdk",
+                  "owner": "caller",
+                  "state": "open",
+                  "title": "Update pagination contract",
+                  "author": "caller",
+                  "labels": [
+                    "integration"
+                  ],
+                  "number": 42,
+                  "comments": 0,
+                  "createdAt": "2026-10-01T00:00:00.000Z",
+                  "updatedAt": "2026-10-02T13:45:00.000Z"
+                },
+                "claims": {
+                  "notDemand": true,
+                  "ownerQaOnly": true,
+                  "automaticPaymentReplay": false,
+                  "paymentImpliesUsefulOutput": false
+                },
+                "schema": "samedaydesk.work-brief.v1",
+                "source": {
+                  "kind": "fixture",
+                  "path": "caller-snapshot:issue"
+                },
+                "actions": [
+                  {
+                    "kind": "implement",
+                    "text": "Update src/pagination.ts to parse next_cursor from the response."
+                  },
+                  {
+                    "kind": "implement",
+                    "text": "Add a regression for the final page with no next_cursor."
+                  }
+                ],
+                "summary": "The caller needs cursor pagination in the SDK.",
+                "fileRefs": [
+                  "src/pagination.ts"
+                ],
+                "sourceBody": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+                "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+                "fingerprint": {
+                  "url": "https://github.com/caller/sdk/issues/42",
+                  "repo": "sdk",
+                  "owner": "caller",
+                  "state": "open",
+                  "title": "Update pagination contract",
+                  "labels": [
+                    "integration"
+                  ],
+                  "number": 42,
+                  "bodyBytes": 169,
+                  "updatedAt": "2026-10-02T13:45:00.000Z",
+                  "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+                }
+              },
+              "issue": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "author": "caller",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "comments": 0,
+                "createdAt": "2026-10-01T00:00:00.000Z",
+                "updatedAt": "2026-10-02T13:45:00.000Z"
+              },
+              "claims": {
+                "notDemand": true,
+                "ownerQaOnly": true,
+                "automaticPaymentReplay": false,
+                "paymentImpliesUsefulOutput": false
+              },
+              "source": {
+                "kind": "fixture",
+                "path": "caller-snapshot:issue"
+              },
+              "changed": true,
+              "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+              "transport": {
+                "bytes": 459,
+                "status": 200,
+                "elapsedMs": 0
+              },
+              "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+              "corrections": [],
+              "fingerprint": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "bodyBytes": 169,
+                "updatedAt": "2026-10-02T13:45:00.000Z",
+                "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+              }
+            },
+            "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior."
+          },
+          "directUse": {
+            "markdown": "# Work brief: Update pagination contract\n\n- Source: https://github.com/caller/sdk/issues/42\n- State: open\n- Observed clock: 2026-10-02T14:00:00.000Z\n- Content hash: sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3\n- Owner QA only (not demand)\n\n## Summary\nThe caller needs cursor pagination in the SDK.\n\n## Source constraints (untrusted issue text; not execution authority)\n    The caller needs cursor pagination in the SDK.\n    \n    Update src/pagination.ts to parse next_cursor from the response.\n    Add a regression for the final page with no next_cursor.\n\n## Proposed actions\n- [implement] Update src/pagination.ts to parse next_cursor from the response.\n- [implement] Add a regression for the final page with no next_cursor.\n\n## File references\n- `src/pagination.ts`\n",
+            "briefPathHint": "write brief JSON via --out-dir --write-artifact"
+          },
+          "scheduleHint": null
+        },
+        "schema": "samedaydesk.hosted-useful-job.v1",
+        "source": {
+          "kind": "caller_supplied_snapshots",
+          "trusted": false,
+          "inputDigest": "sha256:77ebcc33c468b29cc1d6f5eb8cb1779b9af848e431fb6c1cc8bcb3eb125b6370",
+          "networkUsed": false,
+          "paymentAttempted": false,
+          "independentlyFetched": false
+        },
+        "taskId": "receiving-pagination-brief",
+        "recipeId": "issue-to-work-brief",
+        "execution": "completed",
+        "nextPrior": {
+          "schema": "samedaydesk.recurring-job-prior.v1",
+          "sha256": "dcf6e4a4fcb067bf7a3da20d7abd86b57f33404b620e18efed5ae8b9e1762916",
+          "payload": {
+            "brief": {
+              "kind": "issue_to_work_brief",
+              "clock": "2026-10-02T14:00:00.000Z",
+              "issue": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "author": "caller",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "comments": 0,
+                "createdAt": "2026-10-01T00:00:00.000Z",
+                "updatedAt": "2026-10-02T13:45:00.000Z"
+              },
+              "claims": {
+                "notDemand": true,
+                "ownerQaOnly": true,
+                "automaticPaymentReplay": false,
+                "paymentImpliesUsefulOutput": false
+              },
+              "schema": "samedaydesk.work-brief.v1",
+              "source": {
+                "kind": "fixture",
+                "path": "caller-snapshot:issue"
+              },
+              "actions": [
+                {
+                  "kind": "implement",
+                  "text": "Update src/pagination.ts to parse next_cursor from the response."
+                },
+                {
+                  "kind": "implement",
+                  "text": "Add a regression for the final page with no next_cursor."
+                }
+              ],
+              "summary": "The caller needs cursor pagination in the SDK.",
+              "fileRefs": [
+                "src/pagination.ts"
+              ],
+              "sourceBody": "The caller needs cursor pagination in the SDK.\n\nUpdate src/pagination.ts to parse next_cursor from the response.\nAdd a regression for the final page with no next_cursor.",
+              "contentHash": "sha256:fc324bf89a8a064b86f7e452e2c792136c5c26d8632234601a95c239fa5c38b3",
+              "fingerprint": {
+                "url": "https://github.com/caller/sdk/issues/42",
+                "repo": "sdk",
+                "owner": "caller",
+                "state": "open",
+                "title": "Update pagination contract",
+                "labels": [
+                  "integration"
+                ],
+                "number": 42,
+                "bodyBytes": 169,
+                "updatedAt": "2026-10-02T13:45:00.000Z",
+                "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+              }
+            },
+            "fingerprint": {
+              "url": "https://github.com/caller/sdk/issues/42",
+              "repo": "sdk",
+              "owner": "caller",
+              "state": "open",
+              "title": "Update pagination contract",
+              "labels": [
+                "integration"
+              ],
+              "number": 42,
+              "bodyBytes": 169,
+              "updatedAt": "2026-10-02T13:45:00.000Z",
+              "bodySha256": "f92a799df0f0116f019fd538ed692c3bbc4dfb82706fad34f7b85c7d5159ee4e"
+            }
+          },
+          "payment": {
+            "attempted": false
+          },
+          "recipeId": "issue-to-work-brief",
+          "sequence": 2,
+          "createdAt": "2026-10-02T14:00:00.000Z",
+          "immutable": true
+        },
+        "inputDigest": "sha256:77ebcc33c468b29cc1d6f5eb8cb1779b9af848e431fb6c1cc8bcb3eb125b6370",
+        "measurement": {
+          "child": {
+            "bytes": 2414,
+            "limits": {
+              "deadlineMs": 25418,
+              "totalBytes": 497031,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "intake": 1032,
+              "source-read": 691,
+              "materialized-input": 691
+            },
+            "elapsedMs": 6
+          },
+          "owner": {
+            "bytes": 38342,
+            "limits": {
+              "deadlineMs": 29965,
+              "totalBytes": 524288,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "caller-io": 17517,
+              "child-stdin": 1032,
+              "http-intake": 39,
+              "child-stdout": 9703,
+              "postgres-read": 4373,
+              "child-source-io": 1382,
+              "postgres-write-arguments": 4296
+            },
+            "elapsedMs": 59
+          },
+          "reviewMs": null,
+          "adaptationMs": null,
+          "inferenceCost": null,
+          "cashMarginalCost": null,
+          "includedQuotaOpportunityCost": null
+        }
+      },
+      "directOutputMatched": true
+    },
+    {
+      "taskId": "receiving-missing-heading-check",
+      "recipeId": "comparable-record-extraction",
+      "directModuleMs": 0.55,
+      "hostedClientMs": 102.906,
+      "retainedOutputBytes": 4705,
+      "outcome": "error",
+      "ok": false,
+      "callerInput": {
+        "schema": "samedaydesk.useful-recipe-request.v1",
+        "taskId": "receiving-missing-heading-check",
+        "recipeId": "comparable-record-extraction",
+        "input": {
+          "clock": "2026-10-02T14:00:00.000Z",
+          "fields": [
+            "title",
+            "h1"
+          ],
+          "prior": {
+            "schema": "samedaydesk.recurring-job-prior.v1",
+            "recipeId": "comparable-record-extraction",
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "sequence": 1,
+            "immutable": true,
+            "payload": {
+              "records": []
+            },
+            "payment": {
+              "attempted": false
+            }
+          },
+          "sources": [
+            {
+              "id": "caller-empty-page",
+              "kind": "html",
+              "data": "<main>No title or heading supplied.</main>"
+            }
+          ]
+        }
+      },
+      "resultDigest": "sha256:61cb27f68b1419a575fd8e7e08355e1aaa2bff1719f218e0d44811edda3ed211",
+      "directRecipeResult": {
+        "ok": false,
+        "schema": "samedaydesk.recurring-job-recipe-result.v1",
+        "recipeId": "comparable-record-extraction",
+        "meta": {
+          "recipeId": "comparable-record-extraction",
+          "userBenefit": "Recurringly extract the same comparable fields from one to five public sources and keep a durable before/after record without inventing completeness.",
+          "operatorSupplies": [
+            "priorPath",
+            "sources",
+            "fields",
+            "scheduleHint",
+            "clock",
+            "horizonHours"
+          ],
+          "acceptedContracts": [
+            "samedaydesk.extract-batch.v0",
+            "explicit buyer-record mapping"
+          ]
+        },
+        "cost": {
+          "primary": {
+            "kind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+            "examples": [
+              {
+                "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                "amount": "costs_unknown",
+                "note": "no merchant fee; operator egress/CPU not priced here"
+              }
+            ]
+          },
+          "related": [
+            {
+              "kind": "sourced",
+              "asOf": "2026-09-09",
+              "source": "https://samedaydesk.com/for-agents",
+              "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+              "examples": [
+                {
+                  "item": "POST /extract/batch",
+                  "amount": "0.01 USDC listed",
+                  "note": "sourced list price only; not invoked by these recipes"
+                }
+              ]
+            },
+            {
+              "kind": "costs_unknown",
+              "asOf": "2026-09-09",
+              "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+              "examples": [
+                {
+                  "item": "local page-change compare",
+                  "amount": "costs_unknown",
+                  "note": "no merchant charge; operator compute not priced here"
+                }
+              ]
+            }
+          ]
+        },
+        "recovery": {
+          "action": "bounded_retry_then_stop",
+          "operatorNext": "Apply the recipe's bounded retry policy, then stop with the error evidence. Do not invent success or replay payment.",
+          "detail": {
+            "kind": "comparable_records",
+            "schemaHint": "samedaydesk.extract-batch.v0",
+            "summary": {
+              "total": 1,
+              "success": 0,
+              "failure": 1,
+              "changed": 0,
+              "unchanged": 0
+            },
+            "rows": [
+              {
+                "sourceKey": "caller-empty-page",
+                "status": "failure",
+                "partial": false,
+                "fields": {
+                  "title": null,
+                  "h1": null
+                },
+                "missing": [
+                  "title",
+                  "h1"
+                ],
+                "error": {
+                  "code": "empty_extract",
+                  "message": "no selected fields found"
+                },
+                "provenance": {
+                  "transport": "fixture",
+                  "path": "/tmp/sds-useful-journey-qa-MixO34/source-0.html"
+                }
+              }
+            ],
+            "comparisons": [],
+            "contentHash": "sha256:1633902c6cbba5e7770dbed172df754a25078bb76efe1f23474edc87f1a47655"
+          }
+        },
+        "outcome": "error",
+        "clock": "2026-10-02T14:00:00.000Z",
+        "scheduleHint": null,
+        "fields": [
+          "title",
+          "h1"
+        ],
+        "prior": {
+          "path": "/tmp/sds-useful-journey-qa-MixO34/negative-prior.json",
+          "sha256": "1b8b4c0b6f6ad1d32565952720bc004eeb1f188f62045e4d5525ae2af8c78432",
+          "sequence": 1,
+          "createdAt": "2026-10-02T13:00:00.000Z",
+          "immutable": true
+        },
+        "payment": {
+          "ok": true,
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "stale": {
+          "stale": false,
+          "reason": "horizon_not_supplied"
+        },
+        "evidence": {
+          "kind": "comparable_records",
+          "schemaHint": "samedaydesk.extract-batch.v0",
+          "summary": {
+            "total": 1,
+            "success": 0,
+            "failure": 1,
+            "changed": 0,
+            "unchanged": 0
+          },
+          "rows": [
+            {
+              "sourceKey": "caller-empty-page",
+              "status": "failure",
+              "partial": false,
+              "fields": {
+                "title": null,
+                "h1": null
+              },
+              "missing": [
+                "title",
+                "h1"
+              ],
+              "error": {
+                "code": "empty_extract",
+                "message": "no selected fields found"
+              },
+              "provenance": {
+                "transport": "fixture",
+                "path": "/tmp/sds-useful-journey-qa-MixO34/source-0.html"
+              }
+            }
+          ],
+          "comparisons": [],
+          "contentHash": "sha256:1633902c6cbba5e7770dbed172df754a25078bb76efe1f23474edc87f1a47655"
+        }
+      },
+      "retainedResult": {
+        "facts": {
+          "qa": "caller-input execution",
+          "settledPayment": "unobserved",
+          "sourceAccepted": false,
+          "paymentAttempted": false,
+          "earnedWorkAccepted": false,
+          "independentlyUseful": "unobserved",
+          "publicationVerified": false
+        },
+        "recipe": {
+          "ok": false,
+          "cost": {
+            "primary": {
+              "asOf": "2026-09-09",
+              "kind": "costs_unknown",
+              "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+              "examples": [
+                {
+                  "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                  "note": "no merchant fee; operator egress/CPU not priced here",
+                  "amount": "costs_unknown"
+                }
+              ]
+            },
+            "related": [
+              {
+                "asOf": "2026-09-09",
+                "kind": "sourced",
+                "source": "https://samedaydesk.com/for-agents",
+                "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+                "examples": [
+                  {
+                    "item": "POST /extract/batch",
+                    "note": "sourced list price only; not invoked by these recipes",
+                    "amount": "0.01 USDC listed"
+                  }
+                ]
+              },
+              {
+                "asOf": "2026-09-09",
+                "kind": "costs_unknown",
+                "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+                "examples": [
+                  {
+                    "item": "local page-change compare",
+                    "note": "no merchant charge; operator compute not priced here",
+                    "amount": "costs_unknown"
+                  }
+                ]
+              }
+            ]
+          },
+          "meta": {
+            "recipeId": "comparable-record-extraction",
+            "userBenefit": "Recurringly extract the same comparable fields from one to five public sources and keep a durable before/after record without inventing completeness.",
+            "operatorSupplies": [
+              "priorPath",
+              "sources",
+              "fields",
+              "scheduleHint",
+              "clock",
+              "horizonHours"
+            ],
+            "acceptedContracts": [
+              "samedaydesk.extract-batch.v0",
+              "explicit buyer-record mapping"
+            ]
+          },
+          "clock": "2026-10-02T14:00:00.000Z",
+          "prior": {
+            "path": "caller-snapshot:prior",
+            "sha256": "1b8b4c0b6f6ad1d32565952720bc004eeb1f188f62045e4d5525ae2af8c78432",
+            "sequence": 1,
+            "createdAt": "2026-10-02T13:00:00.000Z",
+            "immutable": true
+          },
+          "stale": {
+            "stale": false,
+            "reason": "horizon_not_supplied"
+          },
+          "fields": [
+            "title",
+            "h1"
+          ],
+          "schema": "samedaydesk.recurring-job-recipe-result.v1",
+          "outcome": "error",
+          "payment": {
+            "ok": true,
+            "attempted": false,
+            "replayBlocked": true,
+            "hasPriorReceipt": false
+          },
+          "evidence": {
+            "kind": "comparable_records",
+            "rows": [
+              {
+                "error": {
+                  "code": "empty_extract",
+                  "message": "no selected fields found"
+                },
+                "fields": {
+                  "h1": null,
+                  "title": null
+                },
+                "status": "failure",
+                "missing": [
+                  "title",
+                  "h1"
+                ],
+                "partial": false,
+                "sourceKey": "caller-empty-page",
+                "provenance": {
+                  "path": "caller-snapshot:source-0",
+                  "transport": "fixture"
+                }
+              }
+            ],
+            "summary": {
+              "total": 1,
+              "changed": 0,
+              "failure": 1,
+              "success": 0,
+              "unchanged": 0
+            },
+            "schemaHint": "samedaydesk.extract-batch.v0",
+            "comparisons": [],
+            "contentHash": "sha256:1633902c6cbba5e7770dbed172df754a25078bb76efe1f23474edc87f1a47655"
+          },
+          "recipeId": "comparable-record-extraction",
+          "recovery": {
+            "action": "bounded_retry_then_stop",
+            "detail": {
+              "kind": "comparable_records",
+              "rows": [
+                {
+                  "error": {
+                    "code": "empty_extract",
+                    "message": "no selected fields found"
+                  },
+                  "fields": {
+                    "h1": null,
+                    "title": null
+                  },
+                  "status": "failure",
+                  "missing": [
+                    "title",
+                    "h1"
+                  ],
+                  "partial": false,
+                  "sourceKey": "caller-empty-page",
+                  "provenance": {
+                    "path": "caller-snapshot:source-0",
+                    "transport": "fixture"
+                  }
+                }
+              ],
+              "summary": {
+                "total": 1,
+                "changed": 0,
+                "failure": 1,
+                "success": 0,
+                "unchanged": 0
+              },
+              "schemaHint": "samedaydesk.extract-batch.v0",
+              "comparisons": [],
+              "contentHash": "sha256:1633902c6cbba5e7770dbed172df754a25078bb76efe1f23474edc87f1a47655"
+            },
+            "operatorNext": "Apply the recipe's bounded retry policy, then stop with the error evidence. Do not invent success or replay payment."
+          },
+          "scheduleHint": null
+        },
+        "schema": "samedaydesk.hosted-useful-job.v1",
+        "source": {
+          "kind": "caller_supplied_snapshots",
+          "trusted": false,
+          "inputDigest": "sha256:93cfd41d00fab7492d3197b63d9aa7836baa7d18d7aec8a93853bbbd043533d1",
+          "networkUsed": false,
+          "paymentAttempted": false,
+          "independentlyFetched": false
+        },
+        "taskId": "receiving-missing-heading-check",
+        "recipeId": "comparable-record-extraction",
+        "execution": "completed",
+        "nextPrior": null,
+        "inputDigest": "sha256:93cfd41d00fab7492d3197b63d9aa7836baa7d18d7aec8a93853bbbd043533d1",
+        "measurement": {
+          "child": {
+            "bytes": 1198,
+            "limits": {
+              "deadlineMs": 25427,
+              "totalBytes": 499691,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "intake": 688,
+              "source-read": 255,
+              "materialized-input": 255
+            },
+            "elapsedMs": 5
+          },
+          "owner": {
+            "bytes": 28951,
+            "limits": {
+              "deadlineMs": 29968,
+              "totalBytes": 524288,
+              "outputBytes": 65536
+            },
+            "stages": {
+              "caller-io": 15520,
+              "child-stdin": 688,
+              "http-intake": 44,
+              "child-stdout": 3844,
+              "postgres-read": 4039,
+              "child-source-io": 510,
+              "postgres-write-arguments": 4306
+            },
+            "elapsedMs": 50
+          },
+          "reviewMs": null,
+          "adaptationMs": null,
+          "inferenceCost": null,
+          "cashMarginalCost": null,
+          "includedQuotaOpportunityCost": null
+        }
+      },
+      "directOutputMatched": true
+    }
+  ],
+  "usefulOutputs": {
+    "changedFields": 2,
+    "issueActions": 2,
+    "missingFieldsInUsefulNegative": [
+      "title",
+      "h1"
+    ],
+    "laterChangedFields": 1,
+    "retainedPriorReused": true,
+    "retrievalAfterProcessRestartMs": 15.008,
+    "exportFieldsRetained": true,
+    "laterInput": {
+      "schema": "samedaydesk.useful-recipe-request.v1",
+      "taskId": "measured-later-input",
+      "recipeId": "source-change-alert",
+      "input": {
+        "clock": "2026-10-02T15:00:00.000Z",
+        "fields": [
+          "title",
+          "h1"
+        ],
+        "current": {
+          "id": "caller-sdk-page",
+          "kind": "html",
+          "data": "<title>SDK 5.0</title><h1>Pagination contract v4</h1>"
+        },
+        "priorResult": {
+          "jobId": "wcl_c998aeda0db8143e72fd635323552f4009077d02a1a6dc152ade1449863f98c7",
+          "taskId": "receiving-sdk-release-watch",
+          "digest": "sha256:35fb4048d011ed6708cad896111a4bd93d22d247927fe64025d21f829f24a62c"
+        }
+      }
+    },
+    "laterResultDigest": "sha256:8a45a174e8e7c4ae419b2e1e53ccf1b3ffe963f3dcc8af276396bc957fe128ab",
+    "laterChanged": [
+      {
+        "after": "SDK 5.0",
+        "field": "title",
+        "before": "SDK 4.0"
+      }
+    ],
+    "originalRetainedDigestUnchanged": true
+  },
+  "effort": {
+    "automatedLaterInputAssemblyMs": 0.188,
+    "automatedLaterReviewMs": 0.125,
+    "laterClientMs": 141.541,
+    "exportClientMs": 11.15,
+    "humanRequesterReviewMs": null,
+    "manualAdaptationMs": null,
+    "measuredSavings": null,
+    "sharedResearchAndDevelopmentCost": null,
+    "contributorReviewMs": null,
+    "contributorEffortMs": null
+  },
+  "economics": {
+    "paidCalls": 0,
+    "newInferenceCalls": 0,
+    "cashMarginalCost": null,
+    "includedQuotaOpportunityCost": null,
+    "nativeSessionCost": null,
+    "settledPayment": "unobserved"
+  },
+  "facts": {
+    "qa": true,
+    "outsideCaller": false,
+    "publicWrite": false,
+    "rewardLedgerWrite": false,
+    "productionEnrollment": "conditional",
+    "publicationVerified": false,
+    "sourceAcceptedByRoot": false
+  }
+}

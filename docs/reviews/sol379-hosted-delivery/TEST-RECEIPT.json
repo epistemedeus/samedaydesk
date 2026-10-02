@@ -1,0 +1,314 @@
+{
+  "schema": "samedaydesk.sol379.receiving-tests.v1",
+  "observedAt": "2026-10-02T16:31:14.305Z",
+  "base": "685f90f6b48d9b141afc5c5dc1e2d09c839a3182",
+  "branch": "codex/sol-hosted-delivery-receiving-100379",
+  "nativeExecutableCheckpoint": "58556a5e89777569e371af2fa0d89a327d110275",
+  "runtime": "v22.22.2",
+  "remoteVM": "/home/ubuntu/root-sol-379",
+  "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "canonicalVF": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "actualAdjacentMerchant": "91fbf94786658c96c89f94e0f88b03caefd951b0",
+  "checks": [
+    {
+      "name": "baseline adapter",
+      "log": "/tmp/sol379-evidence/baseline-adapter.log",
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "82c8acae33a3138c09178c2875c6789cd41e6b4f69c93352a88418b26032c13d"
+    },
+    {
+      "name": "baseline recipes/reuse",
+      "log": "/tmp/sol379-evidence/baseline-recipes.log",
+      "tests": 121,
+      "pass": 121,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "9f7d8ef6c5e46655ac0e1c89cf6a675739ec2821b65bc0e345aec5a0e93df8cd"
+    },
+    {
+      "name": "baseline backend",
+      "log": "/tmp/sol379-evidence/baseline-backend.log",
+      "tests": 53,
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "93290396507087a80340857afab16ee90c437acf8f997e545eabc61fa720951a"
+    },
+    {
+      "name": "baseline readiness",
+      "log": "/tmp/sol379-evidence/baseline-readiness.log",
+      "tests": 127,
+      "pass": 126,
+      "fail": 1,
+      "skipped": 0,
+      "logSha256": "45ac8e28be76d2d149e9d96a2505bc03ada49a3b2610a79285860aee60fcc684"
+    },
+    {
+      "name": "unchanged detached base readiness proof",
+      "log": "/tmp/sol379-evidence/unchanged-base-readiness.log",
+      "tests": 4,
+      "pass": 3,
+      "fail": 1,
+      "skipped": 0,
+      "logSha256": "49256956d18b0104725674bd9d0280fe8a2cdeec39efc00f25f9a198a7c9eb21"
+    },
+    {
+      "name": "cumulative budget regressions before fix",
+      "log": "/tmp/sol379-evidence/budget-before.log",
+      "tests": 2,
+      "pass": 0,
+      "fail": 2,
+      "skipped": 0,
+      "logSha256": "79ec2ce47c783a0a111cb6ede6abb92618048c94b89af8dbf69e7129c35b0183"
+    },
+    {
+      "name": "caller work brief before fix",
+      "log": "/tmp/sol379-evidence/brief-before.log",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "logSha256": "eb220263c620bbbfaef27d0a1a4a6735c0a24684a7612b563cf86f16f10584f3"
+    },
+    {
+      "name": "final mounted adapter/real PG/stripped client",
+      "log": "/tmp/sol379-evidence/final-adapter.log",
+      "tests": 36,
+      "pass": 36,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "852d2784e835f7e26a0630aea6cfe0fdefccc6f5a2aa75de24993a1ad3359cac"
+    },
+    {
+      "name": "final recipes/reuse",
+      "log": "/tmp/sol379-evidence/final-recipes.log",
+      "tests": 122,
+      "pass": 122,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "6d0d2d8b57330ee2046a4d2e25518fd9d95f1c245c6a2e753871f7f070e61311"
+    },
+    {
+      "name": "broader backend with explicit disposable PG",
+      "log": "/tmp/sol379-evidence/final-backend-with-pg.log",
+      "tests": 108,
+      "pass": 108,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "03d9bd545a5d876e143872836997358e52dec6d453de9a8a0e5be6e6edf39ec0"
+    },
+    {
+      "name": "final readiness",
+      "log": "/tmp/sol379-evidence/final-readiness.log",
+      "tests": 127,
+      "pass": 127,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "b1dea9e4d5371b6cb1964d130a50132dffd0eb872dc616097accf923827a885a"
+    },
+    {
+      "name": "L08",
+      "log": "/tmp/sol379-evidence/final-l08.log",
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "592cd6862f13064a19a4324ecbfcaa0c24ff2a7d9d31104053c1353de0020f6b"
+    },
+    {
+      "name": "public predecessor integration",
+      "log": "/tmp/sol379-evidence/final-public-jobs.log",
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "6ace4ab367e81a68ca12242c88e150ff8c68e748caa2ad3231644edf9e6250b1"
+    },
+    {
+      "name": "public entry",
+      "log": "/tmp/sol379-evidence/final-public-entry.log",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "bd8dcf8dfca1e6f82c850984197fdb4acf362e7a313c8c32baf835763d70cf29"
+    },
+    {
+      "name": "real site build",
+      "result": "pass",
+      "logSha256": "07395b695889fa897395bb7892770e1d1de720b0d215bfd2698c5b0880a87fa3"
+    },
+    {
+      "name": "actual production-mode loopback startup",
+      "result": "pass",
+      "logSha256": "7309660c759c4dc2d66e31dadc4f28becb47dc467578e2bf1085170bf68bd7aa"
+    },
+    {
+      "name": "stripped direct baseline/later reuse measurement",
+      "result": "pass",
+      "logSha256": "305f273a167eed95ea2b3c15d25758aede36969dfa4ee663163c3277375438a4"
+    },
+    {
+      "name": "anonymous production inspection/acquisition",
+      "result": "pass",
+      "logSha256": "180c68ae504e8353515ae90315b2165d25fc2e7c2c87809b23639cdf88cd8d51"
+    },
+    {
+      "name": "reproducible sealed export",
+      "result": "pass",
+      "logSha256": "795a24e40eee26ffdae9ceb01de8c955035cf134bee9c63b65888b9f878caa7b"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "docs/reviews/sol379-hosted-delivery/read-only-production.mjs",
+      "sha256": "108326255372cc6c889e4858b3c8014d25c0fe293b18448747ef1c6ce71ba91d"
+    },
+    {
+      "path": "docs/reviews/sol379-hosted-delivery/startup-smoke.mjs",
+      "sha256": "f7c114989632ee69686642a35cb7c9688101a9eeeee9b06c222ba9e72ab745db"
+    },
+    {
+      "path": "server/app.js",
+      "sha256": "af49f8696bbf105e02c1a65d0bf657eca8979195381ab6af82506e9047991d81"
+    },
+    {
+      "path": "server/index.js",
+      "sha256": "2f551dcb3b546f72d23327c727e298602cb8d2d26b2a43ceda6da13685218ede"
+    },
+    {
+      "path": "server/scripts/agent-readiness/http-mcp.test.js",
+      "sha256": "7b59169a4bf327ee793f6c7d544673dca6b4883cd90f42bf24bf922e5a0d7ef1"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/client.mjs",
+      "sha256": "ea04f9a55a46e32b00ee3c408f33df57b1769438942eddfa2aa115e1dcd1ae37"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/budget.mjs",
+      "sha256": "226ea929a8bc45b287f2bad5deea50e0f1a57a84c939be05235c77c1e018271e"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/client-entry.mjs",
+      "sha256": "27da00c28315123bee20ce4a952f45a34e8452900708a716826933a8e32efb6c"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/contracts.mjs",
+      "sha256": "f847815eab7f519d969c128333d063d921bfc3d4626c4568411e7ecb15be8a0b"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/router.mjs",
+      "sha256": "f354634292ef1ecf512506c05523e4bf1fd484ee558823e0b9e8ab8ad422e507"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/service.mjs",
+      "sha256": "3c92e71aa90d157bbad8a6368c1e9bbce8e7fa04295b5a12042fb30ddebc38ff"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/patches/ROOT-MOUNT.patch",
+      "sha256": "d6b8a707fbf9da74400bc8ec720e68fe51f08b88d3dc9ddd55c350a617f41be7"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/scripts/export.mjs",
+      "sha256": "0724c495e8cbdc9d2491ce38a044f8e8878e5cb200f1c7fc8b7f05265ad395f3"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/scripts/measure-qa.mjs",
+      "sha256": "5cd404dd365b0d375984c5ec61c6608a34d78d1a590a2bd0765f0a80b971f7d5"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/bounds.test.mjs",
+      "sha256": "3f16a60e7a964fd83ccb30e059924a3c89ebe7256c5ca8117f7662177156a059"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/export.test.mjs",
+      "sha256": "8cfe8d2abad8ac383a92cf144e527e23c81f7b522c81184bd1c83a6915e9f164"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/integration.test.mjs",
+      "sha256": "8ccc02a8e0c6b42c7d50c8f9bc972567704dfeb97cf49fbabc4b9cb618b93c64"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/journey.test.mjs",
+      "sha256": "9b1d8b06438dd78c125ffc5c8dcae6e9093a7107f6c224cd35afca4e6917d336"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/server-child.mjs",
+      "sha256": "82a9ee4d16dd0833d4b13737a15df7f41fa5acbf33f003088eadb3b2e11526d0"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/support.mjs",
+      "sha256": "3cc53c5abd1eb938be808e017c2b53973a3ed4acc3915087c139155c815f4e95"
+    },
+    {
+      "path": "tools/recurring-job-recipes/lib/work-brief.mjs",
+      "sha256": "fcda0a5f5a190d816b088c8885b2abf829e090779ae6c9e5fe951da1094656b7"
+    },
+    {
+      "path": "tools/recurring-job-recipes/test/work-brief-actions.test.mjs",
+      "sha256": "efda425987bf916281f1cfd8b41f354915b772de70ace08704b872e2f90435d6"
+    },
+    {
+      "path": "tools/result-reuse/src/project.mjs",
+      "sha256": "e2de0b5a9be7432dada78120390d901d96ecc18d6fdf0b5ebd61ed38560eb22c"
+    },
+    {
+      "path": "tools/result-reuse/test/record-fields.test.mjs",
+      "sha256": "b401a4bb652af860d48a9210d5ec2fd067efebd11c6fb878a923db1c299acdbd"
+    }
+  ],
+  "sourceFileSetSha256": "fa0dbccded3c819bb3f26397873e06271d7bfa88ff9fc04d0c9304e7bb758a58",
+  "preservation": {
+    "humanClientTreeAtBase": "18f0e556b1d3970b04fed0ddf9f2fa1b04d88095",
+    "humanClientTreeAtReceiving": "18f0e556b1d3970b04fed0ddf9f2fa1b04d88095",
+    "vendorTreeAtBase": "9177d876ce68ec354dd83b797e406af01ff1dfdd",
+    "vendorTreeAtReceiving": "9177d876ce68ec354dd83b797e406af01ff1dfdd",
+    "predecessorClient": {
+      "schema": "samedaydesk.hosted-useful-client-release.v1",
+      "version": "0.1.0",
+      "sourceHead": "1d89672aca16c4ff0ec2f68249db2c908ae25d21",
+      "archive": "hosted-useful-journey-0.1.0.tar.gz",
+      "bytes": 9966,
+      "sha256": "5726bcb576445d8f32c698d9ac5cad9eb7b36907d689d4a2a7085683ab09adbd",
+      "license": "MIT",
+      "node": "22.x",
+      "dependencies": [],
+      "publicationVerified": false,
+      "productionReady": false,
+      "outsideUsefulUse": "unobserved",
+      "settledPayment": "unobserved"
+    },
+    "successorClient": {
+      "schema": "samedaydesk.hosted-useful-client-release.v1",
+      "version": "0.1.1",
+      "sourceHead": "fa4cac94758ba8d35189d09ef685130f8db5d83a",
+      "archive": "hosted-useful-journey-0.1.1.tar.gz",
+      "bytes": 10377,
+      "sha256": "84cbb35758e8466cf36dd99d804b0b4c09251b9dc4c2820239c98568b494323d",
+      "license": "MIT",
+      "node": "22.x",
+      "dependencies": [],
+      "publicationVerified": false,
+      "productionReady": false,
+      "outsideUsefulUse": "unobserved",
+      "settledPayment": "unobserved"
+    },
+    "predecessorSourceNoticeRetargeted": false
+  },
+  "facts": {
+    "disposablePostgres": true,
+    "newTables": 0,
+    "productionWrites": 0,
+    "enrollmentCalls": 0,
+    "paidCalls": 0,
+    "newInferenceCalls": 0,
+    "rewardAuthorityLedgerWrites": 0,
+    "sourceAcceptedByRoot": false,
+    "productionJourneyRoutes": false,
+    "outsideUsefulUse": "unobserved",
+    "settledPayment": "unobserved"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "schema": "samedaydesk.sol379.production-read-only.v1",
+  "observedAt": "2026-10-02T16:21:10.566Z",
+  "origin": "https://samedaydesk.com",
+  "requests": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "bytes": 127,
+      "elapsedMs": 188.112,
+      "sha256": "3086c5343a676d80faafb759502f72e4fa878899345556a8201c5e7ff18233c5",
+      "facts": {
+        "service": "samedaydesk",
+        "configured": {
+          "supabase": true,
+          "stripe": true,
+          "email": true
+        }
+      }
+    },
+    {
+      "path": "/api/correspondence/healthz",
+      "status": 200,
+      "bytes": 52,
+      "elapsedMs": 27.298,
+      "sha256": "de0ae1cca8ec8d65a259ed98d614347f2fb8f31c0ef3c51fff8889794da1005f",
+      "facts": {
+        "enabled": false,
+        "reason": "unconfigured"
+      }
+    },
+    {
+      "path": "/api/correspondence/v1/visitor-entry",
+      "status": 503,
+      "bytes": 75,
+      "elapsedMs": 26.385,
+      "sha256": "d6096b097e339fa18dea2bae82e93ab6763709d19772c161e2013e8b5a6ffe72",
+      "facts": {
+        "error": "unconfigured"
+      }
+    },
+    {
+      "path": "/api/public-readiness/healthz",
+      "status": 200,
+      "bytes": 549,
+      "elapsedMs": 85.786,
+      "sha256": "783abab2db50005d81aa55638740dcf61e204e569d13fe15d37db1d82180c16e",
+      "facts": {
+        "enabled": true
+      }
+    },
+    {
+      "path": "/.well-known/agent-card.json",
+      "status": 200,
+      "bytes": 1386,
+      "elapsedMs": 26.72,
+      "sha256": "310b92148c44332df5cf55330b3c88e8f5f6d9cd4c3daad5fee70ec734fe4717",
+      "facts": {
+        "version": "1.2.0",
+        "machineNames": [
+          "check_ai_readiness",
+          "check_agent_readiness",
+          "generate_complete_fix_pack",
+          "plan_taskmarket_delegation",
+          "browse_taskmarket_tasks",
+          "track_taskmarket_task"
+        ]
+      }
+    },
+    {
+      "path": "/api/hosted-useful/recipes",
+      "status": 404,
+      "bytes": 21,
+      "elapsedMs": 26.45,
+      "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
+      "facts": {
+        "error": "Not found"
+      }
+    },
+    {
+      "path": "/api/hosted-useful/healthz",
+      "status": 404,
+      "bytes": 21,
+      "elapsedMs": 26.276,
+      "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
+      "facts": {
+        "error": "Not found"
+      }
+    },
+    {
+      "path": "/api/hosted-useful/client",
+      "status": 404,
+      "bytes": 21,
+      "elapsedMs": 26.908,
+      "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
+      "facts": {
+        "error": "Not found"
+      }
+    },
+    {
+      "path": "/discovery/useful-jobs.json",
+      "status": 200,
+      "bytes": 7995,
+      "elapsedMs": 28.515,
+      "sha256": "be11a8e927db4c7f189320df2cd44db63ac963a1232399762dbb858e5eabb0e4",
+      "facts": {
+        "schema": "samedaydesk.for-agents.useful-jobs.v1",
+        "version": "1.4.7"
+      }
+    },
+    {
+      "path": "/for-agents/useful-jobs/catalog.json",
+      "status": 200,
+      "bytes": 9041,
+      "elapsedMs": 27.909,
+      "sha256": "de44beb3b9cfa1cc989c5771a04570d1191ca151aa26140850932afa03c8e676",
+      "facts": {
+        "schema": "useful-jobs.catalog.v1",
+        "version": "1.4.7"
+      }
+    },
+    {
+      "path": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+      "status": 200,
+      "bytes": 5255824,
+      "elapsedMs": 232.417,
+      "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec"
+    }
+  ],
+  "acquisition": {
+    "hostedJourney": false,
+    "offlinePredecessor": true,
+    "version": "1.4.7",
+    "bytes": 5255824,
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "path": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "executesHostedJobs": false
+  },
+  "budget": {
+    "elapsedMs": 812,
+    "bytes": 5283876,
+    "stages": {
+      "request": 572,
+      "http-response": 5275112,
+      "receipt-output-reservation": 8192
+    },
+    "limits": {
+      "deadlineMs": 30000,
+      "totalBytes": 8388608,
+      "outputBytes": 65536
+    }
+  },
+  "usefulNegative": {
+    "nextAction": "Root must publish the received mount/client and enroll the existing correspondence provider before a visitor can use an existing project grant for a retained job."
+  },
+  "facts": {
+    "anonymous": true,
+    "productionWrites": 0,
+    "enrollmentCalls": 0,
+    "grantsFabricated": false,
+    "assessPrepareClaimPayCalls": 0,
+    "outsideUsefulUse": "unobserved",
+    "settledPayment": "unobserved"
+  }
+}
