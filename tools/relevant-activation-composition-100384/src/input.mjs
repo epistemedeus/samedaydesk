@@ -8,7 +8,7 @@ export const CHECKPOINT_SCHEMA = 'samedaydesk.relevant-activation.continuation.v
 const ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$/;
 const TRI = ['yes', 'no', 'unknown'];
 const FACTS = ['hasUsEntity', 'hasEin', 'providerPath', 'providerRequiresUsEntity', 'providerRequiresEin', 'jurisdictionKnown', 'selectedState'];
-const CHECKPOINT_KEYS = ['schema', 'taskId', 'recipientId', 'customerKeyHash', 'recipientEmailHash', 'goalDigest', 'readinessDigest', 'taskDigest', 'phase', 'einApplicationId', 'einTermsFingerprint', 'einOrigin', 'einTransport', 'einCatalogTransport'];
+const CHECKPOINT_KEYS = ['schema', 'taskId', 'recipientId', 'customerKeyHash', 'recipientEmailHash', 'goalDigest', 'readinessDigest', 'taskDigest', 'phase', 'einApplicationId', 'einTermsFingerprint', 'einOrigin', 'einTransport', 'einCatalogTransport', 'sourceRecordsDigest'];
 
 export function only(value, keys) {
   if (!value || Object.getPrototypeOf(value) !== Object.prototype || Array.isArray(value)
@@ -111,6 +111,7 @@ export function relevance(task) {
   if (value('providerRequiresUsEntity') === 'unknown') return clarify('facts.providerRequiresUsEntity', `Does the selected ${value('providerPath')} path require a US entity? Supply its written yes/no requirement with source and provider authority.`);
   if (value('providerRequiresUsEntity') === 'no') return { category: 'technical_integration', qualified: false, reason: value('providerRequiresEin') === 'yes' ? 'ein_only_no_llc_service' : 'no_us_entity_prerequisite', documentation: value('providerRequiresEin') === 'yes' };
   if (value('hasUsEntity') === 'unknown') return clarify('facts.hasUsEntity', 'Does the operator already have a US entity for this selected path?');
-  if (value('jurisdictionKnown') !== 'yes' || value('selectedState') === 'unknown') return clarify('facts.selectedState', 'Which state has the operator selected for this new entity? Supply that decision before preparation.');
+  if (value('selectedState') === 'unknown') return clarify('facts.selectedState', 'Which state has the operator selected for this new entity? Supply that decision before preparation.');
+  if (value('jurisdictionKnown') !== 'yes') return clarify('facts.jurisdictionKnown', `Has the operator confirmed the selected ${value('selectedState')} jurisdiction for this task?`);
   return { category: 'confirmed_formation_goal', qualified: true, reason: 'operator_goal_and_sourced_selected_path_requirement', basis: ['goal', 'facts.providerPath', 'facts.providerRequiresUsEntity', 'facts.hasUsEntity', 'facts.selectedState'] };
 }

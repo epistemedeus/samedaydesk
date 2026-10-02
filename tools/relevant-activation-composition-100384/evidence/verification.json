@@ -1,0 +1,113 @@
+{
+  "schema": "samedaydesk.relevant-activation.verification.v1",
+  "native": {
+    "host": "cloud-d",
+    "model": "gpt-6.1-sol",
+    "threadId": "01a0fd5d-5b29-7610-947e-f71814f94d08",
+    "base": "1f333f33e088ffd466f8ce13fb7202e8d4e6d0b5",
+    "earlyTransferredCheckpoint": "f7b72de"
+  },
+  "callerAndPack": {
+    "tests": 9,
+    "pass": 9,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "actualEin175Backend": {
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "einBackendSource": "f380faad42638e18c31f53711001a8b567e3d273",
+  "existingSdsSuites": [
+    {
+      "command": "npm run test:l08-agent-repair",
+      "pass": 28,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run test:agent-readiness",
+      "pass": 126,
+      "fail": 1,
+      "skipped": 0,
+      "preExistingFailure": "server/scripts/agent-readiness/http-mcp.test.js:35 expects check_ai_readiness and /agent-readiness in restored human discovery copy",
+      "baselineReproduction": {
+        "source": "1f333f33e088ffd466f8ce13fb7202e8d4e6d0b5",
+        "selectedTestCount": 1,
+        "fail": 1,
+        "sameAssertion": "/check_ai_readiness/ missing from client/public/llms.txt"
+      }
+    },
+    {
+      "command": "npm run test:result-reuse",
+      "pass": 23,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test scripts/public-entry.test.mjs server/scripts/test-spa-fallback.js server/scripts/test-spa-route-shells.js server/scripts/test-hosted-startup.js",
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run build --prefix client",
+      "exitCode": 0,
+      "location": "isolated full exact SDS source copy; installed dependencies reused"
+    },
+    {
+      "command": "git apply --check CALLER-MACHINE-ENTRY.patch; isolated patched catalog generator test",
+      "pass": 1,
+      "fail": 0,
+      "nativePatchApplied": false
+    }
+  ],
+  "publicReadback": "public-readback.json",
+  "preservation": {
+    "allTrackedDiffsInsideOwnedPath": true,
+    "homepagesLocalizedCopyPricesFrozenArchivesByteIdentical": true,
+    "einAcquiredMembersByteIdentical": 39,
+    "sharedMountEdits": 0
+  },
+  "negativeControls": [
+    "model authority refused",
+    "invented fact with valid-looking operator label differs from independent receiving record",
+    "wrong source scope",
+    "changed goal even with a new received record",
+    "wrong recipient/task/caller",
+    "missing/foreign-origin/foreign-case/revoked status grant",
+    "forged completion checkpoint",
+    "prepare lost after actual commit then restart replay with one application",
+    "return reply lost then fresh same-case reread",
+    "local cancellation and aborted in-flight read",
+    "whole stdin/discovery/status deadline and cumulative response bytes",
+    "existing entity without EIN and EIN-only path: no LLC service",
+    "specific ambiguous entity prerequisite resolved from an amended receiving record"
+  ],
+  "production": {
+    "assess": false,
+    "prepare": false,
+    "claim": false,
+    "payment": false,
+    "enrollment": false,
+    "rewardAuthorityApplicationJournalWrites": false
+  },
+  "knownCosts": {
+    "paidProductionCalls": 0,
+    "sdsSuppliedReadiness": "free",
+    "einCatalogPrice": "$399 + state filing fees; only shown to qualified caller",
+    "newAccountSpendOverageReset": false
+  },
+  "unknownCosts": [
+    "state filing fees for a real reviewed case",
+    "real provider or operator costs",
+    "native inference allocation/cash cost"
+  ],
+  "outsideCustomerUsefulDelivery": "unknown",
+  "customerDemand": "unknown",
+  "customerPayment": "not_observed"
+}

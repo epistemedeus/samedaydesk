@@ -1,0 +1,185 @@
+{
+  "schema": "samedaydesk.relevant-activation.public-readback.v1",
+  "observedAt": "2026-10-02T16:40:26.465Z",
+  "execution": "native_cursor_vm_public_hosts",
+  "nativeModel": "gpt-6.1-sol",
+  "archiveReceived": "1273c33e77aadef2eececd1d1c7269ef9c9205558c223adb2982e7517d523ad2",
+  "manifestPublished": false,
+  "mutableIndexPublished": false,
+  "bytesHostedSeparatelyFromPublicationFlag": true,
+  "discovery": [
+    {
+      "transport": "http",
+      "catalogVersion": "2026-10-01",
+      "termsFingerprint": "937c969e7bd8f9dda7f2004ef33f8ee673908ea71cfde891456c8291790e5dba",
+      "contract": {
+        "operation": "http",
+        "catalog": "http",
+        "openapi": "http",
+        "cachedOfferUsed": false,
+        "offerSource": "current_catalog",
+        "requests": 2,
+        "latencyMs": 159
+      }
+    },
+    {
+      "transport": "mcp",
+      "catalogVersion": "2026-10-01",
+      "termsFingerprint": "937c969e7bd8f9dda7f2004ef33f8ee673908ea71cfde891456c8291790e5dba",
+      "contract": {
+        "operation": "mcp",
+        "catalog": "mcp",
+        "openapi": "mcp",
+        "cachedOfferUsed": false,
+        "offerSource": "current_catalog",
+        "requests": 2,
+        "latencyMs": 325
+      }
+    },
+    {
+      "transport": "a2a",
+      "catalogVersion": "2026-10-01",
+      "termsFingerprint": "937c969e7bd8f9dda7f2004ef33f8ee673908ea71cfde891456c8291790e5dba",
+      "contract": {
+        "operation": "a2a",
+        "catalog": "http",
+        "openapi": "a2a",
+        "cachedOfferUsed": false,
+        "offerSource": "current_catalog",
+        "requests": 3,
+        "latencyMs": 193
+      }
+    },
+    {
+      "transport": "a2a-rest",
+      "catalogVersion": "2026-10-01",
+      "termsFingerprint": "937c969e7bd8f9dda7f2004ef33f8ee673908ea71cfde891456c8291790e5dba",
+      "contract": {
+        "operation": "a2a-rest",
+        "catalog": "http",
+        "openapi": "a2a",
+        "cachedOfferUsed": false,
+        "offerSource": "current_catalog",
+        "requests": 3,
+        "latencyMs": 240
+      }
+    }
+  ],
+  "callers": [
+    {
+      "name": "qualifying",
+      "category": "confirmed_formation_goal",
+      "qualified": true,
+      "offer": {
+        "offerId": "llc-ein-399",
+        "priceNote": "$399 + state filing fees",
+        "timingNote": "2–3 business days for qualifying cases (not a universal SLA or guarantee)"
+      },
+      "nextAction": "operator_authorized_assess",
+      "clarificationFields": [],
+      "sameInputDirectReadiness": true,
+      "readinessDigest": "18cff44afa7814ab2ea3ecfbe507c011032c73ee98499db7cebf63e05916f5d7",
+      "findings": [
+        "seller_response_required_path_missing:data.status"
+      ],
+      "repairApplied": [
+        "data.status"
+      ],
+      "recheckCheckerOk": true,
+      "readinessClaimed": false,
+      "paymentSent": false,
+      "budget": {
+        "responseBytes": 93861,
+        "maxResponseBytes": 1048576,
+        "deadlineMs": 15000,
+        "scope": "stdin_readiness_discovery_status"
+      }
+    },
+    {
+      "name": "existing-business",
+      "category": "existing_business_setup",
+      "qualified": false,
+      "offer": null,
+      "nextAction": "continue_readiness",
+      "clarificationFields": [],
+      "sameInputDirectReadiness": true,
+      "readinessDigest": "18cff44afa7814ab2ea3ecfbe507c011032c73ee98499db7cebf63e05916f5d7",
+      "findings": [
+        "seller_response_required_path_missing:data.status"
+      ],
+      "repairApplied": [
+        "data.status"
+      ],
+      "recheckCheckerOk": true,
+      "readinessClaimed": false,
+      "paymentSent": false,
+      "budget": {
+        "responseBytes": 6596,
+        "maxResponseBytes": 1048576,
+        "deadlineMs": 15000,
+        "scope": "stdin_readiness_discovery_status"
+      }
+    },
+    {
+      "name": "ambiguous",
+      "category": "unknown_prerequisite",
+      "qualified": false,
+      "offer": null,
+      "nextAction": "clarify_prerequisite",
+      "clarificationFields": [
+        "facts.providerRequiresUsEntity"
+      ],
+      "sameInputDirectReadiness": true,
+      "readinessDigest": "18cff44afa7814ab2ea3ecfbe507c011032c73ee98499db7cebf63e05916f5d7",
+      "findings": [
+        "seller_response_required_path_missing:data.status"
+      ],
+      "repairApplied": [
+        "data.status"
+      ],
+      "recheckCheckerOk": true,
+      "readinessClaimed": false,
+      "paymentSent": false,
+      "budget": {
+        "responseBytes": 6596,
+        "maxResponseBytes": 1048576,
+        "deadlineMs": 15000,
+        "scope": "stdin_readiness_discovery_status"
+      }
+    },
+    {
+      "name": "technical",
+      "category": "technical_integration",
+      "qualified": false,
+      "offer": null,
+      "nextAction": "continue_readiness",
+      "clarificationFields": [],
+      "sameInputDirectReadiness": true,
+      "readinessDigest": "18cff44afa7814ab2ea3ecfbe507c011032c73ee98499db7cebf63e05916f5d7",
+      "findings": [
+        "seller_response_required_path_missing:data.status"
+      ],
+      "repairApplied": [
+        "data.status"
+      ],
+      "recheckCheckerOk": true,
+      "readinessClaimed": false,
+      "paymentSent": false,
+      "budget": {
+        "responseBytes": 6596,
+        "maxResponseBytes": 1048576,
+        "deadlineMs": 15000,
+        "scope": "stdin_readiness_discovery_status"
+      }
+    }
+  ],
+  "productionAssess": "not_run",
+  "productionPrepare": "not_run",
+  "productionClaim": "not_run",
+  "productionPayment": "not_run",
+  "grants": "none",
+  "callerInputs": "independently_supplied_owner_QA_records",
+  "outsideUsefulDelivery": "unknown",
+  "customerDemand": "unknown",
+  "customerPayment": "not_observed"
+}

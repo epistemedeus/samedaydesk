@@ -18,6 +18,12 @@ provider authority bound to the original task and recipient. The goal's
 intent is an explicit operator fact, not text classification. These are
 supplied assertions, not provider-document certification. `examples/` are
 owner-QA inputs; replace them with the actual caller's records for real work.
+The invoking caller separately selects an independently received source
+record through `SDS_ACTIVATION_SOURCE_RECORDS_FILE`. The adapter opens that
+owner-only file read-only, checks its scope, and requires exact goal/fact
+equality. Model-authored source/authority labels in task JSON cannot qualify
+on their own. The caller is responsible for selecting an authentic receiving
+record; matching a public example never certifies a real provider requirement.
 
 From this profile directory (or an exported archive):
 
@@ -29,6 +35,9 @@ export EIN_CONTINUATION_CUSTOMER_KEY=qa-caller-key-sol384
 export EIN_CONTINUATION_INTENDED_EMAIL=owner@example.test
 export EIN_ACTIVATION_BASE_URL=https://ein.llc
 export EIN_CONTINUATION_FILE=/tmp/sol384-ein.private.json
+cp examples/qualifying.source-record.json /tmp/sol384-sources.private.json
+chmod 600 /tmp/sol384-sources.private.json
+export SDS_ACTIVATION_SOURCE_RECORDS_FILE=/tmp/sol384-sources.private.json
 node bin/sds-activation.mjs plan < examples/qualifying.json > /tmp/sol384-plan.private.json
 ```
 
@@ -46,6 +55,7 @@ Caller command inputs are `{ "task": ..., "checkpoint": ... }`. To continue,
 retain `task` from the original input and `checkpoint` from the last result:
 
 ```sh
+node -e 'const fs = require("node:fs"); const task = JSON.parse(fs.readFileSync("examples/qualifying.json")).task; const checkpoint = JSON.parse(fs.readFileSync("/tmp/sol384-plan.private.json")).checkpoint; process.stdout.write(JSON.stringify({task, checkpoint}));' > /tmp/sol384-next.private.json
 node bin/sds-activation.mjs handoff < /tmp/sol384-next.private.json
 export EIN_AGENT_GRANT_FILE=/path/to/operator-issued-status.grant
 export EIN_AGENT_GRANT_ORIGIN=https://ein.llc
@@ -66,13 +76,20 @@ checkpoint; it does not cancel an EIN case or revoke the operator's grant.
 No-purchase examples:
 
 ```sh
-EIN_CONTINUATION_TASK_ID=qa-existing-384 node bin/sds-activation.mjs plan < examples/existing-business.json
-EIN_CONTINUATION_TASK_ID=qa-ambiguous-384 node bin/sds-activation.mjs plan < examples/ambiguous.json
-EIN_CONTINUATION_TASK_ID=qa-technical-384 node bin/sds-activation.mjs plan < examples/technical.json
+cp examples/existing-business.source-record.json /tmp/sol384-existing.sources.private.json
+chmod 600 /tmp/sol384-existing.sources.private.json
+EIN_CONTINUATION_TASK_ID=qa-existing-384 SDS_ACTIVATION_SOURCE_RECORDS_FILE=/tmp/sol384-existing.sources.private.json node bin/sds-activation.mjs plan < examples/existing-business.json
+cp examples/ambiguous.source-record.json /tmp/sol384-ambiguous.sources.private.json
+chmod 600 /tmp/sol384-ambiguous.sources.private.json
+EIN_CONTINUATION_TASK_ID=qa-ambiguous-384 SDS_ACTIVATION_SOURCE_RECORDS_FILE=/tmp/sol384-ambiguous.sources.private.json node bin/sds-activation.mjs plan < examples/ambiguous.json
+cp examples/technical.source-record.json /tmp/sol384-technical.sources.private.json
+chmod 600 /tmp/sol384-technical.sources.private.json
+EIN_CONTINUATION_TASK_ID=qa-technical-384 SDS_ACTIVATION_SOURCE_RECORDS_FILE=/tmp/sol384-technical.sources.private.json node bin/sds-activation.mjs plan < examples/technical.json
 ```
 
 Only a pending clarification permits supplied prerequisite facts to change
-under the same goal and readiness task. Once qualified, changed goals,
+under the same goal and readiness task, with the caller's amended receiving
+record supplied separately. Once qualified, changed goals,
 facts, recipients, callers, origin, transport or terms stop continuation.
 The checkpoint is not authority: return always reads the original EIN file
 and the backend's status with the existing grant.
@@ -96,3 +113,7 @@ downloads and HTTP 200 establish no customer demand, payment or savings.
 Catalog price text is returned verbatim only to a qualified task; state fees,
 operator time and real provider costs remain unknown. Root owns receiving
 the unapplied machine-entry patch, merge, publication and any external invite.
+
+`CALLER-MACHINE-ENTRY.patch` adds one optional source-candidate reference to
+the existing readiness discovery and its generator. No hosted URL or
+publication success is asserted. It is unapplied in this native branch.

@@ -1,0 +1,112 @@
+{
+  "schema": "samedaydesk.caller-source-records.v1",
+  "taskId": "qa-existing-384",
+  "recipientId": "qa-operator-384",
+  "goal": {
+    "value": "Repair the order API success contract using my existing US company and EIN.",
+    "source": {
+      "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+      "locator": "goal"
+    },
+    "authority": {
+      "kind": "operator",
+      "id": "qa-operator-384",
+      "taskId": "qa-existing-384",
+      "recipientId": "qa-operator-384"
+    },
+    "intent": "operator_setup"
+  },
+  "facts": {
+    "hasUsEntity": {
+      "value": "yes",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+        "locator": "hasUsEntity"
+      },
+      "authority": {
+        "kind": "operator",
+        "id": "qa-operator-384",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "hasEin": {
+      "value": "yes",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+        "locator": "hasEin"
+      },
+      "authority": {
+        "kind": "operator",
+        "id": "qa-operator-384",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "providerPath": {
+      "value": "qa-supplier-us-company-path",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+        "locator": "providerPath"
+      },
+      "authority": {
+        "kind": "operator",
+        "id": "qa-operator-384",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "providerRequiresUsEntity": {
+      "value": "yes",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:provider-record",
+        "locator": "providerRequiresUsEntity"
+      },
+      "authority": {
+        "kind": "provider",
+        "id": "qa-supplier-us-company-path",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "providerRequiresEin": {
+      "value": "yes",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:provider-record",
+        "locator": "providerRequiresEin"
+      },
+      "authority": {
+        "kind": "provider",
+        "id": "qa-supplier-us-company-path",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "jurisdictionKnown": {
+      "value": "yes",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+        "locator": "jurisdictionKnown"
+      },
+      "authority": {
+        "kind": "operator",
+        "id": "qa-operator-384",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    },
+    "selectedState": {
+      "value": "Wyoming",
+      "source": {
+        "uri": "urn:caller:sol384:qa-existing-384:operator-record",
+        "locator": "selectedState"
+      },
+      "authority": {
+        "kind": "operator",
+        "id": "qa-operator-384",
+        "taskId": "qa-existing-384",
+        "recipientId": "qa-operator-384"
+      }
+    }
+  }
+}

@@ -29,6 +29,10 @@ export function scopeFor(env, { signal, stdin } = {}) {
       const result = await budget.run(() => Promise.race([Promise.resolve().then(work), cancelled]), { stdin });
       check();
       return result;
+    } catch (error) {
+      if (signal?.aborted) throw fail('cancelled');
+      if (used > bytes) throw fail('body_limit');
+      throw error;
     } finally {
       signal?.removeEventListener('abort', abort);
     }

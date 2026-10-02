@@ -26,6 +26,9 @@ the JSON checkpoint is private caller state, never a credential or certified
 source. Model-generated facts are refused. Provider facts are explicitly
 supplied assertions with a cited record and scoped authority; the adapter
 does not authenticate a provider document or turn descriptions into facts.
+The separately supplied caller receiving record is selected outside task
+JSON, opened read-only as an owner-only file, and matched exactly. The
+adapter neither creates source authority nor writes to a receiving journal.
 
 `examples/` are independently supplied owner-QA tasks, not customers or
 claims about a named payment provider. A supplier's specific US-company path
