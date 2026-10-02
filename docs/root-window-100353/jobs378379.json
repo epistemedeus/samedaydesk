@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ROOT-SOL-NETWORK-REUSE-RECEIVING-100378",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "0731456f3a621b6f19975a8079d227c1134deb77",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-network-reuse-receiving-100378",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-NETWORK-REUSE-RECEIVING-100378",
+    "worktree": "/home/ubuntu/root-sol-378",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-NETWORK-REUSE-RECEIVING-100378.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  },
+  {
+    "id": "ROOT-SOL-HOSTED-DELIVERY-RECEIVING-100379",
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "base": "685f90f6b48d9b141afc5c5dc1e2d09c839a3182",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-hosted-delivery-receiving-100379",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-HOSTED-DELIVERY-RECEIVING-100379",
+    "worktree": "/home/ubuntu/root-sol-379",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-HOSTED-DELIVERY-RECEIVING-100379.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  }
+]
