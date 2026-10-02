@@ -1,0 +1,13 @@
+{
+  "schema": "ein.supplied-context.v1",
+  "task": "Complete the supplied supplier registration path that explicitly requires a US entity; EIN and state selection have not been confirmed.",
+  "business": {
+    "hasUsEntity": "no",
+    "hasEin": "unknown"
+  },
+  "requirements": {
+    "providerRequiresUsEntity": "yes",
+    "providerRequiresEin": "unknown",
+    "jurisdictionKnown": "unknown"
+  }
+}

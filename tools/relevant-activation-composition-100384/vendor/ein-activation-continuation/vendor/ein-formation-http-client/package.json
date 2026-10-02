@@ -1,0 +1,27 @@
+{
+  "name": "ein-public-http-client",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Standalone zero-dependency Node client/example for the public EIN.LLC formation HTTPS flow documented at /agents/http-quickstart. Not a private SDK; not payment or claim automation. Distributed as a static allowlisted download at /downloads/ein-formation-http-client-v0.1.0.tgz — not published to npm.",
+  "bin": {
+    "ein-http-client": "./cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "check": "node --check cli.mjs && node --check client.mjs && node --check lib/http.mjs && node --check lib/redact.mjs && node --check lib/grant.mjs"
+  },
+  "files": [
+    "cli.mjs",
+    "client.mjs",
+    "lib",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "PROVENANCE.md"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "ein.activation-continuation-acquisition.v1",
+  "name": "ein-activation-continuation",
+  "version": "0.1.3",
+  "spdxLicense": "MIT",
+  "libraryDownloadIsCustomerActivation": false,
+  "activationComplete": false,
+  "customerActivation": "not_performed",
+  "published": false,
+  "humanPagesChanged": false,
+  "dependencies": [
+    {
+      "name": "ein-formation-http-client",
+      "version": "0.1.0",
+      "spdxLicense": "MIT",
+      "vendored": "vendor/ein-formation-http-client",
+      "reviewedRuntime": "f31eba83ebb2531788a3c1fb993b5b72c8075040",
+      "runtimeDependencies": []
+    }
+  ],
+  "source": {
+    "repository": "https://github.com/epistemedeus/ein-llc-lean",
+    "baseline": "e57bee961c41bebc12a2bd3be91d7294663e344a",
+    "receivedPullRequest": 174,
+    "receivedHead": "e57bee961c41bebc12a2bd3be91d7294663e344a"
+  },
+  "amends": {
+    "package": "0.1.2",
+    "frozenArchive": "ein-activation-continuation-v0.1.2.tgz",
+    "frozenSha256": "802974d20b45d57203ce40ca995362c80bff1463b567ea034c3f42e00ff8a313"
+  },
+  "install": {
+    "runtime": "node>=22",
+    "command": "node bin/ein-continuation.mjs help",
+    "manifest": "/downloads/ein-activation-continuation-v0.1.3.json"
+  },
+  "boundaries": [
+    "Downloading or extracting this client is not a customer activation, claim, payment, or filing.",
+    "The client does not claim, pay, attest, or invent grants.",
+    "Tests, previews, traces, state, credentials, and repository context are excluded."
+  ]
+}
