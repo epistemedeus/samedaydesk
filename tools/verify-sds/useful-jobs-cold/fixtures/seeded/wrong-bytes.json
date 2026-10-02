@@ -1,0 +1,7 @@
+{
+  "id": "wrong-bytes",
+  "seededId": "wrong-bytes",
+  "command": "acquire",
+  "feature": "useful-jobs-cold",
+  "expectProductCode": "wrong-size"
+}
