@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ROOT-SOL-COMPARABLE-TASK-ROUTES-100365",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "3a5f46b6f40d97360ebe87d78efdc2f24401a326",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-comparable-task-routes-100365",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-COMPARABLE-TASK-ROUTES-100365",
+    "worktree": "/home/ubuntu/root-sol-365",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-COMPARABLE-TASK-ROUTES-100365.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  },
+  {
+    "id": "ROOT-SOL-CONTRIBUTOR-OPERATIONS-100366",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "3a5f46b6f40d97360ebe87d78efdc2f24401a326",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-contributor-operations-100366",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-CONTRIBUTOR-OPERATIONS-100366",
+    "worktree": "/home/ubuntu/root-sol-366",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-CONTRIBUTOR-OPERATIONS-100366.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  }
+]
