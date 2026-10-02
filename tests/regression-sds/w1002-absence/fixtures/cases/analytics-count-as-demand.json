@@ -1,0 +1,25 @@
+{
+  "id": "analytics-count-as-demand",
+  "surface": "evidence-records",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/evidence-records/catalog.json",
+  "expectedReasons": [
+    "absence_as_demand",
+    "analytics_count_as_demand"
+  ],
+  "defect": "Hosting/analytics counts treated as independent demand (prohibited inference analytics_count_is_independent_demand).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "evidence-records",
+    "evidenceClass": "analytics_count",
+    "analyticsCountAsDemand": true,
+    "prohibitedInference": "analytics_count_is_independent_demand",
+    "demand": true,
+    "paidDemand": true,
+    "demandCount": 412,
+    "demandSignal": "present",
+    "message": "analytics count invented as independent demand"
+  }
+}
