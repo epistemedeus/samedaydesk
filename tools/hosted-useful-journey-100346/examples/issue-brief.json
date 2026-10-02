@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.useful-recipe-request.v1",
+  "taskId": "sdk-migration-brief",
+  "recipeId": "issue-to-work-brief",
+  "input": {
+    "clock": "2026-10-02T14:00:00.000Z",
+    "prior": {
+      "schema": "samedaydesk.recurring-job-prior.v1",
+      "recipeId": "issue-to-work-brief",
+      "createdAt": "2026-10-02T13:00:00.000Z",
+      "sequence": 1,
+      "immutable": true,
+      "payload": { "fingerprint": "caller-previous-revision" },
+      "payment": { "attempted": false }
+    },
+    "issue": {
+      "number": 42,
+      "title": "Repair response-contract migration",
+      "owner": "caller",
+      "repo": "sdk",
+      "url": "https://github.com/caller/sdk/issues/42",
+      "state": "open",
+      "labels": ["integration"],
+      "body": "The SDK consumer fails when the response shape changes.\n\nFix src/consumer.ts to parse the current response schema.\nVerify the new response contract with a supplied regression case.",
+      "updatedAt": "2026-10-02T13:45:00.000Z",
+      "createdAt": "2026-10-01T00:00:00.000Z",
+      "author": "caller",
+      "comments": 0
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema": "samedaydesk.hosted-useful-qa-measurement.v1",
+  "observedAt": "2026-10-02T15:14:07.593Z",
+  "runtime": "v22.22.2",
+  "source": "actual recurring recipes + VF1652533 correspondence/VF02 Postgres adapters on a disposable local cluster",
+  "tasks": [
+    {
+      "taskId": "sdk-release-watch",
+      "recipeId": "source-change-alert",
+      "directModuleMs": 0.888,
+      "hostedClientMs": 153.962,
+      "retainedOutputBytes": 4705,
+      "outcome": "changed",
+      "ok": true
+    },
+    {
+      "taskId": "sdk-migration-brief",
+      "recipeId": "issue-to-work-brief",
+      "directModuleMs": 1.498,
+      "hostedClientMs": 107.617,
+      "retainedOutputBytes": 12789,
+      "outcome": "changed",
+      "ok": true
+    },
+    {
+      "taskId": "missing-heading-check",
+      "recipeId": "comparable-record-extraction",
+      "directModuleMs": 0.66,
+      "hostedClientMs": 104.162,
+      "retainedOutputBytes": 4695,
+      "outcome": "error",
+      "ok": false
+    }
+  ],
+  "usefulOutputs": {
+    "changedFields": 2,
+    "issueActions": 2,
+    "missingFieldsInUsefulNegative": [
+      "title",
+      "h1"
+    ],
+    "laterChangedFields": 1,
+    "retainedPriorReused": true,
+    "retrievalAfterProcessRestartMs": 15.847,
+    "exportFieldsRetained": true
+  },
+  "effort": {
+    "automatedLaterInputAssemblyMs": 0.13,
+    "automatedLaterReviewMs": 0.096,
+    "laterClientMs": 113.386,
+    "exportClientMs": 10.086,
+    "humanRequesterReviewMs": null,
+    "manualAdaptationMs": null,
+    "measuredSavings": null,
+    "sharedResearchAndDevelopmentCost": null
+  },
+  "economics": {
+    "paidCalls": 0,
+    "newInferenceCalls": 0,
+    "cashMarginalCost": null,
+    "includedQuotaOpportunityCost": null,
+    "nativeSessionCost": null,
+    "settledPayment": "unobserved"
+  },
+  "facts": {
+    "qa": true,
+    "outsideCaller": false,
+    "publicWrite": false,
+    "rewardLedgerWrite": false,
+    "productionEnrollment": "conditional",
+    "publicationVerified": false,
+    "sourceAcceptedByRoot": false
+  }
+}

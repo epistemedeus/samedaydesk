@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.useful-recipe-request.v1",
+  "taskId": "sdk-release-watch",
+  "recipeId": "source-change-alert",
+  "input": {
+    "clock": "2026-10-02T14:00:00.000Z",
+    "fields": ["title", "h1"],
+    "prior": {
+      "schema": "samedaydesk.recurring-job-prior.v1",
+      "recipeId": "source-change-alert",
+      "createdAt": "2026-10-02T13:00:00.000Z",
+      "sequence": 1,
+      "immutable": true,
+      "payload": { "fields": { "title": "SDK 1.0", "h1": "Stable API" } },
+      "payment": { "attempted": false }
+    },
+    "current": { "id": "caller-sdk-page", "kind": "html", "data": "<title>SDK 2.0</title><h1>New response contract</h1>" }
+  }
+}

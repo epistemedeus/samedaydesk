@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.useful-recipe-request.v1",
+  "taskId": "missing-heading-check",
+  "recipeId": "comparable-record-extraction",
+  "input": {
+    "clock": "2026-10-02T14:00:00.000Z",
+    "fields": ["title", "h1"],
+    "prior": {
+      "schema": "samedaydesk.recurring-job-prior.v1",
+      "recipeId": "comparable-record-extraction",
+      "createdAt": "2026-10-02T13:00:00.000Z",
+      "sequence": 1,
+      "immutable": true,
+      "payload": { "records": [] },
+      "payment": { "attempted": false }
+    },
+    "sources": [ { "id": "caller-empty-page", "kind": "html", "data": "<main>No title or heading supplied.</main>" } ]
+  }
+}

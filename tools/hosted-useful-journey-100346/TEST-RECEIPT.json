@@ -1,0 +1,200 @@
+{
+  "schema": "samedaydesk.hosted-useful-tests.v1",
+  "observedAt": "2026-10-02T15:31:23.602Z",
+  "vm": "/home/ubuntu/root-sol-346",
+  "runtime": "v22.22.2",
+  "postgres": "16",
+  "base": "1f333f33e088ffd466f8ce13fb7202e8d4e6d0b5",
+  "nativeExecutableCheckpoint": "1d89672aca16c4ff0ec2f68249db2c908ae25d21",
+  "canonicalVF": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "earnedReadOnly": "2e7403f53967c0056163c62f591eeda7f0a52c83",
+  "actualAdjacentMerchant": "91fbf94786658c96c89f94e0f88b03caefd951b0",
+  "checks": [
+    {
+      "name": "recipe/reuse baseline",
+      "command": "node --test tools/recurring-job-recipes/test/*.test.mjs tools/result-reuse/test/*.test.mjs",
+      "log": "/tmp/sol346-baseline-recipes-resolved.log",
+      "tests": 119,
+      "pass": 119,
+      "fail": 0,
+      "logSha256": "99e0d48866ce7753a2ae4ae9f83d08763dcd239d17c15e9c3eab03d4a239c67a"
+    },
+    {
+      "name": "backend baseline",
+      "command": "node --test server/scripts/test-foundry-*.js server/scripts/test-public-readiness-*.js",
+      "log": "/tmp/sol346-baseline-backend.log",
+      "tests": 42,
+      "pass": 42,
+      "fail": 0,
+      "logSha256": "a2ef42677f9d774991c207863fb3a6c4d549f695e46b56c9bec6f28bf2af30f9"
+    },
+    {
+      "name": "owning regression before fix",
+      "command": "node --test tools/result-reuse/test/record-fields.test.mjs",
+      "log": "/tmp/sol346-record-fields-before.log",
+      "tests": 2,
+      "pass": 0,
+      "fail": 2,
+      "logSha256": "f6fc2bc12187b15eec497da9a55bb318fb1859e122000e516e8feea20793767f"
+    },
+    {
+      "name": "adapter + disposable PG + Root receiving + exported cold client",
+      "command": "node --test --test-concurrency=1 tools/hosted-useful-journey-100346/test/*.test.mjs",
+      "log": "/tmp/sol346-adapter-tests.log",
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "logSha256": "7f9891dbb098de245630e01e4821f6da075500ae21b2a88dc54e7840aac81bea"
+    },
+    {
+      "name": "recipe/reuse final",
+      "command": "node --test tools/recurring-job-recipes/test/*.test.mjs tools/result-reuse/test/*.test.mjs",
+      "log": "/tmp/sol346-recipe-final.log",
+      "tests": 121,
+      "pass": 121,
+      "fail": 0,
+      "logSha256": "a38d6b02258e27f0b617f24ddc916bde3e2d54977d8ad40e7b47c7e785e92a97"
+    },
+    {
+      "name": "backend final",
+      "command": "node --test server/scripts/test-foundry-*.js server/scripts/test-hosted-startup.js server/scripts/test-public-readiness-*.js",
+      "log": "/tmp/sol346-backend-final.log",
+      "tests": 46,
+      "pass": 46,
+      "fail": 0,
+      "logSha256": "0617193ab106cc22df7735a16dca7ae997bbbf3c80467e0fddd630db6f273ff6"
+    },
+    {
+      "name": "L08 final",
+      "command": "npm run test:l08-agent-repair",
+      "log": "/tmp/sol346-l08-final.log",
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "logSha256": "95c29a6272d8d826822ae15774c009644b07dd4b9c121b20d6052182177884f0"
+    },
+    {
+      "name": "agent-readiness final",
+      "command": "npm run test:agent-readiness",
+      "log": "/tmp/sol346-readiness.log",
+      "tests": 127,
+      "pass": 126,
+      "fail": 1,
+      "inheritedFailure": "http-mcp.test.js:35 expects literal tool names in unchanged human llms.txt",
+      "logSha256": "eeaa94c7cc3ea801e8cdfd328e031ee38e20cef9ef3b31cbcc2e8b2c6f9260a7"
+    },
+    {
+      "name": "agent-readiness unchanged base proof",
+      "command": "node --test server/scripts/agent-readiness/http-mcp.test.js (disposable detached 1f333f3 worktree)",
+      "log": "/tmp/sol346-readiness-base.log",
+      "tests": 4,
+      "pass": 3,
+      "fail": 1,
+      "logSha256": "2a7cb0529136ac3e6f7221f3d47a79be7b79606ca43b42477c679968fe59dcde"
+    },
+    {
+      "name": "site build",
+      "command": "npm run build",
+      "log": "/tmp/sol346-final-build.log",
+      "result": "pass",
+      "logSha256": "6be1d2c9c58531b8aaa0042456db9d2e157a2fee02795a8781163fca4389a499"
+    },
+    {
+      "name": "sealed export after source-wrapper portability fix",
+      "command": "node --test tools/hosted-useful-journey-100346/test/export.test.mjs",
+      "log": "/tmp/sol346-export-final.log",
+      "logSha256": "baea02f314449efb45d5251e7be0678c18733d20a4956e6df6ac4fa2f0c7e6ad",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "tools/hosted-useful-journey-100346/client.mjs",
+      "sha256": "d3f2c109f7b31714d8544428fcd9331ea73546f51eaa4505b7435ff450e72cfb"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/cold-client.mjs",
+      "sha256": "aa9ea8f2bff9d12329a7471d07c1b73ffba3cdd9ec5279a1db1fd2308ade09db"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/budget.mjs",
+      "sha256": "61f1b030e6c2c121b769ad1b0fc1965d9ef5db8241e641f69ce834b416e1f38d"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/contracts.mjs",
+      "sha256": "7843c601f52dc00c168fe8a892ec6fc28b15c5db8117fb60f049a0f1116c814f"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/executor.mjs",
+      "sha256": "26064f6fca8e52c1589243edc9c75d11c7e082919b8e06269da1d1d96cfb769a"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/recipe-child.mjs",
+      "sha256": "5268b72e1e1ae94c29b249552b1eccc757c6a18d7158175903df6eea63581f3a"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/router.mjs",
+      "sha256": "2f19188dce50d4ace477bd48562aab7cead25014ea167712f16a0e2da0a27cb4"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/lib/service.mjs",
+      "sha256": "2c8c8748a2277372f5b2a6d20530718125a3627f38b6cb6e26abc466448c9a3d"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/scripts/export.mjs",
+      "sha256": "680db5e99672f16cc46f11596d00e3a7b407ed5b5dc8d369fa46fdda3ecb3f1b"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/scripts/measure-qa.mjs",
+      "sha256": "2c2de2278f40262b7564f1cbffb89b572fb9f4b3f470c85395ba6500c9a26d22"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/bounds.test.mjs",
+      "sha256": "f19fc101765029bc24a40e5f327c29a30637c0e59fe0752d98f28b71c0995808"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/export.test.mjs",
+      "sha256": "1b430ed483507b05f9a2b1920f1afb4c0fe73535f46228cb7f2fa745304ad381"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/integration.test.mjs",
+      "sha256": "81ca88439b9f6336623983e08e7cd076ed087a3a6181e76fd7f4fb70c8b92494"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/journey.test.mjs",
+      "sha256": "20b358296d488d6077525e48efefee77ae0418434171c756a24f4a7d8b785f00"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/server-child.mjs",
+      "sha256": "006f6ce16caf862602464c55634bc2d5f62f4c11567b2ea32b02eba29561c437"
+    },
+    {
+      "path": "tools/hosted-useful-journey-100346/test/support.mjs",
+      "sha256": "f47c77b258befc61590f5d800f3adbfa85e80c4a59e59f9d9fde8f9d928a9938"
+    },
+    {
+      "path": "tools/result-reuse/src/project.mjs",
+      "sha256": "e2de0b5a9be7432dada78120390d901d96ecc18d6fdf0b5ebd61ed38560eb22c"
+    },
+    {
+      "path": "tools/result-reuse/test/record-fields.test.mjs",
+      "sha256": "b401a4bb652af860d48a9210d5ec2fd067efebd11c6fb878a923db1c299acdbd"
+    }
+  ],
+  "sourceFileSetSha256": "5174a2f9284d77d9e7c0214e685165d23d480a59d149eb286d3b184c320ecf4d",
+  "qaMeasurementSha256": "1511207b02046b2e1956a8e68ec9b9dc1786818c9647a0a7ba613f4a2bb94ceb",
+  "facts": {
+    "disposableStore": true,
+    "publicWrites": 0,
+    "paidCalls": 0,
+    "newInferenceCalls": 0,
+    "rewardLedgerWrites": 0,
+    "sourceAcceptedByRoot": false,
+    "productionEnrollment": "conditional",
+    "publicationVerified": false,
+    "outsideUsefulUse": "unobserved",
+    "settledPayment": "unobserved"
+  }
+}
