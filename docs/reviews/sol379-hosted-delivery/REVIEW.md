@@ -1,6 +1,6 @@
 # Receiving decisions
 
-The exported0.1.0 client and original346 receipts remain historical immutable
+The exported 0.1.0 client and original 346 receipts remain historical immutable
 evidence. Their native source SHA is retained even when GitHub uses a different
 commit wrapper. The new client is needed because executable budget transport
 changed. Its source pin identifies committed client bytes, and export fails if
@@ -29,11 +29,11 @@ The source work-brief parser omitted ordinary Update/Add instructions. The new
 caller case reproduced zero actions; its owning regression now preserves both
 actions and the untrusted original source body. No code or instruction execution
 authority is derived from that body. The projection regression remains at its
-original owner and is included in the122 recipe/reuse checks.
+original owner and is included in the 122 recipe/reuse checks.
 
 The inherited readiness assertion required literal MCP tool names plus an
 unpublished agent-readiness URL in human discovery files. It fails on detached
-unchanged685f90f6. The corrected owner verifies actual tools/list, agent card and
+unchanged 685f90f6. The corrected owner verifies actual tools/list, agent card and
 verifier equality and the existing MCP/for-agents/llms discovery links. No human
 file was changed to satisfy the stale assertion.
 

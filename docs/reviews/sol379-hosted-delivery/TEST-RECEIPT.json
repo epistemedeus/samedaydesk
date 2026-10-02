@@ -305,10 +305,12 @@
     "enrollmentCalls": 0,
     "paidCalls": 0,
     "newInferenceCalls": 0,
-    "rewardAuthorityLedgerWrites": 0,
     "sourceAcceptedByRoot": false,
     "productionJourneyRoutes": false,
     "outsideUsefulUse": "unobserved",
-    "settledPayment": "unobserved"
+    "settledPayment": "unobserved",
+    "liveAuthorityLedgerWrites": 0,
+    "isolatedAuthorityFixtures": true,
+    "rewardLedgerWrites": 0
   }
 }

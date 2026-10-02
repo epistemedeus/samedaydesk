@@ -56,7 +56,7 @@ An absent authorized connection remains a publication/enrollment condition.
    migrates. Follow the owning
    [ACTIVATION.md](../../../server/foundry/activation/ACTIVATION.md), not an HTTP
    service-key substitution or a fabricated enrollment record. None of this
-   production step was performed by379.
+   production step was performed by 379.
 3. After the existing installation receipt is true, Root sets the serving
    `FOUNDRY_HOST_OPT_IN=1`, `HOSTED_USEFUL_JOURNEY_OPT_IN=1`,
    `CORRESPONDENCE_STORE=postgres`, `CORRESPONDENCE_PG_SCHEMA=pilot_correspondence`,
@@ -98,7 +98,7 @@ acquisition remain public, admission returns 503, and all existing receipts,
 grants and cells remain. The owning foundry opt-out is separate. No data drop,
 reset, price change, purchase, paid route call or outreach is needed.
 
-Today's next real visitor action is to acquire the already public offline1.4.7
+Today's next real visitor action is to acquire the already public offline 1.4.7
 package from `/discovery/useful-jobs.json` and use caller-owned files. The retained
 hosted journey becomes a visitor action only after Root's publication and existing
 authority enrollment. Source receiving and production hosting remain separate.
