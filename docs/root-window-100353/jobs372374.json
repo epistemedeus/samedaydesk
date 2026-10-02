@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ROOT-SOL-REUSE-RECEIVING-100372",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "08eb7fb8b5d8971b48bad11a0c626bbc5db9f41e",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-reuse-receiving-100372",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-REUSE-RECEIVING-100372",
+    "worktree": "/home/ubuntu/root-sol-372",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-REUSE-RECEIVING-100372.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  },
+  {
+    "id": "ROOT-SOL-CAPABILITY-BUDGET-100374",
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "base": "3a5f46b6f40d97360ebe87d78efdc2f24401a326",
+    "effort": "max",
+    "model": "gpt-6.1-sol",
+    "branch": "codex/sol-capability-budget-100374",
+    "root": "/home/ubuntu/root-sol-window100337/ROOT-SOL-CAPABILITY-BUDGET-100374",
+    "worktree": "/home/ubuntu/root-sol-374",
+    "prompt": "/home/ubuntu/root-sol-context100337/dispatch/ROOT-SOL-CAPABILITY-BUDGET-100374.md",
+    "cli": "/home/ubuntu/toolchain/codex-native/node_modules/.bin/codex"
+  }
+]
