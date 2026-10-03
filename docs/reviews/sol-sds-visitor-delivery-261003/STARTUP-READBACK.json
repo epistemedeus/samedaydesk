@@ -1,10 +1,10 @@
 {
   "schema": "samedaydesk.visitor-delivery.actual-startup.v1",
-  "observedAt": "2026-10-03T11:33:03.661Z",
+  "observedAt": "2026-10-03T11:44:29.882Z",
   "command": "NODE_ENV=production node server/index.js",
   "runtime": "v22.22.2",
   "loopback": true,
-  "processId": 1095467,
+  "processId": 1126294,
   "builtHomepage": true,
   "existingMcpNames": [
     "check_ai_readiness",
@@ -86,7 +86,7 @@
   "admissionEnabled": false,
   "cleanSigtermExit": true,
   "budget": {
-    "elapsedMs": 360,
+    "elapsedMs": 335,
     "bytes": 177446,
     "stages": {
       "startup-diagnostics": 48,

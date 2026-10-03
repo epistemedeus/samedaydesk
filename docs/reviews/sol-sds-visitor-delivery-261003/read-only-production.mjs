@@ -43,12 +43,21 @@ await get("/api/public-readiness/healthz");
 await get("/.well-known/agent-card.json");
 await get("/api/hosted-useful/recipes");
 await get("/api/hosted-useful/healthz");
-await get("/api/hosted-useful/client");
+const hostedMetadata = await get("/api/hosted-useful/client");
 await get("/discovery/task-readiness.json");
-await get("/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz", 131072);
+const activationArchive = await get("/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz", 131072);
 const discovery = await get("/discovery/useful-jobs.json");
 await get("/for-agents/useful-jobs/catalog.json");
-let acquisition = { hostedJourney: false, offlinePredecessor: false };
+let acquisition = { hostedJourney: false, offlinePredecessor: false,
+  activationCaller: activationArchive?.row.status === 200 && activationArchive.bytes.length === 68369
+    && hash(activationArchive.bytes) === "994ffe92d532c309a1f0b99f20ffcffc6a0c01846f44054f782c0f3ff7744c5b" };
+if (hostedMetadata?.row.status === 200 && hostedMetadata.json?.version === "0.1.1"
+    && hostedMetadata.json?.sha256 === "84cbb35758e8466cf36dd99d804b0b4c09251b9dc4c2820239c98568b494323d"
+    && hostedMetadata.json?.archiveUrl === "/api/hosted-useful/client/archive") {
+  const archive = await get(hostedMetadata.json.archiveUrl);
+  acquisition.hostedJourney = archive?.row.status === 200 && archive.bytes.length === 10377
+    && hash(archive.bytes) === hostedMetadata.json.sha256;
+}
 if (discovery?.row.status === 200) {
   const manifest = discovery.json;
   const declaredBytes = manifest?.archive?.bytes;
