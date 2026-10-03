@@ -1,0 +1,16 @@
+{
+  "schema": "samedaydesk.paid-batch-reconciler.request.v1",
+  "runner": "useful-jobs",
+  "items": [
+    {
+      "id": "fallback",
+      "engineId": "vendor-budget-impact",
+      "files": {
+        "before": "../caller/vendor-budget-impact/before.json",
+        "after": "../caller/vendor-budget-impact/after.json"
+      },
+      "funding": "reserved-fixture",
+      "payment": "../payment/reserved-fixture.json"
+    }
+  ]
+}

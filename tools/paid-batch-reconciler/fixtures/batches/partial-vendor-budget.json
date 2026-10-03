@@ -1,0 +1,24 @@
+{
+  "schema": "samedaydesk.paid-batch-reconciler.request.v1",
+  "items": [
+    {
+      "id": "ok-caller-pair",
+      "engineId": "vendor-budget-impact",
+      "files": {
+        "before": "../caller/vendor-budget-impact/before.json",
+        "after": "../caller/vendor-budget-impact/after.json"
+      },
+      "funding": "reserved-fixture",
+      "payment": "../payment/reserved-fixture.json"
+    },
+    {
+      "id": "missing-after",
+      "engineId": "vendor-budget-impact",
+      "files": {
+        "before": "../caller/vendor-budget-impact/before.json"
+      },
+      "funding": "reserved-fixture",
+      "payment": "../payment/reserved-fixture.json"
+    }
+  ]
+}
