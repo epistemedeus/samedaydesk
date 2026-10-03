@@ -1,0 +1,483 @@
+{
+  "schemaVersion": "samedaydesk.w901-402-matrix.v1",
+  "recordSchemaVersion": "samedaydesk.w901-402-matrix.unpaid.v1",
+  "product": "samedaydesk-verify-sds",
+  "pack": "w901-402-matrix",
+  "wave": "w901",
+  "statusClasses": [
+    "unpaid"
+  ],
+  "kinds": [
+    "unpaid_payment_required"
+  ],
+  "pin": {
+    "origin": "https://agents.samedaydesk.com",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "decimals": 6,
+    "assetSymbol": "USDC"
+  },
+  "inTreeCatalog": {
+    "path": "fixtures/presence/catalog/x402.json",
+    "lastUpdated": 1788454976,
+    "x402Version": 2,
+    "itemCount": 23
+  },
+  "uniqueAmounts": [
+    {
+      "amountAtomic": "2000",
+      "amountDisplayUsd": "0.002",
+      "routeCount": 2
+    },
+    {
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "routeCount": 5
+    },
+    {
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "routeCount": 5
+    },
+    {
+      "amountAtomic": "20000",
+      "amountDisplayUsd": "0.02",
+      "routeCount": 1
+    },
+    {
+      "amountAtomic": "50000",
+      "amountDisplayUsd": "0.05",
+      "routeCount": 4
+    },
+    {
+      "amountAtomic": "100000",
+      "amountDisplayUsd": "0.1",
+      "routeCount": 2
+    },
+    {
+      "amountAtomic": "200000",
+      "amountDisplayUsd": "0.2",
+      "routeCount": 1
+    },
+    {
+      "amountAtomic": "250000",
+      "amountDisplayUsd": "0.25",
+      "routeCount": 3
+    }
+  ],
+  "routes": [
+    {
+      "route": "/extract",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/read",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/read?url=https%3A%2F%2Fexample.com",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/scan",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/scan?repo=owner%2Fname",
+      "amountAtomic": "200000",
+      "amountDisplayUsd": "0.2",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/schemaforge",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/schemaforge?city=Austin&site=https%3A%2F%2Fexample-clinic.com&vertical=med-spas",
+      "amountAtomic": "250000",
+      "amountDisplayUsd": "0.25",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/enrich",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/enrich?domain=stripe.com",
+      "amountAtomic": "50000",
+      "amountDisplayUsd": "0.05",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/wallet-enrich",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/wallet-enrich?address=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "amountAtomic": "50000",
+      "amountDisplayUsd": "0.05",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/deep-audit",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/deep-audit?city=San+Francisco&domain=stripe.com&vertical=fintech",
+      "amountAtomic": "250000",
+      "amountDisplayUsd": "0.25",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/defi/morpho-position",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-position?address=0x4352Cc849b33a936Ad93bB109aFDec1c89653b4f&shocks=-10%2C-20%2C-30",
+      "amountAtomic": "20000",
+      "amountDisplayUsd": "0.02",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/defi/morpho-protection",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-protection?address=0x4352Cc849b33a936Ad93bB109aFDec1c89653b4f&executionBufferBps=25&protectAgainstShockPct=-10&targetHealthFactor=1.25",
+      "amountAtomic": "100000",
+      "amountDisplayUsd": "0.1",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/defi/morpho-market-underwrite",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-market-underwrite?marketId=0xbd9754505799c229af1b85a02e4f5cda74603411ba7edb585025eefd7ef9e5f4",
+      "amountAtomic": "250000",
+      "amountDisplayUsd": "0.25",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/defi/morpho-preliquidation-replay",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-preliquidation-replay?transactionHash=0xa8d73ec64db7a9e801ab78956133db0799e54e1a9c4a58231cd31ec3b90d9dc6",
+      "amountAtomic": "100000",
+      "amountDisplayUsd": "0.1",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/work/opportunity-preflight",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/work/opportunity-preflight?acceptance=discretionary&agentAccess=agent_allowed&competition=80&computeUsd=0.5&hourlyCostUsd=4&hours=0.25&mandatorySpendUsd=0&platform=taskmarket&reusableValueUsd=1&rewardUsd=10&selectionProbabilityPct=2&settlement=escrow&slots=1",
+      "amountAtomic": "50000",
+      "amountDisplayUsd": "0.05",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/distribution/agent-discoverability-audit",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/distribution/agent-discoverability-audit?expectedPriceUsd=0.005&intent=extract+a+public+web+page+into+structured+JSON+metadata+headings+links+and+JSON-LD&origin=https%3A%2F%2Fagents.samedaydesk.com&payTo=0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee&route=%2Fextract&runtimeUrl=https%3A%2F%2Fagents.samedaydesk.com%2Fextract%3Furl%3Dhttps%253A%252F%252Fexample.com",
+      "amountAtomic": "50000",
+      "amountDisplayUsd": "0.05",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/commerce/payment-offer-preflight",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/commerce/payment-offer-preflight?url=https%3A%2F%2Fagents.samedaydesk.com%2Fdefi%2Fmorpho-position%3Faddress%3D0x8ee9c15c3e5332cbc6ef39a2bb036c63c6549b6e",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/commerce/settlement-proof",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/commerce/settlement-proof?amountAtomic=5000&payer=0x990CC4f469dfe854c16C601c7B8eE6534B267f17&recipient=0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee&transactionHash=0xcfcbb367fecf27052db9ca855e5146e99cacbce1cab94f20f9f95a74170a8987",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/chain/transaction-receipt",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/chain/transaction-receipt?network=base&transactionHash=0xcfcbb367fecf27052db9ca855e5146e99cacbce1cab94f20f9f95a74170a8987",
+      "amountAtomic": "2000",
+      "amountDisplayUsd": "0.002",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/chain/solana-transaction-receipt",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/chain/solana-transaction-receipt?mint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&signature=3CjY38avdggKZbKfu2BmFYN4MUTiiNX27c8dHzPW79PrAx3huB9Pa6AfwW6sT4biax3y22z8toyLzmjtCc2QGNZn",
+      "amountAtomic": "2000",
+      "amountDisplayUsd": "0.002",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/security/wallet-policy-conformance",
+      "method": "POST",
+      "resource": "https://agents.samedaydesk.com/security/wallet-policy-conformance",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/security/stateful-wallet-policy-conformance",
+      "method": "POST",
+      "resource": "https://agents.samedaydesk.com/security/stateful-wallet-policy-conformance",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&referral=r1_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/commerce/contract-qualified-search",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/commerce/contract-qualified-search?limit=5&maxPriceDisplayUnits=0.1&query=service+domain+ownership+code+provenance&requiredPaths=data.sourceRepository",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/distribution/agent-surface-budget-audit",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit?mcpBudgetBytes=65536&mcpPath=%2Fmcp&openApiBudgetBytes=524288&openApiPath=%2Fopenapi.json&origin=https%3A%2F%2Fagents.samedaydesk.com&surfaceMode=both",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    },
+    {
+      "route": "/gateway/commerce/payment-offer-preflight",
+      "method": "GET",
+      "resource": "https://agents.samedaydesk.com/gateway/commerce/payment-offer-preflight?url=https%3A%2F%2Fagents.samedaydesk.com%2Fdefi%2Fmorpho-position%3Faddress%3D0x8ee9c15c3e5332cbc6ef39a2bb036c63c6549b6e",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 604900,
+      "extra": {
+        "name": "GatewayWalletBatched",
+        "version": "1",
+        "verifyingContract": "0x77777777Dcc4d5A8B6E418Fd04D8997ef11000eE"
+      }
+    }
+  ],
+  "knownStaleListings": [
+    {
+      "id": "stale-listed-amount",
+      "surface": "bazaar",
+      "route": "/read",
+      "method": "GET",
+      "listedAmountAtomic": "50000",
+      "catalogAmountAtomic": "5000",
+      "listedAmountDisplayUsd": "0.05",
+      "catalogAmountDisplayUsd": "0.005",
+      "note": "Bazaar listed /read amount 50000 vs origin catalog 5000."
+    }
+  ],
+  "designatedSeed": {
+    "id": "bad-amount",
+    "file": "invalid/stale-listed-amount.json",
+    "code": "stale_listed_amount",
+    "naiveRule": "statusClass-unpaid",
+    "aliases": ["stale-listed-amount"]
+  },
+  "designatedSeeds": [
+    {
+      "id": "bad-amount",
+      "file": "invalid/stale-listed-amount.json",
+      "code": "stale_listed_amount",
+      "naiveRule": "statusClass-unpaid",
+      "aliases": ["stale-listed-amount"]
+    },
+    {
+      "id": "bad-status",
+      "file": "invalid/http-200-as-unpaid.json",
+      "code": "bad_status",
+      "naiveRule": "statusClass-unpaid",
+      "aliases": ["http-200-as-unpaid"]
+    },
+    {
+      "id": "forged-settle",
+      "file": "invalid/forged-settle.json",
+      "code": "forged_settle",
+      "naiveRule": "statusClass-unpaid",
+      "aliases": []
+    }
+  ],
+  "requiredProhibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery",
+    "amount_mismatch_is_unpaid_match"
+  ],
+  "boundary": {
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "neoAttached": false,
+    "live": false,
+    "statement": "w901 unpaid SDS 402 matrix. Catalog atomic amounts are the pin. HTTP 402 is not settlement. A stale listed amount, non-402 status labeled unpaid, or forged settle is rejected."
+  }
+}
