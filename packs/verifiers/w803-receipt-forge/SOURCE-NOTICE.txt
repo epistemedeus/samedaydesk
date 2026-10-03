@@ -1,0 +1,29 @@
+SameDayDesk local pack. Offline unpaid receipt-forge verification only.
+Does not pay, publish, fetch, or call neo.
+
+Committed SDS artifacts this pack cold-pins (read-only, never rewritten):
+
+  fixtures/presence/catalog/x402.json
+    GET /extract accepts[0] amount 5000, scheme exact, network eip155:8453,
+    payTo 0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee,
+    asset 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+    blob 2290b15377882062e9fc457ae5a4dbb422eca631 @ main 775051602d91f42ca1aa920054cfd7a451982940
+
+  fixtures/verified-feed/observations/extract-current.json
+    HTTP 402 unpaid extract observation, same accept pin
+    blob 7deee4111492d3ccb64923f55b478f4d81f6c243
+
+  tools/evidence-records/fixtures/settlements/agent402-external-validation-purchase-2026-08-29.json
+    transaction 0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7
+    bound to GET /commerce/seller-integrity-audit, amountUsdc 0.010
+    blob 44ef9db02012d9c8996c281b29795009559f71c3
+    A matching digest is not chain settlement. This pack does not fetch or re-settle.
+
+  fixtures/buyer-runtimes/coinbase-x402/states/stop.json
+    Buyer stop before PAYMENT-SIGNATURE / facilitator settle
+    blob 193005276a566927c84d0d3dc3c2619e39a7c87b
+
+Wave family: SDS receipt-forge reject. Prior drafts include
+packs/verifiers/receipt-forge-w7, packs/verifiers/w823-receipt-forge,
+packs/verifiers/w903-receipt-forge, and packs/verifiers/w1123-receipt-forge.
+This pack is the w803 write boundary.
