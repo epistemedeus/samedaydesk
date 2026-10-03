@@ -2,7 +2,7 @@ import { sha256Hex, stableStringify } from "./hash.mjs";
 import { issueFingerprint } from "./github-issue.mjs";
 
 const ACTION_PATTERNS = [
-  { re: /\b(fix|patch|extend|give|restore|prerender)\b/i, kind: "implement" },
+  { re: /\b(fix|patch|extend|give|restore|prerender|update|add)\b/i, kind: "implement" },
   { re: /\b(res\.status\(404\)|canonical|og:url|catch-all)\b/i, kind: "defect" },
   { re: /\b(measure|confirm|verify|check)\b/i, kind: "verify" },
 ];

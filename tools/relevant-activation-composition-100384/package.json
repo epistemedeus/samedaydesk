@@ -1,0 +1,14 @@
+{
+  "name": "@samedaydesk/relevant-activation-caller",
+  "version": "0.1.1",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/unit.test.mjs test/pack.test.mjs",
+    "test:backend": "node --experimental-strip-types --test --test-concurrency=1 test/backend.test.mjs",
+    "readback": "node scripts/public-readback.mjs",
+    "pack": "node scripts/pack.mjs"
+  }
+}

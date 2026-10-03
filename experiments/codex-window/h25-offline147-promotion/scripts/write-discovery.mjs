@@ -3,7 +3,7 @@
  * Write public discovery JSON from the live kit + machineEntry cold-start.
  * Keeps install/coldStart identical to USEFUL_JOBS_COLD_START.
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import KIT from "../../../../client/src/data/usefulJobsKit.json" with { type: "json" };
@@ -20,6 +20,8 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../../..");
 const out = resolve(root, "client/public/discovery/useful-jobs.json");
+const hostedEntry = JSON.parse(readFileSync(resolve(root, "tools/hosted-useful-journey-100346/entry.json"), "utf8"));
+const hostedRelease = JSON.parse(readFileSync(resolve(root, "tools/hosted-useful-journey-100346/successors/0.1.1/release.json"), "utf8"));
 
 const discovery = {
   schema: "samedaydesk.for-agents.useful-jobs.v1",
@@ -68,6 +70,19 @@ const discovery = {
   acquireTools: [...USEFUL_JOBS_ACQUIRE_TOOLS],
   runtime: USEFUL_JOBS_RUNTIME,
   freeOffline: true,
+  hostedJourney: {
+    entryRoute: hostedEntry.entryRoute,
+    evaluationRoute: hostedEntry.evaluationRoute,
+    clientEntry: hostedEntry.clientEntry,
+    clientArchive: hostedEntry.clientArchive,
+    version: hostedRelease.version,
+    bytes: hostedRelease.bytes,
+    sha256: hostedRelease.sha256,
+    admission: hostedEntry.admission,
+    publicationVerified: false,
+    productionReady: false,
+    activationContinuation: "/discovery/task-readiness.json",
+  },
   note: [
     "Free local package. Paid hosted extract on /for-agents stays a separate product and is not started by these jobs.",
     "No new public paid HTTP merchant route is claimed.",

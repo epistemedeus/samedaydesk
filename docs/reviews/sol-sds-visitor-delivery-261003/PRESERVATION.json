@@ -1,0 +1,26 @@
+{
+  "observedAt": "2026-10-03T11:36:02.668349+00:00",
+  "base": "1f333f33e088ffd466f8ce13fb7202e8d4e6d0b5",
+  "protectedFilesVerified": 659,
+  "humanClientAndFrozenArchivesUnchanged": true,
+  "canonicalVendorAndFoundryUnchanged": true,
+  "receivedFrozenArchives": [
+    {
+      "pin": "19bf598369de000a3dd78ff2401f9e3cc957e662",
+      "path": "tools/hosted-useful-journey-100346/successors/0.1.0/hosted-useful-journey-0.1.0.tar.gz"
+    },
+    {
+      "pin": "19bf598369de000a3dd78ff2401f9e3cc957e662",
+      "path": "tools/hosted-useful-journey-100346/successors/0.1.1/hosted-useful-journey-0.1.1.tar.gz"
+    },
+    {
+      "pin": "eb5d95f4f5d3d63c2c815151ac2891181bb96bc5",
+      "path": "tools/relevant-activation-composition-100384/export/relevant-activation-caller-0.1.0.tgz"
+    }
+  ],
+  "machineChanges": [
+    "client/public/discovery/task-readiness.json",
+    "client/public/discovery/useful-jobs.json",
+    "client/public/for-agents/relevant-activation/"
+  ]
+}

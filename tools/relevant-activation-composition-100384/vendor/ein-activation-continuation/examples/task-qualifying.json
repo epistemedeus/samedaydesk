@@ -1,0 +1,10 @@
+{
+  "goal": "Accept card payments for a software product",
+  "hasUsEntity": "no",
+  "hasEin": "no",
+  "jurisdictionKnown": "yes",
+  "selectedState": "Wyoming",
+  "providerRequiresUsEntity": "yes",
+  "providerRequiresEin": "yes",
+  "foreignOwnedCaution": false
+}

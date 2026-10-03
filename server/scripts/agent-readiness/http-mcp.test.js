@@ -32,16 +32,28 @@ async function get(port, path, headers) {
   return { status: response.status, headers: response.headers, text };
 }
 
-test("tool inventory is the only list behind MCP, the agent card, llms.txt, and the sitemap", () => {
+test("MCP, the agent card and verifier share the current inventory; discovery documents link to their interfaces", async () => {
   assert.deepEqual([...APEX_TOOLS], [...MCP_TOOL_NAMES]);
   const card = apexAgentCard();
   assert.deepEqual(card.skills.map((skill) => skill.id), [...MCP_TOOL_NAMES]);
   assert.equal(card.skills.some((skill) => skill.id === "check_agent_readiness"), true);
   const llms = readFileSync(join(repo, "client/public/llms.txt"), "utf8");
   const sitemap = readFileSync(join(repo, "client/public/sitemap.xml"), "utf8");
-  for (const name of MCP_TOOL_NAMES) assert.match(llms, new RegExp(name));
-  assert.match(llms, /\/agent-readiness/);
-  assert.match(sitemap, /<loc>https:\/\/samedaydesk\.com\/agent-readiness<\/loc>/);
+  // llms.txt describes interfaces and points readers to live MCP inventory.
+  // It does not freeze literal machine names into human copy.
+  assert.match(llms, /\(https:\/\/samedaydesk\.com\/mcp\)/);
+  assert.match(llms, /\(https:\/\/samedaydesk\.com\/for-agents\)/);
+  assert.match(sitemap, /<loc>https:\/\/samedaydesk\.com\/llms\.txt<\/loc>/);
+  const server = http.createServer(createSdsApp());
+  const port = await listen(server);
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/mcp`, {
+      method: "POST", headers: { "content-type": "application/json", accept: "application/json, text/event-stream" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 379, method: "tools/list", params: {} }),
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual((await response.json()).result.tools.map(tool => tool.name), [...MCP_TOOL_NAMES]);
+  } finally { await close(server); }
 });
 
 test("the page renders the score, the check table, the top fixes, and the fix pack", async () => {

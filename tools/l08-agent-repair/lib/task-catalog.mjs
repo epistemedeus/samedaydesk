@@ -1,7 +1,8 @@
 // Machine catalog for the task-specific check. No human page and no score.
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+const callerRelease = JSON.parse(readFileSync(new URL("../../relevant-activation-composition-100384/export/relevant-activation-caller-0.1.1.json", import.meta.url), "utf8"));
 import { NEO230, PIN_SOURCES, S14_PIN, STALE_NEO } from "./pins.mjs";
 import { ALLOWED_FIXTURES } from "./public-adapter.mjs";
 
@@ -23,6 +24,30 @@ export function catalogDocument() {
     privateGitRequired: false,
     paid: false,
     humanPageAdded: false,
+    callerComposition: {
+      "schema": "samedaydesk.relevant-activation.entry.v1",
+      "sourcePath": "tools/relevant-activation-composition-100384",
+      "license": "MIT",
+      "mode": "caller-held",
+      "command": "node tools/relevant-activation-composition-100384/bin/sds-activation.mjs plan",
+      "inputSchema": "samedaydesk.relevant-activation.task.v1",
+      "sourceCandidate": true,
+      "publicAcquisition": false,
+      "hostedArchive": {
+        "path": `/for-agents/relevant-activation/${callerRelease.archive}`,
+        "version": "0.1.1",
+        "bytes": callerRelease.bytes,
+        "sha256": callerRelease.sha256,
+        "sourceHead": callerRelease.sourcePin,
+        "publicationVerified": false,
+        "command": `node ${callerRelease.name}/bin/sds-activation.mjs plan`
+      },
+      "formationRequiredForReadiness": false,
+      "qualification": "exact sourced operator goal and selected-path prerequisite; model and keywords refused",
+      "returnsThrough": "existing application-scoped status grant",
+      "productionFormationMutations": false,
+      "humanPagesChanged": false
+    },
     coldStart: [
       "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
       "node tools/l08-agent-repair/cold-client.mjs task-readiness",

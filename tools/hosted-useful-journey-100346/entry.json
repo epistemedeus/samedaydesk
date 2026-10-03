@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.hosted-useful-journey-entry.v1",
+  "version": "0.1.1",
+  "entryRoute": "/api/hosted-useful/recipes",
+  "evaluationRoute": "/api/hosted-useful/evaluate",
+  "admission": "enrolled Postgres and existing project-scoped grant required",
+  "clientEntry": "/api/hosted-useful/client",
+  "clientArchive": "/api/hosted-useful/client/archive",
+  "clientArtifact": "successors/0.1.1/hosted-useful-journey-0.1.1.tar.gz",
+  "license": "MIT",
+  "runtime": "Node 22.x",
+  "sourceAcceptance": "pending Root independent receiving",
+  "publicationVerified": false,
+  "productionReady": false,
+  "outsideUsefulUse": "unobserved",
+  "settledPayment": "unobserved",
+  "sharedMountPatch": "patches/ROOT-MOUNT.patch",
+  "nextOwner": "Root: receive tested source, publish the existing mount/client, enroll the recorded correspondence provider, verify production and observe a real visitor task"
+}

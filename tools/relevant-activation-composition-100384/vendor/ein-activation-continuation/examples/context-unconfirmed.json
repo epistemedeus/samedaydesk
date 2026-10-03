@@ -1,0 +1,12 @@
+{
+  "schema": "ein.supplied-context.v1",
+  "task": "Build a document comparison tool for the supplied project.",
+  "business": {
+    "hasUsEntity": "no",
+    "hasEin": "no"
+  },
+  "requirements": {
+    "providerRequiresUsEntity": "unknown",
+    "providerRequiresEin": "unknown"
+  }
+}

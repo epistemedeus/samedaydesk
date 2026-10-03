@@ -1,0 +1,10 @@
+{
+  "goal": "Accept Stripe for a SaaS product",
+  "hasUsEntity": "no",
+  "hasEin": "no",
+  "providerRequiresUsEntity": "yes",
+  "providerRequiresEin": "yes",
+  "selectedState": "Wyoming",
+  "foreignOwnedCaution": false
+}
+

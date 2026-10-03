@@ -1,0 +1,178 @@
+{
+  "schema": "samedaydesk.visitor-delivery.receiving-tests.v1",
+  "observedAt": "2026-10-03T11:42:29.882609+00:00",
+  "base": "1f333f33e088ffd466f8ce13fb7202e8d4e6d0b5",
+  "testedSource": "02b514cf1c47a1d690670029c5c84c7024a9e4cb",
+  "testedTree": "c9fca29c34d9c297f1bb9981caff87ef841dc25a",
+  "runtime": "v22.22.2",
+  "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "nativeSession": "01a10179-1fbd-7630-9557-dd00515939ba",
+  "nativeModel": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "checks": [
+    {
+      "name": "baseline-readiness",
+      "tests": 127,
+      "pass": 126,
+      "fail": 1,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "5938538936b5958c20bf84e105d61f81b2aa8c069d1c2c0f506e8d4f8dd337c0",
+      "log": "/tmp/sds-visitor-261003-logs/baseline-readiness.log"
+    },
+    {
+      "name": "baseline-merchant-input",
+      "tests": 6,
+      "pass": 1,
+      "fail": 4,
+      "skipped": 1,
+      "cancelled": 0,
+      "logSha256": "5a1aeb6a622494d1bfb6e960a35a096df85caddb7213ea3edfa6d3acfb11d4b9",
+      "log": "/tmp/sds-visitor-261003-logs/baseline-merchant-input.log"
+    },
+    {
+      "name": "correction-before",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "c56ced2e0a714f63530dbbdf8f265d291b78c7f800bb66a421df619e55f1ad40",
+      "log": "/tmp/sds-visitor-261003-logs/correction-before.log"
+    },
+    {
+      "name": "pending-before",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "19961f73d884ee7e9984fe5e23870125dfda80ca830f06ee80673381ca1a9644",
+      "log": "/tmp/sds-visitor-261003-logs/pending-before.log"
+    },
+    {
+      "name": "hosted-final",
+      "tests": 38,
+      "pass": 38,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "fb83b786beec72253a84e2308cca5620b879cc08d9c6c74cb6f61c9bb2dead19",
+      "log": "/tmp/sds-visitor-261003-logs/hosted-final.log"
+    },
+    {
+      "name": "activation-final",
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "3c5e23469e10f98a0094973c5c169be7f784e78094d42aea929ce3976028ccf6",
+      "log": "/tmp/sds-visitor-261003-logs/activation-final.log"
+    },
+    {
+      "name": "readiness-final",
+      "tests": 127,
+      "pass": 127,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "3385a5a0f3a870c9630c7ae4f0428f55f16db82188d6b271e693b9b455c27fa6",
+      "log": "/tmp/sds-visitor-261003-logs/readiness-final.log"
+    },
+    {
+      "name": "l08-final",
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "bdd8e691d927f3ad39fa8ba3202a9b5d17774857d37d62afb8cce4e80a9f4826",
+      "log": "/tmp/sds-visitor-261003-logs/l08-final.log"
+    },
+    {
+      "name": "backend-final",
+      "tests": 97,
+      "pass": 97,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "d4b6d90369f2fc8ed8dbfa9beec0ce97cde897f27ee6d6377925ba8d175b4df8",
+      "log": "/tmp/sds-visitor-261003-logs/backend-final.log"
+    },
+    {
+      "name": "foundry-real-process",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "13d1cefa4721ad20b1659543a388b6131db5f01ca13055bc3406cafe470d95d5",
+      "log": "/tmp/sds-visitor-261003-logs/foundry-real-process.log"
+    },
+    {
+      "name": "recipes-reuse-public-final",
+      "tests": 154,
+      "pass": 154,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "07e84f060d55ac466308a049319572ae027e0bd709138527fbf09bc740133c87",
+      "log": "/tmp/sds-visitor-261003-logs/recipes-reuse-public-final.log"
+    },
+    {
+      "name": "offline-immutability",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "bf5313b99d1d20f9376de44b7461e53850f9134111031bf83768218faf17fe20",
+      "log": "/tmp/sds-visitor-261003-logs/offline-immutability.log"
+    },
+    {
+      "name": "final-combined",
+      "tests": 471,
+      "pass": 471,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "dd99d0f48671a2bb87329e35e21fab030e6d12f8fc7940c141bdffb937be4a5a",
+      "log": "/tmp/sds-visitor-261003-logs/final-combined.log"
+    }
+  ],
+  "finalCommand": "SOL384_EIN_SOURCE=/tmp/sds-visitor-261003-ein-current SDS_VISITOR_TEST_LOG=/tmp/sds-visitor-261003-logs/final-combined.log node docs/reviews/sol-sds-visitor-delivery-261003/verify-local.mjs",
+  "finalRunner": {
+    "exitCode": 0,
+    "expired": false,
+    "disposablePostgres": true,
+    "files": 61
+  },
+  "fixtureSources": {
+    "ein": "9b71db2a00b96f1b2ffa8165d1e19cd0e0edfc42",
+    "einLocation": "/tmp/sds-visitor-261003-ein-current",
+    "merchant": "015f07d5a75d02a4e74709b17b2b1176501e92a5",
+    "merchantLocation": "/tmp/merchant-input/x402-url-extractor",
+    "canonicalVF": "1652533b1823ac33b86591ec4e931a8c4ea4aa97"
+  },
+  "nonTestChecks": [
+    {
+      "name": "build-final",
+      "command": "npm run build",
+      "result": "pass",
+      "logSha256": "f9fdb7e73274133ed6ce6366359ef6ef674df6b9a17da56ed29e04f64abc0049"
+    },
+    {
+      "name": "startup-final",
+      "command": "node docs/reviews/sol-sds-visitor-delivery-261003/startup-smoke.mjs",
+      "result": "pass",
+      "logSha256": "5f86b806be59aabae72393a8375ee351c5425fe4f17e07ccf7c28dea3375bc25"
+    },
+    {
+      "name": "hosted-export",
+      "command": "node tools/hosted-useful-journey-100346/scripts/export.mjs",
+      "result": "pass",
+      "logSha256": "795a24e40eee26ffdae9ceb01de8c955035cf134bee9c63b65888b9f878caa7b"
+    }
+  ]
+}

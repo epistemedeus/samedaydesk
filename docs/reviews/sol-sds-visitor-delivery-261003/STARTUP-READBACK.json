@@ -1,0 +1,106 @@
+{
+  "schema": "samedaydesk.visitor-delivery.actual-startup.v1",
+  "observedAt": "2026-10-03T11:44:29.882Z",
+  "command": "NODE_ENV=production node server/index.js",
+  "runtime": "v22.22.2",
+  "loopback": true,
+  "processId": 1126294,
+  "builtHomepage": true,
+  "existingMcpNames": [
+    "check_ai_readiness",
+    "check_agent_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "requests": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "bytes": 130
+    },
+    {
+      "path": "/api/correspondence/healthz",
+      "status": 200,
+      "bytes": 52
+    },
+    {
+      "path": "/api/hosted-useful/healthz",
+      "status": 200,
+      "bytes": 130
+    },
+    {
+      "path": "/api/public-readiness/healthz",
+      "status": 200,
+      "bytes": 549
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 12633
+    },
+    {
+      "path": "/mcp",
+      "status": 200,
+      "bytes": 162
+    },
+    {
+      "path": "/mcp",
+      "status": 200,
+      "bytes": 5708
+    },
+    {
+      "path": "/api/uploads/signed-url",
+      "status": 501,
+      "bytes": 31
+    },
+    {
+      "path": "/discovery/useful-jobs.json",
+      "status": 200,
+      "bytes": 8563
+    },
+    {
+      "path": "/discovery/task-readiness.json",
+      "status": 200,
+      "bytes": 3408
+    },
+    {
+      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz",
+      "status": 200,
+      "bytes": 68369
+    }
+  ],
+  "client": {
+    "version": "0.1.1",
+    "bytes": 10377,
+    "sha256": "84cbb35758e8466cf36dd99d804b0b4c09251b9dc4c2820239c98568b494323d"
+  },
+  "callerArchive": {
+    "version": "0.1.1",
+    "bytes": 68369,
+    "sha256": "994ffe92d532c309a1f0b99f20ffcffc6a0c01846f44054f782c0f3ff7744c5b",
+    "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz"
+  },
+  "publicSuppliedEvaluation": true,
+  "admissionEnabled": false,
+  "cleanSigtermExit": true,
+  "budget": {
+    "elapsedMs": 335,
+    "bytes": 177446,
+    "stages": {
+      "startup-diagnostics": 48,
+      "http-response": 123644,
+      "http-request": 1140,
+      "hosted-work": 48518,
+      "receipt-output-reservation": 4096
+    },
+    "limits": {
+      "deadlineMs": 30000,
+      "totalBytes": 524288,
+      "outputBytes": 65536
+    }
+  },
+  "productionHostingVerified": false,
+  "productionWrites": 0
+}

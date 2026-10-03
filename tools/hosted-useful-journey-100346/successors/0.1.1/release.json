@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.hosted-useful-client-release.v1",
+  "version": "0.1.1",
+  "sourceHead": "fa4cac94758ba8d35189d09ef685130f8db5d83a",
+  "archive": "hosted-useful-journey-0.1.1.tar.gz",
+  "bytes": 10377,
+  "sha256": "84cbb35758e8466cf36dd99d804b0b4c09251b9dc4c2820239c98568b494323d",
+  "license": "MIT",
+  "node": "22.x",
+  "dependencies": [],
+  "publicationVerified": false,
+  "productionReady": false,
+  "outsideUsefulUse": "unobserved",
+  "settledPayment": "unobserved"
+}

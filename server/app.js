@@ -25,6 +25,7 @@ import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
+import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -78,6 +79,10 @@ app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captu
 //     besides a truthful disabled healthz under the prefix.
 const correspondence = mountCorrespondence(app, options.correspondence || {});
 app.set("s51Correspondence", correspondence);
+
+// Bounded raw intake before the global parser. Admission needs enrolled PG;
+// anonymous snapshot evaluation and current publication facts remain separate.
+app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedUsefulJourney || {}));
 
 // 2) Everything else parses JSON normally.
 app.use(express.json({ limit: "1mb" }));

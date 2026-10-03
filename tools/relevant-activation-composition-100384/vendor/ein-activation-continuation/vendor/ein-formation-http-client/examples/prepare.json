@@ -1,0 +1,11 @@
+{
+  "intendedEmail": "owner@example.com",
+  "preparation": {
+    "goal": "Accept Stripe for a SaaS product",
+    "jurisdiction": "Wyoming",
+    "existingEntityStatus": "none",
+    "assessmentOutcome": "required_for_selected_path",
+    "providerPath": "stripe"
+  }
+}
+
