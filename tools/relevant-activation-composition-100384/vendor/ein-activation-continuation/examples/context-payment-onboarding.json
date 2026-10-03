@@ -1,0 +1,14 @@
+{
+  "schema": "ein.supplied-context.v1",
+  "task": "Complete the supplied payment-provider company onboarding path; its selected US merchant path requires a US entity and EIN.",
+  "business": {
+    "hasUsEntity": "no",
+    "hasEin": "no"
+  },
+  "requirements": {
+    "providerRequiresUsEntity": "yes",
+    "providerRequiresEin": "yes",
+    "jurisdictionKnown": "yes",
+    "selectedState": "Wyoming"
+  }
+}

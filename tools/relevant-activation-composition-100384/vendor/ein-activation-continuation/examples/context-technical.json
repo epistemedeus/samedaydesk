@@ -1,0 +1,12 @@
+{
+  "schema": "ein.supplied-context.v1",
+  "task": "Run the existing API sandbox integration with technical credentials.",
+  "business": {
+    "hasUsEntity": "no",
+    "hasEin": "no"
+  },
+  "requirements": {
+    "providerRequiresUsEntity": "no",
+    "providerRequiresEin": "no"
+  }
+}

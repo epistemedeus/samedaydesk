@@ -10,5 +10,9 @@ const server = app.listen(port, "0.0.0.0", () => {
 });
 bindListenerLifecycle(server, async () => {
   const handle = app.get("s51Correspondence");
-  if (handle?.close) await handle.close();
+  try {
+    await app.get("s346HostedUsefulJourney")?.close();
+  } finally {
+    if (handle?.close) await handle.close();
+  }
 });

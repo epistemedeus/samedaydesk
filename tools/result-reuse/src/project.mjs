@@ -180,7 +180,7 @@ function compactRecord(envelope, selected) {
     networkUsed: envelope.networkUsed,
   };
   if (selected.has("records")) {
-    out.records = (envelope.records || []).map(compactRecordRow);
+    out.records = (envelope.records || []).map((row) => compactRecordRow(row, selected));
   }
   if (selected.has("invalidRecords")) {
     out.invalidRecords = (envelope.invalidRecords || []).map((row) => ({
@@ -226,10 +226,14 @@ function compactFailedRow(row) {
   };
 }
 
-function compactRecordRow(row) {
+function compactRecordRow(row, selected) {
   return {
     status: row.status,
     source: publicOrOmit(row.source),
+    // `fields` is already a reviewed selection. Keep the useful record payload
+    // before the common recursive scrubber and 32KiB payload bound run.
+    ...(selected.has("fields") && row.fields && typeof row.fields === "object"
+      ? { fields: row.fields } : {}),
   };
 }
 

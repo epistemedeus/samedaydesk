@@ -1,0 +1,18 @@
+{
+  "name": "ein-activation-continuation",
+  "version": "0.1.3",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Portable caller-owned continuation for the public EIN.LLC formation HTTP flow: discover, assess, bound prepare, human claim link, and grant-scoped status. Not a payment client and not an npm package.",
+  "bin": {
+    "ein-continuation": "./bin/ein-continuation.mjs"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test --test-concurrency=1 test/*.test.mjs",
+    "check": "node --check bin/ein-continuation.mjs && node --check src/*.mjs && node --check scripts/*.mjs"
+  }
+}

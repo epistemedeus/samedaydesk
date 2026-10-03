@@ -11,6 +11,30 @@
   "privateGitRequired": false,
   "paid": false,
   "humanPageAdded": false,
+  "callerComposition": {
+    "schema": "samedaydesk.relevant-activation.entry.v1",
+    "sourcePath": "tools/relevant-activation-composition-100384",
+    "license": "MIT",
+    "mode": "caller-held",
+    "command": "node tools/relevant-activation-composition-100384/bin/sds-activation.mjs plan",
+    "inputSchema": "samedaydesk.relevant-activation.task.v1",
+    "sourceCandidate": true,
+    "publicAcquisition": false,
+    "hostedArchive": {
+      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.0.tgz",
+      "version": "0.1.0",
+      "bytes": 67835,
+      "sha256": "1ebdb38651dbae3262d8d5306ae35f4fb8bd3c2cf3cbea167c41834e3da7a781",
+      "sourceHead": "eb5d95f4f5d3d63c2c815151ac2891181bb96bc5",
+      "publicationVerified": false,
+      "command": "node relevant-activation-caller-0.1.0/bin/sds-activation.mjs plan"
+    },
+    "formationRequiredForReadiness": false,
+    "qualification": "exact sourced operator goal and selected-path prerequisite; model and keywords refused",
+    "returnsThrough": "existing application-scoped status grant",
+    "productionFormationMutations": false,
+    "humanPagesChanged": false
+  },
   "coldStart": [
     "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
     "node tools/l08-agent-repair/cold-client.mjs task-readiness"
