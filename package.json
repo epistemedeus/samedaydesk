@@ -7,6 +7,8 @@
     "node": "22.x"
   },
   "scripts": {
+    "test:hosted-useful-visitor": "node --test --test-concurrency=1 tools/hosted-useful-journey-100346/test/*.test.mjs",
+    "test:relevant-activation": "node --experimental-strip-types --test --test-concurrency=1 tools/relevant-activation-composition-100384/test/*.test.mjs",
     "dev": "concurrently -k -n server,client -c green,cyan \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "node --watch --env-file=.env server/index.js",
     "dev:client": "npm --prefix client run dev",

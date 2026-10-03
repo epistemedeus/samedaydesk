@@ -44,6 +44,8 @@ await get("/.well-known/agent-card.json");
 await get("/api/hosted-useful/recipes");
 await get("/api/hosted-useful/healthz");
 await get("/api/hosted-useful/client");
+await get("/discovery/task-readiness.json");
+await get("/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz", 131072);
 const discovery = await get("/discovery/useful-jobs.json");
 await get("/for-agents/useful-jobs/catalog.json");
 let acquisition = { hostedJourney: false, offlinePredecessor: false };

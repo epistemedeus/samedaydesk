@@ -27,7 +27,7 @@ try {
     child.once("exit", () => reject(Error("startup_failed")));
     child.once("error", reject);
   }), budget);
-  async function request(path, body) {
+  async function request(path, body, maxBytes = budget.outputBytes) {
     const controller = new AbortController();
     try {
       const encoded = body === undefined ? undefined : JSON.stringify(body);
@@ -35,7 +35,7 @@ try {
       const response = await within(fetch(`${origin}${path}`, { method: body ? "POST" : "GET",
         headers: body ? { "content-type": "application/json", accept: "application/json, text/event-stream" } : {},
         body: encoded, redirect: "manual", signal: controller.signal }), budget, 0, () => controller.abort());
-      const bytes = await readResponse(response, budget);
+      const bytes = await readResponse(response, budget, maxBytes);
       requests.push({ path, status: response.status, bytes: bytes.length });
       return { status: response.status, bytes, json: () => JSON.parse(bytes) };
     } finally { controller.abort(); }
@@ -65,6 +65,18 @@ try {
   const archive = await readResponse(archiveReply, budget); controller.abort();
   assert.equal(createHash("sha256").update(archive).digest("hex"), entry.sha256);
   assert.equal(archive.length, entry.bytes);
+  const usefulDiscovery = (await request('/discovery/useful-jobs.json')).json();
+  assert.equal(usefulDiscovery.hostedJourney.clientEntry, '/api/hosted-useful/client');
+  assert.equal(usefulDiscovery.hostedJourney.sha256, entry.sha256);
+  assert.equal(usefulDiscovery.hostedJourney.productionReady, false);
+  const taskDiscovery = (await request('/discovery/task-readiness.json')).json();
+  const caller = taskDiscovery.callerComposition.hostedArchive;
+  assert.equal(caller.version, '0.1.1');
+  const callerArchive = await request(caller.path, undefined, 131072);
+  assert.equal(callerArchive.status, 200);
+  assert.equal(callerArchive.bytes.length, caller.bytes);
+  assert.equal(createHash('sha256').update(callerArchive.bytes).digest('hex'), caller.sha256);
+  assert.equal(caller.publicationVerified, false);
   const supplied = JSON.parse(await within(readFile(new URL("../../../tools/hosted-useful-journey-100346/examples/issue-brief.json", import.meta.url)), budget));
   supplied.taskId = "production-mode-loopback-supplied-brief";
   const evaluated = await client.evaluate(supplied);
@@ -78,6 +90,7 @@ try {
   const receipt = { schema: "samedaydesk.visitor-delivery.actual-startup.v1", observedAt: new Date().toISOString(),
     command: "NODE_ENV=production node server/index.js", runtime: process.version, loopback: true, processId: child.pid,
     builtHomepage: true, existingMcpNames: MCP_TOOL_NAMES, requests, client: { version: entry.version, bytes: entry.bytes, sha256: entry.sha256 },
+    callerArchive: { version: caller.version, bytes: caller.bytes, sha256: caller.sha256, path: caller.path },
     publicSuppliedEvaluation: true, admissionEnabled: false, cleanSigtermExit: true, budget: budget.snapshot(),
     productionHostingVerified: false, productionWrites: 0 };
   const output = JSON.stringify(receipt, null, 2) + "\n";

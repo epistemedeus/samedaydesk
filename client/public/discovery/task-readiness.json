@@ -21,13 +21,13 @@
     "sourceCandidate": true,
     "publicAcquisition": false,
     "hostedArchive": {
-      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.0.tgz",
-      "version": "0.1.0",
-      "bytes": 67835,
-      "sha256": "1ebdb38651dbae3262d8d5306ae35f4fb8bd3c2cf3cbea167c41834e3da7a781",
-      "sourceHead": "eb5d95f4f5d3d63c2c815151ac2891181bb96bc5",
+      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz",
+      "version": "0.1.1",
+      "bytes": 68369,
+      "sha256": "994ffe92d532c309a1f0b99f20ffcffc6a0c01846f44054f782c0f3ff7744c5b",
+      "sourceHead": "b529cf9266d63c4c0a0408d402ead2570022a50a",
       "publicationVerified": false,
-      "command": "node relevant-activation-caller-0.1.0/bin/sds-activation.mjs plan"
+      "command": "node relevant-activation-caller-0.1.1/bin/sds-activation.mjs plan"
     },
     "formationRequiredForReadiness": false,
     "qualification": "exact sourced operator goal and selected-path prerequisite; model and keywords refused",

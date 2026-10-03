@@ -1,14 +1,14 @@
 {
-  "schema": "samedaydesk.sol379.production-read-only.v1",
-  "observedAt": "2026-10-03T11:23:25.233Z",
+  "schema": "samedaydesk.visitor-delivery.production-read-only.v1",
+  "observedAt": "2026-10-03T11:33:54.323Z",
   "origin": "https://samedaydesk.com",
   "requests": [
     {
       "path": "/api/health",
       "status": 200,
       "bytes": 127,
-      "elapsedMs": 174.039,
-      "sha256": "0ec9c8fb456a38f4c4b0d7f19095ee1f3045e1ad0ec9f3361599f70b9f8d95c5",
+      "elapsedMs": 126.884,
+      "sha256": "519f3b715c37058ca913b09427ae577297e2e9cf14ef09a27176cc181e874b2b",
       "facts": {
         "service": "samedaydesk",
         "configured": {
@@ -22,7 +22,7 @@
       "path": "/api/correspondence/healthz",
       "status": 200,
       "bytes": 52,
-      "elapsedMs": 49.851,
+      "elapsedMs": 51.657,
       "sha256": "de0ae1cca8ec8d65a259ed98d614347f2fb8f31c0ef3c51fff8889794da1005f",
       "facts": {
         "enabled": false,
@@ -33,7 +33,7 @@
       "path": "/api/correspondence/v1/visitor-entry",
       "status": 503,
       "bytes": 75,
-      "elapsedMs": 48.788,
+      "elapsedMs": 70.041,
       "sha256": "d6096b097e339fa18dea2bae82e93ab6763709d19772c161e2013e8b5a6ffe72",
       "facts": {
         "error": "unconfigured"
@@ -43,7 +43,7 @@
       "path": "/api/public-readiness/healthz",
       "status": 200,
       "bytes": 549,
-      "elapsedMs": 97.028,
+      "elapsedMs": 94.474,
       "sha256": "783abab2db50005d81aa55638740dcf61e204e569d13fe15d37db1d82180c16e",
       "facts": {
         "enabled": true
@@ -53,7 +53,7 @@
       "path": "/.well-known/agent-card.json",
       "status": 200,
       "bytes": 1386,
-      "elapsedMs": 50.41,
+      "elapsedMs": 53.143,
       "sha256": "310b92148c44332df5cf55330b3c88e8f5f6d9cd4c3daad5fee70ec734fe4717",
       "facts": {
         "version": "1.2.0",
@@ -71,7 +71,7 @@
       "path": "/api/hosted-useful/recipes",
       "status": 404,
       "bytes": 21,
-      "elapsedMs": 48.179,
+      "elapsedMs": 51.713,
       "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
       "facts": {
         "error": "Not found"
@@ -81,7 +81,7 @@
       "path": "/api/hosted-useful/healthz",
       "status": 404,
       "bytes": 21,
-      "elapsedMs": 54.203,
+      "elapsedMs": 48.85,
       "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
       "facts": {
         "error": "Not found"
@@ -91,17 +91,34 @@
       "path": "/api/hosted-useful/client",
       "status": 404,
       "bytes": 21,
-      "elapsedMs": 53.87,
+      "elapsedMs": 53.69,
       "sha256": "c8d3eae160a892e32837db3dcae515e843e5383fef52b8141940c8bcf8b6d59f",
       "facts": {
         "error": "Not found"
       }
     },
     {
+      "path": "/discovery/task-readiness.json",
+      "status": 200,
+      "bytes": 2258,
+      "elapsedMs": 21.907,
+      "sha256": "c00fff1497fe90c981b91f039768651ca8d7d4ce801d4be2fda48684298cab12",
+      "facts": {
+        "schema": "samedaydesk.acquisition-discovery.v1"
+      }
+    },
+    {
+      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz",
+      "status": 404,
+      "bytes": 10,
+      "elapsedMs": 52.215,
+      "sha256": "493fda53120050f85836032324409be6c6484f90a0755ae0c6a673ba7626818b"
+    },
+    {
       "path": "/discovery/useful-jobs.json",
       "status": 200,
       "bytes": 7995,
-      "elapsedMs": 49.199,
+      "elapsedMs": 50.059,
       "sha256": "be11a8e927db4c7f189320df2cd44db63ac963a1232399762dbb858e5eabb0e4",
       "facts": {
         "schema": "samedaydesk.for-agents.useful-jobs.v1",
@@ -112,7 +129,7 @@
       "path": "/for-agents/useful-jobs/catalog.json",
       "status": 200,
       "bytes": 9041,
-      "elapsedMs": 59.436,
+      "elapsedMs": 47.931,
       "sha256": "de44beb3b9cfa1cc989c5771a04570d1191ca151aa26140850932afa03c8e676",
       "facts": {
         "schema": "useful-jobs.catalog.v1",
@@ -123,7 +140,7 @@
       "path": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
       "status": 200,
       "bytes": 5255824,
-      "elapsedMs": 210.518,
+      "elapsedMs": 220.184,
       "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec"
     }
   ],
@@ -137,11 +154,11 @@
     "executesHostedJobs": false
   },
   "budget": {
-    "elapsedMs": 972,
-    "bytes": 5283876,
+    "elapsedMs": 1019,
+    "bytes": 5286288,
     "stages": {
-      "request": 572,
-      "http-response": 5275112,
+      "request": 716,
+      "http-response": 5277380,
       "receipt-output-reservation": 8192
     },
     "limits": {

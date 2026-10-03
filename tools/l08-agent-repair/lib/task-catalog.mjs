@@ -1,7 +1,8 @@
 // Machine catalog for the task-specific check. No human page and no score.
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+const callerRelease = JSON.parse(readFileSync(new URL("../../relevant-activation-composition-100384/export/relevant-activation-caller-0.1.1.json", import.meta.url), "utf8"));
 import { NEO230, PIN_SOURCES, S14_PIN, STALE_NEO } from "./pins.mjs";
 import { ALLOWED_FIXTURES } from "./public-adapter.mjs";
 
@@ -33,13 +34,13 @@ export function catalogDocument() {
       "sourceCandidate": true,
       "publicAcquisition": false,
       "hostedArchive": {
-        "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.0.tgz",
-        "version": "0.1.0",
-        "bytes": 67835,
-        "sha256": "1ebdb38651dbae3262d8d5306ae35f4fb8bd3c2cf3cbea167c41834e3da7a781",
-        "sourceHead": "eb5d95f4f5d3d63c2c815151ac2891181bb96bc5",
+        "path": `/for-agents/relevant-activation/${callerRelease.archive}`,
+        "version": "0.1.1",
+        "bytes": callerRelease.bytes,
+        "sha256": callerRelease.sha256,
+        "sourceHead": callerRelease.sourcePin,
         "publicationVerified": false,
-        "command": "node relevant-activation-caller-0.1.0/bin/sds-activation.mjs plan"
+        "command": `node ${callerRelease.name}/bin/sds-activation.mjs plan`
       },
       "formationRequiredForReadiness": false,
       "qualification": "exact sourced operator goal and selected-path prerequisite; model and keywords refused",
