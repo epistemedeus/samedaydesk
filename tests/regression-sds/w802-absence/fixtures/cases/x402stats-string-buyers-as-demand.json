@@ -1,0 +1,20 @@
+{
+  "id": "x402stats-string-buyers-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/x402stats.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "series_buyers_as_unique_humans"
+  ],
+  "defect": "Unlabeled: x402stats paidCustomers as a numeric string with no paidDemand/*AsDemand flags.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "sourceId": "x402stats",
+    "paidCustomers": "1200",
+    "message": "numeric-string x402stats series buyers treated as unique-human paid demand"
+  }
+}

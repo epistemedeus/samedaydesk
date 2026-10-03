@@ -1,0 +1,31 @@
+{
+  "id": "nested-claims-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/contract.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "x402scan_unavailable_as_demand"
+  ],
+  "defect": "Unlabeled: demand claimed only under claims (no top-level demand/*AsDemand flags) for documented-unavailable x402scan.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "x402scan",
+    "availability": "unavailable",
+    "called": false,
+    "documentedUnavailable": true,
+    "paidActivity": {
+      "available": false,
+      "reason": "x402scan data endpoints require micropayment; documented only, never called as success"
+    },
+    "claims": {
+      "demand": true,
+      "paidDemand": true,
+      "demandCount": 9
+    },
+    "message": "nested claims.demand treated documented-unavailable x402scan as demand"
+  }
+}
