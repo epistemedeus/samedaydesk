@@ -324,9 +324,12 @@ test("published response variants match the actual HTTP transports", async (t) =
   const malformed = await request(port, { method: "POST", path: "/mcp",
     headers: { "content-type": "application/json" }, body: "{" });
   assert.equal(malformed.status, 400);
-  assert.match(malformed.headers["content-type"], /text\/html/);
-  assert.ok(transport.responses["400"].content["text/html"]);
-  assert.ok(transport.responses["413"].content["text/html"]);
+  // JSON-RPC parse errors have a distinct -32700 machine error; MCP parser
+  // failures must not fall through to Express's HTML/default logging boundary.
+  assert.match(malformed.headers["content-type"], /application\/json/);
+  assert.equal(malformed.json.error.code, -32700);
+  assert.ok(transport.responses["400"].content["application/json"]);
+  assert.ok(transport.responses["413"].content["application/json"]);
 
   const form = await request(port, { path: "/agent-readiness" });
   assert.equal(form.status, 200);

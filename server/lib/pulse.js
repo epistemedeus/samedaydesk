@@ -28,14 +28,12 @@ import {
   newFlushId,
 } from "./pulse-store/index.js";
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
-import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "./mcp-tool-inventory.js";
+import { mcpAdmissionForRequest } from "./mcp-admission.js";
+export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
 const RECENT_CAP = 80;
 const MCP_MOUNT_PATH = "/mcp";
-const MCP_BATCH_MAX = 25;
-const MCP_METHOD_MAX_LEN = 128;
-const MCP_TOOL_NAME_SET = new Set(MCP_TOOL_NAMES);
 
 export const sellerRepairFindingRouteClasses = Object.freeze({
   "hypernatt-liq-radar-20260830": "paid_get",
@@ -685,70 +683,13 @@ function bump(obj, key) {
 }
 
 function isMcpMountPath(requestPath) {
-  return requestPath === MCP_MOUNT_PATH || requestPath === `${MCP_MOUNT_PATH}/`;
+  const path = requestPath.toLowerCase();
+  return path === MCP_MOUNT_PATH || path === `${MCP_MOUNT_PATH}/`;
 }
 
 function pushRecent(event) {
   localProcess.recent.push(event);
   if (localProcess.recent.length > RECENT_CAP) localProcess.recent.shift();
-}
-
-export function mcpMethodClass(method) {
-  if (method === "initialize") return "initialize";
-  if (method === "tools/list") return "tools/list";
-  if (method === "tools/call") return "tools/call";
-  if (
-    method === "notifications/initialized" ||
-    method === "notifications/cancelled" ||
-    method.startsWith("notifications/")
-  ) {
-    return "notifications";
-  }
-  return "other";
-}
-
-function isValidMcpRpcMessage(msg) {
-  if (!msg || typeof msg !== "object" || Array.isArray(msg)) return false;
-  if (msg.jsonrpc !== "2.0") return false;
-  if (typeof msg.method !== "string" || !msg.method || msg.method.length > MCP_METHOD_MAX_LEN) {
-    return false;
-  }
-  return true;
-}
-
-export function parseMcpProtocolBody(body) {
-  let entries;
-  if (Array.isArray(body)) {
-    if (body.length === 0 || body.length > MCP_BATCH_MAX) {
-      return { admitted: false, messages: [] };
-    }
-    entries = body;
-  } else if (body && typeof body === "object") {
-    entries = [body];
-  } else {
-    return { admitted: false, messages: [] };
-  }
-
-  const messages = [];
-  for (const entry of entries) {
-    if (!isValidMcpRpcMessage(entry)) return { admitted: false, messages: [] };
-    const message = { methodClass: mcpMethodClass(entry.method) };
-    if (entry.method === "tools/call") {
-      const params = Object.hasOwn(entry, "params") ? entry.params : null;
-      const descriptor =
-        params && typeof params === "object" && !Array.isArray(params) && Object.hasOwn(params, "name")
-          ? Object.getOwnPropertyDescriptor(params, "name")
-          : null;
-      if (
-        descriptor && Object.hasOwn(descriptor, "value") && typeof descriptor.value === "string" &&
-        descriptor.value.length <= MCP_TOOL_NAME_MAX_LEN && MCP_TOOL_NAME_SET.has(descriptor.value)
-      ) {
-        message.toolName = descriptor.value;
-      }
-    }
-    messages.push(message);
-  }
-  return { admitted: messages.length > 0, messages };
 }
 
 export function classifyPulseGet(req, requestPath) {
@@ -796,8 +737,7 @@ function recordMcpSurfaceGet() {
 }
 
 function recordMcpProtocolPost(req) {
-  const parsed = parseMcpProtocolBody(req.body);
-  if (!parsed.admitted) return;
+  const parsed = mcpAdmissionForRequest(req);
 
   pendingDelta.total += 1;
   pendingDelta.mcpProtocolRequests += 1;
@@ -851,7 +791,9 @@ function recordOrdinaryGet(req, p) {
 
 export function pulseMiddleware(req, _res, next) {
   try {
-    const p = (req.path || "/").split("?")[0];
+    // A parser error is received inside the /mcp mount, where req.path is '/'.
+    // Express's original URL retains the owning path; strip its entire query.
+    const p = (req.originalUrl || req.path || "/").split("?")[0];
 
     if (req.method === "POST" && isMcpMountPath(p)) {
       recordMcpProtocolPost(req);
@@ -976,8 +918,11 @@ export function pulseSnapshot() {
           "messages over the broader MCP protocol window.",
       },
       meaning:
-        "Shape-valid POST /mcp JSON-RPC HTTP requests only. " +
-        "Counts HTTP requests, safe method classes, and exact declared tool names only. " +
+        "Mounted POST /mcp attempts, including rejected bodies since the shared admission repair. " +
+        "Earlier HTTP counts covered only entirely shape-valid bodies. Messages count admitted valid envelopes " +
+        "(including notifications, responses and parameter errors); rejected batches contribute no messages. " +
+        "Mixed compatibility batches retain every valid entry. Safe method classes and declared tool names only; " +
+        "tool-name counts require valid tools/call parameters and record attempts, not successful execution or delivery. " +
         "Not unique agents, buyers, demand, or payment.",
     },
     legacyUncertainty,
