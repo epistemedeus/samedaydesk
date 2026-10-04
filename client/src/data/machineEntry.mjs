@@ -14,6 +14,9 @@ export const MERCHANT_INPUT_PIN = "f9dd59aeeb200881bc1313ed846ba002e7081258";
 export const MERCHANT_INPUT_SHORT = "f9dd59ae";
 export const CUSTOMER_EXAMPLE_VERSION = "0.2.3";
 export const CUSTOMER_EXAMPLE_DIR = "examples/customer-x402";
+// The directory entry is shared by the React page and initial HTTP document.
+export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
+export const USEFUL_JOBS_ENTRY_HEADING = "Run local useful jobs on files you already hold";
 export const RECURRING_MERCHANT_CONTRACTS = Object.freeze({
   C31: Object.freeze({
     label: "page-change compare",
@@ -247,6 +250,8 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         Later task-memory import is a separate step.
       </p>
       <pre><code>${REUSE_QUICKSTART}</code></pre>
+      <h2>${USEFUL_JOBS_ENTRY_HEADING}</h2>
+      <p><a href="${USEFUL_JOBS_PATH}">${USEFUL_JOBS_PATH}</a></p>
       <h2>Job 5. Recurring page, issue, and buyer-setup recipes</h2>
       <p>
         From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
@@ -557,7 +562,6 @@ export const CONSUMER_REPEAT_SHELL = Object.freeze({
   crawlerHtml: CONSUMER_REPEAT_CRAWLER_HTML,
 });
 
-export const USEFUL_JOBS_PATH = "/for-agents/useful-jobs";
 export const USEFUL_JOBS_TITLE = "Offline useful jobs for agent callers | SameDayDesk";
 /** Customer-facing intro/SEO. Install tools and --example limits stay in detailed sections. */
 export const USEFUL_JOBS_PUBLIC_SUMMARY =
