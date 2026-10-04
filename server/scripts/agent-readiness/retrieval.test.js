@@ -93,7 +93,7 @@ describe("document retrieval diagnosis", () => {
       expect(item.fix).toMatch(/Obtain a recorded response/);
     }
     const onlyOnePath = buildReport(bundle({ "/.well-known/openapi.json": undefined }), "2026-09-24T09:00:00Z");
-    expect(check(onlyOnePath, "openapi.parses").reason).toMatch(/No response was recorded for \\/.well-known\\/openapi.json/);
+    expect(check(onlyOnePath, "openapi.parses").reason).toContain("No response was recorded for /.well-known/openapi.json");
     expect(check(onlyOnePath, "openapi.parses").reason).not.toBe(ABSENT_OPENAPI);
   });
 
