@@ -262,7 +262,10 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.equal(mcp.negotiateProtocolVersion("1999-01-01"), mcp.SUPPORTED_PROTOCOL_VERSIONS[0]);
     assert.equal(mcp.protocolHeaderValue({ headers: {} }), null);
     assert.equal(mcp.protocolHeaderValue({ headers: { "mcp-protocol-version": "1999-01-01" } }), "1999-01-01");
-    assert.equal(mcp.isInitializationRequest({ method: "initialize" }), true);
+    // MCP's transport negotiation exemption requires a valid singleton request;
+    // malformed and mixed messages cannot borrow initialize's version gate.
+    assert.equal(mcp.isInitializationRequest({ jsonrpc: "2.0", id: 1, method: "initialize" }), true);
+    assert.equal(mcp.isInitializationRequest({ method: "initialize" }), false);
     assert.equal(mcp.isInitializationRequest({ method: "tools/list" }), false);
     assert.match(mcp.unsupportedProtocolMessage("1999-01-01"), /Unsupported protocol version: 1999-01-01/);
   });

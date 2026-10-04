@@ -2,6 +2,7 @@
 // refused after DNS resolution, including every address a name returns.
 import dns from "node:dns/promises";
 import net from "node:net";
+import ipaddr from "ipaddr.js";
 
 export class PublicHostError extends Error {
   constructor(message) {
@@ -59,7 +60,11 @@ function ipv6Hextets(ip) {
 }
 
 export function normalizeIp(ip) {
-  return String(ip || "").trim().toLowerCase().replace(/^\[|\]$/g, "").split("%")[0];
+  const value = String(ip || "").trim().toLowerCase().replace(/^\[|\]$/g, "").split("%")[0];
+  if (!net.isIP(value)) return "";
+  // Collapse IPv4-mapped IPv6 (including hex form) and canonicalize IPv6 so
+  // textual equivalents cannot acquire different rate buckets.
+  return ipaddr.process(value).toString();
 }
 
 export function isPrivateIp(ip) {

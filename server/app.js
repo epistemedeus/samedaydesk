@@ -17,6 +17,7 @@ import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
+import { mcpHeaders, mcpJsonParser, mcpBodyError } from "./lib/mcp-http.js";
 import agentReadinessRouter from "./routes/agent-readiness.js";
 import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
@@ -37,6 +38,10 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 export function createSdsApp(options = {}) {
 const app = express();
 app.disable("x-powered-by");
+
+// Include bearer-return redirects in the same cache/referrer protection as the
+// endpoint. This does not change the canonical host or redirect destination.
+app.use("/mcp", mcpHeaders);
 
 // 0) Canonical host: 301 any `www.` request to the bare apex, preserving path + query.
 //    Runs first so a www hit short-circuits before anything else. GET/HEAD only, so
@@ -85,7 +90,10 @@ app.set("s51Correspondence", correspondence);
 // anonymous snapshot evaluation and current publication facts remain separate.
 app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedUsefulJourney || {}));
 
-// 2) Everything else parses JSON normally.
+// 2) MCP owns its machine parser errors; unrelated APIs and raw webhooks retain
+// their existing parsers and error behavior.
+app.use("/mcp", mcpJsonParser, mcpBodyError);
+// Everything else parses JSON normally. Already-read MCP/raw bodies are skipped.
 app.use(express.json({ limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run

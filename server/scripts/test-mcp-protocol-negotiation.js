@@ -30,6 +30,7 @@ const FROZEN_TOOLS_BLOCK_SHA256 = "1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e883
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
+const TOOLS_SOURCE = readFileSync(join(dirname(MCP_SOURCE_PATH), "../lib/mcp-tool-inventory.js"), "utf8");
 
 function sha256(text) {
   return createHash("sha256").update(text, "utf8").digest("hex");
@@ -43,9 +44,9 @@ function extractBlock(src, startMarker, endMarker) {
   return src.slice(start, end);
 }
 
-function toolsFromSource(src) {
-  const block = extractBlock(src, "const TOOLS = [", "const okMsg");
-  const link = src.match(/const FIXPACK_LINK = "([^"]+)"/);
+function toolsFromSource() {
+  const block = TOOLS_SOURCE.slice(TOOLS_SOURCE.indexOf("const TOOLS = ["));
+  const link = MCP_SOURCE.match(/const FIXPACK_LINK = "([^"]+)"/);
   assert.ok(link, "FIXPACK_LINK missing from MCP source");
   const load = new Function("FIXPACK_LINK", "MCP_TOOL_NAMES", `${block}\nreturn TOOLS;`);
   return load(link[1], MCP_TOOL_NAMES);
@@ -121,7 +122,8 @@ test("negotiation echoes only the four supported versions and otherwise returns 
 });
 
 test("apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket", () => {
-  const toolsBlock = extractBlock(MCP_SOURCE, "const TOOLS = [", "const okMsg");
+  // Definitions moved to the shared inventory; preserve the original semantic pin.
+  const toolsBlock = TOOLS_SOURCE.slice(TOOLS_SOURCE.indexOf("const TOOLS = [")).trimEnd() + "\n\n";
   assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
 
   const callBlock = extractBlock(
@@ -263,7 +265,7 @@ test("server.json names the unpublished apex remote and keeps CORS star", () => 
   assert.equal(registry.description.length <= 100, true);
   assert.deepEqual(registry.remotes, [{ type: "streamable-http", url: "https://samedaydesk.com/mcp" }]);
   assert.equal(JSON.stringify(registry).includes("registry.modelcontextprotocol.io"), false);
-  assert.match(MCP_SOURCE, /"Access-Control-Allow-Origin": "\*"/);
+  assert.match(readFileSync(join(dirname(MCP_SOURCE_PATH), "../lib/mcp-http.js"), "utf8"), /"Access-Control-Allow-Origin": "\*"/);
 });
 
 test("seeded unsupported protocol is rejected instead of echoed", () => {
@@ -271,8 +273,10 @@ test("seeded unsupported protocol is rejected instead of echoed", () => {
   assert.equal(SUPPORTED_PROTOCOL_VERSIONS.includes(seeded), false);
   assert.equal(negotiateProtocolVersion(seeded), LATEST_PROTOCOL);
   assert.notEqual(negotiateProtocolVersion(seeded), seeded);
-  assert.equal(isInitializationRequest({ method: "initialize" }), true);
-  assert.equal(isInitializationRequest([{ method: "tools/list" }, { method: "initialize" }]), true);
+  assert.equal(isInitializationRequest({ jsonrpc: "2.0", id: 1, method: "initialize" }), true);
+  // Only a validated singleton negotiates; it cannot exempt unrelated messages.
+  assert.equal(isInitializationRequest({ method: "initialize" }), false);
+  assert.equal(isInitializationRequest([{ jsonrpc: "2.0", id: 2, method: "tools/list" }, { jsonrpc: "2.0", id: 1, method: "initialize" }]), false);
   assert.equal(isInitializationRequest({ method: "tools/list" }), false);
   assert.match(unsupportedProtocolMessage(seeded), /1999-01-01/);
   assert.match(unsupportedProtocolMessage(seeded), /2025-11-25/);
@@ -397,8 +401,8 @@ test("a batch after initialize rejects an unsupported header and accepts a missi
   assert.equal(quiet.text, "");
 });
 
-test("a batch that contains initialize keeps body negotiation", async () => {
-  const { response, json } = await postRaw([
+test("legacy initialize batches negotiate without bypassing the unsupported-header gate", async () => {
+  const body = [
     {
       jsonrpc: "2.0",
       id: 8,
@@ -410,11 +414,17 @@ test("a batch that contains initialize keeps body negotiation", async () => {
       },
     },
     { jsonrpc: "2.0", method: "notifications/initialized" },
-  ], { "mcp-protocol-version": "1999-01-01" });
+  ];
+  const { response, json } = await postRaw(body, { "mcp-protocol-version": "2024-11-05" });
   assert.equal(response.status, 200);
   assert.equal(Array.isArray(json), true);
   assert.equal(json.length, 1);
   assert.equal(json[0].result.protocolVersion, "2024-11-05");
+  // Initialization's body negotiation cannot admit unrelated messages under
+  // an unsupported transport header (MCP Streamable HTTP version gate).
+  const rejected = await postRaw(body, { "mcp-protocol-version": "1999-01-01" });
+  assert.equal(rejected.response.status, 400);
+  assert.equal(rejected.json.error.code, -32000);
 });
 
 test("existing error paths stay JSON-RPC results on HTTP 200", async () => {

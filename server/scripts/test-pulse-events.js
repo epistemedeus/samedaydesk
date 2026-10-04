@@ -368,10 +368,11 @@ test("admits a bounded valid POST /mcp batch and rejects oversized batches", () 
     method: "ping",
   }));
   const blocked = recordMcpPost(oversized);
-  assert.equal(blocked.after.mcpProtocol.httpRequests, after.mcpProtocol.httpRequests);
+  assert.equal(blocked.after.mcpProtocol.httpRequests, after.mcpProtocol.httpRequests + 1);
+  assert.equal(blocked.after.mcpProtocol.messages, after.mcpProtocol.messages);
 });
 
-test("rejects malformed JSON-RPC-shaped POST bodies without counting protocol traffic", () => {
+test("receives rejected POST bodies as attempts without admitting protocol messages", () => {
   const rejected = [
     { jsonrpc: "1.0", method: "initialize" },
     { jsonrpc: "2.0" },
@@ -383,8 +384,9 @@ test("rejects malformed JSON-RPC-shaped POST bodies without counting protocol tr
   ];
   for (const body of rejected) {
     const { before, after } = recordMcpPost(body);
-    assert.equal(after.mcpProtocol.httpRequests, before.mcpProtocol.httpRequests);
-    assert.equal(after.total, before.total);
+    assert.equal(after.mcpProtocol.httpRequests, before.mcpProtocol.httpRequests + 1);
+    assert.equal(after.total, before.total + 1);
+    assert.equal(after.mcpProtocol.messages, before.mcpProtocol.messages);
   }
 });
 
@@ -426,7 +428,9 @@ test("parseMcpProtocolBody and mcpMethodClass stay bounded and fail closed", () 
     { jsonrpc: "2.0", method: "initialize", id: 1 },
     { jsonrpc: "2.0", id: 2 },
   ]);
-  assert.equal(badBatch.admitted, false);
+  // JSON-RPC legacy mixed batches retain valid calls beside invalid entries.
+  assert.equal(badBatch.admitted, true);
+  assert.deepEqual(badBatch.messages, [{ methodClass: "initialize" }]);
 });
 
 test("seller-repair counters stay unchanged when MCP surface or protocol traffic is recorded", () => {

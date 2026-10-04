@@ -11,13 +11,18 @@
 // Payment Link / product — not an amount-only threshold and not a customer login.
 import { Router } from "express";
 import { clientKey } from "../lib/agent-readiness/rate-limit.js";
+import {
+  SUPPORTED_PROTOCOL_VERSIONS, mcpAdmissionForRequest,
+  protocolHeaderValue, isInitializationRequest, unsupportedProtocolMessage,
+} from "../lib/mcp-admission.js";
+import { mcpHeaders } from "../lib/mcp-http.js";
 import { runCheck } from "./tools.js";
 import {
   browseTaskMarketTasks,
   buildTaskMarketDelegationPlan,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
-import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
+import { TOOLS } from "../lib/mcp-tool-inventory.js";
 import { formatAgentReadiness, runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 import {
   FIXPACK_MCP_BUY_URL,
@@ -31,12 +36,7 @@ import {
 const router = Router();
 
 // Newest first. initialize echoes a supported client version, otherwise the latest.
-export const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze([
-  "2025-11-25",
-  "2025-06-18",
-  "2025-03-26",
-  "2024-11-05",
-]);
+export { SUPPORTED_PROTOCOL_VERSIONS, protocolHeaderValue, isInitializationRequest, unsupportedProtocolMessage };
 export const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 
 export function negotiateProtocolVersion(offered) {
@@ -49,145 +49,7 @@ if (FIXPACK_LINK !== FIXPACK_MCP_BUY_URL) {
   throw new Error("FIXPACK_LINK must stay aligned with FIXPACK_MCP_BUY_URL");
 }
 
-export const TOOLS = [
-  {
-    name: MCP_TOOL_NAMES[0],
-    annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
-    description:
-      "Check whether a website is visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). " +
-      "Scores AI-crawler access, JSON-LD structured data, title/meta, Open Graph, sitemap, and llms.txt, and returns " +
-      "a 0-100 score, a letter grade, and a specific fix for each gap. Free.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        url: { type: "string", description: "The website to check, e.g. example.com or https://example.com" },
-      },
-      required: ["url"],
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES[1],
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-    description:
-      "Free. Check whether agents can discover and call a public website. Fetches discovery files, follows MCP links " +
-      "named by those files, and runs only initialize, tools/list, and one unknown-tool call. Never executes a real tool. " +
-      "Returns a 0-100 score, every check with an evidence URL, and the top fixes. No license.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        host: { type: "string", description: "Public host to score, for example example.com" },
-      },
-      required: ["host"],
-    },
-    outputSchema: {
-      type: "object",
-      properties: {
-        host: { type: "string" },
-        score: { type: "number" },
-        free: { type: "boolean" },
-        checks: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              id: { type: "string" },
-              title: { type: "string" },
-              status: { type: "string" },
-              reason: { type: "string" },
-              fix: { type: "string" },
-              evidenceUrl: { type: "string" },
-            },
-            required: ["id", "title", "status", "reason", "fix"],
-          },
-        },
-        topFixes: { type: "array" },
-        evidence: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              url: { type: "string" },
-              status: { type: "number" },
-            },
-            required: ["url"],
-          },
-        },
-      },
-      required: ["host", "score", "checks", "topFixes", "evidence"],
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES[2],
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-    description:
-      "PAID. Returns the complete, ready-to-paste AI-readiness Fix Pack for a site: tailored Organization + FAQPage " +
-      "JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license` — the " +
-      `checkout-session id you receive after buying the $39 Fix Pack at ${FIXPACK_LINK} (after paying you're shown ` +
-      "your license code). Without a valid license it returns purchase instructions plus a free starter pack.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        url: { type: "string", description: "The website to generate the Fix Pack for." },
-        license: { type: "string", description: "Your Stripe checkout-session license code (starts with cs_)." },
-      },
-      required: ["url"],
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES[3],
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
-    description:
-      "Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. " +
-      "Requires the deliverable, reward, deadline, and an explicit maximum-spend ceiling. Returns the canonical TaskMarket " +
-      "API payload and approval summary without creating a task, holding a wallet, or spending funds.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        request: { type: "string", description: "The external work needed, written as a clear task." },
-        deliverable: { type: "string", description: "The exact artifact or result the worker must return." },
-        acceptance_criteria: { type: "array", items: { type: "string" }, maxItems: 10, description: "Up to 10 testable acceptance checks." },
-        reward_usdc: { type: ["number", "string"], description: "Proposed worker reward in USDC, up to 6 decimal places." },
-        max_spend_usdc: { type: ["number", "string"], description: "Explicit user-authorized reward ceiling in USDC." },
-        deadline_hours: { type: "number", exclusiveMinimum: 0, maximum: 720, description: "Hours until TaskMarket submission closes." },
-        mode: { type: "string", enum: ["bounty", "claim"], default: "bounty" },
-        tags: { type: "array", items: { type: "string" }, maxItems: 10 },
-      },
-      required: ["request", "deliverable", "reward_usdc", "max_spend_usdc", "deadline_hours"],
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES[4],
-    annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
-    description:
-      "Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, " +
-      "text, and minimum reward. Task descriptions are returned as untrusted text and are never executed.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        status: { type: "string", enum: ["ALL", "open", "claimed", "worker_selected", "pending_approval", "review", "appealing", "disputed", "completed", "expired", "cancelled"], default: "open" },
-        mode: { type: "string", enum: ["bounty", "claim", "pitch", "benchmark", "auction"] },
-        tag: { type: "string", description: "Exact case-insensitive tag filter." },
-        search: { type: "string", description: "Case-insensitive text match over descriptions and tags." },
-        min_reward_usdc: { type: ["number", "string"], description: "Minimum gross reward in USDC." },
-        limit: { type: "integer", minimum: 1, maximum: 25, default: 10 },
-      },
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES[5],
-    annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
-    description:
-      "Track one public TaskMarket task through the official read API. Returns status, deadline, submissions, artifact " +
-      "hashes, canonical awards, pending actions, and the next authorization boundary. It cannot create, accept, reject, rate, or refund work.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        task_id: { type: "string", pattern: "^0x[0-9a-fA-F]{64}$", description: "TaskMarket 32-byte task id." },
-      },
-      required: ["task_id"],
-    },
-  },
-];
+export { TOOLS };
 
 const okMsg = (id, result) => ({ jsonrpc: "2.0", id, result });
 const errMsg = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
@@ -303,15 +165,7 @@ async function handle(msg, ctx = {}) {
   }
 }
 
-router.use((req, res, next) => {
-  res.set({
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version",
-  });
-  if (req.method === "OPTIONS") return res.status(204).end();
-  next();
-});
+router.use(mcpHeaders);
 
 // GET /mcp?cs=<session> is where Stripe redirects after a Fix Pack purchase —
 // show the buyer their license code + how to redeem it.
@@ -336,43 +190,24 @@ router.get("/", (req, res) => {
 // this server does not implement is HTTP 400 on requests after initialize.
 // Initialize negotiates the version in the JSON-RPC body. A missing header
 // stays accepted for clients that predate the header, including this probe.
-export function protocolHeaderValue(req) {
-  const raw = req.headers["mcp-protocol-version"];
-  if (raw == null) return null;
-  return Array.isArray(raw) ? raw.join(", ") : String(raw);
-}
-
-function messageList(msg) {
-  if (Array.isArray(msg)) return msg;
-  return msg && typeof msg === "object" ? [msg] : [];
-}
-
-export function isInitializationRequest(msg) {
-  return messageList(msg).some((entry) => entry?.method === "initialize");
-}
-
-export function unsupportedProtocolMessage(version) {
-  return `Bad Request: Unsupported protocol version: ${version} (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`;
-}
-
 router.post("/", async (req, res) => {
-  const msg = req.body;
-  const headerVersion = protocolHeaderValue(req);
-  if (!isInitializationRequest(msg) && headerVersion !== null && !SUPPORTED_PROTOCOL_VERSIONS.includes(headerVersion)) {
-    return res.status(400).json(errMsg(null, -32000, unsupportedProtocolMessage(headerVersion)));
-  }
+  const admission = mcpAdmissionForRequest(req);
+  if (admission.error) return res.status(admission.status).json(admission.error);
   const ctx = { clientKey: clientKey(req) };
-  try {
-    if (Array.isArray(msg)) {
-      const out = (await Promise.all(msg.map((entry) => handle(entry, ctx)))).filter(Boolean);
-      return out.length ? res.json(out) : res.status(202).end();
+  // Validate and bound the entire producer body before choosing any async tool.
+  // Per-entry failures must not discard valid work from a legacy mixed batch.
+  const out = (await Promise.all(admission.entries.map(async (message) => {
+    if (message.kind === "response") return null;
+    if (message.error) return message.kind === "notification" ? null : message.error;
+    try {
+      const result = await handle(message.entry, ctx);
+      return message.kind === "notification" ? null : result;
+    } catch {
+      return message.kind === "notification" ? null : errMsg(message.entry.id, -32603, "Internal error");
     }
-    const out = await handle(msg, ctx);
-    if (!out) return res.status(202).end();
-    return res.json(out);
-  } catch (e) {
-    return res.status(500).json(errMsg(msg?.id ?? null, -32603, e.message));
-  }
+  }))).filter(Boolean);
+  if (!out.length) return res.status(202).end();
+  return res.status(admission.status).json(admission.batch ? out : out[0]);
 });
 
 export default router;

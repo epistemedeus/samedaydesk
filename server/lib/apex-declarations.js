@@ -10,6 +10,7 @@ import {
 import { publicDeploymentBody } from "./public-readiness-mount.js";
 import { buildTaskMarketDelegationPlan } from "./taskmarket.js";
 import { SERVER_INFO, SUPPORTED_PROTOCOL_VERSIONS, TOOLS } from "../routes/mcp.js";
+import { MCP_BATCH_MIN, MCP_BATCH_MAX, MCP_BATCH_PROTOCOL_VERSIONS, MCP_BODY_LIMIT, rpcMessageSchema, rpcIdSchema, rpcBatchSchema } from "./mcp-admission.js";
 
 export const PAID_ORIGIN = "https://agents.samedaydesk.com";
 
@@ -155,7 +156,7 @@ const queryParam = (name, schema, description, required = false) => ({
 
 function apexPaths(catalog, skillMarkdown) {
   const planResult = planToolResult();
-  const rate = `Defaults to ${AGENT_READINESS_RATE_LIMIT_DEFAULT} calls per ${AGENT_READINESS_RATE_WINDOW_MS_DEFAULT / 1000} seconds per client key (AGENT_READINESS_RATE_LIMIT, AGENT_READINESS_RATE_WINDOW_MS).`;
+  const rate = `Defaults to ${AGENT_READINESS_RATE_LIMIT_DEFAULT} calls per ${AGENT_READINESS_RATE_WINDOW_MS_DEFAULT / 1000} seconds per client key (AGENT_READINESS_RATE_LIMIT, AGENT_READINESS_RATE_WINDOW_MS). Client keys use the normalized socket peer by default. AGENT_READINESS_TRUSTED_PROXIES may explicitly list literal proxy IPs/CIDRs; a validated forwarded chain stops at the nearest untrusted hop. Invalid policy or addresses fall back to the peer.`;
   return {
     "/api/health": {
       get: operation({
@@ -312,7 +313,7 @@ function apexPaths(catalog, skillMarkdown) {
       post: operation({
         operationId: "mcpJsonRpc",
         summary: "MCP JSON-RPC for the apex tool inventory",
-        description: `Streamable HTTP body. Supported MCP-Protocol-Version values: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")}. initialize negotiates the body protocolVersion and echoes a supported one, otherwise ${SUPPORTED_PROTOCOL_VERSIONS[0]}. A present unsupported MCP-Protocol-Version header on any later method is HTTP 400. A missing header stays accepted. tools/list returns one bounded tool array for this server, not a paginated collection. Repeating a read or plan_taskmarket_delegation is not a purchase: that plan keeps request.executed false and does not accept an Idempotency-Key because it does not create or fund a task. generate_complete_fix_pack does not charge; it only accepts an existing license. Unknown tool names return JSON-RPC error -32602.`,
+        description: `Streamable HTTP body. Supported MCP-Protocol-Version values: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")}. initialize negotiates the body protocolVersion and echoes a supported one, otherwise ${SUPPORTED_PROTOCOL_VERSIONS[0]}. Only a valid singleton initialize is exempt from the unsupported-header HTTP 400 gate. A missing header stays accepted using the inherited March-2025 compatibility path. Headers 2025-06-18 and 2025-11-25 require one message per POST. Compatibility batches of ${MCP_BATCH_MIN}..${MCP_BATCH_MAX} entries are accepted without a header or with ${MCP_BATCH_PROTOCOL_VERSIONS.join(" or ")}; the 2024 path is an SDS extension, not deprecated HTTP+SSE. Valid calls in mixed compatibility batches execute even if another entry is invalid. Requests use string/integer IDs; notifications omit ID and never receive results, including unknown methods and tool errors. Accepted responses are no-ops with HTTP 202. Invalid envelopes return -32600, invalid parameters -32602, unknown methods -32601, and malformed JSON -32700. Supplied tool argument types are checked before execution; missing tool fields retain useful isError results. tools/list returns one bounded tool array for this server, not a paginated collection. Repeating a read or plan_taskmarket_delegation is not a purchase: that plan keeps request.executed false and does not accept an Idempotency-Key because it does not create or fund a task. generate_complete_fix_pack does not charge; it only accepts an existing license. Unknown tool names return JSON-RPC error -32602.`,
         idempotent: false,
         requestBody: {
           required: true,
@@ -320,7 +321,8 @@ function apexPaths(catalog, skillMarkdown) {
             "application/json": {
               schema: { anyOf: [
                 { $ref: "#/components/schemas/JsonRpcRequest" },
-                { type: "array", items: { $ref: "#/components/schemas/JsonRpcRequest" } },
+                rpcBatchSchema({ anyOf: [{ $ref: "#/components/schemas/JsonRpcRequest" }, { $ref: "#/components/schemas/JsonRpcClientResponse" }] }),
+                { $ref: "#/components/schemas/JsonRpcClientResponse" },
               ] },
               example: planCallBody(),
             },
@@ -333,27 +335,26 @@ function apexPaths(catalog, skillMarkdown) {
               { anyOf: [
                 { $ref: "#/components/schemas/JsonRpcSuccess" },
                 { $ref: "#/components/schemas/JsonRpcError" },
-                { type: "array", items: { anyOf: [
+                rpcBatchSchema({ anyOf: [
                   { $ref: "#/components/schemas/JsonRpcSuccess" },
                   { $ref: "#/components/schemas/JsonRpcError" },
-                ] } },
+                ] }),
               ] },
               { jsonrpc: "2.0", id: "plan-1", result: { content: [{ type: "text", text: "TaskMarket plan" }], structuredContent: planResult } },
             ),
           },
-          "202": { description: "Notification with no result body." },
+          "202": { description: "Accepted notifications or responses only; no body." },
           "400": {
-            description: "Unsupported MCP-Protocol-Version header after initialize (JSON), or malformed JSON rejected by the shared parser (HTML).",
+            description: "Unsupported protocol header (-32000), invalid envelope or rejected compatibility batch (-32600), or malformed JSON (-32700). No tool executes for these transport failures.",
             content: {
               ...jsonContent(
                 { $ref: "#/components/schemas/JsonRpcError" },
                 { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Bad Request: Unsupported protocol version: 1999-01-01 (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})` } },
               ),
-              "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Invalid JSON</body></html>" },
             },
           },
-          "413": { description: "The shared parser rejects a body larger than 1mb.", content: { "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Payload too large</body></html>" } } },
-          "500": { description: "The handler threw.", content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32603, message: "Internal error" } }) },
+          "413": { description: `MCP parser rejects a body larger than ${MCP_BODY_LIMIT} before execution.`, content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Request body exceeds ${MCP_BODY_LIMIT}` } }) },
+          "415": { description: "Unsupported JSON charset or content encoding.", content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: "Invalid request body" } }) },
         },
       }),
     },
@@ -654,6 +655,9 @@ export function apexSkillMarkdown() {
     "initialize echoes a supported client protocolVersion. Otherwise it answers the newest supported version.",
     "A present unsupported MCP-Protocol-Version header on a later request is HTTP 400 with JSON-RPC code -32000.",
     "A missing header stays accepted.",
+    `Compatibility batches contain ${MCP_BATCH_MIN}..${MCP_BATCH_MAX} entries, without a header or with ${MCP_BATCH_PROTOCOL_VERSIONS.join(" or ")}. The 2024 batch path is an SDS extension.`,
+    "Headers 2025-06-18 and 2025-11-25 require one message per POST. Only a valid singleton initialize negotiates despite an unsupported header.",
+    "Notifications and accepted responses return 202 with no body. Malformed JSON returns 400/-32700; invalid envelopes and rejected batches return 400/-32600.",
     "An unknown tool name returns JSON-RPC error -32602.",
     `Server: ${SERVER_INFO.name} ${SERVER_INFO.version}.`,
     "",
@@ -721,31 +725,28 @@ export function apexOpenApiDocument() {
           required: ["error"],
           properties: { error: { type: "string" } },
         },
-        JsonRpcRequest: {
-          type: "object",
-          required: ["jsonrpc", "method"],
-          properties: {
-            jsonrpc: { const: "2.0" },
-            id: {},
-            method: { type: "string" },
-            params: { type: "object" },
-          },
+        JsonRpcRequest: rpcMessageSchema(),
+        JsonRpcClientResponse: {
+          anyOf: [
+            { $ref: "#/components/schemas/JsonRpcSuccess" },
+            { type: "object", required: ["jsonrpc", "id", "error"], properties: { jsonrpc: { const: "2.0" }, id: rpcIdSchema(), error: { type: "object", required: ["code", "message"], properties: { code: { type: "integer" }, message: { type: "string" } } } } },
+          ],
         },
         JsonRpcSuccess: {
           type: "object",
-          required: ["jsonrpc", "result"],
+          required: ["jsonrpc", "id", "result"],
           properties: {
             jsonrpc: { const: "2.0" },
-            id: {},
+            id: rpcIdSchema(),
             result: { type: "object" },
           },
         },
         JsonRpcError: {
           type: "object",
-          required: ["jsonrpc", "error"],
+          required: ["jsonrpc", "id", "error"],
           properties: {
             jsonrpc: { const: "2.0" },
-            id: {},
+            id: { type: ["string", "integer", "null"] },
             error: {
               type: "object",
               required: ["code", "message"],
