@@ -312,3 +312,20 @@ test("the actual generated OpenAPI receives the same admission limits and ID typ
   assert.equal(operation.responses["413"].content["text/html"], undefined);
   assert.ok(operation.responses["415"].content["application/json"]);
 });
+
+test("async adapter failure retains sibling work and suppresses notification error details", async () => {
+  const savedGetStripe = fixPackLicenseDeps.getStripe;
+  fixPackLicenseDeps.getStripe = () => { throw new Error("cs_test_boundary_secret adapter failure"); };
+  const before = counts();
+  try {
+    const mixed = await request({ body: [paidCall(), ping] });
+    assert.equal(mixed.status, 200);
+    assert.deepEqual(mixed.json[0], { jsonrpc: "2.0", id: "paid", error: { code: -32603, message: "Internal error" } });
+    assert.deepEqual(mixed.json[1].result, {});
+    assert.equal(counts().messages, before.messages + 2);
+    assert.equal(counts().paid, before.paid + 1);
+    const notification = await request({ body: paidCall({ id: undefined }) });
+    assert.equal(notification.status, 202);
+    assert.equal(notification.raw, "");
+  } finally { fixPackLicenseDeps.getStripe = savedGetStripe; }
+});
