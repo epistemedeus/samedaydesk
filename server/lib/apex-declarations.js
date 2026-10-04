@@ -119,6 +119,13 @@ function errorContent(example) {
   };
 }
 
+function readinessErrorContent(example) {
+  return {
+    ...errorContent(example),
+    "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Could not score that host</body></html>" },
+  };
+}
+
 function jsonContent(schema, example) {
   return {
     "application/json": { schema, example },
@@ -271,15 +278,17 @@ function apexPaths(catalog, skillMarkdown) {
                 },
                 example: { host: "example.com", score: 0, free: true, checks: [], topFixes: [] },
               },
+              "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Agent readiness checker</body></html>" },
+              "text/markdown": { schema: { type: "string" }, example: "# Agent readiness fix pack\n\nHost: example.com\n" },
             },
           },
-          "400": { description: "format=json or format=fix-pack without a host, or a host the checker rejects.", content: errorContent({ error: "Provide a host, for example example.com" }) },
+          "400": { description: "format=json or format=fix-pack without a host, or a host the checker rejects. Other formats return HTML errors.", content: readinessErrorContent({ error: "Provide a host, for example example.com" }) },
           "429": {
             description: "Client key exceeded the agent-readiness rate limit. Retry-After is set.",
             headers: { "Retry-After": { schema: { type: "string" } } },
-            content: errorContent({ error: "Too many checks from this client. Retry in 1s." }),
+            content: readinessErrorContent({ error: "Too many checks from this client. Retry in 1s." }),
           },
-          "502": { description: "The host could not be probed.", content: errorContent({ error: "Could not probe that host" }) },
+          "502": { description: "The host could not be probed.", content: readinessErrorContent({ error: "Could not probe that host" }) },
         },
       }),
     },
@@ -309,7 +318,10 @@ function apexPaths(catalog, skillMarkdown) {
           required: true,
           content: {
             "application/json": {
-              schema: { $ref: "#/components/schemas/JsonRpcRequest" },
+              schema: { anyOf: [
+                { $ref: "#/components/schemas/JsonRpcRequest" },
+                { type: "array", items: { $ref: "#/components/schemas/JsonRpcRequest" } },
+              ] },
               example: planCallBody(),
             },
           },
@@ -318,18 +330,29 @@ function apexPaths(catalog, skillMarkdown) {
           "200": {
             description: "JSON-RPC result, or a JSON-RPC error object for an unknown tool or a bad request body that still parsed.",
             content: jsonContent(
-              { $ref: "#/components/schemas/JsonRpcSuccess" },
+              { anyOf: [
+                { $ref: "#/components/schemas/JsonRpcSuccess" },
+                { $ref: "#/components/schemas/JsonRpcError" },
+                { type: "array", items: { anyOf: [
+                  { $ref: "#/components/schemas/JsonRpcSuccess" },
+                  { $ref: "#/components/schemas/JsonRpcError" },
+                ] } },
+              ] },
               { jsonrpc: "2.0", id: "plan-1", result: { content: [{ type: "text", text: "TaskMarket plan" }], structuredContent: planResult } },
             ),
           },
           "202": { description: "Notification with no result body." },
           "400": {
-            description: "Unsupported MCP-Protocol-Version header after initialize.",
-            content: jsonContent(
-              { $ref: "#/components/schemas/JsonRpcError" },
-              { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Bad Request: Unsupported protocol version: 1999-01-01 (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})` } },
-            ),
+            description: "Unsupported MCP-Protocol-Version header after initialize (JSON), or malformed JSON rejected by the shared parser (HTML).",
+            content: {
+              ...jsonContent(
+                { $ref: "#/components/schemas/JsonRpcError" },
+                { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Bad Request: Unsupported protocol version: 1999-01-01 (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})` } },
+              ),
+              "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Invalid JSON</body></html>" },
+            },
           },
+          "413": { description: "The shared parser rejects a body larger than 1mb.", content: { "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Payload too large</body></html>" } } },
           "500": { description: "The handler threw.", content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32603, message: "Internal error" } }) },
         },
       }),
@@ -371,7 +394,7 @@ function apexPaths(catalog, skillMarkdown) {
         responses: {
           "200": {
             description: "OpenAPI 3.1 document.",
-            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk apex", version: SERVER_INFO.version } } } },
+            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk apex", version: SERVER_INFO.version }, paths: {} } } },
           },
         },
       }),

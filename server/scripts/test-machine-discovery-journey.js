@@ -298,6 +298,47 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   t.diagnostic(JSON.stringify(acquisition));
 });
 
+test("published response variants match the actual HTTP transports", async (t) => {
+  const { server, port } = await listen(createSdsApp());
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const { json: spec } = await request(port, { path: "/openapi.json" });
+  const transport = spec.paths["/mcp"].post;
+  assert.equal(transport.requestBody.content["application/json"].schema.anyOf[1].type, "array");
+  const variants = transport.responses["200"].content["application/json"].schema.anyOf;
+  assert.equal(variants.some((schema) => schema.$ref?.endsWith("/JsonRpcError")), true);
+  assert.equal(variants.some((schema) => schema.type === "array"), true);
+
+  const batch = await request(port, { method: "POST", path: "/mcp",
+    headers: { "content-type": "application/json" },
+    body: [{ jsonrpc: "2.0", id: 1, method: "ping" },
+      { jsonrpc: "2.0", id: 2, method: "tools/call", params: { name: "unknown" } }] });
+  assert.equal(batch.status, 200);
+  assert.equal(Array.isArray(batch.json), true);
+  assert.deepEqual(batch.json[0].result, {});
+  assert.equal(batch.json[1].error.code, -32602);
+  const notification = await request(port, { method: "POST", path: "/mcp",
+    headers: { "content-type": "application/json" },
+    body: { jsonrpc: "2.0", method: "notifications/initialized" } });
+  assert.equal(notification.status, 202);
+  assert.equal(notification.body, "");
+  const malformed = await request(port, { method: "POST", path: "/mcp",
+    headers: { "content-type": "application/json" }, body: "{" });
+  assert.equal(malformed.status, 400);
+  assert.match(malformed.headers["content-type"], /text\/html/);
+  assert.ok(transport.responses["400"].content["text/html"]);
+  assert.ok(transport.responses["413"].content["text/html"]);
+
+  const form = await request(port, { path: "/agent-readiness" });
+  assert.equal(form.status, 200);
+  assert.match(form.headers["content-type"], /text\/html/);
+  const readiness = spec.paths["/agent-readiness"].get.responses;
+  assert.ok(readiness["200"].content["text/html"]);
+  assert.ok(readiness["200"].content["text/markdown"]);
+  assert.ok(readiness["400"].content["text/html"]);
+  const selfExample = spec.paths["/openapi.json"].get.responses["200"].content["application/openapi+json"];
+  for (const key of selfExample.schema.required) assert.ok(key in selfExample.example);
+});
+
 test("production fallback keeps declarations out of the HTML shell and preserves old routes", async (t) => {
   const dist = mkdtempSync(join(tmpdir(), "apex-decl-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
