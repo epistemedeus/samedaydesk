@@ -1,4 +1,5 @@
-import { OPENAPI_PATHS, first, json, mcpTools, openapiOperations, rec, } from "./checks.js";
+import { OPENAPI_PATHS, mcpTools, openapiOperations, rec, } from "./checks.js";
+import { inspectJsonBody, retrievalDiagnostic, selectDocument } from "./retrieval.js";
 /** First MCP revision that defines tool outputSchema / structuredContent. */
 export const OUTPUT_SCHEMA_MCP_VERSION = "2025-06-18";
 export const DESC_MIN = 40;
@@ -174,8 +175,10 @@ function returnsArray(doc, op) {
     return false;
 }
 export function openapiUsabilityChecks(bundle) {
-    const found = first(bundle, OPENAPI_PATHS);
-    const doc = found ? rec(json(found.res)) : null;
+    const selected = selectDocument(bundle, OPENAPI_PATHS);
+    const unread = retrievalDiagnostic(selected.blocking?.path || "/openapi.json", selected.blocking?.outcome);
+    const inspected = selected.chosen ? inspectJsonBody(selected.chosen.res, selected.chosen.path) : null;
+    const doc = inspected?.state === "object" ? inspected.value : null;
     const ops = openapiOperations(doc);
     const titles = {
         examples: "OpenAPI operations have examples",
@@ -184,8 +187,17 @@ export function openapiUsabilityChecks(bundle) {
         pagination: "Array responses describe pagination",
     };
     if (!doc || ops.length === 0) {
-        const reason = doc ? "The OpenAPI document has no operations to lint." : "No OpenAPI document in this bundle.";
-        return Object.keys(titles).map((k) => na(`openapi.${k}`, titles[k], reason, "Publish an OpenAPI 3.x document with operations agents can call."));
+        const reason = unread
+            ? unread.reason
+            : doc
+                ? "The OpenAPI document has no operations to lint."
+                : inspected
+                    ? "The retrieved OpenAPI body is not a usable document."
+                    : "No OpenAPI document in this bundle.";
+        const fix = unread?.fix || (inspected && !doc
+            ? inspected.fix
+            : "Publish an OpenAPI 3.x document with operations agents can call.");
+        return Object.keys(titles).map((k) => na(`openapi.${k}`, titles[k], reason, fix));
     }
     const label = (o) => typeof o.op.operationId === "string" ? o.op.operationId : `${o.method.toUpperCase()} ${o.path}`;
     const pathItem = (o) => rec(doc.paths)?.[o.path];

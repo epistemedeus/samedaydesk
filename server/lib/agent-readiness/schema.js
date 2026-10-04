@@ -1,6 +1,6 @@
 export class BundleError extends Error {
 }
-const RESPONSE_KEYS = ["status", "contentType", "headers", "body"];
+const RESPONSE_KEYS = ["status", "contentType", "headers", "body", "truncated", "error"];
 function isObject(v) {
     return typeof v === "object" && v !== null && !Array.isArray(v);
 }
@@ -30,6 +30,12 @@ export function validateBundle(input) {
             if (!RESPONSE_KEYS.includes(key)) {
                 throw new BundleError(`Response for ${path} has an unknown field: ${key}.`);
             }
+        }
+        if (value.truncated !== undefined && typeof value.truncated !== "boolean") {
+            throw new BundleError(`Response for ${path} field truncated must be boolean.`);
+        }
+        if (value.error !== undefined && (typeof value.error !== "string" || value.error === "")) {
+            throw new BundleError(`Response for ${path} field error must be a string.`);
         }
     }
     if (input.mcp !== undefined) {

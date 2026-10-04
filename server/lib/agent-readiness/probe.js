@@ -95,6 +95,9 @@ export function rawExchange(url, options = {}) {
 
   return new Promise((resolve) => {
     let settled = false;
+    let timedOut = false;
+    let truncated = false;
+    let sawResponse = false;
     const finish = (result) => {
       if (settled) return;
       settled = true;
@@ -123,26 +126,45 @@ export function rawExchange(url, options = {}) {
         else cb(null, address.address, family);
       },
     }, (res) => {
+      sawResponse = true;
       const chunks = [];
       let size = 0;
       res.on("data", (chunk) => {
-        if (size >= maxBytes) return;
+        if (size >= maxBytes) {
+          truncated = true;
+          res.destroy();
+          return;
+        }
         const room = maxBytes - size;
-        chunks.push(chunk.length > room ? chunk.subarray(0, room) : chunk);
-        size += Math.min(chunk.length, room);
-        if (chunk.length > room) res.destroy();
+        if (chunk.length > room) {
+          chunks.push(chunk.subarray(0, room));
+          size += room;
+          truncated = true;
+          res.destroy();
+          return;
+        }
+        chunks.push(chunk);
+        size += chunk.length;
       });
       const done = () => finish({
         status: res.statusCode || 0,
         headers: headerMap(res.headers),
         body: Buffer.concat(chunks).toString("utf8"),
+        ...(truncated ? { truncated: true } : {}),
+        ...(timedOut ? { error: "timeout" } : {}),
       });
       res.on("end", done);
       res.on("error", done);
       res.on("close", done);
     });
-    req.on("timeout", () => req.destroy());
-    req.on("error", () => finish({ status: 0, headers: {}, body: "" }));
+    req.on("timeout", () => {
+      timedOut = true;
+      req.destroy();
+    });
+    req.on("error", () => {
+      if (sawResponse) return;
+      finish({ status: 0, headers: {}, body: "", error: timedOut ? "timeout" : "connection" });
+    });
     if (options.body && method !== "GET" && method !== "HEAD") req.write(options.body);
     req.end();
   });
@@ -188,7 +210,10 @@ function toResponse(got) {
   const headers = headerMap(got?.headers);
   const entry = { status: Number(got?.status) || 0, headers };
   if (headers["content-type"]) entry.contentType = headers["content-type"];
-  if (got?.body) entry.body = String(got.body).slice(0, MAX_BODY_BYTES);
+  const rawBody = got?.body == null ? "" : String(got.body);
+  if (rawBody) entry.body = rawBody.slice(0, MAX_BODY_BYTES);
+  if (got?.truncated || rawBody.length > MAX_BODY_BYTES) entry.truncated = true;
+  if (got?.error) entry.error = String(got.error);
   return entry;
 }
 
