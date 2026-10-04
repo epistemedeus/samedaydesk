@@ -19,9 +19,12 @@ export function clientKey(req) {
   return `peer:${peer || "unknown"}`;
 }
 
+export const AGENT_READINESS_RATE_LIMIT_DEFAULT = 12;
+export const AGENT_READINESS_RATE_WINDOW_MS_DEFAULT = 10 * 60 * 1000;
+
 export function consumeClient(key, now = Date.now()) {
-  const limit = Number(process.env.AGENT_READINESS_RATE_LIMIT || 12);
-  const windowMs = Number(process.env.AGENT_READINESS_RATE_WINDOW_MS || 10 * 60 * 1000);
+  const limit = Number(process.env.AGENT_READINESS_RATE_LIMIT || AGENT_READINESS_RATE_LIMIT_DEFAULT);
+  const windowMs = Number(process.env.AGENT_READINESS_RATE_WINDOW_MS || AGENT_READINESS_RATE_WINDOW_MS_DEFAULT);
   const id = String(key || "unknown");
   let bucket = buckets.get(id);
   if (!bucket || now >= bucket.reset) {

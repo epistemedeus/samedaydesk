@@ -29,6 +29,7 @@ import {
 } from "./pulse-store/index.js";
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
 import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "./mcp-tool-inventory.js";
+import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
 const RECENT_CAP = 80;
 const MCP_MOUNT_PATH = "/mcp";
@@ -756,6 +757,34 @@ export function classifyPulseGet(req, requestPath) {
   return { kind, aiBot, recentKind: aiBot || kind };
 }
 
+function isDeclarationFetchPath(requestPath) {
+  return DECLARATION_FETCH_PATHS.includes(requestPath);
+}
+
+function recordDeclarationFetch(requestPath) {
+  pendingDelta.total += 1;
+  bump(pendingDelta.byPath, requestPath);
+  pushRecent({
+    t: new Date().toISOString(),
+    p: requestPath,
+    kind: "declarationFetch",
+  });
+}
+
+function declarationFetchView(byPath) {
+  const counts = Object.create(null);
+  for (const path of DECLARATION_FETCH_PATHS) counts[path] = byPath[path] || 0;
+  return {
+    counts,
+    meaning:
+      "GET counts for machine declaration paths, reused from the existing byPath map. " +
+      "Recent events in this process use kind declarationFetch and do not increment humans. " +
+      "/openapi.json was previously skipped as a static asset, so a byPath count there starts with this classification. " +
+      "A pre-existing byPath value for /skill.md or the api-catalog is not separable from an older ordinary GET. " +
+      "A declaration fetch is not a tool attempt, not delivery of a tool result, and not later usefulness, a referral, or a conversion.",
+  };
+}
+
 function recordMcpSurfaceGet() {
   pendingDelta.total += 1;
   pendingDelta.mcpSurfaceGets += 1;
@@ -830,6 +859,11 @@ export function pulseMiddleware(req, _res, next) {
     }
 
     if (req.method !== "GET") return next();
+
+    if (isDeclarationFetchPath(p)) {
+      recordDeclarationFetch(p);
+      return next();
+    }
 
     if (
       ASSET_RE.test(p) ||
@@ -919,6 +953,7 @@ export function pulseSnapshot() {
     },
     bots: counters.bots,
     aiCrawlers: counters.aiCrawlers,
+    declarationFetch: declarationFetchView(counters.byPath),
     mcpSurfaceGet: {
       requests: counters.mcpSurfaceGets,
       meaning:

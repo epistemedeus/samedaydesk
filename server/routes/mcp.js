@@ -37,7 +37,7 @@ export const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze([
   "2025-03-26",
   "2024-11-05",
 ]);
-const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
+export const SERVER_INFO = { name: "samedaydesk-agent-tools", version: "1.2.0" };
 
 export function negotiateProtocolVersion(offered) {
   if (typeof offered === "string" && SUPPORTED_PROTOCOL_VERSIONS.includes(offered)) return offered;

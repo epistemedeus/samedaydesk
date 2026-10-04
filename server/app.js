@@ -19,6 +19,7 @@ import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
 import agentReadinessRouter from "./routes/agent-readiness.js";
 import { apexAgentCard } from "./lib/apex-agent-card.js";
+import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
@@ -131,6 +132,10 @@ app.get("/.well-known/agent-card.json", (_req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.type("application/json").send(apexAgentCard());
 });
+
+// Machine declarations derived from the mounted tools. Mounted before the SPA
+// so a missing static file cannot turn them into an HTML document.
+mountApexDeclarations(app);
 
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
