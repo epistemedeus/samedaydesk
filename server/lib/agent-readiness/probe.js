@@ -4,6 +4,7 @@ import dns from "node:dns/promises";
 import http from "node:http";
 import https from "node:https";
 import { LATEST_MCP_VERSION } from "./checks.js";
+import { classifyRetrieval } from "./retrieval.js";
 import { discoverMcpLinks, needsWwwFallback, parseLlmsTxt } from "./discovery.js";
 import { PROBE_PATHS } from "./probeScript.js";
 import { PublicHostError, assertPublicHostname, resolvePublicAddresses } from "./ssrf.js";
@@ -129,6 +130,7 @@ export function rawExchange(url, options = {}) {
       sawResponse = true;
       const chunks = [];
       let size = 0;
+      let responseError = null;
       res.on("data", (chunk) => {
         if (size >= maxBytes) {
           truncated = true;
@@ -151,11 +153,17 @@ export function rawExchange(url, options = {}) {
         headers: headerMap(res.headers),
         body: Buffer.concat(chunks).toString("utf8"),
         ...(truncated ? { truncated: true } : {}),
-        ...(timedOut ? { error: "timeout" } : {}),
+        ...(timedOut ? { error: "timeout" } : responseError ? { error: responseError } : {}),
       });
       res.on("end", done);
-      res.on("error", done);
-      res.on("close", done);
+      res.on("error", () => {
+        if (!truncated) responseError = "connection";
+        done();
+      });
+      res.on("close", () => {
+        if (!res.complete && !truncated) responseError = "connection";
+        done();
+      });
     });
     req.on("timeout", () => {
       timedOut = true;
@@ -211,8 +219,9 @@ function toResponse(got) {
   const entry = { status: Number(got?.status) || 0, headers };
   if (headers["content-type"]) entry.contentType = headers["content-type"];
   const rawBody = got?.body == null ? "" : String(got.body);
-  if (rawBody) entry.body = rawBody.slice(0, MAX_BODY_BYTES);
-  if (got?.truncated || rawBody.length > MAX_BODY_BYTES) entry.truncated = true;
+  const bodyBytes = Buffer.from(rawBody, "utf8");
+  if (rawBody) entry.body = bodyBytes.subarray(0, MAX_BODY_BYTES).toString("utf8");
+  if (got?.truncated || bodyBytes.length > MAX_BODY_BYTES) entry.truncated = true;
   if (got?.error) entry.error = String(got.error);
   return entry;
 }
@@ -258,6 +267,7 @@ async function rpc(exchange, url, kind) {
     if (err instanceof PublicHostError) throw err;
     return undefined;
   }
+  if (classifyRetrieval(got).kind !== "retrieved") return undefined;
   return parseRpc(got?.body);
 }
 

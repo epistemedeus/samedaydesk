@@ -38,7 +38,7 @@ export function classifyRetrieval(res) {
   if (!res || typeof res.status !== "number") return { kind: "unavailable", status: null, challenge: false };
   const status = res.status;
   const challenge = looksLikeChallenge(res);
-  if (res.error === "timeout") return { kind: "failed", status, failure: "timeout", challenge };
+  if (res.error) return { kind: "failed", status, failure: res.error, challenge };
   if (status === 0) return { kind: "failed", status, failure: res.error || "connection", challenge };
   if (challenge || REFUSAL_STATUSES.has(status)) return { kind: "blocked", status, challenge };
   if (ABSENT_STATUSES.has(status)) return { kind: "absent", status, challenge: false };
@@ -57,14 +57,20 @@ export function selectDocument(bundle, paths) {
   });
   const chosen = attempts.find((attempt) => attempt.outcome.kind === "retrieved") || null;
   const blocking = chosen ? null : attempts.find((attempt) => (
-    attempt.outcome.kind === "blocked" || attempt.outcome.kind === "failed" || attempt.outcome.kind === "budget"
+    attempt.outcome.kind === "blocked" || attempt.outcome.kind === "failed" || attempt.outcome.kind === "budget" || attempt.outcome.kind === "unavailable"
   )) || null;
   return { attempts, chosen, blocking };
 }
 
 export function retrievalDiagnostic(pathLabel, outcome, noun = "document") {
-  if (!outcome || outcome.kind === "absent" || outcome.kind === "unavailable" || outcome.kind === "retrieved") {
+  if (!outcome || outcome.kind === "absent" || outcome.kind === "retrieved") {
     return null;
+  }
+  if (outcome.kind === "unavailable") {
+    return {
+      reason: `No response was recorded for ${pathLabel}. The ${noun} was not read, so this is not evidence it is absent or invalid.`,
+      fix: `Obtain a recorded response for ${pathLabel}, then rerun this check before changing the ${noun}.`,
+    };
   }
   if (outcome.kind === "blocked") {
     const how = outcome.challenge ? `an HTTP ${outcome.status} challenge` : `HTTP ${outcome.status}`;

@@ -76,13 +76,34 @@ describe("document retrieval diagnosis", () => {
     expect(check(report, "mcp.initialize").reason).toBe("No MCP server (/mcp returned 404).");
   });
 
-  it("passes a valid OpenAPI document and does not ask the caller to publish it", () => {
+  it("passes a valid OpenAPI document with the existing scoring contract", () => {
     const report = buildReport(bundle({
       "/openapi.json": { status: 200, contentType: "application/json", body: JSON.stringify(VALID_DOC) },
     }), "2026-09-24T09:00:00Z");
     expect(check(report, "openapi.parses").status).toBe("pass");
     expect(check(report, "openapi.parses").reason).toBe("/openapi.json parsed as JSON.");
     expect(check(report, "openapi.version").status).toBe("pass");
+  });
+
+  it("keeps unobserved paths unknown rather than claiming documents are absent", () => {
+    const report = buildReport({ ...bundle(), responses: {} }, "2026-09-24T09:00:00Z");
+    for (const id of ["openapi.parses", "discovery.skill", "discovery.llms", "apiCatalog.present", "x402.parses", "agentCard.present", "mcp.initialize"]) {
+      const item = check(report, id);
+      expect(item.reason).toMatch(/No response was recorded/);
+      expect(item.fix).toMatch(/Obtain a recorded response/);
+    }
+    const onlyOnePath = buildReport(bundle({ "/.well-known/openapi.json": undefined }), "2026-09-24T09:00:00Z");
+    expect(check(onlyOnePath, "openapi.parses").reason).toMatch(/No response was recorded for \\/.well-known\\/openapi.json/);
+    expect(check(onlyOnePath, "openapi.parses").reason).not.toBe(ABSENT_OPENAPI);
+  });
+
+  it("refuses a parseable prefix when its connection failed after headers", () => {
+    const report = buildReport(bundle({
+      "/openapi.json": { status: 200, contentType: "application/json", body: JSON.stringify(VALID_DOC), error: "connection" },
+    }), "2026-09-24T09:00:00Z");
+    expect(check(report, "openapi.parses").status).toBe("fail");
+    expect(check(report, "openapi.parses").reason).toMatch(/connection failed/);
+    expect(check(report, "openapi.parses").fix).not.toBe(PUBLISH_OPENAPI);
   });
 
   it("rejects a seeded HTTP 403 challenge misread as a missing document", () => {
@@ -283,5 +304,57 @@ describe("probe records retrieval limits", () => {
     expect(check(report, "openapi.parses").reason).toMatch(/probe body budget/);
     const { checks } = runChecks(probed);
     expect(checks.find((item) => item.id === "openapi.parses").reason).not.toMatch(/No OpenAPI document/);
+  });
+});
+
+describe("partial transport and byte-budget receiving", () => {
+  it("marks an aborted HTTP body as a connection failure even if its prefix is valid JSON", async () => {
+    const prefix = JSON.stringify(VALID_DOC);
+    const server = http.createServer((_req, res) => {
+      res.writeHead(200, { "content-type": "application/json", "content-length": Buffer.byteLength(prefix) + 20 });
+      res.flushHeaders();
+      res.write(prefix);
+      setTimeout(() => res.destroy(), 20);
+    });
+    const port = await listen(server);
+    try {
+      const got = await rawExchange(new URL(`http://127.0.0.1:${port}/doc`), {
+        address: { address: "127.0.0.1", family: 4 },
+        timeoutMs: 1000,
+      });
+      expect(got.status).toBe(200);
+      expect(got.error).toBe("connection");
+      expect(got.body).toBe(prefix);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it("applies the existing body budget in bytes to supplied multibyte responses", async () => {
+    const { probeHost, MAX_BODY_BYTES } = await import("../../lib/agent-readiness/probe.js");
+    const probed = await probeHost("public.example", {
+      lookup: async () => [{ address: "1.1.1.1", family: 4 }],
+      rawExchange(url) {
+        const path = new URL(url).pathname;
+        if (path === "/llms.txt") return { status: 200, headers: { "content-type": "text/plain" }, body: "é".repeat(110001) };
+        return { status: 404, headers: { "content-type": "text/plain" }, body: "Not found" };
+      },
+    });
+    expect(probed.responses["/llms.txt"].truncated).toBe(true);
+    expect(Buffer.byteLength(probed.responses["/llms.txt"].body)).toBe(MAX_BODY_BYTES);
+  });
+
+  it("does not accept a partial MCP reply as a successful initialization", async () => {
+    const { probeHost } = await import("../../lib/agent-readiness/probe.js");
+    const probed = await probeHost("public.example", {
+      lookup: async () => [{ address: "1.1.1.1", family: 4 }],
+      rawExchange(url, options) {
+        if (new URL(url).pathname === "/mcp" && options.method === "POST") {
+          return { status: 200, headers: { "content-type": "application/json" }, body: '{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-11-25","capabilities":{},"serverInfo":{"name":"prefix","version":"1"}}}', truncated: true };
+        }
+        return { status: 404, headers: { "content-type": "text/plain" }, body: "Not found" };
+      },
+    });
+    expect(probed.mcp).toBe(undefined);
   });
 });
