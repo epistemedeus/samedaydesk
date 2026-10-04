@@ -4,6 +4,7 @@ export * from "./types.js";
 export * from "./schema.js";
 export * from "./normalize.js";
 export * from "./checks.js";
+export * from "./retrieval.js";
 export * from "./score.js";
 export * from "./probeScript.js";
 export * from "./demo.js";

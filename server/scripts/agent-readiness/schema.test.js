@@ -53,6 +53,19 @@ describe("bundle validation", () => {
       })
     ).toThrow(/numeric status/);
   });
+  it("accepts optional retrieval fields and rejects a bad truncated flag", () => {
+    const base = {
+      schema: "agent-readiness.probe.v1",
+      host: "a.example",
+      probedAt: "2026-09-24T09:00:00Z",
+      responses: { "/openapi.json": { status: 200, body: "{", truncated: true, error: "timeout" } },
+    };
+    expect(validateBundle(base).responses["/openapi.json"].truncated).toBe(true);
+    expect(() => validateBundle({
+      ...base,
+      responses: { "/openapi.json": { status: 200, truncated: "yes" } },
+    })).toThrow(/truncated must be boolean/);
+  });
   it("rejects an unknown response field", () => {
     expect(
       () => validateBundle({

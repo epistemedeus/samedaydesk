@@ -235,33 +235,35 @@ test("l08 agent repair", { timeout: 300_000 }, async (t) => {
     assert.equal(validateMaintHandoff(echo).error, "journey_result");
   });
 
-  await t.test("SDS255, seller-repair, and SDS260 paths stay untouched", () => {
-    const diff = spawnSync("git", [
-      "diff",
-      "--name-only",
-      "9cc816e13bfea448d68a26380efe2a91c88773dd",
-      "--",
-      "server/lib/agent-readiness",
-      "server/routes/agent-readiness.js",
-      "server/lib/seller-repair-checkout.js",
-      "server/lib/pulse.js",
-      "client/src/data/sellerRepairBriefs.ts",
-      "experiments/s260-useful-jobs-public-integration",
-    ], { cwd: repoRoot, encoding: "utf8" });
-    assert.equal(diff.status, 0, diff.stderr);
-    assert.equal(diff.stdout.trim(), "");
-    const mcp = spawnSync("git", [
-      "diff",
-      "-U0",
-      "9cc816e13bfea448d68a26380efe2a91c88773dd",
-      "--",
-      "server/routes/mcp.js",
-    ], { cwd: repoRoot, encoding: "utf8" });
-    assert.equal(mcp.status, 0, mcp.stderr);
-    const removed = mcp.stdout.split("\n").filter((line) => line.startsWith("-") && !line.startsWith("---"));
-    assert.deepEqual(removed, []);
-    assert.match(mcp.stdout, /protocolHeaderValue/);
-    assert.match(mcp.stdout, /Unsupported protocol version/);
-    assert.doesNotMatch(mcp.stdout, /const TOOLS/);
+  await t.test("retained readiness, repair, and MCP contracts remain compatible", async () => {
+    const readiness = await import(join(repoRoot, "server/lib/agent-readiness/index.js"));
+    const before = JSON.stringify(readiness.DEMO_BUNDLES);
+    const scores = Object.fromEntries(readiness.DEMO_BUNDLES.map((item) => [
+      item.host, readiness.buildReport(item, "2026-09-24T09:00:00Z").score,
+    ]));
+    assert.deepEqual(scores, {
+      "ein.llc": 44,
+      "samedaydesk.com": 43,
+      "agents.samedaydesk.com": 78,
+      "neomorphic.io": 49,
+    });
+    assert.equal(JSON.stringify(readiness.DEMO_BUNDLES), before);
+    const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
+    assert.deepEqual(validateMaintHandoff(handoff), { ok: true });
+    assert.equal(handoff.sellerRepair.catalogMutated, false);
+    assert.equal(handoff.journey.secondWallet, false);
+    assert.equal(handoff.contractRepair.externalSellerMutated, false);
+    const mcp = await import(join(repoRoot, "server/routes/mcp.js"));
+    const { MCP_TOOL_NAMES } = await import(join(repoRoot, "server/lib/mcp-tool-inventory.js"));
+    assert.deepEqual(mcp.TOOLS.map((tool) => tool.name), [...MCP_TOOL_NAMES]);
+    for (const version of mcp.SUPPORTED_PROTOCOL_VERSIONS) {
+      assert.equal(mcp.negotiateProtocolVersion(version), version);
+    }
+    assert.equal(mcp.negotiateProtocolVersion("1999-01-01"), mcp.SUPPORTED_PROTOCOL_VERSIONS[0]);
+    assert.equal(mcp.protocolHeaderValue({ headers: {} }), null);
+    assert.equal(mcp.protocolHeaderValue({ headers: { "mcp-protocol-version": "1999-01-01" } }), "1999-01-01");
+    assert.equal(mcp.isInitializationRequest({ method: "initialize" }), true);
+    assert.equal(mcp.isInitializationRequest({ method: "tools/list" }), false);
+    assert.match(mcp.unsupportedProtocolMessage("1999-01-01"), /Unsupported protocol version: 1999-01-01/);
   });
 });

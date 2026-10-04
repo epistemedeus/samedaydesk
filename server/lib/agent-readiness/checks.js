@@ -1,6 +1,7 @@
 import { detectWebMcp, discoverMcpLinks, resolveMcp } from "./discovery.js";
 import { usabilityChecks } from "./usability.js";
 import { buildIdentityMatrix, extractNamesFromText } from "./normalize.js";
+import { classifyRetrieval, contentTypeOf, inspectJsonBody, isHtmlDocument, retrievalDiagnostic, selectDocument, textDocumentVerdict } from "./retrieval.js";
 export const LATEST_MCP_VERSION = "2025-11-25";
 export const AI_AGENTS = ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended"];
 export const OPENAPI_PATHS = ["/openapi.json", "/.well-known/openapi.json"];
@@ -54,16 +55,15 @@ function discoveryChecks(ctx) {
     const skill = bundle.responses["/skill.md"];
     const robots = bundle.responses["/robots.txt"];
     const out = [];
-    const llmsBody = ok(llms) ? (llms?.body ?? "") : "";
+    const llmsVerdict = textDocumentVerdict(llms, "/llms.txt", "Publish /llms.txt describing what the site does and linking its machine surfaces.");
+    const llmsBody = llmsVerdict.status === "pass" ? (llms?.body ?? "") : "";
     out.push({
         id: "discovery.llms",
         category: "discovery",
         title: "llms.txt published",
-        status: llmsBody.trim() ? "pass" : "fail",
-        reason: llmsBody.trim()
-            ? `/llms.txt returned ${llms.status} with ${llmsBody.length} bytes.`
-            : `/llms.txt returned ${llms?.status ?? "no response"}.`,
-        fix: "Publish /llms.txt describing what the site does and linking its machine surfaces.",
+        status: llmsVerdict.status,
+        reason: llmsVerdict.reason,
+        fix: llmsVerdict.fix,
     });
     if (!llmsBody.trim()) {
         out.push({
@@ -95,25 +95,37 @@ function discoveryChecks(ctx) {
             fix: "Add absolute links to /openapi.json, /mcp and /.well-known/agent-card.json inside llms.txt.",
         });
     }
-    const skillBody = ok(skill) ? (skill?.body ?? "") : "";
+    const skillVerdict = textDocumentVerdict(skill, "/skill.md", "Publish /skill.md with step by step instructions an agent can follow to use the site.");
     out.push({
         id: "discovery.skill",
         category: "discovery",
         title: "skill.md published",
-        status: skillBody.trim() ? "pass" : "fail",
-        reason: skillBody.trim()
-            ? `/skill.md returned ${skill.status} with ${skillBody.length} bytes.`
-            : `/skill.md returned ${skill?.status ?? "no response"}.`,
-        fix: "Publish /skill.md with step by step instructions an agent can follow to use the site.",
+        status: skillVerdict.status,
+        reason: skillVerdict.reason,
+        fix: skillVerdict.fix,
     });
-    if (!ok(robots)) {
+    const robotsOutcome = classifyRetrieval(robots);
+    const robotsDiagnostic = retrievalDiagnostic("/robots.txt", robotsOutcome, "robots.txt");
+    if (robotsOutcome.kind !== "retrieved") {
         out.push({
             id: "discovery.robots",
             category: "discovery",
             title: "robots.txt does not block AI agents",
             status: "warn",
-            reason: `/robots.txt returned ${robots?.status ?? "no response"}, so agent rules are undefined.`,
-            fix: "Publish /robots.txt that allows the AI agents you want to be callable by.",
+            reason: robotsDiagnostic
+                ? `${robotsDiagnostic.reason} Agent rules are therefore unknown.`
+                : `/robots.txt returned ${robots?.status ?? "no response"}, so agent rules are undefined.`,
+            fix: robotsDiagnostic?.fix ?? "Publish /robots.txt that allows the AI agents you want to be callable by.",
+        });
+    }
+    else if (isHtmlDocument(robots)) {
+        out.push({
+            id: "discovery.robots",
+            category: "discovery",
+            title: "robots.txt does not block AI agents",
+            status: "warn",
+            reason: `/robots.txt returned HTTP ${robots.status} as ${contentTypeOf(robots) || "HTML"}, so agent rules were not read.`,
+            fix: "Serve /robots.txt as plain text. An HTML page does not define agent rules and is not evidence they are missing.",
         });
     }
     else {
@@ -180,37 +192,42 @@ export function blockedAgents(robots) {
 }
 /* -------------------------------- openapi -------------------------------- */
 function openapiChecks(ctx) {
-    const found = first(ctx.bundle, OPENAPI_PATHS);
-    const doc = rec(json(found?.res));
+    const selected = selectDocument(ctx.bundle, OPENAPI_PATHS);
+    const inspected = selected.chosen ? inspectJsonBody(selected.chosen.res, selected.chosen.path) : null;
+    const doc = inspected?.state === "object" ? inspected.value : null;
     const out = [];
+    const unread = retrievalDiagnostic(selected.blocking?.path || "/openapi.json", selected.blocking?.outcome);
     out.push({
         id: "openapi.parses",
         category: "openapi",
         title: "OpenAPI document parses",
         status: doc ? "pass" : "fail",
         reason: doc
-            ? `${found.path} parsed as JSON.`
-            : found
-                ? `${found.path} was served but did not parse as JSON.`
-                : "No OpenAPI document at /openapi.json or /.well-known/openapi.json.",
-        fix: "Serve a valid JSON OpenAPI document at /openapi.json.",
+            ? inspected.reason
+            : unread
+                ? unread.reason
+                : inspected?.reason || "No OpenAPI document at /openapi.json or /.well-known/openapi.json.",
+        fix: doc
+            ? "Serve a valid JSON OpenAPI document at /openapi.json."
+            : unread?.fix || inspected?.fix || "Serve a valid JSON OpenAPI document at /openapi.json.",
     });
-    const na = (id, title, fix) => ({
+    const na = (id, title, fix, reason = "No parsable OpenAPI document.") => ({
         id,
         category: "openapi",
         title,
         status: "na",
-        reason: "No parsable OpenAPI document.",
+        reason,
         fix,
     });
     if (!doc) {
+        const unreadReason = unread ? "The OpenAPI document was not read." : "No parsable OpenAPI document.";
         return [
             ...out,
-            na("openapi.version", "OpenAPI version is 3.x", "Use OpenAPI 3.0 or 3.1."),
-            na("openapi.operationId", "Every operation has an operationId", "Add an operationId to each operation."),
-            na("openapi.summary", "Every operation has a summary", "Add a one-line summary to each operation."),
-            na("openapi.security", "Every operation declares security", "Declare security per operation."),
-            na("openapi.public", "Public operations are marked", "Mark public operations with security: []."),
+            na("openapi.version", "OpenAPI version is 3.x", "Use OpenAPI 3.0 or 3.1.", unreadReason),
+            na("openapi.operationId", "Every operation has an operationId", "Add an operationId to each operation.", unreadReason),
+            na("openapi.summary", "Every operation has a summary", "Add a one-line summary to each operation.", unreadReason),
+            na("openapi.security", "Every operation declares security", "Declare security per operation.", unreadReason),
+            na("openapi.public", "Public operations are marked", "Mark public operations with security: [].", unreadReason),
         ];
     }
     const version = typeof doc.openapi === "string" ? doc.openapi : "";
@@ -294,6 +311,9 @@ function mcpChecks(ctx) {
     });
     const mcpGet = ctx.bundle.responses["/mcp"];
     const initResult = rec(rec(mcp?.initialize)?.result);
+    const mcpDiagnostic = !initResult && !mcp
+        ? retrievalDiagnostic("/mcp", classifyRetrieval(mcpGet), "endpoint response")
+        : null;
     const present = {
         id: "mcp.initialize",
         category: "mcp",
@@ -303,8 +323,8 @@ function mcpChecks(ctx) {
             ? `initialize returned a result from ${mcp.url}.`
             : mcp
                 ? "initialize returned no result object."
-                : `No MCP server (/mcp returned ${mcpGet?.status ?? "no response"}).`,
-        fix: "Expose an MCP endpoint at /mcp that answers the initialize handshake.",
+                : mcpDiagnostic?.reason || `No MCP server (/mcp returned ${mcpGet?.status ?? "no response"}).`,
+        fix: mcpDiagnostic?.fix || "Expose an MCP endpoint at /mcp that answers the initialize handshake.",
     };
     if (!initResult) {
         return [
@@ -395,8 +415,10 @@ function mcpChecks(ctx) {
 }
 /* ------------------------------- agent card ------------------------------- */
 function agentCardChecks(ctx) {
-    const found = first(ctx.bundle, AGENT_CARD_PATHS);
-    const card = rec(json(found?.res));
+    const selected = selectDocument(ctx.bundle, AGENT_CARD_PATHS);
+    const inspected = selected.chosen ? inspectJsonBody(selected.chosen.res, selected.chosen.path) : null;
+    const card = inspected?.state === "object" ? inspected.value : null;
+    const unread = retrievalDiagnostic(selected.blocking?.path || "/.well-known/agent-card.json", selected.blocking?.outcome);
     const out = [];
     out.push({
         id: "agentCard.present",
@@ -405,12 +427,13 @@ function agentCardChecks(ctx) {
         status: card && typeof card.name === "string" && typeof card.description === "string" ? "pass" : card ? "warn" : "fail",
         reason: card
             ? typeof card.name === "string" && typeof card.description === "string"
-                ? `${found.path} declares name and description.`
-                : `${found.path} parsed but is missing name or description.`
-            : "No agent card at /.well-known/agent-card.json or /.well-known/agent.json.",
-        fix: "Publish an A2A agent card at /.well-known/agent-card.json with name and description.",
+                ? `${selected.chosen.path} declares name and description.`
+                : `${selected.chosen.path} parsed but is missing name or description.`
+            : unread?.reason || inspected?.reason || "No agent card at /.well-known/agent-card.json or /.well-known/agent.json.",
+        fix: unread?.fix || (inspected && inspected.state !== "object" ? inspected.fix : "Publish an A2A agent card at /.well-known/agent-card.json with name and description."),
     });
     if (!card) {
+        const unreadReason = unread ? "The agent card was not read." : "No agent card to inspect.";
         return [
             ...out,
             {
@@ -418,7 +441,7 @@ function agentCardChecks(ctx) {
                 category: "agentCard",
                 title: "Agent card lists non-empty skills",
                 status: "na",
-                reason: "No agent card to inspect.",
+                reason: unreadReason,
                 fix: "List each callable skill with an id, name and description in the agent card.",
             },
             {
@@ -426,7 +449,7 @@ function agentCardChecks(ctx) {
                 category: "agentCard",
                 title: "Agent card declares interfaces",
                 status: "na",
-                reason: "No agent card to inspect.",
+                reason: unreadReason,
                 fix: "Declare the transports agents can use in the card's interfaces array.",
             },
         ];
@@ -459,12 +482,14 @@ function agentCardChecks(ctx) {
 export function collectNamedOperations(bundle) {
     const llms = bundle.responses["/llms.txt"];
     const skill = bundle.responses["/skill.md"];
-    const openapi = rec(json(first(bundle, OPENAPI_PATHS)?.res));
-    const card = rec(json(first(bundle, AGENT_CARD_PATHS)?.res));
+    const openapiChoice = selectDocument(bundle, OPENAPI_PATHS).chosen;
+    const openapi = openapiChoice ? inspectJsonBody(openapiChoice.res, openapiChoice.path).value : null;
+    const cardChoice = selectDocument(bundle, AGENT_CARD_PATHS).chosen;
+    const card = cardChoice ? inspectJsonBody(cardChoice.res, cardChoice.path).value : null;
     const named = {};
-    if (ok(llms) && llms?.body)
+    if (ok(llms) && llms?.body && !isHtmlDocument(llms) && classifyRetrieval(llms).kind === "retrieved")
         named["llms.txt"] = extractNamesFromText(llms.body);
-    if (ok(skill) && skill?.body)
+    if (ok(skill) && skill?.body && !isHtmlDocument(skill) && classifyRetrieval(skill).kind === "retrieved")
         named["skill.md"] = extractNamesFromText(skill.body);
     if (openapi) {
         named.openapi = openapiOperations(openapi)
@@ -524,19 +549,20 @@ function identityChecks(matrix) {
 /* --------------------------------- x402 ---------------------------------- */
 function x402Checks(ctx) {
     const res = ctx.bundle.responses["/.well-known/x402"];
-    const doc = rec(json(ok(res) ? res : undefined));
+    const outcome = classifyRetrieval(res);
+    const inspected = outcome.kind === "retrieved" ? inspectJsonBody(res, "/.well-known/x402") : null;
+    const doc = inspected?.state === "object" ? inspected.value : null;
+    const unread = retrievalDiagnostic("/.well-known/x402", outcome);
     const out = [];
     out.push({
         id: "x402.parses",
         category: "x402",
         title: "x402 payment manifest parses",
-        status: doc ? "pass" : ok(res) ? "warn" : "fail",
+        status: doc ? "pass" : outcome.kind === "retrieved" ? "warn" : "fail",
         reason: doc
             ? "/.well-known/x402 parsed as JSON."
-            : ok(res)
-                ? "/.well-known/x402 was served but did not parse as JSON."
-                : `/.well-known/x402 returned ${res?.status ?? "no response"}.`,
-        fix: "Publish a JSON x402 manifest at /.well-known/x402, even if it lists no paid resources yet.",
+            : unread?.reason || inspected?.reason || `/.well-known/x402 returned ${res?.status ?? "no response"}.`,
+        fix: unread?.fix || inspected?.fix || "Publish a JSON x402 manifest at /.well-known/x402, even if it lists no paid resources yet.",
     });
     if (!doc) {
         return [
@@ -546,7 +572,7 @@ function x402Checks(ctx) {
                 category: "x402",
                 title: "Paid resource list is truthful",
                 status: "na",
-                reason: "No parsable x402 manifest.",
+                reason: unread ? "The x402 manifest was not read." : "No parsable x402 manifest.",
                 fix: "List paid resources, or state plainly that there are none.",
             },
         ];
@@ -614,8 +640,10 @@ function corsChecks(ctx) {
 /* ------------------------------ api-catalog ------------------------------ */
 function apiCatalogChecks(ctx) {
     const res = ctx.bundle.responses["/.well-known/api-catalog"];
-    const present = ok(res);
-    const doc = rec(json(present ? res : undefined));
+    const outcome = classifyRetrieval(res);
+    const present = outcome.kind === "retrieved";
+    const doc = present ? rec(json(res)) : null;
+    const unread = retrievalDiagnostic("/.well-known/api-catalog", outcome);
     const out = [];
     out.push({
         id: "apiCatalog.present",
@@ -624,10 +652,11 @@ function apiCatalogChecks(ctx) {
         status: present ? "pass" : "fail",
         reason: present
             ? `/.well-known/api-catalog returned ${res?.status ?? 0}.`
-            : `/.well-known/api-catalog returned ${res?.status ?? "no response"}.`,
-        fix: "Publish an RFC 9727 linkset at /.well-known/api-catalog listing every machine surface.",
+            : unread?.reason || `/.well-known/api-catalog returned ${res?.status ?? "no response"}.`,
+        fix: unread?.fix || "Publish an RFC 9727 linkset at /.well-known/api-catalog listing every machine surface.",
     });
     if (!present) {
+        const unreadReason = unread ? "The api-catalog was not read." : "No api-catalog to inspect.";
         return [
             ...out,
             {
@@ -635,7 +664,7 @@ function apiCatalogChecks(ctx) {
                 category: "apiCatalog",
                 title: "api-catalog is application/linkset+json",
                 status: "na",
-                reason: "No api-catalog to inspect.",
+                reason: unreadReason,
                 fix: "Serve the catalog with Content-Type: application/linkset+json.",
             },
             {
@@ -643,7 +672,7 @@ function apiCatalogChecks(ctx) {
                 category: "apiCatalog",
                 title: "api-catalog links resolve",
                 status: "na",
-                reason: "No api-catalog to inspect.",
+                reason: unreadReason,
                 fix: "Point every catalog link at a path that actually returns 200.",
             },
         ];

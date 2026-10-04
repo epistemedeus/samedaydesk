@@ -106,10 +106,15 @@ for p in paths:
     h = headers(read(base + ".head"))
     body = read(base + ".body")
     entry = {"status": code, "headers": h}
+    if code == 0:
+        entry["error"] = "connection"
     if h.get("content-type"):
         entry["contentType"] = h["content-type"]
+    if len(body) > 200000:
+        entry["truncated"] = True
+        body = body[:200000]
     if body:
-        entry["body"] = body[:200000]
+        entry["body"] = body
     bundle["responses"][p] = entry
     pre_code = int((read(base + ".precode", "0") or "0").strip() or 0)
     bundle["corsPreflight"][p] = {"status": pre_code, "headers": headers(read(base + ".pre"))}
@@ -183,9 +188,17 @@ def get(url):
     try:
         req = urllib.request.Request(url, headers={"Accept": "application/json"})
         with urllib.request.urlopen(req, timeout=15) as r:
-            return r.status, r.headers.get("content-type", ""), r.read(200000).decode("utf-8", "replace")
+            data = r.read(200001)
+            entry = {
+                "status": r.status,
+                "contentType": r.headers.get("content-type", ""),
+                "body": data[:200000].decode("utf-8", "replace"),
+            }
+            if len(data) > 200000:
+                entry["truncated"] = True
+            return entry
     except Exception:
-        return 0, "", ""
+        return {"status": 0, "contentType": "", "body": "", "error": "connection"}
 
 def post(url, payload):
     try:
@@ -210,10 +223,10 @@ for line in llms.splitlines():
 
 bundle["linkedResponses"] = {}
 for cat in catalogs:
-    code, ct, text = get(cat)
-    bundle["linkedResponses"][cat] = {"status": code, "contentType": ct, "body": text}
+    entry = get(cat)
+    bundle["linkedResponses"][cat] = entry
     try:
-        acc = []; walk(json.loads(text), acc)
+        acc = []; walk(json.loads(entry.get("body") or "null"), acc)
         for u in acc:
             if is_mcp(u): add(u, "MCP catalog JSON")
     except ValueError:
