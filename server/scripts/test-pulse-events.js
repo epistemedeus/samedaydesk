@@ -612,3 +612,35 @@ test("uses a durable per-user state path in production and migrates the legacy t
   const wal = JSON.parse(readFileSync(`${durableFile}.fallback.json`, "utf8"));
   assert.ok(wal.pendingFlushes.length >= 1);
 });
+
+test("declaration GET is not a human page view, a tool attempt, or usefulness", () => {
+  const ua = "Mozilla/5.0 (compatible; discovery-replay)";
+  const before = pulseSnapshot();
+  for (const path of ["/openapi.json", "/skill.md", "/.well-known/api-catalog", "/.well-known/agent-card.json"]) {
+    const { after } = recordGet({ "user-agent": ua }, path);
+    assert.equal(after.recent[0]?.kind, "declarationFetch");
+    assert.equal(after.recent[0]?.p, path);
+    assert.equal(after.declarationFetch.counts[path], (before.declarationFetch.counts[path] || 0) + 1);
+  }
+  const afterDeclarations = pulseSnapshot();
+  assert.equal(afterDeclarations.humans, before.humans);
+  assert.equal(afterDeclarations.uniqueHumansEstimate.count, before.uniqueHumansEstimate.count);
+  assert.equal(afterDeclarations.funnel.home, before.funnel.home);
+  assert.equal(afterDeclarations.mcpProtocol.httpRequests, before.mcpProtocol.httpRequests);
+  assert.match(afterDeclarations.declarationFetch.meaning, /not later usefulness/i);
+
+  const toolCall = recordMcpPost({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "tools/call",
+    params: { name: "plan_taskmarket_delegation", arguments: { request: "secret-deliverable-should-not-be-stored" } },
+  });
+  assert.equal(toolCall.after.mcpProtocol.byMethod["tools/call"], before.mcpProtocol.byMethod["tools/call"] + 1);
+  assert.equal(
+    toolCall.after.mcpProtocol.toolCallsByName.counts.plan_taskmarket_delegation,
+    (before.mcpProtocol.toolCallsByName.counts.plan_taskmarket_delegation || 0) + 1,
+  );
+  assert.equal(toolCall.after.declarationFetch.counts["/openapi.json"], afterDeclarations.declarationFetch.counts["/openapi.json"]);
+  assert.equal(JSON.stringify(toolCall.after).includes("secret-deliverable-should-not-be-stored"), false);
+  assert.match(toolCall.after.mcpProtocol.meaning, /Not unique agents/i);
+});
