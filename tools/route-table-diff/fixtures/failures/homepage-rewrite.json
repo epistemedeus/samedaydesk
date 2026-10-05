@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "claim": "homepage rewrite",
+  "rewritesHomepage": true,
+  "routes": [
+    {
+      "path": "/",
+      "title": "SameDayDesk: agent commerce, built and shipped",
+      "canonical": "https://samedaydesk.com/"
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    }
+  ]
+}

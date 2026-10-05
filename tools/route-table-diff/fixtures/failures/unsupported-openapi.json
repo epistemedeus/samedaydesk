@@ -1,0 +1,11 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Not an SDS route catalog", "version": "0.0.0" },
+  "paths": {
+    "/terms": {
+      "get": {
+        "summary": "Unlike schema. Must be refused, not compared as SDS routes."
+      }
+    }
+  }
+}

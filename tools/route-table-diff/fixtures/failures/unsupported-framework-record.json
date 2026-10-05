@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "path": "/api/terms",
+      "method": "GET",
+      "handler": "getTerms"
+    }
+  ]
+}
