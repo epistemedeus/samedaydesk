@@ -1,4 +1,4 @@
-import { constants, closeSync, fstatSync, lstatSync, mkdirSync, openSync, unlinkSync, writeFileSync } from "node:fs";
+import { constants, closeSync, fsyncSync, fstatSync, lstatSync, mkdirSync, openSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { X509Certificate } from "node:crypto";
 import { assertPrivateLocation, coded, openPrivateParent, readPrivateBytes } from "./private-paths.js";
@@ -36,10 +36,15 @@ function parsePayload(kind, raw) {
 }
 
 export function materializePrivateProfiles(env, { repoRoot }) {
+  return materializePrivateInputs(env, { repoRoot, files: FILES });
+}
+
+// Trusted adapters supply fixed input names. Visitor requests never select these.
+export function materializePrivateInputs(env, { repoRoot, files }) {
   const assigned = {}, wrote = [], created = [];
   const dir = String(env.FOUNDRY_PRIVATE_DIR || "").trim();
   // Validate all incoming payloads before creating any directory or file.
-  const requests = FILES.map(([key, fileKey, name, kind]) => {
+  const requests = files.map(([key, fileKey, name, kind]) => {
     const incoming = env[key] == null || String(env[key]).trim() === "" ? null : parsePayload(kind, env[key]);
     const explicit = String(env[fileKey] || "").trim();
     if (!explicit && incoming && !dir) throw coded("private_dir_required");
@@ -77,6 +82,8 @@ export function materializePrivateProfiles(env, { repoRoot }) {
           created.push({ entry: r.parent.entry, stat });
           if (!stat.isFile() || stat.nlink !== 1 || (stat.mode & 0o777) !== 0o600) throw coded("private_input_mode");
           writeFileSync(fd, r.incoming);
+          fsyncSync(fd);
+          fsyncSync(r.parent.fd);
         } finally { closeSync(fd); }
         wrote.push(r.name);
       }
