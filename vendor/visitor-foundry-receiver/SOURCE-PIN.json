@@ -56,6 +56,25 @@
           "sha256": "1b26c2b62ac0a7dfa53fea611ab91f6190c82efb7351c9b68ea8af3202ba8016"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-ENTRY-RESERVATION-100505",
+      "sdsBase": "e73bd8956305fc7d5a53cbb309560f4c77e5c0a5",
+      "reason": "Bounded reserved-only canonical recovery after exact pending readback; unknown begin is never repeated or publicly fenced. Strict partial HTTP/client continuation binding. Existing allocation, terms, execution generation, physical ownership and sealed execution limits unchanged.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "2941d2f34e2b876cee2eee5d8e1172dc171009740830df9d76ed7a711b3ee68d",
+          "sha256": "679608a1f85a287bcfe3b211096f7d7842ef13d1629f5c1dea2a61b1c400f8d9"
+        },
+        "scripts/visitor-foundry/entry/src/client.mjs": {
+          "receivedSha256": "996e178725d14f21f7a61dfd1e3f64e1638b8a9e96caf201803ad33929814ac6",
+          "sha256": "bab21910838d03fed65ca1458c7ae2064ca2bf7339ca5626f8c6fdcabb22c08c"
+        },
+        "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+          "receivedSha256": "7b7a42f5539766ee14f608d2d2fc959c81a685406a5de327a8e94f098543f234",
+          "sha256": "2100120eb472393ec07247717dcb6528d0779b006f559303af0db4a3be249ffd"
+        }
+      }
     }
   ]
 }

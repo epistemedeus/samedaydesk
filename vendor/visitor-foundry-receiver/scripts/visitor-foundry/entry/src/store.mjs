@@ -175,12 +175,12 @@ export class EntryStore {
       return { begin: true, state: 'unknown' };
     });
     if (['ready', 'declined'].includes(decision.state)&&!row.entry_profile?.contribution) return decision.state;
-    // A thrown/unknown begin is never automatically repeated. read is read-only and
-    // must prove the exact registration/project/config binding, even after restart.
-    const bounded = async method => {
+    // A thrown/unknown begin is never repeated. An exact pending readback proves
+    // a committed reservation that canonical recovery may finish, even on restart.
+    const bounded = async (method, options) => {
       const controller = new AbortController(); let timer;
       try { return await Promise.race([
-        Promise.resolve().then(() => this.receiver[method]({ ...input, signal: controller.signal })),
+        Promise.resolve().then(() => this.receiver[method]({ ...input, signal: controller.signal }, options)),
         new Promise((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('receiver deadline')); }, 1000); }),
       ]); } finally { clearTimeout(timer); controller.abort(); }
     };
@@ -188,6 +188,13 @@ export class EntryStore {
     if (decision.begin) { try { await bounded('begin'); } catch {} }
     let state = 'unknown';
     try { state = await bounded('read'); } catch {}
+    if (state === 'pending' && typeof this.receiver.recover === 'function') {
+      // No absent-begin fencing from a public continuation. This is completion
+      // of an already charged reservation, not another admission or begin call.
+      try { await bounded('recover', { reservedOnly: true }); } catch {}
+      // A recovery response alone never replaces authoritative bound readback.
+      try { state = await bounded('read'); } catch { state = 'unknown'; }
+    }
     if(row.entry_profile?.contribution&&['ready','declined'].includes(decision.state)&&state!==decision.state)return 'unknown';
     need(['unknown', 'pending', 'ready', 'declined'].includes(state), 503, 'receiver_invalid_readback', 'reconcile_same_attempt');
     return this.tx(async c => {

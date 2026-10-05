@@ -54,10 +54,17 @@ export async function continueEntry(directory, action = 'reconcile', transport) 
       ['use_private_correspondence', 'reconcile_same_attempt'].includes(x.nextAction) &&
       [x.workspaceExpiresAt, x.grants.reader.expiresAt, x.grants.writer.expiresAt].every(s => typeof s === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(s)),
     503, 'invalid_entry_response', 'reconcile_same_attempt');
+    need(result.status === 202
+      ? x.status === 'partial' && ['pending', 'unknown'].includes(x.receiver.state) && x.nextAction === 'reconcile_same_attempt'
+      : x.status === 'ready' && ['disabled', 'ready', 'declined'].includes(x.receiver.state) && x.nextAction === 'use_private_correspondence',
+    503, 'invalid_entry_response', 'reconcile_same_attempt');
     need(x.schema === SCHEMA && x.requestId === attempt.body.requestId && x.profileId === attempt.body.profileId && x.termsHash === attempt.body.termsHash &&
       /^ven_[\w-]{16}$/.test(x.registrationId) && /^prj_[\w-]{16}$/.test(x.projectId) &&
       ['reader', 'writer'].every(role => x.grants?.[role]?.role === role && x.grants[role].token === grantToken(proof, x.registrationId, role)),
     503, 'invalid_entry_response', 'reconcile_same_attempt');
+    const prior = readPrivateJson(join(directory, 'continuation.json'));
+    need(!prior || prior.requestId === x.requestId && prior.registrationId === x.registrationId && prior.projectId === x.projectId
+      && prior.profileId === x.profileId && prior.termsHash === x.termsHash, 503, 'invalid_entry_response', 'reconcile_same_attempt');
     // Tokens are reconstructed from the private proof only when used. No bearer
     // credential is persisted in the continuation or printed by the CLI.
     const { grants, ...safe } = x;

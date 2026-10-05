@@ -13,6 +13,7 @@ import { runBounded } from '../foundry/bounded-child.mjs';
 import { startDisposablePg } from './fixtures/disposable-pg.mjs';
 import { original, task, cases } from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs';
 import { bootFoundryServer } from '../foundry/activation/local-journey.mjs';
+import { verifyFoundrySource } from './fixtures/verify-foundry-source.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const vendor = 'vendor/visitor-foundry-receiver';
@@ -371,19 +372,9 @@ test('generation request rejects symlink, public path, wrong mode and product da
 });
 
 test('all vendored amendments declare exact base/current hashes; execution remains sealed', async () => {
-  const pin = JSON.parse(await readFile(path.join(root, vendor, 'SOURCE-PIN.json')));
+  const pin = await verifyFoundrySource(root);
   const current = pin.localAmendments.find(a => a.package === 'ROOT-SOL-RETAINED-GENERATION-100503');
   assert.equal(current.sdsBase, baseHead);
-  const sha = b => createHash('sha256').update(b).digest('hex');
-  for (const [file, identity] of Object.entries(current.files)) {
-    assert.equal(sha(await readFile(path.join(root, vendor, file))), identity.sha256);
-    const previous = await runBounded('git', ['show', `${baseHead}:${vendor}/${file}`], { cwd: root, capture: true, stdoutLimit: 100000 });
-    assert.equal(previous.code === 0 ? sha(previous.stdout) : null, identity.receivedSha256);
-  }
-  for (const file of ['src/child.py','src/contracts.mjs','src/supervisor.mjs','src/launch.mjs','src/launcher.py']) {
-    const previous = await runBounded('git', ['show', `${baseHead}:${executionPath}/${file}`], { cwd: root, capture: true, stdoutLimit: 100000 });
-    assert.equal(previous.code, 0); assert.equal(sha(await readFile(path.join(root, executionPath, file))), sha(previous.stdout));
-  }
 });
 
 test('actual managed-host named receive build receives the same private unconsumed enrollment', async () => {
