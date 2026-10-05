@@ -1,0 +1,1457 @@
+{
+  "package": "ROOT-SOL-RETAINED-GENERATION-100503",
+  "nativeSession": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "base": "2c26534955fd3fa3c1a1ff12c5c5d4cdc5c2b7c1",
+  "branch": "codex/sol-retained-generation-100503",
+  "date": "2026-10-05",
+  "hostingerMeasured": false,
+  "retainedDatabaseTouched": false,
+  "productDatabaseTouched": false,
+  "productionActivate": "HOLD",
+  "receiver": {
+    "sourceRepo": "epistemedeus/neomorphic-io",
+    "branch": "codex/visitor-foundry-integration-20260926",
+    "head": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "tree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+    "module": "@neomorphic/correspondence",
+    "layout": "vendor/visitor-foundry-receiver keeps repo-relative paths for the import closure only",
+    "note": "Subset of Neo 1652533b, byte-identical for paths that remain except the explicit local amendments below. One correspondence module (src, dist, migrations, bin). Script and pack files are the static import closure of the entry mount, visitor CLI, worker, portable loader, execution example build, and the SDS acceptance helpers, plus dynamically loaded migrations, oracle, and held-out files. Not the whole Neo tree. No node_modules, .runtime, or .build. Worker drain remains in server/foundry. Canonical host.ts closes extension then base.",
+    "localAmendments": [
+      {
+        "package": "ROOT-SOL-RETAINED-PLATFORM-100502",
+        "sdsBase": "1132af16054e4639e57827c7e521e2a9ff9f052e",
+        "reason": "Faithful stdlib setrlimit-before-exec launcher, owned process-group cancellation and exit/pipe-drain witnesses; PROFILE, CAPS and child.py unchanged",
+        "files": {
+          "scripts/visitor-foundry/execution/src/supervisor.mjs": {
+            "receivedSha256": "bd69a81c569f0322f2f06901218d4f016ae8e5543cd360106d2627428e5444b2",
+            "sha256": "dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983"
+          },
+          "scripts/visitor-foundry/execution/src/launch.mjs": {
+            "receivedSha256": null,
+            "sha256": "0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95"
+          },
+          "scripts/visitor-foundry/execution/src/launcher.py": {
+            "receivedSha256": null,
+            "sha256": "672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+          }
+        }
+      },
+      {
+        "package": "ROOT-SOL-RETAINED-GENERATION-100503",
+        "sdsBase": "2c26534955fd3fa3c1a1ff12c5c5d4cdc5c2b7c1",
+        "reason": "Explicit v2 allocation/consent binding independent of actual execution generation; audited expected-old zero-work receiving only; existing verification maintenance refuses outstanding physical work. Execution profile, limits and adapter unchanged.",
+        "files": {
+          "scripts/visitor-foundry/integration/entry/profile.mjs": {
+            "receivedSha256": "bab0d92e569ebe66fa8a3bcb1c59cc305d35b14fcc952922c4712dc8570373c1",
+            "sha256": "f7bfe22c5d73abc0de8bd430763b5d00fde6463cd2f7a001a6a72e7a0713f0bd"
+          },
+          "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+            "receivedSha256": "7913b6b8e765739134a2c7eb2044189c608cb8ebf41fc1b6bbe0b3f950fd0109",
+            "sha256": "7b7a42f5539766ee14f608d2d2fc959c81a685406a5de327a8e94f098543f234"
+          },
+          "scripts/visitor-foundry/integration/entry/receive.mjs": {
+            "receivedSha256": null,
+            "sha256": "5f303820cbf46cbacce8488777f85f230ac7edce681bd54fe57053b14805c23e"
+          },
+          "scripts/visitor-foundry/entry/src/contract.mjs": {
+            "receivedSha256": "53392a0fbedea1c2bca93a17870e8eb753fa19496e68f4cf0f89a7483f36b890",
+            "sha256": "c23c3167a0e2058d84d15f3c3f728c68eb334baff2c865fa08b1bf49f6e3836b"
+          },
+          "scripts/visitor-foundry/integration/src/store.mjs": {
+            "receivedSha256": "f41078c05c35e3d3f90498a559102f73b114f7b591c30b8524f42b5a96bad28f",
+            "sha256": "909df8a852e8bde54912906d8c4170ba60ac3911c7364b87742efd93977f0c24"
+          },
+          "services/correspondence/migrations/visitor-foundry/006_vf12_allocation_receiving.sql": {
+            "receivedSha256": null,
+            "sha256": "1b26c2b62ac0a7dfa53fea611ab91f6190c82efb7351c9b68ea8af3202ba8016"
+          }
+        }
+      }
+    ]
+  },
+  "sourceSha256": {
+    "docs/FOUNDRY-HOST-RECEIVER.md": "9d221547f358522780e300780e6eac47211d85e8b98a6053cc97df786e4c6963",
+    "package.json": "fd24234b3b9d5360af37f0d8e6097c638bd2f0d939f521ed5c58acba0fdfa315",
+    "server/foundry/activation/ACTIVATION.md": "15282610e89fd0c952b9a85971883b9094ddeace08b0b3f229d4054b22098ddb",
+    "server/foundry/activation/MANAGED-NODE.md": "ad623b242b9875bdfc246b017759668463ec1c50ff66569e73d3c39489432aa5",
+    "server/foundry/activation/local-journey.mjs": "4661175c42203a5fd8ede6071ad4b0ff0045be8e4960e4507575601e85f7db88",
+    "server/foundry/activation/wire-contract.mjs": "00733cea3b80b9e242d81531294f4dc5027f617537c7d7cf94bdc45d18e5cd9d",
+    "server/foundry/install.mjs": "69b779ba760f116a2ce57c2c8d3387a7bb7d0c27cb4e69640bdefd0f44a39e13",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "847481c2cd090a891c1b2ef2f93d7d45d217639b7d02b3c2a7a09cdbc2db116e",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/contract.mjs": "c23c3167a0e2058d84d15f3c3f728c68eb334baff2c865fa08b1bf49f6e3836b",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/profile.mjs": "f7bfe22c5d73abc0de8bd430763b5d00fde6463cd2f7a001a6a72e7a0713f0bd",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receiver.mjs": "7b7a42f5539766ee14f608d2d2fc959c81a685406a5de327a8e94f098543f234",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/store.mjs": "909df8a852e8bde54912906d8c4170ba60ac3911c7364b87742efd93977f0c24",
+    "server/foundry/activation/GENERATION.md": "897d5277955568a66303e01c94474bb382e0e9b8aac75e5ffaf0712aeca074e5",
+    "server/foundry/generation.mjs": "a7d815f441b9aa4ff8287135b294cf25ae2c3fa11948921d374d0b615ba85e95",
+    "server/scripts/fixtures/generation-host.mjs": "6b2f3affbd6d14404926db5ccc0c3f505eeadaeeb0a3c5f4018b77a496472873",
+    "server/scripts/test-foundry-generation.js": "db2ca221ae8545a5c14bead28f0a55521def8ecd571f0cdcf9b63168819a06bf",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receive.mjs": "5f303820cbf46cbacce8488777f85f230ac7edce681bd54fe57053b14805c23e",
+    "vendor/visitor-foundry-receiver/services/correspondence/migrations/visitor-foundry/006_vf12_allocation_receiving.sql": "1b26c2b62ac0a7dfa53fea611ab91f6190c82efb7351c9b68ea8af3202ba8016",
+    "server/foundry/activation/receiving-100503/RESULT.md": "949815b0ca0d59c42faaaa08deef9adb16a4308806093eb19b539043e4ee2baa"
+  },
+  "sealedUnchangedSha256": {
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/child.py": "2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs": "85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/supervisor.mjs": "dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/launch.mjs": "0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/launcher.py": "672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+  },
+  "previousReceiptsUnchangedSha256": {
+    "server/foundry/activation/receiving-100501/RESULT.md": "889da866a9370588900ae1fcffd5d7f0a3edac4b9853bc05f592bc2cb6d43c98",
+    "server/foundry/activation/receiving-100501/replay.mjs": "850577013e86c064a52a3a991eda59a593511f804b271d3552c32bfdc6e9fdc0",
+    "server/foundry/activation/receiving-100501/receipt.json": "1b7a8dafa51af3fcb8bf1be2bc0487f402308c0ea15f865a54a346b0f7c2c1e1",
+    "server/foundry/activation/receiving-100502/namespace.mjs": "ecb4b9b8a3087680460b255616b4556df0fd77bf102dd6d84922e325406579d6",
+    "server/foundry/activation/receiving-100502/RESULT.md": "a888bf2bf0b1de740ce914f0c69fd4fdb7e6e8011e62b70f29ee82ebaf59dc7f",
+    "server/foundry/activation/receiving-100502/replay.mjs": "eb68b8020015fc73033960d44ab97ce5086d9e76d5074c427e90b0bc8e7be5ef",
+    "server/foundry/activation/receiving-100502/receipt.json": "710a5e7591d6e459b4329751527ebe0c96536e7a6a735701a3e98ec3a3cd3757"
+  },
+  "lockfiles": {
+    "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
+    "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+  },
+  "node2218": {
+    "source": "https://nodejs.org/dist/v22.18.0/",
+    "archiveSha256": "c1bfeecf1d7404fa74728f9db72e697decbd8119ccc6f5a294d795756dfcfca7",
+    "binarySha256": "ccacb2d6d87ba6d118b2bffc1ae33747a05cc5fc6b1f1ec4fc1d420b687e952d",
+    "officialShasumsSha256": "5499a9c23b58f52f297f9541656564aee7025ef652f7f74d49b98f7c72f9030f",
+    "commands": [
+      "curl --fail --silent --show-error --max-time 60 --max-filesize 50000000 -o /tmp/root-sol-100503/node-v22.18.0-linux-x64.tar.xz https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz",
+      "curl --fail --silent --show-error --max-time 30 -o /tmp/root-sol-100503/SHASUMS256.txt https://nodejs.org/dist/v22.18.0/SHASUMS256.txt",
+      "cd /tmp/root-sol-100503 && rg ' node-v22.18.0-linux-x64.tar.xz$' SHASUMS256.txt | sha256sum -c - && tar -xf node-v22.18.0-linux-x64.tar.xz && ./node-v22.18.0-linux-x64/bin/node --version"
+    ]
+  },
+  "reproduced": {
+    "legacyInstallerSameNodeExit": 0,
+    "legacyInstallerDifferentNodeExit": 1,
+    "canonicalCode": "immutable_contribution_installation",
+    "fixedOrdinaryInstallerLegacyExit": 1,
+    "missingExpectedIdentityExit": 2,
+    "expectedOldConflictExit": 1,
+    "changedAuthorityExit": 1,
+    "populatedLegacyExit": 1,
+    "receiptWriteFailureExit": 1,
+    "physicalMaintenanceRefusalExit": 2,
+    "privatePathRefusalExit": 2,
+    "differentRuntimeHistoricalMaintenanceReplayExit": 2,
+    "nonzeroCasesLeaveAuthorityRecordsUnchanged": true
+  },
+  "totals": {
+    "pass": 134,
+    "failed": 0,
+    "skipped": 0
+  },
+  "tests": [
+    {
+      "suite": "generation",
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/root-sol-100503/generation-trace.json npm run test:foundry-generation",
+      "exit": 0,
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "5407f347ae73405a42f139144c5578500c6078ab0b292e66cbefcbff9152c024",
+      "cases": [
+        "real unchanged legacy installer replay; Node22.18.0 mismatch reproduced and closed pools",
+        "read-only identity inspection does not migrate or reset legacy enrollment",
+        "expected-old conflict refuses authority rewrite atomically",
+        "receiving without expected identities refuses before migration or private enrollment",
+        "unconsumed transition preserves full original authority/charge/caps; concurrent exact replay",
+        "changed allocation caps cannot use the pre-admission transition",
+        "receipt commit failure rolls host/profile updates back together",
+        "populated legacy admissions refuse transition without rewriting registrations",
+        "stable allocation installer replays across real Node and changed installed source identities",
+        "reserved legacy registration with no project/admission refuses receiving",
+        "visitor authority/private correspondence survive Node/source/Python generations with fresh verification",
+        "already reserved job blocks maintenance; the exact admitted job completes once",
+        "generation 2: stale evidence blocked; explicit renewal does not execute or refill",
+        "generation 3: stale evidence blocked; explicit renewal does not execute or refill",
+        "generation 4: stale evidence blocked; explicit renewal does not execute or refill",
+        "later visitor acquires/executes after restart; useful negative and changed input retain bindings",
+        "generation request rejects symlink, public path, wrong mode and product database before mutation",
+        "all vendored amendments declare exact base/current hashes; execution remains sealed",
+        "actual managed-host named receive build receives the same private unconsumed enrollment"
+      ]
+    },
+    {
+      "suite": "managed",
+      "command": "npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "69506de603f5b3596f1efc18eb7a860a5427eb92730757b6251f765b78ef9def",
+      "cases": [
+        "setup drains noisy stdout and stderr without retaining or exposing stderr",
+        "setup hang is bounded and its child exits",
+        "setup stdout overflow is bounded and its child exits",
+        "setup stderr overflow is bounded and its child exits",
+        "setup input disconnect is bounded and its child exits",
+        "setup nonzero/missing children return safe failure evidence",
+        "setup cancellation and deadlines kill descendants with inherited pipes",
+        "download enforces the byte ceiling while streaming and cancels the body",
+        "download rejects oversized content-length without reading",
+        "download deadline and disconnected stream return secret-free failures",
+        "materializer terminates a noisy installed interpreter instead of deadlocking",
+        "materializer bounds a hanging readiness child and refuses nonzero partial runtime",
+        "purelib stdout/stderr discovery is bounded and refuses malformed/nonzero paths",
+        "managed diagnostics drain stderr, time out, and never print child secrets",
+        "private JSON/key/CA replay checks content with implicit and explicit filenames",
+        "private materialization never chmods a linked public directory or writes through ancestors",
+        "private reads and replay refuse file links, hardlinks, FIFOs, and unsafe modes",
+        "private invalid later payload creates no partial secrets",
+        "private malformed CA creates no files",
+        "private write failure removes only this invocation's new files",
+        "private file reads bound allocation before loading oversized JSON",
+        "optional foundry CA never changes the pg constructor or product/Pulse configuration",
+        "configured CA requires verify-full and refuses conflicting TLS options",
+        "real PostgreSQL TLS retains certificate-chain and hostname verification",
+        "removed runtime selector cannot silently rename or load the sealed profile",
+        "sealed invocation witnesses compile/instantiate/execute for changed input and rejects mixed pins before spawn",
+        "SIGTERM on a diagnostic parent kills and reaps its owned child group",
+        "reference profile stays the sealed wasmtime-py pin",
+        "default opt-in stays off",
+        "private files are materialized outside the repo and JSON stays off the listener",
+        "product database url is refused before connect",
+        "reference child enforces fuel, memory, imports, output, and malformed-module limits",
+        "reference child executes useful and negative structured results",
+        "process witness rejects unknown, cancelled, missing, and phase timeout",
+        "installer replay does not drift on a disposable database",
+        "standalone cpython fallback imports the pinned wheel",
+        "managed probe stays non-secret and off",
+        "sealed supervisor enforces instantiate deadline and waits for exit",
+        "sealed supervisor enforces execute deadline and waits for exit",
+        "sealed supervisor never treats an ok result without exit as execution completion",
+        "reference child bounds raw parsing and rejects WASI, variable memory, and invalid pointers"
+      ]
+    },
+    {
+      "suite": "platform",
+      "command": "npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "587cbcaaf9dfcbadd2d330cb9ee7d7d55faf5de23272c5a86a8eb888bae022e6",
+      "cases": [
+        "fresh bundled runtime invokes real/changed/useful-negative input without system Python or prlimit",
+        "OS limits and original PID exist at the first target instruction, before stdin/Wasmtime",
+        "actual kernel address-space, file-size and descriptor limits refuse excess",
+        "actual kernel CPU limit terminates and reaps a spinning installed target",
+        "a lower inherited hard limit fails closed instead of silently substituting weaker limits",
+        "launcher missing resource is typed, secret-free and never executes the target",
+        "launcher failed setrlimit is typed, secret-free and never executes the target",
+        "launcher false enforcement is typed, secret-free and never executes the target",
+        "launcher failed exec is typed, secret-free and never executes the target",
+        "launcher bounds numeric arguments to sealed caps before executing a target",
+        "cancellation kills the owned group, drains pipes and reaps the direct launcher/worker PID",
+        "launcher source change invalidates prior runtime pins before any worker spawn",
+        "probe distinguishes unavailable interpreter from launcher enforcement and discards diagnostic secrets",
+        "probe reports an installed interpreter separately from refused launcher enforcement",
+        "pipe close without an exit witness cannot prove execution completion"
+      ]
+    },
+    {
+      "suite": "host",
+      "command": "npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "8a8af0eb2b39c9a400c4a1bbf5d724bb5f91ad1a76fad73fa4f0ecf163491ce9",
+      "cases": [
+        "opt-in unset keeps the 32KiB parser, SDS routes, and exact disabled health",
+        "explicit 524288 without opt-in, and a sloppy flag, are rejected before connect",
+        "opt-in serves only the entry facade and accepts a max-domain authenticated body",
+        "opt-in without private profile files stays invalid and does not open a store",
+        "opt-in unset does not mount the extension even if a factory is provided",
+        "layout resolver fails closed when the export dist is absent",
+        "vendored receiver pin is the canonical VF12 head",
+        "foundry migrate refuses to connect without --apply or a correspondence URL",
+        "worker lifecycle closes on shutdown and on failure",
+        "worker CLI skips dispatch when SIGTERM arrives during recover",
+        "worker CLI without opt-in exits 2 and does not spawn a pass",
+        "server/index.js SIGTERM exits 0 and leaves correspondence disabled",
+        "listener drain invokes the correspondence close hook",
+        "VF09 loader is the canonical artifact function and uploads remain the 501 stub",
+        "ordinary active HTTP response survives early drain before cleanup",
+        "foundry active HTTP response survives early drain before cleanup",
+        "force deadline truncates stuck request and reports failure exactly once",
+        "resource close failure cannot report graceful success",
+        "resource cleanup remains bounded and late completion cannot exit zero",
+        "documented connection envelopes match executable budget",
+        "copied venv, bad fixture bytes, and a sandbox claim are rejected",
+        "bounded probe exercises VF08 runtime needs on this host"
+      ]
+    },
+    {
+      "suite": "activation",
+      "command": "npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "b553171a8a33b7b3eb66e4e30890a3465a1d4fd9e97e7ba8f42ceea881429dcc",
+      "cases": [
+        "production activation stays HOLD",
+        "classifier keeps the four states distinct",
+        "seeded false green is rejected by the acceptance command",
+        "rollback procedure does not apply production changes",
+        "degraded correspondence states are not a successful disabled mount",
+        "database namespace and equivalent output do not prove wire identity",
+        "task acceptance fails unless the canonical readback selected the contribution",
+        "live disabled acceptance distinguishes unconfigured from degraded mounts",
+        "activation delta stays HOLD and keeps correspondence off the product data service",
+        "seeded secret metadata and product-data reuse are rejected",
+        "product reuse class covers pooler, flags, and the configured Supabase host",
+        "missing host configuration and an unenrolled store cannot launch",
+        "installer and worker refuse the product data service before connect",
+        "seeded health and MCP success is not portable-kit interoperability",
+        "opaque secret-bearing names are rejected and never reflected",
+        "enrolled product baseline rejects each true-to-false change on its own"
+      ]
+    },
+    {
+      "suite": "correspondence",
+      "command": "node server/foundry/activation/receiving-100501/replay.mjs correspondence",
+      "exit": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "9187c904f77e19f1aef43312bc25a2ba5f25e19baee8592b9ed5079a454f9a98",
+      "cases": [
+        "unconfigured correspondence leaves SDS health/MCP intact and exposes disabled healthz",
+        "malformed correspondence config is disabled without breaking merchant health",
+        "memory store is refused outside test even if URL and token are present",
+        "S58 shared-host env rejects public/unrelated schema and pool above four",
+        "S58 initialization has one request-triggered retry, coalesces requests, and stops after failure",
+        "S58 app initialization failure closes its acquired store",
+        "S58 actual SDS mount preserves CORS, body limit and store readiness (memory fixture)",
+        "S58 shipped migration/package entrypoints reject generic DB before connecting",
+        "mounted correspondence: two clients, artifact/correction, restart, sentinel, SDS health",
+        "DB down is store_unavailable; SDS health stays 200; one recovery after cooldown"
+      ]
+    },
+    {
+      "suite": "startup",
+      "command": "npm run test:hosted-startup",
+      "exit": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "4c4cbcce62066e24c78bbf88f76dee3fa18a350447fc9ce963968a75a305fe40",
+      "cases": [
+        "direct Node entry actually listens and serves health",
+        "managed-host ESM loader actually listens and serves health",
+        "managed-host CommonJS loader actually listens and serves health",
+        "factory import remains unbound"
+      ]
+    },
+    {
+      "suite": "drain",
+      "command": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "efabc445bc37c6e46ecdb63b823cc10290aee85997ed1e61c525fa678d50ebab",
+      "cases": [
+        "SIGTERM during a claimed assignment does not kill the healthy pass at eight seconds",
+        "SIGKILL of a claimed pass leaves the assignment without termination evidence",
+        "readiness failure closes extension and base once, retaining original error",
+        "normal close drains base even when extension close fails, without duplicate close",
+        "shutdown does not suppress current-pass failure",
+        "healthy bounded pass survives the former eight-second wrapper deadline",
+        "cold visitors use the SDS server, and startup does not migrate"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "logSha256": "a629aaceb31c87b7efc6ddd294f1a157069ec9fd221c5e4816e7bfdfef129dc5"
+    },
+    {
+      "command": "npm run foundry:cold",
+      "exit": 0,
+      "logSha256": "218e9ec0a7cfbe278d3ef3237ca44ae73ab78b88a7e0168f59b6afc3a6c8556b"
+    },
+    {
+      "command": "node server/foundry/activation/receiving-100502/replay.mjs build",
+      "exit": 0,
+      "logSha256": "ce3c4f169d619c8242f5645345c3cc698d709c749ff2dda65e171809df587f42"
+    },
+    {
+      "command": "node server/foundry/activation/receiving-100502/replay.mjs cold",
+      "exit": 0,
+      "logSha256": "8cc00e506ae14e1ccb365f0af47bf008c51919902c436993fc269dac1480a576"
+    },
+    {
+      "command": "node server/foundry/activation/receiving-100501/replay.mjs managed-install",
+      "exit": 0,
+      "logSha256": "152cc5d9b18aa81819a944015dfe632d568b10843a1aa823910b4673081aee2e"
+    }
+  ],
+  "rehearsals": {
+    "cold": {
+      "ok": true,
+      "productionActivate": "HOLD",
+      "productionReady": false,
+      "hostingerMeasured": false,
+      "launchedService": false,
+      "serviceClass": "local-disposable",
+      "startupMigrates": false,
+      "schemaDropped": false,
+      "clientCompatibility": {
+        "ok": true,
+        "productionActivate": "HOLD",
+        "productionReady": false,
+        "officialMcp": {
+          "stable": true,
+          "protocolVersion": "2025-11-25",
+          "serverName": "samedaydesk-agent-tools",
+          "serverVersion": "1.2.0",
+          "toolsCalled": false
+        },
+        "productDataService": {
+          "stableConfigured": true,
+          "configured": {
+            "supabase": true,
+            "stripe": true,
+            "email": true
+          },
+          "baseline": {
+            "supabase": true,
+            "stripe": true,
+            "email": true
+          },
+          "separateFromCorrespondence": true,
+          "evidence": "local-nonsecret-stubs",
+          "productionEnrollmentInspected": false
+        },
+        "uploadsStatus": 501,
+        "officialVisitorClient": {
+          "program": "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs",
+          "modes": [
+            "register",
+            "contribute",
+            "use"
+          ],
+          "visitors": 2,
+          "distinctProjects": true,
+          "heldoutCase": "case:project-created",
+          "outputMatched": true
+        },
+        "portableKit": {
+          "profileId": "vf08.wasmtime49-linux-x64-fixed.v1",
+          "runtime": "wasmtime-py",
+          "version": "49.0.0",
+          "outcome": "observed",
+          "matchedHeldOut": true,
+          "restarted": true
+        }
+      },
+      "evidence": {
+        "i23": {
+          "repo": "epistemedeus/neomorphic-io",
+          "ref": "heavy/s07-vf16-recover-0930",
+          "commit": "89fa38bdefe067c7c88d02549cb649c1f3c33c97",
+          "consumed": "read-only",
+          "edited": false,
+          "usedFor": "Client A then client B after HTTP restart, seeded refusal of a success claim that the service did not earn, and a disposable correspondence service that is not hosted activation."
+        },
+        "receiverHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+        "sourceCommit": "a51110ab6ede18658cac816042edc491b34e0a5e"
+      },
+      "preconditions": {
+        "productionActivate": "HOLD",
+        "productionReady": false,
+        "shapeComplete": true,
+        "shapeBlockers": [],
+        "blockers": [],
+        "startupMigrates": false,
+        "destructiveDownMigration": false,
+        "schema": "pilot_correspondence"
+      },
+      "seededFalseGreen": {
+        "exitCode": 2,
+        "code": "false_green_rejected",
+        "reason": "durable_claim_without_retrieval",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "seededNegatives": {
+        "falseGreen": {
+          "exitCode": 2,
+          "code": "false_green_rejected",
+          "reason": "durable_claim_without_retrieval",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "productReuse": {
+          "exitCode": 2,
+          "code": "correspondence_reuses_product_data_service",
+          "reason": "correspondence_reuses_product_data_service",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "secretMetadata": {
+          "exitCode": 2,
+          "code": "false_green_rejected",
+          "reason": "secret_material",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "secretNested": {
+          "exitCode": 2,
+          "code": "false_green_rejected",
+          "reason": "secret_material",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "hostWithhold": {
+          "exitCode": 2,
+          "code": "host_configuration_withheld",
+          "reason": "host_configuration_withheld",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "unenrolled": {
+          "exitCode": 2,
+          "code": "hosted_success_without_enrolled_store",
+          "reason": "hosted_success_without_enrolled_store",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        },
+        "unboundTask": {
+          "exitCode": 2,
+          "code": "false_green_rejected",
+          "reason": "task_claim_without_result",
+          "productionActivate": "HOLD",
+          "productionReady": false
+        }
+      },
+      "hostConfigurationWithheld": true,
+      "rollback": {
+        "schemaDropped": false,
+        "requiredTablesPresent": true,
+        "rowsRetained": true,
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "hostedUsefulJob": {
+        "path": "/for-agents/useful-jobs/catalog.json",
+        "jobId": "lockfile-pin-delta",
+        "privatePortableCase": "case:project-created",
+        "retrievedAfterRestart": true,
+        "visitorOutputMatched": true,
+        "wasmtimeVersion": "49.0.0",
+        "humanPagesChanged": false,
+        "productionActivate": "HOLD",
+        "productionReady": false,
+        "becomesTrueOnlyAfterRootActivation": [
+          "public_correspondence_healthz_enabled",
+          "public_foundry_facade",
+          "public_visitor_restart_retrieval_on_enrolled_store"
+        ]
+      },
+      "phases": {
+        "disabled": {
+          "requirement": "disabled",
+          "exitCode": 0,
+          "code": "classified",
+          "facts": {
+            "disabledOptionalMount": true,
+            "degradedMount": false,
+            "degradedReason": null,
+            "hostedDiscovery": false,
+            "taskResult": false,
+            "durableRetrieval": false
+          },
+          "launchWithheld": true,
+          "missing": [
+            "FOUNDRY_HOST_OPT_IN",
+            "CORRESPONDENCE_DATABASE_URL",
+            "CORRESPONDENCE_ADMIN_TOKEN"
+          ]
+        },
+        "discovery": {
+          "requirement": "discovery",
+          "exitCode": 0,
+          "code": "classified",
+          "facts": {
+            "disabledOptionalMount": false,
+            "degradedMount": false,
+            "degradedReason": null,
+            "hostedDiscovery": true,
+            "taskResult": false,
+            "durableRetrieval": false
+          }
+        },
+        "task": {
+          "requirement": "task",
+          "exitCode": 0,
+          "code": "classified",
+          "facts": {
+            "disabledOptionalMount": false,
+            "degradedMount": false,
+            "degradedReason": null,
+            "hostedDiscovery": true,
+            "taskResult": true,
+            "durableRetrieval": false
+          },
+          "heldoutCase": "case:project-created",
+          "outputOutcome": "observed"
+        },
+        "retrieval": {
+          "requirement": "durable",
+          "exitCode": 0,
+          "code": "classified",
+          "facts": {
+            "disabledOptionalMount": false,
+            "degradedMount": false,
+            "degradedReason": null,
+            "hostedDiscovery": true,
+            "taskResult": true,
+            "durableRetrieval": true
+          },
+          "binding": {
+            "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+            "generation": 1,
+            "manifestId": "sha256:5fb3cc7452c999e8279f1f91ce37c950007f69ace90663bf8800ebee83f6cead",
+            "taskId": "task:ddcf9b9b-9091-42bf-9bca-ae90be5b8c05",
+            "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+            "requestDigest": "sha256:feae892eb9f411477c739c40e5f18dada2d3a415d20209c52add91b962fdeafc"
+          }
+        },
+        "inputVariants": [
+          {
+            "id": "useful-negative",
+            "beforeRestart": {
+              "requirement": "task",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": false
+              }
+            },
+            "afterRestart": {
+              "requirement": "durable",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": true
+              }
+            },
+            "outputOutcome": "unsupported",
+            "phases": [
+              "compile",
+              "instantiate",
+              "execute"
+            ],
+            "exited": true,
+            "observationId": "sha256:5cf36fa54a89d5c6ff0aacec720bb8a692d22c31a79d0c86e0d9281f215823fc",
+            "distinctExecution": true
+          },
+          {
+            "id": "changed-admitted-input",
+            "beforeRestart": {
+              "requirement": "task",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": false
+              }
+            },
+            "afterRestart": {
+              "requirement": "durable",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": true
+              }
+            },
+            "outputOutcome": "unknown",
+            "phases": [
+              "compile",
+              "instantiate",
+              "execute"
+            ],
+            "exited": true,
+            "observationId": "sha256:a0fe90d808852d3c504a79f2f08ad8b47f83818a5cd54fcf3522aa7af13bbcc5",
+            "distinctExecution": true
+          },
+          {
+            "id": "changed-input",
+            "beforeRestart": {
+              "exitCode": 0,
+              "expectedRefusal": true,
+              "noInvocation": true
+            },
+            "afterRestart": {
+              "exitCode": 0,
+              "expectedRefusal": true,
+              "noInvocation": true
+            },
+            "outputOutcome": null,
+            "phases": [],
+            "exited": false,
+            "observationId": null,
+            "distinctExecution": false
+          }
+        ],
+        "rollback": {
+          "requirement": "disabled",
+          "exitCode": 0,
+          "code": "classified",
+          "facts": {
+            "disabledOptionalMount": true,
+            "degradedMount": false,
+            "degradedReason": null,
+            "hostedDiscovery": false,
+            "taskResult": false,
+            "durableRetrieval": false
+          },
+          "rowsRetained": true,
+          "schemaDropped": false,
+          "requiredTablesPresent": true,
+          "missingTables": [],
+          "published": 1,
+          "projects": 2,
+          "charged": 2,
+          "admissions": 2,
+          "httpServesFoundry": false
+        }
+      },
+      "demonstrated": {
+        "disabledOptionalMount": true,
+        "hostedDiscovery": true,
+        "taskResult": true,
+        "durableRetrieval": true,
+        "rollbackToDisabledMount": true
+      }
+    },
+    "build-missing-utilities": {
+      "mode": "build",
+      "namespace": true,
+      "optionalHostUtilities": {
+        "systemPython3": false,
+        "prlimit": false
+      },
+      "exit": 0,
+      "hostingerMeasured": false,
+      "observations": [
+        {
+          "ok": true,
+          "action": "cpython-standalone",
+          "privatePythonWebServer": false
+        },
+        {
+          "probe": "managed-node",
+          "ok": true,
+          "linuxX64": true,
+          "node": "v22.14.0",
+          "python3": false,
+          "installedPython": true,
+          "bundledPython": true,
+          "installedPythonFailure": null,
+          "prlimit": false,
+          "procReadable": true,
+          "procFdReadable": true,
+          "childProcReadable": true,
+          "referenceRuntime": true,
+          "osLimitsEnforced": true,
+          "pidPreserved": true,
+          "referenceExecution": true,
+          "referenceFailure": null,
+          "pythonFailure": "spawn_failed",
+          "osLimitMechanism": "python-setrlimit-before-exec",
+          "launcher": {
+            "id": "vf08.python-setrlimit-exec.v1",
+            "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+            "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+          },
+          "launcherIdentityStable": true,
+          "unsupportedHostReasons": [],
+          "productionActivate": "HOLD",
+          "activation": false,
+          "notProduction": true,
+          "wholeHostSandbox": false,
+          "privatePythonWebServer": false,
+          "referenceProfileRetained": true
+        }
+      ]
+    },
+    "cold-missing-utilities": {
+      "mode": "cold",
+      "namespace": true,
+      "optionalHostUtilities": {
+        "systemPython3": false,
+        "prlimit": false
+      },
+      "exit": 0,
+      "hostingerMeasured": false,
+      "observations": [
+        {
+          "ok": true,
+          "productionActivate": "HOLD",
+          "productionReady": false,
+          "hostingerMeasured": false,
+          "launchedService": false,
+          "serviceClass": "local-disposable",
+          "startupMigrates": false,
+          "schemaDropped": false,
+          "clientCompatibility": {
+            "ok": true,
+            "productionActivate": "HOLD",
+            "productionReady": false,
+            "officialMcp": {
+              "stable": true,
+              "protocolVersion": "2025-11-25",
+              "serverName": "samedaydesk-agent-tools",
+              "serverVersion": "1.2.0",
+              "toolsCalled": false
+            },
+            "productDataService": {
+              "stableConfigured": true,
+              "configured": {
+                "supabase": true,
+                "stripe": true,
+                "email": true
+              },
+              "baseline": {
+                "supabase": true,
+                "stripe": true,
+                "email": true
+              },
+              "separateFromCorrespondence": true,
+              "evidence": "local-nonsecret-stubs",
+              "productionEnrollmentInspected": false
+            },
+            "uploadsStatus": 501,
+            "officialVisitorClient": {
+              "program": "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs",
+              "modes": [
+                "register",
+                "contribute",
+                "use"
+              ],
+              "visitors": 2,
+              "distinctProjects": true,
+              "heldoutCase": "case:project-created",
+              "outputMatched": true
+            },
+            "portableKit": {
+              "profileId": "vf08.wasmtime49-linux-x64-fixed.v1",
+              "runtime": "wasmtime-py",
+              "version": "49.0.0",
+              "outcome": "observed",
+              "matchedHeldOut": true,
+              "restarted": true
+            }
+          },
+          "evidence": {
+            "i23": {
+              "repo": "epistemedeus/neomorphic-io",
+              "ref": "heavy/s07-vf16-recover-0930",
+              "commit": "89fa38bdefe067c7c88d02549cb649c1f3c33c97",
+              "consumed": "read-only",
+              "edited": false,
+              "usedFor": "Client A then client B after HTTP restart, seeded refusal of a success claim that the service did not earn, and a disposable correspondence service that is not hosted activation."
+            },
+            "receiverHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+            "sourceCommit": "a51110ab6ede18658cac816042edc491b34e0a5e"
+          },
+          "preconditions": {
+            "productionActivate": "HOLD",
+            "productionReady": false,
+            "shapeComplete": true,
+            "shapeBlockers": [],
+            "blockers": [],
+            "startupMigrates": false,
+            "destructiveDownMigration": false,
+            "schema": "pilot_correspondence"
+          },
+          "seededFalseGreen": {
+            "exitCode": 2,
+            "code": "false_green_rejected",
+            "reason": "durable_claim_without_retrieval",
+            "productionActivate": "HOLD",
+            "productionReady": false
+          },
+          "seededNegatives": {
+            "falseGreen": {
+              "exitCode": 2,
+              "code": "false_green_rejected",
+              "reason": "durable_claim_without_retrieval",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "productReuse": {
+              "exitCode": 2,
+              "code": "correspondence_reuses_product_data_service",
+              "reason": "correspondence_reuses_product_data_service",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "secretMetadata": {
+              "exitCode": 2,
+              "code": "false_green_rejected",
+              "reason": "secret_material",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "secretNested": {
+              "exitCode": 2,
+              "code": "false_green_rejected",
+              "reason": "secret_material",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "hostWithhold": {
+              "exitCode": 2,
+              "code": "host_configuration_withheld",
+              "reason": "host_configuration_withheld",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "unenrolled": {
+              "exitCode": 2,
+              "code": "hosted_success_without_enrolled_store",
+              "reason": "hosted_success_without_enrolled_store",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            },
+            "unboundTask": {
+              "exitCode": 2,
+              "code": "false_green_rejected",
+              "reason": "task_claim_without_result",
+              "productionActivate": "HOLD",
+              "productionReady": false
+            }
+          },
+          "hostConfigurationWithheld": true,
+          "rollback": {
+            "schemaDropped": false,
+            "requiredTablesPresent": true,
+            "rowsRetained": true,
+            "productionActivate": "HOLD",
+            "productionReady": false
+          },
+          "hostedUsefulJob": {
+            "path": "/for-agents/useful-jobs/catalog.json",
+            "jobId": "lockfile-pin-delta",
+            "privatePortableCase": "case:project-created",
+            "retrievedAfterRestart": true,
+            "visitorOutputMatched": true,
+            "wasmtimeVersion": "49.0.0",
+            "humanPagesChanged": false,
+            "productionActivate": "HOLD",
+            "productionReady": false,
+            "becomesTrueOnlyAfterRootActivation": [
+              "public_correspondence_healthz_enabled",
+              "public_foundry_facade",
+              "public_visitor_restart_retrieval_on_enrolled_store"
+            ]
+          },
+          "phases": {
+            "disabled": {
+              "requirement": "disabled",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": true,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": false,
+                "taskResult": false,
+                "durableRetrieval": false
+              },
+              "launchWithheld": true,
+              "missing": [
+                "FOUNDRY_HOST_OPT_IN",
+                "CORRESPONDENCE_DATABASE_URL",
+                "CORRESPONDENCE_ADMIN_TOKEN"
+              ]
+            },
+            "discovery": {
+              "requirement": "discovery",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": false,
+                "durableRetrieval": false
+              }
+            },
+            "task": {
+              "requirement": "task",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": false
+              },
+              "heldoutCase": "case:project-created",
+              "outputOutcome": "observed"
+            },
+            "retrieval": {
+              "requirement": "durable",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": false,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": true,
+                "taskResult": true,
+                "durableRetrieval": true
+              },
+              "binding": {
+                "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+                "generation": 1,
+                "manifestId": "sha256:80eec8f3ae85bc0dcf0ac4876e3300f0fa257f686da815fb8466ad4b56c9cd29",
+                "taskId": "task:516951a2-562d-4c2c-b0f9-1bec1b8ff237",
+                "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+                "requestDigest": "sha256:9b3404d8ea9bdf805bbdd2a4051dd93a530bfb003e0ff096663ec627d584a8c5"
+              }
+            },
+            "inputVariants": [
+              {
+                "id": "useful-negative",
+                "beforeRestart": {
+                  "requirement": "task",
+                  "exitCode": 0,
+                  "code": "classified",
+                  "facts": {
+                    "disabledOptionalMount": false,
+                    "degradedMount": false,
+                    "degradedReason": null,
+                    "hostedDiscovery": true,
+                    "taskResult": true,
+                    "durableRetrieval": false
+                  }
+                },
+                "afterRestart": {
+                  "requirement": "durable",
+                  "exitCode": 0,
+                  "code": "classified",
+                  "facts": {
+                    "disabledOptionalMount": false,
+                    "degradedMount": false,
+                    "degradedReason": null,
+                    "hostedDiscovery": true,
+                    "taskResult": true,
+                    "durableRetrieval": true
+                  }
+                },
+                "outputOutcome": "unsupported",
+                "phases": [
+                  "compile",
+                  "instantiate",
+                  "execute"
+                ],
+                "exited": true,
+                "observationId": "sha256:75294b36e36d0c64c640dc731e980e5f3fad2b3fecf2cfd88e7423df94798df1",
+                "distinctExecution": true
+              },
+              {
+                "id": "changed-admitted-input",
+                "beforeRestart": {
+                  "requirement": "task",
+                  "exitCode": 0,
+                  "code": "classified",
+                  "facts": {
+                    "disabledOptionalMount": false,
+                    "degradedMount": false,
+                    "degradedReason": null,
+                    "hostedDiscovery": true,
+                    "taskResult": true,
+                    "durableRetrieval": false
+                  }
+                },
+                "afterRestart": {
+                  "requirement": "durable",
+                  "exitCode": 0,
+                  "code": "classified",
+                  "facts": {
+                    "disabledOptionalMount": false,
+                    "degradedMount": false,
+                    "degradedReason": null,
+                    "hostedDiscovery": true,
+                    "taskResult": true,
+                    "durableRetrieval": true
+                  }
+                },
+                "outputOutcome": "unknown",
+                "phases": [
+                  "compile",
+                  "instantiate",
+                  "execute"
+                ],
+                "exited": true,
+                "observationId": "sha256:bd0d85f471ea11df463e3ae23fc251b0fe53c0cb4c802644e16d8a121d8ac121",
+                "distinctExecution": true
+              },
+              {
+                "id": "changed-input",
+                "beforeRestart": {
+                  "exitCode": 0,
+                  "expectedRefusal": true,
+                  "noInvocation": true
+                },
+                "afterRestart": {
+                  "exitCode": 0,
+                  "expectedRefusal": true,
+                  "noInvocation": true
+                },
+                "outputOutcome": null,
+                "phases": [],
+                "exited": false,
+                "observationId": null,
+                "distinctExecution": false
+              }
+            ],
+            "rollback": {
+              "requirement": "disabled",
+              "exitCode": 0,
+              "code": "classified",
+              "facts": {
+                "disabledOptionalMount": true,
+                "degradedMount": false,
+                "degradedReason": null,
+                "hostedDiscovery": false,
+                "taskResult": false,
+                "durableRetrieval": false
+              },
+              "rowsRetained": true,
+              "schemaDropped": false,
+              "requiredTablesPresent": true,
+              "missingTables": [],
+              "published": 1,
+              "projects": 2,
+              "charged": 2,
+              "admissions": 2,
+              "httpServesFoundry": false
+            }
+          },
+          "demonstrated": {
+            "disabledOptionalMount": true,
+            "hostedDiscovery": true,
+            "taskResult": true,
+            "durableRetrieval": true,
+            "rollbackToDisabledMount": true
+          }
+        },
+        {
+          "kind": "runtime-provenance",
+          "runtime": {
+            "pins": {
+              "profile": {
+                "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+                "runtime": "wasmtime-py",
+                "version": "49.0.0",
+                "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+                "license": "Apache-2.0 WITH LLVM-exception",
+                "platform": "linux",
+                "arch": "x64",
+                "imports": "none",
+                "memory": "fixed-wasm32",
+                "tables": "fixed-funcref",
+                "nan": "canonical",
+                "parallelCompilation": false
+              },
+              "node": "v22.14.0",
+              "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+              "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+              "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+              "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+              "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+              "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+              "launcher": {
+                "id": "vf08.python-setrlimit-exec.v1",
+                "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+                "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+              }
+            },
+            "runtimePin": "sha256:0349a35366eb8f82be9e1e8312985c7aab834004e0180e85bcd560680a41a9d4"
+          }
+        }
+      ]
+    },
+    "build-install": {
+      "ok": true,
+      "migrated": true,
+      "installed": true,
+      "schema": "pilot_correspondence",
+      "charged": 0,
+      "maxEnrollments": 12,
+      "receiverId": "host:vf12-canonical-portable-v1",
+      "termsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+      "contributionProfileId": "vf10:contribution-v2",
+      "configId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+      "maxAdmissions": 4,
+      "maxPhysical": 1
+    }
+  },
+  "generationTrace": {
+    "baseHead": "2c26534955fd3fa3c1a1ff12c5c5d4cdc5c2b7c1",
+    "hostingerMeasured": false,
+    "transitions": [
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": true,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      }
+    ],
+    "generations": [
+      {
+        "generation": 2,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:a7a68266b24d9e391498ac74ca8c1ed73680134089dc11d85611ba5d54a7b3a3",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_anWBJNKh9E2vU7wr",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-2",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:477032d7bd9a785599cddbf4743f447ba104d00d872c78b523d871bc5020adbd"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_anWBJNKh9E2vU7wr",
+          "runtimePin": "sha256:38bbaf140028ec6d539e023f8a17980aaf2624752b44ef3478c0c598a53bfbd6",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": false,
+        "bundledPython": false,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      },
+      {
+        "generation": 3,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:586e5d3c31ad45912c65080f87058507d2c52a311b54c319bbdc5c0fd63cc87a",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_anWBJNKh9E2vU7wr",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-3",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:170ddd48e5806b5584d3e93b56148a2227eb2860acc4706516411f11aaabd0c3"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_anWBJNKh9E2vU7wr",
+          "runtimePin": "sha256:fd7da80db1ad50b16526ef1e3980fd61c02b5206b735451d194a9c2ddd86ba1a",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": true,
+        "bundledPython": false,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      },
+      {
+        "generation": 4,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:4aab53229200d1a98e3f44aa33eaaf5e95f110ae0b9b3cbe1c402a355a5d7cde",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_anWBJNKh9E2vU7wr",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-4",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:c2d70234b5eebe74753f0c05455d22ff0f41c5686519f7e5203c721d40ca483a"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_anWBJNKh9E2vU7wr",
+          "runtimePin": "sha256:e6ff4f8c7811b219936b1fddc73ebd108130390f90a2b75d92dba3e29eebd4d4",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": true,
+        "bundledPython": true,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      }
+    ],
+    "namedReceiveBuild": {
+      "exit": 0,
+      "schema": "pilot_correspondence",
+      "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+      "replayed": false,
+      "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+      "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+      "charged": 0,
+      "activation": false,
+      "migratedExplicitly": true
+    }
+  },
+  "knownReceivingRetry": {
+    "cause": "Two client npm ci rehearsals initially ran against the same client/node_modules and collided",
+    "resolution": "Sequential build/receive/install rehearsals all passed; failed runs excluded from passing counts"
+  },
+  "rootReportedActualHost": {
+    "probePassed": true,
+    "node": "v22.18.0",
+    "systemPython": false,
+    "prlimit": false,
+    "installerBuild": "01a10cd8-b314-7290-9dbe-9f37fb8a078e",
+    "installerCode": "immutable_contribution_installation",
+    "servingOptIn": false,
+    "oldSiteStillServes": true,
+    "originalEnvironmentValues": 16,
+    "privateIndependentDatabase": "ydlqsncpsajcpnaeqyur",
+    "receivingInstallationAtUtc": "11:27:59",
+    "independentlyMeasuredByThisAgent": false
+  },
+  "remainingActualHostProcedure": [
+    "Inspect stored identity and zero-work counts on the original authorized independent enrollment; never use fixture identities.",
+    "Root explicitly selects named build:managed-foundry-receive with both expected old hashes, preserving all sixteen original environment values and default-off serving.",
+    "Compare receiving receipt and ordinary destination installer replay; restore normal build and remove installer-only keys/inline values, keeping private path/CA inputs.",
+    "Only Root separately activates and verifies actual visitor A contribution/verification/publication/use then visitor B after actual HTTP restart, negatives and source-bound readback.",
+    "Populated legacy v1 conversion is unsupported. Future populated v2 uses existing private verification generation maintenance after all admitted owned work settles; no budget/generation reset."
+  ],
+  "primarySources": [
+    "https://www.postgresql.org/docs/17/explicit-locking.html",
+    "https://nodejs.org/en/blog/release/v22.18.0",
+    "https://github.com/hostinger/api-python-sdk/blob/main/docs/HostingV1NodeJsUpdateBuildSettingsRequest.md",
+    "https://www.hostinger.com/support/how-to-edit-or-add-environment-variables-after-deployment/"
+  ]
+}

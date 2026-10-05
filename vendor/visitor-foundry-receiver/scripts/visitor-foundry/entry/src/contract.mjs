@@ -44,7 +44,7 @@ export function grantToken(proof, registrationId, role) {
 // Installed v2 addon. The original profile/cohort budget remains immutable.
 export function contributionProfile(privateProfile, {id, binding}) {
   need(/^vf10:[a-z0-9-]{1,64}$/.test(id)&&id!==privateProfile.profileId,400,'invalid_contribution_profile');
-  need(binding?.schema==='neomorphic.foundry.entry-receiver-binding.v1',400,'invalid_receiver_binding');
+  need(['neomorphic.foundry.entry-receiver-binding.v1','neomorphic.foundry.entry-receiver-binding.v2'].includes(binding?.schema),400,'invalid_receiver_binding');
   const {termsHash,...base}=privateProfile;
   const terms={...base,profileId:id,capabilities:[...base.capabilities,'bounded_foundry_use','voluntary_reusable_contribution'],
     excludedAuthority:['owner','funding','verification','configuration','publication'],sharingAuthorized:false,

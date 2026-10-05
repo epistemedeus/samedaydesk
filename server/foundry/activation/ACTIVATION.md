@@ -20,6 +20,8 @@ node server/foundry/install.mjs --migrate --install
 
 Profile and key files are mode `0600` and live outside the repo. Repeat `--install` for the same profile keeps the charged count and terms. A different profile is refused. There is no down migration.
 
+For an existing v1 allocation that was installed under another runtime, first follow [GENERATION.md](GENERATION.md). Its explicit expected-old, unconsumed-only receive action is separate from ordinary install and from populated v2 verification renewal. Current contribution bindings explicitly use `neomorphic.foundry.entry-receiver-binding.v2`; old v1 observations remain historical.
+
 Shape required before Root opts in, checked by `assessPreconditions` without printing secret values:
 
 | Check | Required |

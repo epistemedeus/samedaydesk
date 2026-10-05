@@ -18,6 +18,7 @@ export const DB_NAMESPACE = "pilot_correspondence";
 
 export const ENTRY_SCHEMA = SCHEMA;
 export const BINDING_SCHEMA = "neomorphic.foundry.entry-receiver-binding.v1";
+export const ALLOCATION_BINDING_SCHEMA = "neomorphic.foundry.entry-receiver-binding.v2";
 export const REQUEST_SCHEMA = "neomorphic.foundry.capability-request.v1";
 export const INVOCATION_SCHEMA = "neomorphic.foundry.invocation.v1";
 
@@ -109,11 +110,13 @@ export function validateVisitorEntry(body) {
     if (body.profile.contribution.standingScopeRequired !== true) return null;
     if (body.profile.contribution.scope !== "synthetic-reusable-components") return null;
     const binding = body.profile.contribution.binding;
-    exact(binding, BINDING_KEYS);
-    if (binding.schema !== BINDING_SCHEMA || binding.schema === DB_NAMESPACE) return null;
+    const stable = binding.schema === ALLOCATION_BINDING_SCHEMA;
+    exact(binding, stable ? [...BINDING_KEYS.filter(k => k !== "environmentDigest"), "executionAuthority"] : BINDING_KEYS);
+    if (!stable && binding.schema !== BINDING_SCHEMA) return null;
     if (binding.receiverId !== RECEIVER_ID || binding.scope !== "synthetic-reusable-components") return null;
     if (!TERMS_HASH.test(binding.contributionTerms)) return null;
-    if (!TERMS_HASH.test(binding.environmentDigest) || !TERMS_HASH.test(binding.hostConfigId)) return null;
+    if (!TERMS_HASH.test(binding.hostConfigId)) return null;
+    if (stable ? binding.executionAuthority !== "current-installed-verification-generation-required" : !TERMS_HASH.test(binding.environmentDigest)) return null;
     if (body.receiver !== binding.receiverId) return null;
     return body;
   } catch {
