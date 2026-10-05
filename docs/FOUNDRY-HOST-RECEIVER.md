@@ -44,6 +44,8 @@ node server/foundry/install.mjs --migrate --install
 
 Repeat `--install` is idempotent for the same profile, terms, and charged count. A different profile is refused. There is no destructive down migration.
 
+Current allocations use explicit `entry-host-profile.v2` / `entry-receiver-binding.v2`; actual execution pins remain in the installed pool verification generations. Receiving an existing unconsumed runtime-bound v1 allocation requires both expected old identities and the private zero-work transition in [GENERATION.md](../server/foundry/activation/GENERATION.md). Ordinary startup/build/install never performs that transition. Populated legacy v1 cohorts are refused; populated v2 execution maintenance uses the existing verification journal without refilling budgets or trusting old evidence.
+
 ## Root restart inputs
 
 Set these on the existing Hostinger Node app. Do not commit values. Leave `FOUNDRY_HOST_OPT_IN` unset until the installer has been run on a database Root authorizes.

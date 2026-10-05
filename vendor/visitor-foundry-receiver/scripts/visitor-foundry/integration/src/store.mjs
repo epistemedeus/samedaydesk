@@ -281,6 +281,8 @@ export class IntegrationStore {
       return this.maintenanceOnce(c,projectId,key,{type:'configureVerification',...body},async()=>{
         need(body.expectedVerificationId===(verification?.id??null),'verification_revision_conflict');
         const next=verificationFor(config,body),engine=await this.replay(c,projectId,config);
+        if(next.id!==verification?.id)need(!(await c.query(`SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled'
+          UNION ALL SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1`,[projectId])).rows.length,'physical_reservation_held');
         await engine.apply(operator,'configurePolicy',next.policy);
         if(next.id!==verification?.id)for(const p of (await c.query("SELECT receipt FROM correspondence_vf04_publications WHERE project_id=$1 AND state='published'",[projectId])).rows)
           await this.retireEvidence(c,projectId,p.receipt,'Installed verification policy/runtime changed');

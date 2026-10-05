@@ -1,6 +1,6 @@
 import {hash} from '../../capabilities/src/index.mjs';
 import {need,exact} from '../../entry/src/contract.mjs';
-import {portablePolicy,portableEvaluation,PORTABLE_RIGHTS} from '../src/portable-profile.mjs';
+import {portableEvaluation,PORTABLE_RIGHTS} from '../src/portable-profile.mjs';
 export const RECEIVER_ID='host:vf12-canonical-portable-v1';
 export const contributionTerms=()=>{const t={revision:'terms:vf09-owner-qa-v1',scope:'synthetic-reusable-components',funding:'voluntary',rights:PORTABLE_RIGHTS};return {...t,id:hash(t)};};
 export function hostProfile(options){
@@ -15,8 +15,15 @@ export function hostProfile(options){
  const allowance={registrations:1,candidates:p.maxCandidates,packages:p.maxPackages,gaps:p.maxPackages,workCells:p.maxWorkCells,cellCommands:p.maxCellCommands+p.maxWorkCells,httpKeys:p.maxHttpKeys,nativeCommands:p.maxNativeCommands,maintenanceKeys:p.maxNativeCommands,manifests:p.maxManifests,
   verificationCpuMs:attempts*8000,verificationWallMs:attempts*16000,verificationCostUsdMicros:Number(p.maxValidationCostUnits),reviewMs:attempts*1000,reviews:attempts,
   invocationRows:p.maxInvocations,invocationCpuMs:p.maxInvocations*2000,invocationWallMs:p.maxInvocations*4000,invocationCostUsdMicros:p.maxInvocations*1000};
- const policy=portablePolicy(),body={schema:'neomorphic.foundry.entry-host-profile.v1',...options,receiverId:RECEIVER_ID,evaluator:portableEvaluation,environmentDigest:policy.environmentDigest,runtimePin:policy.runtimePin,contributionTerms:contributionTerms().id,
+ // Allocation and visitor consent survive ordinary execution generations. Actual
+ // runtime/source authority remains in each pool's installed verification policy.
+ const body={schema:'neomorphic.foundry.entry-host-profile.v2',...options,receiverId:RECEIVER_ID,evaluator:portableEvaluation,contributionTerms:contributionTerms().id,
   allowance,aggregate:Object.fromEntries(Object.entries(allowance).map(([k,n])=>[k,n*options.maxAdmissions])),physicalMemoryMb:options.maxPhysical*512,sharing:'accepted reusable code/evidence within this installed cohort; private correspondence excluded'};
  return {...body,configId:hash(body)};
 }
-export function entryBinding(config){return {schema:'neomorphic.foundry.entry-receiver-binding.v1',receiverId:RECEIVER_ID,hostConfigId:config.configId,evaluator:config.evaluator,environmentDigest:config.environmentDigest,contributionTerms:config.contributionTerms,scope:'synthetic-reusable-components',aggregate:config.aggregate,maxPhysical:config.maxPhysical,sharing:config.sharing};}
+export function entryBinding(config){
+ const legacy=config.schema==='neomorphic.foundry.entry-host-profile.v1';
+ return {schema:`neomorphic.foundry.entry-receiver-binding.${legacy?'v1':'v2'}`,receiverId:RECEIVER_ID,hostConfigId:config.configId,evaluator:config.evaluator,
+  ...(legacy?{environmentDigest:config.environmentDigest}:{executionAuthority:'current-installed-verification-generation-required'}),
+  contributionTerms:config.contributionTerms,scope:'synthetic-reusable-components',aggregate:config.aggregate,maxPhysical:config.maxPhysical,sharing:config.sharing};
+}

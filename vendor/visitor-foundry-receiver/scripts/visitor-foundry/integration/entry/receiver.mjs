@@ -10,7 +10,7 @@ import {hostProfile,entryBinding,RECEIVER_ID} from './profile.mjs';
  * finishes an already reserved phase or fences absent begin with a tombstone. */
 export class EntryReceiver {
  constructor(integration,options){this.store=integration;this.config=hostProfile(options);this.id=RECEIVER_ID;}
- async migrate(){const sql=await readFile(new URL('../../../../services/correspondence/migrations/visitor-foundry/005_vf12_entry.sql',import.meta.url),'utf8');await this.store.db.tx(c=>c.query(sql));}
+ async migrate(){const sql=(await Promise.all(['005_vf12_entry.sql','006_vf12_allocation_receiving.sql'].map(name=>readFile(new URL(`../../../../services/correspondence/migrations/visitor-foundry/${name}`,import.meta.url),'utf8')))).join('\n');await this.store.db.tx(c=>c.query(sql));}
  binding(){return entryBinding(this.config);}
  async installBinding(c,profile){
   need(hash(profile.contribution?.binding)===hash(this.binding()),409,'entry_receiver_profile_mismatch');

@@ -25,6 +25,37 @@
           "sha256": "672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-RETAINED-GENERATION-100503",
+      "sdsBase": "2c26534955fd3fa3c1a1ff12c5c5d4cdc5c2b7c1",
+      "reason": "Explicit v2 allocation/consent binding independent of actual execution generation; audited expected-old zero-work receiving only; existing verification maintenance refuses outstanding physical work. Execution profile, limits and adapter unchanged.",
+      "files": {
+        "scripts/visitor-foundry/integration/entry/profile.mjs": {
+          "receivedSha256": "bab0d92e569ebe66fa8a3bcb1c59cc305d35b14fcc952922c4712dc8570373c1",
+          "sha256": "f7bfe22c5d73abc0de8bd430763b5d00fde6463cd2f7a001a6a72e7a0713f0bd"
+        },
+        "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+          "receivedSha256": "7913b6b8e765739134a2c7eb2044189c608cb8ebf41fc1b6bbe0b3f950fd0109",
+          "sha256": "7b7a42f5539766ee14f608d2d2fc959c81a685406a5de327a8e94f098543f234"
+        },
+        "scripts/visitor-foundry/integration/entry/receive.mjs": {
+          "receivedSha256": null,
+          "sha256": "5f303820cbf46cbacce8488777f85f230ac7edce681bd54fe57053b14805c23e"
+        },
+        "scripts/visitor-foundry/entry/src/contract.mjs": {
+          "receivedSha256": "53392a0fbedea1c2bca93a17870e8eb753fa19496e68f4cf0f89a7483f36b890",
+          "sha256": "c23c3167a0e2058d84d15f3c3f728c68eb334baff2c865fa08b1bf49f6e3836b"
+        },
+        "scripts/visitor-foundry/integration/src/store.mjs": {
+          "receivedSha256": "f41078c05c35e3d3f90498a559102f73b114f7b591c30b8524f42b5a96bad28f",
+          "sha256": "909df8a852e8bde54912906d8c4170ba60ac3911c7364b87742efd93977f0c24"
+        },
+        "services/correspondence/migrations/visitor-foundry/006_vf12_allocation_receiving.sql": {
+          "receivedSha256": null,
+          "sha256": "1b26c2b62ac0a7dfa53fea611ab91f6190c82efb7351c9b68ea8af3202ba8016"
+        }
+      }
     }
   ]
 }
