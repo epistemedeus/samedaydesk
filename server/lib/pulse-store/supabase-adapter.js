@@ -20,13 +20,17 @@ export function createPulseStoreFromTransport(transport, { configured = true } =
     async flush(flushId, delta) {
       const validated = validateDelta(delta);
       const payload = deltaToRpcPayload(validated);
-      const { data, error } = await transport.rpc("pulse_apply_delta", {
+      const result = await transport.rpc("pulse_apply_delta", {
         p_flush_id: flushId,
         p_delta: payload,
       });
+      const data = result?.data;
+      const error = result?.error;
       if (error) {
         const err = new Error(error.message || "pulse_flush_failed");
-        err.code = error.code || error.details || "pulse_flush_failed";
+        err.code = error.code || "pulse_flush_failed";
+        const status = Number(result?.status ?? error.status);
+        if (Number.isInteger(status) && status >= 100 && status <= 599) err.status = status;
         throw err;
       }
       return data;

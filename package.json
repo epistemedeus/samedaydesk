@@ -21,7 +21,7 @@
     "verified-feed:write": "node client/scripts/writeVerifiedFeed.mjs",
     "verified-feed:refresh": "node client/scripts/refreshVerifiedFeed.mjs",
     "test:seller-repair-checkout": "node --test server/scripts/test-seller-repair-checkout.js server/scripts/test-seller-repair-webhook.js client/scripts/sellerRepairCheckout.test.ts",
-    "test:pulse": "node --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-s125-replay.js server/scripts/test-pulse-postgres-real.js",
+    "test:pulse": "node --experimental-strip-types --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-s125-replay.js server/scripts/test-pulse-postgres-real.js server/scripts/test-pulse-tool-contract.js server/scripts/test-pulse-flush-retry.js",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
     "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js server/scripts/test-fixpack-entitlement.js server/scripts/test-mcp-boundary.js",
     "test:machine-discovery": "node --test server/scripts/test-machine-discovery-journey.js",

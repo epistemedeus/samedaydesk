@@ -28,6 +28,7 @@ import {
   newFlushId,
 } from "./pulse-store/index.js";
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
+import { classifyPulseFlushError, flushBackoffMs } from "./pulse-store/flush-error.js";
 import { mcpAdmissionForRequest } from "./mcp-admission.js";
 export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
@@ -79,6 +80,9 @@ let droppedUnknown = fileFallback.getDroppedUnknown();
 let fallbackCorrupt = fileFallback.isCorrupt();
 let snapshotCorrupt = fileFallback.isSnapshotCorrupt();
 let walWritePending = false;
+let persistenceFailure = null;
+let nowMs = () => Date.now();
+const flushRetryState = new Map();
 
 const localProcess = {
   uniqueHumans: new Set(),
@@ -328,7 +332,58 @@ async function readDurableSnapshot() {
   return snapshot;
 }
 
+function flushEntryReady(entry) {
+  const meta = flushRetryState.get(entry.flushId);
+  if (!meta) return true;
+  return nowMs() >= meta.nextAttemptAt;
+}
+
+function refreshPersistenceFailure() {
+  const pendingIds = new Set(fileFallback.loadPendingFlushes().map((row) => row.flushId));
+  if (inFlightFlush) pendingIds.add(inFlightFlush.flushId);
+  let permanent = null;
+  let transient = null;
+  for (const [flushId, record] of flushRetryState) {
+    if (!pendingIds.has(flushId)) {
+      flushRetryState.delete(flushId);
+      continue;
+    }
+    if (record.class === "permanent") permanent ??= record;
+    else transient ??= record;
+  }
+  persistenceFailure = permanent || transient;
+}
+
+function noteFlushFailure(entry, error) {
+  const classified = classifyPulseFlushError(error);
+  const attempts = (flushRetryState.get(entry.flushId)?.attempts || 0) + 1;
+  flushRetryState.set(entry.flushId, {
+    flushId: entry.flushId,
+    class: classified.class,
+    code: classified.code,
+    status: classified.status,
+    message: classified.message,
+    attempts,
+    nextAttemptAt: nowMs() + flushBackoffMs(classified.class, attempts),
+  });
+  refreshPersistenceFailure();
+}
+
+function persistenceFailureView() {
+  if (!persistenceFailure) return null;
+  return {
+    flushId: persistenceFailure.flushId,
+    class: persistenceFailure.class,
+    code: persistenceFailure.code,
+    status: persistenceFailure.status,
+    message: persistenceFailure.message,
+    attempts: persistenceFailure.attempts,
+    nextAttemptAt: new Date(persistenceFailure.nextAttemptAt).toISOString(),
+  };
+}
+
 async function attemptFlush(entry) {
+  if (!flushEntryReady(entry)) return false;
   try {
     const ack = await durableStore.flush(entry.flushId, entry.delta);
     const removal = fileFallback.removePendingFlush(entry.flushId);
@@ -337,6 +392,7 @@ async function attemptFlush(entry) {
       return false;
     }
     walWritePending = false;
+    flushRetryState.delete(entry.flushId);
     lastSuccessfulFlush = {
       flushId: entry.flushId,
       status: ack?.status || "applied",
@@ -344,13 +400,14 @@ async function attemptFlush(entry) {
     };
     fileFallback.recordSuccessfulFlush(lastSuccessfulFlush);
     if (inFlightFlush?.flushId === entry.flushId) inFlightFlush = null;
+    refreshPersistenceFailure();
     try {
       await readDurableSnapshot();
     } catch {
       hydrationState = "stale";
     }
     return true;
-  } catch {
+  } catch (error) {
     if (!fileFallback.loadPendingFlushes().some((row) => row.flushId === entry.flushId)) {
       const result = fileFallback.enqueuePendingFlush(entry);
       refreshFallbackDiagnostics();
@@ -361,6 +418,7 @@ async function attemptFlush(entry) {
     if (inFlightFlush?.flushId !== entry.flushId) {
       inFlightFlush = entry;
     }
+    noteFlushFailure(entry, error);
     return false;
   }
 }
@@ -370,15 +428,16 @@ async function drainPendingFlushes() {
   flushInProgress = true;
   try {
     admitPendingDeltaToWal();
-    if (!inFlightFlush) {
-      const backlog = fileFallback.loadPendingFlushes();
-      if (backlog.length > 0) inFlightFlush = backlog[0];
-    }
-    if (inFlightFlush) {
+    const backlog = fileFallback.loadPendingFlushes();
+    if (!inFlightFlush && backlog.length > 0) inFlightFlush = backlog[0];
+    const queuedIds = new Set(backlog.map((entry) => entry.flushId));
+    // A backed-off rejection stays in the WAL with its original id and bytes.
+    // Skip it without stopping, so later durable deltas still drain.
+    if (inFlightFlush && !queuedIds.has(inFlightFlush.flushId) && flushEntryReady(inFlightFlush)) {
       await attemptFlush(inFlightFlush);
     }
-    for (const entry of fileFallback.loadPendingFlushes()) {
-      if (inFlightFlush?.flushId === entry.flushId) continue;
+    for (const entry of backlog) {
+      if (!flushEntryReady(entry)) continue;
       await attemptFlush(entry);
     }
   } finally {
@@ -619,11 +678,12 @@ function maybeRetryHydration() {
 
 loadWalStateOnStartup();
 void waitForPulseHydration();
-setInterval(() => {
+const flushInterval = setInterval(() => {
   admitPendingDeltaToWal();
   scheduleFlush();
   maybeRetryHydration();
-}, 15000).unref();
+}, 15000);
+flushInterval.unref();
 process.on("SIGTERM", () => {
   admitPendingDeltaToWal();
 });
@@ -942,6 +1002,7 @@ export function pulseSnapshot() {
         "Any non-zero dropped count, corrupt local evidence, or unresolved WAL write " +
         "marks admitted-but-unaccounted or unreadable backlog state.",
     },
+    persistenceFailure: persistenceFailureView(),
     lastSuccessfulFlush,
     storage: { ...pulseStorage, hydrationState },
     recent: localProcess.recent.slice(-40).reverse(),
@@ -955,6 +1016,9 @@ export function configurePulseStoreForTests(options = {}) {
   hydrationState = "pending";
   durableSnapshot = null;
   inFlightFlush = null;
+  persistenceFailure = null;
+  flushRetryState.clear();
+  nowMs = () => Date.now();
   pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
   localProcess.uniqueHumans = new Set();
   localProcess.recent = [];
@@ -996,5 +1060,11 @@ export function __pulseTestInternals() {
     deltaToRpcPayload,
     loadWalStateOnStartup,
     PULSE_FALLBACK_FILE,
+    setPulseNow(fn) {
+      nowMs = typeof fn === "function" ? fn : () => Date.now();
+    },
+    stopScheduledFlush() {
+      clearInterval(flushInterval);
+    },
   };
 }
