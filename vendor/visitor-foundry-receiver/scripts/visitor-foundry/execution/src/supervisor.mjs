@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { performance } from 'node:perf_hooks';
 import { bytesHash, hash, PROFILE, SCHEMA, validateArtifact, validateBinding, encodeInput, decodeOutput, copy, check } from './contracts.mjs';
+import { launcherPins, limitedPythonLaunch } from './launch.mjs';
 
 export const python = fileURLToPath(new URL('../.runtime/bin/python', import.meta.url));
 const childPath = fileURLToPath(new URL('./child.py', import.meta.url));
@@ -19,7 +20,7 @@ export function installation() {
     binding: hash(bindingFiles.map(path => ({ path, digest: bytesHash(readFileSync(`${bindingRoot}/${path}`)) }))),
     native: bytesHash(readFileSync(`${lib}python${version}/site-packages/wasmtime/linux-x86_64/_libwasmtime.so`)),
     worker: bytesHash(readFileSync(childPath)), supervisor: bytesHash(readFileSync(fileURLToPath(import.meta.url))),
-    contracts: bytesHash(readFileSync(new URL('./contracts.mjs', import.meta.url))) };
+    contracts: bytesHash(readFileSync(new URL('./contracts.mjs', import.meta.url))), launcher: launcherPins() };
   return { pins, runtimePin: hash(pins) };
 }
 function identity(child) {
@@ -36,12 +37,16 @@ export function superviseProcess({ launch, payload, limits, signal, onSpawn, exi
     const phasesObserved = []; let phaseStarted = start;
     let phase = 'compile', stopped = null, finished = false, exited = false, stageTimer, graceTimer, totalTimer;
     const phases = ['compile', 'instantiate', 'execute']; let phaseIndex = -1;
+    const killOwned = () => {
+      if (!child?.pid || child.pid === process.pid) return;
+      try { process.kill(-child.pid, 'SIGKILL'); } catch { try { child.kill('SIGKILL'); } catch {} }
+    };
     const clean = () => { clearTimeout(stageTimer); clearTimeout(totalTimer); clearTimeout(graceTimer); signal?.removeEventListener('abort', abort); };
     const finish = (termination, code = null) => {
       if (finished) return;
       if (!stopped && code === 0 && result?.status === 'ok' && (performance.now()-start > limits.wallMs || performance.now()-phaseStarted > limits[`${phase}Ms`])) stopped = 'deadline_exceeded';
       finished = true; clean();
-      resolve({ status: !termination.exited && !termination.noLaunch ? 'unknown' : stopped ?? (code === 0 && result ? result.status : 'incomplete'),
+      resolve({ status: ((!termination.exited || termination.drained === false) && !termination.noLaunch) ? 'unknown' : stopped ?? (code === 0 && result ? result.status : 'incomplete'),
         code: stopped ?? result?.code ?? null, phase, phasesObserved, result, processIdentity, termination,
         wallMs: performance.now()-start });
     };
@@ -49,9 +54,9 @@ export function superviseProcess({ launch, payload, limits, signal, onSpawn, exi
       if (stopped || finished) return; stopped = reason; clearTimeout(stageTimer);
       if (!child?.pid) return;
       // SIGKILL is requested; only the subsequent exit event is a witness.
-      try { child.kill('SIGKILL'); } catch {}
+      killOwned();
       graceTimer = setTimeout(() => { child.unref?.(); child.stdout?.destroy(); child.stderr?.destroy(); child.stdin?.destroy();
-        finish({ exited: false, noLaunch: false, code: null, signal: null }); }, exitGraceMs);
+        finish({ exited, drained: false, noLaunch: false, code: null, signal: null }); }, exitGraceMs);
     };
     const abort = () => stop('cancelled');
     if (signal?.aborted) { stopped = 'cancelled'; finish({ exited: false, noLaunch: true, code: null, signal: null }); return; }
@@ -61,6 +66,8 @@ export function superviseProcess({ launch, payload, limits, signal, onSpawn, exi
     signal?.addEventListener('abort', abort, { once: true });
     child.on('error', () => { if (!child.pid) finish({ exited: false, noLaunch: true, code: null, signal: null }); else stop('process_error'); });
     child.stdin.on('error', () => stop('input_pipe_error'));
+    child.stdout.on('error', () => stop('output_pipe_error'));
+    child.stderr.on('error', () => stop('output_pipe_error'));
     child.stderr.on('data', data => { outputBytes += data.length; if (outputBytes > 65536 + limits.outputBytes*2) stop('protocol_limit'); });
     child.stdout.on('data', data => {
       if (stopped || finished) return;
@@ -85,7 +92,8 @@ export function superviseProcess({ launch, payload, limits, signal, onSpawn, exi
         } catch { stop('protocol_error'); return; }
       }
     });
-    child.once('exit', (code, signalName) => { exited = true; finish({ exited: true, noLaunch: false, code, signal: signalName }, code); });
+    child.once('exit', () => { exited = true; killOwned(); });
+    child.once('close', (code, signalName) => { finish({ exited, drained: true, noLaunch: false, code, signal: signalName }, code); });
     child.once('spawn', async () => {
       try {
         processIdentity = identity(child);
@@ -101,11 +109,9 @@ export async function invoke({ artifact, moduleBytes, input, binding, signal, on
   validateArtifact(artifact, moduleBytes); validateBinding(binding, artifact);
   const runtime = installation(); check(runtime.runtimePin === binding.runtimePin, 'runtime binding mismatch');
   const inputBytes = encodeInput(artifact, input); const l = artifact.limits;
-  const args = [`--as=${l.addressSpaceBytes}:${l.addressSpaceBytes}`, `--cpu=${l.cpuSeconds}:${l.cpuSeconds}`,
-    `--stack=${l.hostStackBytes}:${l.hostStackBytes}`, `--fsize=${l.fileBytes}:${l.fileBytes}`,
-    `--nofile=${l.openFiles}:${l.openFiles}`, '--core=0:0', '--', python, '-I', '-B', childPath];
+  const plan = limitedPythonLaunch(python, l, [childPath]);
   const observation = await superviseProcess({
-    launch: () => spawn('/usr/bin/prlimit', args, { env: { LANG: 'C', LC_ALL: 'C' }, cwd: '/', stdio: ['pipe', 'pipe', 'pipe'] }),
+    launch: () => spawn(plan.command, plan.args, { env: { LANG: 'C', LC_ALL: 'C' }, cwd: '/', detached: true, stdio: ['pipe', 'pipe', 'pipe'] }),
     payload: { module: moduleBytes.toString('base64'), moduleDigest: artifact.module.digest,
       input: inputBytes.toString('base64'), limits: l }, limits: l, signal, onSpawn,
   });

@@ -2,7 +2,6 @@ import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { randomBytes } from "node:crypto";
 import { chmod, copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,6 +16,7 @@ import { clientInvocationSelects, validateVisitorEntry } from "./wire-contract.m
 import { assessPreconditions } from "./preconditions.mjs";
 import { observeOrigin } from "./observe.mjs";
 import { PROFILE } from "../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
+import { materializeReferenceRuntime } from "../materialize-runtime.mjs";
 import evidence from "./EVIDENCE.json" with { type: "json" };
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -47,7 +47,6 @@ const REQUIRED_TABLES = [
   "correspondence_vf12_host",
   "correspondence_vf12_admissions",
 ];
-const runtimePython = path.join(receiverRoot, "scripts/visitor-foundry/execution/.runtime/bin/python");
 const LEAKED_MARKERS = [
   "not-a-real-secret",
   "opaque-nested-admin-token",
@@ -323,6 +322,7 @@ async function variantUse({ configPath, projectId, candidateId, databaseUrl, dir
   const changedInput = { structuredContent: { project: { id: "prj_changed_beta", status: "closed", version: 7 }, nextAction: null } };
   const variants = prior || [
     { id: "useful-negative", request: task(cases[3].input), expected: cases[3].expected },
+    { id: "changed-admitted-input", request: task(cases[1].input), expected: cases[1].expected },
     { id: "changed-input", request: task(changedInput), expected: { outcome: "observed", payload: changedInput.structuredContent } },
   ];
   const results = [];
@@ -387,13 +387,8 @@ function seededCommand(script, fixture, code, reason) {
 
 export async function runLocalJourney() {
   assertHold();
-  if (!existsSync(runtimePython)) {
-    const setup = spawnSync("python3", ["vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/setup-runtime.py"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-    });
-    if (setup.status !== 0) throw fail(1, `wasmtime runtime setup failed: ${redact(setup.stderr || "")}`);
-  }
+  try { await materializeReferenceRuntime(); }
+  catch (error) { throw fail(1, error.code || "runtime_setup_failed"); }
   const seeded = {
     falseGreen: seededCommand(acceptCli, falseGreen, "false_green_rejected", "durable_claim_without_retrieval"),
     productReuse: seededCommand(deltaCli, productReuse, "correspondence_reuses_product_data_service"),

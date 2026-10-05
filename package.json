@@ -48,6 +48,7 @@
     "foundry:runtime": "node server/foundry/materialize-runtime.mjs",
     "foundry:managed-probe": "node server/foundry/managed-node-probe.mjs",
     "test:managed-node": "node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js",
+    "test:managed-platform": "node --test --test-concurrency=1 server/scripts/test-managed-platform.js",
     "foundry:worker": "node server/foundry/worker.mjs",
     "foundry:canary": "node server/foundry/canary.mjs",
     "test:market-observations": "node --test server/scripts/test-market-observations.js",

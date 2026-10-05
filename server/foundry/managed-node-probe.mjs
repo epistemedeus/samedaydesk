@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, realpath } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { runBounded } from "./bounded-child.mjs";
+import { limitedPythonLaunch, launcherPins } from "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/launch.mjs";
+import { DEFAULT_LIMITS } from "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
 
 const python = fileURLToPath(new URL(
   "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/bin/python", import.meta.url,
@@ -21,15 +23,23 @@ export async function collectProbe({ pythonCommand = "python3", referencePython 
   let childProcReadable = false;
   const prlimit = await flag(prlimitPath, constants.X_OK);
   const system = await runBounded(pythonCommand, ["-I", "-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"], { timeoutMs });
+  const installed = await runBounded(referencePython, ["-I", "-S", "-c", "import sys; assert sys.version_info[0]==3; print('installed-python')"], { timeoutMs, capture: true, stdoutLimit: 128 });
+  const installedPython = installed.code === 0 && installed.reason === null && installed.stdout === "installed-python\n";
+  const bundledRoot = fileURLToPath(new URL("../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.python-standalone/", import.meta.url));
+  const bundledPython = await realpath(referencePython).then(file => file.startsWith(bundledRoot)).catch(() => false);
+  let launcher;
+  try { launcher = launcherPins(); } catch {}
   const script = [
-    "import importlib.metadata, resource, wasmtime as w",
-    "assert importlib.metadata.version('wasmtime') == '49.0.0'",
+    "import json, os, resource",
     "assert resource.getrlimit(resource.RLIMIT_AS) == (536870912,536870912)",
     "assert resource.getrlimit(resource.RLIMIT_CPU) == (2,2)",
     "assert resource.getrlimit(resource.RLIMIT_STACK) == (8388608,8388608)",
     "assert resource.getrlimit(resource.RLIMIT_FSIZE) == (1048576,1048576)",
     "assert resource.getrlimit(resource.RLIMIT_NOFILE) == (32,32)",
     "assert resource.getrlimit(resource.RLIMIT_CORE) == (0,0)",
+    "print(json.dumps({'limits':True,'pid':os.getpid()}),flush=True)",
+    "import importlib.metadata, wasmtime as w",
+    "assert importlib.metadata.version('wasmtime') == '49.0.0'",
     "c = w.Config(); c.consume_fuel = True; c.parallel_compilation = False",
     "e = w.Engine(c)",
     // Fixed installed diagnostic, no caller source or guest imports.
@@ -40,19 +50,31 @@ export async function collectProbe({ pythonCommand = "python3", referencePython 
     "assert s.get_fuel() < 1000",
     "print('reference-executed')",
   ].join("\n");
-  const reference = await runBounded(prlimitPath, [
-    "--as=536870912:536870912", "--cpu=2:2", "--stack=8388608:8388608",
-    "--fsize=1048576:1048576", "--nofile=32:32", "--core=0:0", "--", referencePython, "-I", "-B", "-c", script,
-  ], { env: { LANG: "C", LC_ALL: "C" }, timeoutMs, capture: true, stdoutLimit: 128,
-    onSpawn(pid) { try { const stat = readFileSync(`/proc/${pid}/stat`, "utf8"); childProcReadable = /^[0-9]+$/.test(stat.slice(stat.lastIndexOf(") ")+2).split(" ")[19]); } catch {} } });
-  const referenceRuntime = reference.code === 0 && reference.reason === null && reference.stdout === "reference-executed\n";
+  const plan = limitedPythonLaunch(referencePython, DEFAULT_LIMITS, ["-c", script]);
+  const reference = launcher ? await runBounded(plan.command, plan.args, { env: { LANG: "C", LC_ALL: "C" }, timeoutMs, capture: true, stdoutLimit: 1024,
+    onSpawn(pid) { try { const stat = readFileSync(`/proc/${pid}/stat`, "utf8"); childProcReadable = /^[0-9]+$/.test(stat.slice(stat.lastIndexOf(") ")+2).split(" ")[19]); } catch {} } })
+    : { code: null, reason: "launcher_identity_unavailable", stdout: "", pid: null };
+  let launcherIdentityStable = false;
+  try { launcherIdentityStable = Boolean(launcher && JSON.stringify(launcher) === JSON.stringify(launcherPins())); } catch {}
+  const lines = reference.stdout.trim().split("\n");
+  let enforcement, launcherFailure;
+  try { enforcement = JSON.parse(lines[0]);
+    if (["launcher_arguments_invalid", "launcher_resource_unavailable", "launcher_limits_unavailable", "launcher_exec_failed"].includes(enforcement.result?.code)) launcherFailure = enforcement.result.code;
+  } catch {}
+  const pidPreserved = enforcement?.limits === true && enforcement.pid === reference.pid;
+  const osLimitsEnforced = reference.reason === null && pidPreserved;
+  const referenceRuntime = reference.code === 0 && reference.reason === null && launcherIdentityStable && osLimitsEnforced && lines.length === 2 && lines[1] === "reference-executed";
+  const referenceFailure = reference.reason || launcherFailure || (!launcherIdentityStable ? "launcher_identity_changed" : null) || (referenceRuntime ? null : "execution_failed");
+  const unsupportedHostReasons = [!linuxX64 && "linux_x64_required", (!procReadable || !procFdReadable || !childProcReadable) && "proc_unavailable",
+    !installedPython && "installed_python_unavailable", !referenceRuntime && (referenceFailure || "reference_execution_unavailable")].filter(Boolean);
   return {
-    probe: "managed-node", ok: linuxX64 && procReadable && procFdReadable && childProcReadable && prlimit && referenceRuntime,
+    probe: "managed-node", ok: unsupportedHostReasons.length === 0,
     linuxX64, node: process.version, python3: system.code === 0 && system.reason === null,
-    prlimit, procReadable, procFdReadable, childProcReadable, referenceRuntime, osLimitsEnforced: referenceRuntime,
-    referenceExecution: referenceRuntime, referenceFailure: reference.reason || (referenceRuntime ? null : "execution_failed"),
+    installedPython, bundledPython, installedPythonFailure: installed.reason || (installedPython ? null : "execution_failed"),
+    prlimit, procReadable, procFdReadable, childProcReadable, referenceRuntime, osLimitsEnforced, pidPreserved,
+    referenceExecution: referenceRuntime, referenceFailure,
     pythonFailure: system.reason || (system.code === 0 ? null : "execution_failed"),
-    osLimitMechanism: prlimit ? "prlimit-before-exec" : "unavailable",
+    osLimitMechanism: "python-setrlimit-before-exec", launcher: launcher || null, launcherIdentityStable, unsupportedHostReasons,
     productionActivate: "HOLD", activation: false, notProduction: true, wholeHostSandbox: false,
     privatePythonWebServer: false, referenceProfileRetained: true,
   };
