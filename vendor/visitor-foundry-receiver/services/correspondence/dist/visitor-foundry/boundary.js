@@ -13,6 +13,26 @@ export class IntegrationError extends Error {
         this.nextAction = nextAction;
     }
 }
+// A transaction owns its checked-out connection. Abort destroys that lease;
+// it never returns a client with uncertain/in-flight SQL to the pool.
+export function transactionBudget(signal) {
+    let client, destroyed = false;
+    const abort = () => { if (client && !destroyed) {
+        destroyed = true;
+        client.release(true);
+    } };
+    const check = () => { if (signal?.aborted)
+        throw new IntegrationError(503, "transaction_aborted"); };
+    signal?.addEventListener("abort", abort, { once: true });
+    return {
+        check,
+        attach(c) { client = c; if (signal?.aborted)
+            abort(); check(); },
+        get destroyed() { return destroyed; },
+        dispose() { signal?.removeEventListener("abort", abort); if (client && !destroyed)
+            client.release(); client = undefined; },
+    };
+}
 export class FoundryBoundary {
     pool;
     pending = 0;
@@ -24,28 +44,34 @@ export class FoundryBoundary {
             idleTimeoutMillis: 10000, allowExitOnIdle: true, application_name: "neomorphic_vf04" });
         this.pool.on("error", () => { });
     }
-    async tx(fn) {
+    async tx(fn, { signal } = {}) {
         if (this.pending >= 128)
             throw new IntegrationError(503, "ingress_capacity");
         this.pending++;
+        const budget = transactionBudget(signal);
         let c;
         try {
+            budget.check();
             c = await this.pool.connect();
+            budget.attach(c);
             await c.query("BEGIN");
             await c.query(`SET LOCAL search_path TO ${quoteIdent(this.schema)}`);
             await c.query("SET LOCAL lock_timeout='1500ms'");
             await c.query("SET LOCAL idle_in_transaction_session_timeout='10000ms'");
             const result = await fn(c);
+            budget.check();
             await c.query("COMMIT");
+            budget.check();
             return result;
         }
         catch (e) {
-            if (c)
+            if (c && !budget.destroyed)
                 await c.query("ROLLBACK").catch(() => { });
+            budget.check();
             throw e;
         }
         finally {
-            c?.release();
+            budget.dispose();
             this.pending--;
         }
     }

@@ -1,0 +1,300 @@
+{
+  "schema": "sds.foundry.entry-progress-receiving.v1",
+  "package": "ROOT-SOL-HOST-ENTRY-PROGRESS-100506",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-host-entry-progress-100506",
+  "base": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+  "hostingerMeasured": false,
+  "productionMutation": false,
+  "provenance": {
+    "neoHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "neoTree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+    "sourcePinSha256": "145fd2198c081d37419acb5a45427305e654aa8ac50827503dc59b97503eff60",
+    "amendment": {
+      "package": "ROOT-SOL-HOST-ENTRY-PROGRESS-100506",
+      "sdsBase": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+      "reason": "Atomic reserved-only ownership check/completion under one 20s receiving budget and 3s acknowledgment budget; owned SQL lease cancellation retains the existing 5s server-statement cleanup bound. Sanitized private progress journal. Unknown begin is never repeated or publicly fenced; allocation, terms, history, physical ownership and sealed execution unchanged.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "679608a1f85a287bcfe3b211096f7d7842ef13d1629f5c1dea2a61b1c400f8d9",
+          "sha256": "11e4c080e8a39d48735065f5b50a377396b42659974e31ccf2896e3037dacdf7"
+        },
+        "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+          "receivedSha256": "2100120eb472393ec07247717dcb6528d0779b006f559303af0db4a3be249ffd",
+          "sha256": "516ae3d482f95f85e5640df2902948abe0b26624a82f47ce966fc5759da308cc"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.d.ts": {
+          "receivedSha256": "7c7890f37e50df57bdbde0e51bbdf203dbb1e2ac84af86b164805d0dd787fe55",
+          "sha256": "11feafa49f660ac134d61aa02b8b98a2a4544dc5677ab518f633194893762092"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.js": {
+          "receivedSha256": "b8819dd4ba614ebcf961fbe1a0c9b6bbc6d660374a9c551b92cea0dde2a5164f",
+          "sha256": "94b2cf11b418703e8a503308f6b75875b4d1f62f35578ce62b5c8236a4570b20"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.js.map": {
+          "receivedSha256": "596374e56de1c952e74fe68507c9707d9f3f661c46537273854b7f9eab994415",
+          "sha256": "be59dd1b80e4406b33cbc88ac619e4b3a8f54f3074083b11038f95a8ef91ad14"
+        },
+        "services/correspondence/src/visitor-foundry/boundary.ts": {
+          "receivedSha256": "99f41c01a683d82ce811bab284bd8d4469fff0253664390bbc01f5ff0dc610f5",
+          "sha256": "6065c3ced5070e374fa14390784692e8380577551bb723971555d6533f11e0e8"
+        },
+        "scripts/visitor-foundry/entry/src/progress.mjs": {
+          "receivedSha256": null,
+          "sha256": "f011046a800aa99e04efeaa6c088f0fb571ae45e023ab84268f7cc7d8b60e3be"
+        }
+      }
+    },
+    "acceptedControlSources": {
+      "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "679608a1f85a287bcfe3b211096f7d7842ef13d1629f5c1dea2a61b1c400f8d9",
+      "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receiver.mjs": "2100120eb472393ec07247717dcb6528d0779b006f559303af0db4a3be249ffd"
+    },
+    "controlClosure": {
+      "base": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+      "sourcePinSha256": "145fd2198c081d37419acb5a45427305e654aa8ac50827503dc59b97503eff60",
+      "closureDigest": "sha256:4e184d5cedd1515c15346e1549559b66fe40d00b8b0b2153948a8ba0976ff0fb"
+    },
+    "privateControlPinSha256": "1450101d015c44cefebc1308dcfe424710aae25fda94ed5dec162437165c9831",
+    "locks": {
+      "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
+      "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+    },
+    "priorReceivingFilesUnchanged": 15,
+    "priorReceivingDigest": "e4ed9de95e07fc49df9431c12ac4b1db4a9d3c1fa84b5993e02ad725080131ec",
+    "sealedExecutionUnchanged": true,
+    "pgVersion": "8.23.0"
+  },
+  "files": {
+    "server/foundry/activation/private-control-pin.json": "1450101d015c44cefebc1308dcfe424710aae25fda94ed5dec162437165c9831",
+    "server/foundry/private-pass-core.mjs": "4c05702b157dead2ba7b4e2e42600049365bba63c50db4db36f2ce870d6fc189",
+    "server/scripts/test-foundry-entry-reservation.js": "c23f5d9889532df748c2d5468838b68c57a913b8875fe34cb162c9c82ed19f94",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "145fd2198c081d37419acb5a45427305e654aa8ac50827503dc59b97503eff60",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs": "f011046a800aa99e04efeaa6c088f0fb571ae45e023ab84268f7cc7d8b60e3be",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "11e4c080e8a39d48735065f5b50a377396b42659974e31ccf2896e3037dacdf7",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receiver.mjs": "516ae3d482f95f85e5640df2902948abe0b26624a82f47ce966fc5759da308cc",
+    "vendor/visitor-foundry-receiver/services/correspondence/dist/visitor-foundry/boundary.d.ts": "11feafa49f660ac134d61aa02b8b98a2a4544dc5677ab518f633194893762092",
+    "vendor/visitor-foundry-receiver/services/correspondence/dist/visitor-foundry/boundary.js": "94b2cf11b418703e8a503308f6b75875b4d1f62f35578ce62b5c8236a4570b20",
+    "vendor/visitor-foundry-receiver/services/correspondence/dist/visitor-foundry/boundary.js.map": "be59dd1b80e4406b33cbc88ac619e4b3a8f54f3074083b11038f95a8ef91ad14",
+    "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-foundry/boundary.ts": "6065c3ced5070e374fa14390784692e8380577551bb723971555d6533f11e0e8"
+  },
+  "installationAndBuild": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "logSha256": "c28655fe74c10ced9523164bb18b8eebba3c1a51f705d579b07aea2b5b5696f1"
+    },
+    {
+      "command": "npm --prefix vendor/visitor-foundry-receiver/services/correspondence run build",
+      "exit": 0,
+      "logSha256": "079117fd70563f23fa1e4d986051f40c1c59378d65878f67094d4d35453bd0bc"
+    }
+  ],
+  "tests": [
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH FOUNDRY_ENTRY_RESERVATION_RECEIPT=/tmp/root-sol-100506/entry-evidence.json npm run test:foundry-entry-reservation",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "20e0b9a824929c235c1bb77fbe5bf2975f849704a669f7cb25a864c9d98e5f67"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-private-pass",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "8053d51c32257172150ba6ed8eebdd253960cf369f3be79914cd4550cf8c41f4"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "1392e08ea6b18d7a6b768c2f7ef2bf0f7e115652a31d11e25f8ff29bc3b59a95"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "8caa5db97cd9d65c691f55d8c3be6b0a58cfdf1f913496f2e747e8bc45c22aea"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "d46cf3a1ea1d9afc374789fe5cc56585f4101e8f6e9eb19a3c3837f7fa21fdd6"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "ac5baf22a84d7729bd1bd5837634d85f79c2c574d3ce046f285787220d941a87"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "7540fa6c6d7aeaed0fd55cfa415d972b0647a72f8108852105bd725c6affc800"
+    }
+  ],
+  "totals": {
+    "passed": 135,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "boundaryAndJourney": {
+    "base": "e73bd8956305fc7d5a53cbb309560f4c77e5c0a5",
+    "hostingerMeasured": false,
+    "latencyBoundary": {
+      "afterCommittedReservationMs": 1200,
+      "wrapperDeadlineMs": 1000,
+      "receivedRegisterStatus": 202,
+      "receivedReconcileStatus": 202,
+      "beginCalls": 1,
+      "pendingCommitted": true,
+      "poolAbsent": true,
+      "physicalWork": 0
+    },
+    "receivedEntrySha256": "2941d2f34e2b876cee2eee5d8e1172dc171009740830df9d76ed7a711b3ee68d",
+    "sourcePinSha256": "145fd2198c081d37419acb5a45427305e654aa8ac50827503dc59b97503eff60",
+    "progressControl": {
+      "base": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+      "queryLatencyMs": 100,
+      "connectionLatencyMs": 450,
+      "reconcileStatuses": [
+        202,
+        202
+      ],
+      "recoverCompletionCalls": 0,
+      "poolAbsent": true,
+      "registrationIdUnchanged": true
+    },
+    "progressChangedReplay": {
+      "sameLatencyAsControl": true,
+      "status": 200,
+      "pools": 1,
+      "charged": 1,
+      "admissions": 1,
+      "progress": {
+        "schema": "neomorphic.foundry.entry-progress.v1",
+        "receiveBudgetMs": 20000,
+        "ackBudgetMs": 3000,
+        "sqlCleanupBoundMs": 5000,
+        "totalBudgetMs": 28000,
+        "plannedPhase": null,
+        "budgetExpired": false,
+        "observedState": "ready",
+        "acknowledgedState": "ready",
+        "phases": [
+          {
+            "phase": "marker",
+            "outcome": "returned",
+            "code": null,
+            "state": "pending",
+            "ms": 1
+          },
+          {
+            "phase": "recover",
+            "outcome": "returned",
+            "code": null,
+            "state": "ready",
+            "ms": 2145
+          },
+          {
+            "phase": "read",
+            "outcome": "returned",
+            "code": null,
+            "state": "ready",
+            "ms": 59
+          }
+        ]
+      },
+      "originalHistoryPreserved": true,
+      "actualHost": false
+    },
+    "retainedJourney": {
+      "initialStatus": 202,
+      "laterVisitorPartialStatus": 202,
+      "continuedRegistrationSame": true,
+      "privateCorrespondenceEvents": 1,
+      "registrations": 2,
+      "admissions": 2,
+      "pools": 2,
+      "verificationAttempts": 1,
+      "invocations": 6,
+      "canonicalObservations": 6,
+      "changedRefused": true,
+      "outstandingPhysical": 0,
+      "actualHost": false,
+      "runtimePin": "sha256:38bbaf140028ec6d539e023f8a17980aaf2624752b44ef3478c0c598a53bfbd6"
+    }
+  },
+  "receivingBudget": {
+    "scope": "reconcileReceiver after existing proof/project/grant binding",
+    "receivingMs": 20000,
+    "ackMs": 3000,
+    "localEnvelopeMs": 23000,
+    "existingServerStatementCleanupMs": 5000,
+    "conservativeEnvelopeMs": 28000,
+    "existingConnectionMs": 3000,
+    "existingStatementMs": 5000,
+    "existingDriverQueryMs": 6000,
+    "existingLockMs": 1500,
+    "clientReplyDeadlineMs": 10000,
+    "disconnectProvesServerTermination": false,
+    "lostCommitReply": "unknown-until-canonical-readback"
+  },
+  "contract": {
+    "recover": "one locked reserved-only ownership/completion transaction",
+    "absentBegin": "unknown-never-repeated-or-publicly-fenced",
+    "readback": "fresh canonical proof required even with concurrent terminal acknowledgment",
+    "privateProgress": "one bound diagnostic snapshot per registration in existing idempotency table; plan is not execution evidence",
+    "newOwnerRecoveryAction": false,
+    "allocationTermsCapsChargesHistory": "preserved",
+    "physicalOwnership": "held-no-automatic-reassignment",
+    "profileChanged": false,
+    "executionGenerationRenewed": false,
+    "coldMigration": false
+  },
+  "remainingActualHost": {
+    "owner": "Root",
+    "projectId": "prj_5cboYklXAf5S8Gio",
+    "registrationId": "ven_LN-0OoD1GHnf_iur",
+    "sourceBuildName": "build:managed-foundry",
+    "sameAttemptStage": "a-reconcile",
+    "observationBuildName": "build:managed-foundry-private-pass",
+    "existingObservationIntent": "root-observe-entry-a1005",
+    "renewal": "same saved canonical registration within original workspace deadline only",
+    "proofStillRequired": [
+      "actual current admission/pool/phase readback",
+      "actual controlled verification/publication/use",
+      "actual HTTP stop/start",
+      "later B same-candidate acquisition/invocation with exit/drain witnesses"
+    ]
+  }
+}

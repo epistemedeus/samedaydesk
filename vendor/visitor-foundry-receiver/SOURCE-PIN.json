@@ -75,6 +75,41 @@
           "sha256": "2100120eb472393ec07247717dcb6528d0779b006f559303af0db4a3be249ffd"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-ENTRY-PROGRESS-100506",
+      "sdsBase": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+      "reason": "Atomic reserved-only ownership check/completion under one 20s receiving budget and 3s acknowledgment budget; owned SQL lease cancellation retains the existing 5s server-statement cleanup bound. Sanitized private progress journal. Unknown begin is never repeated or publicly fenced; allocation, terms, history, physical ownership and sealed execution unchanged.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "679608a1f85a287bcfe3b211096f7d7842ef13d1629f5c1dea2a61b1c400f8d9",
+          "sha256": "11e4c080e8a39d48735065f5b50a377396b42659974e31ccf2896e3037dacdf7"
+        },
+        "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+          "receivedSha256": "2100120eb472393ec07247717dcb6528d0779b006f559303af0db4a3be249ffd",
+          "sha256": "516ae3d482f95f85e5640df2902948abe0b26624a82f47ce966fc5759da308cc"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.d.ts": {
+          "receivedSha256": "7c7890f37e50df57bdbde0e51bbdf203dbb1e2ac84af86b164805d0dd787fe55",
+          "sha256": "11feafa49f660ac134d61aa02b8b98a2a4544dc5677ab518f633194893762092"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.js": {
+          "receivedSha256": "b8819dd4ba614ebcf961fbe1a0c9b6bbc6d660374a9c551b92cea0dde2a5164f",
+          "sha256": "94b2cf11b418703e8a503308f6b75875b4d1f62f35578ce62b5c8236a4570b20"
+        },
+        "services/correspondence/dist/visitor-foundry/boundary.js.map": {
+          "receivedSha256": "596374e56de1c952e74fe68507c9707d9f3f661c46537273854b7f9eab994415",
+          "sha256": "be59dd1b80e4406b33cbc88ac619e4b3a8f54f3074083b11038f95a8ef91ad14"
+        },
+        "services/correspondence/src/visitor-foundry/boundary.ts": {
+          "receivedSha256": "99f41c01a683d82ce811bab284bd8d4469fff0253664390bbc01f5ff0dc610f5",
+          "sha256": "6065c3ced5070e374fa14390784692e8380577551bb723971555d6533f11e0e8"
+        },
+        "scripts/visitor-foundry/entry/src/progress.mjs": {
+          "receivedSha256": null,
+          "sha256": "f011046a800aa99e04efeaa6c088f0fb571ae45e023ab84268f7cc7d8b60e3be"
+        }
+      }
     }
   ]
 }

@@ -9,6 +9,12 @@ export type Context = {
     projectId: string;
     token: string;
 };
+export declare function transactionBudget(signal?: AbortSignal): {
+    check: () => void;
+    attach(c: pg.PoolClient): void;
+    readonly destroyed: boolean;
+    dispose(): void;
+};
 export declare class FoundryBoundary {
     private pool;
     private pending;
@@ -17,7 +23,9 @@ export declare class FoundryBoundary {
         schema: string;
         poolMax?: number;
     });
-    tx<T>(fn: (c: pg.PoolClient) => Promise<T>): Promise<T>;
+    tx<T>(fn: (c: pg.PoolClient) => Promise<T>, { signal }?: {
+        signal?: AbortSignal;
+    }): Promise<T>;
     authorize(c: pg.PoolClient, ctx: Context, write?: boolean): Promise<any>;
     now(c: pg.PoolClient): Promise<string>;
     migrate(): Promise<void>;

@@ -17,11 +17,16 @@ import {express} from '../../vendor/visitor-foundry-receiver/scripts/visitor-fou
 import {original,task,cases} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs';
 import {PASS_SCHEMA,runPrivatePass,digest} from '../foundry/private-pass-core.mjs';
 import {verifyFoundrySource} from './fixtures/verify-foundry-source.mjs';
+import {openEntryFacade} from '../foundry/compose.js';
+import {AsyncLocalStorage} from 'node:async_hooks';
+import {RECEIVE_MS,ACK_MS,SQL_CLEANUP_MS,PROGRESS_SCOPE,progressBinding} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs';
 const root=process.cwd(),vendor=path.join(root,'vendor/visitor-foundry-receiver'),baseHead='e73bd8956305fc7d5a53cbb309560f4c77e5c0a5';
 const entrySource='scripts/visitor-foundry/entry/src/store.mjs';
 const inherited={PATH:process.env.PATH,HOME:process.env.HOME,LANG:'C',LC_ALL:'C'};
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-let dir,cluster,admin,OldEntryStore;
+let dir,cluster,admin,OldEntryStore,ProgressControlStore,ProgressControlReceiver;
+const progressBase='f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a';
+const latency=new AsyncLocalStorage();
 const fixtures=new Set();
 const evidence={base:baseHead,hostingerMeasured:false,latencyBoundary:null};
 test('declared receiving amendment chain and exact sealed execution bytes remain bound',async()=>{
@@ -42,10 +47,17 @@ before(async()=>{
  await writeFile(path.join(oldRoot,'vendor/visitor-foundry-receiver',entrySource),r.stdout);
  evidence.receivedEntrySha256=createHash('sha256').update(r.stdout).digest('hex');
  ({EntryStore:OldEntryStore}=await import(pathToFileURL(path.join(oldRoot,'vendor/visitor-foundry-receiver',entrySource))));
+ const controlRoot=path.join(dir,'progress-control');await cp(oldRoot,controlRoot,{recursive:true});
+ for(const f of [entrySource,'scripts/visitor-foundry/integration/entry/receiver.mjs']){
+  const received=await runBounded('git',['show',`${progressBase}:vendor/visitor-foundry-receiver/${f}`],{cwd:root,capture:true,stdoutLimit:50000});assert.equal(received.code,0);
+  await writeFile(path.join(controlRoot,'vendor/visitor-foundry-receiver',f),received.stdout);
+ }
+ ({EntryStore:ProgressControlStore}=await import(pathToFileURL(path.join(controlRoot,'vendor/visitor-foundry-receiver',entrySource))));
+ ({EntryReceiver:ProgressControlReceiver}=await import(pathToFileURL(path.join(controlRoot,'vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receiver.mjs'))));
 });
 after(async()=>{for(const f of fixtures)await f.close();await admin?.end();await cluster?.stop();if(dir)await rm(dir,{recursive:true,force:true});
  if(process.env.FOUNDRY_ENTRY_RESERVATION_RECEIPT)await writeFile(process.env.FOUNDRY_ENTRY_RESERVATION_RECEIPT,JSON.stringify(evidence,null,2)+'\n',{mode:0o600});});
-async function fixture({legacy=false}={}) {
+async function fixture({legacy=false,progressControl=false}={}) {
  const db=`entryreservation_${randomUUID().replaceAll('-','')}`;await admin.query(`CREATE DATABASE "${db}"`);const url=cluster.url.replace('/correspondence',`/${db}`),schema='pilot_correspondence';
  const privateDir=path.join(dir,db);await mkdir(privateDir,{mode:0o700});const pool=new pg.Pool({connectionString:url});
  const query=async(sql,values)=>{const c=await pool.connect();try{await c.query('BEGIN');await c.query(`SET LOCAL search_path TO ${schema}`);const r=await c.query(sql,values);await c.query('COMMIT');return r;}catch(e){await c.query('ROLLBACK');throw e;}finally{c.release();}};
@@ -56,15 +68,16 @@ async function fixture({legacy=false}={}) {
  await writeFile(privateEnv.FOUNDRY_PARTICIPATION_KEY_FILE,'disposable-entry-reservation-purpose-key-32',{mode:0o600});
  const config={databaseUrl:url,pgSchema:schema,adminToken:'disposable-only-not-issued-admin',store:'postgres',bodyLimitBytes:524288,rateLimitWindowMs:60000,rateLimitMax:10000,corsOrigins:[],trustProxyHops:0,poolMax:1,port:0};
  let base,mount,server;
- async function boot({install=false,old=false,port=0}={}) {
-  base=new PostgresStore(url,{schema,poolMax:1});mount=await createEntryReuseMount({enabled:true,databaseUrl:url,schema,correspondence:base,config,hostProfile,participationKey:'disposable-entry-reservation-purpose-key-32',poolMax:2});
+ async function boot({install=false,old=false,control=false,port=0}={}) {
+  base=new PostgresStore(url,{schema,poolMax:1});({mounted:mount}=await openEntryFacade({store:base,config,hostProfile,participationKey:'disposable-entry-reservation-purpose-key-32'}));
   if(install){await base.migrate();await mount.extension.cells.migrate();await mount.extension.integration.migrate();await mount.entry.migrate();await mount.receiver.migrate();
    mount.entry.receiver=null;const prior=await mount.entry.install(privateProfile);mount.entry.receiver=mount.receiver;await mount.entry.enableContribution({expectedTerms:prior.termsHash,id:'vf10:contribution-v2',binding:mount.receiver.binding()});}
   if(old)Object.setPrototypeOf(mount.entry,OldEntryStore.prototype);
-  const app=express();app.use('/api/correspondence',mount.app);server=app.listen(port,'127.0.0.1');await new Promise(r=>server.once('listening',r));
+  if(control){Object.setPrototypeOf(mount.entry,ProgressControlStore.prototype);Object.setPrototypeOf(mount.receiver,ProgressControlReceiver.prototype);}
+  const app=express();app.get('/product-unrelated-fixture',(_req,res)=>res.json({serving:true}));app.use('/api/correspondence',mount.app);server=app.listen(port,'127.0.0.1');await new Promise(r=>server.once('listening',r));
  }
  async function stop(){if(server){server.closeAllConnections();await new Promise(r=>server.close(r));server=null;}await mount?.close();await base?.close();}
- await boot({install:true,old:legacy});
+ await boot({install:true,old:legacy,control:progressControl});
  const configFile=path.join(privateDir,'a.config.json'),clientDir=path.join(privateDir,'visitor-a');
  async function client(name='a') {
   const describe=await mount.entry.describe(),file=path.join(privateDir,`${name}.config.json`),directory=path.join(privateDir,`visitor-${name}`);
@@ -82,7 +95,7 @@ async function fixture({legacy=false}={}) {
   expectedHostConfigId:mount.receiver.config.configId,expectedEntryTermsHash:(await mount.entry.describe()).profile.termsHash,expectedVerificationId:null,candidateId:null,expectedGeneration:null,reconcileIntentId:null,...extra});
  const observe=async(projectId,extra={})=>runPrivatePass(mount.extension.integration,mount.receiver,await observeRequest(projectId,extra));
  const f={privateDir,privateEnv,clientDir,configFile,a,client,query,counts,authority,observe,observeRequest,get mount(){return mount;},get port(){return server.address().port;},get baseUrl(){return `http://127.0.0.1:${server.address().port}/api/correspondence`;},
-  async restart({legacy=false}={}){const port=server.address().port;await stop();await boot({port,old:legacy});},async close(){await stop();await pool.end();fixtures.delete(f);}};
+  async restart({legacy=false,progressControl=false}={}){const port=server.address().port;await stop();await boot({port,old:legacy,control:progressControl});},async close(){await stop();await pool.end();fixtures.delete(f);}};
  fixtures.add(f);return f;
 }
 async function pending(f) {
@@ -91,6 +104,116 @@ async function pending(f) {
  const first=await f.a.run('register');assert.equal(first.status,202);assert.equal(first.body.status,'partial');assert.equal(first.body.receiver.state,'pending');
  await delay(300);return {first,begins:()=>begins,input:{registrationId:first.body.registrationId,projectId:first.body.projectId}};
 }
+// Real SQL waits before each query, plus delayed connection handoff, only in
+// the selected owning phase. No production environment switch or query change.
+function sqlLatency(f,{scope='recover',queryMs=100,connectionMs=450}={}) {
+ const db=f.mount.extension.integration.db,pool=db.pool,connect=pool.connect.bind(pool),originalRecover=f.mount.receiver.recover.bind(f.mount.receiver);
+ const metrics={queries:0,connections:0,completions:0};
+ pool.connect=async()=>{
+  const c=await connect(),selected=scope==='all'||latency.getStore()==='recover';
+  if(!selected)return c;
+  metrics.connections++;await delay(connectionMs);
+  const query=c.query.bind(c),release=c.release.bind(c);
+  c.query=async(...args)=>{metrics.queries++;await query('SELECT pg_sleep($1)',[queryMs/1000]);return query(...args);};
+  c.release=(destroy)=>{c.query=query;c.release=release;return release(destroy);};
+  return c;
+ };
+ f.mount.receiver.recover=(...args)=>latency.run('recover',()=>originalRecover(...args));
+ const complete=f.mount.receiver.complete.bind(f.mount.receiver);f.mount.receiver.complete=async(...args)=>{metrics.completions++;return complete(...args);};
+ return {metrics,restore(){pool.connect=connect;f.mount.receiver.recover=originalRecover;f.mount.receiver.complete=complete;}};
+}
+async function retained(f) {
+ const auth=await f.authority();
+ const registration=(await f.query('SELECT id,project_id,request_id,request_hash,proof_hash,owner_hash,expires_at,grant_expires_at,entry_profile FROM correspondence_vf10_registrations')).rows;
+ const history=(await f.query('SELECT scope,project_id,key,request_hash,status_code,response_json,created_at FROM correspondence_idempotency WHERE scope<>$1 ORDER BY scope,project_id,key',[PROGRESS_SCOPE])).rows;
+ return {auth,registration,history};
+}
+async function ownedBackendEnded(f,pid) {
+ const until=performance.now()+SQL_CLEANUP_MS+1500;
+ while((await f.query('SELECT count(*)::int n FROM pg_stat_activity WHERE pid=$1',[pid])).rows[0].n){
+  assert.ok(performance.now()<until,'owned server statement did not end within existing SQL timeout');await delay(100);
+ }
+}
+test('100506 failing control: full mounted recovery exists but per-query/connection latency exhausts its preliminary 1s gate',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart({progressControl:true});
+ assert.equal(f.mount.entry.receiver,f.mount.receiver);assert.equal(typeof f.mount.receiver.recover,'function');const old=await retained(f),slow=sqlLatency(f);
+ const one=await f.a.run('reconcile');assert.equal(one.status,202);assert.equal(one.body.receiver.state,'pending');await delay(700);
+ const two=await f.a.run('reconcile');assert.equal(two.status,202);assert.equal(two.body.receiver.state,'pending');await delay(700);slow.restore();
+ assert.equal(slow.metrics.completions,0);assert.ok(slow.metrics.queries>=18);assert.equal((await f.counts()).pools,0);assert.equal((await f.counts()).allocated,1);assert.deepEqual(await retained(f),old);
+ evidence.progressControl={base:progressBase,queryLatencyMs:100,connectionLatencyMs:450,reconcileStatuses:[one.status,two.status],recoverCompletionCalls:0,poolAbsent:true,registrationIdUnchanged:two.body.registrationId===p.input.registrationId};
+});
+test('100506 changed replay: same mounted pending admission completes under identical SQL latency, original renewal/history survive restart',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart();
+ await f.query("UPDATE correspondence_vf10_registrations SET grant_expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[p.input.registrationId]);
+ await f.query("UPDATE correspondence_grants SET expires_at=clock_timestamp()-interval '1 second' WHERE project_id=$1 AND role IN ('reader','writer')",[p.input.projectId]);
+ const expired=await f.a.run('reconcile');assert.equal(expired.status,401);assert.equal(expired.body.error.code,'grant_expired');
+ await f.restart({progressControl:true});
+ const slowControl=sqlLatency(f);const renew=await f.a.run('renew');assert.equal(renew.status,202);await delay(700);slowControl.restore();
+ const old=await retained(f),proof=await readFile(path.join(f.a.directory,'registration.secret')),attempt=await readFile(path.join(f.a.directory,'attempt.json'));
+ await f.restart();f.mount.receiver.begin=()=>{throw new Error('begin_must_not_repeat');};const slow=sqlLatency(f);
+ const continued=await f.a.run('reconcile');slow.restore();assert.equal(continued.status,200);assert.equal(continued.body.projectId,p.input.projectId);assert.equal(continued.body.registrationId,p.input.registrationId);
+ assert.deepEqual(await retained(f),old);assert.deepEqual(await readFile(path.join(f.a.directory,'registration.secret')),proof);assert.deepEqual(await readFile(path.join(f.a.directory,'attempt.json')),attempt);
+ const observation=await f.observe(p.input.projectId),progress=observation.readback.entry.progress;
+ assert.equal(progress.totalBudgetMs,28000);assert.equal(progress.budgetExpired,false);assert.equal(progress.phases.find(p=>p.phase==='recover').outcome,'returned');assert.ok(progress.phases.find(p=>p.phase==='recover').ms>1000);
+ assert.equal(observation.readback.entry.poolReady,true);assert.equal((await f.counts()).pools,1);assert.equal((await f.counts()).charged,1);assert.equal((await f.counts()).allocated,1);
+ evidence.progressChangedReplay={sameLatencyAsControl:true,status:continued.status,pools:1,charged:1,admissions:1,progress,originalHistoryPreserved:true,actualHost:false};
+});
+test('100506 high latency in read as well as recovery progresses; two concurrent same-attempt recoveries preserve monotonic ready and one pool',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart({progressControl:true});const allControl=sqlLatency(f,{scope:'all'});
+ const stuck=await f.a.run('reconcile');assert.equal(stuck.status,202);assert.equal(stuck.body.receiver.state,'unknown');await delay(900);allControl.restore();
+ assert.equal((await f.counts()).pools,0);await f.restart();f.mount.receiver.begin=()=>{throw new Error('begin_must_not_repeat');};const all=sqlLatency(f,{scope:'all'});
+ const attempt=JSON.parse(await readFile(path.join(f.a.directory,'attempt.json'))),proof=(await readFile(path.join(f.a.directory,'registration.secret'),'utf8')).trim();
+ const post=async()=>{const r=await fetch(`${f.baseUrl}/v1/visitor-entry/reconcile`,{method:'POST',headers:{'content-type':'application/json','idempotency-key':attempt.body.requestId,authorization:`Bearer ${proof}`},body:JSON.stringify(attempt.body),signal:AbortSignal.timeout(25000)});return {status:r.status,body:await r.json()};};
+ const results=await Promise.all([post(),post()]);all.restore();
+ for(const r of results){assert.equal(r.status,200);assert.equal(r.body.receiver.state,'ready');assert.equal(r.body.registrationId,p.input.registrationId);assert.equal(r.body.projectId,p.input.projectId);assert.equal(Object.hasOwn(r.body,'progress'),false);}
+ const again=await f.a.run('reconcile');assert.equal(again.status,200);assert.equal((await f.counts()).pools,1);assert.equal((await f.counts()).admissions,1);assert.equal((await f.counts()).charged,1);
+});
+test('100506 lost committed recovery response is resolved by readback; sanitized private phases never reach the public caller',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart();const recover=f.mount.receiver.recover.bind(f.mount.receiver);
+ f.mount.receiver.recover=async(...args)=>{await recover(...args);throw Object.assign(new Error('SECRET postgres://credentials SQL private correspondence'),{code:'57014'});};
+ const result=await f.a.run('reconcile');assert.equal(result.status,200);assert.equal(result.body.registrationId,p.input.registrationId);assert.doesNotMatch(JSON.stringify(result),/SECRET|postgres:|progress|sql_statement/);
+ const v=await f.observe(p.input.projectId),phase=v.readback.entry.progress.phases.find(p=>p.phase==='recover');assert.equal(phase.code,'sql_statement_timeout');assert.equal(phase.outcome,'error');assert.equal(v.readback.entry.poolReady,true);assert.equal((await f.counts()).pools,1);
+ await f.query('UPDATE correspondence_idempotency SET request_hash=$1 WHERE scope=$2',[`sha256:${'c'.repeat(64)}`,PROGRESS_SCOPE]);await assert.rejects(f.observe(p.input.projectId),{code:'private_pass_progress_conflict'});
+});
+test('100506 concurrent terminal acknowledgment stays monotonic but cannot substitute for this call\'s failed fresh readback',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart();const read=f.mount.receiver.read.bind(f.mount.receiver);
+ f.mount.receiver.read=async input=>{
+  assert.equal(await read(input),'ready');
+  await f.query("UPDATE correspondence_vf10_registrations SET receiver_state='ready' WHERE id=$1",[p.input.registrationId]);
+  throw Object.assign(new Error('SECRET stale readback'),{code:'installed_verification_changed'});
+ };
+ const unknown=await f.a.run('reconcile');assert.equal(unknown.status,202);assert.equal(unknown.body.receiver.state,'unknown');
+ const v=await f.observe(p.input.projectId);assert.equal(v.readback.entry.acknowledgedState,'ready');assert.equal(v.readback.entry.progress.observedState,'unknown');assert.equal(v.readback.entry.progress.acknowledgedState,'ready');assert.equal(v.readback.entry.progress.phases.find(p=>p.phase==='read').code,'installed_verification_changed');
+ f.mount.receiver.read=read;const ready=await f.a.run('reconcile');assert.equal(ready.status,200);assert.equal(ready.body.registrationId,p.input.registrationId);assert.equal((await f.counts()).pools,1);assert.equal((await f.counts()).charged,1);
+});
+test('100506 total budget abort destroys only the owned SQL lease, retains pending ownership, and a later exact continuation can progress',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart();const db=f.mount.extension.integration.db,recover=f.mount.receiver.recover.bind(f.mount.receiver);let backend;
+ f.mount.receiver.recover=async input=>db.tx(async c=>{
+  backend=(await c.query('SELECT pg_backend_pid() id')).rows[0].id;
+  for(let i=0;i<6;i++)await c.query('SELECT pg_sleep(4)');return 'pending';
+ },{signal:input.signal});
+ const attempt=JSON.parse(await readFile(path.join(f.a.directory,'attempt.json'))),proof=(await readFile(path.join(f.a.directory,'registration.secret'),'utf8')).trim();
+ const started=performance.now();const pendingRequest=fetch(`${f.baseUrl}/v1/visitor-entry/reconcile`,{method:'POST',headers:{'content-type':'application/json','idempotency-key':attempt.body.requestId,authorization:`Bearer ${proof}`},body:JSON.stringify(attempt.body),signal:AbortSignal.timeout(26000)});
+ await delay(100);const product=await fetch(f.baseUrl.replace('/api/correspondence','/product-unrelated-fixture'));assert.equal(product.status,200);assert.deepEqual(await product.json(),{serving:true});
+ const response=await pendingRequest,body=await response.json();assert.equal(response.status,202);assert.equal(body.receiver.state,'unknown');assert.ok(performance.now()-started<RECEIVE_MS+ACK_MS+1500);
+ await ownedBackendEnded(f,backend);assert.equal(db.pending,0);
+ const v=await f.observe(p.input.projectId);assert.equal(v.readback.entry.progress.budgetExpired,true);assert.equal(v.readback.entry.progress.phases.find(p=>p.phase==='recover').code,'receive_deadline');assert.equal(v.readback.entry.admission.state,'pending');assert.equal(v.readback.outstandingPhysical,0);assert.equal((await f.counts()).pools,0);
+ f.mount.receiver.recover=recover;const completed=await f.a.run('reconcile');assert.equal(completed.status,200);assert.equal(completed.body.projectId,p.input.projectId);assert.equal((await f.counts()).pools,1);assert.equal((await f.counts()).admissions,1);assert.equal((await f.counts()).charged,1);
+});
+test('100506 cancellation before acquisition and during partial completion rolls back SQL; unproved/stale private readback stays unknown',async()=>{
+ const f=await fixture({legacy:true}),p=await pending(f);await f.restart();const db=f.mount.extension.integration.db;
+ const cancelled=new AbortController();cancelled.abort();await assert.rejects(db.tx(()=>{throw new Error('must_not_enter');},{signal:cancelled.signal}),{code:'transaction_aborted'});assert.equal(db.pending,0);
+ await f.query(`CREATE FUNCTION interrupt_pool() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_sleep(3); RETURN NEW; END $$;
+ CREATE TRIGGER interrupt_pool BEFORE INSERT ON correspondence_vf04_pools FOR EACH ROW EXECUTE FUNCTION interrupt_pool()`);
+ const connect=db.pool.connect.bind(db.pool);let backend;
+ db.pool.connect=async()=>{const c=await connect();backend=(await c.query('SELECT pg_backend_pid() id')).rows[0].id;return c;};
+ const interrupted=new AbortController(),timer=setTimeout(()=>interrupted.abort(),250);
+ await assert.rejects(f.mount.receiver.recover({...p.input,signal:interrupted.signal},{reservedOnly:true}),{code:'transaction_aborted'});clearTimeout(timer);db.pool.connect=connect;await ownedBackendEnded(f,backend);
+ assert.equal((await f.counts()).pools,0);assert.equal((await f.counts()).allocated,1);assert.equal((await f.observe(p.input.projectId)).readback.entry.admission.state,'pending');
+ await f.query('DROP TRIGGER interrupt_pool ON correspondence_vf04_pools');assert.equal((await f.a.run('reconcile')).status,200);
+ const read=f.mount.receiver.readInTransaction.bind(f.mount.receiver);f.mount.receiver.readInTransaction=async()=>{throw Object.assign(new Error('SECRET'),{code:'installed_verification_changed'});};
+ const view=await f.observe(p.input.projectId);assert.equal(view.readback.entry.poolEnrolled,true);assert.equal(view.readback.entry.poolReady,false);assert.equal(view.readback.entry.receiverState,'unknown');assert.equal(view.readback.entry.readFailureCode,'installed_verification_changed');assert.equal(view.readback.installedVerificationMatches,null);assert.equal(view.readback.verificationId,null);assert.deepEqual(view.readback.invocations,[]);assert.doesNotMatch(JSON.stringify(view),/SECRET/);f.mount.receiver.readInTransaction=read;
+});
 test('received source reproduces >1s committed-reservation abort: exact reconcile remains pending without another begin',async()=>{
  const f=await fixture({legacy:true}),p=await pending(f),original=await f.authority();
  const again=await f.a.run('reconcile');assert.equal(again.status,202);assert.equal(again.body.receiver.state,'pending');assert.equal(again.body.projectId,p.input.projectId);assert.equal(p.begins(),1);
@@ -134,12 +257,12 @@ test('a lost recovery response is resolved only by canonical readback; an uncomm
 });
 test('missing/unknown begin is not retried or fenced by public reconcile; explicit canonical tombstone blocks delayed begin',async()=>{
  const f=await fixture();let beginCalls=0,recoverCalls=0;const begin=f.mount.receiver.begin.bind(f.mount.receiver),recover=f.mount.receiver.recover.bind(f.mount.receiver);
- f.mount.receiver.begin=async i=>{beginCalls++;await delay(1800);return begin(i);};f.mount.receiver.recover=async(...args)=>{recoverCalls++;return recover(...args);};
+ f.mount.receiver.begin=async()=>{beginCalls++;throw new Error('disposable unknown begin');};f.mount.receiver.recover=async(...args)=>{recoverCalls++;return recover(...args);};
  const first=await f.a.run('register');assert.equal(first.status,202);assert.equal(first.body.receiver.state,'unknown');
- const input={registrationId:first.body.registrationId,projectId:first.body.projectId};const second=await f.a.run('reconcile');assert.equal(second.status,202);assert.equal(second.body.receiver.state,'unknown');assert.equal(beginCalls,1);assert.equal(recoverCalls,0);
+ const input={registrationId:first.body.registrationId,projectId:first.body.projectId};const second=await f.a.run('reconcile');assert.equal(second.status,202);assert.equal(second.body.receiver.state,'unknown');assert.equal(beginCalls,1);assert.equal(recoverCalls,2);
  const obs=await f.observe(input.projectId);assert.equal(obs.readback.entry.admission,null);assert.equal(obs.readback.entry.receiverState,'unknown');
  assert.equal(await recover(input,{reservedOnly:true}),'unknown');assert.equal((await f.counts()).admissions,0);
- assert.equal(await recover(input),'declined');await delay(900);const terminal=await f.a.run('reconcile');assert.equal(terminal.body.receiver.state,'declined');assert.equal(beginCalls,1);
+ assert.equal(await recover(input),'declined');await begin(input);const terminal=await f.a.run('reconcile');assert.equal(terminal.body.receiver.state,'declined');assert.equal(beginCalls,1);
  const c=await f.counts();assert.equal(c.charged,1);assert.equal(c.allocated,0);assert.equal(c.pools,0);assert.equal(c.admissions,1);assert.equal(c.attempts,0);
 });
 test('concurrent known-pending reconcile creates one pool and does not add charge/admissions/grants',async()=>{
@@ -149,11 +272,11 @@ test('concurrent known-pending reconcile creates one pool and does not add charg
  const r=await Promise.all([post(),post(),post()]);for(const x of r){assert.equal(x.status,200);assert.equal(x.state,'ready');assert.equal(x.projectId,p.input.projectId);assert.equal(x.registrationId,p.input.registrationId);}assert.equal(begins,0);
  assert.deepEqual(await f.counts(),{charged:1,registrations:1,projects:1,grants:3,admissions:1,allocated:1,pools:1,attempts:0,invocations:0});
 });
-test('pool completion crossing >1s response deadline remains atomic; next exact reconcile reads committed ready',async()=>{
+test('pool completion taking >1s remains atomic within owned receiving budget; exact replay reads committed ready',async()=>{
  const f=await fixture();await f.query(`CREATE FUNCTION slow_pool() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_sleep(2.2); RETURN NEW; END $$;
   CREATE TRIGGER slow_pool BEFORE INSERT ON correspondence_vf04_pools FOR EACH ROW EXECUTE FUNCTION slow_pool()`);
  f.mount.receiver.afterReservation=()=>delay(1200);
- const first=await f.a.run('register');assert.equal(first.status,202);assert.equal(first.body.status,'partial');assert.equal(first.body.nextAction,'reconcile_same_attempt');await delay(500);
+ const first=await f.a.run('register');assert.equal(first.status,200);assert.equal(first.body.status,'ready');assert.equal(first.body.nextAction,'use_private_correspondence');
  const second=await f.a.run('reconcile');assert.equal(second.status,200);assert.equal(second.body.projectId,first.body.projectId);assert.equal((await f.counts()).pools,1);assert.equal((await f.counts()).allocated,1);assert.equal((await f.counts()).attempts,0);
 });
 test('lost registration response retains the original proof/attempt; exact reconciliation completes one admission',async()=>{
