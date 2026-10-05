@@ -38,7 +38,17 @@ export function readParticipationKey(file) {
   return key;
 }
 
+const LISTENER_JSON_KEYS = [
+  "FOUNDRY_HOST_PROFILE_JSON",
+  "FOUNDRY_PRIVATE_PROFILE_JSON",
+  "FOUNDRY_PARTICIPATION_KEY",
+  "FOUNDRY_PGSSL_CA_PEM",
+];
+
 export function hostInputsFromEnv(env = process.env) {
+  if (LISTENER_JSON_KEYS.some((key) => String(env[key] || "").trim())) {
+    return { ok: false, reason: "profile_json_in_listener" };
+  }
   const hostProfileFile = String(env.FOUNDRY_HOST_PROFILE_FILE || "").trim();
   const participationKeyFile = String(env.FOUNDRY_PARTICIPATION_KEY_FILE || "").trim();
   if (!hostProfileFile || !participationKeyFile) {

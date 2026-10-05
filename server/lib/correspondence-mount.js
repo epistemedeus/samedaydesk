@@ -5,6 +5,7 @@ import express from "express";
 import { foundryHostOptIn, parseFoundryBodyLimit } from "../foundry/opt-in.js";
 import { REUSE_CLASS, reusesProductDataService } from "../foundry/product-isolation.js";
 import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
+import { readCaStatus } from "../foundry/pg-tls.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
@@ -37,6 +38,8 @@ export function inspectCorrespondenceEnv(env = process.env) {
   if (url && reusesProductDataService(url, { supabaseUrl: env.SUPABASE_URL })) {
     return { kind: "invalid_config", detail: REUSE_CLASS };
   }
+  const ca = readCaStatus(env);
+  if (ca.required && !ca.ok) return { kind: "invalid_config", detail: ca.reason || "pg_ca_unreadable" };
   const store = String(env.CORRESPONDENCE_STORE || "postgres").toLowerCase();
   if (store !== "postgres" && store !== "memory") return { kind: "invalid_config", detail: "invalid store" };
   const nodeEnv = env.NODE_ENV || "production";

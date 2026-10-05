@@ -109,3 +109,5 @@ The first command prints the procedure and changes nothing. The second exits 2 w
 The cold job records the same client surfaces across the disabled mount, hosted discovery, restart, and rollback. The official visitor client is `visitor.mjs`. The portable kit is Wasmtime 49.0.0. Those two agree on the held-out output after the HTTP process restarts, on a private Postgres cluster, not on the product Supabase project.
 
 Root rollback, when a hosted opt-in has already happened, is: unset `FOUNDRY_HOST_OPT_IN` and the `CORRESPONDENCE_*` variables, unset the profile and key paths, and restart `node server/index.js`. Health stays the SDS check. Healthz returns `enabled: false` and `reason: unconfigured`. Do not drop `pilot_correspondence`.
+
+Managed Node portability, the non-secret host probe, and the distinct Wasmtime 49 embedding are in `MANAGED-NODE.md`. This package does not activate Hostinger.

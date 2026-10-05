@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { foundryHostOptIn } from "./opt-in.js";
 import { REUSE_CLASS, reusesProductDataService } from "./product-isolation.js";
 import { CANONICAL_WORKER } from "./paths.js";
@@ -22,7 +23,7 @@ function resolvePass(env) {
 }
 
 function childEnv(env) {
-  return {
+  const base = {
     PATH: env.PATH || "",
     HOME: env.HOME || "",
     LANG: "C",
@@ -39,6 +40,12 @@ function childEnv(env) {
     FOUNDRY_CLAIM_ASSIGNMENT: env.FOUNDRY_CLAIM_ASSIGNMENT || "",
     FOUNDRY_WORKER_HOLD_MS: env.FOUNDRY_WORKER_HOLD_MS || "",
   };
+  if (env.CORRESPONDENCE_PGSSL_CA_FILE) base.CORRESPONDENCE_PGSSL_CA_FILE = env.CORRESPONDENCE_PGSSL_CA_FILE;
+  if (env.FOUNDRY_EXECUTION_RUNTIME) base.FOUNDRY_EXECUTION_RUNTIME = env.FOUNDRY_EXECUTION_RUNTIME;
+  if (env.CORRESPONDENCE_PGSSL_CA_FILE || env.FOUNDRY_EXECUTION_RUNTIME === "wasmtime49-embed") {
+    base.NODE_OPTIONS = `--import ${fileURLToPath(new URL("./process-bootstrap.mjs", import.meta.url))}`;
+  }
+  return base;
 }
 
 function spawnPass(pass, phase, projectId) {
