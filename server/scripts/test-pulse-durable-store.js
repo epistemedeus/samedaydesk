@@ -19,6 +19,7 @@ import {
 import { createPulseStoreFromTransport, newFlushId } from "../lib/pulse-store/index.js";
 import { createFileFallbackStore } from "../lib/pulse-store/file-fallback.js";
 import { atomicWriteJson } from "../lib/pulse-store/atomic-write.js";
+import { TRANSIENT_FLUSH_BACKOFF_MS } from "../lib/pulse-store/flush-error.js";
 import {
   createFakePulseAuthority,
   createFakeRpcTransport,
@@ -210,8 +211,11 @@ test("defect 1: ambiguous ack retry keeps one owner and new events do not double
   });
 
   pulseMiddleware({ method: "GET", path: "/pricing", headers: { "user-agent": "Mozilla/5.0" }, ip: "1.1.1.1" }, {}, () => {});
-  const { drainPendingFlushes } = __pulseTestInternals();
+  const { drainPendingFlushes, setPulseNow } = __pulseTestInternals();
+  let clock = 1_700_000_000_000;
+  setPulseNow(() => clock);
   await drainPendingFlushes();
+  clock += TRANSIENT_FLUSH_BACKOFF_MS[0];
   await drainPendingFlushes();
 
   pulseMiddleware({ method: "GET", path: "/scan", headers: { "user-agent": "Mozilla/5.0" }, ip: "2.2.2.2" }, {}, () => {});
