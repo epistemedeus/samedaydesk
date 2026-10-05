@@ -1,66 +1,46 @@
-import { statSync } from "node:fs";
-import path from "node:path";
-import pg from "pg";
+import { isIP } from "node:net";
+import { X509Certificate } from "node:crypto";
+import { fileURLToPath } from "node:url";
+import { assertPrivateLocation, coded, readPrivateBytes } from "./private-paths.js";
 
-const CA_ENV = "CORRESPONDENCE_PGSSL_CA_FILE";
-
-function coded(code) {
-  const error = new Error(code);
-  error.code = code;
-  return error;
-}
-
-export function assertCaPath(file) {
-  const resolved = path.resolve(String(file || ""));
-  if (resolved.split(path.sep).includes("public_html")) throw coded("pg_ca_path_refused");
-  return resolved;
-}
+const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
+export function assertCaPath(file) { return assertPrivateLocation(String(file || ""), repoRoot); }
 
 export function readCaStatus(env = process.env) {
-  const configured = String(env[CA_ENV] || "").trim();
+  const configured = String(env.CORRESPONDENCE_PGSSL_CA_FILE || "").trim();
   if (!configured) return { required: false, ok: true, file: "" };
   try {
     const file = assertCaPath(configured);
-    const stat = statSync(file);
-    if (!stat.isFile() || stat.size < 32 || stat.size > 1024 * 1024) throw coded("pg_ca_unreadable");
+    const pem = readPrivateBytes(file, { repoRoot, limit: 1024 * 1024 }).toString("utf8");
+    const certificates = pem.match(/-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/g);
+    if (!certificates?.length || certificates.some(cert => !new X509Certificate(cert).ca)) throw coded("pg_ca_unreadable");
     return { required: true, ok: true, file };
-  } catch (error) {
-    return { required: true, ok: false, file: "", reason: error.code || "pg_ca_unreadable" };
+  } catch {
+    return { required: true, ok: false, file: "", reason: "pg_ca_unreadable" };
   }
 }
 
 export function appendSslRootCert(connectionString, caFile) {
   let url;
-  try {
-    url = new URL(connectionString);
-  } catch {
-    return connectionString;
-  }
-  if (url.protocol !== "postgres:" && url.protocol !== "postgresql:") return connectionString;
-  if (url.searchParams.get("sslmode") !== "verify-full") return connectionString;
-  if (url.searchParams.has("sslrootcert")) return connectionString;
+  try { url = new URL(connectionString); } catch { throw coded("pg_tls_url_invalid"); }
+  if (!["postgres:", "postgresql:"].includes(url.protocol)) throw coded("pg_tls_url_invalid");
+  // A configured CA is never silently ignored by a weaker mode or libpq compatibility.
+  if (url.searchParams.getAll("sslmode").length !== 1 || url.searchParams.get("sslmode") !== "verify-full"
+      || url.searchParams.has("uselibpqcompat") || url.searchParams.has("ssl")) throw coded("pg_tls_verify_full_required");
+  // This locked pg version omits TLS servername for IP hosts. Require DNS so
+  // Node checks the certificate against the actual connection hostname.
+  const hostname = url.hostname.replace(/^\[|\]$/g, "");
+  if (!hostname || isIP(hostname) || url.searchParams.has("host")) throw coded("pg_tls_hostname_required");
+  const existing = url.searchParams.getAll("sslrootcert");
+  if (existing.length > 1 || (existing.length === 1 && existing[0] !== caFile)) throw coded("pg_ca_conflict");
   url.searchParams.set("sslrootcert", caFile);
   return url.toString();
 }
 
-let wrapped = false;
-
-export function installVerifiedPgTls() {
-  if (wrapped) return readCaStatus();
-  const Original = pg.Pool;
-  function VerifiedPool(config) {
-    const status = readCaStatus();
-    if (status.required && !status.ok) throw coded(status.reason || "pg_ca_unreadable");
-    if (status.file && config && typeof config === "object" && typeof config.connectionString === "string") {
-      config = { ...config, connectionString: appendSslRootCert(config.connectionString, status.file) };
-    } else if (status.file && typeof config === "string") {
-      config = appendSslRootCert(config, status.file);
-    }
-    return new Original(config);
-  }
-  VerifiedPool.prototype = Original.prototype;
-  Object.setPrototypeOf(VerifiedPool, Original);
-  pg.Pool = VerifiedPool;
-  wrapped = true;
-  return readCaStatus();
+// Apply only at the foundry URL boundary. Never patch pg or mutate product/Pulse pools.
+export function verifiedFoundryDatabaseUrl(connectionString, env = process.env) {
+  const status = readCaStatus(env);
+  if (status.file && (env.NODE_TLS_REJECT_UNAUTHORIZED === "0" || process.env.NODE_TLS_REJECT_UNAUTHORIZED === "0")) throw coded("pg_tls_verification_disabled");
+  if (!status.ok) throw coded(status.reason);
+  return status.file ? appendSslRootCert(connectionString, status.file) : connectionString;
 }

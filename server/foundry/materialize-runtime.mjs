@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
-import { spawn, spawnSync } from "node:child_process";
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { runBounded } from "./bounded-child.mjs";
+import { access, mkdir, mkdtemp, open, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -26,14 +26,22 @@ function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
-function run(command, args, options = {}) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { ...options, stdio: ["ignore", "pipe", "pipe"] });
-    let stderr = "";
-    child.stderr.on("data", (buf) => { stderr = (stderr + buf).slice(-2000); });
-    child.once("error", reject);
-    child.once("exit", (code) => resolve({ code, stderr }));
-  });
+async function run(command, args, options = {}) {
+  const result = await runBounded(command, args, options);
+  if (result.reason) throw coded(`runtime_child_${result.reason}`);
+  return result;
+}
+
+async function boundedFile(file, limit) {
+  const handle = await open(file, "r");
+  try {
+    const stat = await handle.stat();
+    if (!stat.isFile() || stat.size < 1 || stat.size > limit) throw coded("runtime_download_failed");
+    const bytes = Buffer.alloc(stat.size + 1);
+    const { bytesRead } = await handle.read(bytes, 0, bytes.length, 0);
+    if (bytesRead !== stat.size) throw coded("runtime_download_failed");
+    return bytes.subarray(0, bytesRead);
+  } finally { await handle.close(); }
 }
 
 async function exists(file) {
@@ -45,27 +53,45 @@ async function exists(file) {
   }
 }
 
-async function download(url, limit) {
-  const response = await fetch(url);
-  if (!response.ok) throw coded("runtime_download_failed");
-  const bytes = Buffer.from(await response.arrayBuffer());
-  if (bytes.length === 0 || bytes.length > limit) throw coded("runtime_download_failed");
-  return bytes;
+export async function download(url, limit, { timeoutMs = 30_000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let reader;
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    reader = response.body?.getReader();
+    const length = Number(response.headers.get("content-length"));
+    if (!response.ok || !reader || length > limit) throw coded("runtime_download_failed");
+    const chunks = [];
+    let size = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > limit) throw coded("runtime_download_failed");
+      chunks.push(Buffer.from(value));
+    }
+    if (size === 0) throw coded("runtime_download_failed");
+    return Buffer.concat(chunks, size);
+  } catch {
+    throw coded("runtime_download_failed");
+  } finally {
+    controller.abort();
+    if (reader) await reader.cancel().catch(() => {});
+    clearTimeout(timer);
+  }
 }
 
-async function runtimeReady(python) {
-  const result = await run(python, ["-I", "-c", "import importlib.metadata; raise SystemExit(0 if importlib.metadata.version('wasmtime')=='49.0.0' else 1)"]);
+async function runtimeReady(python, timeoutMs = 30_000) {
+  const result = await run(python, ["-I", "-c", "import importlib.metadata, wasmtime as w; assert importlib.metadata.version('wasmtime')=='49.0.0'; e=w.Engine(); m=w.Module(e, b'\\x00asm\\x01\\x00\\x00\\x00'); w.Instance(w.Store(e), m, [])"], { timeoutMs });
   return result.code === 0;
 }
 
-async function installWheel(python, wheelPath) {
-  const pure = await new Promise((resolve, reject) => {
-    const child = spawn(python, ["-I", "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"], { stdio: ["ignore", "pipe", "pipe"] });
-    let out = "";
-    child.stdout.on("data", (buf) => { out += buf; });
-    child.once("error", reject);
-    child.once("exit", (code) => (code === 0 ? resolve(out.trim()) : reject(coded("runtime_setup_failed"))));
-  });
+export async function installWheel(python, wheelPath, { timeoutMs = 30_000 } = {}) {
+  const located = await run(python, ["-I", "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"],
+    { capture: true, stdoutLimit: 4096, timeoutMs });
+  const pure = located.stdout.trim();
+  if (located.code !== 0 || !path.isAbsolute(pure) || /[\r\n\0]/.test(pure)) throw coded("runtime_setup_failed");
   const script = [
     "import pathlib, sys, zipfile",
     "wheel, site = sys.argv[1], pathlib.Path(sys.argv[2])",
@@ -77,7 +103,7 @@ async function installWheel(python, wheelPath) {
     "            raise SystemExit('wheel path')",
     "    archive.extractall(site)",
   ].join("\n");
-  const extracted = await run(python, ["-I", "-c", script, wheelPath, pure]);
+  const extracted = await run(python, ["-I", "-c", script, wheelPath, pure], { timeoutMs });
   if (extracted.code !== 0) throw coded("runtime_setup_failed");
 }
 
@@ -85,7 +111,7 @@ async function installStandalone({ runtimeDir, standaloneDir, tarball, wheelPath
   const python = path.join(standaloneDir, "bin", "python3");
   await mkdir(path.dirname(standaloneDir), { recursive: true });
   if (!(await exists(python))) {
-    const bytes = tarball ? await readFile(tarball) : await download(CPYTHON_URL, 40 * 1024 * 1024);
+    const bytes = tarball ? await boundedFile(tarball, 40 * 1024 * 1024) : await download(CPYTHON_URL, 40 * 1024 * 1024);
     if (sha256(bytes) !== CPYTHON_SHA256) throw coded("cpython_checksum");
     const temp = await mkdtemp(path.join(tmpdir(), "sds-cpython-"));
     try {
@@ -108,16 +134,16 @@ async function installStandalone({ runtimeDir, standaloneDir, tarball, wheelPath
   if (!wheel) {
     const bytes = await download(WHEEL_URL, 11 * 1024 * 1024);
     if (sha256(bytes) !== WHEEL_SHA256) throw coded("wheel_checksum");
-    tempWheel = path.join(tmpdir(), `wasmtime-49-${process.pid}.whl`);
-    await writeFile(tempWheel, bytes);
-    wheel = tempWheel;
-  } else if (sha256(await readFile(wheel)) !== WHEEL_SHA256) {
+    tempWheel = await mkdtemp(path.join(tmpdir(), "sds-wheel-"));
+    wheel = path.join(tempWheel, "wasmtime.whl");
+    await writeFile(wheel, bytes, { mode: 0o600 });
+  } else if (sha256(await boundedFile(wheel, 11 * 1024 * 1024)) !== WHEEL_SHA256) {
     throw coded("wheel_checksum");
   }
   try {
     await installWheel(venvPython, wheel);
   } finally {
-    if (tempWheel) await rm(tempWheel, { force: true });
+    if (tempWheel) await rm(tempWheel, { recursive: true, force: true });
   }
   if (!(await runtimeReady(venvPython))) throw coded("runtime_setup_failed");
 }
@@ -127,26 +153,29 @@ export async function materializeReferenceRuntime(options = {}) {
   const executionRoot = options.executionRoot || defaultExecutionRoot;
   const runtimeDir = options.runtimeDir || path.join(executionRoot, ".runtime");
   const python = path.join(runtimeDir, "bin", "python");
-  if (await exists(python) && await runtimeReady(python)) {
+  const childTimeoutMs = options.childTimeoutMs ?? 30_000;
+  if (await exists(python) && await runtimeReady(python, childTimeoutMs)) {
     return { ok: true, action: "present" };
   }
+  if (await exists(runtimeDir)) throw coded("runtime_incomplete");
   const forceStandalone = options.forceStandalone === true || process.env.FOUNDRY_RUNTIME_FORCE_STANDALONE === "1";
   const defaultRuntime = path.resolve(runtimeDir) === path.resolve(executionRoot, ".runtime");
-  const system = spawnSync("python3", ["-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"]);
-  if (!forceStandalone && defaultRuntime && system.status === 0) {
-    const setup = path.join(executionRoot, "setup-runtime.py");
-    const result = await run("python3", [setup], { cwd: executionRoot });
-    if (result.code !== 0 || !(await runtimeReady(python))) throw coded("runtime_setup_failed");
-    return { ok: true, action: "setup-runtime.py" };
+  const system = await runBounded("python3", ["-I", "-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"], { timeoutMs: 5000 });
+  try {
+    if (!forceStandalone && defaultRuntime && system.code === 0 && !system.reason) {
+      const setup = path.join(executionRoot, "setup-runtime.py");
+      const result = await run("python3", [setup], { cwd: executionRoot, timeoutMs: 60_000 });
+      if (result.code !== 0 || !(await runtimeReady(python))) throw coded("runtime_setup_failed");
+      return { ok: true, action: "setup-runtime.py" };
+    }
+    const standaloneDir = options.standaloneDir || path.join(path.dirname(runtimeDir), ".python-standalone");
+    await installStandalone({ runtimeDir, standaloneDir,
+      tarball: options.tarball || process.env.FOUNDRY_CPYTHON_TARBALL || "", wheelPath: options.wheelPath || "" });
+    return { ok: true, action: "cpython-standalone" };
+  } catch (error) {
+    await rm(runtimeDir, { recursive: true, force: true });
+    throw error;
   }
-  const standaloneDir = options.standaloneDir || path.join(path.dirname(runtimeDir), ".python-standalone");
-  await installStandalone({
-    runtimeDir,
-    standaloneDir,
-    tarball: options.tarball || process.env.FOUNDRY_CPYTHON_TARBALL || "",
-    wheelPath: options.wheelPath || "",
-  });
-  return { ok: true, action: "cpython-standalone" };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

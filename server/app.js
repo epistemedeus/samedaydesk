@@ -25,9 +25,7 @@ import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
-import { register } from "node:module";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
-import { installVerifiedPgTls } from "./foundry/pg-tls.js";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 
@@ -37,14 +35,7 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
   ? path.resolve(process.env.SAMEDAYDESK_CLIENT_DIST)
   : path.resolve(__dirname, "../client/dist");
 
-const EMBED_HOOKS = Symbol.for("sds.foundry.wasmtime49-embed-hooks");
-
 export function createSdsApp(options = {}) {
-installVerifiedPgTls();
-if (process.env.FOUNDRY_EXECUTION_RUNTIME === "wasmtime49-embed" && !globalThis[EMBED_HOOKS]) {
-  register(new URL("./foundry/wasmtime49-embed/hooks.mjs", import.meta.url));
-  globalThis[EMBED_HOOKS] = true;
-}
 const app = express();
 app.disable("x-powered-by");
 

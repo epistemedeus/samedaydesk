@@ -1,33 +1,33 @@
 # Managed Node receiving
 
-`productionActivate` stays **HOLD**. This file is the host procedure. It does not change Hostinger, buy a VPS, merge, or start the public mount.
+`productionActivate` stays **HOLD**. Root reports the actual app is **cloud-f**. This package has not probed, written to, or deployed that host. Python/Django product documentation does not establish whether its Node process can execute a private Python child. A passing VM probe establishes only this VM.
 
-Hostinger Business can run this Node app (`server/index.js`, Passenger `alt-nodejs22`). The same plan documents Python and Django as VPS-only. That does not by itself prove whether a private child process may run beside Node. `node server/foundry/managed-node-probe.mjs` prints booleans and versions only. It is not an HTTP route and it does not print environment values or paths. Root runs it on the managed host. A passing probe on this Cursor VM is not production acceptance.
+The received execution route is the sealed `vf08.wasmtime49-linux-x64-fixed.v1`, `wasmtime-py` 49.0.0. Vendored PROFILE, `child.py`, `supervisor.mjs`, and `contracts.mjs` stay byte-identical. The optional C embedding and its module-rewriting loader were removed during receiving; `FOUNDRY_EXECUTION_RUNTIME` must be unset. A future embedding needs its own explicit, source-bound integration and acceptance.
 
-## Route
+## Named build entries
 
-The sealed reference profile stays `vf08.wasmtime49-linux-x64-fixed.v1` (`wasmtime-py` 49.0.0). Vendor `child.py`, `supervisor.mjs`, and `contracts.mjs` are unchanged. `npm run build` stays the client build.
-
-`node server/foundry/materialize-runtime.mjs` installs that private child when it is missing. An existing `.runtime` that imports Wasmtime 49.0.0 is left untouched. Otherwise, when `python3` exists, it runs the pinned `setup-runtime.py`. Otherwise it downloads the pinned CPython standalone `731af898886c5f821890dc901eca3c651cca8e51fa7308c159d12a1194aeac91` and the same wheel. It does not start a Python web server and it does not copy a virtualenv between machines. `.runtime` and `.python-standalone` stay gitignored. Hostinger rebuilds `hbuilds` on deploy and the plan's SSH cannot run an extra command, so Root may append the materialize command and the probe to the Node build command.
-
-If the managed host cannot execute that child, set `FOUNDRY_EXECUTION_RUNTIME=wasmtime49-embed`. The listener registers the embed loader before correspondence loads. The worker child also gets `NODE_OPTIONS=--import <deploy>/server/foundry/process-bootstrap.mjs`. That loads a separate profile, `vf08.wasmtime49-linux-x64-embed.v1` (`wasmtime-capi` 49.0.0), linked to the official Wasmtime 49 C API (`8f181711f4cf4ddd084d7d54d13d10d44e3c622b0f03bfb8b2cc7afbd85cc131`). It is not WASI and not the host JavaScript engine. Do not install it over a database that already has the reference profile. If the loader does not apply, the embed path throws `embed profile was not installed` and does not fall through to Python.
-
-The embed child applies `setrlimit` before it reads guest bytes. When `/usr/bin/prlimit` exists, the supervisor also applies `prlimit` before exec. Those are different mechanisms. The probe's `embedLimits` field is true only when the child accepts the profile's address, CPU, stack, file, and file-descriptor limits and then rejects an empty request as `request_size`. `os_limits_unavailable` means the control is not enforced. Leave activation off in that case.
-
-## Private configuration
-
-Secrets stay in the provider environment or in mode `0600` files under a mode `0700` directory. That directory is `FOUNDRY_PRIVATE_DIR`, resolved at install time. It must sit outside this repository, outside `public_html`, and outside the deploy output that Hostinger overwrites. The installer may create the files from `FOUNDRY_HOST_PROFILE_JSON`, `FOUNDRY_PRIVATE_PROFILE_JSON`, `FOUNDRY_PARTICIPATION_KEY`, and `FOUNDRY_PGSSL_CA_PEM`, then the serving environment keeps only the file paths. The listener refuses those JSON variables with `profile_json_in_listener` and does not migrate.
-
-`CORRESPONDENCE_DATABASE_URL` keeps `sslmode=verify-full`. Set `CORRESPONDENCE_PGSSL_CA_FILE` to the official CA. The pool wrapper appends `sslrootcert` because node-pg lets the connection string replace an explicit `ssl` object. It does not set `rejectUnauthorized` false. A missing or `public_html` CA path disables the mount. The product Supabase project is still refused before connect.
-
-## Hostinger environment
-
-The panel GET returns masked values (`********`) and the PUT replaces the whole set. Copy the live key names. Build the desired values from Root's private store, including every live key plus the foundry keys this app needs. Do not copy masked values back. Do not PUT a stale backup that has fewer keys than the live set. `planHostingerEnvPut` in `server/foundry/hostinger-env.mjs` rejects those shapes. Saving restarts the app. Leave `FOUNDRY_HOST_OPT_IN` unset until the explicit installer has been run on the independent database. Product auth, Stripe, and mail variables stay as they are.
+Hostinger's [`build_script` control](https://github.com/hostinger/api-python-sdk/blob/main/docs/HostingV1NodeJsUpdateBuildSettingsRequest.md) accepts a **package.json script name**. Root can select `build:managed-foundry`, whose local command is:
 
 ```sh
-node server/foundry/install.mjs --migrate
-node server/foundry/install.mjs --migrate --install
-node server/foundry/managed-node-probe.mjs
+npm run build:managed-foundry
 ```
 
-Repeat `--install` for the same profile. A second run must report the same `configId`, terms, and charged count. Unset the installer-only JSON variables before the serving restart.
+It builds the existing client, materializes the pinned private interpreter, and probes it. A failed diagnostic exits nonzero. For the explicit installation step, `build:managed-foundry-install` runs the same build and then `foundry:install`. Root selects that name only after authorizing an independent database and supplying private installer inputs. Neither script sets host environment values or enables the listener.
+
+The materializer uses the existing system Python and pinned `setup-runtime.py`, or the pinned CPython standalone archive and Wasmtime wheel. Downloads enforce their size ceiling while streaming and have a deadline. Setup children drain both pipes, bound output, have deadlines, and terminate their process groups. Existing incomplete runtimes are refused. New incomplete runtimes are removed on failure. `.runtime` and `.python-standalone` remain gitignored and must be built on the destination machine.
+
+`npm run foundry:managed-probe` checks Linux x64, `/proc`, `prlimit`, and actually compiles, instantiates and executes a fixed Wasmtime diagnostic with fuel and OS limits. It prints booleans, fixed failure codes, and the Node version; child stderr, paths and environment values are discarded. It remains `notProduction: true`, `activation: false`, `wholeHostSandbox: false`. It does not migrate or install a profile. Actual visitor execution uses the sealed supervisor and strict no-import child, with durable process identity and termination witnesses.
+
+## Private installation inputs
+
+Root supplies `FOUNDRY_PRIVATE_DIR`, a mode `0700` directory outside the repo, `public_html`, and disposable deployment output. Its parent must already exist. The explicit installer can create mode `0600` files from `FOUNDRY_HOST_PROFILE_JSON`, `FOUNDRY_PRIVATE_PROFILE_JSON`, `FOUNDRY_PARTICIPATION_KEY`, and `FOUNDRY_PGSSL_CA_PEM`. Every path component and file is opened without following symlinks. Existing directories/files are checked, never chmodded. Explicit and implicit filename replay must match incoming content; different JSON/key/CA is refused without overwrite. Later validation or write failure removes only files created by that invocation.
+
+The serving environment keeps the resulting file paths and removes the installer-only JSON/key/PEM values. The listener refuses inline values with `profile_json_in_listener` and never migrates. Leave `FOUNDRY_HOST_OPT_IN` unset until installation is complete.
+
+For a remote foundry database, retain `sslmode=verify-full` and set `CORRESPONDENCE_PGSSL_CA_FILE` to Root's official provider CA in a private `0600` file. The adapter validates CA certificates and appends `sslrootcert` only to the foundry URL. It does not patch `pg.Pool`. Conflicting root certificates and weaker TLS options are refused. Use a DNS hostname: the locked pg version omits TLS servername for IP hosts, so this adapter refuses IPs when a CA is configured. Product/Pulse pools retain their own configuration. The product Supabase project is refused before connect.
+
+## Actual-host steps still owned by Root
+
+Use [hPanel's individual environment-key additions/edits](https://www.hostinger.com/support/how-to-edit-or-add-environment-variables-after-deployment/). The API GET masks the live 16-key set; full-replacement PUT from the old 15-key backup loses a payment-link key. Do not use it. This tree contains no replacement planner.
+
+Root still needs to measure the named build/probe on cloud-f, install against the authorized retained database, remove installer inputs, read back serving configuration safely, restart the actual app, and prove visitor A contribution/verification/publication plus visitor B's canonical invocation after another restart. Health or fixture success cannot supply that evidence. Keep product auth, payment links, Stripe, mail, and human pages unchanged.

@@ -82,7 +82,7 @@ node server/foundry/worker.mjs dispatch <projectId>
 
 Portable execution uses the pinned Wasmtime 49.0.0 wheel installed by `vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/setup-runtime.py` into that package's `.runtime` directory. That directory is not committed. The probe refuses a copied virtualenv and sets `wholeHostSandbox` to false. Clang is not a runtime requirement.
 
-Managed Node hosting does not gain a Python web server. `node server/foundry/materialize-runtime.mjs` installs the same private child runtime. If that child cannot be executed, `FOUNDRY_EXECUTION_RUNTIME=wasmtime49-embed` selects the distinct Wasmtime 49 C embedding. See `server/foundry/activation/MANAGED-NODE.md`. `productionActivate` stays HOLD.
+Managed Node hosting does not gain a Python web server. `node server/foundry/materialize-runtime.mjs` installs the same private child runtime. The optional C embedding was removed during receiving; unset `FOUNDRY_EXECUTION_RUNTIME`. Root can select the named `build:managed-foundry` script to materialize and measure the reference child on the destination host. See `server/foundry/activation/MANAGED-NODE.md`. `productionActivate` stays HOLD.
 
 ## Artifact loader
 

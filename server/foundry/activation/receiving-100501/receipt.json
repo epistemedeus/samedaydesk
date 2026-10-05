@@ -1,0 +1,835 @@
+{
+  "package": "ROOT-SOL-RETAINED-HOST-100501",
+  "date": "2026-10-05",
+  "receivedHead": "0e491bc5307b32a40a1117752859b0ad45db5013",
+  "base": "e1d03aedbc6a5a65b8d38ed11e8a09e475171231",
+  "branch": "codex/sol-retained-host-receive-100501",
+  "scope": "local-disposable; direct amendment; native Git export",
+  "productionActivate": "HOLD",
+  "hostingerMeasured": false,
+  "retainedDatabaseInspected": false,
+  "toolchain": {
+    "node": "v22.14.0",
+    "npm": "10.9.7",
+    "postgres": "17.11"
+  },
+  "originalReproductions": [
+    {
+      "defect": "different_json_silently_reused",
+      "reproduced": true
+    },
+    {
+      "defect": "symlink_public_directory_chmod",
+      "reproduced": true
+    },
+    {
+      "defect": "optional_ca_breaks_product_pool",
+      "reproduced": true
+    },
+    {
+      "defect": "substring_replaces_unrelated_module",
+      "reproduced": true
+    },
+    {
+      "defect": "changed_unrelated_contracts_rewritten",
+      "reproduced": true
+    },
+    {
+      "defect": "runtime_noisy_unbounded",
+      "reproduced": true
+    },
+    {
+      "defect": "runtime_hanging_unbounded",
+      "reproduced": true
+    },
+    {
+      "defect": "download_buffered_before_limit",
+      "reproduced": true
+    },
+    {
+      "defect": "managed_probe_undrained_stderr_no_deadline",
+      "reproduced": true,
+      "watchdogExit": 137
+    }
+  ],
+  "sourceDigests": {
+    ".env.example": {
+      "state": "present",
+      "sha256": "816b623eb3aaefaeabe72f5ea66cdc7931e0c9050333d7bab6d2711ec4990db6"
+    },
+    "docs/FOUNDRY-HOST-RECEIVER.md": {
+      "state": "present",
+      "sha256": "066248fe2b53e61e59096cdc597a21d0af9d834b06c1ad8ab42783e757672852"
+    },
+    "package.json": {
+      "state": "present",
+      "sha256": "43497da6cf2871bfc2fbd0174fd328b9f8834c6cc6a12ff3cda23211797d287c"
+    },
+    "server/app.js": {
+      "state": "present",
+      "sha256": "3b9e8e2e04a4d645a53199469a46bdae21aa5154434b1dadbf04aa44b34d4c96"
+    },
+    "server/foundry/activation/MANAGED-NODE.md": {
+      "state": "present",
+      "sha256": "1d82c2981741d76fbb10d168196381e384bd57b955438c24ae3a931a305bc9a4"
+    },
+    "server/foundry/activation/cold-job.mjs": {
+      "state": "present",
+      "sha256": "ec4fa6129b7a9af479ba126d5a5925d96e66c4c545434dec022a5f56524481b1"
+    },
+    "server/foundry/activation/local-journey.mjs": {
+      "state": "present",
+      "sha256": "b9ac8578300c3ddcd029dfc8f86703ea18822e8da697dec71de15a1c0d991020"
+    },
+    "server/foundry/activation/receiving-100501/RESULT.md": {
+      "state": "present",
+      "sha256": "889da866a9370588900ae1fcffd5d7f0a3edac4b9853bc05f592bc2cb6d43c98"
+    },
+    "server/foundry/activation/receiving-100501/replay.mjs": {
+      "state": "present",
+      "sha256": "850577013e86c064a52a3a991eda59a593511f804b271d3552c32bfdc6e9fdc0"
+    },
+    "server/foundry/bounded-child.mjs": {
+      "state": "present",
+      "sha256": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f"
+    },
+    "server/foundry/hostinger-env.mjs": {
+      "state": "removed",
+      "receivedSha256": "9c941de75b19721dd2c7099661f8476c88a6b78ec92e467a8766dd6cbadc797c"
+    },
+    "server/foundry/install.mjs": {
+      "state": "present",
+      "sha256": "429706190f961c735e125e9d989db99633f47a98c038898f653318007cc10086"
+    },
+    "server/foundry/managed-node-probe.mjs": {
+      "state": "present",
+      "sha256": "c3ab0218b2de83bca87534402999e57c6edcaf6df5569b4781b65594f492d87b"
+    },
+    "server/foundry/materialize-runtime.mjs": {
+      "state": "present",
+      "sha256": "2da8008deef303da850fa8bac385a1b1ef35e38879ef421f1edf7567779bb2ad"
+    },
+    "server/foundry/pg-tls.js": {
+      "state": "present",
+      "sha256": "a593fac1205f348c299ca51b6f97ab1dcab215ed9464a4d36d25a9add7d4191c"
+    },
+    "server/foundry/private-files.js": {
+      "state": "present",
+      "sha256": "5b6991527601364aae5c8df072fc2d3603c89afa33294f7231a25c0589395312"
+    },
+    "server/foundry/private-materialize.js": {
+      "state": "present",
+      "sha256": "fbe2af215392c7b87d163bdaa1f2ef7a06ed794741fe78bd1922a84420b7b90d"
+    },
+    "server/foundry/private-paths.js": {
+      "state": "present",
+      "sha256": "df6f1a58cecd5a5797ab6e8df82b4a80c682f19059cd12c7e55891f80cb685d8"
+    },
+    "server/foundry/process-bootstrap.mjs": {
+      "state": "removed",
+      "receivedSha256": "fd88f03c14a4abd0d9038335e6e7a7b51248f53c9aa3ac0d67bc56efd07cdb01"
+    },
+    "server/foundry/wasmtime49-embed/PIN.json": {
+      "state": "removed",
+      "receivedSha256": "64eca1e2121cd628240031ca96d2d969857fed83c2e385e6c8e6794655e4b07f"
+    },
+    "server/foundry/wasmtime49-embed/bin/foundry-wasmtime49": {
+      "state": "removed",
+      "receivedSha256": "90005b01567770beca1c87155a595e6cf125e869daedeb7f29df32a8a3ce5205"
+    },
+    "server/foundry/wasmtime49-embed/build.mjs": {
+      "state": "removed",
+      "receivedSha256": "f5d82077801565125fe34de48413bf76d51376424a69804aeee9cc5a65fbdbb4"
+    },
+    "server/foundry/wasmtime49-embed/child.c": {
+      "state": "removed",
+      "receivedSha256": "da0781bf3a3863d3c693a142d8e67cedf24bcd7d83f04eb16888ba07fe58e3bd"
+    },
+    "server/foundry/wasmtime49-embed/hooks.mjs": {
+      "state": "removed",
+      "receivedSha256": "6f82c6c3367c707bb4ad49c1132cec365daf5e9b9f98d77f8327bf7602f8daa2"
+    },
+    "server/foundry/wasmtime49-embed/invoke.mjs": {
+      "state": "removed",
+      "receivedSha256": "1c24a411df1b7bf3691c4b6bd7cc7b333b4473b200e6b4528ff56e729c439745"
+    },
+    "server/foundry/wasmtime49-embed/profile.mjs": {
+      "state": "removed",
+      "receivedSha256": "2912182fd49f8d15f2b72c7b32f34fd6c068dfb38894fb9c1cc4080800efebf4"
+    },
+    "server/foundry/wasmtime49-embed/register.mjs": {
+      "state": "removed",
+      "receivedSha256": "60c7c4b4b7add28ca329e573ee0f92ea5a399d423348b9f7901e1760831b3cda"
+    },
+    "server/foundry/worker.mjs": {
+      "state": "present",
+      "sha256": "ee7bbc73436bd238fb7185d2fa93387bbbc43d5032cefc944bc0f3f03b78ce11"
+    },
+    "server/lib/correspondence-mount.js": {
+      "state": "present",
+      "sha256": "a37e9015f1c1014bd4606240800144b0a17e74cb61f9366b6852c75ec4698d62"
+    },
+    "server/scripts/test-managed-node-receiving.js": {
+      "state": "present",
+      "sha256": "d027d8c823c0c7e4eb2fc9945b55668a105ca34983e5e7268596e1deb8bace74"
+    },
+    "server/scripts/test-managed-node.js": {
+      "state": "present",
+      "sha256": "9839570842781f6a7d1d7b2142d41285b98c23fb5adb7a0a04b56de6a3f37458"
+    }
+  },
+  "lockfiles": {
+    "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
+    "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+  },
+  "vendor": {
+    "sourceRepo": "epistemedeus/neomorphic-io",
+    "branch": "codex/visitor-foundry-integration-20260926",
+    "head": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "tree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+    "module": "@neomorphic/correspondence",
+    "layout": "vendor/visitor-foundry-receiver keeps repo-relative paths for the import closure only",
+    "note": "Subset of Neo 1652533b, byte-identical for paths that remain. One correspondence module (src, dist, migrations, bin). Script and pack files are the static import closure of the entry mount, visitor CLI, worker, portable loader, execution example build, and the SDS acceptance helpers, plus dynamically loaded migrations, oracle, and held-out files. Not the whole Neo tree. No node_modules, .runtime, or .build. Worker drain remains in server/foundry. Canonical host.ts closes extension then base."
+  },
+  "sealedSources": {
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/child.py": "2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/supervisor.mjs": "bd69a81c569f0322f2f06901218d4f016ae8e5543cd360106d2627428e5444b2",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs": "85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/setup-runtime.py": "e3a9427d1a6af2b969a12aac618692d072324453c5988964cb75d26a0179290b",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/ports.mjs": "fd4f4771216345d58f23f404588fc88f47884b91ed9974c912dd294f2ce4be0f"
+  },
+  "referenceRuntime": {
+    "pins": {
+      "profile": {
+        "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+        "runtime": "wasmtime-py",
+        "version": "49.0.0",
+        "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+        "license": "Apache-2.0 WITH LLVM-exception",
+        "platform": "linux",
+        "arch": "x64",
+        "imports": "none",
+        "memory": "fixed-wasm32",
+        "tables": "fixed-funcref",
+        "nan": "canonical",
+        "parallelCompilation": false
+      },
+      "node": "v22.14.0",
+      "python": "sha256:e1efa562c2cc2e35521a5c9c9b9939921001ff8ca9708a13ef15ace68cc2ccd7",
+      "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+      "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+      "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+      "supervisor": "sha256:bd69a81c569f0322f2f06901218d4f016ae8e5543cd360106d2627428e5444b2",
+      "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5"
+    },
+    "runtimePin": "sha256:acc6b6e98390fa0230fe133f27f466fdac7222622636f5b8ca7edf6c782d4db4"
+  },
+  "standaloneArchiveSha256": "731af898886c5f821890dc901eca3c651cca8e51fa7308c159d12a1194aeac91",
+  "removedEmbedding": {
+    "receivedPin": {
+      "id": "vf08.wasmtime49-linux-x64-embed.v1",
+      "runtime": "wasmtime-capi",
+      "version": "49.0.0",
+      "capiSha256": "8f181711f4cf4ddd084d7d54d13d10d44e3c622b0f03bfb8b2cc7afbd85cc131",
+      "capiUrl": "https://github.com/bytecodealliance/wasmtime/releases/download/v49.0.0/wasmtime-v49.0.0-x86_64-linux-c-api.tar.xz",
+      "binary": "bin/foundry-wasmtime49",
+      "binarySha256": "90005b01567770beca1c87155a595e6cf125e869daedeb7f29df32a8a3ce5205",
+      "distinctFrom": "vf08.wasmtime49-linux-x64-fixed.v1",
+      "wasi": false,
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    "receivedBinarySha256": "90005b01567770beca1c87155a595e6cf125e869daedeb7f29df32a8a3ce5205",
+    "binaryMatchedReceivedPin": true,
+    "receivedSourceSha256": "da0781bf3a3863d3c693a142d8e67cedf24bcd7d83f04eb16888ba07fe58e3bd",
+    "rebuilt": false,
+    "accepted": false
+  },
+  "suites": [
+    {
+      "name": "managed",
+      "command": "npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "setup drains noisy stdout and stderr without retaining or exposing stderr",
+        "setup hang is bounded and its child exits",
+        "setup stdout overflow is bounded and its child exits",
+        "setup stderr overflow is bounded and its child exits",
+        "setup input disconnect is bounded and its child exits",
+        "setup nonzero/missing children return safe failure evidence",
+        "setup cancellation and deadlines kill descendants with inherited pipes",
+        "download enforces the byte ceiling while streaming and cancels the body",
+        "download rejects oversized content-length without reading",
+        "download deadline and disconnected stream return secret-free failures",
+        "materializer terminates a noisy installed interpreter instead of deadlocking",
+        "materializer bounds a hanging readiness child and refuses nonzero partial runtime",
+        "purelib stdout/stderr discovery is bounded and refuses malformed/nonzero paths",
+        "managed diagnostics drain stderr, time out, and never print child secrets",
+        "private JSON/key/CA replay checks content with implicit and explicit filenames",
+        "private materialization never chmods a linked public directory or writes through ancestors",
+        "private reads and replay refuse file links, hardlinks, FIFOs, and unsafe modes",
+        "private invalid later payload creates no partial secrets",
+        "private malformed CA creates no files",
+        "private write failure removes only this invocation's new files",
+        "private file reads bound allocation before loading oversized JSON",
+        "optional foundry CA never changes the pg constructor or product/Pulse configuration",
+        "configured CA requires verify-full and refuses conflicting TLS options",
+        "real PostgreSQL TLS retains certificate-chain and hostname verification",
+        "removed runtime selector cannot silently rename or load the sealed profile",
+        "sealed invocation witnesses compile/instantiate/execute for changed input and rejects mixed pins before spawn",
+        "SIGTERM on a diagnostic parent kills and reaps its owned child group",
+        "reference profile stays the sealed wasmtime-py pin",
+        "default opt-in stays off",
+        "private files are materialized outside the repo and JSON stays off the listener",
+        "product database url is refused before connect",
+        "reference child enforces fuel, memory, imports, output, and malformed-module limits",
+        "reference child executes useful and negative structured results",
+        "process witness rejects unknown, cancelled, missing, and phase timeout",
+        "installer replay does not drift on a disposable database",
+        "standalone cpython fallback imports the pinned wheel",
+        "managed probe stays non-secret and off",
+        "sealed supervisor enforces instantiate deadline and waits for exit",
+        "sealed supervisor enforces execute deadline and waits for exit",
+        "sealed supervisor never treats an ok result without exit as execution completion",
+        "reference child bounds raw parsing and rejects WASI, variable memory, and invalid pointers"
+      ],
+      "logSha256": "23479d30499b88beb25ddb1a391679c1c8be1f0c471eacee21dbbed860ab9842"
+    },
+    {
+      "name": "foundry-host",
+      "command": "npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "opt-in unset keeps the 32KiB parser, SDS routes, and exact disabled health",
+        "explicit 524288 without opt-in, and a sloppy flag, are rejected before connect",
+        "opt-in serves only the entry facade and accepts a max-domain authenticated body",
+        "opt-in without private profile files stays invalid and does not open a store",
+        "opt-in unset does not mount the extension even if a factory is provided",
+        "layout resolver fails closed when the export dist is absent",
+        "vendored receiver pin is the canonical VF12 head",
+        "foundry migrate refuses to connect without --apply or a correspondence URL",
+        "worker lifecycle closes on shutdown and on failure",
+        "worker CLI skips dispatch when SIGTERM arrives during recover",
+        "worker CLI without opt-in exits 2 and does not spawn a pass",
+        "server/index.js SIGTERM exits 0 and leaves correspondence disabled",
+        "listener drain invokes the correspondence close hook",
+        "VF09 loader is the canonical artifact function and uploads remain the 501 stub",
+        "ordinary active HTTP response survives early drain before cleanup",
+        "foundry active HTTP response survives early drain before cleanup",
+        "force deadline truncates stuck request and reports failure exactly once",
+        "resource close failure cannot report graceful success",
+        "resource cleanup remains bounded and late completion cannot exit zero",
+        "documented connection envelopes match executable budget",
+        "copied venv, bad fixture bytes, and a sandbox claim are rejected",
+        "bounded probe exercises VF08 runtime needs on this host"
+      ],
+      "logSha256": "66776a632f095057785f560a357015ebb1cee2b2db07c5c8910541f5a86402b7"
+    },
+    {
+      "name": "foundry-activation",
+      "command": "npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "production activation stays HOLD",
+        "classifier keeps the four states distinct",
+        "seeded false green is rejected by the acceptance command",
+        "rollback procedure does not apply production changes",
+        "degraded correspondence states are not a successful disabled mount",
+        "database namespace and equivalent output do not prove wire identity",
+        "task acceptance fails unless the canonical readback selected the contribution",
+        "live disabled acceptance distinguishes unconfigured from degraded mounts",
+        "activation delta stays HOLD and keeps correspondence off the product data service",
+        "seeded secret metadata and product-data reuse are rejected",
+        "product reuse class covers pooler, flags, and the configured Supabase host",
+        "missing host configuration and an unenrolled store cannot launch",
+        "installer and worker refuse the product data service before connect",
+        "seeded health and MCP success is not portable-kit interoperability",
+        "opaque secret-bearing names are rejected and never reflected",
+        "enrolled product baseline rejects each true-to-false change on its own"
+      ],
+      "logSha256": "e400aed8bfe8b4a87d0f03ade0267119c23404ac349dd10b2ef4e674f6c390e9"
+    },
+    {
+      "name": "correspondence-mount",
+      "command": "node server/foundry/activation/receiving-100501/replay.mjs correspondence",
+      "exit": 0,
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "unconfigured correspondence leaves SDS health/MCP intact and exposes disabled healthz",
+        "malformed correspondence config is disabled without breaking merchant health",
+        "memory store is refused outside test even if URL and token are present",
+        "S58 shared-host env rejects public/unrelated schema and pool above four",
+        "S58 initialization has one request-triggered retry, coalesces requests, and stops after failure",
+        "S58 app initialization failure closes its acquired store",
+        "S58 actual SDS mount preserves CORS, body limit and store readiness (memory fixture)",
+        "S58 shipped migration/package entrypoints reject generic DB before connecting",
+        "mounted correspondence: two clients, artifact/correction, restart, sentinel, SDS health",
+        "DB down is store_unavailable; SDS health stays 200; one recovery after cooldown"
+      ],
+      "logSha256": "75255881d82e37c632a91b0fc6ea296c26dcc10aecbd2573bb2b297ca50cf1c0"
+    },
+    {
+      "name": "hosted-startup",
+      "command": "npm run test:hosted-startup",
+      "exit": 0,
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "direct Node entry actually listens and serves health",
+        "managed-host ESM loader actually listens and serves health",
+        "managed-host CommonJS loader actually listens and serves health",
+        "factory import remains unbound"
+      ],
+      "logSha256": "ce00d46bcc24a35271d186f85eec8571c3feb7b29469e20c7f43b9fbbe25c7f6"
+    },
+    {
+      "name": "entry-sigterm-drain",
+      "command": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "testNames": [
+        "SIGTERM during a claimed assignment does not kill the healthy pass at eight seconds",
+        "SIGKILL of a claimed pass leaves the assignment without termination evidence",
+        "readiness failure closes extension and base once, retaining original error",
+        "normal close drains base even when extension close fails, without duplicate close",
+        "shutdown does not suppress current-pass failure",
+        "healthy bounded pass survives the former eight-second wrapper deadline",
+        "cold visitors use the SDS server, and startup does not migrate"
+      ],
+      "logSha256": "66855e91272fdd8c4a58b181e0559e75ac07c998bad2d00f5e520deea48f8df4"
+    }
+  ],
+  "totalTests": 100,
+  "commands": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "logSha256": "c28655fe74c10ced9523164bb18b8eebba3c1a51f705d579b07aea2b5b5696f1"
+    },
+    {
+      "command": "npm run foundry:runtime",
+      "exit": 0,
+      "logSha256": "8b437f27b7fbfe32bc8e3e23a7b9f31f8e8e6ae85d1d28c9ce25f2ba3764e563"
+    },
+    {
+      "command": "npm run build:managed-foundry",
+      "exit": 0,
+      "logSha256": "51cd9a2f09331a6ad23202c3fe378c6f2d56d11463dafeec75f11468f75934e7"
+    },
+    {
+      "command": "node server/foundry/activation/receiving-100501/replay.mjs managed-install",
+      "exit": 0,
+      "observations": [
+        {
+          "ok": true,
+          "action": "present",
+          "privatePythonWebServer": false
+        },
+        {
+          "probe": "managed-node",
+          "ok": true,
+          "linuxX64": true,
+          "node": "v22.14.0",
+          "python3": true,
+          "prlimit": true,
+          "procReadable": true,
+          "procFdReadable": true,
+          "childProcReadable": true,
+          "referenceRuntime": true,
+          "osLimitsEnforced": true,
+          "referenceExecution": true,
+          "referenceFailure": null,
+          "pythonFailure": null,
+          "osLimitMechanism": "prlimit-before-exec",
+          "productionActivate": "HOLD",
+          "activation": false,
+          "notProduction": true,
+          "wholeHostSandbox": false,
+          "privatePythonWebServer": false,
+          "referenceProfileRetained": true
+        },
+        {
+          "ok": true,
+          "migrated": true,
+          "installed": true,
+          "schema": "pilot_correspondence",
+          "charged": 0,
+          "maxEnrollments": 12,
+          "receiverId": "host:vf12-canonical-portable-v1",
+          "termsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+          "contributionProfileId": "vf10:contribution-v2",
+          "configId": "sha256:ab166d4413845bd4f528cedfd584aa4013620a295927c337f579d8f7d0a5fa12",
+          "maxAdmissions": 4,
+          "maxPhysical": 1
+        }
+      ],
+      "logSha256": "8eeb32e57b0a59e3395708c842fede3ff16bc2b814ccd8a8911f1f6e6ea49a40"
+    },
+    {
+      "command": "npm run foundry:cold",
+      "exit": 0,
+      "logSha256": "33bbfafd8b5d45cef3a3f47b4d227a884213e188fe677fe5dab84e68071939a8"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "git diff --exit-code 0e491bc5307b32a40a1117752859b0ad45db5013 -- vendor/visitor-foundry-receiver package-lock.json client/package-lock.json",
+      "exit": 0
+    }
+  ],
+  "diagnosticChildren": {
+    "boundedRegressionDirectChildrenExited": true,
+    "processGroupDescendantsNotLive": true,
+    "ownedDiagnosticSurvivorPids": []
+  },
+  "cold": {
+    "ok": true,
+    "productionActivate": "HOLD",
+    "productionReady": false,
+    "hostingerMeasured": false,
+    "launchedService": false,
+    "serviceClass": "local-disposable",
+    "startupMigrates": false,
+    "schemaDropped": false,
+    "clientCompatibility": {
+      "ok": true,
+      "productionActivate": "HOLD",
+      "productionReady": false,
+      "officialMcp": {
+        "stable": true,
+        "protocolVersion": "2025-11-25",
+        "serverName": "samedaydesk-agent-tools",
+        "serverVersion": "1.2.0",
+        "toolsCalled": false
+      },
+      "productDataService": {
+        "stableConfigured": true,
+        "configured": {
+          "supabase": true,
+          "stripe": true,
+          "email": true
+        },
+        "baseline": {
+          "supabase": true,
+          "stripe": true,
+          "email": true
+        },
+        "separateFromCorrespondence": true,
+        "evidence": "local-nonsecret-stubs",
+        "productionEnrollmentInspected": false
+      },
+      "uploadsStatus": 501,
+      "officialVisitorClient": {
+        "program": "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs",
+        "modes": [
+          "register",
+          "contribute",
+          "use"
+        ],
+        "visitors": 2,
+        "distinctProjects": true,
+        "heldoutCase": "case:project-created",
+        "outputMatched": true
+      },
+      "portableKit": {
+        "profileId": "vf08.wasmtime49-linux-x64-fixed.v1",
+        "runtime": "wasmtime-py",
+        "version": "49.0.0",
+        "outcome": "observed",
+        "matchedHeldOut": true,
+        "restarted": true
+      }
+    },
+    "evidence": {
+      "i23": {
+        "repo": "epistemedeus/neomorphic-io",
+        "ref": "heavy/s07-vf16-recover-0930",
+        "commit": "89fa38bdefe067c7c88d02549cb649c1f3c33c97",
+        "consumed": "read-only",
+        "edited": false,
+        "usedFor": "Client A then client B after HTTP restart, seeded refusal of a success claim that the service did not earn, and a disposable correspondence service that is not hosted activation."
+      },
+      "receiverHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+      "sourceCommit": "a51110ab6ede18658cac816042edc491b34e0a5e"
+    },
+    "preconditions": {
+      "productionActivate": "HOLD",
+      "productionReady": false,
+      "shapeComplete": true,
+      "shapeBlockers": [],
+      "blockers": [],
+      "startupMigrates": false,
+      "destructiveDownMigration": false,
+      "schema": "pilot_correspondence"
+    },
+    "seededFalseGreen": {
+      "exitCode": 2,
+      "code": "false_green_rejected",
+      "reason": "durable_claim_without_retrieval",
+      "productionActivate": "HOLD",
+      "productionReady": false
+    },
+    "seededNegatives": {
+      "falseGreen": {
+        "exitCode": 2,
+        "code": "false_green_rejected",
+        "reason": "durable_claim_without_retrieval",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "productReuse": {
+        "exitCode": 2,
+        "code": "correspondence_reuses_product_data_service",
+        "reason": "correspondence_reuses_product_data_service",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "secretMetadata": {
+        "exitCode": 2,
+        "code": "false_green_rejected",
+        "reason": "secret_material",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "secretNested": {
+        "exitCode": 2,
+        "code": "false_green_rejected",
+        "reason": "secret_material",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "hostWithhold": {
+        "exitCode": 2,
+        "code": "host_configuration_withheld",
+        "reason": "host_configuration_withheld",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "unenrolled": {
+        "exitCode": 2,
+        "code": "hosted_success_without_enrolled_store",
+        "reason": "hosted_success_without_enrolled_store",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      },
+      "unboundTask": {
+        "exitCode": 2,
+        "code": "false_green_rejected",
+        "reason": "task_claim_without_result",
+        "productionActivate": "HOLD",
+        "productionReady": false
+      }
+    },
+    "hostConfigurationWithheld": true,
+    "rollback": {
+      "schemaDropped": false,
+      "requiredTablesPresent": true,
+      "rowsRetained": true,
+      "productionActivate": "HOLD",
+      "productionReady": false
+    },
+    "hostedUsefulJob": {
+      "path": "/for-agents/useful-jobs/catalog.json",
+      "jobId": "lockfile-pin-delta",
+      "privatePortableCase": "case:project-created",
+      "retrievedAfterRestart": true,
+      "visitorOutputMatched": true,
+      "wasmtimeVersion": "49.0.0",
+      "humanPagesChanged": false,
+      "productionActivate": "HOLD",
+      "productionReady": false,
+      "becomesTrueOnlyAfterRootActivation": [
+        "public_correspondence_healthz_enabled",
+        "public_foundry_facade",
+        "public_visitor_restart_retrieval_on_enrolled_store"
+      ]
+    },
+    "phases": {
+      "disabled": {
+        "requirement": "disabled",
+        "exitCode": 0,
+        "code": "classified",
+        "facts": {
+          "disabledOptionalMount": true,
+          "degradedMount": false,
+          "degradedReason": null,
+          "hostedDiscovery": false,
+          "taskResult": false,
+          "durableRetrieval": false
+        },
+        "launchWithheld": true,
+        "missing": [
+          "FOUNDRY_HOST_OPT_IN",
+          "CORRESPONDENCE_DATABASE_URL",
+          "CORRESPONDENCE_ADMIN_TOKEN"
+        ]
+      },
+      "discovery": {
+        "requirement": "discovery",
+        "exitCode": 0,
+        "code": "classified",
+        "facts": {
+          "disabledOptionalMount": false,
+          "degradedMount": false,
+          "degradedReason": null,
+          "hostedDiscovery": true,
+          "taskResult": false,
+          "durableRetrieval": false
+        }
+      },
+      "task": {
+        "requirement": "task",
+        "exitCode": 0,
+        "code": "classified",
+        "facts": {
+          "disabledOptionalMount": false,
+          "degradedMount": false,
+          "degradedReason": null,
+          "hostedDiscovery": true,
+          "taskResult": true,
+          "durableRetrieval": false
+        },
+        "heldoutCase": "case:project-created",
+        "outputOutcome": "observed"
+      },
+      "retrieval": {
+        "requirement": "durable",
+        "exitCode": 0,
+        "code": "classified",
+        "facts": {
+          "disabledOptionalMount": false,
+          "degradedMount": false,
+          "degradedReason": null,
+          "hostedDiscovery": true,
+          "taskResult": true,
+          "durableRetrieval": true
+        },
+        "binding": {
+          "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+          "generation": 1,
+          "manifestId": "sha256:d61f7f075b04ce8028bd01241294f3704b02496599d3d1659368f37b4d99dd66",
+          "taskId": "task:4fc2ae93-ed92-462a-9481-6c04ca3e8f51",
+          "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca",
+          "requestDigest": "sha256:4642a5a84d0cf59a92d7a0deaad3404467d91cb1be7bbfb608be93267c3732da"
+        }
+      },
+      "inputVariants": [
+        {
+          "id": "useful-negative",
+          "beforeRestart": {
+            "requirement": "task",
+            "exitCode": 0,
+            "code": "classified",
+            "facts": {
+              "disabledOptionalMount": false,
+              "degradedMount": false,
+              "degradedReason": null,
+              "hostedDiscovery": true,
+              "taskResult": true,
+              "durableRetrieval": false
+            }
+          },
+          "afterRestart": {
+            "requirement": "durable",
+            "exitCode": 0,
+            "code": "classified",
+            "facts": {
+              "disabledOptionalMount": false,
+              "degradedMount": false,
+              "degradedReason": null,
+              "hostedDiscovery": true,
+              "taskResult": true,
+              "durableRetrieval": true
+            }
+          },
+          "outputOutcome": "unsupported",
+          "phases": [
+            "compile",
+            "instantiate",
+            "execute"
+          ],
+          "exited": true,
+          "observationId": "sha256:053e4636eaa980c45ef8cb6981f5ee6c212e92b1185c8752706481f6a1eebda0",
+          "distinctExecution": true
+        },
+        {
+          "id": "changed-input",
+          "beforeRestart": {
+            "exitCode": 0,
+            "expectedRefusal": true,
+            "noInvocation": true
+          },
+          "afterRestart": {
+            "exitCode": 0,
+            "expectedRefusal": true,
+            "noInvocation": true
+          },
+          "outputOutcome": null,
+          "phases": [],
+          "exited": false,
+          "observationId": null,
+          "distinctExecution": false
+        }
+      ],
+      "rollback": {
+        "requirement": "disabled",
+        "exitCode": 0,
+        "code": "classified",
+        "facts": {
+          "disabledOptionalMount": true,
+          "degradedMount": false,
+          "degradedReason": null,
+          "hostedDiscovery": false,
+          "taskResult": false,
+          "durableRetrieval": false
+        },
+        "rowsRetained": true,
+        "schemaDropped": false,
+        "requiredTablesPresent": true,
+        "missingTables": [],
+        "published": 1,
+        "projects": 2,
+        "charged": 2,
+        "admissions": 2,
+        "httpServesFoundry": false
+      }
+    },
+    "demonstrated": {
+      "disabledOptionalMount": true,
+      "hostedDiscovery": true,
+      "taskResult": true,
+      "durableRetrieval": true,
+      "rollbackToDisabledMount": true
+    }
+  },
+  "actualHostMissing": [
+    "cloud-f named build/probe",
+    "official provider CA with verify-full",
+    "authorized retained-store installation",
+    "safe serving environment readback",
+    "actual listener activation",
+    "actual visitors with contribution/publication and restart acquisition/execution"
+  ],
+  "outputIncident": "An overly broad cleanup process listing included unrelated daemon authentication arguments in tool output. No such arguments were copied into repository artifacts; subsequent checks were scoped."
+}

@@ -1,92 +1,65 @@
 #!/usr/bin/env node
-import { spawn } from "node:child_process";
 import { access, readFile } from "node:fs/promises";
-import { constants } from "node:fs";
+import { constants, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { runBounded } from "./bounded-child.mjs";
 
 const python = fileURLToPath(new URL(
-  "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/bin/python",
-  import.meta.url,
+  "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.runtime/bin/python", import.meta.url,
 ));
-const embed = fileURLToPath(new URL("./wasmtime49-embed/bin/foundry-wasmtime49", import.meta.url));
-
-function spawnCollected(command, args, { env, input } = {}) {
-  return new Promise((resolve) => {
-    const child = spawn(command, args, {
-      env: env || { PATH: process.env.PATH || "", LANG: "C", LC_ALL: "C" },
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-    let stdout = "";
-    child.stdout.on("data", (buf) => { stdout = (stdout + buf).slice(-4000); });
-    child.once("error", () => resolve({ code: null, stdout }));
-    child.once("exit", (code) => resolve({ code, stdout }));
-    if (input == null) child.stdin.end();
-    else child.stdin.end(input);
-  });
-}
+const prlimitPath = "/usr/bin/prlimit";
 
 async function flag(file, mode) {
-  try {
-    await access(file, mode);
-    return true;
-  } catch {
-    return false;
-  }
+  return access(file, mode).then(() => true).catch(() => false);
 }
 
-export async function collectProbe() {
+// The only executable override is for private diagnostic regressions, never HTTP.
+export async function collectProbe({ pythonCommand = "python3", referencePython = python, timeoutMs = 5000 } = {}) {
   const linuxX64 = process.platform === "linux" && process.arch === "x64";
-  const procReadable = await readFile("/proc/self/stat", "utf8").then(() => true).catch(() => false);
-  const prlimit = await flag("/usr/bin/prlimit", constants.X_OK);
-  const python3 = (await spawnCollected("python3", ["-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"])).code === 0;
-  const embedProbeRun = await spawnCollected(embed, ["--probe"], { env: { LANG: "C", LC_ALL: "C" } });
-  let embedProbe = false;
-  try {
-    const body = JSON.parse(embedProbeRun.stdout);
-    embedProbe = body.ok === true && body.version === "49.0.0" && body.runtime === "wasmtime-capi" && body.wasi === false;
-  } catch {
-    embedProbe = false;
-  }
-  const limitsRun = await spawnCollected(embed, [
-    "--as=536870912", "--cpu=2", "--stack=8388608", "--fsize=1048576", "--nofile=32",
-  ], { env: { LANG: "C", LC_ALL: "C" }, input: "" });
-  let embedLimits = false;
-  let embedLimitCode = null;
-  try {
-    const line = limitsRun.stdout.trim().split("\n").pop();
-    const body = JSON.parse(line);
-    embedLimitCode = body.result?.code || null;
-    embedLimits = body.result?.status === "error" && embedLimitCode === "request_size";
-  } catch {
-    embedLimits = false;
-  }
-  const reference = await spawnCollected(python, ["-I", "-c", "import importlib.metadata; raise SystemExit(0 if importlib.metadata.version('wasmtime')=='49.0.0' else 1)"]);
-  const referenceRuntime = reference.code === 0;
-  const referenceRoute = linuxX64 && procReadable && prlimit && referenceRuntime;
-  const embedRoute = linuxX64 && procReadable && embedProbe && embedLimits;
+  const procReadable = await Promise.all(["/proc/self/stat", "/proc/sys/kernel/random/boot_id"].map(file => readFile(file, "utf8"))).then(() => true).catch(() => false);
+  const procFdReadable = await flag("/proc/self/fd", constants.R_OK | constants.X_OK);
+  let childProcReadable = false;
+  const prlimit = await flag(prlimitPath, constants.X_OK);
+  const system = await runBounded(pythonCommand, ["-I", "-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"], { timeoutMs });
+  const script = [
+    "import importlib.metadata, resource, wasmtime as w",
+    "assert importlib.metadata.version('wasmtime') == '49.0.0'",
+    "assert resource.getrlimit(resource.RLIMIT_AS) == (536870912,536870912)",
+    "assert resource.getrlimit(resource.RLIMIT_CPU) == (2,2)",
+    "assert resource.getrlimit(resource.RLIMIT_STACK) == (8388608,8388608)",
+    "assert resource.getrlimit(resource.RLIMIT_FSIZE) == (1048576,1048576)",
+    "assert resource.getrlimit(resource.RLIMIT_NOFILE) == (32,32)",
+    "assert resource.getrlimit(resource.RLIMIT_CORE) == (0,0)",
+    "c = w.Config(); c.consume_fuel = True; c.parallel_compilation = False",
+    "e = w.Engine(c)",
+    // Fixed installed diagnostic, no caller source or guest imports.
+    "m = w.Module(e, w.wat2wasm('(module (func (export \"answer\") (result i32) i32.const 42))'))",
+    "assert len(m.imports) == 0",
+    "s = w.Store(e); s.set_fuel(1000); s.set_limits(memory_size=262144,instances=1,tables=1,memories=1)",
+    "i = w.Instance(s,m,[]); assert i.exports(s)['answer'](s) == 42",
+    "assert s.get_fuel() < 1000",
+    "print('reference-executed')",
+  ].join("\n");
+  const reference = await runBounded(prlimitPath, [
+    "--as=536870912:536870912", "--cpu=2:2", "--stack=8388608:8388608",
+    "--fsize=1048576:1048576", "--nofile=32:32", "--core=0:0", "--", referencePython, "-I", "-B", "-c", script,
+  ], { env: { LANG: "C", LC_ALL: "C" }, timeoutMs, capture: true, stdoutLimit: 128,
+    onSpawn(pid) { try { const stat = readFileSync(`/proc/${pid}/stat`, "utf8"); childProcReadable = /^[0-9]+$/.test(stat.slice(stat.lastIndexOf(") ")+2).split(" ")[19]); } catch {} } });
+  const referenceRuntime = reference.code === 0 && reference.reason === null && reference.stdout === "reference-executed\n";
   return {
-    probe: "managed-node",
-    ok: referenceRoute || embedRoute,
-    linuxX64,
-    node: process.version,
-    python3,
-    prlimit,
-    procReadable,
-    referenceRuntime,
-    embedProbe,
-    embedLimits,
-    embedLimitCode,
-    osLimitMechanism: prlimit ? "prlimit-then-setrlimit" : (embedLimits ? "setrlimit-after-exec" : "unavailable"),
-    productionActivate: "HOLD",
-    activation: false,
-    notProduction: true,
-    wholeHostSandbox: false,
-    privatePythonWebServer: false,
-    referenceProfileRetained: true,
+    probe: "managed-node", ok: linuxX64 && procReadable && procFdReadable && childProcReadable && prlimit && referenceRuntime,
+    linuxX64, node: process.version, python3: system.code === 0 && system.reason === null,
+    prlimit, procReadable, procFdReadable, childProcReadable, referenceRuntime, osLimitsEnforced: referenceRuntime,
+    referenceExecution: referenceRuntime, referenceFailure: reference.reason || (referenceRuntime ? null : "execution_failed"),
+    pythonFailure: system.reason || (system.code === 0 ? null : "execution_failed"),
+    osLimitMechanism: prlimit ? "prlimit-before-exec" : "unavailable",
+    productionActivate: "HOLD", activation: false, notProduction: true, wholeHostSandbox: false,
+    privatePythonWebServer: false, referenceProfileRetained: true,
   };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const report = await collectProbe();
   process.stdout.write(`${JSON.stringify(report)}\n`);
+  process.exitCode = report.ok ? 0 : 2;
 }
