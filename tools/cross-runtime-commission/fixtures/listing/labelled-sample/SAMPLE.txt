@@ -1,0 +1,14 @@
+SAMPLE (not a customer)
+
+Label: caller-alpha
+Job: listing-repair-packet
+Input: samples/listing/caller-alpha.json
+
+What it shows:
+- Complete baseline/current route pair for a public listing
+- Multiple owner-facing deltas (redirect, inaccessible, restored, removed, added)
+- Expected packet status: actionable
+
+Honesty:
+- Fixture / synthetic only
+- Not market demand, not revenue, not a live listing claim

@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "demo-single-runtime",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "demo": true,
+  "label": "demo",
+  "runtimes": [
+    { "label": "node22-local", "kind": "local" }
+  ],
+  "notes": "Demo-labelled single-runtime run. Must not claim independent:true."
+}

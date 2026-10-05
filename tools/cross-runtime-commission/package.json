@@ -1,0 +1,17 @@
+{
+  "name": "samedaydesk-cross-runtime-commission",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W3-09 E03 cross-runtime commission scaffold. Labelled runtimes, exact commands, demo vs independent. Not a live second-customer purchase.",
+  "bin": {
+    "sds-cross-runtime": "./bin/cross-runtime.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node bin/cross-runtime.mjs journey --fixture fixtures/ok.json"
+  }
+}

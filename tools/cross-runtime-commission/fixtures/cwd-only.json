@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "cwd-only",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "runtimes": [
+    { "label": "node22-local-a", "kind": "local" },
+    { "label": "node22-local-b", "kind": "local" }
+  ],
+  "notes": "Two labelled locals that differ only by cwd. independent must be false."
+}
