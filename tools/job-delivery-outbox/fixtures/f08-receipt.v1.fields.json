@@ -1,0 +1,36 @@
+{
+  "source": "SDS52 pin aeef964fa188443078958d9d6d393afae1d542ee server/paid-useful-jobs/lib/receipt.mjs",
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "required": [
+    "schema",
+    "jobId",
+    "engine",
+    "engine.archiveSha256",
+    "engine.archiveBytes",
+    "inputsDigest",
+    "outputsDigest",
+    "inputs",
+    "outputs",
+    "fundingState",
+    "sold",
+    "sample",
+    "purchaseAuthority",
+    "liveSettlement"
+  ],
+  "fundingStates": ["unfunded", "reserved-fixture", "rejected"],
+  "honesty": {
+    "sold": false,
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope"
+  },
+  "outputsDigest": "recomputed from listed outputs using receipt.v1 named-bytes digest; asserted mismatch is refused",
+  "laterCompatibleFields": [
+    "engine.archiveSha256",
+    "engine.archiveBytes",
+    "engineArchiveIdentity = archiveSha256:archiveBytes",
+    "inputRoot",
+    "engineResult.identityVerified"
+  ],
+  "termsMapping": "samedaydesk.paid-useful-jobs.receipt.v1->job-delivery-outbox.terms.v1",
+  "notImported": "SDS52 wrapper/envelope/settle kernel is not copied into this module"
+}
