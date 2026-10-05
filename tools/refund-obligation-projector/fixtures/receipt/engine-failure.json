@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "jobId": "vendor-budget-impact",
+  "operationId": "agent402-external-validation-purchase-2026-08-29",
+  "sold": false,
+  "engineResult": {
+    "ok": false,
+    "refused": false,
+    "status": null,
+    "digest": null
+  }
+}
