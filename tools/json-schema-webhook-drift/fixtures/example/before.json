@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SAMPLE webhook schema (not a customer brief)",
+  "type": "object",
+  "properties": {
+    "amount": { "type": "number" },
+    "debug": { "type": "string" }
+  }
+}
