@@ -5,6 +5,7 @@ import express from "express";
 import { foundryHostOptIn, parseFoundryBodyLimit } from "../foundry/opt-in.js";
 import { REUSE_CLASS, reusesProductDataService } from "../foundry/product-isolation.js";
 import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
+import { verifiedFoundryDatabaseUrl } from "../foundry/pg-tls.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
@@ -32,7 +33,7 @@ export function inspectCorrespondenceEnv(env = process.env) {
   } catch {
     return { kind: "invalid_config", detail: "foundry opt-in" };
   }
-  const url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
+  let url = String(env.CORRESPONDENCE_DATABASE_URL || "").trim();
   const token = String(env.CORRESPONDENCE_ADMIN_TOKEN || "").trim();
   if (url && reusesProductDataService(url, { supabaseUrl: env.SUPABASE_URL })) {
     return { kind: "invalid_config", detail: REUSE_CLASS };
@@ -76,6 +77,10 @@ export function inspectCorrespondenceEnv(env = process.env) {
   } catch {
     return { kind: "invalid_config", detail: "invalid trust proxy" };
   }
+  try {
+    if (env.FOUNDRY_EXECUTION_RUNTIME) throw new Error("runtime_selection_unsupported");
+    url = verifiedFoundryDatabaseUrl(url, env);
+  } catch { return { kind: "invalid_config", detail: "foundry runtime or TLS configuration" }; }
   return { kind: "configured", url, token, schema, poolMax, store, foundryOptIn };
 }
 

@@ -25,6 +25,12 @@ try {
     && compat.portableKit?.matchedHeldOut === true
     && compat.portableKit?.restarted === true
     && compat.portableKit?.version === "49.0.0"
+    && receipt.phases?.inputVariants?.length === 2
+    && receipt.phases.inputVariants.every(v => v.beforeRestart.exitCode === 0
+      && v.afterRestart.exitCode === 0 && (v.id === "changed-input"
+        ? v.beforeRestart.expectedRefusal === true && v.afterRestart.expectedRefusal === true
+          && v.beforeRestart.noInvocation === true && v.afterRestart.noInvocation === true
+        : v.afterRestart.facts.durableRetrieval === true && v.exited === true && v.distinctExecution === true))
     && receipt.hostConfigurationWithheld === true
     && receipt.rollback?.schemaDropped === false
     && receipt.rollback?.requiredTablesPresent === true

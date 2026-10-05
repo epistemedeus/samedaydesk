@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { foundryHostOptIn } from "./opt-in.js";
 import { REUSE_CLASS, reusesProductDataService } from "./product-isolation.js";
 import { CANONICAL_WORKER } from "./paths.js";
+import { verifiedFoundryDatabaseUrl } from "./pg-tls.js";
 import { runPhasedWorker } from "./lifecycle.js";
 
 function redact(text) {
@@ -22,7 +23,7 @@ function resolvePass(env) {
 }
 
 function childEnv(env) {
-  return {
+  const base = {
     PATH: env.PATH || "",
     HOME: env.HOME || "",
     LANG: "C",
@@ -30,7 +31,7 @@ function childEnv(env) {
     NODE_ENV: env.NODE_ENV || "production",
     FOUNDRY_HOST_OPT_IN: "1",
     VF04_OWNER_QA_WORKER: "1",
-    CORRESPONDENCE_DATABASE_URL: env.CORRESPONDENCE_DATABASE_URL,
+    CORRESPONDENCE_DATABASE_URL: verifiedFoundryDatabaseUrl(env.CORRESPONDENCE_DATABASE_URL, env),
     CORRESPONDENCE_PG_SCHEMA: env.CORRESPONDENCE_PG_SCHEMA,
     CORRESPONDENCE_POOL_MAX: "2",
     FOUNDRY_WORKER_TRACE: env.FOUNDRY_WORKER_TRACE || "",
@@ -39,6 +40,7 @@ function childEnv(env) {
     FOUNDRY_CLAIM_ASSIGNMENT: env.FOUNDRY_CLAIM_ASSIGNMENT || "",
     FOUNDRY_WORKER_HOLD_MS: env.FOUNDRY_WORKER_HOLD_MS || "",
   };
+  return base;
 }
 
 function spawnPass(pass, phase, projectId) {
@@ -67,6 +69,7 @@ function spawnPass(pass, phase, projectId) {
 
 let optedIn = false;
 try {
+  if (process.env.FOUNDRY_EXECUTION_RUNTIME) fail(2, "runtime_selection_unsupported");
   optedIn = foundryHostOptIn(process.env);
 } catch {
   fail(2, "foundry_opt_in_invalid");

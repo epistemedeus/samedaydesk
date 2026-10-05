@@ -1,11 +1,13 @@
 import { spawn } from "node:child_process";
 import { once } from "node:events";
+import { existsSync } from "node:fs";
 import net from "node:net";
 import { mkdtemp, rm, appendFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-const bin = "/usr/lib/postgresql/16/bin";
+const bin = ["/usr/lib/postgresql/16/bin", "/usr/lib/postgresql/17/bin"].find((dir) => existsSync(path.join(dir, "initdb")));
+if (!bin) throw new Error("disposable postgres bin missing");
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {

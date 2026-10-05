@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 // Explicit private installer. Importing this module does not migrate or install.
+import { fileURLToPath } from "node:url";
 import { PostgresStore } from "@neomorphic/correspondence";
 import { parseMountedDatabaseUrl, parseMountedPgSchema } from "../../vendor/visitor-foundry-receiver/services/correspondence/dist/config.js";
 import { openEntryFacade, closeEntryThenBase } from "./compose.js";
+import { materializeReferenceRuntime } from "./materialize-runtime.mjs";
+import { verifiedFoundryDatabaseUrl } from "./pg-tls.js";
+import { materializePrivateProfiles, PROFILE_JSON_KEYS } from "./private-materialize.js";
 import { readPrivateJson } from "./private-files.js";
 import { REUSE_CLASS, reusesProductDataService } from "./product-isolation.js";
 
@@ -32,10 +36,23 @@ try {
   fail(1, error);
 }
 
+const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
+try {
+  const materialized = materializePrivateProfiles(process.env, { repoRoot });
+  for (const key of PROFILE_JSON_KEYS) delete process.env[key];
+  Object.assign(process.env, materialized.assigned);
+} catch (error) {
+  fail(2, error.code || error);
+}
 if (install) {
   const profileFile = String(process.env.FOUNDRY_PRIVATE_PROFILE_FILE || "").trim();
   if (!profileFile) fail(2, "FOUNDRY_PRIVATE_PROFILE_FILE is required to install");
 }
+try {
+  url = verifiedFoundryDatabaseUrl(url);
+  if (process.env.FOUNDRY_EXECUTION_RUNTIME) throw Object.assign(new Error("runtime_selection_unsupported"), { code: "runtime_selection_unsupported" });
+  if (install) await materializeReferenceRuntime();
+} catch (error) { fail(2, error.code || "runtime_setup_failed"); }
 
 const store = new PostgresStore(url, { schema, poolMax: 1 });
 let mounted = null;

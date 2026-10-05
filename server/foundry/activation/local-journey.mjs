@@ -255,6 +255,8 @@ async function canonicalReadback(databaseUrl, { projectId, taskId, candidateId }
       moduleDigest: row.execution.binding.moduleDigest ?? null,
       sampleOutput: sample.output ?? null,
       sampleStatus: sample.observation?.status ?? null,
+      samplePhases: sample.observation?.phasesObserved?.map(p => p.phase) ?? [],
+      sampleTermination: sample.observation?.termination ?? null,
       observationId: sample.observation?.id ?? null,
       sampleModuleDigest: sample.observation?.binding?.moduleDigest ?? null,
       contributed: {
@@ -315,6 +317,49 @@ function clientWire(stdout, readback, request, candidateId, label) {
     throw fail(1, `${label} client wire did not select the contributed candidate`);
   }
   return body;
+}
+
+async function variantUse({ configPath, projectId, candidateId, databaseUrl, directory, observation, prior = null }) {
+  const changedInput = { structuredContent: { project: { id: "prj_changed_beta", status: "closed", version: 7 }, nextAction: null } };
+  const variants = prior || [
+    { id: "useful-negative", request: task(cases[3].input), expected: cases[3].expected },
+    { id: "changed-input", request: task(changedInput), expected: { outcome: "observed", payload: changedInput.structuredContent } },
+  ];
+  const results = [];
+  for (const variant of variants) {
+    const file = path.join(directory, `${variant.id}.json`);
+    await writeFile(file, JSON.stringify(variant.request), { mode: 0o600 });
+    const ran = await runNode([visitor, "use", configPath, file], baseEnv(), receiverRoot);
+    if (ran.code !== 0) throw fail(1, `${variant.id} visitor use failed: ${ran.stderr}`);
+    const response = JSON.parse(ran.stdout);
+    if (variant.id === "changed-input") {
+      if (response.invocation !== null || response.discovery?.manifest !== null
+          || response.discovery?.resolution?.status !== "unknown") throw fail(1, "changed input gained unmeasured applicability");
+      const client = new pg.Client({ connectionString: databaseUrl });
+      await client.connect();
+      try {
+        const row = await client.query("SELECT count(*)::int AS n FROM pilot_correspondence.correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2", [projectId, variant.request.taskId]);
+        if (row.rows[0].n !== 0) throw fail(1, "changed input created an invocation");
+      } finally { await client.end(); }
+      results.push({ ...variant, taskEvidence: null, assessment: { exitCode: 0, expectedRefusal: true, noInvocation: true } });
+      continue;
+    }
+    if (!response.invocation) throw fail(1, `${variant.id} resolution had no invocation`);
+    const readback = await canonicalReadback(databaseUrl, { projectId, taskId: variant.request.taskId, candidateId });
+    const wire = clientWire(ran.stdout, readback, variant.request, candidateId, variant.id);
+    if (!isDeepStrictEqual(readback.samplePhases, ["compile", "instantiate", "execute"])
+      || readback.sampleTermination?.exited !== true || readback.sampleTermination?.code !== 0) {
+      throw fail(1, `${variant.id} execution phases or termination missing`);
+    }
+    const taskEvidence = { published: true, candidateId, output: readback.invocation.output,
+      expected: variant.expected, request: variant.request, invocation: readback.invocation, readback, clientWire: wire };
+    const assessment = acceptPhase({ ...observation, task: variant.taskEvidence || taskEvidence,
+      retrieval: prior ? { processRestarted: true, databaseSurvived: true, output: readback.invocation.output,
+        readback, clientWire: wire } : null }, prior ? "durable" : "task");
+    results.push({ ...variant, taskEvidence, assessment, observationId: readback.observationId,
+      phases: readback.samplePhases, termination: readback.sampleTermination });
+  }
+  return results;
 }
 
 function acceptPhase(observation, requirement) {
@@ -513,6 +558,8 @@ export async function runLocalJourney() {
       outputOutcome: output?.outcome ?? null,
     };
     if (phases.task.facts.durableRetrieval) throw fail(2, "task result counted as durable before restart");
+    const firstVariants = await variantUse({ configPath: `${visitorA}.json`, projectId, candidateId,
+      databaseUrl: pgCluster.url, directory: dir, observation: discoveryObs });
     await server.stop();
     server = null;
 
@@ -556,7 +603,14 @@ export async function runLocalJourney() {
         requestDigest: readback.requestDigest,
       },
     };
-    process.stderr.write("phase durable-retrieval\n");
+    const laterVariants = await variantUse({ configPath: `${visitorB}.json`, projectId: second.body.projectId,
+      candidateId, databaseUrl: pgCluster.url, directory: dir, observation: afterRestart, prior: firstVariants });
+    phases.inputVariants = laterVariants.map((v, i) => ({ id: v.id,
+      beforeRestart: firstVariants[i].assessment, afterRestart: v.assessment,
+      outputOutcome: v.taskEvidence?.output.outcome ?? null, phases: v.phases ?? [],
+      exited: v.termination?.exited ?? false, observationId: v.observationId ?? null,
+      distinctExecution: v.observationId != null && v.observationId !== firstVariants[i].observationId }));
+    process.stderr.write("phase useful-negative changed-input durable-retrieval\n");
     if (!phases.retrieval.facts.hostedDiscovery || !phases.retrieval.facts.taskResult) {
       throw fail(2, "durable retrieval dropped discovery or task result");
     }
