@@ -6,8 +6,8 @@ import {checkInstalledVerification} from '../src/verification.mjs';
 import {hostProfile,entryBinding,RECEIVER_ID} from './profile.mjs';
 
 /** Trusted binding over existing entry charges and canonical receiver transactions.
- * begin crosses two durable phases once. read never mutates; private recover
- * finishes an already reserved phase or fences absent begin with a tombstone. */
+ * begin crosses two durable phases once. read never mutates; reserved-only recover
+ * finishes a committed phase. Private recovery may also fence absent begin. */
 export class EntryReceiver {
  constructor(integration,options){this.store=integration;this.config=hostProfile(options);this.id=RECEIVER_ID;}
  async migrate(){const sql=(await Promise.all(['005_vf12_entry.sql','006_vf12_allocation_receiving.sql'].map(name=>readFile(new URL(`../../../../services/correspondence/migrations/visitor-foundry/${name}`,import.meta.url),'utf8')))).join('\n');await this.store.db.tx(c=>c.query(sql));}
@@ -58,7 +58,8 @@ export class EntryReceiver {
   });
   await this.afterCompletion?.(input);return result;
  }
- async read(input){return this.store.db.tx(async c=>{
+ async read(input){return this.store.db.tx(c=>this.readInTransaction(c,input));}
+ async readInTransaction(c,input){
   await this.host(c);const {binding}=await this.charged(c,input);
   const row=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1',[input.registrationId])).rows[0];
   if(!row)return 'unknown';need(hash(row.binding)===hash(binding),409,'admission_binding_mismatch');
@@ -68,17 +69,18 @@ export class EntryReceiver {
    checkInstalledVerification(pool.verification,pool.config);
   }
   return row.state;
- });}
- async recover(input){
+ }
+ async recover(input,{reservedOnly=false}={}){
   // Authoritative tombstone prevents a delayed first begin from reviving an
   // absent reservation. It never repeats an unknown begin call.
   const state=await this.store.db.tx(async c=>{
    await this.host(c,true);const {r,binding}=await this.charged(c,input);
    const old=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1',[r.id])).rows[0];
    if(old){need(hash(old.binding)===hash(binding),409,'admission_binding_mismatch');return old.state;}
+   if(reservedOnly)return 'unknown';
    await c.query("INSERT INTO correspondence_vf12_admissions(registration_id,project_id,binding,state,charged,reason) VALUES($1,$2,$3,'declined',false,'begin_absent_fenced_by_private_recovery')",[r.id,r.project_id,binding]);return 'declined';
   });
-  return state==='pending'?this.complete(input):state;
+  return state==='pending'&&!input.signal?.aborted?this.complete(input):state;
  }
  async authorizeRequest(req,token){
   const match=/^\/v1\/projects\/([^/]+)\/foundry(?:\/(.*))?$/i.exec(req.path);

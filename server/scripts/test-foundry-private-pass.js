@@ -86,6 +86,8 @@ test('changed durable intent and concurrent exact retry cannot launch twice',asy
 test('unknown/lost response never redispatches; unlaunched reservation remains held for explicit reconciliation',async()=>{
  const f=await fixture();await assert.rejects(f.pass(f.request,{onStarted:()=>{throw Object.assign(new Error(),{code:'lost_response'});}}),{code:'lost_response'});
  const prior=await f.counts();const again=await f.pass();assert.equal(again.code,'private_pass_outcome_unknown');assert.equal(again.readback.outstandingPhysical,1);assert.deepEqual(await f.counts(),prior);
+ const entry=await f.a.run('reconcile');assert.equal(entry.status,200);assert.equal(entry.body.projectId,f.a.projectId);assert.equal(entry.body.receiver.state,'ready');assert.deepEqual(await f.counts(),prior);
+ const read=await f.cli({...f.request,intentId:'observe-held-entry',action:'observe'});assert.equal(read.readback.outstandingPhysical,1);assert.equal(read.readback.attempts[0].state,'reserved');assert.deepEqual(await f.counts(),prior);
  await code(f.pass({...f.request,intentId:'new-attempt'}),'physical_reservation_held');
  await code(f.pass({...f.request,intentId:'reconcile-held',action:'reconcile',reconcileIntentId:f.request.intentId}),'private_pass_outcome_unknown');
  assert.equal((await f.counts()).attempts,1);

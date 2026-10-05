@@ -26,11 +26,15 @@ export function validateRequest(value) {
     || id(r.candidateId) && Number.isSafeInteger(r.expectedGeneration) && r.expectedGeneration >= 1 && r.expectedGeneration <= 16, 'private_pass_request_invalid');
   return r;
 }
-async function bound(store, receiver, c, r, write) {
+async function allocation(receiver, c, r, write) {
   const host = await receiver.host(c,write);
   need(host.configId === r.expectedHostConfigId, 'private_pass_host_conflict');
   const entry = (await c.query('SELECT active_profile FROM correspondence_vf10_installation WHERE singleton FOR SHARE')).rows[0];
   need(entry?.active_profile?.termsHash === r.expectedEntryTermsHash, 'private_pass_terms_conflict');
+  return host;
+}
+async function bound(store, receiver, c, r, write) {
+  const host = await allocation(receiver,c,r,write);
   const locked = await store.lock(c,r.projectId,write);
   need(locked.config.kind === PORTABLE_KIND && locked.config.entryHost === host.configId, 'private_pass_project_conflict');
   checkInstalledVerification(locked.verification,locked.config);
@@ -96,8 +100,29 @@ function witness(v,assignmentId) {
 }
 export async function observePass(store,receiver,input) {
   const r=validateRequest(input);
-  return store.db.tx(async c=>{ const b=await bound(store,receiver,c,r,false); const j=await journal(c,r);
-    return {ok:true,action:'observe',mutated:false,journalState:j?.response_json.state ?? null,readback:await view(c,r,b)}; });
+  return store.db.tx(async c=>{
+    const host=await allocation(receiver,c,r,false);
+    const registration=(await c.query(`SELECT id,project_id,receiver_started,receiver_state,entry_profile,receiver_id,expires_at
+      FROM correspondence_vf10_registrations WHERE project_id=$1 FOR SHARE`,[r.projectId])).rows[0];
+    need(registration && registration.receiver_id===receiver.id && registration.entry_profile?.termsHash===r.expectedEntryTermsHash
+      && digest(registration.entry_profile.contribution?.binding)===digest(receiver.binding()),'private_pass_entry_conflict');
+    const state=registration.receiver_started?await receiver.readInTransaction(c,{registrationId:registration.id,projectId:r.projectId}):'unknown';
+    const admission=(await c.query('SELECT state,charged,reason FROM correspondence_vf12_admissions WHERE registration_id=$1',[registration.id])).rows[0];
+    const pool=(await c.query('SELECT 1 FROM correspondence_vf04_pools WHERE project_id=$1',[r.projectId])).rows.length>0;
+    const entry={registrationId:registration.id,projectId:r.projectId,receiverStarted:registration.receiver_started,
+      acknowledgedState:registration.receiver_state,receiverState:state,workspaceExpiresAt:registration.expires_at.toISOString(),
+      admission:admission?{state:admission.state,charged:admission.charged,reason:admission.reason}:null,poolEnrolled:pool,poolReady:state==='ready'&&pool};
+    const j=await journal(c,r);
+    if(state!=='ready'||!pool){
+      need(r.expectedVerificationId===null && r.candidateId===null && r.expectedGeneration===null,'private_pass_verification_conflict');
+      return {ok:true,action:'observe',mutated:false,journalState:j?.response_json.state ?? null,readback:{
+        projectId:r.projectId,hostConfigId:host.configId,entryTermsHash:r.expectedEntryTermsHash,entry,
+        verificationId:null,installedVerificationMatches:null,charged:null,validationCeiling:null,invocationCeiling:null,
+        outstandingPhysical:await physical(c,{entryHost:host.configId}),candidates:[],attempts:[],publications:[],invocations:[]}};
+    }
+    const b=await bound(store,receiver,c,r,false);
+    return {ok:true,action:'observe',mutated:false,journalState:j?.response_json.state ?? null,readback:{...await view(c,r,b),entry}};
+  });
 }
 export async function runPrivatePass(store,receiver,input,{signal,persist=()=>{},onStarted=()=>{},onSpawn,localReceipts=[]}={}) {
   const r=validateRequest(input); if(r.action==='observe') return observePass(store,receiver,r);

@@ -2,7 +2,7 @@
 // Root's explicit owner QA caller. No hosting/SQL credentials, owner endpoints or deployment.
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readFileSync,lstatSync,readdirSync} from 'node:fs';
+import {readFileSync,lstatSync,readdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {readPrivateBytes} from '../private-paths.js';
@@ -30,7 +30,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
@@ -42,9 +42,24 @@ export async function remoteJourney(stage,file,readbackFile) {
   let body;try{body=JSON.parse(result.stdout);}catch{need(false,'caller_response_invalid');}
   privateTree(dir);return body;
  }
- if(stage==='a-contribute') {
-  const registered=await cli('register',aFile),checkpoint=await cli('checkpoint',aFile,{text:'owner QA private correspondence before controlled host restart'},'a-checkpoint');
-  need(registered.body?.receiver?.state==='ready','caller_receiver_not_ready');
+ async function continueVisitor(config,name,{mustExist=false}={}) {
+  const saved=existsSync(path.join(dir,`visitor-${name}`,'attempt.json'));
+  need(!mustExist||saved,'caller_saved_attempt_required');
+  const registered=await cli(saved?'reconcile':'register',config);
+  const receipt={schema:'sds.foundry.remote-entry.v1',purpose:'owner_qa',stage,httpStatus:registered.status,
+    status:registered.body?.status ?? 'unknown',receiverState:registered.body?.receiver?.state ?? 'unknown',
+    registrationId:registered.body?.registrationId ?? null,projectId:registered.body?.projectId ?? null,
+    nextAction:registered.body?.nextAction ?? registered.body?.error?.nextAction ?? 'reconcile_same_attempt',
+    code:registered.body?.error?.code ?? null,contributionStarted:false,pin};
+  seal(dir,`${name}-entry-${digest(receipt).slice(7)}.json`,receipt);
+  const ready=registered.status===200 && registered.body?.status==='ready' && registered.body?.receiver?.state==='ready';
+  return {registered,receipt,ready};
+ }
+ if(['a-contribute','a-reconcile'].includes(stage)) {
+  const {registered,receipt:entryReceipt,ready}=await continueVisitor(aFile,'a',{mustExist:stage==='a-reconcile'});
+  if(stage==='a-reconcile') return {ok:ready,...entryReceipt};
+  if([200,202].includes(registered.status)) await cli('checkpoint',aFile,{text:'owner QA private correspondence before controlled host restart'},'a-checkpoint');
+  if(!ready) return {ok:false,...entryReceipt};
   const contribution=await cli('contribute',aFile,original(),'a-contribution-input');
   const candidateId=contribution.submission?.admission?.candidateId;
   need(typeof candidateId==='string','caller_contribution_unknown');
@@ -97,7 +112,9 @@ export async function remoteJourney(stage,file,readbackFile) {
   need(json(path.join(dir,'a-use-receipt.json')).candidateId===saved.candidateId,'caller_a_use_required');
   // Owner supplied hosting readback is an attestation, not measured by this caller.
   config=seal(dir,'visitor-b.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-b'),authority:c.authority});
-  projectId=(await cli('register',config)).body?.projectId;
+  const continued=await continueVisitor(config,'b');
+  if(!continued.ready)return {ok:false,...continued.receipt};
+  projectId=continued.registered.body.projectId;
   const correspondence=await cli('correspondence',aFile);seal(dir,'a-after-restart-correspondence.json',correspondence);
  }
  const uses=[];
@@ -120,6 +137,6 @@ export async function remoteJourney(stage,file,readbackFile) {
  return {ok:true,...receipt};
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
- try {const [stage,file,readback,...rest]=process.argv.slice(2);need(file && !rest.length && (stage==='check'?Boolean(readback):!readback),'caller_arguments_invalid');console.log(JSON.stringify(await remoteJourney(stage,file,readback)));}
+ try {const [stage,file,readback,...rest]=process.argv.slice(2);need(file && !rest.length && (stage==='check'?Boolean(readback):!readback),'caller_arguments_invalid');const result=await remoteJourney(stage,file,readback);console.log(JSON.stringify(result));if(!result.ok)process.exitCode=2;}
  catch(error){console.error(JSON.stringify({ok:false,code:/^[a-z_]{1,100}$/.test(error?.code)?error.code:'caller_failed'}));process.exitCode=2;}
 }
