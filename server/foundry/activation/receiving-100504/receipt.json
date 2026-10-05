@@ -1,0 +1,103 @@
+{
+  "schema": "sds.foundry.receiving-100504.v1",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "base": "dda6349fee85997cef16f66f58cfc7d243dc840d",
+  "branch": "codex/sol-host-private-pass-100504",
+  "neoHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "neoTree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+  "hostingerMeasured": false,
+  "productionActivated": false,
+  "databases": "disposable PostgreSQL17 only",
+  "cursorDefaultNode": "v22.14.0",
+  "newJourneyNode": "v22.18.0",
+  "npmCiExit": 0,
+  "tests": [
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-private-pass",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "d2eac0930f47d59723a3d3abbe5d6ce885f80827be9073a242c1d04cfacdc5b7"
+    },
+    {
+      "command": "npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "cd9942d290b581894678d901a722a2e25c5dcd64adfdf3d46cd33fa8ab5ed9b2"
+    },
+    {
+      "command": "npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "5bf43b5b23e2020ea3f4fdc72b4a51ae0927d39ba95dfe2488e1bf7922c9feaa"
+    },
+    {
+      "command": "npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "67c6ad20fd5c802b6df1495fffd6098ef7a43c15de441d8f5205a74c17883bfc"
+    },
+    {
+      "command": "npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "d621be51287c09de63a234ad039f6174370484c9ad2f993b72b53d09334557cf"
+    },
+    {
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node npm run test:foundry-generation",
+      "exit": 0,
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "12a7c98f90615244cdac621960ab6c3421d0dd1cd739a34e56432b0134a520e7"
+    },
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "logSha256": "cfca4d65e4d03708f414c49e160e172682d9d2424d467eb80107b72dcdd09ce0"
+    }
+  ],
+  "passed": 134,
+  "failed": 0,
+  "skipped": 0,
+  "sourceFiles": {
+    "package.json": "06a4d018e17ca572957cba44220abd893375db8aabed9ba8c7a3ed17d22e9126",
+    "server/foundry/private-materialize.js": "5b08bd4c0ecd14402e69c1e6655016bdc12dc819d3f30d31f3dd81f5b25cd497",
+    "server/foundry/private-pass-core.mjs": "295ddeaceb6f6faf60ddf4bf7173a252270ab631b7fd55bebed705a2edd94ec4",
+    "server/foundry/private-pass.mjs": "67cb541cde54d433ac801641a7e81f0a69da9a09d07c74b88e55c77452ec4c2b",
+    "server/foundry/activation/remote-private-journey.mjs": "74e9d8c2d802029506f6bf90fcb6520206bd033571eed66030cd3aa9951767a4",
+    "server/foundry/activation/private-control-pin.json": "41fa8570cd46a1a189e37eef9a066344fd72b771619091875e27a60ff9973c1f",
+    "server/scripts/test-foundry-private-pass.js": "1c309022a7a47f374dfab3fcb8294be14e9b9117d435504c1f80cb15cccd4dd5",
+    "server/foundry/activation/receiving-100504/ROOT.md": "2639610fb96d888d675c75fa519046cd7090bd76af597b6243c03e8b64ca643b",
+    "server/foundry/activation/receiving-100504/RESULT.md": "f88a4c65ccc1800a7d6d958fccd471998331a48056ec075f1e3dfb41e4b72eb2"
+  },
+  "sourcePinSha256": "847481c2cd090a891c1b2ef2f93d7d45d217639b7d02b3c2a7a09cdbc2db116e",
+  "controlClosureFiles": 214,
+  "vendorAndPriorReceiptsUnchanged": true,
+  "preservedFiles": 209,
+  "lockfiles": {
+    "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
+    "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+  },
+  "namedBuild": "build:managed-foundry-private-pass",
+  "remainingProof": "Root actual Hostinger A/controlled canonical publication/use/actual HTTP restart/B canonical same-candidate observations with exit/drain, changed/negative inputs and private correspondence; no outside adoption claim"
+}

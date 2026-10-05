@@ -97,7 +97,10 @@
     "foundry:generation": "node server/foundry/generation.mjs",
     "test:foundry-generation": "node --test --test-concurrency=1 server/scripts/test-foundry-generation.js",
     "build:managed-foundry-inspect": "npm run build:managed-foundry && npm run foundry:installation",
-    "build:managed-foundry-generation": "npm run build:managed-foundry && npm run foundry:generation -- --apply"
+    "build:managed-foundry-generation": "npm run build:managed-foundry && npm run foundry:generation -- --apply",
+    "foundry:private-pass": "node server/foundry/private-pass.mjs",
+    "build:managed-foundry-private-pass": "npm run build:managed-foundry && npm run foundry:private-pass",
+    "test:foundry-private-pass": "node --test --test-concurrency=1 server/scripts/test-foundry-private-pass.js"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
