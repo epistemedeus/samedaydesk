@@ -1,0 +1,73 @@
+{
+  "schema": "samedaydesk.useful-jobs-consumer.v1",
+  "status": "proposed-packet-only",
+  "notAMoneyOrKernelContract": true,
+  "notPermissionToCopyStaleApi": true,
+  "doesNotChange": [
+    "server/pricing.js",
+    "live extract 0.005 USDC",
+    "seller-integrity-audit 0.01 USDC",
+    "payTo 0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "F08 receipt schema samedaydesk.paid-useful-jobs.receipt.v1",
+    "useful-jobs catalog.json job ids"
+  ],
+  "enginePin": {
+    "package": "useful-jobs",
+    "version": "1.0.0",
+    "archiveRel": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+    "bytes": 2522418,
+    "cli": "bin/useful-jobs.mjs",
+    "purchaseAuthority": false,
+    "schedulerDaemon": false
+  },
+  "jobIds": [
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ],
+  "request": {
+    "required": ["engineId", "orderId", "enginePin", "inputs"],
+    "engineId": "one of jobIds",
+    "orderId": "caller-chosen immutable string",
+    "enginePin": {
+      "sha256": "enginePin.sha256",
+      "bytes": 2522418,
+      "version": "1.0.0"
+    },
+    "inputs": [
+      {
+        "flag": "--before|--after|--used|--input|--next-run|--input-root",
+        "path": "caller file",
+        "sha256": "64 hex",
+        "bytes": "integer"
+      }
+    ],
+    "fundingState": "unfunded|reserved-fixture|rejected",
+    "example": false,
+    "sold": false
+  },
+  "result": {
+    "required": ["ok", "orderId", "engineId", "archiveSha256", "outputs", "sold", "purchaseAuthority"],
+    "sold": false,
+    "purchaseAuthority": false,
+    "sample": "true only when example or SAMPLE inputs",
+    "outputs": [{ "name": "catalog output filename", "bytes": 0, "sha256": "64 hex" }],
+    "optionalF08Receipt": "samedaydesk.paid-useful-jobs.receipt.v1 when F08 CLI is spawned from pin bae3e7cd; do not fork that schema"
+  },
+  "honesty": {
+    "SAMPLE_is_not_a_sale": true,
+    "liveSettleOutOfScope": true,
+    "missingInputsRefuse": true,
+    "digestMismatchRefuses": true,
+    "sameOrderIdMustNotSwapFiles": true,
+    "changedInputsNeedNewOrderId": true,
+    "rejectedReplayStaysRejected": true,
+    "isolatedResultDir": "store/results/<requestId>",
+    "unlikeTermsHashesAreNotForcedEqual": true,
+    "testedSds52": "aeef964fa188443078958d9d6d393afae1d542ee"
+  }
+}
