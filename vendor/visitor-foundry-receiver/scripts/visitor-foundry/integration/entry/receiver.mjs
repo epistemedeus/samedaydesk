@@ -36,15 +36,23 @@ export class EntryReceiver {
    const count=(await c.query('SELECT count(*)::int AS n FROM correspondence_vf12_admissions WHERE charged')).rows[0].n;
    const expired=r.expires_at<=new Date(await this.store.db.now(c));const accepted=count<this.config.maxAdmissions&&!expired;
    await c.query('INSERT INTO correspondence_vf12_admissions(registration_id,project_id,binding,state,charged,reason) VALUES($1,$2,$3,$4,$5,$6)',[r.id,r.project_id,binding,accepted?'pending':'declined',accepted,accepted?null:expired?'workspace_expired':'aggregate_allowance_exhausted']);
-  });
+  },{signal:input.signal});
   await this.afterReservation?.(input);
   if(input.signal?.aborted)return;
   await this.complete(input);
  }
  async complete(input){
-  const result=await this.store.db.tx(async c=>{
+  const result=await this.store.db.tx(c=>this.completeInTransaction(c,input),{signal:input.signal});
+  await this.afterCompletion?.(input);return result;
+ }
+ async completeInTransaction(c,input,owned){
+   // Ownership check and completion share one transaction and one wall budget.
+   // No post-preliminary-commit abort gate can strand a proven reservation.
+   const ownership=owned??await (async()=>{
    await this.host(c,true);const {r,binding}=await this.charged(c,input);
    const row=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1 FOR UPDATE',[r.id])).rows[0];
+   return {r,binding,row};})();
+   const {r,binding,row}=ownership;
    need(row&&hash(row.binding)===hash(binding),409,'admission_binding_mismatch');
    if(row.state!=='pending')return row.state;
    if(r.expires_at<=new Date(await this.store.db.now(c))){await c.query("UPDATE correspondence_vf12_admissions SET state='declined',reason='workspace_expired_after_reservation' WHERE registration_id=$1",[r.id]);return 'declined';}
@@ -55,10 +63,8 @@ export class EntryReceiver {
    for(const peer of peers){await c.query('INSERT INTO correspondence_vf04_shares(consumer,source) VALUES($1,$2),($2,$1) ON CONFLICT DO NOTHING',[r.project_id,peer.project_id]);}
    const installed=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[r.project_id])).rows[0].config;
    await c.query("UPDATE correspondence_vf12_admissions SET state='ready',pool_config_digest=$2 WHERE registration_id=$1",[r.id,hash(installed)]);return 'ready';
-  });
-  await this.afterCompletion?.(input);return result;
  }
- async read(input){return this.store.db.tx(c=>this.readInTransaction(c,input));}
+ async read(input){return this.store.db.tx(c=>this.readInTransaction(c,input),{signal:input.signal});}
  async readInTransaction(c,input){
   await this.host(c);const {binding}=await this.charged(c,input);
   const row=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1',[input.registrationId])).rows[0];
@@ -75,12 +81,12 @@ export class EntryReceiver {
   // absent reservation. It never repeats an unknown begin call.
   const state=await this.store.db.tx(async c=>{
    await this.host(c,true);const {r,binding}=await this.charged(c,input);
-   const old=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1',[r.id])).rows[0];
-   if(old){need(hash(old.binding)===hash(binding),409,'admission_binding_mismatch');return old.state;}
+   const old=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1 FOR UPDATE',[r.id])).rows[0];
+   if(old){need(hash(old.binding)===hash(binding),409,'admission_binding_mismatch');return this.completeInTransaction(c,input,{r,binding,row:old});}
    if(reservedOnly)return 'unknown';
    await c.query("INSERT INTO correspondence_vf12_admissions(registration_id,project_id,binding,state,charged,reason) VALUES($1,$2,$3,'declined',false,'begin_absent_fenced_by_private_recovery')",[r.id,r.project_id,binding]);return 'declined';
-  });
-  return state==='pending'&&!input.signal?.aborted?this.complete(input):state;
+  },{signal:input.signal});
+  await this.afterCompletion?.(input);return state;
  }
  async authorizeRequest(req,token){
   const match=/^\/v1\/projects\/([^/]+)\/foundry(?:\/(.*))?$/i.exec(req.path);

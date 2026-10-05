@@ -1,6 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { Pool, parsePgSchema, quoteIdent, parsePoolMax, hashToken, hashRequest, issueToken, newId, ApiError } from './deps.mjs';
 import { need, profile, validateAttempt, grantToken, SCHEMA, contributionProfile } from './contract.mjs';
+import { transactionBudget } from '../../../../services/correspondence/dist/visitor-foundry/boundary.js';
+import { RECEIVE_MS, ACK_MS, PROGRESS_SCOPE, phaseCode, progressBinding } from './progress.mjs';
 
 /** Durable bounded adapter; existing PostgresStore owns all project/grant/event writes.
  * Separate commits are reconciled by existing immutable keys/hashes, never guessed. */
@@ -16,18 +18,19 @@ export class EntryStore {
     this.pool.on('error', () => {});
     this.requests = 0; this.peakRequests = 0; this.pending = 0; this.peakPending = 0; this.active = 0; this.peakActive = 0;
   }
-  async tx(fn) {
+  async tx(fn, { signal } = {}) {
     need(this.pending < 128, 503, 'entry_busy', 'reconcile_same_attempt');
     this.pending++; this.peakPending = Math.max(this.peakPending, this.pending);
+    const budget = transactionBudget(signal);
     let c;
     try {
-      c = await this.pool.connect(); this.active++; this.peakActive = Math.max(this.peakActive, this.active);
+      budget.check(); c = await this.pool.connect(); this.active++; this.peakActive = Math.max(this.peakActive, this.active); budget.attach(c);
       await c.query('BEGIN'); await c.query(`SET LOCAL search_path TO ${quoteIdent(this.schema)}`);
       await c.query("SET LOCAL lock_timeout='1500ms'");
       await c.query("SET LOCAL idle_in_transaction_session_timeout='15000ms'");
-      const value = await fn(c); await c.query('COMMIT'); return value;
-    } catch (e) { if (c) await c.query('ROLLBACK').catch(() => {}); throw e; }
-    finally { if (c) { c.release(); this.active--; } this.pending--; }
+      const value = await fn(c); budget.check(); await c.query('COMMIT'); budget.check(); return value;
+    } catch (e) { if (c && !budget.destroyed) await c.query('ROLLBACK').catch(() => {}); budget.check(); throw e; }
+    finally { budget.dispose(); if (c) this.active--; this.pending--; }
   }
   async migrate() {
     const sql = (await Promise.all(['001_entry.sql','002_versioned_profile.sql'].map(name=>readFile(new URL(`../migrations/${name}`,import.meta.url),'utf8')))).join('\n');
@@ -167,44 +170,78 @@ export class EntryStore {
     if(row.receiver_id==='disabled'||!this.receiver)return 'disabled';
     need(row.receiver_id===this.receiver.id,503,'receiver_installation_mismatch');
     const input = { registrationId: row.id, projectId: row.project_id };
-    const decision = await this.tx(async c => {
-      const current = (await c.query('SELECT receiver_started,receiver_state FROM correspondence_vf10_registrations WHERE id=$1 FOR UPDATE', [row.id])).rows[0];
-      if (current.receiver_started) return { begin: false, state: current.receiver_state };
-      // Persist uncertainty BEFORE crossing a separately committed receiving port.
-      await c.query("UPDATE correspondence_vf10_registrations SET receiver_started=true,receiver_state='unknown' WHERE id=$1", [row.id]);
-      return { begin: true, state: 'unknown' };
-    });
-    if (['ready', 'declined'].includes(decision.state)&&!row.entry_profile?.contribution) return decision.state;
-    // A thrown/unknown begin is never repeated. An exact pending readback proves
-    // a committed reservation that canonical recovery may finish, even on restart.
-    const bounded = async (method, options) => {
-      const controller = new AbortController(); let timer;
-      try { return await Promise.race([
-        Promise.resolve().then(() => this.receiver[method]({ ...input, signal: controller.signal }, options)),
-        new Promise((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('receiver deadline')); }, 1000); }),
-      ]); } finally { clearTimeout(timer); controller.abort(); }
+    // One wall budget covers marker + receiving SQL. A caller disconnect is not
+    // rollback evidence; the owned operation may finish within this fixed budget.
+    const controller = new AbortController(), phases = [];
+    const timer = setTimeout(() => controller.abort(), RECEIVE_MS);
+    const phase = async (name, fn) => {
+      const started = performance.now(); let abort;
+      try {
+        if (controller.signal.aborted) throw Object.assign(new Error(), {code:'receive_deadline'});
+        const result = await Promise.race([Promise.resolve().then(fn), new Promise((_,reject) => {
+          abort = () => reject(Object.assign(new Error(), {code:'receive_deadline'}));
+          controller.signal.addEventListener('abort',abort,{once:true});
+        })]);
+        phases.push({phase:name,outcome:'returned',code:null,state:typeof result==='string'?result:result?.state??null,ms:performance.now()-started});
+        return result;
+      } catch(error) {
+        phases.push({phase:name,outcome:controller.signal.aborted?'deadline':'error',code:controller.signal.aborted?'receive_deadline':phaseCode(error),state:null,ms:performance.now()-started});
+        return null;
+      } finally { if(abort)controller.signal.removeEventListener('abort',abort); }
     };
-    await this.afterReceiverMarker?.(row,decision);
-    if (decision.begin) { try { await bounded('begin'); } catch {} }
-    let state = 'unknown';
-    try { state = await bounded('read'); } catch {}
-    if (state === 'pending' && typeof this.receiver.recover === 'function') {
-      // No absent-begin fencing from a public continuation. This is completion
-      // of an already charged reservation, not another admission or begin call.
-      try { await bounded('recover', { reservedOnly: true }); } catch {}
-      // A recovery response alone never replaces authoritative bound readback.
-      try { state = await bounded('read'); } catch { state = 'unknown'; }
-    }
-    if(row.entry_profile?.contribution&&['ready','declined'].includes(decision.state)&&state!==decision.state)return 'unknown';
-    need(['unknown', 'pending', 'ready', 'declined'].includes(state), 503, 'receiver_invalid_readback', 'reconcile_same_attempt');
-    return this.tx(async c => {
-      // Terminal enrollment readback is monotonic: a slow earlier pending read
-      // cannot overwrite another process's exact ready/declined acknowledgment.
-      const current = (await c.query('SELECT receiver_state FROM correspondence_vf10_registrations WHERE id=$1 FOR UPDATE', [row.id])).rows[0].receiver_state;
-      if (['ready', 'declined'].includes(current)) return current;
-      await c.query('UPDATE correspondence_vf10_registrations SET receiver_state=$2 WHERE id=$1', [row.id, state]);
-      return state;
-    });
+    let decision, state = 'unknown', budgetExpired;
+    try {
+      decision = await phase('marker', async () => {
+        const marked = await this.tx(async c => {
+          const current = (await c.query('SELECT receiver_started,receiver_state FROM correspondence_vf10_registrations WHERE id=$1 FOR UPDATE', [row.id])).rows[0];
+          const decision = current.receiver_started ? {begin:false,state:current.receiver_state} : {begin:true,state:'unknown'};
+          if(!current.receiver_started)await c.query("UPDATE correspondence_vf10_registrations SET receiver_started=true,receiver_state='unknown' WHERE id=$1",[row.id]);
+          if(row.entry_profile?.contribution){
+            // A durable plan remains inspectable if later SQL/readback/response
+            // is lost. It does not claim that the planned port was entered.
+            const plan={schema:'neomorphic.foundry.entry-progress.v1',observedState:'unknown',acknowledgedState:decision.state,
+              plannedPhase:decision.begin?'begin':['ready','declined'].includes(decision.state)?'read':'recover',phases:[]};
+            const saved=await c.query(`INSERT INTO correspondence_idempotency(scope,project_id,key,request_hash,status_code,response_json,created_at)
+              VALUES($1,$2,$3,$4,202,$5,clock_timestamp()) ON CONFLICT(scope,project_id,key) DO UPDATE SET response_json=EXCLUDED.response_json
+              WHERE correspondence_idempotency.request_hash=EXCLUDED.request_hash`,[PROGRESS_SCOPE,row.project_id,row.id,progressBinding(row),plan]);
+            need(saved.rowCount===1,503,'progress_binding_conflict','reconcile_same_attempt');
+          }
+          return decision;
+        }, {signal:controller.signal});
+        await this.afterReceiverMarker?.(row,marked); return marked;
+      });
+      if (['ready','declined'].includes(decision?.state) && !row.entry_profile?.contribution) return decision.state;
+      if (decision?.begin) await phase('begin', () => this.receiver.begin({...input,signal:controller.signal}));
+      if (!controller.signal.aborted && row.entry_profile?.contribution && !['ready','declined'].includes(decision?.state) && typeof this.receiver.recover==='function') {
+        // The canonical transaction proves ownership itself. An earlier 1s read
+        // must not gate a safe completion. Absent ownership stays unknown.
+        await phase('recover', () => this.receiver.recover({...input,signal:controller.signal},{reservedOnly:true}));
+      }
+      if (!controller.signal.aborted) state = await phase('read',async () => {
+        const observed = await this.receiver.read({...input,signal:controller.signal});
+        need(['unknown','pending','ready','declined'].includes(observed),503,'receiver_invalid_readback','reconcile_same_attempt');
+        return observed;
+      }) ?? 'unknown';
+      budgetExpired = controller.signal.aborted;
+    } finally { clearTimeout(timer); controller.abort(); }
+    // A separate bounded acknowledgment/diagnostic transaction cannot prolong
+    // receiving indefinitely. It changes neither allocation nor physical work.
+    const ack = new AbortController(), ackTimer = setTimeout(() => ack.abort(), ACK_MS);
+    try { return await this.tx(async c => {
+      const current = (await c.query('SELECT receiver_state FROM correspondence_vf10_registrations WHERE id=$1 FOR UPDATE',[row.id])).rows[0].receiver_state;
+      const acknowledged = ['ready','declined'].includes(current) ? current : state;
+      if (!['ready','declined'].includes(current)) await c.query('UPDATE correspondence_vf10_registrations SET receiver_state=$2 WHERE id=$1',[row.id,state]);
+      if (row.entry_profile?.contribution) {
+        const record = {schema:'neomorphic.foundry.entry-progress.v1',budgetExpired,observedState:state,acknowledgedState:acknowledged,phases};
+        const stored = await c.query(`INSERT INTO correspondence_idempotency(scope,project_id,key,request_hash,status_code,response_json,created_at)
+          VALUES($1,$2,$3,$4,202,$5,clock_timestamp()) ON CONFLICT(scope,project_id,key) DO UPDATE
+          SET response_json=EXCLUDED.response_json WHERE correspondence_idempotency.request_hash=EXCLUDED.request_hash`,
+        [PROGRESS_SCOPE,row.project_id,row.id,progressBinding(row),record]);
+        need(stored.rowCount===1,503,'progress_binding_conflict','reconcile_same_attempt');
+      }
+      if (row.entry_profile?.contribution && ['ready','declined'].includes(acknowledged) && state!==acknowledged) return 'unknown';
+      return acknowledged;
+    }, {signal:ack.signal}); } finally { clearTimeout(ackTimer); ack.abort(); }
   }
 
   boundedCorrespondence() {

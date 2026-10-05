@@ -7,6 +7,20 @@ export class IntegrationError extends Error {
   constructor(public status: number, public code: string, public nextAction = "Reload current state; reconcile an unknown outcome before retrying.") { super(code); }
 }
 export type Context = { projectId: string; token: string };
+// A transaction owns its checked-out connection. Abort destroys that lease;
+// it never returns a client with uncertain/in-flight SQL to the pool.
+export function transactionBudget(signal?: AbortSignal) {
+  let client: pg.PoolClient | undefined, destroyed = false;
+  const abort = () => { if (client && !destroyed) { destroyed = true; client.release(true); } };
+  const check = () => { if (signal?.aborted) throw new IntegrationError(503, "transaction_aborted"); };
+  signal?.addEventListener("abort", abort, { once: true });
+  return {
+    check,
+    attach(c: pg.PoolClient) { client = c; if (signal?.aborted) abort(); check(); },
+    get destroyed() { return destroyed; },
+    dispose() { signal?.removeEventListener("abort", abort); if (client && !destroyed) client.release(); client = undefined; },
+  };
+}
 export class FoundryBoundary {
   private pool: pg.Pool;
   private pending = 0;
@@ -18,23 +32,27 @@ export class FoundryBoundary {
       idleTimeoutMillis: 10000, allowExitOnIdle: true, application_name: "neomorphic_vf04" });
     this.pool.on("error", () => {});
   }
-  async tx<T>(fn: (c: pg.PoolClient) => Promise<T>): Promise<T> {
+  async tx<T>(fn: (c: pg.PoolClient) => Promise<T>, { signal }: { signal?: AbortSignal } = {}): Promise<T> {
     if (this.pending >= 128) throw new IntegrationError(503, "ingress_capacity");
     this.pending++;
+    const budget = transactionBudget(signal);
     let c: pg.PoolClient | undefined;
     try {
-      c = await this.pool.connect();
+      budget.check(); c = await this.pool.connect(); budget.attach(c);
       await c.query("BEGIN");
       await c.query(`SET LOCAL search_path TO ${quoteIdent(this.schema)}`);
       await c.query("SET LOCAL lock_timeout='1500ms'");
       await c.query("SET LOCAL idle_in_transaction_session_timeout='10000ms'");
       const result = await fn(c);
+      budget.check();
       await c.query("COMMIT");
+      budget.check();
       return result;
     } catch (e) {
-      if (c) await c.query("ROLLBACK").catch(() => {});
+      if (c && !budget.destroyed) await c.query("ROLLBACK").catch(() => {});
+      budget.check();
       throw e;
-    } finally { c?.release(); this.pending--; }
+    } finally { budget.dispose(); this.pending--; }
   }
   async authorize(c: pg.PoolClient, ctx: Context, write = false) {
     const row = (await c.query("SELECT * FROM correspondence_grants WHERE token_hash=$1 FOR SHARE", [hashToken(ctx.token)])).rows[0];
