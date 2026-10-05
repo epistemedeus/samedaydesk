@@ -5,5 +5,26 @@
   "tree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
   "module": "@neomorphic/correspondence",
   "layout": "vendor/visitor-foundry-receiver keeps repo-relative paths for the import closure only",
-  "note": "Subset of Neo 1652533b, byte-identical for paths that remain. One correspondence module (src, dist, migrations, bin). Script and pack files are the static import closure of the entry mount, visitor CLI, worker, portable loader, execution example build, and the SDS acceptance helpers, plus dynamically loaded migrations, oracle, and held-out files. Not the whole Neo tree. No node_modules, .runtime, or .build. Worker drain remains in server/foundry. Canonical host.ts closes extension then base."
+  "note": "Subset of Neo 1652533b, byte-identical for paths that remain except the explicit local amendments below. One correspondence module (src, dist, migrations, bin). Script and pack files are the static import closure of the entry mount, visitor CLI, worker, portable loader, execution example build, and the SDS acceptance helpers, plus dynamically loaded migrations, oracle, and held-out files. Not the whole Neo tree. No node_modules, .runtime, or .build. Worker drain remains in server/foundry. Canonical host.ts closes extension then base.",
+  "localAmendments": [
+    {
+      "package": "ROOT-SOL-RETAINED-PLATFORM-100502",
+      "sdsBase": "1132af16054e4639e57827c7e521e2a9ff9f052e",
+      "reason": "Faithful stdlib setrlimit-before-exec launcher, owned process-group cancellation and exit/pipe-drain witnesses; PROFILE, CAPS and child.py unchanged",
+      "files": {
+        "scripts/visitor-foundry/execution/src/supervisor.mjs": {
+          "receivedSha256": "bd69a81c569f0322f2f06901218d4f016ae8e5543cd360106d2627428e5444b2",
+          "sha256": "dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983"
+        },
+        "scripts/visitor-foundry/execution/src/launch.mjs": {
+          "receivedSha256": null,
+          "sha256": "0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95"
+        },
+        "scripts/visitor-foundry/execution/src/launcher.py": {
+          "receivedSha256": null,
+          "sha256": "672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        }
+      }
+    }
+  ]
 }
