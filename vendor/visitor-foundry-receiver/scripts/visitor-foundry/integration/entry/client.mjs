@@ -1,6 +1,6 @@
 import {createHmac} from 'node:crypto';
 import {join} from 'node:path';
-import {openSync,closeSync,fsyncSync} from 'node:fs';
+import {openSync,closeSync,fsyncSync,readdirSync} from 'node:fs';
 import {readPrivateJson,readPrivateSecret,writeJsonNoClobber,canonicalOperatorOrigin} from '../../../../services/correspondence/bin/safe-io.mjs';
 import {prepare,continueEntry,entryRequest} from '../../entry/src/client.mjs';
 import {grantToken,need,exact} from '../../entry/src/contract.mjs';
@@ -10,6 +10,7 @@ import {contribute} from '../compound/contribute.mjs';
 import {checkUploadIntent,checkUploadReceipt} from '../compound/upload.mjs';
 import {decodeComponent,encodeComponent,COMPONENT_WIRE} from '../src/portable-upload-wire.mjs';
 import {portableArtifact} from '../src/portable-profile.mjs';
+import {continuationView} from '../src/execution-view.mjs';
 import {clientFailure} from '../compound/transport.mjs';
 const sync=dir=>{const fd=openSync(dir,'r');try{fsyncSync(fd);}finally{closeSync(fd);}};
 export function durable(directory,name,value){const file=join(directory,name),old=readPrivateJson(file);if(old)need(hash(old)===hash(value),409,'local_intent_mismatch','restore_exact_attempt');else writeJsonNoClobber(file,value);sync(directory);return value;}
@@ -107,11 +108,58 @@ export async function prepareNoLaunch(config,{intentId,expectedHostConfigId,requ
  return received;
 }
 
+// Immutable local lineage: the first intent is never rewritten. Only an explicit
+// authenticated status reconciliation can seal an owner-received successor.
+function savedInvocation(config,request){
+ const prefix=`invoke-${hash(request).slice(7)}`,first=readPrivateJson(join(config.directory,`${prefix}.json`));
+ if(!first)return null;
+ need(hash(first.request)===hash(request),409,'local_intent_mismatch');
+ const names=readdirSync(config.directory).filter(n=>n.startsWith(`${prefix}-continuation-`)&&n.endsWith('.json'));
+ need(names.length<=4,409,'local_intent_mismatch');
+ const transitions=names.map(n=>{const t=readPrivateJson(join(config.directory,n)),{id,...body}=t??{};
+  need(continuationView(t) && hash(body)===id && n===`${prefix}-continuation-${id.slice(7)}.json` && t.requestDigest===hash(request),409,'local_intent_mismatch');return t;});
+ let current=first;
+ const consumed=new Set();
+ for(let i=0;i<4;i++){
+  const next=transitions.filter(t=>t.predecessorManifestId===current.manifestId&&!consumed.has(t.id));need(next.length<=1,409,'local_intent_mismatch');
+  if(!next.length)break;consumed.add(next[0].id);current={manifestId:next[0].successorManifestId,request};
+ }
+ need(consumed.size===transitions.length,409,'local_intent_mismatch');return current;
+}
+export async function prepareContinuation(config,{intentId,expectedHostConfigId,request}){
+ const {client,receipt}=resumed(config),a=standing(config),saved=savedInvocation(config,request);
+ need(saved,409,'local_intent_mismatch');
+ const status=await client.call('status'),row=status.portableExecution?.invocations.find(x=>x.taskId===request.taskId);
+ need(row?.state==='completed' && row.termination?.noLaunch===true && row.manifestId===saved.manifestId && row.requestDigest===hash(request),409,'invocation_no_launch');
+ need(status.verification.id===row.verificationId && row.sourceProject===receipt.projectId,409,'standing_terms_mismatch');
+ const common={schema:'sds.foundry.private-pass.v1',projectId:receipt.projectId,expectedHostConfigId,expectedEntryTermsHash:a.entryTerms,
+  expectedVerificationId:row.verificationId,candidateId:row.candidateId,expectedGeneration:row.generation,reconcileIntentId:null};
+ const renewalIntentId=`${intentId}:evidence`;
+ return {renew:{...common,intentId:renewalIntentId,action:'renew-evidence'},
+  dispatch:{...common,intentId:`${intentId}:dispatch`,action:'dispatch',expectedGeneration:row.generation+1},
+  receive:{...common,schema:'sds.foundry.private-pass.v3',intentId:`${intentId}:receive`,action:'receive-no-launch',
+   registrationId:receipt.registrationId,taskId:request.taskId,manifestId:saved.manifestId,expectedExecutionId:row.executionId,
+   expectedFence:row.fence,expectedObservationId:row.observationId,request,renewalIntentId,successorGeneration:row.generation+1}};
+}
+export async function reconcileInvocation(config,request){
+ const {client,receipt}=resumed(config),saved=savedInvocation(config,request);
+ need(saved,409,'local_intent_mismatch');
+ const status=await client.call('status'),row=status.portableExecution?.invocations.find(x=>x.taskId===request.taskId),t=continuationView(row?.continuation);
+ const {id,...body}=t??{};
+ need(t?.schema==='neomorphic.foundry.invocation-continuation.v1' && id===hash(body) && t.projectId===receipt.projectId && t.registrationId===receipt.registrationId
+  && t.taskId===request.taskId && t.requestDigest===hash(request) && [t.predecessorManifestId,t.successorManifestId].includes(saved.manifestId)
+  && row.manifestId===t.successorManifestId && row.executionId===t.executionId && row.fence===t.fence && row.generation===t.generation
+  && row.verificationId===t.verificationId && status.verification.id===t.verificationId
+  && row.priorAttempts.some(p=>p.executionId===t.priorExecutionId && p.observationId===t.priorObservationId && p.noLaunch===true),409,'continuation_required');
+ need(['reserved','completed'].includes(row.state),409,'invocation_outcome_unknown');
+ durable(config.directory,`invoke-${hash(request).slice(7)}-continuation-${id.slice(7)}.json`,t);
+ return {reconciled:true,transition:t,state:row.state,nextAction:'invoke_same_saved_intent',physicalLaunched:false};
+}
 export async function useFromEntry(config,request){
  const {client,receipt}=resumed(config);
  if(receipt.receiver.state!=='ready')return {original:request.input,invocation:null,nextAction:'use_private_correspondence'};
- const name=`invoke-${hash(request).slice(7)}.json`,saved=readPrivateJson(join(config.directory,name));
- let discovery=null,body=saved;
+ const name=`invoke-${hash(request).slice(7)}.json`;
+ let discovery=null,body=savedInvocation(config,request);
  if(!body){discovery=await client.call('task',{request,negotiation:{accepts:[]},sharing:null});if(!discovery.manifest)return {discovery,invocation:null};body={manifestId:discovery.manifest.id,request};durable(config.directory,name,body);}
  return {discovery,invocation:await client.call('invoke',body)};
 }

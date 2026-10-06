@@ -27,10 +27,13 @@ const fixturePools = new Set();
 const evidence = { baseHead, hostingerMeasured: false, transitions: [], generations: [] };
 const inherited = { PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'C', LC_ALL: 'C' };
 async function command(cwd, node, args, env = {}, expected = 0) {
-  const r = await runBounded(node, args, { cwd, env: { ...inherited, ...env }, timeoutMs: 60000,
+  const installer = args[0] === 'server/foundry/install.mjs';
+  const runArgs = installer ? ['--import', path.join(root, 'server/scripts/fixtures/installer-code.mjs'), ...args] : args;
+  const r = await runBounded(node, runArgs, { cwd, env: { ...inherited, ...env }, timeoutMs: 60000,
     capture: true, stdoutLimit: 512000, outputLimit: 1048576 });
-  assert.equal(r.reason, null); assert.equal(r.code, expected, `${args[0]} exit ${r.code}`);
-  return r.stdout.trim() ? JSON.parse(r.stdout.trim().split('\n').at(-1)) : null;
+  const result = r.stdout.trim() ? JSON.parse(r.stdout.trim().split('\n').at(-1)) : null;
+  assert.equal(r.reason, null); assert.equal(r.code, expected, `${args[0]} exit ${r.code}: ${result?.fixtureInstallerFailure ?? 'no_typed_fixture_code'} phase:${result?.fixturePhase ?? 'unknown'}`);
+  return result;
 }
 async function copyRoot(name) {
   const target = path.join(dir, name); await mkdir(target);
@@ -39,6 +42,7 @@ async function copyRoot(name) {
   await cp(path.join(root, 'server/foundry'), path.join(target, 'server/foundry'), { recursive: true });
   await mkdir(path.join(target, 'server/scripts/fixtures'), { recursive: true });
   await cp(path.join(root, 'server/scripts/fixtures/generation-host.mjs'), path.join(target, 'server/scripts/fixtures/generation-host.mjs'));
+  await cp(path.join(root, 'server/scripts/fixtures/installer-interleaving.mjs'), path.join(target, 'server/scripts/fixtures/installer-interleaving.mjs'));
   await cp(path.join(root, 'package.json'), path.join(target, 'package.json'));
   await symlink(path.join(root, 'node_modules'), path.join(target, 'node_modules'));
   await symlink(path.join(root, executionPath, '.runtime'), path.join(target, executionPath, '.runtime'));
@@ -161,23 +165,51 @@ test('receiving without expected identities refuses before migration or private 
   assert.deepEqual(await snapshot(f), before);
 });
 test('unconsumed transition preserves full original authority/charge/caps; concurrent exact replay', async () => {
-  const f = await fixture(); await f.install(oldRoot); const before = await snapshot(f); const env = await identity(f);
-  const results = await Promise.all([f.install(newRoot, node218, ['--receive-unconsumed'], 0, env), f.install(newRoot, node218, ['--receive-unconsumed'], 0, env)]);
-  assert.deepEqual(results.map(r => r.receiving.replayed).sort(), [false, true]);
-  assert.equal(results[0].receiving.id, results[1].receiving.id);
-  const after = await snapshot(f); const e = after.correspondence_vf10_installation[0], prior = before.correspondence_vf10_installation[0];
-  for (const key of Object.keys(prior).filter(k => k !== 'active_profile')) assert.deepEqual(e[key], prior[key]);
-  const record = after.correspondence_vf12_allocation_receipts[0].record;
-  assert.deepEqual(record.originalInstallation, prior); assert.deepEqual(record.previousHost, before.correspondence_vf12_host[0].config);
-  for (const key of ['id','pool','maxAdmissions','maxPhysical','allowance','aggregate','contributionTerms','physicalMemoryMb','sharing','evaluator']) assert.deepEqual(record.nextHost[key], record.previousHost[key]);
-  assert.equal(record.evidenceTrusted, false); assert.equal(record.visitorWorkReplayed, false);
-  evidence.transitions.push({ ...results[0].receiving, concurrentReplay: true, previousHostConfigId: record.previousHost.configId,
-    previousEntryTermsHash: record.previousEntry.termsHash, originalTermsHash: record.originalInstallation.profile.termsHash,
-    charged: record.originalInstallation.charged, maxEnrollments: record.originalInstallation.max_enrollments,
-    maxAdmissions: record.nextHost.maxAdmissions, maxPhysical: record.nextHost.maxPhysical,
-    oldRecordsRetained: true, originalAuthorityPreserved: true });
-  assert.equal((await f.install(newRoot, node218)).charged, 0);
-  assert.deepEqual(await snapshot(f), after);
+  const iterations = Number(process.env.FOUNDRY_CONCURRENT_ITERATIONS ?? 1);
+  assert.ok(Number.isInteger(iterations) && iterations >= 1 && iterations <= 100);
+  for (let iteration = 0; iteration < iterations; iteration++) {
+    const f = await fixture(); await f.install(oldRoot); const before = await snapshot(f); const env = await identity(f);
+    const settled = await Promise.allSettled([f.install(newRoot, node218, ['--receive-unconsumed'], 0, env), f.install(newRoot, node218, ['--receive-unconsumed'], 0, env)]);
+    // Reap both diagnostic children even when either control fails.
+    const results = settled.map(r => { assert.equal(r.status, 'fulfilled', r.reason?.message); return r.value; });
+    assert.deepEqual(results.map(r => r.receiving.replayed).sort(), [false, true]);
+    assert.equal(results[0].receiving.id, results[1].receiving.id);
+    const after = await snapshot(f); const e = after.correspondence_vf10_installation[0], prior = before.correspondence_vf10_installation[0];
+    for (const key of Object.keys(prior).filter(k => k !== 'active_profile')) assert.deepEqual(e[key], prior[key]);
+    const record = after.correspondence_vf12_allocation_receipts[0].record;
+    assert.deepEqual(record.originalInstallation, prior); assert.deepEqual(record.previousHost, before.correspondence_vf12_host[0].config);
+    for (const key of ['id','pool','maxAdmissions','maxPhysical','allowance','aggregate','contributionTerms','physicalMemoryMb','sharing','evaluator']) assert.deepEqual(record.nextHost[key], record.previousHost[key]);
+    assert.equal(record.evidenceTrusted, false); assert.equal(record.visitorWorkReplayed, false);
+    evidence.transitions.push({ ...results[0].receiving, concurrentReplay: true, previousHostConfigId: record.previousHost.configId,
+      previousEntryTermsHash: record.previousEntry.termsHash, originalTermsHash: record.originalInstallation.profile.termsHash,
+      charged: record.originalInstallation.charged, maxEnrollments: record.originalInstallation.max_enrollments,
+      maxAdmissions: record.nextHost.maxAdmissions, maxPhysical: record.nextHost.maxPhysical,
+      oldRecordsRetained: true, originalAuthorityPreserved: true });
+    assert.equal((await f.install(newRoot, node218)).charged, 0);
+    assert.deepEqual(await snapshot(f), after);
+  }
+});
+test('forced owning migration/receive boundary reproduces old deadlock and preserves new lock order', async () => {
+  const unsafe = await copyRoot('unsafe-entry-migration');
+  const file = `${vendor}/scripts/visitor-foundry/entry/src/store.mjs`;
+  const received = await runBounded('git', ['show', `6e901035597bfa46ece12de072a7ae3880703da8:${file}`], { cwd: root, capture: true, stdoutLimit: 100000 });
+  assert.equal(received.reason, null); assert.equal(received.code, 0); await writeFile(path.join(unsafe, file), received.stdout);
+  for (const [cwd, corrected] of [[unsafe, false], [newRoot, true]]) {
+    const f = await fixture(); await f.install(oldRoot); const env = await identity(f); const before = await snapshot(f);
+    const result = await command(cwd, node218, ['server/scripts/fixtures/installer-interleaving.mjs'], { ...f.env, ...env });
+    assert.equal(result.locks.installationWait, true); assert.equal(result.locks.registrationsHeld, !corrected);
+    if (!corrected) assert.ok(result.outcomes.some(r => r.code === '40P01'));
+    else {
+      assert.ok(result.outcomes.every(r => r.ok)); assert.equal(result.outcomes[0].receipt.replayed, false);
+      const replay = await f.install(newRoot, node218, ['--receive-unconsumed'], 0, env);
+      assert.equal(replay.receiving.replayed, true); assert.equal(replay.receiving.id, result.outcomes[0].receipt.id);
+      const after = await snapshot(f); const prior = before.correspondence_vf10_installation[0];
+      for (const key of Object.keys(prior).filter(k => k !== 'active_profile')) assert.deepEqual(after.correspondence_vf10_installation[0][key], prior[key]);
+      assert.equal(after.correspondence_vf12_allocation_receipts.length, 1);
+      assert.equal(after.correspondence_vf12_admissions.length, 0);
+    }
+    evidence.transitions.push({ forcedLockOrder: true, corrected, ...result });
+  }
 });
 test('changed allocation caps cannot use the pre-admission transition', async () => {
   const f = await fixture(); await f.install(oldRoot); const env = await identity(f); const before = await snapshot(f);
@@ -380,7 +412,15 @@ test('all vendored amendments declare exact base/current hashes; execution remai
 test('actual managed-host named receive build receives the same private unconsumed enrollment', async () => {
   const f = await fixture(); await f.install(oldRoot); const env = await identity(f);
   const before = await snapshot(f);
-  const result = await runBounded('npm', ['run', 'build:managed-foundry-receive'], { cwd: root,
+  // Managed delivery uses its own fresh bundled installation. A local system
+  // venv is a separate identity and must never be converted by this test.
+  const managedRoot=await copyRoot('managed-receive-build');
+  await rm(path.join(managedRoot,executionPath,'.runtime'));
+  await cp(path.join(root,'client'),path.join(managedRoot,'client'),{recursive:true,filter:p=>!['node_modules','build','dist'].includes(path.basename(p))});
+  await cp(path.join(root,'server/lib'),path.join(managedRoot,'server/lib'),{recursive:true});
+  await cp(path.join(root,'server/scripts/generate-route-shells.js'),path.join(managedRoot,'server/scripts/generate-route-shells.js'));
+  await cp(path.join(root,'package-lock.json'),path.join(managedRoot,'package-lock.json'));
+  const result = await runBounded('npm', ['run', 'build:managed-foundry-receive'], { cwd: managedRoot,
     env: { ...inherited, ...f.env, ...env, PATH: `${path.dirname(node218)}:${inherited.PATH}` },
     timeoutMs: 180000, capture: true, stdoutLimit: 1048576, outputLimit: 2097152 });
   assert.equal(result.reason, null); assert.equal(result.code, 0);

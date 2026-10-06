@@ -277,6 +277,44 @@
           "sha256": "f7a7bcff913497af33677073b563f06dee057345be63b9a1144a6c6a599d5cb9"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-LIFECYCLE-100517",
+      "sdsBase": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+      "reason": "Explicit existing expiry revalidation, canonical dispatch/publication, and lossless owner-received successor manifest for a durable no-launch proof. Same original task/request/artifact/registration/authority; immutable manifest lineage, observations and charges retained. Current installed policy/runtime mandatory; no expiry extension, unknown physical retry, refund, migration, namespace or sealed executor change. Explicit authenticated client reconciliation seals a separate successor receipt; completed invocation result replay reads history without a new launch.",
+      "files": {
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "10d429a9c7c1cca35c0b335bb9d035818ebda1b2bf7c3300179ebab1ac284f7e",
+          "sha256": "406078adb6d192f47630f702b51b127a17e5b52f4ff38159befb610cf95e2b9d"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "6d62f4135eb760e2a6308ad6125797b306740a87e6e552e79ee8a17c5846177c",
+          "sha256": "c7da966eee93a57e8e3a47557f598c6f47b388478a89ecd2ad5bbc2e2f9702fc"
+        },
+        "scripts/visitor-foundry/integration/src/execution-view.mjs": {
+          "receivedSha256": "132a0214e5da3d4e58eaf629564e92718833995b98bdbd4b8d47044d502aa6e5",
+          "sha256": "f2d273fd9f9f7612d5af95321cfc77bdf0cf5eaf109223e06c3039d9e8a4f025"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "d03d34dab4064b90a765243430173914ecfdc4e0ce0fc6fdb910ddf3dfbc81f1",
+          "sha256": "f9342bbb7983f0c3c82996501af41b7779df5a8de18bf86db1435ecbd9edfdd6"
+        },
+        "scripts/visitor-foundry/integration/src/store.mjs": {
+          "receivedSha256": "f7a7bcff913497af33677073b563f06dee057345be63b9a1144a6c6a599d5cb9",
+          "sha256": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb"
+        }
+      }
+    },
+    {
+      "package": "ROOT-SOL-HOST-INSTALL-CONCURRENCY-100520",
+      "sdsBase": "6e901035597bfa46ece12de072a7ae3880703da8",
+      "reason": "Replay entry migrations take the strongest existing installation table lock before registrations, matching canonical allocation receiving lock order. Removes independently reproduced 40P01 DDL/receiving deadlock without retries, longer budgets, changed SQL/history/authority, session locks or runtime/execution changes. Fresh schema creation retains the existing transaction-scoped migration advisory lock.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "378308f5aa80bda968fcae7617aeb047afd4bffbd59f9b1998947d6f50a7a30a",
+          "sha256": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1"
+        }
+      }
     }
   ]
 }

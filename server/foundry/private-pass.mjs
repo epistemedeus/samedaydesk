@@ -67,7 +67,7 @@ export async function privatePassMain(env=process.env) {
     if(!result.ok) process.exitCode=2;
     return result;
   } catch(error) {
-    console.error(JSON.stringify({ok:false,code:/^[a-z_]{1,100}$/.test(error?.code)?error.code:'private_pass_failed'}));
+    console.error(JSON.stringify({ok:false,code:typeof error?.code==='string' && /^[a-z_]{1,100}$/.test(error.code)?error.code:'private_pass_failed'}));
     process.exitCode=2;
   } finally {
     if(base) await closeEntryThenBase(mounted,base).catch(()=>{});
