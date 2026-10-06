@@ -29,7 +29,7 @@ const inherited = { PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'C', L
 async function command(cwd, node, args, env = {}, expected = 0) {
   const r = await runBounded(node, args, { cwd, env: { ...inherited, ...env }, timeoutMs: 60000,
     capture: true, stdoutLimit: 512000, outputLimit: 1048576 });
-  assert.equal(r.reason, null); assert.equal(r.code, expected, `${args[0]} exit ${r.code}`);
+  assert.equal(r.reason, null); assert.equal(r.code, expected, `${args[0]} exit ${r.code}: ${r.stderr.trim() || r.stdout.trim()}`);
   return r.stdout.trim() ? JSON.parse(r.stdout.trim().split('\n').at(-1)) : null;
 }
 async function copyRoot(name) {
