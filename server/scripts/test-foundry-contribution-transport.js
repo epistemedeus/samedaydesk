@@ -25,6 +25,7 @@ import {createArtifact} from '../../vendor/visitor-foundry-receiver/scripts/visi
 import {portableArtifact,portableVerification} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-profile.mjs';
 import {callerResult,callerFailure,remoteJourney,verifyCallerClosure} from '../foundry/activation/remote-private-journey.mjs';
 const root=process.cwd(),vendor=path.join(root,'vendor/visitor-foundry-receiver'),baseHead='0efa7ec527959281f6de5fa5e16c172a2903ad3f';
+const expectedControlBase=JSON.parse(await readFile(path.join(root,'server/foundry/activation/private-control-pin.json'),'utf8')).base;
 const legacyTransport={schema:LEGACY_COMPONENT_WIRE,sourceEncoding:'base64-utf8',moduleEncoding:'base64'};
 const secret='ARBITRARY_PROSE_SECRET postgres://credential@private/db SELECT secret_payload';
 let cluster,dir,OldClient,oldCatch,OldUploadIntent;
@@ -241,7 +242,7 @@ test('exact accepted v1 saved/upload-started intent continues as v2 without auth
  const automatic=await f.a.run('contribute',original(),1);assert.equal(automatic.error.code,'upload_outcome_unknown');assert.equal(f.componentRequests,1);
  const canary=await f.a.run('upload-full-canary');assert.equal(canary.routeValidationObserved,true);assert.equal(canary.transport,COMPONENT_WIRE);
  const ownerFile=path.join(f.privateDir,'full-canary-owner.json');await writeFile(ownerFile,JSON.stringify({schema:'sds.foundry.remote-owner-qa.v1',baseUrl:f.baseUrl,directory:f.privateDir,authority:f.a.configuration.authority,expectedHostConfigId:f.descriptor.profile.contribution.binding.hostConfigId,expectedEntryTermsHash:f.descriptor.profile.termsHash}),{mode:0o600});
- const ownerCanary=await remoteJourney('a-upload-full-canary',ownerFile);assert.equal(ownerCanary.routeValidationObserved,true);assert.equal(ownerCanary.mutated,false);assert.equal(ownerCanary.pin.base,'eaed1efef1c6b04fc0ba74bd55e25bf424964a34');
+ const ownerCanary=await remoteJourney('a-upload-full-canary',ownerFile);assert.equal(ownerCanary.routeValidationObserved,true);assert.equal(ownerCanary.mutated,false);assert.equal(ownerCanary.pin.base,expectedControlBase);
  assert.equal((await f.counts()).components,0);for(const op of ['create','claim','checkpoint','submit'])await assert.rejects(stat(path.join(f.a.directory,`${op}.json`)),{code:'ENOENT'});
  // Unknown first explicit v2 acknowledgement: committed exactly once, then restarted same-intent reconciliation.
  f.loseNextUpload();const lost=await f.a.run('reconcile-upload',undefined,1);assert.equal(lost.error.code,'transport_outcome_unknown');assert.equal((await f.counts()).components,1);
@@ -279,4 +280,4 @@ test('full-wire invalid schema refuses before mounted authentication and any SQL
  } finally {f.entry.isVisitorToken=isVisitor;f.store.authenticated=authenticated;for(const {owner,name,original}of databaseMethods)owner[name]=original;}
  assert.deepEqual(await f.counts(),prior);assert.deepEqual(await f.authority(),authority);
 });
-test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,'eaed1efef1c6b04fc0ba74bd55e25bf424964a34');});
+test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,expectedControlBase);});
