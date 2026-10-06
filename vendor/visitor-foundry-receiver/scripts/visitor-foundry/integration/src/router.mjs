@@ -3,11 +3,13 @@ import { createRequire } from 'node:module';
 import { FoundryError } from '../../validation/src/index.mjs';
 import { UnsupportedWire } from './wire.mjs';
 import { IntegrationError } from '../../../../services/correspondence/dist/visitor-foundry/boundary.js';
+import {COMPONENT_WIRE} from './portable-upload-wire.mjs';
 const require = createRequire(new URL('../../../../services/correspondence/package.json', import.meta.url));
 const { Router } = require('express');
 export function createIntegrationRouter(store) {
   const router = Router(); const base = '/v1/projects/:projectId/foundry';
   const ctx = req => ({ projectId: req.params.projectId, token: req.header('authorization')?.replace(/^Bearer /, '') ?? '' });
+  router.use(`${base}/components`,(_req,res,next)=>{res.set('x-foundry-component-wire',COMPONENT_WIRE);next();});
   for (const [path, method] of [['withdraw','withdraw'], ['task','task'], ['components','uploadComponent'], ['participation','participate'], ['resolve','resolve'], ['gap','gap'], ['candidates','admit'], ['invoke','invoke'], ['observe','observe'], ['decline','decline'], ['environment-evidence','submitEnvironmentEvidence']]) {
     router.post(`${base}/${path}`, async (req, res) => res.json(await store[method](ctx(req), req.body, req.header('idempotency-key'))));
   }

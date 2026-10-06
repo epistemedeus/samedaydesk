@@ -7,6 +7,10 @@ import {grantToken,need,exact} from '../../entry/src/contract.mjs';
 import {hash} from '../../capabilities/src/index.mjs';
 import {participationClient} from '../compound/client.mjs';
 import {contribute} from '../compound/contribute.mjs';
+import {checkUploadIntent,checkUploadReceipt} from '../compound/upload.mjs';
+import {decodeComponent,COMPONENT_WIRE} from '../src/portable-upload-wire.mjs';
+import {portableArtifact} from '../src/portable-profile.mjs';
+import {clientFailure} from '../compound/transport.mjs';
 const sync=dir=>{const fd=openSync(dir,'r');try{fsyncSync(fd);}finally{closeSync(fd);}};
 export function durable(directory,name,value){const file=join(directory,name),old=readPrivateJson(file);if(old)need(hash(old)===hash(value),409,'local_intent_mismatch','restore_exact_attempt');else writeJsonNoClobber(file,value);sync(directory);return value;}
 export function standing(config){
@@ -47,6 +51,30 @@ export async function reconcileContribution(config,operation){
  const {client}=resumed(config),saved=readPrivateJson(join(config.directory,`${operation}.json`)),a=standing(config);
  need(saved&&saved.entryTerms===a.entryTerms&&saved.contributionTerms===a.contributionTerms,409,'local_intent_mismatch');
  return client.session.reconcile(saved.intent);
+}
+
+export async function reconcileUpload(config){
+ const {client,receipt}=resumed(config),a=standing(config);
+ need(receipt.receiver.state==='ready',409,'receiver_not_ready');
+ const saved=readPrivateJson(join(config.directory,'upload.json'));
+ need(saved?.entryTerms===a.entryTerms && saved.contributionTerms===a.contributionTerms,409,'local_intent_mismatch');
+ const intent=saved.intent,artifact=portableArtifact(decodeComponent(intent?.body?.artifact));checkUploadIntent(intent,artifact,a.contributionTerms);
+ const started=readPrivateJson(join(config.directory,'upload-started.json'));
+ need(started?.entryTerms===a.entryTerms && started.contributionTerms===a.contributionTerms && started.intent?.intentDigest===hash(intent),409,'local_intent_mismatch');
+ const existing=readPrivateJson(join(config.directory,'upload-receipt.json'));
+ if(existing){need(existing.entryTerms===a.entryTerms && existing.contributionTerms===a.contributionTerms,409,'local_intent_mismatch');return {reconciled:true,receipt:checkUploadReceipt(existing.intent,artifact)};}
+ const terms=await client.call('participation/terms');need(terms.id===a.contributionTerms,409,'standing_terms_mismatch');
+ const result=checkUploadReceipt(await client.call('components',intent.body,intent.key),artifact);
+ durable(config.directory,'upload-receipt.json',{entryTerms:a.entryTerms,contributionTerms:a.contributionTerms,intent:result});
+ return {reconciled:true,receipt:result};
+}
+// Always invalid before authentication/SQL. Measures route reachability, not upload acceptance.
+export async function uploadCanary(config){
+ const {client,receipt}=resumed(config),a=standing(config);need(receipt.receiver.state==='ready',409,'receiver_not_ready');
+ const terms=await client.call('participation/terms');need(terms.id===a.contributionTerms,409,'standing_terms_mismatch');
+ try{await client.call('components',{artifact:{schema:COMPONENT_WIRE},termsVersion:terms.id},'component-wire-validation-canary');}
+ catch(error){const observation=clientFailure(error);return {purpose:'owner_qa',mutated:false,routeValidationObserved:observation.code==='invalid-input' && observation.diagnostic?.applicationMarked===true,observation};}
+ throw Object.assign(new Error(),{code:'client_outcome_unknown'});
 }
 
 export async function useFromEntry(config,request){

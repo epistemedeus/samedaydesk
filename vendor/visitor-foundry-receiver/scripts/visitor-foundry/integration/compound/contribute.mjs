@@ -1,17 +1,21 @@
-import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {readFile,mkdir} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import {performance} from 'node:perf_hooks';
 import {invoke as localInvoke} from '../../execution/src/supervisor.mjs';
 import {packageModule,bindingFor} from '../../execution/example/package.mjs';
-import {createVersion} from '../../capabilities/src/index.mjs';
+import {createVersion,hash} from '../../capabilities/src/index.mjs';
 import {createArtifact,bytesHash} from '../../execution/src/contracts.mjs';
-export async function contribute(client,config,request,{loadIntent=()=>null,persistIntent=async(operation,intent)=>writeFile(`${config.stateDir}/${operation}.json`,JSON.stringify(intent),{mode:0o600})}={}){
+import {readPrivateJson,writeJsonNoClobber} from '../../../../services/correspondence/bin/safe-io.mjs';
+import {upload} from './upload.mjs';
+import {failure} from './transport.mjs';
+export async function contribute(client,config,request,{loadIntent=operation=>readPrivateJson(`${config.stateDir}/${operation}.json`),persistIntent=async(operation,intent)=>{const file=`${config.stateDir}/${operation}.json`,prior=readPrivateJson(file);if(prior){if(hash(prior)!==hash(intent))throw failure('local_intent_mismatch');}else writeJsonNoClobber(file,intent);}}={}){
  const start=performance.now();
   if(config.standingScope!=='synthetic-reusable-components'||!config.stateDir)throw new Error('explicit standing reusable contribution scope required');
   await mkdir(config.stateDir,{recursive:true,mode:0o700});
+  if(await loadIntent('upload-started') && !await loadIntent('upload-receipt'))throw failure('upload_outcome_unknown');
   const terms=await client.call('participation/terms');
   const task=await client.call('task',{request,negotiation:{accepts:['neomorphic.foundry.participation.v1'],modes:['adapt-artifact'],budgetSeconds:300},sharing:{scope:config.standingScope,termsVersion:terms.id}});
-  if(!task.continuation)throw new Error('no qualified contribution opportunity');
+  if(!task.continuation)throw failure('no_contribution_opportunity');
   execFileSync(process.execPath,['scripts/visitor-foundry/execution/example/build.mjs'],{stdio:'pipe'});
   const sourceText=await readFile(new URL('../../execution/example/structured-result.c',import.meta.url),'utf8');
   const bytes=await readFile(new URL('../../execution/.build/structured-result.wasm',import.meta.url));
@@ -20,13 +24,13 @@ export async function contribute(client,config,request,{loadIntent=()=>null,pers
   const {id,schema,...base}=old;const descriptor=createArtifact({...base,capability:createVersion(cap),evaluation:terms.evaluation});
   const artifact={kind:'portable-structured-result-v1',descriptor,moduleBase64:bytes.toString('base64'),sourceText};
   const privateResult=await localInvoke({artifact:descriptor,moduleBytes:bytes,input:request.input,binding:bindingFor(descriptor)});
-  if(privateResult.observation.status!=='ok')throw new Error('local-task-execution-incomplete');
-  const uploaded=await client.call('components',{artifact,termsVersion:terms.id},`upload:${descriptor.id}`);
+  if(privateResult.observation.status!=='ok')throw failure('local_execution_incomplete');
+  const uploaded=await upload(client,artifact,terms,{loadIntent,persistIntent});
   let cellId=null,current;
   const perform=async(operation,body)=>{
    const intent=await loadIntent(operation)??client.session.prepare({mode:'adapt-artifact',operation,cellId,termsVersion:terms.id,body,consent:true});
    await persistIntent(operation,intent);
-   const result=await client.session.execute(intent);if(result.status!=='committed')throw new Error(`${operation}:${result.status}:${client.metrics.lastError?.code??'receipt-binding'}`);
+   const result=await client.session.execute(intent);if(result.status!=='committed')throw failure('participation_incomplete',client.metrics.lastError?.diagnostic);
    cellId=result.receipt.cellId;current=(await client.session.resume({schema:'neomorphic.foundry.participation-hint.v1',cellId})).current;
    return result;
   };
