@@ -7,7 +7,7 @@ import {isDeepStrictEqual} from 'node:util';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {verifyOfflineContent,MANIFEST,coded} from './runtime-layout.mjs';
-import {CPYTHON_SHA256,WHEEL_SHA256} from './materialize-runtime.mjs';
+import {CPYTHON_SHA256,WHEEL_SHA256} from './runtime-artifacts.mjs';
 
 // Independently received outputs of the checksum-pinned archive and wheel.
 // This is publication integrity, not a replacement for installedPolicy/verification.
