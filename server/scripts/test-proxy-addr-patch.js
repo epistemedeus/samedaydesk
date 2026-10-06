@@ -166,12 +166,8 @@ test("cold production install resolves patched proxy-addr from the managed-layou
   const repoCopy = JSON.parse(await readFile(path.join(root, "node_modules/proxy-addr/package.json"), "utf8"));
   assert.equal(repoCopy.version, copies[0].version);
 
-  // The imported receiver lock still names 2.0.7 and is not the hosted install input.
-  const nestedLock = JSON.parse(await readFile(path.join(
-    coldDir,
-    "vendor/visitor-foundry-receiver/services/correspondence/package-lock.json",
-  ), "utf8"));
-  assert.equal(nestedLock.packages["node_modules/proxy-addr"].version, "2.0.7");
+  // The hosted layout uses the root lock; no nested correspondence install may
+  // supply its runtime. Do not preserve an obsolete vendored version as a requirement.
   const nestedInstalled = (await installedCopies(path.join(
     coldDir,
     "vendor/visitor-foundry-receiver/services/correspondence",
