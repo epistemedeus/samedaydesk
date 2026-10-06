@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "18206aff60febe13fcabe37e77a6b44946ce3254",
+  "base": "396dd4debe5593c42fc1e43ed3d0e4945fa6c193",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
@@ -10,7 +10,7 @@
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "24cd64e977f624c8ab43e1d452bc5f25caea18ef4d51d06b5d3f4227d8da4742",
     "server/foundry/managed-node-probe.mjs": "dd9e7e2f427c41e6c7f33d9d70066e2b571db4a8abb08fb10304ef18ba3cdcdf",
-    "server/foundry/materialize-runtime.mjs": "9516def46d11f1964ebce4a2ee11bfa7f1624e6a8978033a22f7158ce575a10b",
+    "server/foundry/materialize-runtime.mjs": "7b7a05b5a6338bd5382949bd6f0efabcbda016665a35dbf6823fc5bb2fb5b1fc",
     "server/foundry/paths.js": "b680bd00eadc9ac4f054f02dbc413fab14eb924457a7d8aa83ea14b94e9a8342",
     "server/foundry/pg-tls.js": "a593fac1205f348c299ca51b6f97ab1dcab215ed9464a4d36d25a9add7d4191c",
     "server/foundry/private-files.js": "5b6991527601364aae5c8df072fc2d3603c89afa33294f7231a25c0589395312",
@@ -19,8 +19,9 @@
     "server/foundry/private-pass.mjs": "b4d658563af0a7d150fa07b62975a08cae8f95e0f3023321d4c6a0e8c7ba97f0",
     "server/foundry/private-paths.js": "df6f1a58cecd5a5797ab6e8df82b4a80c682f19059cd12c7e55891f80cb685d8",
     "server/foundry/product-isolation.js": "987781df8bada18c51e0b5d5cf92e215f24590631261768d12232a60532b1527",
+    "server/foundry/runtime-artifacts.mjs": "c5b59f3dfe0ba6f79ed39a38e35364a38f7e1aaba24d23a8da6df63a0a65dfb7",
     "server/foundry/runtime-layout.mjs": "2bee71a837f7da6cd266553b3bc96abdc98c64826c9ed25a0ddf3c710c1573b8",
-    "server/foundry/serving-runtime.mjs": "4e633192712ec531cbc26246518a5309fbc873ba14e02f946d0b27d81ec4a36f",
+    "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
     "server/index.js": "2f551dcb3b546f72d23327c727e298602cb8d2d26b2a43ceda6da13685218ede",
     "server/lib/correspondence-mount.js": "a55118f1a89a2033eceb69b7dbd8c8fd5b70eeea830174fc0fb44f3c160948a5",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
@@ -254,6 +255,11 @@
       "base": "7ee8130190042222ea795f102c147edbbd013c5a",
       "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
       "closureDigest": "sha256:58ba1de0fd5384b90a06aa139d95e6a070a87664eda6c7ef732bd705b575116e"
+    },
+    {
+      "base": "18206aff60febe13fcabe37e77a6b44946ce3254",
+      "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+      "closureDigest": "sha256:1d76d54411140b6c0b6e987f3e479b1d648e5629c3310ac110a150cfb6cdd2bc"
     }
   ]
 }
