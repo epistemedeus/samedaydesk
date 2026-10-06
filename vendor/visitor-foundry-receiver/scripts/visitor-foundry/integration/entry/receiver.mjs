@@ -4,6 +4,7 @@ import {hashToken,hashRequest} from '../../entry/src/deps.mjs';
 import {SCHEMA,need,EntryError} from '../../entry/src/contract.mjs';
 import {checkInstalledVerification} from '../src/verification.mjs';
 import {hostProfile,entryBinding,RECEIVER_ID} from './profile.mjs';
+import {receivingStep} from '../../entry/src/progress.mjs';
 
 /** Trusted binding over existing entry charges and canonical receiver transactions.
  * begin crosses two durable phases once. read never mutates; reserved-only recover
@@ -48,21 +49,21 @@ export class EntryReceiver {
  async completeInTransaction(c,input,owned){
    // Ownership check and completion share one transaction and one wall budget.
    // No post-preliminary-commit abort gate can strand a proven reservation.
-   const ownership=owned??await (async()=>{
+   const ownership=owned??await receivingStep('receiver_authority',async()=>{
    await this.host(c,true);const {r,binding}=await this.charged(c,input);
    const row=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1 FOR UPDATE',[r.id])).rows[0];
-   return {r,binding,row};})();
+   return {r,binding,row};});
    const {r,binding,row}=ownership;
-   need(row&&hash(row.binding)===hash(binding),409,'admission_binding_mismatch');
+   await receivingStep('admission_binding',()=>need(row&&hash(row.binding)===hash(binding),409,'admission_binding_mismatch'));
    if(row.state!=='pending')return row.state;
-   if(r.expires_at<=new Date(await this.store.db.now(c))){await c.query("UPDATE correspondence_vf12_admissions SET state='declined',reason='workspace_expired_after_reservation' WHERE registration_id=$1",[r.id]);return 'declined';}
+   if(r.expires_at<=new Date(await receivingStep('workspace_clock',()=>this.store.db.now(c)))){await receivingStep('admission_decline',()=>c.query("UPDATE correspondence_vf12_admissions SET state='declined',reason='workspace_expired_after_reservation' WHERE registration_id=$1",[r.id]));return 'declined';}
    const p=this.config.pool;
    await this.store.enrollPortable(r.project_id,{validityMs:p.validityMs,maxInvocations:p.maxInvocations,maxValidationCostUnits:p.maxValidationCostUnits,entryBounds:{...p,hostConfigId:this.config.configId}},c);
    // Shares expose only canonical published code/evidence, never private correspondence.
-   const peers=(await c.query("SELECT project_id FROM correspondence_vf12_admissions WHERE state='ready' ORDER BY project_id")).rows;
-   for(const peer of peers){await c.query('INSERT INTO correspondence_vf04_shares(consumer,source) VALUES($1,$2),($2,$1) ON CONFLICT DO NOTHING',[r.project_id,peer.project_id]);}
-   const installed=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[r.project_id])).rows[0].config;
-   await c.query("UPDATE correspondence_vf12_admissions SET state='ready',pool_config_digest=$2 WHERE registration_id=$1",[r.id,hash(installed)]);return 'ready';
+   const peers=(await receivingStep('peer_read',()=>c.query("SELECT project_id FROM correspondence_vf12_admissions WHERE state='ready' ORDER BY project_id"))).rows;
+   for(const peer of peers){await receivingStep('share_insert',()=>c.query('INSERT INTO correspondence_vf04_shares(consumer,source) VALUES($1,$2),($2,$1) ON CONFLICT DO NOTHING',[r.project_id,peer.project_id]));}
+   const installed=await receivingStep('pool_readback',async()=>(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1',[r.project_id])).rows[0].config);
+   await receivingStep('admission_ready',()=>c.query("UPDATE correspondence_vf12_admissions SET state='ready',pool_config_digest=$2 WHERE registration_id=$1",[r.id,hash(installed)]));return 'ready';
  }
  async read(input){return this.store.db.tx(c=>this.readInTransaction(c,input),{signal:input.signal});}
  async readInTransaction(c,input){
@@ -79,13 +80,13 @@ export class EntryReceiver {
  async recover(input,{reservedOnly=false}={}){
   // Authoritative tombstone prevents a delayed first begin from reviving an
   // absent reservation. It never repeats an unknown begin call.
-  const state=await this.store.db.tx(async c=>{
-   await this.host(c,true);const {r,binding}=await this.charged(c,input);
-   const old=(await c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1 FOR UPDATE',[r.id])).rows[0];
-   if(old){need(hash(old.binding)===hash(binding),409,'admission_binding_mismatch');return this.completeInTransaction(c,input,{r,binding,row:old});}
+  const state=await receivingStep('receiver_transaction',()=>this.store.db.tx(async c=>{
+   const {r,binding}=await receivingStep('receiver_authority',async()=>{await this.host(c,true);return this.charged(c,input);});
+   const old=(await receivingStep('admission_read',()=>c.query('SELECT * FROM correspondence_vf12_admissions WHERE registration_id=$1 FOR UPDATE',[r.id]))).rows[0];
+   if(old){await receivingStep('admission_binding',()=>need(hash(old.binding)===hash(binding),409,'admission_binding_mismatch'));return this.completeInTransaction(c,input,{r,binding,row:old});}
    if(reservedOnly)return 'unknown';
    await c.query("INSERT INTO correspondence_vf12_admissions(registration_id,project_id,binding,state,charged,reason) VALUES($1,$2,$3,'declined',false,'begin_absent_fenced_by_private_recovery')",[r.id,r.project_id,binding]);return 'declined';
-  },{signal:input.signal});
+  },{signal:input.signal}));
   await this.afterCompletion?.(input);return state;
  }
  async authorizeRequest(req,token){
