@@ -52,7 +52,9 @@ async function fixture({runtime='present',control=false}={}) {
  const pool=new pg.Pool({connectionString:env.CORRESPONDENCE_DATABASE_URL});
  const query=async(sql,args)=>{const c=await pool.connect();try{await c.query('BEGIN');await c.query('SET LOCAL search_path TO pilot_correspondence');const result=await c.query(sql,args);await c.query('COMMIT');return result;}catch(e){await c.query('ROLLBACK');throw e;}finally{c.release();}};
  const runtimePath=path.join(delivery,execution,'.runtime');
- async function setRuntime(kind){await rm(runtimePath,{recursive:true,force:true});if(kind==='present')await symlink(path.join(root,execution,'.runtime'),runtimePath);else if(kind==='invalid'){await mkdir(runtimePath);await writeFile(path.join(runtimePath,'pyvenv.cfg'),'version=invalid\n');}}
+ // A real delivery owns its runtime directory. An external checkout link is
+ // deliberately refused by normal startup's no-follow publication receiving.
+ async function setRuntime(kind){await rm(runtimePath,{recursive:true,force:true});if(kind==='present')await cp(path.join(root,execution,'.runtime'),runtimePath,{recursive:true});else if(kind==='invalid'){await mkdir(runtimePath);await writeFile(path.join(runtimePath,'pyvenv.cfg'),'version=invalid\n');}}
  await setRuntime(runtime);
  let server;
  async function boot(port=0){

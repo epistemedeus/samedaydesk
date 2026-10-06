@@ -18,6 +18,17 @@ The receiver lives at `vendor/visitor-foundry-receiver/` and is the only corresp
 
 Startup and imports do not migrate and do not install profiles. The facade's readiness composes the original bound `store.checkReady` with the entry mount. Shutdown and startup failure close the entry mount, then the base store.
 
+For a sealed offline publication, normal opt-in HTTP startup verifies the pinned
+interpreter/binding/native bytes and receives deployment-stripped executable modes
+once, before foundry readiness. Only owner-held regular `bin/python`, `bin/python3`
+and `bin/python3.12` files may change from0644 to0755; open no-follow handles bind
+the verified inodes. Directories, libraries, source scripts and private stores are
+not chmodded. Unknown content, links, identities or denied changes refuse the
+foundry mount with a closed startup diagnostic; product routes remain available.
+Existing host venvs without an offline publication certificate stay read-only.
+This performs no download, installation, migration, verification renewal or
+visitor execution. See [serving receiving100574](../server/foundry/activation/receiving-100574/RESULT.md).
+
 Private files, mode `0600`, are read from paths. Their contents are not logged.
 
 ```

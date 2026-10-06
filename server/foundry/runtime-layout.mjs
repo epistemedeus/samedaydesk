@@ -1,4 +1,4 @@
-// Build-time packaging only. The sealed execution loader/launcher is unchanged.
+// Offline publication identity. The sealed execution loader/launcher is unchanged.
 import {lstat,readdir,open,writeFile,chmod} from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -67,11 +67,15 @@ async function runtimeModes(root,receive=false){
 }
 export const publishRuntimeModes=root=>runtimeModes(root,true);
 export const verifyRuntimeModes=root=>runtimeModes(root);
-export async function verifyOfflineRuntime(root,{archiveSha256,wheelSha256}) {
+export async function verifyOfflineContent(root,{archiveSha256,wheelSha256}) {
  await auditOfflineTree(root);
  let record;try{record=JSON.parse((await small(path.join(root,MANIFEST),4096)).toString('utf8'));}catch{throw coded('runtime_layout_manifest');}
  const content=await runtimeContentIdentity(root),expected={schema:'sds.foundry.runtime-layout.v1',layout:LAYOUT,archiveSha256,wheelSha256,content};
  if(hash(record)!==hash(expected))throw coded('runtime_content_changed');
+ return content;
+}
+export async function verifyOfflineRuntime(root,pins) {
+ await verifyOfflineContent(root,pins);
  await verifyRuntimeModes(root);
  return {layout:LAYOUT,deployable:true};
 }
