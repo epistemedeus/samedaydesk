@@ -1,0 +1,165 @@
+{
+  "artifact": {
+    "schema": "neomorphic.foundry.portable-component-wire.v1",
+    "kind": "portable-structured-result-v1",
+    "descriptor": {
+      "capability": {
+        "schema": "neomorphic.foundry.capability-version.v1",
+        "capabilityId": "source:correspondence-structured-result",
+        "version": "vf08.37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+        "source": {
+          "repository": "https://github.com/epistemedeus/neomorphic-io",
+          "revision": "e278017956465f0665dceb138ea1e666591ded14b4a7cda36bd6f2e0995f8114",
+          "path": "scripts/visitor-foundry/execution/example/structured-result.c"
+        },
+        "outcomes": [
+          "compact-correspondence-structured-result"
+        ],
+        "input": {
+          "type": "object",
+          "required": [],
+          "properties": {}
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "outcome",
+            "payload"
+          ],
+          "properties": {
+            "payload": {
+              "type": "object",
+              "required": [],
+              "properties": {}
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "observed",
+                "unknown",
+                "error",
+                "unsupported"
+              ]
+            }
+          }
+        },
+        "dependencies": [],
+        "rights": {
+          "status": "allowed",
+          "license": "MIT",
+          "ref": "permission:vf09-owner-qa"
+        },
+        "environment": {
+          "platform": [
+            "linux"
+          ],
+          "arch": [
+            "x64"
+          ],
+          "executionProfile": [
+            "vf08.wasmtime49-linux-x64-fixed.v1"
+          ]
+        },
+        "provenance": {
+          "refs": [
+            "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+            "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08",
+            "sha256:e278017956465f0665dceb138ea1e666591ded14b4a7cda36bd6f2e0995f8114"
+          ],
+          "origin": "operator:owner-qa-a",
+          "maintainer": "operator:neomorphic",
+          "classification": "demo",
+          "funding": "voluntary",
+          "actionability": "not-actionable",
+          "original": {
+            "purpose": "owner_qa",
+            "relationship": "owner",
+            "inputFormat": "tools/correspondence-mcp/src/tools/write.mjs#toolText,toolError"
+          }
+        },
+        "contentId": "sha256:8e97599b75d35ada613550ce1b2c4b8cd60cb7746defc1b9c7428783b41994ca"
+      },
+      "module": {
+        "digest": "sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121",
+        "bytes": 3356
+      },
+      "abi": "vf08.transform-buffer.v1",
+      "input": {
+        "encoding": "json",
+        "shape": {
+          "type": "object",
+          "required": [],
+          "properties": {}
+        }
+      },
+      "output": {
+        "encoding": "json",
+        "shape": {
+          "type": "object",
+          "required": [
+            "outcome",
+            "payload"
+          ],
+          "properties": {
+            "payload": {
+              "type": "object",
+              "required": [],
+              "properties": {}
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "observed",
+                "unknown",
+                "error",
+                "unsupported"
+              ]
+            }
+          }
+        }
+      },
+      "profile": {
+        "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+        "runtime": "wasmtime-py",
+        "version": "49.0.0",
+        "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+        "license": "Apache-2.0 WITH LLVM-exception",
+        "platform": "linux",
+        "arch": "x64",
+        "imports": "none",
+        "memory": "fixed-wasm32",
+        "tables": "fixed-funcref",
+        "nan": "canonical",
+        "parallelCompilation": false
+      },
+      "limits": {
+        "moduleBytes": 262144,
+        "inputBytes": 16384,
+        "outputBytes": 32768,
+        "memoryBytes": 262144,
+        "tableElements": 128,
+        "stackBytes": 65536,
+        "fuel": 1000000,
+        "compileMs": 1500,
+        "instantiateMs": 500,
+        "executeMs": 500,
+        "wallMs": 4000,
+        "addressSpaceBytes": 536870912,
+        "cpuSeconds": 2,
+        "hostStackBytes": 8388608,
+        "fileBytes": 1048576,
+        "openFiles": 32
+      },
+      "evaluation": {
+        "id": "evaluator:vf09-structured-result",
+        "revision": "vf09.oracle.v1",
+        "suiteDigest": "sha256:5ffcbc7c1cbc80cce6cf66a09aac9f9e1b7be34e6de258023433f8ddb190db08"
+      },
+      "schema": "neomorphic.foundry.portable-execution.artifact.v1",
+      "id": "sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e"
+    },
+    "moduleBase64": "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",
+    "sourceBase64": "LyogT3duZXItUUEgY29udHJpYnV0aW9uOiBjb21wYWN0IHRoZSBleGlzdGluZyBjb3JyZXNwb25kZW5jZSBNQ1AgZW52ZWxvcGUuCiAqIE5vIGxpYmMsIGFsbG9jYXRvciwgV0FTSSwgb3IgcnVudGltZSBpbXBvcnRzLiBIb3N0IHN1cHBsaWVzIHZhbGlkIGJvdW5kZWQgSlNPTi4KICogUmV0YWluIHBheWxvYWQsIGV4cGxpY2l0IGVycm9ycyBhbmQgdW5rbm93biB3cml0ZSBvdXRjb21lczsgdGV4dCBpcyBub3QgYXV0aG9yaXR5LgogKi8KdHlwZWRlZiB1bnNpZ25lZCBpbnQgdTMyOwp0eXBlZGVmIHVuc2lnbmVkIGxvbmcgbG9uZyB1NjQ7CnN0YXRpYyBjaGFyIGlucHV0WzE2Mzg0XSwgb3V0cHV0WzMyNzY4XTsKc3RhdGljIGNvbnN0IGNoYXIgKnM7IHN0YXRpYyB1MzIgbiwgcG9zOwpzdGF0aWMgdm9pZCB3cyh2b2lkKSB7IHdoaWxlKHBvczxuICYmIChzW3Bvc109PScgJ3x8c1twb3NdPT0nXG4nfHxzW3Bvc109PSdccid8fHNbcG9zXT09J1x0JykpIHBvcysrOyB9CnN0YXRpYyB2b2lkIHN0cmluZyh2b2lkKSB7CiAgcG9zKys7CiAgd2hpbGUocG9zPG4pIHsgY2hhciBjPXNbcG9zKytdOyBpZihjPT0nIicpIGJyZWFrOyBpZihjPT0nXFwnICYmIHBvczxuKSBwb3MrKzsgfQp9CnN0YXRpYyB2b2lkIHZhbHVlKHZvaWQpIHsKICB3cygpOyBpZihwb3M+PW4pIHJldHVybjsKICBpZihzW3Bvc109PSciJykge3N0cmluZygpO3JldHVybjt9CiAgaWYoc1twb3NdPT0neyd8fHNbcG9zXT09J1snKSB7CiAgICBjaGFyIGVuZD1zW3BvcysrXT09J3snPyd9JzonXSc7IHdzKCk7CiAgICB3aGlsZShwb3M8biAmJiBzW3Bvc10hPWVuZCkgewogICAgICBpZihzW3Bvc109PScsJ3x8c1twb3NdPT0nOicpIHBvcysrOyBlbHNlIHZhbHVlKCk7IHdzKCk7CiAgICB9CiAgICBpZihwb3M8bikgcG9zKys7IHJldHVybjsKICB9CiAgd2hpbGUocG9zPG4gJiYgc1twb3NdIT0nLCcgJiYgc1twb3NdIT0nXScgJiYgc1twb3NdIT0nfScgJiYgc1twb3NdIT0nICcgJiYgc1twb3NdIT0nXG4nICYmIHNbcG9zXSE9J1x0JyAmJiBzW3Bvc10hPSdccicpIHBvcysrOwp9CnN0YXRpYyBpbnQgZXEodTMyIHN0YXJ0LHUzMiBlbmQsY29uc3QgY2hhciAqd29yZCkgewogIHUzMiBpPTA7IHdoaWxlKHdvcmRbaV0gJiYgc3RhcnQraTxlbmQgJiYgc1tzdGFydCtpXT09d29yZFtpXSkgaSsrOwogIHJldHVybiBzdGFydCtpPT1lbmQgJiYgd29yZFtpXT09MDsKfQpzdGF0aWMgaW50IGZpZWxkKHUzMiBzdGFydCxjb25zdCBjaGFyICpuYW1lLHUzMiAqYSx1MzIgKmIpIHsKICBwb3M9c3RhcnQ7d3MoKTsgaWYocG9zPj1ufHxzW3BvcysrXSE9J3snKSByZXR1cm4gMDsgd3MoKTsKICB3aGlsZShwb3M8biAmJiBzW3Bvc10hPSd9JykgewogICAgdTMyIGs9cG9zOyBzdHJpbmcoKTt1MzIgZW5kPXBvczt3cygpO3BvcysrO3dzKCk7dTMyIHY9cG9zO3ZhbHVlKCk7dTMyIGU9cG9zOwogICAgaWYoZXEoaysxLGVuZC0xLG5hbWUpKXsqYT12OypiPWU7cmV0dXJuIDE7fQogICAgd3MoKTtpZihwb3M8biYmc1twb3NdPT0nLCcpcG9zKys7d3MoKTsKICB9CiAgcmV0dXJuIDA7Cn0Kc3RhdGljIHUzMiBhcHBlbmQodTMyIGF0LGNvbnN0IGNoYXIgKnYpIHt3aGlsZSgqdiAmJiBhdDxzaXplb2Yob3V0cHV0KSlvdXRwdXRbYXQrK109KnYrKztyZXR1cm4gYXQ7fQpfX2F0dHJpYnV0ZV9fKChleHBvcnRfbmFtZSgiYWxsb2MiKSkpIHUzMiBhbGxvYyh1MzIgbGVuZ3RoKSB7cmV0dXJuIGxlbmd0aDw9c2l6ZW9mKGlucHV0KT8odTMyKWlucHV0OjB4ZmZmZmZmZmY7fQpfX2F0dHJpYnV0ZV9fKChleHBvcnRfbmFtZSgidHJhbnNmb3JtIikpKSB1NjQgdHJhbnNmb3JtKHUzMiBwb2ludGVyLHUzMiBsZW5ndGgpIHsKICBzPShjb25zdCBjaGFyICopcG9pbnRlcjtuPWxlbmd0aDt1MzIgYT0wLGI9MCxjPTAsZD0wLHA9MDsKICBjb25zdCBjaGFyICpvdXRjb21lPSJ1bnN1cHBvcnRlZCI7CiAgaW50IGZvdW5kPWZpZWxkKDAsInN0cnVjdHVyZWRDb250ZW50IiwmYSwmYikgJiYgc1thXT09J3snOwogIGlmKGZvdW5kKSB7CiAgICBvdXRjb21lPSJvYnNlcnZlZCI7CiAgICBpZihmaWVsZCgwLCJpc0Vycm9yIiwmYywmZCkgJiYgZXEoYyxkLCJ0cnVlIikpIG91dGNvbWU9ImVycm9yIjsKICAgIGlmKGZpZWxkKGEsImVycm9yIiwmYywmZCkgJiYgZmllbGQoYywiY29kZSIsJmMsJmQpICYmIGVxKGMsZCwiXCJ1bmtub3duX291dGNvbWVcIiIpKSBvdXRjb21lPSJ1bmtub3duIjsKICB9CiAgcD1hcHBlbmQocCwie1wib3V0Y29tZVwiOlwiIik7cD1hcHBlbmQocCxvdXRjb21lKTtwPWFwcGVuZChwLCJcIixcInBheWxvYWRcIjoiKTsKICBpZihmb3VuZCkge2Zvcih1MzIgaT1hO2k8YiAmJiBwPHNpemVvZihvdXRwdXQpLTE7aSsrKW91dHB1dFtwKytdPXNbaV07fQogIGVsc2UgcD1hcHBlbmQocCwie30iKTsKICBwPWFwcGVuZChwLCJ9Iik7cmV0dXJuICgodTY0KXA8PDMyKXwodTMyKW91dHB1dDsKfQo="
+  },
+  "termsVersion": "sha256:10b8b4a99aaf3fa4772356e813f5e1d278bdc6323f0fabc284a2997b367e693d"
+}

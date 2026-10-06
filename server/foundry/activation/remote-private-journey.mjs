@@ -23,6 +23,10 @@ export function verifyCallerClosure() {
  for(const [file,expected] of Object.entries(pin.files)) need(createHash('sha256').update(readFileSync(path.join(root,file))).digest('hex')===expected,'caller_source_changed');
  return {base:pin.base,sourcePinSha256:pin.files['vendor/visitor-foundry-receiver/SOURCE-PIN.json'],closureDigest:digest(pin)};
 }
+export function acceptedCallerPin(saved,current=verifyCallerClosure()) {
+ const received=JSON.parse(readFileSync(pinFile)).receivedCallerClosures??[];
+ return isDeepStrictEqual(saved,current) || received.some(p=>isDeepStrictEqual(saved,p));
+}
 function privateTree(dir) {
  const s=lstatSync(dir);need(s.isDirectory() && !s.isSymbolicLink() && (s.mode&0o777)===0o700,'caller_private_mode');
  for(const item of readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,item.name);if(item.isDirectory())privateTree(file);else readPrivateBytes(file,{repoRoot:root,limit:1048576});}
@@ -45,7 +49,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-prepare-no-launch','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
@@ -54,6 +58,13 @@ export async function remoteJourney(stage,file,readbackFile) {
   const result=await runBounded(process.execPath,['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,config,...(inputFile?[inputFile]:[]),'--json-result'],
     {cwd:vendor,env:{PATH:process.env.PATH || '',LANG:'C',LC_ALL:'C'},timeoutMs:60000,capture:true,stdoutLimit:1048576,outputLimit:2097152});
   const body=callerResult(result);privateTree(dir);return body;
+ }
+ if(stage==='a-prepare-no-launch') {
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const request=task(cases[0].input,'task:owner-a-use-useful');
+  const result=await cli('prepare-no-launch',aFile,{intentId:'root-receive-original-a-no-launch',expectedHostConfigId:c.expectedHostConfigId,request},'a-no-launch-spec');
+  seal(dir,'owner-receive-original-a-no-launch.json',result);
+  return {ok:true,purpose:'owner_qa',stage,request:result,pin,physicalLaunched:false};
  }
  if(['a-upload-canary','a-upload-full-canary','a-reconcile-upload'].includes(stage)) {
   need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
@@ -90,7 +101,7 @@ export async function remoteJourney(stage,file,readbackFile) {
   return {ok:true,stage,...receipt,actualHostVerificationRequired:true};
  }
  const saved=json(path.join(dir,'a-contribution-receipt.json'));
- need(saved.hostConfigId===c.expectedHostConfigId && saved.entryTermsHash===c.expectedEntryTermsHash && isDeepStrictEqual(saved.pin,pin),'caller_binding_conflict');
+ need(saved.hostConfigId===c.expectedHostConfigId && saved.entryTermsHash===c.expectedEntryTermsHash && acceptedCallerPin(saved.pin,pin),'caller_binding_conflict');
  if(stage==='check') {
   const controls=json(readbackFile),a=json(path.join(dir,'a-use-receipt.json')),b=json(path.join(dir,'b-use-receipt.json'));
   need(b.restart?.ownerAttested===true,'caller_actual_restart_required');

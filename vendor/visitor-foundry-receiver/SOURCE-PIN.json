@@ -238,6 +238,45 @@
           "sha256": "4156315052af37b39758133b9fa1a4c7490c7b025af783a0a16977f443e00895"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-INVOKE-100511",
+      "sdsBase": "eaed1efef1c6b04fc0ba74bd55e25bf424964a34",
+      "reason": "Receiver-scoped documented Node child_process diagnostics and closed authoritative invocation status/client codes without changing sealed execution pins. Explicit atomic owner receiving of a completed supervisor-witnessed no-launch sample preserves original task/manifest/grant/terms/candidate, retains prior charged observation and fence, consumes one remaining original invocation allowance, and authorizes one same-intent continuation. Exited but undrained samples remain unknown and physically held. No unknown physical reassignment, automatic retry, refund, migration or authority/evidence renewal. Actual native spawn cause/hosting acceptance remains Root readback.",
+      "files": {
+        "scripts/visitor-foundry/integration/compound/transport.mjs": {
+          "receivedSha256": "94bcaf201264c8a5ffafcfb67e81bee33e0804c6de4a55e41ae2c01df8bde69f",
+          "sha256": "48143c5f468500180e63e2411de06646b73590875f26df85f3c3696f4b0e554a"
+        },
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "1e65f2b60a05751a892f431fc2cc5c70b0bd2af02b99d2b76537c52a67296aed",
+          "sha256": "10d429a9c7c1cca35c0b335bb9d035818ebda1b2bf7c3300179ebab1ac284f7e"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "4e5ee9c2a9225c762d654aca891b848b5b6b42add61b786801f31dfe6039b1df",
+          "sha256": "6d62f4135eb760e2a6308ad6125797b306740a87e6e552e79ee8a17c5846177c"
+        },
+        "scripts/visitor-foundry/integration/src/execution-view.mjs": {
+          "receivedSha256": null,
+          "sha256": "132a0214e5da3d4e58eaf629564e92718833995b98bdbd4b8d47044d502aa6e5"
+        },
+        "scripts/visitor-foundry/integration/src/launch-evidence.mjs": {
+          "receivedSha256": null,
+          "sha256": "cfb57f9d5025827f7599c708dffd930160452c244faea59b0a3fd655727938e1"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "85658c2fcb59757811952797042d55735642ec4a346d898b983b501ec504bb1e",
+          "sha256": "d03d34dab4064b90a765243430173914ecfdc4e0ce0fc6fdb910ddf3dfbc81f1"
+        },
+        "scripts/visitor-foundry/integration/src/router.mjs": {
+          "receivedSha256": "4156315052af37b39758133b9fa1a4c7490c7b025af783a0a16977f443e00895",
+          "sha256": "155dfc024b307a4d45344afd45a4df6e22809e8fc45e8b216c94a1bca8d2d22b"
+        },
+        "scripts/visitor-foundry/integration/src/store.mjs": {
+          "receivedSha256": "909df8a852e8bde54912906d8c4170ba60ac3911c7364b87742efd93977f0c24",
+          "sha256": "f7a7bcff913497af33677073b563f06dee057345be63b9a1144a6c6a599d5cb9"
+        }
+      }
     }
   ]
 }

@@ -1,4 +1,5 @@
 // Receiver-owned joins over the existing transactional pool/attempt/outbox lifecycle.
+import {observeLaunch} from './launch-evidence.mjs';
 import {randomUUID} from 'node:crypto';
 import {hash,refOf,createGap} from '../../capabilities/src/index.mjs';
 import {requireThat as need,jsonBounded,digest} from '../../validation/src/index.mjs';
@@ -16,7 +17,11 @@ import {parseComponentRequest,COMPONENT_TRANSPORT} from './portable-upload-wire.
 const ref=id=>({uri:`https://foundry.invalid/approved/${id.slice(7)}`,digest:id});
 const exact=(x,fields)=>need(Object.keys(x).sort().join(',')===fields.sort().join(','),'invalid_participation_input');
 const source=(a)=>a.descriptor.capability;
-const safeExit=o=>o?.termination&&(o.termination.exited===true||o.termination.noLaunch===true);
+const safeExit=o=>o?.termination&&(o.termination.noLaunch===true||o.termination.exited===true&&o.termination.drained===true);
+function invocationBinding(permit,id,fence){const p=portablePolicy();return {assignmentId:id,candidateId:permit.candidate.id,fence,capability:permit.manifest.target,
+ sourceDigest:hash(permit.artifact.capability.source),artifactId:permit.artifact.id,moduleDigest:permit.artifact.module.digest,dependencyDigest:hash([]),
+ evaluator:portableEvaluation,environmentDigest:p.environmentDigest,runtimePin:p.runtimePin};}
+export async function chargedInvocationCount(c,projectId){return Number((await c.query("SELECT COALESCE(sum(1+jsonb_array_length(COALESCE(execution->'priorAttempts','[]'::jsonb))),0)::int AS n FROM correspondence_vf04_invocations WHERE project_id=$1",[projectId])).rows[0].n);}
 export const portableMethods={
  async enrollPortable(projectId,{validityMs=3600000,maxInvocations=64,maxValidationCostUnits='256000',entryBounds=null}={},installedClient=null) {
   const config=await receivingStep('pool_configuration',()=>{
@@ -146,7 +151,7 @@ export const portableMethods={
   need(a&&a.supervisor===supervisor&&a.fence===fence&&a.state!=='reconciled','stale_attempt_fence');need(a.assignment.requiredChecks.includes(caseId),'unassigned_case');
   let child=a.children.find(x=>x.caseId===caseId);
   if(update.planned){need(a.state==='running'&&!child&&a.children.length<16&&a.children.every(x=>safeExit(x.sample?.observation)),'physical_child_held');child={caseId,planned:true,identity:null,sample:null};a.children.push(child);}
-  else {need(child,'child_not_planned');for(const name of ['identity','sample'])if(update[name]){need(!child[name]||hash(child[name])===hash(update[name]),'immutable_child_evidence');child[name]=update[name];}}
+  else {need(child,'child_not_planned');for(const name of ['identity','sample','launchEvidence'])if(update[name]){need(!child[name]||hash(child[name])===hash(update[name]),'immutable_child_evidence');child[name]=update[name];}}
   if(child.sample?.observation?.processIdentity)need(hash(child.identity)===hash(child.sample.observation.processIdentity),'child_identity_mismatch');
   await c.query('UPDATE correspondence_vf04_attempts SET children=$3 WHERE project_id=$1 AND id=$2',[projectId,id,JSON.stringify(a.children)]);return {recorded:true};
  });},
@@ -183,12 +188,13 @@ export const portableMethods={
    // Write lock serializes reservation with validation dispatch; runtime runs after commit.
    locked=await this.lock(c,ctx.projectId,true);const permit=await this.invocationPermit(c,ctx,body,locked);
    const old=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2',[ctx.projectId,body.request.taskId])).rows[0];
-   if(old){need(old.manifest_id===body.manifestId&&old.input_digest===hash(body.request.input)&&old.execution.grantId===g.id,'task_reuse_conflict');need(old.state==='completed'&&old.result,'invocation_outcome_unknown');return {result:{...old.result,replayed:true}};}
+   if(old){need(old.manifest_id===body.manifestId&&old.input_digest===hash(body.request.input)&&old.execution.grantId===g.id&&old.execution.requestId===hash(body.request),'task_reuse_conflict');
+    if(old.state==='reserved' && old.execution.continuation && old.execution.supervisor===null && !old.execution.identity && !old.execution.sample)return {execution:old.execution};
+    need(old.state==='completed'&&old.result,old.execution.sample?.observation.termination?.noLaunch===true?'invocation_no_launch':'invocation_outcome_unknown');return {result:{...old.result,replayed:true}};}
    need(!(await c.query("SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled' UNION ALL SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1",[ctx.projectId])).rows.length,'physical_reservation_held');
-   need((await c.query('SELECT count(*)::int AS n FROM correspondence_vf04_invocations WHERE project_id=$1',[ctx.projectId])).rows[0].n<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
+   need(await this.chargedInvocations(c,ctx.projectId)<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
    await this.entryPhysicalCapacity(c,ctx.projectId,locked.config);
-   const id=`invocation:${randomUUID()}`,fence=randomUUID();const p=portablePolicy();
-   const binding={assignmentId:id,candidateId:permit.candidate.id,fence,capability:permit.manifest.target,sourceDigest:hash(permit.artifact.capability.source),artifactId:permit.artifact.id,moduleDigest:permit.artifact.module.digest,dependencyDigest:hash([]),evaluator:portableEvaluation,environmentDigest:p.environmentDigest,runtimePin:p.runtimePin};
+   const id=`invocation:${randomUUID()}`,fence=randomUUID(),binding=invocationBinding(permit,id,fence);
    const execution={id,fence,grantId:g.id,sourceProject:permit.candidate.project_id,generation:permit.candidate.generation,verification:permit.verification,binding,requestId:hash(body.request),reservation:locked.config.invocationLimits,supervisor:null,identity:null,sample:null};
    await c.query("INSERT INTO correspondence_vf04_invocations(project_id,task_id,manifest_id,input_digest,result,state,execution) VALUES($1,$2,$3,$4,NULL,'reserved',$5)",[ctx.projectId,body.request.taskId,body.manifestId,hash(body.request.input),execution]);return {execution};
   },true);if(plan.result)return plan.result;
@@ -201,15 +207,52 @@ export const portableMethods={
    row.execution.supervisor=supervisor;await c.query("UPDATE correspondence_vf04_invocations SET state='running',execution=$3 WHERE project_id=$1 AND task_id=$2",[ctx.projectId,body.request.taskId,row.execution]);
    return {...permit,binding:row.execution.binding};
   },true)});
-  let sample;
-  try{sample=await ports.invoke({projectId:ctx.projectId,manifestId:body.manifestId,request:body.request,onSpawn:identity=>this.invocationWrite(ctx.projectId,body.request.taskId,plan.execution.fence,supervisor,{identity})});}
-  catch{throw Object.assign(new Error('invocation_outcome_unknown'),{code:'invocation_outcome_unknown',status:409});}
-  await this.invocationWrite(ctx.projectId,body.request.taskId,plan.execution.fence,supervisor,{sample});
+  let sample,launchEvidence;
+  try{({sample,launchEvidence}=await observeLaunch(()=>ports.invoke({projectId:ctx.projectId,manifestId:body.manifestId,request:body.request,onSpawn:identity=>this.invocationWrite(ctx.projectId,body.request.taskId,plan.execution.fence,supervisor,{identity})})));}
+  catch{need(false,'invocation_outcome_unknown');}
+  await this.invocationWrite(ctx.projectId,body.request.taskId,plan.execution.fence,supervisor,{sample,launchEvidence});
   return this.authenticated(ctx,false,async(c,g,locked)=>{
-   await this.invocationPermit(c,ctx,body,locked);need(safeExit(sample.observation)&&sample.observation.status==='ok','invocation_outcome_unknown');
+   await this.invocationPermit(c,ctx,body,locked);need(safeExit(sample.observation)&&sample.observation.status==='ok',sample.observation.termination?.noLaunch===true?'invocation_no_launch':safeExit(sample.observation)?'invocation_failed':'invocation_outcome_unknown');
    return (await c.query('SELECT result FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2',[ctx.projectId,body.request.taskId])).rows[0].result;
   });
  },
+ // Private owner receiving only. One original task; prior evidence/charge is retained.
+ // c belongs to the caller's allocation/project/intent transaction. Never exposed by HTTP.
+ async receiveNoLaunchInvocation(c,r){
+  const locked=await this.lock(c,r.projectId,true),body={manifestId:r.manifestId,request:r.request};
+  const permit=await this.invocationPermit(c,{projectId:r.projectId},body,locked);
+  const row=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2 FOR UPDATE',[r.projectId,r.taskId])).rows[0];
+  need(row && row.state==='completed' && row.result===null && row.manifest_id===r.manifestId && row.input_digest===hash(r.request.input),'invocation_receive_conflict');
+  const old=row.execution,o=old?.sample?.observation;
+  need(old?.id===r.expectedExecutionId && old.fence===r.expectedFence && old.requestId===hash(r.request)
+   && old.binding.candidateId===r.candidateId && old.generation===r.expectedGeneration
+   && old.verification.id===r.expectedVerificationId && permit.verification.id===r.expectedVerificationId
+   && permit.candidate.id===r.candidateId && permit.candidate.generation===r.expectedGeneration,'invocation_receive_conflict');
+  need(o?.id===r.expectedObservationId && o.termination?.noLaunch===true && o.termination.exited===false
+   && o.termination.code===null && o.termination.signal===null && !o.processIdentity && !old.identity
+   && old.supervisor && ['incomplete','cancelled'].includes(o.status) && Array.isArray(o.phasesObserved) && o.phasesObserved.length===0
+   && o.termination.drained!==false && o.outputDigest===null && old.sample.output===null
+   && ['cpuMs','peakRssBytes','fuelUsed','compileMs','instantiateMs','executeMs'].every(k=>o.usage?.[k]===null),'invocation_launch_not_excluded');
+  const {id:observationId,...observation}=o;
+  need(hash(observation)===observationId && hash(o.binding)===hash(old.binding)
+   && o.runtimePin===old.binding.runtimePin && old.binding.fence===old.fence && old.binding.assignmentId===old.id
+   && old.sourceProject===permit.candidate.project_id && hash(old.binding)===hash(invocationBinding(permit,old.id,old.fence))
+   && hash(old.reservation)===hash(locked.config.invocationLimits),'invocation_receive_evidence_conflict');
+  const grant=(await c.query('SELECT * FROM correspondence_grants WHERE id=$1 FOR SHARE',[old.grantId])).rows[0],now=await this.db.now(c);
+  need(grant && grant.project_id===r.projectId && grant.role!=='reader' && !grant.revoked_at
+   && (!grant.expires_at || grant.expires_at>new Date(now)),'invocation_receive_grant_conflict');
+  need(!(await c.query("SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled' UNION ALL SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1",[r.projectId])).rows.length,'physical_reservation_held');
+  await this.entryPhysicalCapacity(c,r.projectId,locked.config);
+  const chargedBefore=await this.chargedInvocations(c,r.projectId);need(chargedBefore<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
+  const {priorAttempts=[],...prior}=old,id=`invocation:${randomUUID()}`,fence=randomUUID();
+  need(priorAttempts.length<64,'invocation_budget_exhausted');
+  const execution={...prior,id,fence,binding:{...prior.binding,assignmentId:id,fence},supervisor:null,identity:null,sample:null,launchEvidence:null,
+   priorAttempts:[...priorAttempts,prior],continuation:{intentId:r.intentId,receivedAt:now,priorExecutionId:prior.id,priorObservationId:observationId}};
+  await c.query("UPDATE correspondence_vf04_invocations SET state='reserved',execution=$3 WHERE project_id=$1 AND task_id=$2",[r.projectId,r.taskId,execution]);
+  return {taskId:r.taskId,manifestId:r.manifestId,requestDigest:old.requestId,priorExecutionId:old.id,priorObservationId:observationId,
+   executionId:id,fence,chargedBefore,chargedAfter:chargedBefore+1,budgetRefunded:false,physicalLaunched:false,nextAction:'invoke_same_saved_intent'};
+ },
+ async chargedInvocations(c,projectId){return chargedInvocationCount(c,projectId);},
  // Only the durable unclaimed state proves no child could have received bytes.
  async reconcileUnlaunchedInvocation(projectId,taskId){return this.db.tx(async c=>{
   await this.lock(c,projectId);const row=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2 FOR UPDATE',[projectId,taskId])).rows[0];
@@ -221,7 +264,7 @@ export const portableMethods={
  async invocationWrite(projectId,taskId,fence,supervisor,update){return this.db.tx(async c=>{
   await this.lock(c,projectId);const row=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2 FOR UPDATE',[projectId,taskId])).rows[0];
   need(row&&row.execution.fence===fence&&row.execution.supervisor===supervisor&&['running','unknown'].includes(row.state),'stale_invocation_fence');
-  for(const name of ['identity','sample'])if(update[name]){need(!row.execution[name]||hash(row.execution[name])===hash(update[name]),'immutable_invocation_evidence');row.execution[name]=update[name];}
+  for(const name of ['identity','sample','launchEvidence'])if(update[name]){need(!row.execution[name]||hash(row.execution[name])===hash(update[name]),'immutable_invocation_evidence');row.execution[name]=update[name];}
   if(update.sample){need(hash(update.sample.observation.binding)===hash(row.execution.binding),'invocation_binding_mismatch');if(update.sample.observation.processIdentity)need(hash(row.execution.identity)===hash(update.sample.observation.processIdentity),'invocation_identity_mismatch');}
   const state=update.sample?(safeExit(update.sample.observation)?'completed':'unknown'):row.state;
   let result=row.result;

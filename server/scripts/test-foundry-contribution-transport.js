@@ -110,6 +110,23 @@ test('declared complete metadata and explicit v1/raw legacy preserve exact canon
  for(const sourceText of ['\ud800','\udfff','x'.repeat(32769),null])for(const transport of [legacyTransport,COMPONENT_TRANSPORT])assert.throws(()=>encodeComponent({...a,sourceText},transport),{code:'invalid_source_encoding'});
  for(const x of [{...old,sourceText:a.sourceText},{...old,schema:'other'},{...old,sourceBase64:'YQ'},{...old,sourceBase64:'YQ==\n'},{...old,sourceBase64:'/w=='},{...old,sourceBase64:Buffer.alloc(32769).toString('base64')}])assert.throws(()=>decodeComponent(x));
 });
+test('exact supplied hosted synthetic artifact retains descriptor/source/module identity through both declared wires',async()=>{
+ const bytes=await readFile('server/scripts/fixtures/hosted-synthetic-upload-100511.json');
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),'b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a');
+ const saved=JSON.parse(bytes),artifact=portableArtifact(decodeComponent(saved.artifact));
+ assert.equal(artifact.descriptor.id,'sha256:075a5bc27569cf79a85061d72692ca3b2101a26b4c74bd17eaf2a16bb45d4b3e');
+ assert.equal(artifact.descriptor.module.digest,'sha256:37e04d035231a179a3408e98ab6bc68c54d9a61996554de38e75554465076121');
+ for(const representation of [encodeComponent(artifact,legacyTransport),encodeComponent(artifact,COMPONENT_TRANSPORT)]){
+  assert.deepEqual(portableArtifact(decodeComponent(representation)),artifact);
+  assert.equal(digest({actor:'same-original-actor',body:parseComponentRequest({artifact:representation,termsVersion:saved.termsVersion})}),digest({actor:'same-original-actor',body:{artifact,termsVersion:saved.termsVersion}}));
+ }
+});
+test('invoke application marker and known no-launch/failed/unknown codes survive the closed caller path',async()=>{
+ for(const code of ['invocation_no_launch','invocation_failed','invocation_outcome_unknown']){
+  let calls=0;const c=client(async()=>{calls++;return Response.json({error:{code,message:secret}},{status:409,headers:{'x-foundry-integration':'neomorphic.foundry.integration.v1'}});});
+  await assert.rejects(c.call('invoke',{request:{taskId:'same-original-task'}}),e=>{const safe=clientFailure(e);assert.equal(safe.code,code);assert.deepEqual(safe.diagnostic,{stage:'invoke',status:409,contentClass:'json',applicationMarked:true});assert.doesNotMatch(JSON.stringify(safe),/ARBITRARY|credential|secret_payload/);return true;});assert.equal(calls,1);
+ }
+});
 test('full wire rejects mixed fields, aliases, digest changes, malformed/noncanonical JSON and finite byte bounds',()=>{
  const a={kind:'test',descriptor:{test:true},sourceText:'exact',moduleBase64:'AGFzbQ=='},full=encodeComponent(a,COMPONENT_TRANSPORT);
  for(const x of [{...full,descriptor:a.descriptor},{...full,encoding:'other'},{...full,schema:'unknown'},{...full,digest:'sha256:'+'0'.repeat(64)},
@@ -224,7 +241,7 @@ test('exact accepted v1 saved/upload-started intent continues as v2 without auth
  const automatic=await f.a.run('contribute',original(),1);assert.equal(automatic.error.code,'upload_outcome_unknown');assert.equal(f.componentRequests,1);
  const canary=await f.a.run('upload-full-canary');assert.equal(canary.routeValidationObserved,true);assert.equal(canary.transport,COMPONENT_WIRE);
  const ownerFile=path.join(f.privateDir,'full-canary-owner.json');await writeFile(ownerFile,JSON.stringify({schema:'sds.foundry.remote-owner-qa.v1',baseUrl:f.baseUrl,directory:f.privateDir,authority:f.a.configuration.authority,expectedHostConfigId:f.descriptor.profile.contribution.binding.hostConfigId,expectedEntryTermsHash:f.descriptor.profile.termsHash}),{mode:0o600});
- const ownerCanary=await remoteJourney('a-upload-full-canary',ownerFile);assert.equal(ownerCanary.routeValidationObserved,true);assert.equal(ownerCanary.mutated,false);assert.equal(ownerCanary.pin.base,'900c37b6383fa87efead3e56ae52d3973c7fb196');
+ const ownerCanary=await remoteJourney('a-upload-full-canary',ownerFile);assert.equal(ownerCanary.routeValidationObserved,true);assert.equal(ownerCanary.mutated,false);assert.equal(ownerCanary.pin.base,'eaed1efef1c6b04fc0ba74bd55e25bf424964a34');
  assert.equal((await f.counts()).components,0);for(const op of ['create','claim','checkpoint','submit'])await assert.rejects(stat(path.join(f.a.directory,`${op}.json`)),{code:'ENOENT'});
  // Unknown first explicit v2 acknowledgement: committed exactly once, then restarted same-intent reconciliation.
  f.loseNextUpload();const lost=await f.a.run('reconcile-upload',undefined,1);assert.equal(lost.error.code,'transport_outcome_unknown');assert.equal((await f.counts()).components,1);
@@ -262,4 +279,4 @@ test('full-wire invalid schema refuses before mounted authentication and any SQL
  } finally {f.entry.isVisitorToken=isVisitor;f.store.authenticated=authenticated;for(const {owner,name,original}of databaseMethods)owner[name]=original;}
  assert.deepEqual(await f.counts(),prior);assert.deepEqual(await f.authority(),authority);
 });
-test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,'900c37b6383fa87efead3e56ae52d3973c7fb196');});
+test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,'eaed1efef1c6b04fc0ba74bd55e25bf424964a34');});

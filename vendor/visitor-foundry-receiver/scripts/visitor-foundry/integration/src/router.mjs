@@ -8,6 +8,7 @@ const require = createRequire(new URL('../../../../services/correspondence/packa
 const { Router } = require('express');
 export function createIntegrationRouter(store) {
   const router = Router(); const base = '/v1/projects/:projectId/foundry';
+  router.use((req,res,next)=>{if(/^\/v1\/projects\/[^/]+\/foundry(?:\/|$)/.test(req.path))res.set('x-foundry-integration','neomorphic.foundry.integration.v1');next();});
   const ctx = req => ({ projectId: req.params.projectId, token: req.header('authorization')?.replace(/^Bearer /, '') ?? '' });
   router.use(parseComponentInput);
   for (const [path, method] of [['withdraw','withdraw'], ['task','task'], ['components','uploadComponent'], ['participation','participate'], ['resolve','resolve'], ['gap','gap'], ['candidates','admit'], ['invoke','invoke'], ['observe','observe'], ['decline','decline'], ['environment-evidence','submitEnvironmentEvidence']]) {
