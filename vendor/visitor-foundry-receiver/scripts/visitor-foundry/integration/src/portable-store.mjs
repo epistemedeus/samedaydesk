@@ -11,27 +11,32 @@ import {createReceivingPorts,verificationResult,toVF03Receipt} from '../../execu
 import {assessVF01} from '../../participation/src/core.mjs';
 import {jsonBoundary} from '../../participation/src/adapters.mjs';
 import {semanticIdentity} from '../../participation/src/reproducer.mjs';
+import {receivingStep} from '../../entry/src/progress.mjs';
 const ref=id=>({uri:`https://foundry.invalid/approved/${id.slice(7)}`,digest:id});
 const exact=(x,fields)=>need(Object.keys(x).sort().join(',')===fields.sort().join(','),'invalid_participation_input');
 const source=(a)=>a.descriptor.capability;
 const safeExit=o=>o?.termination&&(o.termination.exited===true||o.termination.noLaunch===true);
 export const portableMethods={
  async enrollPortable(projectId,{validityMs=3600000,maxInvocations=64,maxValidationCostUnits='256000',entryBounds=null}={},installedClient=null) {
-  need(Number.isInteger(maxInvocations)&&maxInvocations>=1&&maxInvocations<=64,'invalid_invocation_cap');
-  const config=poolConfig(projectId,{maxValidationCostUnits});config.kind=PORTABLE_KIND;
+  const config=await receivingStep('pool_configuration',()=>{
+   need(Number.isInteger(maxInvocations)&&maxInvocations>=1&&maxInvocations<=64,'invalid_invocation_cap');
+   return poolConfig(projectId,{maxValidationCostUnits});
+  });config.kind=PORTABLE_KIND;
   config.limits.maxMemoryMb=512;config.limits.maxReviews=64;config.limits.maxReviewMs=64000;config.invocationLimits={maxRecords:maxInvocations,maxRunning:1,cpuMs:2000,wallMs:4000,memoryMb:512,costCapUsdMicros:'1000'};
-  const p=portablePolicy();config.policies=[{...config.policies[0],id:'policy:portable-structured-result',revision:'vf09:v1',evaluator:{id:p.evaluator.id,revision:p.evaluator.revision},environmentDigest:p.environmentDigest,requiredChecks:cases.map(c=>c.id),attempt:{cpuMs:2000*cases.length,wallMs:4000*cases.length,memoryMb:512,cost:{currency:'USD_MICROS',units:'4000'}}}];
+  const p=await receivingStep('portable_policy',()=>portablePolicy());config.policies=[{...config.policies[0],id:'policy:portable-structured-result',revision:'vf09:v1',evaluator:{id:p.evaluator.id,revision:p.evaluator.revision},environmentDigest:p.environmentDigest,requiredChecks:cases.map(c=>c.id),attempt:{cpuMs:2000*cases.length,wallMs:4000*cases.length,memoryMb:512,cost:{currency:'USD_MICROS',units:'4000'}}}];
   if(entryBounds){
    const attempts=Number(maxValidationCostUnits)/4000;config.entryBounds=entryBounds;config.entryHost=entryBounds.hostConfigId;
    Object.assign(config.limits,{maxRecords:entryBounds.maxCandidates,maxOutstanding:entryBounds.maxCandidates,maxPerScope:entryBounds.maxCandidates,maxCommands:entryBounds.maxNativeCommands,maxCpuMs:attempts*8000,maxWallMs:attempts*16000,maxReviews:attempts,maxReviewMs:attempts*1000});
   }
-  const verification=verificationFor(config,{validityMs});
+  const verification=await receivingStep('portable_verification',()=>verificationFor(config,{validityMs}));
   const participation={revision:'terms:vf09-owner-qa-v1',scope:'synthetic-reusable-components',funding:'voluntary',rights:PORTABLE_RIGHTS};participation.id=hash(participation);
   const install=async c=>{
-   await c.query('INSERT INTO correspondence_vf04_pools(project_id,config,verification,participation) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[projectId,config,verification,participation]);
-   const prior=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1 FOR UPDATE',[projectId])).rows[0];need(hash(prior.config)===hash(config),'immutable_pool_configuration');
+   await receivingStep('pool_insert',()=>c.query('INSERT INTO correspondence_vf04_pools(project_id,config,verification,participation) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[projectId,config,verification,participation]));
+   await receivingStep('pool_identity',async()=>{
+    const prior=(await c.query('SELECT config FROM correspondence_vf04_pools WHERE project_id=$1 FOR UPDATE',[projectId])).rows[0];need(hash(prior.config)===hash(config),'immutable_pool_configuration');
+   });
    const experiment={id:'experiment:vf09-cold-reuse',purpose:'owner_qa',cases,oracleDigest:portableEvaluation.suiteDigest,originalTask:{taskId:'task:visitor-a',input:{structuredContent:{event:{id:'evt_original',kind:'artifact'},replayed:false},content:[{type:'text',text:'redundant rendering'}]}}};
-   await c.query('INSERT INTO correspondence_vf04_experiments(project_id,id,digest,record) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[projectId,experiment.id,hash(experiment),experiment]);
+   await receivingStep('experiment_insert',()=>c.query('INSERT INTO correspondence_vf04_experiments(project_id,id,digest,record) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[projectId,experiment.id,hash(experiment),experiment]));
   };await (installedClient?install(installedClient):this.db.tx(install));return {verification,participation};
  },
  async participationTerms(ctx){return this.authenticated(ctx,false,async(c,_g,{config})=>{

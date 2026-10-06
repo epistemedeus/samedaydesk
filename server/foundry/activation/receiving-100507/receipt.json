@@ -1,0 +1,494 @@
+{
+  "schema": "sds.foundry.runtime-progress-receiving.v1",
+  "package": "ROOT-SOL-HOST-RUNTIME-PROGRESS-100507",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-host-runtime-progress-100507",
+  "base": "d9025af2cffc38a5d6eb551fe20ac9d99c45704c",
+  "status": "tested_diagnostic_handoff",
+  "headBinding": "single commit containing this receipt; exact SHA returned with PR",
+  "hostingerMeasuredByThisAgent": false,
+  "productionMutation": false,
+  "provenance": {
+    "neoHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "neoTree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+    "sourcePinSha256": "0a426b69289014c0f2a7cb9f35480eb27d500e7537384608e10d7965b8984c9a",
+    "amendment": {
+      "package": "ROOT-SOL-HOST-RUNTIME-PROGRESS-100507",
+      "sdsBase": "d9025af2cffc38a5d6eb551fe20ac9d99c45704c",
+      "reason": "Closed private receiving stage/error/SQLSTATE evidence at the actual recovery and portable enrollment operations; original errors are rethrown unchanged. No runtime, profile, transaction, allocation, deadline, SQL or public contract change. Actual Hostinger recovery cause remains unmeasured by this diagnostic handoff.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/progress.mjs": {
+          "receivedSha256": "f011046a800aa99e04efeaa6c088f0fb571ae45e023ab84268f7cc7d8b60e3be",
+          "sha256": "0704ba6ed11879e66b3098f253ed14726e282b42378743f5aad3be46c3883e17"
+        },
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "11e4c080e8a39d48735065f5b50a377396b42659974e31ccf2896e3037dacdf7",
+          "sha256": "378308f5aa80bda968fcae7617aeb047afd4bffbd59f9b1998947d6f50a7a30a"
+        },
+        "scripts/visitor-foundry/integration/entry/receiver.mjs": {
+          "receivedSha256": "516ae3d482f95f85e5640df2902948abe0b26624a82f47ce966fc5759da308cc",
+          "sha256": "fef0f818d528514d034877cd12b328fb157209e8be62aeff343aab4026de574c"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "d200580a9a5f1eff28c28bb124639da13fb8c91b2302cc3ca00a0b464e48ba91",
+          "sha256": "16975fcba50d982bef8912431565dd18f285fb6f0c3c3cb5d8b4a3ca1be89a8a"
+        }
+      }
+    },
+    "privateControlPinSha256": "06e3a3e148de9f28fab41ea6d047c9e1e14569173e9ede78983249f5c2c0de02",
+    "controlClosureFileCount": 215,
+    "priorReceivingFilesUnchanged": 18,
+    "priorReceivingDigest": "357e341852ac7bc4162574bb57c297f85c6bd6e05d5ecd9db70275d354799517",
+    "sealedExecutionUnchanged": true,
+    "runtimeProfilesChanged": false,
+    "installedVmPins": {
+      "node": "v22.18.0",
+      "pins": {
+        "profile": {
+          "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+          "runtime": "wasmtime-py",
+          "version": "49.0.0",
+          "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+          "license": "Apache-2.0 WITH LLVM-exception",
+          "platform": "linux",
+          "arch": "x64",
+          "imports": "none",
+          "memory": "fixed-wasm32",
+          "tables": "fixed-funcref",
+          "nan": "canonical",
+          "parallelCompilation": false
+        },
+        "node": "v22.18.0",
+        "python": "sha256:e1efa562c2cc2e35521a5c9c9b9939921001ff8ca9708a13ef15ace68cc2ccd7",
+        "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+        "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+        "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+        "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+        "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        }
+      },
+      "runtimePin": "sha256:38bbaf140028ec6d539e023f8a17980aaf2624752b44ef3478c0c598a53bfbd6",
+      "environmentDigest": "sha256:477032d7bd9a785599cddbf4743f447ba104d00d872c78b523d871bc5020adbd",
+      "oraclePin": "sha256:ad8f1cbaba98a8e325b991c29f451188b3caefe0f78f738d2cccf99a4e665123",
+      "portsPin": "sha256:fd4f4771216345d58f23f404588fc88f47884b91ed9974c912dd294f2ce4be0f"
+    },
+    "locks": {
+      "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
+      "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+    }
+  },
+  "files": {
+    "package.json": "25b2111c91449944e3921b1a8a67059a938d0c5262664d2433e167cd4e880e9d",
+    "server/foundry/activation/private-control-pin.json": "06e3a3e148de9f28fab41ea6d047c9e1e14569173e9ede78983249f5c2c0de02",
+    "server/foundry/activation/receiving-100507/RESULT.md": "bc021a49497ba5026e3ffc8a236477f0d9c838d6f6c292ec55a2ebd3e57ff560",
+    "server/foundry/activation/receiving-100507/ROOT.md": "28856d784b7afbf4af6e9635fff499d5e88e72a9ed9c8c8b400f36c1cfae622f",
+    "server/scripts/test-foundry-runtime-progress.js": "3871f5c470bc2e6c71338281db93fdf617c332dd850f690ff6738f5ebac45068",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "0a426b69289014c0f2a7cb9f35480eb27d500e7537384608e10d7965b8984c9a",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs": "0704ba6ed11879e66b3098f253ed14726e282b42378743f5aad3be46c3883e17",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "378308f5aa80bda968fcae7617aeb047afd4bffbd59f9b1998947d6f50a7a30a",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/receiver.mjs": "fef0f818d528514d034877cd12b328fb157209e8be62aeff343aab4026de574c",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-store.mjs": "16975fcba50d982bef8912431565dd18f285fb6f0c3c3cb5d8b4a3ca1be89a8a"
+  },
+  "installation": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "logSha256": "c28655fe74c10ced9523164bb18b8eebba3c1a51f705d579b07aea2b5b5696f1"
+    }
+  ],
+  "tests": [
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH FOUNDRY_RUNTIME_PROGRESS_RECEIPT=/tmp/root-sol-100507/runtime-evidence.json npm run test:foundry-runtime-progress",
+      "exit": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "6df00d3ebd3e44c50c029e265c7e63d2dffe10dfe1ad83cf1f6713396740e97a"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH FOUNDRY_ENTRY_RESERVATION_RECEIPT=/tmp/root-sol-100507/entry-evidence.json npm run test:foundry-entry-reservation",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "08418afc120db45a51e6c82f72a364e888c7813c175979731468574bf28051f5"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-private-pass",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "0715a069226c86fc3dab1b7ed07e9b5342acd1b1b3c2edc9a8ac0b4770403e78"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "4321e7eb0014e4abf1bfbc756489f613cdb49eb7d57e02c93aa4b818480c0e41"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "7311c4a318f9b0df4b26b969a940b2543e33fe9269ebacb082c2476461d6d3be"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "5ca04697fdac96c71dfc6cc122661aa599cc36c0c94f5e4b59c09072d0ce70d7"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "68cb31a94950de06c2bda7bb98eb179e20d994542e5752da81297ef23cf77430"
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "f65c6661bfc2bde25d4ddf092094322853393b296cc293023d8ab17706c55151"
+    }
+  ],
+  "totals": {
+    "passed": 143,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "rootSuppliedDatedNegative": {
+    "measuredBy": "Root",
+    "observedByThisAgent": false,
+    "at": "2026-10-05T23:51:54Z",
+    "normalBuildId": "01a10e6d-3f0c-715a-85fb-6c1b4aaba503",
+    "observationBuildId": "01a10e7a-acfc-715c-b75c-860ab9eb0d2b",
+    "registrationId": "ven_LN-0OoD1GHnf_iur",
+    "projectId": "prj_5cboYklXAf5S8Gio",
+    "trace": {
+      "receiverStarted": true,
+      "acknowledgedState": "pending",
+      "receiverState": "pending",
+      "workspaceExpiresAt": "2026-10-06T21:04:20.163Z",
+      "admission": {
+        "state": "pending",
+        "charged": true,
+        "reason": null
+      },
+      "poolEnrolled": false,
+      "poolReady": false,
+      "readFailureCode": null,
+      "progress": {
+        "receiveBudgetMs": 20000,
+        "ackBudgetMs": 3000,
+        "sqlCleanupBoundMs": 5000,
+        "totalBudgetMs": 28000,
+        "plannedPhase": null,
+        "budgetExpired": false,
+        "observedState": "pending",
+        "acknowledgedState": "pending",
+        "phases": [
+          {
+            "phase": "marker",
+            "outcome": "returned",
+            "code": null,
+            "state": "pending",
+            "ms": 191
+          },
+          {
+            "phase": "recover",
+            "outcome": "error",
+            "code": "port_error",
+            "state": null,
+            "ms": 417
+          },
+          {
+            "phase": "read",
+            "outcome": "returned",
+            "code": null,
+            "state": "pending",
+            "ms": 227
+          }
+        ]
+      }
+    },
+    "conclusion": "recover failed before deadline; port_error does not identify actual cause"
+  },
+  "runtimeProgressReplay": {
+    "schema": "sds.foundry.runtime-progress-replay.v1",
+    "base": "d9025af2cffc38a5d6eb551fe20ac9d99c45704c",
+    "actualHost": false,
+    "cases": [
+      {
+        "case": "build-vs-delivery-control",
+        "probePassed": true,
+        "control": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "port_error",
+          "errorClass": null,
+          "sqlState": null,
+          "stage": null,
+          "resource": null,
+          "state": null,
+          "ms": 2
+        },
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "runtime_config",
+          "state": null,
+          "ms": 4
+        },
+        "restoredDeliveryReady": true,
+        "sameRegistration": true,
+        "authorityHistoryPreserved": true,
+        "actualHost": false
+      },
+      {
+        "case": "invalid-runtime",
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "validation_failed",
+          "errorClass": "validation",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": null,
+          "state": null,
+          "ms": 2
+        },
+        "restoredDeliveryReady": true
+      },
+      {
+        "case": "pool_insert",
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "sql_check",
+          "errorClass": "sql",
+          "sqlState": "23514",
+          "stage": "pool_insert",
+          "resource": null,
+          "state": null,
+          "ms": 3
+        },
+        "rollbackPoolAbsent": true,
+        "sameAttemptReady": true
+      },
+      {
+        "case": "experiment_insert",
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "sql_foreign_key",
+          "errorClass": "sql",
+          "sqlState": "23503",
+          "stage": "experiment_insert",
+          "resource": null,
+          "state": null,
+          "ms": 5
+        },
+        "rollbackPoolAbsent": true,
+        "sameAttemptReady": true
+      },
+      {
+        "case": "missing-column",
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "sql_column_missing",
+          "errorClass": "sql",
+          "sqlState": "42703",
+          "stage": "pool_insert",
+          "resource": null,
+          "state": null,
+          "ms": 3
+        },
+        "sameAttemptReady": true
+      },
+      {
+        "case": "changed-source",
+        "diagnostic": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "installed_source_changed",
+          "errorClass": "validation",
+          "sqlState": null,
+          "stage": "portable_verification",
+          "resource": null,
+          "state": null,
+          "ms": 3
+        },
+        "sameAttemptReady": true
+      },
+      {
+        "case": "changed-launcher",
+        "staleVerificationRefused": true,
+        "oldEvidenceRetained": true,
+        "renewed": false
+      }
+    ],
+    "sourcePinSha256": "0a426b69289014c0f2a7cb9f35480eb27d500e7537384608e10d7965b8984c9a"
+  },
+  "retainedEntryReplay": {
+    "base": "e73bd8956305fc7d5a53cbb309560f4c77e5c0a5",
+    "hostingerMeasured": false,
+    "latencyBoundary": {
+      "afterCommittedReservationMs": 1200,
+      "wrapperDeadlineMs": 1000,
+      "receivedRegisterStatus": 202,
+      "receivedReconcileStatus": 202,
+      "beginCalls": 1,
+      "pendingCommitted": true,
+      "poolAbsent": true,
+      "physicalWork": 0
+    },
+    "receivedEntrySha256": "2941d2f34e2b876cee2eee5d8e1172dc171009740830df9d76ed7a711b3ee68d",
+    "sourcePinSha256": "0a426b69289014c0f2a7cb9f35480eb27d500e7537384608e10d7965b8984c9a",
+    "progressControl": {
+      "base": "f0eedc292ee5ba03f536b0c2c1c4dd8f45f67e8a",
+      "queryLatencyMs": 100,
+      "connectionLatencyMs": 450,
+      "reconcileStatuses": [
+        202,
+        202
+      ],
+      "recoverCompletionCalls": 0,
+      "poolAbsent": true,
+      "registrationIdUnchanged": true
+    },
+    "progressChangedReplay": {
+      "sameLatencyAsControl": true,
+      "status": 200,
+      "pools": 1,
+      "charged": 1,
+      "admissions": 1,
+      "progress": {
+        "schema": "neomorphic.foundry.entry-progress.v1",
+        "receiveBudgetMs": 20000,
+        "ackBudgetMs": 3000,
+        "sqlCleanupBoundMs": 5000,
+        "totalBudgetMs": 28000,
+        "plannedPhase": null,
+        "budgetExpired": false,
+        "observedState": "ready",
+        "acknowledgedState": "ready",
+        "phases": [
+          {
+            "phase": "marker",
+            "outcome": "returned",
+            "code": null,
+            "errorClass": null,
+            "sqlState": null,
+            "stage": null,
+            "resource": null,
+            "state": "pending",
+            "ms": 2
+          },
+          {
+            "phase": "recover",
+            "outcome": "returned",
+            "code": null,
+            "errorClass": null,
+            "sqlState": null,
+            "stage": null,
+            "resource": null,
+            "state": "ready",
+            "ms": 2136
+          },
+          {
+            "phase": "read",
+            "outcome": "returned",
+            "code": null,
+            "errorClass": null,
+            "sqlState": null,
+            "stage": null,
+            "resource": null,
+            "state": "ready",
+            "ms": 51
+          }
+        ]
+      },
+      "originalHistoryPreserved": true,
+      "actualHost": false
+    },
+    "retainedJourney": {
+      "initialStatus": 202,
+      "laterVisitorPartialStatus": 202,
+      "continuedRegistrationSame": true,
+      "privateCorrespondenceEvents": 1,
+      "registrations": 2,
+      "admissions": 2,
+      "pools": 2,
+      "verificationAttempts": 1,
+      "invocations": 6,
+      "canonicalObservations": 6,
+      "changedRefused": true,
+      "outstandingPhysical": 0,
+      "actualHost": false,
+      "runtimePin": "sha256:38bbaf140028ec6d539e023f8a17980aaf2624752b44ef3478c0c598a53bfbd6"
+    }
+  },
+  "contract": {
+    "safeEvidence": "closed alias/class/SQLSTATE/stage/resource only; original error rethrown",
+    "resourceClassification": "compare actual filesystem error path to this installed closure; no new reads or exposed paths",
+    "publicContractChanged": false,
+    "budgetChanged": false,
+    "receivingMs": 20000,
+    "ackMs": 3000,
+    "sqlCleanupBoundMs": 5000,
+    "totalBudgetMs": 28000,
+    "diagnosticJournal": "one existing bound snapshot; not verification authority",
+    "transactionSqlChanged": false,
+    "newOwnerAction": false,
+    "allocationTermsCapsChargesHistory": "preserved",
+    "coldMigration": false,
+    "generationRenewed": false,
+    "physicalOwnership": "held; no automatic replay/reassignment",
+    "privatePassContext": "current read is relative to build process; retained phase trace belongs to serving reconciliation"
+  },
+  "remainingActualHost": {
+    "owner": "Root",
+    "sourceBuildName": "build:managed-foundry",
+    "sameAttemptStage": "a-reconcile",
+    "observationBuildName": "build:managed-foundry-private-pass",
+    "observationIntent": "root-observe-entry-a1005",
+    "required": "new serving phase evidence first; identified producer/composition/schema repair only if demonstrated; actual A verification/publication/use/restart/B still required"
+  }
+}

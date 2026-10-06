@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { Pool, parsePgSchema, quoteIdent, parsePoolMax, hashToken, hashRequest, issueToken, newId, ApiError } from './deps.mjs';
 import { need, profile, validateAttempt, grantToken, SCHEMA, contributionProfile } from './contract.mjs';
 import { transactionBudget } from '../../../../services/correspondence/dist/visitor-foundry/boundary.js';
-import { RECEIVE_MS, ACK_MS, PROGRESS_SCOPE, phaseCode, progressBinding } from './progress.mjs';
+import { RECEIVE_MS, ACK_MS, PROGRESS_SCOPE, phaseFailure, progressBinding } from './progress.mjs';
 
 /** Durable bounded adapter; existing PostgresStore owns all project/grant/event writes.
  * Separate commits are reconciled by existing immutable keys/hashes, never guessed. */
@@ -185,7 +185,7 @@ export class EntryStore {
         phases.push({phase:name,outcome:'returned',code:null,state:typeof result==='string'?result:result?.state??null,ms:performance.now()-started});
         return result;
       } catch(error) {
-        phases.push({phase:name,outcome:controller.signal.aborted?'deadline':'error',code:controller.signal.aborted?'receive_deadline':phaseCode(error),state:null,ms:performance.now()-started});
+        phases.push({phase:name,outcome:controller.signal.aborted?'deadline':'error',...phaseFailure(controller.signal.aborted?{code:'receive_deadline'}:error),state:null,ms:performance.now()-started});
         return null;
       } finally { if(abort)controller.signal.removeEventListener('abort',abort); }
     };
