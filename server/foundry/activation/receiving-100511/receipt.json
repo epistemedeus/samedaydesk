@@ -1,0 +1,317 @@
+{
+  "schema": "sds.foundry.invoke-receiving.v1",
+  "branch": "codex/sol-host-invoke-100511",
+  "base": "eaed1efef1c6b04fc0ba74bd55e25bf424964a34",
+  "nativeSession": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "actualHostActions": false,
+  "npmCiExit": 0,
+  "sourcePinSha256": "9daeeed39d3cbf64fb0a05fe114f89c9469d7067b6a61d27609f892243cc1fd6",
+  "closureDigest": "sha256:55d96f9d9fd5646fed9d5aa819bb73e9bef5f20b8269edb658d745c668f64906",
+  "closureFiles": 222,
+  "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9",
+  "tests": [
+    {
+      "command": "npm run test:foundry-contribution-transport",
+      "exit": 0,
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "d6da40b8210680e688996c693ca5983235b9d2030b44c96e0fb7a2c294b8458b"
+    },
+    {
+      "command": "npm run test:foundry-private-pass",
+      "exit": 0,
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "291a3eb320a58b06186dba84ec06ada917a5b5407d232a5b3a860901d089a285"
+    },
+    {
+      "command": "npm run test:foundry-entry-reservation",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "8e15c85551a87a965cd636d35152bc4dcd4797ad3af4083c140f4c97e315b846"
+    },
+    {
+      "command": "npm run test:foundry-runtime-progress",
+      "exit": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "f8e6bfc525c641283b2dec80f31c70725d523bc59d70e9546c28db67e502149d"
+    },
+    {
+      "command": "npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "3a4e640e1f8f6164cd2432553d178c2b4845d92dfc166f28af5549d7610bcb54"
+    },
+    {
+      "command": "npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "fe17aae5267b1f67add5b7598100c79355e85a6ffa0ef9e420aa578f419cc61e"
+    },
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "641f0404fc7f0d801dc288504e4ebfcba3a25804d70c47d321d1694df4e35d34"
+    },
+    {
+      "command": "npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "f6599413df9372ae1c59cc13944133a6f541ea1caa5e7388d2e15ce0749f227a"
+    },
+    {
+      "command": "npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "038837eaf1e3dc1765b96a8555bef129455d29faae6eae6a3d6e11ece3f3cb5b"
+    },
+    {
+      "command": "npm run test:foundry-runtime-layout",
+      "exit": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "stdoutSha256": "b3008c04b74dc2889e77387839b9cddf207fc346970d2e9694e5048f10dc3e29"
+    }
+  ],
+  "total": {
+    "pass": 186,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "actualNegative": {
+    "suppliedBy": "Root",
+    "observedAt": "2026-10-06T05:11:56.762Z",
+    "projectId": "prj_5cboYklXAf5S8Gio",
+    "registrationId": "ven_LN-0OoD1GHnf_iur",
+    "taskId": "task:owner-a-use-useful",
+    "observationId": "sha256:0ddd220e88facdce964df67de653b964b19cff3ffefe7bcb28d76348bcbf2d59",
+    "state": "completed",
+    "charged": 1,
+    "termination": {
+      "noLaunch": true,
+      "exited": false,
+      "code": null,
+      "signal": null
+    },
+    "nativeCauseEstablished": false
+  },
+  "coldServing": {
+    "schema": "sds.foundry.runtime-layout-replay.v1",
+    "base": "e6b6bcba8316c395199312a1580ec9eae1770738",
+    "actualHost": false,
+    "cases": [
+      {
+        "case": "missing-utilities-build",
+        "pinsEqual": true,
+        "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9",
+        "files": 4905,
+        "bytes": 229361517
+      },
+      {
+        "case": "legacy-receiving",
+        "contentPreserved": true,
+        "changedIncomingRefused": true,
+        "badWheelRetained": true
+      },
+      {
+        "case": "offline-copy",
+        "exited": true,
+        "pipesClosed": true,
+        "changedInterpreterAndNativeRefused": true,
+        "brokenRefused": true
+      },
+      {
+        "case": "archived-serving",
+        "buildRemoved": true,
+        "noCheckoutLinks": true,
+        "broken": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "unreachable_external_absolute_link",
+          "state": null,
+          "ms": 4
+        },
+        "missing": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "runtime_config",
+          "interpreterEntry": null,
+          "state": null,
+          "ms": 4
+        },
+        "missingEntry": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "missing_entry",
+          "state": null,
+          "ms": 5
+        },
+        "pinsEqual": true,
+        "sameAttemptReady": true,
+        "originalAuthorityRetained": true,
+        "privateCorrespondenceRetained": true,
+        "grantsAndHistoryRetained": true,
+        "installerReplayUnchanged": true,
+        "concurrentRecoveries": 2,
+        "verificationRenewed": false,
+        "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+        "invocations": 6,
+        "chargedAInvocations": 4,
+        "terminationExitedDrained": true,
+        "noLaunchControl": {
+          "code": "spawn_permission",
+          "actualProviderCause": false,
+          "originalIntentRetained": true,
+          "priorChargedObservationRetained": true,
+          "explicitOwnerReceiving": true,
+          "chargedBefore": 1,
+          "chargedAfter": 2,
+          "continuedAfterHttpRestart": true
+        }
+      }
+    ],
+    "sourcePinSha256": "9daeeed39d3cbf64fb0a05fe114f89c9469d7067b6a61d27609f892243cc1fd6",
+    "controlPinSha256": "f8401422d01c8efc92152f561f69e6246ec242c56eb9ab33e8a29b18ee986256",
+    "build": {
+      "code": 0,
+      "reason": null,
+      "exited": true,
+      "materializer": {
+        "ok": true,
+        "action": "cpython-standalone",
+        "layout": "self-contained-regular-v1",
+        "deployable": true,
+        "contentPreserved": null,
+        "privatePythonWebServer": false
+      },
+      "probe": {
+        "probe": "managed-node",
+        "ok": true,
+        "linuxX64": true,
+        "node": "v22.18.0",
+        "python3": false,
+        "installedPython": true,
+        "bundledPython": true,
+        "runtimeLayout": "self-contained-regular-v1",
+        "runtimeLayoutFailure": null,
+        "installedPythonFailure": null,
+        "prlimit": false,
+        "procReadable": true,
+        "procFdReadable": true,
+        "childProcReadable": true,
+        "referenceRuntime": true,
+        "osLimitsEnforced": true,
+        "pidPreserved": true,
+        "referenceExecution": true,
+        "referenceFailure": null,
+        "pythonFailure": "spawn_failed",
+        "osLimitMechanism": "python-setrlimit-before-exec",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        },
+        "launcherIdentityStable": true,
+        "unsupportedHostReasons": [],
+        "productionActivate": "HOLD",
+        "activation": false,
+        "notProduction": true,
+        "wholeHostSandbox": false,
+        "privatePythonWebServer": false,
+        "referenceProfileRetained": true
+      },
+      "stdoutSha256": "207a1c2e98454eb104991a07a53d822fbd9c55d630bffa3e3fbd9e3948007a4d"
+    },
+    "runtime": {
+      "pins": {
+        "profile": {
+          "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+          "runtime": "wasmtime-py",
+          "version": "49.0.0",
+          "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+          "license": "Apache-2.0 WITH LLVM-exception",
+          "platform": "linux",
+          "arch": "x64",
+          "imports": "none",
+          "memory": "fixed-wasm32",
+          "tables": "fixed-funcref",
+          "nan": "canonical",
+          "parallelCompilation": false
+        },
+        "node": "v22.18.0",
+        "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+        "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+        "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+        "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+        "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+        "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        }
+      },
+      "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+    }
+  },
+  "remainingActualHost": [
+    "Receive current source/caller without changing authority",
+    "Canonical serving status/resource readback",
+    "Explicit expected-old no-launch receiving only while original manifest/evidence remain current",
+    "Same original saved A invocation; retain any new native failure classification",
+    "Actual HTTP restart and B canonical same-candidate execution/readbacks"
+  ]
+}

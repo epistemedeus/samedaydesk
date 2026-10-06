@@ -8,6 +8,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import test, { before, after } from "node:test";
 import { createSdsApp } from "../app.js";
+import { verifyCallerClosure } from "../foundry/activation/remote-private-journey.mjs";
 import { clientKey, TRUSTED_PROXIES_ENV } from "../lib/agent-readiness/rate-limit.js";
 import { inspectCorrespondenceEnv } from "../lib/correspondence-mount.js";
 import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
@@ -131,6 +132,11 @@ before(async () => {
 
 after(async () => {
   if (coldDir) await rm(coldDir, { recursive: true, force: true });
+});
+
+test("production dependencies retain a valid private caller control closure", () => {
+  const received = verifyCallerClosure();
+  assert.match(received.closureDigest, /^sha256:[a-f0-9]{64}$/);
 });
 
 test("seeded proxy-addr 2.0.7 resolution is refused", () => {

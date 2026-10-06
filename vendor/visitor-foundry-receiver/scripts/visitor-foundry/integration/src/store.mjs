@@ -1,3 +1,4 @@
+import {executionView,servingLaunchResources} from './execution-view.mjs';
 import {PORTABLE_KIND,PORTABLE_ENV,PORTABLE_OUTCOME,PORTABLE_RIGHTS,portableArtifact,portableMatches,portablePolicy} from './portable-profile.mjs';
 import {portableMethods} from './portable-store.mjs';
 import { randomUUID, createHash } from 'node:crypto';
@@ -655,8 +656,8 @@ export class IntegrationStore {
       const engine = await this.replay(c, ctx.projectId, config);
       const state = engine.service.snapshot();
       const attempts = (await c.query('SELECT id,candidate_id,generation,verification,state,assignment,termination FROM correspondence_vf04_attempts WHERE project_id=$1 ORDER BY id', [ctx.projectId])).rows;
-      const invocations=(await c.query('SELECT task_id,state,execution FROM correspondence_vf04_invocations WHERE project_id=$1 AND execution IS NOT NULL ORDER BY task_id',[ctx.projectId])).rows;
-      return { revision: state.revision, verification, portableExecution:{invocationCap:config.invocationLimits??null,chargedInvocations:invocations.length,invocations:invocations.map(i=>({taskId:i.task_id,state:i.state,observationId:i.execution.sample?.observation.id??null,termination:i.execution.sample?.observation.termination??null,usage:i.execution.sample?.observation.usage??null}))}, candidates: Object.values(state.candidates).map(c => ({ id: c.candidate.id, generation:c.generation??1, stage: c.stage, active: c.active, acceptance: c.acceptance })),
+      const invocations=(await c.query('SELECT task_id,manifest_id,state,execution FROM correspondence_vf04_invocations WHERE project_id=$1 AND execution IS NOT NULL ORDER BY task_id',[ctx.projectId])).rows;
+      return { revision: state.revision, verification, portableExecution:{invocationCap:config.invocationLimits??null,chargedInvocations:await this.chargedInvocations(c,ctx.projectId),servingLaunchResources:servingLaunchResources(),invocations:invocations.map(i=>({taskId:i.task_id,state:i.state,executionId:i.execution.id,fence:i.execution.fence,manifestId:i.manifest_id,sourceProject:i.execution.sourceProject,candidateId:i.execution.binding?.candidateId,generation:i.execution.generation,verificationId:i.execution.verification?.id,requestDigest:i.execution.requestId,priorAttempts:(i.execution.priorAttempts??[]).map(p=>({executionId:p.id,observationId:p.sample?.observation?.id??null,execution:executionView(p.sample,p.launchEvidence)})),execution:executionView(i.execution.sample,i.execution.launchEvidence),observationId:i.execution.sample?.observation.id??null,termination:i.execution.sample?.observation.termination??null,usage:i.execution.sample?.observation.usage??null}))}, candidates: Object.values(state.candidates).map(c => ({ id: c.candidate.id, generation:c.generation??1, stage: c.stage, active: c.active, acceptance: c.acceptance })),
         attempts, reuse: projectReuse(state), publications: (await c.query('SELECT candidate_id,generation,state FROM correspondence_vf04_publications WHERE project_id=$1 ORDER BY candidate_id,generation', [ctx.projectId])).rows };
     });
   }

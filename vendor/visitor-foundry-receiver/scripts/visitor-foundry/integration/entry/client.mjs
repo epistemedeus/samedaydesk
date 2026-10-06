@@ -91,6 +91,22 @@ export async function uploadFullCanary(config){
  throw Object.assign(new Error(),{code:'client_outcome_unknown'});
 }
 
+// Root's private receiving request is prepared from the exact saved invocation,
+// original registration/terms, and canonical read-only status. No grant is emitted.
+export async function prepareNoLaunch(config,{intentId,expectedHostConfigId,request}){
+ const {client,receipt}=resumed(config),a=standing(config);
+ const saved=readPrivateJson(join(config.directory,`invoke-${hash(request).slice(7)}.json`));
+ need(saved && hash(saved.request)===hash(request),409,'local_intent_mismatch');
+ const status=await client.call('status'),row=status.portableExecution?.invocations.find(x=>x.taskId===request.taskId);
+ need(row?.state==='completed' && row.termination?.noLaunch===true && row.manifestId===saved.manifestId
+  && row.requestDigest===hash(request),409,'invocation_no_launch');
+ const received={schema:'sds.foundry.private-pass.v2',intentId,action:'receive-no-launch',projectId:receipt.projectId,
+  expectedHostConfigId,expectedEntryTermsHash:a.entryTerms,expectedVerificationId:row.verificationId,candidateId:row.candidateId,
+  expectedGeneration:row.generation,reconcileIntentId:null,registrationId:receipt.registrationId,taskId:request.taskId,manifestId:saved.manifestId,
+  expectedExecutionId:row.executionId,expectedFence:row.fence,expectedObservationId:row.observationId,request};
+ return received;
+}
+
 export async function useFromEntry(config,request){
  const {client,receipt}=resumed(config);
  if(receipt.receiver.state!=='ready')return {original:request.input,invocation:null,nextAction:'use_private_correspondence'};
