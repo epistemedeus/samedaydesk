@@ -191,6 +191,53 @@
           "sha256": "e6e75a10f88c74beb781c3b8ef16e680ee1382bc929dfe1b12c0827558b1b7ea"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-UPLOAD-METADATA-100510",
+      "sdsBase": "900c37b6383fa87efead3e56ae52d3973c7fb196",
+      "reason": "Declared finite canonical-JSON UTF8/Base64 full portable metadata wire, explicit raw/v1 legacy decoding and unchanged decoded actor/body journal identity. Both canonical clients negotiate only network representation; exact saved v1 intent and started digest remain immutable across explicit reconciliation. Shared protocol parsing before entry authentication gives an invalid-schema full-wire canary no SQL. No execution/profile/runtime/authority/terms/budget/history/physical ownership change; provider acceptance remains Root measurement.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/mount.mjs": {
+          "receivedSha256": "9ed5a7a0ee6deff6497c503078880f72dab1e239ced565ffb951aa8c8e9818da",
+          "sha256": "e75cb6978bce6cd15333a595c7753c0db1868f2fce08b9a1780877121be20ca7"
+        },
+        "scripts/visitor-foundry/integration/compound/client.mjs": {
+          "receivedSha256": "1378f68c4cd081064615fe7621b3c64529de91e6de20557c24719f688118c425",
+          "sha256": "93cf2fec0a2caee273eac7410212af3f299d05fcf6ef182d09887501bc8b44d9"
+        },
+        "scripts/visitor-foundry/integration/compound/transport.mjs": {
+          "receivedSha256": "ee6a3aa0be749f6d0b0ebe63cb8a0cd23eda682eebf243a30870113e045c44f2",
+          "sha256": "94bcaf201264c8a5ffafcfb67e81bee33e0804c6de4a55e41ae2c01df8bde69f"
+        },
+        "scripts/visitor-foundry/integration/compound/upload.mjs": {
+          "receivedSha256": "2d36710a0a0858e7d0d8be5d12fcc1b41717e59c46dfbd4c76a39ee3b60b48e3",
+          "sha256": "f543d27b2bde234ad50c226b7cba9ea309b7794f6c5875cc57b22f74e430026f"
+        },
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "7dbcb8a25120d3a5adebd7908686981c80d95b14f3382fe69ed9d6eae7b1d2c3",
+          "sha256": "1e65f2b60a05751a892f431fc2cc5c70b0bd2af02b99d2b76537c52a67296aed"
+        },
+        "scripts/visitor-foundry/integration/entry/mount.mjs": {
+          "receivedSha256": "8f18fbb1bdfcaf1d9328097348926fcedc1bbd1929646003cfac8634cc39f422",
+          "sha256": "dbd2298e41caa7638bed87428b8734ef9fcd65420e5c586955e8fa01053c7f82"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "e3421c54094e92aea7733bc296bc084eb41aa7c117ace6e1d06dd3c33c3d5e32",
+          "sha256": "4e5ee9c2a9225c762d654aca891b848b5b6b42add61b786801f31dfe6039b1df"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "86986b09e124a54bf0fc10ec35a71f5fffb31193b8105cea01a66d9d5a75ea82",
+          "sha256": "85658c2fcb59757811952797042d55735642ec4a346d898b983b501ec504bb1e"
+        },
+        "scripts/visitor-foundry/integration/src/portable-upload-wire.mjs": {
+          "receivedSha256": "9f3ff8da91ea883b963ef19522a6ee846445bfc61464c6ae2adf8a26fcda2364",
+          "sha256": "d831bd3a195363df2b9cdf90c26ac3b0ee7e887139585769721baf88e5641e3f"
+        },
+        "scripts/visitor-foundry/integration/src/router.mjs": {
+          "receivedSha256": "e6e75a10f88c74beb781c3b8ef16e680ee1382bc929dfe1b12c0827558b1b7ea",
+          "sha256": "4156315052af37b39758133b9fa1a4c7490c7b025af783a0a16977f443e00895"
+        }
+      }
     }
   ]
 }

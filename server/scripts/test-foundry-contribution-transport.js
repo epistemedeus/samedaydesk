@@ -4,7 +4,7 @@ import {mkdtemp,mkdir,readFile,writeFile,stat,rm} from 'node:fs/promises';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
 import {pathToFileURL} from 'node:url';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 import pg from 'pg';
 import {PostgresStore} from '@neomorphic/correspondence';
 import {startDisposablePg} from './fixtures/disposable-pg.mjs';
@@ -14,15 +14,20 @@ import {runPrivatePass,PASS_SCHEMA} from '../foundry/private-pass-core.mjs';
 import {verifyFoundrySource} from './fixtures/verify-foundry-source.mjs';
 import {express} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/deps.mjs';
 import {original,task,cases} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs';
+import {checkUploadIntent} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/upload.mjs';
+import {hash,createVersion} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/index.mjs';
+import {canonical,digest} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/validation/src/index.mjs';
 import {resumed} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/client.mjs';
 import {participationClient} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/client.mjs';
 import {clientFailure,jsonCall} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/transport.mjs';
-import {decodeComponent,encodeComponent,COMPONENT_WIRE,COMPONENT_TRANSPORT} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-upload-wire.mjs';
+import {decodeComponent,encodeComponent,componentRequest,parseComponentRequest,COMPONENT_WIRE,LEGACY_COMPONENT_WIRE,COMPONENT_TRANSPORT,MAX_COMPONENT_BYTES} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-upload-wire.mjs';
+import {createArtifact} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs';
 import {portableArtifact,portableVerification} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-profile.mjs';
 import {callerResult,callerFailure,remoteJourney,verifyCallerClosure} from '../foundry/activation/remote-private-journey.mjs';
 const root=process.cwd(),vendor=path.join(root,'vendor/visitor-foundry-receiver'),baseHead='0efa7ec527959281f6de5fa5e16c172a2903ad3f';
+const legacyTransport={schema:LEGACY_COMPONENT_WIRE,sourceEncoding:'base64-utf8',moduleEncoding:'base64'};
 const secret='ARBITRARY_PROSE_SECRET postgres://credential@private/db SELECT secret_payload';
-let cluster,dir,OldClient,oldCatch;
+let cluster,dir,OldClient,oldCatch,OldUploadIntent;
 const fixtures=new Set();
 before(async()=>{
  dir=await mkdtemp(path.join(tmpdir(),'sds-transport-'));cluster=await startDisposablePg();
@@ -32,6 +37,13 @@ before(async()=>{
  OldClient=(await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)).participationClient;
  const cli=await runBounded('git',['show',`${baseHead}:vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs`],{capture:true,stdoutLimit:30000});assert.equal(cli.code,0);
  oldCatch=new Function('error','console','process',cli.stdout.match(/catch\(error\)\{(.+)\}\s*$/)[1]);
+ const accepted='900c37b6383fa87efead3e56ae52d3973c7fb196',integration=path.join(vendor,'scripts/visitor-foundry/integration');
+ const absolute=(source,file)=>source.replace(/from '(\.\.?\/[^']+)'/g,(_m,p)=>`from '${new URL(p,pathToFileURL(file)).href}'`);
+ const oldWire=await runBounded('git',['show',`${accepted}:vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-upload-wire.mjs`],{capture:true,stdoutLimit:30000});assert.equal(oldWire.code,0);
+ const wireURL=`data:text/javascript;base64,${Buffer.from(absolute(oldWire.stdout,path.join(integration,'src/portable-upload-wire.mjs'))).toString('base64')}`;
+ const oldUpload=await runBounded('git',['show',`${accepted}:vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/upload.mjs`],{capture:true,stdoutLimit:30000});assert.equal(oldUpload.code,0);
+ const uploadSource=absolute(oldUpload.stdout.replace("'../src/portable-upload-wire.mjs'",`'${wireURL}'`),path.join(integration,'compound/upload.mjs'));
+ OldUploadIntent=(await import(`data:text/javascript;base64,${Buffer.from(uploadSource).toString('base64')}`)).uploadIntent;
 });
 after(async()=>{for(const f of fixtures)await f.close();await cluster?.stop();await rm(dir,{recursive:true,force:true});});
 const client=fetchImpl=>participationClient({baseUrl:'https://fixture.invalid',projectId:'fixture',token:secret,identityKey:'f'.repeat(64),fetchImpl,timeoutMs:80});
@@ -87,26 +99,41 @@ test('real CLI always emits a closed error code and the diagnostic child exits',
  assert.equal(r.code,1);assert.equal(r.reason,null);assert.equal(r.exited,true);
  assert.deepEqual(JSON.parse(r.stdout),{error:{code:'client_outcome_unknown',nextAction:'reconcile_same_attempt'}});assert.throws(()=>process.kill(r.pid,0),{code:'ESRCH'});
 });
-test('declared source encoding is exact, finite and rejects mixed/unknown/noncanonical/invalid UTF8',()=>{
- const a={kind:'portable-structured-result-v1',descriptor:{test:true},sourceText:'\ufeffexact π\n',moduleBase64:'AGFzbQ=='};
- assert.deepEqual(decodeComponent(encodeComponent(a,COMPONENT_TRANSPORT)),a);assert.equal(encodeComponent(a,null),a);assert.equal(decodeComponent(a),a);
- for(const sourceText of ['\ud800','\udfff','x'.repeat(32769),null])assert.throws(()=>encodeComponent({...a,sourceText},COMPONENT_TRANSPORT),{code:'invalid_source_encoding'});
- for(const x of [{...encodeComponent(a,COMPONENT_TRANSPORT),sourceText:a.sourceText},{...encodeComponent(a,COMPONENT_TRANSPORT),schema:'other'},
-  {...encodeComponent(a,COMPONENT_TRANSPORT),sourceBase64:'YQ'}, {...encodeComponent(a,COMPONENT_TRANSPORT),sourceBase64:'YQ==\n'},
-  {...encodeComponent(a,COMPONENT_TRANSPORT),sourceBase64:'/w=='},{...encodeComponent(a,COMPONENT_TRANSPORT),sourceBase64:Buffer.alloc(32769).toString('base64')}])assert.throws(()=>decodeComponent(x));
+test('declared complete metadata and explicit v1/raw legacy preserve exact canonical bytes',()=>{
+ const a={kind:'portable-structured-result-v1',descriptor:{test:'metadata π <script>schema</script>'},sourceText:'\ufeffexact π\n',moduleBase64:'AGFzbQ=='};
+ const full=encodeComponent(a,COMPONENT_TRANSPORT),old=encodeComponent(a,legacyTransport);
+ assert.deepEqual(decodeComponent(full),a);assert.deepEqual(decodeComponent(old),a);assert.equal(decodeComponent(a),a);assert.equal(encodeComponent(a,null),a);
+ assert.equal(Object.hasOwn(old,'descriptor'),true);assert.equal(Object.hasOwn(full,'descriptor'),false);assert.equal(Object.hasOwn(full,'moduleBase64'),false);
+ assert.doesNotMatch(JSON.stringify(full),/metadata|<script>|sourceText|moduleBase64/);
+ const body={artifact:old,termsVersion:'sha256:'+'a'.repeat(64)};assert.equal(canonical(body)===canonical(componentRequest(body,COMPONENT_TRANSPORT)),false);
+ assert.equal(digest({actor:'original-actor',body:componentRequest(body,null)}),digest({actor:'original-actor',body:{artifact:decodeComponent(full),termsVersion:body.termsVersion}}));
+ for(const sourceText of ['\ud800','\udfff','x'.repeat(32769),null])for(const transport of [legacyTransport,COMPONENT_TRANSPORT])assert.throws(()=>encodeComponent({...a,sourceText},transport),{code:'invalid_source_encoding'});
+ for(const x of [{...old,sourceText:a.sourceText},{...old,schema:'other'},{...old,sourceBase64:'YQ'},{...old,sourceBase64:'YQ==\n'},{...old,sourceBase64:'/w=='},{...old,sourceBase64:Buffer.alloc(32769).toString('base64')}])assert.throws(()=>decodeComponent(x));
 });
+test('full wire rejects mixed fields, aliases, digest changes, malformed/noncanonical JSON and finite byte bounds',()=>{
+ const a={kind:'test',descriptor:{test:true},sourceText:'exact',moduleBase64:'AGFzbQ=='},full=encodeComponent(a,COMPONENT_TRANSPORT);
+ for(const x of [{...full,descriptor:a.descriptor},{...full,encoding:'other'},{...full,schema:'unknown'},{...full,digest:'sha256:'+'0'.repeat(64)},
+  {...full,payloadBase64:full.payloadBase64+'\n'},{...full,payloadBase64:Buffer.alloc(MAX_COMPONENT_BYTES+1).toString('base64')}])assert.throws(()=>decodeComponent(x));
+ const wrap=bytes=>({...full,digest:'sha256:'+createHash('sha256').update(bytes).digest('hex'),payloadBase64:bytes.toString('base64')});
+ for(const bytes of [Buffer.from([0xff]),Buffer.from('{'),Buffer.from(' {"sourceText":"exact"}'),Buffer.from('{"x":1,"x":1}'),Buffer.from('null'),Buffer.from('[]'),Buffer.from('{"schema":"nested"}')])assert.throws(()=>decodeComponent(wrap(bytes)));
+ for(const raw of [null,[],false,3,'invalid',{artifact:full,termsVersion:'t',extra:'x'}])assert.throws(()=>parseComponentRequest(raw),{code:'invalid_participation_input'});
+ assert.throws(()=>encodeComponent(a,{schema:'unknown'}),{code:'invalid_component_wire'});
+ assert.throws(()=>encodeComponent(a,{schema:COMPONENT_WIRE,encoding:'guess'}),{code:'invalid_component_wire'});
+ assert.throws(()=>encodeComponent({...a,descriptor:{large:'x'.repeat(MAX_COMPONENT_BYTES)}},COMPONENT_TRANSPORT));
+});
+
 async function fixture({rejectAll=false}={}) {
  const schema=`transport_${randomUUID().replaceAll('-','')}`,privateDir=path.join(dir,schema);await mkdir(privateDir,{mode:0o700});
  const url=cluster.url,config={databaseUrl:url,pgSchema:schema,adminToken:'fixture-only-never-issued',store:'postgres',bodyLimitBytes:524288,rateLimitWindowMs:60000,rateLimitMax:10000,corsOrigins:[],trustProxyHops:0,poolMax:1,port:0};
  const hostProfile=JSON.parse(await readFile(path.join(vendor,'scripts/visitor-foundry/integration/entry/host-profile.example.json'))),privateProfile=JSON.parse(await readFile(path.join(vendor,'scripts/visitor-foundry/integration/entry/private-profile.example.json')));
  const pool=new pg.Pool({connectionString:url});
  const query=async(sql,args)=>{const c=await pool.connect();try{await c.query('BEGIN');await c.query(`SET LOCAL search_path TO ${schema}`);const r=await c.query(sql,args);await c.query('COMMIT');return r;}catch(e){await c.query('ROLLBACK');throw e;}finally{c.release();}};
- let base,mount,server,port=0,componentRequests=0,drop=false,allowLegacy=false;
+ let base,mount,server,port=0,componentRequests=0,drop=false,allowLegacy=false,blockAll=rejectAll;
  async function boot(install=false) {
   base=new PostgresStore(url,{schema,poolMax:1});({mounted:mount}=await openEntryFacade({store:base,config,hostProfile,participationKey:'transport-disposable-private-purpose-key-32'}));
   if(install){await base.migrate();await mount.extension.cells.migrate();await mount.extension.integration.migrate();await mount.entry.migrate();await mount.receiver.migrate();mount.entry.receiver=null;const prior=await mount.entry.install(privateProfile);mount.entry.receiver=mount.receiver;await mount.entry.enableContribution({expectedTerms:prior.termsHash,id:'vf10:contribution-v2',binding:mount.receiver.binding()});}
   const app=express();app.get('/product-unrelated-fixture',(_req,res)=>res.json({serving:true}));app.use(express.json({limit:524288}));
-  app.use((req,res,next)=>{if(req.path.endsWith('/components')){componentRequests++;if(rejectAll || !allowLegacy && req.body?.artifact?.sourceText!==undefined)return res.status(403).type('text').send('Forbidden\n');if(drop){drop=false;res.json=()=>{res.destroy();return res;};}}next();});
+  app.use((req,res,next)=>{if(req.path.endsWith('/components')){componentRequests++;if(blockAll || !allowLegacy && (req.body?.artifact?.sourceText!==undefined || req.body?.artifact?.descriptor!==undefined))return res.status(403).type('text').send('Forbidden\n');if(drop){drop=false;res.json=()=>{res.destroy();return res;};}}next();});
   app.use('/api/correspondence',mount.app);server=app.listen(port,'127.0.0.1');await new Promise(r=>server.once('listening',r));port=server.address().port;
  }
  async function stop(){server.closeAllConnections();await new Promise(r=>server.close(r));await closeEntryThenBase(mount,base);}
@@ -125,7 +152,7 @@ async function fixture({rejectAll=false}={}) {
  const counts=async()=>(await query(`SELECT (SELECT charged FROM correspondence_vf10_installation) charged,(SELECT count(*)::int FROM correspondence_vf12_admissions) admissions,(SELECT count(*)::int FROM correspondence_vf04_packages WHERE kind='component') components,(SELECT count(*)::int FROM correspondence_vf04_candidates) candidates,(SELECT count(*)::int FROM correspondence_vf04_attempts) attempts`)).rows[0];
  const pass=async(candidateId)=>{const verification=(await query('SELECT verification FROM correspondence_vf04_pools WHERE project_id=$1',[a.registration.projectId])).rows[0].verification;
   return runPrivatePass(mount.extension.integration,mount.receiver,{schema:PASS_SCHEMA,intentId:'transport-explicit-owner-dispatch',action:'dispatch',projectId:a.registration.projectId,expectedHostConfigId:descriptor.profile.contribution.binding.hostConfigId,expectedEntryTermsHash:descriptor.profile.termsHash,expectedVerificationId:verification.id,candidateId,expectedGeneration:1,reconcileIntentId:null});};
- const f={a,visitor,query,authority,counts,pass,descriptor,privateDir,baseUrl,get componentRequests(){return componentRequests;},get store(){return mount.extension.integration;},allowLegacy(){allowLegacy=true;},loseNextUpload(){drop=true;},async restart(){await stop();await boot();},async close(){await stop();await pool.end();fixtures.delete(f);}};fixtures.add(f);return f;
+ const f={a,visitor,query,authority,counts,pass,descriptor,privateDir,baseUrl,get componentRequests(){return componentRequests;},get store(){return mount.extension.integration;},get entry(){return mount.entry;},get base(){return base;},allowLegacy(){allowLegacy=true;},acceptFull(){blockAll=false;},loseNextUpload(){drop=true;},async restart(){await stop();await boot();},async close(){await stop();await pool.end();fixtures.delete(f);}};fixtures.add(f);return f;
 }
 test('content refusal reaches canonical CLI and pinned private caller, before participation intent',async()=>{
  const f=await fixture({rejectAll:true}),before=await f.authority();
@@ -139,17 +166,18 @@ test('real mounted route: canary is pre-SQL; negotiated encoded identity/journal
  const canary=await f.a.run('upload-canary');assert.equal(canary.routeValidationObserved,true);assert.equal(canary.mutated,false);assert.equal(canary.observation.diagnostic.applicationMarked,true);assert.deepEqual(await f.counts(),counts);
  const contributed=await f.a.run('contribute',original()),candidate=contributed.submission.admission.candidateId;
  const saved=JSON.parse(await readFile(path.join(f.a.directory,'upload.json'))).intent;
- assert.equal(saved.body.artifact.schema,COMPONENT_WIRE);assert.equal(Object.hasOwn(saved.body.artifact,'sourceText'),false);
+ assert.equal(Object.hasOwn(saved.body.artifact,'schema'),false);assert.equal(Object.hasOwn(saved.body.artifact,'sourceText'),true);
  const artifact=portableArtifact(decodeComponent(saved.body.artifact));assert.equal(artifact.descriptor.id,contributed.artifactId);
  const originalUpload=JSON.parse(await readFile(path.join(f.a.directory,'upload-receipt.json'))).intent;
  const ctx=resumed(f.a.configuration);
  const keyRow=(await f.query('SELECT request_hash,response_json FROM correspondence_idempotency WHERE key=$1',[saved.key])).rows[0];
  // Same authenticated context through HTTP with explicitly encoded form replays its saved identity.
- assert.deepEqual(await ctx.client.call('components',saved.body,saved.key),{...originalUpload,replayed:true});
+ assert.deepEqual(await ctx.client.submitComponent(saved,{id:saved.body.termsVersion,componentTransport:COMPONENT_TRANSPORT}),{...originalUpload,replayed:true});
  f.allowLegacy();assert.deepEqual(await ctx.client.call('components',{artifact,termsVersion:saved.body.termsVersion},saved.key),{...originalUpload,replayed:true});
+ assert.deepEqual(await ctx.client.call('components',{artifact:encodeComponent(artifact,legacyTransport),termsVersion:saved.body.termsVersion},saved.key),{...originalUpload,replayed:true});
  const prior=await f.counts();
- await assert.rejects(ctx.client.call('components',{...saved.body,artifact:{...saved.body.artifact,sourceBase64:Buffer.from(artifact.sourceText+'\nchanged').toString('base64')}},saved.key),{code:'invalid-input'});
- await assert.rejects(ctx.client.call('components',{...saved.body,artifact:{...saved.body.artifact,moduleBase64:Buffer.from('changed module').toString('base64')}},saved.key));
+ await assert.rejects(ctx.client.call('components',componentRequest({...saved.body,artifact:{...artifact,sourceText:artifact.sourceText+'\nchanged'}},COMPONENT_TRANSPORT),saved.key),{code:'invalid-input'});
+ await assert.rejects(ctx.client.call('components',componentRequest({...saved.body,artifact:{...artifact,moduleBase64:Buffer.from('changed module').toString('base64')}},COMPONENT_TRANSPORT),saved.key),{code:'invalid-input'});
  assert.deepEqual(await f.counts(),prior);
  assert.equal((await f.counts()).components,1);assert.deepEqual((await f.query('SELECT request_hash,response_json FROM correspondence_idempotency WHERE key=$1',[saved.key])).rows[0],keyRow);
  for(const name of ['upload','upload-started','upload-receipt','create','claim','checkpoint','submit'])assert.equal((await stat(path.join(f.a.directory,`${name}.json`))).mode&0o777,0o600);
@@ -179,4 +207,59 @@ test('committed upload loses response: no automatic write replay, restart explic
  const contribution=await f.a.run('contribute',original());assert.ok(contribution.submission.admission.candidateId);assert.equal(f.componentRequests,2);
  assert.equal((await f.counts()).components,1);assert.equal((await f.counts()).candidates,1);assert.deepEqual(await f.authority(),before);
 });
-test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,baseHead);});
+test('exact accepted v1 saved/upload-started intent continues as v2 without authority or file rewrite',async()=>{
+ const f=await fixture({rejectAll:true}),authority=await f.authority();
+ const failed=await f.a.run('contribute',original(),1);assert.equal(failed.error.code,'transport_refused');
+ const originalFile=path.join(f.a.directory,'upload.json'),startedFile=path.join(f.a.directory,'upload-started.json');
+ const wrapper=JSON.parse(await readFile(originalFile)),artifact=portableArtifact(wrapper.intent.body.artifact);
+ // Seed the exact received v1 producer's synthetic durable files, before any durable server upload.
+ wrapper.intent=OldUploadIntent(artifact,{id:wrapper.contributionTerms,componentTransport:legacyTransport});
+ assert.equal(wrapper.intent.body.artifact.schema,LEGACY_COMPONENT_WIRE);checkUploadIntent(wrapper.intent,artifact,wrapper.contributionTerms);
+ const started={entryTerms:wrapper.entryTerms,contributionTerms:wrapper.contributionTerms,intent:{intentDigest:hash(wrapper.intent)}};
+ await writeFile(originalFile,JSON.stringify(wrapper)+'\n',{mode:0o600});await writeFile(startedFile,JSON.stringify(started)+'\n',{mode:0o600});
+ const bytes=await readFile(originalFile),startBytes=await readFile(startedFile);
+ const decoded={artifact,termsVersion:wrapper.contributionTerms};
+ assert.equal(canonical(parseComponentRequest(wrapper.intent.body)),canonical(parseComponentRequest(componentRequest(wrapper.intent.body,COMPONENT_TRANSPORT))));
+ f.acceptFull();await f.restart();
+ const automatic=await f.a.run('contribute',original(),1);assert.equal(automatic.error.code,'upload_outcome_unknown');assert.equal(f.componentRequests,1);
+ const canary=await f.a.run('upload-full-canary');assert.equal(canary.routeValidationObserved,true);assert.equal(canary.transport,COMPONENT_WIRE);
+ const ownerFile=path.join(f.privateDir,'full-canary-owner.json');await writeFile(ownerFile,JSON.stringify({schema:'sds.foundry.remote-owner-qa.v1',baseUrl:f.baseUrl,directory:f.privateDir,authority:f.a.configuration.authority,expectedHostConfigId:f.descriptor.profile.contribution.binding.hostConfigId,expectedEntryTermsHash:f.descriptor.profile.termsHash}),{mode:0o600});
+ const ownerCanary=await remoteJourney('a-upload-full-canary',ownerFile);assert.equal(ownerCanary.routeValidationObserved,true);assert.equal(ownerCanary.mutated,false);assert.equal(ownerCanary.pin.base,'900c37b6383fa87efead3e56ae52d3973c7fb196');
+ assert.equal((await f.counts()).components,0);for(const op of ['create','claim','checkpoint','submit'])await assert.rejects(stat(path.join(f.a.directory,`${op}.json`)),{code:'ENOENT'});
+ // Unknown first explicit v2 acknowledgement: committed exactly once, then restarted same-intent reconciliation.
+ f.loseNextUpload();const lost=await f.a.run('reconcile-upload',undefined,1);assert.equal(lost.error.code,'transport_outcome_unknown');assert.equal((await f.counts()).components,1);
+ await f.restart();const received=await f.a.run('reconcile-upload');assert.equal(received.receipt.replayed,true);
+ assert.deepEqual(await readFile(originalFile),bytes);assert.deepEqual(await readFile(startedFile),startBytes);
+ const beforeRequests=f.componentRequests;assert.deepEqual(await f.a.run('reconcile-upload'),received);assert.equal(f.componentRequests,beforeRequests);
+ const ctx=resumed(f.a.configuration),key=wrapper.intent.key;
+ const row=(await f.query("SELECT request_hash,response_json FROM correspondence_idempotency WHERE scope='vf04:http' AND key=$1",[key])).rows[0];
+ await assert.rejects(f.store.db.tx(c=>f.store.once(c,f.a.registration.projectId,{id:'another-actor'},key,decoded,()=>assert.fail('collision executed'))),{code:'idempotency_conflict'});
+ await assert.rejects(ctx.client.call('components',componentRequest({...decoded,termsVersion:'sha256:'+'a'.repeat(64)},COMPONENT_TRANSPORT),key),{code:'stale-terms'});
+ const {contentId,...cap}=structuredClone(artifact.descriptor.capability);cap.source.repository='https://fixture.invalid/changed-metadata';
+ const {id,schema,...descriptor}=structuredClone(artifact.descriptor);
+ const changed={...artifact,descriptor:createArtifact({...descriptor,capability:createVersion(cap)})};portableArtifact(changed);
+ // Even a different independently valid artifact cannot reuse the original actor/body journal key.
+ await assert.rejects(ctx.client.call('components',componentRequest({...decoded,artifact:changed},COMPONENT_TRANSPORT),key),{code:'conflict'});
+ const invalidAuth=participationClient({baseUrl:f.baseUrl,projectId:f.a.registration.projectId,token:'synthetic-invalid-token',identityKey:'f'.repeat(64)});
+ await assert.rejects(invalidAuth.submitComponent(wrapper.intent,{componentTransport:COMPONENT_TRANSPORT}));
+ assert.deepEqual((await f.query("SELECT request_hash,response_json FROM correspondence_idempotency WHERE scope='vf04:http' AND key=$1",[key])).rows[0],row);
+ assert.deepEqual(await f.authority(),authority);assert.deepEqual(await f.counts(),{charged:1,admissions:1,components:1,candidates:0,attempts:0});
+ const completed=await f.a.run('contribute',original());assert.ok(completed.submission.admission.candidateId);assert.equal((await f.counts()).candidates,1);
+ assert.deepEqual(await readFile(originalFile),bytes);assert.deepEqual(await readFile(startedFile),startBytes);assert.deepEqual(await f.authority(),authority);
+});
+test('full-wire invalid schema refuses before mounted authentication and any SQL, including no credential',async()=>{
+ const f=await fixture({rejectAll:true});await f.a.run('contribute',original(),1);f.acceptFull();
+ const saved=JSON.parse(await readFile(path.join(f.a.directory,'upload.json'))).intent;
+ const wire=encodeComponent({...saved.body.artifact,schema:'neomorphic.foundry.invalid-component-canary.v1'},COMPONENT_TRANSPORT);
+ const prior=await f.counts(),authority=await f.authority();let auth=0,sql=0;
+ const databaseMethods=[[f.entry.pool,'connect'],[f.store.db,'tx'],[f.base.pool,'connect']].map(([owner,name])=>({owner,name,original:owner[name]}));
+ for(const {owner,name}of databaseMethods)owner[name]=()=>{sql++;throw new Error(secret);};
+ const isVisitor=f.entry.isVisitorToken;f.entry.isVisitorToken=()=>{auth++;throw new Error(secret);};
+ const authenticated=f.store.authenticated;f.store.authenticated=()=>{auth++;throw new Error(secret);};
+ try {
+  const response=await fetch(`${f.baseUrl}/v1/projects/${f.a.registration.projectId}/foundry/components`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({artifact:wire,termsVersion:saved.body.termsVersion})});
+  assert.equal(response.status,409);assert.equal(response.headers.get('x-foundry-component-wire'),COMPONENT_WIRE);assert.equal((await response.json()).error.code,'invalid_portable_package');assert.equal(auth,0);assert.equal(sql,0);
+ } finally {f.entry.isVisitorToken=isVisitor;f.store.authenticated=authenticated;for(const {owner,name,original}of databaseMethods)owner[name]=original;}
+ assert.deepEqual(await f.counts(),prior);assert.deepEqual(await f.authority(),authority);
+});
+test('source closure/amendment preserves sealed execution and control pins',async()=>{await verifyFoundrySource(root);assert.equal(verifyCallerClosure().base,'900c37b6383fa87efead3e56ae52d3973c7fb196');});

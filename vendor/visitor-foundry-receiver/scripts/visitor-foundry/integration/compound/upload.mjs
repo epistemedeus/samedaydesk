@@ -1,10 +1,10 @@
 import {hash} from '../../capabilities/src/index.mjs';
 import {portableArtifact} from '../src/portable-profile.mjs';
-import {decodeComponent,encodeComponent} from '../src/portable-upload-wire.mjs';
+import {decodeComponent} from '../src/portable-upload-wire.mjs';
 import {identity} from '../src/wire.mjs';
 import {failure} from './transport.mjs';
 export function uploadIntent(artifact,terms) {
- return {schema:'neomorphic.foundry.component-upload-intent.v1',key:`upload:${artifact.descriptor.id}`,body:{artifact:encodeComponent(artifact,terms.componentTransport),termsVersion:terms.id}};
+ return {schema:'neomorphic.foundry.component-upload-intent.v1',key:`upload:${artifact.descriptor.id}`,body:{artifact,termsVersion:terms.id}};
 }
 export function checkUploadIntent(intent,artifact,termsId) {
  if(!intent || Object.keys(intent).sort().join(',')!=='body,key,schema' || intent.schema!=='neomorphic.foundry.component-upload-intent.v1'
@@ -27,6 +27,6 @@ export async function upload(client,artifact,terms,{loadIntent,persistIntent}) {
  if(await loadIntent('upload-started'))throw failure('upload_outcome_unknown');
  // Durable before sending; every failure requires explicit same-intent reconciliation.
  await persistIntent('upload-started',{intentDigest:hash(intent)});
- const result=checkUploadReceipt(await client.call('components',intent.body,intent.key),artifact);
+ const result=checkUploadReceipt(await client.submitComponent(intent,terms),artifact);
  await persistIntent('upload-receipt',result);return result;
 }

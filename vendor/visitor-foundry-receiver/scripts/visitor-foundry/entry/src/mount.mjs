@@ -11,7 +11,7 @@ function failure(res, error) {
 }
 /** Optional replacement for createApp at the EXISTING correspondence mount.
  * No listener, migrations, host secrets, runtime launch or automatic installation. */
-export function createEntryMount({ enabled = false, databaseUrl, schema, correspondence, config, receiver = null, poolMax = 2 }) {
+export function createEntryMount({ enabled = false, databaseUrl, schema, correspondence, config, receiver = null, parseReceiverInput = null, poolMax = 2 }) {
   if (enabled !== true) throw new Error('entry mount requires explicit installation');
   if (schema !== config.pgSchema || correspondence.schema !== schema) throw new Error('entry schema must match correspondence');
   const entry = new EntryStore({ databaseUrl, schema, correspondence, receiver, poolMax });
@@ -31,6 +31,7 @@ export function createEntryMount({ enabled = false, databaseUrl, schema, corresp
     next();
   });
   const service = createApp(entry.boundedCorrespondence(), config);
+  if(parseReceiverInput)service.use(parseReceiverInput);
   service.use(async (req, res, next) => {
     if (!/^\/v1\/projects\/[^/]+\/(work-cells|foundry)(\/|$)/i.test(req.path)) return next();
     try {

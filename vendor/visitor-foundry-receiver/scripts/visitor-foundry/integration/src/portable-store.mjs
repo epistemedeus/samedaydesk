@@ -12,7 +12,7 @@ import {assessVF01} from '../../participation/src/core.mjs';
 import {jsonBoundary} from '../../participation/src/adapters.mjs';
 import {semanticIdentity} from '../../participation/src/reproducer.mjs';
 import {receivingStep} from '../../entry/src/progress.mjs';
-import {decodeComponent,COMPONENT_TRANSPORT} from './portable-upload-wire.mjs';
+import {parseComponentRequest,COMPONENT_TRANSPORT} from './portable-upload-wire.mjs';
 const ref=id=>({uri:`https://foundry.invalid/approved/${id.slice(7)}`,digest:id});
 const exact=(x,fields)=>need(Object.keys(x).sort().join(',')===fields.sort().join(','),'invalid_participation_input');
 const source=(a)=>a.descriptor.capability;
@@ -62,7 +62,7 @@ export const portableMethods={
   need(r&&hash(r)===hash(ref(r.digest)),'unapproved_reference');const row=(await c.query('SELECT kind,record FROM correspondence_vf04_packages WHERE project_id=$1 AND id=$2',[ctx.projectId,r.digest])).rows[0];
   need(row?.kind===kind,'package_not_found');need(kind==='component'?portableArtifact(row.record).descriptor.id===r.digest:hash(row.record)===r.digest,'package_content_mismatch');return row.record;
  },
- async uploadComponent(ctx,raw,key){const body=jsonBounded(raw,490000);exact(body,['artifact','termsVersion']);body.artifact=decodeComponent(body.artifact);const artifact=portableArtifact(body.artifact);ensurePostgresJson(body);
+ async uploadComponent(ctx,raw,key){const body=parseComponentRequest(raw),artifact=body.artifact;
   return this.authenticated(ctx,true,async(c,g,locked)=>{
    const current=(await c.query('SELECT participation FROM correspondence_vf04_pools WHERE project_id=$1',[ctx.projectId])).rows[0].participation;need(current?.id===body.termsVersion,'stale_terms');
    return this.once(c,ctx.projectId,g,key,body,async()=>{

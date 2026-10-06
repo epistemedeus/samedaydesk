@@ -8,7 +8,7 @@ import {hash} from '../../capabilities/src/index.mjs';
 import {participationClient} from '../compound/client.mjs';
 import {contribute} from '../compound/contribute.mjs';
 import {checkUploadIntent,checkUploadReceipt} from '../compound/upload.mjs';
-import {decodeComponent,COMPONENT_WIRE} from '../src/portable-upload-wire.mjs';
+import {decodeComponent,encodeComponent,COMPONENT_WIRE} from '../src/portable-upload-wire.mjs';
 import {portableArtifact} from '../src/portable-profile.mjs';
 import {clientFailure} from '../compound/transport.mjs';
 const sync=dir=>{const fd=openSync(dir,'r');try{fsyncSync(fd);}finally{closeSync(fd);}};
@@ -64,7 +64,7 @@ export async function reconcileUpload(config){
  const existing=readPrivateJson(join(config.directory,'upload-receipt.json'));
  if(existing){need(existing.entryTerms===a.entryTerms && existing.contributionTerms===a.contributionTerms,409,'local_intent_mismatch');return {reconciled:true,receipt:checkUploadReceipt(existing.intent,artifact)};}
  const terms=await client.call('participation/terms');need(terms.id===a.contributionTerms,409,'standing_terms_mismatch');
- const result=checkUploadReceipt(await client.call('components',intent.body,intent.key),artifact);
+ const result=checkUploadReceipt(await client.submitComponent(intent,terms),artifact);
  durable(config.directory,'upload-receipt.json',{entryTerms:a.entryTerms,contributionTerms:a.contributionTerms,intent:result});
  return {reconciled:true,receipt:result};
 }
@@ -74,6 +74,20 @@ export async function uploadCanary(config){
  const terms=await client.call('participation/terms');need(terms.id===a.contributionTerms,409,'standing_terms_mismatch');
  try{await client.call('components',{artifact:{schema:COMPONENT_WIRE},termsVersion:terms.id},'component-wire-validation-canary');}
  catch(error){const observation=clientFailure(error);return {purpose:'owner_qa',mutated:false,routeValidationObserved:observation.code==='invalid-input' && observation.diagnostic?.applicationMarked===true,observation};}
+ throw Object.assign(new Error(),{code:'client_outcome_unknown'});
+}
+
+// Full-metadata reachability only: the decoded schema is deliberately invalid.
+// The mounted component parser rejects it before any authentication or SQL.
+export async function uploadFullCanary(config){
+ const a=standing(config),saved=readPrivateJson(join(config.directory,'upload.json'));
+ need(saved?.entryTerms===a.entryTerms && saved.contributionTerms===a.contributionTerms,409,'local_intent_mismatch');
+ const artifact=portableArtifact(decodeComponent(saved.intent?.body?.artifact));checkUploadIntent(saved.intent,artifact,a.contributionTerms);
+ const {client,receipt}=resumed(config);need(receipt.receiver.state==='ready',409,'receiver_not_ready');
+ const terms=await client.call('participation/terms');need(terms.id===a.contributionTerms && terms.componentTransport?.schema===COMPONENT_WIRE,409,'standing_terms_mismatch');
+ const body={artifact:encodeComponent({...artifact,schema:'neomorphic.foundry.invalid-component-canary.v1'},terms.componentTransport),termsVersion:terms.id};
+ try{await client.call('components',body,'component-full-wire-validation-canary');}
+ catch(error){const observation=clientFailure(error);return {purpose:'owner_qa',mutated:false,transport:COMPONENT_WIRE,routeValidationObserved:observation.code==='invalid-input' && observation.diagnostic?.applicationMarked===true,observation};}
  throw Object.assign(new Error(),{code:'client_outcome_unknown'});
 }
 
