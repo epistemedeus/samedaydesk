@@ -1,0 +1,31 @@
+# ROOT-SOL-HOST-RUNTIME-LAYOUT-100508
+
+**Structural repair; actual Hostinger receiving remains Root's next measurement.** Supplied actual 2026-10-06T00:37:39.400Z trace proved readable runtime configuration followed by missing interpreter during `portable_policy`, 243ms recovery, charged pending original A and no pool/physical work. It did not establish link representation or a deadline failure. That dated negative is retained separately in [receipt.json](receipt.json).
+
+One writer in native session `01a10c36-95c6-7d81-ba6c-edd7587eb57f`, branch `codex/sol-host-runtime-layout-100508`, from exact accepted SDS279 `e6b6bcba8316c395199312a1580ec9eae1770738`; no owning AGENTS was present. Export is the single commit containing this report; PR/final receipt gives its exact head.
+
+The exact accepted materializer creates a standalone-based venv: its interpreter alias chain reaches an absolute build-directory executable, and `pyvenv.cfg` records absolute base paths. Probing that build succeeds. Archiving both folders, relocating them and deleting the build breaks the interpreter despite readable config. No repository-owned Hostinger archive implementation was found, so this independently reproduced producer defect is not labeled direct inspection of Hostinger's link. [Python venv documentation](https://docs.python.org/3.12/library/venv.html) documents relocation restrictions.
+
+The shared managed build now requires `foundry:runtime -- --deployable`. It stages the complete checksum-pinned standalone tree and Wasmtime wheel together under `.runtime`, dereferences internal aliases into regular files and keeps loader version metadata without venv's absolute `home`. CPython finds its adjacent stdlib, consistent with [pinned getpath.py](https://raw.githubusercontent.com/python/cpython/v3.12.15/Modules/getpath.py) and [standalone distribution semantics](https://gregoryszorc.com/docs/python-build-standalone/main/distributions.html). No customer-request download, second engine or profile change. The build audits finite tree size/types and bounded content reads; manifest/content/link mismatch refuses before probe execution. Readable legacy receiving compares exact interpreter/binding/native pins against the staged official artifact and rechecks before replacement; failures preserve the previous runtime. Missing old identity is refused. Packed probe identity now recognizes verified layout, rather than relying on the obsolete standalone path. Its output remains secret-free/default-off.
+
+**Falsifiable control:** copied normal `server/index.js`, its own locked npm dependencies and assets, production-shaped configuration, disposable PostgreSQL and private enrollment; no checkout links/build tree remain. Legacy delivery yields 202/pending plus private `unreachable_external_absolute_link`; separate missing runtime/interpreter controls discriminate configuration versus entry absence. Packed delivery completes the original same attempt, including two concurrent recoveries, one charge/admission/pool and unchanged allocation, grants, original history, workspace/terms/ceilings and private correspondence. Installer replay preserves them. Changed interpreter/native refuses packed probe and pool readback, retaining old evidence without renewal. A contributes, explicit canonical private dispatch publishes once, A uses, HTTP stops/starts, B acquires the same candidate and uses: six useful/changed-admitted/useful-negative invocations, compile/instantiate/execute, exited/drained and zero outstanding ownership. All are VM owner QA.
+
+**Validation: 148 passed, 0 failures/skips/cancellations; final commands exit0.** Owning `npm ci` and a fresh archived-tree `npm ci` passed with unchanged locks. Official Node22.18.0 selected with `PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH`:
+
+| Command | Pass |
+| --- | ---: |
+| `FOUNDRY_RUNTIME_LAYOUT_RECEIPT=/tmp/root-sol-100508/layout-evidence.json npm run test:foundry-runtime-layout` | 5 |
+| `npm run test:foundry-runtime-progress` | 8 |
+| `npm run test:foundry-entry-reservation` | 20 |
+| `npm run test:foundry-private-pass` | 14 |
+| `npm run test:foundry-host` | 22 |
+| `npm run test:foundry-activation` | 16 |
+| `node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js` | 7 |
+| `npm run test:managed-node` | 41 |
+| `npm run test:managed-platform` | 15 |
+
+The new layout suite actually runs `build:managed-foundry` from a fresh locked install with system Python/prlimit hidden. Private-pass's owning npm script now runs its 14 tests under the accepted bundled layout in the existing isolated missing-utilities VM harness. Existing regressions retain real SQL failures/high latency, lost/unknown replies, concurrent recovery, physical uncertainty, private-path negatives, enforced limits, cancellation, drain/reaping and ordinary product serving. Initial fixture corrections included preserving the old control across the installer's layout receiving, canonical visitor cwd and sizing a bounded wrapper read to accommodate the pinned 316507-byte binding. No optional test supplies proof.
+
+Neo head/tree remain `1652533b1823ac33b86591ec4e931a8c4ea4aa97` / `d9c80cfd56cb05d40055dba047d6462656764ff8`. SOURCE-PIN appends only the bounded private interpreter-entry diagnostic; receiving checks preserve the amendment chain. Control closure adds the packaging helper (216 files). Full `installation()` pins match legacy versus packed/copy, runtime pin recorded in receipt. PROFILE/child/contracts/supervisor/launcher/ports, interpreter49 pins and limits remain unchanged. Runtime metadata is packaging, never verification authority.
+
+[ROOT.md](ROOT.md) names the normal build, safe observation and original-A continuation, then actual A/verification/publication/use/restart/B. Root must measure repaired serving separately; current private-build readiness cannot substitute. No production credentials/caller directory, retained/product database, Hostinger settings, accounts, human pages/prices/payments or original receiving receipts were read or changed. No merge/deployment or actual receiving success is claimed.

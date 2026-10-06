@@ -103,7 +103,7 @@ test('closed error aliases rethrow identity, prefer inner stage, exclude arbitra
   await assert.rejects(receivingStep('receiver_transaction',()=>receivingStep('portable_policy',()=>{throw error;})),e=>e===error);
   const safe=phaseFailure(error);assert.equal(safe.code,alias);assert.equal(safe.errorClass,klass);assert.equal(safe.stage,'portable_policy');assert.doesNotMatch(JSON.stringify(safe),/ARBITRARY_PROSE_SECRET|credential|private_payload_secret_100507/);
  }
- assert.deepEqual(phaseFailure({code:'UNKNOWN',stage:'portable_policy',errorClass:'sql'}),{code:'port_error',errorClass:'unknown',sqlState:null,stage:null,resource:null});
+ assert.deepEqual(phaseFailure({code:'UNKNOWN',stage:'portable_policy',errorClass:'sql'}),{code:'port_error',errorClass:'unknown',sqlState:null,stage:null,resource:null,interpreterEntry:null});
  const filtered=progressView({schema:'neomorphic.foundry.entry-progress.v1',phases:[{phase:sentinel,outcome:sentinel,code:sentinel,errorClass:sentinel,sqlState:sentinel,stage:sentinel,state:sentinel,ms:1e9,message:sentinel}]});
  assert.doesNotMatch(JSON.stringify(filtered),/ARBITRARY_PROSE_SECRET|credential|private_payload_secret_100507/);assert.equal(filtered.phases[0].ms,20000);assert.equal(filtered.phases[0].stage,null);
 });
