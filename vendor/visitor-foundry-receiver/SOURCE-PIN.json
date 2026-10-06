@@ -144,6 +144,53 @@
           "sha256": "ac6285e3830ec17389ee32cc91910e9c9e199add5d8aeeda54e11d18b2e61cbe"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-CONTRIBUTION-TRANSPORT-100509",
+      "sdsBase": "0efa7ec527959281f6de5fa5e16c172a2903ad3f",
+      "reason": "Declared base64-UTF8 source wire decoded before unchanged canonical portable artifact validation and idempotency hashing. Bounded closed HTTP/client diagnostics, private caller propagation, durable upload uncertainty and explicit same-intent reconciliation. No execution/profile/allocation/terms/budget/physical ownership change. Actual provider acceptance remains Root measurement.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/client.mjs": {
+          "receivedSha256": "bab21910838d03fed65ca1458c7ae2064ca2bf7339ca5626f8c6fdcabb22c08c",
+          "sha256": "820cf6eb8759aa79d9b46f2c4821b301083145373ce6c4c25bab665eba548607"
+        },
+        "scripts/visitor-foundry/integration/compound/client.mjs": {
+          "receivedSha256": "fcf8956d803719923b001072e825815935f1da809cd0ec87b09fa4ffc85844bf",
+          "sha256": "1378f68c4cd081064615fe7621b3c64529de91e6de20557c24719f688118c425"
+        },
+        "scripts/visitor-foundry/integration/compound/contribute.mjs": {
+          "receivedSha256": "b982164a03407870a18c42bc42ef30172deceed77b4807cf79cc26e01894ae49",
+          "sha256": "ab4965082ed5c40aa1f5c7f1ad34d4cc7beb317ad542d7bf1fb9004da289a9d1"
+        },
+        "scripts/visitor-foundry/integration/compound/transport.mjs": {
+          "receivedSha256": null,
+          "sha256": "ee6a3aa0be749f6d0b0ebe63cb8a0cd23eda682eebf243a30870113e045c44f2"
+        },
+        "scripts/visitor-foundry/integration/compound/upload.mjs": {
+          "receivedSha256": null,
+          "sha256": "2d36710a0a0858e7d0d8be5d12fcc1b41717e59c46dfbd4c76a39ee3b60b48e3"
+        },
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "125ac4baa998a125c1f540e0209c8c6daeebc7c89c0786db03f85845c6adcf3a",
+          "sha256": "7dbcb8a25120d3a5adebd7908686981c80d95b14f3382fe69ed9d6eae7b1d2c3"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "84220e5294193d3967ab546982b5136cd90a6694e7526de82323ed5a58297e78",
+          "sha256": "e3421c54094e92aea7733bc296bc084eb41aa7c117ace6e1d06dd3c33c3d5e32"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "16975fcba50d982bef8912431565dd18f285fb6f0c3c3cb5d8b4a3ca1be89a8a",
+          "sha256": "86986b09e124a54bf0fc10ec35a71f5fffb31193b8105cea01a66d9d5a75ea82"
+        },
+        "scripts/visitor-foundry/integration/src/portable-upload-wire.mjs": {
+          "receivedSha256": null,
+          "sha256": "9f3ff8da91ea883b963ef19522a6ee846445bfc61464c6ae2adf8a26fcda2364"
+        },
+        "scripts/visitor-foundry/integration/src/router.mjs": {
+          "receivedSha256": "d2bf8a440fadc8fb7fa4e32bfad7fb1fad1eac4986e192191c219540d9ea56b1",
+          "sha256": "e6e75a10f88c74beb781c3b8ef16e680ee1382bc929dfe1b12c0827558b1b7ea"
+        }
+      }
     }
   ]
 }

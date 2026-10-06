@@ -74,8 +74,8 @@ export async function continueEntry(directory, action = 'reconcile', transport) 
   }
   // Refusal codes are an allowlisted shape; never reflect server prose or request.
   return { status: result.status, body: { error: {
-    code: /^[a-z_]{1,80}$/.test(result.body?.error?.code) ? result.body.error.code : 'entry_refused',
-    nextAction: /^[a-z_]{1,80}$/.test(result.body?.error?.nextAction) ? result.body.error.nextAction : 'reconcile_same_attempt' } } };
+    code: typeof result.body?.error?.code==='string' && /^[a-z_]{1,80}$/.test(result.body.error.code) ? result.body.error.code : 'entry_refused',
+    nextAction: typeof result.body?.error?.nextAction==='string' && /^[a-z_]{1,80}$/.test(result.body.error.nextAction) ? result.body.error.nextAction : 'reconcile_same_attempt' } } };
 }
 export function resumedCorrespondence(directory, role = 'writer') {
   need(['reader', 'writer'].includes(role), 400, 'invalid_role');

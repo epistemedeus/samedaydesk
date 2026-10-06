@@ -11,6 +11,7 @@ import {runBounded} from '../bounded-child.mjs';
 import {PASS_SCHEMA,need,digest} from '../private-pass-core.mjs';
 import {cases,original,task} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs';
 import {hash} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/index.mjs';
+import {clientFailure} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/transport.mjs';
 const root=fileURLToPath(new URL('../../../',import.meta.url)),vendor=path.join(root,'vendor/visitor-foundry-receiver');
 const pinFile=new URL('./private-control-pin.json',import.meta.url);
 const json=file=>JSON.parse(readPrivateBytes(file,{repoRoot:root}).toString('utf8'));
@@ -26,21 +27,38 @@ function privateTree(dir) {
  const s=lstatSync(dir);need(s.isDirectory() && !s.isSymbolicLink() && (s.mode&0o777)===0o700,'caller_private_mode');
  for(const item of readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,item.name);if(item.isDirectory())privateTree(file);else readPrivateBytes(file,{repoRoot:root,limit:1048576});}
 }
+export function callerResult(result) {
+ need(!result.reason,'caller_outcome_unknown');
+ let body;try{body=JSON.parse(result.stdout);}catch{need(false,'caller_response_invalid');}
+ if(result.code!==0){
+  const safe=clientFailure(body?.error);
+  throw Object.assign(new Error(),{code:safe.code,clientFailure:safe});
+ }
+ need(body && typeof body==='object' && !body.error,'caller_response_invalid');return body;
+}
+const callerCodes=new Set(['caller_a_use_required','caller_actual_restart_required','caller_arguments_invalid','caller_binding_conflict','caller_candidate_conflict','caller_candidate_generation_conflict','caller_config_invalid','caller_contribution_unknown','caller_execution_incomplete','caller_generation_conflict','caller_input_conflict','caller_manifest_conflict','caller_module_conflict','caller_outcome_unknown','caller_output_conflict','caller_output_mismatch','caller_private_mode','caller_readback_conflict','caller_response_invalid','caller_runtime_conflict','caller_saved_attempt_required','caller_source_changed','caller_source_project_conflict','caller_termination_incomplete','caller_unmeasured_not_refused']);
+export function callerFailure(error) {
+ if(error?.clientFailure)return clientFailure(error.clientFailure);
+ return {code:callerCodes.has(error?.code)?error.code:'caller_failed'};
+}
 export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-reconcile','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-upload-canary','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
  async function cli(mode,config,input,name) {
   const inputFile=input===undefined?null:seal(dir,`${name}.json`,input);
-  const result=await runBounded(process.execPath,['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,config,...(inputFile?[inputFile]:[])],
+  const result=await runBounded(process.execPath,['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,config,...(inputFile?[inputFile]:[]),'--json-result'],
     {cwd:vendor,env:{PATH:process.env.PATH || '',LANG:'C',LC_ALL:'C'},timeoutMs:60000,capture:true,stdoutLimit:1048576,outputLimit:2097152});
-  need(!result.reason && result.code===0,'caller_outcome_unknown');
-  let body;try{body=JSON.parse(result.stdout);}catch{need(false,'caller_response_invalid');}
-  privateTree(dir);return body;
+  const body=callerResult(result);privateTree(dir);return body;
+ }
+ if(['a-upload-canary','a-reconcile-upload'].includes(stage)) {
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const result=await cli(stage==='a-upload-canary'?'upload-canary':'reconcile-upload',aFile);
+  return {ok:true,stage,...result,pin};
  }
  async function continueVisitor(config,name,{mustExist=false}={}) {
   const saved=existsSync(path.join(dir,`visitor-${name}`,'attempt.json'));
@@ -138,5 +156,5 @@ export async function remoteJourney(stage,file,readbackFile) {
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
  try {const [stage,file,readback,...rest]=process.argv.slice(2);need(file && !rest.length && (stage==='check'?Boolean(readback):!readback),'caller_arguments_invalid');const result=await remoteJourney(stage,file,readback);console.log(JSON.stringify(result));if(!result.ok)process.exitCode=2;}
- catch(error){console.error(JSON.stringify({ok:false,code:/^[a-z_]{1,100}$/.test(error?.code)?error.code:'caller_failed'}));process.exitCode=2;}
+ catch(error){console.error(JSON.stringify({ok:false,...callerFailure(error)}));process.exitCode=2;}
 }

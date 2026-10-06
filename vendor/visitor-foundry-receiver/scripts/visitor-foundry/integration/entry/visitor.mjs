@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import {readPrivateJson} from '../../../../services/correspondence/bin/safe-io.mjs';
-import {enroll,resumed,contributeFromEntry,reconcileContribution,durable,useFromEntry} from './client.mjs';
+import {enroll,resumed,contributeFromEntry,reconcileContribution,reconcileUpload,uploadCanary,durable,useFromEntry} from './client.mjs';
+import {clientFailure} from '../compound/transport.mjs';
 import {writeCheckpoint,resume,entryRequest} from '../../entry/src/client.mjs';
-const [mode,file,inputFile]=process.argv.slice(2);
+const args=process.argv.slice(2),jsonResult=args.includes('--json-result');
+const [mode,file,inputFile]=args.filter(x=>x!=='--json-result');
 try{
  const config=readPrivateJson(file),input=inputFile?readPrivateJson(inputFile):null;
  let result;
@@ -10,6 +12,8 @@ try{
  else if(mode==='checkpoint')result=await writeCheckpoint(config.directory,input.text);
  else if(mode==='correspondence')result=await resume(config.directory);
  else if(mode==='contribute')result=await contributeFromEntry(config,input);
+ else if(mode==='reconcile-upload')result=await reconcileUpload(config);
+ else if(mode==='upload-canary')result=await uploadCanary(config);
  else if(mode==='reconcile-contribution')result=await reconcileContribution(config,input.operation);
  else if(mode==='resume-contribution')result=await resumed(config).client.session.resume(input);
  else if(mode==='withdraw'){
@@ -18,4 +22,4 @@ try{
  else if(mode==='use')result=await useFromEntry(config,input);
  else throw Object.assign(new Error(),{code:'invalid_action'});
  console.log(JSON.stringify(result));
-}catch(error){console.error(JSON.stringify({error:{code:/^[a-z_-]{1,80}$/.test(error.code)?error.code:'client_outcome_unknown',nextAction:error.nextAction??'reconcile_same_attempt'}}));process.exitCode=1;}
+}catch(error){(jsonResult?console.log:console.error)(JSON.stringify({error:clientFailure(error)}));process.exitCode=1;}

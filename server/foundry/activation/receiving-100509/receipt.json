@@ -1,0 +1,164 @@
+{
+  "schema": "sds.foundry.contribution-transport-receiving.v1",
+  "package": "ROOT-SOL-CONTRIBUTION-TRANSPORT-100509",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-contribution-transport-100509",
+  "base": "0efa7ec527959281f6de5fa5e16c172a2903ad3f",
+  "exportHeadBinding": "single Git commit introducing this receipt; exact head returned in PR/final native Git receipt",
+  "actualHostMeasured": false,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "neoHead": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+  "neoTree": "d9c80cfd56cb05d40055dba047d6462656764ff8",
+  "sourcePinSha256": "6eeedfd31b473b2166fd5533d5d2cf8fbd039440ef20719dc08652672b863925",
+  "controlPinSha256": "479ba314f271dfe43e822a4cc6e2345372474cc3a186449df0bcffef5602a6b4",
+  "controlClosureFiles": 219,
+  "controlClosureDigest": "sha256:1fbe7cafb110074f86bcabb79717d6543224b7d49adb735e41341dd89bacac13",
+  "executionAuthorityChanged": false,
+  "interpreterBindingNativeLauncherProfileChanged": false,
+  "lockfilesChanged": false,
+  "npmCiExit": 0,
+  "nodeTestVersion": "22.18.0",
+  "storage": "disposable PostgreSQL only",
+  "tests": [
+    {
+      "command": "npm run test:foundry-contribution-transport",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "2cda01a801a2d184ea9da8c6bbce0ce83cb2a061dd0304407c65e4e2acbd5c0a"
+    },
+    {
+      "command": "npm run test:foundry-entry-reservation",
+      "exit": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "0ea99af99ba9e1e603e68a67f820f45984ecea1808b655872d8d28740d73d166"
+    },
+    {
+      "command": "npm run test:foundry-runtime-progress",
+      "exit": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "9498f8f577b4b64a44908c1ebefce4fff95b4de5877e363cbd7f446c5487a915"
+    },
+    {
+      "command": "npm run test:foundry-private-pass",
+      "exit": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "a2ac579afe96e027fce8cd1078528b75e085c95ccad4d4f12f4daa997b55d930"
+    },
+    {
+      "command": "npm run test:foundry-host",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "a1fae5a8eeacc61876cba3491f00bae63951dd05a38d64db371a6bbc451e5fa0"
+    },
+    {
+      "command": "npm run test:foundry-activation",
+      "exit": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "3a9371a564dc5580ad3d51a7d53a4c5d5bfe52561e02a7655b71e6985760aac3"
+    },
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "ea71feab5ab56c6b1d2c37354bf5d1c8c35ee9b58941f9cd6cd6570095797592"
+    },
+    {
+      "command": "npm run test:managed-node",
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "9c743ed2c0e9d3266fdbe5e1506e818ada7da03465d4db123e45d0a3e29385f3"
+    },
+    {
+      "command": "npm run test:managed-platform",
+      "exit": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "logSha256": "bafb2a89bfa8607a1502688707956362ad7fc9a4002876b9def94f5dccfa923c"
+    }
+  ],
+  "totals": {
+    "pass": 163,
+    "fail": 0,
+    "skip": 0,
+    "cancelled": 0
+  },
+  "actualNegativeSuppliedByRoot": {
+    "at": "2026-10-06T02:08:48Z",
+    "stage": "components",
+    "status": 403,
+    "contentClass": "text",
+    "createClaimIntents": 0,
+    "producerIdentified": false
+  },
+  "localControl": {
+    "exactAcceptedClient": "SyntaxError on Forbidden text",
+    "exactAcceptedCli": "undefined code omitted",
+    "simulatedFrontFilter": true,
+    "hostingerPolicyEstablished": false
+  },
+  "localChangedReplay": {
+    "declaredEncodingCanonicalDecodedIdentity": true,
+    "legacyEncodedSameJournalReplay": true,
+    "changedSourceModuleRejected": true,
+    "closedSecretFreeCodes": true,
+    "boundedCancelledDiagnostics": true,
+    "committedUploadLostResponseNoAutomaticReplay": true,
+    "explicitSameIntentRestartReconciliation": true,
+    "oneComponentOneCandidate": true,
+    "savedContributionIntentsPreserved": true,
+    "originalAllocationHistoryChargePreserved": true,
+    "canonicalPrivateDispatchPublishes": true,
+    "visitorARestartB": true,
+    "sameSourceCandidateGenerationModule": true,
+    "completedConsumerInvocations": 4,
+    "compileInstantiateExecuteExitedDrained": true,
+    "usefulChangedUsefulNegative": true,
+    "unmeasuredRefused": true,
+    "privateCorrespondencePreserved": true,
+    "productRouteServes": true,
+    "systemPythonPrlimitHidden": true
+  },
+  "rootRemaining": [
+    "actual same-A route-validation canary",
+    "actual full declared encoded artifact upload",
+    "actual canonical verification/publication/A invocation",
+    "actual HTTP restart/B acquisition and bound exited/drained readback"
+  ],
+  "receivingProcedure": "ROOT.md"
+}

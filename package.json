@@ -103,7 +103,8 @@
     "test:foundry-private-pass": "node server/scripts/fixtures/managed-layout-tests.mjs",
     "test:foundry-entry-reservation": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-reservation.js",
     "test:foundry-runtime-progress": "node --test --test-concurrency=1 server/scripts/test-foundry-runtime-progress.js",
-    "test:foundry-runtime-layout": "node --test --test-concurrency=1 server/scripts/test-foundry-runtime-layout.js"
+    "test:foundry-runtime-layout": "node --test --test-concurrency=1 server/scripts/test-foundry-runtime-layout.js",
+    "test:foundry-contribution-transport": "node server/scripts/fixtures/managed-layout-tests.mjs server/scripts/test-foundry-contribution-transport.js"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
