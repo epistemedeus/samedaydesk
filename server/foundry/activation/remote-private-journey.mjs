@@ -11,6 +11,7 @@ import {runBounded} from '../bounded-child.mjs';
 import {PASS_SCHEMA,need,digest} from '../private-pass-core.mjs';
 import {cases,original,task} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/tests/entry-helpers.mjs';
 import {hash} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/index.mjs';
+import {savedInvocation} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/client.mjs';
 import {clientFailure} from '../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/transport.mjs';
 const root=fileURLToPath(new URL('../../../',import.meta.url)),vendor=path.join(root,'vendor/visitor-foundry-receiver');
 const pinFile=new URL('./private-control-pin.json',import.meta.url);
@@ -49,7 +50,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-prepare-no-launch','a-prepare-continuation','a-reconcile-invocation','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-prepare-no-launch','a-prepare-continuation','a-prepare-current-continuation','a-prepare-later-continuation','a-launch-observe','a-reconcile-invocation','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
@@ -58,6 +59,27 @@ export async function remoteJourney(stage,file,readbackFile) {
   const result=await runBounded(process.execPath,['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,config,...(inputFile?[inputFile]:[]),'--json-result'],
     {cwd:vendor,env:{PATH:process.env.PATH || '',LANG:'C',LC_ALL:'C'},timeoutMs:60000,capture:true,stdoutLimit:1048576,outputLimit:2097152});
   const body=callerResult(result);privateTree(dir);return body;
+ }
+ if(stage==='a-launch-observe'){
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const status=await cli('status',aFile);
+  return {ok:true,purpose:'owner_qa',stage,mutated:false,context:'serving_http_process',
+   resources:status.portableExecution?.servingLaunchResources,chargedInvocations:status.portableExecution?.chargedInvocations,
+   invocations:status.portableExecution?.invocations,pin};
+ }
+ if(stage==='a-prepare-current-continuation'){
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const result=await cli('prepare-current-continuation',aFile,{intentId:'root-original-a-current-100526',expectedHostConfigId:c.expectedHostConfigId,
+   request:task(cases[0].input,'task:owner-a-use-useful')},'a-current-continuation-spec-100526');
+  const requestName=`owner-current-a-${hash(result).slice(7)}.json`;seal(dir,requestName,result);
+  return {ok:true,purpose:'owner_qa',stage,request:result,requestName,pin,physicalLaunched:false};
+ }
+ if(stage==='a-prepare-later-continuation'){
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const result=await cli('prepare-later-continuation',aFile,{intentId:'root-original-a-later-100526',expectedHostConfigId:c.expectedHostConfigId,
+   request:task(cases[0].input,'task:owner-a-use-useful')},'a-later-continuation-spec-100526');
+  for(const action of ['renew','dispatch','receive'])seal(dir,`owner-later-a-${hash(result.receive).slice(7)}-${action}.json`,result[action]);
+  return {ok:true,purpose:'owner_qa',stage,requests:result,pin,physicalLaunched:false};
  }
  if(stage==='a-prepare-continuation'){
   need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
@@ -68,7 +90,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  }
  if(stage==='a-reconcile-invocation'){
   const result=await cli('reconcile-invocation',aFile,task(cases[0].input,'task:owner-a-use-useful'),'a-reconcile-invocation-100517');
-  seal(dir,'a-invocation-continuation-100517.json',result.transition);
+  seal(dir,`a-invocation-continuation-${result.transition.id.slice(7)}.json`,result.transition);
   return {ok:true,purpose:'owner_qa',stage,...result,pin};
  }
  if(stage==='a-prepare-no-launch') {
@@ -113,8 +135,8 @@ export async function remoteJourney(stage,file,readbackFile) {
   return {ok:true,stage,...receipt,actualHostVerificationRequired:true};
  }
  const saved=json(path.join(dir,'a-contribution-receipt.json'));
- const continuationFile=path.join(dir,'a-invocation-continuation-100517.json'),continuation=existsSync(continuationFile)?json(continuationFile):null;
- if(continuation){const {id,...body}=continuation;need(id===digest(body) && continuation.projectId===saved.projectId && continuation.priorGeneration===saved.generation && continuation.generation===saved.generation+1,'caller_candidate_generation_conflict');}
+ const lineage=savedInvocation({directory:path.join(dir,'visitor-a')},task(cases[0].input,'task:owner-a-use-useful')),continuation=lineage?.transitions?.at(-1)??null;
+ if(continuation){need(lineage.transitions[0].priorGeneration===saved.generation && lineage.transitions.every(t=>t.projectId===saved.projectId),'caller_candidate_generation_conflict');}
  const receivedGeneration=continuation?.generation??saved.generation;
  need(saved.hostConfigId===c.expectedHostConfigId && saved.entryTermsHash===c.expectedEntryTermsHash && acceptedCallerPin(saved.pin,pin),'caller_binding_conflict');
  if(stage==='check') {
@@ -173,7 +195,7 @@ export async function remoteJourney(stage,file,readbackFile) {
   const target=result.discovery?.manifest?.target;
   const durable=json(path.join(path.dirname(config),stage==='a-use'?'visitor-a':'visitor-b',`invoke-${hash(request).slice(7)}.json`));
   const manifestId=result.invocation.manifestId;
-  need(manifestId===durable.manifestId || continuation?.taskId===request.taskId && continuation.predecessorManifestId===durable.manifestId && continuation.successorManifestId===manifestId,'caller_manifest_conflict');
+  need(manifestId===(continuation?.taskId===request.taskId?lineage.manifestId:durable.manifestId),'caller_manifest_conflict');
   uses.push({label,taskId:request.taskId,inputDigest:digest(request.input),manifestId,target:target ?? result.invocation.target ?? null,
     outputDigest:digest(result.invocation.output)});
  }

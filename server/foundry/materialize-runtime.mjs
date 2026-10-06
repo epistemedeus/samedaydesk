@@ -171,7 +171,16 @@ export async function materializeReferenceRuntime(options = {}) {
   const standaloneDir = options.standaloneDir || path.join(path.dirname(runtimeDir), ".python-standalone");
   if (await exists(runtimeDir)) {
     if (await exists(path.join(runtimeDir, MANIFEST))) {
-      const layout = await verifyOfflineRuntime(runtimeDir, { archiveSha256: CPYTHON_SHA256, wheelSha256: WHEEL_SHA256 });
+      let layout;
+      try { layout = await verifyOfflineRuntime(runtimeDir, { archiveSha256: CPYTHON_SHA256, wheelSha256: WHEEL_SHA256 }); }
+      catch(error) {
+        if(error.code!=='runtime_publication_modes' || !deployable)throw error;
+        // Explicit build-time receiving only; stage the pinned bytes and atomically
+        // publish them. Never chmod an existing delivery during an HTTP request.
+        const expectedContent=await runtimeContentIdentity(runtimeDir);
+        layout=await installStandalone({runtimeDir,expectedContent,tarball:options.tarball||process.env.FOUNDRY_CPYTHON_TARBALL||'',wheelPath:options.wheelPath||''});
+        return {ok:true,action:'publication-received',...layout};
+      }
       if (!(await runtimeReady(python, childTimeoutMs))) throw coded("runtime_incomplete");
       return { ok: true, action: "present", ...layout };
     }

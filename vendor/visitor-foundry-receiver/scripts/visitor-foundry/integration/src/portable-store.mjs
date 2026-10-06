@@ -1,5 +1,5 @@
 // Receiver-owned joins over the existing transactional pool/attempt/outbox lifecycle.
-import {observeLaunch} from './launch-evidence.mjs';
+import {observeLaunch,launchAccessReady} from './launch-evidence.mjs';
 import {randomUUID} from 'node:crypto';
 import {hash,refOf,createGap} from '../../capabilities/src/index.mjs';
 import {requireThat as need,jsonBounded,digest} from '../../validation/src/index.mjs';
@@ -191,9 +191,10 @@ export const portableMethods={
    if(old){need(old.manifest_id===body.manifestId&&old.input_digest===hash(body.request.input)&&old.execution.grantId===g.id&&old.execution.requestId===hash(body.request),'task_reuse_conflict');
     if(old.state==='completed'&&old.result)return {result:{...old.result,replayed:true}};
     await this.invocationPermit(c,ctx,body,locked);
-    if(old.state==='reserved' && old.execution.continuation && old.execution.supervisor===null && !old.execution.identity && !old.execution.sample)return {execution:old.execution};
+    if(old.state==='reserved' && old.execution.continuation && old.execution.supervisor===null && !old.execution.identity && !old.execution.sample){need(launchAccessReady(),'invocation_launch_unavailable');return {execution:old.execution};}
     need(false,old.execution.sample?.observation?.termination?.noLaunch===true?'invocation_no_launch':'invocation_outcome_unknown');}
    const permit=await this.invocationPermit(c,ctx,body,locked);
+   need(launchAccessReady(),'invocation_launch_unavailable');
    need(!(await c.query("SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled' UNION ALL SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1",[ctx.projectId])).rows.length,'physical_reservation_held');
    need(await this.chargedInvocations(c,ctx.projectId)<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
    await this.entryPhysicalCapacity(c,ctx.projectId,locked.config);
@@ -267,7 +268,7 @@ export const portableMethods={
   const chargedBefore=await this.chargedInvocations(c,r.projectId);need(chargedBefore<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
   const {priorAttempts=[],...prior}=old,id=`invocation:${randomUUID()}`,fence=randomUUID();
   need(priorAttempts.length<64,'invocation_budget_exhausted');
-  const transition=r.schema==='sds.foundry.private-pass.v3'?{schema:'neomorphic.foundry.invocation-continuation.v1',intentId:r.intentId,renewalIntentId:r.renewalIntentId,projectId:r.projectId,registrationId:r.registrationId,taskId:r.taskId,requestDigest:old.requestId,predecessorManifestId:r.manifestId,successorManifestId:permit.manifest.id,target:permit.manifest.target,priorGeneration:old.generation,generation:permit.candidate.generation,verificationId:permit.verification.id,priorExecutionId:old.id,priorObservationId:observationId,executionId:id,fence,receivedAt:now}:null;
+  const transition=['sds.foundry.private-pass.v3','sds.foundry.private-pass.v4'].includes(r.schema)?{schema:r.schema==='sds.foundry.private-pass.v4'?'neomorphic.foundry.invocation-continuation.v2':'neomorphic.foundry.invocation-continuation.v1',intentId:r.intentId,renewalIntentId:r.renewalIntentId??null,projectId:r.projectId,registrationId:r.registrationId,taskId:r.taskId,requestDigest:old.requestId,predecessorManifestId:r.manifestId,successorManifestId:permit.manifest.id,target:permit.manifest.target,priorGeneration:old.generation,generation:permit.candidate.generation,verificationId:permit.verification.id,priorExecutionId:old.id,priorObservationId:observationId,executionId:id,fence,receivedAt:now}:null;
   if(transition)transition.id=hash(transition);
   const execution={...prior,id,fence,generation:permit.candidate.generation,binding:{...prior.binding,assignmentId:id,fence},supervisor:null,identity:null,sample:null,launchEvidence:null,
    priorAttempts:[...priorAttempts,transition?{...prior,manifestId:r.manifestId}:prior],continuation:transition??{intentId:r.intentId,receivedAt:now,priorExecutionId:prior.id,priorObservationId:observationId}};

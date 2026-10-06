@@ -39,13 +39,16 @@ async function copyRoot(name) {
   const target = path.join(dir, name); await mkdir(target);
   await cp(path.join(root, vendor), path.join(target, vendor), { recursive: true,
     filter: p => !['.runtime', '.python-standalone', '.build'].includes(path.basename(p)) });
-  await cp(path.join(root, 'server/foundry'), path.join(target, 'server/foundry'), { recursive: true });
+  const tracked=await runBounded('git',['ls-files','server','tools/hosted-useful-journey-100346','tools/l08-agent-repair','tools/result-reuse','tools/recurring-job-recipes','client/src/data'],{cwd:root,capture:true,stdoutLimit:100000});assert.equal(tracked.code,0);assert.equal(tracked.reason,null);
+  for(const file of tracked.stdout.trim().split('\n')){await mkdir(path.dirname(path.join(target,file)),{recursive:true});await cp(path.join(root,file),path.join(target,file));}
   await mkdir(path.join(target, 'server/scripts/fixtures'), { recursive: true });
   await cp(path.join(root, 'server/scripts/fixtures/generation-host.mjs'), path.join(target, 'server/scripts/fixtures/generation-host.mjs'));
   await cp(path.join(root, 'server/scripts/fixtures/installer-interleaving.mjs'), path.join(target, 'server/scripts/fixtures/installer-interleaving.mjs'));
   await cp(path.join(root, 'package.json'), path.join(target, 'package.json'));
   await symlink(path.join(root, 'node_modules'), path.join(target, 'node_modules'));
-  await symlink(path.join(root, executionPath, '.runtime'), path.join(target, executionPath, '.runtime'));
+  // A sealed deployable runtime deliberately refuses links at its root. Exercise
+  // the actual installed representation, not an external checkout shortcut.
+  await cp(path.join(root, executionPath, '.runtime'), path.join(target, executionPath, '.runtime'), {recursive:true});
   return target;
 }
 before(async () => {
@@ -55,14 +58,24 @@ before(async () => {
   cluster = await startDisposablePg(); pool = new pg.Pool({ connectionString: cluster.url });
   oldRoot = await copyRoot('received'); newRoot = await copyRoot('deployment'); driftRoot = await copyRoot('source-drift');
   bundledRoot = await copyRoot('bundled-runtime');
+  // The Python-generation control must remain distinct even when the builder
+  // itself already uses the pinned standalone runtime. Build a real system venv
+  // using the accepted setup script, only in this disposable fixture.
+  const systemRoot=await copyRoot('system-runtime-control');
+  await rm(path.join(systemRoot,executionPath,'.runtime'),{recursive:true});
+  const system=await runBounded('/usr/bin/python3',[path.join(systemRoot,executionPath,'setup-runtime.py')],{cwd:systemRoot,capture:true,stdoutLimit:4096,timeoutMs:60000});
+  assert.equal(system.reason,null);assert.equal(system.code,0);
+  for(const target of[oldRoot,newRoot,driftRoot]){await rm(path.join(target,executionPath,'.runtime'),{recursive:true});await cp(path.join(systemRoot,executionPath,'.runtime'),path.join(target,executionPath,'.runtime'),{recursive:true,verbatimSymlinks:true});}
   for (const file of ['server/foundry/install.mjs', `${entryPath}/profile.mjs`, `${entryPath}/receiver.mjs`, `${vendor}/scripts/visitor-foundry/entry/src/contract.mjs`]) {
     const r = await runBounded('git', ['show', `${baseHead}:${file}`], { cwd: root, capture: true, stdoutLimit: 100000 });
     assert.equal(r.code, 0); await writeFile(path.join(oldRoot, file), r.stdout);
   }
   await appendFile(path.join(driftRoot, executionPath, 'src/launch.mjs'), '\n// Disposable receiving source generation change.\n');
   await appendFile(path.join(bundledRoot, executionPath, 'src/launch.mjs'), '\n// Disposable receiving source generation change.\n');
-  await rm(path.join(bundledRoot, executionPath, '.runtime'));
+  await rm(path.join(bundledRoot, executionPath, '.runtime'),{recursive:true});
   await command(bundledRoot, node218, ['server/foundry/materialize-runtime.mjs'], { FOUNDRY_RUNTIME_FORCE_STANDALONE: '1' });
+  assert.notEqual(createHash('sha256').update(await readFile(path.join(newRoot,executionPath,'.runtime/bin/python'))).digest('hex'),createHash('sha256').update(await readFile(path.join(bundledRoot,executionPath,'.runtime/bin/python'))).digest('hex'));
+  evidence.pythonControl={system:'/usr/bin/python3',realDistinctInterpreter:true,wasmtime:49};
 });
 after(async () => {
   for (const host of hosts) await host.stop();
@@ -347,7 +360,7 @@ test('visitor authority/private correspondence survive Node/source/Python genera
           CORRESPONDENCE_STORE: 'postgres', CORRESPONDENCE_POOL_MAX: '1',
           SUPABASE_URL: 'https://local-baseline.example', SUPABASE_SERVICE_ROLE_KEY: 'local-baseline-stub',
           STRIPE_SECRET_KEY: 'local-baseline-stub', RESEND_API_KEY: 'local-baseline-stub',
-        }, node218);
+        }, node218, newRoot);
         try {
           const health = await fetch(`${actual.origin}/api/correspondence/healthz`, { signal: AbortSignal.timeout(8000) });
           assert.equal((await health.json()).enabled, true);
@@ -415,7 +428,7 @@ test('actual managed-host named receive build receives the same private unconsum
   // Managed delivery uses its own fresh bundled installation. A local system
   // venv is a separate identity and must never be converted by this test.
   const managedRoot=await copyRoot('managed-receive-build');
-  await rm(path.join(managedRoot,executionPath,'.runtime'));
+  await rm(path.join(managedRoot,executionPath,'.runtime'),{recursive:true});
   await cp(path.join(root,'client'),path.join(managedRoot,'client'),{recursive:true,filter:p=>!['node_modules','build','dist'].includes(path.basename(p))});
   await cp(path.join(root,'server/lib'),path.join(managedRoot,'server/lib'),{recursive:true});
   await cp(path.join(root,'server/scripts/generate-route-shells.js'),path.join(managedRoot,'server/scripts/generate-route-shells.js'));

@@ -315,6 +315,37 @@
           "sha256": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HTTP-SPAWN-100526",
+      "sdsBase": "7ee8130190042222ea795f102c147edbbd013c5a",
+      "reason": "Closed serving-process launch/access/native errno evidence and pre-admission access refusal; explicit lossless current-generation no-launch continuation with execution-linked immutable client lineage. No sealed executor/pin/authority/limit/expiry change. Actual provider exec authority remains Root receiving.",
+      "files": {
+        "scripts/visitor-foundry/integration/compound/transport.mjs": {
+          "receivedSha256": "48143c5f468500180e63e2411de06646b73590875f26df85f3c3696f4b0e554a",
+          "sha256": "0b75b25da2ee48709a1028b74c7232ea95a68e6aecbb9ec622064fb6e5f3e87f"
+        },
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "406078adb6d192f47630f702b51b127a17e5b52f4ff38159befb610cf95e2b9d",
+          "sha256": "4378df97bee6778e85026e8e90f19c91114750cc436ecd8e943b7e56f93630f2"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "c7da966eee93a57e8e3a47557f598c6f47b388478a89ecd2ad5bbc2e2f9702fc",
+          "sha256": "b58a3863faa05ea6346b15ac9a3f6c5fe8273fc992898eb0343175f2faeb7d5d"
+        },
+        "scripts/visitor-foundry/integration/src/execution-view.mjs": {
+          "receivedSha256": "f2d273fd9f9f7612d5af95321cfc77bdf0cf5eaf109223e06c3039d9e8a4f025",
+          "sha256": "79834f9ee6091d6a2cdca21aa07dff85268edca5c6d3e3c0657ea1d1e97a4be3"
+        },
+        "scripts/visitor-foundry/integration/src/launch-evidence.mjs": {
+          "receivedSha256": "cfb57f9d5025827f7599c708dffd930160452c244faea59b0a3fd655727938e1",
+          "sha256": "116ae1772f58a42ad66dee40419b3213c926a0249db58d59b5a5a04eff9f4b38"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "f9342bbb7983f0c3c82996501af41b7779df5a8de18bf86db1435ecbd9edfdd6",
+          "sha256": "f7937f5dd549a6668ce5e6c789af21454460131e2997e81c8d37cbf7ea991d3c"
+        }
+      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 // Build-time packaging only. The sealed execution loader/launcher is unchanged.
-import {lstat,readdir,open,writeFile} from 'node:fs/promises';
+import {lstat,readdir,open,writeFile,chmod} from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {hash} from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/index.mjs';
@@ -49,12 +49,29 @@ export async function sealOfflineRuntime(root,{archiveSha256,wheelSha256}) {
  const content=await runtimeContentIdentity(root);
  const record={schema:'sds.foundry.runtime-layout.v1',layout:LAYOUT,archiveSha256,wheelSha256,content};
  await writeFile(path.join(root,MANIFEST),JSON.stringify(record)+'\n',{mode:0o600,flag:'wx'});
- await auditOfflineTree(root);return record;
+ await publishRuntimeModes(root);return record;
 }
+// Only a verified build candidate is mutable. These are public runtime bytes,
+// never private inputs. No write permission is granted to another uid/gid.
+const executables=new Set(['bin/python','bin/python3','bin/python3.12']);
+async function runtimeModes(root,receive=false){
+ await auditOfflineTree(root);
+ const queue=[root];while(queue.length){const dir=queue.pop(),items=await readdir(dir);
+  for(const item of items){const file=path.join(dir,item),s=await lstat(file),relative=path.relative(root,file);
+   const mode=s.isDirectory()?0o755:executables.has(relative)?0o755:0o644;
+   if(receive)await chmod(file,mode);else if((s.mode&0o7777)!==mode)throw coded('runtime_publication_modes');
+   if(s.isDirectory())queue.push(file);
+  }
+ }
+ if(receive)await chmod(root,0o755);else if(((await lstat(root)).mode&0o7777)!==0o755)throw coded('runtime_publication_modes');
+}
+export const publishRuntimeModes=root=>runtimeModes(root,true);
+export const verifyRuntimeModes=root=>runtimeModes(root);
 export async function verifyOfflineRuntime(root,{archiveSha256,wheelSha256}) {
  await auditOfflineTree(root);
  let record;try{record=JSON.parse((await small(path.join(root,MANIFEST),4096)).toString('utf8'));}catch{throw coded('runtime_layout_manifest');}
  const content=await runtimeContentIdentity(root),expected={schema:'sds.foundry.runtime-layout.v1',layout:LAYOUT,archiveSha256,wheelSha256,content};
  if(hash(record)!==hash(expected))throw coded('runtime_content_changed');
+ await verifyRuntimeModes(root);
  return {layout:LAYOUT,deployable:true};
 }
