@@ -277,6 +277,33 @@
           "sha256": "f7a7bcff913497af33677073b563f06dee057345be63b9a1144a6c6a599d5cb9"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-LIFECYCLE-100517",
+      "sdsBase": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+      "reason": "Explicit existing expiry revalidation, canonical dispatch/publication, and lossless owner-received successor manifest for a durable no-launch proof. Same original task/request/artifact/registration/authority; immutable manifest lineage, observations and charges retained. Current installed policy/runtime mandatory; no expiry extension, unknown physical retry, refund, migration, namespace or sealed executor change. Explicit authenticated client reconciliation seals a separate successor receipt; completed invocation result replay reads history without a new launch.",
+      "files": {
+        "scripts/visitor-foundry/integration/entry/client.mjs": {
+          "receivedSha256": "10d429a9c7c1cca35c0b335bb9d035818ebda1b2bf7c3300179ebab1ac284f7e",
+          "sha256": "406078adb6d192f47630f702b51b127a17e5b52f4ff38159befb610cf95e2b9d"
+        },
+        "scripts/visitor-foundry/integration/entry/visitor.mjs": {
+          "receivedSha256": "6d62f4135eb760e2a6308ad6125797b306740a87e6e552e79ee8a17c5846177c",
+          "sha256": "c7da966eee93a57e8e3a47557f598c6f47b388478a89ecd2ad5bbc2e2f9702fc"
+        },
+        "scripts/visitor-foundry/integration/src/execution-view.mjs": {
+          "receivedSha256": "132a0214e5da3d4e58eaf629564e92718833995b98bdbd4b8d47044d502aa6e5",
+          "sha256": "f2d273fd9f9f7612d5af95321cfc77bdf0cf5eaf109223e06c3039d9e8a4f025"
+        },
+        "scripts/visitor-foundry/integration/src/portable-store.mjs": {
+          "receivedSha256": "d03d34dab4064b90a765243430173914ecfdc4e0ce0fc6fdb910ddf3dfbc81f1",
+          "sha256": "f9342bbb7983f0c3c82996501af41b7779df5a8de18bf86db1435ecbd9edfdd6"
+        },
+        "scripts/visitor-foundry/integration/src/store.mjs": {
+          "receivedSha256": "f7a7bcff913497af33677073b563f06dee057345be63b9a1144a6c6a599d5cb9",
+          "sha256": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb"
+        }
+      }
     }
   ]
 }

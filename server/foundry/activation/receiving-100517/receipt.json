@@ -1,0 +1,357 @@
+{
+  "schema": "sds.foundry.host-lifecycle-receiving.v1",
+  "nativeSession": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "base": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+  "branch": "codex/sol-host-lifecycle-100517",
+  "exportHead": "single-commit-containing-this-receipt; exact Git head in PR/final receiving",
+  "actualHostMeasured": false,
+  "productionReadOrMutated": false,
+  "productionActivation": false,
+  "tests": [
+    {
+      "command": "npm run test:foundry-private-pass",
+      "node": "22.18.0",
+      "exit": 0,
+      "logSha256": "8d4616dc5fdc113d0434d35ad4499c0a1758145624ff53fd6d196fda510014a7",
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js server/scripts/test-managed-platform.js server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js server/scripts/test-foundry-activation.js server/scripts/test-foundry-client-compat.js server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js server/scripts/test-foundry-entry-reservation.js server/scripts/test-foundry-runtime-progress.js server/scripts/test-proxy-addr-patch.js",
+      "node": "22.18.0",
+      "exit": 0,
+      "logSha256": "70f91834eb7b30199766e2dcbd914f0c1db346f0121419e725b74be0c44a81f1",
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "FOUNDRY_RUNTIME_LAYOUT_RECEIPT=/tmp/sol-100517-cold-final.json npm run test:foundry-runtime-layout",
+      "node": "22.18.0",
+      "exit": 0,
+      "logSha256": "14d7547c1b74535cb6de51c089404358c0691b9585efc53a1eb2b57727c05836",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run test:foundry-contribution-transport",
+      "node": "22.18.0",
+      "exit": 0,
+      "logSha256": "125faa4cfe3cec94a8a67a073b069ccfd07c02f061743a77754c88f0ed0f2c34",
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/sol-100517-generation-final-receipt.json npm run test:foundry-generation",
+      "node": "22.14.0",
+      "exit": 0,
+      "logSha256": "2d131568ef9a2bd481e502b52d5421d00c4d63569fc20733fbd3984075369536",
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "total": {
+    "pass": 214,
+    "fail": 0,
+    "skip": 0,
+    "cancel": 0
+  },
+  "installation": {
+    "command": "npm ci",
+    "exit": 0,
+    "logSha256": "7e3fbdc2db3d5dcd78dd22225bced5c0aa97e63fa6aa5d048b27c2448a34ea70"
+  },
+  "closure": {
+    "files": 222,
+    "sourcePinSha256": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+    "controlDigest": "sha256:a0a59e15ffae3c9a3b0658d6c3001d7adc4e6aff443a21d11c95fe34e58c0d20",
+    "receivedCallerClosures": [
+      {
+        "base": "900c37b6383fa87efead3e56ae52d3973c7fb196",
+        "sourcePinSha256": "94ac47d5efc27afdffa0884bbfe4dadfb4f673565bf7cc7fd67520ba6bae0c17",
+        "closureDigest": "sha256:5a8b347e9daa9d3ee5e89279a4d8273cee9e21b634e5b2815777ce608ba74cc1"
+      },
+      {
+        "base": "a7d27d6478d53c43a9c8b69ed77213791d50ff98",
+        "sourcePinSha256": "9daeeed39d3cbf64fb0a05fe114f89c9469d7067b6a61d27609f892243cc1fd6",
+        "closureDigest": "sha256:94eebf0933507210ddf1b7a5a4b176eb34f738c5ac6a40bb3e09562c06c70026"
+      }
+    ]
+  },
+  "runtime": {
+    "pins": {
+      "profile": {
+        "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+        "runtime": "wasmtime-py",
+        "version": "49.0.0",
+        "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+        "license": "Apache-2.0 WITH LLVM-exception",
+        "platform": "linux",
+        "arch": "x64",
+        "imports": "none",
+        "memory": "fixed-wasm32",
+        "tables": "fixed-funcref",
+        "nan": "canonical",
+        "parallelCompilation": false
+      },
+      "node": "v22.18.0",
+      "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+      "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+      "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+      "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+      "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+      "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+      "launcher": {
+        "id": "vf08.python-setrlimit-exec.v1",
+        "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+        "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+      }
+    },
+    "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+  },
+  "cold": {
+    "schema": "sds.foundry.runtime-layout-replay.v1",
+    "base": "e6b6bcba8316c395199312a1580ec9eae1770738",
+    "actualHost": false,
+    "cases": [
+      {
+        "case": "missing-utilities-build",
+        "pinsEqual": true,
+        "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9",
+        "files": 4905,
+        "bytes": 229361517
+      },
+      {
+        "case": "legacy-receiving",
+        "contentPreserved": true,
+        "changedIncomingRefused": true,
+        "badWheelRetained": true
+      },
+      {
+        "case": "offline-copy",
+        "exited": true,
+        "pipesClosed": true,
+        "changedInterpreterAndNativeRefused": true,
+        "brokenRefused": true
+      },
+      {
+        "case": "archived-serving",
+        "buildRemoved": true,
+        "noCheckoutLinks": true,
+        "broken": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "unreachable_external_absolute_link",
+          "state": null,
+          "ms": 4
+        },
+        "missing": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "runtime_config",
+          "interpreterEntry": null,
+          "state": null,
+          "ms": 4
+        },
+        "missingEntry": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "missing_entry",
+          "state": null,
+          "ms": 7
+        },
+        "pinsEqual": true,
+        "sameAttemptReady": true,
+        "originalAuthorityRetained": true,
+        "privateCorrespondenceRetained": true,
+        "grantsAndHistoryRetained": true,
+        "installerReplayUnchanged": true,
+        "concurrentRecoveries": 2,
+        "verificationRenewed": false,
+        "evidenceGenerations": [
+          1,
+          2,
+          3
+        ],
+        "expiredOriginalRefused": true,
+        "currentEvidenceRemeasured": true,
+        "manifestLineageRetained": true,
+        "laterVisitorAfterEvidenceExpiry": true,
+        "validationChargedUnits": 12000,
+        "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+        "invocations": 6,
+        "chargedAInvocations": 4,
+        "terminationExitedDrained": true,
+        "noLaunchControl": {
+          "code": "spawn_permission",
+          "actualProviderCause": false,
+          "originalIntentRetained": true,
+          "priorChargedObservationRetained": true,
+          "explicitOwnerReceiving": true,
+          "chargedBefore": 1,
+          "chargedAfter": 2,
+          "continuedAfterHttpRestart": true
+        }
+      }
+    ],
+    "sourcePinSha256": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+    "controlPinSha256": "8e7f722a05f4c65d99acc016ec20c442e1824e03fddb0ec5b26f1aa77cff95a9",
+    "build": {
+      "code": 0,
+      "reason": null,
+      "exited": true,
+      "materializer": {
+        "ok": true,
+        "action": "cpython-standalone",
+        "layout": "self-contained-regular-v1",
+        "deployable": true,
+        "contentPreserved": null,
+        "privatePythonWebServer": false
+      },
+      "probe": {
+        "probe": "managed-node",
+        "ok": true,
+        "linuxX64": true,
+        "node": "v22.18.0",
+        "python3": false,
+        "installedPython": true,
+        "bundledPython": true,
+        "runtimeLayout": "self-contained-regular-v1",
+        "runtimeLayoutFailure": null,
+        "installedPythonFailure": null,
+        "prlimit": false,
+        "procReadable": true,
+        "procFdReadable": true,
+        "childProcReadable": true,
+        "referenceRuntime": true,
+        "osLimitsEnforced": true,
+        "pidPreserved": true,
+        "referenceExecution": true,
+        "referenceFailure": null,
+        "pythonFailure": "spawn_failed",
+        "osLimitMechanism": "python-setrlimit-before-exec",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        },
+        "launcherIdentityStable": true,
+        "unsupportedHostReasons": [],
+        "productionActivate": "HOLD",
+        "activation": false,
+        "notProduction": true,
+        "wholeHostSandbox": false,
+        "privatePythonWebServer": false,
+        "referenceProfileRetained": true
+      },
+      "stdoutSha256": "1675121b8a7da33d1a1722178d9eb6c8a481e17faf70697efe727da1cc464682"
+    },
+    "runtime": {
+      "pins": {
+        "profile": {
+          "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+          "runtime": "wasmtime-py",
+          "version": "49.0.0",
+          "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+          "license": "Apache-2.0 WITH LLVM-exception",
+          "platform": "linux",
+          "arch": "x64",
+          "imports": "none",
+          "memory": "fixed-wasm32",
+          "tables": "fixed-funcref",
+          "nan": "canonical",
+          "parallelCompilation": false
+        },
+        "node": "v22.18.0",
+        "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+        "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+        "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+        "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+        "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+        "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        }
+      },
+      "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+    }
+  },
+  "generationReceiptSha256": "fbfe089bb8b7a79b400e4321f46a15c30d62e68773cf8e4504a98731c91112c4",
+  "changedFileSha256": {
+    "server/foundry/activation/private-control-pin.json": "8e7f722a05f4c65d99acc016ec20c442e1824e03fddb0ec5b26f1aa77cff95a9",
+    "server/foundry/activation/remote-private-journey.mjs": "6f31d6f27feed14af874d83f70c9e4bdb799598aa9ec9922c62847833e06a9d2",
+    "server/foundry/private-pass-core.mjs": "dbab93f6ffa4f538f421166508e126c997e1bb302367e482be01c950b7d89b5d",
+    "server/foundry/private-pass.mjs": "b4d658563af0a7d150fa07b62975a08cae8f95e0f3023321d4c6a0e8c7ba97f0",
+    "server/scripts/fixtures/managed-layout-tests.mjs": "a15dd52586db30805f9369bce1e1e707e1f6382f9558cc5720fafc2da4a9dc5e",
+    "server/scripts/test-foundry-generation.js": "538b5a33fdab46a63e3c65eb953b9715c11c1159cca0358f616983ac282a8d6c",
+    "server/scripts/test-foundry-private-pass.js": "e989c120df99e994274dfa37239b607854f3e833c031baeab515a11580906111",
+    "server/scripts/test-foundry-runtime-layout.js": "7d094e381b7fd32ead118f5cd63c680cff606c14538138ec44a9d444a523dcb6",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/client.mjs": "406078adb6d192f47630f702b51b127a17e5b52f4ff38159befb610cf95e2b9d",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs": "c7da966eee93a57e8e3a47557f598c6f47b388478a89ecd2ad5bbc2e2f9702fc",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/execution-view.mjs": "f2d273fd9f9f7612d5af95321cfc77bdf0cf5eaf109223e06c3039d9e8a4f025",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-store.mjs": "f9342bbb7983f0c3c82996501af41b7779df5a8de18bf86db1435ecbd9edfdd6",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/store.mjs": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb"
+  },
+  "receivingSchemas": {
+    "renew": "sds.foundry.private-pass.v1/renew-evidence",
+    "dispatch": "sds.foundry.private-pass.v1/dispatch",
+    "receive": "sds.foundry.private-pass.v3/receive-no-launch",
+    "continuation": "neomorphic.foundry.invocation-continuation.v1"
+  },
+  "originalProductionBindingFromRoot": {
+    "projectId": "prj_5cboYklXAf5S8Gio",
+    "registrationId": "ven_LN-0OoD1GHnf_iur",
+    "taskId": "task:owner-a-use-useful",
+    "manifestId": "sha256:d881fa10fdab79d92d4c496a6f1446aeb832163641438e68395eec4c30aa1e7c",
+    "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+    "generation": 1,
+    "verificationId": "sha256:1d597ed3641ec5f9cdc248aca640855d03c5d35352a98d416c29634b10de7060",
+    "executionId": "invocation:abfc449f-715e-4ec2-ba9d-55b8cfe5d37c",
+    "fence": "aeb7823a-b809-4ec2-abfb-91806c36f1da",
+    "observationId": "sha256:0ddd220e88facdce964df67de653b964b19cff3ffefe7bcb28d76348bcbf2d59",
+    "negativeReceiving": {
+      "build": "01a11009",
+      "code": "manifest_expired",
+      "finishedAt": "2026-10-06T07:07:01Z"
+    }
+  },
+  "remainingActualHost": [
+    "Root source receiving/deployment",
+    "same-proof grant renewal if needed",
+    "explicit expiry revalidation, canonical verification/publication and original-A successor receiving",
+    "canonical local reconcile and actual original A execution/termination",
+    "actual HTTP restart and later B acquisition/execution",
+    "bounded canonical source/runtime/task/manifest/generation/status readbacks"
+  ]
+}

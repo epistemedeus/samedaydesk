@@ -186,11 +186,14 @@ export const portableMethods={
  async invokePortable(ctx,raw){const body=jsonBounded(raw,24576);exact(body,['manifestId','request']);ensurePostgresJson(body);
   const plan=await this.authenticated(ctx,false,async(c,g,locked)=>{
    // Write lock serializes reservation with validation dispatch; runtime runs after commit.
-   locked=await this.lock(c,ctx.projectId,true);const permit=await this.invocationPermit(c,ctx,body,locked);
+   locked=await this.lock(c,ctx.projectId,true);
    const old=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2',[ctx.projectId,body.request.taskId])).rows[0];
    if(old){need(old.manifest_id===body.manifestId&&old.input_digest===hash(body.request.input)&&old.execution.grantId===g.id&&old.execution.requestId===hash(body.request),'task_reuse_conflict');
+    if(old.state==='completed'&&old.result)return {result:{...old.result,replayed:true}};
+    await this.invocationPermit(c,ctx,body,locked);
     if(old.state==='reserved' && old.execution.continuation && old.execution.supervisor===null && !old.execution.identity && !old.execution.sample)return {execution:old.execution};
-    need(old.state==='completed'&&old.result,old.execution.sample?.observation.termination?.noLaunch===true?'invocation_no_launch':'invocation_outcome_unknown');return {result:{...old.result,replayed:true}};}
+    need(false,old.execution.sample?.observation?.termination?.noLaunch===true?'invocation_no_launch':'invocation_outcome_unknown');}
+   const permit=await this.invocationPermit(c,ctx,body,locked);
    need(!(await c.query("SELECT 1 FROM correspondence_vf04_attempts WHERE project_id=$1 AND state<>'reconciled' UNION ALL SELECT 1 FROM correspondence_vf04_invocations WHERE project_id=$1 AND state<>'completed' LIMIT 1",[ctx.projectId])).rows.length,'physical_reservation_held');
    need(await this.chargedInvocations(c,ctx.projectId)<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
    await this.entryPhysicalCapacity(c,ctx.projectId,locked.config);
@@ -220,14 +223,32 @@ export const portableMethods={
  // c belongs to the caller's allocation/project/intent transaction. Never exposed by HTTP.
  async receiveNoLaunchInvocation(c,r){
   const locked=await this.lock(c,r.projectId,true),body={manifestId:r.manifestId,request:r.request};
-  const permit=await this.invocationPermit(c,{projectId:r.projectId},body,locked);
+  let permit;
+  if(r.schema==='sds.foundry.private-pass.v3'){
+   const predecessor=(await c.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[r.projectId,r.manifestId])).rows[0]?.record;
+   const {id:manifestId,...manifestBody}=predecessor??{};
+   need(manifestId===r.manifestId && hash(manifestBody)===manifestId && predecessor.requestId===hash(r.request),'manifest_request_mismatch');
+   const renewal=(await c.query('SELECT response_json FROM correspondence_idempotency WHERE scope=$1 AND project_id=$2 AND key=$3',['sds:private-pass:v1',r.projectId,r.renewalIntentId])).rows[0]?.response_json;
+   need(renewal?.state==='completed' && renewal.request.action==='renew-evidence'
+    && renewal.request.expectedHostConfigId===r.expectedHostConfigId && renewal.request.expectedEntryTermsHash===r.expectedEntryTermsHash
+    && renewal.request.candidateId===r.candidateId && renewal.request.expectedGeneration===r.expectedGeneration
+    && renewal.request.expectedVerificationId===r.expectedVerificationId && renewal.receipt.generation===r.successorGeneration
+    && r.successorGeneration===r.expectedGeneration+1,'invocation_renewal_conflict');
+   const graph=await this.graph(c,locked.sources),fresh=resolutionManifest(graph.snapshot,r.request,{...graph.options,target:predecessor.target}).manifest;
+   need(fresh && fresh.id!==manifestId && hash(fresh.target)===hash(predecessor.target)
+    && hash(fresh.versions)===hash(predecessor.versions) && fresh.evaluatorPolicy===predecessor.evaluatorPolicy,'invocation_successor_conflict');
+   // The successor is ordinary current evidence, never an extension of the old record.
+   await this.saveManifest(c,r.projectId,fresh,locked.config);
+   permit=await this.invocationPermit(c,{projectId:r.projectId},{manifestId:fresh.id,request:r.request},locked);
+   need(permit.candidate.generation===r.successorGeneration,'invocation_renewal_conflict');
+  }else permit=await this.invocationPermit(c,{projectId:r.projectId},body,locked);
   const row=(await c.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2 FOR UPDATE',[r.projectId,r.taskId])).rows[0];
   need(row && row.state==='completed' && row.result===null && row.manifest_id===r.manifestId && row.input_digest===hash(r.request.input),'invocation_receive_conflict');
   const old=row.execution,o=old?.sample?.observation;
   need(old?.id===r.expectedExecutionId && old.fence===r.expectedFence && old.requestId===hash(r.request)
    && old.binding.candidateId===r.candidateId && old.generation===r.expectedGeneration
    && old.verification.id===r.expectedVerificationId && permit.verification.id===r.expectedVerificationId
-   && permit.candidate.id===r.candidateId && permit.candidate.generation===r.expectedGeneration,'invocation_receive_conflict');
+   && permit.candidate.id===r.candidateId && permit.candidate.generation===(r.successorGeneration??r.expectedGeneration),'invocation_receive_conflict');
   need(o?.id===r.expectedObservationId && o.termination?.noLaunch===true && o.termination.exited===false
    && o.termination.code===null && o.termination.signal===null && !o.processIdentity && !old.identity
    && old.supervisor && ['incomplete','cancelled'].includes(o.status) && Array.isArray(o.phasesObserved) && o.phasesObserved.length===0
@@ -236,7 +257,7 @@ export const portableMethods={
   const {id:observationId,...observation}=o;
   need(hash(observation)===observationId && hash(o.binding)===hash(old.binding)
    && o.runtimePin===old.binding.runtimePin && old.binding.fence===old.fence && old.binding.assignmentId===old.id
-   && old.sourceProject===permit.candidate.project_id && hash(old.binding)===hash(invocationBinding(permit,old.id,old.fence))
+   && hash(old.verification)===hash(permit.verification) && old.sourceProject===permit.candidate.project_id && hash(old.binding)===hash(invocationBinding(permit,old.id,old.fence))
    && hash(old.reservation)===hash(locked.config.invocationLimits),'invocation_receive_evidence_conflict');
   const grant=(await c.query('SELECT * FROM correspondence_grants WHERE id=$1 FOR SHARE',[old.grantId])).rows[0],now=await this.db.now(c);
   need(grant && grant.project_id===r.projectId && grant.role!=='reader' && !grant.revoked_at
@@ -246,10 +267,12 @@ export const portableMethods={
   const chargedBefore=await this.chargedInvocations(c,r.projectId);need(chargedBefore<locked.config.invocationLimits.maxRecords,'invocation_budget_exhausted');
   const {priorAttempts=[],...prior}=old,id=`invocation:${randomUUID()}`,fence=randomUUID();
   need(priorAttempts.length<64,'invocation_budget_exhausted');
-  const execution={...prior,id,fence,binding:{...prior.binding,assignmentId:id,fence},supervisor:null,identity:null,sample:null,launchEvidence:null,
-   priorAttempts:[...priorAttempts,prior],continuation:{intentId:r.intentId,receivedAt:now,priorExecutionId:prior.id,priorObservationId:observationId}};
-  await c.query("UPDATE correspondence_vf04_invocations SET state='reserved',execution=$3 WHERE project_id=$1 AND task_id=$2",[r.projectId,r.taskId,execution]);
-  return {taskId:r.taskId,manifestId:r.manifestId,requestDigest:old.requestId,priorExecutionId:old.id,priorObservationId:observationId,
+  const transition=r.schema==='sds.foundry.private-pass.v3'?{schema:'neomorphic.foundry.invocation-continuation.v1',intentId:r.intentId,renewalIntentId:r.renewalIntentId,projectId:r.projectId,registrationId:r.registrationId,taskId:r.taskId,requestDigest:old.requestId,predecessorManifestId:r.manifestId,successorManifestId:permit.manifest.id,target:permit.manifest.target,priorGeneration:old.generation,generation:permit.candidate.generation,verificationId:permit.verification.id,priorExecutionId:old.id,priorObservationId:observationId,executionId:id,fence,receivedAt:now}:null;
+  if(transition)transition.id=hash(transition);
+  const execution={...prior,id,fence,generation:permit.candidate.generation,binding:{...prior.binding,assignmentId:id,fence},supervisor:null,identity:null,sample:null,launchEvidence:null,
+   priorAttempts:[...priorAttempts,transition?{...prior,manifestId:r.manifestId}:prior],continuation:transition??{intentId:r.intentId,receivedAt:now,priorExecutionId:prior.id,priorObservationId:observationId}};
+  await c.query("UPDATE correspondence_vf04_invocations SET state='reserved',execution=$3,manifest_id=$4 WHERE project_id=$1 AND task_id=$2",[r.projectId,r.taskId,execution,permit.manifest.id]);
+  return {taskId:r.taskId,manifestId:permit.manifest.id,...(transition?{transition}:{}),requestDigest:old.requestId,priorExecutionId:old.id,priorObservationId:observationId,
    executionId:id,fence,chargedBefore,chargedAfter:chargedBefore+1,budgetRefunded:false,physicalLaunched:false,nextAction:'invoke_same_saved_intent'};
  },
  async chargedInvocations(c,projectId){return chargedInvocationCount(c,projectId);},

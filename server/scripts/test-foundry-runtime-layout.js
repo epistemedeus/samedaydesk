@@ -157,6 +157,7 @@ test('copied normal production serving retains original pending A, then same-att
  assert.deepEqual(await f.retained(),retained);assert.deepEqual(await f.counts(),{...counts,pools:1});assert.deepEqual(await pins(delivery),packedPins);
  await command(['server/foundry/install.mjs','--migrate','--install'],{cwd:delivery,env:f.env});
  assert.deepEqual(await f.retained(),retained);assert.deepEqual(await f.counts(),{...counts,pools:1});
+ await command(['--input-type=module','-e',`import {PostgresStore} from '@neomorphic/correspondence';import {openEntryFacade,closeEntryThenBase} from './server/foundry/compose.js';const config={databaseUrl:process.env.CORRESPONDENCE_DATABASE_URL,pgSchema:process.env.CORRESPONDENCE_PG_SCHEMA,poolMax:1,store:'postgres',bodyLimitBytes:524288,rateLimitWindowMs:60000,rateLimitMax:10000,corsOrigins:[],trustProxyHops:0,port:0};const base=new PostgresStore(config.databaseUrl,{schema:config.pgSchema,poolMax:1});const {mounted}=await openEntryFacade({store:base,config,env:process.env});try{const store=mounted.extension.integration,p=(await store.db.tx(c=>c.query('SELECT verification FROM correspondence_vf04_pools WHERE project_id=$1',[${JSON.stringify(projectId)}]))).rows[0].verification;await store.configureVerification(${JSON.stringify(projectId)},{expectedVerificationId:p.id,revision:p.policy.revision,validityMs:7000},'fixture-short-evidence');console.log(JSON.stringify({configured:true}));}finally{await closeEntryThenBase(mounted,base);}`],{cwd:delivery,env:f.env});
  const beforeGeneration=(await f.query('SELECT config,verification FROM correspondence_vf04_pools')).rows;
  for(const file of ['bin/python','lib/python3.12/site-packages/wasmtime/linux-x86_64/_libwasmtime.so']){
   const full=path.join(runtime,file),bytes=await readFile(full);await appendFile(full,'changed');
@@ -182,23 +183,37 @@ test('copied normal production serving retains original pending A, then same-att
  const intentFiles=(await readdir(path.join(f.env.FOUNDRY_PRIVATE_DIR,'a'))).filter(x=>x.startsWith('invoke-'));assert.equal(intentFiles.length,1);
  const intentFile=path.join(f.env.FOUNDRY_PRIVATE_DIR,'a',intentFiles[0]),intentBytes=await readFile(intentFile);
  const receipt=await a.run('prepare-no-launch',{intentId:'layout-receive-original-a',expectedHostConfigId:dispatch.expectedHostConfigId,request:originalRequest});
- const received=await f.pass(receipt);assert.equal(received.receipt.chargedBefore,1);assert.equal(received.receipt.chargedAfter,2);assert.equal(received.physicalLaunched,false);
- assert.equal((await f.pass(receipt)).replayed,true);
+ const oldManifest=(await f.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[projectId,receipt.manifestId])).rows[0].record;
+ await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(oldManifest.validUntil)-Date.now()+80)));
+ assert.equal((await a.run('use',originalRequest,1)).error.code,'stale-terms');
+ await command(['server/foundry/private-pass.mjs'],{cwd:delivery,env:{...f.env,FOUNDRY_PRIVATE_PASS_JSON:JSON.stringify(receipt)},exit:2});
+ const plan=await a.run('prepare-continuation',{intentId:'layout-original-a-100517',expectedHostConfigId:dispatch.expectedHostConfigId,request:originalRequest});
+ assert.equal((await f.pass(plan.renew)).receipt.generation,2);assert.equal((await f.pass(plan.dispatch)).readback.charged.costUnits,'8000');
+ const received=await f.pass(plan.receive);assert.equal(received.receipt.chargedBefore,1);assert.equal(received.receipt.chargedAfter,2);assert.equal(received.physicalLaunched,false);
+ assert.equal((await f.pass(plan.receive)).replayed,true);
+ const reconciled=await a.run('reconcile-invocation',originalRequest);assert.equal(reconciled.transition.predecessorManifestId,prior.manifest_id);assert.notEqual(reconciled.transition.successorManifestId,prior.manifest_id);
  await f.restart();const continued=await a.run('use',originalRequest);assert.deepEqual(continued.invocation.output,cases[0].expected);
- assert.deepEqual(await readFile(intentFile),intentBytes);const current=await invRow();assert.equal(current.manifest_id,prior.manifest_id);assert.equal(current.input_digest,prior.input_digest);
- assert.deepEqual(current.execution.priorAttempts,[prior.execution]);assert.equal(current.execution.requestId,prior.execution.requestId);assert.equal(current.execution.grantId,prior.execution.grantId);assert.equal(current.execution.binding.moduleDigest,prior.execution.binding.moduleDigest);
+ assert.deepEqual(await readFile(intentFile),intentBytes);const current=await invRow();assert.notEqual(current.manifest_id,prior.manifest_id);assert.equal(current.input_digest,prior.input_digest);
+ assert.deepEqual(current.execution.priorAttempts,[{...prior.execution,manifestId:prior.manifest_id}]);assert.equal(current.execution.requestId,prior.execution.requestId);assert.equal(current.execution.grantId,prior.execution.grantId);assert.equal(current.execution.binding.moduleDigest,prior.execution.binding.moduleDigest);
  assert.equal(current.execution.sample.observation.termination.exited,true);assert.equal(current.execution.sample.observation.termination.drained,true);assert.equal(current.execution.sample.observation.termination.code,0);
  for(const c of [cases[1],cases[3]])assert.deepEqual((await a.run('use',task(c.input))).invocation.output,c.expected);
  assert.deepEqual(await pins(delivery),packedPins);assert.deepEqual((await f.query('SELECT config,verification FROM correspondence_vf04_pools WHERE project_id=$1',[projectId])).rows,beforeGeneration);
  const aView=await f.pass({...f.request(projectId),intentId:'observe-a-use'});assert.equal(aView.readback.invocations.length,3);
- await f.restart();assert.deepEqual(await a.run('correspondence'),privateCorrespondence);const b=await f.visitor('b'),bReg=await b.run('register');assert.equal(bReg.status,200);
+ const secondPub=(await f.query('SELECT receipt,verification FROM correspondence_vf04_publications WHERE project_id=$1 AND generation=2',[projectId])).rows[0];
+ await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(secondPub.receipt.observedAt)+secondPub.verification.validityMs-Date.now()+80)));
+ await f.restart();assert.deepEqual(await a.run('correspondence'),privateCorrespondence);assert.equal((await a.run('use',originalRequest)).invocation.replayed,true);
+ const b=await f.visitor('b'),bReg=await b.run('register');assert.equal(bReg.status,200);
+ const staleB=await b.run('use',task(cases[0].input));assert.equal(staleB.invocation,null);
+ const renewForB={...dispatch,intentId:'layout-expired-evidence-for-b',action:'renew-evidence',expectedGeneration:2};
+ assert.equal((await f.pass(renewForB)).receipt.generation,3);
+ await f.pass({...dispatch,intentId:'layout-dispatch-current-for-b',expectedGeneration:3});
  for(const c of [cases[0],cases[1],cases[3]]){const used=await b.run('use',task(c.input));assert.deepEqual(used.invocation.output,c.expected);}
  const bView=await f.pass({...f.request(bReg.body.projectId),intentId:'observe-b-use'});
  for(const view of[aView,bView]){assert.equal(view.readback.outstandingPhysical,0);for(const i of view.readback.invocations){assert.deepEqual(i.sample.phases,['compile','instantiate','execute']);assert.equal(i.sample.termination.exited,true);assert.equal(i.sample.termination.drained,true);assert.equal(i.candidateId,candidateId);}}
- assert.deepEqual(await f.counts(),{charged:2,registrations:2,admissions:2,pools:2,attempts:1});
+ assert.deepEqual(await f.counts(),{charged:2,registrations:2,admissions:2,pools:2,attempts:3});
  // Explicit installer replay observes the same durable enrollment; startup never
  // ran migrations, receiving, budget refill or verification maintenance.
- evidence.cases.push({case:'archived-serving',buildRemoved:true,noCheckoutLinks:true,broken,missing,missingEntry,pinsEqual:true,sameAttemptReady:true,originalAuthorityRetained:true,privateCorrespondenceRetained:true,grantsAndHistoryRetained:true,installerReplayUnchanged:true,concurrentRecoveries:2,verificationRenewed:false,candidateId,invocations:6,chargedAInvocations:4,terminationExitedDrained:true,noLaunchControl:{code:'spawn_permission',actualProviderCause:false,originalIntentRetained:true,priorChargedObservationRetained:true,explicitOwnerReceiving:true,chargedBefore:1,chargedAfter:2,continuedAfterHttpRestart:true}});
+ evidence.cases.push({case:'archived-serving',buildRemoved:true,noCheckoutLinks:true,broken,missing,missingEntry,pinsEqual:true,sameAttemptReady:true,originalAuthorityRetained:true,privateCorrespondenceRetained:true,grantsAndHistoryRetained:true,installerReplayUnchanged:true,concurrentRecoveries:2,verificationRenewed:false,evidenceGenerations:[1,2,3],expiredOriginalRefused:true,currentEvidenceRemeasured:true,manifestLineageRetained:true,laterVisitorAfterEvidenceExpiry:true,validationChargedUnits:12000,candidateId,invocations:6,chargedAInvocations:4,terminationExitedDrained:true,noLaunchControl:{code:'spawn_permission',actualProviderCause:false,originalIntentRetained:true,priorChargedObservationRetained:true,explicitOwnerReceiving:true,chargedBefore:1,chargedAfter:2,continuedAfterHttpRestart:true}});
  await f.server.stop();
 });
 test('closed private metadata evidence excludes error prose/paths and never traverses an external link',async()=>{

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import {readPrivateJson} from '../../../../services/correspondence/bin/safe-io.mjs';
-import {enroll,resumed,contributeFromEntry,reconcileContribution,reconcileUpload,uploadCanary,uploadFullCanary,prepareNoLaunch,durable,useFromEntry} from './client.mjs';
+import {enroll,resumed,contributeFromEntry,reconcileContribution,reconcileUpload,uploadCanary,uploadFullCanary,prepareNoLaunch,prepareContinuation,reconcileInvocation,durable,useFromEntry} from './client.mjs';
 import {clientFailure} from '../compound/transport.mjs';
 import {writeCheckpoint,resume,entryRequest} from '../../entry/src/client.mjs';
 const args=process.argv.slice(2),jsonResult=args.includes('--json-result');
@@ -15,6 +15,8 @@ try{
  else if(mode==='reconcile-upload')result=await reconcileUpload(config);
  else if(mode==='upload-canary')result=await uploadCanary(config);
  else if(mode==='upload-full-canary')result=await uploadFullCanary(config);
+ else if(mode==='prepare-continuation')result=await prepareContinuation(config,input);
+ else if(mode==='reconcile-invocation')result=await reconcileInvocation(config,input);
  else if(mode==='prepare-no-launch')result=await prepareNoLaunch(config,input);
  else if(mode==='status')result=await resumed(config).client.call('status');
  else if(mode==='reconcile-contribution')result=await reconcileContribution(config,input.operation);

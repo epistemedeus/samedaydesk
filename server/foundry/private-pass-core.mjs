@@ -8,6 +8,7 @@ import { checkInstalledVerification } from '../../vendor/visitor-foundry-receive
 import { PORTABLE_KIND } from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-profile.mjs';
 import { PROGRESS_SCOPE,progressBinding,progressView,phaseCode } from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs';
 
+export const RENEWED_INVOCATION_PASS_SCHEMA='sds.foundry.private-pass.v3';
 export const INVOCATION_PASS_SCHEMA='sds.foundry.private-pass.v2';
 export const PASS_SCHEMA = 'sds.foundry.private-pass.v1';
 export const PASS_SCOPE = 'sds:private-pass:v1';
@@ -20,20 +21,22 @@ const id = value => typeof value === 'string' && /^[A-Za-z0-9:_-]{1,200}$/.test(
 const sha = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 const invocationFields=[...fields,'registrationId','taskId','manifestId','expectedExecutionId','expectedFence','expectedObservationId','request'];
 export function validateRequest(value) {
-  if(value?.schema===INVOCATION_PASS_SCHEMA){
-    need(Object.keys(value).length===invocationFields.length && invocationFields.every(k=>Object.hasOwn(value,k)),'private_pass_request_invalid');
-    const r=Object.fromEntries(invocationFields.map(k=>[k,value[k]]));
+  if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA].includes(value?.schema)){
+    const selected=value.schema===RENEWED_INVOCATION_PASS_SCHEMA?[...invocationFields,'renewalIntentId','successorGeneration']:invocationFields;
+    need(Object.keys(value).length===selected.length && selected.every(k=>Object.hasOwn(value,k)),'private_pass_request_invalid');
+    const r=Object.fromEntries(selected.map(k=>[k,value[k]]));
     need(r.action==='receive-no-launch' && id(r.intentId) && id(r.projectId) && sha(r.expectedHostConfigId) && sha(r.expectedEntryTermsHash)
       && sha(r.expectedVerificationId) && id(r.candidateId) && Number.isInteger(r.expectedGeneration) && r.expectedGeneration>=1 && r.expectedGeneration<=16
       && r.reconcileIntentId===null && id(r.registrationId) && id(r.taskId) && sha(r.manifestId) && id(r.expectedExecutionId)
       && typeof r.expectedFence==='string' && /^[a-f0-9-]{36}$/.test(r.expectedFence) && sha(r.expectedObservationId) && r.request?.taskId===r.taskId,'private_pass_request_invalid');
+    if(r.schema===RENEWED_INVOCATION_PASS_SCHEMA)need(id(r.renewalIntentId) && r.renewalIntentId!==r.intentId && r.successorGeneration===r.expectedGeneration+1 && r.successorGeneration<=4,'private_pass_request_invalid');
     need(Buffer.byteLength(JSON.stringify(r))<=8192,'private_pass_request_invalid');return r;
   }
   need(value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === fields.length && fields.every(k => Object.hasOwn(value,k)), 'private_pass_request_invalid');
   const r = Object.fromEntries(fields.map(k => [k,value[k]]));
-  need(r.schema === PASS_SCHEMA && ['observe','dispatch','reconcile'].includes(r.action) && id(r.intentId) && id(r.projectId)
+  need(r.schema === PASS_SCHEMA && ['observe','dispatch','reconcile','renew-evidence'].includes(r.action) && id(r.intentId) && id(r.projectId)
     && sha(r.expectedHostConfigId) && sha(r.expectedEntryTermsHash), 'private_pass_request_invalid');
-  need(r.action === 'observe' ? r.reconcileIntentId === null : r.action === 'dispatch' ? r.reconcileIntentId === null : id(r.reconcileIntentId) && r.reconcileIntentId !== r.intentId, 'private_pass_request_invalid');
+  need(r.action === 'observe' ? r.reconcileIntentId === null : ['dispatch','renew-evidence'].includes(r.action) ? r.reconcileIntentId === null : id(r.reconcileIntentId) && r.reconcileIntentId !== r.intentId, 'private_pass_request_invalid');
   need((r.expectedVerificationId === null && r.action === 'observe') || sha(r.expectedVerificationId), 'private_pass_request_invalid');
   need((r.candidateId === null && r.expectedGeneration === null && r.action === 'observe')
     || id(r.candidateId) && Number.isSafeInteger(r.expectedGeneration) && r.expectedGeneration >= 1 && r.expectedGeneration <= 16, 'private_pass_request_invalid');
@@ -166,8 +169,8 @@ async function receiveInvocationPass(store,receiver,r,{signal,persist,localRecei
    const saved=prior.response_json;need(saved.state==='completed' && localReceipts.every(x=>digest(x.request)===digest(r) && digest(x.receipt)===digest(saved.receipt)),'private_pass_receipt_conflict');
    const row=(await c.query('SELECT state,execution,manifest_id,input_digest FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2 FOR UPDATE',[r.projectId,r.taskId])).rows[0];
    need(row?.execution.id===saved.receipt.executionId && row.execution.fence===saved.receipt.fence
-    && row.manifest_id===r.manifestId && row.input_digest===digest(r.request.input) && row.execution.requestId===digest(r.request)
-    && row.execution.binding.candidateId===r.candidateId && row.execution.generation===r.expectedGeneration && row.execution.verification.id===r.expectedVerificationId
+    && row.manifest_id===saved.receipt.manifestId && row.input_digest===digest(r.request.input) && row.execution.requestId===digest(r.request)
+    && row.execution.binding.candidateId===r.candidateId && row.execution.generation===(r.successorGeneration??r.expectedGeneration) && row.execution.verification.id===r.expectedVerificationId
     && row.execution.priorAttempts.some(p=>p.id===r.expectedExecutionId && p.fence===r.expectedFence && p.sample?.observation?.id===r.expectedObservationId),'private_pass_readback_conflict');
    return {record:saved,replayed:true,invocationState:row.state};
   }
@@ -181,9 +184,35 @@ async function receiveInvocationPass(store,receiver,r,{signal,persist,localRecei
  persist('completed',result.record);
  return {ok:true,action:r.action,state:'completed',replayed:result.replayed,receipt:result.record.receipt,invocationState:result.invocationState,physicalLaunched:false};
 }
+// Existing generation maintenance, explicitly selected; never runs at boot/build/install.
+async function renewEvidencePass(store,receiver,r,{signal,persist,localReceipts}){
+ const result=await store.db.tx(async c=>{
+  await allocation(receiver,c,r,true);await store.lock(c,r.projectId,true);
+  const prior=await journal(c,r);
+  if(prior){
+   need(prior.request_hash===digest(r),'private_pass_intent_conflict');
+   await bound(store,receiver,c,{...r,expectedGeneration:prior.response_json.receipt?.generation},true);
+   need(prior.response_json.state==='completed' && localReceipts.every(x=>digest(x.request)===digest(r) && digest(x.receipt)===digest(prior.response_json.receipt)),'private_pass_receipt_conflict');
+   return {record:prior.response_json,replayed:true};
+  }
+  const b=await bound(store,receiver,c,r,true);
+  need(localReceipts.length===0,'private_pass_journal_missing');need(!signal?.aborted,'private_pass_cancelled');
+  need(await physical(c,b.config)===0,'physical_reservation_held');
+  need(!(await c.query("SELECT 1 FROM correspondence_idempotency WHERE scope=$1 AND project_id=$2 AND response_json->>'state'<>'completed' LIMIT 1",[PASS_SCOPE,r.projectId])).rows.length,'private_pass_outcome_unknown');
+  const count=(await c.query('SELECT count(*)::int AS n FROM correspondence_idempotency WHERE scope=$1 AND project_id=$2',[PASS_SCOPE,r.projectId])).rows[0].n;
+  need(count<Math.min(64,b.config.limits.maxCommands),'private_pass_capacity');
+  persist('prepared',{request:r});
+  const transactional=Object.create(store);transactional.db=Object.create(store.db);transactional.db.tx=fn=>fn(c);
+  const renewed=await transactional.requestRevalidation(r.projectId,{candidateId:r.candidateId,expectedGeneration:r.expectedGeneration,expectedVerificationId:r.expectedVerificationId,reason:'expiry'},`renew:${digest(r).slice(7)}`);
+  const receipt={...renewed,previousGeneration:r.expectedGeneration,reason:'expiry',physicalLaunched:false,budgetRefunded:false,nextAction:'dispatch_current_generation'};
+  const record={state:'completed',request:r,receipt};await save(c,r,record,true);return {record,replayed:false};
+ },{signal});
+ persist('completed',result.record);return {ok:true,action:r.action,state:'completed',replayed:result.replayed,receipt:result.record.receipt,physicalLaunched:false};
+}
 export async function runPrivatePass(store,receiver,input,{signal,persist=()=>{},onStarted=()=>{},onSpawn,localReceipts=[]}={}) {
-  const r=validateRequest(input); if(r.schema===INVOCATION_PASS_SCHEMA)return receiveInvocationPass(store,receiver,r,{signal,persist,localReceipts});
+  const r=validateRequest(input); if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA].includes(r.schema))return receiveInvocationPass(store,receiver,r,{signal,persist,localReceipts});
   if(r.action==='observe') return observePass(store,receiver,r,{signal});
+  if(r.action==='renew-evidence')return renewEvidencePass(store,receiver,r,{signal,persist,localReceipts});
   const initial = await store.db.tx(async c=>{
     const b=await bound(store,receiver,c,r,true), prior=await journal(c,r);
     need(prior || localReceipts.length===0,'private_pass_journal_missing');

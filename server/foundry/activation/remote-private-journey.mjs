@@ -49,7 +49,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-prepare-no-launch','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-prepare-no-launch','a-prepare-continuation','a-reconcile-invocation','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
@@ -58,6 +58,18 @@ export async function remoteJourney(stage,file,readbackFile) {
   const result=await runBounded(process.execPath,['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,config,...(inputFile?[inputFile]:[]),'--json-result'],
     {cwd:vendor,env:{PATH:process.env.PATH || '',LANG:'C',LC_ALL:'C'},timeoutMs:60000,capture:true,stdoutLimit:1048576,outputLimit:2097152});
   const body=callerResult(result);privateTree(dir);return body;
+ }
+ if(stage==='a-prepare-continuation'){
+  need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
+  const request=task(cases[0].input,'task:owner-a-use-useful');
+  const result=await cli('prepare-continuation',aFile,{intentId:'root-original-a-lifecycle-100517',expectedHostConfigId:c.expectedHostConfigId,request},'a-continuation-spec-100517');
+  for(const action of ['renew','dispatch','receive'])seal(dir,`owner-original-a-${action}-100517.json`,result[action]);
+  return {ok:true,purpose:'owner_qa',stage,requests:result,pin,physicalLaunched:false};
+ }
+ if(stage==='a-reconcile-invocation'){
+  const result=await cli('reconcile-invocation',aFile,task(cases[0].input,'task:owner-a-use-useful'),'a-reconcile-invocation-100517');
+  seal(dir,'a-invocation-continuation-100517.json',result.transition);
+  return {ok:true,purpose:'owner_qa',stage,...result,pin};
  }
  if(stage==='a-prepare-no-launch') {
   need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
@@ -101,6 +113,9 @@ export async function remoteJourney(stage,file,readbackFile) {
   return {ok:true,stage,...receipt,actualHostVerificationRequired:true};
  }
  const saved=json(path.join(dir,'a-contribution-receipt.json'));
+ const continuationFile=path.join(dir,'a-invocation-continuation-100517.json'),continuation=existsSync(continuationFile)?json(continuationFile):null;
+ if(continuation){const {id,...body}=continuation;need(id===digest(body) && continuation.projectId===saved.projectId && continuation.priorGeneration===saved.generation && continuation.generation===saved.generation+1,'caller_candidate_generation_conflict');}
+ const receivedGeneration=continuation?.generation??saved.generation;
  need(saved.hostConfigId===c.expectedHostConfigId && saved.entryTermsHash===c.expectedEntryTermsHash && acceptedCallerPin(saved.pin,pin),'caller_binding_conflict');
  if(stage==='check') {
   const controls=json(readbackFile),a=json(path.join(dir,'a-use-receipt.json')),b=json(path.join(dir,'b-use-receipt.json'));
@@ -114,21 +129,26 @@ export async function remoteJourney(stage,file,readbackFile) {
     const invocation=v.invocations.find(i=>i.taskId===use.taskId),sample=invocation?.sample;
     need(invocation?.state==='completed' && invocation.manifestId===use.manifestId,'caller_manifest_conflict');
     need(invocation.inputDigest===use.inputDigest,'caller_input_conflict');
+    if(use.generation!==undefined)need(invocation.generation===use.generation && invocation.verificationId===use.verificationId,'caller_generation_conflict');
     need(invocation.sourceProject===saved.projectId,'caller_source_project_conflict');
     need(invocation.candidateId===saved.candidateId,'caller_candidate_conflict');
-    need(invocation.generation===saved.generation,'caller_candidate_generation_conflict');
+    const source=controls.a.readback,candidate=source.candidates.find(x=>x.id===saved.candidateId);
+    need(Number.isInteger(invocation.generation) && invocation.generation>=receivedGeneration && invocation.generation<=candidate?.generation
+      && source.publications.some(p=>p.candidateId===saved.candidateId && p.generation===invocation.generation && p.state==='published')
+      && source.attempts.some(a=>a.candidateId===saved.candidateId && a.generation===invocation.generation && a.state==='reconciled' && a.verificationId===invocation.verificationId),'caller_candidate_generation_conflict');
+    if(continuation && use.taskId===continuation.taskId)need(invocation.manifestId===continuation.successorManifestId && isDeepStrictEqual(invocation.binding.capability,continuation.target),'caller_manifest_conflict');
     need(invocation.binding?.moduleDigest===saved.moduleDigest && sample?.binding?.moduleDigest===saved.moduleDigest,'caller_module_conflict');
     need(sample.outputDigest===use.outputDigest,'caller_output_conflict');
     need(sample.binding.runtimePin===invocation.binding.runtimePin,'caller_runtime_conflict');
     need(isDeepStrictEqual(sample.phases,['compile','instantiate','execute']) && sample.status==='ok','caller_execution_incomplete');
     need(sample.termination?.exited===true && sample.termination.drained===true && sample.termination.code===0 && sample.termination.signal===null,'caller_termination_incomplete');
-    observations.push({visitor,taskId:use.taskId,observationId:sample.id,runtimePin:sample.binding.runtimePin,verificationId:invocation.verificationId});
+    observations.push({visitor,taskId:use.taskId,generation:invocation.generation,observationId:sample.id,runtimePin:sample.binding.runtimePin,verificationId:invocation.verificationId});
    }
   }
   need(new Set(observations.map(x=>x.runtimePin)).size===1 && new Set(observations.map(x=>x.verificationId)).size===1,'caller_generation_conflict');
   const candidate=controls.a.readback.candidates.find(x=>x.id===saved.candidateId);
-  need(candidate?.generation===saved.generation && controls.a.readback.publications.some(x=>x.candidateId===saved.candidateId && x.generation===saved.generation && x.state==='published'),'caller_readback_conflict');
-  const result={ok:true,purpose:'owner_qa',stage,candidateId:saved.candidateId,generation:saved.generation,moduleDigest:saved.moduleDigest,
+  need(candidate?.generation>=receivedGeneration && controls.a.readback.publications.some(x=>x.candidateId===saved.candidateId && x.generation===candidate.generation && x.state==='published'),'caller_readback_conflict');
+  const result={ok:true,purpose:'owner_qa',stage,candidateId:saved.candidateId,generation:candidate.generation,moduleDigest:saved.moduleDigest,
     observations,changedRefused:a.changedRefused && b.changedRefused,restart:b.restart,pin,controlDigest:digest(controls),hostingerMeasuredByCaller:false};
   seal(dir,'canonical-control-check.json',result);return result;
  }
@@ -152,13 +172,21 @@ export async function remoteJourney(stage,file,readbackFile) {
   need(isDeepStrictEqual(result.invocation?.output,cases[n].expected),'caller_output_mismatch');
   const target=result.discovery?.manifest?.target;
   const durable=json(path.join(path.dirname(config),stage==='a-use'?'visitor-a':'visitor-b',`invoke-${hash(request).slice(7)}.json`));
-  uses.push({label,taskId:request.taskId,inputDigest:digest(request.input),manifestId:durable.manifestId,target:target ?? null,
+  const manifestId=result.invocation.manifestId;
+  need(manifestId===durable.manifestId || continuation?.taskId===request.taskId && continuation.predecessorManifestId===durable.manifestId && continuation.successorManifestId===manifestId,'caller_manifest_conflict');
+  uses.push({label,taskId:request.taskId,inputDigest:digest(request.input),manifestId,target:target ?? result.invocation.target ?? null,
     outputDigest:digest(result.invocation.output)});
  }
+ const status=await cli('status',config);
+ for(const use of uses){const row=status.portableExecution?.invocations.find(i=>i.taskId===use.taskId);
+  need(row?.state==='completed' && row.manifestId===use.manifestId && row.candidateId===saved.candidateId && row.sourceProject===saved.projectId,'caller_readback_conflict');
+  use.generation=row.generation;use.verificationId=row.verificationId;
+ }
+ const generations=[...new Set(uses.map(u=>u.generation))];
  const changed=task({structuredContent:{project:{id:'unmeasured',status:'closed',version:7},nextAction:null}},`task:owner-${stage}-unmeasured`);
  const refused=await cli('use',config,changed,`${stage}-unmeasured`);need(refused.invocation===null && refused.discovery?.manifest===null,'caller_unmeasured_not_refused');
  const receipt={schema:'sds.foundry.remote-use.v1',purpose:'owner_qa',stage,projectId,candidateId:saved.candidateId,
-   expectedGeneration:saved.generation,uses,changedRefused:true,pin,restart:restart?{receiptId:restart.receiptId,ownerAttested:true}:null,
+   expectedGeneration:generations.length===1?generations[0]:null,uses,changedRefused:true,pin,restart:restart?{receiptId:restart.receiptId,ownerAttested:true}:null,
    canonicalSameCandidateReadbackRequired:true};
  seal(dir,stage==='a-use'?'a-use-receipt.json':'b-use-receipt.json',receipt);
  seal(dir,stage==='a-use'?'owner-observe-a-use.json':'owner-observe-b.json',{schema:PASS_SCHEMA,intentId:`owner-observe-${stage}`,action:'observe',projectId,

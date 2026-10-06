@@ -380,7 +380,15 @@ test('all vendored amendments declare exact base/current hashes; execution remai
 test('actual managed-host named receive build receives the same private unconsumed enrollment', async () => {
   const f = await fixture(); await f.install(oldRoot); const env = await identity(f);
   const before = await snapshot(f);
-  const result = await runBounded('npm', ['run', 'build:managed-foundry-receive'], { cwd: root,
+  // Managed delivery uses its own fresh bundled installation. A local system
+  // venv is a separate identity and must never be converted by this test.
+  const managedRoot=await copyRoot('managed-receive-build');
+  await rm(path.join(managedRoot,executionPath,'.runtime'));
+  await cp(path.join(root,'client'),path.join(managedRoot,'client'),{recursive:true,filter:p=>!['node_modules','build','dist'].includes(path.basename(p))});
+  await cp(path.join(root,'server/lib'),path.join(managedRoot,'server/lib'),{recursive:true});
+  await cp(path.join(root,'server/scripts/generate-route-shells.js'),path.join(managedRoot,'server/scripts/generate-route-shells.js'));
+  await cp(path.join(root,'package-lock.json'),path.join(managedRoot,'package-lock.json'));
+  const result = await runBounded('npm', ['run', 'build:managed-foundry-receive'], { cwd: managedRoot,
     env: { ...inherited, ...f.env, ...env, PATH: `${path.dirname(node218)}:${inherited.PATH}` },
     timeoutMs: 180000, capture: true, stdoutLimit: 1048576, outputLimit: 2097152 });
   assert.equal(result.reason, null); assert.equal(result.code, 0);
