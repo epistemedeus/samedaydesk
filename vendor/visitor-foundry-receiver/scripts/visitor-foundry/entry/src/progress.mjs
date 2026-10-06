@@ -1,5 +1,7 @@
 import { hashRequest } from './deps.mjs';
 import { fileURLToPath } from 'node:url';
+import {lstatSync,readlinkSync} from 'node:fs';
+import path from 'node:path';
 export const RECEIVE_MS = 20000, ACK_MS = 3000;
 // Disconnect stops local SQL immediately; the server's existing statement
 // timeout bounds its current statement before session termination/rollback.
@@ -26,6 +28,30 @@ const resources=new Map([['.runtime/pyvenv.cfg','runtime_config'],['.runtime/bin
   ['src/child.py','execution_source'],['src/supervisor.mjs','execution_source'],['src/contracts.mjs','execution_source'],
   ['src/launch.mjs','launcher_source'],['src/launcher.py','launcher_source']].map(([file,kind])=>[runtimeRoot+file,kind]));
 const resourceKinds=new Set([...resources.values(),'wasmtime_bindings','wasmtime_native']);
+const entryKinds=new Set(['missing_entry','unreachable_internal_relative_link','unreachable_internal_absolute_link',
+  'unreachable_external_relative_link','unreachable_external_absolute_link','changed_since_failure','unreadable_entry','link_depth_exceeded']);
+function interpreterEntry(error,resource) {
+  if(error?.code!=='ENOENT'||resource!=='interpreter')return null;
+  const directory=runtimeRoot+'.runtime';
+  let file=directory+'/bin/python',hops=0,absolute=false;
+  // At most eight no-follow metadata/readlink pairs; never inspect outside the
+  // installed execution subtree, follow a target's contents, or disclose a path.
+  while(hops<8){
+    // Refuse symlinked parents instead of following metadata outside the tree.
+    const parents=path.relative(directory,path.dirname(file)).split(path.sep).filter(Boolean);
+    if(parents.length>8)return 'unreadable_entry';
+    let parent=directory;try{
+      if(!lstatSync(parent).isDirectory())return 'unreadable_entry';
+      for(const part of parents){parent=path.join(parent,part);if(!lstatSync(parent).isDirectory())return 'unreadable_entry';}
+    }catch{return 'unreadable_entry';}
+    let stat;try{stat=lstatSync(file);}catch(e){return e.code==='ENOENT'?hops===0?'missing_entry':absolute?'unreachable_internal_absolute_link':'unreachable_internal_relative_link':'unreadable_entry';}
+    if(!stat.isSymbolicLink())return 'changed_since_failure';
+    let link;try{link=readlinkSync(file);}catch{return 'unreadable_entry';}
+    absolute ||= path.isAbsolute(link);file=path.resolve(path.dirname(file),link);hops++;
+    if(!file.startsWith(runtimeRoot))return absolute?'unreachable_external_absolute_link':'unreachable_external_relative_link';
+  }
+  return 'link_depth_exceeded';
+}
 function runtimeResource(error) {
   // Compare against this installed closure only. Do not stat, log or return a
   // path, basename, arbitrary module name or error prose.
@@ -49,7 +75,8 @@ export async function receivingStep(stage, fn) {
 }
 export function phaseFailure(error) {
   const code=error?.code,raw=typeof code==='string'?code:null,stage=error && typeof error==='object' ? tagged.get(error) ?? null : null;
-  const context={stage,resource:Object.hasOwn(filesystem,raw)?runtimeResource(error):null};
+  const resource=Object.hasOwn(filesystem,raw)?runtimeResource(error):null;
+  const context={stage,resource,interpreterEntry:interpreterEntry(error,resource)};
   if (Object.hasOwn(sql,raw)) return {code:sql[raw],errorClass:'sql',sqlState:raw,...context};
   if (/^08[A-Z0-9]{3}$/.test(raw ?? '')) return {code:'sql_connection_failure',errorClass:'sql',sqlState:null,...context};
   if (Object.hasOwn(filesystem,raw)) return {code:filesystem[raw],errorClass:'filesystem',sqlState:null,...context};
@@ -77,5 +104,6 @@ export function progressView(value) {
       errorClass:['sql','filesystem','transport','validation','transaction','unknown'].includes(p.errorClass)?p.errorClass:null,
       sqlState:typeof p.sqlState==='string'&&Object.hasOwn(sql,p.sqlState)?p.sqlState:null,stage:stages.has(p.stage)?p.stage:null,
       resource:resourceKinds.has(p.resource)?p.resource:null,
+      interpreterEntry:entryKinds.has(p.interpreterEntry)?p.interpreterEntry:null,
       state:states.includes(p.state)?p.state:null,ms:Number.isFinite(p.ms)?Math.max(0,Math.min(RECEIVE_MS,Math.round(p.ms))):null}))};
 }

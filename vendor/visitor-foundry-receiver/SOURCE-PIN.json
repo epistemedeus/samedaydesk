@@ -133,6 +133,17 @@
           "sha256": "16975fcba50d982bef8912431565dd18f285fb6f0c3c3cb5d8b4a3ca1be89a8a"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-RUNTIME-LAYOUT-100508",
+      "sdsBase": "e6b6bcba8316c395199312a1580ec9eae1770738",
+      "reason": "Bounded private interpreter-entry metadata discrimination on an existing ENOENT only. Closed missing/link aliases, no external target lookup, raw path or prose; execution, transaction, authority and public schemas unchanged.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/progress.mjs": {
+          "receivedSha256": "0704ba6ed11879e66b3098f253ed14726e282b42378743f5aad3be46c3883e17",
+          "sha256": "ac6285e3830ec17389ee32cc91910e9c9e199add5d8aeeda54e11d18b2e61cbe"
+        }
+      }
     }
   ]
 }

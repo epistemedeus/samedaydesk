@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { runBounded } from "./bounded-child.mjs";
-import { access, mkdir, mkdtemp, open, rm, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, mkdtemp, open, rename, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import {LAYOUT,MANIFEST,runtimeContentIdentity,sealOfflineRuntime,verifyOfflineRuntime} from './runtime-layout.mjs';
 
 export const WHEEL_URL = "https://files.pythonhosted.org/packages/6b/49/d62b41a6ae9063681bb6af018ff49b75d49f853bbf672c7ddebedf21d69e/wasmtime-49.0.0-py3-none-manylinux1_x86_64.whl";
 export const WHEEL_SHA256 = "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a";
@@ -107,45 +108,57 @@ export async function installWheel(python, wheelPath, { timeoutMs = 30_000 } = {
   if (extracted.code !== 0) throw coded("runtime_setup_failed");
 }
 
-async function installStandalone({ runtimeDir, standaloneDir, tarball, wheelPath }) {
-  const python = path.join(standaloneDir, "bin", "python3");
-  await mkdir(path.dirname(standaloneDir), { recursive: true });
-  if (!(await exists(python))) {
+async function installStandalone({ runtimeDir, tarball, wheelPath, expectedContent = null }) {
+  await mkdir(path.dirname(runtimeDir), { recursive: true });
+  // Build-only staging. Candidate failure never changes an existing runtime.
+  const stage = await mkdtemp(path.join(path.dirname(runtimeDir), ".runtime-stage-"));
+  const candidate = path.join(stage, "candidate");
+  let backup, retainStage = false;
+  try {
     const bytes = tarball ? await boundedFile(tarball, 40 * 1024 * 1024) : await download(CPYTHON_URL, 40 * 1024 * 1024);
     if (sha256(bytes) !== CPYTHON_SHA256) throw coded("cpython_checksum");
-    const temp = await mkdtemp(path.join(tmpdir(), "sds-cpython-"));
-    try {
-      const archive = path.join(temp, "cpython.tar.gz");
-      await writeFile(archive, bytes);
-      const unpacked = await run("tar", ["-xzf", archive, "-C", temp]);
-      if (unpacked.code !== 0) throw coded("runtime_setup_failed");
-      const moved = await run("mv", [path.join(temp, "python"), standaloneDir]);
-      if (moved.code !== 0) throw coded("runtime_setup_failed");
-    } finally {
-      await rm(temp, { recursive: true, force: true });
+    const archive = path.join(stage, "cpython.tar.gz");
+    await writeFile(archive, bytes);
+    const unpacked = await run("tar", ["-xzf", archive, "-C", stage]);
+    if (unpacked.code !== 0) throw coded("runtime_setup_failed");
+    // Colocate the full pinned installation. Make internal executable/library
+    // aliases regular files so an archive or ordinary copy cannot rebase links.
+    await cp(path.join(stage, "python"), candidate, { recursive: true, dereference: true });
+    // The unchanged sealed loader needs version metadata. Omit venv's absolute
+    // home override: CPython discovers its stdlib beside its own executable.
+    await writeFile(path.join(candidate, "pyvenv.cfg"), "include-system-site-packages = false\nversion = 3.12.15\n");
+    const installedPython = path.join(candidate, "bin", "python");
+    let wheel = wheelPath, tempWheel = "";
+    if (!wheel) {
+      const bytes = await download(WHEEL_URL, 11 * 1024 * 1024);
+      if (sha256(bytes) !== WHEEL_SHA256) throw coded("wheel_checksum");
+      tempWheel = await mkdtemp(path.join(tmpdir(), "sds-wheel-"));
+      wheel = path.join(tempWheel, "wasmtime.whl");
+      await writeFile(wheel, bytes, { mode: 0o600 });
+    } else if (sha256(await boundedFile(wheel, 11 * 1024 * 1024)) !== WHEEL_SHA256) {
+      throw coded("wheel_checksum");
     }
-  }
-  if (await exists(runtimeDir)) throw coded("runtime_incomplete");
-  const venv = await run(python, ["-m", "venv", "--without-pip", runtimeDir]);
-  if (venv.code !== 0) throw coded("runtime_setup_failed");
-  const venvPython = path.join(runtimeDir, "bin", "python");
-  let wheel = wheelPath;
-  let tempWheel = "";
-  if (!wheel) {
-    const bytes = await download(WHEEL_URL, 11 * 1024 * 1024);
-    if (sha256(bytes) !== WHEEL_SHA256) throw coded("wheel_checksum");
-    tempWheel = await mkdtemp(path.join(tmpdir(), "sds-wheel-"));
-    wheel = path.join(tempWheel, "wasmtime.whl");
-    await writeFile(wheel, bytes, { mode: 0o600 });
-  } else if (sha256(await boundedFile(wheel, 11 * 1024 * 1024)) !== WHEEL_SHA256) {
-    throw coded("wheel_checksum");
-  }
-  try {
-    await installWheel(venvPython, wheel);
+    try { await installWheel(installedPython, wheel); }
+    finally { if (tempWheel) await rm(tempWheel, { recursive: true, force: true }); }
+    if (!(await runtimeReady(installedPython))) throw coded("runtime_setup_failed");
+    const sealed = await sealOfflineRuntime(candidate, { archiveSha256: CPYTHON_SHA256, wheelSha256: WHEEL_SHA256 });
+    if (expectedContent && JSON.stringify(sealed.content) !== JSON.stringify(expectedContent)) throw coded("runtime_identity_changed");
+    if (expectedContent) {
+      if (JSON.stringify(await runtimeContentIdentity(runtimeDir)) !== JSON.stringify(expectedContent)) throw coded("runtime_identity_changed");
+      backup = path.join(stage, "previous");
+      await rename(runtimeDir, backup);
+    }
+    try { await rename(candidate, runtimeDir); }
+    catch (error) {
+      if (backup) try { await rename(backup, runtimeDir); }
+      catch { retainStage = true; throw coded("runtime_layout_restore_failed"); }
+      throw error;
+    }
+    return { layout: LAYOUT, deployable: true, contentPreserved: expectedContent ? true : null };
   } finally {
-    if (tempWheel) await rm(tempWheel, { recursive: true, force: true });
+    // Keep the previous directory available if rollback itself failed.
+    if (!retainStage) await rm(stage, { recursive: true, force: true });
   }
-  if (!(await runtimeReady(venvPython))) throw coded("runtime_setup_failed");
 }
 
 export async function materializeReferenceRuntime(options = {}) {
@@ -154,11 +167,26 @@ export async function materializeReferenceRuntime(options = {}) {
   const runtimeDir = options.runtimeDir || path.join(executionRoot, ".runtime");
   const python = path.join(runtimeDir, "bin", "python");
   const childTimeoutMs = options.childTimeoutMs ?? 30_000;
-  if (await exists(python) && await runtimeReady(python, childTimeoutMs)) {
-    return { ok: true, action: "present" };
+  const deployable = options.deployable === true;
+  const standaloneDir = options.standaloneDir || path.join(path.dirname(runtimeDir), ".python-standalone");
+  if (await exists(runtimeDir)) {
+    if (await exists(path.join(runtimeDir, MANIFEST))) {
+      const layout = await verifyOfflineRuntime(runtimeDir, { archiveSha256: CPYTHON_SHA256, wheelSha256: WHEEL_SHA256 });
+      if (!(await runtimeReady(python, childTimeoutMs))) throw coded("runtime_incomplete");
+      return { ok: true, action: "present", ...layout };
+    }
+    if (deployable || await exists(path.join(standaloneDir, "bin/python3"))) {
+      let expectedContent;
+      try { expectedContent = await runtimeContentIdentity(runtimeDir); }
+      catch { throw coded("runtime_incomplete"); }
+      const layout = await installStandalone({ runtimeDir, tarball: options.tarball || process.env.FOUNDRY_CPYTHON_TARBALL || "",
+        wheelPath: options.wheelPath || "", expectedContent });
+      return { ok: true, action: "layout-received", ...layout };
+    }
+    if (await exists(python) && await runtimeReady(python, childTimeoutMs)) return { ok: true, action: "present", layout: "host-venv", deployable: false };
+    throw coded("runtime_incomplete");
   }
-  if (await exists(runtimeDir)) throw coded("runtime_incomplete");
-  const forceStandalone = options.forceStandalone === true || process.env.FOUNDRY_RUNTIME_FORCE_STANDALONE === "1";
+  const forceStandalone = deployable || options.forceStandalone === true || process.env.FOUNDRY_RUNTIME_FORCE_STANDALONE === "1";
   const defaultRuntime = path.resolve(runtimeDir) === path.resolve(executionRoot, ".runtime");
   const system = await runBounded("python3", ["-I", "-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"], { timeoutMs: 5000 });
   try {
@@ -168,10 +196,9 @@ export async function materializeReferenceRuntime(options = {}) {
       if (result.code !== 0 || !(await runtimeReady(python))) throw coded("runtime_setup_failed");
       return { ok: true, action: "setup-runtime.py" };
     }
-    const standaloneDir = options.standaloneDir || path.join(path.dirname(runtimeDir), ".python-standalone");
-    await installStandalone({ runtimeDir, standaloneDir,
+    const layout=await installStandalone({ runtimeDir,
       tarball: options.tarball || process.env.FOUNDRY_CPYTHON_TARBALL || "", wheelPath: options.wheelPath || "" });
-    return { ok: true, action: "cpython-standalone" };
+    return { ok: true, action: "cpython-standalone",...layout };
   } catch (error) {
     await rm(runtimeDir, { recursive: true, force: true });
     throw error;
@@ -180,8 +207,9 @@ export async function materializeReferenceRuntime(options = {}) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    const result = await materializeReferenceRuntime();
-    process.stdout.write(`${JSON.stringify({ ok: true, action: result.action, privatePythonWebServer: false })}\n`);
+    if(process.argv.slice(2).some(a=>a!=='--deployable') || process.argv.length>3)throw coded('runtime_arguments_invalid');
+    const result = await materializeReferenceRuntime({deployable:process.argv.includes('--deployable')});
+    process.stdout.write(`${JSON.stringify({ ...result, privatePythonWebServer: false })}\n`);
   } catch (error) {
     process.stderr.write(`${error.code || "runtime_setup_failed"}\n`);
     process.exit(1);

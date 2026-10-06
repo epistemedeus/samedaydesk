@@ -2,6 +2,9 @@
 import { access, readFile, realpath } from "node:fs/promises";
 import { constants, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import path from "node:path";
+import { verifyOfflineRuntime, MANIFEST } from "./runtime-layout.mjs";
+import { CPYTHON_SHA256, WHEEL_SHA256 } from "./materialize-runtime.mjs";
 import { runBounded } from "./bounded-child.mjs";
 import { limitedPythonLaunch, launcherPins } from "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/launch.mjs";
 import { DEFAULT_LIMITS } from "../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/src/contracts.mjs";
@@ -23,10 +26,23 @@ export async function collectProbe({ pythonCommand = "python3", referencePython 
   let childProcReadable = false;
   const prlimit = await flag(prlimitPath, constants.X_OK);
   const system = await runBounded(pythonCommand, ["-I", "-c", "import sys; raise SystemExit(0 if sys.version_info[0]==3 else 1)"], { timeoutMs });
-  const installed = await runBounded(referencePython, ["-I", "-S", "-c", "import sys; assert sys.version_info[0]==3; print('installed-python')"], { timeoutMs, capture: true, stdoutLimit: 128 });
+  const ownInterpreter = path.resolve(referencePython) === path.resolve(python);
+  let runtimeLayout = null, runtimeLayoutFailure = null;
+  if (ownInterpreter && await flag(path.join(path.dirname(path.dirname(python)), MANIFEST), constants.F_OK)) {
+    try { runtimeLayout = (await verifyOfflineRuntime(path.dirname(path.dirname(python)),
+      { archiveSha256: CPYTHON_SHA256, wheelSha256: WHEEL_SHA256 })).layout; }
+    catch (error) {
+      runtimeLayoutFailure = ["runtime_layout_invalid", "runtime_layout_link", "runtime_layout_capacity", "runtime_layout_manifest", "runtime_content_changed"].includes(error?.code)
+        ? error.code : "runtime_layout_unavailable";
+    }
+  }
+  const installed = runtimeLayoutFailure ? { code: null, reason: runtimeLayoutFailure, stdout: "" }
+    : await runBounded(referencePython, ["-I", "-S", "-c", "import sys; assert sys.version_info[0]==3; print('installed-python')"], { timeoutMs, capture: true, stdoutLimit: 128 });
   const installedPython = installed.code === 0 && installed.reason === null && installed.stdout === "installed-python\n";
   const bundledRoot = fileURLToPath(new URL("../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.python-standalone/", import.meta.url));
-  const bundledPython = await realpath(referencePython).then(file => file.startsWith(bundledRoot)).catch(() => false);
+  const legacyBundle = await realpath(referencePython).then(file => file.startsWith(bundledRoot)).catch(() => false);
+  if (legacyBundle) runtimeLayout = "legacy-standalone-venv";
+  const bundledPython = installedPython && (legacyBundle || runtimeLayout === "self-contained-regular-v1");
   let launcher;
   try { launcher = launcherPins(); } catch {}
   const script = [
@@ -51,9 +67,9 @@ export async function collectProbe({ pythonCommand = "python3", referencePython 
     "print('reference-executed')",
   ].join("\n");
   const plan = limitedPythonLaunch(referencePython, DEFAULT_LIMITS, ["-c", script]);
-  const reference = launcher ? await runBounded(plan.command, plan.args, { env: { LANG: "C", LC_ALL: "C" }, timeoutMs, capture: true, stdoutLimit: 1024,
+  const reference = launcher && !runtimeLayoutFailure ? await runBounded(plan.command, plan.args, { env: { LANG: "C", LC_ALL: "C" }, timeoutMs, capture: true, stdoutLimit: 1024,
     onSpawn(pid) { try { const stat = readFileSync(`/proc/${pid}/stat`, "utf8"); childProcReadable = /^[0-9]+$/.test(stat.slice(stat.lastIndexOf(") ")+2).split(" ")[19]); } catch {} } })
-    : { code: null, reason: "launcher_identity_unavailable", stdout: "", pid: null };
+    : { code: null, reason: runtimeLayoutFailure || "launcher_identity_unavailable", stdout: "", pid: null };
   let launcherIdentityStable = false;
   try { launcherIdentityStable = Boolean(launcher && JSON.stringify(launcher) === JSON.stringify(launcherPins())); } catch {}
   const lines = reference.stdout.trim().split("\n");
@@ -70,7 +86,7 @@ export async function collectProbe({ pythonCommand = "python3", referencePython 
   return {
     probe: "managed-node", ok: unsupportedHostReasons.length === 0,
     linuxX64, node: process.version, python3: system.code === 0 && system.reason === null,
-    installedPython, bundledPython, installedPythonFailure: installed.reason || (installedPython ? null : "execution_failed"),
+    installedPython, bundledPython, runtimeLayout, runtimeLayoutFailure, installedPythonFailure: installed.reason || (installedPython ? null : "execution_failed"),
     prlimit, procReadable, procFdReadable, childProcReadable, referenceRuntime, osLimitsEnforced, pidPreserved,
     referenceExecution: referenceRuntime, referenceFailure,
     pythonFailure: system.reason || (system.code === 0 ? null : "execution_failed"),

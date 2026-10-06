@@ -27,7 +27,7 @@ const alive = pid => { try { const s=fs.readFileSync(`/proc/${pid}/stat`,"utf8")
 
 test("fresh bundled runtime invokes real/changed/useful-negative input without system Python or prlimit", async () => {
   const result = await withoutHostUtilities(["server/scripts/fixtures/managed-platform-invocation.mjs"], { fresh:true });
-  assert.equal(result.reason,null); assert.equal(result.code,0);
+  assert.equal(result.reason,null); assert.equal(result.code,0,result.stdout);
   const receipt=JSON.parse(result.stdout);
   assert.equal(receipt.ok,true); assert.equal(receipt.runs.length,3);
   assert.equal(receipt.probe.launcherIdentityStable,true);
