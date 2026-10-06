@@ -18,9 +18,9 @@ export const servingLaunchResources=()=>launchResources();
 const continuationFields=['schema','intentId','renewalIntentId','projectId','registrationId','taskId','requestDigest','predecessorManifestId','successorManifestId','target','priorGeneration','generation','verificationId','priorExecutionId','priorObservationId','executionId','fence','receivedAt','id'];
 export function continuationView(value){
  if(!value || Object.keys(value).length!==continuationFields.length || !continuationFields.every(k=>Object.hasOwn(value,k)))return null;
- if(value.schema!=='neomorphic.foundry.invocation-continuation.v1' || Buffer.byteLength(JSON.stringify(value))>4096)return null;
+ if(!['neomorphic.foundry.invocation-continuation.v1','neomorphic.foundry.invocation-continuation.v2'].includes(value.schema) || Buffer.byteLength(JSON.stringify(value))>4096)return null;
  try{ref(value.target);iso(value.receivedAt);}catch{return null;}
  const {id,...body}=value;
- if(hash(body)!==id || !Number.isInteger(value.priorGeneration) || value.priorGeneration<1 || value.generation!==value.priorGeneration+1 || value.generation>4)return null;
+ if(hash(body)!==id || !Number.isInteger(value.priorGeneration) || value.priorGeneration<1 || (value.schema==='neomorphic.foundry.invocation-continuation.v1'?value.generation!==value.priorGeneration+1:value.generation!==value.priorGeneration || value.renewalIntentId!==null || value.predecessorManifestId!==value.successorManifestId) || value.generation>4)return null;
  return value;
 }

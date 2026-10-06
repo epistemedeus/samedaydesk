@@ -110,21 +110,25 @@ export async function prepareNoLaunch(config,{intentId,expectedHostConfigId,requ
 
 // Immutable local lineage: the first intent is never rewritten. Only an explicit
 // authenticated status reconciliation can seal an owner-received successor.
-function savedInvocation(config,request){
+export function savedInvocation(config,request){
  const prefix=`invoke-${hash(request).slice(7)}`,first=readPrivateJson(join(config.directory,`${prefix}.json`));
  if(!first)return null;
  need(hash(first.request)===hash(request),409,'local_intent_mismatch');
  const names=readdirSync(config.directory).filter(n=>n.startsWith(`${prefix}-continuation-`)&&n.endsWith('.json'));
- need(names.length<=4,409,'local_intent_mismatch');
+ need(names.length<=64,409,'local_intent_mismatch');
  const transitions=names.map(n=>{const t=readPrivateJson(join(config.directory,n)),{id,...body}=t??{};
   need(continuationView(t) && hash(body)===id && n===`${prefix}-continuation-${id.slice(7)}.json` && t.requestDigest===hash(request),409,'local_intent_mismatch');return t;});
- let current=first;
- const consumed=new Set();
- for(let i=0;i<4;i++){
-  const next=transitions.filter(t=>t.predecessorManifestId===current.manifestId&&!consumed.has(t.id));need(next.length<=1,409,'local_intent_mismatch');
-  if(!next.length)break;consumed.add(next[0].id);current={manifestId:next[0].successorManifestId,request};
+ let current=first,executionId=null;
+ const ordered=[],consumed=new Set(),successors=new Set(transitions.map(t=>t.executionId));
+ for(let i=0;i<64;i++){
+  const next=transitions.filter(t=>!consumed.has(t.id) && t.predecessorManifestId===current.manifestId
+   && (executionId?t.priorExecutionId===executionId:!successors.has(t.priorExecutionId)));
+  need(next.length<=1,409,'local_intent_mismatch');if(!next.length)break;
+  consumed.add(next[0].id);ordered.push(next[0]);executionId=next[0].executionId;current={manifestId:next[0].successorManifestId,request};
  }
- need(consumed.size===transitions.length,409,'local_intent_mismatch');return current;
+ need(consumed.size===transitions.length,409,'local_intent_mismatch');
+ // Internal lineage position is never sent as a new invocation field.
+ if(executionId)Object.defineProperty(current,'executionId',{value:executionId});Object.defineProperty(current,'transitions',{value:ordered});return current;
 }
 export async function prepareContinuation(config,{intentId,expectedHostConfigId,request}){
  const {client,receipt}=resumed(config),a=standing(config),saved=savedInvocation(config,request);
@@ -141,13 +145,32 @@ export async function prepareContinuation(config,{intentId,expectedHostConfigId,
    registrationId:receipt.registrationId,taskId:request.taskId,manifestId:saved.manifestId,expectedExecutionId:row.executionId,
    expectedFence:row.fence,expectedObservationId:row.observationId,request,renewalIntentId,successorGeneration:row.generation+1}};
 }
+// Current evidence only. A same-generation successor retains the same manifest;
+// a distinct execution edge, not a manifest rename, binds this receiving.
+export async function prepareCurrentContinuation(config,{intentId,expectedHostConfigId,request}){
+ const {client,receipt}=resumed(config),a=standing(config),saved=savedInvocation(config,request);
+ need(saved,409,'local_intent_mismatch');
+ const status=await client.call('status'),row=status.portableExecution?.invocations.find(x=>x.taskId===request.taskId);
+ need(row?.state==='completed' && row.termination?.noLaunch===true && row.manifestId===saved.manifestId
+  && row.requestDigest===hash(request) && (!saved.executionId || row.executionId===saved.executionId),409,'invocation_no_launch');
+ need(status.verification.id===row.verificationId && row.sourceProject===receipt.projectId,409,'standing_terms_mismatch');
+ return {schema:'sds.foundry.private-pass.v4',intentId:`${intentId}:${hash(row.executionId).slice(7,31)}`,action:'receive-no-launch',projectId:receipt.projectId,
+  expectedHostConfigId,expectedEntryTermsHash:a.entryTerms,expectedVerificationId:row.verificationId,candidateId:row.candidateId,
+  expectedGeneration:row.generation,reconcileIntentId:null,registrationId:receipt.registrationId,taskId:request.taskId,manifestId:saved.manifestId,
+  expectedExecutionId:row.executionId,expectedFence:row.fence,expectedObservationId:row.observationId,request};
+}
+export async function prepareLaterContinuation(config,{intentId,expectedHostConfigId,request}){
+ const r=await prepareCurrentContinuation(config,{intentId,expectedHostConfigId,request});
+ return prepareContinuation(config,{intentId:r.intentId,expectedHostConfigId,request});
+}
 export async function reconcileInvocation(config,request){
  const {client,receipt}=resumed(config),saved=savedInvocation(config,request);
  need(saved,409,'local_intent_mismatch');
  const status=await client.call('status'),row=status.portableExecution?.invocations.find(x=>x.taskId===request.taskId),t=continuationView(row?.continuation);
  const {id,...body}=t??{};
- need(t?.schema==='neomorphic.foundry.invocation-continuation.v1' && id===hash(body) && t.projectId===receipt.projectId && t.registrationId===receipt.registrationId
+ need(t && ['neomorphic.foundry.invocation-continuation.v1','neomorphic.foundry.invocation-continuation.v2'].includes(t.schema) && id===hash(body) && t.projectId===receipt.projectId && t.registrationId===receipt.registrationId
   && t.taskId===request.taskId && t.requestDigest===hash(request) && [t.predecessorManifestId,t.successorManifestId].includes(saved.manifestId)
+  && (!saved.executionId || [t.priorExecutionId,t.executionId].includes(saved.executionId))
   && row.manifestId===t.successorManifestId && row.executionId===t.executionId && row.fence===t.fence && row.generation===t.generation
   && row.verificationId===t.verificationId && status.verification.id===t.verificationId
   && row.priorAttempts.some(p=>p.executionId===t.priorExecutionId && p.observationId===t.priorObservationId && p.noLaunch===true),409,'continuation_required');

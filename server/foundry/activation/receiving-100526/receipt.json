@@ -1,0 +1,859 @@
+{
+  "schema": "sds.foundry.http-spawn-receiving.v1",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-http-spawn-permission-100526",
+  "base": "7ee8130190042222ea795f102c147edbbd013c5a",
+  "exportHead": "single commit containing this receipt; exact Git head in PR/final receipt",
+  "actualHostMeasured": false,
+  "productionMutations": 0,
+  "pass": 220,
+  "fail": 0,
+  "skip": 0,
+  "cancel": 0,
+  "commands": [
+    {
+      "name": "private33",
+      "command": "npm run test:foundry-private-pass",
+      "log": "/tmp/sol-100526-private-final-closure.log",
+      "sha256": "0733e534954af0427ff17f69355dbd15643a1da732ca42ad289a86507ff6d325",
+      "tests": 33,
+      "pass": 33,
+      "fail": 0,
+      "skip": 0,
+      "cancel": 0,
+      "exit": 0
+    },
+    {
+      "name": "serving135",
+      "command": "node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js server/scripts/test-managed-platform.js server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js server/scripts/test-foundry-activation.js server/scripts/test-foundry-client-compat.js server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js server/scripts/test-foundry-entry-reservation.js server/scripts/test-foundry-runtime-progress.js server/scripts/test-proxy-addr-patch.js",
+      "log": "/tmp/sol-100526-serving-export.log",
+      "sha256": "804a4000700296e4f3405d44143f3c531347a35231211a007f35cd403cc7c376",
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "skip": 0,
+      "cancel": 0,
+      "exit": 0
+    },
+    {
+      "name": "wire25",
+      "command": "npm run test:foundry-contribution-transport",
+      "log": "/tmp/sol-100526-wire-export.log",
+      "sha256": "a432d8721011782b7938fbf64cb288daee6bf9d72f2d8808e4a939b115b44ef7",
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "skip": 0,
+      "cancel": 0,
+      "exit": 0
+    },
+    {
+      "name": "copied7",
+      "command": "FOUNDRY_RUNTIME_LAYOUT_RECEIPT=/tmp/sol-100526-layout-export-receipt.json npm run test:foundry-runtime-layout",
+      "log": "/tmp/sol-100526-layout-export.log",
+      "sha256": "68e540c9df772b5fef664b8b002a91f0cf2881e55929134fc330ba135a513f15",
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skip": 0,
+      "cancel": 0,
+      "exit": 0
+    },
+    {
+      "name": "generation20",
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_CONCURRENT_ITERATIONS=5 FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/sol-100526-generation-complete-receipt.json /exec-daemon/node --test --test-concurrency=1 server/scripts/test-foundry-generation.js",
+      "log": "/tmp/sol-100526-generation-complete.log",
+      "sha256": "a16accd574a0f92b3d642e0574d7555f82e5f5556691203373514f9bdf558258",
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skip": 0,
+      "cancel": 0,
+      "exit": 0
+    }
+  ],
+  "npmCi": {
+    "command": "npm ci",
+    "exit": 0,
+    "log": "/tmp/sol-100526-npm-ci.log",
+    "sha256": "7e3fbdc2db3d5dcd78dd22225bced5c0aa97e63fa6aa5d048b27c2448a34ea70"
+  },
+  "localPublicationReceiving": {
+    "command": "node server/foundry/materialize-runtime.mjs --deployable",
+    "exit": 0,
+    "log": "/tmp/sol-100526-publication-receive.log",
+    "sha256": "316c4ca509e27b69d633ba32a7052e0046e7c7edb641b1541ca59219cb36c169",
+    "contentPreserved": true
+  },
+  "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+  "controlClosure": "sha256:58ba1de0fd5384b90a06aa139d95e6a070a87664eda6c7ef732bd705b575116e",
+  "previousCallerClosure": {
+    "base": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+    "sourcePinSha256": "aae0fabc68814bc83b7b17f246d06d52e9c0741a9b76d64e7fa25e9a0c02d53f",
+    "closureDigest": "sha256:f22a99ccfc482e317bbf862d63b48789072273690697f11c6a4c7d2dac3f0b18"
+  },
+  "binarySha256": {
+    "/exec-daemon/node": "1abce2374a485bddae3c27b17a3e3143e2780232026e627c4fe74ddde3f380a1",
+    "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node": "ccacb2d6d87ba6d118b2bffc1ae33747a05cc5fc6b1f1ec4fc1d420b687e952d",
+    "/usr/bin/python3.12": "e1efa562c2cc2e35521a5c9c9b9939921001ff8ca9708a13ef15ace68cc2ccd7"
+  },
+  "changedSourceSha256": {
+    "server/foundry/activation/local-journey.mjs": "e140c0eb0a3956e6d1bb8b6bfbb94d4d96f878fd8b3a4edaf526f7b492b74bbf",
+    "server/foundry/activation/private-control-pin.json": "95439f13def39a56b74b86d96a43c8560e9423a6c45c801fe49fa55dd949fdf6",
+    "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
+    "server/foundry/materialize-runtime.mjs": "9516def46d11f1964ebce4a2ee11bfa7f1624e6a8978033a22f7158ce575a10b",
+    "server/foundry/private-pass-core.mjs": "9dd537874e37c132025344ee814837e718175689e1ac925817f5ac1cf581a023",
+    "server/foundry/runtime-layout.mjs": "8b013df2e04bf4ea77d5005282438626a907e7f377ea5fb7598908b3590f530d",
+    "server/scripts/fixtures/hosted-startup-preload.mjs": "630505e12832d1d22ecd2351c1710f27fb60764c488db5f42f858bd3d8f40955",
+    "server/scripts/test-foundry-generation.js": "c6d8068e126322ff89328209f143199598f78ea7d70e4888003281e5ee59f3ee",
+    "server/scripts/test-foundry-private-pass.js": "3b5c120d8d14f0666e2a798bac0cc61d6d545b731316c765498786fe1a37e301",
+    "server/scripts/test-foundry-runtime-layout.js": "e5544621f1a390f24af2d07042ccf9045e506b3285d6d39791ca53c458260a29",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/compound/transport.mjs": "0b75b25da2ee48709a1028b74c7232ea95a68e6aecbb9ec622064fb6e5f3e87f",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/client.mjs": "4378df97bee6778e85026e8e90f19c91114750cc436ecd8e943b7e56f93630f2",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/entry/visitor.mjs": "b58a3863faa05ea6346b15ac9a3f6c5fe8273fc992898eb0343175f2faeb7d5d",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/execution-view.mjs": "79834f9ee6091d6a2cdca21aa07dff85268edca5c6d3e3c0657ea1d1e97a4be3",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/launch-evidence.mjs": "116ae1772f58a42ad66dee40419b3213c926a0249db58d59b5a5a04eff9f4b38",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/portable-store.mjs": "f7937f5dd549a6668ce5e6c789af21454460131e2997e81c8d37cbf7ea991d3c",
+    "server/scripts/fixtures/changed-identity-server.mjs": "3e07d1e4940753796cc0eecc918a5fd2a13fb97b745c25f23e9d055c7ab25e7c"
+  },
+  "retainedLogs": [
+    {
+      "log": "/tmp/sol-100526-generation-accepted.log",
+      "sha256": "27c6837ae422184f201c763c33d608603b59748230b67eda07744133bbdf5d71",
+      "pass": "18",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-done.log",
+      "sha256": "ab6b79ba4e678e66732d8f19ba3a810ccb81521270282aae23e19b350f7fd57e",
+      "pass": "18",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-export.log",
+      "sha256": "746bf33a88e472eb9ebe4291db50866afd855b2bcc64eb41b4bd52945f15e1c6",
+      "pass": "18",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-final-pass.log",
+      "sha256": "59f96ded278851805f27dccdcfe429dcfc26434b9f9a4345000ff984d0ba40ca",
+      "pass": "18",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-final.log",
+      "sha256": "3dc0581ede1ef5fe9e60cebf515b4166edeae6059bd310e69729c33548492eef",
+      "pass": "15",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-green.log",
+      "sha256": "8c0713abedfe82695773bddac935ce8ac4f5f20e3ff053f6b28f3bac93413a6b",
+      "pass": "18",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation-pass.log",
+      "sha256": "124dc7ff699ac655e2979f752133947e5ea03053a45c2f84e69cbbfa56d67e94",
+      "pass": "16",
+      "fail": "3",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-generation.log",
+      "sha256": "1fe13a8b02c3b936f5310b6050a7a975e6795af7b199422c620577266c448da9",
+      "pass": "2",
+      "fail": "13",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-layout-final-pass.log",
+      "sha256": "bf0780052d7f4cb5e3658e2058eb18648c89429c8cc08e66bd8e7603520806a1",
+      "pass": "7",
+      "fail": "0",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-layout-final.log",
+      "sha256": "d5040df5a4f1ae28734109fd8a3f6323d179f44b4ca4ac20b34dc68b51d38bc4",
+      "pass": "6",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-layout-green.log",
+      "sha256": "d4cfbeab830ff415794d4a1fac28b82d17e2bd2076d9ea7fc3f4aaa0c6e3efe7",
+      "pass": "6",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-layout-pass.log",
+      "sha256": "bce406c95c7209625e0f5059cb652f69dcce84109138747c73ed2cee55009087",
+      "pass": "6",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-layout.log",
+      "sha256": "e954c7f73a20b967cdcec7eb39ae252217c420c07d85db56f8171af3223238f4",
+      "pass": "5",
+      "fail": "2",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-npm-ci.log",
+      "sha256": "7e3fbdc2db3d5dcd78dd22225bced5c0aa97e63fa6aa5d048b27c2448a34ea70",
+      "pass": null,
+      "fail": null,
+      "skip": null,
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-private-export.log",
+      "sha256": "2d0466bee101870845384af3a6871db6c4695a3e275fbdf36129837dd37d5b5e",
+      "pass": "33",
+      "fail": "0",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-private-final.log",
+      "sha256": "e24078b45a0390310930a3aef837f57f43d0b25740de6b21ad8b9d233aca9eb2",
+      "pass": "31",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-private-green.log",
+      "sha256": "b0a36a5951c536e546c1fc2e920da6923bc60587b77a56a4a84290230d7dbd0c",
+      "pass": "32",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-private-pass.log",
+      "sha256": "404111cbfbf6d0987d6b80b8d8ef9ef5b6d4c44345bd657c7a324b5f7d7209ad",
+      "pass": "32",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-private.log",
+      "sha256": "d6b3fc1d0b50cee842da306356f8f1dccffeef8afd11581d1455cf0fcdf074f9",
+      "pass": "29",
+      "fail": "1",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-publication-receive.log",
+      "sha256": "316c4ca509e27b69d633ba32a7052e0046e7c7edb641b1541ca59219cb36c169",
+      "pass": null,
+      "fail": null,
+      "skip": null,
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-runtime.log",
+      "sha256": "136dca296c9b87579cb5e94507d8510a1739d4d9e7390c058e81621409eb6d07",
+      "pass": null,
+      "fail": null,
+      "skip": null,
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-serving-pass.log",
+      "sha256": "c6237fb4e78e70b19c8b7d2a22e899f60c529e9ae9d3efea8a195b1d51e1e7d4",
+      "pass": "135",
+      "fail": "0",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-serving.log",
+      "sha256": "084ad9f8c03993f1cd28db34f2db3d4f356054e133649b65e471002c86984bfb",
+      "pass": "125",
+      "fail": "10",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    },
+    {
+      "log": "/tmp/sol-100526-wire.log",
+      "sha256": "48d1baa65d168635c0966c0afae890f26e14a5d6d6403ab13e65851443899d46",
+      "pass": "25",
+      "fail": "0",
+      "skip": "0",
+      "retained": true,
+      "actualHost": false
+    }
+  ],
+  "copiedRuntime": {
+    "schema": "sds.foundry.runtime-layout-replay.v1",
+    "base": "e6b6bcba8316c395199312a1580ec9eae1770738",
+    "actualHost": false,
+    "cases": [
+      {
+        "case": "missing-utilities-build",
+        "pinsEqual": true,
+        "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9",
+        "files": 4905,
+        "bytes": 229361517
+      },
+      {
+        "case": "legacy-receiving",
+        "contentPreserved": true,
+        "changedIncomingRefused": true,
+        "badWheelRetained": true
+      },
+      {
+        "case": "offline-copy",
+        "exited": true,
+        "pipesClosed": true,
+        "changedInterpreterAndNativeRefused": true,
+        "brokenRefused": true
+      },
+      {
+        "case": "umask077-producer",
+        "acceptedProducer": "7ee8130190042222ea795f102c147edbbd013c5a",
+        "beforeMode": 384,
+        "afterMode": 420,
+        "contentPreserved": true,
+        "actualProviderCause": false
+      },
+      {
+        "case": "archived-serving",
+        "buildRemoved": true,
+        "noCheckoutLinks": true,
+        "broken": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "unreachable_external_absolute_link",
+          "state": null,
+          "ms": 4
+        },
+        "missing": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "runtime_config",
+          "interpreterEntry": null,
+          "state": null,
+          "ms": 4
+        },
+        "missingEntry": {
+          "phase": "recover",
+          "outcome": "error",
+          "code": "filesystem_missing",
+          "errorClass": "filesystem",
+          "sqlState": null,
+          "stage": "portable_policy",
+          "resource": "interpreter",
+          "interpreterEntry": "missing_entry",
+          "state": null,
+          "ms": 6
+        },
+        "pinsEqual": true,
+        "sameAttemptReady": true,
+        "originalAuthorityRetained": true,
+        "privateCorrespondenceRetained": true,
+        "grantsAndHistoryRetained": true,
+        "installerReplayUnchanged": true,
+        "concurrentRecoveries": 2,
+        "verificationRenewed": false,
+        "evidenceGenerations": [
+          1,
+          2,
+          3
+        ],
+        "expiredOriginalRefused": true,
+        "currentEvidenceRemeasured": true,
+        "manifestLineageRetained": true,
+        "laterVisitorAfterEvidenceExpiry": true,
+        "validationChargedUnits": 12000,
+        "candidateId": "candidate:2afce79068cbcab275211f670e6206ec7c1f4e8364e948043a0c573a4ed10546",
+        "invocations": 6,
+        "chargedAInvocations": 4,
+        "terminationExitedDrained": true,
+        "noLaunchControl": {
+          "code": "spawn_permission",
+          "actualProviderCause": false,
+          "originalIntentRetained": true,
+          "priorChargedObservationRetained": true,
+          "explicitOwnerReceiving": true,
+          "chargedBefore": 1,
+          "chargedAfter": 2,
+          "continuedAfterHttpRestart": true
+        }
+      },
+      {
+        "case": "different-build-serve-identity",
+        "buildUid": 1000,
+        "serveUid": 65534,
+        "serveGid": 65534,
+        "relocated": true,
+        "prelaunchErrno": "EACCES",
+        "prelaunchCharged": 0,
+        "invocations": 6,
+        "restart": true,
+        "allExitedDrained": true,
+        "actualProviderCause": false
+      }
+    ],
+    "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+    "controlPinSha256": "95439f13def39a56b74b86d96a43c8560e9423a6c45c801fe49fa55dd949fdf6",
+    "build": {
+      "code": 0,
+      "reason": null,
+      "exited": true,
+      "materializer": {
+        "ok": true,
+        "action": "cpython-standalone",
+        "layout": "self-contained-regular-v1",
+        "deployable": true,
+        "contentPreserved": null,
+        "privatePythonWebServer": false
+      },
+      "probe": {
+        "probe": "managed-node",
+        "ok": true,
+        "linuxX64": true,
+        "node": "v22.18.0",
+        "python3": false,
+        "installedPython": true,
+        "bundledPython": true,
+        "runtimeLayout": "self-contained-regular-v1",
+        "runtimeLayoutFailure": null,
+        "installedPythonFailure": null,
+        "prlimit": false,
+        "procReadable": true,
+        "procFdReadable": true,
+        "childProcReadable": true,
+        "referenceRuntime": true,
+        "osLimitsEnforced": true,
+        "pidPreserved": true,
+        "referenceExecution": true,
+        "referenceFailure": null,
+        "pythonFailure": "spawn_failed",
+        "osLimitMechanism": "python-setrlimit-before-exec",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        },
+        "launcherIdentityStable": true,
+        "unsupportedHostReasons": [],
+        "productionActivate": "HOLD",
+        "activation": false,
+        "notProduction": true,
+        "wholeHostSandbox": false,
+        "privatePythonWebServer": false,
+        "referenceProfileRetained": true
+      },
+      "stdoutSha256": "ffa9f2896009ada6a78d3c36fc225d86fd408af4cb34322fad368498fd0f9b45"
+    },
+    "runtime": {
+      "pins": {
+        "profile": {
+          "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+          "runtime": "wasmtime-py",
+          "version": "49.0.0",
+          "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+          "license": "Apache-2.0 WITH LLVM-exception",
+          "platform": "linux",
+          "arch": "x64",
+          "imports": "none",
+          "memory": "fixed-wasm32",
+          "tables": "fixed-funcref",
+          "nan": "canonical",
+          "parallelCompilation": false
+        },
+        "node": "v22.18.0",
+        "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+        "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+        "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+        "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+        "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+        "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+        "launcher": {
+          "id": "vf08.python-setrlimit-exec.v1",
+          "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+          "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+        }
+      },
+      "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+    }
+  },
+  "generation": {
+    "baseHead": "2c26534955fd3fa3c1a1ff12c5c5d4cdc5c2b7c1",
+    "hostingerMeasured": false,
+    "transitions": [
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": false,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      },
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": false,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      },
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": true,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      },
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": false,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      },
+      {
+        "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+        "replayed": false,
+        "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+        "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+        "charged": 0,
+        "concurrentReplay": true,
+        "previousHostConfigId": "sha256:5032b8882553134361487476042c0b467c8df01693ee7b8affd05de1bd3ea083",
+        "previousEntryTermsHash": "sha256:210262e80d9633d68abeb8ed764cc987b8bb58aa99b17ae6561472f54c48bbc7",
+        "originalTermsHash": "sha256:213cc002eb570032050349815e05a0e9a2abb6460d3a31ccacf82b168aeccbd2",
+        "maxEnrollments": 12,
+        "maxAdmissions": 4,
+        "maxPhysical": 1,
+        "oldRecordsRetained": true,
+        "originalAuthorityPreserved": true
+      },
+      {
+        "forcedLockOrder": true,
+        "corrected": false,
+        "locks": {
+          "installationWait": true,
+          "registrationsHeld": true
+        },
+        "outcomes": [
+          {
+            "ok": true,
+            "receipt": {
+              "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+              "replayed": false,
+              "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+              "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+              "charged": 0
+            }
+          },
+          {
+            "ok": false,
+            "code": "40P01"
+          }
+        ]
+      },
+      {
+        "forcedLockOrder": true,
+        "corrected": true,
+        "locks": {
+          "installationWait": true,
+          "registrationsHeld": false
+        },
+        "outcomes": [
+          {
+            "ok": true,
+            "receipt": {
+              "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+              "replayed": false,
+              "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+              "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+              "charged": 0
+            }
+          },
+          {
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "generations": [
+      {
+        "generation": 2,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:d88f92f2e0aa65aae53b977d89b4c778ab2667cd3b49a3d6fcb82f1eb1066234",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_O_iuOW0ontlHPJLt",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-2",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:477032d7bd9a785599cddbf4743f447ba104d00d872c78b523d871bc5020adbd"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_O_iuOW0ontlHPJLt",
+          "runtimePin": "sha256:38bbaf140028ec6d539e023f8a17980aaf2624752b44ef3478c0c598a53bfbd6",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": false,
+        "bundledPython": false,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      },
+      {
+        "generation": 3,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:7972e86cfa6cb4075d5988a18995d5afa342dfdc69fa18d91e65fedc092b9e7e",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_O_iuOW0ontlHPJLt",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-3",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:170ddd48e5806b5584d3e93b56148a2227eb2860acc4706516411f11aaabd0c3"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_O_iuOW0ontlHPJLt",
+          "runtimePin": "sha256:fd7da80db1ad50b16526ef1e3980fd61c02b5206b735451d194a9c2ddd86ba1a",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": true,
+        "bundledPython": false,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      },
+      {
+        "generation": 4,
+        "node": "v22.18.0",
+        "verification": {
+          "id": "sha256:80c263eda4cd934510626e21983fa680425c7b45a3a314109e7b4f83f75fc07d",
+          "kind": "portable-structured-result-v1",
+          "policy": {
+            "id": "policy:portable-structured-result",
+            "risk": "low",
+            "scope": "project:prj_O_iuOW0ontlHPJLt",
+            "schema": "neomorphic.foundry.validation_policy.v1",
+            "attempt": {
+              "cost": {
+                "units": "4000",
+                "currency": "USD_MICROS"
+              },
+              "cpuMs": 8000,
+              "wallMs": 16000,
+              "memoryMb": 512
+            },
+            "reviewMs": 1000,
+            "revision": "vf09:receiving-100503-4",
+            "evaluator": {
+              "id": "evaluator:vf09-structured-result",
+              "revision": "vf09.oracle.v1"
+            },
+            "maxAttempts": 1,
+            "retryDelayMs": 1000,
+            "deterministic": true,
+            "requiredChecks": [
+              "case:project-created",
+              "case:lost-artifact-ack",
+              "case:grant-denied",
+              "case:unsupported-prose"
+            ],
+            "environmentDigest": "sha256:c2d70234b5eebe74753f0c05455d22ff0f41c5686519f7e5203c721d40ca483a"
+          },
+          "schema": "neomorphic.foundry.verification-generation-policy.v1",
+          "projectId": "prj_O_iuOW0ontlHPJLt",
+          "runtimePin": "sha256:e6ff4f8c7811b219936b1fddc73ebd108130390f90a2b75d92dba3e29eebd4d4",
+          "validityMs": 3600000,
+          "sourceDigest": "sha256:f9f1d4bef9059a5e6ed246f93ec22a590432f58587a08d08b41d0df6780a7918",
+          "sourceRevision": "installed:vf09-structured-result"
+        },
+        "receivedSourceChange": true,
+        "bundledPython": true,
+        "oldEvidenceRejected": true,
+        "renewalDidNotExecute": true,
+        "originalAuthorityPreserved": true,
+        "oldRecordsRetained": true,
+        "freshVerificationCases": 4,
+        "compileInstantiateExecute": true
+      }
+    ],
+    "pythonControl": {
+      "system": "/usr/bin/python3",
+      "realDistinctInterpreter": true,
+      "wasmtime": 49
+    },
+    "namedReceiveBuild": {
+      "exit": 0,
+      "schema": "pilot_correspondence",
+      "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+      "replayed": false,
+      "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+      "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+      "charged": 0,
+      "activation": false,
+      "migratedExplicitly": true
+    }
+  },
+  "remainingActualHost": [
+    "source receiving/ordinary managed deployment",
+    "authenticated serving identity/mode/access readback; do not infer provider permission from build",
+    "explicit current-proof continuation or canonical fresh-evidence receiving if expired",
+    "original A useful/changed/negative exited/drained execution",
+    "actual HTTP restart then separate B canonical reuse"
+  ]
+}

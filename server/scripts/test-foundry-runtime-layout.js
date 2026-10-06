@@ -9,7 +9,7 @@ import {randomUUID,createHash} from 'node:crypto';
 import pg from 'pg';
 import {runBounded} from '../foundry/bounded-child.mjs';
 import {materializeReferenceRuntime,CPYTHON_SHA256,WHEEL_SHA256,download,WHEEL_URL} from '../foundry/materialize-runtime.mjs';
-import {runtimeContentIdentity,verifyOfflineRuntime,auditOfflineTree} from '../foundry/runtime-layout.mjs';
+import {runtimeContentIdentity,verifyOfflineRuntime,auditOfflineTree,publishRuntimeModes} from '../foundry/runtime-layout.mjs';
 import {withoutHostUtilities,npmCli} from '../foundry/activation/receiving-100502/namespace.mjs';
 import {verifyFoundrySource} from './fixtures/verify-foundry-source.mjs';
 import {startDisposablePg} from './fixtures/disposable-pg.mjs';
@@ -37,7 +37,7 @@ before(async()=>{
  const archive=path.join(dir,'source.tar');await bounded('git',['archive','--format=tar',`--output=${archive}`,'HEAD','server','vendor','client','tools','packs','package.json','package-lock.json']);
  await bounded('tar',['-xf',archive,'-C',build]);
  const control=JSON.parse(await readFile(path.join(root,'server/foundry/activation/private-control-pin.json')));
- for(const f of [...Object.keys(control.files),'server/foundry/activation/private-control-pin.json'])await cp(path.join(root,f),path.join(build,f));
+ for(const f of [...Object.keys(control.files),'server/foundry/activation/private-control-pin.json','server/scripts/fixtures/hosted-startup-preload.mjs'])await cp(path.join(root,f),path.join(build,f));
  await bounded(process.execPath,[await npmCli(),'ci'],{cwd:build,timeoutMs:90000});
  const made=await withoutHostUtilities(['server/scripts/fixtures/managed-layout-build.mjs',build],{timeoutMs:240000});
  assert.equal(made.reason,null);assert.equal(made.code,0,made.stdout);evidence.build=JSON.parse(made.stdout.trim());
@@ -59,7 +59,7 @@ before(async()=>{
 after(async()=>{
  for(const s of servers)await s.stop();for(const p of pools)await p.end();await admin?.end();await cluster?.stop();
  if(process.env.FOUNDRY_RUNTIME_LAYOUT_RECEIPT)await writeFile(process.env.FOUNDRY_RUNTIME_LAYOUT_RECEIPT,JSON.stringify(evidence,null,2)+'\n',{mode:0o600});
- if(dir)await rm(dir,{recursive:true,force:true});
+ if(dir){try{await lstat(path.join(dir,'identity-private'));await bounded('sudo',['-n','chown','-R','1000:1000',path.join(dir,'identity-private')]);}catch(e){if(e.code!=='ENOENT')throw e;}await rm(dir,{recursive:true,force:true});}
 });
 const opts=runtimeDir=>({runtimeDir,deployable:true,tarball:'/tmp/cpython-standalone.tar.gz',wheelPath:wheel});
 const pinsOptions={archiveSha256:CPYTHON_SHA256,wheelSha256:WHEEL_SHA256};
@@ -97,11 +97,27 @@ test('ordinary copy, relocation and removed source tree execute offline; missing
  await rm(path.join(copy,'runtime-layout.json'));await assert.rejects(materializeReferenceRuntime(opts(copy)),{code:'runtime_incomplete'});
  evidence.cases.push({case:'offline-copy',exited:ran.exited,pipesClosed:true,changedInterpreterAndNativeRefused:true,brokenRefused:true});
 });
+test('actual accepted producer with umask077 is build-readable but not independently serve-readable; staged receiving preserves exact bytes and public read/execute modes',async()=>{
+ const oldMaterializer=(await bounded('git',['show','7ee8130190042222ea795f102c147edbbd013c5a:server/foundry/materialize-runtime.mjs'])).stdout;
+ const oldLayout=(await bounded('git',['show','7ee8130190042222ea795f102c147edbbd013c5a:server/foundry/runtime-layout.mjs'])).stdout;
+ await writeFile(path.join(build,'server/foundry/materialize-mode-control.mjs'),oldMaterializer.replace("'./runtime-layout.mjs'","'./runtime-layout-mode-control.mjs'"));
+ await writeFile(path.join(build,'server/foundry/runtime-layout-mode-control.mjs'),oldLayout);
+ const controlled=path.join(dir,'umask-control');
+ const produced=await command(['--input-type=module','-e',`process.umask(0o077);import {materializeReferenceRuntime} from './server/foundry/materialize-mode-control.mjs';console.log(JSON.stringify(await materializeReferenceRuntime({deployable:true,runtimeDir:process.env.DISPOSABLE_RUNTIME,tarball:'/tmp/cpython-standalone.tar.gz',wheelPath:process.env.DISPOSABLE_WHEEL})));`],{cwd:build,env:{DISPOSABLE_RUNTIME:controlled,DISPOSABLE_WHEEL:wheel}});
+ assert.equal(produced.ok,true);assert.equal((await lstat(path.join(controlled,'pyvenv.cfg'))).mode&0o777,0o600);
+ assert.equal((await lstat(path.join(controlled,'lib/python3.12/site-packages/wasmtime/__init__.py'))).mode&0o777,0o600);
+ const before=await runtimeContentIdentity(controlled);await assert.rejects(verifyOfflineRuntime(controlled,pinsOptions),{code:'runtime_publication_modes'});
+ const received=await materializeReferenceRuntime(opts(controlled));assert.equal(received.action,'publication-received');assert.equal(received.contentPreserved,true);
+ assert.deepEqual(await runtimeContentIdentity(controlled),before);await verifyOfflineRuntime(controlled,pinsOptions);
+ for(const f of ['pyvenv.cfg','runtime-layout.json','lib/python3.12/site-packages/wasmtime/__init__.py'])assert.equal((await lstat(path.join(controlled,f))).mode&0o777,0o644);
+ for(const f of ['bin/python','bin/python3','bin/python3.12'])assert.equal((await lstat(path.join(controlled,f))).mode&0o777,0o755);
+ evidence.cases.push({case:'umask077-producer',acceptedProducer:'7ee8130190042222ea795f102c147edbbd013c5a',beforeMode:384,afterMode:420,contentPreserved:true,actualProviderCause:false});
+});
 async function fixture(){
  const db=`layout_${randomUUID().replaceAll('-','')}`;await admin.query(`CREATE DATABASE "${db}"`);
  const privateDir=path.join(dir,'private');await mkdir(privateDir,{mode:0o700});
  const env={CORRESPONDENCE_DATABASE_URL:cluster.url.replace('/correspondence',`/${db}`),CORRESPONDENCE_PG_SCHEMA:'pilot_correspondence',FOUNDRY_PRIVATE_DIR:privateDir,
-  FOUNDRY_HOST_PROFILE_FILE:path.join(privateDir,'host.json'),FOUNDRY_PRIVATE_PROFILE_FILE:path.join(privateDir,'private.json'),FOUNDRY_PARTICIPATION_KEY_FILE:path.join(privateDir,'key')};
+  FOUNDRY_HOST_PROFILE_FILE:path.join(privateDir,'host.json'),FOUNDRY_PRIVATE_PROFILE_FILE:path.join(privateDir,'private.json'),FOUNDRY_PARTICIPATION_KEY_FILE:path.join(privateDir,'key'),SDS_FIXTURE_INVOCATION_RACE_FILE:path.join(privateDir,'launch-race.json')};
  for(const [name,file]of [['host-profile.example.json',env.FOUNDRY_HOST_PROFILE_FILE],['private-profile.example.json',env.FOUNDRY_PRIVATE_PROFILE_FILE]])await writeFile(file,await readFile(path.join(build,vendor,'scripts/visitor-foundry/integration/entry',name)),{mode:0o600});
  await writeFile(env.FOUNDRY_PARTICIPATION_KEY_FILE,'disposable-layout-purpose-key-32',{mode:0o600});
  const runtimeBuild=path.join(build,execution,'.runtime'),legacyControl=path.join(dir,'legacy-control');
@@ -175,7 +191,7 @@ test('copied normal production serving retains original pending A, then same-att
  const originalRequest=task(cases[0].input,'task:owner-a-use-useful');
  const interpreter=path.join(runtime,'bin/python'),mode=(await lstat(interpreter)).mode&0o777;
  let failed;
- try{await chmod(interpreter,0o644);failed=await a.run('use',originalRequest,1);}finally{await chmod(interpreter,mode);}
+ try{await writeFile(f.env.SDS_FIXTURE_INVOCATION_RACE_FILE,JSON.stringify({requestDigest:'sha256:'+createHash('sha256').update((await import('../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/index.mjs')).stableJSON(originalRequest)).digest('hex')}),{mode:0o600});failed=await a.run('use',originalRequest,1);}finally{await chmod(interpreter,mode);}
  assert.equal(failed.error.code,'invocation_no_launch');assert.deepEqual(failed.error.diagnostic,{stage:'invoke',status:409,contentClass:'json',applicationMarked:true});
  const invRow=async()=>(await f.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2',[projectId,originalRequest.taskId])).rows[0];
  const prior=await invRow();assert.equal(prior.state,'completed');assert.equal(prior.result,null);assert.equal(prior.execution.sample.observation.termination.noLaunch,true);assert.equal(prior.execution.identity,null);
@@ -215,6 +231,60 @@ test('copied normal production serving retains original pending A, then same-att
  // ran migrations, receiving, budget refill or verification maintenance.
  evidence.cases.push({case:'archived-serving',buildRemoved:true,noCheckoutLinks:true,broken,missing,missingEntry,pinsEqual:true,sameAttemptReady:true,originalAuthorityRetained:true,privateCorrespondenceRetained:true,grantsAndHistoryRetained:true,installerReplayUnchanged:true,concurrentRecoveries:2,verificationRenewed:false,evidenceGenerations:[1,2,3],expiredOriginalRefused:true,currentEvidenceRemeasured:true,manifestLineageRetained:true,laterVisitorAfterEvidenceExpiry:true,validationChargedUnits:12000,candidateId,invocations:6,chargedAInvocations:4,terminationExitedDrained:true,noLaunchControl:{code:'spawn_permission',actualProviderCause:false,originalIntentRetained:true,priorChargedObservationRetained:true,explicitOwnerReceiving:true,chargedBefore:1,chargedAfter:2,continuedAfterHttpRestart:true}});
  await f.server.stop();
+});
+test('relocated normal HTTP serving under a different uid/gid refuses inaccessible publication without charging, then executes exact A/restart/B', {timeout:180000},async()=>{
+ // The preceding test produced a copied managed delivery and removed its build.
+ assert.equal(process.getuid(),1000);await chmod(dir,0o755);
+ const node=path.join(dir,'node');await cp(process.execPath,node);await chmod(node,0o755);
+ const db=`identity_${randomUUID().replaceAll('-','')}`;await admin.query(`CREATE DATABASE "${db}"`);
+ const privateDir=path.join(dir,'identity-private'),callerDir=path.join(dir,'identity-caller');
+ await mkdir(privateDir,{mode:0o700});await mkdir(callerDir,{mode:0o700});
+ const env={CORRESPONDENCE_DATABASE_URL:cluster.url.replace('/correspondence',`/${db}`),CORRESPONDENCE_PG_SCHEMA:'pilot_correspondence',FOUNDRY_PRIVATE_DIR:privateDir,
+  FOUNDRY_HOST_PROFILE_FILE:path.join(privateDir,'host.json'),FOUNDRY_PRIVATE_PROFILE_FILE:path.join(privateDir,'private.json'),FOUNDRY_PARTICIPATION_KEY_FILE:path.join(privateDir,'key')};
+ for(const [example,file]of [['host-profile.example.json',env.FOUNDRY_HOST_PROFILE_FILE],['private-profile.example.json',env.FOUNDRY_PRIVATE_PROFILE_FILE]])await writeFile(file,await readFile(path.join(delivery,vendor,'scripts/visitor-foundry/integration/entry',example)),{mode:0o600});
+ await writeFile(env.FOUNDRY_PARTICIPATION_KEY_FILE,'identity-fixture-participation-key-32',{mode:0o600});
+ await command(['server/foundry/install.mjs','--migrate','--install'],{cwd:delivery,env});
+ const inspect=await command(['server/foundry/install.mjs','--inspect-installation'],{cwd:delivery,env});
+ const allocation=inspect.installation;
+ await bounded('sudo',['-n','chown','-R','65534:65534',privateDir]);
+ let current;
+ async function boot(port=0){
+  const child=spawn('sudo',['-n',process.execPath,path.join(root,'server/scripts/fixtures/changed-identity-server.mjs')],{stdio:['pipe','pipe','pipe']});
+  const closed=once(child,'close');let out='',errBytes=0;
+  child.stderr.on('data',b=>{errBytes+=b.length;if(errBytes>200000)child.kill('SIGKILL');});
+  let resolvePort,rejectPort;const ready=new Promise((resolve,reject)=>{resolvePort=resolve;rejectPort=reject;});
+  const deadline=setTimeout(()=>{child.kill('SIGTERM');rejectPort(new Error('identity_listener_deadline'));},20000);
+  child.stdout.on('data',b=>{out+=b;if(Buffer.byteLength(out)>10000)child.kill('SIGTERM');const line=out.split('\n')[0];try{const v=JSON.parse(line);if(v.port){clearTimeout(deadline);resolvePort(v);}}catch{}});
+  child.once('exit',()=>{clearTimeout(deadline);rejectPort(new Error('identity_listener_exit'));});
+  child.stdin.end(JSON.stringify({cwd:delivery,node,env:{...inherited,...env,NODE_ENV:'production',PORT:String(port),FOUNDRY_HOST_OPT_IN:'1',CORRESPONDENCE_STORE:'postgres',CORRESPONDENCE_POOL_MAX:'1',CORRESPONDENCE_ADMIN_TOKEN:'disposable-identity-admin-never-issued',SUPABASE_URL:'https://local-baseline.example',SUPABASE_SERVICE_ROLE_KEY:'fixture-stub',STRIPE_SECRET_KEY:'fixture-stub',RESEND_API_KEY:'fixture-stub'}}));
+  const v=await ready;assert.equal(v.servingUid,65534);assert.equal(v.servingGid,65534);
+  let stopped=false;current={port:v.port,origin:`http://127.0.0.1:${v.port}`,async stop(){if(stopped)return;stopped=true;child.kill('SIGTERM');const timer=setTimeout(()=>child.kill('SIGKILL'),8000);const [code,signal]=await closed;clearTimeout(timer);assert.equal(code,0);assert.equal(signal,null);assert.equal(JSON.parse(out.trim().split('\n').at(-1)).gone,true);servers.delete(current);}};servers.add(current);
+  assert.equal((await fetch(current.origin+'/api/health')).status,200);return current;
+ }
+ const runtime=path.join(delivery,execution,'.runtime');await publishRuntimeModes(runtime);await boot();
+ async function visitor(name){const descriptor=await(await fetch(current.origin+'/api/correspondence/v1/visitor-entry')).json(),file=path.join(callerDir,name+'.json');
+  await writeFile(file,JSON.stringify({baseUrl:current.origin+'/api/correspondence',directory:path.join(callerDir,name),authority:{profileId:descriptor.profile.profileId,entryTerms:descriptor.profile.termsHash,contributionTerms:descriptor.profile.contribution.binding.contributionTerms,scope:'synthetic-reusable-components'}}),{mode:0o600});
+  const run=async(mode,input,exit=0)=>{const inputFile=path.join(callerDir,randomUUID()+'.json');if(input!==undefined)await writeFile(inputFile,JSON.stringify(input),{mode:0o600});return command(['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,file,...(input===undefined?[]:[inputFile]),'--json-result'],{cwd:path.join(delivery,vendor),exit});};
+  const registered=await run('register');assert.equal(registered.status,200);return {run,projectId:registered.body.projectId};}
+ const a=await visitor('a'),contributed=await a.run('contribute',original()),candidateId=contributed.submission.admission.candidateId;
+ const status=await a.run('status'),verificationId=status.verification.id;
+ // The managed build/probe ran as uid1000; this explicit disposable owner pass
+ // runs as uid0, independently of HTTP uid65534, and cannot prove its exec access.
+ const dispatch={schema:'sds.foundry.private-pass.v1',intentId:'identity-dispatch',action:'dispatch',projectId:a.projectId,expectedHostConfigId:allocation.hostConfigId,expectedEntryTermsHash:allocation.entryTermsHash,expectedVerificationId:verificationId,candidateId,expectedGeneration:1,reconcileIntentId:null};
+ // sudo filters custom env by default; use a private disposable env launcher.
+ const ownerFile=path.join(privateDir,'owner-fixture.mjs');await bounded('sudo',['-n',node,'--input-type=module','-e',`import {writeFile} from 'node:fs/promises';await writeFile(${JSON.stringify(ownerFile)},${JSON.stringify("Object.assign(process.env,"+JSON.stringify(env)+");await (await import("+JSON.stringify('file://'+path.join(delivery,'server/foundry/private-pass.mjs'))+")).privatePassMain();")},{mode:0o600});`]);
+ const pass=async r=>{const file=path.join(callerDir,'operator.json');await writeFile(file,JSON.stringify(r),{mode:0o600});const result=await bounded('sudo',['-n',node,'--input-type=module','-e',`import {readFile} from 'node:fs/promises';process.env.FOUNDRY_PRIVATE_PASS_JSON=await readFile(${JSON.stringify(file)},'utf8');await import(${JSON.stringify('file://'+ownerFile)});`],{cwd:delivery});return JSON.parse(result.stdout.trim());};
+ const accepted=await pass(dispatch);assert.equal(accepted.readback.publications[0].state,'published');
+ const request=task(cases[0].input,'task:identity-useful'),interpreter=path.join(runtime,'bin/python');
+ await chmod(interpreter,0o744);const negative=await a.run('use',request,1);assert.equal(negative.error.code,'invocation_launch_unavailable');
+ let facts=await a.run('status');assert.equal(facts.portableExecution.chargedInvocations,0);assert.equal(facts.portableExecution.servingLaunchResources.effectiveUid,65534);assert.equal(facts.portableExecution.servingLaunchResources.effectiveGid,65534);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.identityRole,'other');assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.mode,0o744);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.execute.code,'EACCES');
+ await chmod(interpreter,0o755);
+ for(const c of [cases[0],cases[1],cases[3]])assert.deepEqual((await a.run('use',c===cases[0]?request:task(c.input))).invocation.output,c.expected);
+ const port=current.port;await current.stop();await boot(port);const b=await visitor('b');
+ for(const c of [cases[0],cases[1],cases[3]])assert.deepEqual((await b.run('use',task(c.input))).invocation.output,c.expected);
+ for(const v of[a,b]){const view=await v.run('status');assert.equal(view.portableExecution.chargedInvocations,3);for(const i of view.portableExecution.invocations){assert.equal(i.termination.exited,true);assert.equal(i.termination.drained,true);assert.equal(i.termination.code,0);}}
+ assert.deepEqual(await pins(delivery),packedPins);await current.stop();
+ evidence.cases.push({case:'different-build-serve-identity',buildUid:1000,serveUid:65534,serveGid:65534,relocated:true,prelaunchErrno:'EACCES',prelaunchCharged:0,invocations:6,restart:true,allExitedDrained:true,actualProviderCause:false});
 });
 test('closed private metadata evidence excludes error prose/paths and never traverses an external link',async()=>{
  const file=path.join(delivery,execution,'.runtime/bin/python'),mod=path.join(delivery,vendor,'scripts/visitor-foundry/entry/src/progress.mjs');

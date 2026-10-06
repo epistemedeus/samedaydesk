@@ -43,7 +43,7 @@ async function fixture(withContribution=true,{validityMs}={}) {
  const db=`privatepass_${randomUUID().replaceAll('-','')}`;await admin.query(`CREATE DATABASE "${db}"`);
  const privateDir=path.join(dir,db);await mkdir(privateDir,{mode:0o700});
  const env={CORRESPONDENCE_DATABASE_URL:cluster.url.replace('/correspondence',`/${db}`),CORRESPONDENCE_PG_SCHEMA:'pilot_correspondence',FOUNDRY_PRIVATE_DIR:privateDir,
-  FOUNDRY_HOST_PROFILE_FILE:path.join(privateDir,'host.json'),FOUNDRY_PRIVATE_PROFILE_FILE:path.join(privateDir,'private.json'),FOUNDRY_PARTICIPATION_KEY_FILE:path.join(privateDir,'key')};
+  FOUNDRY_HOST_PROFILE_FILE:path.join(privateDir,'host.json'),FOUNDRY_PRIVATE_PROFILE_FILE:path.join(privateDir,'private.json'),FOUNDRY_PARTICIPATION_KEY_FILE:path.join(privateDir,'key'),SDS_FIXTURE_INVOCATION_RACE_FILE:path.join(privateDir,'launch-race.json')};
  for(const [name,file] of [['host-profile.example.json',env.FOUNDRY_HOST_PROFILE_FILE],['private-profile.example.json',env.FOUNDRY_PRIVATE_PROFILE_FILE]])await writeFile(file,await readFile(path.join(vendor,'scripts/visitor-foundry/integration/entry',name)),{mode:0o600});
  await writeFile(env.FOUNDRY_PARTICIPATION_KEY_FILE,'disposable-private-pass-key-32-characters\n',{mode:0o600});
  await command(['server/foundry/install.mjs','--migrate','--install'],env);
@@ -204,7 +204,7 @@ test('private started/completed receipt with missing durable journal refuses new
 async function noLaunchFixture({peerBeforeInvocation=false,validityMs}={}){
  const f=await fixture(true,{validityMs});await f.cli();const peer=peerBeforeInvocation?await f.visitor('b'):null,request=task(cases[0].input,'task:owner-a-use-useful');
  const mode=(await stat(python)).mode&0o777;let refused;
- try{await chmod(python,0o644);refused=await f.a.run('use',request,1);}finally{await chmod(python,mode);}
+ try{await writeFile(f.env.SDS_FIXTURE_INVOCATION_RACE_FILE,JSON.stringify({requestDigest:digest(request)}),{mode:0o600});refused=await f.a.run('use',request,1);}finally{await chmod(python,mode);}
  assert.equal(refused.error.code,'invocation_no_launch');assert.equal(refused.error.diagnostic.applicationMarked,true);
  const row=async()=>(await f.query('SELECT * FROM correspondence_vf04_invocations WHERE project_id=$1 AND task_id=$2',[f.a.projectId,request.taskId])).rows[0];
  const prior=await row();assert.equal(prior.state,'completed');assert.equal(prior.execution.sample.observation.termination.noLaunch,true);
@@ -338,8 +338,8 @@ test('HTTP invocation refuses missing/changed installed interpreter or native by
 });
 test('closed launch/status/CLI diagnostics discard arbitrary error prose and native aliases remain truthful',async()=>{
  const sentinel='PRIVATE_CREDENTIAL_PROSE_SENTINEL_100511';
- for(const [native,alias]of [['ENOENT','spawn_not_found'],['EACCES','spawn_permission'],['EAGAIN','spawn_process_capacity'],['EMFILE','spawn_file_capacity'],['ERR_ACCESS_DENIED','spawn_permission_model']]){const out=launchFailure({code:native,message:sentinel,path:sentinel});assert.equal(out.code,alias);assert.doesNotMatch(JSON.stringify(out),new RegExp(sentinel));}
- const forged=launchEvidenceView({schema:'neomorphic.foundry.launch-evidence.v1',interpreterEntry:sentinel,childPermission:sentinel,failure:{code:sentinel,errorClass:sentinel,resource:sentinel,message:sentinel}});
+ for(const [native,alias]of [['ENOENT','spawn_not_found'],['EACCES','spawn_permission'],['EPERM','spawn_denied'],['EAGAIN','spawn_process_capacity'],['EMFILE','spawn_file_capacity'],['ERR_ACCESS_DENIED','spawn_permission_model']]){const out=launchFailure({code:native,message:sentinel,path:sentinel});assert.equal(out.code,alias);assert.equal(out.nativeCode,native);assert.doesNotMatch(JSON.stringify(out),new RegExp(sentinel));}
+ const forged=launchEvidenceView({schema:'neomorphic.foundry.launch-evidence.v1',interpreterEntry:sentinel,childPermission:sentinel,roles:Object.fromEntries(['runtime','bin','interpreter','launcher','child','cwd'].map(k=>[k,{type:sentinel,mode:sentinel,identityRole:sentinel,read:{ok:false,code:sentinel,message:sentinel},execute:{ok:false,code:sentinel}}])),processIdentity:sentinel,failure:{code:sentinel,nativeCode:sentinel,errorClass:sentinel,resource:sentinel,message:sentinel}});
  const view=executionView({observation:{status:sentinel,code:sentinel,phase:sentinel,termination:{noLaunch:true}}},forged);assert.doesNotMatch(JSON.stringify(view),new RegExp(sentinel));assert.equal(view.status,'unclassified');assert.equal(view.code,'unclassified');
  const {callerFailure,callerResult,acceptedCallerPin,verifyCallerClosure}=await import('../foundry/activation/remote-private-journey.mjs');
  assert.throws(()=>callerResult({code:1,stdout:JSON.stringify({error:{code:'invocation_no_launch',diagnostic:{stage:'invoke',status:409,contentClass:'json',applicationMarked:true,message:sentinel}}})}),e=>{assert.equal(callerFailure(e).code,'invocation_no_launch');assert.doesNotMatch(JSON.stringify(callerFailure(e)),new RegExp(sentinel));return true;});
@@ -436,4 +436,65 @@ test('delayed successor receiving refuses expired new evidence; no owner renewal
  const pub=(await f.query('SELECT receipt,verification FROM correspondence_vf04_publications WHERE project_id=$1 AND generation=2',[f.a.projectId])).rows[0];await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(pub.receipt.observedAt)+pub.verification.validityMs-Date.now()+80)));
  await assert.rejects(f.pass(plan.receive),e=>['invocation_successor_conflict','resolution_invalidated'].includes(e.code));assert.deepEqual(await f.row(),f.prior);
  const before=await f.counts();await f.s.stop();await f.boot(f.s.port);const status=await f.a.run('status');assert.equal(status.candidates[0].generation,2);assert.equal(status.portableExecution.chargedInvocations,1);assert.deepEqual(await f.counts(),before);
+});
+test('two proved no-launch predecessors continue once in the same current generation; immutable execution lineage survives lost reply, concurrency and restart',async()=>{
+ const f=await noLaunchFixture({validityMs:15000}),intent=path.join(f.a.directory,`invoke-${digest(f.request).slice(7)}.json`),firstBytes=await readFile(intent);
+ const authority=(await authorityRows(f)).rows,caps=(await f.query('SELECT config,verification,participation FROM correspondence_vf04_pools')).rows;
+ const oldManifest=(await f.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[f.a.projectId,f.r.manifestId])).rows[0].record;await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(oldManifest.validUntil)-Date.now()+80)));
+ const plan=await lifecyclePlan(f);await f.pass(plan.renew);await f.pass(plan.dispatch);await f.pass(plan.receive);await f.a.run('reconcile-invocation',f.request);
+ const firstTransition=(await f.row()).execution.continuation,mode=(await stat(python)).mode&0o777;
+ try{await writeFile(f.env.SDS_FIXTURE_INVOCATION_RACE_FILE,JSON.stringify({requestDigest:digest(f.request)}),{mode:0o600});assert.equal((await f.a.run('use',f.request,1)).error.code,'invocation_no_launch');}finally{await chmod(python,mode);}
+ const second=await f.row();assert.equal(second.execution.generation,2);assert.equal(second.execution.sample.observation.termination.noLaunch,true);assert.equal(second.execution.launchEvidence.failure.nativeCode,'EACCES');
+ const oldReplay=await f.pass(plan.receive);assert.equal(oldReplay.replayed,true);assert.equal(oldReplay.receipt.executionId,second.execution.id);assert.deepEqual(await f.row(),second);
+ const {remoteJourney,verifyCallerClosure}=await import('../foundry/activation/remote-private-journey.mjs');
+ const qaDir=path.join(f.privateDir,'current-caller');await mkdir(qaDir,{mode:0o700});await cp(f.a.directory,path.join(qaDir,'visitor-a'),{recursive:true});
+ const configA=JSON.parse(await readFile(f.a.file)),ownerFile=path.join(f.privateDir,'current-owner.json');
+ await writeFile(ownerFile,JSON.stringify({schema:'sds.foundry.remote-owner-qa.v1',directory:qaDir,baseUrl:configA.baseUrl,authority:configA.authority,expectedHostConfigId:f.r.expectedHostConfigId,expectedEntryTermsHash:f.r.expectedEntryTermsHash}),{mode:0o600});
+ await writeFile(path.join(qaDir,'a-contribution-receipt.json'),JSON.stringify({schema:'sds.foundry.remote-contribution.v1',purpose:'owner_qa',projectId:f.a.projectId,candidateId:f.candidateId,generation:1,hostConfigId:f.r.expectedHostConfigId,entryTermsHash:f.r.expectedEntryTermsHash,moduleDigest:f.prior.execution.binding.moduleDigest,pin:verifyCallerClosure()}),{mode:0o600});
+ const facts=await remoteJourney('a-launch-observe',ownerFile);assert.equal(facts.mutated,false);assert.equal(facts.context,'serving_http_process');assert.equal(facts.chargedInvocations,2);assert.equal(facts.resources.effectiveUid,process.getuid());assert.equal(facts.invocations[0].execution.launchEvidence.failure.nativeCode,'EACCES');
+ const laterPlan=await remoteJourney('a-prepare-later-continuation',ownerFile);assert.equal(laterPlan.requests.receive.expectedGeneration,2);assert.equal(laterPlan.requests.receive.successorGeneration,3);assert.deepEqual(await f.row(),second);
+ const prepared=await remoteJourney('a-prepare-current-continuation',ownerFile),r=prepared.request;
+ assert.match(prepared.requestName,/^owner-current-a-[a-f0-9]{64}\.json$/);assert.equal((await stat(path.join(qaDir,prepared.requestName))).mode&0o777,0o600);
+
+ assert.equal(r.schema,'sds.foundry.private-pass.v4');assert.equal(r.expectedGeneration,2);assert.equal(r.manifestId,second.manifest_id);assert.equal(r.expectedExecutionId,second.execution.id);
+ assert.deepEqual((await remoteJourney('a-prepare-current-continuation',ownerFile)).request,r);
+ for(const [field,value,error]of [['expectedFence',randomUUID(),'invocation_receive_conflict'],['expectedObservationId',`sha256:${'c'.repeat(64)}`,'invocation_launch_not_excluded'],['candidateId','candidate:wrong','invocation_receive_conflict'],['expectedGeneration',1,'invocation_receive_conflict'],['expectedEntryTermsHash',`sha256:${'c'.repeat(64)}`,'private_pass_terms_conflict']])await code(f.pass({...r,intentId:randomUUID(),[field]:value}),error);
+ await code(f.pass({...r,intentId:randomUUID(),request:{...r.request,input:{changed:true}}}),'manifest_request_mismatch');
+ const concurrent=await Promise.all([f.pass(r),f.pass(r)]);assert.equal(concurrent.filter(x=>!x.replayed).length,1);
+ const received=concurrent.find(x=>!x.replayed);assert.equal(received.receipt.chargedBefore,2);assert.equal(received.receipt.chargedAfter,3);
+ const transition=received.receipt.transition;assert.equal(transition.schema,'neomorphic.foundry.invocation-continuation.v2');assert.equal(transition.predecessorManifestId,transition.successorManifestId);assert.equal(transition.priorGeneration,transition.generation);assert.equal(continuationView(transition).id,transition.id);
+ const current=await f.row();assert.equal(current.execution.priorAttempts.length,2);assert.deepEqual(current.execution.priorAttempts[0],{...f.prior.execution,manifestId:f.prior.manifest_id});
+ const {priorAttempts:ignored,...secondPrior}=second.execution;assert.deepEqual(current.execution.priorAttempts[1],{...secondPrior,manifestId:second.manifest_id});
+ // The priorAttempts array is flattened by the canonical store; compare exact
+ // immutable prior body rather than introducing a recursive history copy.
+ assert.equal(current.execution.priorAttempts[1].continuation.id,firstTransition.id);
+ const reconciled=await f.a.run('reconcile-invocation',f.request);assert.equal(reconciled.transition.id,transition.id);assert.equal((await f.a.run('reconcile-invocation',f.request)).transition.id,transition.id);
+ assert.equal((await f.cli(r)).replayed,true);await f.s.stop();const restarted=await f.boot(f.s.port);
+ const rootReconcile=await remoteJourney('a-reconcile-invocation',ownerFile);assert.equal(rootReconcile.transition.id,transition.id);
+ const rootUsed=await remoteJourney('a-use',ownerFile);assert.equal(rootUsed.uses.length,3);assert.equal(rootUsed.expectedGeneration,2);assert.equal((await f.a.run('use',f.request)).invocation.replayed,true);
+ const b=await f.visitor('b',restarted);for(const c of [cases[0],cases[1],cases[3]])assert.deepEqual((await b.run('use',task(c.input))).invocation.output,c.expected);
+ assert.deepEqual(await readFile(intent),firstBytes);assert.deepEqual((await authorityRows(f)).rows.map(x=>x.value.active_profile),authority.map(x=>x.value.active_profile));assert.deepEqual((await f.query('SELECT config,verification,participation FROM correspondence_vf04_pools WHERE project_id=$1',[f.a.projectId])).rows,caps);
+ const status=await f.client.call('status');assert.equal(status.portableExecution.chargedInvocations,5);assert.equal(status.portableExecution.invocationCap.maxRecords,8);
+ for(const i of status.portableExecution.invocations){assert.equal(i.termination.exited,true);assert.equal(i.termination.drained,true);assert.equal(i.termination.code,0);}
+});
+test('observable prelaunch mode refusal preserves a new task intent and zero charge; repaired access permits the same saved request',async()=>{
+ const f=await fixture();await f.cli();const request=task(cases[0].input,'task:access-refusal'),mode=(await stat(python)).mode&0o777;
+ try{await chmod(python,0o644);assert.equal((await f.a.run('use',request,1)).error.code,'invocation_launch_unavailable');assert.equal((await f.a.run('status')).portableExecution.chargedInvocations,0);}
+ finally{await chmod(python,mode);}
+ assert.deepEqual((await f.a.run('use',request)).invocation.output,cases[0].expected);assert.equal((await f.a.run('status')).portableExecution.chargedInvocations,1);
+});
+test('current-generation receiving rejects unknown proof, stale fence/input/authority/expired evidence and caps; a lost receiving response replays one charged successor',async()=>{
+ const f=await noLaunchFixture({validityMs:7000}),r={...f.r,schema:'sds.foundry.private-pass.v4'},prior=await f.row();
+ for(const change of [{identity:{pid:123}},{sample:null},{fence:randomUUID()}]){
+  await f.query('UPDATE correspondence_vf04_invocations SET execution=$3 WHERE project_id=$1 AND task_id=$2',[f.a.projectId,f.request.taskId,{...prior.execution,...change}]);
+  await assert.rejects(f.pass(r),e=>['invocation_receive_conflict','invocation_launch_not_excluded'].includes(e.code));
+ }
+ await f.query('UPDATE correspondence_vf04_invocations SET execution=$3 WHERE project_id=$1 AND task_id=$2',[f.a.projectId,f.request.taskId,prior.execution]);
+ const originalCount=f.store.chargedInvocations;try{f.store.chargedInvocations=async()=>8;await code(f.pass(r),'invocation_budget_exhausted');}finally{f.store.chargedInvocations=originalCount;}
+ assert.deepEqual(await f.row(),prior);
+ await assert.rejects(f.pass(r,{persist:phase=>{if(phase==='completed')throw Object.assign(new Error('PRIVATE_RECEIPT_LOSS_SENTINEL'),{code:'lost_receipt'});}}),{code:'lost_receipt'});
+ const replay=await f.pass(r);assert.equal(replay.replayed,true);assert.equal(replay.receipt.chargedBefore,1);assert.equal(replay.receipt.chargedAfter,2);
+ await f.a.run('reconcile-invocation',f.request);assert.deepEqual((await f.a.run('use',f.request)).invocation.output,cases[0].expected);
+ const expired=await noLaunchFixture({validityMs:7000});await waitManifestExpiry(expired);
+ await code(expired.pass({...expired.r,schema:'sds.foundry.private-pass.v4'}),'manifest_expired');assert.deepEqual(await expired.row(),expired.prior);
 });

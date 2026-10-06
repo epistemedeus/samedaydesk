@@ -9,6 +9,7 @@ import { PORTABLE_KIND } from '../../vendor/visitor-foundry-receiver/scripts/vis
 import { PROGRESS_SCOPE,progressBinding,progressView,phaseCode } from '../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs';
 
 export const RENEWED_INVOCATION_PASS_SCHEMA='sds.foundry.private-pass.v3';
+export const CURRENT_INVOCATION_PASS_SCHEMA='sds.foundry.private-pass.v4';
 export const INVOCATION_PASS_SCHEMA='sds.foundry.private-pass.v2';
 export const PASS_SCHEMA = 'sds.foundry.private-pass.v1';
 export const PASS_SCOPE = 'sds:private-pass:v1';
@@ -21,7 +22,7 @@ const id = value => typeof value === 'string' && /^[A-Za-z0-9:_-]{1,200}$/.test(
 const sha = value => typeof value === 'string' && /^sha256:[a-f0-9]{64}$/.test(value);
 const invocationFields=[...fields,'registrationId','taskId','manifestId','expectedExecutionId','expectedFence','expectedObservationId','request'];
 export function validateRequest(value) {
-  if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA].includes(value?.schema)){
+  if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA,CURRENT_INVOCATION_PASS_SCHEMA].includes(value?.schema)){
     const selected=value.schema===RENEWED_INVOCATION_PASS_SCHEMA?[...invocationFields,'renewalIntentId','successorGeneration']:invocationFields;
     need(Object.keys(value).length===selected.length && selected.every(k=>Object.hasOwn(value,k)),'private_pass_request_invalid');
     const r=Object.fromEntries(selected.map(k=>[k,value[k]]));
@@ -210,7 +211,7 @@ async function renewEvidencePass(store,receiver,r,{signal,persist,localReceipts}
  persist('completed',result.record);return {ok:true,action:r.action,state:'completed',replayed:result.replayed,receipt:result.record.receipt,physicalLaunched:false};
 }
 export async function runPrivatePass(store,receiver,input,{signal,persist=()=>{},onStarted=()=>{},onSpawn,localReceipts=[]}={}) {
-  const r=validateRequest(input); if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA].includes(r.schema))return receiveInvocationPass(store,receiver,r,{signal,persist,localReceipts});
+  const r=validateRequest(input); if([INVOCATION_PASS_SCHEMA,RENEWED_INVOCATION_PASS_SCHEMA,CURRENT_INVOCATION_PASS_SCHEMA].includes(r.schema))return receiveInvocationPass(store,receiver,r,{signal,persist,localReceipts});
   if(r.action==='observe') return observePass(store,receiver,r,{signal});
   if(r.action==='renew-evidence')return renewEvidencePass(store,receiver,r,{signal,persist,localReceipts});
   const initial = await store.db.tx(async c=>{

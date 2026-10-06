@@ -111,9 +111,9 @@ function assertHold() {
   }
 }
 
-async function boot(env, node = process.execPath) {
+async function boot(env, node = process.execPath, cwd = repoRoot) {
   const child = spawn(node, ["--import", preload, "server/index.js"], {
-    cwd: repoRoot,
+    cwd,
     env,
     stdio: ["ignore", "pipe", "pipe", "ipc"],
   });
@@ -140,8 +140,8 @@ async function boot(env, node = process.execPath) {
   };
 }
 
-export async function bootFoundryServer(env, node = process.execPath) {
-  return boot(env, node);
+export async function bootFoundryServer(env, node = process.execPath, cwd = repoRoot) {
+  return boot(env, node, cwd);
 }
 
 async function writeInputs(dir) {
