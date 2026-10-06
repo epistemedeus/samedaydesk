@@ -1,0 +1,237 @@
+{
+  "schema": "sds.foundry.serving-modes-receiving.v1",
+  "session": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-serving-runtime-modes-100574",
+  "base": "18206aff60febe13fcabe37e77a6b44946ce3254",
+  "exportHead": "commit containing this receipt; exact head is in the draft PR/final export",
+  "actualHost": false,
+  "tests": [
+    {
+      "name": "private33",
+      "command": "npm run test:foundry-private-pass",
+      "log": "/tmp/sol-100574-private.log",
+      "logSha256": "71f06e588391ae881e590179b53b99c65ef4e0872f3f2671cf9492f377aebe7f",
+      "pass": 33,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit": 0
+    },
+    {
+      "name": "serving135",
+      "command": "node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js server/scripts/test-managed-platform.js server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js server/scripts/test-foundry-activation.js server/scripts/test-foundry-client-compat.js server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js server/scripts/test-foundry-entry-reservation.js server/scripts/test-foundry-runtime-progress.js server/scripts/test-proxy-addr-patch.js",
+      "log": "/tmp/sol-100574-serving-final.log",
+      "logSha256": "c9a73442dfd6d555b5c12527967917b383f680a6ea3b70dbc7f37e8a8e9383c6",
+      "pass": 135,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit": 0
+    },
+    {
+      "name": "copiedLayout8",
+      "command": "FOUNDRY_RUNTIME_LAYOUT_RECEIPT=/tmp/sol-100574-layout-complete-receipt.json npm run test:foundry-runtime-layout",
+      "log": "/tmp/sol-100574-layout-complete.log",
+      "logSha256": "50f857c3cb75abfebf7ed6238f37e8d62f84d9654a70f92f11e28984791310f9",
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit": 0
+    },
+    {
+      "name": "wire25",
+      "command": "npm run test:foundry-contribution-transport",
+      "log": "/tmp/sol-100574-wire.log",
+      "logSha256": "4ef4e65151c5eb89ee3613f6cbdc1a1a0383e5bce3e2041ea54775bfba50d1e5",
+      "pass": 25,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit": 0
+    },
+    {
+      "name": "generation20",
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_CONCURRENT_ITERATIONS=5 FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/sol-100574-generation-final-receipt.json /exec-daemon/node --test --test-concurrency=1 server/scripts/test-foundry-generation.js",
+      "log": "/tmp/sol-100574-generation-final.log",
+      "logSha256": "b62c29b8a906d01c529ddfdd11f8b4061baf30fe5b6664cb14147d2b7edeef96",
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit": 0
+    }
+  ],
+  "total": {
+    "pass": 221,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+  "controlClosure": "sha256:1d76d54411140b6c0b6e987f3e479b1d648e5629c3310ac110a150cfb6cdd2bc",
+  "receivedPreviousControlClosure": {
+    "base": "7ee8130190042222ea795f102c147edbbd013c5a",
+    "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+    "closureDigest": "sha256:58ba1de0fd5384b90a06aa139d95e6a070a87664eda6c7ef732bd705b575116e"
+  },
+  "sourceFiles": {
+    "docs/FOUNDRY-HOST-RECEIVER.md": "2b74bb15f72c9aec3eaee0f08a36149000c227552883581790083a8cc5dbbc65",
+    "server/foundry/activation/private-control-pin.json": "2a486d8fd7562a0a53c61344889defd4578ff19290dd586c9513099708ac48c7",
+    "server/foundry/runtime-layout.mjs": "2bee71a837f7da6cd266553b3bc96abdc98c64826c9ed25a0ddf3c710c1573b8",
+    "server/foundry/serving-runtime.mjs": "4e633192712ec531cbc26246518a5309fbc873ba14e02f946d0b27d81ec4a36f",
+    "server/lib/correspondence-mount.js": "a55118f1a89a2033eceb69b7dbd8c8fd5b70eeea830174fc0fb44f3c160948a5",
+    "server/scripts/fixtures/serving-runtime-readonly.mjs": "7033842dca10045efd3c93b5ed1389593ffd0ea0698bca3e26ef85ba6bf7e6d5",
+    "server/scripts/test-foundry-runtime-layout.js": "3c523b39f04ca10e990fb9ccdf5e4148603cae8cf4b1252f00a313b397dd92c1",
+    "server/scripts/test-foundry-runtime-progress.js": "d1e31f47fcea3a0ec4e4f41c643747e8fb8bd313d9440f171687a9c518058430"
+  },
+  "runtime": {
+    "pins": {
+      "profile": {
+        "id": "vf08.wasmtime49-linux-x64-fixed.v1",
+        "runtime": "wasmtime-py",
+        "version": "49.0.0",
+        "wheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+        "license": "Apache-2.0 WITH LLVM-exception",
+        "platform": "linux",
+        "arch": "x64",
+        "imports": "none",
+        "memory": "fixed-wasm32",
+        "tables": "fixed-funcref",
+        "nan": "canonical",
+        "parallelCompilation": false
+      },
+      "node": "v22.18.0",
+      "python": "sha256:0886fb76ceec8ff568d23079b5da6342bb41675e216e11525d4d6a9e65988d10",
+      "binding": "sha256:908e397c5235a35788d6783e2a2fb7f0bfe554eca5d2a05de500253d0a450905",
+      "native": "sha256:9594714d3c73c3087ab3d42d9614cf72973b25c181b8625ffcc46a8a75972d7e",
+      "worker": "sha256:2daf86aca6e04c07f9562d57555331509db7361e69a2cf42d0e83e8ad629ec5b",
+      "supervisor": "sha256:dd51dd213e4537a95c2d6e7ff30df52fd8f26b21e4e8b9fee5353cff6510c983",
+      "contracts": "sha256:85c7fddf1037a470cff7924506a6ab3b1507f276c3dcd8e8876d7f57ea9ce9c5",
+      "launcher": {
+        "id": "vf08.python-setrlimit-exec.v1",
+        "adapter": "sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95",
+        "script": "sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"
+      }
+    },
+    "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+  },
+  "officialNodes": {
+    "/exec-daemon/node": {
+      "version": "v22.14.0",
+      "sha256": "1abce2374a485bddae3c27b17a3e3143e2780232026e627c4fe74ddde3f380a1"
+    },
+    "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node": {
+      "version": "v22.18.0",
+      "sha256": "ccacb2d6d87ba6d118b2bffc1ae33747a05cc5fc6b1f1ec4fc1d420b687e952d"
+    }
+  },
+  "generation": {
+    "nodeGenerations": [
+      {
+        "generation": 2,
+        "node": "v22.18.0"
+      },
+      {
+        "generation": 3,
+        "node": "v22.18.0"
+      },
+      {
+        "generation": 4,
+        "node": "v22.18.0"
+      }
+    ],
+    "freshConcurrentInstallerPairs": 5,
+    "pythonControl": {
+      "system": "/usr/bin/python3",
+      "realDistinctInterpreter": true,
+      "wasmtime": 49
+    }
+  },
+  "normalServing": [
+    {
+      "case": "normal-serving-readonly",
+      "failure": {
+        "code": "runtime_startup_denied",
+        "nativeCode": "EROFS",
+        "resource": "runtime_publication"
+      },
+      "productStatus": 200,
+      "foundryEnabled": false,
+      "exitedDrained": true
+    },
+    {
+      "case": "post-publication-serving-receiving",
+      "buildUid": 1000,
+      "serveUid": 65534,
+      "serveGid": 65534,
+      "relocated": true,
+      "beforeMode": 420,
+      "afterMode": 493,
+      "unsafeStartupRefusals": 6,
+      "privateModesRetained": true,
+      "ordinaryFileUntouched": true,
+      "restartNoRepeatedChmod": true,
+      "prelaunchErrno": "EACCES",
+      "prelaunchCharged": 0,
+      "acceptedStartupControl": {
+        "base": "18206aff60febe13fcabe37e77a6b44946ce3254",
+        "code": "invocation_launch_unavailable",
+        "charged": 0,
+        "mode": 420
+      },
+      "savedIntentUnchanged": true,
+      "invocations": 6,
+      "restart": true,
+      "allExitedDrained": true,
+      "actualHost": false
+    }
+  ],
+  "setup": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "log": "/tmp/sol-100574-npm-ci.log",
+      "logSha256": "7e3fbdc2db3d5dcd78dd22225bced5c0aa97e63fa6aa5d048b27c2448a34ea70"
+    },
+    {
+      "command": "FOUNDRY_CPYTHON_TARBALL=/tmp/cpython-standalone.tar.gz node server/foundry/materialize-runtime.mjs --deployable",
+      "exit": 0,
+      "log": "/tmp/sol-100574-materialize.log",
+      "logSha256": "136dca296c9b87579cb5e94507d8510a1739d4d9e7390c058e81621409eb6d07"
+    }
+  ],
+  "earlierRuns": [
+    {
+      "log": "/tmp/sol-100574-layout.log",
+      "logSha256": "dfbb2b5e77113a68ff7ecd1843750861cfbd76d2535d0c12459bef974a613245",
+      "cause": "fixture attempted metadata access under a correctly private uid65534 directory",
+      "productionVerdict": false
+    },
+    {
+      "log": "/tmp/sol-100574-serving.log",
+      "logSha256": "6c5fb22ad764d181a42deda2fc6e914b69f304b77ff7b1f485518191e47e0291",
+      "cause": "older diagnostic fixture substituted an external runtime root symlink; now copies the owned runtime",
+      "productionVerdict": false
+    },
+    {
+      "log": "/tmp/sol-100574-generation.log",
+      "logSha256": "9033ef93f6abdb1fac4af554a94c00cbc614939648ee6c42845d160fa9ed2d53",
+      "cause": "new startup module was not yet staged when the tracked-source fixture first copied files",
+      "productionVerdict": false
+    },
+    {
+      "log": "/tmp/sol-100574-layout-export.log",
+      "logSha256": "84f0cfad02018d8ea55bd7cb55f9304b79f3992a36cf196fecdbdf5a0631457d",
+      "cause": "paired-control fixture inspected modes after product listening but before asynchronous foundry readiness",
+      "productionVerdict": false
+    }
+  ],
+  "remainingActualHost": [
+    "normal managed deployment of this source",
+    "same-grant authenticated HTTP launch-access readback (two charges retained)",
+    "explicit current-proof generation2→3 renewal/dispatch/v3 receiving under original limits",
+    "original A useful/changed/negative execution",
+    "actual HTTP restart and separate B same-candidate canonical acquisition/use"
+  ]
+}

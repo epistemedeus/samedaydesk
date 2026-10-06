@@ -7,6 +7,7 @@ import { REUSE_CLASS, reusesProductDataService } from "../foundry/product-isolat
 import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
 import { verifiedFoundryDatabaseUrl } from "../foundry/pg-tls.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
+import { receiveServingRuntime, servingRuntimeFailure } from "../foundry/serving-runtime.mjs";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
 export const MOUNTED_PG_SCHEMA = "pilot_correspondence";
@@ -119,6 +120,9 @@ export function mountCorrespondence(app, options = {}) {
     entryReuseMount: null,
   };
   const disabled = disabledRouter(state);
+  // Shared by initial enable and the existing bounded store retry. Publication
+  // receiving runs once for this HTTP mount, never from a request or owner pass.
+  let runtimeReceiving;
 
   async function tryEnable() {
     const inspected = inspectCorrespondenceEnv(env);
@@ -144,6 +148,14 @@ export function mountCorrespondence(app, options = {}) {
     state.lastAttempt = now();
     let mounted = null;
     try {
+      if (inspected.foundryOptIn && !options.createEntryReuseMount) {
+        runtimeReceiving ||= receiveServingRuntime();
+        try { state.runtimePublication = await runtimeReceiving; }
+        catch (error) {
+          console.error("foundry_runtime_startup_refused", servingRuntimeFailure(error));
+          throw error;
+        }
+      }
       const service = loadService
         ? await loadService()
         : await import("@neomorphic/correspondence");

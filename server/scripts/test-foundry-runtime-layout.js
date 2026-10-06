@@ -10,6 +10,7 @@ import pg from 'pg';
 import {runBounded} from '../foundry/bounded-child.mjs';
 import {materializeReferenceRuntime,CPYTHON_SHA256,WHEEL_SHA256,download,WHEEL_URL} from '../foundry/materialize-runtime.mjs';
 import {runtimeContentIdentity,verifyOfflineRuntime,auditOfflineTree,publishRuntimeModes} from '../foundry/runtime-layout.mjs';
+import {PUBLICATION_CONTENT,servingRuntimeFailure} from '../foundry/serving-runtime.mjs';
 import {withoutHostUtilities,npmCli} from '../foundry/activation/receiving-100502/namespace.mjs';
 import {verifyFoundrySource} from './fixtures/verify-foundry-source.mjs';
 import {startDisposablePg} from './fixtures/disposable-pg.mjs';
@@ -66,6 +67,7 @@ const pinsOptions={archiveSha256:CPYTHON_SHA256,wheelSha256:WHEEL_SHA256};
 test('managed build with no system Python/prlimit packs the exact accepted runtime with no links',async()=>{
  assert.deepEqual(legacyPins,packedPins);assert.equal((await lstat(path.join(packed,'bin/python'))).isFile(),true);
  const audit=await auditOfflineTree(packed);assert.ok(audit.files>1000);assert.ok(audit.bytes<256*1024*1024);
+ assert.deepEqual(await runtimeContentIdentity(packed),PUBLICATION_CONTENT);
  assert.deepEqual(await verifyOfflineRuntime(packed,pinsOptions),{layout:'self-contained-regular-v1',deployable:true});
  evidence.cases.push({case:'missing-utilities-build',pinsEqual:true,runtimePin:packedPins.runtimePin,...audit});
 });
@@ -112,6 +114,18 @@ test('actual accepted producer with umask077 is build-readable but not independe
  for(const f of ['pyvenv.cfg','runtime-layout.json','lib/python3.12/site-packages/wasmtime/__init__.py'])assert.equal((await lstat(path.join(controlled,f))).mode&0o777,0o644);
  for(const f of ['bin/python','bin/python3','bin/python3.12'])assert.equal((await lstat(path.join(controlled,f))).mode&0o777,0o755);
  evidence.cases.push({case:'umask077-producer',acceptedProducer:'7ee8130190042222ea795f102c147edbbd013c5a',beforeMode:384,afterMode:420,contentPreserved:true,actualProviderCause:false});
+});
+test('normal serving refuses a read-only mode transition with closed EROFS evidence, preserves bytes/private modes and drains',async()=>{
+ const readonly=path.join(dir,'readonly-runtime');await cp(packed,readonly,{recursive:true});
+ for(const name of ['python','python3','python3.12'])await chmod(path.join(readonly,'bin',name),0o644);
+ const r=await withoutHostUtilities(['server/scripts/fixtures/serving-runtime-readonly.mjs',readonly],{timeoutMs:30000});
+ assert.equal(r.reason,null);assert.equal(r.code,0,r.stdout);const v=JSON.parse(r.stdout.trim());
+ assert.deepEqual(v.failure,{code:'runtime_startup_denied',nativeCode:'EROFS',resource:'runtime_publication'});
+ assert.equal(v.productStatus,200);assert.equal(v.foundryEnabled,false);assert.equal(v.exitedDrained,true);
+ assert.deepEqual(await runtimeContentIdentity(readonly),PUBLICATION_CONTENT);
+ for(const name of ['python','python3','python3.12'])assert.equal((await lstat(path.join(readonly,'bin',name))).mode&0o777,0o644);
+ assert.deepEqual(servingRuntimeFailure({code:sentinel,message:sentinel,path:sentinel}),{code:'runtime_startup_denied',nativeCode:null,resource:'runtime_publication'});
+ evidence.cases.push({case:'normal-serving-readonly',...v});
 });
 async function fixture(){
  const db=`layout_${randomUUID().replaceAll('-','')}`;await admin.query(`CREATE DATABASE "${db}"`);
@@ -164,9 +178,9 @@ test('copied normal production serving retains original pending A, then same-att
  const projectId=registered.body.projectId,retained=await f.retained(),counts=await f.counts();assert.deepEqual(counts,{charged:1,registrations:1,admissions:1,pools:0,attempts:0});
  const diag=async expected=>{const v=await f.pass(f.request(projectId)),p=v.readback.entry.progress.phases.find(p=>p.phase==='recover');assert.equal(v.mutated,false);assert.equal(v.readback.outstandingPhysical,0);assert.equal(v.readback.entry.poolReady,false);for(const[k,x]of Object.entries(expected))assert.equal(p[k],x);assert.doesNotMatch(JSON.stringify(v),/PRIVATE_PROSE_SENTINEL_100508|"path"|"message"|\/tmp\//);return p;};
  const broken=await diag({code:'filesystem_missing',resource:'interpreter',interpreterEntry:'unreachable_external_absolute_link'});
- const runtime=path.join(delivery,execution,'.runtime');await rm(runtime,{recursive:true});await f.restart();assert.equal((await a.run('reconcile')).status,202);
+ const runtime=path.join(delivery,execution,'.runtime');await rm(runtime,{recursive:true});assert.equal((await a.run('reconcile')).status,202);
  const missing=await diag({code:'filesystem_missing',resource:'runtime_config',interpreterEntry:null});
- await cp(packed,runtime,{recursive:true});await rm(path.join(runtime,'bin/python'));await f.restart();assert.equal((await a.run('reconcile')).status,202);
+ await cp(packed,runtime,{recursive:true});await rm(path.join(runtime,'bin/python'));assert.equal((await a.run('reconcile')).status,202);
  const missingEntry=await diag({code:'filesystem_missing',resource:'interpreter',interpreterEntry:'missing_entry'});
  await cp(path.join(packed,'bin/python'),path.join(runtime,'bin/python'));await rm(path.join(delivery,execution,'.python-standalone'),{recursive:true});await f.restart();
  const progressed=await Promise.all([a.run('reconcile'),a.run('reconcile')]);for(const r of progressed){assert.equal(r.status,200);assert.equal(r.body.projectId,projectId);assert.equal(r.body.registrationId,registered.body.registrationId);assert.equal(r.body.receiver.state,'ready');}
@@ -232,7 +246,7 @@ test('copied normal production serving retains original pending A, then same-att
  evidence.cases.push({case:'archived-serving',buildRemoved:true,noCheckoutLinks:true,broken,missing,missingEntry,pinsEqual:true,sameAttemptReady:true,originalAuthorityRetained:true,privateCorrespondenceRetained:true,grantsAndHistoryRetained:true,installerReplayUnchanged:true,concurrentRecoveries:2,verificationRenewed:false,evidenceGenerations:[1,2,3],expiredOriginalRefused:true,currentEvidenceRemeasured:true,manifestLineageRetained:true,laterVisitorAfterEvidenceExpiry:true,validationChargedUnits:12000,candidateId,invocations:6,chargedAInvocations:4,terminationExitedDrained:true,noLaunchControl:{code:'spawn_permission',actualProviderCause:false,originalIntentRetained:true,priorChargedObservationRetained:true,explicitOwnerReceiving:true,chargedBefore:1,chargedAfter:2,continuedAfterHttpRestart:true}});
  await f.server.stop();
 });
-test('relocated normal HTTP serving under a different uid/gid refuses inaccessible publication without charging, then executes exact A/restart/B', {timeout:180000},async()=>{
+test('mode-stripped relocated normal startup as its unprivileged owner repairs once, refuses unsafe receiving, then executes exact A/restart/B', {timeout:180000},async()=>{
  // The preceding test produced a copied managed delivery and removed its build.
  assert.equal(process.getuid(),1000);await chmod(dir,0o755);
  const node=path.join(dir,'node');await cp(process.execPath,node);await chmod(node,0o755);
@@ -261,7 +275,36 @@ test('relocated normal HTTP serving under a different uid/gid refuses inaccessib
   let stopped=false;current={port:v.port,origin:`http://127.0.0.1:${v.port}`,async stop(){if(stopped)return;stopped=true;child.kill('SIGTERM');const timer=setTimeout(()=>child.kill('SIGKILL'),8000);const [code,signal]=await closed;clearTimeout(timer);assert.equal(code,0);assert.equal(signal,null);assert.equal(JSON.parse(out.trim().split('\n').at(-1)).gone,true);servers.delete(current);}};servers.add(current);
   assert.equal((await fetch(current.origin+'/api/health')).status,200);return current;
  }
- const runtime=path.join(delivery,execution,'.runtime');await publishRuntimeModes(runtime);await boot();
+ const runtime=path.join(delivery,execution,'.runtime');await publishRuntimeModes(runtime);
+ const interpreter=path.join(runtime,'bin/python'),aliases=['python','python3','python3.12'];
+ // Delivery happened AFTER the build/probe. The actual serving owner is a
+ // distinct unprivileged uid, and publication stripped executable bits.
+ for(const alias of aliases){const file=path.join(runtime,'bin',alias);await chmod(file,0o644);await bounded('sudo',['-n','chown','65534:65534',file]);}
+ const privateModes=async()=>{const r=await bounded('sudo',['-n',node,'--input-type=module','-e',`import {lstat} from 'node:fs/promises';console.log(JSON.stringify(await Promise.all(['host.json','key'].map(async name=>{const s=await lstat(${JSON.stringify(privateDir)}+'/'+name);return {name,mode:s.mode&0o777,uid:s.uid};}))));`]);return JSON.parse(r.stdout.trim());};
+ const privateBefore=await privateModes();assert.ok(privateBefore.every(x=>x.mode===0o600&&x.uid===65534));
+ const ordinaryFile=path.join(runtime,'pyvenv.cfg'),ordinaryBefore=await lstat(ordinaryFile);
+ async function startupRefusal(mutator,restore){
+  await mutator();await boot();
+  const health=await(await fetch(current.origin+'/api/correspondence/healthz')).json();assert.equal(health.ok,false);assert.equal(health.reason,'store_unavailable');
+  assert.equal((await fetch(current.origin+'/api/correspondence/v1/visitor-entry')).status,503);
+  await current.stop();await restore();
+ }
+ const bytes=await readFile(interpreter),manifestFile=path.join(runtime,'runtime-layout.json'),manifest=await readFile(manifestFile);
+ async function replaceOwned(data){await bounded('sudo',['-n','chown','1000:1000',interpreter]);await writeFile(interpreter,data);await bounded('sudo',['-n','chown','65534:65534',interpreter]);}
+ await startupRefusal(()=>replaceOwned(Buffer.concat([bytes,Buffer.from('changed')])),()=>replaceOwned(bytes));
+ await startupRefusal(()=>writeFile(manifestFile,JSON.stringify({...JSON.parse(manifest),archiveSha256:'0'.repeat(64)})),()=>writeFile(manifestFile,manifest));
+ const native=path.join(runtime,'lib/python3.12/site-packages/wasmtime/linux-x86_64/_libwasmtime.so'),nativeBytes=await readFile(native);
+ // A self-consistent edited certificate cannot authorize different pinned bytes.
+ await startupRefusal(async()=>{await appendFile(native,'changed');await writeFile(manifestFile,JSON.stringify({...JSON.parse(manifest),content:await runtimeContentIdentity(runtime)}));},async()=>{await writeFile(native,nativeBytes);await writeFile(manifestFile,manifest);});
+ await startupRefusal(async()=>{await rm(interpreter);await symlink(path.join(packed,'bin/python'),interpreter);},async()=>{await rm(interpreter);await writeFile(interpreter,bytes,{mode:0o644});await bounded('sudo',['-n','chown','65534:65534',interpreter]);});
+ await startupRefusal(async()=>{await rm(interpreter);await mkdir(interpreter);},async()=>{await rm(interpreter,{recursive:true});await writeFile(interpreter,bytes,{mode:0o644});await bounded('sudo',['-n','chown','65534:65534',interpreter]);});
+ await startupRefusal(()=>bounded('sudo',['-n','chown','1000:1000',interpreter]),()=>bounded('sudo',['-n','chown','65534:65534',interpreter]));
+ for(const alias of aliases)assert.equal((await lstat(path.join(runtime,'bin',alias))).mode&0o777,0o644);
+ await boot();assert.equal((await fetch(current.origin+'/api/correspondence/v1/visitor-entry')).status,200);
+ for(const alias of aliases)assert.equal((await lstat(path.join(runtime,'bin',alias))).mode&0o777,0o755);
+ assert.deepEqual(await pins(delivery),packedPins);
+ assert.deepEqual(await privateModes(),privateBefore);
+ assert.equal((await lstat(ordinaryFile)).mode,ordinaryBefore.mode);assert.equal((await lstat(ordinaryFile)).ctimeMs,ordinaryBefore.ctimeMs);
  async function visitor(name){const descriptor=await(await fetch(current.origin+'/api/correspondence/v1/visitor-entry')).json(),file=path.join(callerDir,name+'.json');
   await writeFile(file,JSON.stringify({baseUrl:current.origin+'/api/correspondence',directory:path.join(callerDir,name),authority:{profileId:descriptor.profile.profileId,entryTerms:descriptor.profile.termsHash,contributionTerms:descriptor.profile.contribution.binding.contributionTerms,scope:'synthetic-reusable-components'}}),{mode:0o600});
   const run=async(mode,input,exit=0)=>{const inputFile=path.join(callerDir,randomUUID()+'.json');if(input!==undefined)await writeFile(inputFile,JSON.stringify(input),{mode:0o600});return command(['scripts/visitor-foundry/integration/entry/visitor.mjs',mode,file,...(input===undefined?[]:[inputFile]),'--json-result'],{cwd:path.join(delivery,vendor),exit});};
@@ -275,16 +318,31 @@ test('relocated normal HTTP serving under a different uid/gid refuses inaccessib
  const ownerFile=path.join(privateDir,'owner-fixture.mjs');await bounded('sudo',['-n',node,'--input-type=module','-e',`import {writeFile} from 'node:fs/promises';await writeFile(${JSON.stringify(ownerFile)},${JSON.stringify("Object.assign(process.env,"+JSON.stringify(env)+");await (await import("+JSON.stringify('file://'+path.join(delivery,'server/foundry/private-pass.mjs'))+")).privatePassMain();")},{mode:0o600});`]);
  const pass=async r=>{const file=path.join(callerDir,'operator.json');await writeFile(file,JSON.stringify(r),{mode:0o600});const result=await bounded('sudo',['-n',node,'--input-type=module','-e',`import {readFile} from 'node:fs/promises';process.env.FOUNDRY_PRIVATE_PASS_JSON=await readFile(${JSON.stringify(file)},'utf8');await import(${JSON.stringify('file://'+ownerFile)});`],{cwd:delivery});return JSON.parse(result.stdout.trim());};
  const accepted=await pass(dispatch);assert.equal(accepted.readback.publications[0].state,'published');
- const request=task(cases[0].input,'task:identity-useful'),interpreter=path.join(runtime,'bin/python');
- await chmod(interpreter,0o744);const negative=await a.run('use',request,1);assert.equal(negative.error.code,'invocation_launch_unavailable');
- let facts=await a.run('status');assert.equal(facts.portableExecution.chargedInvocations,0);assert.equal(facts.portableExecution.servingLaunchResources.effectiveUid,65534);assert.equal(facts.portableExecution.servingLaunchResources.effectiveGid,65534);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.identityRole,'other');assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.mode,0o744);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.execute.code,'EACCES');
- await chmod(interpreter,0o755);
+ const request=task(cases[0].input,'task:identity-useful');
+ // A later permission change is not repaired by requests or SQL retries.
+ await bounded('sudo',['-n','chmod','644',interpreter]);const negative=await a.run('use',request,1);assert.equal(negative.error.code,'invocation_launch_unavailable');
+ let facts=await a.run('status');assert.equal(facts.portableExecution.chargedInvocations,0);assert.equal(facts.portableExecution.servingLaunchResources.effectiveUid,65534);assert.equal(facts.portableExecution.servingLaunchResources.effectiveGid,65534);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.identityRole,'owner');assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.mode,0o644);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.execute.code,'EACCES');
+ const invocationFile=path.join(callerDir,'a',(await readdir(path.join(callerDir,'a'))).find(x=>x.startsWith('invoke-')&&!x.startsWith('invoke-continuation-'))),savedIntent=await readFile(invocationFile);
+ const samePort=current.port,mountFile=path.join(delivery,'server/lib/correspondence-mount.js'),receivedMount=await readFile(mountFile);
+ await current.stop();
+ // Exact accepted normal-entry owner, before this startup correction. A passed
+ // build and publication cannot heal the deployed 0644 interpreter at HTTP boot.
+ const priorMount=(await bounded('git',['show','18206aff60febe13fcabe37e77a6b44946ce3254:server/lib/correspondence-mount.js'])).stdout;
+ await writeFile(mountFile,priorMount);await boot(samePort);
+ assert.equal((await a.run('use',request,1)).error.code,'invocation_launch_unavailable');
+ facts=await a.run('status');assert.equal(facts.portableExecution.chargedInvocations,0);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.mode,0o644);assert.equal(facts.portableExecution.servingLaunchResources.roles.interpreter.execute.code,'EACCES');
+ await current.stop();await writeFile(mountFile,receivedMount);await boot(samePort);await a.run('status');
+ assert.equal((await lstat(interpreter)).mode&0o777,0o755);assert.deepEqual(await readFile(invocationFile),savedIntent);
  for(const c of [cases[0],cases[1],cases[3]])assert.deepEqual((await a.run('use',c===cases[0]?request:task(c.input))).invocation.output,c.expected);
- const port=current.port;await current.stop();await boot(port);const b=await visitor('b');
+ const executableTimes=await Promise.all(aliases.map(async name=>(await lstat(path.join(runtime,'bin',name))).ctimeMs));
+ const port=current.port;await current.stop();await boot(port);
+ assert.deepEqual(await Promise.all(aliases.map(async name=>(await lstat(path.join(runtime,'bin',name))).ctimeMs)),executableTimes);
+ const b=await visitor('b');
  for(const c of [cases[0],cases[1],cases[3]])assert.deepEqual((await b.run('use',task(c.input))).invocation.output,c.expected);
  for(const v of[a,b]){const view=await v.run('status');assert.equal(view.portableExecution.chargedInvocations,3);for(const i of view.portableExecution.invocations){assert.equal(i.termination.exited,true);assert.equal(i.termination.drained,true);assert.equal(i.termination.code,0);}}
  assert.deepEqual(await pins(delivery),packedPins);await current.stop();
- evidence.cases.push({case:'different-build-serve-identity',buildUid:1000,serveUid:65534,serveGid:65534,relocated:true,prelaunchErrno:'EACCES',prelaunchCharged:0,invocations:6,restart:true,allExitedDrained:true,actualProviderCause:false});
+ for(const alias of aliases)await bounded('sudo',['-n','chown','1000:1000',path.join(runtime,'bin',alias)]);
+ evidence.cases.push({case:'post-publication-serving-receiving',buildUid:1000,serveUid:65534,serveGid:65534,relocated:true,beforeMode:0o644,afterMode:0o755,unsafeStartupRefusals:6,privateModesRetained:true,ordinaryFileUntouched:true,restartNoRepeatedChmod:true,prelaunchErrno:'EACCES',prelaunchCharged:0,acceptedStartupControl:{base:'18206aff60febe13fcabe37e77a6b44946ce3254',code:'invocation_launch_unavailable',charged:0,mode:0o644},savedIntentUnchanged:true,invocations:6,restart:true,allExitedDrained:true,actualHost:false});
 });
 test('closed private metadata evidence excludes error prose/paths and never traverses an external link',async()=>{
  const file=path.join(delivery,execution,'.runtime/bin/python'),mod=path.join(delivery,vendor,'scripts/visitor-foundry/entry/src/progress.mjs');

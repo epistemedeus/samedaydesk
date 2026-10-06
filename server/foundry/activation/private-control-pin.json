@@ -1,10 +1,11 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "7ee8130190042222ea795f102c147edbbd013c5a",
+  "base": "18206aff60febe13fcabe37e77a6b44946ce3254",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
     "package.json": "4bfc1aeaf92d814f93817f6629d8c62058250981e4fcc79cdbc7159a5cbff0b0",
+    "server/app.js": "3b9e8e2e04a4d645a53199469a46bdae21aa5154434b1dadbf04aa44b34d4c96",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "24cd64e977f624c8ab43e1d452bc5f25caea18ef4d51d06b5d3f4227d8da4742",
@@ -18,9 +19,11 @@
     "server/foundry/private-pass.mjs": "b4d658563af0a7d150fa07b62975a08cae8f95e0f3023321d4c6a0e8c7ba97f0",
     "server/foundry/private-paths.js": "df6f1a58cecd5a5797ab6e8df82b4a80c682f19059cd12c7e55891f80cb685d8",
     "server/foundry/product-isolation.js": "987781df8bada18c51e0b5d5cf92e215f24590631261768d12232a60532b1527",
-    "server/foundry/runtime-layout.mjs": "8b013df2e04bf4ea77d5005282438626a907e7f377ea5fb7598908b3590f530d",
+    "server/foundry/runtime-layout.mjs": "2bee71a837f7da6cd266553b3bc96abdc98c64826c9ed25a0ddf3c710c1573b8",
+    "server/foundry/serving-runtime.mjs": "4e633192712ec531cbc26246518a5309fbc873ba14e02f946d0b27d81ec4a36f",
+    "server/index.js": "2f551dcb3b546f72d23327c727e298602cb8d2d26b2a43ceda6da13685218ede",
+    "server/lib/correspondence-mount.js": "a55118f1a89a2033eceb69b7dbd8c8fd5b70eeea830174fc0fb44f3c160948a5",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
-    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/constants.mjs": "0964cf26451a1844ff2119f0e42840981fc4fa39e8a6ea6870b7e5045cb0b884",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/probes.mjs": "85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/trust.mjs": "623ae4bdbc43cb38c8cc5989bea2e15b0423575e5a2f3c1dc3a20482651dd1e1",
@@ -61,10 +64,10 @@
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.gitignore": "fa5fd4f84df5706fe4353ca28138f683caf163a611e31aa01ecf41d0f9ac5d20",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/cli.mjs": "acd095ab024cc4a15f5e9be111e89bfaf38b178226a1c683d8247c77b49e768f",
-    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/LICENSE": "666ddfed2086ffba2713729245f7267792116cc7a4bcaa543e276a908f24c021",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/build.mjs": "0c0aba1bf4217b3981641ddbcd73c10f072e1a443df48f7c462eb82b0db0145d",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/heldouts.json": "1ac05457df201424948e4c8f614a529849507f9b7bdf5a82772c3db3567f4e30",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/journey.mjs": "423cd884e0590e12c76a86bb995e4f461ec9465dfdf87858cf3a8464e5d0ee81",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/LICENSE": "666ddfed2086ffba2713729245f7267792116cc7a4bcaa543e276a908f24c021",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/package.mjs": "34404d51ed25761b69419e67c381f0652bb19bfa1a645a5085b787e8beb919e5",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/structured-result.c": "e278017956465f0665dceb138ea1e666591ded14b4a7cda36bd6f2e0995f8114",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/package.json": "4d75b70c57a60c5be8aff726578fde0e77327220a05a67b03eda5d39d6dd8a57",
@@ -223,7 +226,8 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/index.ts": "2e39111e4dfd57bb4beed23a6fa8ab252f932c734dc489be832f47284fe07dc7",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/router.ts": "b6abf1f5f97d42df796b702ab28dbd492c90ce3e9181eb6104cd6c891f688681",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
-    "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26"
+    "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08"
   },
   "receivedCallerClosures": [
     {
@@ -245,6 +249,11 @@
       "base": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
       "sourcePinSha256": "aae0fabc68814bc83b7b17f246d06d52e9c0741a9b76d64e7fa25e9a0c02d53f",
       "closureDigest": "sha256:f22a99ccfc482e317bbf862d63b48789072273690697f11c6a4c7d2dac3f0b18"
+    },
+    {
+      "base": "7ee8130190042222ea795f102c147edbbd013c5a",
+      "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+      "closureDigest": "sha256:58ba1de0fd5384b90a06aa139d95e6a070a87664eda6c7ef732bd705b575116e"
     }
   ]
 }
