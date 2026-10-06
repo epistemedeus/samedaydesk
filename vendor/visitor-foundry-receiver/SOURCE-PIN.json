@@ -304,6 +304,17 @@
           "sha256": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb"
         }
       }
+    },
+    {
+      "package": "ROOT-SOL-HOST-INSTALL-CONCURRENCY-100520",
+      "sdsBase": "6e901035597bfa46ece12de072a7ae3880703da8",
+      "reason": "Replay entry migrations take the strongest existing installation table lock before registrations, matching canonical allocation receiving lock order. Removes independently reproduced 40P01 DDL/receiving deadlock without retries, longer budgets, changed SQL/history/authority, session locks or runtime/execution changes. Fresh schema creation retains the existing transaction-scoped migration advisory lock.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/store.mjs": {
+          "receivedSha256": "378308f5aa80bda968fcae7617aeb047afd4bffbd59f9b1998947d6f50a7a30a",
+          "sha256": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1"
+        }
+      }
     }
   ]
 }

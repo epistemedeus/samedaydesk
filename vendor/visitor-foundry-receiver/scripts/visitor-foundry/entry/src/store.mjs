@@ -36,6 +36,12 @@ export class EntryStore {
     const sql = (await Promise.all(['001_entry.sql','002_versioned_profile.sql'].map(name=>readFile(new URL(`../migrations/${name}`,import.meta.url),'utf8')))).join('\n');
     await this.tx(async c => {
       await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [`vf10:migrate:${this.schema}`]);
+      // Receiving locks installation before reading registrations. Replayed DDL
+      // must take its strongest installation lock first too: 001 otherwise locks
+      // registrations before 002 upgrades installation, forming a deadlock with
+      // a concurrent receive. Fresh creation remains under the migration lock.
+      const existing = (await c.query('SELECT to_regclass($1) AS installation', [`${this.schema}.correspondence_vf10_installation`])).rows[0].installation;
+      if (existing) await c.query('LOCK TABLE correspondence_vf10_installation IN ACCESS EXCLUSIVE MODE');
       await c.query(sql);
     });
   }

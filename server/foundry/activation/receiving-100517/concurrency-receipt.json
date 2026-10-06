@@ -1,0 +1,324 @@
+{
+  "schema": "sds.foundry.concurrent-installer-receiving.v1",
+  "nativeSession": "01a10c36-95c6-7d81-ba6c-edd7587eb57f",
+  "branch": "codex/sol-host-lifecycle-100517",
+  "pr": 285,
+  "base": "6e901035597bfa46ece12de072a7ae3880703da8",
+  "retainedLifecycleSource": "e82ef4be220db3b145e592650f1d3ea6d5075f17",
+  "exportHead": "git rev-parse HEAD on pushed PR285; exact head also in PR/final receipt",
+  "actualHostMeasured": false,
+  "productionSqlOrHostingOperations": false,
+  "productionCredentialRead": false,
+  "cause": {
+    "code": "40P01",
+    "phase": "entry_migration",
+    "oldOrder": "registrations AccessExclusive then installation AccessExclusive upgrade",
+    "receivingOrder": "installation then registrations count",
+    "repair": "existing installation strongest table lock before both original migration files, same transaction",
+    "retries": 0,
+    "budgetChanges": false,
+    "migrationSqlChanges": false,
+    "runtimeChanges": false
+  },
+  "tests": [
+    {
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/sol-100520-generation-final.json /exec-daemon/node --test --test-concurrency=1 server/scripts/test-foundry-generation.js",
+      "node": "/exec-daemon/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-generation-final.log",
+      "logSha256": "9c6dac8d15d244888f2bd341b87c0589f597740ce0801723f4c5ebdb3ae4affa",
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-private-pass",
+      "node": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-private-pass-final.log",
+      "logSha256": "51e3d2fee1441a230bb0c3eb5f3fb123ebc7e8d98c67e506b87ab6b71af9ddf5",
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js server/scripts/test-managed-platform.js server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js server/scripts/test-foundry-activation.js server/scripts/test-foundry-client-compat.js server/scripts/test-foundry-entry-server.js server/scripts/test-foundry-claimed-sigterm.js server/scripts/test-foundry-drain.js server/scripts/test-foundry-entry-reservation.js server/scripts/test-foundry-runtime-progress.js server/scripts/test-proxy-addr-patch.js",
+      "node": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-serving-final.log",
+      "logSha256": "12033f0b9728912c6412fe85812900585c45532282abe40f0d64de8b1ad745e4",
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH FOUNDRY_RUNTIME_LAYOUT_RECEIPT=/tmp/sol-100520-cold-final.json npm run test:foundry-runtime-layout",
+      "node": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-cold-final.log",
+      "logSha256": "c13e92821a3199ce38528d5f9d43ab829895264ad1148d8a8f70d774299d75f4",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm run test:foundry-contribution-transport",
+      "node": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-wire-final.log",
+      "logSha256": "4e77af10b6e0aa21c76e10d6a7c17a228de2c9d26185d83b2cef39db36ccaec0",
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "focusedTotal": {
+    "pass": 215,
+    "fail": 0,
+    "skip": 0,
+    "cancel": 0
+  },
+  "installation": {
+    "command": "PATH=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin:$PATH npm ci",
+    "node": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+    "exit": 0,
+    "log": "/tmp/sol-100520-npm-ci.log",
+    "logSha256": "7e3fbdc2db3d5dcd78dd22225bced5c0aa97e63fa6aa5d048b27c2448a34ea70"
+  },
+  "nodes": [
+    {
+      "path": "/exec-daemon/node",
+      "version": "v22.14.0",
+      "sha256": "1abce2374a485bddae3c27b17a3e3143e2780232026e627c4fe74ddde3f380a1"
+    },
+    {
+      "path": "/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node",
+      "version": "v22.18.0",
+      "sha256": "ccacb2d6d87ba6d118b2bffc1ae33747a05cc5fc6b1f1ec4fc1d420b687e952d"
+    }
+  ],
+  "repeatedConcurrent": {
+    "runs": [
+      {
+        "command": "FOUNDRY_CONCURRENT_ITERATIONS=50 FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node /exec-daemon/node --test --test-concurrency=1 --test-name-pattern='unconsumed transition preserves' server/scripts/test-foundry-generation.js",
+        "node": "/exec-daemon/node",
+        "exit": 0,
+        "log": "/tmp/sol-100520-concurrent-fixed-50.log",
+        "logSha256": "415bfb0ace52193c9217565a22a79a80242438bc626cd3ff82680e374459a1ca",
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "command": "FOUNDRY_CONCURRENT_ITERATIONS=50 FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node FOUNDRY_GENERATION_TEST_RECEIPT=/tmp/sol-100520-concurrent-final.json /exec-daemon/node --test --test-concurrency=1 --test-name-pattern='unconsumed transition preserves' server/scripts/test-foundry-generation.js",
+        "node": "/exec-daemon/node",
+        "exit": 0,
+        "log": "/tmp/sol-100520-concurrent-final.log",
+        "logSha256": "2bd835581f6cb9f95b53acc5ce896d7b84bbed157295766f986e9ee7964c201b",
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    ],
+    "freshPairsPerRun": 50,
+    "exactFalseTrueReceipt": true,
+    "retainedAuthorityChargeCaps": true,
+    "finalEvidenceSha256": "50c8283c0e5423b1113cf6484e9dba034fa154345e4ccda9c23076add55e58a0"
+  },
+  "forcedLockOrder": {
+    "observations": [
+      {
+        "forcedLockOrder": true,
+        "corrected": false,
+        "locks": {
+          "installationWait": true,
+          "registrationsHeld": true
+        },
+        "outcomes": [
+          {
+            "ok": true,
+            "receipt": {
+              "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+              "replayed": false,
+              "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+              "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+              "charged": 0
+            }
+          },
+          {
+            "ok": false,
+            "code": "40P01"
+          }
+        ]
+      },
+      {
+        "forcedLockOrder": true,
+        "corrected": true,
+        "locks": {
+          "installationWait": true,
+          "registrationsHeld": false
+        },
+        "outcomes": [
+          {
+            "ok": true,
+            "receipt": {
+              "id": "sha256:9db74d6a0b3e20255232f70c1ff773f82cc1eafbcdfaa4f12cda0caba39cc569",
+              "replayed": false,
+              "hostConfigId": "sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00",
+              "entryTermsHash": "sha256:adcde1a2493a1e98936bd2108c108a9ca4c1e449b3562b12fce6ab07bf57a169",
+              "charged": 0
+            }
+          },
+          {
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "finalRun": {
+      "command": "FOUNDRY_TEST_NODE_2218=/tmp/root-sol-100503/node-v22.18.0-linux-x64/bin/node /exec-daemon/node --test --test-concurrency=1 --test-name-pattern='forced owning' server/scripts/test-foundry-generation.js",
+      "node": "/exec-daemon/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-forced-final.log",
+      "logSha256": "e3e91050628518abed1e65c0d2a60e41381f5e6bd9e4563f45d90b42463e4a94",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  },
+  "retainedNegativeLogs": [
+    {
+      "command": "Root independent run:213 of214, concurrent exit1; stderr discarded, exact failure code unrecorded",
+      "node": null,
+      "exit": 1,
+      "log": "/tmp/root-host100520-generation.log",
+      "logSha256": "010453907677bff95b59fe46803139a5fe3b6563061bb37fa3b3dc0f94eddb88",
+      "tests": 19,
+      "pass": 18,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "Root diagnostic hook incorrectly assumed bounded stderr; not an additional lifecycle source verdict",
+      "node": null,
+      "exit": 1,
+      "log": "/tmp/root-host100520-concurrent-diag.log",
+      "logSha256": "ba1d22a47d344fb4780688ebea7939b99751914de74d04897b9aaf5f53dc7d20",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "Independent requested50 fresh pairs stopped on40P01; no retry",
+      "node": null,
+      "exit": 1,
+      "log": "/tmp/sol-100520-concurrent-stress-control.log",
+      "logSha256": "c6c949a891d0bebd144db1c69889974cd3b9ba5f2da0e1fb34fdcb50c2c5d922",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "Independent requested50 fresh pairs stopped on40P01/entry_migration; no retry",
+      "node": null,
+      "exit": 1,
+      "log": "/tmp/sol-100520-concurrent-phase-control.log",
+      "logSha256": "dc13f2fb6b857b2ef6bf5bc20c676f611ef95019c04b42f568098c56c7f32f18",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "command": "Builder mistakenly overlapped npm ci; module-loading failure before controls",
+      "node": null,
+      "exit": 1,
+      "log": "/tmp/sol-100520-generation-fixed.log",
+      "logSha256": "5241055bce3e040e86a99e1d80a5eecef948ac7022727e05083fed66318578a1",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "preservedOriginalReceiptSha256": "eda989c376372bf10c72897371448b8446a5225df1ee50e842e58e54f6a747a5",
+  "initialPassingControls": {
+    "pairs": 12,
+    "fullGeneration": {
+      "command": "Initial distinct-Node generation with fixture diagnostic, before lock repair",
+      "node": "/exec-daemon/node",
+      "exit": 0,
+      "log": "/tmp/sol-100520-generation-control.log",
+      "logSha256": "2d61f99de1414bc469a3a96b27851987ac236f6f6ca29aba4b43d0d5a6ec1f83",
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "note": "Intermittent passing controls did not close the race"
+  },
+  "source": {
+    "files": {
+      "server/foundry/activation/private-control-pin.json": "2673499cf4f89d261a96ce1a9bd3f7b2f501009c6088275b3b85346c8d05ff63",
+      "server/scripts/fixtures/installer-code.mjs": "38594f984bc0b77766b3d803e6ee11cf0b780c87aab28d6cd16d9ccd344d69ac",
+      "server/scripts/fixtures/installer-interleaving.mjs": "0028a47228f82363514d0e86bfe333d36b205ad02dab3cefcf8474c9da72fe38",
+      "server/scripts/test-foundry-generation.js": "578ff58f3bafe72be0975d458b6e4fac02b3f46351de89713930a49c33b95adc",
+      "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "aae0fabc68814bc83b7b17f246d06d52e9c0741a9b76d64e7fa25e9a0c02d53f",
+      "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1"
+    },
+    "sourcePinSha256": "aae0fabc68814bc83b7b17f246d06d52e9c0741a9b76d64e7fa25e9a0c02d53f",
+    "controlClosure": "sha256:f22a99ccfc482e317bbf862d63b48789072273690697f11c6a4c7d2dac3f0b18",
+    "receivedCallerClosures": [
+      {
+        "base": "900c37b6383fa87efead3e56ae52d3973c7fb196",
+        "sourcePinSha256": "94ac47d5efc27afdffa0884bbfe4dadfb4f673565bf7cc7fd67520ba6bae0c17",
+        "closureDigest": "sha256:5a8b347e9daa9d3ee5e89279a4d8273cee9e21b634e5b2815777ce608ba74cc1"
+      },
+      {
+        "base": "a7d27d6478d53c43a9c8b69ed77213791d50ff98",
+        "sourcePinSha256": "9daeeed39d3cbf64fb0a05fe114f89c9469d7067b6a61d27609f892243cc1fd6",
+        "closureDigest": "sha256:94eebf0933507210ddf1b7a5a4b176eb34f738c5ac6a40bb3e09562c06c70026"
+      },
+      {
+        "base": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+        "sourcePinSha256": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+        "closureDigest": "sha256:a0a59e15ffae3c9a3b0658d6c3001d7adc4e6aff443a21d11c95fe34e58c0d20"
+      }
+    ],
+    "runtimePin": "sha256:f332a87cc95f2f02da587e654748e2da1449181c84c76150acafd60831a2d1b9"
+  },
+  "evidenceHashes": {
+    "/tmp/sol-100520-generation-final.json": "585a98cfc7e4b945688793a3b69cdfd7058191d9815d8fe8ed0243dde159505f",
+    "/tmp/sol-100520-cold-final.json": "2ba0421aba7e5a2bc355c928ff8cae4d6b51fa9b53b585709bf1684a9a1f51a7"
+  },
+  "remainingActualHostGates": [
+    "Root source receiving/ordinary deployment",
+    "original A explicit expiry revalidation, dispatch, v3 no-launch receiving and same-task invocation",
+    "actual HTTP restart and separate B canonical acquisition/use"
+  ],
+  "rootProcedure": "RESULT.md; original exact full binding/typed contracts retained in RESULT-e82ef4be.md; no production installer needed"
+}

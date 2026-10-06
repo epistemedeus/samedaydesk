@@ -20,7 +20,7 @@
     "server/foundry/product-isolation.js": "987781df8bada18c51e0b5d5cf92e215f24590631261768d12232a60532b1527",
     "server/foundry/runtime-layout.mjs": "9eec918bdc4c17099e7af944b5f03b860a7c00498bfdb556d18a174cd06686b2",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
-    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "aae0fabc68814bc83b7b17f246d06d52e9c0741a9b76d64e7fa25e9a0c02d53f",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/constants.mjs": "0964cf26451a1844ff2119f0e42840981fc4fa39e8a6ea6870b7e5045cb0b884",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/probes.mjs": "85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/trust.mjs": "623ae4bdbc43cb38c8cc5989bea2e15b0423575e5a2f3c1dc3a20482651dd1e1",
@@ -58,7 +58,7 @@
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/deps.mjs": "37bea5d3879b0ed0736a0f2064741afe2750f78f94f625ed9695a64ddeda12ed",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/mount.mjs": "e75cb6978bce6cd15333a595c7753c0db1868f2fce08b9a1780877121be20ca7",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs": "ac6285e3830ec17389ee32cc91910e9c9e199add5d8aeeda54e11d18b2e61cbe",
-    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "378308f5aa80bda968fcae7617aeb047afd4bffbd59f9b1998947d6f50a7a30a",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/store.mjs": "cede0e060bafabdea92b88b190025506cf51e86d59be43c2dc691b54100561a1",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/.gitignore": "fa5fd4f84df5706fe4353ca28138f683caf163a611e31aa01ecf41d0f9ac5d20",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/cli.mjs": "acd095ab024cc4a15f5e9be111e89bfaf38b178226a1c683d8247c77b49e768f",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/execution/example/LICENSE": "666ddfed2086ffba2713729245f7267792116cc7a4bcaa543e276a908f24c021",
@@ -235,6 +235,11 @@
       "base": "a7d27d6478d53c43a9c8b69ed77213791d50ff98",
       "sourcePinSha256": "9daeeed39d3cbf64fb0a05fe114f89c9469d7067b6a61d27609f892243cc1fd6",
       "closureDigest": "sha256:94eebf0933507210ddf1b7a5a4b176eb34f738c5ac6a40bb3e09562c06c70026"
+    },
+    {
+      "base": "7043e33a4f2aa2db1f1480eaf84a7de4cb836337",
+      "sourcePinSha256": "d4fe9783a263d10a68911081364839b844fb02db3f4262123b657f161c2bafc3",
+      "closureDigest": "sha256:a0a59e15ffae3c9a3b0658d6c3001d7adc4e6aff443a21d11c95fe34e58c0d20"
     }
   ]
 }
