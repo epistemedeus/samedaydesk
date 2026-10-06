@@ -1,6 +1,7 @@
 import {ParticipationSession} from '../../participation/src/session.mjs';
 import {vf04Port} from '../../participation/src/vf04-port.mjs';
 import {hash} from '../../capabilities/src/index.mjs';
+import {componentRequest} from '../src/portable-upload-wire.mjs';
 import {jsonCall,transportStage} from './transport.mjs';
 export function participationClient({baseUrl,projectId,token,identityKey,headers={},fetchImpl=globalThis.fetch,timeoutMs=20000}) {
  if(!/^[a-zA-Z0-9_-]{1,128}$/.test(projectId))throw new Error('invalid_project_id');
@@ -14,5 +15,7 @@ export function participationClient({baseUrl,projectId,token,identityKey,headers
  const host={read:({cellId})=>call(`participation/cells/${cellId}`)};
  for(const operation of ['create','claim','checkpoint','submit'])host[operation]=x=>call('participation',{...x,operation},x.requestId);
  const session=new ParticipationSession({identityKey,binding:{origin:baseUrl,tenantId:projectId,grantFingerprint:hash(token)},port:vf04Port(host),currentTerms:async()=>(await call('participation/terms')).id});
- return {session,call,metrics};
+ // Wire negotiation changes bytes on the network, never the durable logical intent/key.
+ const submitComponent=(intent,terms)=>call('components',componentRequest(intent.body,terms.componentTransport),intent.key);
+ return {session,call,submitComponent,metrics};
 }

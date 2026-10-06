@@ -45,7 +45,7 @@ export async function remoteJourney(stage,file,readbackFile) {
  const pin=verifyCallerClosure(),c=json(file);
  need(c.schema==='sds.foundry.remote-owner-qa.v1' && typeof c.directory==='string' && typeof c.baseUrl==='string'
   && /^sha256:[a-f0-9]{64}$/.test(c.expectedHostConfigId ?? '') && c.expectedEntryTermsHash===c.authority?.entryTerms,'caller_config_invalid');
- need(['a-contribute','a-reconcile','a-upload-canary','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
+ need(['a-contribute','a-reconcile','a-upload-canary','a-upload-full-canary','a-reconcile-upload','a-use','b-use','check'].includes(stage),'caller_arguments_invalid');
  // Canonical client verifies the explicit authority and canonical origin itself.
  const dir=c.directory;
  const aFile=seal(dir,'visitor-a.config.json',{baseUrl:c.baseUrl,directory:path.join(dir,'visitor-a'),authority:c.authority});
@@ -55,9 +55,9 @@ export async function remoteJourney(stage,file,readbackFile) {
     {cwd:vendor,env:{PATH:process.env.PATH || '',LANG:'C',LC_ALL:'C'},timeoutMs:60000,capture:true,stdoutLimit:1048576,outputLimit:2097152});
   const body=callerResult(result);privateTree(dir);return body;
  }
- if(['a-upload-canary','a-reconcile-upload'].includes(stage)) {
+ if(['a-upload-canary','a-upload-full-canary','a-reconcile-upload'].includes(stage)) {
   need(existsSync(path.join(dir,'visitor-a','attempt.json')),'caller_saved_attempt_required');
-  const result=await cli(stage==='a-upload-canary'?'upload-canary':'reconcile-upload',aFile);
+  const result=await cli(stage==='a-upload-canary'?'upload-canary':stage==='a-upload-full-canary'?'upload-full-canary':'reconcile-upload',aFile);
   return {ok:true,stage,...result,pin};
  }
  async function continueVisitor(config,name,{mustExist=false}={}) {
