@@ -1,10 +1,10 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "eaed1efef1c6b04fc0ba74bd55e25bf424964a34",
+  "base": "a7d27d6478d53c43a9c8b69ed77213791d50ff98",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
-    "package-lock.json": "a021a9fb31e8a11bbfe11799a02f9d3cb3747729b00ebd893a1ffa0b24d8b8e2",
-    "package.json": "8a3b9d893771852a8c536edee9d0b58008d9768dec0fedd636d7f351a6d48643",
+    "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
+    "package.json": "4bfc1aeaf92d814f93817f6629d8c62058250981e4fcc79cdbc7159a5cbff0b0",
     "server/foundry/activation/remote-private-journey.mjs": "087d13af356e582f40f372022a3b31ee3fb9807369daf89068e1cae0e8f27e0e",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "24cd64e977f624c8ab43e1d452bc5f25caea18ef4d51d06b5d3f4227d8da4742",
