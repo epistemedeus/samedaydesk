@@ -119,9 +119,11 @@ export async function openPgWatchStore({ databaseUrl, schema = IDENTIFIER }) {
         return { action, watch };
       });
     },
-    async listRunning() {
+    async listRunning(projectId = null) {
       const result = await pool.query(
-        `SELECT version, document FROM ${watchTable} WHERE document->>'status' = 'running'`,
+        `SELECT version, document FROM ${watchTable} WHERE document->>'status' = 'running'
+           AND ($1::text IS NULL OR project_id = $1)`,
+        [projectId],
       );
       return result.rows.map(rowWatch);
     },

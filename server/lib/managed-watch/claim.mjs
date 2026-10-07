@@ -57,7 +57,7 @@ export function markClaimed(watch, { nowIso, workerId, leaseMs }) {
     hostId: watchHostId(),
     pid: process.pid,
     operationId: `op_${randomBytes(12).toString("hex")}`,
-    until: new Date(Date.parse(nowIso) + leaseMs).toISOString(),
+    until: new Date(Date.parse(nowIso) + Math.max(leaseMs, (watch.budget.maxTimeMs || 0) + 5_000)).toISOString(),
     phase: "claimed",
   };
   watch.pending = {

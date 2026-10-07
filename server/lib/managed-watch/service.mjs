@@ -231,10 +231,11 @@ export function createManagedWatch({ store, now = () => new Date(), readSource =
     return row;
   }
 
-  async function recover(nowIso, deliveryMode) {
-    const running = await store.listRunning();
+  async function recover(nowIso, deliveryMode, projectId = null) {
+    const running = await store.listRunning(projectId);
     const rows = [];
     for (const watch of running) {
+      if (projectId != null && watch.projectId !== projectId) continue;
       if (leaseHeldElsewhere(watch.lease, nowIso, self)) continue;
       if (watch.pending?.phase === "fetched" && (watch.pending.document || watch.pending.failure)) {
         const row = await classify(watch, nowIso, deliveryMode, performance.now());
@@ -357,7 +358,7 @@ export function createManagedWatch({ store, now = () => new Date(), readSource =
     async runDue({ projectId = null, deliveryMode = "accepted", readSource: readOverride = null } = {}) {
       const started = performance.now();
       const nowIso = clock();
-      await recover(nowIso, deliveryMode);
+      await recover(nowIso, deliveryMode, projectId);
       const claimed = await store.claimDue({
         nowIso,
         workerId: self,

@@ -19,6 +19,7 @@ import { createManagedWatch } from "../lib/managed-watch/service.mjs";
 import { openFileWatchStore } from "../lib/managed-watch/store-file.mjs";
 import { openPgWatchStore } from "../lib/managed-watch/store-pg.mjs";
 import { WatchError } from "../lib/managed-watch/errors.mjs";
+import { markClaimed } from "../lib/managed-watch/claim.mjs";
 import { runDirectAlternative } from "../lib/managed-watch/direct-alternative.mjs";
 import { startDisposablePg } from "./fixtures/disposable-pg.mjs";
 
@@ -1407,4 +1408,74 @@ test("idle process enrollment reads the public snapshot once and a restarted cli
   assert.equal(retained.results.length, outcomes);
   assert.equal(retained.results.at(-1).outcome, row.outcome);
   assert.equal(retained.proposedManagedPrice, null);
+});
+
+test("refusal cleanup cannot extend the source deadline", { timeout: 5000 }, async () => {
+  await loadPinnedMonitor();
+  for (const kind of ["declared", "chunked", "redirect"]) {
+    let cancels = 0;
+    let transportSignal;
+    const cancel = () => { cancels += 1; return new Promise(() => {}); };
+    let guard;
+    const result = await Promise.race([
+      readPinnedSnapshot({
+        timeoutMs: 50,
+        maxBodyBytes: 4,
+        lookup: async () => [{ address: "1.1.1.1", family: 4 }],
+        fetchImpl: async (_url, options) => {
+          transportSignal = options.signal;
+          return {
+            status: kind === "redirect" ? 302 : 200,
+            headers: new Headers(kind === "declared" ? { "content-length": "1000" } : {}),
+            body: kind === "chunked"
+              ? { getReader: () => ({ read: async () => ({ done: false, value: new Uint8Array(5) }), cancel }) }
+              : { cancel },
+          };
+        },
+      }),
+      new Promise((resolve) => { guard = setTimeout(() => resolve({ rootGuardTimeout: true }), 1000); }),
+    ]).finally(() => clearTimeout(guard));
+    assert.equal(result.rootGuardTimeout, undefined, kind);
+    assert.equal(result.failure.code, kind === "redirect" ? "redirect_refused" : "body_limit", kind);
+    assert.equal(result.calls, 1, kind);
+    assert.equal(cancels, 1, kind);
+    assert.equal(transportSignal.aborted, true, kind);
+  }
+});
+
+test("granted due recovery stays in its project; the internal scheduler may recover all", async () => {
+  const writes = [];
+  const scopes = [];
+  const foreign = {
+    version: 1, projectId: "projectB", taskId: "foreign", status: "running",
+    lease: { workerId: "other", pid: 0, until: "2026-01-01T00:00:00Z", operationId: "foreign-op" },
+    pending: { phase: "reading", operationId: "foreign-op" },
+    costs: { sourceCalls: 0, unknownDeliveries: 0 }, results: [], cadenceMs: 60000,
+    expiresAt: "2027-01-01T00:00:00Z",
+  };
+  const store = {
+    listRunning: async (scope) => { scopes.push(scope); return [structuredClone(foreign)]; },
+    storageBytes: async () => 0,
+    compareAndSave: async (watch) => { writes.push(watch.projectId); return { ok: true, watch }; },
+    claimDue: async () => null,
+    findGrant: async () => ({ id: "grantA", projectId: "projectA", role: "owner" }),
+  };
+  const service = createManagedWatch({ store, now: () => "2026-10-07T00:00:00Z" });
+  await service.runDueForGrant({ token: "root-fixture-token-16" });
+  assert.deepEqual(scopes, ["projectA"]);
+  assert.deepEqual(writes, []);
+  await service.runDue();
+  assert.deepEqual(scopes, ["projectA", null]);
+  assert.deepEqual(writes, ["projectB"]);
+});
+
+test("a due lease covers its caller read budget before crash recovery", () => {
+  const nowIso = "2026-10-07T00:00:00Z";
+  const watch = {
+    expiresAt: "2027-01-01T00:00:00Z", results: [],
+    budget: { maxOperations: 3, maxChecks: 3, maxTimeMs: 60000 },
+    costs: { operations: 0, sourceCalls: 0 },
+  };
+  assert.equal(markClaimed(watch, { nowIso, workerId: "root-control", leaseMs: 30000 }), "claimed");
+  assert.ok(Date.parse(watch.lease.until) - Date.parse(nowIso) >= 65000);
 });

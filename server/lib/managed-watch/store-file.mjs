@@ -147,9 +147,9 @@ export async function openFileWatchStore(directory) {
         return { action, watch: structuredClone(watch) };
       });
     },
-    async listRunning() {
+    async listRunning(projectId = null) {
       const state = await readState(file);
-      return Object.values(state.watches).filter((watch) => watch.status === "running").map((watch) => structuredClone(watch));
+      return Object.values(state.watches).filter((watch) => watch.status === "running" && (projectId == null || watch.projectId === projectId)).map((watch) => structuredClone(watch));
     },
     async compareAndSave(watch, expectedVersion) {
       return mutate((draft) => {

@@ -80,16 +80,17 @@ function raceSignal(promise, signal, code, message) {
   });
 }
 
-async function cancelBody(response) {
+function cancelBody(body) {
+  // Initiate cleanup, but an uncooperative cancellation must not extend the deadline.
   try {
-    if (response?.body?.cancel) await response.body.cancel();
-  } catch { /* the refusal is the result */ }
+    if (typeof body?.cancel === "function") void Promise.resolve(body.cancel()).catch(() => {});
+  } catch { /* preserve the refusal */ }
 }
 
 async function readAtMost(response, maxBodyBytes, signal, codeFor = () => "timeout") {
   const declared = Number(response?.headers?.get?.("content-length"));
   if (Number.isFinite(declared) && declared > maxBodyBytes) {
-    await cancelBody(response);
+    cancelBody(response?.body);
     const error = abortError("body_limit", "declared source body exceeds the check budget");
     error.bytes = 0;
     error.declaredBytes = declared;
@@ -115,7 +116,7 @@ async function readAtMost(response, maxBodyBytes, signal, codeFor = () => "timeo
     const value = Buffer.from(next.value);
     total += value.length;
     if (total > maxBodyBytes) {
-      await reader.cancel().catch(() => {});
+      cancelBody(reader);
       const error = abortError("body_limit", "source body exceeded the check budget");
       error.bytes = total;
       throw error;
@@ -209,8 +210,9 @@ export async function readPinnedSnapshot({
         "snapshot request timed out",
       );
       if (response?.status >= 300 && response.status < 400) {
-        await cancelBody(response);
+        cancelBody(response?.body);
         refusal = { code: "redirect_refused", message: "snapshot redirect was refused" };
+        budgetController.abort();
         const error = abortError("redirect_refused", refusal.message);
         error.calls = calls;
         throw error;
@@ -221,6 +223,7 @@ export async function readPinnedSnapshot({
       } catch (error) {
         if (error instanceof WatchError) {
           refusal = { code: error.code, message: error.message, bytes: Number(error.bytes) || 0 };
+          budgetController.abort();
           error.calls = calls;
           error.bytes = error.bytes || 0;
           throw error;
