@@ -29,7 +29,12 @@ import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
-import { ORIGINAL_TASK_DESCRIPTOR_PATH, originalTaskDescriptor } from "./lib/original-task/descriptor.mjs";
+import {
+  ORIGINAL_TASK_CLIENT_ARCHIVE_PATH,
+  ORIGINAL_TASK_DESCRIPTOR_PATH,
+  originalTaskClientArchiveFile,
+  originalTaskDescriptor,
+} from "./lib/original-task/descriptor.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -155,6 +160,13 @@ mountApexDeclarations(app);
 app.get(ORIGINAL_TASK_DESCRIPTOR_PATH, (_req, res) => {
   res.set("Cache-Control", "no-cache");
   res.json(originalTaskDescriptor());
+});
+
+// Public original-task client. Bytes are the tested source closure, not a second kernel.
+app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.type("application/gzip");
+  res.sendFile(originalTaskClientArchiveFile());
 });
 
 // 4) Exact SPA route shells, then static files, then history fallback.

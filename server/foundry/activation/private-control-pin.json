@@ -1,11 +1,11 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "b94d1762a5e03d523916e16d46710b843283862b",
+  "base": "d9b06d08d4f1aa9c2d0e051d7c4121465d48bbe8",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
-    "package.json": "72bfccf42f32b827b2daf356673d073817653de5fc3fb9c3faa943c18f927695",
-    "server/app.js": "5f8e3968c9c0a825a806caa961d267dbc3010811af32690be416768496771b85",
+    "package.json": "b885ce7ccf20fe555d4e09e81176199c679d18bf5aff85140de83eed91a52b0c",
+    "server/app.js": "56b9fa403685a42c6fa3522589fa590b905d43cb6c72baff4b507e31ff8f79bd",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "24cd64e977f624c8ab43e1d452bc5f25caea18ef4d51d06b5d3f4227d8da4742",
@@ -73,7 +73,7 @@
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/migrations/001_entry.sql": "be954b396f3d0c9ba90d1d1e40affad0156c07b89f1d1deb76104073e584fe4c",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/migrations/002_versioned_profile.sql": "3b4e23f92302d9a61ae24a83a8c75f02a457b43c187177378e3e95b3ce9361ac",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/client.mjs": "820cf6eb8759aa79d9b46f2c4821b301083145373ce6c4c25bab665eba548607",
-    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/contract.mjs": "c23c3167a0e2058d84d15f3c3f728c68eb334baff2c865fa08b1bf49f6e3836b",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/contract.mjs": "77a002b497511cb5008501d3b764c0ffe54c660149df7b4c1ffc0ad52a66adf0",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/deps.mjs": "37bea5d3879b0ed0736a0f2064741afe2750f78f94f625ed9695a64ddeda12ed",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/mount.mjs": "e75cb6978bce6cd15333a595c7753c0db1868f2fce08b9a1780877121be20ca7",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/entry/src/progress.mjs": "ac6285e3830ec17389ee32cc91910e9c9e199add5d8aeeda54e11d18b2e61cbe",
@@ -243,15 +243,17 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/router.ts": "b6abf1f5f97d42df796b702ab28dbd492c90ce3e9181eb6104cd6c891f688681",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
     "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
-    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
     "server/lib/original-task/cli.mjs": "73847221d8351086f6202db47e5d45276ce320918b00e9e5f00fd12cf0bfdb5e",
     "server/lib/original-task/client.mjs": "6b4471129ad49cad7066c64853178c482d85445539d64068f330231462f28d13",
     "server/lib/original-task/collect.mjs": "b4103956ad1f419a518e2f5913459b57830083656e474f611baf3142a7ae3d21",
-    "server/lib/original-task/descriptor.mjs": "13b9fed5322e295e6e4b0aeefa8a3e1247fabe35271c2168f5dad9b688e40150",
+    "server/lib/original-task/descriptor.mjs": "0aa640b4b4bb2a611c895d5bdb3b0f3fa4942643e072d81d3a91dd782d39c505",
     "server/lib/original-task/envelope.mjs": "39cae5266ba24edc75dce414f148cbc25fe2bf4ea0c20af668b6f63c85ce8c6b",
     "server/lib/original-task/event-guard.mjs": "39fd1a0b73917af8b39a478b947a8cba5b49da196f0af5f168d3a3d154baad22",
     "server/lib/original-task/operator-http.mjs": "ed216f52432727fb04f3e3a076e5e4ef44761903bc2669880015057560ab8cf8",
-    "client/public/discovery/original-task-correspondence.json": "052451ac3a3f71060f6a6f52422ffbb294ba1f40791229dc13a4756a5178307e"
+    "client/public/discovery/original-task-correspondence.json": "1b8653ed6e9dc2291c1e72caf3daa2bb096bf2644e0ba197dbfabcbf18b1e0b8",
+    "client/public/for-agents/original-task/original-task-client.tar.gz": "e586c3201bf29796ae0bfc0e32f822d63f590d92556bdb66068dda81707e955d",
+    "server/lib/original-task/bundled-descriptor.json": "0fde8c1eef8e0571d251ba630ef22890bb402df8d55e89ab6e48f59abc85e553"
   },
   "receivedCallerClosures": [
     {
@@ -293,6 +295,16 @@
       "base": "e2fb371e2ad803151852b8683ccd65aac7e07600",
       "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
       "closureDigest": "sha256:6528ea2b4adbc7a44a5cfe49f02aabf009325c1c57a265cc9758a79c939a9390"
+    },
+    {
+      "base": "b94d1762a5e03d523916e16d46710b843283862b",
+      "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+      "closureDigest": "sha256:40b52620492f497a4cb77e26863f44ca8a54bcccfaf9d931e5f9f679ae723ef3"
+    },
+    {
+      "base": "ca00b4a556de94e729b65f9ed8760866ad7c5ec1",
+      "sourcePinSha256": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
+      "closureDigest": "sha256:44d0c3549b0a0f8c0dfb72fdde8923272782eaf7995df49b785c436855245e90"
     }
   ]
 }

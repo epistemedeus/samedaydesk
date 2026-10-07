@@ -28,9 +28,7 @@
     "deliveryPromise": false,
     "archive": {
       "path": "/for-agents/original-task/original-task-client.tar.gz",
-      "url": "https://samedaydesk.com/for-agents/original-task/original-task-client.tar.gz",
-      "sha256": "e586c3201bf29796ae0bfc0e32f822d63f590d92556bdb66068dda81707e955d",
-      "bytes": 19152
+      "url": "https://samedaydesk.com/for-agents/original-task/original-task-client.tar.gz"
     },
     "recipe": [
       "curl -fsSL --max-time 60 -o original-task-client.tar.gz https://samedaydesk.com/for-agents/original-task/original-task-client.tar.gz",
