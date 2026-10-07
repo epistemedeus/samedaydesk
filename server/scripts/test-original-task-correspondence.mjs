@@ -1044,6 +1044,77 @@ test("entry path receives a task, refusal, withdrawal, expiry, and restart", { t
   const ownerEvents = await store().listEvents({ projectId: ownerProject.projectId, afterSequence: 0, limit: 10 });
   assert.equal(classifyThread(ownerEvents.events).disposition, "useful_refusal");
 
+  // Root receiving: match the event router's URL semantics and recheck time
+  // inside the committing transaction, not only before waiting for the lock.
+  const boundaryProject = await openRaceProject("root-boundaries");
+  const boundaryWriter = randomBytes(32).toString("base64url");
+  await store().createGrant({
+    projectId: boundaryProject.projectId,
+    role: "writer",
+    tokenHash: hashToken(boundaryWriter),
+    expiresAt: null,
+  });
+  const boundaryText = dispositionRequest({
+    schema: DISPOSITION_SCHEMA,
+    disposition: "useful_refusal",
+    reason: "A writer cannot become an operator through another spelling of the URL.",
+  }).text;
+  const boundaryPaths = [
+    `/v1/projects/${boundaryProject.projectId}/events`,
+    `/v1/projects/${boundaryProject.projectId}/events/`,
+    `/V1/PROJECTS/${boundaryProject.projectId}/EVENTS`,
+    `/v1/projects/%70${boundaryProject.projectId.slice(1)}/events`,
+  ];
+  const boundaryStatuses = [];
+  for (const [index, route] of boundaryPaths.entries()) {
+    const response = await jsonFetch(`${base}${route}`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${boundaryWriter}`,
+        "content-type": "application/json",
+        "idempotency-key": `root-router-equivalence-${index}`,
+      },
+      body: JSON.stringify({ kind: "reply", text: boundaryText }),
+    });
+    boundaryStatuses.push(response.status);
+  }
+  const deadlineProject = await openRaceProject("root-deadline");
+  let deadlineClock = Date.now();
+  await store().query(
+    "UPDATE correspondence_grants SET expires_at = $1 WHERE project_id = $2 AND role = 'reader'",
+    [new Date(deadlineClock + 2000), deadlineProject.projectId],
+  );
+  let deadlineOutcome;
+  try {
+    const response = await writeOriginalTaskDisposition(store(), {
+      projectId: deadlineProject.projectId,
+      body: {
+        schema: DISPOSITION_SCHEMA,
+        disposition: "useful_refusal",
+        reason: "A deadline passing during the write wait must not receive a new disposition.",
+      },
+      idempotencyKey: "root-commit-deadline-recheck",
+      now: () => deadlineClock,
+      beforeAppend: async () => { deadlineClock += 10000; },
+    });
+    deadlineOutcome = { error: null, eventWritten: Boolean(response.eventId) };
+  } catch (error) {
+    deadlineOutcome = { error: error.code, eventWritten: false };
+  }
+  console.log(JSON.stringify({ rootBoundaryReceiving: true, boundaryStatuses, deadlineOutcome }));
+  assert.deepEqual(boundaryStatuses, [403, 403, 403, 403]);
+  assert.equal(deadlineOutcome.error, "workspace_expired");
+  const deadlineReplies = await store().query(
+    "SELECT count(*)::int AS n FROM correspondence_events WHERE project_id = $1 AND kind = 'reply'",
+    [deadlineProject.projectId],
+  );
+  assert.equal(deadlineReplies.rows[0].n, 0);
+  const boundaryReplies = await store().query(
+    "SELECT count(*)::int AS n FROM correspondence_events WHERE project_id = $1 AND kind = 'reply'",
+    [boundaryProject.projectId],
+  );
+  assert.equal(boundaryReplies.rows[0].n, 0);
+
   assert.equal(seen.some((url) => url.includes("/foundry") || url.includes("invoke")), false);
   assert.equal(seen.some((url) => url.includes("/v1/visitor-entry")), true);
 });
