@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
+import os from "node:os";
 import { WatchError } from "./errors.mjs";
+
+export function watchHostId(env = process.env) {
+  const configured = String(env.MANAGED_WATCH_HOST_ID || "").trim();
+  return configured || os.hostname();
+}
 
 export const DEFAULTS = Object.freeze({
   cadenceMs: 3_600_000,

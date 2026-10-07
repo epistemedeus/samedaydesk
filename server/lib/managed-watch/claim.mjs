@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { DEFAULTS } from "./limits.mjs";
+import { DEFAULTS, watchHostId } from "./limits.mjs";
 
 function result(fields) {
   return {
@@ -54,6 +54,7 @@ export function markClaimed(watch, { nowIso, workerId, leaseMs }) {
   watch.status = "running";
   watch.lease = {
     workerId,
+    hostId: watchHostId(),
     pid: process.pid,
     operationId: `op_${randomBytes(12).toString("hex")}`,
     until: new Date(Date.parse(nowIso) + leaseMs).toISOString(),

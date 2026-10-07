@@ -19,7 +19,7 @@ export MANAGED_WATCH_SCHEDULER=1
 node server/index.js
 ```
 
-There is no `setInterval`, recovery heartbeat, resource patrol, bot message, or model call. With the scheduler unset, due work runs only when Root's supervisor calls the granted due route:
+There is no `setInterval`, recovery heartbeat, resource patrol, bot message, or model call. Enrollment, resume, pause, cancel, and due replan the one scheduler when it is enabled. Health `scheduler` reports `enabled`, `armed`, and `nextDueAt`. A cadence longer than the platform timer limit wakes once to rearm; it does not loop. When more than one host opens the same Postgres store, set a distinct `MANAGED_WATCH_HOST_ID` on each host. Recovery follows that lease identity and the durable version check. A process id is only a same-host hint. With the scheduler unset, due work runs only when Root's supervisor calls the granted due route:
 
 ```bash
 node server/lib/managed-watch/client.mjs due --base https://samedaydesk.com --token-file /secure/grant.token

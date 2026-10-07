@@ -11,10 +11,10 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { hashToken } from "../../vendor/visitor-foundry-receiver/services/correspondence/dist/crypto.js";
 import { createSdsApp } from "../app.js";
-import { hashGrantToken } from "../lib/managed-watch/limits.mjs";
+import { hashGrantToken, watchHostId } from "../lib/managed-watch/limits.mjs";
 import { digestMatchesPin, loadPinnedMonitor } from "../lib/managed-watch/runtime.mjs";
 import { readPinnedSnapshot, refuseCallerTarget } from "../lib/managed-watch/source.mjs";
-import { armScheduler } from "../lib/managed-watch/scheduler.mjs";
+import { armScheduler, boundedTimerDelay, MAX_TIMER_MS } from "../lib/managed-watch/scheduler.mjs";
 import { createManagedWatch } from "../lib/managed-watch/service.mjs";
 import { openFileWatchStore } from "../lib/managed-watch/store-file.mjs";
 import { openPgWatchStore } from "../lib/managed-watch/store-pg.mjs";
@@ -526,6 +526,8 @@ test("restart, overlap, cancel, lost reply, and store failure use the disposable
   const unknownWatch = JSON.parse(afterUnknown.stdout);
   assert.equal(unknownWatch.results.at(-1).outcome, "unknown");
   assert.equal(unknownWatch.results.at(-1).failureCode, "lost_reply_no_body");
+  assert.equal(unknownWatch.results.at(-1).sourceCalls, 1);
+  assert.equal(unknownWatch.costs.sourceCalls, 1);
   const stillOne = (await readFile(baseEnv.MANAGED_WATCH_COUNTER, "utf8")).trim().split("\n").filter(Boolean);
   assert.equal(stillOne.length, 1);
 
@@ -625,7 +627,7 @@ test("restart, overlap, cancel, lost reply, and store failure use the disposable
   let saves = 0;
   failStore.compareAndSave = async (...args) => {
     saves += 1;
-    if (saves === 1) throw new WatchError("store_unavailable", "disk full", 503);
+    if (saves === 2) throw new WatchError("store_unavailable", "disk full", 503);
     return original(...args);
   };
   await failing.enroll({ token: TOKEN, body: enrollment() });
@@ -786,4 +788,623 @@ test("cold client retrieves a retained baseline from a different process", async
   await chmod(loose, 0o644);
   const refused = await run(["get", "--base", base, "--token-file", loose, "--task", "moltjobs-hold"]);
   assert.equal(refused.code, 1);
+});
+
+test("bounded source enforces byte, DNS, body, and cancel limits before a parse", async (t) => {
+  const lookup = async () => [{ address: "1.1.1.1", family: 4 }];
+  let pulled = 0;
+  const declared = await readPinnedSnapshot({
+    now: "2026-10-07T00:00:00.000Z",
+    timeoutMs: 1000,
+    maxBodyBytes: 64,
+    lookup,
+    fetchImpl: async () => ({
+      status: 200,
+      headers: { get: (name) => (name === "content-length" ? "1000000" : null) },
+      body: {
+        getReader() {
+          pulled += 1;
+          return { read: () => new Promise(() => {}), async cancel() {} };
+        },
+      },
+    }),
+  });
+  assert.equal(pulled, 0);
+  assert.equal(declared.failure.code, "body_limit");
+  assert.equal(declared.calls, 1);
+  assert.equal(declared.bytes, 0);
+  assert.equal(declared.document, undefined);
+
+  let chunkReads = 0;
+  let cancelled = false;
+  const chunked = await readPinnedSnapshot({
+    now: "2026-10-07T00:00:00.000Z",
+    timeoutMs: 1000,
+    maxBodyBytes: 50,
+    lookup,
+    fetchImpl: async () => ({
+      status: 200,
+      headers: { get: () => null },
+      body: {
+        getReader() {
+          return {
+            async read() {
+              chunkReads += 1;
+              if (chunkReads > 2) return { done: true };
+              return { done: false, value: Buffer.alloc(40, chunkReads) };
+            },
+            async cancel() { cancelled = true; },
+          };
+        },
+      },
+    }),
+  });
+  assert.equal(chunked.failure.code, "body_limit");
+  assert.equal(chunkReads, 2);
+  assert.equal(cancelled, true);
+  assert.equal(chunked.calls, 1);
+  assert.equal(chunked.document, undefined);
+
+  let dnsFetches = 0;
+  const stalledDns = await readPinnedSnapshot({
+    now: "2026-10-07T00:00:00.000Z",
+    timeoutMs: 80,
+    lookup: () => new Promise(() => {}),
+    fetchImpl: async () => { dnsFetches += 1; throw new Error("dns stall was fetched"); },
+  });
+  assert.equal(stalledDns.failure.code, "dns_timeout");
+  assert.equal(stalledDns.calls, 1);
+  assert.equal(dnsFetches, 0);
+  assert.equal(stalledDns.document, undefined);
+
+  const stalledBody = await readPinnedSnapshot({
+    now: "2026-10-07T00:00:00.000Z",
+    timeoutMs: 120,
+    lookup,
+    fetchImpl: async () => ({
+      status: 200,
+      headers: { get: () => null },
+      body: { getReader: () => ({ read: () => new Promise(() => {}), async cancel() {} }) },
+    }),
+  });
+  assert.equal(stalledBody.failure.code, "timeout");
+  assert.equal(stalledBody.calls, 1);
+  assert.equal(stalledBody.document, undefined);
+
+  const controller = new AbortController();
+  const aborted = await readPinnedSnapshot({
+    now: "2026-10-07T00:00:00.000Z",
+    timeoutMs: 5000,
+    lookup,
+    signal: controller.signal,
+    fetchImpl: async () => ({
+      status: 200,
+      headers: { get: () => null },
+      body: {
+        getReader() {
+          return {
+            read() {
+              controller.abort();
+              return new Promise(() => {});
+            },
+            async cancel() {},
+          };
+        },
+      },
+    }),
+  });
+  assert.equal(aborted.failure.code, "cancelled");
+  assert.equal(aborted.calls, 1);
+  assert.equal(aborted.document, undefined);
+
+  const live = await readPinnedSnapshot({ timeoutMs: 8000, maxBodyBytes: 262144 });
+  t.diagnostic(`direct-snapshot ${JSON.stringify({
+    calls: live.calls,
+    bytes: live.bytes,
+    runtimeMs: live.runtimeMs,
+    capture: live.document?.capture || null,
+    failure: live.failure?.code || null,
+  })}`);
+  assert.ok(live.runtimeMs > 0);
+  assert.ok(live.calls >= 1);
+  if (live.document) {
+    assert.equal(live.document.capture, "live");
+    assert.equal(live.document.publicSourceChanged, false);
+    assert.ok(live.bytes > 0);
+    assert.ok(live.bytes <= 262144);
+  } else {
+    assert.ok(live.failure?.code);
+    assert.equal(live.document, undefined);
+  }
+});
+
+test("scheduler caps a long cadence and does not spin an exhausted due", async () => {
+  assert.equal(boundedTimerDelay(5_000, 1_000), 4_000);
+  assert.equal(boundedTimerDelay(1_000, 2_000), 0);
+  assert.equal(boundedTimerDelay(null, 0), null);
+  assert.equal(boundedTimerDelay(Date.now() + 40 * 24 * 60 * 60 * 1000), MAX_TIMER_MS);
+
+  const timers = [];
+  let nowMs = 1_000;
+  let next = nowMs + 30 * 24 * 60 * 60 * 1000;
+  let runs = 0;
+  const scheduler = armScheduler({
+    async nextDueAt() { return next; },
+    async runDue() { runs += 1; return { action: "completed", read: true }; },
+  }, {
+    schedule(fn, delay) {
+      const handle = { fn, delay, fired: false, cleared: false, unref() {} };
+      timers.push(handle);
+      return handle;
+    },
+    clear(handle) { handle.cleared = true; },
+    now: () => nowMs,
+  });
+  await scheduler.plan();
+  assert.equal(scheduler.armed, true);
+  assert.equal(timers[0].delay, MAX_TIMER_MS);
+  timers[0].fired = true;
+  timers[0].fn();
+  for (let i = 0; i < 8; i += 1) await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(runs, 0);
+  assert.equal(timers.at(-1).delay, MAX_TIMER_MS);
+  assert.equal(timers.length, 2);
+  scheduler.stop();
+
+  const idle = armScheduler({
+    async nextDueAt() { return null; },
+    async runDue() { throw new Error("idle store was read"); },
+  }, {
+    schedule() { throw new Error("idle store armed a timer"); },
+    clear() {},
+    now: () => 0,
+  });
+  await idle.plan();
+  assert.equal(idle.armed, false);
+  idle.stop();
+
+  const exhausted = [];
+  let dueAt = 50;
+  let exhaustedRuns = 0;
+  const spinning = armScheduler({
+    async nextDueAt() { return dueAt; },
+    async runDue() {
+      exhaustedRuns += 1;
+      return { action: "budget_exhausted", read: false };
+    },
+  }, {
+    schedule(fn, delay) {
+      const handle = { fn, delay, fired: false, cleared: false, unref() {} };
+      exhausted.push(handle);
+      return handle;
+    },
+    clear(handle) { handle.cleared = true; },
+    now: () => 50,
+  });
+  await spinning.plan();
+  for (let i = 0; i < 6; i += 1) {
+    const pending = exhausted.filter((row) => !row.fired && !row.cleared);
+    if (pending.length === 0) break;
+    pending[0].fired = true;
+    pending[0].fn();
+    for (let n = 0; n < 8; n += 1) await new Promise((resolve) => setImmediate(resolve));
+  }
+  assert.ok(exhaustedRuns <= 2, `exhausted due ran ${exhaustedRuns}`);
+  assert.equal(spinning.armed, false);
+  spinning.stop();
+});
+
+test("http enrollment after an idle arm runs one due and reports scheduler state", async (t) => {
+  const docs = await documents();
+  const { store, cleanup } = await tempStore();
+  t.after(cleanup);
+  let reads = 0;
+  const app = createSdsApp({
+    managedWatch: {
+      enabled: true,
+      store,
+      now: () => new Date().toISOString(),
+      readSource: async () => {
+        reads += 1;
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        return { document: docs.baseline, bytes: 20, calls: 1 };
+      },
+    },
+  });
+  const handle = app.get("l12ManagedWatch");
+  await handle.arm();
+  const { server, port } = await listen(app);
+  t.after(async () => {
+    handle.scheduler?.stop();
+    await new Promise((resolve) => server.close(resolve));
+  });
+  const before = await request(port, "/api/managed-watch/healthz");
+  assert.deepEqual(before.json.scheduler, { enabled: true, armed: false, nextDueAt: null });
+  assert.equal(reads, 0);
+  const created = await request(port, "/api/managed-watch/enrollments", {
+    method: "POST",
+    token: TOKEN,
+    body: enrollment({ taskId: "idle-enroll" }),
+  });
+  assert.equal(created.status, 201, JSON.stringify(created.json));
+  const started = Date.now();
+  let view = null;
+  while (Date.now() - started < 5000) {
+    const got = await request(port, "/api/managed-watch/enrollments/idle-enroll", { token: TOKEN });
+    if (got.json?.results?.length) { view = got.json; break; }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.ok(view, "enrollment did not replan a due read");
+  assert.equal(view.results[0].outcome, "baseline_established");
+  assert.equal(view.results[0].publicSourceChanged, false);
+  assert.equal(view.results[0].sourceCalls, 1);
+  assert.ok(view.results[0].runtimeMs >= 25);
+  assert.equal(view.costs.sourceCalls, 1);
+  assert.equal(reads, 1);
+  const follow = Date.now();
+  let armed = null;
+  while (Date.now() - follow < 2000) {
+    const health = await request(port, "/api/managed-watch/healthz");
+    if (health.json?.scheduler?.armed === true) { armed = health.json.scheduler; break; }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.equal(armed?.enabled, true);
+  assert.equal(armed?.armed, true);
+  assert.equal(typeof armed?.nextDueAt, "number");
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  assert.equal(reads, 1);
+});
+
+test("pause, expiry, cancel, stale write, and foreign lease do not take a second read", async (t) => {
+  const docs = await documents();
+  const dead = spawn(process.execPath, ["-e", "process.exit(0)"]);
+  await once(dead, "exit");
+  const deadPid = dead.pid;
+
+  const paused = await tempStore();
+  t.after(paused.cleanup);
+  let pauseReads = 0;
+  let pauseService;
+  pauseService = createManagedWatch({
+    store: paused.store,
+    now: () => "2026-10-07T00:00:00.000Z",
+    hooks: { beforeRead: async () => { await pauseService.pause({ token: TOKEN, taskId: "pause-hold" }); } },
+    readSource: async () => { pauseReads += 1; throw new Error("paused watch was read"); },
+  });
+  await pauseService.enroll({ token: TOKEN, body: enrollment({ taskId: "pause-hold" }) });
+  const pauseDue = await pauseService.runDue({ projectId: "projwatch1" });
+  assert.equal(pauseDue.action, "paused");
+  assert.equal(pauseDue.read, false);
+  assert.equal(pauseReads, 0);
+  assert.equal((await pauseService.retrieve({ token: TOKEN, taskId: "pause-hold" })).status, "paused");
+
+  const expiring = await tempStore();
+  t.after(expiring.cleanup);
+  let expiryClock = "2026-10-07T00:00:00.000Z";
+  let expiryReads = 0;
+  const expiryService = createManagedWatch({
+    store: expiring.store,
+    now: () => expiryClock,
+    hooks: { beforeRead: async () => { expiryClock = "2026-10-07T00:06:00.000Z"; } },
+    readSource: async () => { expiryReads += 1; throw new Error("expired watch was read"); },
+  });
+  await expiryService.enroll({
+    token: TOKEN,
+    body: enrollment({ taskId: "expire-early", expiresAt: "2026-10-07T00:05:00.000Z" }),
+  });
+  const expiryDue = await expiryService.runDue({ projectId: "projwatch1" });
+  assert.equal(expiryDue.action, "expired");
+  assert.equal(expiryDue.read, false);
+  assert.equal(expiryReads, 0);
+  assert.equal((await expiryService.retrieve({ token: TOKEN, taskId: "expire-early" })).status, "expired");
+
+  const cancelling = await tempStore();
+  t.after(cancelling.cleanup);
+  let cancelReads = 0;
+  let markReading;
+  const reading = new Promise((resolve) => { markReading = resolve; });
+  const cancelService = createManagedWatch({
+    store: cancelling.store,
+    now: () => "2026-10-07T00:00:00.000Z",
+    readSource: async ({ signal }) => {
+      cancelReads += 1;
+      markReading();
+      await new Promise((resolve) => {
+        const timer = setTimeout(resolve, 1000);
+        signal?.addEventListener("abort", () => { clearTimeout(timer); resolve(); }, { once: true });
+      });
+      return { document: docs.changed, bytes: 12, calls: 1 };
+    },
+  });
+  await cancelService.enroll({ token: TOKEN, body: enrollment({ taskId: "cancel-inflight" }) });
+  const inflight = cancelService.runDue({ projectId: "projwatch1" });
+  await reading;
+  await cancelService.cancel({ token: TOKEN, taskId: "cancel-inflight" });
+  const cancelled = await inflight;
+  assert.equal(cancelled.action, "cancelled");
+  assert.equal(cancelled.results.length, 0);
+  assert.equal(cancelReads, 1);
+  const cancelledWatch = await cancelService.retrieve({ token: TOKEN, taskId: "cancel-inflight" });
+  assert.equal(cancelledWatch.status, "cancelled");
+  assert.equal(cancelledWatch.results.some((row) => row.outcome === "content_changed"), false);
+  assert.equal(cancelledWatch.costs.sourceCalls, 1);
+  const afterCancel = await cancelService.runDue({ projectId: "projwatch1" });
+  assert.equal(afterCancel.read, false);
+  assert.equal(cancelReads, 1);
+
+  const stale = await tempStore();
+  t.after(stale.cleanup);
+  let staleReads = 0;
+  const staleService = createManagedWatch({
+    store: stale.store,
+    now: () => "2026-10-07T00:00:00.000Z",
+    readSource: async () => {
+      staleReads += 1;
+      return { document: docs.changed, bytes: 12, calls: 1 };
+    },
+  });
+  const originalSave = stale.store.compareAndSave.bind(stale.store);
+  let saves = 0;
+  stale.store.compareAndSave = async (watch, expectedVersion) => {
+    saves += 1;
+    if (saves === 2) {
+      const current = await stale.store.getWatch(watch.projectId, watch.taskId);
+      current.status = "paused";
+      current.lease = null;
+      current.pending = null;
+      const pausedRow = await originalSave(current, current.version);
+      assert.equal(pausedRow.ok, true);
+    }
+    return originalSave(watch, expectedVersion);
+  };
+  await staleService.enroll({ token: TOKEN, body: enrollment({ taskId: "stale-hold" }) });
+  const superseded = await staleService.runDue({ projectId: "projwatch1" });
+  assert.equal(superseded.action, "superseded");
+  assert.equal(superseded.watch.status, "paused");
+  assert.equal(staleReads, 1);
+  const staleWatch = await staleService.retrieve({ token: TOKEN, taskId: "stale-hold" });
+  assert.equal(staleWatch.status, "paused");
+  assert.equal(staleWatch.results.length, 0);
+  stale.store.compareAndSave = originalSave;
+  const staleAgain = await staleService.runDue({ projectId: "projwatch1" });
+  assert.equal(staleAgain.read, false);
+  assert.equal(staleReads, 1);
+
+  async function plant(store, taskId, phase, hostId) {
+    const watch = await store.getWatch("projwatch1", taskId);
+    watch.status = "running";
+    watch.lease = {
+      workerId: "remote-worker",
+      hostId,
+      pid: deadPid,
+      operationId: `op_${phase}`,
+      until: "2026-10-07T00:30:00.000Z",
+      phase,
+    };
+    watch.pending = { operationId: `op_${phase}`, phase, document: null, failure: null, bytes: 0 };
+    const saved = await store.compareAndSave(watch, watch.version);
+    assert.equal(saved.ok, true);
+  }
+
+  const foreign = await tempStore();
+  t.after(foreign.cleanup);
+  let foreignReads = 0;
+  const foreignService = createManagedWatch({
+    store: foreign.store,
+    now: () => "2026-10-07T00:00:00.000Z",
+    readSource: async () => { foreignReads += 1; throw new Error("foreign lease was read"); },
+  });
+  await foreignService.enroll({ token: TOKEN, body: enrollment({ taskId: "foreign-host" }) });
+  await plant(foreign.store, "foreign-host", "reading", "other-host");
+  const foreignDue = await foreignService.runDue({ projectId: "projwatch1" });
+  assert.equal(foreignDue.action, "idle");
+  assert.equal(foreignDue.read, false);
+  assert.equal(foreignReads, 0);
+  const foreignWatch = await foreign.store.getWatch("projwatch1", "foreign-host");
+  assert.equal(foreignWatch.status, "running");
+  assert.equal(foreignWatch.lease.hostId, "other-host");
+  assert.equal(foreignWatch.results.length, 0);
+
+  const local = await tempStore();
+  t.after(local.cleanup);
+  let localReads = 0;
+  const localService = createManagedWatch({
+    store: local.store,
+    now: () => "2026-10-07T00:00:00.000Z",
+    readSource: async () => { localReads += 1; throw new Error("dead lease was read again"); },
+  });
+  await localService.enroll({ token: TOKEN, body: enrollment({ taskId: "dead-reading" }) });
+  await plant(local.store, "dead-reading", "reading", watchHostId());
+  await localService.enroll({ token: TOKEN, body: enrollment({ taskId: "dead-claimed" }) });
+  await plant(local.store, "dead-claimed", "claimed", watchHostId());
+  const recovered = await localService.runDue({ projectId: "projwatch1" });
+  assert.equal(recovered.read, false);
+  assert.equal(localReads, 0);
+  const readingWatch = await localService.retrieve({ token: TOKEN, taskId: "dead-reading" });
+  const claimedWatch = await localService.retrieve({ token: TOKEN, taskId: "dead-claimed" });
+  assert.equal(readingWatch.results.at(-1).outcome, "unknown");
+  assert.equal(readingWatch.results.at(-1).failureCode, "lost_reply_no_body");
+  assert.equal(readingWatch.results.at(-1).sourceCalls, 1);
+  assert.equal(readingWatch.costs.sourceCalls, 1);
+  assert.equal(claimedWatch.results.at(-1).outcome, "unknown");
+  assert.equal(claimedWatch.results.at(-1).sourceCalls, 0);
+  assert.equal(claimedWatch.costs.sourceCalls, 0);
+  const replay = await localService.runDue({ projectId: "projwatch1" });
+  assert.equal(replay.read, false);
+  assert.equal(localReads, 0);
+  assert.equal((await localService.retrieve({ token: TOKEN, taskId: "dead-reading" })).results.length, 1);
+  assert.equal((await localService.retrieve({ token: TOKEN, taskId: "dead-reading" })).costs.sourceCalls, 1);
+
+  const counted = await tempStore();
+  t.after(counted.cleanup);
+  let countedClock = Date.parse("2026-10-07T05:00:00.000Z");
+  const countedService = createManagedWatch({
+    store: counted.store,
+    now: () => new Date(countedClock).toISOString(),
+    readSource: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      return { failure: { code: "source_unreachable", message: "down" }, bytes: 0, calls: 1 };
+    },
+  });
+  await countedService.enroll({ token: TOKEN, body: enrollment({ taskId: "fail-count" }) });
+  const failed = await countedService.runDue({ projectId: "projwatch1" });
+  assert.equal(failed.results[0].sourceCalls, 1);
+  assert.equal(failed.results[0].usefulChange, false);
+  assert.equal(failed.results[0].publicSourceChanged, false);
+  assert.ok(failed.results[0].runtimeMs >= 25);
+  assert.equal(failed.watch.costs.sourceCalls, 1);
+  assert.equal(failed.watch.costs.providerMarginalCost, null);
+  assert.equal(failed.watch.costs.savings, null);
+  assert.equal(failed.watch.costs.profit, null);
+  const quietStore = await tempStore();
+  t.after(quietStore.cleanup);
+  const quiet = createManagedWatch({
+    store: quietStore.store,
+    now: () => "2026-10-07T06:00:00.000Z",
+    readSource: async () => ({ failure: { code: "ssrf", message: "refused before contact" }, bytes: 0, calls: 0 }),
+  });
+  await quiet.enroll({ token: TOKEN, body: enrollment({ taskId: "pre-contact" }) });
+  const untouched = await quiet.runDue({ projectId: "projwatch1" });
+  assert.equal(untouched.results[0].sourceCalls, 0);
+  assert.equal(untouched.results[0].usefulChange, false);
+  assert.equal(untouched.watch.costs.sourceCalls, 0);
+  assert.equal(JSON.stringify(untouched.results[0]).includes('"value":0'), false);
+});
+
+test("idle process enrollment reads the public snapshot once and a restarted client retrieves it", { timeout: 60_000 }, async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "l12-live-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const seeded = await openFileWatchStore(dir);
+  await seeded.seedGrant({ id: "gr_owner", projectId: "projwatch1", role: "owner", tokenHash: hashGrantToken(TOKEN), expiresAt: null, revokedAt: null });
+  await seeded.close();
+  const tokenFile = path.join(dir, "grant.token");
+  const bodyFile = path.join(dir, "body.json");
+  await writeFile(tokenFile, `${TOKEN}\n`, { mode: 0o600 });
+  await chmod(tokenFile, 0o600);
+  const expiresAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
+  await writeFile(bodyFile, JSON.stringify(enrollment({ taskId: "public-snap", expiresAt, cadenceMs: 60_000 })));
+  const repoRoot = path.resolve(root, "../..");
+  const preload = path.join(root, "fixtures/hosted-startup-preload.mjs");
+  const children = [];
+  async function stop(child) {
+    if (!child || child.exitCode != null || child.signalCode != null) return;
+    const exited = once(child, "exit");
+    child.kill("SIGTERM");
+    const timer = setTimeout(() => child.kill("SIGKILL"), 2000);
+    try { await exited; } finally { clearTimeout(timer); }
+  }
+  t.after(async () => { await Promise.all(children.map(stop)); });
+  function startServer() {
+    const child = spawn(process.execPath, ["--import", preload, "server/index.js"], {
+      cwd: repoRoot,
+      env: {
+        PATH: process.env.PATH,
+        HOME: process.env.HOME,
+        NODE_ENV: "test",
+        PORT: "0",
+        MANAGED_WATCH_OPT_IN: "1",
+        MANAGED_WATCH_SCHEDULER: "1",
+        MANAGED_WATCH_STORE_DIR: dir,
+      },
+      stdio: ["ignore", "pipe", "pipe", "ipc"],
+    });
+    children.push(child);
+    let output = "";
+    for (const stream of [child.stdout, child.stderr]) {
+      stream.on("data", (chunk) => { output = (output + chunk).slice(-4000); });
+    }
+    const portReady = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`no port ${output}`)), 10_000);
+      child.once("message", (message) => {
+        if (!Number.isInteger(message?.port)) return;
+        clearTimeout(timer);
+        resolve(message.port);
+      });
+      child.once("exit", (code, signal) => {
+        clearTimeout(timer);
+        reject(new Error(`exited ${code || signal} ${output}`));
+      });
+    });
+    return { child, portReady, output: () => output };
+  }
+  const run = (port, args) => new Promise((resolve) => {
+    const child = spawn(process.execPath, [client, ...args], { stdio: ["ignore", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.once("exit", (code) => resolve({ code, stdout, stderr, port }));
+  });
+  const first = startServer();
+  const port = await first.portReady;
+  const healthStarted = Date.now();
+  let health = null;
+  while (Date.now() - healthStarted < 10_000) {
+    const response = await request(port, "/api/managed-watch/healthz");
+    if (response.json?.scheduler?.enabled === true) { health = response.json; break; }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  assert.ok(health, first.output());
+  assert.equal(health.scheduler.armed, false);
+  assert.equal(health.scheduler.nextDueAt, null);
+  assert.equal(health.paidServiceLaunch, false);
+  const enrolled = await run(port, ["enroll", "--base", `http://127.0.0.1:${port}`, "--token-file", tokenFile, "--body-file", bodyFile]);
+  assert.equal(enrolled.code, 0, enrolled.stderr + enrolled.stdout);
+  const readStarted = Date.now();
+  let view = null;
+  while (Date.now() - readStarted < 25_000) {
+    const got = await run(port, ["get", "--base", `http://127.0.0.1:${port}`, "--token-file", tokenFile, "--task", "public-snap"]);
+    if (got.code === 0) {
+      const body = JSON.parse(got.stdout).json;
+      if (body?.results?.length) { view = body; break; }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+  assert.ok(view, first.output());
+  const row = view.results.at(-1);
+  t.diagnostic(`scheduled-snapshot ${JSON.stringify({
+    outcome: row.outcome,
+    failureCode: row.failureCode,
+    capture: row.capture,
+    sourceCalls: row.sourceCalls,
+    sourceBytes: row.sourceBytes,
+    runtimeMs: row.runtimeMs,
+    usefulChange: row.usefulChange,
+    publicSourceChanged: row.publicSourceChanged,
+    providerMarginalCost: view.costs.providerMarginalCost,
+  })}`);
+  assert.ok(row.sourceCalls >= 1);
+  assert.equal(row.naturalCustomerDemand, false);
+  assert.equal(view.proposedManagedPrice, null);
+  assert.equal(view.paidServiceLaunch, false);
+  assert.equal(view.subscriptionOffered, false);
+  assert.equal(view.costs.providerMarginalCost, null);
+  assert.equal(view.costs.modelTokens, null);
+  assert.equal(view.costs.savings, null);
+  assert.equal(view.costs.profit, null);
+  assert.equal(JSON.stringify(row).includes('"value":0'), false);
+  if (row.outcome === "baseline_established") {
+    assert.equal(row.capture, "live");
+    assert.equal(row.usefulChange, false);
+    assert.equal(row.publicSourceChanged, false);
+    assert.ok(row.runtimeMs > 0);
+    assert.ok(row.sourceBytes > 0);
+    assert.equal(view.costs.sourceCalls, row.sourceCalls);
+  } else {
+    assert.equal(row.usefulChange, false);
+    assert.equal(row.publicSourceChanged, false);
+    assert.ok(row.failureCode);
+  }
+  const calls = view.costs.sourceCalls;
+  const outcomes = view.results.length;
+  await stop(first.child);
+  const second = startServer();
+  const restartedPort = await second.portReady;
+  const again = await run(restartedPort, ["get", "--base", `http://127.0.0.1:${restartedPort}`, "--token-file", tokenFile, "--task", "public-snap"]);
+  assert.equal(again.code, 0, again.stderr + again.stdout + second.output());
+  const retained = JSON.parse(again.stdout).json;
+  assert.equal(retained.costs.sourceCalls, calls);
+  assert.equal(retained.results.length, outcomes);
+  assert.equal(retained.results.at(-1).outcome, row.outcome);
+  assert.equal(retained.proposedManagedPrice, null);
 });

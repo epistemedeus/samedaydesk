@@ -88,7 +88,7 @@ export function mountManagedWatch(app, options = {}) {
         ok: true,
         enabled: true,
         service: "managed-watch",
-        scheduler: false,
+        scheduler: handle.schedulerState(),
         paidServiceLaunch: false,
         subscriptionOffered: false,
         proposedManagedPrice: null,
@@ -97,6 +97,15 @@ export function mountManagedWatch(app, options = {}) {
       res.status(200).json({ ok: false, enabled: false, reason: error.code || "unconfigured", paidServiceLaunch: false, subscriptionOffered: false });
     }
   });
+
+  async function replan() {
+    if (!handle.scheduler) return;
+    try {
+      await handle.scheduler.plan();
+    } catch (error) {
+      console.error("managed_watch_replan_failed", error?.code || "error");
+    }
+  }
 
   function route(handler) {
     return async (req, res) => {
@@ -112,22 +121,27 @@ export function mountManagedWatch(app, options = {}) {
 
   router.post("/enrollments", route(async (current, req, res) => {
     res.status(201).json(await current.enroll({ token: bearer(req), body: req.body }));
+    await replan();
   }));
   router.get("/enrollments/:taskId", route(async (current, req, res) => {
     res.json(await current.retrieve({ token: bearer(req), taskId: req.params.taskId }));
   }));
   router.post("/enrollments/:taskId/pause", route(async (current, req, res) => {
     res.json(await current.pause({ token: bearer(req), taskId: req.params.taskId }));
+    await replan();
   }));
   router.post("/enrollments/:taskId/resume", route(async (current, req, res) => {
     res.json(await current.resume({ token: bearer(req), taskId: req.params.taskId }));
+    await replan();
   }));
   router.post("/enrollments/:taskId/cancel", route(async (current, req, res) => {
     res.json(await current.cancel({ token: bearer(req), taskId: req.params.taskId }));
+    await replan();
   }));
   router.post("/due", route(async (current, req, res) => {
     const mode = options.allowDeliveryMode && req.body?.deliveryMode === "unknown" ? "unknown" : "accepted";
     res.json(await current.runDueForGrant({ token: bearer(req), deliveryMode: mode }));
+    await replan();
   }));
 
   app.use("/api/managed-watch", router);
@@ -136,13 +150,19 @@ export function mountManagedWatch(app, options = {}) {
     handle.scheduler?.stop();
     if (store?.close) await store.close();
   };
+  handle.schedulerState = () => ({
+    enabled: Boolean(handle.scheduler),
+    armed: Boolean(handle.scheduler?.armed),
+    nextDueAt: handle.scheduler?.nextDueAt ?? null,
+  });
   handle.arm = async () => {
+    if (handle.scheduler) return handle.scheduler;
     const current = await ready();
     const scheduler = armScheduler(current, {
       onError(error) { console.error("managed_watch_due_failed", error?.code || "error"); },
     });
-    await scheduler.plan();
     handle.scheduler = scheduler;
+    await scheduler.plan();
     return scheduler;
   };
   handle.service = () => service;
