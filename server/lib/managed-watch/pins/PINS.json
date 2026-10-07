@@ -1,0 +1,42 @@
+{
+  "schema": "sds.managed-watch.pins.v1",
+  "consumedNotRepublished": true,
+  "paidServiceLaunch": false,
+  "subscriptionOffered": false,
+  "stagedSealNotUsed": {
+    "path": "experiments/maintained-useful-delivery-100278/successors/0.3.1/maintained-useful-delivery-0.3.1.tar.gz",
+    "sha256": "d2b093c56dc4c09f1d334e7c080a6e89608f3ad8ed83f4d1c0536e747ca8a72e",
+    "reason": "Same version label as the received archive. Not the hosted bytes."
+  },
+  "changeMonitor": {
+    "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+    "commit": "d9038c21964a0a736ebb115b4718a83231d7dd42",
+    "version": "0.1.0",
+    "archive": "change-monitor-0.1.0.tgz",
+    "sha256": "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f",
+    "bytes": 88319,
+    "publicUrl": "https://neomorphic.io/downloads/change-monitor/0.1.0/change-monitor-0.1.0.tgz",
+    "publicationStatus": "candidate",
+    "hostedAcquisitionVerified": true,
+    "paidServiceLaunch": false
+  },
+  "maintainedOperations": {
+    "version": "0.1.0",
+    "sha256": "b68024a3b359b354b6869cfdc4621f1eb2947cb40311bf7bafcbd546b0cdabc9",
+    "bytes": 104792,
+    "publicUrl": "https://neomorphic.io/downloads/maintained-operations/0.1.0/maintained-operations-0.1.0.tar.gz",
+    "scheduler": false,
+    "subscriptionPrice": false
+  },
+  "maintainedUsefulDelivery": {
+    "version": "0.3.1",
+    "sha256": "0963ce3be29185a82c0cc11aec0a8eaa3fde7d7a94a9fc6a4e9de4c3513578e5",
+    "bytes": 52069,
+    "publicUrl": "https://neomorphic.io/downloads/maintained-useful-delivery/0.3.1/maintained-useful-delivery-0.3.1.tar.gz",
+    "publicationStatus": "hosted_library_received",
+    "paidServiceLaunch": false,
+    "subscriptionOffered": false,
+    "sourceCommit": "3a89afce6155374bd3fb65e53acd641adbe6224d"
+  },
+  "publicSnapshotUrl": "https://samedaydesk.com/api/observatory/snapshot"
+}

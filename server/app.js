@@ -26,6 +26,7 @@ import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
+import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 
@@ -85,6 +86,10 @@ app.use("/api/webhooks/resend", express.raw({ type: "application/json" }), captu
 //     besides a truthful disabled healthz under the prefix.
 const correspondence = mountCorrespondence(app, options.correspondence || {});
 app.set("s51Correspondence", correspondence);
+
+// Opt-in retained watch. Unset MANAGED_WATCH_OPT_IN mounts nothing, so existing
+// routes and the foundry CJS/runtime materialization path stay as they are.
+app.set("l12ManagedWatch", mountManagedWatch(app, options.managedWatch || {}));
 
 // Bounded raw intake before the global parser. Admission needs enrolled PG;
 // anonymous snapshot evaluation and current publication facts remain separate.
