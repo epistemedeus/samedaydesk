@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "ca00b4a556de94e729b65f9ed8760866ad7c5ec1",
+  "base": "d9b06d08d4f1aa9c2d0e051d7c4121465d48bbe8",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
@@ -251,8 +251,8 @@
     "server/lib/original-task/envelope.mjs": "39cae5266ba24edc75dce414f148cbc25fe2bf4ea0c20af668b6f63c85ce8c6b",
     "server/lib/original-task/event-guard.mjs": "39fd1a0b73917af8b39a478b947a8cba5b49da196f0af5f168d3a3d154baad22",
     "server/lib/original-task/operator-http.mjs": "ed216f52432727fb04f3e3a076e5e4ef44761903bc2669880015057560ab8cf8",
-    "client/public/discovery/original-task-correspondence.json": "f807e079534d0bc3888f39ad7aced39d61c0e9beb745142df7686618c5db28a3",
-    "client/public/for-agents/original-task/original-task-client.tar.gz": "ef66965ee8821aea59f5d86f86cfa9f326a6993f25df22e63014fceb6f5916a5",
+    "client/public/discovery/original-task-correspondence.json": "1b8653ed6e9dc2291c1e72caf3daa2bb096bf2644e0ba197dbfabcbf18b1e0b8",
+    "client/public/for-agents/original-task/original-task-client.tar.gz": "e586c3201bf29796ae0bfc0e32f822d63f590d92556bdb66068dda81707e955d",
     "server/lib/original-task/bundled-descriptor.json": "0fde8c1eef8e0571d251ba630ef22890bb402df8d55e89ab6e48f59abc85e553"
   },
   "receivedCallerClosures": [
@@ -300,6 +300,11 @@
       "base": "b94d1762a5e03d523916e16d46710b843283862b",
       "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
       "closureDigest": "sha256:40b52620492f497a4cb77e26863f44ca8a54bcccfaf9d931e5f9f679ae723ef3"
+    },
+    {
+      "base": "ca00b4a556de94e729b65f9ed8760866ad7c5ec1",
+      "sourcePinSha256": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
+      "closureDigest": "sha256:44d0c3549b0a0f8c0dfb72fdde8923272782eaf7995df49b785c436855245e90"
     }
   ]
 }
