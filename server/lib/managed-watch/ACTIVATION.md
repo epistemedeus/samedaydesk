@@ -6,6 +6,10 @@ Do not deploy, merge, price, or start a subscription from the worker that prepar
 
 Leave `MANAGED_WATCH_OPT_IN` unset or `0`. No `/api/managed-watch` route is mounted. Existing SDS routes stay on their current handlers. Foundry serving-runtime and `materialize-runtime.mjs` are not invoked by this adapter. No watch timer is armed. Idle startup does no customerless watch query.
 
+## Release source receiving
+
+Receive the integrated runtime, not only the adapter tests. Run `npm run test:proxy-addr`, `npm run test:hosted-startup`, `npm run test:correspondence-mount` and `npm run test:managed-watch` on the release head. The caller source manifest is `server/foundry/activation/private-control-pin.json`; entry/package changes require its exact accepted graph, including newly imported runtime and archive members. Retain previously received caller closures so original owner QA receipts stay readable. A seeded changed runtime must still return `caller_source_changed`. The source manifest is reconciled by the receiving owner after review, rather than automatically accepting changed bytes inside CI. Feature-off receiving also requires normal startup and the unchanged route boundary.
+
 ## Activation
 
 The process needs the existing correspondence database URL. Grants already live in `pilot_correspondence.correspondence_grants`. This adapter adds only `correspondence_l12_managed_watch` on first enabled open. It does not migrate foundry invocations and does not charge the original 8/8 QA allocation.
