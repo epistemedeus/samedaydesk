@@ -13,6 +13,8 @@ export const DISCOVERY_REL = "client/public/discovery/original-task-corresponden
 export const BUNDLED_REL = "server/lib/original-task/bundled-descriptor.json";
 export const ARCHIVE_REL = "client/public/for-agents/original-task/original-task-client.tar.gz";
 const ENTRY = "server/lib/original-task/cli.mjs";
+export const CLIENT_PACKAGE_REL = "package.json";
+const CLIENT_PACKAGE = { private: true, type: "module", engines: { node: ">=22" } };
 
 const FORBIDDEN = [
   "collect.mjs",
@@ -113,6 +115,9 @@ export function buildPublicClient(root = ROOT) {
     assertPublic(rel);
     files.set(rel, rel === BUNDLED_REL ? bundledBytes : readFileSync(join(root, rel)));
   }
+  // Preserve ESM scope even below an explicit CommonJS parent. This is not
+  // the website package: no dependencies, scripts or server configuration.
+  files.set(CLIENT_PACKAGE_REL, Buffer.from(`${JSON.stringify(CLIENT_PACKAGE, null, 2)}\n`));
   const archive = packArchive(files);
   const sha256 = createHash("sha256").update(archive).digest("hex");
   const published = structuredClone(discovery);

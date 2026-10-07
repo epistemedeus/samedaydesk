@@ -17,6 +17,7 @@ import {
   acceptPublicArchive,
   buildPublicClient,
   BUNDLED_REL,
+  CLIENT_PACKAGE_REL,
   DISCOVERY_REL,
 } from "../lib/original-task/public-client.mjs";
 
@@ -80,7 +81,7 @@ test("public archive is the owning client and a tampered byte is refused", () =>
   for (const rel of built.files) {
     assert.equal(rel.includes("node_modules"), false, rel);
     assert.equal(/collect|operator-http|event-guard|deps\.mjs|store\.mjs|mount\.mjs|\.sql|\.env/.test(rel), false, rel);
-    if (rel === BUNDLED_REL) continue;
+    if (rel === BUNDLED_REL || rel === CLIENT_PACKAGE_REL) continue;
     assert.deepEqual(built.files && readFileSync(join(root, rel)), readFileSync(join(root, rel)));
   }
   const text = archive.toString("latin1");
@@ -198,13 +199,18 @@ test("cold archive runs describe, submit, refusal, result, expiry, and a later r
   const descriptor = await get(`${origin}${new URL(described.href).pathname}`);
   const downloaded = await get(`${origin}${descriptor.json.acquisition.archive.path}`);
   acceptPublicArchive(downloaded.bytes, descriptor.json);
+  // A cold caller may extract below a CommonJS application. The capsule must
+  // preserve its own ESM scope rather than rely on Node syntax detection.
+  writeFileSync(join(work, "package.json"), JSON.stringify({ type: "commonjs" }));
   const root = join(work, "client");
   writeFileSync(join(work, "client.tar.gz"), downloaded.bytes);
   await exec("tar", ["-xzf", join(work, "client.tar.gz"), "-C", work]);
   // tar extracts into work, which also contains client.tar.gz. Move members to a clean root.
   await exec("mkdir", ["-p", root]);
   await exec("tar", ["-xzf", join(work, "client.tar.gz"), "-C", root]);
-  assert.equal(existsSync(join(root, "package.json")), false);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, "package.json"), "utf8")), {
+    private: true, type: "module", engines: { node: ">=22" },
+  });
 
   const describedCold = await runCold(root, ["describe"]);
   assert.equal(describedCold.code, 0, describedCold.stderr);
