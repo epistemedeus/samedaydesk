@@ -1,7 +1,7 @@
 import express from "express";
 import { readBearer } from "../../../vendor/visitor-foundry-receiver/services/correspondence/dist/auth.js";
 import { tokensEqual } from "../../../vendor/visitor-foundry-receiver/services/correspondence/dist/crypto.js";
-import { collectOriginalTasks, writeOriginalTaskDisposition } from "./collect.mjs";
+import { receiveOriginalTasks, writeOriginalTaskDisposition } from "./collect.mjs";
 import { OriginalTaskError } from "./envelope.mjs";
 
 const COLLECTION = "/v1/operator/original-tasks";
@@ -25,7 +25,8 @@ export function handleOriginalTaskOperator(req, res, { store, adminToken }) {
     try {
       if (req.path === COLLECTION) {
         if (req.method !== "GET") return sendError(res, 405, "method_not_allowed");
-        const body = await collectOriginalTasks(store);
+        const after = typeof req.query?.after === "string" ? req.query.after : null;
+        const body = await receiveOriginalTasks(store, { cursor: after });
         res.set("Cache-Control", "no-store");
         return res.status(200).json(body);
       }

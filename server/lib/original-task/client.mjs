@@ -23,16 +23,16 @@ function loopback(baseUrl) {
   return url.protocol === "http:" && (url.hostname === "127.0.0.1" || url.hostname === "localhost");
 }
 
-export function assertExecutableOrigin(baseUrl, { ownerQa = false } = {}) {
-  if (loopback(baseUrl)) return baseUrl;
+export function assertExecutableOrigin(baseUrl) {
   let url;
   try { url = new URL(baseUrl); } catch { throw new OriginalTaskError("origin_refused"); }
-  if (ownerQa && url.protocol === "https:" && !url.username && !url.password && !url.search && !url.hash) return baseUrl;
+  if (url.username || url.password || url.search || url.hash) throw new OriginalTaskError("origin_refused");
+  if (url.protocol === "https:" || loopback(baseUrl)) return baseUrl;
   throw new OriginalTaskError("origin_refused");
 }
 
-export async function discoverEntry(baseUrl, { ownerQa = false, fetchImpl } = {}) {
-  assertExecutableOrigin(baseUrl, { ownerQa });
+export async function discoverEntry(baseUrl, { fetchImpl } = {}) {
+  assertExecutableOrigin(baseUrl);
   const result = await entryRequest(baseUrl, "", { fetchImpl });
   if (result.status !== 200) throw new OriginalTaskError("entry_unavailable", result.status || 503);
   const profile = result.body?.profile;
@@ -56,8 +56,8 @@ export async function discoverEntry(baseUrl, { ownerQa = false, fetchImpl } = {}
   };
 }
 
-export async function registerOriginalTask(directory, baseUrl, { ownerQa = false, fetchImpl } = {}) {
-  const discovered = await discoverEntry(baseUrl, { ownerQa, fetchImpl });
+export async function registerOriginalTask(directory, baseUrl, { fetchImpl } = {}) {
+  const discovered = await discoverEntry(baseUrl, { fetchImpl });
   prepare(directory, baseUrl, discovered.profileId, discovered.termsHash);
   let registration = await continueEntry(directory, "register", fetchImpl);
   if (registration.status === 202) registration = await continueEntry(directory, "reconcile", fetchImpl);
@@ -104,16 +104,23 @@ export async function readOriginalTask(directory) {
   try {
     const events = [];
     let after;
-    for (let page = 0; page < 5; page += 1) {
+    let complete = false;
+    for (let page = 0; page < 50; page += 1) {
       const result = await client.listEvents({ projectId, limit: 100, ...(after ? { after } : {}) });
       events.push(...result.events);
-      if (!result.nextCursor || result.events.length < 100) break;
+      if (result.events.length < 100) { complete = true; break; }
+      if (!result.nextCursor) throw new OriginalTaskError("incomplete", 409);
       after = result.nextCursor;
     }
+    if (!complete) throw new OriginalTaskError("incomplete", 409);
     const view = classifyThread(events);
     if (!view) throw new OriginalTaskError("not_task_bearing", 404);
     if (view.triaged) view.delivered = true;
     return { projectId, ...view };
+  } catch (error) {
+    if (error instanceof OriginalTaskError) throw error;
+    if (error?.status === 401) throw new OriginalTaskError("grant_expired", 401);
+    throw error;
   } finally {
     client.dispose();
   }

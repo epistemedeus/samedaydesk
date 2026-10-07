@@ -8,6 +8,7 @@ import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
 import { verifiedFoundryDatabaseUrl } from "../foundry/pg-tls.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
 import { receiveServingRuntime, servingRuntimeFailure } from "../foundry/serving-runtime.mjs";
+import { guardVisitorEvent } from "./original-task/event-guard.mjs";
 import { handleOriginalTaskOperator, isOriginalTaskOperatorPath } from "./original-task/operator-http.mjs";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
@@ -258,7 +259,13 @@ export function mountCorrespondence(app, options = {}) {
           wholeHostSandbox: false,
         });
       }
-      if (state.app) return state.app(req, res, next);
+      if (state.app) {
+        if (!state.store) return state.app(req, res, next);
+        return guardVisitorEvent(req, res, next, {
+          store: state.store,
+          forward: () => state.app(req, res, next),
+        });
+      }
       return disabled(req, res, next);
     };
     if (state.inFlight) {

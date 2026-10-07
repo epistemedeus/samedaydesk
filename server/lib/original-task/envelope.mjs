@@ -89,6 +89,15 @@ export function consentText() {
   return encodeOriginalTask({ schema: REQUEST_SCHEMA, disposition: "example_consent", exampleConsent: true });
 }
 
+export function dispositionShape(text) {
+  if (typeof text !== "string" || text.length > TEXT_MAX) return false;
+  let value;
+  try { value = JSON.parse(text); } catch { return false; }
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  if (value.schema !== DISPOSITION_SCHEMA) return false;
+  return value.disposition === "useful_refusal" || value.disposition === "scoped_result";
+}
+
 export function dispositionRequest(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new OriginalTaskError("invalid_disposition");
   if (input.disposition === "useful_refusal") {
