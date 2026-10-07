@@ -3,7 +3,7 @@ import { readBearer } from "../../../vendor/visitor-foundry-receiver/services/co
 import { hashToken } from "../../../vendor/visitor-foundry-receiver/services/correspondence/dist/crypto.js";
 import { dispositionShape } from "./envelope.mjs";
 
-const EVENT_WRITE = /^\/v1\/projects\/(prj_[\w-]{16})\/events$/;
+const EVENT_WRITE = /^\/v1\/projects\/([^/]+)\/events\/?$/i;
 const parseJson = express.json({ limit: 32 * 1024, type: ["application/json"] });
 
 function sendError(res, status, code) {
@@ -13,7 +13,12 @@ function sendError(res, status, code) {
 
 export function visitorEventProjectId(method, path) {
   if (method !== "POST") return null;
-  return EVENT_WRITE.exec(path)?.[1] ?? null;
+  const match = EVENT_WRITE.exec(path);
+  if (!match) return null;
+  let projectId;
+  try { projectId = decodeURIComponent(match[1]); }
+  catch { return null; }
+  return /^prj_[\w-]{16}$/.test(projectId) ? projectId : null;
 }
 
 export function guardVisitorEvent(req, res, next, { store, forward }) {

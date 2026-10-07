@@ -92,7 +92,7 @@ function grantExpired(grant, now) {
 async function accessOf(store, projectId, now) {
   let grants = [];
   let registrationId = null;
-  let workspaceExpired = false;
+  let workspaceExpiresAt = null;
   if (store.kind === "postgres") {
     const grantRows = await store.query(
       `SELECT role, expires_at, revoked_at FROM correspondence_grants WHERE project_id = $1`,
@@ -107,14 +107,16 @@ async function accessOf(store, projectId, now) {
       );
       if (registration.rows[0]) {
         registrationId = registration.rows[0].id;
-        workspaceExpired = new Date(registration.rows[0].expires_at).getTime() <= now;
+        workspaceExpiresAt = new Date(registration.rows[0].expires_at).getTime();
       }
     }
   } else {
     grants = [...store.state.grants.values()].filter((grant) => grant.projectId === projectId);
   }
+  const clock = typeof now === "function" ? now() : now;
+  const workspaceExpired = workspaceExpiresAt !== null && workspaceExpiresAt <= clock;
   const readers = grants.filter((grant) => grant.role === "reader");
-  const retrieval = readers.length === 0 || readers.every((grant) => grantExpired(grant, now))
+  const retrieval = readers.length === 0 || readers.every((grant) => grantExpired(grant, clock))
     ? (readers.length === 0 ? "no_reader" : "grant_expired")
     : "open";
   return { registrationId, retrieval, workspaceExpired };
@@ -322,7 +324,7 @@ async function commitPostgres(store, ctx) {
         EVENT_SAFETY,
       );
       if (!thread.complete) throw new OriginalTaskError("incomplete", 409);
-      const access = await accessOf({ kind: "postgres", query: (text, params) => client.query(text, params) }, ctx.projectId, ctx.clock);
+      const access = await accessOf({ kind: "postgres", query: (text, params) => client.query(text, params) }, ctx.projectId, ctx.now);
       justify(thread.events, access);
       const now = new Date();
       const nextProject = applyEventToProject(locked.project, "reply", ctx.version, now.toISOString());
@@ -384,7 +386,7 @@ async function commitMemory(store, ctx) {
     if (!project) throw new OriginalTaskError("not_found", 404);
     if (Number(project.version) !== ctx.version) throw new OriginalTaskError("version_conflict", 409);
     const events = await eventsOf(store, ctx.projectId);
-    const access = await accessOf(store, ctx.projectId, ctx.clock);
+    const access = await accessOf(store, ctx.projectId, ctx.now);
     justify(events, access);
     const written = await store.createEvent(ctx.eventInput);
     return { replayed: written.replayed === true, event: written.event };
@@ -426,7 +428,7 @@ export async function writeOriginalTaskDisposition(store, {
   const access = await accessOf(store, projectId, clock);
   justify(events, access);
   if (beforeAppend) await beforeAppend();
-  const ctx = { projectId, key, requestHash, text: disposition.text, version, clock, eventInput };
+  const ctx = { projectId, key, requestHash, text: disposition.text, version, now, eventInput };
   try {
     const written = store.kind === "postgres" ? await commitPostgres(store, ctx) : await commitMemory(store, ctx);
     return dispositionResult(disposition, projectId, written);
