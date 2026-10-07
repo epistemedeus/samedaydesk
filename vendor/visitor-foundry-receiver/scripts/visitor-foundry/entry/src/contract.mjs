@@ -1,5 +1,5 @@
 import { createHmac } from 'node:crypto';
-import { hashRequest, hashToken } from './deps.mjs';
+import { hashRequest, hashToken } from '../../../../services/correspondence/dist/crypto.js';
 export const SCHEMA = 'neomorphic.foundry.entry.v1';
 export const BASE = '/v1/visitor-entry';
 export class EntryError extends Error {

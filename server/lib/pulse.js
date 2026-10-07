@@ -869,6 +869,7 @@ export function pulseMiddleware(req, _res, next) {
 
     if (
       ASSET_RE.test(p) ||
+      p === "/for-agents/original-task/original-task-client.tar.gz" ||
       p.startsWith("/api/") ||
       p === "/favicon.ico" ||
       p === "/robots.txt" ||

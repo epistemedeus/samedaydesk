@@ -346,6 +346,17 @@
           "sha256": "f7937f5dd549a6668ce5e6c789af21454460131e2997e81c8d37cbf7ea991d3c"
         }
       }
+    },
+    {
+      "package": "ROOT-TASK-FIRST-PUBLIC-ACQUISITION-102330",
+      "sdsBase": "ca00b4a556de94e729b65f9ed8760866ad7c5ec1",
+      "reason": "The visitor entry contract reads the same hash functions from the correspondence crypto module, so a public original-task client does not load the database driver or HTTP server. Grant and request hashes are unchanged. Store, mount, and operator code still use deps.mjs.",
+      "files": {
+        "scripts/visitor-foundry/entry/src/contract.mjs": {
+          "receivedSha256": "c23c3167a0e2058d84d15f3c3f728c68eb334baff2c865fa08b1bf49f6e3836b",
+          "sha256": "77a002b497511cb5008501d3b764c0ffe54c660149df7b4c1ffc0ad52a66adf0"
+        }
+      }
     }
   ]
 }

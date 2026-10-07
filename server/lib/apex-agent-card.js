@@ -24,6 +24,7 @@ export function apexAgentCard() {
       { transport: "HTTP", url: `${APEX_ORIGIN}/agent-readiness` },
       { transport: "HTTP", url: `${APEX_ORIGIN}/openapi.json` },
       { transport: "HTTP", url: `${APEX_ORIGIN}/skill.md` },
+      { transport: "HTTP", url: `${APEX_ORIGIN}/discovery/original-task-correspondence.json` },
     ],
     skills: MCP_TOOL_NAMES.map((name) => ({
       id: name,
