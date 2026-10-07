@@ -1,0 +1,6 @@
+The tarball beside this notice is the consumed change-monitor 0.1.0 archive.
+sha256 a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f
+bytes 88319
+public URL https://neomorphic.io/downloads/change-monitor/0.1.0/change-monitor-0.1.0.tgz
+It is loaded by the managed-watch adapter after a hash check.
+It is not a new package, a republished download route, or a subscription.
