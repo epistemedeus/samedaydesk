@@ -113,3 +113,20 @@ The cold job records the same client surfaces across the disabled mount, hosted 
 Root rollback, when a hosted opt-in has already happened, is: unset `FOUNDRY_HOST_OPT_IN` and the `CORRESPONDENCE_*` variables, unset the profile and key paths, and restart `node server/index.js`. Health stays the SDS check. Healthz returns `enabled: false` and `reason: unconfigured`. Do not drop `pilot_correspondence`.
 
 Managed Node portability, the non-secret host probe, and the distinct Wasmtime 49 embedding are in `MANAGED-NODE.md`. This package does not activate Hostinger.
+
+## Receiving a changed private caller runtime
+
+The private caller is bound to `private-control-pin.json`, including the host
+application, its production package and every reviewed original-task module and
+descriptor. After changing that graph, receive the changed source and extend the
+closure before release. Preserve the prior current closure in
+`receivedCallerClosures` so saved private attempts remain readable. The
+pin's `base` names the reviewed source commit before the pin update.
+
+Run `npm run test:proxy-addr` with the production-only install. It checks current
+source, earlier received callers and changed-runtime refusal. Run
+`PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task` as well:
+it exercises the mounted HTTP path, later private retrieval, URL-equivalent
+authorization, commit-time expiry and complete collection. Both belong to the
+Runtime startup workflow. A fixture result alone does not replace that workflow
+or receiving the existing deployed attempt.

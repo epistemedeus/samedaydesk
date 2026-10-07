@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { mkdtemp, cp, readFile, rm, readdir } from "node:fs/promises";
+import { mkdtemp, cp, readFile, writeFile, rm, readdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import test, { before, after } from "node:test";
 import { createSdsApp } from "../app.js";
-import { verifyCallerClosure } from "../foundry/activation/remote-private-journey.mjs";
+import { acceptedCallerPin, verifyCallerClosure } from "../foundry/activation/remote-private-journey.mjs";
 import { clientKey, TRUSTED_PROXIES_ENV } from "../lib/agent-readiness/rate-limit.js";
 import { inspectCorrespondenceEnv } from "../lib/correspondence-mount.js";
 import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
@@ -137,6 +137,28 @@ after(async () => {
 test("production dependencies retain a valid private caller control closure", () => {
   const received = verifyCallerClosure();
   assert.match(received.closureDigest, /^sha256:[a-f0-9]{64}$/);
+});
+
+test("caller closure binds original-task runtime and retains received callers", async () => {
+  const pin = JSON.parse(await readFile(path.join(root, "server/foundry/activation/private-control-pin.json"), "utf8"));
+  for (const name of ["cli", "client", "collect", "descriptor", "envelope", "event-guard", "operator-http"]) {
+    assert.ok(pin.files[`server/lib/original-task/${name}.mjs`], name);
+  }
+  assert.ok(pin.files["client/public/discovery/original-task-correspondence.json"]);
+  const current = verifyCallerClosure();
+  assert.equal(acceptedCallerPin(current, current), true);
+  for (const prior of pin.receivedCallerClosures) {
+    assert.equal(acceptedCallerPin(prior, current), true);
+  }
+  const member = path.join(root, "server/lib/original-task/event-guard.mjs");
+  const original = await readFile(member);
+  try {
+    await writeFile(member, Buffer.concat([original, Buffer.from("\n// changed runtime member\n")]));
+    assert.throws(() => verifyCallerClosure(), (error) => error.code === "caller_source_changed");
+  } finally {
+    await writeFile(member, original);
+  }
+  assert.deepEqual(verifyCallerClosure(), current);
 });
 
 test("seeded proxy-addr 2.0.7 resolution is refused", () => {

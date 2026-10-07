@@ -1,11 +1,11 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "e2fb371e2ad803151852b8683ccd65aac7e07600",
+  "base": "b94d1762a5e03d523916e16d46710b843283862b",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
-    "package.json": "3d4c8f3baecb6bf5d4d41fff795d7380f5fa5d516ebaa24489589c1ba7c33290",
-    "server/app.js": "937565fed35174248d9481756506cf060b99d837a4d03ca7b9c9c0970723c5ff",
+    "package.json": "72bfccf42f32b827b2daf356673d073817653de5fc3fb9c3faa943c18f927695",
+    "server/app.js": "5f8e3968c9c0a825a806caa961d267dbc3010811af32690be416768496771b85",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "24cd64e977f624c8ab43e1d452bc5f25caea18ef4d51d06b5d3f4227d8da4742",
@@ -23,7 +23,7 @@
     "server/foundry/runtime-layout.mjs": "2bee71a837f7da6cd266553b3bc96abdc98c64826c9ed25a0ddf3c710c1573b8",
     "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
     "server/index.js": "476742ff8e676dcf5529fa45285ff5626cb6a7be02a8df62573de340fed81e1d",
-    "server/lib/correspondence-mount.js": "a55118f1a89a2033eceb69b7dbd8c8fd5b70eeea830174fc0fb44f3c160948a5",
+    "server/lib/correspondence-mount.js": "2b3bfe9224fc98072e73b62ff711fd6407ba49acd8dabbf60cd06af33348ebf0",
     "server/lib/managed-watch/claim.mjs": "bc706b232c49c8704bc8be47234dfff79077d4cf659bd1d1a33779b9f80a2041",
     "server/lib/managed-watch/client.mjs": "e2fe0994ecc72968e8b26932c76a2ef782d29234a1fc8513534a6d7ca9cb0b58",
     "server/lib/managed-watch/direct-alternative.mjs": "fb51b9d3cbe38bd1e61f036b0b9faa868499a7e14f10903982871e2bd4595373",
@@ -243,7 +243,15 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/router.ts": "b6abf1f5f97d42df796b702ab28dbd492c90ce3e9181eb6104cd6c891f688681",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
     "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
-    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08"
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+    "server/lib/original-task/cli.mjs": "73847221d8351086f6202db47e5d45276ce320918b00e9e5f00fd12cf0bfdb5e",
+    "server/lib/original-task/client.mjs": "6b4471129ad49cad7066c64853178c482d85445539d64068f330231462f28d13",
+    "server/lib/original-task/collect.mjs": "b4103956ad1f419a518e2f5913459b57830083656e474f611baf3142a7ae3d21",
+    "server/lib/original-task/descriptor.mjs": "13b9fed5322e295e6e4b0aeefa8a3e1247fabe35271c2168f5dad9b688e40150",
+    "server/lib/original-task/envelope.mjs": "39cae5266ba24edc75dce414f148cbc25fe2bf4ea0c20af668b6f63c85ce8c6b",
+    "server/lib/original-task/event-guard.mjs": "39fd1a0b73917af8b39a478b947a8cba5b49da196f0af5f168d3a3d154baad22",
+    "server/lib/original-task/operator-http.mjs": "ed216f52432727fb04f3e3a076e5e4ef44761903bc2669880015057560ab8cf8",
+    "client/public/discovery/original-task-correspondence.json": "052451ac3a3f71060f6a6f52422ffbb294ba1f40791229dc13a4756a5178307e"
   },
   "receivedCallerClosures": [
     {
@@ -280,6 +288,11 @@
       "base": "396dd4debe5593c42fc1e43ed3d0e4945fa6c193",
       "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
       "closureDigest": "sha256:b79938f34450b9cc4ac61cb5ecd6e2a358ce37484a337bb3b8600950b6728698"
+    },
+    {
+      "base": "e2fb371e2ad803151852b8683ccd65aac7e07600",
+      "sourcePinSha256": "717096e5ffc0e102ef53aa10a969bf558522aa9878cd6b3bc2636716a0ec2f08",
+      "closureDigest": "sha256:6528ea2b4adbc7a44a5cfe49f02aabf009325c1c57a265cc9758a79c939a9390"
     }
   ]
 }

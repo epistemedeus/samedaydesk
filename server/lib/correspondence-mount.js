@@ -8,6 +8,8 @@ import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
 import { verifiedFoundryDatabaseUrl } from "../foundry/pg-tls.js";
 import { hostInputsFromEnv } from "../foundry/private-files.js";
 import { receiveServingRuntime, servingRuntimeFailure } from "../foundry/serving-runtime.mjs";
+import { guardVisitorEvent } from "./original-task/event-guard.mjs";
+import { handleOriginalTaskOperator, isOriginalTaskOperatorPath } from "./original-task/operator-http.mjs";
 
 export const CORRESPONDENCE_PREFIX = "/api/correspondence";
 export const MOUNTED_PG_SCHEMA = "pilot_correspondence";
@@ -118,6 +120,7 @@ export function mountCorrespondence(app, options = {}) {
     closed: false,
     foundry: { optIn: false, extension: false, reason: "opt_in_unset", facade: false, rawMounted: false },
     entryReuseMount: null,
+    adminToken: null,
   };
   const disabled = disabledRouter(state);
   // Shared by initial enable and the existing bounded store retry. Publication
@@ -219,6 +222,7 @@ export function mountCorrespondence(app, options = {}) {
           rawMounted: false,
         };
       }
+      state.adminToken = inspected.token;
       state.status = "ready";
       state.reason = "ready";
     } catch (error) {
@@ -226,6 +230,7 @@ export function mountCorrespondence(app, options = {}) {
       state.entryReuseMount = null;
       state.store = null;
       state.app = null;
+      state.adminToken = null;
       state.status = "disabled";
       state.reason = "store_unavailable";
       console.error("correspondence_store_unavailable", {
@@ -236,6 +241,10 @@ export function mountCorrespondence(app, options = {}) {
 
   function dispatch(req, res, next) {
     const proceed = () => {
+      if (isOriginalTaskOperatorPath(req.path)) {
+        if (!state.app || !state.store || !state.adminToken) return disabled(req, res, next);
+        return handleOriginalTaskOperator(req, res, { store: state.store, adminToken: state.adminToken });
+      }
       if (req.path === "/foundry-receiver" && state.foundry?.optIn && state.status === "ready") {
         return res.status(200).json({
           optIn: true,
@@ -250,7 +259,13 @@ export function mountCorrespondence(app, options = {}) {
           wholeHostSandbox: false,
         });
       }
-      if (state.app) return state.app(req, res, next);
+      if (state.app) {
+        if (!state.store) return state.app(req, res, next);
+        return guardVisitorEvent(req, res, next, {
+          store: state.store,
+          forward: () => state.app(req, res, next),
+        });
+      }
       return disabled(req, res, next);
     };
     if (state.inFlight) {
@@ -279,6 +294,7 @@ export function mountCorrespondence(app, options = {}) {
       await state.inFlight;
       state.status = "disabled";
       state.reason = "store_unavailable";
+      state.adminToken = null;
       const entry = state.entryReuseMount;
       const store = state.store;
       state.entryReuseMount = null;
