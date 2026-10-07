@@ -29,6 +29,7 @@ import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
+import { ORIGINAL_TASK_DESCRIPTOR_PATH, originalTaskDescriptor } from "./lib/original-task/descriptor.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -149,6 +150,12 @@ app.get("/.well-known/agent-card.json", (_req, res) => {
 // Machine declarations derived from the mounted tools. Mounted before the SPA
 // so a missing static file cannot turn them into an HTML document.
 mountApexDeclarations(app);
+
+// Existing discovery directory. This descriptor does not call a network endpoint.
+app.get(ORIGINAL_TASK_DESCRIPTOR_PATH, (_req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.json(originalTaskDescriptor());
+});
 
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
