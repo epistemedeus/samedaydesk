@@ -357,6 +357,17 @@
           "sha256": "77a002b497511cb5008501d3b764c0ffe54c660149df7b4c1ffc0ad52a66adf0"
         }
       }
+    },
+    {
+      "package": "ROOT-INTAKE-READINESS-104130",
+      "sdsBase": "08b90bdef8dbd198023be447942a3119cb268235",
+      "reason": "Service readiness is storage and schema. A historical portable profile remains project-scoped execution evidence and is checked on each operation, so ordinary original-task intake stays available when that profile no longer matches the installed runtime. Execution, admission, publication and reuse still use the unchanged verifier. No fingerprint, generation, budget, reseal, renewal or pool deletion.",
+      "files": {
+        "scripts/visitor-foundry/integration/src/store.mjs": {
+          "receivedSha256": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb",
+          "sha256": "6c2fd20ada759876543229b65a8c50bc3865bd9de493a0dd4a275819b8435547"
+        }
+      }
     }
   ]
 }
