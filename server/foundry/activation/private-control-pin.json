@@ -1,12 +1,12 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "32d029b3130c79672a5629aa355892d31ad5e4db",
+  "base": "08b90bdef8dbd198023be447942a3119cb268235",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "1b8653ed6e9dc2291c1e72caf3daa2bb096bf2644e0ba197dbfabcbf18b1e0b8",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "e586c3201bf29796ae0bfc0e32f822d63f590d92556bdb66068dda81707e955d",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
-    "package.json": "b885ce7ccf20fe555d4e09e81176199c679d18bf5aff85140de83eed91a52b0c",
+    "package.json": "88dc3a96da1795aef3463c11d0bb9e9a8f5fdf484d0ab252afda895df07d3811",
     "server/app.js": "56b9fa403685a42c6fa3522589fa590b905d43cb6c72baff4b507e31ff8f79bd",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -51,7 +51,7 @@
     "server/lib/original-task/event-guard.mjs": "39fd1a0b73917af8b39a478b947a8cba5b49da196f0af5f168d3a3d154baad22",
     "server/lib/original-task/operator-http.mjs": "ed216f52432727fb04f3e3a076e5e4ef44761903bc2669880015057560ab8cf8",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
-    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
+    "vendor/visitor-foundry-receiver/SOURCE-PIN.json": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/constants.mjs": "0964cf26451a1844ff2119f0e42840981fc4fa39e8a6ea6870b7e5045cb0b884",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/probes.mjs": "85dbdc32d1f97715ef06c075b54c42487b8ec156a08857d8cad73e74b24d1c69",
     "vendor/visitor-foundry-receiver/packs/capability-preflight/src/trust.mjs": "623ae4bdbc43cb38c8cc5989bea2e15b0423575e5a2f3c1dc3a20482651dd1e1",
@@ -135,7 +135,7 @@
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/recover.mjs": "b6e64fedf97ed2f94d6a69592cea213bd290d85c6ab12c50fcb704b4db2eb6f5",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/router.mjs": "155dfc024b307a4d45344afd45a4df6e22809e8fc45e8b216c94a1bca8d2d22b",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/runner-child.mjs": "4c5caaaf6eed7b97f6a5140c20fc6fa11dd6d4809cd5222766fc3cf64352e838",
-    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/store.mjs": "b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb",
+    "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/store.mjs": "6c2fd20ada759876543229b65a8c50bc3865bd9de493a0dd4a275819b8435547",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/supervisor.mjs": "0cbcd69d4318a7587ec2d391f3686be425c6476adff651a7f1cdbcb6d513a7a6",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/verification.mjs": "94aecd4b49a493dca60a6a17f828e453a6e296f2bdd435e473d374b4a3358e07",
     "vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/wire.mjs": "4fafa72189f16a43516d5da2cde7036330d7293edc40312cd09090beb632fab5",
@@ -311,6 +311,11 @@
       "base": "d9b06d08d4f1aa9c2d0e051d7c4121465d48bbe8",
       "sourcePinSha256": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
       "closureDigest": "sha256:6553ddea8c385114155a228c5083da9fc37347745d3a6520923769675d236c64"
+    },
+    {
+      "base": "32d029b3130c79672a5629aa355892d31ad5e4db",
+      "sourcePinSha256": "c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda",
+      "closureDigest": "sha256:9814323d166563cfe9338a5d3c826af1aa9e46a8fbc15b8ef0ae67f37525f9b3"
     }
   ]
 }

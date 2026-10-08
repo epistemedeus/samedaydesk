@@ -37,12 +37,9 @@ export class IntegrationStore {
   metric(kind,started,fields={}) { this.onMetric?.({kind,ms:performance.now()-started,...fields}); }
   migrate() { return this.db.migrate(); }
   async checkReady() {
+    // Storage and schema readiness only. A historical portable profile remains
+    // project-scoped execution evidence and is checked on each operation.
     await this.db.checkReady();
-    await this.db.tx(async c => {
-      for (const row of (await c.query('SELECT config,verification FROM correspondence_vf04_pools')).rows) {
-        if(row.config.kind===PORTABLE_KIND)checkInstalledVerification(row.verification,row.config);
-      }
-    });
   }
   close() { return this.db.close(); }
 
