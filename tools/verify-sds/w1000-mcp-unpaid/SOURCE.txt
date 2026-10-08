@@ -1,0 +1,22 @@
+w1000 SDS unpaid MCP list/call fixtures.
+
+Shipped inventory (read-only cite):
+  server/lib/mcp-tool-inventory.js
+  server/routes/mcp.js  (PROTOCOL_VERSION 2024-11-05, SERVER_INFO samedaydesk-agent-tools@1.2.0)
+  server/scripts/test-mcp-protocol-negotiation.js
+    FROZEN_TOOLS_BLOCK_SHA256=068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf
+
+Prior unpaid harnesses (read-only; this pack does not write those paths):
+  tools/verify-sds/mcp-unpaid/**                 W0-X70 PR162 + PR182 review amendments
+  tools/verify-sds/mcp-tools-call-unpaid-w7/**  W0-X135 tools/call isError (disjoint)
+  tools/verify-sds/w920-mcp-unpaid/**           W0-X239 PR226 window + cs-query
+  tools/verify-sds/w1020-mcp-unpaid/**          W0-X274 PR201 list-only predecessor
+  tools/verify-sds/w1040-mcp-unpaid/**          W0-X294 PR235 list-only sibling
+  tools/verify/lib/mcp.mjs                      W0-B2 PR148 patterns
+
+This wave owns only:
+  tools/verify-sds/w1000-mcp-unpaid/**
+
+Cold proof is loopback node:http /mcp (no npm ci, no live pay, no publish).
+Live apex https://samedaydesk.com/mcp is cite-only. --live and non-loopback
+--origin refuse with LIVE_REFUSE before any socket.
