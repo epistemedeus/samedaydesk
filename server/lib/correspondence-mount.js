@@ -2,6 +2,7 @@
 // Unconfigured: truthful disabled healthz only. Never takes down SDS routes.
 // No host-global CORS, no memory store outside NODE_ENV=test, no retry loop.
 import express from "express";
+import { startupDiagnostic } from "../foundry/startup-diagnostic.js";
 import { foundryHostOptIn, parseFoundryBodyLimit } from "../foundry/opt-in.js";
 import { REUSE_CLASS, reusesProductDataService } from "../foundry/product-isolation.js";
 import { closeEntryThenBase, openEntryFacade } from "../foundry/compose.js";
@@ -150,6 +151,7 @@ export function mountCorrespondence(app, options = {}) {
     }
     state.lastAttempt = now();
     let mounted = null;
+    let startupStage = "runtime_publication";
     try {
       if (inspected.foundryOptIn && !options.createEntryReuseMount) {
         runtimeReceiving ||= receiveServingRuntime();
@@ -159,6 +161,7 @@ export function mountCorrespondence(app, options = {}) {
           throw error;
         }
       }
+      startupStage = "service_import";
       const service = loadService
         ? await loadService()
         : await import("@neomorphic/correspondence");
@@ -171,12 +174,14 @@ export function mountCorrespondence(app, options = {}) {
         CORRESPONDENCE_POOL_MAX: String(inspected.poolMax),
         CORRESPONDENCE_STORE: inspected.store,
       };
+      startupStage = "service_config";
       const config = {
         ...service.loadConfig(configEnv),
         bodyLimitBytes: parseFoundryBodyLimit(env),
       };
       // Opt-in serving does not migrate. createPostgresStore applies the base
       // schema as a side effect, so the installed facade opens the class directly.
+      startupStage = "store_create";
       const store = inspected.foundryOptIn && !loadService
         ? new service.PostgresStore(config.databaseUrl, {
           schema: config.pgSchema || inspected.schema,
@@ -193,6 +198,7 @@ export function mountCorrespondence(app, options = {}) {
         return;
       }
       if (!inspected.foundryOptIn) {
+        startupStage = "app_create";
         state.app = service.createApp(store, config);
         state.foundry = { optIn: false, extension: false, reason: "opt_in_unset", facade: false, rawMounted: false };
       } else {
@@ -203,6 +209,7 @@ export function mountCorrespondence(app, options = {}) {
           createEntryReuseMount: options.createEntryReuseMount,
           hostProfile: options.hostProfile,
           participationKey: options.participationKey,
+          onStartupStage: (stage) => { startupStage = stage; },
         });
         mounted = opened.mounted;
         state.entryReuseMount = mounted;
@@ -233,9 +240,7 @@ export function mountCorrespondence(app, options = {}) {
       state.adminToken = null;
       state.status = "disabled";
       state.reason = "store_unavailable";
-      console.error("correspondence_store_unavailable", {
-        name: error instanceof Error ? error.name : "unknown",
-      });
+      console.error("correspondence_store_unavailable", startupDiagnostic(startupStage, error));
     }
   }
 

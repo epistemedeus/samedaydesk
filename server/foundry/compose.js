@@ -18,10 +18,12 @@ export async function openEntryFacade({
   createEntryReuseMount,
   hostProfile,
   participationKey,
+  onStartupStage = () => {},
 }) {
   let profile = hostProfile;
   let key = participationKey;
   if (!profile || !key) {
+    onStartupStage("profile_load");
     const loaded = hostInputsFromEnv(env);
     if (!loaded.ok) {
       const error = new Error(loaded.reason);
@@ -31,7 +33,9 @@ export async function openEntryFacade({
     profile = loaded.hostProfile;
     key = loaded.participationKey;
   }
+  onStartupStage("entry_module");
   const create = createEntryReuseMount || await loadCreateEntryReuseMount();
+  onStartupStage("entry_create");
   const mounted = await create({
     enabled: true,
     databaseUrl: config.databaseUrl,
@@ -44,7 +48,9 @@ export async function openEntryFacade({
   });
   const baseReady = typeof store.checkReady === "function" ? store.checkReady.bind(store) : async () => {};
   store.checkReady = async () => {
+    onStartupStage("base_readiness");
     await baseReady();
+    onStartupStage("entry_readiness");
     await mounted.checkReady();
   };
   return { mounted, baseReady };
