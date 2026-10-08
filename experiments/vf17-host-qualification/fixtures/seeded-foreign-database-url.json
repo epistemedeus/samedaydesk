@@ -1,0 +1,5 @@
+{
+  "purpose": "seeded refusal of an external database target",
+  "databaseUrl": "postgres://example.invalid/not-disposable",
+  "traffic": "synthetic"
+}
