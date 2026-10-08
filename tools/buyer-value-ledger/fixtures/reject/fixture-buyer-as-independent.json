@@ -1,0 +1,6 @@
+{
+  "jobId": "vendor-budget-impact",
+  "buyerClass": "fixture-buyer",
+  "independentDemand": true,
+  "example": true
+}
