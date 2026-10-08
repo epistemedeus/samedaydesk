@@ -33,7 +33,9 @@ for (const failedStage of ["service_import", "service_config", "store_create",
     let baseClosed = 0, entryClosed = 0;
     const lines = [];
     t.mock.method(console, "error", (...args) => lines.push(args));
-    const failure = Object.assign(new Error("private credentials and rows"), { code: "28P01" });
+    const failureCode = failedStage === "entry_readiness" ? "installed_verification_changed" :
+      failedStage === "base_readiness" ? "ERR_TLS_CERT_ALTNAME_INVALID" : "28P01";
+    const failure = Object.assign(new Error("private credentials and rows"), { code: failureCode });
     const store = new MemoryStore();
     store.close = async () => { baseClosed++; };
     store.checkReady = async () => { if (failedStage === "base_readiness") throw failure; };
@@ -56,7 +58,7 @@ for (const failedStage of ["service_import", "service_config", "store_create",
     assert.equal(handle.state.reason, "store_unavailable");
     assert.equal(handle.state.adminToken, null);
     assert.deepEqual(lines, [["correspondence_store_unavailable",
-      { stage: failedStage, code: "28P01" }]]);
+      { stage: failedStage, code: failureCode }]]);
     assert.equal(baseClosed, ["service_import", "service_config", "store_create"].includes(failedStage) ? 0 : 1);
     assert.equal(entryClosed, ["base_readiness", "entry_readiness"].includes(failedStage) ? 1 : 0);
     await handle.close();
