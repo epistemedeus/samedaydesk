@@ -150,15 +150,18 @@ test("caller closure binds original-task runtime and retains received callers", 
   for (const prior of pin.receivedCallerClosures) {
     assert.equal(acceptedCallerPin(prior, current), true);
   }
-  const member = path.join(root, "server/lib/original-task/event-guard.mjs");
-  const original = await readFile(member);
-  try {
-    await writeFile(member, Buffer.concat([original, Buffer.from("\n// changed runtime member\n")]));
-    assert.throws(() => verifyCallerClosure(), (error) => error.code === "caller_source_changed");
-  } finally {
-    await writeFile(member, original);
+  assert.ok(pin.files["server/foundry/startup-diagnostic.js"]);
+  for (const name of ["server/lib/original-task/event-guard.mjs", "server/foundry/startup-diagnostic.js"]) {
+    const member = path.join(root, name);
+    const original = await readFile(member);
+    try {
+      await writeFile(member, Buffer.concat([original, Buffer.from("\n// changed runtime member\n")]));
+      assert.throws(() => verifyCallerClosure(), (error) => error.code === "caller_source_changed");
+    } finally {
+      await writeFile(member, original);
+    }
+    assert.deepEqual(verifyCallerClosure(), current);
   }
-  assert.deepEqual(verifyCallerClosure(), current);
 });
 
 test("seeded proxy-addr 2.0.7 resolution is refused", () => {
