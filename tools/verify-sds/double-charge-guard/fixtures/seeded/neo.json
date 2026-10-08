@@ -1,0 +1,8 @@
+{
+  "id": "neo",
+  "seededId": "neo",
+  "feature": "double-charge-guard",
+  "vendor": "neomorphic/neo-kernel-vendor",
+  "expectExit": 1,
+  "errorCode": "NEO_VENDOR_REFUSE"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "changed-facts-bypass",
+  "seededId": "changed-facts-bypass",
+  "feature": "double-charge-guard",
+  "claim": { "changedFactsMintSecondCharge": true },
+  "expectExit": 1,
+  "errorCode": "FACTS_BYPASS_REFUSE"
+}
