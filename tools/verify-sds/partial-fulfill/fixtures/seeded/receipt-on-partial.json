@@ -1,0 +1,10 @@
+{
+  "seededId": "receipt-on-partial",
+  "claim": {
+    "settlementReceipt": {
+      "schemaVersion": "samedaydesk.settlement-receipt.v1",
+      "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "note": "Lie: a settlement receipt attached to a partial extract-batch proves full delivery."
+}

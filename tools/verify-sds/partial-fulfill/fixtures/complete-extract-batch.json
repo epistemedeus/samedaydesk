@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "jobId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "item-001",
+      "source": "https://example.com/alpha",
+      "status": "success",
+      "data": { "title": "Alpha Product Page" },
+      "notes": [],
+      "error": null,
+      "finalUrl": "https://example.com/alpha",
+      "httpStatus": 200
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 128,
+    "wallMs": 4,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "charged": false,
+  "boundary": {
+    "note": "Pack-local complete extract-batch. Not a live fetch and not a payment."
+  }
+}

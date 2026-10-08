@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "partial-fulfill",
+  "seeds": [
+    {
+      "id": "settle-partial",
+      "why": "A partial extract-batch must not be marked settled / delivered-in-full.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "settle-partial", "--json"],
+      "expectExit": 1,
+      "errorCode": "SETTLE_PARTIAL",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "forged-complete",
+      "why": "Accounting with failed/partial rows labeled complete is not a settleable delivery.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "forged-complete", "--json"],
+      "expectExit": 1,
+      "errorCode": "FORGED_COMPLETE",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "silent-ok-partial",
+      "why": "{ok:true, partial:true} is not a complete delivery and must not settle.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "silent-ok-partial", "--json"],
+      "expectExit": 1,
+      "errorCode": "SILENT_OK_PARTIAL",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "receipt-on-partial",
+      "why": "A settlement receipt attached to a partial job is not proof of full delivery.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "receipt-on-partial", "--json"],
+      "expectExit": 1,
+      "errorCode": "RECEIPT_ON_PARTIAL",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "payment-signature", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "stripe-path",
+      "why": "Stripe checkout / webhook / cs_ paths are out of this unpaid pack.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "stripe-path", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "settled": false }
+    },
+    {
+      "id": "live",
+      "why": "This pack is offline. Never fetch agents.samedaydesk.com settlement-proof.",
+      "command": ["node", "tools/verify-sds/partial-fulfill/cli.mjs", "--seeded-failure", "live", "--json"],
+      "expectExit": 2,
+      "errorCode": "LIVE_REFUSE",
+      "boundary": { "paymentSent": false, "settled": false, "liveFetch": false }
+    }
+  ]
+}
