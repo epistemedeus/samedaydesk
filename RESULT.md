@@ -1,86 +1,238 @@
-# ROOT-INTAKE-READINESS-104130
+# SC-R29-IMPL result
 
 ## Identity
 
-- model: grok-4.7, effort xhigh
-- session: fc2d669b-da9c-4934-bf35-8afedcb1e5b7
-- branch: codex/intake-readiness-104130
-- base: 08b90bdef8dbd198023be447942a3119cb268235
-- head: 95515a51a6423981acc229af9bbef88143189abe
-- VM: Node v22.22.2, PostgreSQL 16.15. Hostinger's Node 22.23.3 probe is build evidence, not this process and not the serving process.
+- repo: epistemedeus/samedaydesk
+- branch: pilot/sc-r29-seller-conformance
+- base SHA: dca510d4a130e202037db2ec03a344db354e6cf1
+- page commit: 235dfedd83462cb2111da9945bd48689a06f74ca
+- page tree SHA: ae61220869510f132fa0ad7dc69405b2c07801f8
+- RESULT.md commit: ef374552130f7aca7c2356282837a224c4b47d26
+- RESULT.md tree SHA: 1adfdc846c4b1a97f627941cdd3ffb6dd0b65543
 
-`head` is the repair commit that contains the code and the result narrative. This recording commit is its child and is the branch tip.
+## Changed files
 
-## Change
+- client/src/pages/SellerConformance.tsx (new)
+- client/src/pages/SellerConformance.module.css (new)
+- client/src/App.tsx
+- client/src/pages/Mcp.tsx
+- client/public/sitemap.xml
+- client/public/llms.txt
+- client/index.html
+- RESULT.md
 
-`IntegrationStore.checkReady` now checks storage and schema only. A historical portable profile stays project-scoped execution evidence. `checkInstalledVerification`, installed fingerprints (`process.version` included), serving-runtime publication checks, host binding, and per-operation admission, execution, and publication checks are unchanged. No pool was deleted, resealed, renewed, or given a new generation or budget.
+Untouched: client/src/pages/Landing.tsx, client/src/components/Nav.tsx.
 
-## Old failure, unedited source
+## Validation
 
-Disposable PostgreSQL, `server/foundry/install.mjs --migrate --install`, valid host `host:vf12-qa` (`configId` `sha256:b12b0f33d296a39b0859a40aab816ce027c417f37e90491d262795fcc7b4dd00`), charged 0, plus a stale portable pool whose `runtimePin` differed from `installation().runtimePin`. Store bytes were still `b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb`.
+### 1. npm --prefix client run lint
 
-- `GET /api/health` 200, service `samedaydesk`
-- correspondence healthz 200, `enabled: false`, `reason: store_unavailable`
-- `GET /api/correspondence/v1/operator/original-tasks` 503, `store_unavailable`
-- stderr: `correspondence_store_unavailable { stage: 'entry_readiness', code: 'installed_verification_changed' }`
-- pool, attempt, invocation, admission, and charge rows were identical before and after that startup
+Command: `npm --prefix client run lint`
 
-## Corrected proof
+Outcome: exit 1. 3 errors, 0 warnings, all in unchanged files present at the base SHA:
 
-`server/scripts/test-intake-readiness.mjs` uses that same disposable PostgreSQL shape and the real `server/index.js` foundry opt-in mount.
+- client/src/lib/auth.tsx:14 react-refresh/only-export-components
+- client/src/lib/auth.tsx:22 react-hooks/set-state-in-effect
+- client/src/lib/theme.tsx:99 react-refresh/only-export-components
 
-- Startup, empty operator collection, and restart stay up. Health stays 200. Collection is an empty 200, not 503. Stderr does not report `installed_verification_changed`.
-- Submit, private `readOriginalTask`, operator collection, and a same-port restart work. The stale row is not treated as a database failure.
-- The stale pool's `loadPortableAttempt`, `reserve`, `admit`, and `publish` return `installed_verification_changed` with no child launch. A current pool reaches `stale_attempt_fence` and `stale_cell_fence`. Its publication passes verification and then returns `installed_source_changed` from later eligibility, without a write.
-- Reader, wrong project, and expired grant still return `forbidden`, `not_found`, and `unauthorized`. Changed verification bytes return `installed_verification_changed` and are restored.
-- Wrong host binding still logs `entry_readiness` / `host_installation_mismatch`. A closed database port logs `base_readiness` / `ECONNREFUSED`. A dropped vf04 table logs `entry_readiness` / `42P01`. Schema `public` stays `invalid_config`. None of these are reported as healthy.
-- Startup and private readback do not change historical verification, generation, attempts, grants, allowances, or invocation count. Original-task submit on the disposable schema charges one new enrollment only. Invocations stay 0. The historical pools are unchanged.
+Scoped command: `cd client && npx eslint src/pages/SellerConformance.tsx src/App.tsx src/pages/Mcp.tsx`
 
-## Closure
+Outcome: exit 0. No findings in new or changed TSX.
 
-Prior caller-pin members stay (253 files). All 11 received tuples stay, and the pre-edit closure was appended:
+### 2. npm --prefix client run build
 
-`{base: 32d029b3130c79672a5629aa355892d31ad5e4db, sourcePinSha256: c33ed15f3b7e47361a83dc5fe1ebae8beaba3a5f543d9f5d01da865d815adcda, closureDigest: sha256:9814323d166563cfe9338a5d3c826af1aa9e46a8fbc15b8ef0ae67f37525f9b3}`
+Command: `npm --prefix client run build`
 
-Reviewed current closure:
+Outcome: exit 0. `tsc -b && vite build` succeeded. Emitted `dist/assets/SellerConformance-DgUNf6L9.js` (9.13 kB) and `dist/assets/SellerConformance-C_8ccH0T.css` (2.87 kB).
 
-`{base: 08b90bdef8dbd198023be447942a3119cb268235, sourcePinSha256: 02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15, closureDigest: sha256:7c5d16672e263c2f8672bbfe0a1065dac94f2cb057d6fe6e44b8a8a37ceb0a61}`
+### 3. Direct-route readback
 
-`SOURCE-PIN.json` amendment `ROOT-INTAKE-READINESS-104130` binds `store.mjs` from `b728ce736eece8bd3fdab6ad0865117e486b82103a833a1deabcf876ac0e35eb` to `6c2fd20ada759876543229b65a8c50bc3865bd9de493a0dd4a275819b8435547` at sdsBase `08b90bdef8dbd198023be447942a3119cb268235`. `npm run test:proxy-addr` replayed caller-closure tamper refusal (`caller_source_changed`) and retained every received tuple. A mutated closure digest is refused.
+Commands:
 
-## Gates
+```
+cd client && npm run preview -- --host 127.0.0.1 --port 4173
+curl -sS -D - -o /tmp/sc-route-body.html http://127.0.0.1:4173/x402/seller-conformance
+```
 
-Local runtime-startup workflow, after `npm ci --omit=dev --ignore-scripts`. Disposable PostgreSQL via `PULSE_PG_BIN=/usr/lib/postgresql/16/bin`.
+Outcome: HTTP/1.1 200 OK, Content-Type: text/html, Content-Length: 11449. SPA shell HTML (expected). Route and Action SHA are in the served assets:
 
-| command | tests | pass | fail | skipped |
-| --- | ---: | ---: | ---: | ---: |
-| `npm run test:proxy-addr` | 7 | 7 | 0 | 0 |
-| `node --test server/scripts/test-correspondence-startup-diagnostic.js` | 7 | 7 | 0 | 0 |
-| `npm run test:hosted-startup` | 4 | 4 | 0 | 0 |
-| `npm run test:machine-discovery` | 4 | 4 | 0 | 0 |
-| `PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse` | 80 | 80 | 0 | 0 |
-| `PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task` | 8 | 8 | 0 | 0 |
-| `npm run test:agent-readiness` | 150 | 150 | 0 | 0 |
-| `npm run test:l08-agent-repair` | 28 | 28 | 0 | 0 |
-| `npm run test:mcp` | 46 | 46 | 0 | 0 |
-| `node --test server/scripts/test-public-readiness-load-failure.js` | 1 | 1 | 0 | 0 |
-| total | 335 | 335 | 0 | 0 |
+`dist/assets/index-CeJvTFDm.js` snippet:
 
-Cancelled 0. The original-task count includes `test-intake-readiness.mjs`.
+```
+path:`/x402/seller-conformance`,element:(0,H.jsx)(Ip,{})
+```
 
-## Files
+`dist/assets/SellerConformance-DgUNf6L9.js` snippet:
 
-- `vendor/visitor-foundry-receiver/scripts/visitor-foundry/integration/src/store.mjs`
-- `server/scripts/test-intake-readiness.mjs`
-- `package.json`
-- `vendor/visitor-foundry-receiver/SOURCE-PIN.json`
-- `server/foundry/activation/private-control-pin.json`
-- `RESULT.md`
+```
+u=`https://samedaydesk.com/x402/seller-conformance`,d=`ef519956505b195454aa670230b0936258b451fb`,f=`086163e979b6a91a73a8eb82664336ae6dbc5473`
+```
 
-## Limits
+### 4. Metadata cleanup
 
-- Not merged and not deployed. No production migration, paid task, TLS change, or owner-QA refill.
-- This VM did not measure the Hostinger serving-process Node version.
-- The local l08 gate rewrote `tools/l08-agent-repair/MAINT-HANDOFF.json` and `TASK-READINESS-RECEIPT.json`. Those rewrites are not part of this repair and are not in the commit.
-- `intake-startup-104110/ROOT-RECEIVING.md` was not in the pilot tree. The closure follows the original-task and retained-host receiving pattern already in the pin.
-- Reference runtime materialization wrote gitignored `execution/.runtime` on this VM.
+Proved in `client/src/pages/SellerConformance.tsx` `useEffect` (mount set, unmount restore):
+
+- document.title
+- meta[name="description"]
+- link[rel="canonical"]
+- meta[property="og:url"]
+- meta[property="og:title"]
+- meta[property="og:description"]
+- meta[name="twitter:title"]
+- meta[name="twitter:description"]
+
+Restore helper: `restoreAttribute`. Existing image `https://samedaydesk.com/og.png` reused; no Offer, Service, or certification JSON-LD added.
+
+### 5. Exact source checks
+
+Commands and counts (must be 1 unless noted):
+
+```
+rg -c 'path="/x402/seller-conformance"' client/src/App.tsx
+# 1
+
+rg -c 'https://samedaydesk.com/x402/seller-conformance' client/public/sitemap.xml
+# 1
+
+rg -n 'x402/seller-conformance' client/public/llms.txt
+# 1 line under ## Agent interfaces
+
+rg -n 'x402/seller-conformance' client/index.html
+# 1 noscript Agent interfaces <li>
+
+rg -c 'ef519956505b195454aa670230b0936258b451fb' client/src/pages/SellerConformance.tsx
+# 1
+
+rg -c '086163e979b6a91a73a8eb82664336ae6dbc5473' client/src/pages/SellerConformance.tsx
+# 1
+```
+
+Banned-term scan of new/changed files (implementation set): 0 matches.
+
+### 6. git diff --check
+
+Command: `git diff --check`
+
+Outcome: exit 0. No whitespace errors.
+
+### 7. git status --short
+
+Command: `git status --short` after the implementation commit, before this file:
+
+Outcome: empty.
+
+After adding RESULT.md, this file is the only remaining change until it is committed.
+
+## Unresolved limits
+
+- Full-project lint remains red on pre-existing auth.tsx and theme.tsx issues at the base SHA. Those files were not edited.
+- Direct-route fetch returns the SPA index.html shell. Page copy is in the lazy JS chunk, not in the first HTML bytes.
+- Live unpaid 402, marketplace listing, npm registry 404, and Agent402 merge were not re-queried in this run. Copy uses only the supplied 2026-08-26 sources.
+- No pull request opened. No merge. No deploy.
+
+# Amendment 1 (SC-R29-A1-IMPL)
+
+## Identity
+
+- start HEAD: a3ce17d91a0f466ad7f5332642334bde929da6f1
+- start tree: 72aab91649aedc024b64fc60b820afd360d5b5da
+- new HEAD: the single amendment commit on this branch (recorded after push in the run report)
+- new tree: the tree of that amendment commit
+- changed files: client/src/pages/SellerConformance.tsx, RESULT.md
+
+## Fix
+
+Replaced the bare `LIVE_AUDIT_URL` path with one constructed credential-free GET. Both page links reuse that constant: CTA "Inspect the live unpaid 402" and source "Live seller-integrity-audit".
+
+Exact constructed URL:
+
+```
+https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight
+```
+
+Query key order: method, origin, requireBazaar, requiredPaths, route.
+
+## Curl evidence (this run, credential-free)
+
+Command:
+
+```
+curl -sS -D /tmp/a1-audit.headers -o /tmp/a1-audit.json -w '%{http_code}' \
+  'https://agents.samedaydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight'
+```
+
+No `-u`, no cookies, no PAYMENT header. No signing or payment.
+
+Outcome: HTTP **402** (not 400). `WWW-Authenticate: Payment` present. Body snippet:
+
+```
+{"x402Version":2,"error":"Payment required","accepts":[{"amount":"10000","network":"eip155:8453","asset":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","payTo":"0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"}]}
+```
+
+Date header: Wed, 26 Aug 2026 16:01:36 GMT.
+
+## Validation
+
+### 1. Constructed URL curl
+
+See above. Status 402. Body has x402Version 2, amount 10000, error Payment required.
+
+### 2. npm --prefix client run build
+
+Command: `npm --prefix client run build`
+
+Outcome: exit 0. Emitted `dist/assets/SellerConformance-BraLsUBn.js` (9.28 kB).
+
+### 3. Scoped lint
+
+Command: `cd client && npx eslint src/pages/SellerConformance.tsx src/App.tsx src/pages/Mcp.tsx`
+
+Outcome: exit 0.
+
+### 4. vite preview + direct route
+
+Commands:
+
+```
+cd client && npm run preview -- --host 127.0.0.1 --port 4173
+curl -sS -D - -o /tmp/a1-route.html -w '%{http_code}' http://127.0.0.1:4173/x402/seller-conformance
+curl -sS -o /tmp/a1-chunk.js http://127.0.0.1:4173/assets/SellerConformance-BraLsUBn.js
+```
+
+Outcome: route HTTP 200. Served chunk contains the constructed query string (`method=GET`, `origin=https%3A%2F%2Fagents.samedaydesk.com`, `requireBazaar=true`, `requiredPaths=decision%2Coffers`, `route=%2Fcommerce%2Fpayment-offer-preflight`). One occurrence of the audit path; it includes the query. The bare path without query is no longer the only `LIVE_AUDIT_URL`.
+
+Chunk snippet:
+
+```
+aydesk.com/commerce/seller-integrity-audit?method=GET&origin=https%3A%2F%2Fagents.samedaydesk.com&requireBazaar=true&requiredPaths=decision%2Coffers&route=%2Fcommerce%2Fpayment-offer-preflight`
+```
+
+### 5. Metadata cleanup
+
+Still present in `SellerConformance.tsx` `useEffect`: title, description, canonical, og:url, og:title, og:description, twitter:title, twitter:description, restored via `restoreAttribute`.
+
+### 6. SHA counts
+
+```
+rg -c 'ef519956505b195454aa670230b0936258b451fb' client/src/pages/SellerConformance.tsx
+# 1
+rg -c '086163e979b6a91a73a8eb82664336ae6dbc5473' client/src/pages/SellerConformance.tsx
+# 1
+```
+
+### 7. Banned-term scan of new/changed files
+
+Scan: the listed banned phrases. Outcome: 0 matches.
+
+### 8. git diff --check
+
+Command: `git diff --check`
+
+Outcome: exit 0.
+
+## Unresolved limits
+
+- Full-project lint is still red on pre-existing auth.tsx / theme.tsx issues. Not edited.
+- Direct-route HTML is still the SPA shell; the constructed URL is in the lazy chunk.
+- This amendment does not re-prove marketplace listing, npm absence, or Agent402 merge.
+- No PR. No merge. No deploy. No payment.
