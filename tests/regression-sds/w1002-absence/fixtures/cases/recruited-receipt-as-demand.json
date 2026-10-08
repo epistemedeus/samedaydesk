@@ -1,0 +1,27 @@
+{
+  "id": "recruited-receipt-as-demand",
+  "surface": "seller-conformance",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/spa-route-shells.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "recruited_receipt_as_demand"
+  ],
+  "defect": "One recruited Agent402 payment that led to deployed upstream repairs treated as organic demand, repeat use, or a repair sale.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "seller-conformance",
+    "sellerConformance": true,
+    "recruitedAgent402": true,
+    "recruitedReceiptAsDemand": true,
+    "organicDemandFromInspection": true,
+    "demand": true,
+    "paidDemand": true,
+    "repeatDemand": true,
+    "demandSignal": "paid",
+    "demandCount": 1,
+    "message": "recruited Agent402 receipt treated as organic demand"
+  }
+}

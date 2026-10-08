@@ -1,0 +1,26 @@
+{
+  "id": "owner-qa-not-demand-honest",
+  "surface": "work-brief",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "tools/recurring-job-recipes/lib/work-brief.mjs",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "work-brief",
+    "ownerQa": true,
+    "ownerQaOnly": true,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "claims": {
+      "ownerQaOnly": true,
+      "notDemand": true
+    },
+    "withheldConclusions": [
+      "demand"
+    ],
+    "message": "Owner QA only - not demand or network claims."
+  }
+}

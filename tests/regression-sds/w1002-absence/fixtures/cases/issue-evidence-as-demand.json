@@ -1,0 +1,33 @@
+{
+  "id": "issue-evidence-as-demand",
+  "surface": "issue-evidence",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/recurring-job-recipes/lib/issue-evidence-brief.mjs",
+  "expectedReasons": [
+    "absence_as_demand",
+    "issue_evidence_as_demand"
+  ],
+  "defect": "Issue-evidence observation (notDemandSignal) treated as market demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "issue-evidence",
+    "kind": "issue_evidence",
+    "issueEvidence": true,
+    "issueEvidenceAsDemand": true,
+    "notDemandSignal": true,
+    "demand": true,
+    "paidDemand": true,
+    "demandCount": 4,
+    "demandSignal": "positive",
+    "evidence": {
+      "kind": "issue_evidence",
+      "claims": {
+        "notDemand": true,
+        "notDemandSignal": true
+      }
+    },
+    "message": "issue-evidence notDemandSignal treated as demand"
+  }
+}

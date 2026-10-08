@@ -1,0 +1,27 @@
+{
+  "id": "seller-conformance-honest",
+  "surface": "seller-conformance",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/spa-route-shells.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "seller-conformance",
+    "sellerConformance": true,
+    "inspectionNotDemand": true,
+    "recruitedAgent402": true,
+    "demand": false,
+    "paidDemand": false,
+    "organicDemandProven": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": [
+      "demand",
+      "organic_demand",
+      "repeat_demand"
+    ],
+    "message": "seller-conformance is inspection; recruited Agent402 receipt does not prove organic demand"
+  }
+}
