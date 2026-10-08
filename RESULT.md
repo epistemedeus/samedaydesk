@@ -6,10 +6,10 @@
 - session: fc2d669b-da9c-4934-bf35-8afedcb1e5b7
 - branch: codex/intake-readiness-104130
 - base: 08b90bdef8dbd198023be447942a3119cb268235
-- head: PENDING_MEASUREMENT
+- head: 95515a51a6423981acc229af9bbef88143189abe
 - VM: Node v22.22.2, PostgreSQL 16.15. Hostinger's Node 22.23.3 probe is build evidence, not this process and not the serving process.
 
-`head` is the repair commit. The branch tip is the child commit that records this measured hash.
+`head` is the repair commit that contains the code and the result narrative. This recording commit is its child and is the branch tip.
 
 ## Change
 
