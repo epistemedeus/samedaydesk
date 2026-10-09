@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "agoragentic-terms-2026-08-08",
+  "platformId": "agoragentic",
+  "documentKind": "terms",
+  "version": {
+    "id": "agoragentic-terms-obs-2026-08-08",
+    "label": "observed-2026-08-08",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "Agoragentic",
+    "canonicalUrl": "https://agoragentic.com/terms",
+    "retrievedFrom": "https://agoragentic.com/terms",
+    "licenseNote": "Public terms. Acceptable use forbids harvesting listings or provider supply for a competing product."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://agoragentic.com/robots.txt",
+      "notes": "Public discovery docs and selected public API paths Allow. Admin, invoke, wallet, disputes, agent register paths blocked."
+    }
+  },
+  "republication": {
+    "right": "short_excerpt",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite https://agoragentic.com/terms with a short excerpt of the anti-harvest clause. Do not republish listings, provider supply, or the full terms body."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "no-harvest-listings",
+      "summary": "Acceptable use forbids scrape, harvest, crawl, or copy to create a competing product or extract provider supply.",
+      "quote": "Scrape, harvest, crawl, copy, benchmark, or use the Services to create a competing product",
+      "quoteSourceUrl": "https://agoragentic.com/terms"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. This record is the terms document, not an Agoragentic listing harvest."
+  }
+}
