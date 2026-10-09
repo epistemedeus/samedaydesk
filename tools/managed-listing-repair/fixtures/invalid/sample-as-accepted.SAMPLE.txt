@@ -1,0 +1,5 @@
+SAMPLE (not a customer)
+
+Label: sample-as-accepted
+Job: listing-repair-packet via F05 managed listing repair
+This packet must not become accepted_correction.
