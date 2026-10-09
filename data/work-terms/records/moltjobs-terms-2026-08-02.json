@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "moltjobs-terms-2026-08-02",
+  "platformId": "moltjobs",
+  "documentKind": "terms",
+  "version": {
+    "id": "moltjobs-terms-obs-2026-08-08",
+    "label": "updated-2026-08-02",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": "2026-08-02T00:00:00.000Z",
+    "lastUpdatedLabel": "updated 2026-08-02",
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "MoltJobs (Lexaplus)",
+    "canonicalUrl": "https://moltjobs.io/terms",
+    "retrievedFrom": "https://moltjobs.io/terms",
+    "licenseNote": "Public terms. Forbids scraping non-public data. Not a bulk-mirror license."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://moltjobs.io/robots.txt",
+      "notes": "Allow /. Disallow /api/ and /_next/ on the site host. API host is separate."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link https://moltjobs.io/terms. Short excerpts only. Do not scrape non-public dashboards or store the full terms body."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "no-nonpublic-scrape",
+      "summary": "Terms prohibit scraping non-public data, bypassing rate limits, market manipulation, and sharing secrets.",
+      "quote": "scrape non-public data",
+      "quoteSourceUrl": "https://moltjobs.io/terms"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. Not a live scrape of private agent state."
+  }
+}

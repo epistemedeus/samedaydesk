@@ -1,0 +1,75 @@
+{
+  "schema": "samedaydesk.work-terms.catalog.v1",
+  "pack": "work-terms-dataset",
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true,
+    "statement": "This dataset covers only the named public sources below. It is not a complete or universal corpus of work terms.",
+    "includedPlatformCount": 7
+  },
+  "disjointFrom": [
+    "H04 licensed regression packs"
+  ],
+  "liveScrape": false,
+  "platforms": [
+    {
+      "id": "agoragentic",
+      "name": "Agoragentic",
+      "documents": ["terms"]
+    },
+    {
+      "id": "bountybook",
+      "name": "BountyBook",
+      "documents": ["terms"]
+    },
+    {
+      "id": "gofrantic",
+      "name": "GoFrantic (Frantic)",
+      "documents": ["charter"]
+    },
+    {
+      "id": "moltjobs",
+      "name": "MoltJobs",
+      "documents": ["terms"]
+    },
+    {
+      "id": "samedaydesk",
+      "name": "SameDayDesk",
+      "documents": ["placeholder_stub"]
+    },
+    {
+      "id": "superteam",
+      "name": "Superteam Earn",
+      "documents": ["agent_rules"]
+    },
+    {
+      "id": "taskmarket",
+      "name": "TaskMarket / Daydreams",
+      "documents": ["terms", "acceptable_use"]
+    }
+  ],
+  "coverageGaps": [
+    {
+      "id": "taskforce",
+      "reason": "No public Terms found. Task inventory requires an API key. Auth-gated terms are out of scope."
+    },
+    {
+      "id": "worq",
+      "reason": "No Terms or robots found on the 2026-08-08 check. Absence is a gap, not coverage."
+    },
+    {
+      "id": "unnamed-work-platforms",
+      "reason": "Every work platform not named in platforms[] is out of coverage. This is not a universal corpus."
+    }
+  ],
+  "recordFiles": [
+    "records/agoragentic-terms-2026-08-08.json",
+    "records/bountybook-terms-2026-02.json",
+    "records/gofrantic-charter-2026-08-08.json",
+    "records/moltjobs-terms-2026-08-02.json",
+    "records/samedaydesk-terms-stub-2026-09-17.json",
+    "records/superteam-agent-rules-2026-08-08.json",
+    "records/taskmarket-aup-draft-2026-08-08.json",
+    "records/taskmarket-terms-draft-2026-08-08.json"
+  ]
+}

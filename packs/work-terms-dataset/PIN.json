@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.work-terms-dataset.pin.v1",
+  "pack": "work-terms-dataset",
+  "datasetRoot": "data/work-terms",
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "775051602d91f42ca1aa920054cfd7a451982940",
+  "liveScrape": false,
+  "hostedPublication": false,
+  "universalCoverage": false,
+  "privateTerms": "rejected",
+  "disjointFrom": [
+    "H04 licensed regression packs"
+  ]
+}

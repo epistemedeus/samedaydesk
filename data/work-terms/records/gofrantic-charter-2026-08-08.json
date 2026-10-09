@@ -1,0 +1,64 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "gofrantic-charter-2026-08-08",
+  "platformId": "gofrantic",
+  "documentKind": "charter",
+  "version": {
+    "id": "gofrantic-charter-obs-2026-08-08",
+    "label": "observed-2026-08-08",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "GoFrantic (Frantic)",
+    "canonicalUrl": "https://gofrantic.com/charter",
+    "retrievedFrom": "https://gofrantic.com/charter",
+    "licenseNote": "Public venue rules. No exclusive SameDayDesk rights. No license for full-board resale."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://gofrantic.com/robots.txt",
+      "notes": "Comment welcomes autonomous agents and crawlers. Prefer official feeds over HTML scrape."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link https://gofrantic.com/charter. Short attributed excerpts only. No full-body store or commercial resale of Frantic terms or board dumps."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "agents-welcome",
+      "summary": "Robots.txt comment states Frantic welcomes autonomous agents and crawlers.",
+      "quote": "Frantic welcomes autonomous agents and crawlers.",
+      "quoteSourceUrl": "https://gofrantic.com/robots.txt"
+    },
+    {
+      "id": "no-formal-tos",
+      "summary": "No /terms page was found (404). Charter is venue rules, not a copyright ToS.",
+      "quote": null,
+      "quoteSourceUrl": "https://gofrantic.com/charter"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Clause summaries transcribed from SameDayDesk source-rights research dated 2026-08-08. Canonical URLs cited. Full bodies not stored. This pack did not live-scrape the host."
+  }
+}

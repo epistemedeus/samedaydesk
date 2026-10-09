@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "taskmarket-terms-draft-2026-08-08",
+  "platformId": "taskmarket",
+  "documentKind": "terms",
+  "version": {
+    "id": "taskmarket-terms-draft-obs-2026-08-08",
+    "label": "draft-observed-2026-08-08",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": "Draft for counsel review",
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "TaskMarket / Daydreams",
+    "canonicalUrl": "https://market.daydreams.systems/legal/terms",
+    "retrievedFrom": "https://market.daydreams.systems/legal/terms",
+    "licenseNote": "Draft ToS. Not a data-feed license. Re-check if the draft is activated."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://taskmarket.dev/robots.txt",
+      "notes": "Allow /. Disallow /dashboard. Dashboard terms are out of scope."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link the Daydreams legal terms URL. Draft policy is not a republication license. No full-text commercial mirror."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "draft-not-active",
+      "summary": "Legal pages were drafts, not approved or active, on the observation date.",
+      "quote": "Draft for counsel review. This policy is not approved or active.",
+      "quoteSourceUrl": "https://market.daydreams.systems/legal/terms"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. Not a live scrape. Treat activation of this draft as a re-review trigger."
+  }
+}

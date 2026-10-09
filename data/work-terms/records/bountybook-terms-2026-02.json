@@ -1,0 +1,64 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "bountybook-terms-2026-02",
+  "platformId": "bountybook",
+  "documentKind": "terms",
+  "version": {
+    "id": "bountybook-terms-obs-2026-08-08",
+    "label": "last-updated-feb-2026",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": "Last updated Feb 2026",
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "BountyBook",
+    "canonicalUrl": "https://www.bountybook.ai/terms",
+    "retrievedFrom": "https://www.bountybook.ai/terms",
+    "licenseNote": "Experimental PoC terms. No clause granting a third-party data-feed license."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://www.bountybook.ai/robots.txt",
+      "notes": "Site host Disallow /api/ and /my-jobs. Use the documented API host, not site-path scraping of /api/ or /my-jobs."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link https://www.bountybook.ai/terms. No full-body store. Do not scrape /my-jobs or the disallowed site /api/ path."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "experimental-poc",
+      "summary": "Terms describe an experimental proof of concept and warn against depositing unaffordable funds.",
+      "quote": "do not deposit funds you cannot afford to lose.",
+      "quoteSourceUrl": "https://www.bountybook.ai/terms"
+    },
+    {
+      "id": "no-rate-limit-bypass",
+      "summary": "Terms prohibit circumventing rate limits, unlawful use, sybil, and oracle exploit.",
+      "quote": "circumventing rate limits",
+      "quoteSourceUrl": "https://www.bountybook.ai/terms"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. Not a live scrape. /my-jobs remains a private surface."
+  }
+}
