@@ -1,0 +1,11 @@
+{
+  "id": "fresh-ok",
+  "kind": "classify",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T11:55:00.000Z",
+  "expect": {
+    "observatoryState": "ok",
+    "marketObsState": "ok",
+    "clocksDistinct": true
+  }
+}

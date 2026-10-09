@@ -1,0 +1,10 @@
+{
+  "id": "future-as-ok",
+  "defect": "Treat a provider clock more than FUTURE_SKEW_MS ahead as ok.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T12:05:00.000Z",
+  "claim": {
+    "observatoryState": "ok",
+    "availability": "ok"
+  }
+}

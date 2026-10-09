@@ -1,0 +1,11 @@
+{
+  "id": "invalid-timestamp",
+  "kind": "classify",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "not-a-clock",
+  "expect": {
+    "observatoryState": "invalid",
+    "marketObsState": "schema_drift",
+    "clocksDistinct": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "adapter-within-skew",
+  "kind": "adapter",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T12:01:30.000Z",
+  "expect": {
+    "observatoryState": "ok",
+    "marketObsState": "ok",
+    "clocksDistinct": true,
+    "moltjobs": {
+      "providerTimestampState": "ok",
+      "availability": "ok",
+      "jobCount": 12
+    },
+    "x402stats": {
+      "providerTimestampState": "ok",
+      "availability": "ok",
+      "sellers_30d": 47303
+    }
+  }
+}

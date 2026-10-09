@@ -1,0 +1,12 @@
+{
+  "id": "future-skew",
+  "kind": "classify",
+  "note": "FUTURE_SKEW_MS + 1s. Observatory must mark invalid, not ok.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T12:02:01.000Z",
+  "expect": {
+    "observatoryState": "invalid",
+    "marketObsState": "ok",
+    "clocksDistinct": true
+  }
+}

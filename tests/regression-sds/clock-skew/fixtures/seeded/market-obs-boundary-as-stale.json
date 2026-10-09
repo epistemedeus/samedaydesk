@@ -1,0 +1,10 @@
+{
+  "id": "market-obs-boundary-as-stale",
+  "defect": "Treat an exactly SOURCE_TIME_STALE_MS-old provider clock as stale (inclusive >=).",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T11:00:00.000Z",
+  "claim": {
+    "marketObsState": "stale",
+    "observatoryState": "ok"
+  }
+}

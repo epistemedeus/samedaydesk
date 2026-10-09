@@ -1,0 +1,11 @@
+{
+  "id": "future-skew-day",
+  "kind": "classify",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-18T12:00:00.000Z",
+  "expect": {
+    "observatoryState": "invalid",
+    "marketObsState": "ok",
+    "clocksDistinct": true
+  }
+}
