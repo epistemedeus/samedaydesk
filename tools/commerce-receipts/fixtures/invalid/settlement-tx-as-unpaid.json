@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipt.v1",
+  "receiptId": "cr_settlement_tx_as_unpaid",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-08-30T00:00:00.000Z",
+  "completeness": "truncated",
+  "authorityClass": "seller_observed",
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "5000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+      "maxTimeoutSeconds": 300,
+      "extra": {
+        "name": "USD Coin",
+        "version": "2"
+      }
+    }
+  ],
+  "settlement": {
+    "operationId": "what-agents-buy-independent-benchmark-2026-08-30",
+    "amountUsdc": "0.005",
+    "transaction": "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2",
+    "facilitatorOrPayoutRef": "receipt_label_not_bound_facilitator_evidence"
+  },
+  "joinKeys": ["receipt_id", "resource", "amount", "pay_to"],
+  "source": {
+    "kind": "live_unpaid_402",
+    "path": "tools/evidence-records/fixtures/settlements/what-agents-buy-independent-benchmark-2026-08-30.json",
+    "note": "Buyer-attested settlement transaction labeled unpaid."
+  },
+  "unknownWhenAbsent": [
+    "paid_body"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "offer_is_settlement",
+    "http_402_is_delivery",
+    "payment_header_is_unpaid"
+  ]
+}
