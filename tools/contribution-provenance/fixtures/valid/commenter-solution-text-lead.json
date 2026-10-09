@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "commenter-solution-text-lead",
+  "actorLabel": "commenter",
+  "adoption": "lead",
+  "surface": "issue_comment",
+  "text": "Standalone tracker: add every inbound sender to buyers in both shared-wallet branches. SHA and signature in this comment are illustrative only and do not name a git object.",
+  "notes": "Solution-shaped text without a claimed hash. Lead only. Not adoption.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

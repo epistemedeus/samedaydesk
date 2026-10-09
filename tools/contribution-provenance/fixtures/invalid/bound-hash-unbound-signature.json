@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "bound-hash-unbound-signature",
+  "actorLabel": "commenter",
+  "adoption": "object_bound",
+  "claimedHash": "072f8d04026bb29a62dbf8a761a2ae62abbdc663",
+  "claimedSignature": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINotAGitObject",
+  "surface": "issue_comment",
+  "text": "Bound Verantis object plus a signature that is not a git object.",
+  "notes": "A claimed signature must bind. Hash binding does not waive the signature.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "member-bound-7e56569",
+  "actorLabel": "member",
+  "adoption": "object_bound",
+  "claimedHash": "7e56569feb576d409dca1e1c8f3465155220bbf7",
+  "claimedSignature": null,
+  "surface": "commit",
+  "text": "Drop internal H21 labels from public useful-jobs 1.4.7 copy",
+  "notes": "Bound SDS commit. actorLabel member is fixture-declared; this tool does not query GitHub.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

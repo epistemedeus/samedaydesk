@@ -1,0 +1,23 @@
+{
+  "commenter-unbound-hash.json": {
+    "code": "claimed_hash_unbound_object"
+  },
+  "commenter-as-adoption.json": {
+    "code": "comment_text_is_not_adoption"
+  },
+  "unknown-actor-label.json": {
+    "code": "unknown_actor_label"
+  },
+  "bound-hash-unbound-signature.json": {
+    "code": "claimed_hash_unbound_object"
+  },
+  "owner-unresolved-adoption.json": {
+    "code": "claimed_hash_unbound_object"
+  },
+  "solution-text-as-adoption.json": {
+    "code": "comment_text_is_not_adoption"
+  },
+  "member-as-adoption.json": {
+    "code": "actor_cannot_adopt"
+  }
+}
