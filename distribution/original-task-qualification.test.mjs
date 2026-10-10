@@ -559,6 +559,7 @@ test("live public descriptor and archive match the pin", { timeout: 30000 }, asy
 
 test("cached bytes, cache ownership, and owned children stay bounded", { timeout: 60000 }, async (t) => {
   const work = mkdtempSync(join(tmpdir(), "original-task-skill-owned-"));
+  const tempsBefore = new Set(readdirSync(tmpdir()).filter((name) => name.startsWith("otq-141430-")));
   const script = installSkill(work);
   const archive = readFileSync(ARCHIVE_PATH);
   const source = await contentServer({ discovery: (origin) => publishedDiscovery(origin), archive });
@@ -569,7 +570,7 @@ test("cached bytes, cache ownership, and owned children stay bounded", { timeout
   const marker = `${JSON.stringify({ schema: "samedaydesk.original-task-qualification-cache.v1", package: "original-task-qualification" })}\n`;
 
   const unowned = join(work, "unowned");
-  mkdirSync(join(unowned, "client"));
+  mkdirSync(join(unowned, "client"), { recursive: true });
   writeFileSync(join(unowned, "client/SENTINEL"), "KEEP_CLIENT");
   writeFileSync(join(unowned, "sentinel.txt"), "KEEP_ROOT");
   const unownedBefore = snapshot(unowned);
@@ -581,7 +582,7 @@ test("cached bytes, cache ownership, and owned children stay bounded", { timeout
   assert.equal(source.counts.discovery, 0);
 
   const planted = join(work, "planted");
-  mkdirSync(join(planted, "client"));
+  mkdirSync(join(planted, "client"), { recursive: true });
   writeFileSync(join(planted, "client/SENTINEL"), "KEEP_CLIENT");
   writeFileSync(join(planted, "sentinel.txt"), "KEEP_ROOT");
   writeFileSync(join(planted, "cache-owner.json"), marker);
@@ -895,6 +896,6 @@ process.exit(1);
   assert.equal(completed.error, undefined);
   assert.equal(completed.code, 0);
   assert.equal(JSON.parse(completed.stdout).ok, true);
-  assert.deepEqual(readdirSync(tmpdir()).filter((name) => name.startsWith("otq-141430-")), []);
+  assert.deepEqual(readdirSync(tmpdir()).filter((name) => name.startsWith("otq-141430-") && !tempsBefore.has(name)), []);
   assert.equal(sibling.error.code, "arguments_required");
 });
