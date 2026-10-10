@@ -10,6 +10,8 @@ The machine entry already served a public original-task archive and the apex MCP
 | --- | --- |
 | Pilot carrier | `367986b11e14012575649aed32f43f74f3adac84` |
 | samedaydesk baseline | `3db8220c9008bc315ab6e25a970bcf7ea3559312` |
+| Implementation commit | `af9ca9a9e81e6502b5875998815a2a14175cb95c` |
+| Product branch | `codex/task-native-acquisition-141400` |
 | Caller closure base | `08b90bdef8dbd198023be447942a3119cb268235` |
 | Source pin sha256 | `02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15` |
 | Current caller closure | `sha256:1e43f06ccb6158d9e676f1e4737285dcbf0e85ed5b162f21d846112abbee513e` |
@@ -69,9 +71,11 @@ The machine-discovery checker recorded no response for `/llms.txt` and `/.well-k
 
 ## Root publication and measurement
 
-This VM could not push `epistemedeus/samedaydesk`. The GitHub integration token reports `admin`, `maintain`, `pull`, `push`, and `triage` false. The exact push attempt is recorded in the Pilot export beside this file. No product pull request was opened.
+Feature-branch push of implementation commit `af9ca9a9e81e6502b5875998815a2a14175cb95c` succeeded to `origin/codex/task-native-acquisition-141400` on `epistemedeus/samedaydesk`. No product pull request was opened. Main was not updated. Nothing was deployed.
 
-Root applies `samedaydesk-141400.patch` with `git apply --binary` onto a clean worktree at `3db8220c9008bc315ab6e25a970bcf7ea3559312`, on branch `codex/task-native-acquisition-141400`. `git apply --check --binary` passed on a detached worktree at that baseline before export. Root owns main merge, deployment, and any public submission.
+`gh` repo permission fields for the integration identity were false before the push. Git credential push of this non-default branch still succeeded. That permission snapshot is not a claim that a later main merge or pull request will succeed.
+
+Root can fetch that branch. A binary patch of the same range is on the Pilot evidence branch for a checkout that does not have the product remote. `git apply --check --binary` of that patch passed on a detached worktree at the baseline. Root owns main merge, deployment, and any public submission.
 
 After a deploy Root chooses, fetch `https://samedaydesk.com/discovery/original-task-correspondence.json` and compare `acquisition.archive.sha256` with `d9d7c1a4cb426e89eed2ac12b2df22305d81ed0933fdc2ef5785d86ed5f6be08` and `bytes` with 23506. Until that readback, the live URL is unknown. The predecessor archive bytes remain at the baseline commit. Do not overwrite useful-jobs immutable archives.
 
