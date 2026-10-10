@@ -46,6 +46,50 @@ const outcomesPath = join(root, "client/public", USEFUL_JOBS_OUTCOMES.replace(/^
 const pagePath = join(root, "client/src/pages/UsefulJobs.tsx");
 const JOBS = [...USEFUL_JOBS_JOB_IDS];
 
+test("obtain returns failure status for every shared refusal path", async () => {
+  const work = mkdtempSync(join(tmpdir(), "uj-exit-"));
+  try {
+    const source = join(work, "not-an-archive.txt");
+    const payload = Buffer.from("not a gzip archive");
+    writeFileSync(source, payload);
+    const base = (dest) => [obtain, "--from", source, "--expected-sha256",
+      sha256(payload), "--expected-bytes", String(payload.length), "--dest", dest];
+    const cases = [
+      { code: "missing-args", args: [obtain] },
+      { code: "invalid-expected-bytes", replace: ["--expected-bytes", "0"] },
+      { code: "invalid-expected-bytes", replace: ["--expected-bytes", "1.5"] },
+      { code: "invalid-expected-sha256", replace: ["--expected-sha256", "invalid"] },
+      { code: "source-missing", replace: ["--from", join(work, "missing.tgz")] },
+      { code: "wrong-size", replace: ["--expected-bytes", String(payload.length + 1)] },
+      { code: "wrong-digest", replace: ["--expected-sha256", "0".repeat(64)] },
+      { code: "extract-failed", extra: ["--extract-dir", join(work, "bad-out")] },
+    ];
+    for (const [i, entry] of cases.entries()) {
+      const dest = join(work, "refused-" + i + ".tgz");
+      const args = entry.args || base(dest);
+      if (entry.replace) args[args.indexOf(entry.replace[0]) + 1] = entry.replace[1];
+      args.push(...(entry.extra || []));
+      const result = await spawnAsync(process.execPath, args);
+      assert.equal(result.status, 1, entry.code + ": " + result.stdout + result.stderr);
+      const body = parseJsonStdout(result);
+      assert.equal(body.code, entry.code);
+      assert.equal(body.ok, false);
+      assert.equal(body.executed, false);
+      if (entry.code !== "extract-failed") assert.equal(existsSync(dest), false);
+    }
+    const chained = await spawnAsync("bash", ["-c",
+      'if "$@"; then printf "\\nCHAIN-CONTINUED\\n"; else exit 7; fi',
+      "archive-chain", process.execPath, ...base(join(work, "chain.tgz")),
+      "--expected-sha256", "0".repeat(64)]);
+    assert.equal(chained.status, 7, chained.stdout + chained.stderr);
+    assert.doesNotMatch(chained.stdout, /CHAIN-CONTINUED/);
+    assert.equal(parseJsonStdout(chained).code, "wrong-digest");
+    assert.equal(existsSync(join(work, "chain.tgz")), false);
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+});
+
 function sha256(buf) {
   return createHash("sha256").update(buf).digest("hex");
 }
@@ -308,6 +352,7 @@ test("obtain refuses bad status/size/digest before extract or execute", async ()
       const body = parseJsonStdout(r);
       assert.equal(body.ok, false);
       assert.equal(body.code, "bad-status");
+      assert.equal(r.status, 1, r.stdout + r.stderr);
       assert.equal(existsSync(dest), false);
       assert.equal(existsSync(extractDir), false);
     } finally {
@@ -334,6 +379,7 @@ test("obtain refuses bad status/size/digest before extract or execute", async ()
       const body = parseJsonStdout(r);
       assert.equal(body.ok, false);
       assert.equal(body.code, "wrong-size");
+      assert.equal(r.status, 1, r.stdout + r.stderr);
       assert.equal(existsSync(dest), false);
       assert.equal(existsSync(extractDir), false);
     } finally {
@@ -360,6 +406,7 @@ test("obtain refuses bad status/size/digest before extract or execute", async ()
       const body = parseJsonStdout(r);
       assert.equal(body.ok, false);
       assert.equal(body.code, "wrong-digest");
+      assert.equal(r.status, 1, r.stdout + r.stderr);
       assert.equal(existsSync(dest), false);
       assert.equal(existsSync(extractDir), false);
     } finally {
