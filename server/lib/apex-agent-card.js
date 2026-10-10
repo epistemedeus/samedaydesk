@@ -10,6 +10,7 @@ const SKILL_TEXT = {
   plan_taskmarket_delegation: "Free plan only. Prepares a TaskMarket delegation and does not create or fund a task.",
   browse_taskmarket_tasks: "Free. Read public TaskMarket tasks.",
   track_taskmarket_task: "Free. Read one public TaskMarket task.",
+  project_funnel_evidence: "Free. Project one declared observation packet. No fetch, no customer query, no store, no spend.",
 };
 
 export function apexAgentCard() {

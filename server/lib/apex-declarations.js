@@ -65,6 +65,13 @@ const TOOL_AUTHORITY = Object.freeze({
     executesPayment: false,
     network: "taskmarket-read",
   },
+  project_funnel_evidence: {
+    tier: "free",
+    executesPayment: false,
+    network: "none",
+    http: "POST /api/funnel-evidence",
+    note: "Projects a caller-supplied packet. This call does not fetch, store, or spend.",
+  },
 });
 
 const PLAN_ARGUMENTS = Object.freeze({
@@ -187,6 +194,82 @@ function apexPaths(catalog, skillMarkdown) {
               },
               { ok: true, service: "samedaydesk", time: "2026-10-04T00:00:00.000Z", configured: { supabase: false, stripe: false, email: false } },
             ),
+          },
+        },
+      }),
+    },
+    "/api/funnel-evidence": {
+      post: operation({
+        operationId: "project_funnel_evidence",
+        summary: "Project one declared funnel observation packet",
+        description: "Free bounded projection of a caller-supplied packet. Retries are idempotent because nothing is stored. This is not a paginated collection. The call does not fetch input URLs, query customers, or spend.",
+        idempotent: true,
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                description: "A neomorphic.funnel-decision-request.v1 packet or a neomorphic.live-measurement-input.v1 packet. URLs inside it are not fetched.",
+              },
+              example: {
+                schema: "neomorphic.funnel-decision-request.v1",
+                asOf: "2026-10-10T03:42:00.000Z",
+                sources: [],
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Typed projection and next action. Not a paginated collection.",
+            content: jsonContent(
+              {
+                type: "object",
+                required: ["schema", "evidenceAuthority", "inputFetched", "projection", "nextAction"],
+                properties: {
+                  schema: { const: "samedaydesk.funnel-evidence.v1" },
+                  evidenceAuthority: { const: "caller-declared" },
+                  inputFetched: { const: false },
+                  hostedAcquisitionVerified: { const: false },
+                  recognizedIncomeAtomic: { type: "null" },
+                  independentCustomers: { type: "null" },
+                  projection: { type: "object" },
+                  nextAction: {
+                    type: "object",
+                    required: ["action", "changes"],
+                    properties: {
+                      action: { type: "string" },
+                      changes: { type: "string" },
+                    },
+                  },
+                },
+              },
+              {
+                schema: "samedaydesk.funnel-evidence.v1",
+                evidenceAuthority: "caller-declared",
+                inputFetched: false,
+                hostedAcquisitionVerified: false,
+                recognizedIncomeAtomic: null,
+                independentCustomers: null,
+                projection: {
+                  schema: "neomorphic.funnel-decision.v1",
+                  decision: { kind: "measure", reasons: ["a_decision_changing_join_is_missing"] },
+                },
+                nextAction: {
+                  action: "One source-separated discovery, signup, task, delivery, or payment export with explicit task, operation, or stored-event refs and a stated coverage.",
+                  changes: "Which stage is observed. Provider observations are optional.",
+                },
+              },
+            ),
+          },
+          "400": {
+            description: "The packet was rejected.",
+            content: errorContent({ error: { code: "request_schema" } }),
+          },
+          "413": {
+            description: "The body is over the byte bound.",
+            content: errorContent({ error: { code: "oversize" } }),
           },
         },
       }),

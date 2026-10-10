@@ -8,6 +8,7 @@ export const MCP_TOOL_NAMES = Object.freeze([
   "plan_taskmarket_delegation",
   "browse_taskmarket_tasks",
   "track_taskmarket_task",
+  "project_funnel_evidence",
 ]);
 
 export const MCP_TOOL_NAME_MAX_LEN = Math.max(...MCP_TOOL_NAMES.map((name) => name.length));
@@ -148,6 +149,23 @@ export const TOOLS = [
         task_id: { type: "string", pattern: "^0x[0-9a-fA-F]{64}$", description: "TaskMarket 32-byte task id." },
       },
       required: ["task_id"],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES[6],
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    description:
+      "Free. Project one declared source-separated observation packet into the accepted funnel decision. " +
+      "Caller observations stay declared. Does not fetch URLs, query customers, store the packet, or spend.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        packet: {
+          type: "object",
+          description: "Caller-supplied observation packet. URLs inside it are not fetched.",
+        },
+      },
+      required: ["packet"],
     },
   },
 ];

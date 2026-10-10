@@ -188,7 +188,7 @@ test("real PostgreSQL 17 admits every declared tool and rejects drift", { timeou
   });
   const allTools = Object.fromEntries(MCP_TOOL_NAMES.map((name) => [name, 1]));
   const allId = "e3000000-0000-4000-8000-000000000010";
-  const allDelta = baseDelta(allTools, { total: 6, humans: 6 });
+  const allDelta = baseDelta(allTools, { total: MCP_TOOL_NAMES.length, humans: MCP_TOOL_NAMES.length });
   serviceRoleSql(
     cluster,
     `
@@ -241,8 +241,8 @@ END $$;
     cluster,
     `SELECT total::text || '|' || (mcp_tool_calls_by_name->>'check_ai_readiness') || '|' || (mcp_tool_calls_by_name->>'check_agent_readiness') FROM public.pulse_aggregate WHERE classification_schema_version=2;`,
   );
-  // prior 3 + one per declared tool + all-tools delta 6. check_ai_readiness: 2 + 1 + 1. check_agent_readiness: 1 + 1.
-  assert.equal(counts, `15|4|2`);
+  // prior 3 + one per declared tool + one all-tools delta. check_ai_readiness: 2 + 1 + 1. check_agent_readiness: 1 + 1.
+  assert.equal(counts, `${3 + MCP_TOOL_NAMES.length + MCP_TOOL_NAMES.length}|4|2`);
   assert.equal(
     psqlTuples(cluster, "SELECT count(*) FROM public.pulse_flush_receipts;"),
     String(1 + MCP_TOOL_NAMES.length + 1),

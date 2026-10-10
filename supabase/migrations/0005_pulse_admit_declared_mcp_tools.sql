@@ -6,8 +6,8 @@
 -- receipt hashes, or idempotency. Does not grant customer, payment, or
 -- extra role authority. CREATE OR REPLACE keeps existing function grants;
 -- the statements below only re-state the service-role-only write/read posture.
--- Tool keys (6): check_ai_readiness, check_agent_readiness, generate_complete_fix_pack, plan_taskmarket_delegation, browse_taskmarket_tasks, track_taskmarket_task
--- Counter-map limit: 6 keys, 32 chars.
+-- Tool keys (7): check_ai_readiness, check_agent_readiness, generate_complete_fix_pack, plan_taskmarket_delegation, browse_taskmarket_tasks, track_taskmarket_task, project_funnel_evidence
+-- Counter-map limit: 7 keys, 32 chars.
 
 create or replace function public.pulse_validate_delta(p_delta jsonb)
 returns jsonb language plpgsql immutable set search_path = '' as $$
@@ -16,7 +16,7 @@ declare
   v_tool_observed_from timestamptz;
   v_funnel_keys text[] := array['home', 'scan', 'tools', 'reports', 'guides', 'pricing'];
   v_mcp_keys text[] := array['initialize', 'tools/list', 'tools/call', 'notifications', 'other'];
-  v_tool_keys text[] := array['check_ai_readiness', 'check_agent_readiness', 'generate_complete_fix_pack', 'plan_taskmarket_delegation', 'browse_taskmarket_tasks', 'track_taskmarket_task'];
+  v_tool_keys text[] := array['check_ai_readiness', 'check_agent_readiness', 'generate_complete_fix_pack', 'plan_taskmarket_delegation', 'browse_taskmarket_tasks', 'track_taskmarket_task', 'project_funnel_evidence'];
 begin
   if p_delta is null or jsonb_typeof(p_delta) <> 'object' then raise exception 'pulse_invalid_delta' using errcode = '22023'; end if;
   if (select count(*) from jsonb_object_keys(p_delta) k where k not in (
@@ -50,7 +50,7 @@ begin
     'mcpProtocolMessages',public.pulse_validate_nonneg_int(p_delta -> 'mcpProtocolMessages','mcpProtocolMessages'),
     'mcpProtocolByMethod',public.pulse_validate_counter_map(p_delta -> 'mcpProtocolByMethod','mcpProtocolByMethod',v_mcp_keys,8,32),
     'mcpToolCallsObservedFrom',v_tool_observed_from,
-    'mcpToolCallsByName',public.pulse_validate_counter_map(p_delta -> 'mcpToolCallsByName','mcpToolCallsByName',v_tool_keys,6,32),
+    'mcpToolCallsByName',public.pulse_validate_counter_map(p_delta -> 'mcpToolCallsByName','mcpToolCallsByName',v_tool_keys,7,32),
     'byPath',public.pulse_validate_counter_map(p_delta -> 'byPath','byPath',null,200,60),
     'byReferer',public.pulse_validate_counter_map(p_delta -> 'byReferer','byReferer',null,200,96),
     'byAiBot',public.pulse_validate_counter_map(p_delta -> 'byAiBot','byAiBot',null,64,64),

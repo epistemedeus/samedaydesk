@@ -1,0 +1,96 @@
+{
+  "schema": "pilot.payment-delivery-receiving.v1",
+  "observedAt": "2026-10-10T04:01:52.084Z",
+  "url": "https://agents.samedaydesk.com/v0/commerce-demand.json?days=1",
+  "status": 200,
+  "generatedAt": "2026-10-10T04:01:51.206Z",
+  "requestedWindowDays": 1,
+  "requestedWindowComplete": null,
+  "requestedWindowCoverage": "not_collected_by_this_projection",
+  "paymentEvidence": {
+    "schemaVersion": "samedaydesk.commerce-payment-evidence-readout.v1",
+    "relationship": "retained_paid_event_and_durable_settlement",
+    "eventPlane": {
+      "coverage": "unknown_for_full_window",
+      "retainedPaidSuccessActors": 1,
+      "retainedRepeatPaidSuccessActors": 1,
+      "requestedWindowPaidSuccessActors": null,
+      "requestedWindowRepeatPaidSuccessActors": null
+    },
+    "settlementPlane": {
+      "enabled": true,
+      "baseline": "2026-08-09T13:49:54.000Z",
+      "coverage": "complete",
+      "reconciledSettlements": 56,
+      "amountAtomic": "1132000",
+      "byClass": {
+        "unclassified": {
+          "settlements": 43,
+          "amountAtomic": "545000"
+        },
+        "internal": {
+          "settlements": 12,
+          "amountAtomic": "577000"
+        },
+        "validation": {
+          "settlements": 1,
+          "amountAtomic": "10000"
+        }
+      },
+      "byRoute": {
+        "/enrich": {
+          "settlements": 1,
+          "amountAtomic": "50000"
+        },
+        "/wallet-enrich": {
+          "settlements": 2,
+          "amountAtomic": "100000"
+        },
+        "/extract": {
+          "settlements": 27,
+          "amountAtomic": "225000"
+        },
+        "/work/opportunity-preflight": {
+          "settlements": 3,
+          "amountAtomic": "150000"
+        },
+        "/distribution/agent-discoverability-audit": {
+          "settlements": 3,
+          "amountAtomic": "350000"
+        },
+        "/defi/morpho-position": {
+          "settlements": 8,
+          "amountAtomic": "160000"
+        },
+        "/commerce/payment-offer-preflight": {
+          "settlements": 2,
+          "amountAtomic": "10000"
+        },
+        "/commerce/settlement-proof": {
+          "settlements": 1,
+          "amountAtomic": "5000"
+        },
+        "/chain/transaction-receipt": {
+          "settlements": 1,
+          "amountAtomic": "2000"
+        },
+        "/commerce/seller-integrity-audit": {
+          "settlements": 8,
+          "amountAtomic": "80000"
+        }
+      }
+    },
+    "customerPlane": {
+      "attributableCustomerCount": null,
+      "buyerValidDeliveryCount": null,
+      "repeatIndependentCustomerCount": null
+    },
+    "boundaries": {
+      "retainedEventZeroNeverMeansHistoricalZeroWhenCoverageIncomplete": true,
+      "settlementNeverBecomesCustomer": true,
+      "paymentKeyNeverBecomesCustomer": true,
+      "settlementNeverProvesBuyerValidDelivery": true,
+      "customerAttributionRequiresSeparateEvidence": true
+    }
+  }
+}

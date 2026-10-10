@@ -25,6 +25,7 @@
     "test:pulse": "node --experimental-strip-types --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-s125-replay.js server/scripts/test-pulse-postgres-real.js server/scripts/test-pulse-tool-contract.js server/scripts/test-pulse-flush-retry.js",
     "test:taskmarket": "node --test server/scripts/test-taskmarket-integration.js",
     "test:mcp": "node --test server/scripts/test-mcp-protocol-negotiation.js server/scripts/test-fixpack-entitlement.js server/scripts/test-mcp-boundary.js",
+    "test:funnel-evidence": "node --test --test-concurrency=1 server/scripts/test-funnel-evidence.mjs",
     "test:machine-discovery": "node --test server/scripts/test-machine-discovery-journey.js",
     "test:agent-readiness": "node --test server/scripts/agent-readiness/*.test.js",
     "test:l08-agent-repair": "node --test --test-concurrency=1 tools/l08-agent-repair/test/repair.test.mjs tools/l08-agent-repair/test/task-readiness.test.mjs tools/l08-agent-repair/test/public-install.test.mjs server/scripts/test-public-readiness-mount.js server/scripts/test-public-readiness-supplied.js server/scripts/test-public-readiness-load-failure.js",
