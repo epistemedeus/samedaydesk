@@ -1,0 +1,3 @@
+Part of epistemedeus/neomorphic-io. Candidate package only.
+task-cohort-consumer 0.1.0 and task-economics-delivery 0.1.0 archives stay immutable.
+hostedAcquisitionVerified is false. This tree does not spend, price, or publish.

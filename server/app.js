@@ -17,6 +17,7 @@ import stripeWebhookRouter from "./routes/stripe-webhook.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
+import funnelEvidenceRouter, { funnelEvidenceParser, funnelEvidenceBodyError } from "./routes/funnel-evidence.js";
 import { mcpHeaders, mcpJsonParser, mcpBodyError } from "./lib/mcp-http.js";
 import agentReadinessRouter from "./routes/agent-readiness.js";
 import { apexAgentCard } from "./lib/apex-agent-card.js";
@@ -104,6 +105,9 @@ app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedU
 // 2) MCP owns its machine parser errors; unrelated APIs and raw webhooks retain
 // their existing parsers and error behavior.
 app.use("/mcp", mcpJsonParser, mcpBodyError);
+// Declared funnel evidence owns a smaller parser so an oversized packet never
+// reaches the global 1mb parser or a log line.
+app.use("/api/funnel-evidence", funnelEvidenceParser, funnelEvidenceBodyError);
 // Everything else parses JSON normally. Already-read MCP/raw bodies are skipped.
 app.use(express.json({ limit: "1mb" }));
 
@@ -113,6 +117,7 @@ app.use(pulseMiddleware);
 
 // 3) API routes.
 app.use("/api", healthRouter);
+app.use("/api/funnel-evidence", funnelEvidenceRouter);
 app.use("/api/pulse", pulseRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);

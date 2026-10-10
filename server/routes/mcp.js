@@ -23,6 +23,7 @@ import {
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
 import { TOOLS } from "../lib/mcp-tool-inventory.js";
+import { projectDeclaredEvidence, safeCode } from "../lib/funnel-evidence/project-evidence.mjs";
 import { formatAgentReadiness, runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 import {
   FIXPACK_MCP_BUY_URL,
@@ -118,6 +119,31 @@ async function handle(msg, ctx = {}) {
         } catch (e) {
           const safe = e.status === 400 || e.status === 429 ? e.message : `Could not check ${host}`;
           return okMsg(id, { content: [{ type: "text", text: safe }], isError: true });
+        }
+      }
+
+      if (name === "project_funnel_evidence") {
+        try {
+          const result = projectDeclaredEvidence(args.packet);
+          const reasons = (result.projection?.decision?.reasons || []).join(", ");
+          const text = [
+            `decision: ${result.projection?.decision?.kind || "unknown"}`,
+            `reasons: ${reasons || "none"}`,
+            `next: ${result.nextAction?.action || ""}`,
+            `changes: ${result.nextAction?.changes || ""}`,
+            `authority: ${result.evidenceAuthority}`,
+          ].join("\n");
+          return okMsg(id, {
+            content: [{ type: "text", text }],
+            structuredContent: result,
+          });
+        } catch (error) {
+          const code = safeCode(error);
+          return okMsg(id, {
+            content: [{ type: "text", text: code }],
+            structuredContent: { error: { code } },
+            isError: true,
+          });
         }
       }
 

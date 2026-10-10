@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-10-10T02:08:39.274Z",
+  "project": "ein-llc-e",
+  "database": "ein-llc-e",
+  "window": {"startInclusive": "2026-10-10T00:27:03Z", "endExclusive": "2026-10-10T02:07:00Z"},
+  "readTime": "2026-10-10T02:08:38.567462Z",
+  "boundedCount": 65,
+  "projectedCount": 65,
+  "bounds": {"count": 2001, "projection": 2001},
+  "capped": false,
+  "populationMatches": true,
+  "credentialExported": false,
+  "selectedFields": ["event", "tool", "outcome", "http_status", "protocol_reason", "activation_states", "assessment_outcome", "release"],
+  "events": {"page_viewed": 7, "agent_call": 58},
+  "releases": {"unknown": 65},
+  "calls": [
+    {"tool": "mcp", "outcome": "client_error", "http_status": 405, "protocol_reason": null, "count": 5},
+    {"tool": "initialize", "outcome": "ok", "http_status": 200, "protocol_reason": null, "count": 19},
+    {"tool": "tools/list", "outcome": "ok", "http_status": 200, "protocol_reason": null, "count": 25},
+    {"tool": "mcp", "outcome": "client_error", "http_status": 400, "protocol_reason": null, "count": 3},
+    {"tool": "get_application_status", "outcome": "client_error", "http_status": 400, "protocol_reason": null, "count": 1},
+    {"tool": "get_application_status", "outcome": "unauthorized", "http_status": 401, "protocol_reason": null, "count": 1},
+    {"tool": "get_formation_contract", "outcome": "ok", "http_status": 200, "protocol_reason": null, "count": 1},
+    {"tool": "compare_states", "outcome": "ok", "http_status": 200, "protocol_reason": null, "count": 1},
+    {"tool": "unknown_tool", "outcome": "client_error", "http_status": 400, "protocol_reason": "method_not_found", "count": 2}
+  ],
+  "unknownCallStatus": 0,
+  "noCallCoverage": ["mcp_gate_missing_client", "notification", "resources_list", "resources_read"],
+  "ownership": "unclassified",
+  "subjectOrderDraftReads": false
+}

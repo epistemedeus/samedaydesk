@@ -1,0 +1,11 @@
+{
+  "repository": "epistemedeus/neomorphic-io",
+  "commit": "e19bc1b97ee78d96dc59fdaa0cffccd717381cc8",
+  "blobs": {
+    "experiments/funnel-decision-projection-141100/src/project.mjs": "9ca997bc2f0a51e1ab283bb87943ada151708ddf",
+    "experiments/funnel-decision-projection-141100/SOURCE-NOTICE.txt": "38152c208399d4b6710b06fdc7f55b7d9dcd53e4",
+    "experiments/live-measurement-consumer-142500/src/consume.mjs": "106f71299fce208069f9830d4dd13de1a5a5762f",
+    "experiments/live-measurement-consumer-142500/src/capture.mjs": "5a8d191bb62e8b089055cf8c5261077bd7b265e9",
+    "experiments/live-measurement-consumer-142500/SOURCE-NOTICE.txt": "e29a33f2f2cf1ba45a7d8eed521c5f71c8c6f215"
+  }
+}

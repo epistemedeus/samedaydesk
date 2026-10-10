@@ -1,0 +1,3 @@
+The sibling funnel-decision-projection-141100 tree is the accepted 0.1.1 projection.
+This consumer reads it and does not rewrite it.
+Aggregates are not expanded into events.

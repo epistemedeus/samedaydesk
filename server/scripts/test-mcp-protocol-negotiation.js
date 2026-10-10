@@ -23,10 +23,11 @@ const EXPECTED_ANNOTATIONS = {
   plan_taskmarket_delegation: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   browse_taskmarket_tasks: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
   track_taskmarket_task: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+  project_funnel_evidence: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
 };
 const EXPECTED_TOOL_NAMES = [...MCP_TOOL_NAMES];
 // Byte-semantic pin of the apex tool surface definitions. Recomputed when TOOLS changes.
-const FROZEN_TOOLS_BLOCK_SHA256 = "1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e8839aeb07f357d041c14d9";
+const FROZEN_TOOLS_BLOCK_SHA256 = "caa88147c598606c5a12806ff764bc736cf122f8993111391e60375a628e7de7";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
