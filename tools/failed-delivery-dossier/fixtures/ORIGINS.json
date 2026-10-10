@@ -1,0 +1,54 @@
+{
+  "wrapper-receipt": {
+    "class": "fixture",
+    "note": "Captured from F08 public CLI at the exact pin. F08 is absent from SDS main; this is not a copied kernel.",
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "fable/f08-paid-wrappers",
+    "sha": "bae3e7cd5034b21019fb272a99d88db964b831ee",
+    "command": "node server/paid-useful-jobs/bin/cli.mjs run vendor-budget-impact --example --funding reserved-fixture --payment server/paid-useful-jobs/fixtures/payment/reserved-fixture.json",
+    "exitCode": 2,
+    "code": "sample-not-a-sale"
+  },
+  "wrapper-receipt-unfunded": {
+    "class": "fixture",
+    "note": "Captured from the same F08 pin with --funding unfunded. Local output paths redacted. Digests are from that run.",
+    "sha": "bae3e7cd5034b21019fb272a99d88db964b831ee"
+  },
+  "checkout-intake": {
+    "class": "fixture",
+    "note": "Reconstructed from published checkout verify JSON and the HTTP lifecycle test assertions. Local-runtime capture is a separate test and may use different PaymentIntent ids.",
+    "copiedFrom": [
+      "server/routes/checkout.js",
+      "server/lib/fulfill.js",
+      "server/scripts/test-checkout-http-lifecycle.js"
+    ],
+    "mainSha": "5b97d1b02e786acd1895cfa1508087ae3f7a1545"
+  },
+  "extract-unpaid": {
+    "class": "fixture",
+    "copiedFrom": "fixtures/buyer-runtimes/agent402/states/stop.json",
+    "mainSha": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+    "observationStatus": "fixture",
+    "note": "Buyer-runtime stop.json. Not an HTTP 402 observation."
+  },
+  "extract-unpaid-expected-402": {
+    "class": "fixture",
+    "copiedFrom": "fixtures/buyer-runtimes/catalog.json",
+    "observationStatus": "expected",
+    "note": "Catalog/contract expects unpaid HTTP 402. That expectation is not an observed response."
+  },
+  "sds52-current-wrapper": {
+    "class": "verified-worktree",
+    "repo": "epistemedeus/samedaydesk",
+    "ref": "fable/f08-paid-wrappers",
+    "pr": 52,
+    "sha": "aeef964fa188443078958d9d6d393afae1d542ee",
+    "note": "Current wrapper pin consumed read-only. Unlike F08 capture sha bae3e7cd. Do not force equal. Do not copy wrapper.mjs."
+  },
+  "i01-terms": {
+    "owner": "https://github.com/epistemedeus/neomorphic-io/pull/54",
+    "termsVersionKind": "sha256: + 64 hex",
+    "golden": "sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f",
+    "note": "This packer does not own earned-work. Integer termsVersion is refused if present on an input."
+  }
+}

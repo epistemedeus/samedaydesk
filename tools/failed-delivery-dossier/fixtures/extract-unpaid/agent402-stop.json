@@ -1,0 +1,23 @@
+{
+  "state": "stop",
+  "provenance": "derived-from-source",
+  "source": {
+    "file": "src/x402-buyer.js",
+    "lines": "76-81",
+    "quote": "getUpstreamBuyer throws when X402_UPSTREAM_BUYER_KEY is unset — this path pays an upstream x402 seller and cannot run without a funded spending wallet"
+  },
+  "reason": "no wallet",
+  "recorded": "Replay ends after authorize-ready. No signer is constructed, no PAYMENT-SIGNATURE is sent, no facilitator verify or settle is called.",
+  "paidContinuationWouldNeed": [
+    "A funded Base USDC spending wallet (Agent402: X402_UPSTREAM_BUYER_KEY; agent402-client: AGENT_KEY passed to @x402/evm ExactEvmScheme).",
+    "registerExactEvmScheme on x402Client for eip155:8453 / scheme exact.",
+    "createPaymentPayload over the picked accept (scheme, network, payTo, amount, asset, extra.name, extra.version, resource, extensions).",
+    "Retry the same GET with PAYMENT-SIGNATURE (x402 v2) and no second unpaid probe.",
+    "Facilitator verify/settle of the exact Base USDC transfer to payTo 0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee for 5000 atomic units."
+  ],
+  "mustNotRun": [
+    "payX402 paid retry",
+    "Agent402 route-execute",
+    "wrapFetchWithPayment second fetch"
+  ]
+}

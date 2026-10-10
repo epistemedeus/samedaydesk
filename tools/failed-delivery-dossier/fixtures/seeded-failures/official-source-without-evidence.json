@@ -1,0 +1,8 @@
+{
+  "officialSource": true,
+  "expectedStatus": 402,
+  "paid": false,
+  "sold": false,
+  "success": false,
+  "note": "Claims official source/state with no sha, gitHead, or http evidence."
+}
