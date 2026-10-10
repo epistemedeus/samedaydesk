@@ -3,20 +3,28 @@
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import {
+  closeSync,
+  constants,
+  fsyncSync,
   lstatSync,
   mkdirSync,
+  mkdtempSync,
+  openSync,
   readFileSync,
   readdirSync,
   realpathSync,
   rmSync,
+  unlinkSync,
   writeFileSync,
+  writeSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve, sep } from "node:path";
+import { basename, dirname, join, resolve, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 
 const SCHEMA = "samedaydesk.original-task-qualification-skill.v1";
+const CACHE_SCHEMA = "samedaydesk.original-task-qualification-cache.v1";
 const COMMANDS = new Set(["acquire", "describe", "map", "submit", "read"]);
 const PAYMENT_FLAGS = new Set(["--pay", "--settle", "--sign", "--wallet", "--purchase"]);
 const DROPPED = new Set([
@@ -40,6 +48,16 @@ const EXPECTED = {
   basePath: "/api/correspondence",
   client: "server/lib/original-task/cli.mjs",
 };
+const OWNER_NAME = "cache-owner.json";
+const ARCHIVE_NAME = "original-task-client.tar.gz";
+const DISCOVERY_NAME = "discovery.json";
+const SOURCE_NAME = "source.json";
+const ALLOWED_FILES = new Set([OWNER_NAME, DISCOVERY_NAME, SOURCE_NAME, ARCHIVE_NAME]);
+const IGNORED_ENTRY = "client";
+const TEMP_PREFIX = "otq-141430-";
+const GRACE_MS = 250;
+const STDOUT_MAX = 1_000_000;
+const STDERR_MAX = 64_000;
 
 function blank(command) {
   return {
@@ -198,13 +216,398 @@ function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
+function lstatSyncOrNull(file) {
+  try { return lstatSync(file); }
+  catch { return null; }
+}
+
 function regularFile(file) {
+  const info = lstatSyncOrNull(file);
+  return info?.isFile() ? info : null;
+}
+
+function existsPath(file) {
+  return Boolean(lstatSyncOrNull(file));
+}
+
+function insideSkill(directory) {
+  const root = skillRoot();
+  const prefix = root.endsWith(sep) ? root : root + sep;
+  return directory === root || directory.startsWith(prefix);
+}
+
+function outsideSkill(directory) {
+  try { return !insideSkill(realpathSync(directory)); }
+  catch { return false; }
+}
+
+function markerBytes() {
+  return Buffer.from(`${JSON.stringify({ schema: CACHE_SCHEMA, package: "original-task-qualification" })}\n`);
+}
+
+function markerValid(cache) {
+  const info = regularFile(join(cache, OWNER_NAME));
+  if (!info || info.size > 512) return false;
   try {
-    const info = lstatSync(file);
-    return info.isFile() ? info : null;
+    const parsed = JSON.parse(readFileSync(join(cache, OWNER_NAME), "utf8"));
+    return parsed?.schema === CACHE_SCHEMA
+      && parsed?.package === "original-task-qualification"
+      && Object.keys(parsed).length === 2;
   } catch {
-    return null;
+    return false;
   }
+}
+
+function cacheEntriesAccepted(cache) {
+  let names;
+  try { names = readdirSync(cache); }
+  catch { return false; }
+  for (const name of names) {
+    if (name === IGNORED_ENTRY) continue;
+    if (!ALLOWED_FILES.has(name)) return false;
+    const info = lstatSyncOrNull(join(cache, name));
+    if (!info?.isFile()) return false;
+  }
+  return true;
+}
+
+function writeOwnedFile(cache, name, bytes, mode) {
+  if (!ALLOWED_FILES.has(name)) return { error: "cache_refused" };
+  const dest = join(cache, name);
+  let existing = lstatSyncOrNull(dest);
+  if (existing?.isSymbolicLink()) {
+    try { unlinkSync(dest); }
+    catch { return { error: "cache_refused" }; }
+    existing = null;
+  } else if (existing && !existing.isFile()) {
+    return { error: "cache_refused" };
+  }
+  const flags = existing
+    ? constants.O_WRONLY | constants.O_TRUNC | constants.O_NOFOLLOW
+    : constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW;
+  let fd;
+  try {
+    fd = openSync(dest, flags, mode);
+    writeSync(fd, bytes);
+    fsyncSync(fd);
+  } catch {
+    return { error: "cache_refused" };
+  } finally {
+    if (fd !== undefined) closeSync(fd);
+  }
+  if (!regularFile(dest)) return { error: "cache_refused" };
+  return null;
+}
+
+function prepareCache(cachePath) {
+  if (!cachePath) return { error: "arguments_required" };
+  const resolved = resolve(cachePath);
+  const parent = dirname(resolved);
+  const parentInfo = lstatSyncOrNull(parent);
+  if (!parentInfo?.isDirectory()) return { error: "cache_refused" };
+  let parentReal;
+  try { parentReal = realpathSync(parent); }
+  catch { return { error: "cache_refused" }; }
+  const prospective = join(parentReal, basename(resolved));
+  if (insideSkill(prospective)) return { error: "cache_refused" };
+  if (!existsPath(resolved)) {
+    mkdirSync(resolved, { mode: 0o700 });
+    let cache;
+    try { cache = realpathSync(resolved); }
+    catch { return { error: "cache_refused" }; }
+    if (cache !== prospective || insideSkill(cache)) return { error: "cache_refused" };
+    const wrote = writeOwnedFile(cache, OWNER_NAME, markerBytes(), 0o644);
+    if (wrote?.error) return wrote;
+    return { cache };
+  }
+  const info = lstatSyncOrNull(resolved);
+  if (!info?.isDirectory()) return { error: "cache_refused" };
+  let cache;
+  try { cache = realpathSync(resolved); }
+  catch { return { error: "cache_refused" }; }
+  if (insideSkill(cache)) return { error: "cache_refused" };
+  if (!cacheEntriesAccepted(cache) || !markerValid(cache)) return { error: "cache_refused" };
+  return { cache };
+}
+
+function readBounded(file, max) {
+  const info = lstatSyncOrNull(file);
+  if (!info) return { missing: true };
+  if (!info.isFile()) return { refused: true };
+  if (info.size > max) return { malformed: true };
+  try { return { ok: true, bytes: readFileSync(file) }; }
+  catch { return { malformed: true }; }
+}
+
+function discoveryMatchesPin(discovery) {
+  const claimed = discovery?.acquisition?.archive;
+  return Boolean(
+    discovery
+    && typeof discovery === "object"
+    && !Array.isArray(discovery)
+    && claimed?.sha256 === EXPECTED.sha256
+    && claimed?.bytes === EXPECTED.bytes
+    && claimed?.path === EXPECTED.archivePath,
+  );
+}
+
+function sourceMatches(source) {
+  return Boolean(source && typeof source === "object" && !Array.isArray(source) && allowedDiscovery(source.descriptorUrl));
+}
+
+function parseJson(bytes) {
+  try { return { ok: true, value: JSON.parse(bytes.toString("utf8")) }; }
+  catch { return { malformed: true }; }
+}
+
+function classifyCache(cache) {
+  const discovery = readBounded(join(cache, DISCOVERY_NAME), 262144);
+  const source = readBounded(join(cache, SOURCE_NAME), 4096);
+  const archive = readBounded(join(cache, ARCHIVE_NAME), EXPECTED.bytes);
+  if (discovery.refused || source.refused || archive.refused) return { error: "cache_refused" };
+  let discoveryValue = null;
+  if (discovery.malformed) return { error: "stale_discovery" };
+  if (discovery.ok) {
+    const parsed = parseJson(discovery.bytes);
+    if (!parsed.ok || !discoveryMatchesPin(parsed.value)) return { error: "stale_discovery" };
+    discoveryValue = parsed.value;
+  }
+  let sourceValue = null;
+  if (source.malformed) return { error: "stale_discovery" };
+  if (source.ok) {
+    const parsed = parseJson(source.bytes);
+    if (!parsed.ok || !sourceMatches(parsed.value)) return { error: "stale_discovery" };
+    sourceValue = parsed.value;
+  }
+  if (archive.malformed) return { error: "archive_refused" };
+  if (archive.ok && (archive.bytes.length !== EXPECTED.bytes || sha256(archive.bytes) !== EXPECTED.sha256)) {
+    return { error: "archive_refused" };
+  }
+  if (!discovery.ok || !source.ok || !archive.ok || !discoveryValue || !sourceValue) return { incomplete: true };
+  return {
+    ready: true,
+    archiveBytes: archive.bytes,
+    discoveryBytes: discovery.bytes,
+    discovery: discoveryValue,
+    descriptorUrl: sourceValue.descriptorUrl,
+  };
+}
+
+function containedExtract(clientRoot) {
+  const base = realpathSync(clientRoot);
+  const pending = [base];
+  while (pending.length) {
+    const current = pending.pop();
+    for (const name of readdirSync(current)) {
+      const full = join(current, name);
+      const info = lstatSync(full);
+      if (info.isSymbolicLink()) return false;
+      if (info.isDirectory()) pending.push(full);
+      else if (!info.isFile()) return false;
+    }
+  }
+  const cli = realpathSync(join(clientRoot, EXPECTED.client));
+  const prefix = base.endsWith(sep) ? base : base + sep;
+  return cli.startsWith(prefix);
+}
+
+function minimalEnv() {
+  return {
+    PATH: process.env.PATH || "",
+    HOME: process.env.HOME || "",
+    TMPDIR: process.env.TMPDIR || tmpdir(),
+    LANG: "C.UTF-8",
+  };
+}
+
+function takeBytes(current, chunk, max) {
+  if (current.length >= max) return current;
+  const room = max - current.length;
+  const piece = chunk.length > room ? chunk.subarray(0, room) : chunk;
+  return piece.length ? Buffer.concat([current, piece]) : current;
+}
+
+export async function runOwnedChild(command, args, options) {
+  const timeoutMs = options.timeoutMs;
+  const maxStdout = options.maxStdout ?? STDOUT_MAX;
+  const maxStderr = options.maxStderr ?? STDERR_MAX;
+  const graceMs = options.graceMs ?? GRACE_MS;
+  let child;
+  try {
+    child = spawn(command, args, {
+      cwd: options.cwd,
+      env: options.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch {
+    return { error: "client_failed", gone: true, code: null, signal: null, stdout: "", stderr: "" };
+  }
+  let stdout = Buffer.alloc(0);
+  let stderr = Buffer.alloc(0);
+  let error = null;
+  let timer = null;
+  let killTimer = null;
+  let finished = false;
+  const onAbort = () => beginKill("client_cancelled");
+
+  function stopTimers() {
+    if (timer) clearTimeout(timer);
+    if (killTimer) clearTimeout(killTimer);
+    timer = null;
+    killTimer = null;
+    options.signal?.removeEventListener("abort", onAbort);
+  }
+
+  function beginKill(reason) {
+    if (error === null) error = reason;
+    try { child.stdout.destroy(); } catch { /* already closed */ }
+    try { child.stderr.destroy(); } catch { /* already closed */ }
+    try { child.kill("SIGTERM"); } catch { /* already exited */ }
+    if (!killTimer) {
+      killTimer = setTimeout(() => {
+        try { child.kill("SIGKILL"); } catch { /* already exited */ }
+      }, graceMs);
+    }
+  }
+
+  return new Promise((resolvePromise) => {
+    function finish(code, signal) {
+      if (finished) return;
+      finished = true;
+      stopTimers();
+      const pid = child.pid;
+      let gone = true;
+      if (pid) {
+        try {
+          process.kill(pid, 0);
+          gone = false;
+        } catch (err) {
+          gone = err?.code === "ESRCH";
+        }
+      }
+      if (!gone) {
+        try { process.kill(pid, "SIGKILL"); } catch { /* already exited */ }
+        resolvePromise({ error: error || "client_timeout", code, signal, gone: false, stdout: "", stderr: "" });
+        return;
+      }
+      if (error) {
+        resolvePromise({ error, code, signal, gone: true, stdout: "", stderr: "" });
+        return;
+      }
+      resolvePromise({
+        code,
+        signal,
+        gone: true,
+        stdout: stdout.toString("utf8"),
+        stderr: stderr.toString("utf8"),
+      });
+    }
+
+    timer = setTimeout(() => beginKill("client_timeout"), timeoutMs);
+    if (options.signal) {
+      if (options.signal.aborted) beginKill("client_cancelled");
+      else options.signal.addEventListener("abort", onAbort, { once: true });
+    }
+    child.stdout.on("data", (chunk) => {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      const overflow = stdout.length + buf.length > maxStdout;
+      stdout = takeBytes(stdout, buf, maxStdout);
+      if (overflow) beginKill("client_output");
+    });
+    child.stderr.on("data", (chunk) => {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      const overflow = stderr.length + buf.length > maxStderr;
+      stderr = takeBytes(stderr, buf, maxStderr);
+      if (overflow) beginKill("client_output");
+    });
+    child.once("error", () => {
+      if (error === null) error = "client_failed";
+      finish(null, null);
+    });
+    child.once("exit", (code, signal) => finish(code, signal));
+  });
+}
+
+function removeOwnedTemp(directory, identity) {
+  let current;
+  try { current = realpathSync(directory); }
+  catch { return; }
+  const info = lstatSyncOrNull(current);
+  if (!info?.isDirectory() || info.dev !== identity.dev || info.ino !== identity.ino) return;
+  let root;
+  try { root = realpathSync(tmpdir()); }
+  catch { return; }
+  const prefix = root.endsWith(sep) ? root : root + sep;
+  if (!current.startsWith(prefix)) return;
+  const rest = current.slice(prefix.length);
+  if (rest.includes(sep) || !rest.startsWith(TEMP_PREFIX)) return;
+  rmSync(current, { recursive: true, force: true });
+}
+
+async function withVerifiedExtract(archiveBytes, discoveryBytes, timeoutMs, fn) {
+  if (!Buffer.isBuffer(archiveBytes) || archiveBytes.length !== EXPECTED.bytes || sha256(archiveBytes) !== EXPECTED.sha256 || !inspectTar(archiveBytes).ok) {
+    return { error: "archive_refused" };
+  }
+  let root;
+  try { root = realpathSync(tmpdir()); }
+  catch { return { error: "archive_refused" }; }
+  const directory = mkdtempSync(join(root, TEMP_PREFIX));
+  const created = lstatSync(directory);
+  const identity = { dev: created.dev, ino: created.ino };
+  try {
+    let real;
+    try { real = realpathSync(directory); }
+    catch { return { error: "archive_refused" }; }
+    if (real !== directory || !created.isDirectory()) return { error: "archive_refused" };
+    const clientRoot = join(directory, "client");
+    mkdirSync(clientRoot, { mode: 0o700 });
+    const archivePath = join(directory, ARCHIVE_NAME);
+    writeFileSync(archivePath, archiveBytes, { mode: 0o644 });
+    const discoveryPath = join(directory, DISCOVERY_NAME);
+    if (discoveryBytes) writeFileSync(discoveryPath, discoveryBytes, { mode: 0o644 });
+    const extracted = await runOwnedChild("tar", ["-xzf", archivePath, "-C", clientRoot], {
+      cwd: directory,
+      env: minimalEnv(),
+      timeoutMs,
+      maxStdout: 1024,
+      maxStderr: 8192,
+    });
+    if (extracted.error === "client_failed") return { error: "tar_required" };
+    if (extracted.error === "client_timeout" || extracted.error === "client_cancelled") return { error: "extract_timeout" };
+    if (extracted.error || extracted.code !== 0) return { error: "archive_refused" };
+    if (!containedExtract(clientRoot)) return { error: "archive_refused" };
+    return await fn({ clientRoot, archivePath, discoveryPath });
+  } catch {
+    return { error: "archive_refused" };
+  } finally {
+    removeOwnedTemp(directory, identity);
+  }
+}
+
+function inspectTar(gzipped) {
+  let raw;
+  try { raw = gunzipSync(gzipped, { maxOutputLength: 2_000_000 }); }
+  catch { return { ok: false }; }
+  const names = [];
+  let offset = 0;
+  while (offset + 512 <= raw.length) {
+    const header = raw.subarray(offset, offset + 512);
+    if (header.every((byte) => byte === 0)) break;
+    const name = header.toString("utf8", 0, 100).replace(/\0.*$/, "");
+    const prefix = header.toString("utf8", 345, 500).replace(/\0.*$/, "");
+    const member = prefix ? `${prefix}/${name}` : name;
+    const size = Number.parseInt(header.toString("utf8", 124, 136).replace(/\0.*$/, "").trim(), 8);
+    const typeflag = header[156];
+    if (!member || !Number.isInteger(size) || size < 0 || size > 1_000_000) return { ok: false };
+    if (member.startsWith("/") || member.split("/").includes("..") || member.includes("\\")) return { ok: false };
+    if (typeflag !== 48 && typeflag !== 0) return { ok: false };
+    names.push(member);
+    const end = offset + 512 + size;
+    if (end > raw.length) return { ok: false };
+    offset = offset + 512 + (Math.ceil(size / 512) * 512);
+  }
+  if (!names.includes(EXPECTED.client)) return { ok: false };
+  return { ok: true };
 }
 
 async function readLimited(response, maxBytes) {
@@ -253,139 +656,6 @@ async function fetchBytes(url, maxBytes, timeoutMs) {
   }
 }
 
-function inspectTar(gzipped) {
-  let raw;
-  try {
-    raw = gunzipSync(gzipped, { maxOutputLength: 2_000_000 });
-  } catch {
-    return { ok: false };
-  }
-  const names = [];
-  let offset = 0;
-  while (offset + 512 <= raw.length) {
-    const header = raw.subarray(offset, offset + 512);
-    if (header.every((byte) => byte === 0)) break;
-    const name = header.toString("utf8", 0, 100).replace(/\0.*$/, "");
-    const prefix = header.toString("utf8", 345, 500).replace(/\0.*$/, "");
-    const member = prefix ? `${prefix}/${name}` : name;
-    const size = Number.parseInt(header.toString("utf8", 124, 136).replace(/\0.*$/, "").trim(), 8);
-    const typeflag = header[156];
-    if (!member || !Number.isInteger(size) || size < 0 || size > 1_000_000) return { ok: false };
-    if (member.startsWith("/") || member.split("/").includes("..") || member.includes("\\")) return { ok: false };
-    if (typeflag !== 48 && typeflag !== 0) return { ok: false };
-    names.push(member);
-    const end = offset + 512 + size;
-    if (end > raw.length) return { ok: false };
-    offset = offset + 512 + (Math.ceil(size / 512) * 512);
-  }
-  if (!names.includes(EXPECTED.client)) return { ok: false };
-  return { ok: true };
-}
-
-function prepareCache(cachePath) {
-  if (!cachePath) return { error: "arguments_required" };
-  const parent = dirname(resolve(cachePath));
-  let parentInfo;
-  try { parentInfo = lstatSync(parent); }
-  catch { return { error: "cache_refused" }; }
-  if (!parentInfo.isDirectory()) return { error: "cache_refused" };
-  if (existsPath(cachePath)) {
-    const info = lstatSync(cachePath);
-    if (!info.isDirectory()) return { error: "cache_refused" };
-  } else {
-    mkdirSync(cachePath, { mode: 0o700 });
-  }
-  const cache = realpathSync(cachePath);
-  const root = skillRoot();
-  const rootPrefix = root.endsWith(sep) ? root : root + sep;
-  if (cache === root || cache.startsWith(rootPrefix)) return { error: "cache_refused" };
-  return { cache };
-}
-
-function existsPath(file) {
-  try {
-    lstatSync(file);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function cacheReady(cache) {
-  const archive = regularFile(join(cache, "original-task-client.tar.gz"));
-  const discovery = regularFile(join(cache, "discovery.json"));
-  const cli = regularFile(join(cache, "client", EXPECTED.client));
-  if (!archive || !discovery || !cli) return false;
-  if (archive.size !== EXPECTED.bytes) return false;
-  const bytes = readFileSync(join(cache, "original-task-client.tar.gz"));
-  return sha256(bytes) === EXPECTED.sha256;
-}
-
-function containedExtract(clientRoot) {
-  const base = realpathSync(clientRoot);
-  const pending = [base];
-  while (pending.length) {
-    const current = pending.pop();
-    for (const name of readdirSync(current)) {
-      const full = join(current, name);
-      const info = lstatSync(full);
-      if (info.isSymbolicLink()) return false;
-      if (info.isDirectory()) pending.push(full);
-      else if (!info.isFile()) return false;
-    }
-  }
-  const cli = realpathSync(join(clientRoot, EXPECTED.client));
-  const prefix = base.endsWith(sep) ? base : base + sep;
-  return cli.startsWith(prefix);
-}
-
-function outsideSkill(directory) {
-  try {
-    const real = realpathSync(directory);
-    const root = skillRoot();
-    const prefix = root.endsWith(sep) ? root : root + sep;
-    return real !== root && !real.startsWith(prefix);
-  } catch {
-    return false;
-  }
-}
-
-function extractArchive(cache, bytes) {
-  const clientRoot = join(cache, "client");
-  rmSync(clientRoot, { recursive: true, force: true });
-  mkdirSync(clientRoot, { mode: 0o700 });
-  writeFileSync(join(cache, "package.json"), `${JSON.stringify({ private: true, type: "commonjs" })}\n`, { mode: 0o644 });
-  const archivePath = join(cache, "original-task-client.tar.gz");
-  writeFileSync(archivePath, bytes, { mode: 0o644 });
-  return new Promise((resolvePromise) => {
-    let settled = false;
-    const finish = (value) => {
-      if (settled) return;
-      settled = true;
-      resolvePromise(value);
-    };
-    const child = spawn("tar", ["-xzf", archivePath, "-C", clientRoot], {
-      cwd: tmpdir(),
-      stdio: ["ignore", "ignore", "pipe"],
-    });
-    child.stderr.on("data", () => {});
-    child.once("error", () => finish({ error: "tar_required" }));
-    child.once("exit", (code) => {
-      if (code !== 0) {
-        rmSync(clientRoot, { recursive: true, force: true });
-        finish({ error: "archive_refused" });
-        return;
-      }
-      if (!containedExtract(clientRoot)) {
-        rmSync(clientRoot, { recursive: true, force: true });
-        finish({ error: "archive_refused" });
-        return;
-      }
-      finish({ clientRoot });
-    });
-  });
-}
-
 function registrationCode(directory) {
   if (!directory) return null;
   const info = regularFile(join(directory, "registration.secret"));
@@ -403,39 +673,40 @@ function taskFileOk(file) {
   return Boolean(info && info.size > 1 && info.size <= 65536);
 }
 
-function rememberSource(cache, descriptorUrl, discoveryBytes) {
-  writeFileSync(join(cache, "discovery.json"), discoveryBytes, { mode: 0o644 });
-  writeFileSync(join(cache, "source.json"), `${JSON.stringify({ descriptorUrl })}\n`, { mode: 0o644 });
+function sameOrNested(parent, child) {
+  if (parent === child) return true;
+  const prefix = parent.endsWith(sep) ? parent : parent + sep;
+  return child.startsWith(prefix);
 }
 
-function savedEncounter(cache) {
-  try {
-    const source = JSON.parse(readFileSync(join(cache, "source.json"), "utf8"));
-    const discovery = JSON.parse(readFileSync(join(cache, "discovery.json"), "utf8"));
-    return {
-      acquisition: {
-        source: "cache",
-        sha256: EXPECTED.sha256,
-        bytes: EXPECTED.bytes,
-        matched: true,
-        fetched: false,
-      },
-      encounter: {
-        descriptorUrl: typeof source.descriptorUrl === "string" ? source.descriptorUrl : null,
-        schema: typeof discovery.schema === "string" ? discovery.schema : null,
-      },
-      install: { clientExtracted: true, client: EXPECTED.client },
-    };
-  } catch {
-    return null;
-  }
+function realpathOrNull(file) {
+  try { return realpathSync(file); }
+  catch { return null; }
 }
 
-function applySaved(observation, saved) {
-  if (!saved) return;
-  observation.acquisition = saved.acquisition;
-  observation.encounter = saved.encounter;
-  observation.install = saved.install;
+function pathsOverlap(cachePath, privatePath) {
+  if (!cachePath || !privatePath) return false;
+  const cacheResolved = resolve(cachePath);
+  const privateResolved = resolve(privatePath);
+  if (sameOrNested(cacheResolved, privateResolved) || sameOrNested(privateResolved, cacheResolved)) return true;
+  const cacheReal = realpathOrNull(cacheResolved);
+  const privateReal = realpathOrNull(privateResolved);
+  if (cacheReal && privateReal && (sameOrNested(cacheReal, privateReal) || sameOrNested(privateReal, cacheReal))) return true;
+  return false;
+}
+
+function applySaved(observation, state) {
+  observation.acquisition = {
+    source: "cache",
+    sha256: EXPECTED.sha256,
+    bytes: EXPECTED.bytes,
+    matched: true,
+    fetched: false,
+  };
+  observation.encounter = {
+    descriptorUrl: state.descriptorUrl,
+    schema: typeof state.discovery.schema === "string" ? state.discovery.schema : null,
+  };
 }
 
 function applyDecision(observation, parsed) {
@@ -469,56 +740,20 @@ function applyDescriptor(observation, parsed) {
 }
 
 function runClient(clientRoot, args, timeoutMs) {
-  return new Promise((resolvePromise) => {
-    const child = spawn(process.execPath, [join(clientRoot, EXPECTED.client), ...args], {
-      cwd: clientRoot,
-      env: {
-        PATH: process.env.PATH || "",
-        HOME: process.env.HOME || "",
-        TMPDIR: process.env.TMPDIR || tmpdir(),
-        LANG: "C.UTF-8",
-      },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    let stdout = "";
-    let stderr = "";
-    let settled = false;
-    const timer = setTimeout(() => {
-      child.kill("SIGTERM");
-    }, timeoutMs);
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk;
-      if (stdout.length > 1_000_000) child.kill("SIGTERM");
-    });
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk;
-      if (stderr.length > 64_000) child.kill("SIGTERM");
-    });
-    child.once("error", () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      resolvePromise({ error: "client_failed" });
-    });
-    child.once("exit", (code, signal) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      if (signal) {
-        resolvePromise({ error: "client_timeout" });
-        return;
-      }
-      resolvePromise({ code, stdout, stderr });
-    });
+  return runOwnedChild(process.execPath, [join(clientRoot, EXPECTED.client), ...args], {
+    cwd: clientRoot,
+    env: minimalEnv(),
+    timeoutMs,
+    maxStdout: STDOUT_MAX,
+    maxStderr: STDERR_MAX,
   });
 }
 
 function parseClient(result) {
-  if (result.error) return { error: result.error };
-  const line = result.stdout.trim();
+  if (!result || result.error) return { error: result?.error || "client_failed" };
   if (result.code === 0) {
     try {
-      const parsed = JSON.parse(line);
+      const parsed = JSON.parse(result.stdout.trim());
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { error: "client_output" };
       return { parsed };
     } catch {
@@ -533,13 +768,7 @@ function parseClient(result) {
   }
 }
 
-async function acquireInto(observation, cache, discoveryUrl, timeoutMs, refresh) {
-  if (!refresh && cacheReady(cache)) {
-    const saved = savedEncounter(cache);
-    if (!saved) return "cache_refused";
-    applySaved(observation, saved);
-    return null;
-  }
+async function acquireInto(observation, cache, discoveryUrl, timeoutMs) {
   const fetched = await fetchBytes(discoveryUrl, 262144, timeoutMs);
   observation.encounter = { descriptorUrl: discoveryUrl.href, schema: null };
   if (fetched.error === "redirect_refused") return "redirect_refused";
@@ -585,9 +814,12 @@ async function acquireInto(observation, cache, discoveryUrl, timeoutMs, refresh)
     };
     return "archive_refused";
   }
-  const extracted = await extractArchive(cache, archive.bytes);
-  if (extracted.error) return extracted.error;
-  rememberSource(cache, discoveryUrl.href, fetched.bytes);
+  const wroteArchive = writeOwnedFile(cache, ARCHIVE_NAME, archive.bytes, 0o644);
+  if (wroteArchive?.error) return wroteArchive.error;
+  const wroteDiscovery = writeOwnedFile(cache, DISCOVERY_NAME, fetched.bytes, 0o644);
+  if (wroteDiscovery?.error) return wroteDiscovery.error;
+  const wroteSource = writeOwnedFile(cache, SOURCE_NAME, Buffer.from(`${JSON.stringify({ descriptorUrl: discoveryUrl.href })}\n`), 0o644);
+  if (wroteSource?.error) return wroteSource.error;
   observation.acquisition = {
     source: "public-archive",
     sha256: digest,
@@ -595,27 +827,43 @@ async function acquireInto(observation, cache, discoveryUrl, timeoutMs, refresh)
     matched: true,
     fetched: true,
   };
-  observation.install = { clientExtracted: true, client: EXPECTED.client };
-  return null;
+  return {
+    cache,
+    archiveBytes: archive.bytes,
+    discoveryBytes: fetched.bytes,
+  };
 }
 
 async function ensure(observation, flags, timeoutMs, { fetchable }) {
   const prepared = prepareCache(flags.get("--cache"));
   if (prepared.error) return prepared.error;
   const refresh = flags.get("--refresh") === "yes";
-  if (!refresh && cacheReady(prepared.cache)) {
-    const saved = savedEncounter(prepared.cache);
-    if (!saved) return "cache_refused";
-    applySaved(observation, saved);
-    return { cache: prepared.cache };
+  if (!refresh) {
+    const state = classifyCache(prepared.cache);
+    if (state.error) return state.error;
+    if (state.ready) {
+      applySaved(observation, state);
+      return {
+        cache: prepared.cache,
+        archiveBytes: state.archiveBytes,
+        discoveryBytes: state.discoveryBytes,
+      };
+    }
   }
   if (!fetchable) return "cache_required";
   const discoveryValue = flags.get("--discovery-url") || `${EXPECTED.origin}${EXPECTED.discoveryPath}`;
   const discoveryUrl = allowedDiscovery(discoveryValue);
   if (!discoveryUrl) return "origin_refused";
-  const failed = await acquireInto(observation, prepared.cache, discoveryUrl, timeoutMs, true);
-  if (failed) return failed;
-  return { cache: prepared.cache };
+  const acquired = await acquireInto(observation, prepared.cache, discoveryUrl, timeoutMs);
+  if (typeof acquired === "string") return acquired;
+  return acquired;
+}
+
+async function proveExtract(observation, ensured, timeoutMs) {
+  const proved = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, async () => ({ ok: true }));
+  if (!proved?.ok) return proved?.error || "archive_refused";
+  observation.install = { clientExtracted: true, client: EXPECTED.client };
+  return null;
 }
 
 async function commandAcquire(observation, flags, timeoutMs) {
@@ -623,6 +871,8 @@ async function commandAcquire(observation, flags, timeoutMs) {
   if (rejected) return fail(observation, rejected);
   const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
   if (typeof ensured === "string") return fail(observation, ensured);
+  const failed = await proveExtract(observation, ensured, timeoutMs);
+  if (failed) return fail(observation, failed);
   emit(observation);
 }
 
@@ -631,7 +881,10 @@ async function commandDescribe(observation, flags, timeoutMs) {
   if (rejected) return fail(observation, rejected);
   const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
   if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await runClient(join(ensured.cache, "client"), ["describe"], timeoutMs);
+  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+    observation.install = { clientExtracted: true, client: EXPECTED.client };
+    return runClient(paths.clientRoot, ["describe"], timeoutMs);
+  });
   const parsed = parseClient(ran);
   if (parsed.error) return fail(observation, parsed.error);
   applyDescriptor(observation, parsed.parsed);
@@ -643,21 +896,20 @@ async function commandMap(observation, flags, timeoutMs) {
   if (rejected) return fail(observation, rejected);
   const taskFile = flags.get("--task-file");
   if (!taskFile || !taskFileOk(taskFile)) return fail(observation, "arguments_required");
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const args = [
-    "map",
-    "--discovery-file", join(ensured.cache, "discovery.json"),
-    "--archive", join(ensured.cache, "original-task-client.tar.gz"),
-    "--task-file", taskFile,
-  ];
   if (flags.has("--directory")) {
     const directory = flags.get("--directory");
+    if (pathsOverlap(flags.get("--cache"), directory)) return fail(observation, "cache_private_overlap");
     if (existsPath(directory) && !outsideSkill(directory)) return fail(observation, "arguments_rejected");
-    args.push("--directory", directory);
   }
-  if (flags.has("--handle")) args.push("--handle", flags.get("--handle"));
-  const ran = await runClient(join(ensured.cache, "client"), args, timeoutMs);
+  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
+  if (typeof ensured === "string") return fail(observation, ensured);
+  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+    observation.install = { clientExtracted: true, client: EXPECTED.client };
+    const args = ["map", "--discovery-file", paths.discoveryPath, "--archive", paths.archivePath, "--task-file", taskFile];
+    if (flags.has("--directory")) args.push("--directory", flags.get("--directory"));
+    if (flags.has("--handle")) args.push("--handle", flags.get("--handle"));
+    return runClient(paths.clientRoot, args, timeoutMs);
+  });
   const parsed = parseClient(ran);
   if (parsed.error) return fail(observation, parsed.error);
   applyDecision(observation, parsed.parsed);
@@ -673,6 +925,7 @@ async function commandSubmit(observation, flags, timeoutMs) {
   const directory = flags.get("--directory");
   const base = allowedBase(flags.get("--base-url") || "");
   if (!taskFile || !taskFileOk(taskFile) || !directory || !base) return fail(observation, !base && flags.has("--base-url") ? "origin_refused" : "arguments_required");
+  if (pathsOverlap(flags.get("--cache"), directory)) return fail(observation, "cache_private_overlap");
   const directoryInfo = lstatSyncOrNull(directory);
   if (!directoryInfo?.isDirectory()) {
     return fail(observation, directoryInfo?.isSymbolicLink() ? "missing_private_authority" : "arguments_required");
@@ -680,12 +933,15 @@ async function commandSubmit(observation, flags, timeoutMs) {
   if (!outsideSkill(directory)) return fail(observation, "arguments_rejected");
   const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
   if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await runClient(join(ensured.cache, "client"), [
-    "submit",
-    "--base-url", base,
-    "--directory", directory,
-    "--task-file", taskFile,
-  ], timeoutMs);
+  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+    observation.install = { clientExtracted: true, client: EXPECTED.client };
+    return runClient(paths.clientRoot, [
+      "submit",
+      "--base-url", base,
+      "--directory", directory,
+      "--task-file", taskFile,
+    ], timeoutMs);
+  });
   const parsed = parseClient(ran);
   observation.registration = { code: registrationCode(directory) };
   if (parsed.error) return fail(observation, parsed.error);
@@ -693,26 +949,31 @@ async function commandSubmit(observation, flags, timeoutMs) {
   emit(observation);
 }
 
-function lstatSyncOrNull(file) {
-  try { return lstatSync(file); }
-  catch { return null; }
-}
-
 async function commandRead(observation, flags, timeoutMs) {
   const rejected = unknownFlag(flags, ["--cache", "--timeout-ms", "--directory"]);
   if (rejected) return fail(observation, rejected);
   const directory = flags.get("--directory");
   if (!directory) return fail(observation, "arguments_required");
+  if (pathsOverlap(flags.get("--cache"), directory)) return fail(observation, "cache_private_overlap");
   const directoryInfo = lstatSyncOrNull(directory);
   if (directoryInfo?.isSymbolicLink()) return fail(observation, "missing_private_authority");
   if (directoryInfo && !outsideSkill(directory)) return fail(observation, "arguments_rejected");
   const repeat = continuationPresent(directory);
   const ensured = await ensure(observation, flags, timeoutMs, { fetchable: false });
   if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await runClient(join(ensured.cache, "client"), ["read", "--directory", directory], timeoutMs);
+  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+    observation.install = { clientExtracted: true, client: EXPECTED.client };
+    return runClient(paths.clientRoot, ["read", "--directory", directory], timeoutMs);
+  });
   const parsed = parseClient(ran);
   observation.registration = { code: registrationCode(directory) };
-  if (repeat) observation.repeatUse = { samePrivateDirectory: true };
+  if (repeat) {
+    observation.repeatUse = {
+      kind: "local_continuation_retrieval",
+      acceptedUsefulJob: false,
+      customerDemand: false,
+    };
+  }
   if (parsed.error) return fail(observation, parsed.error);
   applyReceipt(observation, parsed.parsed);
   observation.submission = null;

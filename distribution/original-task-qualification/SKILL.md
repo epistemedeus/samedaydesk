@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Node.js >=22 and tar. No wallet, signup, or API key. The installed command fetches the pinned public descriptor and archive, then runs the extracted correspondence client. Loopback origins are owner QA only. Any other origin is refused before connect.
 metadata:
   author: neomorphic
-  version: "0.1.0"
+  version: "0.1.1"
   hermes:
     tags: [original-task, correspondence, qualification, no-spend]
   openclaw:
@@ -35,7 +35,7 @@ node scripts/cli.mjs submit --cache CACHE --base-url https://samedaydesk.com/api
 node scripts/cli.mjs read --cache CACHE --directory PRIVATE
 ```
 
-`--cache` is a directory whose parent already exists, and the cache itself must sit outside this skill. `PRIVATE` must also sit outside this skill. The cache receives the public descriptor, the public archive, and the extracted client. It does not receive `registration.secret`, `continuation.json`, or `retrieval.json`. Those stay in `PRIVATE`.
+`--cache` is a directory outside this skill. This command creates it, or reuses it only when this command already owns that directory. An existing unrelated directory is refused and left unchanged. The cache receives the public descriptor and the public archive. Each command extracts that pinned archive into a private temporary directory, runs that extract, and removes the temporary directory. `PRIVATE` must also sit outside this skill. The cache and `PRIVATE` must not be the same directory, and neither may contain the other. Sibling directories are the ordinary layout. The cache does not receive `registration.secret`, `continuation.json`, or `retrieval.json`. Those stay in `PRIVATE`.
 
 `--submit` must be the value `yes`. Without that pair the command does not register and does not post. `--pay`, `--settle`, `--sign`, `--wallet`, and `--purchase` are refused before any fetch.
 
@@ -49,7 +49,7 @@ Map may receive `--directory` and `--handle`. The extracted client decides wheth
 
 Every result is one JSON object. These keys are separate observations: `acquisition`, `encounter`, `install`, `registration`, `submission`, `disposition`, `delivery`, `acceptance`, `payment`, and `repeatUse`. Null means this command did not observe that stage. It does not mean the stage succeeded.
 
-`install` here means the pinned client archive was extracted into the caller cache. Installing this skill into Hermes or ClawHub is a different observation and is not implied by that field. `registration` is `present` or `absent`. The command does not print the registration id or the registration file. `repeatUse` is set only when a later read finds the private continuation already in that directory.
+`install` here means this command extracted the pinned archive for that invocation and ran that extract. Installing this skill into Hermes or ClawHub is a different observation and is not implied by that field. `registration` is `present` or `absent`. The command does not print the registration id or the registration file. A later `read` from the same private directory sets `repeatUse` to local continuation retrieval. That is not acceptance, a new submission, or customer demand.
 
 Exit 0 is a classified result. Read `result.action` and `disposition`. A refusal decision is still exit 0. Exit 1 means the descriptor was unavailable, the archive did not match, confirmation or the runtime was missing, the origin was refused, or the extracted client failed.
 
