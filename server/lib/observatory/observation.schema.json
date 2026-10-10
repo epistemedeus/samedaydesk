@@ -47,6 +47,17 @@
             "null"
           ]
         },
+        "unitClass": {
+          "enum": [
+            "count",
+            "money",
+            "ratio",
+            "atomic",
+            "custom",
+            "absent",
+            "invalid"
+          ]
+        },
         "definition": {
           "type": [
             "string",

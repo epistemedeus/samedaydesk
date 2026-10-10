@@ -56,7 +56,7 @@
     "foundry:worker": "node server/foundry/worker.mjs",
     "foundry:canary": "node server/foundry/canary.mjs",
     "test:market-observations": "node --test server/scripts/test-market-observations.js",
-    "test:observatory": "node --test server/scripts/test-observatory.js server/scripts/test-observatory-s64.js server/scripts/test-observatory-paid-activity.js server/scripts/test-observatory-paid-activity-other.js server/scripts/test-observatory-positioning.js",
+    "test:observatory": "node --test server/scripts/test-observatory.js server/scripts/test-observatory-s64.js server/scripts/test-observatory-paid-activity.js server/scripts/test-observatory-paid-activity-other.js server/scripts/test-observatory-positioning.js server/scripts/test-observatory-convergence.js server/scripts/test-observatory-measurement.js",
     "observatory:capture": "node server/scripts/observatory-capture.mjs capture --out proofs/observatory-captures/live --label live",
     "test:observatory-capture": "node --test server/scripts/test-observatory-capture.js",
     "test:spa-route-shells": "node --test server/scripts/test-spa-route-shells.js",

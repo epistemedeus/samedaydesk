@@ -46,3 +46,4 @@ jobs:
       - run: npm run test:l08-agent-repair
       - run: npm run test:mcp
       - run: node --test server/scripts/test-public-readiness-load-failure.js
+      - run: npm run test:observatory
