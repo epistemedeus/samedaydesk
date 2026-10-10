@@ -25,6 +25,7 @@ import {
 } from "../lib/observatory/registry.js";
 import * as registry from "../lib/observatory/registry.js";
 import { MOLTJOBS_STATS_SOURCE_URL } from "../lib/market-observations/moltjobs-stats-adapter.js";
+import { upstreamUrl as OPEN_JOBS_UPSTREAM } from "../lib/observatory/adapters/moltjobs-open-jobs.js";
 
 const FETCHED_AT_MS = Date.parse("2026-09-09T23:00:00.000Z");
 const FETCHED_AT = "2026-09-09T23:00:00.000Z";
@@ -36,6 +37,18 @@ const URLS = Object.freeze({
   moltjobs: MOLTJOBS_STATS_SOURCE_URL,
   x402stats: "https://x402stats.io/api/stats",
   smithery: "https://api.smithery.ai/servers?pageSize=1",
+  openJobs: OPEN_JOBS_UPSTREAM,
+});
+
+const OPEN_JOBS_FIXTURE = Object.freeze({
+  data: Object.freeze([{
+    status: "OPEN",
+    purpose: "PLATFORM_REFERRAL",
+    funded: true,
+    requiredSkills: Object.freeze([]),
+    preferredSkills: Object.freeze([]),
+  }]),
+  meta: Object.freeze({ hasMore: false, limit: 20 }),
 });
 
 const MOLTJOBS_FIXTURE = Object.freeze({
@@ -114,6 +127,7 @@ function createRoutedFetch(handlers = {}) {
     if (u === URLS.smithery) {
       return jsonResponse(SMITHERY_FIXTURE, 200, { "last-modified": SMITHERY_LAST_MODIFIED });
     }
+    if (u === URLS.openJobs) return jsonResponse(OPEN_JOBS_FIXTURE);
     throw new Error(`unexpected upstream ${u}`);
   };
   fetchImpl.calls = calls;
@@ -230,7 +244,7 @@ test("GET /sources lists fixed registry metadata and does not fetch", async (t) 
   assert.equal(res.body.schemaVersion, SCHEMA_VERSION);
   assert.equal(res.body.additivity, "not_additive");
   const ids = res.body.sources.map((source) => source.sourceId);
-  assert.deepEqual(ids, ["moltjobs", "x402stats", "smithery_mcp"]);
+  assert.deepEqual(ids, ["moltjobs", "x402stats", "smithery_mcp", "moltjobs_open_jobs"]);
   assert.equal(res.body.sources[0].upstreamUrl, URLS.moltjobs);
   assert.equal(res.body.sources[0].sourceKind, "work_market");
   assert.equal(res.body.sources[1].sourceKind, "settlement");
@@ -632,7 +646,7 @@ test("snapshot observes each named source in parallel without cross-source total
   await enteredGate;
   const second = request(base, "/api/observatory/snapshot");
   await new Promise((resolve) => setTimeout(resolve, 40));
-  assert.equal(fetchImpl.calls.length, 3);
+  assert.equal(fetchImpl.calls.length, 4);
   release();
   const [a, b] = await Promise.all([first, second]);
   assert.equal(a.status, 200);
@@ -645,7 +659,7 @@ test("snapshot observes each named source in parallel without cross-source total
   assert.equal(a.body.combined, undefined);
   assert.equal(a.body.grandTotal, undefined);
   const ids = a.body.observations.map((item) => item.sourceId).sort();
-  assert.deepEqual(ids, ["moltjobs", "smithery_mcp", "x402stats"]);
+  assert.deepEqual(ids, ["moltjobs", "moltjobs_open_jobs", "smithery_mcp", "x402stats"]);
   for (const observation of a.body.observations) {
     assertNoInventedZeros(observation);
     assert.equal(observation.schemaVersion, SCHEMA_VERSION);
@@ -659,7 +673,7 @@ test("snapshot observes each named source in parallel without cross-source total
   assert.equal(a.body.documentedUnavailable[0].sourceId, "x402scan");
   assert.equal(a.body.documentedUnavailable[0].called, false);
   const calledUrls = fetchImpl.calls.map((call) => call.url).sort();
-  assert.deepEqual(calledUrls, [URLS.smithery, URLS.x402stats, URLS.moltjobs].sort());
+  assert.deepEqual(calledUrls, [URLS.smithery, URLS.x402stats, URLS.moltjobs, URLS.openJobs].sort());
   assert.equal(calledUrls.some((url) => /x402scan/i.test(url)), false);
 });
 
@@ -694,10 +708,11 @@ test("no cross-source sum helper exists on the registry or observatory modules",
   assert.equal(typeof registry.sumObservations, "undefined");
   assert.equal(typeof registry.combineTotals, "undefined");
   assert.equal(typeof registry.addMetrics, "undefined");
-  assert.deepEqual(listSourceIds(), ["moltjobs", "x402stats", "smithery_mcp"]);
+  assert.deepEqual(listSourceIds(), ["moltjobs", "x402stats", "smithery_mcp", "moltjobs_open_jobs"]);
   assert.equal(getSource("moltjobs").upstreamUrl, URLS.moltjobs);
+  assert.equal(getSource("moltjobs_open_jobs").upstreamUrl, URLS.openJobs);
   assert.equal(getSource("missing"), null);
-  assert.equal(listSources().length, 3);
+  assert.equal(listSources().length, 4);
 
   const dir = fileURLToPath(new URL("../lib/observatory/", import.meta.url));
   for (const file of walkJs(dir)) {
@@ -739,7 +754,7 @@ test("optional live OBSERVATORY_LIVE real GETs for the three fixed URLs", async 
     server.close(resolve);
   }));
   try {
-    for (const sourceId of ["moltjobs", "x402stats", "smithery_mcp"]) {
+    for (const sourceId of ["moltjobs", "x402stats", "smithery_mcp", "moltjobs_open_jobs"]) {
       const res = await request(base, `/api/observatory/sources/${sourceId}`);
       if (res.body && res.body.errors && res.body.errors.some((err) => err.code === "network" || err.code === "timeout" || err.kind === "network")) {
         t.skip(`live ${sourceId} failed after try: ${JSON.stringify(res.body.errors)}`);
@@ -758,7 +773,7 @@ test("optional live OBSERVATORY_LIVE real GETs for the three fixed URLs", async 
     assert.equal(snapshot.status, 200);
     assert.equal(snapshot.body.additivity, "not_additive");
     assert.equal(snapshot.body.totals, undefined);
-    assert.equal(snapshot.body.observations.length, 3);
+    assert.equal(snapshot.body.observations.length, 4);
   } catch (error) {
     t.skip(`live upstream network failed after try: ${error && error.message ? error.message : error}`);
   }

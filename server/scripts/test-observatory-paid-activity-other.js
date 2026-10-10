@@ -13,6 +13,7 @@ import {
 } from "../lib/observatory/registry.js";
 import * as registry from "../lib/observatory/registry.js";
 import { MOLTJOBS_STATS_SOURCE_URL } from "../lib/market-observations/moltjobs-stats-adapter.js";
+import { upstreamUrl as OPEN_JOBS_UPSTREAM } from "../lib/observatory/adapters/moltjobs-open-jobs.js";
 import { metricSpecs as x402MetricSpecs } from "../lib/observatory/adapters/x402stats.js";
 import { metricSpecs as smitheryMetricSpecs } from "../lib/observatory/adapters/smithery-mcp.js";
 
@@ -25,6 +26,18 @@ const URLS = Object.freeze({
   moltjobs: MOLTJOBS_STATS_SOURCE_URL,
   x402stats: "https://x402stats.io/api/stats",
   smithery: "https://api.smithery.ai/servers?pageSize=1",
+  openJobs: OPEN_JOBS_UPSTREAM,
+});
+
+const OPEN_JOBS_FIXTURE = Object.freeze({
+  data: Object.freeze([{
+    status: "OPEN",
+    purpose: "PLATFORM_REFERRAL",
+    funded: true,
+    requiredSkills: Object.freeze([]),
+    preferredSkills: Object.freeze([]),
+  }]),
+  meta: Object.freeze({ hasMore: false, limit: 20 }),
 });
 
 const LOCKED_X402_METRIC_KEYS = Object.freeze([
@@ -133,6 +146,7 @@ function createRoutedFetch(handlers = {}) {
     if (u === URLS.smithery) {
       return jsonResponse(SMITHERY_FIXTURE, 200, { "last-modified": SMITHERY_LAST_MODIFIED });
     }
+    if (u === URLS.openJobs) return jsonResponse(OPEN_JOBS_FIXTURE);
     throw new Error(`unexpected upstream ${u}`);
   };
   fetchImpl.calls = calls;
@@ -652,9 +666,9 @@ test("snapshot additivity forbids summing moltjobs marketplaceSettledVolumeUsdc 
   assert.equal(typeof registry.sumObservations, "undefined");
   assert.equal(typeof registry.combineTotals, "undefined");
   assert.equal(typeof registry.addMetrics, "undefined");
-  assert.deepEqual(listSourceIds(), ["moltjobs", "x402stats", "smithery_mcp"]);
+  assert.deepEqual(listSourceIds(), ["moltjobs", "x402stats", "smithery_mcp", "moltjobs_open_jobs"]);
   assert.equal(getSource("moltjobs").upstreamUrl, URLS.moltjobs);
-  assert.equal(listSources().length, 3);
+  assert.equal(listSources().length, 4);
 
   const dir = fileURLToPath(new URL("../lib/observatory/", import.meta.url));
   for (const file of walkJs(dir)) {

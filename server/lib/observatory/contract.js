@@ -142,6 +142,7 @@ export function createEnvelope(fields) {
   };
   if (fields.rawExcerpt != null) envelope.rawExcerpt = fields.rawExcerpt;
   if (fields.paidActivity != null) envelope.paidActivity = cloneRaw(fields.paidActivity);
+  if (fields.workload != null) envelope.workload = cloneRaw(fields.workload);
   return freezeDeep(envelope);
 }
 

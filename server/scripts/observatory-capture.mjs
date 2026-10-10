@@ -15,6 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { SCHEMA_VERSION as CONTRACT_SCHEMA_VERSION, WITHHELD_CONCLUSIONS as CONTRACT_WITHHELD } from "../lib/observatory/contract.js";
+import { projectPositioning } from "../lib/observatory/positioning.js";
 import { USER_AGENT } from "../lib/observatory/bounded-fetch.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -44,6 +45,8 @@ const HELP = `Observatory snapshot + delta (one-shot local JSON; no DB, no daemo
 Usage:
   node server/scripts/observatory-capture.mjs capture --out <dir> [--base <url>] [--source <id>] [--now <iso>] [--label live|fixture]
   node server/scripts/observatory-capture.mjs delta --a <captureA> --b <captureB> [--out <file>]
+  node server/scripts/observatory-capture.mjs position --capture <dir> [--out <file>]
+  node server/scripts/observatory-capture.mjs position --core-only [--now <iso>] [--out <file>]
 
 capture  Fetch each named source via the SDS registry, or HTTP GET a local
          /api/observatory mount (--base). Writes YYYYMMDDTHHMMSSZ/<sourceId>.json
@@ -57,6 +60,10 @@ delta    Compare two capture directories source-by-source. Reports added,
 --source <id>    Limit capture to named sourceId (repeatable)
 --label          live or fixture; live evidence belongs under proofs/
 --now <iso>      Pin observer clock (tests)
+--capture <dir>  Saved capture directory for position
+--core-only      Project with no provider observations
+position         Machine-readable positioning cut from one capture, or
+                 from an empty provider set with --core-only. No crawl.
 `;
 
 export function formatCaptureId(date = new Date()) {
@@ -775,6 +782,8 @@ export async function runCli(argv, options = {}) {
         now: { type: "string" },
         label: { type: "string" },
         registry: { type: "string" },
+        capture: { type: "string" },
+        "core-only": { type: "boolean", default: false },
         help: { type: "boolean", default: false },
       },
     });
@@ -826,6 +835,31 @@ export async function runCli(argv, options = {}) {
       return finish(0, stdoutChunks, stderrChunks, result);
     }
 
+    if (cmd === "position") {
+      if (values["core-only"] && values.capture) {
+        throw codedError("conflicting_flags", "position accepts either --capture or --core-only");
+      }
+      const fetchedAt = values.now ? toIso(values.now) : new Date().toISOString();
+      let projection;
+      if (values["core-only"]) {
+        projection = projectPositioning({ observations: [], fetchedAt });
+      } else if (values.capture == null || values.capture === "") {
+        throw codedError("capture_missing", "position requires --capture <dir> or --core-only");
+      } else {
+        const loaded = loadCapture(values.capture);
+        projection = projectPositioning({
+          observations: loaded.observations,
+          fetchedAt: loaded.manifest.fetchedAt || fetchedAt,
+        });
+      }
+      const text = `${JSON.stringify(projection, null, 2)}\n`;
+      writeOut(text);
+      if (values.out) {
+        await writeFile(resolve(values.out), text, { flag: "wx" });
+      }
+      return finish(0, stdoutChunks, stderrChunks, projection);
+    }
+
     if (cmd === "delta") {
       if (values.a == null || values.a === "") {
         throw codedError("baseline_missing", "baseline missing: --a is required");
@@ -855,6 +889,7 @@ export async function runCli(argv, options = {}) {
     const code = error.code === "baseline_missing"
       || error.code === "duplicate_source_ids"
       || error.code === "capture_missing"
+      || error.code === "conflicting_flags"
       || error.code === "unknown_source"
       ? 2
       : 1;
