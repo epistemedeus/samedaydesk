@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
+import { PULSE_TOOL_CONTRACT_MIGRATION } from "../lib/pulse-store/tool-contract-sql.js";
 import {
   PERMANENT_FLUSH_BACKOFF_MS,
   TRANSIENT_FLUSH_BACKOFF_MS,
@@ -25,10 +26,13 @@ import {
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const migration0002 = readFileSync(join(root, "supabase/migrations/0002_pulse_durable.sql"), "utf8");
 const migration0003 = readFileSync(join(root, "supabase/migrations/0003_pulse_mcp_tool_demand.sql"), "utf8");
+// Released six-tool contract. check_agent_readiness is admitted by this file.
+// The locator is the later inventory and is applied only after that receipt exists.
 const migration0005 = readFileSync(
   join(root, "supabase/migrations/0005_pulse_admit_declared_mcp_tools.sql"),
   "utf8",
 );
+const migrationForward = readFileSync(join(root, PULSE_TOOL_CONTRACT_MIGRATION), "utf8");
 const OBSERVED = "2026-09-02T12:00:00.000Z";
 const CREATED = "2026-09-02T12:00:01.000Z";
 
@@ -327,5 +331,26 @@ ${migration0003}
     assert.equal(createFileFallbackStore(walFile).loadPendingFlushes().length, 0);
     assert.equal(pulseSnapshot().complete, true);
     assert.equal(MCP_TOOL_NAMES.includes("check_agent_readiness"), true);
+    const boundaryBeforeForward = psqlTuples(
+      cluster,
+      "SELECT mcp_tool_calls_observed_from::text FROM public.pulse_aggregate WHERE classification_schema_version=2;",
+    );
+    psql(cluster, null, { input: migrationForward });
+    psql(cluster, null, { input: migrationForward });
+    assert.equal(psqlTuples(cluster, "SELECT total FROM public.pulse_aggregate WHERE classification_schema_version=2;"), "5");
+    assert.equal(
+      psqlTuples(cluster, "SELECT mcp_tool_calls_by_name->>'check_agent_readiness' FROM public.pulse_aggregate WHERE classification_schema_version=2;"),
+      "1",
+    );
+    assert.equal(psqlTuples(cluster, `SELECT delta_hash FROM public.pulse_flush_receipts WHERE flush_id='${badId}';`), receipt);
+    assert.equal(
+      psqlTuples(cluster, "SELECT mcp_tool_calls_observed_from::text FROM public.pulse_aggregate WHERE classification_schema_version=2;"),
+      boundaryBeforeForward,
+    );
+    assert.equal(
+      psqlTuples(cluster, "SELECT coalesce(mcp_tool_calls_by_name->>'project_funnel_evidence', '') FROM public.pulse_aggregate WHERE classification_schema_version=2;"),
+      "",
+      "forward contract must not backfill the new tool into existing rows",
+    );
   });
 });
