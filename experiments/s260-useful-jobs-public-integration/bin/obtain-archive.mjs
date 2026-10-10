@@ -44,7 +44,7 @@ function fail(code, message, extra = {}) {
     ...extra,
   };
   process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
-  process.exit(0);
+  process.exit(1);
 }
 
 function ok(payload) {
