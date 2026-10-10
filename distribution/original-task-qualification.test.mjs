@@ -2,11 +2,12 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { pathToFileURL } from "node:url";
 import { createSdsApp } from "../server/app.js";
 import { startDisposablePg } from "../server/scripts/fixtures/disposable-pg.mjs";
 
@@ -51,7 +52,7 @@ function closeServer(server) {
   return new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
 }
 
-function runSkill(script, args) {
+function runSkill(script, args, env = {}) {
   return new Promise((resolve) => {
     const child = spawn(process.execPath, [script, ...args], {
       cwd: tmpdir(),
@@ -62,6 +63,7 @@ function runSkill(script, args) {
         LANG: "C.UTF-8",
         CORRESPONDENCE_ADMIN_TOKEN: "should-not-pass",
         SECRET_LEAK: "should-not-pass",
+        ...env,
       },
     });
     let stdout = "";
@@ -88,6 +90,36 @@ function installSkill(work) {
   const installed = join(work, "installed", "original-task-qualification");
   cpSync(SKILL, installed, { recursive: true });
   return join(installed, "scripts/cli.mjs");
+}
+
+function snapshot(dir) {
+  if (!existsSync(dir)) return null;
+  const rows = [];
+  const walk = (current, prefix) => {
+    for (const name of readdirSync(current).sort()) {
+      const full = join(current, name);
+      const rel = prefix ? `${prefix}/${name}` : name;
+      const info = lstatSync(full);
+      if (info.isSymbolicLink()) rows.push([rel, "link", readlinkSync(full)]);
+      else if (info.isDirectory()) {
+        rows.push([rel, "dir"]);
+        walk(full, rel);
+      } else {
+        rows.push([rel, "file", createHash("sha256").update(readFileSync(full)).digest("hex"), info.size]);
+      }
+    }
+  };
+  walk(dir, "");
+  return JSON.stringify(rows);
+}
+
+function alive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error?.code !== "ESRCH";
+  }
 }
 
 function publishedDiscovery(origin, mutate = (copy) => copy) {
@@ -142,6 +174,8 @@ test("pins match the published archive and the skill names that archive", () => 
   const skill = readFileSync(join(SKILL, "SKILL.md"), "utf8");
   assert.match(skill, /^name: original-task-qualification$/m);
   assert.match(skill, /not delivery, acceptance, or payment/);
+  assert.match(skill, /existing unrelated directory is refused/);
+  assert.match(skill, /local continuation retrieval/);
   assert.equal(skill.includes("\u2014"), false);
   assert.doesNotMatch(readFileSync(join(SKILL, "scripts/cli.mjs"), "utf8"), /child_process\.(exec|spawn|fork)\s*\(/);
 });
@@ -332,6 +366,7 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
     "acquire", "--cache", inside, "--discovery-url", good.discoveryUrl,
   ]));
   assert.equal(nested.error.code, "cache_refused");
+  assert.deepEqual(readdirSync(inside), []);
 
   const emptyPrivate = join(work, "empty-private");
   mkdirSync(emptyPrivate, { mode: 0o700 });
@@ -451,7 +486,11 @@ test("fixture submit restarts and reads without treating qualification as accept
   assert.equal(readBack.delivery.delivered, false);
   assert.equal(readBack.acceptance.accepted, false);
   assert.equal(readBack.submission, null);
-  assert.equal(readBack.repeatUse.samePrivateDirectory, true);
+  assert.deepEqual(readBack.repeatUse, {
+    kind: "local_continuation_retrieval",
+    acceptedUsefulJob: false,
+    customerDemand: false,
+  });
   assert.equal(readBack.registration.code, "present");
   assert.equal(readBack.result.accepted, false);
 
@@ -476,7 +515,11 @@ test("fixture submit restarts and reads without treating qualification as accept
   assert.equal(later.delivery.delivered, true);
   assert.equal(later.acceptance.accepted, false);
   assert.equal(later.payment.payment, null);
-  assert.equal(later.repeatUse.samePrivateDirectory, true);
+  assert.deepEqual(later.repeatUse, {
+    kind: "local_continuation_retrieval",
+    acceptedUsefulJob: false,
+    customerDemand: false,
+  });
   assert.equal(later.result.accepted, false);
   assert.equal(JSON.stringify(later).includes("SCOPE_SENTENCE_DISTRIBUTION_ONLY"), false);
   assert.equal(JSON.parse(readFileSync(join(directory, "retrieval.json"), "utf8")).result, "SCOPE_SENTENCE_DISTRIBUTION_ONLY");
@@ -512,4 +555,346 @@ test("live public descriptor and archive match the pin", { timeout: 30000 }, asy
   assert.equal(acquired.encounter.descriptorUrl, discoveryUrl);
   assert.equal(acquired.submission, null);
   assert.equal(acquired.install.clientExtracted, true);
+});
+
+test("cached bytes, cache ownership, and owned children stay bounded", { timeout: 60000 }, async (t) => {
+  const work = mkdtempSync(join(tmpdir(), "original-task-skill-owned-"));
+  const script = installSkill(work);
+  const archive = readFileSync(ARCHIVE_PATH);
+  const source = await contentServer({ discovery: (origin) => publishedDiscovery(origin), archive });
+  t.after(() => {
+    rmSync(work, { recursive: true, force: true });
+    return closeServer(source.server);
+  });
+  const marker = `${JSON.stringify({ schema: "samedaydesk.original-task-qualification-cache.v1", package: "original-task-qualification" })}\n`;
+
+  const unowned = join(work, "unowned");
+  mkdirSync(join(unowned, "client"));
+  writeFileSync(join(unowned, "client/SENTINEL"), "KEEP_CLIENT");
+  writeFileSync(join(unowned, "sentinel.txt"), "KEEP_ROOT");
+  const unownedBefore = snapshot(unowned);
+  const unownedRun = classified(await runSkill(script, [
+    "acquire", "--cache", unowned, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(unownedRun.error.code, "cache_refused");
+  assert.equal(snapshot(unowned), unownedBefore);
+  assert.equal(source.counts.discovery, 0);
+
+  const planted = join(work, "planted");
+  mkdirSync(join(planted, "client"));
+  writeFileSync(join(planted, "client/SENTINEL"), "KEEP_CLIENT");
+  writeFileSync(join(planted, "sentinel.txt"), "KEEP_ROOT");
+  writeFileSync(join(planted, "cache-owner.json"), marker);
+  const plantedBefore = snapshot(planted);
+  const plantedRun = classified(await runSkill(script, [
+    "acquire", "--cache", planted, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(plantedRun.error.code, "cache_refused");
+  assert.equal(snapshot(planted), plantedBefore);
+
+  const emptyExisting = join(work, "empty-existing");
+  mkdirSync(emptyExisting);
+  const emptyBefore = snapshot(emptyExisting);
+  const emptyRun = classified(await runSkill(script, [
+    "acquire", "--cache", emptyExisting, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(emptyRun.error.code, "cache_refused");
+  assert.equal(snapshot(emptyExisting), emptyBefore);
+
+  const absent = join(work, "installed/original-task-qualification/absent-cache");
+  assert.equal(existsSync(absent), false);
+  const absentRun = classified(await runSkill(script, [
+    "acquire", "--cache", absent, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(absentRun.error.code, "cache_refused");
+  assert.equal(existsSync(absent), false);
+
+  const linkTarget = join(work, "link-target");
+  mkdirSync(linkTarget);
+  writeFileSync(join(linkTarget, "sentinel.txt"), "TARGET");
+  const cacheLink = join(work, "cache-link");
+  symlinkSync(linkTarget, cacheLink);
+  const linkBefore = snapshot(linkTarget);
+  const linkRun = classified(await runSkill(script, [
+    "acquire", "--cache", cacheLink, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(linkRun.error.code, "cache_refused");
+  assert.equal(snapshot(linkTarget), linkBefore);
+  assert.equal(lstatSync(cacheLink).isSymbolicLink(), true);
+
+  const realParent = join(work, "real-parent");
+  mkdirSync(realParent);
+  writeFileSync(join(realParent, "sentinel.txt"), "PARENT");
+  const parentLink = join(work, "parent-link");
+  symlinkSync(realParent, parentLink);
+  const parentBefore = snapshot(realParent);
+  const parentRun = classified(await runSkill(script, [
+    "acquire", "--cache", join(parentLink, "cache"), "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(parentRun.error.code, "cache_refused");
+  assert.equal(existsSync(join(realParent, "cache")), false);
+  assert.equal(snapshot(realParent), parentBefore);
+  assert.equal(source.counts.discovery, 0);
+  assert.equal(source.counts.post, 0);
+
+  const cache = join(work, "cache");
+  const acquired = classified(await runSkill(script, [
+    "acquire", "--cache", cache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ]));
+  assert.equal(acquired.acquisition.matched, true);
+  assert.equal(acquired.acquisition.fetched, true);
+  assert.equal(acquired.install.clientExtracted, true);
+  assert.equal(existsSync(join(cache, "client")), false);
+  assert.equal(JSON.parse(readFileSync(join(cache, "cache-owner.json"), "utf8")).package, "original-task-qualification");
+  const taskFile = join(work, "task.json");
+  writeFileSync(taskFile, JSON.stringify(TASK));
+  const realCli = readFileSync(join(ROOT, "server/lib/original-task/cli.mjs"));
+  const cliBody = Buffer.from('console.log(JSON.stringify({canary:"TAMPER_CANARY_CLI"}));\n');
+  const cliPlanted = Buffer.concat([cliBody, Buffer.alloc(realCli.length - cliBody.length, 0x20)]);
+  assert.equal(cliPlanted.length, realCli.length);
+  const cliPath = join(cache, "client/server/lib/original-task/cli.mjs");
+  mkdirSync(join(cache, "client/server/lib/original-task"), { recursive: true });
+  writeFileSync(cliPath, cliPlanted);
+  const described = classified(await runSkill(script, ["describe", "--cache", cache, "--timeout-ms", "5000"]));
+  assert.equal(described.result.schema, "samedaydesk.original-task-correspondence.v1");
+  assert.equal(described.result.deliveryPromise, false);
+  assert.equal(described.acquisition.fetched, false);
+  assert.equal(described.install.clientExtracted, true);
+  assert.equal(described.stdout, undefined);
+  assert.equal(JSON.stringify(described).includes("TAMPER_CANARY_CLI"), false);
+  assert.equal(readFileSync(cliPath).equals(cliPlanted), true);
+  assert.equal(source.counts.discovery, 1);
+
+  const realHelper = readFileSync(join(ROOT, "server/lib/original-task/action.mjs"));
+  const helperBody = Buffer.from('export function mapOriginalTask(){ return { action:"tampered", code:"TAMPER_CANARY_HELPER", payment:false, deliveryPromise:false, acceptance:false }; }\n');
+  const helperPlanted = Buffer.concat([helperBody, Buffer.alloc(realHelper.length - helperBody.length, 0x20)]);
+  assert.equal(helperPlanted.length, realHelper.length);
+  const helperPath = join(cache, "client/server/lib/original-task/action.mjs");
+  writeFileSync(helperPath, helperPlanted);
+  const mapped = classified(await runSkill(script, ["map", "--cache", cache, "--task-file", taskFile, "--timeout-ms", "5000"]));
+  assert.equal(mapped.result.action, "submit_existing_correspondence");
+  assert.equal(mapped.result.code, "ok");
+  assert.equal(mapped.submission, null);
+  assert.equal(JSON.stringify(mapped).includes("TAMPER_CANARY_HELPER"), false);
+  assert.equal(readFileSync(helperPath).equals(helperPlanted), true);
+
+  const foreign = join(work, "foreign");
+  mkdirSync(join(foreign, "server/lib/original-task"), { recursive: true });
+  writeFileSync(join(foreign, "server/lib/original-task/cli.mjs"), 'console.log(JSON.stringify({canary:"TAMPER_CANARY_LINK"}));\n');
+  writeFileSync(join(foreign, "sentinel.txt"), "FOREIGN_SENTINEL");
+  rmSync(join(cache, "client"), { recursive: true, force: true });
+  symlinkSync(foreign, join(cache, "client"));
+  const linked = classified(await runSkill(script, ["describe", "--cache", cache, "--timeout-ms", "5000"]));
+  assert.equal(linked.result.schema, "samedaydesk.original-task-correspondence.v1");
+  assert.equal(JSON.stringify(linked).includes("TAMPER_CANARY_LINK"), false);
+  assert.equal(readFileSync(join(foreign, "sentinel.txt"), "utf8"), "FOREIGN_SENTINEL");
+  assert.equal(lstatSync(join(cache, "client")).isSymbolicLink(), true);
+  assert.equal(source.counts.discovery, 1);
+
+  const staleCache = join(work, "stale-cache");
+  assert.equal(classified(await runSkill(script, [
+    "acquire", "--cache", staleCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ])).acquisition.matched, true);
+  const staleDiscovery = join(staleCache, "discovery.json");
+  const staleCopy = JSON.parse(readFileSync(staleDiscovery, "utf8"));
+  staleCopy.acquisition.archive.sha256 = "b".repeat(64);
+  writeFileSync(staleDiscovery, JSON.stringify(staleCopy));
+  const staleBytes = readFileSync(staleDiscovery);
+  const staleRun = classified(await runSkill(script, ["describe", "--cache", staleCache, "--timeout-ms", "5000"]));
+  assert.equal(staleRun.error.code, "stale_discovery");
+  assert.equal(staleRun.result, null);
+  assert.equal(readFileSync(staleDiscovery).equals(staleBytes), true);
+  assert.equal(source.counts.discovery, 2);
+
+  const sourceCache = join(work, "source-cache");
+  assert.equal(classified(await runSkill(script, [
+    "acquire", "--cache", sourceCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ])).acquisition.fetched, true);
+  const sourceFile = join(sourceCache, "source.json");
+  writeFileSync(sourceFile, "{");
+  const sourceBytes = readFileSync(sourceFile);
+  const sourceRun = classified(await runSkill(script, ["describe", "--cache", sourceCache, "--timeout-ms", "5000"]));
+  assert.equal(sourceRun.error.code, "stale_discovery");
+  assert.equal(readFileSync(sourceFile).equals(sourceBytes), true);
+  assert.equal(source.counts.discovery, 3);
+  const refreshed = classified(await runSkill(script, [
+    "describe", "--cache", sourceCache, "--discovery-url", source.discoveryUrl, "--refresh", "yes", "--timeout-ms", "5000",
+  ]));
+  assert.equal(refreshed.error, null);
+  assert.equal(refreshed.acquisition.fetched, true);
+  assert.equal(refreshed.result.deliveryPromise, false);
+  assert.equal(source.counts.discovery, 4);
+  const again = classified(await runSkill(script, ["describe", "--cache", sourceCache, "--timeout-ms", "5000"]));
+  assert.equal(again.acquisition.fetched, false);
+  assert.equal(again.result.schema, "samedaydesk.original-task-correspondence.v1");
+  assert.equal(source.counts.discovery, 4);
+
+  const flippedCache = join(work, "flipped-cache");
+  assert.equal(classified(await runSkill(script, [
+    "acquire", "--cache", flippedCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ])).acquisition.matched, true);
+  const flippedArchive = join(flippedCache, "original-task-client.tar.gz");
+  const flipped = readFileSync(flippedArchive);
+  flipped[20] ^= 0xff;
+  writeFileSync(flippedArchive, flipped);
+  const flippedBytes = readFileSync(flippedArchive);
+  const flippedRun = classified(await runSkill(script, ["describe", "--cache", flippedCache, "--timeout-ms", "5000"]));
+  assert.equal(flippedRun.error.code, "archive_refused");
+  assert.equal(readFileSync(flippedArchive).equals(flippedBytes), true);
+  assert.equal(source.counts.discovery, 5);
+
+  const overlapCache = join(work, "overlap-cache");
+  assert.equal(classified(await runSkill(script, [
+    "acquire", "--cache", overlapCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
+  ])).install.clientExtracted, true);
+  const beforeSame = snapshot(overlapCache);
+  const samePath = classified(await runSkill(script, [
+    "submit", "--cache", overlapCache, "--base-url", `${source.origin}/api/correspondence`,
+    "--directory", overlapCache, "--task-file", taskFile, "--submit", "yes", "--timeout-ms", "5000",
+  ]));
+  assert.equal(samePath.error.code, "cache_private_overlap");
+  assert.equal(snapshot(overlapCache), beforeSame);
+  assert.equal(existsSync(join(overlapCache, "registration.secret")), false);
+  mkdirSync(join(overlapCache, "nested-private"));
+  writeFileSync(join(overlapCache, "nested-private/sentinel.txt"), "NESTED");
+  const beforeNested = snapshot(overlapCache);
+  const nestedPrivate = classified(await runSkill(script, [
+    "submit", "--cache", overlapCache, "--base-url", `${source.origin}/api/correspondence`,
+    "--directory", join(overlapCache, "nested-private"), "--task-file", taskFile, "--submit", "yes",
+  ]));
+  assert.equal(nestedPrivate.error.code, "cache_private_overlap");
+  assert.equal(snapshot(overlapCache), beforeNested);
+
+  const outerPrivate = join(work, "outer-private");
+  mkdirSync(outerPrivate);
+  writeFileSync(join(outerPrivate, "sentinel.txt"), "OUTER");
+  const beforeOuter = snapshot(outerPrivate);
+  const cacheInside = join(outerPrivate, "cache");
+  const insidePrivate = classified(await runSkill(script, [
+    "read", "--cache", cacheInside, "--directory", outerPrivate, "--timeout-ms", "5000",
+  ]));
+  assert.equal(insidePrivate.error.code, "cache_private_overlap");
+  assert.equal(existsSync(cacheInside), false);
+  assert.equal(snapshot(outerPrivate), beforeOuter);
+
+  const siblingPrivate = join(work, "sibling-private");
+  mkdirSync(siblingPrivate, { mode: 0o700 });
+  const sibling = classified(await runSkill(script, [
+    "map", "--cache", cache, "--task-file", join(work, "retrieve.json"), "--directory", siblingPrivate, "--timeout-ms", "5000",
+  ]));
+  writeFileSync(join(work, "retrieve.json"), JSON.stringify(inquiry("retrieve_continuation")));
+  const siblingAfter = classified(await runSkill(script, [
+    "map", "--cache", cache, "--task-file", join(work, "retrieve.json"), "--directory", siblingPrivate, "--timeout-ms", "5000",
+  ]));
+  assert.equal(siblingAfter.error, null);
+  assert.equal(siblingAfter.result.code, "missing_private_authority");
+  assert.equal(source.counts.post, 0);
+
+  const pidFile = join(work, "tar.pid");
+  const bin = join(work, "bin");
+  mkdirSync(bin);
+  writeFileSync(join(bin, "tar"), `#!/bin/sh
+trap '' TERM
+printf '%s\\n' $$ > '${pidFile}'
+sleep 30
+`);
+  chmodSync(join(bin, "tar"), 0o755);
+  const tarCache = join(work, "tar-cache");
+  const tarRun = classified(await runSkill(script, [
+    "acquire", "--cache", tarCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "1000",
+  ], { PATH: `${bin}:${process.env.PATH || ""}` }));
+  assert.equal(tarRun.error.code, "extract_timeout");
+  assert.equal(tarRun.install, null);
+  const tarPid = Number(readFileSync(pidFile, "utf8"));
+  assert.equal(alive(tarPid), false);
+  assert.equal(existsSync(join(tarCache, "client")), false);
+
+  const { runOwnedChild } = await import(pathToFileURL(script).href);
+  const childEnv = { PATH: process.env.PATH || "", HOME: process.env.HOME || "", TMPDIR: work, LANG: "C" };
+  const sleeper = join(work, "sleeper.mjs");
+  const sleeperPid = join(work, "sleeper.pid");
+  writeFileSync(sleeper, `import { writeFileSync } from "node:fs";
+process.on("SIGTERM", () => {});
+writeFileSync(process.argv[2], String(process.pid));
+setInterval(() => {}, 1000);
+`);
+  const timed = await runOwnedChild(process.execPath, [sleeper, sleeperPid], {
+    cwd: work,
+    env: childEnv,
+    timeoutMs: 400,
+    graceMs: 200,
+    maxStdout: 1000,
+    maxStderr: 1000,
+  });
+  assert.equal(timed.error, "client_timeout");
+  assert.equal(timed.gone, true);
+  assert.equal(alive(Number(readFileSync(sleeperPid, "utf8"))), false);
+
+  const writer = join(work, "writer.mjs");
+  const writerPid = join(work, "writer.pid");
+  writeFileSync(writer, `import { writeFileSync } from "node:fs";
+process.on("SIGTERM", () => {});
+writeFileSync(process.argv[2], String(process.pid));
+process.stdout.write("Y".repeat(300000));
+setInterval(() => { process.stdout.write("Y".repeat(100000)); }, 10);
+`);
+  const flooded = await runOwnedChild(process.execPath, [writer, writerPid], {
+    cwd: work,
+    env: childEnv,
+    timeoutMs: 5000,
+    graceMs: 200,
+    maxStdout: 4096,
+    maxStderr: 1000,
+  });
+  assert.equal(flooded.error, "client_output");
+  assert.equal(flooded.stdout, "");
+  assert.equal(flooded.gone, true);
+  assert.equal(alive(Number(readFileSync(writerPid, "utf8"))), false);
+
+  const cancelPid = join(work, "cancel.pid");
+  const cancelController = new AbortController();
+  const cancelling = runOwnedChild(process.execPath, [sleeper, cancelPid], {
+    cwd: work,
+    env: childEnv,
+    timeoutMs: 10000,
+    graceMs: 200,
+    maxStdout: 1000,
+    maxStderr: 1000,
+    signal: cancelController.signal,
+  });
+  setTimeout(() => cancelController.abort(), 100);
+  const cancelled = await cancelling;
+  assert.equal(cancelled.error, "client_cancelled");
+  assert.equal(cancelled.gone, true);
+  assert.equal(alive(Number(readFileSync(cancelPid, "utf8"))), false);
+
+  const refusal = join(work, "refusal.mjs");
+  writeFileSync(refusal, `console.error(JSON.stringify({ error: { code: "missing_private_authority" } }));
+process.exit(1);
+`);
+  const refused = await runOwnedChild(process.execPath, [refusal], {
+    cwd: work,
+    env: childEnv,
+    timeoutMs: 2000,
+    maxStdout: 1000,
+    maxStderr: 1000,
+  });
+  assert.equal(refused.error, undefined);
+  assert.equal(refused.code, 1);
+  assert.equal(JSON.parse(refused.stderr).error.code, "missing_private_authority");
+
+  const quick = join(work, "quick.mjs");
+  writeFileSync(quick, `console.log(JSON.stringify({ ok: true }));\n`);
+  const completed = await runOwnedChild(process.execPath, [quick], {
+    cwd: work,
+    env: childEnv,
+    timeoutMs: 2000,
+    maxStdout: 1000,
+    maxStderr: 1000,
+  });
+  assert.equal(completed.error, undefined);
+  assert.equal(completed.code, 0);
+  assert.equal(JSON.parse(completed.stdout).ok, true);
+  assert.deepEqual(readdirSync(tmpdir()).filter((name) => name.startsWith("otq-141430-")), []);
+  assert.equal(sibling.error.code, "arguments_required");
 });
