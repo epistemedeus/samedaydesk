@@ -80,7 +80,7 @@ function classified(ran) {
   assert.equal(body.schema, "samedaydesk.original-task-qualification-skill.v1");
   for (const key of OBSERVATIONS) assert.equal(Object.hasOwn(body, key), true);
   assert.equal(ran.stdout.includes("should-not-pass"), false);
-  assert.equal(ran.stdout.includes("CORRESPONDENCE_ADMIN_TOKEN"), false);
+  assert.equal(ran.stdout.includes("Bearer CORRESPONDENCE_ADMIN_TOKEN"), false);
   return body;
 }
 
@@ -230,6 +230,8 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
   assert.equal(described.result.deliveryPromise, false);
   assert.equal(described.result.acceptance, false);
   assert.equal(described.result.thisDescriptorPerformsNoRequest, true);
+  assert.equal(described.result.operator.authorization, undefined);
+  assert.match(described.result.operator.credentialLocator, /CORRESPONDENCE_ADMIN_TOKEN/);
   assert.equal(described.payment.payment, false);
   assert.equal(described.delivery.promised, false);
   assert.equal(described.acceptance.accepted, false);
