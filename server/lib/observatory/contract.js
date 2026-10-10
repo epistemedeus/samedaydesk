@@ -5,6 +5,10 @@
  * distinct from observer fetchedAt. Sources are not additive.
  */
 
+import { classifyUnit, inspectNumeric, judgeMeasured } from "./measurement.js";
+
+export { inspectNumeric };
+
 export const SCHEMA_VERSION = "pilot.external-observatory.v1";
 
 export const SOURCE_KINDS = Object.freeze([
@@ -76,29 +80,53 @@ export const DOCUMENTED_UNAVAILABLE_SOURCES = Object.freeze([
 ]);
 
 const PROTO = new Set(["__proto__", "prototype", "constructor"]);
-const INTEGER_RE = /^(0|[1-9][0-9]*)$/;
-const DECIMAL_RE = /^(0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
-const MAX_SAFE = Number.MAX_SAFE_INTEGER;
-const MAX_SAFE_TEXT = String(MAX_SAFE);
+
+export function judgeMetric(fields) {
+  const source = fields && typeof fields === "object" && !Array.isArray(fields) ? fields : {};
+  const key = typeof source.key === "string" && source.key ? source.key : "unknown";
+  const classified = classifyUnit(source.unit);
+  let state = "invalid";
+  if (classified.unitClass === "invalid") state = "invalid";
+  else if (source.state == null || source.state === "") state = "missing";
+  else if (typeof source.state === "string" && METRIC_STATES.includes(source.state)) state = source.state;
+  let value = null;
+  if (state === "ok") {
+    const judged = judgeMeasured(source.value, source.unit);
+    state = judged.state === "ok" ? "ok" : "invalid";
+    value = judged.state === "ok" ? judged.value : null;
+  }
+  const population = typeof source.population === "string" ? source.population : null;
+  const window = typeof source.window === "string" ? source.window : null;
+  return {
+    key,
+    state,
+    value,
+    unit: classified.unit,
+    unitClass: classified.unitClass,
+    population,
+    window,
+  };
+}
 
 export function createMetric(fields) {
-  const state = fields.state || "missing";
-  const ok = state === "ok";
+  const source = fields && typeof fields === "object" && !Array.isArray(fields) ? fields : {};
+  const judged = judgeMetric(source);
   const metric = {
-    key: fields.key,
-    value: ok ? (fields.value === undefined ? null : fields.value) : null,
-    unit: fields.unit ?? null,
-    state,
-    definition: fields.definition ?? null,
-    population: fields.population ?? null,
-    window: fields.window ?? null,
+    key: judged.key,
+    value: judged.value,
+    unit: judged.unit,
+    unitClass: judged.unitClass,
+    state: judged.state,
+    definition: typeof source.definition === "string" ? source.definition : null,
+    population: judged.population,
+    window: judged.window,
   };
-  if (fields.evidenceClass) metric.evidenceClass = fields.evidenceClass;
-  if (fields.sourcePath) metric.sourcePath = fields.sourcePath;
-  if (fields.ratioAlignment) metric.ratioAlignment = fields.ratioAlignment;
-  if (fields.numeratorKey) metric.numeratorKey = fields.numeratorKey;
-  if (fields.denominatorKey) metric.denominatorKey = fields.denominatorKey;
-  if (fields.sample !== undefined) metric.sample = fields.sample;
+  if (source.evidenceClass) metric.evidenceClass = source.evidenceClass;
+  if (source.sourcePath) metric.sourcePath = source.sourcePath;
+  if (source.ratioAlignment) metric.ratioAlignment = source.ratioAlignment;
+  if (source.numeratorKey) metric.numeratorKey = source.numeratorKey;
+  if (source.denominatorKey) metric.denominatorKey = source.denominatorKey;
+  if (source.sample !== undefined) metric.sample = source.sample;
   return metric;
 }
 
@@ -192,44 +220,6 @@ export function classifyProviderTimestamp(raw, fetchedAt, nowMs) {
   return { timestamp, state: "ok" };
 }
 
-export function inspectNumeric(raw, kind) {
-  if (raw === null || raw === undefined) return { state: "missing", value: null };
-  if (typeof raw === "boolean" || typeof raw === "function" || typeof raw === "symbol") {
-    return { state: "invalid", value: null };
-  }
-  if (typeof raw === "object") return { state: "invalid", value: null };
-
-  if (typeof raw === "number") {
-    if (!Number.isFinite(raw)) return { state: "invalid", value: null };
-    if (raw < 0) return { state: "invalid", value: null };
-    if (kind === "integer") {
-      if (!Number.isInteger(raw) || !Number.isSafeInteger(raw)) return { state: "invalid", value: null };
-      return { state: "ok", value: raw };
-    }
-    return { state: "ok", value: raw };
-  }
-
-  if (typeof raw === "string") {
-    const text = raw.trim();
-    if (text === "") return { state: "invalid", value: null };
-    if (text === "NaN" || text === "Infinity" || text === "+Infinity" || text === "-Infinity") {
-      return { state: "invalid", value: null };
-    }
-    if (text.startsWith("-")) return { state: "invalid", value: null };
-    if (kind === "integer") {
-      if (!INTEGER_RE.test(text)) return { state: "invalid", value: null };
-      if (integerTextOverflows(text)) return { state: "invalid", value: null };
-      return { state: "ok", value: Number(text) };
-    }
-    if (!DECIMAL_RE.test(text)) return { state: "invalid", value: null };
-    const whole = text.split(".")[0];
-    if (integerTextOverflows(whole)) return { state: "invalid", value: null };
-    return { state: "ok", value: text };
-  }
-
-  return { state: "invalid", value: null };
-}
-
 export function boundRawExcerpt(value, maxBytes = MAX_RAW_EXCERPT_BYTES) {
   if (value == null) return undefined;
   let text;
@@ -304,9 +294,6 @@ export function captureErrorRecord(capture) {
 }
 
 function sanitizeMetric(metric) {
-  if (!metric || typeof metric !== "object") {
-    return createMetric({ key: "unknown", state: "invalid" });
-  }
   return createMetric(metric);
 }
 
@@ -321,8 +308,3 @@ function normalizeCache(cache, fetchedAt) {
   };
 }
 
-function integerTextOverflows(text) {
-  if (text.length < MAX_SAFE_TEXT.length) return false;
-  if (text.length > MAX_SAFE_TEXT.length) return true;
-  return text > MAX_SAFE_TEXT;
-}
