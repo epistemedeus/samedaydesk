@@ -52,6 +52,25 @@ function closeServer(server) {
   return new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
 }
 
+function runOffline(script, args) {
+  return new Promise((resolve) => {
+    const child = spawn("unshare", ["-Urn", process.execPath, script, ...args], {
+      cwd: tmpdir(),
+      env: {
+        PATH: process.env.PATH || "",
+        HOME: process.env.HOME || "",
+        TMPDIR: process.env.TMPDIR || tmpdir(),
+        LANG: "C.UTF-8",
+      },
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.once("exit", (code) => resolve({ code, stdout, stderr }));
+  });
+}
+
 function runSkill(script, args, env = {}) {
   return new Promise((resolve) => {
     const child = spawn(process.execPath, [script, ...args], {
@@ -176,8 +195,28 @@ test("pins match the published archive and the skill names that archive", () => 
   assert.match(skill, /not delivery, acceptance, or payment/);
   assert.match(skill, /existing unrelated directory is refused/);
   assert.match(skill, /local continuation retrieval/);
+  assert.match(skill, /version: "0.2.0"/);
+  assert.match(skill, /does not fetch an executable/);
   assert.equal(skill.includes("\u2014"), false);
   assert.doesNotMatch(readFileSync(join(SKILL, "scripts/cli.mjs"), "utf8"), /child_process\.(exec|spawn|fork)\s*\(/);
+  const included = readFileSync(join(SKILL, "client/original-task-client.tar.gz"));
+  assert.equal(included.equals(bytes), true);
+  const discoveryBytes = readFileSync(join(SKILL, "client/included-discovery.json"));
+  assert.equal(discoveryBytes.equals(readFileSync(DISCOVERY_PATH)), true);
+  const manifest = JSON.parse(readFileSync(join(SKILL, "references/included-client.json"), "utf8"));
+  assert.equal(manifest.schema, "samedaydesk.original-task-included-client.v1");
+  assert.equal(manifest.version, "0.2.0");
+  assert.equal(manifest.runtime, "node>=22");
+  assert.equal(manifest.archive.sha256, pins.archive.sha256);
+  assert.equal(manifest.archive.bytes, bytes.length);
+  assert.equal(manifest.discovery.sha256, createHash("sha256").update(discoveryBytes).digest("hex"));
+  assert.equal(manifest.discovery.bytes, discoveryBytes.length);
+  assert.equal(manifest.members.length > 0, true);
+  for (const member of manifest.members) {
+    const file = readFileSync(join(SKILL, "client/source", member.path));
+    assert.equal(file.length, member.bytes);
+    assert.equal(createHash("sha256").update(file).digest("hex"), member.sha256);
+  }
 });
 
 test("cold install acquires, maps, and refuses the unsupported cases", { timeout: 60000 }, async (t) => {
@@ -239,9 +278,16 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
     "acquire", "--cache", join(work, "wrong-cache"), "--discovery-url", wrong.discoveryUrl,
   ]);
   const wrongBody = classified(wrongRun);
-  assert.equal(wrongBody.error.code, "archive_refused");
-  assert.equal(wrongBody.acquisition.matched, false);
+  assert.equal(wrongRun.code, 0);
+  assert.equal(wrongBody.error, null);
+  assert.equal(wrongBody.acquisition.source, "included");
+  assert.equal(wrongBody.acquisition.matched, true);
+  assert.equal(wrongBody.acquisition.fetched, false);
+  assert.equal(wrongBody.install.clientExtracted, true);
+  assert.equal(wrong.counts.archive, 0);
+  assert.equal(wrong.counts.discovery, 1);
   assert.equal(existsSync(join(work, "wrong-cache", "client")), false);
+  assert.equal(existsSync(join(work, "wrong-cache", "original-task-client.tar.gz")), false);
 
   const good = await contentServer({ discovery: (origin) => publishedDiscovery(origin), archive });
   t.after(() => closeServer(good.server));
@@ -250,9 +296,12 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
     "acquire", "--cache", cache, "--discovery-url", good.discoveryUrl,
   ]));
   assert.equal(acquired.error, null);
+  assert.equal(acquired.acquisition.source, "included");
   assert.equal(acquired.acquisition.matched, true);
   assert.equal(acquired.acquisition.sha256, JSON.parse(readFileSync(PINS_PATH, "utf8")).archive.sha256);
-  assert.equal(acquired.acquisition.fetched, true);
+  assert.equal(acquired.acquisition.fetched, false);
+  assert.equal(good.counts.archive, 0);
+  assert.equal(existsSync(join(cache, "original-task-client.tar.gz")), false);
   assert.equal(acquired.install.clientExtracted, true);
   assert.equal(acquired.encounter.schema, "samedaydesk.original-task-correspondence.v1");
   assert.equal(acquired.submission, null);
@@ -269,8 +318,11 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
   assert.equal(described.payment.payment, false);
   assert.equal(described.delivery.promised, false);
   assert.equal(described.acceptance.accepted, false);
+  assert.equal(described.acquisition.source, "included");
   assert.equal(described.acquisition.fetched, false);
+  assert.equal(described.encounter.descriptorUrl, null);
   assert.equal(good.counts.discovery, 1);
+  assert.equal(good.counts.archive, 0);
 
   const taskFile = join(work, "task.json");
   writeFileSync(taskFile, JSON.stringify(TASK));
@@ -339,6 +391,21 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
   assert.equal(promisingBody.result.deliveryPromise, false);
   assert.equal(promisingBody.submission, null);
   assert.equal(JSON.parse(readFileSync(join(promisingCache, "discovery.json"), "utf8")).deliveryPromise, true);
+  assert.equal(promising.counts.archive, 0);
+  assert.equal(promising.counts.post, 0);
+  const promisePrivate = join(work, "promise-private");
+  mkdirSync(promisePrivate, { mode: 0o700 });
+  const promiseSubmit = classified(await runSkill(script, [
+    "submit", "--cache", promisingCache, "--discovery-url", promising.discoveryUrl,
+    "--base-url", `${promising.origin}/api/correspondence`,
+    "--directory", promisePrivate, "--task-file", taskFile, "--submit", "yes", "--timeout-ms", "5000",
+  ]));
+  assert.equal(promiseSubmit.error.code, "stale_discovery");
+  assert.equal(promiseSubmit.result, null);
+  assert.equal(promising.counts.post, 0);
+  assert.equal(promising.counts.archive, 0);
+  assert.equal(existsSync(join(promisePrivate, "registration.secret")), false);
+  assert.equal(JSON.parse(readFileSync(join(promisingCache, "discovery.json"), "utf8")).deliveryPromise, true);
 
   const counter = await contentServer({ discovery: (origin) => publishedDiscovery(origin), archive });
   t.after(() => closeServer(counter.server));
@@ -377,6 +444,7 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
   assert.equal(unreadBody.registration.code, "absent");
   assert.equal(unreadBody.repeatUse, null);
   assert.equal(good.counts.discovery, 1);
+  assert.equal(good.counts.archive, 0);
 });
 
 test("fixture relative paths submit restart and read without treating qualification as acceptance", { timeout: 180000 }, async (t) => {
@@ -447,6 +515,8 @@ test("fixture relative paths submit restart and read without treating qualificat
     "acquire", "--cache", cache, "--discovery-url", source.discoveryUrl,
   ]));
   assert.equal(acquired.acquisition.matched, true);
+  assert.equal(acquired.acquisition.fetched, false);
+  assert.equal(source.counts.archive, 0);
   const qualified = classified(await runSkill(script, ["map", "--cache", relative(tmpdir(), cache), "--task-file", relative(tmpdir(), taskFile)]));
   assert.equal(qualified.result.action, "submit_existing_correspondence");
   assert.equal(qualified.submission, null);
@@ -553,6 +623,8 @@ test("live public descriptor and archive match the pin", { timeout: 30000 }, asy
   assert.equal(acquired.acquisition.sha256, pins.archive.sha256);
   assert.equal(acquired.acquisition.bytes, pins.archive.bytes);
   assert.equal(acquired.encounter.descriptorUrl, discoveryUrl);
+  assert.equal(acquired.acquisition.fetched, false);
+  assert.equal(acquired.acquisition.source, "included");
   assert.equal(acquired.submission, null);
   assert.equal(acquired.install.clientExtracted, true);
 });
@@ -642,9 +714,12 @@ test("cached bytes, cache ownership, and owned children stay bounded", { timeout
   const acquired = classified(await runSkill(script, [
     "acquire", "--cache", cache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
   ]));
+  assert.equal(acquired.acquisition.source, "included");
   assert.equal(acquired.acquisition.matched, true);
-  assert.equal(acquired.acquisition.fetched, true);
+  assert.equal(acquired.acquisition.fetched, false);
   assert.equal(acquired.install.clientExtracted, true);
+  assert.equal(source.counts.archive, 0);
+  assert.equal(existsSync(join(cache, "original-task-client.tar.gz")), false);
   assert.equal(existsSync(join(cache, "client")), false);
   assert.equal(JSON.parse(readFileSync(join(cache, "cache-owner.json"), "utf8")).package, "original-task-qualification");
   const taskFile = join(work, "task.json");
@@ -702,47 +777,63 @@ test("cached bytes, cache ownership, and owned children stay bounded", { timeout
   writeFileSync(staleDiscovery, JSON.stringify(staleCopy));
   const staleBytes = readFileSync(staleDiscovery);
   const staleRun = classified(await runSkill(script, ["describe", "--cache", staleCache, "--timeout-ms", "5000"]));
-  assert.equal(staleRun.error.code, "stale_discovery");
-  assert.equal(staleRun.result, null);
+  assert.equal(staleRun.error, null);
+  assert.equal(staleRun.acquisition.source, "included");
+  assert.equal(staleRun.acquisition.matched, true);
+  assert.equal(staleRun.acquisition.fetched, false);
+  assert.equal(staleRun.encounter.descriptorUrl, null);
+  assert.equal(staleRun.result.deliveryPromise, false);
   assert.equal(readFileSync(staleDiscovery).equals(staleBytes), true);
   assert.equal(source.counts.discovery, 2);
+  assert.equal(source.counts.archive, 0);
 
   const sourceCache = join(work, "source-cache");
   assert.equal(classified(await runSkill(script, [
     "acquire", "--cache", sourceCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
-  ])).acquisition.fetched, true);
+  ])).acquisition.fetched, false);
   const sourceFile = join(sourceCache, "source.json");
   writeFileSync(sourceFile, "{");
   const sourceBytes = readFileSync(sourceFile);
   const sourceRun = classified(await runSkill(script, ["describe", "--cache", sourceCache, "--timeout-ms", "5000"]));
-  assert.equal(sourceRun.error.code, "stale_discovery");
+  assert.equal(sourceRun.error, null);
+  assert.equal(sourceRun.acquisition.fetched, false);
+  assert.equal(sourceRun.result.schema, "samedaydesk.original-task-correspondence.v1");
   assert.equal(readFileSync(sourceFile).equals(sourceBytes), true);
   assert.equal(source.counts.discovery, 3);
+  const beforeRefresh = snapshot(sourceCache);
   const refreshed = classified(await runSkill(script, [
     "describe", "--cache", sourceCache, "--discovery-url", source.discoveryUrl, "--refresh", "yes", "--timeout-ms", "5000",
   ]));
   assert.equal(refreshed.error, null);
-  assert.equal(refreshed.acquisition.fetched, true);
+  assert.equal(refreshed.acquisition.fetched, false);
+  assert.equal(refreshed.encounter.descriptorUrl, null);
   assert.equal(refreshed.result.deliveryPromise, false);
-  assert.equal(source.counts.discovery, 4);
+  assert.equal(source.counts.discovery, 3);
+  assert.equal(source.counts.archive, 0);
+  assert.equal(snapshot(sourceCache), beforeRefresh);
   const again = classified(await runSkill(script, ["describe", "--cache", sourceCache, "--timeout-ms", "5000"]));
   assert.equal(again.acquisition.fetched, false);
   assert.equal(again.result.schema, "samedaydesk.original-task-correspondence.v1");
-  assert.equal(source.counts.discovery, 4);
+  assert.equal(source.counts.discovery, 3);
 
   const flippedCache = join(work, "flipped-cache");
   assert.equal(classified(await runSkill(script, [
     "acquire", "--cache", flippedCache, "--discovery-url", source.discoveryUrl, "--timeout-ms", "5000",
   ])).acquisition.matched, true);
   const flippedArchive = join(flippedCache, "original-task-client.tar.gz");
-  const flipped = readFileSync(flippedArchive);
+  const flipped = Buffer.from(archive);
   flipped[20] ^= 0xff;
   writeFileSync(flippedArchive, flipped);
   const flippedBytes = readFileSync(flippedArchive);
   const flippedRun = classified(await runSkill(script, ["describe", "--cache", flippedCache, "--timeout-ms", "5000"]));
-  assert.equal(flippedRun.error.code, "archive_refused");
+  assert.equal(flippedRun.error, null);
+  assert.equal(flippedRun.acquisition.source, "included");
+  assert.equal(flippedRun.acquisition.fetched, false);
+  assert.equal(flippedRun.result.schema, "samedaydesk.original-task-correspondence.v1");
+  assert.equal(JSON.stringify(flippedRun).includes("TAMPER_CANARY_CLI"), false);
   assert.equal(readFileSync(flippedArchive).equals(flippedBytes), true);
-  assert.equal(source.counts.discovery, 5);
+  assert.equal(source.counts.discovery, 4);
+  assert.equal(source.counts.archive, 0);
 
   const overlapCache = join(work, "overlap-cache");
   assert.equal(classified(await runSkill(script, [
@@ -898,4 +989,79 @@ process.exit(1);
   assert.equal(JSON.parse(completed.stdout).ok, true);
   assert.deepEqual(readdirSync(tmpdir()).filter((name) => name.startsWith("otq-141430-") && !tempsBefore.has(name)), []);
   assert.equal(sibling.error.code, "arguments_required");
+});
+
+test("included client describes and maps with network denied and refuses replaced bytes", { timeout: 60000 }, async (t) => {
+  const work = mkdtempSync(join(tmpdir(), "original-task-skill-offline-"));
+  const script = installSkill(work);
+  const taskFile = join(work, "task.json");
+  writeFileSync(taskFile, JSON.stringify(TASK));
+  const source = await contentServer({ discovery: (origin) => publishedDiscovery(origin), archive: readFileSync(ARCHIVE_PATH) });
+  t.after(() => {
+    rmSync(work, { recursive: true, force: true });
+    return closeServer(source.server);
+  });
+
+  const described = classified(await runOffline(script, [
+    "describe", "--cache", join(work, "cold-cache"), "--timeout-ms", "5000",
+  ]));
+  assert.equal(described.error, null);
+  assert.equal(described.acquisition.source, "included");
+  assert.equal(described.acquisition.fetched, false);
+  assert.equal(described.acquisition.matched, true);
+  assert.equal(described.acquisition.sha256, JSON.parse(readFileSync(PINS_PATH, "utf8")).archive.sha256);
+  assert.equal(described.encounter.descriptorUrl, null);
+  assert.equal(described.result.schema, "samedaydesk.original-task-correspondence.v1");
+  assert.equal(described.result.deliveryPromise, false);
+  assert.equal(described.result.acceptance, false);
+  assert.equal(described.result.payment, false);
+  assert.equal(described.install.clientExtracted, true);
+  assert.equal(described.submission, null);
+
+  const mapped = classified(await runOffline(script, [
+    "map", "--cache", join(work, "cold-cache"), "--task-file", taskFile, "--timeout-ms", "5000",
+  ]));
+  assert.equal(mapped.error, null);
+  assert.equal(mapped.result.action, "submit_existing_correspondence");
+  assert.equal(mapped.result.code, "ok");
+  assert.equal(mapped.encounter.descriptorUrl, null);
+  assert.equal(mapped.submission, null);
+  assert.equal(mapped.payment.payment, false);
+
+  const blocked = classified(await runOffline(script, [
+    "map", "--cache", join(work, "cold-cache"), "--discovery-url", source.discoveryUrl,
+    "--task-file", taskFile, "--timeout-ms", "5000",
+  ]));
+  assert.equal(blocked.error.code, "descriptor_unavailable");
+  assert.equal(blocked.result, null);
+  assert.equal(blocked.install, null);
+  assert.equal(source.counts.discovery, 0);
+  assert.equal(source.counts.archive, 0);
+
+  const replacedRoot = join(work, "replaced");
+  const replacedCli = installSkill(replacedRoot);
+  const planted = join(replacedRoot, "installed/original-task-qualification/client/source/server/lib/original-task/cli.mjs");
+  writeFileSync(planted, 'console.log(JSON.stringify({canary:"TAMPER_CANARY_SOURCE"}));\n');
+  const replaced = classified(await runSkill(replacedCli, [
+    "describe", "--cache", join(replacedRoot, "cache"), "--timeout-ms", "5000",
+  ]));
+  assert.equal(replaced.error.code, "source_refused");
+  assert.equal(replaced.install, null);
+  assert.equal(replaced.result, null);
+  assert.equal(JSON.stringify(replaced).includes("TAMPER_CANARY_SOURCE"), false);
+
+  const tarRoot = join(work, "tar-tamper");
+  const tarCli = installSkill(tarRoot);
+  const tarFile = join(tarRoot, "installed/original-task-qualification/client/original-task-client.tar.gz");
+  const broken = Buffer.from(readFileSync(tarFile));
+  broken[20] ^= 0xff;
+  writeFileSync(tarFile, broken);
+  const tampered = classified(await runSkill(tarCli, [
+    "describe", "--cache", join(tarRoot, "cache"), "--timeout-ms", "5000",
+  ]));
+  assert.equal(tampered.error.code, "archive_refused");
+  assert.equal(tampered.install, null);
+  assert.equal(tampered.result, null);
+  assert.equal(readFileSync(tarFile).equals(broken), true);
+  assert.equal(createHash("sha256").update(readFileSync(ARCHIVE_PATH)).digest("hex"), JSON.parse(readFileSync(PINS_PATH, "utf8")).archive.sha256);
 });
