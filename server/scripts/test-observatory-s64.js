@@ -16,7 +16,7 @@ import { createHttpRegistry, collectObservations, writeCapture, loadCapture, com
 const Ajv = createRequire(new URL('../../client/package.json', import.meta.url))('ajv');
 const validate = new Ajv({ allErrors: true }).compile(JSON.parse(readFileSync(new URL('../lib/observatory/observation.schema.json', import.meta.url))));
 const at='2026-09-10T01:00:00.000Z';
-const bodies={moltjobs:{totalJobs:12,totalCompleted:4,totalAgents:18,totalVolumeUsdc:'1.5',escrowedUsdc:'0.5'},x402stats:{snapshot:{sellers:2,volumeUsd:'1.5',organicSellers:1,organicVolumeUsd:'0.5',avgPaymentUsd:0.5,medianSellerRevenueUsd:0.5,top10VolumeShare:0.8,windowDays:30,computedAt:at}},smithery_mcp:{pagination:{totalCount:12345},servers:[{id:'fixture-only',qualifiedName:'fixture/tool',description:'x'.repeat(6000)}]}};
+const bodies={moltjobs:{totalJobs:12,totalCompleted:4,totalAgents:18,totalVolumeUsdc:'1.5',escrowedUsdc:'0.5'},x402stats:{snapshot:{sellers:2,volumeUsd:'1.5',organicSellers:1,organicVolumeUsd:'0.5',avgPaymentUsd:0.5,medianSellerRevenueUsd:0.5,top10VolumeShare:0.8,windowDays:30,computedAt:at}},smithery_mcp:{pagination:{totalCount:12345},servers:[{id:'fixture-only',qualifiedName:'fixture/tool',description:'x'.repeat(6000)}]},moltjobs_open_jobs:{data:[{status:'OPEN',purpose:'PLATFORM_REFERRAL',funded:true,requiredSkills:[],preferredSkills:[]}],meta:{hasMore:false,limit:20}}};
 function runtime(options={}) {return createObservatoryRuntime({now:()=>Date.parse(at),fetchImpl:async url=>{const d=listSources().find(d=>d.upstreamUrl===String(url));assert.ok(d);return new Response(JSON.stringify(bodies[d.sourceId]));},...options});}
 function valid(body){assert.equal(validate(body),true,JSON.stringify(validate.errors));}
 test('S64 actual mounted HTTP envelopes validate, preserve status/CORS and capture roundtrip',async t=>{
@@ -34,7 +34,7 @@ test('S64 actual mounted HTTP envelopes validate, preserve status/CORS and captu
  const cliDir=join(dir,'cli');
  const command=fileURLToPath(new URL('./observatory-capture.mjs',import.meta.url));
  const captured=await promisify(execFile)(process.execPath,[command,'capture','--base',base,'--out',cliDir,'--label','fixture']);
- const result=JSON.parse(captured.stdout);assert.equal(result.sources.length,3);
+ const result=JSON.parse(captured.stdout);assert.equal(result.sources.length,4);
  const deltaRun=await promisify(execFile)(process.execPath,[command,'delta','--a',result.dir,'--b',result.dir]);
  assert.equal(JSON.parse(deltaRun.stdout).continuity.invented,false);
  await assert.rejects(promisify(execFile)(process.execPath,[command,'delta','--a',result.dir,'--b',result.dir,'--out',join(result.dir,'moltjobs.json')]),error=>error.code===1 && /EEXIST/.test(error.stderr));

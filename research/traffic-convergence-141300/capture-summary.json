@@ -1,0 +1,501 @@
+{
+  "schemaVersion": "pilot.external-observatory.capture-summary.v1",
+  "captureId": "20261010T040538Z",
+  "fetchedAt": "2026-10-10T04:05:38.820Z",
+  "label": "live",
+  "evidenceClass": "live",
+  "polling": false,
+  "heartbeat": false,
+  "rawExcerptsOmitted": true,
+  "sources": [
+    {
+      "sourceId": "moltjobs",
+      "sourceKind": "work_market",
+      "upstreamUrl": "https://api.moltjobs.io/v1/stats",
+      "availability": "ok",
+      "httpStatus": 200,
+      "fetchedAt": "2026-10-10T04:05:38.827Z",
+      "providerTimestamp": "2026-10-10T04:00:56.140Z",
+      "providerTimestampState": "ok",
+      "evidenceClass": "provider_reported_aggregate",
+      "errors": [],
+      "warningCodes": [],
+      "metrics": [
+        {
+          "key": "jobCount",
+          "value": 122,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "completedCount",
+          "value": 57,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "registeredAgents",
+          "value": 980,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "volumeUsdc",
+          "value": "46.3",
+          "state": "ok",
+          "unit": "USDC",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "escrowDeposits",
+          "value": "3.8",
+          "state": "ok",
+          "unit": "USDC",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "avgCompletionTimeMs",
+          "value": 37157932,
+          "state": "ok",
+          "unit": "ms",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "medianCompletionTimeMs",
+          "value": 5142814,
+          "state": "ok",
+          "unit": "ms",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "avgTimeToFillMs",
+          "value": 1034104078,
+          "state": "ok",
+          "unit": "ms",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "medianTimeToFillMs",
+          "value": 345563737,
+          "state": "ok",
+          "unit": "ms",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "completionSampleSize",
+          "value": 17,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "disputeRate",
+          "value": "0",
+          "state": "ok",
+          "unit": "ratio",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "completionRatio",
+          "value": "57/122",
+          "state": "ok",
+          "unit": "ratio",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "escrowToVolumeRatio",
+          "value": "3.8/46.3",
+          "state": "ok",
+          "unit": "ratio",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": null
+        },
+        {
+          "key": "marketplaceJobs",
+          "value": 60,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceCompleted",
+          "value": 15,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceSettledVolumeUsdc",
+          "value": 42.3,
+          "state": "ok",
+          "unit": "USDC",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceEmployers",
+          "value": 4,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_marketplace_employers",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceFundedEmployers",
+          "value": 1,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_marketplace_employers",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "liquidityRegisteredAgents",
+          "value": 980,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_registered_agents",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "liquidityAgentsEverPaid",
+          "value": 7,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_agents_ever_paid",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "liquidityAgentsBidding30d",
+          "value": 59,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_agents_bidding_30d",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "platformProgramJobs",
+          "value": 62,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_platform_programs",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "platformProgramBudgetUsdc",
+          "value": 50,
+          "state": "ok",
+          "unit": "USDC",
+          "population": "moltjobs_platform_programs",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceCompletionRatio",
+          "value": "15/60",
+          "state": "ok",
+          "unit": "ratio",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "marketplaceFundedEmployerRatio",
+          "value": "1/4",
+          "state": "ok",
+          "unit": "ratio",
+          "population": "moltjobs_marketplace_employers",
+          "window": "unspecified_provider_snapshot",
+          "evidenceClass": "provider_reported_aggregate"
+        }
+      ],
+      "workload": null
+    },
+    {
+      "sourceId": "x402stats",
+      "sourceKind": "settlement",
+      "upstreamUrl": "https://x402stats.io/api/stats",
+      "availability": "ok",
+      "httpStatus": 200,
+      "fetchedAt": "2026-10-10T04:05:38.864Z",
+      "providerTimestamp": "2026-10-10T03:29:28.556Z",
+      "providerTimestampState": "ok",
+      "evidenceClass": "provider_reported_onchain_aggregate",
+      "errors": [],
+      "warningCodes": [
+        "timestamp_pair",
+        "provider_heuristic"
+      ],
+      "metrics": [
+        {
+          "key": "sellers_30d",
+          "value": 37971,
+          "state": "ok",
+          "unit": "count",
+          "population": "provider_indexed_sellers",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "volume_usd_30d",
+          "value": 947696.5848723006,
+          "state": "ok",
+          "unit": "USD",
+          "population": "provider_indexed_volume",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "organic_sellers_30d",
+          "value": 94,
+          "state": "ok",
+          "unit": "count",
+          "population": "provider_heuristic_organic_sellers",
+          "window": "30d",
+          "evidenceClass": "provider_heuristic"
+        },
+        {
+          "key": "organic_volume_usd_30d",
+          "value": 715180.9071119999,
+          "state": "ok",
+          "unit": "USD",
+          "population": "provider_heuristic_organic_volume",
+          "window": "30d",
+          "evidenceClass": "provider_heuristic"
+        },
+        {
+          "key": "avg_payment_usd_30d",
+          "value": 0.1487368908953297,
+          "state": "ok",
+          "unit": "USD",
+          "population": "provider_indexed_protocol_activity",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "median_seller_revenue_usd_30d",
+          "value": 0.01,
+          "state": "ok",
+          "unit": "USD",
+          "population": "provider_indexed_sellers",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "top10_volume_share_30d",
+          "value": 0.7097117621191277,
+          "state": "ok",
+          "unit": "ratio",
+          "population": "provider_indexed_protocol_activity",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        },
+        {
+          "key": "window_days",
+          "value": 30,
+          "state": "ok",
+          "unit": "days",
+          "population": "provider_indexed_protocol_activity",
+          "window": "30d",
+          "evidenceClass": "provider_reported_aggregate"
+        }
+      ],
+      "workload": null
+    },
+    {
+      "sourceId": "smithery_mcp",
+      "sourceKind": "capability_discovery",
+      "upstreamUrl": "https://api.smithery.ai/servers?pageSize=1",
+      "availability": "ok",
+      "httpStatus": 200,
+      "fetchedAt": "2026-10-10T04:05:38.865Z",
+      "providerTimestamp": "2026-10-10T03:35:36.000Z",
+      "providerTimestampState": "ok",
+      "evidenceClass": "catalog_registration_count",
+      "errors": [],
+      "warningCodes": [
+        "catalog_only"
+      ],
+      "metrics": [
+        {
+          "key": "registered_servers",
+          "value": 19323,
+          "state": "ok",
+          "unit": "count",
+          "population": "smithery_server_catalog",
+          "window": "catalog_snapshot",
+          "evidenceClass": "catalog_registration_count"
+        }
+      ],
+      "workload": null
+    },
+    {
+      "sourceId": "moltjobs_open_jobs",
+      "sourceKind": "work_market",
+      "upstreamUrl": "https://api.moltjobs.io/v1/jobs?status=OPEN&limit=20&includeExpired=false",
+      "availability": "ok",
+      "httpStatus": 200,
+      "fetchedAt": "2026-10-10T04:05:38.866Z",
+      "providerTimestamp": null,
+      "providerTimestampState": "missing",
+      "evidenceClass": "public_open_job_page",
+      "errors": [],
+      "warningCodes": [],
+      "metrics": [
+        {
+          "key": "returned_rows",
+          "value": 10,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "classified_rows",
+          "value": 10,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "platform_program_rows",
+          "value": 10,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "ordinary_rows",
+          "value": 0,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "unclassified_rows",
+          "value": 0,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "status_mismatch_rows",
+          "value": 0,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "funded_true_rows",
+          "value": 10,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "page_has_more",
+          "value": 0,
+          "state": "ok",
+          "unit": "flag",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        },
+        {
+          "key": "capability_skill_matches",
+          "value": 0,
+          "state": "ok",
+          "unit": "count",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "evidenceClass": "public_open_job_page"
+        }
+      ],
+      "workload": {
+        "schemaVersion": "pilot.external-observatory.open-jobs-page.v1",
+        "query": {
+          "status": "OPEN",
+          "limit": 20,
+          "includeExpired": false
+        },
+        "queryExhausted": true,
+        "purposes": [
+          {
+            "token": "PLATFORM_REFERRAL",
+            "class": "platform_program",
+            "count": 10
+          }
+        ],
+        "participationModes": [
+          {
+            "token": "AUTOMATIC_FORUM_REWARD",
+            "class": "participation",
+            "count": 10
+          }
+        ],
+        "templateSlugs": [
+          {
+            "token": "custom-v1",
+            "class": "template",
+            "count": 10
+          }
+        ],
+        "matchedJobIds": [],
+        "detailRouteCalled": false,
+        "documentedDetailRoute": "/v1/jobs/:id/public",
+        "identifierValuesExcluded": true
+      }
+    }
+  ]
+}

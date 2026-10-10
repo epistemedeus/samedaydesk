@@ -1,0 +1,470 @@
+{
+  "schemaVersion": "pilot.external-observatory.positioning.v1",
+  "fetchedAt": "2026-10-10T04:05:38.820Z",
+  "additivity": "not_additive",
+  "coverage": {
+    "complete": false,
+    "census": false,
+    "realtime": false,
+    "additivity": "not_additive",
+    "notes": "Named public source planes only. Not a census of autonomous agents and not full real-time coverage."
+  },
+  "planes": {
+    "job_listings": {
+      "nodes": [
+        {
+          "id": "open_nonexpired_page",
+          "plane": "job_listings",
+          "sourceId": "moltjobs_open_jobs",
+          "metricKey": "returned_rows",
+          "role": "open_queue",
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "unit": "count",
+          "evidenceClass": "public_open_job_page",
+          "state": "ok",
+          "value": 10,
+          "uncertainty": [
+            "single_capture",
+            "provider_page_order",
+            "not_marketplace_stock",
+            "not_unique_agents",
+            "missing",
+            "provider_clock_missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": {
+            "queryExhausted": true,
+            "purposeTokens": [
+              {
+                "token": "PLATFORM_REFERRAL",
+                "class": "platform_program",
+                "count": 10
+              }
+            ],
+            "participationTokens": [
+              {
+                "token": "AUTOMATIC_FORUM_REWARD",
+                "class": "participation",
+                "count": 10
+              }
+            ],
+            "templateSlugs": [
+              {
+                "token": "custom-v1",
+                "count": 10
+              }
+            ],
+            "matchedJobIds": [],
+            "exactSkillMatches": {
+              "state": "ok",
+              "value": 0
+            },
+            "ordinaryRows": {
+              "state": "ok",
+              "value": 0
+            },
+            "platformProgramRows": {
+              "state": "ok",
+              "value": 10
+            },
+            "fundedTrueRows": {
+              "state": "ok",
+              "value": 10
+            }
+          }
+        },
+        {
+          "id": "ordinary_created_stock",
+          "plane": "job_listings",
+          "sourceId": "moltjobs",
+          "metricKey": "marketplaceJobs",
+          "role": "historical_stock",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "unit": "count",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 60,
+          "uncertainty": [
+            "created_stock_not_open_queue",
+            "not_a_listing_feed",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "all_purpose_created_stock",
+          "plane": "job_listings",
+          "sourceId": "moltjobs",
+          "metricKey": "jobCount",
+          "role": "historical_stock",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "unit": "count",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 122,
+          "uncertainty": [
+            "includes_platform_programs",
+            "not_comparable_with_ordinary_stock",
+            "not_open_queue",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        }
+      ]
+    },
+    "task_completion": {
+      "nodes": [
+        {
+          "id": "all_purpose_completed",
+          "plane": "task_completion",
+          "sourceId": "moltjobs",
+          "metricKey": "completedCount",
+          "role": "completion_stock",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "unit": "count",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 57,
+          "uncertainty": [
+            "includes_platform_programs",
+            "not_a_listing",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "ordinary_completed",
+          "plane": "task_completion",
+          "sourceId": "moltjobs",
+          "metricKey": "marketplaceCompleted",
+          "role": "completion_stock",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "unit": "count",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 15,
+          "uncertainty": [
+            "not_the_open_queue",
+            "not_samedaydesk_delivery",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        }
+      ]
+    },
+    "transaction_totals": {
+      "nodes": [
+        {
+          "id": "all_purpose_volume",
+          "plane": "transaction_totals",
+          "sourceId": "moltjobs",
+          "metricKey": "volumeUsdc",
+          "role": "provider_total",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "unit": "USDC",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": "46.3",
+          "uncertainty": [
+            "includes_platform_programs",
+            "not_samedaydesk_revenue",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "ordinary_settled_volume",
+          "plane": "transaction_totals",
+          "sourceId": "moltjobs",
+          "metricKey": "marketplaceSettledVolumeUsdc",
+          "role": "provider_total",
+          "population": "moltjobs_marketplace_ordinary_third_party",
+          "window": "unspecified_provider_snapshot",
+          "unit": "USDC",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 42.3,
+          "uncertainty": [
+            "not_open_queue",
+            "not_samedaydesk_revenue",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "escrow_deposits",
+          "plane": "transaction_totals",
+          "sourceId": "moltjobs",
+          "metricKey": "escrowDeposits",
+          "role": "provider_total",
+          "population": "moltjobs_work_market",
+          "window": "unspecified_provider_snapshot",
+          "unit": "USDC",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": "3.8",
+          "uncertainty": [
+            "locked_funds_not_settlement",
+            "not_samedaydesk_revenue",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "protocol_volume_30d",
+          "plane": "transaction_totals",
+          "sourceId": "x402stats",
+          "metricKey": "volume_usd_30d",
+          "role": "provider_total",
+          "population": "provider_indexed_volume",
+          "window": "30d",
+          "unit": "USD",
+          "evidenceClass": "provider_reported_aggregate",
+          "state": "ok",
+          "value": 947696.5848723006,
+          "uncertainty": [
+            "different_unit_from_usdc",
+            "different_window",
+            "not_job_listings",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        },
+        {
+          "id": "protocol_organic_volume_30d",
+          "plane": "transaction_totals",
+          "sourceId": "x402stats",
+          "metricKey": "organic_volume_usd_30d",
+          "role": "provider_heuristic",
+          "population": "provider_heuristic_organic_volume",
+          "window": "30d",
+          "unit": "USD",
+          "evidenceClass": "provider_heuristic",
+          "state": "ok",
+          "value": 715180.9071119999,
+          "uncertainty": [
+            "provider_heuristic",
+            "not_organic_demand_proof",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        }
+      ]
+    },
+    "catalog_presence": {
+      "nodes": [
+        {
+          "id": "smithery_catalog",
+          "plane": "catalog_presence",
+          "sourceId": "smithery_mcp",
+          "metricKey": "registered_servers",
+          "role": "catalog_registration",
+          "population": "smithery_server_catalog",
+          "window": "catalog_snapshot",
+          "unit": "count",
+          "evidenceClass": "catalog_registration_count",
+          "state": "ok",
+          "value": 19323,
+          "uncertainty": [
+            "registrations_not_traffic",
+            "not_runtime_heartbeats",
+            "missing"
+          ],
+          "usableForCurrentCut": true,
+          "attributes": null
+        }
+      ]
+    }
+  },
+  "activityRanking": {
+    "state": "ok",
+    "reason": null,
+    "comparisonGroup": "moltjobs_public_open_nonexpired_page_purpose",
+    "denominator": {
+      "key": "returned_rows",
+      "state": "ok",
+      "value": 10,
+      "population": "moltjobs_public_open_nonexpired_page",
+      "window": "status_OPEN_limit_20_includeExpired_false",
+      "queryExhausted": true
+    },
+    "ordered": [
+      {
+        "rank": 1,
+        "rankCount": 1,
+        "nodeId": "purpose:PLATFORM_REFERRAL",
+        "plane": "job_listings",
+        "numerator": {
+          "key": "purpose_rows",
+          "value": 10,
+          "state": "ok"
+        },
+        "denominator": {
+          "key": "returned_rows",
+          "state": "ok",
+          "value": 10,
+          "population": "moltjobs_public_open_nonexpired_page",
+          "window": "status_OPEN_limit_20_includeExpired_false",
+          "queryExhausted": true
+        },
+        "uncertainty": [
+          "single_capture",
+          "provider_page_order",
+          "not_marketplace_stock",
+          "not_unique_agents",
+          "not_a_conversion",
+          "other_statuses_and_expired_unqueried",
+          "provider_clock_missing"
+        ],
+        "mechanism": "Returned rows carry purpose PLATFORM_REFERRAL.",
+        "mechanismBasis": "observed",
+        "inference": {
+          "basis": "inference",
+          "text": "Stats documentation excludes this purpose from ordinary marketplace work.",
+          "citation": "https://moltjobs.io/docs/api#stats"
+        }
+      }
+    ]
+  },
+  "decision": {
+    "state": "projected",
+    "usableForCurrentCut": true,
+    "capability": {
+      "schema": "samedaydesk.for-agents.useful-jobs.v1",
+      "package": "useful-jobs",
+      "version": "1.4.7",
+      "execution": "offline_caller_supplied_artifacts",
+      "purchaseAuthority": false,
+      "hostedAcquisition": false,
+      "jobIds": [
+        "lockfile-pin-delta",
+        "json-schema-webhook-drift",
+        "route-table-diff",
+        "page-change-offline-job",
+        "api-upgrade-brief",
+        "vendor-budget-impact",
+        "feed-agenda",
+        "evidence-ci-annotation",
+        "listing-repair-packet",
+        "repeat-job-record"
+      ],
+      "basis": "maintained_package_on_this_baseline"
+    },
+    "meetsMaintainedExecution": "no_exact_overlap",
+    "exactSkillOverlap": "none",
+    "openQueueMechanism": {
+      "basis": "observed",
+      "purposeTokens": [
+        "PLATFORM_REFERRAL"
+      ],
+      "participationTokens": [
+        "AUTOMATIC_FORUM_REWARD"
+      ]
+    },
+    "statements": [
+      {
+        "basis": "observed",
+        "text": "Purpose tokens on the returned page: PLATFORM_REFERRAL 10."
+      },
+      {
+        "basis": "observed",
+        "text": "Participation tokens on the returned page: AUTOMATIC_FORUM_REWARD 10."
+      },
+      {
+        "basis": "observed",
+        "text": "Exact useful-jobs skill matches on the page: 0. Zero is a row count, not proof the market has no ordinary work."
+      },
+      {
+        "basis": "inference",
+        "text": "useful-jobs 1.4.7 runs offline on caller-supplied artifacts. A platform-program purpose token is not one of those jobs. Stats documentation excludes PLATFORM_MARKETING and PLATFORM_REFERRAL from ordinary marketplace work.",
+        "citation": "https://moltjobs.io/docs/api#stats"
+      },
+      {
+        "basis": "observed",
+        "text": "meta.hasMore was false for this fixed query. Other statuses and expired jobs were not queried."
+      },
+      {
+        "basis": "observed",
+        "text": "The open-jobs page did not carry a provider timestamp. Freshness is the observer fetch time only."
+      }
+    ],
+    "inboundUse": "unobserved",
+    "confirmationWouldRequire": "Inbound use requires a later caller-supplied opaque SameDayDesk operation reference joined to a public job id. This projection does not create that join.",
+    "nextAction": {
+      "kind": "measurement",
+      "doesNotDo": [
+        "listing",
+        "broadcast",
+        "customer_message",
+        "bid",
+        "spend"
+      ],
+      "id": "repeat_fixed_open_jobs_query",
+      "falsifier": "Falsified if a later GET of the same fixed URL returns a purpose token other than PLATFORM_REFERRAL, or an exact useful-jobs skill match while this overlap is none. meta.hasMore was false on this capture. A repeated identical page does not establish inbound use. Marketplace stock, settlement totals, and catalog registrations are different populations."
+    }
+  },
+  "heldAside": [
+    {
+      "sourceId": "moltjobs",
+      "sourcePresent": true,
+      "reason": "Liquidity agent sets, timing, dispute rate, and completion ratios stay off the four planes."
+    },
+    {
+      "sourceId": "x402stats",
+      "sourcePresent": true,
+      "reason": "Seller counts stay off the four planes. Volume metrics stay on transaction totals and are not listings."
+    },
+    {
+      "sourceId": "moltjobs_open_jobs",
+      "sourcePresent": true,
+      "reason": "Per-row budgets, titles, identifiers, and descriptions are not exported and are not added into transaction totals."
+    },
+    {
+      "sourceId": "smithery_mcp",
+      "sourcePresent": true,
+      "reason": "Catalog registration count is not active traffic."
+    }
+  ],
+  "notAdopted": [
+    {
+      "sourceId": "moltjobs_activity",
+      "method": "GET",
+      "path": "/v1/activity",
+      "called": false,
+      "reason": "The public activity feed includes agentName and jobTitle. This projection does not call it. Task completion stays on the stats completion metrics."
+    }
+  ],
+  "documentedUnavailable": [
+    {
+      "sourceId": "x402scan",
+      "called": false,
+      "reason": "x402scan data endpoints require micropayment; documented only, never called as success"
+    }
+  ],
+  "conflicts": [],
+  "withheldConclusions": [
+    "independent_customers",
+    "estimated_customers",
+    "full_realtime_coverage",
+    "cross_plane_total",
+    "inbound_use",
+    "demand",
+    "repeat_demand",
+    "revenue"
+  ]
+}

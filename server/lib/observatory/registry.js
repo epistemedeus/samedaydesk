@@ -5,6 +5,7 @@
 import * as moltjobs from "./adapters/moltjobs.js";
 import * as x402stats from "./adapters/x402stats.js";
 import * as smitheryMcp from "./adapters/smithery-mcp.js";
+import * as moltjobsOpenJobs from "./adapters/moltjobs-open-jobs.js";
 import { createBoundedFetcher } from "./bounded-fetch.js";
 import {
   DOCUMENTED_UNAVAILABLE_SOURCES,
@@ -28,6 +29,7 @@ const ADAPTERS = new Map([
   [moltjobs.sourceId, moltjobs],
   [x402stats.sourceId, x402stats],
   [smitheryMcp.sourceId, smitheryMcp],
+  [moltjobsOpenJobs.sourceId, moltjobsOpenJobs],
 ]);
 
 export function listSourceIds() {

@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { SCHEMA_VERSION } from "../lib/observatory/contract.js";
+import { projectPositioning } from "../lib/observatory/positioning.js";
 import {
   UnknownSourceError,
   createObservatoryRuntime,
@@ -59,6 +60,14 @@ export function createObservatoryRouter(options = {}) {
   router.get("/snapshot", async (_req, res) => {
     const snapshot = await runtime.observeAll();
     return res.status(200).json(snapshot);
+  });
+
+  router.get("/positioning", async (_req, res) => {
+    const snapshot = await runtime.observeAll();
+    return res.status(200).json(projectPositioning({
+      observations: snapshot.observations,
+      fetchedAt: snapshot.fetchedAt,
+    }));
   });
 
   router.get("/sources/:sourceId", async (req, res) => {
