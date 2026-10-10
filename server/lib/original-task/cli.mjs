@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { chmodSync, existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { chmodSync, existsSync, lstatSync, readFileSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { mapOriginalTask } from "./action.mjs";
 import { originalTaskDescriptor } from "./descriptor.mjs";
@@ -79,23 +79,53 @@ async function submit(rest) {
   }
 }
 
+function regularFile(file) {
+  try {
+    const info = lstatSync(file);
+    return info.isFile() ? info : null;
+  } catch {
+    return null;
+  }
+}
+
+function symlinkComponent(file) {
+  const absolute = resolve(file);
+  let current = absolute.startsWith("/") ? "/" : "";
+  for (const part of absolute.split(/[\\/]+/).filter(Boolean)) {
+    current = join(current, part);
+    let info;
+    try { info = lstatSync(current); }
+    catch (error) {
+      if (error?.code === "ENOENT") return false;
+      return true;
+    }
+    if (info.isSymbolicLink()) return true;
+  }
+  return false;
+}
+
 function directoryState(directory) {
   if (!directory) return { provided: false, exists: false, hasAuthority: false, projectId: null, conflict: false };
-  if (!existsSync(directory)) return { provided: true, exists: false, hasAuthority: false, projectId: null, conflict: false };
-  const attempt = existsSync(join(directory, "attempt.json"));
-  let secret = false;
-  const secretPath = join(directory, "registration.secret");
-  if (existsSync(secretPath)) {
-    try {
-      const info = statSync(secretPath);
-      secret = info.isFile() && info.size >= 32 && info.size <= 200;
-    } catch { secret = false; }
+  let info;
+  try { info = lstatSync(directory); }
+  catch { return { provided: true, exists: false, hasAuthority: false, projectId: null, conflict: false }; }
+  if (!info.isDirectory() || symlinkComponent(directory)) {
+    return {
+      provided: true,
+      exists: info.isDirectory() || info.isSymbolicLink(),
+      hasAuthority: false,
+      projectId: null,
+      conflict: false,
+    };
   }
+  const attempt = regularFile(join(directory, "attempt.json"));
+  const secretInfo = regularFile(join(directory, "registration.secret"));
+  const secret = Boolean(secretInfo && secretInfo.size >= 32 && secretInfo.size <= 200);
   let projectId = null;
-  const continuationPath = join(directory, "continuation.json");
-  if (existsSync(continuationPath)) {
+  const continuationInfo = regularFile(join(directory, "continuation.json"));
+  if (continuationInfo) {
     try {
-      const continuation = JSON.parse(readFileSync(continuationPath, "utf8"));
+      const continuation = JSON.parse(readFileSync(join(directory, "continuation.json"), "utf8"));
       if (typeof continuation.projectId === "string" && /^prj_[\w-]{16}$/.test(continuation.projectId)) {
         projectId = continuation.projectId;
       }
@@ -104,12 +134,16 @@ function directoryState(directory) {
   let conflict = false;
   const receiptPath = join(directory, "receipt.json");
   if (existsSync(receiptPath)) {
-    try {
-      const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
-      if (typeof receipt.projectId === "string" && projectId && receipt.projectId !== projectId) conflict = true;
-    } catch { conflict = true; }
+    const receiptInfo = regularFile(receiptPath);
+    if (!receiptInfo) conflict = true;
+    else {
+      try {
+        const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+        if (typeof receipt.projectId === "string" && projectId && receipt.projectId !== projectId) conflict = true;
+      } catch { conflict = true; }
+    }
   }
-  const hasAuthority = attempt && secret && projectId !== null && !conflict;
+  const hasAuthority = Boolean(attempt) && secret && projectId !== null && !conflict;
   return { provided: true, exists: true, hasAuthority, projectId: hasAuthority ? projectId : null, conflict };
 }
 

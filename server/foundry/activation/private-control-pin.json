@@ -3,10 +3,10 @@
   "base": "08b90bdef8dbd198023be447942a3119cb268235",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
-    "client/public/discovery/original-task-correspondence.json": "a0217f49145a76ceb6afd3770b0ed6a002fe881d27f16cf4143cc20b76c5d32e",
-    "client/public/for-agents/original-task/original-task-client.tar.gz": "d9d7c1a4cb426e89eed2ac12b2df22305d81ed0933fdc2ef5785d86ed5f6be08",
+    "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
+    "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
-    "package.json": "54891c8e9bbf1efbc9d41b1beddf1a28ad60a340182bca431909ebe518e8edc7",
+    "package.json": "fa05ab4aa50d85b3d0321dc86df4e5217c0522161e44a83e9fde3c615a0e38dc",
     "server/app.js": "56b9fa403685a42c6fa3522589fa590b905d43cb6c72baff4b507e31ff8f79bd",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -42,9 +42,9 @@
     "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
-    "server/lib/original-task/action.mjs": "0a4fbc63c8b6b7b56ee9302257948b40553bd7962d508152ce804c69e3623fab",
+    "server/lib/original-task/action.mjs": "b68b962166c7923d5f97b4b77c664b13f21d32c302ecdbd3cd68a8d8f98faea8",
     "server/lib/original-task/bundled-descriptor.json": "479b60356b13c64db20d934f4a22d59f1da6a3564db39676c96917c9642ab20c",
-    "server/lib/original-task/cli.mjs": "2ad30eb910dbcce1b9b1ed8a60840fd937ebc77b0f4ecf58d88d79fffe73fbb0",
+    "server/lib/original-task/cli.mjs": "dc205aef381fcb0fc65d259e8ec9fe66955278e42261527e2f7c79cbbbef18c4",
     "server/lib/original-task/client.mjs": "6b4471129ad49cad7066c64853178c482d85445539d64068f330231462f28d13",
     "server/lib/original-task/collect.mjs": "b4103956ad1f419a518e2f5913459b57830083656e474f611baf3142a7ae3d21",
     "server/lib/original-task/descriptor.mjs": "0aa640b4b4bb2a611c895d5bdb3b0f3fa4942643e072d81d3a91dd782d39c505",
@@ -322,6 +322,11 @@
       "base": "08b90bdef8dbd198023be447942a3119cb268235",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:7c5d16672e263c2f8672bbfe0a1065dac94f2cb057d6fe6e44b8a8a37ceb0a61"
+    },
+    {
+      "base": "08b90bdef8dbd198023be447942a3119cb268235",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:1e43f06ccb6158d9e676f1e4737285dcbf0e85ed5b162f21d846112abbee513e"
     }
   ]
 }

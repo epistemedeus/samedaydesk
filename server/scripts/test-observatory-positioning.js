@@ -8,6 +8,7 @@ import { promisify } from "node:util";
 import test from "node:test";
 import express from "express";
 import { observe as observeOpenJobs } from "../lib/observatory/adapters/moltjobs-open-jobs.js";
+import { maintainedCapabilityFromDocument, MAINTAINED_CAPABILITY } from "../lib/observatory/maintained-capability.js";
 import { projectPositioning } from "../lib/observatory/positioning.js";
 import { createObservatoryRuntime } from "../lib/observatory/registry.js";
 import { createObservatoryRouter } from "../routes/observatory.js";
@@ -139,7 +140,9 @@ test("open page drops identifiers and ranks platform purpose on its own denomina
   assert.equal(envelope.paidActivity.available, false);
   assert.equal(envelope.metrics.find((item) => item.key === "returned_rows").value, 3);
   assert.equal(envelope.metrics.find((item) => item.key === "platform_program_rows").value, 2);
-  assert.equal(envelope.metrics.find((item) => item.key === "ordinary_rows").value, 1);
+  assert.equal(envelope.metrics.find((item) => item.key === "ordinary_rows").value, 0);
+  assert.equal(envelope.metrics.find((item) => item.key === "unclassified_rows").value, 1);
+  assert.equal(envelope.workload.purposes.find((item) => item.token === "ORDINARY_WORK").class, "unclassified");
   assert.equal(envelope.metrics.find((item) => item.key === "capability_skill_matches").value, 1);
   assert.equal(envelope.metrics.find((item) => item.key === "page_has_more").value, 1);
   assert.deepEqual(envelope.workload.matchedJobIds, ["lockfile-pin-delta"]);
@@ -159,6 +162,7 @@ test("open page drops identifiers and ranks platform purpose on its own denomina
   assert.equal(projected.activityRanking.ordered[0].mechanismBasis, "observed");
   assert.equal(projected.activityRanking.ordered[0].inference.basis, "inference");
   assert.equal(projected.activityRanking.ordered[1].nodeId, "purpose:ORDINARY_WORK");
+  assert.equal(projected.activityRanking.ordered[1].inference, null);
   const listingIds = projected.planes.job_listings.nodes.map((node) => node.id);
   const completionIds = projected.planes.task_completion.nodes.map((node) => node.id);
   const totalIds = projected.planes.transaction_totals.nodes.map((node) => node.id);
@@ -190,6 +194,99 @@ test("exhausted platform-only page is no exact overlap and not a demand zero", (
   assert.match(projected.decision.nextAction.falsifier, /PLATFORM_REFERRAL/);
   assert.equal(projected.activityRanking.ordered.length, 1);
   assert.equal(projected.activityRanking.denominator.queryExhausted, true);
+});
+
+test("discovery job ids are the maintained list and a drifted mirror is refused", () => {
+  const discovery = JSON.parse(readFileSync(new URL("../../client/public/discovery/useful-jobs.json", import.meta.url), "utf8"));
+  assert.deepEqual(MAINTAINED_CAPABILITY.jobIds, discovery.jobs);
+  assert.equal(MAINTAINED_CAPABILITY.version, discovery.version);
+  assert.equal(MAINTAINED_CAPABILITY.purchaseAuthority, false);
+  const drifted = structuredClone(discovery);
+  drifted.jobs = discovery.jobs.slice(0, -1);
+  assert.throws(() => maintainedCapabilityFromDocument(drifted), /useful_jobs_discovery_invalid/);
+});
+
+test("invalid quantities, duplicate keys, and tallies above the page cannot rank", () => {
+  const base = {
+    sourceId: "moltjobs_open_jobs",
+    availability: "ok",
+    providerTimestampState: "missing",
+    metrics: [
+      metric("returned_rows", 2),
+      metric("platform_program_rows", 2),
+      metric("ordinary_rows", 0),
+      metric("unclassified_rows", 0),
+      metric("capability_skill_matches", 0),
+    ],
+    workload: {
+      queryExhausted: true,
+      purposes: [{ token: "PLATFORM_REFERRAL", class: "platform_program", count: 2 }],
+      participationModes: [],
+      matchedJobIds: [],
+    },
+  };
+  const negative = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{ ...base, metrics: base.metrics.map((item) => item.key === "returned_rows" ? { ...item, value: -1 } : item) }],
+  });
+  assert.equal(negative.activityRanking.state, "withheld");
+  assert.equal(negative.decision.usableForCurrentCut, false);
+  assert.equal(JSON.stringify(negative.planes).includes("-1"), false);
+
+  const nonfinite = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{ ...base, metrics: base.metrics.map((item) => item.key === "returned_rows" ? { ...item, value: Number.POSITIVE_INFINITY } : item) }],
+  });
+  assert.equal(nonfinite.activityRanking.state, "withheld");
+  assert.equal(nonfinite.decision.usableForCurrentCut, false);
+
+  const wrongType = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{ ...base, metrics: base.metrics.map((item) => item.key === "returned_rows" ? { ...item, value: { rows: 2 } } : item) }],
+  });
+  assert.equal(wrongType.activityRanking.state, "withheld");
+  assert.equal(wrongType.decision.usableForCurrentCut, false);
+
+  const duplicate = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{ ...base, metrics: [...base.metrics, metric("returned_rows", 9)] }],
+  });
+  assert.equal(duplicate.activityRanking.state, "withheld");
+  assert.equal(duplicate.activityRanking.reason, "duplicate_metric");
+  assert.equal(duplicate.decision.usableForCurrentCut, false);
+  assert.equal(JSON.stringify(duplicate).includes("9"), false);
+
+  const duplicatePurpose = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{
+      ...base,
+      workload: {
+        ...base.workload,
+        purposes: [
+          { token: "PLATFORM_REFERRAL", class: "platform_program", count: 2 },
+          { token: "PLATFORM_REFERRAL", class: "platform_program", count: 1 },
+        ],
+      },
+    }],
+  });
+  assert.equal(duplicatePurpose.activityRanking.state, "withheld");
+  assert.equal(duplicatePurpose.activityRanking.reason, "duplicate_purpose");
+  assert.equal(duplicatePurpose.decision.usableForCurrentCut, false);
+
+  const above = projectPositioning({
+    fetchedAt: FETCHED_AT,
+    observations: [{
+      ...base,
+      workload: {
+        ...base.workload,
+        purposes: [{ token: "PLATFORM_REFERRAL", class: "platform_program", count: 11 }],
+      },
+    }],
+  });
+  assert.equal(above.activityRanking.state, "withheld");
+  assert.equal(above.activityRanking.reason, "purpose_above_denominator");
+  assert.equal(above.decision.usableForCurrentCut, false);
+  assert.equal(above.decision.state, "blocked");
 });
 
 test("core-only projection stays useful with every provider absent", () => {
@@ -248,8 +345,10 @@ test("stale, unavailable, partial, and conflicting inputs withhold a current cut
   assert.equal(open.usableForCurrentCut, false);
   assert.ok(open.uncertainty.includes("stale"));
   assert.equal(stale.decision.usableForCurrentCut, false);
-  assert.equal(stale.activityRanking.state, "ok");
-  assert.ok(stale.activityRanking.ordered[0].uncertainty.includes("stale"));
+  assert.equal(stale.decision.state, "stale");
+  assert.equal(stale.activityRanking.state, "withheld");
+  assert.equal(stale.activityRanking.reason, "stale");
+  assert.equal(stale.activityRanking.ordered.length, 0);
 
   const unavailable = observeOpenJobs(capture(null, {
     httpStatus: null,

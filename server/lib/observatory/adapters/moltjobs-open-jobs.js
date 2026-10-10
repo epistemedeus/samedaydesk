@@ -42,10 +42,10 @@ const DETAIL_ROUTE = "/v1/jobs/:id/public";
 
 const DEFINITIONS = Object.freeze({
   returned_rows: "Rows in data[] on this fixed public OPEN page, after the documented 100-row cap. Not marketplace.jobs and not a census of agents.",
-  classified_rows: "Returned rows whose purpose is a closed token. Not a customer count.",
-  platform_program_rows: "Returned rows whose purpose token is PLATFORM_MARKETING or PLATFORM_REFERRAL. Same labels the stats docs exclude from ordinary marketplace work.",
-  ordinary_rows: "Returned rows whose purpose is some other closed token. Not proof the work matches a SameDayDesk job.",
-  unclassified_rows: "Returned rows with a missing purpose or a purpose that is not a closed token.",
+  classified_rows: "Returned rows whose purpose token is PLATFORM_MARKETING or PLATFORM_REFERRAL. Not a customer count.",
+  platform_program_rows: "Returned rows whose purpose token is PLATFORM_MARKETING or PLATFORM_REFERRAL. The stats reference excludes platform marketing and referral from ordinary marketplace aggregates.",
+  ordinary_rows: "Returned rows whose purpose token is named as ordinary marketplace work. The jobs listing schema does not define that complement, so this count stays zero unless a later contract names those tokens.",
+  unclassified_rows: "Returned rows with a missing purpose, a purpose that is not a closed token, or a closed token the stats contract does not classify.",
   status_mismatch_rows: "Returned rows whose status token is present and is not OPEN. The query asked for OPEN.",
   funded_true_rows: "Returned rows with funded strictly true. Not a transaction total and not a payer count.",
   page_has_more: "Provider meta.hasMore for this page. 1 means the query result continues. 0 means the provider flagged this page as exhausted. Not full real-time coverage.",
@@ -173,10 +173,9 @@ export function observe(capture, _ctx = {}) {
       tally.platform += 1;
       tally.classified += 1;
       bump(purposes, purpose, "platform_program");
-    } else if (purposeClass === "ordinary") {
-      tally.ordinary += 1;
-      tally.classified += 1;
-      bump(purposes, purpose, "ordinary");
+    } else if (purposeClass === "unclassified") {
+      tally.unclassified += 1;
+      bump(purposes, purpose, "unclassified");
     } else {
       tally.unclassified += 1;
     }
@@ -352,9 +351,9 @@ function countMetric(key, value, unit = "count") {
 }
 
 function classifyPurpose(purpose) {
-  if (typeof purpose !== "string" || !PURPOSE_TOKEN.test(purpose)) return "unclassified";
+  if (typeof purpose !== "string" || !PURPOSE_TOKEN.test(purpose)) return "invalid";
   if (PLATFORM_PURPOSES.has(purpose)) return "platform_program";
-  return "ordinary";
+  return "unclassified";
 }
 
 function rowMatchesCapability(row) {

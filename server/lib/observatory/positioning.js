@@ -13,6 +13,7 @@ import { MAINTAINED_CAPABILITY } from "./maintained-capability.js";
 export const POSITIONING_SCHEMA_VERSION = "pilot.external-observatory.positioning.v1";
 
 const PURPOSE_TOKEN = /^[A-Z][A-Z0-9_]{0,63}$/;
+const DECIMAL_TEXT = /^(0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
 const DOES_NOT = Object.freeze([
   "listing",
   "broadcast",
@@ -199,17 +200,17 @@ export function projectPositioning(input = {}) {
   }
 
   const open = blocked ? null : bySource.get("moltjobs_open_jobs") || null;
-  const openConflict = !blocked && open && pageCountsConflict(open);
-  if (openConflict) {
-    conflicts.push({ code: "open_page_count_conflict", sourceId: "moltjobs_open_jobs" });
+  const openProblem = !blocked && open ? openPageProblem(open) : null;
+  if (openProblem) {
+    conflicts.push({ code: openProblem, sourceId: "moltjobs_open_jobs" });
   }
 
-  const activityRanking = blocked || openConflict
-    ? withheldRanking(blocked ? "conflicting_sources" : "open_page_count_conflict")
+  const activityRanking = blocked || openProblem
+    ? withheldRanking(blocked ? "conflicting_sources" : openProblem)
     : rankOpenPage(open);
 
   const decision = decide({
-    blocked: blocked || openConflict,
+    blocked: blocked || Boolean(openProblem),
     open,
     ranking: activityRanking,
   });
@@ -256,32 +257,81 @@ function readObservation(row) {
     availability: typeof row.availability === "string" ? row.availability : "error",
     providerTimestampState: typeof row.providerTimestampState === "string" ? row.providerTimestampState : "missing",
     evidenceClass: typeof row.evidenceClass === "string" ? row.evidenceClass : null,
-    metrics: Array.isArray(row.metrics) ? row.metrics.map(readMetric).filter(Boolean) : [],
+    ...readMetrics(row.metrics),
     workload: readWorkload(row.workload),
   };
+}
+
+function readMetrics(list) {
+  if (!Array.isArray(list)) return { metrics: [], metricConflict: true };
+  const metrics = [];
+  const seen = new Set();
+  let metricConflict = false;
+  for (const raw of list) {
+    const metric = readMetric(raw);
+    if (!metric) {
+      metricConflict = true;
+      continue;
+    }
+    if (seen.has(metric.key)) metricConflict = true;
+    seen.add(metric.key);
+    metrics.push(metric);
+  }
+  if (metricConflict) {
+    const counts = new Map();
+    for (const metric of metrics) counts.set(metric.key, (counts.get(metric.key) || 0) + 1);
+    for (const metric of metrics) {
+      if (counts.get(metric.key) > 1) {
+        metric.state = "invalid";
+        metric.value = null;
+      }
+    }
+  }
+  return { metrics, metricConflict };
 }
 
 function readMetric(metric) {
   if (!isPlainObject(metric) || typeof metric.key !== "string") return null;
   if (!/^[a-z0-9_]+$/i.test(metric.key)) return null;
-  const state = typeof metric.state === "string" ? metric.state : "invalid";
-  const value = state === "ok" ? metric.value : null;
+  const unit = typeof metric.unit === "string" ? metric.unit : null;
+  const quantity = usableQuantity(metric.state, unit, metric.value);
   return {
     key: metric.key,
-    state,
-    value: state === "ok" ? value : null,
-    unit: typeof metric.unit === "string" ? metric.unit : null,
+    state: quantity.state,
+    value: quantity.value,
+    unit,
     population: typeof metric.population === "string" ? metric.population : null,
     window: typeof metric.window === "string" ? metric.window : null,
     evidenceClass: typeof metric.evidenceClass === "string" ? metric.evidenceClass : null,
   };
 }
 
+function usableQuantity(state, unit, value) {
+  const declared = typeof state === "string" ? state : "invalid";
+  if (declared !== "ok") return { state: declared, value: null };
+  if (unit === "count" || unit === "flag") {
+    if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) return { state: "invalid", value: null };
+    if (unit === "flag" && value !== 0 && value !== 1) return { state: "invalid", value: null };
+    return { state: "ok", value };
+  }
+  if (unit === "USDC" || unit === "USD") {
+    if (typeof value === "number") {
+      if (!Number.isFinite(value) || value < 0) return { state: "invalid", value: null };
+      return { state: "ok", value };
+    }
+    if (typeof value === "string" && DECIMAL_TEXT.test(value)) return { state: "ok", value };
+    return { state: "invalid", value: null };
+  }
+  return { state: "invalid", value: null };
+}
+
 function readWorkload(workload) {
   if (!isPlainObject(workload)) return null;
+  const purposes = readPurposeHistogram(workload.purposes);
   return {
     queryExhausted: workload.queryExhausted === true,
-    purposes: readTokens(workload.purposes),
+    purposes: purposes.items,
+    purposeProblem: purposes.problem,
     participationModes: readTokens(workload.participationModes),
     templateSlugs: readSlugs(workload.templateSlugs),
     matchedJobIds: Array.isArray(workload.matchedJobIds)
@@ -290,13 +340,39 @@ function readWorkload(workload) {
   };
 }
 
+function readPurposeHistogram(list) {
+  if (list == null) return { items: [], problem: null };
+  if (!Array.isArray(list)) return { items: [], problem: "invalid_purpose_entry" };
+  const seen = new Set();
+  const items = [];
+  for (const item of list) {
+    if (!isPlainObject(item)) return { items: [], problem: "invalid_purpose_entry" };
+    if (typeof item.token !== "string" || !PURPOSE_TOKEN.test(item.token)) return { items: [], problem: "invalid_purpose_entry" };
+    if (typeof item.count !== "number" || !Number.isSafeInteger(item.count) || item.count < 0) {
+      return { items: [], problem: "invalid_purpose_count" };
+    }
+    if (seen.has(item.token)) return { items: [], problem: "duplicate_purpose" };
+    seen.add(item.token);
+    const declared = typeof item.class === "string" && /^[a-z_]+$/.test(item.class) ? item.class : "unspecified";
+    items.push({
+      token: item.token,
+      class: declared === "platform_program" ? "platform_program" : "unclassified",
+      count: item.count,
+    });
+  }
+  return { items, problem: null };
+}
+
 function readTokens(list) {
   if (!Array.isArray(list)) return [];
+  const seen = new Set();
   const out = [];
   for (const item of list) {
     if (!isPlainObject(item)) continue;
     if (typeof item.token !== "string" || !PURPOSE_TOKEN.test(item.token)) continue;
     if (!Number.isSafeInteger(item.count) || item.count < 0) continue;
+    if (seen.has(item.token)) continue;
+    seen.add(item.token);
     out.push({
       token: item.token,
       class: typeof item.class === "string" && /^[a-z_]+$/.test(item.class) ? item.class : "unspecified",
@@ -355,18 +431,22 @@ function withheldNode(def, state) {
 function nodeFrom(def, observation) {
   const node = withheldNode(def, observation ? "missing" : "unobserved");
   if (!observation) return node;
-  const metric = observation.metrics.find((item) => item.key === def.metricKey);
-  if (!metric) return node;
+  const matches = observation.metrics.filter((item) => item.key === def.metricKey);
+  if (matches.length !== 1) return withheldNode(def, matches.length ? "conflict" : "missing");
+  const metric = matches[0];
   node.state = metric.state;
   node.value = metric.state === "ok" ? metric.value : null;
-  node.population = metric.population || def.population;
-  node.window = metric.window || def.window;
+  node.population = metric.population;
+  node.window = metric.window;
   node.unit = metric.unit || def.unit;
   node.evidenceClass = metric.evidenceClass || observation.evidenceClass;
   const stale = observation.providerTimestampState === "stale" || observation.availability === "stale";
   const failed = observation.availability === "unavailable" || observation.availability === "error";
-  node.usableForCurrentCut = !stale && !failed && metric.state === "ok"
+  const located = typeof metric.population === "string" && typeof metric.window === "string";
+  node.usableForCurrentCut = !stale && !failed && located && metric.state === "ok"
     && (observation.availability === "ok" || observation.availability === "partial");
+  if (!metric.population) node.uncertainty.push("population_unspecified");
+  if (!metric.window) node.uncertainty.push("window_unspecified");
   if (observation.providerTimestampState === "missing") node.uncertainty.push("provider_clock_missing");
   if (stale) node.uncertainty.push("stale");
   if (observation.availability === "partial") node.uncertainty.push("partial_source");
@@ -397,13 +477,31 @@ function metricView(observation, key) {
   return { state: metric.state, value: metric.state === "ok" ? metric.value : null };
 }
 
+function openPageProblem(observation) {
+  if (observation.metricConflict) return "duplicate_metric";
+  if (observation.workload && observation.workload.purposeProblem) return observation.workload.purposeProblem;
+  if (purposeAboveDenominator(observation)) return "purpose_above_denominator";
+  if (pageCountsConflict(observation)) return "open_page_count_conflict";
+  return null;
+}
+
+function purposeAboveDenominator(observation) {
+  const returned = metricView(observation, "returned_rows");
+  const purposes = observation.workload ? observation.workload.purposes : [];
+  if (returned.state !== "ok" || !Number.isSafeInteger(returned.value) || !purposes.length) return false;
+  const sum = purposes.reduce((total, item) => total + item.count, 0);
+  return purposes.some((item) => item.count > returned.value) || sum > returned.value;
+}
+
 function pageCountsConflict(observation) {
+  if (observation.availability !== "ok" && observation.availability !== "partial") return false;
   const returned = metricView(observation, "returned_rows");
   const platform = metricView(observation, "platform_program_rows");
   const ordinary = metricView(observation, "ordinary_rows");
   const unclassified = metricView(observation, "unclassified_rows");
   const parts = [returned, platform, ordinary, unclassified];
-  if (!parts.every((item) => item.state === "ok")) return false;
+  if (!parts.every((item) => item.state === "ok" && Number.isSafeInteger(item.value) && item.value >= 0)) return true;
+  if (platform.value > returned.value || ordinary.value > returned.value || unclassified.value > returned.value) return true;
   return returned.value !== platform.value + ordinary.value + unclassified.value;
 }
 
@@ -419,12 +517,21 @@ function withheldRanking(reason) {
 
 function rankOpenPage(observation) {
   if (!observation) return withheldRanking("open_page_unobserved");
-  if (observation.availability === "unavailable" || observation.availability === "error" || observation.availability === "stale") {
+  if (observation.providerTimestampState === "stale" || observation.availability === "stale") return withheldRanking("stale");
+  if (observation.availability === "unavailable" || observation.availability === "error") {
     return withheldRanking(observation.availability);
   }
+  if (observation.metricConflict) return withheldRanking("duplicate_metric");
   const returned = metricView(observation, "returned_rows");
-  if (returned.state !== "ok") return withheldRanking("denominator_missing");
+  if (returned.state !== "ok" || !Number.isSafeInteger(returned.value) || returned.value < 0) {
+    return withheldRanking("denominator_invalid");
+  }
   const workload = observation.workload;
+  if (workload && workload.purposeProblem) return withheldRanking(workload.purposeProblem);
+  const ordinary = metricView(observation, "ordinary_rows");
+  if (ordinary.state === "ok" && ordinary.value > 0 && !(workload && workload.purposes.length)) {
+    return withheldRanking("ordinary_complement_undocumented");
+  }
   const rows = workload && workload.purposes.length
     ? workload.purposes.map((item) => ({
       nodeId: `purpose:${item.token}`,
@@ -434,7 +541,6 @@ function rankOpenPage(observation) {
     }))
     : [
       { nodeId: "purpose_class:platform_program", key: "platform_program_rows" },
-      { nodeId: "purpose_class:ordinary", key: "ordinary_rows" },
     ].map((item) => {
       const metric = metricView(observation, item.key);
       return {
@@ -445,6 +551,10 @@ function rankOpenPage(observation) {
         state: metric.state,
       };
     });
+  const sum = rows.reduce((total, row) => total + (Number.isSafeInteger(row.numerator) ? row.numerator : 0), 0);
+  if (rows.some((row) => Number.isSafeInteger(row.numerator) && row.numerator > returned.value) || sum > returned.value) {
+    return withheldRanking("purpose_above_denominator");
+  }
 
   const comparable = rows.filter((row) => Number.isSafeInteger(row.numerator) && row.numerator > 0);
   if (!comparable.length) {
@@ -520,7 +630,7 @@ function decide({ blocked, open, ranking }) {
     purchaseAuthority: MAINTAINED_CAPABILITY.purchaseAuthority,
     hostedAcquisition: MAINTAINED_CAPABILITY.hostedAcquisition,
     jobIds: MAINTAINED_CAPABILITY.jobIds.slice(),
-    basis: "maintained_package_on_this_baseline",
+    basis: MAINTAINED_CAPABILITY.discovery,
   };
   const nextBase = {
     kind: "measurement",
@@ -583,7 +693,7 @@ function decide({ blocked, open, ranking }) {
   }
   statements.push({
     basis: "inference",
-    text: "useful-jobs 1.4.7 runs offline on caller-supplied artifacts. A platform-program purpose token is not one of those jobs. Stats documentation excludes PLATFORM_MARKETING and PLATFORM_REFERRAL from ordinary marketplace work.",
+    text: `useful-jobs ${MAINTAINED_CAPABILITY.version} is the offline package in ${MAINTAINED_CAPABILITY.discovery}. A platform-program purpose token is not one of those jobs. The stats reference excludes platform marketing and referral from ordinary marketplace aggregates and does not classify every other purpose token as ordinary.`,
     citation: "https://moltjobs.io/docs/api#stats",
   });
   if (workload && workload.queryExhausted) {
@@ -601,7 +711,7 @@ function decide({ blocked, open, ranking }) {
 
   const stale = open.providerTimestampState === "stale" || open.availability === "stale";
   return {
-    state: "projected",
+    state: stale ? "stale" : "projected",
     usableForCurrentCut: !stale && ranking.state !== "withheld" && (open.availability === "ok" || open.availability === "partial"),
     capability,
     meetsMaintainedExecution: meets,

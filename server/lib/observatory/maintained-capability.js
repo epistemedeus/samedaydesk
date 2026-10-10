@@ -1,30 +1,53 @@
 /**
  * Maintained SameDayDesk execution this projection can name.
- * Facts copied from the baseline useful-jobs discovery record
- * (schema samedaydesk.for-agents.useful-jobs.v1, package 1.4.7).
- * Offline caller-supplied artifact jobs. Not a hosted bid and not a
- * forum-reward program.
+ * Package, version, and job ids come from the declared discovery record.
+ * releaseScope is checked as the same set, not a second list that can drift.
  */
 
-export const MAINTAINED_CAPABILITY = Object.freeze({
-  schema: "samedaydesk.for-agents.useful-jobs.v1",
-  package: "useful-jobs",
-  version: "1.4.7",
-  execution: "offline_caller_supplied_artifacts",
-  purchaseAuthority: false,
-  hostedAcquisition: false,
-  jobIds: Object.freeze([
-    "lockfile-pin-delta",
-    "json-schema-webhook-drift",
-    "route-table-diff",
-    "page-change-offline-job",
-    "api-upgrade-brief",
-    "vendor-budget-impact",
-    "feed-agenda",
-    "evidence-ci-annotation",
-    "listing-repair-packet",
-    "repeat-job-record",
-  ]),
-});
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
+export const USEFUL_JOBS_DISCOVERY = fileURLToPath(new URL("../../../client/public/discovery/useful-jobs.json", import.meta.url));
+
+export function maintainedCapabilityFromDocument(doc) {
+  if (!doc || typeof doc !== "object" || Array.isArray(doc)) {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  const reviewed = doc.releaseScope?.newlyReviewedJobIds;
+  const inherited = doc.releaseScope?.inheritedJobIds;
+  const jobs = doc.jobs;
+  if (doc.schema !== "samedaydesk.for-agents.useful-jobs.v1" || doc.package !== "useful-jobs") {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  if (typeof doc.version !== "string" || doc.version !== doc.releaseScope?.approvedVersion) {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  if (!Array.isArray(jobs) || !Array.isArray(reviewed) || !Array.isArray(inherited)) {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  if (jobs.some((id) => typeof id !== "string" || id.length < 1) || new Set(jobs).size !== jobs.length) {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  const partition = [...reviewed, ...inherited];
+  const sameSet = partition.length === jobs.length
+    && new Set(partition).size === jobs.length
+    && jobs.every((id) => partition.includes(id));
+  if (!sameSet) throw new Error("useful_jobs_discovery_invalid");
+  if (doc.offline !== true || doc.freeOffline !== true || doc.purchaseAuthority !== false) {
+    throw new Error("useful_jobs_discovery_invalid");
+  }
+  if (doc.releaseScope.hostedAcquisition !== false) throw new Error("useful_jobs_discovery_invalid");
+  return Object.freeze({
+    schema: doc.schema,
+    package: doc.package,
+    version: doc.version,
+    execution: "offline_caller_supplied_artifacts",
+    purchaseAuthority: false,
+    hostedAcquisition: false,
+    jobIds: Object.freeze(jobs.slice()),
+    discovery: "client/public/discovery/useful-jobs.json",
+  });
+}
+
+export const MAINTAINED_CAPABILITY = maintainedCapabilityFromDocument(JSON.parse(readFileSync(USEFUL_JOBS_DISCOVERY, "utf8")));
 export const MAINTAINED_JOB_IDS = new Set(MAINTAINED_CAPABILITY.jobIds);

@@ -127,7 +127,9 @@ export function discoveryProblems(discovery) {
   if (discovery.payment !== false || discovery.deliveryPromise !== false || discovery.fundedJob !== false) return "stale_discovery";
   if (discovery.acceptance !== false || discovery.thisDescriptorPerformsNoRequest !== true) return "stale_discovery";
   if (discovery.visitorEntry !== VISITOR_ENTRY) return "stale_discovery";
-  if (discovery.submitCommand !== SUBMIT_COMMAND || discovery.readCommand !== READ_COMMAND) return "stale_discovery";
+  if (discovery.submitCommand !== SUBMIT_COMMAND || discovery.readCommand !== READ_COMMAND || discovery.mapCommand !== MAP_COMMAND) return "stale_discovery";
+  const action = discovery.taskAction;
+  if (!action || action.payment !== false || action.universalCapability !== false || action.mcpSkill !== false) return "stale_discovery";
   const archive = discovery.acquisition?.archive;
   if (!archive || archive.path !== ARCHIVE_PATH) return "stale_discovery";
   if (typeof archive.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(archive.sha256)) return "stale_discovery";

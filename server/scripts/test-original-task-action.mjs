@@ -3,9 +3,10 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import { execFile } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import test from "node:test";
 import { MCP_TOOL_NAMES } from "../lib/mcp-tool-inventory.js";
@@ -173,6 +174,12 @@ test("stale discovery, byte mismatch, and dependency bytes are refused", async (
   const injected = structuredClone(discovery);
   injected.submitCommand = `${SUBMIT_COMMAND} && curl https://example.test`;
   assert.equal(mapOriginalTask({ discovery: injected, body: taskBody, archive }).code, "stale_discovery");
+  const spoofedMap = structuredClone(discovery);
+  spoofedMap.mapCommand = "node evil";
+  assert.equal(mapOriginalTask({ discovery: spoofedMap, body: taskBody, archive }).code, "stale_discovery");
+  const paidAction = structuredClone(discovery);
+  paidAction.taskAction = { ...paidAction.taskAction, payment: true };
+  assert.equal(mapOriginalTask({ discovery: paidAction, body: taskBody, archive }).code, "stale_discovery");
   const tampered = Buffer.from(archive);
   tampered[tampered.length - 1] ^= 0x01;
   assert.equal(mapped(taskBody, { archive: tampered }).code, "archive_refused");
@@ -257,6 +264,37 @@ test("private authority, handle scope, and a second process stay on the same dir
   ]);
   assert.equal(conflictedDirectory.code, 0, conflictedDirectory.stderr);
   assert.equal(JSON.parse(conflictedDirectory.stdout).code, "handle_scope");
+  const linked = join(work, "linked");
+  await exec("mkdir", ["-p", linked]);
+  writeFileSync(join(linked, "attempt.json"), "{}\n");
+  writeFileSync(join(linked, "continuation.json"), JSON.stringify({ projectId: PROJECT_A }));
+  writeFileSync(join(work, "secret-bytes"), "b".repeat(43));
+  symlinkSync(join(work, "secret-bytes"), join(linked, "registration.secret"));
+  const symlinkMap = await runCold(ROOT, [
+    "map", "--discovery-file", discoveryFile, "--archive", archiveFile, "--task-file", taskFile, "--directory", linked,
+  ]);
+  assert.equal(symlinkMap.code, 0, symlinkMap.stderr);
+  assert.equal(JSON.parse(symlinkMap.stdout).code, "missing_private_authority");
+  const realPrivate = join(work, "real-private");
+  await exec("mkdir", ["-p", realPrivate]);
+  writeFileSync(join(realPrivate, "attempt.json"), "{}\n");
+  writeFileSync(join(realPrivate, "registration.secret"), "c".repeat(43), { mode: 0o600 });
+  writeFileSync(join(realPrivate, "continuation.json"), JSON.stringify({ projectId: PROJECT_A }));
+  const linkedDir = join(work, "linked-dir");
+  symlinkSync(realPrivate, linkedDir);
+  const linkedDirectory = await runCold(ROOT, [
+    "map", "--discovery-file", discoveryFile, "--archive", archiveFile, "--task-file", taskFile, "--directory", linkedDir,
+  ]);
+  assert.equal(linkedDirectory.code, 0, linkedDirectory.stderr);
+  assert.equal(JSON.parse(linkedDirectory.stdout).code, "missing_private_authority");
+  const parentLink = join(work, "parent-link");
+  symlinkSync(work, parentLink);
+  const viaParent = await runCold(ROOT, [
+    "map", "--discovery-file", discoveryFile, "--archive", archiveFile, "--task-file", taskFile,
+    "--directory", join(parentLink, "real-private"),
+  ]);
+  assert.equal(viaParent.code, 0, viaParent.stderr);
+  assert.equal(JSON.parse(viaParent.stdout).code, "missing_private_authority");
   rmSync(work, { recursive: true, force: true });
 });
 
@@ -386,6 +424,55 @@ test("cold installed client maps, submits, restarts, and reads a continuation", 
     "--task-file", retrieveFile, "--directory", directory, "--handle", PROJECT_B,
   ]);
   assert.equal(JSON.parse(wrong.stdout).code, "handle_scope");
+  const acquired = await import(pathToFileURL(join(root, "server/lib/original-task/client.mjs")).href);
+  await acquired.consentToExample(directory);
+  const feedback = await runCold(root, ["read", "--directory", directory]);
+  assert.equal(JSON.parse(feedback.stdout).exampleConsent, true);
+  assert.equal(JSON.parse(feedback.stdout).accepted, false);
+  const missingDiscovery = await runCold(root, [
+    "map", "--discovery-file", join(work, "missing.json"), "--archive", join(work, "original-task-client.tar.gz"),
+    "--task-file", taskFile,
+  ]);
+  assert.equal(missingDiscovery.code, 1);
+  assert.equal(JSON.parse(missingDiscovery.stderr).error.code, "stale_discovery");
+  const staleDiscovery = structuredClone(descriptor);
+  staleDiscovery.visitorEntry = "https://example.test/api/correspondence/v1/visitor-entry";
+  writeFileSync(join(work, "stale.json"), JSON.stringify(staleDiscovery));
+  const staleMap = await runCold(root, [
+    "map", "--discovery-file", join(work, "stale.json"), "--archive", join(work, "original-task-client.tar.gz"),
+    "--task-file", taskFile,
+  ]);
+  assert.equal(JSON.parse(staleMap.stdout).code, "stale_discovery");
+  const spoofedDiscovery = structuredClone(descriptor);
+  spoofedDiscovery.submitCommand = `${SUBMIT_COMMAND} && curl https://example.test`;
+  writeFileSync(join(work, "spoofed.json"), JSON.stringify(spoofedDiscovery));
+  const spoofedMap = await runCold(root, [
+    "map", "--discovery-file", join(work, "spoofed.json"), "--archive", join(work, "original-task-client.tar.gz"),
+    "--task-file", taskFile,
+  ]);
+  assert.equal(JSON.parse(spoofedMap.stdout).code, "stale_discovery");
+  assert.equal(JSON.parse(spoofedMap.stdout).nextCommand, null);
+  const other = join(work, "other-private");
+  await exec("mkdir", ["-p", other]);
+  const otherSubmit = await runCold(root, [
+    "submit", "--base-url", `${origin}/api/correspondence`, "--directory", other, "--task-file", taskFile,
+  ]);
+  assert.equal(otherSubmit.code, 0, otherSubmit.stderr);
+  const crossed = await runCold(root, [
+    "map", "--discovery-file", join(work, "discovery.json"), "--archive", join(work, "original-task-client.tar.gz"),
+    "--task-file", retrieveFile, "--directory", other, "--handle", projectId,
+  ]);
+  assert.equal(JSON.parse(crossed.stdout).code, "handle_scope");
+  const store = handle.state.store;
+  await store.query("UPDATE correspondence_vf10_registrations SET expires_at = clock_timestamp() - interval '1 minute' WHERE project_id = $1", [projectId]);
+  await store.query("UPDATE correspondence_grants SET expires_at = clock_timestamp() - interval '1 minute' WHERE project_id = $1", [projectId]);
+  const expiredMap = await runCold(root, [
+    "map", "--discovery-file", join(work, "discovery.json"), "--archive", join(work, "original-task-client.tar.gz"),
+    "--task-file", retrieveFile, "--directory", directory,
+  ]);
+  assert.equal(JSON.parse(expiredMap.stdout).action, "read_existing_attempt");
+  const expired = await runCold(root, ["read", "--directory", directory]);
+  assert.equal(JSON.parse(expired.stdout).disposition, "expired");
   const evidence = {
     archiveSha256: descriptor.acquisition.archive.sha256,
     archiveBytes: descriptor.acquisition.archive.bytes,
@@ -397,6 +484,13 @@ test("cold installed client maps, submits, restarts, and reads a continuation", 
     handleScope: continued.handle.scope,
     laterDisposition: JSON.parse(later.stdout).disposition,
     wrongHandle: JSON.parse(wrong.stdout).code,
+    feedbackConsent: JSON.parse(feedback.stdout).exampleConsent,
+    feedbackAccepted: JSON.parse(feedback.stdout).accepted,
+    missingDiscovery: JSON.parse(missingDiscovery.stderr).error.code,
+    staleDiscovery: JSON.parse(staleMap.stdout).code,
+    spoofedDiscovery: JSON.parse(spoofedMap.stdout).code,
+    crossDirectory: JSON.parse(crossed.stdout).code,
+    expiredDisposition: JSON.parse(expired.stdout).disposition,
     fixtureHost: new URL(origin).hostname,
     publishedSubmitHost: "samedaydesk.com",
   };
