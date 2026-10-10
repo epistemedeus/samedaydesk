@@ -79,19 +79,27 @@ test("old identities, stale source, stronger claims, and other transports fail",
   assert.ok(metadataIssues(withManifest({ _meta: { "io.modelcontextprotocol.registry/publisher-provided": { rank: 1 } } })).includes("house-meta"));
 });
 
-test("official registry validation accepts this manifest and rejects a stale schema", async () => {
+test("official registry validation accepts this manifest and rejects invalid schema", async () => {
   const accepted = await officialValidate(manifest);
   assert.equal(accepted.status, 200);
   assert.equal(accepted.body.valid, true);
   assert.deepEqual(accepted.body.issues, []);
-  const rejected = await officialValidate(withManifest({
-    $schema: "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
-    version: "^1.2.0",
-    description: "x".repeat(101),
+
+  const range = await officialValidate(withManifest({ version: "^1.2.0" }));
+  assert.equal(range.status, 200);
+  assert.equal(range.body.valid, false);
+  assert.equal(range.body.issues.some((issue) => issue.reference === "version-looks-like-range"), true);
+
+  const transport = await officialValidate(withManifest({
+    remotes: [{ type: "websocket", url: APEX_REMOTE }],
   }));
-  assert.equal(rejected.status, 200);
-  assert.equal(rejected.body.valid, false);
-  assert.ok(rejected.body.issues.length > 0);
+  assert.equal(transport.status, 200);
+  assert.equal(transport.body.valid, false);
+  assert.equal(transport.body.issues.some((issue) => issue.path === "remotes[0].type"), true);
+
+  const length = await officialValidate(withManifest({ description: "x".repeat(101) }));
+  assert.equal(length.status, 422);
+  assert.equal(length.body.errors.some((error) => error.location === "body.description"), true);
 });
 
 test("cold client uses the manifest URL and matches HTTP and the direct projection", async () => {
