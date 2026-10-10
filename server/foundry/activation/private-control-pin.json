@@ -6,7 +6,7 @@
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
     "package-lock.json": "fa437d77b8ccc2a49d2538cb1b2e540b2fb1603a80bd108d02a5899acf591a02",
-    "package.json": "745b4b8b068f5b1fa7078d3b75f7dbb3ed2d5c4ab9b3ebe90418059e5b48909e",
+    "package.json": "e6e1273fd1ee2a0a2b77904a4e3c00e6713e8d4bb38c458088b76383b650a9a3",
     "server/app.js": "c398fddb8d889acf5b3abaf14865b72fb639ce8eaa72ca797aecb35d634759e1",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -332,6 +332,11 @@
       "base": "08b90bdef8dbd198023be447942a3119cb268235",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:b4c7954b8f1ce4a333440047acdaab95dc87eae127d76fbab217ccd07d995685"
+    },
+    {
+      "base": "08b90bdef8dbd198023be447942a3119cb268235",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:f3038c93d09ad26a6bafb39d77822fa456aaf938a368a25d17767a5b258d56a9"
     }
   ]
 }
