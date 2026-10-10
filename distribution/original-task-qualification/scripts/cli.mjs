@@ -993,6 +993,12 @@ async function main() {
   if (!pins) return fail(observation, "pins_refused");
   const parsed = flagsOf(rest);
   if (parsed.error) return fail(observation, parsed.error);
+  // Bind caller paths before the client runs from its invocation-owned extract.
+  for (const key of ["--cache", "--task-file", "--directory"]) {
+    if (parsed.flags.has(key)) {
+      parsed.flags.set(key, resolve(parsed.flags.get(key)));
+    }
+  }
   const timeout = timeoutOf(parsed.flags);
   if (timeout?.error) return fail(observation, timeout.error);
   if (command === "acquire") return commandAcquire(observation, parsed.flags, timeout);

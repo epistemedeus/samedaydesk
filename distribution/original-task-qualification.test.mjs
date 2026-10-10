@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { chmodSync, cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { createSdsApp } from "../server/app.js";
@@ -379,7 +379,7 @@ test("cold install acquires, maps, and refuses the unsupported cases", { timeout
   assert.equal(good.counts.discovery, 1);
 });
 
-test("fixture submit restarts and reads without treating qualification as acceptance", { timeout: 180000 }, async (t) => {
+test("fixture relative paths submit restart and read without treating qualification as acceptance", { timeout: 180000 }, async (t) => {
   const work = mkdtempSync(join(tmpdir(), "original-task-skill-submit-"));
   const script = installSkill(work);
   const archive = readFileSync(ARCHIVE_PATH);
@@ -447,13 +447,13 @@ test("fixture submit restarts and reads without treating qualification as accept
     "acquire", "--cache", cache, "--discovery-url", source.discoveryUrl,
   ]));
   assert.equal(acquired.acquisition.matched, true);
-  const qualified = classified(await runSkill(script, ["map", "--cache", cache, "--task-file", taskFile]));
+  const qualified = classified(await runSkill(script, ["map", "--cache", relative(tmpdir(), cache), "--task-file", relative(tmpdir(), taskFile)]));
   assert.equal(qualified.result.action, "submit_existing_correspondence");
   assert.equal(qualified.submission, null);
 
   const submittedRun = await runSkill(script, [
     "submit", "--cache", cache, "--base-url", `${origin}/api/correspondence`,
-    "--directory", directory, "--task-file", taskFile, "--submit", "yes",
+    "--directory", relative(tmpdir(), directory), "--task-file", relative(tmpdir(), taskFile), "--submit", "yes",
   ]);
   const submitted = classified(submittedRun);
   assert.equal(submittedRun.code, 0, submittedRun.stdout);
@@ -474,14 +474,14 @@ test("fixture submit restarts and reads without treating qualification as accept
 
   await closeServer(source.server);
   const restarted = classified(await runSkill(script, [
-    "map", "--cache", cache, "--task-file", retrieveFile, "--directory", directory,
+    "map", "--cache", relative(tmpdir(), cache), "--task-file", relative(tmpdir(), retrieveFile), "--directory", relative(tmpdir(), directory),
   ]));
   assert.equal(restarted.result.action, "read_existing_attempt");
   assert.equal(restarted.result.continuation, "same_private_read");
   assert.equal(restarted.submission, null);
   assert.equal(JSON.stringify(restarted).includes(privateReceipt.projectId), false);
 
-  const readBack = classified(await runSkill(script, ["read", "--cache", cache, "--directory", directory]));
+  const readBack = classified(await runSkill(script, ["read", "--cache", relative(tmpdir(), cache), "--directory", relative(tmpdir(), directory)]));
   assert.equal(readBack.disposition.disposition, "pending_qualification");
   assert.equal(readBack.delivery.delivered, false);
   assert.equal(readBack.acceptance.accepted, false);
@@ -510,7 +510,7 @@ test("fixture submit restarts and reads without treating qualification as accept
     }),
   });
   assert.equal(scoped.status, 201);
-  const later = classified(await runSkill(script, ["read", "--cache", cache, "--directory", directory]));
+  const later = classified(await runSkill(script, ["read", "--cache", relative(tmpdir(), cache), "--directory", relative(tmpdir(), directory)]));
   assert.equal(later.disposition.disposition, "scoped_result");
   assert.equal(later.delivery.delivered, true);
   assert.equal(later.acceptance.accepted, false);
