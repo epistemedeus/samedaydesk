@@ -259,10 +259,10 @@ test("unknown tool is JSON-RPC -32602 and execution errors are isError results",
   assert.match(brokenJson.result.content[0].text, /request is required/);
 });
 
-test("server.json names the unpublished apex remote and keeps CORS star", () => {
+test("server.json names the apex remote and keeps CORS star", () => {
   const registryPath = join(dirname(fileURLToPath(import.meta.url)), "../../server.json");
   const registry = JSON.parse(readFileSync(registryPath, "utf8"));
-  assert.equal(registry.name, "io.github.epistemedeus/samedaydesk");
+  assert.equal(registry.name, "com.samedaydesk/task-evidence");
   assert.equal(registry.description.length <= 100, true);
   assert.deepEqual(registry.remotes, [{ type: "streamable-http", url: "https://samedaydesk.com/mcp" }]);
   assert.equal(JSON.stringify(registry).includes("registry.modelcontextprotocol.io"), false);
