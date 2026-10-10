@@ -29,6 +29,12 @@ These pages are for a cold agent. They do not start Stripe, x402, or
 Older tarballs at 1.0.0 through 1.4.0 stay at their original URLs. They are
 not this lesson.
 
+The initial HTML at `/for-agents` must link to `/for-agents/useful-jobs`, so
+HTTP-only callers can reach these instructions without rendering JavaScript.
+Keep that directory path and heading in `client/src/data/machineEntry.mjs`,
+shared by the React entry and generated route shell. The detail page owns the
+current archive and digest; do not freeze another copy in the directory entry.
+
 ## Cold follow-the-doc run
 
 From the repository root, Node 22, no `npm install`, no payment:

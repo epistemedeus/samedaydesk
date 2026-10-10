@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -30,6 +31,10 @@ import {
   RECORD_QUICKSTART,
   REUSE_QUICKSTART,
   RECURRING_QUICKSTART,
+  USEFUL_JOBS_ARCHIVE,
+  USEFUL_JOBS_ARCHIVE_BYTES,
+  USEFUL_JOBS_ARCHIVE_SHA256,
+  USEFUL_JOBS_PATH,
   X402_SHELL,
 } from "../../client/src/data/machineEntry.mjs";
 
@@ -273,6 +278,40 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
     assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
   }
   assert.match(route.crawlerHtml, /node --version # must report v22\.x/);
+});
+
+test("an HTTP-only visitor follows the agents directory to the current verified offline archive", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "agents-offline-acquisition-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex());
+  writeRouteShells(dist);
+  const archive = join(dist, USEFUL_JOBS_ARCHIVE);
+  mkdirSync(dirname(archive), { recursive: true });
+  copyFileSync(join(here, "../../client/public", USEFUL_JOBS_ARCHIVE), archive);
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+
+  for (const directory of ["/for-agents", "/for-agents?task=lockfile-change"]) {
+    const parent = await request(port, directory);
+    assert.equal(parent.status, 200);
+    const links = [...parent.body.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
+    assert.ok(links.includes(USEFUL_JOBS_PATH), "the initial HTML must expose the existing offline acquisition path");
+    const detail = await request(port, USEFUL_JOBS_PATH);
+    assert.equal(detail.status, 200);
+    assert.ok(detail.body.includes(USEFUL_JOBS_ARCHIVE));
+    assert.ok(detail.body.includes(USEFUL_JOBS_ARCHIVE_SHA256));
+  }
+  const response = await fetch(`http://127.0.0.1:${port}${USEFUL_JOBS_ARCHIVE}`);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /gzip/);
+  const bytes = Buffer.from(await response.arrayBuffer());
+  assert.equal(bytes.length, USEFUL_JOBS_ARCHIVE_BYTES);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), USEFUL_JOBS_ARCHIVE_SHA256);
+
+  rmSync(archive);
+  assert.equal((await request(port, USEFUL_JOBS_ARCHIVE)).status, 404, "missing archive must not fall back to successful HTML");
 });
 
 test("client metadata transitions match route shells and restore prior attributes", () => {
