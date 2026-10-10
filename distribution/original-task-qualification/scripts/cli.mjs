@@ -19,7 +19,7 @@ import {
   writeSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, dirname, join, resolve, sep } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 
@@ -196,14 +196,6 @@ function allowedDiscovery(value) {
   return null;
 }
 
-function allowedArchive(value, discoveryUrl) {
-  const url = parseUrl(value);
-  if (!url || url.pathname !== EXPECTED.archivePath) return null;
-  if (url.origin === EXPECTED.origin && url.protocol === "https:") return url;
-  if (url.origin === discoveryUrl.origin && url.protocol === "http:" && loopback(url.hostname)) return url;
-  return null;
-}
-
 function allowedBase(value) {
   const url = parseUrl(value);
   if (!url || url.pathname !== EXPECTED.basePath) return null;
@@ -330,15 +322,6 @@ function prepareCache(cachePath) {
   return { cache };
 }
 
-function readBounded(file, max) {
-  const info = lstatSyncOrNull(file);
-  if (!info) return { missing: true };
-  if (!info.isFile()) return { refused: true };
-  if (info.size > max) return { malformed: true };
-  try { return { ok: true, bytes: readFileSync(file) }; }
-  catch { return { malformed: true }; }
-}
-
 function discoveryMatchesPin(discovery) {
   const claimed = discovery?.acquisition?.archive;
   return Boolean(
@@ -351,46 +334,110 @@ function discoveryMatchesPin(discovery) {
   );
 }
 
-function sourceMatches(source) {
-  return Boolean(source && typeof source === "object" && !Array.isArray(source) && allowedDiscovery(source.descriptorUrl));
-}
-
 function parseJson(bytes) {
   try { return { ok: true, value: JSON.parse(bytes.toString("utf8")) }; }
   catch { return { malformed: true }; }
 }
 
-function classifyCache(cache) {
-  const discovery = readBounded(join(cache, DISCOVERY_NAME), 262144);
-  const source = readBounded(join(cache, SOURCE_NAME), 4096);
-  const archive = readBounded(join(cache, ARCHIVE_NAME), EXPECTED.bytes);
-  if (discovery.refused || source.refused || archive.refused) return { error: "cache_refused" };
-  let discoveryValue = null;
-  if (discovery.malformed) return { error: "stale_discovery" };
-  if (discovery.ok) {
-    const parsed = parseJson(discovery.bytes);
-    if (!parsed.ok || !discoveryMatchesPin(parsed.value)) return { error: "stale_discovery" };
-    discoveryValue = parsed.value;
+function pathInsideSkill(file) {
+  const root = skillRoot();
+  const prefix = root.endsWith(sep) ? root : root + sep;
+  return file === root || file.startsWith(prefix);
+}
+
+function readRegularInside(rel, max) {
+  const file = join(skillRoot(), rel);
+  const info = lstatSyncOrNull(file);
+  if (!info || !info.isFile() || info.size < 1 || info.size > max) return null;
+  let real;
+  try { real = realpathSync(file); }
+  catch { return null; }
+  if (!pathInsideSkill(real)) return null;
+  try { return readFileSync(file); }
+  catch { return null; }
+}
+
+function archiveMembers(gzipped) {
+  let raw;
+  try { raw = gunzipSync(gzipped, { maxOutputLength: 2_000_000 }); }
+  catch { return null; }
+  const members = new Map();
+  let offset = 0;
+  while (offset + 512 <= raw.length) {
+    const header = raw.subarray(offset, offset + 512);
+    if (header.every((byte) => byte === 0)) break;
+    const name = header.toString("utf8", 0, 100).replace(/\0.*$/, "");
+    const prefix = header.toString("utf8", 345, 500).replace(/\0.*$/, "");
+    const member = prefix ? `${prefix}/${name}` : name;
+    const size = Number.parseInt(header.toString("utf8", 124, 136).replace(/\0.*$/, "").trim(), 8);
+    const typeflag = header[156];
+    if (!member || !Number.isInteger(size) || size < 0 || size > 1_000_000) return null;
+    if (member.startsWith("/") || member.split("/").includes("..") || member.includes("\\")) return null;
+    if (typeflag !== 48 && typeflag !== 0) return null;
+    const start = offset + 512;
+    const end = start + size;
+    if (end > raw.length) return null;
+    if (members.has(member)) return null;
+    members.set(member, Buffer.from(raw.subarray(start, end)));
+    offset = start + (Math.ceil(size / 512) * 512);
   }
-  let sourceValue = null;
-  if (source.malformed) return { error: "stale_discovery" };
-  if (source.ok) {
-    const parsed = parseJson(source.bytes);
-    if (!parsed.ok || !sourceMatches(parsed.value)) return { error: "stale_discovery" };
-    sourceValue = parsed.value;
+  if (!members.has(EXPECTED.client)) return null;
+  return members;
+}
+
+function sourceMatchesArchive(sourceRoot, members) {
+  const listed = lstatSyncOrNull(sourceRoot);
+  if (!listed?.isDirectory()) return false;
+  let base;
+  try { base = realpathSync(sourceRoot); }
+  catch { return false; }
+  if (!pathInsideSkill(base)) return false;
+  const seen = new Set();
+  const pending = [base];
+  while (pending.length) {
+    const current = pending.pop();
+    let names;
+    try { names = readdirSync(current); }
+    catch { return false; }
+    for (const name of names) {
+      const full = join(current, name);
+      const entry = lstatSyncOrNull(full);
+      if (!entry || entry.isSymbolicLink()) return false;
+      if (entry.isDirectory()) {
+        pending.push(full);
+        continue;
+      }
+      if (!entry.isFile()) return false;
+      let real;
+      try { real = realpathSync(full); }
+      catch { return false; }
+      if (!pathInsideSkill(real)) return false;
+      const rel = relative(base, full).split(sep).join("/");
+      const body = members.get(rel);
+      if (!body || body.length !== entry.size || !readFileSync(full).equals(body)) return false;
+      seen.add(rel);
+    }
   }
-  if (archive.malformed) return { error: "archive_refused" };
-  if (archive.ok && (archive.bytes.length !== EXPECTED.bytes || sha256(archive.bytes) !== EXPECTED.sha256)) {
+  for (const name of members.keys()) {
+    if (!seen.has(name)) return false;
+  }
+  return true;
+}
+
+function loadIncluded() {
+  const archiveBytes = readRegularInside(join("client", ARCHIVE_NAME), EXPECTED.bytes);
+  if (!archiveBytes || archiveBytes.length !== EXPECTED.bytes || sha256(archiveBytes) !== EXPECTED.sha256) {
     return { error: "archive_refused" };
   }
-  if (!discovery.ok || !source.ok || !archive.ok || !discoveryValue || !sourceValue) return { incomplete: true };
-  return {
-    ready: true,
-    archiveBytes: archive.bytes,
-    discoveryBytes: discovery.bytes,
-    discovery: discoveryValue,
-    descriptorUrl: sourceValue.descriptorUrl,
-  };
+  const members = archiveMembers(archiveBytes);
+  if (!members) return { error: "archive_refused" };
+  const sourceRoot = join(skillRoot(), "client", "source");
+  if (!sourceMatchesArchive(sourceRoot, members)) return { error: "source_refused" };
+  const discoveryBytes = readRegularInside(join("client", "included-discovery.json"), 262144);
+  if (!discoveryBytes) return { error: "source_refused" };
+  const parsed = parseJson(discoveryBytes);
+  if (!parsed.ok || !discoveryMatchesPin(parsed.value)) return { error: "source_refused" };
+  return { archiveBytes, discoveryBytes, discovery: parsed.value };
 }
 
 function containedExtract(clientRoot) {
@@ -585,29 +632,7 @@ async function withVerifiedExtract(archiveBytes, discoveryBytes, timeoutMs, fn) 
 }
 
 function inspectTar(gzipped) {
-  let raw;
-  try { raw = gunzipSync(gzipped, { maxOutputLength: 2_000_000 }); }
-  catch { return { ok: false }; }
-  const names = [];
-  let offset = 0;
-  while (offset + 512 <= raw.length) {
-    const header = raw.subarray(offset, offset + 512);
-    if (header.every((byte) => byte === 0)) break;
-    const name = header.toString("utf8", 0, 100).replace(/\0.*$/, "");
-    const prefix = header.toString("utf8", 345, 500).replace(/\0.*$/, "");
-    const member = prefix ? `${prefix}/${name}` : name;
-    const size = Number.parseInt(header.toString("utf8", 124, 136).replace(/\0.*$/, "").trim(), 8);
-    const typeflag = header[156];
-    if (!member || !Number.isInteger(size) || size < 0 || size > 1_000_000) return { ok: false };
-    if (member.startsWith("/") || member.split("/").includes("..") || member.includes("\\")) return { ok: false };
-    if (typeflag !== 48 && typeflag !== 0) return { ok: false };
-    names.push(member);
-    const end = offset + 512 + size;
-    if (end > raw.length) return { ok: false };
-    offset = offset + 512 + (Math.ceil(size / 512) * 512);
-  }
-  if (!names.includes(EXPECTED.client)) return { ok: false };
-  return { ok: true };
+  return { ok: Boolean(archiveMembers(gzipped)) };
 }
 
 async function readLimited(response, maxBytes) {
@@ -695,18 +720,71 @@ function pathsOverlap(cachePath, privatePath) {
   return false;
 }
 
-function applySaved(observation, state) {
+function applyIncluded(observation, discovery) {
   observation.acquisition = {
-    source: "cache",
+    source: "included",
     sha256: EXPECTED.sha256,
     bytes: EXPECTED.bytes,
     matched: true,
     fetched: false,
   };
   observation.encounter = {
-    descriptorUrl: state.descriptorUrl,
-    schema: typeof state.discovery.schema === "string" ? state.discovery.schema : null,
+    descriptorUrl: null,
+    schema: typeof discovery?.schema === "string" ? discovery.schema : null,
   };
+}
+
+function liveRefused(discovery) {
+  return discovery?.schema !== "samedaydesk.original-task-correspondence.v1"
+    || discovery.deliveryPromise !== false
+    || discovery.payment !== false
+    || discovery.acceptance !== false
+    || discovery.thisDescriptorPerformsNoRequest !== true;
+}
+
+async function openIncluded(observation, flags) {
+  const prepared = prepareCache(flags.get("--cache"));
+  if (prepared.error) return prepared.error;
+  const included = loadIncluded();
+  if (included.error) return included.error;
+  applyIncluded(observation, included.discovery);
+  return { cache: prepared.cache, ...included };
+}
+
+async function readLiveDescriptor(observation, cache, discoveryUrl, timeoutMs) {
+  observation.acquisition = null;
+  observation.encounter = { descriptorUrl: discoveryUrl.href, schema: null };
+  const fetched = await fetchBytes(discoveryUrl, 262144, timeoutMs);
+  if (fetched.error === "redirect_refused") return "redirect_refused";
+  if (fetched.error) return "descriptor_unavailable";
+  let discovery;
+  try { discovery = JSON.parse(fetched.bytes.toString("utf8")); }
+  catch { return "descriptor_unavailable"; }
+  if (!discovery || typeof discovery !== "object" || Array.isArray(discovery)) return "descriptor_unavailable";
+  observation.encounter.schema = typeof discovery.schema === "string" ? discovery.schema : null;
+  const claimed = discovery.acquisition?.archive;
+  if (!discoveryMatchesPin(discovery)) {
+    observation.acquisition = {
+      source: "included",
+      sha256: typeof claimed?.sha256 === "string" ? claimed.sha256 : null,
+      bytes: Number.isInteger(claimed?.bytes) ? claimed.bytes : null,
+      matched: false,
+      fetched: false,
+    };
+    return "stale_discovery";
+  }
+  const wroteDiscovery = writeOwnedFile(cache, DISCOVERY_NAME, fetched.bytes, 0o644);
+  if (wroteDiscovery?.error) return wroteDiscovery.error;
+  const wroteSource = writeOwnedFile(cache, SOURCE_NAME, Buffer.from(`${JSON.stringify({ descriptorUrl: discoveryUrl.href })}\n`), 0o644);
+  if (wroteSource?.error) return wroteSource.error;
+  observation.acquisition = {
+    source: "included",
+    sha256: EXPECTED.sha256,
+    bytes: EXPECTED.bytes,
+    matched: true,
+    fetched: false,
+  };
+  return { discovery, discoveryBytes: fetched.bytes };
 }
 
 function applyDecision(observation, parsed) {
@@ -768,95 +846,9 @@ function parseClient(result) {
   }
 }
 
-async function acquireInto(observation, cache, discoveryUrl, timeoutMs) {
-  const fetched = await fetchBytes(discoveryUrl, 262144, timeoutMs);
-  observation.encounter = { descriptorUrl: discoveryUrl.href, schema: null };
-  if (fetched.error === "redirect_refused") return "redirect_refused";
-  if (fetched.error) return "descriptor_unavailable";
-  let discovery;
-  try { discovery = JSON.parse(fetched.bytes.toString("utf8")); }
-  catch { return "descriptor_unavailable"; }
-  if (!discovery || typeof discovery !== "object" || Array.isArray(discovery)) return "descriptor_unavailable";
-  observation.encounter.schema = typeof discovery.schema === "string" ? discovery.schema : null;
-  const claimed = discovery.acquisition?.archive;
-  if (!claimed || claimed.sha256 !== EXPECTED.sha256 || claimed.bytes !== EXPECTED.bytes || claimed.path !== EXPECTED.archivePath) {
-    observation.acquisition = {
-      source: "public-archive",
-      sha256: typeof claimed?.sha256 === "string" ? claimed.sha256 : null,
-      bytes: Number.isInteger(claimed?.bytes) ? claimed.bytes : null,
-      matched: false,
-      fetched: false,
-    };
-    return "stale_discovery";
-  }
-  const archiveUrl = allowedArchive(claimed.url, discoveryUrl);
-  if (!archiveUrl) return "archive_refused";
-  const archive = await fetchBytes(archiveUrl, EXPECTED.bytes, timeoutMs);
-  if (archive.error === "redirect_refused") return "redirect_refused";
-  if (!archive.ok) {
-    observation.acquisition = {
-      source: "public-archive",
-      sha256: null,
-      bytes: null,
-      matched: false,
-      fetched: true,
-    };
-    return "archive_refused";
-  }
-  const digest = sha256(archive.bytes);
-  if (archive.bytes.length !== EXPECTED.bytes || digest !== EXPECTED.sha256 || !inspectTar(archive.bytes).ok) {
-    observation.acquisition = {
-      source: "public-archive",
-      sha256: digest,
-      bytes: archive.bytes.length,
-      matched: false,
-      fetched: true,
-    };
-    return "archive_refused";
-  }
-  const wroteArchive = writeOwnedFile(cache, ARCHIVE_NAME, archive.bytes, 0o644);
-  if (wroteArchive?.error) return wroteArchive.error;
-  const wroteDiscovery = writeOwnedFile(cache, DISCOVERY_NAME, fetched.bytes, 0o644);
-  if (wroteDiscovery?.error) return wroteDiscovery.error;
-  const wroteSource = writeOwnedFile(cache, SOURCE_NAME, Buffer.from(`${JSON.stringify({ descriptorUrl: discoveryUrl.href })}\n`), 0o644);
-  if (wroteSource?.error) return wroteSource.error;
-  observation.acquisition = {
-    source: "public-archive",
-    sha256: digest,
-    bytes: archive.bytes.length,
-    matched: true,
-    fetched: true,
-  };
-  return {
-    cache,
-    archiveBytes: archive.bytes,
-    discoveryBytes: fetched.bytes,
-  };
-}
-
-async function ensure(observation, flags, timeoutMs, { fetchable }) {
-  const prepared = prepareCache(flags.get("--cache"));
-  if (prepared.error) return prepared.error;
-  const refresh = flags.get("--refresh") === "yes";
-  if (!refresh) {
-    const state = classifyCache(prepared.cache);
-    if (state.error) return state.error;
-    if (state.ready) {
-      applySaved(observation, state);
-      return {
-        cache: prepared.cache,
-        archiveBytes: state.archiveBytes,
-        discoveryBytes: state.discoveryBytes,
-      };
-    }
-  }
-  if (!fetchable) return "cache_required";
-  const discoveryValue = flags.get("--discovery-url") || `${EXPECTED.origin}${EXPECTED.discoveryPath}`;
-  const discoveryUrl = allowedDiscovery(discoveryValue);
-  if (!discoveryUrl) return "origin_refused";
-  const acquired = await acquireInto(observation, prepared.cache, discoveryUrl, timeoutMs);
-  if (typeof acquired === "string") return acquired;
-  return acquired;
+function discoveryUrlOf(flags, { required }) {
+  if (!flags.has("--discovery-url")) return required ? `${EXPECTED.origin}${EXPECTED.discoveryPath}` : null;
+  return flags.get("--discovery-url");
 }
 
 async function proveExtract(observation, ensured, timeoutMs) {
@@ -869,9 +861,13 @@ async function proveExtract(observation, ensured, timeoutMs) {
 async function commandAcquire(observation, flags, timeoutMs) {
   const rejected = unknownFlag(flags, ["--cache", "--discovery-url", "--timeout-ms", "--refresh"]);
   if (rejected) return fail(observation, rejected);
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const failed = await proveExtract(observation, ensured, timeoutMs);
+  const opened = await openIncluded(observation, flags);
+  if (typeof opened === "string") return fail(observation, opened);
+  const discoveryUrl = allowedDiscovery(discoveryUrlOf(flags, { required: true }));
+  if (!discoveryUrl) return fail(observation, "origin_refused");
+  const live = await readLiveDescriptor(observation, opened.cache, discoveryUrl, timeoutMs);
+  if (typeof live === "string") return fail(observation, live);
+  const failed = await proveExtract(observation, opened, timeoutMs);
   if (failed) return fail(observation, failed);
   emit(observation);
 }
@@ -879,9 +875,9 @@ async function commandAcquire(observation, flags, timeoutMs) {
 async function commandDescribe(observation, flags, timeoutMs) {
   const rejected = unknownFlag(flags, ["--cache", "--discovery-url", "--timeout-ms", "--refresh"]);
   if (rejected) return fail(observation, rejected);
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+  const opened = await openIncluded(observation, flags);
+  if (typeof opened === "string") return fail(observation, opened);
+  const ran = await withVerifiedExtract(opened.archiveBytes, opened.discoveryBytes, timeoutMs, (paths) => {
     observation.install = { clientExtracted: true, client: EXPECTED.client };
     return runClient(paths.clientRoot, ["describe"], timeoutMs);
   });
@@ -901,9 +897,18 @@ async function commandMap(observation, flags, timeoutMs) {
     if (pathsOverlap(flags.get("--cache"), directory)) return fail(observation, "cache_private_overlap");
     if (existsPath(directory) && !outsideSkill(directory)) return fail(observation, "arguments_rejected");
   }
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+  const opened = await openIncluded(observation, flags);
+  if (typeof opened === "string") return fail(observation, opened);
+  let discoveryBytes = opened.discoveryBytes;
+  const requested = discoveryUrlOf(flags, { required: false });
+  if (requested) {
+    const discoveryUrl = allowedDiscovery(requested);
+    if (!discoveryUrl) return fail(observation, "origin_refused");
+    const live = await readLiveDescriptor(observation, opened.cache, discoveryUrl, timeoutMs);
+    if (typeof live === "string") return fail(observation, live);
+    discoveryBytes = live.discoveryBytes;
+  }
+  const ran = await withVerifiedExtract(opened.archiveBytes, discoveryBytes, timeoutMs, (paths) => {
     observation.install = { clientExtracted: true, client: EXPECTED.client };
     const args = ["map", "--discovery-file", paths.discoveryPath, "--archive", paths.archivePath, "--task-file", taskFile];
     if (flags.has("--directory")) args.push("--directory", flags.get("--directory"));
@@ -931,9 +936,17 @@ async function commandSubmit(observation, flags, timeoutMs) {
     return fail(observation, directoryInfo?.isSymbolicLink() ? "missing_private_authority" : "arguments_required");
   }
   if (!outsideSkill(directory)) return fail(observation, "arguments_rejected");
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: true });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+  const opened = await openIncluded(observation, flags);
+  if (typeof opened === "string") return fail(observation, opened);
+  const requested = discoveryUrlOf(flags, { required: false });
+  if (requested) {
+    const discoveryUrl = allowedDiscovery(requested);
+    if (!discoveryUrl) return fail(observation, "origin_refused");
+    const live = await readLiveDescriptor(observation, opened.cache, discoveryUrl, timeoutMs);
+    if (typeof live === "string") return fail(observation, live);
+    if (liveRefused(live.discovery)) return fail(observation, "stale_discovery");
+  }
+  const ran = await withVerifiedExtract(opened.archiveBytes, opened.discoveryBytes, timeoutMs, (paths) => {
     observation.install = { clientExtracted: true, client: EXPECTED.client };
     return runClient(paths.clientRoot, [
       "submit",
@@ -959,9 +972,9 @@ async function commandRead(observation, flags, timeoutMs) {
   if (directoryInfo?.isSymbolicLink()) return fail(observation, "missing_private_authority");
   if (directoryInfo && !outsideSkill(directory)) return fail(observation, "arguments_rejected");
   const repeat = continuationPresent(directory);
-  const ensured = await ensure(observation, flags, timeoutMs, { fetchable: false });
-  if (typeof ensured === "string") return fail(observation, ensured);
-  const ran = await withVerifiedExtract(ensured.archiveBytes, ensured.discoveryBytes, timeoutMs, (paths) => {
+  const opened = await openIncluded(observation, flags);
+  if (typeof opened === "string") return fail(observation, opened);
+  const ran = await withVerifiedExtract(opened.archiveBytes, opened.discoveryBytes, timeoutMs, (paths) => {
     observation.install = { clientExtracted: true, client: EXPECTED.client };
     return runClient(paths.clientRoot, ["read", "--directory", directory], timeoutMs);
   });
