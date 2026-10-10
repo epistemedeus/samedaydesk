@@ -16,7 +16,7 @@ export function apexAgentCard() {
   return {
     protocolVersion: "0.3.0",
     name: "SameDayDesk",
-    description: "Free apex agent tools for AI readiness and agent readiness. Paid machine-commerce tools stay on https://agents.samedaydesk.com/.well-known/agent-card.json.",
+    description: "Free apex agent tools for AI readiness and agent readiness. Paid machine-commerce tools stay on https://agents.samedaydesk.com/.well-known/agent-card.json. The original-task correspondence interface is a no-spend next action, not an MCP skill and not a payment tool.",
     url: `${APEX_ORIGIN}/mcp`,
     version: "1.2.0",
     interfaces: [
@@ -24,7 +24,11 @@ export function apexAgentCard() {
       { transport: "HTTP", url: `${APEX_ORIGIN}/agent-readiness` },
       { transport: "HTTP", url: `${APEX_ORIGIN}/openapi.json` },
       { transport: "HTTP", url: `${APEX_ORIGIN}/skill.md` },
-      { transport: "HTTP", url: `${APEX_ORIGIN}/discovery/original-task-correspondence.json` },
+      {
+        transport: "HTTP",
+        url: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`,
+        description: "No-spend original-task correspondence descriptor. Not an MCP skill and not a payment tool.",
+      },
     ],
     skills: MCP_TOOL_NAMES.map((name) => ({
       id: name,
