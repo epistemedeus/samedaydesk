@@ -127,7 +127,8 @@
           "enum": [
             "moltjobs",
             "x402stats",
-            "smithery_mcp"
+            "smithery_mcp",
+            "moltjobs_open_jobs"
           ]
         },
         "sourceKind": {

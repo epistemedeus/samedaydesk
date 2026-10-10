@@ -518,7 +518,7 @@ test("registry listSources ids are unique when SDS-CORE registry is present", as
   const listed = normalizeSourceList(await registry.listSources());
   assert.ok(listed.length >= 1);
   assertUniqueSourceIds(listed.map((row) => row.sourceId), "registry.listSources");
-  assert.deepEqual(listed.map((row) => row.sourceId).sort(), ["moltjobs", "smithery_mcp", "x402stats"]);
+  assert.deepEqual(listed.map((row) => row.sourceId).sort(), ["moltjobs", "moltjobs_open_jobs", "smithery_mcp", "x402stats"]);
   for (const row of listed) {
     assert.match(row.sourceId, /^[A-Za-z0-9._-]+$/);
   }
@@ -534,6 +534,12 @@ test("capture uses registry runtime adapters with injectable fetch, not reimplem
   const fetchImpl = async (url, init = {}) => {
     calls.push({ url: String(url), ua: init.headers && init.headers["User-Agent"] });
     const href = String(url);
+    if (href.includes("/v1/jobs?")) {
+      return jsonResponse({
+        data: [{ status: "OPEN", purpose: "PLATFORM_REFERRAL", funded: true, requiredSkills: [], preferredSkills: [] }],
+        meta: { hasMore: false, limit: 20 },
+      });
+    }
     if (href.includes("api.moltjobs.io")) {
       return jsonResponse({
         data: {
@@ -581,7 +587,7 @@ test("capture uses registry runtime adapters with injectable fetch, not reimplem
   assert.equal(result.manifest.captureId, "20260909T230000Z");
   assert.deepEqual(
     result.manifest.sources.map((row) => row.sourceId).sort(),
-    ["moltjobs", "smithery_mcp", "x402stats"],
+    ["moltjobs", "moltjobs_open_jobs", "smithery_mcp", "x402stats"],
   );
   assert.equal(calls.length >= 3, true);
   assert.ok(calls.every((call) => call.ua === "SameDayDeskObservatory/0.1"));

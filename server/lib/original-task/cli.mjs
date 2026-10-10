@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { chmodSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { chmodSync, existsSync, lstatSync, readFileSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { mapOriginalTask } from "./action.mjs";
 import { originalTaskDescriptor } from "./descriptor.mjs";
 import { OriginalTaskError, publicReceipt, taskRequest } from "./envelope.mjs";
 import { postOriginalTask, readOriginalTask, reconcileOriginalTask, registerOriginalTask } from "./client.mjs";
@@ -78,6 +79,101 @@ async function submit(rest) {
   }
 }
 
+function regularFile(file) {
+  try {
+    const info = lstatSync(file);
+    return info.isFile() ? info : null;
+  } catch {
+    return null;
+  }
+}
+
+function symlinkComponent(file) {
+  const absolute = resolve(file);
+  let current = absolute.startsWith("/") ? "/" : "";
+  for (const part of absolute.split(/[\\/]+/).filter(Boolean)) {
+    current = join(current, part);
+    let info;
+    try { info = lstatSync(current); }
+    catch (error) {
+      if (error?.code === "ENOENT") return false;
+      return true;
+    }
+    if (info.isSymbolicLink()) return true;
+  }
+  return false;
+}
+
+function directoryState(directory) {
+  if (!directory) return { provided: false, exists: false, hasAuthority: false, projectId: null, conflict: false };
+  let info;
+  try { info = lstatSync(directory); }
+  catch { return { provided: true, exists: false, hasAuthority: false, projectId: null, conflict: false }; }
+  if (!info.isDirectory() || symlinkComponent(directory)) {
+    return {
+      provided: true,
+      exists: info.isDirectory() || info.isSymbolicLink(),
+      hasAuthority: false,
+      projectId: null,
+      conflict: false,
+    };
+  }
+  const attempt = regularFile(join(directory, "attempt.json"));
+  const secretInfo = regularFile(join(directory, "registration.secret"));
+  const secret = Boolean(secretInfo && secretInfo.size >= 32 && secretInfo.size <= 200);
+  let projectId = null;
+  const continuationInfo = regularFile(join(directory, "continuation.json"));
+  if (continuationInfo) {
+    try {
+      const continuation = JSON.parse(readFileSync(join(directory, "continuation.json"), "utf8"));
+      if (typeof continuation.projectId === "string" && /^prj_[\w-]{16}$/.test(continuation.projectId)) {
+        projectId = continuation.projectId;
+      }
+    } catch { projectId = null; }
+  }
+  let conflict = false;
+  const receiptPath = join(directory, "receipt.json");
+  if (existsSync(receiptPath)) {
+    const receiptInfo = regularFile(receiptPath);
+    if (!receiptInfo) conflict = true;
+    else {
+      try {
+        const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+        if (typeof receipt.projectId === "string" && projectId && receipt.projectId !== projectId) conflict = true;
+      } catch { conflict = true; }
+    }
+  }
+  const hasAuthority = Boolean(attempt) && secret && projectId !== null && !conflict;
+  return { provided: true, exists: true, hasAuthority, projectId: hasAuthority ? projectId : null, conflict };
+}
+
+function mapCommand(rest) {
+  const flags = flagsOf(rest);
+  const discoveryFile = flags.get("--discovery-file");
+  const taskFile = flags.get("--task-file");
+  if (!discoveryFile || !taskFile) return fail("arguments_required");
+  let discovery;
+  let body;
+  try { discovery = JSON.parse(readFileSync(discoveryFile, "utf8")); }
+  catch { return fail("stale_discovery"); }
+  try { body = JSON.parse(readFileSync(taskFile, "utf8")); }
+  catch { return fail("invalid_task"); }
+  let archive = null;
+  const archiveFile = flags.get("--archive");
+  if (archiveFile) {
+    try { archive = readFileSync(archiveFile); }
+    catch { return fail("archive_refused"); }
+  }
+  const result = mapOriginalTask({
+    discovery,
+    body,
+    archive,
+    directory: directoryState(flags.get("--directory")),
+    handle: flags.has("--handle") ? flags.get("--handle") : null,
+  });
+  console.log(JSON.stringify(result));
+}
+
 async function read(rest) {
   const directory = flagsOf(rest).get("--directory");
   if (!directory) return fail("arguments_required");
@@ -115,6 +211,7 @@ async function main() {
   }
   if (command === "submit") return submit(rest);
   if (command === "read") return read(rest);
+  if (command === "map") return mapCommand(rest);
   return fail("invalid_command");
 }
 

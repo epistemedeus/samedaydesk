@@ -9,6 +9,7 @@ import {
 } from "../routes/observatory.js";
 import { SCHEMA_VERSION } from "../lib/observatory/contract.js";
 import { MOLTJOBS_STATS_SOURCE_URL } from "../lib/market-observations/moltjobs-stats-adapter.js";
+import { upstreamUrl as OPEN_JOBS_UPSTREAM } from "../lib/observatory/adapters/moltjobs-open-jobs.js";
 import {
   descriptor as moltjobsDescriptor,
   observe as observeMoltjobsAdapter,
@@ -32,6 +33,18 @@ const URLS = Object.freeze({
   moltjobs: MOLTJOBS_STATS_SOURCE_URL,
   x402stats: "https://x402stats.io/api/stats",
   smithery: "https://api.smithery.ai/servers?pageSize=1",
+  openJobs: OPEN_JOBS_UPSTREAM,
+});
+
+const OPEN_JOBS_FIXTURE = Object.freeze({
+  data: Object.freeze([{
+    status: "OPEN",
+    purpose: "PLATFORM_REFERRAL",
+    funded: true,
+    requiredSkills: Object.freeze([]),
+    preferredSkills: Object.freeze([]),
+  }]),
+  meta: Object.freeze({ hasMore: false, limit: 20 }),
 });
 
 const PAID_ACTIVITY_KEYS = Object.freeze([
@@ -221,6 +234,7 @@ function createRoutedFetch(handlers = {}) {
     if (u === URLS.smithery) {
       return jsonResponse(SMITHERY_FIXTURE, 200, { "last-modified": SMITHERY_LAST_MODIFIED });
     }
+    if (u === URLS.openJobs) return jsonResponse(OPEN_JOBS_FIXTURE);
     throw new Error(`unexpected upstream ${u}`);
   };
   fetchImpl.calls = calls;
@@ -746,7 +760,7 @@ test("GET /sources/moltjobs and /snapshot fetch fixture, echo CORS, stay not_add
   assertNoCrossSourceTotals(denied.body);
   assertValidSchema(denied.body, "http snapshot");
   const ids = denied.body.observations.map((item) => item.sourceId).sort();
-  assert.deepEqual(ids, ["moltjobs", "smithery_mcp", "x402stats"]);
+  assert.deepEqual(ids, ["moltjobs", "moltjobs_open_jobs", "smithery_mcp", "x402stats"]);
 
   const moltjobs = denied.body.observations.find((item) => item.sourceId === "moltjobs");
   const x402 = denied.body.observations.find((item) => item.sourceId === "x402stats");
