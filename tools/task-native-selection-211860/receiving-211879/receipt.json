@@ -1,0 +1,170 @@
+{
+  "schema": "samedaydesk.task-native-useful-consumer.receipt.v1",
+  "feature": "codex/task-native-useful-consumer-211879",
+  "sourceFeature": "codex/task-native-selection-211860",
+  "receivedHead": "e79bbe71bb964902ac812335cd722bafd8c0080d",
+  "receivedTree": "5851b2e66d63d13f5447ab9a508648354ca0b490",
+  "base": "d760714c932fd317e1435b528575fecd95594183",
+  "head": "efe688cdb487ce4c8732c543510ba49f9f5124b7",
+  "tree": "12b2cedd8828760c3794b1302cd2eb7821f7017e",
+  "node": "v22.14.0",
+  "ownerQa": true,
+  "independentCustomer": false,
+  "revenue": false,
+  "usefulAcceptance": "not_observed",
+  "completedUserTask": false,
+  "coldInstall": {
+    "packStatus": 0,
+    "installStatus": 0,
+    "consumeStatus": 0,
+    "fetchStatus": 0,
+    "installMs": 351.34503399999994,
+    "totalMs": 3382.3951070000003,
+    "tarball": "samedaydesk-task-native-selection-211860-0.1.2.tgz",
+    "bytes": 121910,
+    "version": "0.1.2"
+  },
+  "upkeep": {
+    "command": "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
+    "source": "tools/l08-agent-repair/MAINT.md",
+    "catalogColdStartExecuted": false,
+    "status": 0,
+    "ms": 2127.4875020000004
+  },
+  "acquisition": {
+    "url": "https://samedaydesk.com/discovery/task-readiness.json",
+    "status": 200,
+    "hops": [
+      {
+        "url": "https://samedaydesk.com/discovery/task-readiness.json",
+        "status": 200
+      }
+    ],
+    "bytes": 3408,
+    "liveSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "snapshotSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "unchangedFromSnapshot": true
+  },
+  "stages": {
+    "query": "accepted",
+    "render": "rendered",
+    "selection": "selected",
+    "execution": "consumer_invoked",
+    "acceptance": "not_observed"
+  },
+  "selection": {
+    "entryId": "discovery:task-readiness",
+    "economicComparison": "known_free",
+    "impliedCheapest": false,
+    "cost": {
+      "state": "known_free",
+      "amount": "0",
+      "currency": "USD",
+      "charged": false,
+      "atomicComparison": null,
+      "conflict": null
+    }
+  },
+  "discoveryQuote": {
+    "state": "no_fit",
+    "reason": "no_eligible_output",
+    "entryId": null,
+    "documentReasons": [
+      "path_absent:data.quote"
+    ],
+    "meaningId": "quote-decimal-label",
+    "meaningIdRole": "task_label",
+    "semanticEquivalence": false
+  },
+  "invocation": {
+    "state": "invoked",
+    "consumer": "runPublicAdapter",
+    "coldStartExecuted": false,
+    "faithfulInvocation": false,
+    "completedUserTask": false,
+    "positive": {
+      "status": 0,
+      "id": "repair-complete",
+      "ok": true
+    },
+    "negative": {
+      "status": 1,
+      "id": "repair-add-required",
+      "ok": false
+    }
+  },
+  "outputValidation": {
+    "ok": true,
+    "reason": "predeclared_check",
+    "positiveMismatches": [],
+    "negativeMismatches": [],
+    "discoveryQuote": "no_fit",
+    "admissibleOnBoth": true,
+    "decisionChanged": true
+  },
+  "ownerUsefulness": {
+    "state": "actionable_finding",
+    "ownerQa": true,
+    "independentCustomer": false,
+    "completedUserTask": false,
+    "accepted": false,
+    "httpStatusIsAcceptance": false,
+    "decisionAdmissibleIsAcceptance": false,
+    "nextAction": "seller_response_required_path_missing:data.quote remains the negative finding; payment was not sent"
+  },
+  "downstreamEffects": {
+    "publicDeploymentActivated": false,
+    "paymentSent": false,
+    "paymentSigned": false,
+    "credentialsUsed": false,
+    "publication": false,
+    "coldStartExecuted": false,
+    "productionMutation": false,
+    "wallet": false,
+    "claimSubmitted": false
+  },
+  "directComparison": {
+    "directMs": 166.324473,
+    "handoffMs": 159.089141,
+    "sameDecision": true,
+    "directPathRetained": true,
+    "savingsClaim": false,
+    "customerTime": false,
+    "note": "The adapter decision is the direct consumer result. Selection qualifies the readiness document and does not replace that call."
+  },
+  "sourceAcquisition": {
+    "pin": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "head": "efe688cdb487ce4c8732c543510ba49f9f5124b7",
+    "coldStartUsedForInvocation": false,
+    "valuePatternEvaluatedBy": "not_invoked",
+    "valuePatternReason": "task_readiness_module_imports_server"
+  },
+  "actual": {
+    "positive": {
+      "id": "repair-complete",
+      "ok": true,
+      "findings": [],
+      "decision": "admissible",
+      "repairComplete": true,
+      "repairActions": [],
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false
+    },
+    "negative": {
+      "id": "repair-add-required",
+      "ok": false,
+      "findings": [
+        "seller_response_required_path_missing:data.quote"
+      ],
+      "decision": "admissible",
+      "repairComplete": false,
+      "repairActions": [
+        "add_property_to_required"
+      ],
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false
+    }
+  }
+}
