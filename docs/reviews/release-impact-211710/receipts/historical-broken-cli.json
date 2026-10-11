@@ -1,0 +1,539 @@
+{
+  "classification": "historical_source_contrast_owner_qa_not_a_new_release_event",
+  "command": [
+    "node",
+    "tools/release-impact-211710/cli.mjs",
+    "--repo",
+    ".",
+    "--installed",
+    "tools/release-impact-211710/fixtures/installed-root-qa.json",
+    "--observation",
+    "tools/release-impact-211710/fixtures/historical-broken-source-observation.json",
+    "--clock",
+    "2026-10-11T03:49:32.826Z",
+    "--horizon-hours",
+    "24",
+    "--out-dir",
+    "docs/reviews/release-impact-211710/receipts/historical-broken-invocation"
+  ],
+  "exitCode": 0,
+  "elapsedSeconds": 0.08530224399873987,
+  "result": {
+    "schema": "samedaydesk.release-impact-211710.result.v1",
+    "repairId": "sds301-archive-refusal-exit",
+    "repository": "epistemedeus/samedaydesk",
+    "ok": true,
+    "outcome": "relevant_change",
+    "reason": "supported_source_or_dependency_changed",
+    "clock": "2026-10-11T03:49:32.826Z",
+    "horizonHours": 24,
+    "installation": {
+      "ref": "d760714c932fd317e1435b528575fecd95594183",
+      "kind": "local_source_cli",
+      "relationship": "owner_qa",
+      "package": {
+        "name": "samedaydesk",
+        "version": "1.0.0",
+        "repairVersion": "source@5713db0158281e7ae61ba84bf86beb92b27de664"
+      },
+      "capturedAt": "2026-10-11T03:42:46.320Z",
+      "source": {
+        "ref": "d760714c932fd317e1435b528575fecd95594183",
+        "tree": "8bdc2f0fedd0aaa13b53b2daeff4d47dd44428d0",
+        "source": {
+          "path": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+          "status": "present",
+          "mode": "100644",
+          "blob": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+          "sha256": "54cb3b33096f3972f81b2badd3a70d10da4c0c1560ce128d5d07467bc14cedb1"
+        },
+        "manifest": {
+          "path": "package.json",
+          "status": "present",
+          "mode": "100644",
+          "blob": "bc52c2283c2edf24430b43c39c09fdbe67a4d4d9",
+          "sha256": "e6e1273fd1ee2a0a2b77904a4e3c00e6713e8d4bb38c458088b76383b650a9a3"
+        },
+        "nodeRequirement": "22.x",
+        "packageVersion": "1.0.0"
+      },
+      "runtime": {
+        "node": "v22.14.0",
+        "tar": "tar (GNU tar) 1.35",
+        "evidenceKind": "local_analysis_host"
+      },
+      "receiptDigest": "3090b73d4753bea3edf88796ad31ca41cc82107e7db186c08c93a8168f967e8e"
+    },
+    "coverage": {
+      "installed": {
+        "sourcePaths": [
+          "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+          "package.json"
+        ],
+        "dependencyNames": [
+          "node",
+          "tar"
+        ],
+        "installedStateComplete": true,
+        "history": null
+      },
+      "observation": {
+        "sourcePaths": [
+          "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+          "package.json"
+        ],
+        "dependencyNames": [
+          "node",
+          "tar"
+        ],
+        "installedStateComplete": false,
+        "history": "two_exact_snapshots_only"
+      }
+    },
+    "comparedRefs": {
+      "from": "d760714c932fd317e1435b528575fecd95594183",
+      "to": "e27a3181ad48a3a9cd6814699dc525761558810d",
+      "fromTree": "8bdc2f0fedd0aaa13b53b2daeff4d47dd44428d0",
+      "toTree": "441d12802a3ef2dc41c977b304b7bc6eb21aa859"
+    },
+    "observationWindow": {
+      "start": "2026-10-11T03:42:46.320Z",
+      "end": "2026-10-11T03:49:32.751Z"
+    },
+    "candidate": {
+      "source": {
+        "ref": "e27a3181ad48a3a9cd6814699dc525761558810d",
+        "tree": "441d12802a3ef2dc41c977b304b7bc6eb21aa859",
+        "source": {
+          "path": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+          "status": "present",
+          "mode": "100644",
+          "blob": "19f3626d1e021b60fddda4acbdf9bd8246076724",
+          "sha256": "62ca4ecda69f35b6a89ab26ff97f165bbc86db41ad52c0f37db32bdb1d524655"
+        },
+        "manifest": {
+          "path": "package.json",
+          "status": "present",
+          "mode": "100644",
+          "blob": "77473d425f460c71bda9534d1b05caf59279e519",
+          "sha256": "745b4b8b068f5b1fa7078d3b75f7dbb3ed2d5c4ab9b3ebe90418059e5b48909e"
+        },
+        "nodeRequirement": "22.x",
+        "packageVersion": "1.0.0"
+      },
+      "runtime": {
+        "node": "v22.14.0",
+        "tar": "tar (GNU tar) 1.35",
+        "evidenceKind": "local_analysis_host"
+      }
+    },
+    "sourceDiff": {
+      "changedPaths": [
+        ".github/workflows/runtime-startup.yml",
+        "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+        "experiments/s260-useful-jobs-public-integration/test/public-acceptance.test.mjs",
+        "package.json",
+        "server/foundry/activation/private-control-pin.json",
+        "server/lib/observatory/contract.js",
+        "server/lib/observatory/convergence-enrollment.js",
+        "server/lib/observatory/convergence.js",
+        "server/lib/observatory/historical-capture.json",
+        "server/lib/observatory/measurement.js",
+        "server/lib/observatory/observation.schema.json",
+        "server/routes/observatory.js",
+        "server/scripts/test-observatory-convergence.js",
+        "server/scripts/test-observatory-measurement.js"
+      ],
+      "unrelatedPaths": [
+        ".github/workflows/runtime-startup.yml",
+        "experiments/s260-useful-jobs-public-integration/test/public-acceptance.test.mjs",
+        "package.json",
+        "server/foundry/activation/private-control-pin.json",
+        "server/lib/observatory/contract.js",
+        "server/lib/observatory/convergence-enrollment.js",
+        "server/lib/observatory/convergence.js",
+        "server/lib/observatory/historical-capture.json",
+        "server/lib/observatory/measurement.js",
+        "server/lib/observatory/observation.schema.json",
+        "server/routes/observatory.js",
+        "server/scripts/test-observatory-convergence.js",
+        "server/scripts/test-observatory-measurement.js"
+      ]
+    },
+    "supportedFieldChanges": [
+      {
+        "field": "sourceBlob",
+        "before": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+        "after": "19f3626d1e021b60fddda4acbdf9bd8246076724"
+      }
+    ],
+    "recipes": {
+      "change": {
+        "ok": true,
+        "schema": "samedaydesk.recurring-job-recipe-result.v1",
+        "recipeId": "source-change-alert",
+        "meta": {
+          "recipeId": "source-change-alert",
+          "userBenefit": "Know when a watched public page's selected fields change since your immutable prior, without buying a subscription or leaving a daemon running.",
+          "operatorSupplies": [
+            "priorPath",
+            "scheduleHint",
+            "fields",
+            "clock",
+            "horizonHours",
+            "current fixture or --live-safe"
+          ],
+          "acceptedContracts": [
+            "pilot.task-commons.page-change-result.v1",
+            "pilot/page-change-brief/v1"
+          ]
+        },
+        "cost": {
+          "primary": {
+            "kind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+            "examples": [
+              {
+                "item": "local page-change compare",
+                "amount": "costs_unknown",
+                "note": "no merchant charge; operator compute not priced here"
+              }
+            ]
+          },
+          "related": [
+            {
+              "kind": "costs_unknown",
+              "asOf": "2026-09-09",
+              "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+              "examples": [
+                {
+                  "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+                  "amount": "costs_unknown",
+                  "note": "no merchant fee; operator egress/CPU not priced here"
+                }
+              ]
+            },
+            {
+              "kind": "sourced",
+              "asOf": "2026-09-09",
+              "source": "https://samedaydesk.com/for-agents",
+              "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+              "examples": [
+                {
+                  "item": "POST /extract/batch",
+                  "amount": "0.01 USDC listed",
+                  "note": "sourced list price only; not invoked by these recipes"
+                }
+              ]
+            }
+          ]
+        },
+        "recovery": {
+          "action": "review_and_sequence",
+          "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.",
+          "detail": {
+            "kind": "field_diff",
+            "source": {
+              "kind": "fixture",
+              "path": "exact-source-observation:fields"
+            },
+            "contentHash": "sha256:6daa9507a44078f6b05b9a3f47dc6c522f99b30eac29f9872e6dc87da99248f6",
+            "status": 200,
+            "changed": [
+              {
+                "field": "sourceBlob",
+                "before": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+                "after": "19f3626d1e021b60fddda4acbdf9bd8246076724"
+              }
+            ],
+            "unchanged": [
+              {
+                "field": "node",
+                "value": "v22.14.0"
+              },
+              {
+                "field": "tar",
+                "value": "tar (GNU tar) 1.35"
+              },
+              {
+                "field": "nodeRequirement",
+                "value": "22.x"
+              }
+            ],
+            "retriesUsed": 0,
+            "attempts": [
+              {
+                "attempt": 1,
+                "ok": true
+              }
+            ]
+          }
+        },
+        "outcome": "changed",
+        "clock": "2026-10-11T03:49:32.826Z",
+        "scheduleHint": "once",
+        "fields": [
+          "sourceBlob",
+          "node",
+          "tar",
+          "nodeRequirement"
+        ],
+        "prior": {
+          "path": "installed-state:immutable-prior",
+          "sha256": "8dd85ab9ac4c3993ab23c902e5a935614b601d6d76f15b8e1d0fc5775abc26f3",
+          "sequence": 1,
+          "createdAt": "2026-10-11T03:42:46.320Z",
+          "immutable": true
+        },
+        "payment": {
+          "ok": true,
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "stale": {
+          "stale": false,
+          "ageHours": 0.11291833333333333,
+          "horizonHours": 24
+        },
+        "evidence": {
+          "kind": "field_diff",
+          "source": {
+            "kind": "fixture",
+            "path": "exact-source-observation:fields"
+          },
+          "contentHash": "sha256:6daa9507a44078f6b05b9a3f47dc6c522f99b30eac29f9872e6dc87da99248f6",
+          "status": 200,
+          "changed": [
+            {
+              "field": "sourceBlob",
+              "before": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+              "after": "19f3626d1e021b60fddda4acbdf9bd8246076724"
+            }
+          ],
+          "unchanged": [
+            {
+              "field": "node",
+              "value": "v22.14.0"
+            },
+            {
+              "field": "tar",
+              "value": "tar (GNU tar) 1.35"
+            },
+            {
+              "field": "nodeRequirement",
+              "value": "22.x"
+            }
+          ],
+          "retriesUsed": 0,
+          "attempts": [
+            {
+              "attempt": 1,
+              "ok": true
+            }
+          ]
+        }
+      },
+      "verification": {
+        "ok": true,
+        "schema": "samedaydesk.recurring-job-recipe-result.v1",
+        "recipeId": "verification-reconcile",
+        "meta": {
+          "recipeId": "verification-reconcile",
+          "userBenefit": "Verify that a later observation still matches the immutable prior, or reconcile partial/error rows without replaying a payment.",
+          "operatorSupplies": [
+            "priorPath",
+            "candidatePath",
+            "scheduleHint",
+            "clock",
+            "horizonHours"
+          ],
+          "acceptedContracts": [
+            "pilot/page-change-brief/v1",
+            "samedaydesk.extract-batch.v0",
+            "samedaydesk evidence reconcile patterns"
+          ]
+        },
+        "cost": {
+          "primary": {
+            "kind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+            "examples": [
+              {
+                "item": "local page-change compare",
+                "amount": "costs_unknown",
+                "note": "no merchant charge; operator compute not priced here"
+              }
+            ]
+          },
+          "related": [
+            {
+              "kind": "sourced",
+              "asOf": "2026-09-09",
+              "source": "https://samedaydesk.com/for-agents",
+              "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+              "examples": [
+                {
+                  "item": "POST /extract/batch",
+                  "amount": "0.01 USDC listed",
+                  "note": "sourced list price only; not invoked by these recipes"
+                }
+              ]
+            }
+          ]
+        },
+        "recovery": {
+          "action": "review_and_sequence",
+          "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.",
+          "detail": {
+            "kind": "verification_reconcile",
+            "candidatePath": "exact-source-observation:fields",
+            "candidateSha256": "6daa9507a44078f6b05b9a3f47dc6c522f99b30eac29f9872e6dc87da99248f6",
+            "priorDigest": {
+              "node": "v22.14.0",
+              "nodeRequirement": "22.x",
+              "sourceBlob": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+              "tar": "tar (GNU tar) 1.35"
+            },
+            "candidateDigest": {
+              "node": "v22.14.0",
+              "nodeRequirement": "22.x",
+              "sourceBlob": "19f3626d1e021b60fddda4acbdf9bd8246076724",
+              "tar": "tar (GNU tar) 1.35"
+            },
+            "mismatches": [
+              {
+                "field": "sourceBlob",
+                "before": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+                "after": "19f3626d1e021b60fddda4acbdf9bd8246076724"
+              }
+            ],
+            "partial": false,
+            "claims": {
+              "noChangeProven": false,
+              "comparable": true,
+              "paymentImpliesUsefulOutput": false,
+              "automaticPaymentReplay": false
+            }
+          }
+        },
+        "outcome": "changed",
+        "clock": "2026-10-11T03:49:32.826Z",
+        "scheduleHint": "once",
+        "prior": {
+          "path": "installed-state:immutable-prior",
+          "sha256": "8dd85ab9ac4c3993ab23c902e5a935614b601d6d76f15b8e1d0fc5775abc26f3",
+          "sequence": 1,
+          "createdAt": "2026-10-11T03:42:46.320Z",
+          "immutable": true
+        },
+        "payment": {
+          "ok": true,
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "stale": {
+          "stale": false,
+          "ageHours": 0.11291833333333333,
+          "horizonHours": 24
+        },
+        "evidence": {
+          "kind": "verification_reconcile",
+          "candidatePath": "exact-source-observation:fields",
+          "candidateSha256": "6daa9507a44078f6b05b9a3f47dc6c522f99b30eac29f9872e6dc87da99248f6",
+          "priorDigest": {
+            "node": "v22.14.0",
+            "nodeRequirement": "22.x",
+            "sourceBlob": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+            "tar": "tar (GNU tar) 1.35"
+          },
+          "candidateDigest": {
+            "node": "v22.14.0",
+            "nodeRequirement": "22.x",
+            "sourceBlob": "19f3626d1e021b60fddda4acbdf9bd8246076724",
+            "tar": "tar (GNU tar) 1.35"
+          },
+          "mismatches": [
+            {
+              "field": "sourceBlob",
+              "before": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+              "after": "19f3626d1e021b60fddda4acbdf9bd8246076724"
+            }
+          ],
+          "partial": false,
+          "claims": {
+            "noChangeProven": false,
+            "comparable": true,
+            "paymentImpliesUsefulOutput": false,
+            "automaticPaymentReplay": false
+          }
+        }
+      }
+    },
+    "currentSourceCheckedLocally": true,
+    "nextCheck": {
+      "owner": "Root",
+      "action": "In an isolated checkout of the exact observed toRef, run the owning public-acquisition suite and inspect the changed source/runtime conditions. Receive an actual installation before sequencing a replacement baseline.",
+      "command": [
+        "npm",
+        "run",
+        "test:useful-jobs-public"
+      ],
+      "taskPredicate": "Archive argument, source, HTTP status, size, digest or extraction refusal returns structured ok:false and exit 1; valid acquisition returns exit 0. Size/digest/status refusal does not extract or execute the archive, and a shell success branch does not continue."
+    },
+    "knowledge": {
+      "applicabilityAuthority": "211400",
+      "correctionValidityChanged": false,
+      "unrelatedKnowledgeDiscarded": false
+    },
+    "effects": {
+      "finiteInvocation": true,
+      "installedStateChanged": false,
+      "paymentAttempted": false,
+      "messagesSent": false,
+      "subscriptionCreated": false
+    },
+    "costs": {
+      "purchasesInitiated": 0,
+      "hostCashCost": "unknown",
+      "includedModelUsage": "not measured by the consumer",
+      "operatorResources": "unknown",
+      "requesterEffort": "unknown",
+      "receivingEffort": "unknown",
+      "supportEffort": "unknown"
+    },
+    "claims": {
+      "sourceImpactOnly": true,
+      "behaviorRegressionProven": false,
+      "candidateInstalled": false,
+      "customerOwnership": "unknown",
+      "outsideAcceptance": "unknown",
+      "savings": "unmeasured",
+      "revenue": "not established",
+      "paymentReconciled": false
+    },
+    "invocationId": "efa630efc2139a38016d9740af266da77affc5ea651d30b7b974343a592ccdac",
+    "inputDigests": {
+      "installedDigest": "a4f764f3145dc70890fcf3a526ede26005198a61d32fd72a2ff16769b1e3811f",
+      "observationDigest": "4c7e0b0400039a3cbb7eff8eabed19aa05f21a44183cfc5ab91a067bc601c3e4",
+      "clock": "2026-10-11T03:49:32.826Z",
+      "horizonHours": 24
+    },
+    "transport": {
+      "kind": "local_file",
+      "attempts": 0
+    },
+    "integritySha256": "304b465828ebd667308136c1fb6224ef89aa0e333b831f110f950e71cb3a00e1",
+    "persisted": {
+      "path": "/home/ubuntu/root211-control/work/211710/docs/reviews/release-impact-211710/receipts/historical-broken-invocation/efa630efc2139a38016d9740af266da77affc5ea651d30b7b974343a592ccdac.result.json",
+      "sha256": "5a0f76273fb8850f7aa4e3f0c2ec999ba67ca782b104f82a10aa97a6f3f3fa46",
+      "bytes": 12926,
+      "status": "written",
+      "priorPreserved": true
+    }
+  },
+  "stderr": ""
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "node",
+    "tools/release-impact-211710/capture-installed.mjs",
+    "--repo",
+    ".",
+    "--ref",
+    "d760714c932fd317e1435b528575fecd95594183",
+    "--clock",
+    "2026-10-11T03:42:46.320Z",
+    "--out",
+    "tools/release-impact-211710/fixtures/installed-root-qa.json"
+  ],
+  "exitCode": 0,
+  "stdout": "{\"ok\":true,\"schema\":\"samedaydesk.release-impact-211710.installed.v1\",\"repairId\":\"sds301-archive-refusal-exit\",\"installedRef\":\"d760714c932fd317e1435b528575fecd95594183\",\"installationKind\":\"local_source_cli\",\"relationship\":\"owner_qa\",\"persisted\":{\"path\":\"/home/ubuntu/root211-control/work/211710/tools/release-impact-211710/fixtures/installed-root-qa.json\",\"sha256\":\"a4f764f3145dc70890fcf3a526ede26005198a61d32fd72a2ff16769b1e3811f\",\"bytes\":5084}}\n",
+  "stderr": ""
+}

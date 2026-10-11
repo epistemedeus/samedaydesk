@@ -1,0 +1,32 @@
+{
+  "classification": "source_contrast_owner_qa_not_customer_or_new_release_demand",
+  "rawRecipe": {
+    "command": [
+      "node",
+      "tools/recurring-job-recipes/cli.mjs",
+      "--recipe",
+      "source-change-alert",
+      "--prior",
+      "<disposable-seam>/prior.json",
+      "--current-fixture",
+      "<disposable-seam>/current.json",
+      "--fields",
+      "releaseRef",
+      "--schedule",
+      "once",
+      "--clock",
+      "2026-10-11T03:49:32.476Z",
+      "--horizon",
+      "24"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"ok\": true,\n  \"schema\": \"samedaydesk.recurring-job-recipe-result.v1\",\n  \"recipeId\": \"source-change-alert\",\n  \"meta\": {\n    \"recipeId\": \"source-change-alert\",\n    \"userBenefit\": \"Know when a watched public page's selected fields change since your immutable prior, without buying a subscription or leaving a daemon running.\",\n    \"operatorSupplies\": [\n      \"priorPath\",\n      \"scheduleHint\",\n      \"fields\",\n      \"clock\",\n      \"horizonHours\",\n      \"current fixture or --live-safe\"\n    ],\n    \"acceptedContracts\": [\n      \"pilot.task-commons.page-change-result.v1\",\n      \"pilot/page-change-brief/v1\"\n    ]\n  },\n  \"cost\": {\n    \"primary\": {\n      \"kind\": \"costs_unknown\",\n      \"asOf\": \"2026-09-09\",\n      \"summary\": \"Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.\",\n      \"examples\": [\n        {\n          \"item\": \"local page-change compare\",\n          \"amount\": \"costs_unknown\",\n          \"note\": \"no merchant charge; operator compute not priced here\"\n        }\n      ]\n    },\n    \"related\": [\n      {\n        \"kind\": \"costs_unknown\",\n        \"asOf\": \"2026-09-09\",\n        \"summary\": \"A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.\",\n        \"examples\": [\n          {\n            \"item\": \"GET https://example.com/ or mounted 127.0.0.1 fixture\",\n            \"amount\": \"costs_unknown\",\n            \"note\": \"no merchant fee; operator egress/CPU not priced here\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"sourced\",\n        \"asOf\": \"2026-09-09\",\n        \"source\": \"https://samedaydesk.com/for-agents\",\n        \"summary\": \"SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.\",\n        \"examples\": [\n          {\n            \"item\": \"POST /extract/batch\",\n            \"amount\": \"0.01 USDC listed\",\n            \"note\": \"sourced list price only; not invoked by these recipes\"\n          }\n        ]\n      }\n    ]\n  },\n  \"recovery\": {\n    \"action\": \"review_and_sequence\",\n    \"operatorNext\": \"Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.\",\n    \"detail\": {\n      \"kind\": \"field_diff\",\n      \"source\": {\n        \"kind\": \"fixture\",\n        \"path\": \"<disposable-seam>/current.json\"\n      },\n      \"contentHash\": \"sha256:bc5414a99cd1c028654862ef373436a4d316af4caddcd30e92dd8dc7fd29c4b4\",\n      \"status\": 200,\n      \"changed\": [\n        {\n          \"field\": \"releaseRef\",\n          \"before\": \"d760714c932fd317e1435b528575fecd95594183\",\n          \"after\": \"5713db0158281e7ae61ba84bf86beb92b27de664\"\n        }\n      ],\n      \"unchanged\": [],\n      \"retriesUsed\": 0,\n      \"attempts\": [\n        {\n          \"attempt\": 1,\n          \"ok\": true\n        }\n      ]\n    }\n  },\n  \"outcome\": \"changed\",\n  \"clock\": \"2026-10-11T03:49:32.476Z\",\n  \"scheduleHint\": \"once\",\n  \"fields\": [\n    \"releaseRef\"\n  ],\n  \"prior\": {\n    \"path\": \"<disposable-seam>/prior.json\",\n    \"sha256\": \"0280d1f3fdb75ebcf8f115156f2fc34ed3bf2319f55a1e59feeaaa79851aa722\",\n    \"sequence\": 1,\n    \"createdAt\": \"2026-10-11T03:42:46.320Z\",\n    \"immutable\": true\n  },\n  \"payment\": {\n    \"ok\": true,\n    \"attempted\": false,\n    \"replayBlocked\": true,\n    \"hasPriorReceipt\": false\n  },\n  \"stale\": {\n    \"stale\": false,\n    \"ageHours\": 0.11282111111111111,\n    \"horizonHours\": 24\n  },\n  \"evidence\": {\n    \"kind\": \"field_diff\",\n    \"source\": {\n      \"kind\": \"fixture\",\n      \"path\": \"<disposable-seam>/current.json\"\n    },\n    \"contentHash\": \"sha256:bc5414a99cd1c028654862ef373436a4d316af4caddcd30e92dd8dc7fd29c4b4\",\n    \"status\": 200,\n    \"changed\": [\n      {\n        \"field\": \"releaseRef\",\n        \"before\": \"d760714c932fd317e1435b528575fecd95594183\",\n        \"after\": \"5713db0158281e7ae61ba84bf86beb92b27de664\"\n      }\n    ],\n    \"unchanged\": [],\n    \"retriesUsed\": 0,\n    \"attempts\": [\n      {\n        \"attempt\": 1,\n        \"ok\": true\n      }\n    ]\n  },\n  \"persisted\": {\n    \"ok\": true,\n    \"skipped\": true\n  },\n  \"neomorphic\": null\n}\n",
+    "stderr": ""
+  },
+  "installedRepairConsumer": {
+    "result": "unchanged",
+    "reason": "unrelated_source_change_supported_closure_unchanged",
+    "receipt": "historical-unrelated-cli.json"
+  },
+  "residual": "Generic selected releaseRef comparison correctly reports a label change. It does not decide whether the installed accepted repair closure changed, require installation acceptance, or retain a repair-specific next check. The bounded consumer provides those meanings without changing the recipe or retained applicability authority."
+}

@@ -1,0 +1,500 @@
+
+> samedaydesk@1.0.0 test:recurring-job-recipes
+> node --test tools/recurring-job-recipes/test/*.test.mjs
+
+TAP version 13
+# Subtest: CLI --list includes documented unchanged / partial / verification recipes
+ok 1 - CLI --list includes documented unchanged / partial / verification recipes
+  ---
+  duration_ms: 43.160234
+  ...
+# Subtest: documented CLI source-change-alert fixture is unchanged and exits 0
+ok 2 - documented CLI source-change-alert fixture is unchanged and exits 0
+  ---
+  duration_ms: 45.373363
+  ...
+# Subtest: documented CLI comparable-record-extraction fixture is partial and exits 0
+ok 3 - documented CLI comparable-record-extraction fixture is partial and exits 0
+  ---
+  duration_ms: 41.915751
+  ...
+# Subtest: documented CLI verification-reconcile fixture is unchanged and exits 0
+ok 4 - documented CLI verification-reconcile fixture is unchanged and exits 0
+  ---
+  duration_ms: 38.576037
+  ...
+# Subtest: CLI verification-reconcile changed candidate exits 0 with mismatches
+ok 5 - CLI verification-reconcile changed candidate exits 0 with mismatches
+  ---
+  duration_ms: 39.2603
+  ...
+# Subtest: CLI verification-reconcile payment replay is blocked (non-zero exit, no replay)
+ok 6 - CLI verification-reconcile payment replay is blocked (non-zero exit, no replay)
+  ---
+  duration_ms: 36.053551
+  ...
+# Subtest: published /for-agents contracts match recipes/vendor C31/C34
+ok 7 - published /for-agents contracts match recipes/vendor C31/C34
+  ---
+  duration_ms: 1.231443
+  ...
+# Subtest: local merchant root and packages resolve without MERCHANT_INPUT_ROOT or network
+ok 8 - local merchant root and packages resolve without MERCHANT_INPUT_ROOT or network
+  ---
+  duration_ms: 43.237887
+  ...
+# Subtest: local merchant modules export the published C31/C34 field lists
+ok 9 - local merchant modules export the published C31/C34 field lists
+  ---
+  duration_ms: 8.115601
+  ...
+# Subtest: local mocked HTTP serves published C31/C34 routes
+ok 10 - local mocked HTTP serves published C31/C34 routes
+  ---
+  duration_ms: 90.802819
+  ...
+# Subtest: Neomorphic preview of a recipe result is local, execute:false, and credential-free
+ok 11 - Neomorphic preview of a recipe result is local, execute:false, and credential-free
+  ---
+  duration_ms: 5.528398
+  ...
+# Subtest: paid-prior recipe results and persistResult never copy receipt or authorization ids
+ok 12 - paid-prior recipe results and persistResult never copy receipt or authorization ids
+  ---
+  duration_ms: 4.703205
+  ...
+# Subtest: page-change and extract-batch pass-through exports omit payment credentials
+ok 13 - page-change and extract-batch pass-through exports omit payment credentials
+  ---
+  duration_ms: 2.720214
+  ...
+# Subtest: CLI neomorphic preview of payment-replay candidate does not echo credentials
+ok 14 - CLI neomorphic preview of payment-replay candidate does not echo credentials
+  ---
+  duration_ms: 44.714027
+  ...
+# Subtest: buyer-setup neo export keeps hostile 402 payment headers out of the observation
+ok 15 - buyer-setup neo export keeps hostile 402 payment headers out of the observation
+  ---
+  duration_ms: 8.120616
+  ...
+# Subtest: client for-agents copy does not embed payment credentials
+ok 16 - client for-agents copy does not embed payment credentials
+  ---
+  duration_ms: 0.889266
+  ...
+# Subtest: fetchLiveSafe uses manual redirect mode and rejects 3xx even to the allowlist
+ok 17 - fetchLiveSafe uses manual redirect mode and rejects 3xx even to the allowlist
+  ---
+  duration_ms: 0.972346
+  ...
+# Subtest: fetchLiveSafe rejects 301/302/303/307/308 without following Location
+ok 18 - fetchLiveSafe rejects 301/302/303/307/308 without following Location
+  ---
+  duration_ms: 0.897432
+  ...
+# Subtest: fetchLiveSafe revalidates the final response URL against the allowlist
+ok 19 - fetchLiveSafe revalidates the final response URL against the allowlist
+  ---
+  duration_ms: 0.150943
+  ...
+# Subtest: fetchLiveSafe rejects an allowlisted request whose 200 final URL left the allowlist
+ok 20 - fetchLiveSafe rejects an allowlisted request whose 200 final URL left the allowlist
+  ---
+  duration_ms: 0.198747
+  ...
+# Subtest: fetchLiveSafe rejects the initial URL before calling fetch
+ok 21 - fetchLiveSafe rejects the initial URL before calling fetch
+  ---
+  duration_ms: 0.236856
+  ...
+# Subtest: fetchLiveSafe rejects mounted origins unless allowMountedOrigin is set
+ok 22 - fetchLiveSafe rejects mounted origins unless allowMountedOrigin is set
+  ---
+  duration_ms: 0.472127
+  ...
+# Subtest: fetchLiveSafe refuses declared bodies over 1MiB without reading them
+ok 23 - fetchLiveSafe refuses declared bodies over 1MiB without reading them
+  ---
+  duration_ms: 0.280808
+  ...
+# Subtest: fetchLiveSafe enforces the 1MiB bound on the streamed body and cancels the reader
+ok 24 - fetchLiveSafe enforces the 1MiB bound on the streamed body and cancels the reader
+  ---
+  duration_ms: 3.228566
+  ...
+# Subtest: fetchLiveSafe accepts a streamed body of exactly 1MiB
+ok 25 - fetchLiveSafe accepts a streamed body of exactly 1MiB
+  ---
+  duration_ms: 3.024367
+  ...
+# Subtest: policy failures are non-retryable through withRetries and recipe observe
+ok 26 - policy failures are non-retryable through withRetries and recipe observe
+  ---
+  duration_ms: 1.643805
+  ...
+# Subtest: transient 503 remains retryable unlike policy failures
+ok 27 - transient 503 remains retryable unlike policy failures
+  ---
+  duration_ms: 0.397689
+  ...
+# Subtest: extractComparableFields treats blank title and h1 as missing
+ok 28 - extractComparableFields treats blank title and h1 as missing
+  ---
+  duration_ms: 0.62931
+  ...
+# Subtest: comparable-record-extraction keeps partial rows and surfaces all-missing as empty_extract
+ok 29 - comparable-record-extraction keeps partial rows and surfaces all-missing as empty_extract
+  ---
+  duration_ms: 1.595118
+  ...
+# Subtest: all-missing-only comparable extraction is an error, not silent success
+ok 30 - all-missing-only comparable extraction is an error, not silent success
+  ---
+  duration_ms: 0.25843
+  ...
+# Subtest: live-safe all-missing and live-safe partial rows stay classified
+ok 31 - live-safe all-missing and live-safe partial rows stay classified
+  ---
+  duration_ms: 0.667291
+  ...
+# Subtest: S25 merchant package contract rejects non-x402-merchant trees
+ok 32 - S25 merchant package contract rejects non-x402-merchant trees
+  ---
+  duration_ms: 1.723494
+  ...
+# Subtest: mounted merchant E2E against C31/C34 contracts
+    # Subtest: S25 merchant package contract
+    ok 1 - S25 merchant package contract
+      ---
+      duration_ms: 0.508747
+      ...
+    # Subtest: mounted origin binds loopback only
+    ok 2 - mounted origin binds loopback only
+      ---
+      duration_ms: 0.344786
+      ...
+    # Subtest: C31 official CLI matches mounted HTTP unchanged semantics
+    ok 3 - C31 official CLI matches mounted HTTP unchanged semantics
+      ---
+      duration_ms: 115.065753
+      ...
+    # Subtest: C31 changed customer-job and C34 skills index are discoverable
+    ok 4 - C31 changed customer-job and C34 skills index are discoverable
+      ---
+      duration_ms: 12.161259
+      ...
+    # Subtest: recurring recipes across mounted fixture HTML and payment guard
+    ok 5 - recurring recipes across mounted fixture HTML and payment guard
+      ---
+      duration_ms: 9.269372
+      ...
+    # Subtest: persistResult leaves immutable prior bytes untouched
+    ok 6 - persistResult leaves immutable prior bytes untouched
+      ---
+      duration_ms: 1.104737
+      ...
+    # Subtest: C34 official record CLI validates extract-batch.v0 fixture
+    ok 7 - C34 official record CLI validates extract-batch.v0 fixture
+      ---
+      duration_ms: 138.663326
+      ...
+    1..7
+ok 33 - mounted merchant E2E against C31/C34 contracts
+  ---
+  duration_ms: 391.293917
+  ...
+# Subtest: lists six runnable recipes with user benefit and operator inputs
+ok 34 - lists six runnable recipes with user benefit and operator inputs
+  ---
+  duration_ms: 0.735598
+  ...
+# Subtest: source-change-alert reports unchanged against immutable prior
+ok 35 - source-change-alert reports unchanged against immutable prior
+  ---
+  duration_ms: 0.730881
+  ...
+# Subtest: source-change-alert reports changed fields with review recovery
+ok 36 - source-change-alert reports changed fields with review recovery
+  ---
+  duration_ms: 0.444614
+  ...
+# Subtest: stale baseline is flagged instead of silent compare
+ok 37 - stale baseline is flagged instead of silent compare
+  ---
+  duration_ms: 0.370501
+  ...
+# Subtest: retries transient observe failures then surfaces error evidence
+ok 38 - retries transient observe failures then surfaces error evidence
+  ---
+  duration_ms: 0.363063
+  ...
+# Subtest: comparable-record-extraction keeps partial rows visible
+ok 39 - comparable-record-extraction keeps partial rows visible
+  ---
+  duration_ms: 1.15698
+  ...
+# Subtest: verification-reconcile detects unchanged and changed candidates
+ok 40 - verification-reconcile detects unchanged and changed candidates
+  ---
+  duration_ms: 0.54939
+  ...
+# Subtest: no automatic replay of a payment from prior or candidate
+ok 41 - no automatic replay of a payment from prior or candidate
+  ---
+  duration_ms: 0.370613
+  ...
+# Subtest: immutable prior cannot be overwritten; sequenced artifact is written beside it
+ok 42 - immutable prior cannot be overwritten; sequenced artifact is written beside it
+  ---
+  duration_ms: 0.941755
+  ...
+# Subtest: persistResult writes evidence report without mutating the prior file
+ok 43 - persistResult writes evidence report without mutating the prior file
+  ---
+  duration_ms: 0.994106
+  ...
+# Subtest: CLI dry-run fixtures exit 0 for unchanged and list recipes
+ok 44 - CLI dry-run fixtures exit 0 for unchanged and list recipes
+  ---
+  duration_ms: 80.795691
+  ...
+# Subtest: live-safe mock fetch path works without paid calls
+ok 45 - live-safe mock fetch path works without paid calls
+  ---
+  duration_ms: 0.639556
+  ...
+# Subtest: live-safe fetch rejects redirects outside the allowlist without retrying
+ok 46 - live-safe fetch rejects redirects outside the allowlist without retrying
+  ---
+  duration_ms: 0.26409
+  ...
+# Subtest: live-safe fetch rejects oversized responses before reading declared bodies
+ok 47 - live-safe fetch rejects oversized responses before reading declared bodies
+  ---
+  duration_ms: 0.382046
+  ...
+# Subtest: issue-to-work-brief fixture dry-run keeps legacy prior immutable and emits complete source fingerprint
+ok 48 - issue-to-work-brief fixture dry-run keeps legacy prior immutable and emits complete source fingerprint
+  ---
+  duration_ms: 1.79005
+  ...
+# Subtest: live-safe comparable extraction preserves partial fields and mounted-origin policy
+ok 49 - live-safe comparable extraction preserves partial fields and mounted-origin policy
+  ---
+  duration_ms: 0.840411
+  ...
+# Subtest: lists six recipes including issue-to-work-brief, issue-evidence, and buyer-setup-trace
+ok 50 - lists six recipes including issue-to-work-brief, issue-evidence, and buyer-setup-trace
+  ---
+  duration_ms: 0.611481
+  ...
+# Subtest: issue-to-work-brief upgrades a legacy fingerprint without rewriting its immutable prior
+ok 51 - issue-to-work-brief upgrades a legacy fingerprint without rewriting its immutable prior
+  ---
+  duration_ms: 1.911534
+  ...
+# Subtest: issue-to-work-brief reports changed when prior fingerprint differs
+ok 52 - issue-to-work-brief reports changed when prior fingerprint differs
+  ---
+  duration_ms: 1.85839
+  ...
+# Subtest: issue-to-work-brief partial when companion docs fail
+ok 53 - issue-to-work-brief partial when companion docs fail
+  ---
+  duration_ms: 1.454852
+  ...
+# Subtest: source-change-alert incremental baseline write leaves prior untouched
+ok 54 - source-change-alert incremental baseline write leaves prior untouched
+  ---
+  duration_ms: 1.092759
+  ...
+# Subtest: buyer-setup-trace loopback inspection never signs or claims wallet ownership
+ok 55 - buyer-setup-trace loopback inspection never signs or claims wallet ownership
+  ---
+  duration_ms: 32.077893
+  ...
+# Subtest: mounted HTTP origin failure injection surfaces error without payment replay
+ok 56 - mounted HTTP origin failure injection surfaces error without payment replay
+  ---
+  duration_ms: 46.799397
+  ...
+# Subtest: optional Neomorphic local import from recipe result; shared mode undeployed
+ok 57 - optional Neomorphic local import from recipe result; shared mode undeployed
+  ---
+  duration_ms: 3.258681
+  ...
+# Subtest: CLI lists issue-to-work-brief and runs fixture dry-run
+ok 58 - CLI lists issue-to-work-brief and runs fixture dry-run
+  ---
+  duration_ms: 104.887313
+  ...
+# Subtest: schedule-neutral recipe specs are machine-readable and do not install cron
+ok 59 - schedule-neutral recipe specs are machine-readable and do not install cron
+  ---
+  duration_ms: 1.007909
+  ...
+# Subtest: S37R issue fetch rejects redirect and oversized body once without consuming error payload
+ok 60 - S37R issue fetch rejects redirect and oversized body once without consuming error payload
+  ---
+  duration_ms: 17.280434
+  ...
+# Subtest: S37R public timeout, final URL mismatch and credentials fail without retry
+ok 61 - S37R public timeout, final URL mismatch and credentials fail without retry
+  ---
+  duration_ms: 10.877362
+  ...
+# Subtest: S37R public issue failures and wrong response identity produce error evidence
+ok 62 - S37R public issue failures and wrong response identity produce error evidence
+  ---
+  duration_ms: 1.446772
+  ...
+# Subtest: S37R companion documents use the same no-redirect byte bound and preserve the issue on partial
+ok 63 - S37R companion documents use the same no-redirect byte bound and preserve the issue on partial
+  ---
+  duration_ms: 2.816668
+  ...
+# Subtest: S37R buyer probes each target at most once and stop at free failure boundaries
+ok 64 - S37R buyer probes each target at most once and stop at free failure boundaries
+  ---
+  duration_ms: 3.689536
+  ...
+# Subtest: S37R complete source constraints and equal-byte changes affect source fingerprint
+ok 65 - S37R complete source constraints and equal-byte changes affect source fingerprint
+  ---
+  duration_ms: 0.796609
+  ...
+# Subtest: S37R generated issue prior roundtrips unchanged; changed source and previous bytes remain explicit
+ok 66 - S37R generated issue prior roundtrips unchanged; changed source and previous bytes remain explicit
+  ---
+  duration_ms: 3.590889
+  ...
+# Subtest: S62 recipe is registered beside issue-to-work-brief
+ok 67 - S62 recipe is registered beside issue-to-work-brief
+  ---
+  duration_ms: 0.557908
+  ...
+# Subtest: S62 transport classifies 403/429/5xx/redirect without retryability
+ok 68 - S62 transport classifies 403/429/5xx/redirect without retryability
+  ---
+  duration_ms: 0.293127
+  ...
+# Subtest: S62 delta distinguishes same-length edit, reorder, delete, and no-prior
+ok 69 - S62 delta distinguishes same-length edit, reorder, delete, and no-prior
+  ---
+  duration_ms: 6.586813
+  ...
+# Subtest: S62 github adapter respects page bounds and identity mismatch via mocks
+ok 70 - S62 github adapter respects page bounds and identity mismatch via mocks
+  ---
+  duration_ms: 15.69957
+  ...
+# Subtest: S62 github adapter classifies 429 without waiting and supports cancel
+ok 71 - S62 github adapter classifies 429 without waiting and supports cancel
+  ---
+  duration_ms: 0.695811
+  ...
+# Subtest: S62 recipe fixture first observation is changed; prior round-trip; partial stays partial
+ok 72 - S62 recipe fixture first observation is changed; prior round-trip; partial stays partial
+  ---
+  duration_ms: 4.788895
+  ...
+# Subtest: S62 recipe closed/reopened and http error fixtures classify without executing issue text
+ok 73 - S62 recipe closed/reopened and http error fixtures classify without executing issue text
+  ---
+  duration_ms: 1.877425
+  ...
+# Subtest: S62 does not read process.env for github token
+ok 74 - S62 does not read process.env for github token
+  ---
+  duration_ms: 0.508914
+  ...
+# Subtest: undefined options preserve bounds; invalid and infinite limits cannot label unobserved comments complete
+ok 75 - undefined options preserve bounds; invalid and infinite limits cannot label unobserved comments complete
+  ---
+  duration_ms: 16.2704
+  ...
+# Subtest: pagination cannot send explicit credentials to foreign origins, paths or cyclic pages
+ok 76 - pagination cannot send explicit credentials to foreign origins, paths or cyclic pages
+  ---
+  duration_ms: 4.484098
+  ...
+# Subtest: missing counts, duplicate ids and malformed comment records stay partial
+ok 77 - missing counts, duplicate ids and malformed comment records stay partial
+  ---
+  duration_ms: 2.477773
+  ...
+# Subtest: incomplete listings cannot promote missing/oversize comments to deleted or unchanged
+ok 78 - incomplete listings cannot promote missing/oversize comments to deleted or unchanged
+  ---
+  duration_ms: 0.547588
+  ...
+# Subtest: caller abort during source body read ends collection without hidden retries
+ok 79 - caller abort during source body read ends collection without hidden retries
+  ---
+  duration_ms: 11.085053
+  ...
+# Subtest: prior identity is bound and original source constraints survive an issue body edit
+ok 80 - prior identity is bound and original source constraints survive an issue body edit
+  ---
+  duration_ms: 4.407174
+  ...
+# Subtest: forged prior digest, symlink and oversize fixture inputs are rejected before observation
+ok 81 - forged prior digest, symlink and oversize fixture inputs are rejected before observation
+  ---
+  duration_ms: 6.346178
+  ...
+# Subtest: CLI lists source-change-alert after compose
+ok 82 - CLI lists source-change-alert after compose
+  ---
+  duration_ms: 36.410994
+  ...
+# Subtest: CLI fixture journey unchanged exits 0 and keeps prior
+ok 83 - CLI fixture journey unchanged exits 0 and keeps prior
+  ---
+  duration_ms: 47.683785
+  ...
+# Subtest: CLI fixture journey changed exits 0 with field diff and sequenced artifact
+ok 84 - CLI fixture journey changed exits 0 with field diff and sequenced artifact
+  ---
+  duration_ms: 41.48981
+  ...
+# Subtest: CLI fixture journey stale_baseline exits 0 without comparing
+ok 85 - CLI fixture journey stale_baseline exits 0 without comparing
+  ---
+  duration_ms: 35.962449
+  ...
+# Subtest: CLI fixture journey payment replay is blocked and does not purchase
+ok 86 - CLI fixture journey payment replay is blocked and does not purchase
+  ---
+  duration_ms: 38.766258
+  ...
+# Subtest: CLI HTML fixture journeys against mounted prior: unchanged then changed
+ok 87 - CLI HTML fixture journeys against mounted prior: unchanged then changed
+  ---
+  duration_ms: 75.159469
+  ...
+# Subtest: schedule-neutral source-change spec is restored and does not install cron
+ok 88 - schedule-neutral source-change spec is restored and does not install cron
+  ---
+  duration_ms: 0.319362
+  ...
+# Subtest: source-change live-safe still enforces S25 redirect and 1MiB policy
+ok 89 - source-change live-safe still enforces S25 redirect and 1MiB policy
+  ---
+  duration_ms: 1.348585
+  ...
+# Subtest: caller update and add instructions survive the issue work brief
+ok 90 - caller update and add instructions survive the issue work brief
+  ---
+  duration_ms: 2.444777
+  ...
+1..90
+# tests 97
+# suites 0
+# pass 97
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 880.703164

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "tools/release-impact-211710/observe-source.mjs",
+    "--repo",
+    ".",
+    "--from",
+    "d760714c932fd317e1435b528575fecd95594183",
+    "--to",
+    "d760714c932fd317e1435b528575fecd95594183",
+    "--clock",
+    "2026-10-11T03:42:46.519Z",
+    "--window-start",
+    "2026-10-11T03:42:46.320Z",
+    "--out",
+    "tools/release-impact-211710/fixtures/current-source-observation.json"
+  ],
+  "exitCode": 0,
+  "stdout": "{\"ok\":true,\"schema\":\"samedaydesk.release-impact-211710.source-observation.v1\",\"status\":\"complete\",\"fromRef\":\"d760714c932fd317e1435b528575fecd95594183\",\"toRef\":\"d760714c932fd317e1435b528575fecd95594183\",\"failureCode\":null,\"persisted\":{\"path\":\"/home/ubuntu/root211-control/work/211710/tools/release-impact-211710/fixtures/current-source-observation.json\",\"sha256\":\"e192338d2e8bb27188f7d64b329888d48c760ffbb6445cd3ffc7b9b96fa62b54\",\"bytes\":2051}}\n",
+  "stderr": ""
+}

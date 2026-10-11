@@ -1,0 +1,58 @@
+[
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "694d28e350dfbb4b7d48b3f10bca364c3eceb4ea",
+    "path": "overview/self-evaluations/2026-10-11-structural-revenue-window/CURRENT-PROJECT-AND-PHASE.md",
+    "blob": "58a9dce71a8bf8bd75142c392fcb5f195d1f0b74",
+    "sha256": "a5d8797280497abd1455ec7491fa7f5a88d262f9b0cf9138aaf971eb5e1538b0"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "694d28e350dfbb4b7d48b3f10bca364c3eceb4ea",
+    "path": "overview/self-evaluations/2026-10-11-structural-revenue-window/PARALLEL-FANOUT-PLAN.md",
+    "blob": "48f4b00d52c0ef7b01456aecb3fb3ae865de5a88",
+    "sha256": "1a297d857da4be0f6794f0b86ee9ee129628930103cdf7194f67575af4169bf9"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "694d28e350dfbb4b7d48b3f10bca364c3eceb4ea",
+    "path": "overview/self-evaluations/2026-10-11-structural-revenue-window/QUESTIONS-FOR-OUTSIDE-PERSPECTIVES.md",
+    "blob": "4af2311e8450fd7c2f54e7d00c7d93441e4d8825",
+    "sha256": "e9be0f2931f8ffbe42f1fcd4c2d7fccd2b264d284af69d0821d8470045a84472"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "694d28e350dfbb4b7d48b3f10bca364c3eceb4ea",
+    "path": "overview/self-evaluations/2026-10-09-scalable-agentic-revenue/INTEGRATED-DECISIONS.md",
+    "blob": "407df401fa8972f07f5c84be03d6622fd4f75b79",
+    "sha256": "ccf7dfb7c9c6021f36b316eeabd318e5aca82eb5ec87b01ffb92a3490b0d36c5"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "694d28e350dfbb4b7d48b3f10bca364c3eceb4ea",
+    "path": "overview/self-evaluations/2026-10-09-scalable-agentic-revenue/CARRY-FORWARD.md",
+    "blob": "d8b9248ea7b8e4b6e1e8d15ba7f41b591b73d327",
+    "sha256": "2e11cf4e18dc546e0e7ba07a2c46e8b506fcf167f4b25c866ea44484cadf53b8"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "4d0f7aae4d000837abe7c024f378b2150013d389",
+    "path": "overview/self-evaluations/2026-10-11-structural-revenue-window/ANSWERS-CHATGPT-ASTRA-PRO.md",
+    "blob": "263de55f64db644895de9ce0db23ea70c2454b85",
+    "sha256": "d7cbb6ad1928fd4fdb6f109ed1095c754b7532b3ef8192eff8afec65ac6c43dc"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "91db1cc3d9b678dcbe4e7956a7166541c06ca86f",
+    "path": "overview/STATE.md",
+    "blob": "6e568f76ada699fccf6098becf617dac36745b2d",
+    "sha256": "2bba22d8ad6499ba56a5a53f909f89e8f6d12684311c05cc88169231286b4df8"
+  },
+  {
+    "repo": "epistemedeus/pilot",
+    "ref": "91db1cc3d9b678dcbe4e7956a7166541c06ca86f",
+    "path": "overview/research/phase-20261010/current-remaining-outcomes-126020/ROOT-RECEIVING-126030.md",
+    "blob": "a0ccd114fb680dd2705b38045194c32f8a99c567",
+    "sha256": "ad597fe47efcbfc42e66bc07f3911a99ce6b6388334c1c37d6fa77e7f512fbe0"
+  }
+]

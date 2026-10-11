@@ -1,0 +1,267 @@
+
+> samedaydesk-release-impact-211710@0.1.0 test
+> node --test test/*.test.mjs
+
+TAP version 13
+# Subtest: actual CLI returns useful unchanged with exact refs, immutable prior and recipe outputs
+ok 1 - actual CLI returns useful unchanged with exact refs, immutable prior and recipe outputs
+  ---
+  duration_ms: 320.165035
+  ...
+# Subtest: supported source regression is relevant and asks for the owning check, without claiming candidate installation
+ok 2 - supported source regression is relevant and asks for the owning check, without claiming candidate installation
+  ---
+  duration_ms: 113.295086
+  ...
+# Subtest: unrelated dependency changes retain supported knowledge and produce unchanged
+ok 3 - unrelated dependency changes retain supported knowledge and produce unchanged
+  ---
+  duration_ms: 112.727583
+  ...
+# Subtest: known removal of supported source is relevant rather than silently absent coverage
+ok 4 - known removal of supported source is relevant rather than silently absent coverage
+  ---
+  duration_ms: 105.696783
+  ...
+# Subtest: supported runtime requirement and explicit dependency versions are relevant
+    # Subtest: requirement
+    ok 1 - requirement
+      ---
+      duration_ms: 78.021727
+      ...
+    # Subtest: node
+    ok 2 - node
+      ---
+      duration_ms: 79.371822
+      ...
+    # Subtest: tar
+    ok 3 - tar
+      ---
+      duration_ms: 76.390199
+      ...
+    1..3
+ok 5 - supported runtime requirement and explicit dependency versions are relevant
+  ---
+  duration_ms: 328.175397
+  ...
+# Subtest: stale installation refuses before producing an alert
+ok 6 - stale installation refuses before producing an alert
+  ---
+  duration_ms: 72.516964
+  ...
+# Subtest: missing immutable baseline is insufficient coverage
+ok 7 - missing immutable baseline is insufficient coverage
+  ---
+  duration_ms: 76.247332
+  ...
+# Subtest: missing installed input is an artifact-bearing refusal
+ok 8 - missing installed input is an artifact-bearing refusal
+  ---
+  duration_ms: 83.629287
+  ...
+# Subtest: public merge or unknown installation does not supply installed acceptance
+ok 9 - public merge or unknown installation does not supply installed acceptance
+  ---
+  duration_ms: 75.639252
+  ...
+# Subtest: installation evidence cannot silently drop predicate or dependency coverage
+    # Subtest: dependency
+    ok 1 - dependency
+      ---
+      duration_ms: 75.421317
+      ...
+    # Subtest: predicate
+    ok 2 - predicate
+      ---
+      duration_ms: 76.314003
+      ...
+    1..2
+ok 10 - installation evidence cannot silently drop predicate or dependency coverage
+  ---
+  duration_ms: 152.140941
+  ...
+# Subtest: partial, timeout and error observations retain successful witnesses and stop
+    # Subtest: partial
+    ok 1 - partial
+      ---
+      duration_ms: 73.009052
+      ...
+    # Subtest: timed_out
+    ok 2 - timed_out
+      ---
+      duration_ms: 77.835017
+      ...
+    # Subtest: error
+    ok 3 - error
+      ---
+      duration_ms: 76.808225
+      ...
+    1..3
+ok 11 - partial, timeout and error observations retain successful witnesses and stop
+  ---
+  duration_ms: 228.085923
+  ...
+# Subtest: missing source coverage, missing runtime and mismatched refs are refused
+    # Subtest: coverage
+    ok 1 - coverage
+      ---
+      duration_ms: 71.599558
+      ...
+    # Subtest: runtime
+    ok 2 - runtime
+      ---
+      duration_ms: 71.231701
+      ...
+    # Subtest: ref
+    ok 3 - ref
+      ---
+      duration_ms: 74.496648
+      ...
+    # Subtest: window
+    ok 4 - window
+      ---
+      duration_ms: 72.915575
+      ...
+    1..4
+ok 12 - missing source coverage, missing runtime and mismatched refs are refused
+  ---
+  duration_ms: 290.785084
+  ...
+# Subtest: sealed but false blob/diff claims cannot bypass exact local source verification
+    # Subtest: blob
+    ok 1 - blob
+      ---
+      duration_ms: 78.394454
+      ...
+    # Subtest: paths
+    ok 2 - paths
+      ---
+      duration_ms: 75.04563
+      ...
+    1..2
+ok 13 - sealed but false blob/diff claims cannot bypass exact local source verification
+  ---
+  duration_ms: 192.766313
+  ...
+# Subtest: damaged baseline hashes and unsealed observations refuse
+    # Subtest: baseline
+    ok 1 - baseline
+      ---
+      duration_ms: 77.074159
+      ...
+    # Subtest: observation
+    ok 2 - observation
+      ---
+      duration_ms: 78.485067
+      ...
+    1..2
+ok 14 - damaged baseline hashes and unsealed observations refuse
+  ---
+  duration_ms: 155.999644
+  ...
+# Subtest: missing Git objects produce a preserved incomplete observation
+ok 15 - missing Git objects produce a preserved incomplete observation
+  ---
+  duration_ms: 60.279014
+  ...
+# Subtest: cold second process returns the same immutable result and leaves input bytes unchanged
+ok 16 - cold second process returns the same immutable result and leaves input bytes unchanged
+  ---
+  duration_ms: 147.424734
+  ...
+# Subtest: cold process preserves an unfinished invocation and does not repeat it
+ok 17 - cold process preserves an unfinished invocation and does not repeat it
+  ---
+  duration_ms: 76.659832
+  ...
+# Subtest: cold process preserves a damaged retained result instead of rewriting it
+ok 18 - cold process preserves a damaged retained result instead of rewriting it
+  ---
+  duration_ms: 147.2979
+  ...
+# Subtest: simultaneous invocations cannot overwrite one another
+ok 19 - simultaneous invocations cannot overwrite one another
+  ---
+  duration_ms: 77.731647
+  ...
+# Subtest: local input symlink and oversized input refuse before recipe execution
+    # Subtest: symlink
+    ok 1 - symlink
+      ---
+      duration_ms: 72.318199
+      ...
+    # Subtest: large
+    ok 2 - large
+      ---
+      duration_ms: 79.119851
+      ...
+    1..2
+ok 20 - local input symlink and oversized input refuse before recipe execution
+  ---
+  duration_ms: 151.816883
+  ...
+# Subtest: capture and observer CLIs are runnable and never overwrite prior exports
+ok 21 - capture and observer CLIs are runnable and never overwrite prior exports
+  ---
+  duration_ms: 419.462639
+  ...
+# Subtest: mounted HTTP source uses actual CLI and bounded transport for success, partial, timeout, error and redirect
+    # Subtest: full
+    ok 1 - full
+      ---
+      duration_ms: 113.469775
+      ...
+    # Subtest: partial
+    ok 2 - partial
+      ---
+      duration_ms: 74.681744
+      ...
+    # Subtest: slow
+    ok 3 - slow
+      ---
+      duration_ms: 69.521954
+      ...
+    # Subtest: error
+    ok 4 - error
+      ---
+      duration_ms: 65.279272
+      ...
+    # Subtest: redirect
+    ok 5 - redirect
+      ---
+      duration_ms: 64.988645
+      ...
+    # Subtest: large
+    ok 6 - large
+      ---
+      duration_ms: 74.707198
+      ...
+    1..6
+ok 22 - mounted HTTP source uses actual CLI and bounded transport for success, partial, timeout, error and redirect
+  ---
+  duration_ms: 503.457936
+  ...
+# Subtest: payment replay options cannot obtain an execution surface
+ok 23 - payment replay options cannot obtain an execution surface
+  ---
+  duration_ms: 67.769399
+  ...
+# Subtest: unrelated private metadata stays in the immutable input and out of result artifacts
+ok 24 - unrelated private metadata stays in the immutable input and out of result artifacts
+  ---
+  duration_ms: 268.426665
+  ...
+# Subtest: cold source assessment preserves unknown prior payment without replaying or reconciling it
+ok 25 - cold source assessment preserves unknown prior payment without replaying or reconciling it
+  ---
+  duration_ms: 153.917151
+  ...
+1..25
+# tests 49
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4455.790575

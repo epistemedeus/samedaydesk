@@ -1,0 +1,31 @@
+{
+  "runs": [
+    {
+      "name": "final-current",
+      "from": "d760714c932fd317e1435b528575fecd95594183",
+      "to": "d760714c932fd317e1435b528575fecd95594183",
+      "result": "unchanged",
+      "reason": "supported_source_and_dependencies_unchanged",
+      "elapsedSeconds": 0.0994399089977378
+    },
+    {
+      "name": "historical-broken",
+      "from": "d760714c932fd317e1435b528575fecd95594183",
+      "to": "e27a3181ad48a3a9cd6814699dc525761558810d",
+      "result": "relevant_change",
+      "reason": "supported_source_or_dependency_changed",
+      "elapsedSeconds": 0.08530224399873987
+    },
+    {
+      "name": "historical-unrelated",
+      "from": "d760714c932fd317e1435b528575fecd95594183",
+      "to": "5713db0158281e7ae61ba84bf86beb92b27de664",
+      "result": "unchanged",
+      "reason": "unrelated_source_change_supported_closure_unchanged",
+      "elapsedSeconds": 0.0746553389908513
+    }
+  ],
+  "predecessorFailure": "e27a3181ad48a3a9cd6814699dc525761558810d",
+  "currentReceipt": "final-current-cli.json",
+  "naturalNextReleaseOrCustomerNeed": "not established"
+}

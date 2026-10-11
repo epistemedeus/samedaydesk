@@ -1,0 +1,24 @@
+{
+  "id": "ROOT-SOL-RELEASE-IMPACT-211710",
+  "model": "gpt-6.1-sol",
+  "effort": "max",
+  "source": "d760714c932fd317e1435b528575fecd95594183",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "branch": "codex/sol-structural-211710",
+  "worktree": "/home/ubuntu/root211-control/work/211710",
+  "startedAt": "2026-10-11T03:26:03.913Z",
+  "authentication": "native-chatgpt",
+  "nativeSession": "01a128ff-0bed-7551-9c21-57eb5895014e",
+  "sessionEvidence": "thread.started in original task events.jsonl",
+  "effortEvidence": "RUN.json and live launcher arguments model_reasoning_effort=max",
+  "host": "cursor",
+  "provider": "Cursor-hosted VM as supplied in task",
+  "children": [],
+  "includedUsage": "unmeasured in this receipt",
+  "selectedGitAccount": {
+    "login": "epistemedeus",
+    "id": 124947147,
+    "source": "gh api user readback"
+  },
+  "committerIdentity": "epistemedeus <124947147+epistemedeus@users.noreply.github.com>"
+}

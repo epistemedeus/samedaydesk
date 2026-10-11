@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "var",
+    "GIT_AUTHOR_IDENT"
+  ],
+  "exitCode": 128,
+  "stdout": "",
+  "stderr": "Author identity unknown\n\n*** Please tell me who you are.\n\nRun\n\n  git config --global user.email \"you@example.com\"\n  git config --global user.name \"Your Name\"\n\nto set your account's default identity.\nOmit --global to set the identity only in this repository.\n\nfatal: unable to auto-detect email address (got 'ubuntu@cursor.(none)')\n",
+  "resolution": "Use the observed selected Git account public noreply identity per commit; do not change shared/global credentials or identity."
+}

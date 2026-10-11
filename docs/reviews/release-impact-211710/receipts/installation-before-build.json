@@ -1,0 +1,85 @@
+{
+  "schema": "release-impact-211710.installation-evidence.v1",
+  "capturedAt": "2026-10-11T03:29:05.461424+00:00",
+  "owner": "Root",
+  "relationship": "owner_qa",
+  "installationKind": "local_source_cli",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "installedRef": "d760714c932fd317e1435b528575fecd95594183",
+  "sourcePath": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+  "sourceBlob": "e068d9974840cfe680a3f66964d3d88a5cf47141",
+  "sourceSha256": "54cb3b33096f3972f81b2badd3a70d10da4c0c1560ce128d5d07467bc14cedb1",
+  "runtime": {
+    "node": "v22.14.0",
+    "tar": "tar (GNU tar) 1.35"
+  },
+  "priorReceipt": {
+    "repo": "epistemedeus/pilot",
+    "ref": "91db1cc3d9b678dcbe4e7956a7166541c06ca86f",
+    "path": "overview/research/phase-20261010/current-remaining-outcomes-126020/ROOT-RECEIVING-126030.md"
+  },
+  "probes": [
+    {
+      "name": "valid_local_archive",
+      "command": [
+        "node",
+        "/home/ubuntu/root211-control/work/211710/experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+        "--from",
+        "<disposable-probe>/probe.bin",
+        "--expected-bytes",
+        "29",
+        "--expected-sha256",
+        "6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23",
+        "--dest",
+        "<disposable-probe>/accepted.bin"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"extracted\": false,\n  \"executed\": false,\n  \"dest\": \"<disposable-probe>/accepted.bin\",\n  \"bytes\": 29,\n  \"sha256\": \"6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23\",\n  \"extractDir\": null\n}\n",
+      "stderr": "",
+      "result": {
+        "ok": true,
+        "extracted": false,
+        "executed": false,
+        "dest": "<disposable-probe>/accepted.bin",
+        "bytes": 29,
+        "sha256": "6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23",
+        "extractDir": null
+      },
+      "destinationExists": true
+    },
+    {
+      "name": "wrong_digest_local_archive",
+      "command": [
+        "node",
+        "/home/ubuntu/root211-control/work/211710/experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+        "--from",
+        "<disposable-probe>/probe.bin",
+        "--expected-bytes",
+        "29",
+        "--expected-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--dest",
+        "<disposable-probe>/refused.bin"
+      ],
+      "exitCode": 1,
+      "stdout": "{\n  \"ok\": false,\n  \"refused\": true,\n  \"code\": \"wrong-digest\",\n  \"message\": \"sha256 6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23 != expected 0000000000000000000000000000000000000000000000000000000000000000\",\n  \"extracted\": false,\n  \"executed\": false,\n  \"sha256\": \"6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23\",\n  \"expectedSha\": \"0000000000000000000000000000000000000000000000000000000000000000\",\n  \"destExists\": false,\n  \"extractDirExists\": false\n}\n",
+      "stderr": "",
+      "result": {
+        "ok": false,
+        "refused": true,
+        "code": "wrong-digest",
+        "message": "sha256 6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23 != expected 0000000000000000000000000000000000000000000000000000000000000000",
+        "extracted": false,
+        "executed": false,
+        "sha256": "6bc9963d35e03201cede07a2bb3a1208ce9aed3338167641b7ad8a8469145e23",
+        "expectedSha": "0000000000000000000000000000000000000000000000000000000000000000",
+        "destExists": false,
+        "extractDirExists": false
+      },
+      "destinationExists": false
+    }
+  ],
+  "customerInstallation": "unknown",
+  "hostedInstallation": "unverified",
+  "installedBytesMatchAcceptedSource": true
+}

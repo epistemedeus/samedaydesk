@@ -1,0 +1,22 @@
+{
+  "classification": "historical_source_contrast_owner_qa_not_a_new_release_event",
+  "command": [
+    "node",
+    "tools/release-impact-211710/observe-source.mjs",
+    "--repo",
+    ".",
+    "--from",
+    "d760714c932fd317e1435b528575fecd95594183",
+    "--to",
+    "5713db0158281e7ae61ba84bf86beb92b27de664",
+    "--clock",
+    "2026-10-11T03:49:32.915Z",
+    "--window-start",
+    "2026-10-11T03:42:46.320Z",
+    "--out",
+    "tools/release-impact-211710/fixtures/historical-unrelated-source-observation.json"
+  ],
+  "exitCode": 0,
+  "stdout": "{\"ok\":true,\"schema\":\"samedaydesk.release-impact-211710.source-observation.v1\",\"status\":\"complete\",\"fromRef\":\"d760714c932fd317e1435b528575fecd95594183\",\"toRef\":\"5713db0158281e7ae61ba84bf86beb92b27de664\",\"failureCode\":null,\"persisted\":{\"path\":\"/home/ubuntu/root211-control/work/211710/tools/release-impact-211710/fixtures/historical-unrelated-source-observation.json\",\"sha256\":\"d60259f5ea2f74c736820f3f975ae771837f6858dc79afa716b6a579cc14e3c9\",\"bytes\":2553}}\n",
+  "stderr": ""
+}

@@ -1,0 +1,49 @@
+{
+  "classification": "exact_historical_failed_supported_predicate_owner_qa",
+  "sourceRef": "e27a3181ad48a3a9cd6814699dc525761558810d",
+  "sourceBlob": "19f3626d1e021b60fddda4acbdf9bd8246076724",
+  "sourceSha256": "62ca4ecda69f35b6a89ab26ff97f165bbc86db41ad52c0f37db32bdb1d524655",
+  "sourcePath": "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+  "originalReceiptUnchanged": true,
+  "probe": {
+    "command": [
+      "node",
+      "<disposable-predecessor-probe>/obtain-archive.mjs",
+      "--from",
+      "<disposable-predecessor-probe>/input.bin",
+      "--expected-bytes",
+      "25",
+      "--expected-sha256",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "--dest",
+      "<disposable-predecessor-probe>/refused.bin"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"ok\": false,\n  \"refused\": true,\n  \"code\": \"wrong-digest\",\n  \"message\": \"sha256 5dd862722545658dd76b6629225752d47146544ae298514ca4ee8e342c3b2a3d != expected 0000000000000000000000000000000000000000000000000000000000000000\",\n  \"extracted\": false,\n  \"executed\": false,\n  \"sha256\": \"5dd862722545658dd76b6629225752d47146544ae298514ca4ee8e342c3b2a3d\",\n  \"expectedSha\": \"0000000000000000000000000000000000000000000000000000000000000000\",\n  \"destExists\": false,\n  \"extractDirExists\": false\n}\n",
+    "stderr": ""
+  },
+  "shellProbe": {
+    "command": [
+      "bash",
+      "-c",
+      "if \"$@\"; then printf \"\\nCHAIN-CONTINUED\\n\"; else exit 7; fi",
+      "archive-chain",
+      "node",
+      "<disposable-predecessor-probe>/obtain-archive.mjs",
+      "--from",
+      "<disposable-predecessor-probe>/input.bin",
+      "--expected-bytes",
+      "25",
+      "--expected-sha256",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "--dest",
+      "<disposable-predecessor-probe>/refused.bin"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"ok\": false,\n  \"refused\": true,\n  \"code\": \"wrong-digest\",\n  \"message\": \"sha256 5dd862722545658dd76b6629225752d47146544ae298514ca4ee8e342c3b2a3d != expected 0000000000000000000000000000000000000000000000000000000000000000\",\n  \"extracted\": false,\n  \"executed\": false,\n  \"sha256\": \"5dd862722545658dd76b6629225752d47146544ae298514ca4ee8e342c3b2a3d\",\n  \"expectedSha\": \"0000000000000000000000000000000000000000000000000000000000000000\",\n  \"destExists\": false,\n  \"extractDirExists\": false\n}\n\nCHAIN-CONTINUED\n",
+    "stderr": ""
+  },
+  "expectedSupportedExit": 1,
+  "observedShellSuccess": true,
+  "destinationCreated": false
+}
