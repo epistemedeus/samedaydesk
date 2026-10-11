@@ -38,4 +38,4 @@ node ./bin/task-native-select.mjs feedback --result result.json --opt-in --out f
 - Feedback is a local file written only with `--opt-in`. Nothing in this package posts it.
 - Careers and ClawHub distribution is unchanged. This package does not publish a skill and does not scan the registry.
 
-Shared `catalog.json`, site copy, and `package.json` scripts are not modified. See `OPTIONAL-INTEGRATION.md`.
+Shared `catalog.json`, site copy, and the repository root `package.json` are not modified. See `OPTIONAL-INTEGRATION.md`. `RECEIVING.md` is the 211860 snapshot. `RECEIVING-211876.md` is the later correction receipt.

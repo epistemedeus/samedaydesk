@@ -1,0 +1,151 @@
+{
+  "schema": "samedaydesk.task-native-cold-receiving.v1",
+  "feature": "codex/task-native-cold-receiving-211876",
+  "sourceFeature": "codex/task-native-selection-211860",
+  "ownerQa": true,
+  "independentCustomer": false,
+  "revenue": false,
+  "usefulAcceptance": "not_observed",
+  "downstreamCommand": "not_run",
+  "downstreamValidated": false,
+  "scope": "readiness_discovery_document",
+  "directNormalize": null,
+  "readiness": {
+    "query": "accepted",
+    "render": "rendered",
+    "selected": "selected",
+    "executed": "not_executed",
+    "usefulAcceptance": "not_observed",
+    "meaningId": "task-readiness-document",
+    "meaningIdRole": "task_label",
+    "semanticEquivalence": false,
+    "operationId": "task-readiness",
+    "entryId": "discovery:task-readiness",
+    "economicComparison": "known_free",
+    "impliedCheapest": false,
+    "cost": {
+      "state": "known_free",
+      "amount": "0",
+      "currency": "USD",
+      "charged": false,
+      "atomicComparison": null,
+      "conflict": null
+    },
+    "commandRun": "not_run"
+  },
+  "noFit": {
+    "query": "accepted",
+    "render": "rendered",
+    "selected": "no_fit",
+    "executed": "not_executed",
+    "usefulAcceptance": "not_observed",
+    "meaningId": "booked-seat",
+    "meaningIdRole": "task_label",
+    "semanticEquivalence": false,
+    "operationId": null,
+    "entryId": null,
+    "economicComparison": null,
+    "impliedCheapest": false,
+    "cost": null,
+    "commandRun": "not_executed"
+  },
+  "directFree": {
+    "query": "accepted",
+    "render": "rendered",
+    "selected": "selected",
+    "executed": "not_executed",
+    "usefulAcceptance": "not_observed",
+    "meaningId": "task-readiness-document",
+    "meaningIdRole": "task_label",
+    "semanticEquivalence": false,
+    "operationId": "readiness-direct",
+    "entryId": "caller:readiness-direct",
+    "economicComparison": "known_free",
+    "impliedCheapest": false,
+    "cost": {
+      "state": "known_free",
+      "amount": "0",
+      "currency": null,
+      "charged": false,
+      "atomicComparison": null,
+      "conflict": null
+    },
+    "commandRun": "not_run",
+    "alsoEligible": [
+      {
+        "id": "discovery:task-readiness",
+        "relation": "same_known_free_class"
+      }
+    ]
+  },
+  "mutations": {
+    "titleBefore": "output_supported",
+    "titleAfter": "type_not_guaranteed:title",
+    "enumBefore": "output_supported",
+    "enumAfter": "enum_not_guaranteed:recheck.decision",
+    "currencyState": "unranked",
+    "currencyComparison": "unresolved",
+    "currencyImpliedCheapest": false,
+    "currencyAlternatives": [
+      "eur-extract",
+      "usd-extract"
+    ]
+  },
+  "controls": {
+    "expired": true,
+    "stale": true,
+    "changed": true,
+    "unknown": true
+  },
+  "acquisition": {
+    "url": "https://samedaydesk.com/discovery/task-readiness.json",
+    "status": 200,
+    "hops": [
+      {
+        "url": "https://samedaydesk.com/discovery/task-readiness.json",
+        "status": 200
+      }
+    ],
+    "bytes": 3408,
+    "fetchMs": 172.731385,
+    "liveSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "snapshotSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "unchangedFromSnapshot": true,
+    "documentValid": true,
+    "documentReason": "instance_valid",
+    "pathReason": "output_supported",
+    "paid": false,
+    "invokesPricedExecution": false,
+    "packageId": "task-readiness",
+    "coldStartExecuted": false
+  },
+  "effort": {
+    "wallMs": 0.8254200000000083,
+    "plainCatalogMs": 0.07723199999998087,
+    "directContractMs": 0.20771500000000742,
+    "directDocumentMs": 0.012074999999981628,
+    "directDocumentOk": true,
+    "selectorMs": 0.38653599999997823,
+    "selectorState": "selected",
+    "savingsClaim": false,
+    "customerTime": false,
+    "stages": {
+      "query": "accepted",
+      "render": "rendered",
+      "selected": "selected",
+      "executed": "not_executed",
+      "usefulAcceptance": "not_observed"
+    },
+    "impliedCheapest": false
+  },
+  "coldInstall": {
+    "packStatus": 0,
+    "installStatus": 0,
+    "childStatus": 0,
+    "installMs": 610.4489629999999,
+    "totalMs": 1177.7781519999999,
+    "tarball": "samedaydesk-task-native-selection-211860-0.1.1.tgz",
+    "bytes": 112106,
+    "version": "0.1.1"
+  }
+}
