@@ -1,0 +1,45 @@
+{
+  "testedCodeCommit": "3c37bfdabafd90a64bd274195b105dd6fceaf1bb",
+  "repositoryTree": "b3affa579c36b1fed3f4929ae3a43b55652e7324",
+  "suites": {
+    "consumer": {
+      "command": "npm --prefix tools/release-impact-211710 test",
+      "tests": 53,
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0,
+      "log": "consumer-receiving-final.log",
+      "sha256": "370e16e9760cff0785e941612f4950b093aa8f30f02e7d497cce5ee150ab168c"
+    },
+    "recipes": {
+      "command": "npm run test:recurring-job-recipes",
+      "tests": 97,
+      "pass": 97,
+      "fail": 0,
+      "skipped": 0,
+      "log": "recipes-normal-final.log",
+      "sha256": "6afb70afcdba4bcc28f933ecce279181123a99425f10fbc0d3602f9b331a601c"
+    },
+    "repair": {
+      "command": "npm run test:useful-jobs-public",
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "skipped": 0,
+      "log": "repair-normal-final.log",
+      "sha256": "c96b41c6eed3909e975b6bc0daf9c586546a94b1d7ec8736005574d4e017e1a8"
+    },
+    "coldConsumer": {
+      "command": "npm --prefix tools/release-impact-211710 test",
+      "tests": 53,
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0,
+      "log": "cold-consumer-normal.log",
+      "sha256": "497037fbd225f58de0b581d78896a410f48e50be15f61bb5958ea67e4c339178"
+    }
+  },
+  "normalTotal": 178,
+  "coldReplayAdditionalOwnerQa": true,
+  "independentCustomerAdoption": false
+}

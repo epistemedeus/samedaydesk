@@ -1,0 +1,116 @@
+{
+  "classification": "single_owner_qa_comparison_not_a_controlled_savings_estimate",
+  "codeCommit": "3c37bfdabafd90a64bd274195b105dd6fceaf1bb",
+  "repositoryTree": "b3affa579c36b1fed3f4929ae3a43b55652e7324",
+  "clock": "2026-10-11T04:16:58.292Z",
+  "equippedWith": "same installed CLI, accepted source receipt, exact refs, Git, Node, GNU tar and owning normal suite",
+  "direct": {
+    "decision": "unchanged",
+    "sourceRefs": {
+      "from": "d760714c932fd317e1435b528575fecd95594183",
+      "to": "d760714c932fd317e1435b528575fecd95594183"
+    },
+    "installedBytesVerified": true,
+    "installedFileSha256": "54cb3b33096f3972f81b2badd3a70d10da4c0c1560ce128d5d07467bc14cedb1",
+    "elapsedSeconds": 0.007482084998628125,
+    "commands": [
+      {
+        "command": [
+          "git",
+          "rev-parse",
+          "d760714c932fd317e1435b528575fecd95594183:experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.0015994199929991737,
+        "stdout": "e068d9974840cfe680a3f66964d3d88a5cf47141\n",
+        "stderr": "",
+        "stdoutSha256": "f834684efc90e9ae3ac45fd484803ae78eb8bb6a3f5abbc21c0721c517c66449"
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--no-ext-diff",
+          "--no-renames",
+          "d760714c932fd317e1435b528575fecd95594183",
+          "d760714c932fd317e1435b528575fecd95594183",
+          "--",
+          "experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs",
+          "package.json"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.0014884770062053576,
+        "stdout": "",
+        "stderr": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "node",
+          "--version"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.0031500940094701946,
+        "stdout": "v22.14.0\n",
+        "stderr": "",
+        "stdoutSha256": "7703fd79909af9b17df6395137bee2b07c3f3b27b6e96e18c909f433cce84f19"
+      },
+      {
+        "command": [
+          "tar",
+          "--version"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.0011777300096582621,
+        "stdout": "tar (GNU tar) 1.35\nCopyright (C) 2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by John Gilmore and Jay Fenlason.\n",
+        "stderr": "",
+        "stdoutSha256": "b112e5578260c103cafae7150e33b8fe1b5d0720a158d88be5ea8f6d9d26f478"
+      }
+    ]
+  },
+  "consumer": {
+    "command": [
+      "node",
+      "tools/release-impact-211710/cli.mjs",
+      "--repo",
+      ".",
+      "--installed",
+      "tools/release-impact-211710/fixtures/installed-root-qa.json",
+      "--observation",
+      "tools/release-impact-211710/fixtures/current-source-observation.json",
+      "--clock",
+      "2026-10-11T04:16:58.292Z",
+      "--horizon-hours",
+      "24",
+      "--out-dir",
+      "docs/reviews/release-impact-211710/receipts/comparison-current-invocation"
+    ],
+    "outcome": "unchanged",
+    "elapsedSeconds": 0.08228665399656165,
+    "receipt": "comparison-current-cli.json",
+    "extraSetup": [
+      "installation receipt capture",
+      "source observation capture",
+      "immutable result directory"
+    ]
+  },
+  "effort": {
+    "requesterSpecification": "unmeasured",
+    "requesterSetupAndInputPreparation": "unmeasured; same explicit supported task and source access",
+    "builderInvestigationAndImplementation": "reported separately from per-task route timing",
+    "rootReceivingAndResultInterpretation": "unmeasured",
+    "candidateIntegrationAndVerification": "owning suite and supported predicates still required if changed",
+    "failureRecovery": "consumer preserved partial/timeout/unknown state; direct route requires recording those separately",
+    "supportAndUpkeep": "unmeasured; future versions require source/runtime review, coverage upkeep and actual receiving",
+    "futureNaturalTaskOrPaidChoice": "unknown / not established"
+  },
+  "costs": {
+    "newPaymentOrPurchaseInitiated": false,
+    "computeDiskEgressHostCash": "unknown",
+    "nativeIncludedUsage": "unmeasured here",
+    "replacementPrice": "not modeled",
+    "customerRevenue": "not established",
+    "savings": "not established"
+  },
+  "disposition": "direct maintained check is sufficient and faster for this single unchanged source; the consumer adds retained source/refusal and cold recovery evidence, not a proven financial advantage"
+}
