@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { acquireSources } from "../src/acquire.mjs";
 import { buildFeedback, compareEffort } from "../src/feedback.mjs";
 import { executeSyntheticLoopback } from "../src/execute.mjs";
+import { completeReadiness } from "../src/complete.mjs";
 import { consumeQualified } from "../src/consume.mjs";
 import { selectTask } from "../src/select.mjs";
 
@@ -16,6 +17,7 @@ function usage() {
     "task-native-select execute-synthetic --catalog <normalized.json> --task <task.json> --body <body.json>",
     "task-native-select feedback --result <result.json> --opt-in [--accept] --out <file.json>",
     "task-native-select consume --catalog <normalized.json> --task <task.json> --input <input.json> --repo <checkout> [--fresh <normalized.json>]",
+    "task-native-select complete --catalog <normalized.json> --task <task.json> --input <input.json> --repo <checkout> [--fresh <normalized.json>]",
   ].join("\n");
 }
 
@@ -128,6 +130,30 @@ if (command === "consume") {
   }
   say(journey);
   process.exit(journey.outputValidation?.ok === true && journey.invocation?.state === "invoked" ? 0 : 2);
+}
+
+if (command === "complete") {
+  const catalog = readJson(flag(argv, "--catalog") || "");
+  const task = readJson(flag(argv, "--task") || "");
+  const callerInput = readJson(flag(argv, "--input") || "");
+  const repo = flag(argv, "--repo");
+  const freshPath = flag(argv, "--fresh");
+  const freshCatalog = freshPath ? readJson(freshPath) : null;
+  const journey = await completeReadiness({ catalog, task, callerInput, repoRoot: repo, freshCatalog });
+  const out = flag(argv, "--out");
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, `${JSON.stringify(journey, null, 2)}\n`);
+  }
+  say(journey);
+  const ok = journey.outputValidation?.ok === true
+    && journey.invocation?.state === "invoked"
+    && journey.invocation?.faithfulInvocation === false
+    && journey.invocation?.adapterInvoked === false
+    && journey.ownerAcceptance?.accepted === true
+    && journey.outsideAcceptance?.accepted === false
+    && journey.directComparison?.savingsClaim === false;
+  process.exit(ok ? 0 : 2);
 }
 
 if (command === "feedback") {

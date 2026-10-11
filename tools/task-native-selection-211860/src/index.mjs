@@ -7,3 +7,4 @@ export { executeSyntheticLoopback } from "./execute.mjs";
 export { acquireSources } from "./acquire.mjs";
 export { supportsOutput, validateInstance } from "./schema-support.mjs";
 export { consumeQualified, matchCallerInput } from "./consume.mjs";
+export { completeReadiness, matchCompleteInput } from "./complete.mjs";

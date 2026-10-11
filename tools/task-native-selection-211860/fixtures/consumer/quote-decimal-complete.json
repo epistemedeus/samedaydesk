@@ -1,0 +1,124 @@
+{
+  "schema": "samedaydesk.task-native-readiness-complete.input.v1",
+  "taskRef": "quote-decimal-readiness",
+  "meaningId": "quote-decimal-label",
+  "pin": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+  "contract": {
+    "method": "POST",
+    "path": "/quote",
+    "requiredPaths": [
+      "data.quote"
+    ],
+    "valuePattern": "^\\d+(\\.\\d+)?$",
+    "valuePatternSource": "PRICE_PATTERN",
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quote"
+          ],
+          "properties": {
+            "quote": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "conforming": {
+      "data": {
+        "quote": "1.25"
+      }
+    },
+    "wrong": {
+      "data": {
+        "quote": "soon"
+      }
+    },
+    "malformed": {
+      "data": {
+        "quote": 1.25
+      }
+    },
+    "absentSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {
+            "quote": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "nullableSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quote"
+          ],
+          "properties": {
+            "quote": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        }
+      }
+    },
+    "enumSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quote"
+          ],
+          "properties": {
+            "quote": {
+              "type": "string",
+              "enum": [
+                "1.25",
+                "soon"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "unsupportedSchema": {
+      "anyOf": [
+        {
+          "type": "object"
+        }
+      ]
+    }
+  }
+}
