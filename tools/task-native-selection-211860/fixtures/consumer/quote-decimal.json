@@ -1,0 +1,38 @@
+{
+  "schema": "samedaydesk.task-native-useful-consumer.input.v1",
+  "taskRef": "quote-decimal-readiness",
+  "meaningId": "quote-decimal-label",
+  "success": {
+    "pointer": "data.quote",
+    "valuePattern": "^\\d+(\\.\\d+)?$",
+    "valuePatternEvaluatedBy": "not_invoked",
+    "method": "POST",
+    "route": "/quote",
+    "positiveFixture": "catalog-row-repair-complete.json",
+    "positiveRelative": "action/fixtures/catalog-row-repair-complete.json",
+    "negativeFixture": "catalog-row-repair-add-required.json",
+    "negativeRelative": "action/fixtures/catalog-row-repair-add-required.json",
+    "positive": {
+      "id": "repair-complete",
+      "ok": true,
+      "findings": [],
+      "decision": "admissible",
+      "repairComplete": true,
+      "repairActions": [],
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false
+    },
+    "negative": {
+      "id": "repair-add-required",
+      "ok": false,
+      "findings": ["seller_response_required_path_missing:data.quote"],
+      "decision": "admissible",
+      "repairComplete": false,
+      "repairActions": ["add_property_to_required"],
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false
+    }
+  }
+}

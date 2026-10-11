@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { acquireSources } from "../src/acquire.mjs";
 import { buildFeedback, compareEffort } from "../src/feedback.mjs";
 import { executeSyntheticLoopback } from "../src/execute.mjs";
+import { consumeQualified } from "../src/consume.mjs";
 import { selectTask } from "../src/select.mjs";
 
 function usage() {
@@ -14,6 +15,7 @@ function usage() {
     "task-native-select effort --catalog <normalized.json> --task <task.json>",
     "task-native-select execute-synthetic --catalog <normalized.json> --task <task.json> --body <body.json>",
     "task-native-select feedback --result <result.json> --opt-in [--accept] --out <file.json>",
+    "task-native-select consume --catalog <normalized.json> --task <task.json> --input <input.json> --repo <checkout> [--fresh <normalized.json>]",
   ].join("\n");
 }
 
@@ -109,6 +111,23 @@ if (command === "execute-synthetic") {
   }
   say(result);
   process.exit(executed.contract?.ok ? 0 : 2);
+}
+
+if (command === "consume") {
+  const catalog = readJson(flag(argv, "--catalog") || "");
+  const task = readJson(flag(argv, "--task") || "");
+  const callerInput = readJson(flag(argv, "--input") || "");
+  const repo = flag(argv, "--repo");
+  const freshPath = flag(argv, "--fresh");
+  const freshCatalog = freshPath ? readJson(freshPath) : null;
+  const journey = await consumeQualified({ catalog, task, callerInput, repoRoot: repo, freshCatalog });
+  const out = flag(argv, "--out");
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, `${JSON.stringify(journey, null, 2)}\n`);
+  }
+  say(journey);
+  process.exit(journey.outputValidation?.ok === true && journey.invocation?.state === "invoked" ? 0 : 2);
 }
 
 if (command === "feedback") {
