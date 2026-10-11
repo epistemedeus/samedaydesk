@@ -1,0 +1,292 @@
+{
+  "schema": "samedaydesk.task-native-readiness-complete.receipt.v1",
+  "feature": "codex/task-native-readiness-complete-211985",
+  "sourceFeature": "codex/task-native-selection-211860",
+  "receivedHead": "efe688cdb487ce4c8732c543510ba49f9f5124b7",
+  "receivedTree": "12b2cedd8828760c3794b1302cd2eb7821f7017e",
+  "originalReceiving": "ef1ba11e709ea80ac0c54063c2e30fc89d17cc0f",
+  "base": "d760714c932fd317e1435b528575fecd95594183",
+  "baseTree": "8bdc2f0fedd0aaa13b53b2daeff4d47dd44428d0",
+  "head": "6c2ee316fd623cbdf3c3bbefc1a245ccffc49331",
+  "tree": "97319b5a84250c5933bb05fe543eb4781dfc636e",
+  "node": "v22.14.0",
+  "ownerQa": true,
+  "independentCustomer": false,
+  "outsideDemand": "not_observed",
+  "revenue": false,
+  "faithfulInvocation": false,
+  "completedUserTask": false,
+  "coldInstall": {
+    "packStatus": 0,
+    "installStatus": 0,
+    "completeStatus": 0,
+    "directStatus": 0,
+    "fetchStatus": 0,
+    "pureStatus": 0,
+    "installMs": 430.56341999999995,
+    "completeMs": 89.21469899999988,
+    "directWallMs": 25.395763999999872,
+    "directMs": 1.315224999999998,
+    "handoffMs": 0.12772200000000566,
+    "selectorDirectMs": 0.32678800000000763,
+    "totalMs": 1511.7565630000001,
+    "tarball": "samedaydesk-task-native-selection-211860-0.1.3.tgz",
+    "bytes": 131830,
+    "version": "0.1.3",
+    "pinInstall": {
+      "state": "not_required",
+      "ms": null,
+      "reason": "readiness-contract.mjs has no package imports"
+    }
+  },
+  "red": {
+    "natural": {
+      "status": 0,
+      "code": null,
+      "express": false,
+      "stderr": ""
+    },
+    "hidden": {
+      "status": 1,
+      "code": "ERR_MODULE_NOT_FOUND",
+      "express": true
+    }
+  },
+  "green": {
+    "soon": {
+      "state": "fail",
+      "code": "value_mismatch",
+      "pointer": "data.quote",
+      "shape": "string"
+    },
+    "decimal": {
+      "state": "pass",
+      "code": null,
+      "pointer": "data.quote",
+      "shape": "string"
+    },
+    "number": {
+      "state": "fail",
+      "code": "value_mismatch",
+      "pointer": "data.quote",
+      "shape": "number"
+    }
+  },
+  "acquisition": {
+    "url": "https://samedaydesk.com/discovery/task-readiness.json",
+    "status": 200,
+    "hops": [
+      {
+        "url": "https://samedaydesk.com/discovery/task-readiness.json",
+        "status": 200
+      }
+    ],
+    "bytes": 3408,
+    "ms": 182.31095599999998,
+    "liveSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "snapshotSha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "unchangedFromSnapshot": true,
+    "httpStatusIsAcceptance": false
+  },
+  "stages": {
+    "query": "accepted",
+    "render": "rendered",
+    "selection": "selected",
+    "execution": "consumer_invoked",
+    "ownerAcceptance": "recorded",
+    "outsideAcceptance": "not_observed"
+  },
+  "selection": {
+    "entryId": "discovery:task-readiness",
+    "economicComparison": "known_free",
+    "impliedCheapest": false,
+    "cost": {
+      "state": "known_free",
+      "amount": "0",
+      "currency": "USD",
+      "charged": false,
+      "atomicComparison": null,
+      "conflict": null
+    }
+  },
+  "discoveryQuote": {
+    "state": "no_fit",
+    "reason": "no_eligible_output",
+    "entryId": null,
+    "documentReasons": [
+      "path_absent:data.quote"
+    ],
+    "meaningId": "quote-decimal-label",
+    "meaningIdRole": "task_label",
+    "semanticEquivalence": false
+  },
+  "invocation": {
+    "state": "invoked",
+    "consumer": "diagnoseSuppliedContract",
+    "semanticFunction": "semanticResult",
+    "coldStartExecuted": false,
+    "faithfulInvocation": false,
+    "adapterInvoked": false,
+    "completedUserTask": false,
+    "quoteGenerated": false
+  },
+  "outputValidation": {
+    "ok": true,
+    "reason": "predeclared_check",
+    "mismatches": [],
+    "decisionChanged": true,
+    "discoveryQuote": "no_fit",
+    "semanticShape": "string",
+    "semanticState": "fail",
+    "conformingNextAction": "decimal_match",
+    "wrongNextAction": "value_mismatch:data.quote",
+    "absentNextAction": "seller_response_required_path_missing:data.quote"
+  },
+  "ownerAcceptance": {
+    "state": "recorded",
+    "accepted": true,
+    "ownerQa": true,
+    "independentCustomer": false,
+    "completedUserTask": false
+  },
+  "outsideAcceptance": {
+    "state": "not_observed",
+    "accepted": false,
+    "independentCustomer": false
+  },
+  "attention": {
+    "state": "unknown",
+    "amount": null,
+    "currency": null
+  },
+  "downstreamEffects": {
+    "publicDeploymentActivated": false,
+    "paymentSent": false,
+    "paymentSigned": false,
+    "credentialsUsed": false,
+    "publication": false,
+    "coldStartExecuted": false,
+    "productionMutation": false,
+    "wallet": false,
+    "claimSubmitted": false,
+    "repairPosted": false,
+    "quoteGenerated": false
+  },
+  "directComparison": {
+    "directMs": 0.32678800000000763,
+    "handoffMs": 0.12772200000000566,
+    "sameDecision": true,
+    "directPathRetained": true,
+    "savingsClaim": false,
+    "customerTime": false,
+    "sharedUpkeep": "both paths call diagnoseSuppliedContract from the same module after the same qualification",
+    "note": "The pure contract check is the direct consumer. Selection qualifies the readiness document and does not replace that call.",
+    "sameDiagnostic": true,
+    "installShared": true,
+    "discoveryShared": true
+  },
+  "sourceAcquisition": {
+    "repoRoot": "/agent/repos/samedaydesk",
+    "head": "6c2ee316fd623cbdf3c3bbefc1a245ccffc49331",
+    "module": "tools/l08-agent-repair/lib/readiness-contract.mjs",
+    "pin": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "documentPin": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+    "pinVerified": true,
+    "adapterInvoked": false,
+    "discoverySha256": "5139834edf36fca8ee39204c106e56f0423267e98a9efbfb9a464393c9ec9c80",
+    "coldStartUntrusted": [
+      "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
+      "node tools/l08-agent-repair/cold-client.mjs task-readiness"
+    ],
+    "coldStartUsedForInvocation": false,
+    "valuePatternEvaluatedBy": "semanticResult",
+    "valuePattern": "^\\d+(\\.\\d+)?$"
+  },
+  "nextAction": "value_mismatch:data.quote",
+  "actual": {
+    "conforming": {
+      "method": "POST",
+      "path": "/quote",
+      "routeFetched": false,
+      "quoteGenerated": false,
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false,
+      "repairPosted": false,
+      "schema": {
+        "state": "pass",
+        "code": null
+      },
+      "semantic": {
+        "state": "pass",
+        "code": null,
+        "pointer": "data.quote",
+        "shape": "string"
+      },
+      "nextAction": "decimal_match"
+    },
+    "wrong": {
+      "method": "POST",
+      "path": "/quote",
+      "routeFetched": false,
+      "quoteGenerated": false,
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false,
+      "repairPosted": false,
+      "schema": {
+        "state": "pass",
+        "code": null
+      },
+      "semantic": {
+        "state": "fail",
+        "code": "value_mismatch",
+        "pointer": "data.quote",
+        "shape": "string"
+      },
+      "nextAction": "value_mismatch:data.quote"
+    },
+    "malformed": {
+      "method": "POST",
+      "path": "/quote",
+      "routeFetched": false,
+      "quoteGenerated": false,
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false,
+      "repairPosted": false,
+      "schema": {
+        "state": "pass",
+        "code": null
+      },
+      "semantic": {
+        "state": "fail",
+        "code": "value_mismatch",
+        "pointer": "data.quote",
+        "shape": "number"
+      },
+      "nextAction": "value_mismatch:data.quote"
+    },
+    "absentPath": {
+      "method": "POST",
+      "path": "/quote",
+      "routeFetched": false,
+      "quoteGenerated": false,
+      "paymentSent": false,
+      "paymentSigned": false,
+      "credentialsUsed": false,
+      "repairPosted": false,
+      "schema": {
+        "state": "fail",
+        "code": "seller_response_required_path_missing:data.quote"
+      },
+      "semantic": {
+        "state": "pass",
+        "code": null,
+        "pointer": "data.quote",
+        "shape": "string"
+      },
+      "nextAction": "seller_response_required_path_missing:data.quote"
+    }
+  }
+}
