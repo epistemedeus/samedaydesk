@@ -121,6 +121,8 @@ test("the owned adapter runs only after the readiness document qualifies", async
   assert.equal(journey.meaningIdRole, "task_label");
   assert.equal(journey.semanticEquivalence, false);
   assert.equal(journey.discoveryQuote.state, "no_fit");
+  assert.equal(journey.discoveryQuote.reason, "no_eligible_output");
+  assert.deepEqual(journey.discoveryQuote.documentReasons, ["path_absent:data.quote"]);
   assert.equal(journey.discoveryQuote.semanticEquivalence, false);
   assert.equal(journey.invocation.coldStartExecuted, false);
   assert.equal(journey.invocation.completedUserTask, false);

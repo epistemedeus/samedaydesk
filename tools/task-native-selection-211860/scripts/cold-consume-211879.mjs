@@ -150,6 +150,7 @@ const ok = receipt.stages.execution === "consumer_invoked"
   && receipt.outputValidation.ok === true
   && receipt.outputValidation.decisionChanged === true
   && receipt.discoveryQuote.state === "no_fit"
+  && receipt.discoveryQuote.documentReasons?.[0] === "path_absent:data.quote"
   && receipt.invocation.coldStartExecuted === false
   && receipt.directComparison.savingsClaim === false
   && receipt.directComparison.directPathRetained === true

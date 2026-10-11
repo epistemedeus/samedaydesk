@@ -97,6 +97,12 @@ function runOne(runPublicAdapter, relativePath, expected) {
   };
 }
 
+function documentReasons(result) {
+  return (result?.stages?.render?.ineligible || [])
+    .filter((row) => row.id === READINESS_ENTRY)
+    .flatMap((row) => row.reasons || []);
+}
+
 function notInvoked(reason) {
   return {
     state: "not_invoked",
@@ -139,6 +145,7 @@ export async function consumeQualified({ catalog, task, callerInput, repoRoot, f
       state: quote.stages.selected.state,
       reason: quote.stages.selected.reason,
       entryId: quote.stages.selected.entryId,
+      documentReasons: documentReasons(quote),
       meaningId: quote.stages.query.meaningId,
       meaningIdRole: quote.stages.query.meaningIdRole || "task_label",
       semanticEquivalence: false,
