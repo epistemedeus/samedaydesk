@@ -76,6 +76,10 @@ test("free readiness selects the discovery document and keeps the local command 
   assert.equal(choice.direct, true);
   assert.equal(choice.owned, true);
   assert.equal(choice.reason, "known_free_direct");
+  assert.equal(choice.economicComparison, "known_free");
+  assert.equal(choice.impliedCheapest, false);
+  assert.equal(result.stages.query.meaningIdRole, "task_label");
+  assert.equal(result.stages.query.semanticEquivalence, false);
   assert.deepEqual(choice.route.subjectRoute, { method: "POST", path: "/mcp" });
   assert.equal(choice.nextAction.command[0].includes("cold-client.mjs"), true);
   assert.equal(choice.nextAction.run, "not_run");

@@ -140,7 +140,7 @@ test("cross-surface price text cannot zero a known display price", () => {
   assert.equal(result.stages.render.ineligible.some((row) => row.operationId === "extractUrl" && row.reasons.includes("price_authority_conflict")), true);
 });
 
-test("unknown caller price does not beat a known owned price, and a private origin is refused", () => {
+test("an unknown direct price stays beside a denominated price, and a private origin is refused", () => {
   const unknown = structuredClone(directCareers);
   unknown.price = { state: "unknown" };
   unknown.id = "unknown-direct";
@@ -157,7 +157,11 @@ test("unknown caller price does not beat a known owned price, and a private orig
       directAlternative: unknown,
     }),
   });
-  assert.equal(result.stages.selected.operationId, "readNamedCareersBoard");
+  assert.equal(result.stages.selected.state, "unranked");
+  assert.equal(result.stages.selected.entryId, null);
+  assert.equal(result.stages.selected.economicComparison, "unresolved");
+  assert.equal(result.stages.selected.impliedCheapest, false);
+  assert.deepEqual(result.stages.selected.alternatives.map((row) => row.operationId), ["public-careers-board", "readNamedCareersBoard"]);
   const local = structuredClone(directCareers);
   local.origin = "http://127.0.0.1:9";
   const refused = selectTask({
@@ -224,6 +228,10 @@ test("synthetic loopback validates a contract and does not record acceptance", a
   assert.equal(executed.loopbackHost, "127.0.0.1");
   assert.equal(executed.contract.ok, true);
   assert.equal(executed.usefulAcceptance.accepted, false);
+  assert.equal(executed.method, "GET");
+  assert.equal(executed.requestMethod, "GET");
+  assert.equal(executed.fixture, "response_schema");
+  assert.equal(executed.faithfulInvocation, false);
   const mismatch = await executeSyntheticLoopback({ entry, body: { title: "Example" } });
   assert.equal(mismatch.contract.ok, false);
 });

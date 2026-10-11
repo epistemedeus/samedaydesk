@@ -1,4 +1,4 @@
-import { DECIMAL_AMOUNT, DISCOVERY_SCHEMA, PORTFOLIO_HOSTS } from "./constants.mjs";
+import { CURRENCY, DECIMAL_AMOUNT, DISCOVERY_SCHEMA, PORTFOLIO_HOSTS } from "./constants.mjs";
 import { canonical, decimalZero, sha256 } from "./canonical.mjs";
 import { hostnameBlocked } from "./public-host.mjs";
 
@@ -29,7 +29,7 @@ function blankPrice() {
 function knownDisplay(amount, currency, source) {
   const price = blankPrice();
   price.sources.push(source);
-  if (typeof amount !== "string" || !DECIMAL_AMOUNT.test(amount) || typeof currency !== "string" || currency.length === 0) {
+  if (typeof amount !== "string" || !DECIMAL_AMOUNT.test(amount) || typeof currency !== "string" || !CURRENCY.test(currency)) {
     price.state = "invalid";
     price.charged = true;
     return price;
@@ -297,7 +297,7 @@ export function entryFromDiscovery(document, sourceUrl) {
   if (paid === false && invokes === false) {
     price.state = "known_free";
     price.amount = "0";
-    price.currency = "USD";
+    price.currency = null;
     price.charged = false;
     price.sources.push("acquisition-discovery.paid");
   } else if (paid === false && invokes === true) {
@@ -357,6 +357,12 @@ export function entryFromDiscovery(document, sourceUrl) {
   });
 }
 
+function callerCurrency(value) {
+  if (value == null) return { currency: null };
+  if (typeof value === "string" && CURRENCY.test(value)) return { currency: value };
+  return { error: "caller_price_incoherent" };
+}
+
 export function normalizeCallerEntry(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return { entry: null, error: "caller_entry_rejected" };
@@ -388,22 +394,26 @@ export function normalizeCallerEntry(input) {
   const priceInput = input.price && typeof input.price === "object" ? input.price : {};
   const price = blankPrice();
   price.challengeDeclared = false;
+  const currency = callerCurrency(priceInput.currency);
+  if (currency.error && priceInput.state !== "unknown" && priceInput.state != null) {
+    return { entry: null, error: currency.error };
+  }
   if (priceInput.state === "known_free") {
     if (priceInput.amount !== "0" && priceInput.amount !== 0) return { entry: null, error: "caller_price_incoherent" };
     price.state = "known_free";
     price.amount = "0";
-    price.currency = typeof priceInput.currency === "string" ? priceInput.currency : "USD";
+    price.currency = currency.currency;
     price.charged = false;
     price.sources.push("caller.price");
   } else if (priceInput.state === "known") {
     if (typeof priceInput.amount !== "string" || !DECIMAL_AMOUNT.test(priceInput.amount) || decimalZero(priceInput.amount)) {
       return { entry: null, error: "caller_price_incoherent" };
     }
-    price.state = "known";
     price.amount = priceInput.amount;
-    price.currency = typeof priceInput.currency === "string" ? priceInput.currency : null;
+    price.currency = currency.currency;
     price.charged = true;
     price.sources.push("caller.price");
+    price.state = currency.currency ? "known" : "undenominated";
   } else if (priceInput.state === "unknown" || priceInput.state == null) {
     price.state = "unknown";
     price.charged = null;

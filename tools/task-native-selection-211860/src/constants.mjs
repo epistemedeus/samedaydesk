@@ -15,6 +15,7 @@ export const DISCOVERY_SCHEMA = "samedaydesk.acquisition-discovery.v1";
 export const TASK_REF = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,80}$/;
 export const DECIMAL_AMOUNT = /^(0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
 export const INTEGER_AMOUNT = /^(0|[1-9][0-9]*)$/;
+export const CURRENCY = /^[A-Z]{3}$/;
 
 export const DEFAULT_ORIGINS = Object.freeze({
   openapi: "https://agents.samedaydesk.com/openapi.json",

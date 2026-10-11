@@ -1,6 +1,6 @@
 {
   "name": "@samedaydesk/task-native-selection-211860",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -17,7 +17,8 @@
   "scripts": {
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "acquire": "node ./bin/task-native-select.mjs acquire --out acquired",
-    "cold": "node ./scripts/cold-install.mjs"
+    "cold": "node ./scripts/cold-install.mjs",
+    "receive": "node ./scripts/cold-receive-211876.mjs"
   },
   "dependencies": {
     "ajv": "8.20.0",

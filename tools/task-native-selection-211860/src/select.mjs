@@ -1,5 +1,5 @@
-import { CATALOG_SCHEMA, FEATURE, RESULT_SCHEMA, TASK_REF, TASK_SCHEMA } from "./constants.mjs";
-import { canonical, sha256 } from "./canonical.mjs";
+import { CATALOG_SCHEMA, CURRENCY, DECIMAL_AMOUNT, FEATURE, RESULT_SCHEMA, TASK_REF, TASK_SCHEMA } from "./constants.mjs";
+import { canonical, compareDecimal, decimalZero, sha256 } from "./canonical.mjs";
 import { normalizeCallerEntry } from "./catalog.mjs";
 import { supportsOutput } from "./schema-support.mjs";
 
@@ -79,6 +79,7 @@ export function judgeEntry(entry, task, fresh) {
     },
     nextAction: entry.nextAction,
     outputSupported: support.ok,
+    outputClaim: support.claim || (support.ok ? "demonstrated_guarantee" : "refused"),
   };
 }
 
@@ -86,32 +87,8 @@ function selectionReason(entry) {
   const direct = entry.direct ? "direct" : "catalog";
   if (entry.price.state === "known_free") return `known_free_${direct}`;
   if (entry.price.state === "known") return `known_price_${direct}`;
+  if (entry.price.state === "undenominated") return `undenominated_${direct}`;
   return `cost_unknown_${direct}`;
-}
-
-function strength(row) {
-  const price = row.entry.price;
-  const freeRank = price.state === "known_free" ? 0 : price.state === "known" ? 1 : 2;
-  const directRank = row.entry.direct === true ? 0 : 1;
-  const amount = price.state === "known" ? Number(price.amount) : Number.POSITIVE_INFINITY;
-  const caller = row.entry.authority === "caller" && row.entry.direct === true ? 0 : 1;
-  return [freeRank, directRank, amount, caller, row.entry.id];
-}
-
-function compareStrength(left, right) {
-  const a = strength(left);
-  const b = strength(right);
-  for (let index = 0; index < a.length; index += 1) {
-    if (a[index] < b[index]) return -1;
-    if (a[index] > b[index]) return 1;
-  }
-  return 0;
-}
-
-function sameStrength(left, right) {
-  const a = strength(left);
-  const b = strength(right);
-  return a.slice(0, 4).every((value, index) => value === b[index]);
 }
 
 function view(row) {
@@ -136,7 +113,163 @@ function view(row) {
     route: row.route,
     nextAction: row.nextAction,
     outputSupported: row.outputSupported,
+    outputClaim: row.outputClaim,
     untrustedText: row.untrustedText,
+  };
+}
+
+function priceClass(price) {
+  if (price?.state === "known_free") return "free";
+  if (
+    price?.state === "known"
+    && typeof price.currency === "string"
+    && CURRENCY.test(price.currency)
+    && typeof price.amount === "string"
+    && DECIMAL_AMOUNT.test(price.amount)
+    && !decimalZero(price.amount)
+  ) return "priced";
+  return "open";
+}
+
+function compareNonPrice(left, right) {
+  const keys = [
+    [left.entry.direct === true ? 0 : 1, right.entry.direct === true ? 0 : 1],
+    [left.entry.authority === "caller" && left.entry.direct === true ? 0 : 1, right.entry.authority === "caller" && right.entry.direct === true ? 0 : 1],
+    [left.entry.id, right.entry.id],
+  ];
+  for (const [a, b] of keys) {
+    if (a < b) return -1;
+    if (a > b) return 1;
+  }
+  return 0;
+}
+
+function sameRouteStrength(left, right) {
+  return (left.entry.direct === true) === (right.entry.direct === true)
+    && (left.entry.authority === "caller" && left.entry.direct === true) === (right.entry.authority === "caller" && right.entry.direct === true);
+}
+
+function trace(rows) {
+  return [...rows].sort((left, right) => left.entry.id.localeCompare(right.entry.id));
+}
+
+function chosen(best, extra) {
+  return {
+    state: "selected",
+    reason: best.reason,
+    entryId: best.entry.id,
+    operationId: best.entry.operationId,
+    sourceRef: best.entry.sourceRef,
+    authority: best.entry.authority,
+    tied: extra.tied,
+    tieBreak: extra.tieBreak,
+    owned: best.entry.owned === true,
+    direct: best.entry.direct === true,
+    cost: view(best).cost,
+    route: best.route,
+    nextAction: best.nextAction,
+    preferenceIgnored: ["owned"],
+    economicComparison: extra.economicComparison,
+    impliedCheapest: false,
+    alsoEligible: extra.alsoEligible,
+    outputClaim: best.outputClaim,
+    currency: extra.currency || best.entry.price.currency || null,
+  };
+}
+
+function relationFor(row, mode) {
+  if (mode === "free") return priceClass(row.entry.price) === "free" ? "same_known_free_class" : "dominated_by_known_free";
+  return "higher_exact_decimal";
+}
+
+function selectEligible(eligible) {
+  if (eligible.length === 0) {
+    return {
+      state: "no_fit",
+      reason: "no_eligible_output",
+      entryId: null,
+      operationId: null,
+      sourceRef: null,
+      tied: [],
+      tieBreak: null,
+      owned: null,
+      direct: null,
+      cost: null,
+      route: null,
+      nextAction: null,
+      economicComparison: null,
+      impliedCheapest: false,
+      alsoEligible: [],
+    };
+  }
+  const free = eligible.filter((row) => priceClass(row.entry.price) === "free");
+  if (free.length > 0) {
+    const ordered = [...free].sort(compareNonPrice);
+    const best = ordered[0];
+    const tied = free.filter((row) => sameRouteStrength(row, best));
+    return chosen(best, {
+      tied: tied.map((row) => row.entry.id).sort(),
+      tieBreak: tied.length > 1 ? "caller_direct_then_entry_id" : null,
+      economicComparison: "known_free",
+      alsoEligible: trace(eligible.filter((row) => row.entry.id !== best.entry.id)).map((row) => ({
+        id: row.entry.id,
+        operationId: row.entry.operationId,
+        cost: view(row).cost,
+        relation: relationFor(row, "free"),
+      })),
+    });
+  }
+  const priced = eligible.filter((row) => priceClass(row.entry.price) === "priced");
+  const open = eligible.filter((row) => priceClass(row.entry.price) === "open");
+  const currencies = new Set(priced.map((row) => row.entry.price.currency));
+  if (open.length === 0 && priced.length === eligible.length && currencies.size === 1) {
+    const ordered = [...priced].sort((left, right) => {
+      const amount = compareDecimal(left.entry.price.amount, right.entry.price.amount);
+      if (amount !== 0) return amount;
+      return compareNonPrice(left, right);
+    });
+    const best = ordered[0];
+    const tied = priced.filter((row) => compareDecimal(row.entry.price.amount, best.entry.price.amount) === 0 && sameRouteStrength(row, best));
+    return chosen(best, {
+      tied: tied.map((row) => row.entry.id).sort(),
+      tieBreak: tied.length > 1 ? "caller_direct_then_entry_id" : null,
+      economicComparison: priced.length === 1 ? "sole_priced" : "exact_decimal",
+      currency: best.entry.price.currency,
+      alsoEligible: trace(priced.filter((row) => row.entry.id !== best.entry.id)).map((row) => ({
+        id: row.entry.id,
+        operationId: row.entry.operationId,
+        cost: view(row).cost,
+        relation: "higher_exact_decimal",
+      })),
+    });
+  }
+  if (eligible.length === 1) {
+    return chosen(eligible[0], {
+      tied: [eligible[0].entry.id],
+      tieBreak: null,
+      economicComparison: "sole_eligible",
+      alsoEligible: [],
+    });
+  }
+  return {
+    state: "unranked",
+    reason: "economic_rank_unresolved",
+    entryId: null,
+    operationId: null,
+    sourceRef: null,
+    tied: [],
+    tieBreak: null,
+    alternatives: trace(eligible).map(view),
+    alternativeOrder: "entry_id_trace",
+    economicComparison: "unresolved",
+    impliedCheapest: false,
+    owned: null,
+    direct: null,
+    cost: null,
+    route: null,
+    nextAction: null,
+    preferenceIgnored: ["owned"],
+    alsoEligible: [],
   };
 }
 
@@ -173,44 +306,9 @@ export function selectTask({ catalog, task, freshCatalog = null, now }) {
   }
   const fresh = freshCatalog ? freshIndex(freshCatalog) : null;
   const judged = entries.map((entry) => judgeEntry(entry, task, fresh));
-  const eligible = judged.filter((row) => row.eligible).sort(compareStrength);
+  const eligible = judged.filter((row) => row.eligible);
   const ineligible = judged.filter((row) => !row.eligible);
-  let selected;
-  if (eligible.length === 0) {
-    selected = {
-      state: "no_fit",
-      reason: "no_eligible_output",
-      entryId: null,
-      operationId: null,
-      sourceRef: null,
-      tied: [],
-      tieBreak: null,
-      owned: null,
-      direct: null,
-      cost: null,
-      route: null,
-      nextAction: null,
-    };
-  } else {
-    const best = eligible[0];
-    const tied = eligible.filter((row) => sameStrength(row, best));
-    selected = {
-      state: "selected",
-      reason: best.reason,
-      entryId: best.entry.id,
-      operationId: best.entry.operationId,
-      sourceRef: best.entry.sourceRef,
-      authority: best.entry.authority,
-      tied: tied.map((row) => row.entry.id),
-      tieBreak: tied.length > 1 ? "caller_direct_then_entry_id" : null,
-      owned: best.entry.owned === true,
-      direct: best.entry.direct === true,
-      cost: view(best).cost,
-      route: best.route,
-      nextAction: best.nextAction,
-      preferenceIgnored: ["owned"],
-    };
-  }
+  const selected = selectEligible(eligible);
   return shell({
     occurredAt,
     source,
@@ -219,12 +317,15 @@ export function selectTask({ catalog, task, freshCatalog = null, now }) {
       errors: [],
       taskRef: task.taskRef,
       meaningId: task.requiredOutput.meaningId,
+      meaningIdRole: "task_label",
+      semanticEquivalence: false,
+      outputSpec: "allowed_output_set",
       digest: sha256(canonical(task)),
     },
     render: {
       state: "rendered",
-      eligible: eligible.map(view),
-      ineligible: ineligible.map(view),
+      eligible: trace(eligible).map(view),
+      ineligible: trace(ineligible).map(view),
     },
     selected,
   });

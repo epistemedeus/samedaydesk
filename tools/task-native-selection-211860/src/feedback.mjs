@@ -1,6 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { DECIMAL_AMOUNT, EFFORT_SCHEMA, FEATURE, INTEGER_AMOUNT, MEASUREMENT_RULE, RECEIPT_SCHEMA, FEEDBACK_SCHEMA } from "./constants.mjs";
-import { selectTask } from "./select.mjs";
+import { judgeEntry, selectTask } from "./select.mjs";
+import { validateInstance } from "./schema-support.mjs";
 
 function assertMeasured(value, unit) {
   if (unit === "count" || unit === "atomic") {
@@ -31,9 +32,9 @@ export function buildFeedback({ result, optIn, accept = false, now }) {
     assertMeasured(selected.state === "selected" ? "1" : "0", "count"),
     assertMeasured(result.stages?.executed?.state === "synthetic_loopback" ? "1" : "0", "count"),
   ];
-  if (selected.cost?.state === "known" && typeof selected.cost.amount === "string") {
+  if (selected.cost?.state === "known" && selected.cost.currency === "USD" && typeof selected.cost.amount === "string") {
     measurements.push(assertMeasured(selected.cost.amount, "USD"));
-  } else if (selected.cost?.state === "known_free") {
+  } else if (selected.cost?.state === "known_free" && selected.cost.currency === "USD") {
     measurements.push({ ...assertMeasured("0", "USD"), observedZero: true });
   }
   const atomic = selected.cost?.atomicAmount;
@@ -76,7 +77,7 @@ export function buildFeedback({ result, optIn, accept = false, now }) {
   };
 }
 
-export function compareEffort({ catalog, task, now }) {
+export function compareEffort({ catalog, task, now, document = null, documentSchema = null }) {
   const plainStart = performance.now();
   const listed = (catalog?.entries || []).map((entry) => ({
     id: entry.id,
@@ -84,6 +85,22 @@ export function compareEffort({ catalog, task, now }) {
     summary: entry.summaryUntrusted || "",
   }));
   const plainMs = performance.now() - plainStart;
+  const directStart = performance.now();
+  const judged = (catalog?.entries || []).map((entry) => judgeEntry(entry, task, null));
+  const directEligible = judged.filter((row) => row.eligible);
+  const directMs = performance.now() - directStart;
+  let directDocument = null;
+  if (documentSchema) {
+    const documentStart = performance.now();
+    const checked = validateInstance(documentSchema, document);
+    directDocument = {
+      ms: performance.now() - documentStart,
+      ok: checked.ok,
+      reason: checked.reason,
+      downstreamCommand: "not_run",
+      impliedCheapest: false,
+    };
+  }
   const selectStart = performance.now();
   const selected = selectTask({ catalog, task, now });
   const selectMs = performance.now() - selectStart;
@@ -96,14 +113,34 @@ export function compareEffort({ catalog, task, now }) {
       selected: null,
       note: "Lists operation ids and untrusted summaries. Does not match an output contract.",
     },
+    directContract: {
+      ms: directMs,
+      eligible: directEligible.length,
+      ids: directEligible.map((row) => row.entry.id),
+      economicWinner: null,
+      impliedCheapest: false,
+      note: "Same catalog and task. Reports output support and price class. Does not order amounts across currencies.",
+    },
+    directDocument,
     selector: {
       ms: selectMs,
       state: selected.stages.selected.state,
       entryId: selected.stages.selected.entryId,
+      economicComparison: selected.stages.selected.economicComparison || null,
+      impliedCheapest: selected.stages.selected.impliedCheapest === false,
       eligible: selected.stages.render.eligible?.length || 0,
       ineligible: selected.stages.render.ineligible?.length || 0,
     },
+    stages: {
+      query: selected.stages.query.state,
+      render: selected.stages.render.state,
+      selected: selected.stages.selected.state,
+      executed: selected.stages.executed.state,
+      usefulAcceptance: selected.stages.usefulAcceptance.state,
+    },
     savingsClaim: false,
     customerTime: false,
+    ownerQa: true,
+    independentCustomer: false,
   };
 }

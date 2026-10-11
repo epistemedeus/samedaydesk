@@ -14,20 +14,36 @@ function close(server) {
   });
 }
 
+const METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]);
+
 export async function executeSyntheticLoopback({ entry, body }) {
+  const method = typeof entry?.method === "string" ? entry.method.toUpperCase() : "";
+  const base = {
+    synthetic: true,
+    autonomousExternalUse: false,
+    faithfulInvocation: false,
+    fixture: "response_schema",
+    methodDelivery: "declared_method",
+    method: method || null,
+  };
   if (!entry || entry.outputSchemaState === "absent" || !entry.outputSchema) {
-    return {
-      state: "refused",
-      reason: "output_contract_absent",
-      synthetic: true,
-      autonomousExternalUse: false,
-    };
+    return { ...base, state: "refused", reason: "output_contract_absent" };
+  }
+  if (!METHODS.has(method)) {
+    return { ...base, state: "refused", reason: "method_unsupported" };
   }
   const path = entry.path || "/";
+  let requestMethod = null;
   const server = createServer((req, res) => {
+    requestMethod = req.method;
     if ((req.url || "/").split("?")[0] !== path) {
       res.writeHead(404, { "content-type": "application/json" });
       res.end(JSON.stringify({ ok: false, reason: "path_mismatch" }));
+      return;
+    }
+    if (req.method !== method) {
+      res.writeHead(405, { "content-type": "application/json" });
+      res.end(JSON.stringify({ ok: false, reason: "method_mismatch" }));
       return;
     }
     res.writeHead(200, { "content-type": "application/json" });
@@ -35,7 +51,12 @@ export async function executeSyntheticLoopback({ entry, body }) {
   });
   const port = await listen(server);
   try {
-    const response = await fetch(`http://127.0.0.1:${port}${path}`);
+    const init = { method };
+    if (method !== "GET" && method !== "HEAD") {
+      init.headers = { "content-type": "application/json" };
+      init.body = "{}";
+    }
+    const response = await fetch(`http://127.0.0.1:${port}${path}`, init);
     const text = await response.text();
     let parsed = null;
     try {
@@ -45,9 +66,10 @@ export async function executeSyntheticLoopback({ entry, body }) {
     }
     const contract = validateInstance(entry.outputSchema, parsed);
     return {
+      ...base,
       state: "synthetic_loopback",
-      synthetic: true,
-      autonomousExternalUse: false,
+      requestMethod,
+      requestBody: method === "GET" || method === "HEAD" ? null : "empty_json_not_a_service_request",
       loopbackHost: "127.0.0.1",
       port,
       status: response.status,
