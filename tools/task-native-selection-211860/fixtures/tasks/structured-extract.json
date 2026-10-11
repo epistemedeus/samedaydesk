@@ -5,9 +5,9 @@
     "meaningId": "structured-page-fields",
     "paths": [
       { "path": "title", "type": "string" },
-      { "path": "jsonLd", "type": "array" },
-      { "path": "headings", "type": "object" },
-      { "path": "links", "type": "array" }
+      { "path": "requestedUrl", "type": "string" },
+      { "path": "finalUrl", "type": "string" },
+      { "path": "sourceOk", "type": "boolean" }
     ]
   },
   "applicability": {

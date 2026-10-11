@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.task-native-selection.cold-install.v1",
+  "installMs": 350.775249,
+  "totalMs": 688.029355,
+  "packStatus": 0,
+  "installStatus": 0,
+  "selectStatus": 0,
+  "tarball": "samedaydesk-task-native-selection-211860-0.1.0.tgz",
+  "bytes": 102683,
+  "selected": "extractUrl",
+  "stdoutBytes": 3179
+}

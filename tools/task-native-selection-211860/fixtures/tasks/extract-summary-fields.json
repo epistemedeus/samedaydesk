@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.task-native-selection.task.v1",
+  "taskRef": "extract-summary-fields",
+  "requiredOutput": {
+    "meaningId": "summary-promised-structure",
+    "paths": [
+      { "path": "jsonLd", "type": "array" },
+      { "path": "headings", "type": "object" },
+      { "path": "links", "type": "array" }
+    ]
+  },
+  "applicability": {
+    "pricedExecution": "allowed",
+    "availableInputs": ["url"],
+    "asOf": "2026-10-11T00:00:00.000Z"
+  }
+}

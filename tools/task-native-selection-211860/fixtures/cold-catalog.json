@@ -21,9 +21,12 @@
       "outputSchema": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["title", "jsonLd", "headings", "links"],
+        "required": ["title", "requestedUrl", "finalUrl", "sourceOk"],
         "properties": {
           "title": { "type": "string" },
+          "requestedUrl": { "type": "string" },
+          "finalUrl": { "type": "string" },
+          "sourceOk": { "type": "boolean" },
           "jsonLd": { "type": "array" },
           "headings": { "type": "object" },
           "links": { "type": "array" }

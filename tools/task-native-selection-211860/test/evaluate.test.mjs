@@ -24,6 +24,10 @@ test("acquired public catalog selects the grounded tasks", { skip: !existsSync(c
   assert.equal(readiness.stages.selected.cost.state, "known_free");
   assert.equal(extract.stages.selected.operationId, "extractUrl");
   assert.equal(extract.stages.selected.cost.amount, "0.005");
+  const summaryFields = selectTask({ catalog, task: load("extract-summary-fields"), now: "2026-10-11T10:40:00.000Z" });
+  assert.equal(summaryFields.stages.selected.state, "no_fit");
+  const extractRow = summaryFields.stages.render.ineligible.find((row) => row.operationId === "extractUrl");
+  assert.equal(extractRow.reasons.includes("path_optional:jsonLd"), true);
   assert.equal(careers.stages.selected.operationId, "readNamedCareersBoard");
   assert.equal(missing.stages.selected.state, "no_fit");
   assert.equal(tasks.length, 5);

@@ -1,0 +1,26 @@
+{
+  "schema": "samedaydesk.task-native-selection.effort.v1",
+  "feature": "codex/task-native-selection-211860",
+  "savingsClaim": false,
+  "customerTime": false,
+  "plainCatalogParseAndListMs": 1.4784509999999926,
+  "listed": 49,
+  "plainCatalogSelected": null,
+  "selectorMs": 2.3293099999999924,
+  "selectorState": "selected",
+  "selectorOperationId": "extractUrl",
+  "plainHttp": {
+    "url": "https://agents.samedaydesk.com/openapi.json",
+    "status": 200,
+    "bytes": 166766,
+    "ms": 232.5139,
+    "listedOperations": 48
+  },
+  "coldInstall": {
+    "installMs": 350.775249,
+    "totalMs": 688.029355,
+    "selectStatus": 0,
+    "selected": "extractUrl"
+  },
+  "note": "Selector review on the already acquired catalog took about 2.3ms after a 1.5ms parse-and-list. Fetching the OpenAPI document alone took 233ms and listed 48 operations with no selection. Cold install of the packed CLI took 351ms and the package select exited 0. None of these durations are customer time saved."
+}

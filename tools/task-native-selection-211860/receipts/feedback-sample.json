@@ -1,0 +1,62 @@
+{
+  "schema": "samedaydesk.task-native-selection.feedback.v1",
+  "feature": "codex/task-native-selection-211860",
+  "measurementRule": "pilot.observatory-measurement.v1",
+  "send": false,
+  "telemetry": "opt_in_local_file",
+  "occurredAt": "2026-10-11T10:53:16.935Z",
+  "independentCustomer": false,
+  "ownerQa": true,
+  "receipt": {
+    "schema": "samedaydesk.original-task-receipt.v1",
+    "stage": "submitted",
+    "disposition": "pending_qualification",
+    "submitted": true,
+    "triaged": false,
+    "delivered": false,
+    "accepted": false,
+    "reused": false,
+    "published": false,
+    "exampleConsent": true,
+    "contributionRequired": false,
+    "taskRef": "structured-extract",
+    "operationId": "extractUrl",
+    "occurredAt": "2026-10-11T10:53:16.935Z",
+    "synthetic": true,
+    "ownerQa": true
+  },
+  "stages": {
+    "query": "accepted",
+    "render": "rendered",
+    "selected": "selected",
+    "executed": "synthetic_loopback",
+    "usefulAcceptance": "not_observed"
+  },
+  "measurements": [
+    {
+      "state": "measured",
+      "value": "1",
+      "unit": "count",
+      "unitClass": "count"
+    },
+    {
+      "state": "measured",
+      "value": "1",
+      "unit": "count",
+      "unitClass": "count"
+    },
+    {
+      "state": "measured",
+      "value": "1",
+      "unit": "count",
+      "unitClass": "count"
+    },
+    {
+      "state": "measured",
+      "value": "0.005",
+      "unit": "USD",
+      "unitClass": "money",
+      "revenue": false
+    }
+  ]
+}

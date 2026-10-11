@@ -1,5 +1,8 @@
 {
   "title": "Example",
+  "requestedUrl": "https://example.com/",
+  "finalUrl": "https://example.com/",
+  "sourceOk": true,
   "jsonLd": [],
   "headings": {},
   "links": []
