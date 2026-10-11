@@ -1,0 +1,26 @@
+{
+  "name": "@samedaydesk/task-native-selection-211860",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Caller-side task-native selector for SameDayDesk machine catalogs. Deterministic output-contract matching, not a search index.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "task-native-select": "./bin/task-native-select.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "acquire": "node ./bin/task-native-select.mjs acquire --out acquired",
+    "cold": "node ./scripts/cold-install.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ipaddr.js": "2.5.0"
+  }
+}

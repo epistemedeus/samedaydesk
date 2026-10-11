@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.task-native-selection.task.v1",
+  "taskRef": "recoverable-receipt",
+  "requiredOutput": {
+    "meaningId": "seller-integrity-decision",
+    "paths": [
+      {
+        "path": "recheck.decision",
+        "type": "string",
+        "enum": ["machine_buyable", "contract_ready", "repair_required"]
+      }
+    ]
+  },
+  "applicability": {
+    "pricedExecution": "allowed",
+    "availableInputs": ["original", "downstream"],
+    "asOf": "2026-10-11T00:00:00.000Z"
+  }
+}

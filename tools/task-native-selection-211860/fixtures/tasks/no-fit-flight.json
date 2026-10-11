@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.task-native-selection.task.v1",
+  "taskRef": "no-fit-flight",
+  "requiredOutput": {
+    "meaningId": "booked-seat",
+    "paths": [{ "path": "flightNumber", "type": "string" }]
+  },
+  "applicability": {
+    "pricedExecution": "allowed",
+    "availableInputs": [],
+    "asOf": "2026-10-11T00:00:00.000Z"
+  }
+}

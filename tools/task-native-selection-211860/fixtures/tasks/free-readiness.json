@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.task-native-selection.task.v1",
+  "taskRef": "free-readiness",
+  "requiredOutput": {
+    "meaningId": "task-readiness-document",
+    "paths": [
+      { "path": "packageId", "const": "task-readiness" },
+      { "path": "paid", "const": false },
+      { "path": "invokesPricedExecution", "const": false }
+    ]
+  },
+  "applicability": {
+    "pricedExecution": "forbidden",
+    "availableInputs": [],
+    "asOf": "2026-10-11T00:00:00.000Z"
+  }
+}

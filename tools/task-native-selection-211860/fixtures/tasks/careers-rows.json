@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.task-native-selection.task.v1",
+  "taskRef": "careers-rows",
+  "requiredOutput": {
+    "meaningId": "careers-posting-rows",
+    "paths": [
+      {
+        "path": "rows",
+        "type": "array",
+        "items": { "required": ["title", "location", "url", "source", "fetchedAt"] }
+      }
+    ]
+  },
+  "applicability": {
+    "pricedExecution": "allowed",
+    "availableInputs": ["board"],
+    "asOf": "2026-10-11T00:00:00.000Z"
+  }
+}
