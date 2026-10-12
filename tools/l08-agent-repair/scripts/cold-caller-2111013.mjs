@@ -148,6 +148,7 @@ function decisionKey(result) {
     nextAction: result.nextAction,
     schema: result.schema,
     semantic: result.semantic,
+    guarantee: result.guarantee,
     savingsClaim: result.savingsClaim,
     cost: result.cost,
     quoteGenerated: result.quoteGenerated,
@@ -160,13 +161,18 @@ function variableCases() {
   const common = { pin: CALLER_PIN, deadline: "2099-01-01T00:00:00.000Z", semantic };
   const schema = {
     type: "object",
+    required: ["data"],
     properties: {
       data: {
         type: "object",
         required: ["quote"],
-        properties: { quote: { type: "string" } },
+        properties: { quote: { type: "string", pattern: PRICE_PATTERN.source } },
       },
     },
+  };
+  const optionalData = {
+    type: "object",
+    properties: schema.properties,
   };
   return [
     {
@@ -176,6 +182,10 @@ function variableCases() {
     {
       name: "semantic-wrong",
       body: { method: "POST", path: "/price", schema, value: { data: { quote: "later" } }, ...common },
+    },
+    {
+      name: "optional-data",
+      body: { method: "POST", path: "/desk", schema: optionalData, value: { data: { quote: "10" } }, ...common },
     },
     {
       name: "irrelevant",

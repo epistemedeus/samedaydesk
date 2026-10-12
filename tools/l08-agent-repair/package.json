@@ -13,6 +13,7 @@
     "./contract": "./lib/readiness-contract.mjs"
   },
   "files": [
+    "README.md",
     "task-readiness-caller.mjs",
     "lib/caller-readiness.mjs",
     "lib/readiness-contract.mjs",

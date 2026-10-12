@@ -32,11 +32,25 @@ function quoteSchema(quote, required = ["quote"]) {
   };
 }
 
+function anchored(quote, dataRequired = ["quote"]) {
+  return {
+    type: "object",
+    required: ["data"],
+    properties: {
+      data: {
+        type: "object",
+        required: dataRequired,
+        properties: { quote },
+      },
+    },
+  };
+}
+
 function input(overrides = {}) {
   return {
     method: "POST",
     path: "/price",
-    schema: quoteSchema({ type: "string" }),
+    schema: anchored({ type: "string", pattern: PRICE_PATTERN.source }),
     value: { data: { quote: "9" } },
     semantic: { pointer: "data.quote", pattern: PRICE_PATTERN.source },
     pin: CALLER_PIN,
@@ -92,8 +106,11 @@ test("pure modules import nothing and do not mention express", () => {
   assert.equal(caller.includes("task-readiness.mjs"), false);
   assert.equal(caller.includes("public-adapter"), false);
   assert.equal(caller.includes("new RegExp"), false);
+  assert.equal(caller.includes("Date.parse"), false);
   assert.equal(caller.includes("fetch("), false);
   assert.equal(caller.includes("spawn"), false);
+  assert.equal(caller.includes("node:http"), false);
+  assert.equal(caller.includes("node:net"), false);
 });
 
 test("owned decimal results stay on the pure module", () => {
@@ -105,6 +122,17 @@ test("owned decimal results stay on the pure module", () => {
   assert.equal(semanticResult({ data: { quote: 1.25 } }).shape, "number");
   assert.equal(semanticResult({ data: { quote: null } }).shape, "object");
   assert.equal(classifySchema(quoteSchema({ type: ["string", "null"] }), ["data.quote"]).state, "pass");
+  assert.equal(classifySchema(anchored({ type: ["string", "null"] }), ["data.quote"]).state, "pass");
+  assert.equal(classifySchema({
+    type: "object",
+    properties: {
+      data: {
+        type: "object",
+        required: ["quote"],
+        properties: { quote: { type: "string", pattern: PRICE_PATTERN.source } },
+      },
+    },
+  }, ["data.quote"]).state, "pass");
   assert.deepEqual(classifySchema(null, ["data.quote"]), {
     state: "fail",
     code: "seller_response_contract_absent",
@@ -115,10 +143,10 @@ test("independently varied inputs change diagnosis and next action", () => {
   const cases = [
     ["conforming", input(), "diagnosed", "decimal_match", "pass", "string"],
     ["semantic-wrong", input({ value: { data: { quote: "later" } } }), "diagnosed", "value_mismatch:data.quote:string", "fail", "string"],
-    ["missing-path", input({ schema: quoteSchema({ type: "string" }, ["id"]) }), "diagnosed", "seller_response_required_path_missing:data.quote", "pass", "string"],
-    ["nullable", input({ schema: quoteSchema({ type: ["string", "null"] }) }), "diagnosed", "type_not_guaranteed:data.quote", "pass", "string"],
-    ["enum", input({ schema: quoteSchema({ type: "string", enum: ["9", "later"] }) }), "diagnosed", "enum_not_guaranteed:data.quote", "pass", "string"],
-    ["malformed", input({ value: { data: { quote: 9 } } }), "diagnosed", "value_mismatch:data.quote:number", "fail", "number"],
+    ["missing-path", input({ schema: anchored({ type: "string" }, ["id"]) }), "diagnosed", "seller_response_required_path_missing:data.quote", "pass", "string"],
+    ["nullable", input({ schema: anchored({ type: ["string", "null"] }) }), "diagnosed", "type_not_guaranteed:data.quote", "pass", "string"],
+    ["enum", input({ schema: anchored({ type: "string", enum: ["9", "later"] }) }), "diagnosed", "enum_not_guaranteed:data.quote", "pass", "string"],
+    ["malformed", input({ value: { data: { quote: 9 } } }), "diagnosed", "type_mismatch:data.quote", "fail", "number"],
     ["unsupported", input({
       schema: {
         oneOf: [{ type: "object" }],
@@ -154,7 +182,17 @@ test("independently varied inputs change diagnosis and next action", () => {
     value: { data: { quote: "4.50" } },
   }));
   assert.equal(otherDecimal.nextAction, "decimal_match");
+  assert.equal(otherDecimal.guarantee.state, "proved");
   assert.notEqual(otherDecimal.path, "/quote");
+  const constDecimal = diagnose(input({
+    method: "POST",
+    path: "/desk",
+    schema: anchored({ type: "string", const: "10" }),
+    value: { data: { quote: "10" } },
+  }));
+  assert.equal(constDecimal.nextAction, "decimal_match");
+  assert.equal(constDecimal.schema.state, "pass");
+  assert.equal(constDecimal.semantic.state, "pass");
 });
 
 test("missing, absent, array, and irrelevant contracts stay distinct", () => {
@@ -166,13 +204,16 @@ test("missing, absent, array, and irrelevant contracts stay distinct", () => {
   assert.equal(absent.nextAction, "seller_response_contract_absent");
   assert.equal(absent.semantic.state, "pass");
   const arraySchema = diagnose(input({
-    schema: quoteSchema({ type: "array" }),
+    schema: anchored({ type: "array" }),
     value: { data: { quote: ["9"] } },
   }));
   assert.equal(arraySchema.nextAction, "type_not_guaranteed:data.quote:array");
+  assert.equal(arraySchema.semantic.state, "fail");
   const arrayValue = diagnose(input({ value: { data: { quote: ["9"] } } }));
-  assert.equal(arrayValue.nextAction, "value_mismatch:data.quote:object");
+  assert.equal(arrayValue.nextAction, "type_mismatch:data.quote");
+  assert.equal(arrayValue.schema.state, "fail");
   assert.equal(arrayValue.semantic.shape, "object");
+  assert.equal(arrayValue.semantic.state, "fail");
   const currency = diagnose(input({
     semantic: { pointer: "data.total", pattern: "^[A-Z]{3}$" },
   }));
@@ -184,6 +225,78 @@ test("missing, absent, array, and irrelevant contracts stay distinct", () => {
   assert.equal(method.nextAction, "no_fit:method");
 });
 
+test("a matching sample does not prove an unsupported schema", () => {
+  const sample = { data: { quote: "4.50" } };
+  const owned = { type: "string", pattern: PRICE_PATTERN.source };
+  const optionalData = {
+    type: "object",
+    properties: {
+      data: { type: "object", required: ["quote"], properties: { quote: owned } },
+    },
+  };
+  const nullableData = {
+    type: "object",
+    required: ["data"],
+    properties: {
+      data: { type: ["object", "null"], required: ["quote"], properties: { quote: owned } },
+    },
+  };
+  const missingQuote = {
+    type: "object",
+    required: ["data"],
+    properties: { data: { type: "object", required: ["quote"], properties: {} } },
+  };
+  const untypedQuote = anchored({});
+  const untypedRoot = {
+    required: ["data"],
+    properties: { data: { type: "object", required: ["quote"], properties: { quote: owned } } },
+  };
+  const cases = [
+    ["optional-data", input({ schema: optionalData, value: sample }), "diagnosed", "required_not_guaranteed:data", "unproved", "pass"],
+    ["nullable-data", input({ schema: nullableData, value: sample }), "diagnosed", "type_not_guaranteed:data", "unproved", "pass"],
+    ["missing-quote-schema", input({ schema: missingQuote, value: sample }), "diagnosed", "quote_schema_absent:data.quote", "unproved", "pass"],
+    ["untyped-quote", input({ schema: untypedQuote, value: sample }), "diagnosed", "type_not_guaranteed:data.quote", "unproved", "pass"],
+    ["string-without-restriction", input({ schema: anchored({ type: "string" }), value: sample }), "diagnosed", "guarantee_unproved:data.quote", "unproved", "pass"],
+    ["const-conflict", input({ schema: anchored({ type: "string", const: "soon" }), value: sample }), "no_fit", "const_not_decimal:data.quote", "unsupported", "pass"],
+    ["const-sample", input({ schema: anchored({ type: "string", const: "4.50" }), value: { data: { quote: "9" } } }), "diagnosed", "const_mismatch:data.quote", "proved", "pass"],
+    ["foreign-pattern", input({ schema: anchored({ type: "string", pattern: "^[a-z]+$" }), value: sample }), "no_fit", "pattern_unsupported:data.quote", "unsupported", "pass"],
+    ["length", input({ schema: anchored({ type: "string", pattern: PRICE_PATTERN.source, minLength: 8 }), value: sample }), "diagnosed", "length_mismatch:data.quote", "proved", "pass"],
+    ["untyped-root", input({ schema: untypedRoot, value: sample }), "diagnosed", "type_not_guaranteed", "unproved", "pass"],
+    ["malformed-length", input({ schema: anchored({ type: "string", minLength: "8" }), value: sample }), "no_fit", "schema_malformed", "unsupported", "pass"],
+    ["allOf", input({ schema: { allOf: [anchored(owned)], ...anchored(owned) }, value: sample }), "no_fit", "schema_unsupported", "unsupported", "pass"],
+    ["format", input({ schema: anchored({ type: "string", format: "date" }), value: sample }), "no_fit", "schema_unsupported:format", "unsupported", "pass"],
+    ["decimal-enum", input({ schema: anchored({ type: "string", enum: ["4.50", "9"] }), value: { data: { quote: "9" } } }), "diagnosed", "decimal_match", "proved", "pass"],
+    ["enum-sample", input({ schema: anchored({ type: "string", enum: ["4.50", "9"] }), value: { data: { quote: "2" } } }), "diagnosed", "enum_mismatch:data.quote", "proved", "pass"],
+    ["annotation", input({
+      schema: {
+        ...anchored(owned),
+        title: "Quote",
+        description: "A decimal string quote.",
+      },
+      value: sample,
+    }), "diagnosed", "decimal_match", "proved", "pass"],
+  ];
+  for (const [name, body, fit, nextAction, guarantee, semantic] of cases) {
+    const result = diagnose(body);
+    assert.equal(result.fit, fit, name);
+    assert.equal(result.nextAction, nextAction, name);
+    assert.equal(result.guarantee.state, guarantee, name);
+    assert.equal(result.semantic.state, semantic, name);
+    assert.equal(result.quoteGenerated, false, name);
+    assert.equal(result.paymentSent, false, name);
+    assert.equal(result.repairPosted, false, name);
+    assert.equal(result.routeFetched, false, name);
+    assert.equal(result.coldStartExecuted, false, name);
+    assert.equal(result.cost.amount, null, name);
+  }
+  const nonMatch = cases.filter((item) => item[3] !== "decimal_match").map((item) => item[3]);
+  assert.equal(new Set(nonMatch).size, nonMatch.length);
+  const proved = diagnose(cases.find((item) => item[0] === "decimal-enum")[1]);
+  assert.equal(proved.schema.state, "pass");
+  assert.equal(proved.semantic.state, "pass");
+  assert.equal(proved.guarantee.state, "proved");
+});
+
 test("unsafe pin, deadline, and catalog instructions refuse", () => {
   assert.throws(() => diagnose(input({ pin: STALE_CALLER_PIN })), (error) => error.code === "stale_pin");
   assert.throws(() => diagnose(input({ pin: "de9c23b5d19de30874e432e7ef1193d0d02d6702" })), (error) => error.code === "pin_mismatch");
@@ -192,6 +305,11 @@ test("unsafe pin, deadline, and catalog instructions refuse", () => {
   assert.throws(() => diagnose(input({ deadline: "tomorrow" })), (error) => error.code === "deadline_invalid");
   assert.throws(() => diagnose(input({ deadline: "2020-01-01T00:00:00.000Z" })), (error) => error.code === "deadline_passed");
   assert.throws(() => diagnose(input({ deadline: "2026-10-12T00:00:00.000Z" })), (error) => error.code === "deadline_passed");
+  assert.equal(Number.isNaN(Date.parse("2099-02-30T00:00:00.000Z")), false);
+  assert.throws(() => diagnose(input({ deadline: "2099-02-30T00:00:00.000Z" })), (error) => error.code === "deadline_invalid");
+  assert.throws(() => diagnose(input({ deadline: "2099-02-29T00:00:00.000Z" })), (error) => error.code === "deadline_invalid");
+  assert.throws(() => diagnose(input({ deadline: "2099-04-31T00:00:00.000Z" })), (error) => error.code === "deadline_invalid");
+  assert.equal(diagnose(input({ deadline: "2096-02-29T00:00:00.000Z" })).nextAction, "decimal_match");
   assert.throws(() => diagnose(input({ coldStart: "npm test" })), (error) => error.code === "hostile_input");
   assert.throws(() => diagnose(input({ schema: { $ref: "#/x" } })), (error) => error.code === "hostile_input");
   assert.throws(() => diagnose(input({ path: "/../secret" })), (error) => error.code === "hostile_input");
