@@ -50,6 +50,32 @@ function sameDatabase(left, right) {
   return sameReference(left, right) || (a !== null && a === databaseReference(right));
 }
 
+function databasePrincipal(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    if (!["postgres:", "postgresql:"].includes(url.protocol)) return null;
+    const query = Object.fromEntries(url.searchParams);
+    // A startup role override is not evidence of an independent application login.
+    if (query.options && /(?:^|\\s)(?:-c\\s*)?(?:role|session_authorization)\\s*=/.test(query.options)) return null;
+    const principal = decodeURIComponent(query.user || url.username);
+    return principal || null;
+  } catch {
+    return null;
+  }
+}
+
+function separateCorrespondenceAuthority(url, env) {
+  const opportunityPrincipal = databasePrincipal(url);
+  const correspondencePrincipal = databasePrincipal(env.CORRESPONDENCE_DATABASE_URL);
+  const correspondenceSchema = String(env.CORRESPONDENCE_PG_SCHEMA || "").trim();
+  // The existing retained host may share its database, not its application
+  // principal or schema. Root must receive the real role ACLs before deployment.
+  return opportunityPrincipal !== null && correspondencePrincipal !== null &&
+    opportunityPrincipal !== correspondencePrincipal &&
+    /^[a-z][a-z0-9_]{0,62}$/.test(correspondenceSchema) &&
+    correspondenceSchema !== OPPORTUNITY_SCHEMA;
+}
+
 export function inspectOpportunityEnv(env = process.env) {
   const url = String(env.NEOMORPHIC_OPPORTUNITY_DATABASE_URL || "").trim();
   const token = String(env.NEOMORPHIC_OPPORTUNITY_OWNER_TOKEN || "").trim();
@@ -59,7 +85,7 @@ export function inspectOpportunityEnv(env = process.env) {
   if (sameDatabase(url, env.DATABASE_URL) || sameDatabase(url, env.EARNED_WORK_DATABASE_URL)) {
     return { kind: "invalid_config", detail: "reused_database_url" };
   }
-  if (sameDatabase(url, env.CORRESPONDENCE_DATABASE_URL)) {
+  if (sameDatabase(url, env.CORRESPONDENCE_DATABASE_URL) && !separateCorrespondenceAuthority(url, env)) {
     return { kind: "invalid_config", detail: "reused_correspondence_database" };
   }
   if (sameReference(token, env.CORRESPONDENCE_ADMIN_TOKEN)) {
