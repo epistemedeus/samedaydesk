@@ -143,7 +143,7 @@ test("independently varied inputs change diagnosis and next action", () => {
   const cases = [
     ["conforming", input(), "diagnosed", "decimal_match", "pass", "string"],
     ["semantic-wrong", input({ value: { data: { quote: "later" } } }), "diagnosed", "value_mismatch:data.quote:string", "fail", "string"],
-    ["missing-path", input({ schema: anchored({ type: "string" }, ["id"]) }), "diagnosed", "seller_response_required_path_missing:data.quote", "pass", "string"],
+    ["missing-path", input({ schema: anchored({ type: "string" }, ["id"]), value: { data: { quote: "9", id: "supplied" } } }), "diagnosed", "seller_response_required_path_missing:data.quote", "pass", "string"],
     ["nullable", input({ schema: anchored({ type: ["string", "null"] }) }), "diagnosed", "type_not_guaranteed:data.quote", "pass", "string"],
     ["enum", input({ schema: anchored({ type: "string", enum: ["9", "later"] }) }), "diagnosed", "enum_not_guaranteed:data.quote", "pass", "string"],
     ["malformed", input({ value: { data: { quote: 9 } } }), "diagnosed", "type_mismatch:data.quote", "fail", "number"],
