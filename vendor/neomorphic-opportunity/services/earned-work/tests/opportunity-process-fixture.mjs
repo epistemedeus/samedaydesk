@@ -2,7 +2,10 @@
 import { createPostgresStore } from "../src/store/postgres.ts";
 import { createApp } from "../src/app.ts";
 import { testConfig } from "./helpers.ts";
-const config = testConfig({ pgSchema: process.env.EARNED_WORK_PG_SCHEMA });
+import { loadConfig } from "../src/config.ts";
+const config = process.env.RECEIVING_USE_OWNER_CONFIG === "1"
+  ? loadConfig(process.env)
+  : testConfig({ pgSchema: process.env.EARNED_WORK_PG_SCHEMA });
 const store = await createPostgresStore(config.databaseUrl, { schema: config.pgSchema, poolMax: 4,
   afterDurableWrite: ({ kind }) => {
     if (kind === "commit" && process.env.RECEIVING_CRASH_AFTER_COMMIT === "1") process.exit(86);

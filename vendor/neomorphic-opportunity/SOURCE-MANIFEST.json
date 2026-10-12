@@ -1,7 +1,8 @@
 {
   "receivedRepo": "epistemedeus/neomorphic-io",
-  "receivedHead": "d4372bd14281d4b03e079f31b18ce4cb77cf4e7f",
-  "solExport": "bce282c5790d5f20dbb541d606a986e5a91500a5",
+  "receivedHead": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
+  "heavyOriginalHead": "ed48ee856a7a7d1c97e8bad0b35c1f7f8fc5d55c",
+  "correctedBehaviorHead": "a7167b3c06d3d5fc71dcd4f13b917e55f7e06916",
   "sourceFiles": [
     {
       "path": "experiments/arena/workability-dimensions/FEATURE-MAP.md",
@@ -557,8 +558,8 @@
     },
     {
       "path": "services/earned-work/RUNBOOK-opportunity-221400.md",
-      "sha256": "18ef616ddbd5b538d739886193de0d313337c826961ae33b470f7af6d1590a96",
-      "bytes": 14572,
+      "sha256": "eea270183d56c2f4a549671a7a4719226e4594891c1f3efa76cd057a22e42eeb",
+      "bytes": 19928,
       "matchesReceived": true
     },
     {
@@ -610,15 +611,27 @@
       "matchesReceived": true
     },
     {
+      "path": "services/earned-work/migrations/004_opportunity_funnel_stages.sql",
+      "sha256": "e94a18188b5270ff44f2f0767a943757fa7cbacc80b58bb72b1bac848b71378b",
+      "bytes": 1661,
+      "matchesReceived": true
+    },
+    {
       "path": "services/earned-work/openapi-opportunity.json",
-      "sha256": "3b35b5de1d8ad437ddc89baf1beee2883ec3e3d90306a1adcc2caacbdcb3517e",
-      "bytes": 10604,
+      "sha256": "a664948cedef5ceb2288ed8199ff8431f392c365393044beabb319003665538c",
+      "bytes": 12996,
       "matchesReceived": true
     },
     {
       "path": "services/earned-work/openapi.json",
       "sha256": "fe75119d01b787f8745190c93e898b263343e52d782f0e214ea2743c881e2b47",
       "bytes": 18384,
+      "matchesReceived": true
+    },
+    {
+      "path": "services/earned-work/opportunity-hosted-delivery.mjs",
+      "sha256": "879ba54f24b5c78c9b86d62d79ebe9c0c0c0f3356e02476df7cb3f9a9255fa60",
+      "bytes": 5121,
       "matchesReceived": true
     },
     {
@@ -647,14 +660,14 @@
     },
     {
       "path": "services/earned-work/scripts/opportunity-receive.mjs",
-      "sha256": "6ad163529242a4bf95db4a34088556c29b981810e167debae2febec839a70f59",
-      "bytes": 16898,
+      "sha256": "b79239b978baabcdb156265f6f30b9cfee2bb280ab9947dcb7749185cb4a13be",
+      "bytes": 16972,
       "matchesReceived": true
     },
     {
       "path": "services/earned-work/scripts/opportunity.mjs",
-      "sha256": "04bc5498d37df0bf97dab1ba3382b23a43bfc2e74dacb7edb5d9139f34df9a86",
-      "bytes": 7289,
+      "sha256": "b36bf4e4b64c6d3488f9305bbea5b54361898848371f96efa1034c1c47d0ad6a",
+      "bytes": 8071,
       "matchesReceived": true
     },
     {
@@ -677,8 +690,8 @@
     },
     {
       "path": "services/earned-work/src/config.ts",
-      "sha256": "66db6e5c470bb9c6c9a11a7d2b8aa74b2798118e59efc07fee477580b462e890",
-      "bytes": 8646,
+      "sha256": "6eb02b0ea453ae6ae17d839d8648b1df5693003049f2f791288971a0a59a8f74",
+      "bytes": 8820,
       "matchesReceived": true
     },
     {
@@ -742,21 +755,27 @@
       "matchesReceived": true
     },
     {
+      "path": "services/earned-work/src/opportunity/hosted.ts",
+      "sha256": "4277bb538dfacda64c5a887efba13693155ecdf4eff9254f4ea52155cbf5901e",
+      "bytes": 2270,
+      "matchesReceived": true
+    },
+    {
       "path": "services/earned-work/src/opportunity/redact.ts",
-      "sha256": "8e90deb835fe44d43ecb36de42cf7d006a22d1c2533de6c3eb4b5228038547e6",
-      "bytes": 2571,
+      "sha256": "30fd391f2273e13448c6112836ba755080bb5d5a85586ba56d330003adaaea2e",
+      "bytes": 2853,
       "matchesReceived": true
     },
     {
       "path": "services/earned-work/src/opportunity/routes.ts",
-      "sha256": "c703e57ab2338b32fe06be6739705cbb039a52d5cb186ff1cad553cc44d2c9ca",
-      "bytes": 11076,
+      "sha256": "de2da11a2744a41e7107e5ad77d419c127a4c3e2ab4bf5916e636aac2cdcdd94",
+      "bytes": 11099,
       "matchesReceived": true
     },
     {
       "path": "services/earned-work/src/opportunity/service.ts",
-      "sha256": "0a3bdc50a8fbf68ce6d081010967563e734aaafb343acba042dd5ebb96ae52c2",
-      "bytes": 73501,
+      "sha256": "ec5f18df161d0edc6dd2ee121e92a23641062fde811701a14e5d6effe9f95e10",
+      "bytes": 83815,
       "matchesReceived": true
     },
     {
@@ -767,8 +786,8 @@
     },
     {
       "path": "services/earned-work/src/opportunity/validate.ts",
-      "sha256": "a32a80b99f5e14ee1f4f31c1009fb65b3ba5582fabff875c4fb8944472247890",
-      "bytes": 7339,
+      "sha256": "5e76e80cb9b364fc7b4d4479c0bb28703239faebe2307d75a983a277517cf673",
+      "bytes": 7402,
       "matchesReceived": true
     },
     {
@@ -797,8 +816,8 @@
     },
     {
       "path": "services/earned-work/src/store/postgres.ts",
-      "sha256": "2919b7460a9cba02f0ab29b03bfec492fa50338e530d608536f1ac4f618bdf5d",
-      "bytes": 71894,
+      "sha256": "89abb006aee747b8a06a7701eec69b54ba05817f7f2656c20ef5d76e18c9ff75",
+      "bytes": 72059,
       "matchesReceived": true
     },
     {
@@ -929,8 +948,8 @@
     },
     {
       "path": "services/earned-work/tests/helpers.ts",
-      "sha256": "1d2a5fd1004be646f59526b80e4774b29bddb09b1d3975ac4685110525350a1c",
-      "bytes": 6972,
+      "sha256": "beced7c9257c52013ef61bb4572ccdbff003e6b42ec7ee9db98387f19af62e81",
+      "bytes": 7085,
       "matchesReceived": true
     },
     {
@@ -976,9 +995,27 @@
       "matchesReceived": true
     },
     {
+      "path": "services/earned-work/tests/opportunity-funnel-221800.test.ts",
+      "sha256": "d0cfe73f14a75dcac7f944322697699b006a5f29675c94909896b977a561f935",
+      "bytes": 32396,
+      "matchesReceived": true
+    },
+    {
+      "path": "services/earned-work/tests/opportunity-hosted-config.test.ts",
+      "sha256": "34617242e92037525aae9793dd91ce7cecf19d0748f69586bd73fd3d939c759d",
+      "bytes": 3970,
+      "matchesReceived": true
+    },
+    {
       "path": "services/earned-work/tests/opportunity-intake.test.ts",
-      "sha256": "66656d66f9dcd9b35cd1aba963189f0e83ee8646ad31652ae9897a08e7542185",
-      "bytes": 36199,
+      "sha256": "6a45b1cd18971887cb71a2b80cb0e4c6173aca69e0c13508b58d86dc5fdf93ba",
+      "bytes": 36239,
+      "matchesReceived": true
+    },
+    {
+      "path": "services/earned-work/tests/opportunity-migration-isolation.test.ts",
+      "sha256": "4c9d17efff04796ee27893f54a9a1be9087011822cde661231358e7bedb7c9c6",
+      "bytes": 1265,
       "matchesReceived": true
     },
     {
@@ -989,8 +1026,8 @@
     },
     {
       "path": "services/earned-work/tests/opportunity-process-fixture.mjs",
-      "sha256": "e65393409996a92888edc37ba343e198b4ee7e02135b87615fe53ced343f90e3",
-      "bytes": 856,
+      "sha256": "7f6edebaa1df7e52d9f9e0fd55b0d28060f2e0c07ad9560587734bf98a6629af",
+      "bytes": 982,
       "matchesReceived": true
     },
     {
@@ -1084,7 +1121,7 @@
       "matchesReceived": true
     }
   ],
-  "sourceCount": 180,
+  "sourceCount": 186,
   "sourceMismatches": [],
   "distFiles": [
     {
@@ -1184,18 +1221,18 @@
     },
     {
       "path": "services/earned-work/dist/config.d.ts",
-      "sha256": "ccb93c76f4d7af428765f0edd59ca6c6026a7a20d1cc13a19420f6c220896339",
-      "bytes": 2293
+      "sha256": "50fe8727b879ec8a44094b270abd76867c9b1a7e490d87b9d756ced0419815f6",
+      "bytes": 2412
     },
     {
       "path": "services/earned-work/dist/config.js",
-      "sha256": "bcf97c409189a505c64982404c11e3c62239e57685b3a7e36661d9d1651e8216",
-      "bytes": 7951
+      "sha256": "d131f30c7c4a65ad841957be40184b53fc1b2b3af4071973a959c3aae223ada1",
+      "bytes": 8054
     },
     {
       "path": "services/earned-work/dist/config.js.map",
-      "sha256": "941faa02be75b80122922056d9ee2894b8db52c72ec2433b3290827650966313",
-      "bytes": 7715
+      "sha256": "13dbbf0845ea23e1a9054d6abf8b3033f1f94df36c1e1c7f93ec27af9285bacd",
+      "bytes": 7795
     },
     {
       "path": "services/earned-work/dist/contract.d.ts",
@@ -1348,19 +1385,34 @@
       "bytes": 1385
     },
     {
+      "path": "services/earned-work/dist/opportunity/hosted.d.ts",
+      "sha256": "818948a229c0bde8e340675a7f8198d157ff2fc97f42458b7462a6ce1ffe35ba",
+      "bytes": 1495
+    },
+    {
+      "path": "services/earned-work/dist/opportunity/hosted.js",
+      "sha256": "3391fc0ad95f11311999eb6ac48119bef7eba14d7a705a28cb0107bf313e47a4",
+      "bytes": 763
+    },
+    {
+      "path": "services/earned-work/dist/opportunity/hosted.js.map",
+      "sha256": "dbe00d4f993fd080a69abaecacf1634567e378383ee7d86147b5bd9df2884df7",
+      "bytes": 870
+    },
+    {
       "path": "services/earned-work/dist/opportunity/redact.d.ts",
       "sha256": "651bae14a43c367b613e504b47ec525039938e9f6cc9363dbae6604d0194ade6",
       "bytes": 181
     },
     {
       "path": "services/earned-work/dist/opportunity/redact.js",
-      "sha256": "10bc421b3b72f08f93348dad637f9d09bfe66cf7013450d5f4e827bf6a3ec701",
-      "bytes": 2574
+      "sha256": "882562af0f0f7d59fb9a0751eeee2fc68bf5bb6a38a415bfe60263b72c4a6777",
+      "bytes": 2852
     },
     {
       "path": "services/earned-work/dist/opportunity/redact.js.map",
-      "sha256": "6c21b861f7a3412634f7aa6093af6aa31bb17dab73f6ac1506db0ddb2e0e5b66",
-      "bytes": 2694
+      "sha256": "d774badad7380f9b2f66c46c71a92675d51fb486d6241ec451e73f80ab22b67c",
+      "bytes": 2966
     },
     {
       "path": "services/earned-work/dist/opportunity/routes.d.ts",
@@ -1369,28 +1421,28 @@
     },
     {
       "path": "services/earned-work/dist/opportunity/routes.js",
-      "sha256": "c7b7b05c41c970defc47ae6ce85399afbf5a145e04e435285a5410e051c1b62f",
-      "bytes": 10671
+      "sha256": "f8c371594cfc901fdb31c2f93e5b0e8324792a7502cc44b11df77b554d0fa17c",
+      "bytes": 10694
     },
     {
       "path": "services/earned-work/dist/opportunity/routes.js.map",
-      "sha256": "0f3d0370a3f6b456f1e3bcfa0f9948dd62000b3863da366d5552d0677f9c2f97",
-      "bytes": 12008
+      "sha256": "44a1d165834c4a6daf9bbdc8894dc40a2ecd17856180fedb899ef4c418596e3c",
+      "bytes": 12028
     },
     {
       "path": "services/earned-work/dist/opportunity/service.d.ts",
-      "sha256": "f3de6f540075cc1b1f5a46b441ea75c4e5150c6bd25bc231cb88c1deef2a0720",
-      "bytes": 11812
+      "sha256": "ac0c6969bde1d9cb40d20b3f9dd0ca8449ebceecc74d538e29b50bc879299248",
+      "bytes": 14797
     },
     {
       "path": "services/earned-work/dist/opportunity/service.js",
-      "sha256": "ff54524d2d049e84081d48ef9ef22883332ae0697c907a50e1be53ee20c7d3c1",
-      "bytes": 71900
+      "sha256": "487fd3ce69a20f2e35a7d179f15f109e8737861e2d62259c47e52eff1d76f684",
+      "bytes": 82872
     },
     {
       "path": "services/earned-work/dist/opportunity/service.js.map",
-      "sha256": "212e65841d067eca03277d4ae4fb1e46afe63f3275a2781c9f3f24b0ad463932",
-      "bytes": 59735
+      "sha256": "ef08ecd92e67bf1e86540e214a4490c637a9259f66f0e43132df9c14a61add59",
+      "bytes": 66133
     },
     {
       "path": "services/earned-work/dist/opportunity/terms.d.ts",
@@ -1409,18 +1461,18 @@
     },
     {
       "path": "services/earned-work/dist/opportunity/validate.d.ts",
-      "sha256": "c5601400a6a76917e675812ef9ee824e7641d600149869eb1c03a1ba7f37e842",
-      "bytes": 24551
+      "sha256": "dcc118f42c5e0dd93be7d37ff1b951b710ed52bacfba70a595205cf8e26c8862",
+      "bytes": 24735
     },
     {
       "path": "services/earned-work/dist/opportunity/validate.js",
-      "sha256": "2d8901d2d8ab142ce484c86638be0be32f587bfb701e915bda1b08f01c71c29b",
-      "bytes": 7431
+      "sha256": "50b319f3dba57f4d54b49588264ac5c8c0ac5ba2669c8fbb551412b519283826",
+      "bytes": 7494
     },
     {
       "path": "services/earned-work/dist/opportunity/validate.js.map",
-      "sha256": "b3eefaeeed803c74eec89a12167c0fd1d9e09f943e02f7a416ca06497764d240",
-      "bytes": 10276
+      "sha256": "a76725b18a8cd533de551ee7a52634a56784e791c6e04721ac8dc50b718e3fe1",
+      "bytes": 10367
     },
     {
       "path": "services/earned-work/dist/payout.d.ts",
@@ -1489,13 +1541,13 @@
     },
     {
       "path": "services/earned-work/dist/store/postgres.js",
-      "sha256": "0394128f2fad468a817a094350b6ce9057be77207efea3156f6458c78605c5e9",
-      "bytes": 68417
+      "sha256": "a782c1cab48ce6d8603d504c01f36d709b2685a8797ea71aa5862b6b3a111c7e",
+      "bytes": 68588
     },
     {
       "path": "services/earned-work/dist/store/postgres.js.map",
-      "sha256": "830dc1293c7e7afd2ed861b46c3fc203c1ebf1a34a33bc496bf4b0c9c699843b",
-      "bytes": 48358
+      "sha256": "a0ec5607936bdc0bfa2fb2cf3c9b67b149e60f3e7320e6d5faf3ed26430574c6",
+      "bytes": 48501
     },
     {
       "path": "services/earned-work/dist/store/types.d.ts",
@@ -1588,7 +1640,7 @@
       "bytes": 1594
     }
   ],
-  "distCount": 100,
+  "distCount": 103,
   "excluded": [
     "services/earned-work/receipts",
     "node_modules"

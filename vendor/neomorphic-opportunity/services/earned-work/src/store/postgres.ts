@@ -47,6 +47,7 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.
 const migrationPath = path.join(rootDir, "migrations/001_init.sql");
 const opportunityMigrationPath = path.join(rootDir, "migrations/002_opportunity_rounds.sql");
 const personalCapacityMigrationPath = path.join(rootDir, "migrations/003_opportunity_personal_capacity.sql");
+const funnelMigrationPath = path.join(rootDir, "migrations/004_opportunity_funnel_stages.sql");
 
 type TaskRow = {
   id: string;
@@ -702,6 +703,7 @@ export class PostgresStore implements EarnedWorkStore {
       `);
       await client.query(readFileSync(opportunityMigrationPath, "utf8"));
       await client.query(readFileSync(personalCapacityMigrationPath, "utf8"));
+      await client.query(readFileSync(funnelMigrationPath, "utf8"));
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");

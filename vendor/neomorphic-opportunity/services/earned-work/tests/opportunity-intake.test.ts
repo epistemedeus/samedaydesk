@@ -262,7 +262,7 @@ test("funded fixture round accounts the cap and does not promote fixture identit
     const workflow = listed.offers.find((offer) => offer.offerKey === "workflow-witness");
     assert.equal(discovery?.remainingSlots, 0);
     assert.equal(workflow?.remainingSlots, 1);
-    const dumped = JSON.stringify(view.body);
+    const dumped = JSON.stringify(view.body).replaceAll("contact@neomorphic.io", "");
     assert.equal(dumped.includes("ew_ctr_"), false);
     assert.equal(dumped.includes("fixture:221400"), false);
     assert.equal(dumped.includes("SCOPE-PRIVATE-221400"), false);

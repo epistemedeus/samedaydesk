@@ -289,7 +289,7 @@ try {
     "--expect",
     "200",
   ]);
-  const publicText = JSON.stringify(listed.body);
+  const publicText = JSON.stringify(listed.body).replaceAll("contact@neomorphic.io", "");
   if (publicText.includes("ew_ctr_") || publicText.includes("fixture:221400") || publicText.includes("SCOPE-PRIVATE") || publicText.includes("@")) {
     fail("public round read leaked a credential, scope, or personal marker");
   }
@@ -450,6 +450,8 @@ try {
     roundFixture.roundKey,
     "--claim",
     primary.claimId,
+    "--token",
+    primary.token,
     "--provenance",
     provenance,
     "--expect",

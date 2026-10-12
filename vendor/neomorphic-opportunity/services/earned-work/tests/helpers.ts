@@ -4,6 +4,7 @@ import { createServer, type Server } from "node:http";
 import pg from "pg";
 import { createApp, type AppOptions } from "../src/app.js";
 import { quoteIdent, type ServiceConfig } from "../src/config.js";
+import { absentHostedDelivery } from "../src/opportunity/hosted.js";
 import { hashToken } from "../src/crypto.js";
 import { createPostgresStore, PostgresStore, type PostgresStoreOptions } from "../src/store/postgres.js";
 import type { Clock } from "../src/types.js";
@@ -64,6 +65,7 @@ export function testConfig(overrides: Partial<ServiceConfig> = {}): ServiceConfi
     poolMax: 4,
     verifierMode: "default",
     reproduction: null,
+    hostedDelivery: absentHostedDelivery(),
     ...overrides,
   };
 }

@@ -35,7 +35,7 @@ function provenanceOf(value: unknown): Provenance {
 }
 
 export function mountOpportunityRoutes(app: { post: Function; get: Function }, store: PostgresStore, config: ServiceConfig) {
-  const opportunity = new OpportunityService(store);
+  const opportunity = new OpportunityService(store, config.hostedDelivery);
 
   app.post("/v1/opportunity-rounds", async (req: Request, res: Response, next: NextFunction) => {
     try {

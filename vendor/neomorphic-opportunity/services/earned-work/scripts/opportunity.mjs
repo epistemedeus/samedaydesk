@@ -37,11 +37,28 @@ function required(flagMap, name) {
 }
 
 function baseUrl(flagMap) {
-  return (flagMap["base-url"] ?? process.env.EARNED_WORK_BASE_URL ?? "").replace(/\/$/, "");
+  const raw = (flagMap["base-url"] ?? process.env.OPPORTUNITY_BASE_URL ?? process.env.EARNED_WORK_BASE_URL ?? "").trim();
+  if (!raw) return "";
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    fail("base URL is malformed");
+  }
+  if (url.username || url.password || url.search || url.hash) {
+    fail("base URL must not include userinfo, a query, or a fragment");
+  }
+  return raw.replace(/\/$/, "");
 }
 
 function token(flagMap) {
   return flagMap.token ?? process.env.EARNED_WORK_OWNER_TOKEN ?? "";
+}
+
+function holderToken(flagMap) {
+  const value = flagMap.token ?? process.env.OPPORTUNITY_HOLDER_TOKEN ?? "";
+  if (!value) fail("set --token or OPPORTUNITY_HOLDER_TOKEN");
+  return value;
 }
 
 function readJson(file) {
@@ -52,6 +69,9 @@ const USAGE = `usage: opportunity.mjs <command> [flags]
 commands: create-round, import, assign, claim, read-round, read-claim, list-claims,
           submit, accept, start, waitlist, cohort, notice, read-notice
 flags: --base-url --token --idempotency-key --file --round --claim --provenance --campaign --expect
+holder commands claim, read-claim, submit, start, and waitlist use --token or OPPORTUNITY_HOLDER_TOKEN.
+They do not fall back to the owner token. The bearer is not printed.
+Base URL is --base-url, else OPPORTUNITY_BASE_URL, else EARNED_WORK_BASE_URL.
 `;
 
 async function request(method, url, { bearer, idempotencyKey, body }) {
@@ -83,7 +103,7 @@ async function main() {
   }
   const flagMap = flags();
   const root = baseUrl(flagMap);
-  if (!root) fail("set --base-url or EARNED_WORK_BASE_URL");
+  if (!root) fail("set --base-url, OPPORTUNITY_BASE_URL, or EARNED_WORK_BASE_URL");
   const bearer = token(flagMap);
   const idem = flagMap["idempotency-key"];
   const provenance = flagMap.provenance;
@@ -112,7 +132,7 @@ async function main() {
   } else if (command === "claim") {
     const round = required(flagMap, "round");
     result = await request("POST", `${root}/v1/opportunity-rounds/${round}/claims`, {
-      bearer: required(flagMap, "token"),
+      bearer: holderToken(flagMap),
       idempotencyKey: required(flagMap, "idempotency-key"),
       body: readJson(required(flagMap, "file")),
     });
@@ -124,7 +144,7 @@ async function main() {
     const round = required(flagMap, "round");
     const claim = required(flagMap, "claim");
     const query = provenance ? `?provenance=${encodeURIComponent(provenance)}` : "";
-    result = await request("GET", `${root}/v1/opportunity-rounds/${round}/claims/${claim}${query}`, { bearer });
+    result = await request("GET", `${root}/v1/opportunity-rounds/${round}/claims/${claim}${query}`, { bearer: holderToken(flagMap) });
   } else if (command === "list-claims") {
     const round = required(flagMap, "round");
     const query = provenance ? `?provenance=${encodeURIComponent(provenance)}` : "";
@@ -133,7 +153,7 @@ async function main() {
     const round = required(flagMap, "round");
     const claim = required(flagMap, "claim");
     result = await request("POST", `${root}/v1/opportunity-rounds/${round}/claims/${claim}/submissions`, {
-      bearer: required(flagMap, "token"),
+      bearer: holderToken(flagMap),
       idempotencyKey: required(flagMap, "idempotency-key"),
       body: readJson(required(flagMap, "file")),
     });
@@ -149,14 +169,14 @@ async function main() {
     const round = required(flagMap, "round");
     const claim = required(flagMap, "claim");
     result = await request("POST", `${root}/v1/opportunity-rounds/${round}/claims/${claim}/start`, {
-      bearer: required(flagMap, "token"),
+      bearer: holderToken(flagMap),
       idempotencyKey: required(flagMap, "idempotency-key"),
       body: readJson(required(flagMap, "file")),
     });
   } else if (command === "waitlist") {
     const round = required(flagMap, "round");
     result = await request("POST", `${root}/v1/opportunity-rounds/${round}/waitlist`, {
-      bearer: required(flagMap, "token"),
+      bearer: holderToken(flagMap),
       idempotencyKey: required(flagMap, "idempotency-key"),
       body: readJson(required(flagMap, "file")),
     });

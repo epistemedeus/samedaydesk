@@ -671,16 +671,19 @@ export declare const cohortBodySchema: z.ZodObject<{
     eventRef: z.ZodString;
     publicLabel: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     activeMinutes: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    channel: z.ZodOptional<z.ZodEnum<["email", "http", "operator"]>>;
 }, "strict", z.ZodTypeAny, {
     kind: "claimed" | "accepted" | "completed" | "contacted" | "delivered" | "replied" | "paid" | "useful_later_consumer";
     eventRef: string;
     activeMinutes?: number | null | undefined;
     publicLabel?: string | null | undefined;
+    channel?: "email" | "http" | "operator" | undefined;
 }, {
     kind: "claimed" | "accepted" | "completed" | "contacted" | "delivered" | "replied" | "paid" | "useful_later_consumer";
     eventRef: string;
     activeMinutes?: number | null | undefined;
     publicLabel?: string | null | undefined;
+    channel?: "email" | "http" | "operator" | undefined;
 }>;
 export declare const noticeBodySchema: z.ZodObject<{
     campaignKey: z.ZodString;

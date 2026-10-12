@@ -1,9 +1,6 @@
 {
   "sourceRepo": "epistemedeus/neomorphic-io",
-  "receivedHead": "d4372bd14281d4b03e079f31b18ce4cb77cf4e7f",
-  "solExport": "bce282c5790d5f20dbb541d606a986e5a91500a5",
-  "solBehaviorParent": "5d5e63e2b71d9380f503e60771e195cac4d0948b",
-  "amendment": "Root recipient-action amendment is src/lib/opportunity-continuation.mjs and tests/opportunity-continuation.test.mjs. Those files stay in the received tree and are replayed there. They are not part of this host closure.",
+  "receivedHead": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
   "layout": "vendor/neomorphic-opportunity keeps repo-relative paths so earned-work file: dependencies resolve",
   "closure": [
     "services/earned-work",
@@ -14,11 +11,19 @@
     "services/earned-work/receipts",
     "node_modules"
   ],
-  "sourceCount": 180,
+  "sourceCount": 186,
   "sourceMismatches": 0,
-  "dist": "Built locally from the pinned source. Dist hashes are in SOURCE-MANIFEST.json and are not part of the received git pin.",
+  "dist": "Built on the actual remote Cursor VM from the exact corrected producer export. Generated hashes are in SOURCE-MANIFEST.json; dist is not part of the producer git pin.",
   "manifest": "vendor/neomorphic-opportunity/SOURCE-MANIFEST.json",
   "mount": "/api/neomorphic-opportunity",
   "schema": "neo_opportunity_221400",
-  "poolMax": 4
+  "poolMax": 4,
+  "heavyOriginalHead": "ed48ee856a7a7d1c97e8bad0b35c1f7f8fc5d55c",
+  "correctedBehaviorHead": "a7167b3c06d3d5fc71dcd4f13b917e55f7e06916",
+  "previousProducer": {
+    "receivedHead": "d4372bd14281d4b03e079f31b18ce4cb77cf4e7f",
+    "solExport": "bce282c5790d5f20dbb541d606a986e5a91500a5",
+    "solBehaviorParent": "5d5e63e2b71d9380f503e60771e195cac4d0948b"
+  },
+  "previousAmendment": "Root recipient-action amendment is src/lib/opportunity-continuation.mjs and tests/opportunity-continuation.test.mjs. Those files stay in the received tree and are replayed there. They are not part of this host closure."
 }

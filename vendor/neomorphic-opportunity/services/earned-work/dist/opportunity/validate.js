@@ -204,6 +204,7 @@ export const cohortBodySchema = z
     eventRef: z.string().trim().min(1).max(160),
     publicLabel: labelSchema.nullable().optional(),
     activeMinutes: z.number().int().min(0).max(100000).nullable().optional(),
+    channel: z.enum(["email", "http", "operator"]).optional(),
 })
     .strict();
 export const noticeBodySchema = z

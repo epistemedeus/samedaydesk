@@ -1,5 +1,6 @@
 import type pg from "pg";
 import type { ContributorPrincipal, Provenance } from "../types.js";
+import { type HostedDeliveryProjection } from "./hosted.js";
 import { type createRoundBodySchema, type importBodySchema } from "./validate.js";
 import type { z } from "zod";
 type RoundBody = z.infer<typeof createRoundBodySchema>;
@@ -10,7 +11,9 @@ export type OpportunityKernel = {
 };
 export declare class OpportunityService {
     private readonly kernel;
-    constructor(kernel: OpportunityKernel);
+    private readonly hosted;
+    constructor(kernel: OpportunityKernel, hosted?: HostedDeliveryProjection);
+    private hostedFor;
     createRound(body: RoundBody, idempotencyKey: string): Promise<{
         replayed: boolean;
         statusCode: number;
@@ -129,11 +132,13 @@ export declare class OpportunityService {
         claimAuthority: string;
         doNotStartWork: boolean;
         hostedClaimAutomation: boolean;
-        deliveryState: string;
+        deliveryState: "hosted" | "unconfigured";
+        hostedDelivery: HostedDeliveryProjection;
         publicView: boolean;
         note: string;
     }>;
     readClaim(roundKey: string, claimId: string, provenance: Provenance, contributor: ContributorPrincipal | null, owner: boolean): Promise<{
+        hostedDelivery: HostedDeliveryProjection;
         outcome: string;
         created: boolean;
         paid: boolean;
@@ -196,6 +201,7 @@ export declare class OpportunityService {
             revenue: boolean;
             escrowed: boolean;
         };
+        hostedDelivery: HostedDeliveryProjection;
         outcome: string;
         created: boolean;
         paid: boolean;
@@ -260,6 +266,9 @@ export declare class OpportunityService {
         delivered: number;
         replied: number;
         claimed: number;
+        claimedMeans: string;
+        claimedIsHolderConversion: boolean;
+        claimedIsExternalActivity: boolean;
         completed: number;
         accepted: number;
         paid: number;
@@ -269,7 +278,74 @@ export declare class OpportunityService {
         paidFeedbackIsRevenue: boolean;
         organicAdoption: boolean;
         routeConversion: string;
+        agentConversion: string;
         revenue: boolean;
+        funnel: {
+            schema: string;
+            reservations: {
+                ownerImportRows: number;
+                ownerAssignmentRows: number;
+                publicClaimRows: number;
+                rows: number;
+                uniqueRecipients: number;
+                deferredStartRows: number;
+            };
+            holderOriginated: {
+                acknowledgementEvents: number;
+                acknowledgementRequests: number;
+                uniqueRecipients: number;
+                additionalPaidSlots: number;
+                ownerIssuanceIncluded: boolean;
+                readbackIncluded: boolean;
+                verifiedExternalActivity: boolean;
+            };
+            ownerIssuance: {
+                importRequests: number;
+                assignmentRequests: number;
+                verifiedExternalActivity: boolean;
+            };
+            submissions: {
+                rows: number;
+                requests: number;
+                uniqueRecipients: number;
+            };
+            acceptance: {
+                rows: number;
+                requests: number;
+                uniqueRecipients: number;
+            };
+            owed: {
+                rows: number;
+                paidRows: number;
+                settledRows: number;
+                transfer: null;
+                revenue: boolean;
+            };
+            settlement: {
+                stage: string;
+                observedEvents: number;
+                inferredFromOwed: boolean;
+                inferredFromAcceptance: boolean;
+                obligationPaidRows: number;
+            };
+            retainedUse: {
+                stage: string;
+                observedEvents: number;
+                inferredFromSubmission: boolean;
+                inferredFromAcceptance: boolean;
+            };
+            observations: {
+                email: Record<string, number>;
+                http: Record<string, number>;
+                operator: Record<string, number>;
+                unknown: Record<string, number>;
+            };
+            external: {
+                identity: string;
+                delivery: string;
+                acquisition: string;
+            };
+        };
         note: string;
     }>;
     recordCohort(roundKey: string, provenance: Provenance, body: {
@@ -277,6 +353,7 @@ export declare class OpportunityService {
         eventRef: string;
         publicLabel?: string | null;
         activeMinutes?: number | null;
+        channel?: "email" | "http" | "operator";
     }, idempotencyKey: string): Promise<{
         replayed: boolean;
         statusCode: number;
@@ -324,8 +401,13 @@ export declare class OpportunityService {
             rewardPromised: boolean;
             doNotStartWork: boolean;
             claimAuthority: string;
-            path: null;
-            deliveryState: string;
+            path: string | null;
+            deliveryState: "hosted" | "unconfigured";
+            hostedClaimAutomation: boolean;
+            publicPaidCapacity: number;
+            anonymousSelfRegistration: boolean;
+            settlementAutomatic: boolean;
+            grantsDelivered: boolean;
         } | null;
         note: string;
     }>;

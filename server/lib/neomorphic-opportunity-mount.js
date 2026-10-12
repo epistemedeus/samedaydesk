@@ -128,7 +128,15 @@ export function inspectOpportunityEnv(env = process.env) {
   if (verifierRaw != null && String(verifierRaw).trim() !== "" && String(verifierRaw).trim().toLowerCase() !== "default") {
     return { kind: "invalid_config", detail: "verifier" };
   }
-  return { kind: "configured", url, token, schema, poolMax, trustProxyHops };
+  // Dedicated owner deployment data only; no generic earned-work environment
+  // or claimant input can configure this projection.
+  const hostedEnv = {
+    EARNED_WORK_HOSTED_ORIGIN: env.NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN,
+    EARNED_WORK_HOSTED_PREFIX: env.NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX,
+    EARNED_WORK_HOSTED_ROUND_KEY: env.NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY,
+    EARNED_WORK_HOSTED_ADMISSION: env.NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION,
+  };
+  return { kind: "configured", url, token, schema, poolMax, trustProxyHops, hostedEnv };
 }
 
 function serviceEnv(inspected) {
@@ -141,6 +149,7 @@ function serviceEnv(inspected) {
     EARNED_WORK_CORS_ORIGINS: "https://neomorphic.io",
     EARNED_WORK_TRUST_PROXY: String(inspected.trustProxyHops),
     EARNED_WORK_LISTEN_HOST: "127.0.0.1",
+    ...inspected.hostedEnv,
   };
 }
 
@@ -292,7 +301,8 @@ export function mountNeomorphicOpportunity(app, options = {}) {
     try {
       const service = await loadReceivedService(options.loadService);
       const config = service.entry.loadConfig(serviceEnv(inspected));
-      if (config.pgSchema !== OPPORTUNITY_SCHEMA || config.poolMax !== inspected.poolMax || config.verifierMode !== "default") {
+      if (config.pgSchema !== OPPORTUNITY_SCHEMA || config.poolMax !== inspected.poolMax || config.verifierMode !== "default" ||
+          (config.hostedDelivery?.configuration === "hosted" && config.hostedDelivery.prefix !== prefix)) {
         state.reason = "invalid_config";
         return;
       }
