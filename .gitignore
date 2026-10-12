@@ -5,7 +5,7 @@ node_modules/
 tools/l08-agent-repair/.pin-cache/
 client/node_modules/
 
-# build output (root/client only; vendored correspondence dist is committed)
+# build output (root/client only; vendored service dist is committed)
 client/dist/
 /dist/
 vendor/**/node_modules/

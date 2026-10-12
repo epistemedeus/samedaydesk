@@ -1,0 +1,22 @@
+Arena A3 workability-dimensions — SOURCE NOTICE
+
+Own path: experiments/arena/workability-dimensions/
+Write repo: epistemedeus/neomorphic-io
+Feature branch: fable/a3-workability-dimensions
+Capability-preflight pin reused: 45391e02
+
+This experiment is MIT-licensed for Pilot-authored files in this directory.
+It does not relicense the Neomorphic website, company assets, or other packs.
+
+Upstream public facts inside fixtures/s282/*.card.json (MoltJobs, Frantic /
+gofrantic.com, Superteam, TaskMarket, BountyBook, gigs.sh) are labelled
+observation data, not Neomorphic customer records, and are not relicensed here.
+
+## Boundaries
+
+- claimAuthority defaults to none.
+- HTTP 200 is not claim authority.
+- No bid, claim, pay, or POST to third-party claim endpoints.
+- mixedScore is displayOnly and is never a gate.
+- winProbability stays unknown unless a documented formula is labelled guess
+  (diagnostics only; never the Effort field).

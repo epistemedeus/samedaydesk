@@ -1,0 +1,33 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-paused-401",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:48:00.000Z",
+  "notes": "Paused source (the402 class) plus 401 claim-route class. GET 200 on health is not claim authority.",
+  "source": {
+    "name": "the402",
+    "adapter": "job-card",
+    "nativeId": "the402-health",
+    "url": "https://api.the402.ai/health",
+    "publicGetUrl": "https://api.the402.ai/health",
+    "publicGetStatus": 200,
+    "claimRouteStatus": 401,
+    "sourceKind": "paused",
+    "paused": true
+  },
+  "listing": {
+    "id": "the402-health",
+    "title": "the402 paused (compliance review)",
+    "status": "paused",
+    "funded": false,
+    "fundingClass": "unfunded",
+    "agentAccess": "DISCOVER_ONLY"
+  },
+  "reward": {
+    "gross": null
+  },
+  "claim": {
+    "available": false
+  }
+}

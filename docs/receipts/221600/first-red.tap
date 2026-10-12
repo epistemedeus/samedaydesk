@@ -1,0 +1,206 @@
+TAP version 13
+# (node:720230) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: missing and invalid opportunity configuration leaves the host up
+not ok 1 - missing and invalid opportunity configuration leaves the host up
+  ---
+  duration_ms: 13.846311
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:189:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(missingHandle)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:192:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.start (node:internal/test_runner/test:877:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: configured but unreachable storage does not claim readiness
+not ok 2 - configured but unreachable storage does not claim readiness
+  ---
+  duration_ms: 1.45015
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:260:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(handle)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:267:10)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: prefixed opportunity routes coexist with old host routes
+not ok 3 - prefixed opportunity routes coexist with old host routes
+  ---
+  duration_ms: 14.325065
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:288:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:289:28)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: owner-reserved capacity stays out of public claims
+not ok 4 - owner-reserved capacity stays out of public claims
+  ---
+  duration_ms: 6.204481
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:376:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:377:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: duplicate and changed imports and submissions stay bound
+not ok 5 - duplicate and changed imports and submissions stay bound
+  ---
+  duration_ms: 6.123839
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:411:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:412:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: malformed and oversized evidence is refused before storage
+not ok 6 - malformed and oversized evidence is refused before storage
+  ---
+  duration_ms: 5.302978
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:453:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:454:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: other-round and cross-holder credentials are denied
+not ok 7 - other-round and cross-holder credentials are denied
+  ---
+  duration_ms: 5.542215
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:499:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:500:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: closure and expiry keep submitted and owed obligations unpaid
+not ok 8 - closure and expiry keep submitted and owed obligations unpaid
+  ---
+  duration_ms: 5.588583
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:527:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:529:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: unknown commit acknowledgement survives an independent restart
+not ok 9 - unknown commit acknowledgement survives an independent restart
+  ---
+  duration_ms: 15.926976
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:625:1'
+  failureType: 'testCodeFailure'
+  error: 'opportunity mount missing'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    boot (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:140:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:628:28)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: resident shutdown closes the opportunity pool and keeps the round
+not ok 10 - resident shutdown closes the opportunity pool and keeps the round
+  ---
+  duration_ms: 330.719778
+  location: '/home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:703:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":"Not found"}
+    
+    404 !== 201
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 201
+  actual: 404
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root221600-control/sds/server/scripts/test-neomorphic-opportunity-host.mjs:723:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 0
+# fail 10
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75023.695558

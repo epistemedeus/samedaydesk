@@ -1,0 +1,39 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-gigs-directory",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:48:00.000Z",
+  "notes": "gigs.sh is a stale directory of platforms (typical verifiedAt 2026-05-18). Purpose is directory, not a job.",
+  "source": {
+    "name": "gigs.sh",
+    "adapter": "job-card",
+    "nativeId": "agent-hansa",
+    "url": "https://gigs.sh/api/v1/gigs?limit=8&offset=0",
+    "publicGetUrl": "https://gigs.sh/api/v1/gigs?limit=8&offset=0",
+    "publicGetStatus": 200,
+    "sourceKind": "directory",
+    "verifiedAt": "2026-05-18T00:00:00.000Z",
+    "presentedAsJobApi": true
+  },
+  "listing": {
+    "id": "agent-hansa",
+    "title": "Agent Hansa (directory card, not a job)",
+    "status": "OPEN",
+    "funded": false,
+    "fundingClass": "unknown",
+    "agentAccess": "DISCOVER_ONLY",
+    "createdAt": "2026-05-18T00:00:00.000Z",
+    "updatedAt": "2026-05-18T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": null
+  },
+  "claim": {
+    "available": false
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}
