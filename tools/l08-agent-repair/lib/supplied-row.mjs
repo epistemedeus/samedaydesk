@@ -3,50 +3,41 @@
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { checkerRoot, verifyPublicChecker } from "./public-adapter.mjs";
+import {
+  MAX_BYTES,
+  MAX_DEPTH,
+  MAX_KEYS,
+  MAX_REQUIRED_PATHS,
+  MAX_STRING,
+  WORK_LIMIT_MS,
+  assertSuppliedRoute,
+  inspectSupplied as inspect,
+  isPlainJson as isPlain,
+  suppliedFail as fail,
+} from "./supplied-bounds.mjs";
 
 export const SUPPLIED_SCHEMA = "samedaydesk.public-readiness.supplied-row.v1";
-export const MAX_BYTES = 32_768;
-export const MAX_DEPTH = 8;
-export const MAX_KEYS = 32;
-export const MAX_STRING = 2_048;
-export const MAX_REQUIRED_PATHS = 16;
-export const WORK_LIMIT_MS = 2_000;
+export {
+  MAX_BYTES,
+  MAX_DEPTH,
+  MAX_KEYS,
+  MAX_REQUIRED_PATHS,
+  MAX_STRING,
+  WORK_LIMIT_MS,
+};
 
-const ROUTE_PATTERN = /^\/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$/;
 const REQUIRED_PATH = /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){0,7}$/;
-const HOSTILE_KEYS = new Set([
-  "__proto__",
-  "prototype",
-  "constructor",
-  "command",
-  "cmd",
-  "exec",
-  "shell",
-  "eval",
-]);
 const TOP_KEYS = new Set(["catalogRow", "responseContract"]);
 const ROW_KEYS = new Set(["origin", "method", "route", "requiredPaths", "schema"]);
 const CONTRACT_KEYS = new Set(["schema", "example"]);
 
 let checkerPromise = null;
 
-function fail(code, message) {
-  const error = new Error(message);
-  error.code = code;
-  return error;
-}
-
 export function statusForSuppliedCode(code) {
   if (code === "oversized_input") return 413;
   if (code === "rate_limit" || code === "busy") return 429;
   if (code === "checker_unavailable" || code === "work_limit") return 503;
   return 400;
-}
-
-function isPlain(value) {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
-  const proto = Object.getPrototypeOf(value);
-  return proto === Object.prototype || proto === null;
 }
 
 function stable(value) {
@@ -58,52 +49,12 @@ function stable(value) {
   return JSON.stringify(value);
 }
 
-function inspect(value, depth) {
-  if (depth > MAX_DEPTH) throw fail("oversized_input", "document is too deep");
-  if (typeof value === "string") {
-    if (value.length > MAX_STRING) throw fail("oversized_input", "string is too long");
-    if (value.includes("\u0000")) throw fail("hostile_input", "string is not accepted");
-    return;
-  }
-  if (typeof value === "number") {
-    if (!Number.isFinite(value)) throw fail("invalid_shape", "number must be finite");
-    return;
-  }
-  if (typeof value === "boolean" || value === null) return;
-  if (Array.isArray(value)) {
-    if (value.length > MAX_KEYS) throw fail("oversized_input", "array is too long");
-    for (const item of value) inspect(item, depth + 1);
-    return;
-  }
-  if (!isPlain(value)) throw fail("invalid_shape", "value must be plain JSON");
-  const keys = Object.keys(value);
-  if (keys.length > MAX_KEYS) throw fail("oversized_input", "object has too many properties");
-  for (const key of keys) {
-    if (HOSTILE_KEYS.has(key) || key.includes("__proto__") || key.includes("\u0000")) {
-      throw fail("hostile_input", "object property is not accepted");
-    }
-    if (key === "$ref" || key === "$dynamicRef" || key === "$id") {
-      throw fail("hostile_input", "schema references and identifiers are not resolved");
-    }
-    inspect(value[key], depth + 1);
-  }
-}
-
 function assertOnly(value, allowed) {
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) {
       if (key === "fixture") throw fail("fixture_demonstration_is_distinct", "fixture names are not a supplied row");
       throw fail("unknown_property", "object contains an unknown property");
     }
-  }
-}
-
-function assertRoute(route) {
-  if (typeof route !== "string" || route.length > 200 || !ROUTE_PATTERN.test(route)) {
-    throw fail("invalid_shape", "route is not an exact path");
-  }
-  if (route.startsWith("//") || route.includes("..") || route.includes("{") || route.includes("\\")) {
-    throw fail("hostile_input", "route is not an exact path");
   }
 }
 
@@ -146,7 +97,7 @@ export function validateSuppliedBody(body) {
   const { origin, method, route, requiredPaths } = body.catalogRow;
   if (typeof origin !== "string" || origin.length > 200) throw fail("invalid_shape", "origin is required");
   if (method !== "GET" && method !== "POST") throw fail("invalid_shape", "method must be GET or POST");
-  assertRoute(route);
+  assertSuppliedRoute(route);
   assertPaths(requiredPaths);
   const exampleIgnored = Object.hasOwn(body.responseContract, "example");
   const schemaDisagreement = Object.hasOwn(body.catalogRow, "schema")
