@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Neomorphic opportunity intake",
-    "version": "221500",
-    "description": "Sibling of the earned-work kernel for one configurable funded round. Claims reserve an atomic budget and, after owner acceptance, record an owed IOU on adapter null_nonpaying_v0. This service does not transfer USDC, fetch artifact refs, enroll production credentials from fixtures, or change a closed campaign's preserved promise. The kernel contract remains openapi.json. A waitlist is not a paid slot."
+    "version": "221800",
+    "description": "Sibling of the earned-work kernel for one configurable funded round. Claims reserve an atomic budget and, after owner acceptance, record an owed IOU on adapter null_nonpaying_v0. This service does not transfer USDC, fetch artifact refs, enroll production credentials from fixtures, or change a closed campaign's preserved promise. Legacy claimed counts claim rows, including owner imports, and is not holder conversion. A holder POST on an imported reservation is one acknowledgement, not another paid slot. Owner issuance and readback are not verified external activity. The kernel contract remains openapi.json. A waitlist is not a paid slot. Claims and the waitlist require a scoped holder. Email contact@neomorphic.io is the fallback. Anonymous registration is absent."
   },
   "servers": [
     {
@@ -46,7 +46,7 @@
     "/v1/opportunity-rounds/{roundKey}": {
       "get": {
         "operationId": "readOpportunityRound",
-        "description": "Local service inventory only. publicClaimConfigured and unreservedPublicSlots describe configuration; publicClaimable=false, publicRemainingSlots=0 and deliveryState=unconfigured until Root integrates and verifies a real delivery path. remainingAtomic includes protectedPersonalAtomic; availableAtomic excludes that protection. No hosted self-service claim endpoint is asserted.",
+        "description": "Local service inventory only. publicClaimConfigured and unreservedPublicSlots describe configuration. publicClaimable=false and publicRemainingSlots=0 for this round. deliveryState stays unconfigured unless the operator supplies an explicit hosted projection. A hosted projection names round-read, submission, and readback paths and does not open inventory, settle, or deliver grants. A claimant cannot declare readiness. remainingAtomic includes protectedPersonalAtomic; availableAtomic excludes that protection.",
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/Provenance" }],
         "responses": { "200": { "description": "Public round view. Reading does not reserve a reward." } }
       }
@@ -78,7 +78,8 @@
         "operationId": "claimOpportunityOffer",
         "security": [{ "ContributorBearer": [] }],
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
-        "responses": { "201": { "description": "Budgeted reservation" }, "409": { "description": "Closed, full, mismatch, or oversubscribed. Body is a waitlist or next task, not a bare rejection and not an unbudgeted paid promise." } }
+        "description": "A new public claim requires a scoped holder and still finds no paid public capacity on this round. A POST by the holder of an imported or owner-assigned reservation records one holder acknowledgement. Repeating it, including with a new Idempotency-Key, does not create another slot or count as verified external activity. Owner issuance and GET readback are not that acknowledgement.",
+        "responses": { "201": { "description": "New public reservation, or the first holder acknowledgement of an existing import or assignment. An acknowledgement adds no paid slot." }, "200": { "description": "Idempotent replay, or a repeated acknowledgement that does not create another event." }, "409": { "description": "Closed, full, mismatch, or oversubscribed. Body is a waitlist or next task, not a bare rejection and not an unbudgeted paid promise." } }
       }
     },
     "/v1/opportunity-rounds/{roundKey}/claims/{claimId}": {
@@ -117,7 +118,7 @@
     "/v1/opportunity-rounds/{roundKey}/claims/{claimId}/source": {
       "post": {
         "operationId": "recordOpportunitySource",
-        "description": "Authenticated server event ids and request path are retained separately from all volunteered source, provider, query and observed assertions. Claimant source assertions do not authenticate a provider or verify evidence.",
+        "description": "Authenticated server event ids and request path are retained separately from all volunteered source, provider, query and observed assertions. A current query or referrer is not the original encounter. Provider, source, and placement ids stay data. Claimant source assertions do not authenticate a provider or verify evidence. Operator observations and holder self-report are different fields.",
         "security": [{ "ContributorBearer": [] }],
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
         "responses": { "201": { "description": "Self-report stored separately from observed request evidence." } }
@@ -128,6 +129,7 @@
         "operationId": "joinOpportunityWaitlist",
         "security": [{ "ContributorBearer": [] }],
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "description": "Requires a scoped holder bearer. There is no anonymous registration. Email contact@neomorphic.io remains the fallback. A waitlist is not a paid slot.",
         "responses": { "200": { "description": "Waitlist only. paidSlot=false and doNotStartWork=true." } }
       }
     },
@@ -136,7 +138,8 @@
         "operationId": "readOpportunityCohort",
         "security": [{ "OwnerBearer": [] }],
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/Provenance" }],
-        "responses": { "200": { "description": "Contacted, delivered, claimed, completed, accepted. Paid obligation count stays 0." } }
+        "description": "Legacy claimed counts every claim row, including owner imports, and is not agent conversion. The funnel separates reservation rows, holder acknowledgement events and requests, submissions, acceptance, owed records, and separately observed settlement and retained use. Rows, requests, and unique recipients are distinct. External identity, delivery, and acquisition stay unknown.",
+        "responses": { "200": { "description": "Legacy counts plus the honest funnel. Paid obligation count stays 0. Contacted or Sent is not delivery." } }
       }
     },
     "/v1/opportunity-rounds/{roundKey}/cohort-events": {
@@ -144,7 +147,8 @@
         "operationId": "recordOpportunityCohortEvent",
         "security": [{ "OwnerBearer": [] }],
         "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
-        "responses": { "201": { "description": "Denominator observation. Sent is not delivery. A paid observation is not revenue." } }
+        "description": "Optional channel is email, http, or operator. An absent channel stays unknown. The same event recorded on a different channel conflicts. Contacted or Sent is not delivery. A paid observation is not revenue and does not settle an obligation.",
+        "responses": { "201": { "description": "Denominator observation. Sent is not delivery. A paid observation is not revenue." }, "409": { "description": "The same observation is already recorded on a different channel." } }
       }
     },
     "/v1/opportunity-rounds/{roundKey}/close": {
@@ -166,7 +170,7 @@
     "/v1/opportunity-notices/{campaignKey}": {
       "get": {
         "operationId": "readOpportunityNotice",
-        "description": "Public fields are redacted, including retained legacy rows. Continuation path is null while delivery is unconfigured. Immutable preserved promise is retained in storage.",
+        "description": "Public fields are redacted, including retained legacy rows. Continuation path is null while delivery is unconfigured. An explicit hosted projection may name the round-read path and still does not reserve, settle, or open inventory. Immutable preserved promise is retained in storage.",
         "parameters": [{ "name": "campaignKey", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": { "200": { "description": "Preserved promise and a non-paying continuation pointer" } }
       }

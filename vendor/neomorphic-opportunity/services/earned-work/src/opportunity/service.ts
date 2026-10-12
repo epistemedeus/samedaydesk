@@ -6,6 +6,7 @@ import type { ContributorPrincipal, Provenance } from "../types.js";
 import { atomicToDecimal } from "./atomic.js";
 import { assertNoPrivate } from "./redact.js";
 import { canonicalRoundTerms, hashRoundTerms, type RoundTermsInput } from "./terms.js";
+import { absentHostedDelivery, projectionForRound, type HostedDeliveryProjection } from "./hosted.js";
 import {
   observedSchema,
   discoveryEvidenceSchema,
@@ -121,6 +122,19 @@ function settlementKey(parts: string[]): string {
   return `stl_${digestText(parts.join("|")).slice(0, 32)}`;
 }
 
+function emptyObservation(): Record<string, number> {
+  return {
+    contacted: 0,
+    delivered: 0,
+    replied: 0,
+    claimed: 0,
+    completed: 0,
+    accepted: 0,
+    paid: 0,
+    useful_later_consumer: 0,
+  };
+}
+
 function rewardView(atomic: bigint, round: RoundRow) {
   return {
     amount: atomicToDecimal(atomic, round.atomic_scale),
@@ -132,7 +146,14 @@ function rewardView(atomic: bigint, round: RoundRow) {
 }
 
 export class OpportunityService {
-  constructor(private readonly kernel: OpportunityKernel) {}
+  constructor(
+    private readonly kernel: OpportunityKernel,
+    private readonly hosted: HostedDeliveryProjection = absentHostedDelivery(),
+  ) {}
+
+  private hostedFor(roundKey: string): HostedDeliveryProjection {
+    return projectionForRound(this.hosted, roundKey);
+  }
 
   async createRound(body: RoundBody, idempotencyKey: string): Promise<{ replayed: boolean; statusCode: number; body: unknown }> {
     assertNoPrivate(body, "round");
@@ -377,6 +398,8 @@ export class OpportunityService {
     const requestHash = hashRequest(body);
     return this.kernel.withOpportunityClient(async (client) => {
       const round = await this.lockRound(client, roundKey, body.provenance);
+      const replayAck = await loadIdempotency(client, "opportunity_holder_ack", round.id, idempotencyKey, requestHash, contributor.id);
+      if (replayAck.hit) return { replayed: true, statusCode: replayAck.statusCode, body: replayAck.body };
       const replay = await loadIdempotency(client, "opportunity_claim", round.id, idempotencyKey, requestHash, contributor.id);
       if (replay.hit) return { replayed: true, statusCode: replay.statusCode, body: replay.body };
       assertAdmission(round, contributor.id, contributor.provenance);
@@ -399,6 +422,49 @@ export class OpportunityService {
       const credentialRef = await this.credentialForToken(client, round.id, contributor.id);
       const existing = await this.findOccupying(client, round.id, offer.id, credentialRef, contributor.id);
       if (existing) {
+        if (existing.kind === "imported_personal" || existing.kind === "owner_assigned") {
+          if (existing.contributor_token_id !== contributor.id) {
+            throw new ApiError(403, "forbidden", "reservation belongs to a different holder");
+          }
+          const locked = await this.lockClaim(client, existing.id);
+          if (!locked || !["reserved", "submitted", "accepted", "owed"].includes(locked.status)) {
+            throw new ApiError(409, "late_submission", "reservation is no longer occupying");
+          }
+          const priorAck = await client.query<{ id: string }>(
+            `SELECT id FROM opportunity_events WHERE claim_id = $1 AND kind = 'holder_acknowledgement' LIMIT 1`,
+            [locked.id],
+          );
+          let acknowledgementCreated = false;
+          if (!priorAck.rows[0]) {
+            await this.appendEvent(client, round.id, locked.id, "holder_acknowledgement", {
+              newSlot: false,
+              additionalPaidSlot: false,
+              verifiedExternalActivity: false,
+              externalIdentity: "unknown",
+              externalDelivery: "unknown",
+              externalAcquisition: "unknown",
+              ownerIssuance: false,
+              readback: false,
+            }, now);
+            acknowledgementCreated = true;
+          }
+          const response = {
+            ...holderClaim(round, offer, locked, { created: false, tokenReissued: false }),
+            stage: "holder_acknowledgement",
+            holderOriginatedAcknowledgement: true,
+            acknowledgementCreated,
+            additionalPaidSlot: false,
+            newReservation: false,
+            verifiedExternalActivity: false,
+            externalIdentity: "unknown",
+            externalDelivery: "unknown",
+            externalAcquisition: "unknown",
+            hostedDelivery: this.hostedFor(round.round_key),
+          };
+          const statusCode = acknowledgementCreated ? 201 : 200;
+          await saveIdempotency(client, "opportunity_holder_ack", round.id, idempotencyKey, requestHash, statusCode, response, now, contributor.id);
+          return { replayed: false, statusCode, body: response };
+        }
         const response = holderClaim(round, offer, existing, { created: false, tokenReissued: false });
         await saveIdempotency(client, "opportunity_claim", round.id, idempotencyKey, requestHash, 200, response, now, contributor.id);
         return { replayed: false, statusCode: 200, body: response };
@@ -703,7 +769,10 @@ export class OpportunityService {
       }
       const offer = await this.offerById(client, claim.offer_id);
       const obligation = await client.query<{ id: string }>(`SELECT id FROM opportunity_obligations WHERE claim_id = $1`, [claim.id]);
-      const base = holderClaim(round, offer, claim, { created: false });
+      const base = {
+        ...holderClaim(round, offer, claim, { created: false }),
+        hostedDelivery: this.hostedFor(round.round_key),
+      };
       if (!obligation.rows[0]) return base;
       return {
         ...base,
@@ -749,31 +818,162 @@ export class OpportunityService {
         [round.id],
       );
       const counts = Object.fromEntries(events.rows.map((row) => [row.kind, Number(row.n)])) as Record<string, number>;
-      const claims = await client.query<{ n: string }>(`SELECT COUNT(*)::text AS n FROM opportunity_claims WHERE round_id = $1`, [round.id]);
-      const submissions = await client.query<{ n: string }>(`SELECT COUNT(*)::text AS n FROM opportunity_submissions WHERE round_id = $1`, [round.id]);
-      const accepted = await client.query<{ n: string }>(
-        `SELECT COUNT(*)::text AS n FROM opportunity_obligations WHERE round_id = $1 AND paid = FALSE`,
+      const pick = (kind: string) => counts[kind] ?? 0;
+      const reservations = await client.query<{
+        owner_import_rows: string;
+        owner_assignment_rows: string;
+        public_claim_rows: string;
+        rows: string;
+        unique_recipients: string;
+        deferred_rows: string;
+      }>(
+        `SELECT
+           COUNT(*) FILTER (WHERE kind = 'imported_personal')::text AS owner_import_rows,
+           COUNT(*) FILTER (WHERE kind = 'owner_assigned')::text AS owner_assignment_rows,
+           COUNT(*) FILTER (WHERE kind = 'public_claim')::text AS public_claim_rows,
+           COUNT(*)::text AS rows,
+           COUNT(DISTINCT credential_ref)::text AS unique_recipients,
+           COUNT(*) FILTER (WHERE defer_start)::text AS deferred_rows
+         FROM opportunity_claims WHERE round_id = $1`,
         [round.id],
       );
-      const pick = (kind: string) => counts[kind] ?? 0;
+      const reservation = reservations.rows[0];
+      const submissions = await client.query<{ rows: string; recipients: string }>(
+        `SELECT COUNT(*)::text AS rows, COUNT(DISTINCT c.credential_ref)::text AS recipients
+         FROM opportunity_submissions s
+         JOIN opportunity_claims c ON c.id = s.claim_id
+         WHERE s.round_id = $1`,
+        [round.id],
+      );
+      const obligations = await client.query<{ rows: string; recipients: string; paid_rows: string }>(
+        `SELECT COUNT(*)::text AS rows,
+                COUNT(DISTINCT c.credential_ref)::text AS recipients,
+                COUNT(*) FILTER (WHERE o.paid)::text AS paid_rows
+         FROM opportunity_obligations o
+         JOIN opportunity_claims c ON c.id = o.claim_id
+         WHERE o.round_id = $1`,
+        [round.id],
+      );
+      const acks = await client.query<{ events: string; recipients: string }>(
+        `SELECT COUNT(*)::text AS events, COUNT(DISTINCT c.credential_ref)::text AS recipients
+         FROM opportunity_events e
+         JOIN opportunity_claims c ON c.id = e.claim_id
+         WHERE e.round_id = $1 AND e.kind = 'holder_acknowledgement'`,
+        [round.id],
+      );
+      const requests = await client.query<{ scope: string; n: string }>(
+        `SELECT scope, COUNT(*)::text AS n FROM earned_work_idempotency
+         WHERE task_id = $1 AND scope IN (
+           'opportunity_import', 'opportunity_assign', 'opportunity_holder_ack',
+           'opportunity_submit', 'opportunity_accept', 'opportunity_claim'
+         )
+         GROUP BY scope`,
+        [round.id],
+      );
+      const requestCount = Object.fromEntries(requests.rows.map((row) => [row.scope, Number(row.n)])) as Record<string, number>;
+      const channels = await client.query<{ channel: string; kind: string; n: string }>(
+        `SELECT COALESCE(channel, 'unknown') AS channel, kind, COUNT(*)::text AS n
+         FROM opportunity_cohort_events WHERE round_id = $1 GROUP BY 1, 2`,
+        [round.id],
+      );
+      const observations = {
+        email: emptyObservation(),
+        http: emptyObservation(),
+        operator: emptyObservation(),
+        unknown: emptyObservation(),
+      };
+      for (const row of channels.rows) {
+        const bucket = observations[row.channel as keyof typeof observations] ?? observations.unknown;
+        if (row.kind in bucket) bucket[row.kind] = Number(row.n);
+      }
+      const claimRows = Number(reservation?.rows ?? 0);
+      const submissionRows = Number(submissions.rows[0]?.rows ?? 0);
+      const obligationRows = Number(obligations.rows[0]?.rows ?? 0);
+      const paidObservations = pick("paid");
+      const retainedObservations = pick("useful_later_consumer");
       return {
         roundKey: round.round_key,
         provenance: round.provenance,
         contacted: pick("contacted"),
         delivered: pick("delivered"),
         replied: pick("replied"),
-        claimed: Number(claims.rows[0]?.n ?? 0),
-        completed: Number(submissions.rows[0]?.n ?? 0),
-        accepted: Number(accepted.rows[0]?.n ?? 0),
+        claimed: claimRows,
+        claimedMeans: "legacy_claim_rows_including_owner_imports",
+        claimedIsHolderConversion: false,
+        claimedIsExternalActivity: false,
+        completed: submissionRows,
+        accepted: obligationRows,
         paid: 0,
-        paidObservations: pick("paid"),
-        usefulLaterConsumers: pick("useful_later_consumer"),
+        paidObservations,
+        usefulLaterConsumers: retainedObservations,
         sentIsNotDelivery: true,
         paidFeedbackIsRevenue: false,
         organicAdoption: false,
         routeConversion: "unknown",
+        agentConversion: "unknown",
         revenue: false,
-        note: "Ten contacts are not ten site visitors. Paid observations are sponsored learning, not revenue. Obligation paid stays false.",
+        funnel: {
+          schema: "neomorphic.opportunity-funnel.v1",
+          reservations: {
+            ownerImportRows: Number(reservation?.owner_import_rows ?? 0),
+            ownerAssignmentRows: Number(reservation?.owner_assignment_rows ?? 0),
+            publicClaimRows: Number(reservation?.public_claim_rows ?? 0),
+            rows: claimRows,
+            uniqueRecipients: Number(reservation?.unique_recipients ?? 0),
+            deferredStartRows: Number(reservation?.deferred_rows ?? 0),
+          },
+          holderOriginated: {
+            acknowledgementEvents: Number(acks.rows[0]?.events ?? 0),
+            acknowledgementRequests: requestCount.opportunity_holder_ack ?? 0,
+            uniqueRecipients: Number(acks.rows[0]?.recipients ?? 0),
+            additionalPaidSlots: 0,
+            ownerIssuanceIncluded: false,
+            readbackIncluded: false,
+            verifiedExternalActivity: false,
+          },
+          ownerIssuance: {
+            importRequests: requestCount.opportunity_import ?? 0,
+            assignmentRequests: requestCount.opportunity_assign ?? 0,
+            verifiedExternalActivity: false,
+          },
+          submissions: {
+            rows: submissionRows,
+            requests: requestCount.opportunity_submit ?? 0,
+            uniqueRecipients: Number(submissions.rows[0]?.recipients ?? 0),
+          },
+          acceptance: {
+            rows: obligationRows,
+            requests: requestCount.opportunity_accept ?? 0,
+            uniqueRecipients: Number(obligations.rows[0]?.recipients ?? 0),
+          },
+          owed: {
+            rows: obligationRows,
+            paidRows: Number(obligations.rows[0]?.paid_rows ?? 0),
+            settledRows: 0,
+            transfer: null,
+            revenue: false,
+          },
+          settlement: {
+            stage: "separately_observed",
+            observedEvents: paidObservations,
+            inferredFromOwed: false,
+            inferredFromAcceptance: false,
+            obligationPaidRows: 0,
+          },
+          retainedUse: {
+            stage: "separately_observed",
+            observedEvents: retainedObservations,
+            inferredFromSubmission: false,
+            inferredFromAcceptance: false,
+          },
+          observations,
+          external: {
+            identity: "unknown",
+            delivery: "unknown",
+            acquisition: "unknown",
+          },
+        },
+        note: "Legacy claimed counts claim rows, including owner imports, and is not holder conversion or external activity. Holder acknowledgements, submissions, acceptance, and owed are separate from observed settlement and retained use. Contacted or Sent is not delivery. External identity, delivery, and acquisition stay unknown until a distinct observation says otherwise. Paid observations are sponsored learning, not revenue. Obligation paid stays false.",
       };
     }, "read");
   }
@@ -781,7 +981,7 @@ export class OpportunityService {
   async recordCohort(
     roundKey: string,
     provenance: Provenance,
-    body: { kind: string; eventRef: string; publicLabel?: string | null; activeMinutes?: number | null },
+    body: { kind: string; eventRef: string; publicLabel?: string | null; activeMinutes?: number | null; channel?: "email" | "http" | "operator" },
     idempotencyKey: string,
   ) {
     assertNoPrivate(body, "cohort");
@@ -791,12 +991,23 @@ export class OpportunityService {
       const replay = await loadIdempotency(client, "opportunity_cohort", round.id, idempotencyKey, requestHash, OWNER);
       if (replay.hit) return { replayed: true, statusCode: replay.statusCode, body: replay.body };
       const now = this.kernel.now();
-      await client.query(
-        `INSERT INTO opportunity_cohort_events (id, round_id, kind, event_ref, public_label, active_minutes, created_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7)
-         ON CONFLICT (round_id, kind, event_ref) DO NOTHING`,
-        [newId("coh"), round.id, body.kind, body.eventRef, body.publicLabel ?? null, body.activeMinutes ?? null, now],
+      const channel = body.channel ?? null;
+      const inserted = await client.query<{ id: string }>(
+        `INSERT INTO opportunity_cohort_events (id, round_id, kind, event_ref, public_label, active_minutes, channel, created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         ON CONFLICT (round_id, kind, event_ref) DO NOTHING
+         RETURNING id`,
+        [newId("coh"), round.id, body.kind, body.eventRef, body.publicLabel ?? null, body.activeMinutes ?? null, channel, now],
       );
+      if (!inserted.rows[0]) {
+        const existing = await client.query<{ channel: string | null }>(
+          `SELECT channel FROM opportunity_cohort_events WHERE round_id = $1 AND kind = $2 AND event_ref = $3`,
+          [round.id, body.kind, body.eventRef],
+        );
+        if ((existing.rows[0]?.channel ?? null) !== channel) {
+          throw new ApiError(409, "observation_conflict", "this observation is already recorded on a different channel");
+        }
+      }
       if (body.kind === "paid") {
         await this.appendEvent(client, round.id, null, "paid_observation", { eventRef: body.eventRef, flipsObligation: false }, now);
       }
@@ -852,7 +1063,7 @@ export class OpportunityService {
         if (stableJson(existing.rows[0].preserved_promise) !== stableJson(body.preservedPromise)) {
           throw new ApiError(409, "promise_immutable", "closing a notice cannot change its preserved promise");
         }
-        const response = noticeView(body.campaignKey, existing.rows[0].preserved_promise, existing.rows[0].next_round_key, false);
+        const response = noticeView(body.campaignKey, existing.rows[0].preserved_promise, existing.rows[0].next_round_key, false, this.hosted);
         await saveIdempotency(client, "opportunity_notice", body.campaignKey, idempotencyKey, requestHash, 200, response, now, OWNER);
         return { replayed: false, statusCode: 200, body: response };
       }
@@ -861,7 +1072,7 @@ export class OpportunityService {
          VALUES ($1,$2,'closed',$3::jsonb,$4,$5,$5)`,
         [newId("ntc"), body.campaignKey, promiseText, body.nextRoundKey ?? null, now],
       );
-      const response = noticeView(body.campaignKey, body.preservedPromise, body.nextRoundKey ?? null, true);
+      const response = noticeView(body.campaignKey, body.preservedPromise, body.nextRoundKey ?? null, true, this.hosted);
       await saveIdempotency(client, "opportunity_notice", body.campaignKey, idempotencyKey, requestHash, 201, response, now, OWNER);
       return { replayed: false, statusCode: 201, body: response };
     }, "idempotent");
@@ -907,7 +1118,7 @@ export class OpportunityService {
       );
       const row = result.rows[0];
       if (!row) throw new ApiError(404, "not_found", "notice not found");
-      return noticeView(campaignKey, row.preserved_promise, row.next_round_key, false);
+      return noticeView(campaignKey, row.preserved_promise, row.next_round_key, false, this.hosted);
     }, "read");
   }
 
@@ -950,7 +1161,9 @@ export class OpportunityService {
         selfReport,
         observed: { server: serverObserved.server, volunteered: observed },
         reconstructed: false,
-        note: "Self-report and observed request evidence stay separate. Unknowns are not filled from another source.",
+        currentQueryIsOriginalEncounter: false,
+        currentReferrerIsOriginalEncounter: false,
+        note: "Self-report and observed request evidence stay separate. A current query or referrer is not the original encounter. Unknowns are not filled from another source.",
       };
       await saveIdempotency(client, "opportunity_source", round.id, idempotencyKey, requestHash, 201, response, now, contributor.id);
       return { replayed: false, statusCode: 201, body: response };
@@ -1020,7 +1233,7 @@ export class OpportunityService {
         publicRemainingSlots: 0,
         publicClaimConfigured: offer.public_claimable,
         publicClaimable: false,
-        deliveryState: "unconfigured",
+        deliveryState: this.hostedFor(round.round_key).deliveryState,
         ownerAssignedOnly: !offer.public_claimable,
         reservedForCaller: false,
         rewardPromised: false,
@@ -1340,7 +1553,8 @@ export class OpportunityService {
       claimAuthority: "none",
       doNotStartWork: true,
       hostedClaimAutomation: false,
-      deliveryState: "unconfigured",
+      deliveryState: this.hostedFor(round.round_key).deliveryState,
+      hostedDelivery: this.hostedFor(round.round_key),
       publicView,
       note: "Reading a round does not reserve a reward and does not transfer funds. Fixture provenance is not production participation.",
     };
@@ -1391,6 +1605,7 @@ export class OpportunityService {
       evidenceRetained: true,
       evidenceAuthority: "untrusted_self_report",
       reward: rewardView(big(claim.reward_atomic), round),
+      hostedDelivery: this.hostedFor(round.round_key),
       note: "Evidence is stored metadata. The artifact ref was not fetched or executed. Submission is not acceptance and not payment.",
     };
   }
@@ -1565,7 +1780,14 @@ function obligationBody(round: RoundRow, claim: ClaimRow, obligationId: string) 
   };
 }
 
-function noticeView(campaignKey: string, preservedPromise: unknown, nextRoundKey: string | null, created: boolean) {
+function noticeView(
+  campaignKey: string,
+  preservedPromise: unknown,
+  nextRoundKey: string | null,
+  created: boolean,
+  hosted?: HostedDeliveryProjection,
+) {
+  const projection = nextRoundKey ? projectionForRound(hosted ?? absentHostedDelivery(), nextRoundKey) : null;
   return {
     campaignKey,
     status: "closed",
@@ -1586,8 +1808,13 @@ function noticeView(campaignKey: string, preservedPromise: unknown, nextRoundKey
           rewardPromised: false,
           doNotStartWork: true,
           claimAuthority: "none",
-          path: null,
-          deliveryState: "unconfigured",
+          path: projection?.roundReadPath ?? null,
+          deliveryState: projection?.deliveryState ?? "unconfigured",
+          hostedClaimAutomation: false,
+          publicPaidCapacity: 0,
+          anonymousSelfRegistration: false,
+          settlementAutomatic: false,
+          grantsDelivered: false,
         }
       : null,
     note: "The closed notice keeps its original promise. The continuation is not a claim and not a payment.",

@@ -858,3 +858,139 @@ test("resident shutdown closes the opportunity pool and keeps the round", { time
   }
   assert.equal((await sql("SELECT COUNT(*)::int AS n FROM opportunity_obligations WHERE paid = false"))[0].n, 1);
 });
+
+test("explicit owner delivery configuration reaches the actual mount", { timeout: 20000 }, async (t) => {
+  const target = {origin:"https://samedaydesk.com",prefix:PREFIX,roundKey:"synthetic-hosted-222000"};
+  const extra = {
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN: target.origin,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX: target.prefix,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY: target.roundKey,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION: JSON.stringify(target),
+  };
+  const {port} = await boot(t,{extra});
+  assert.equal((await ownerPost(port,`${PREFIX}/v1/opportunity-rounds`,roundBody(target.roundKey,{reserve:true}))).status,201);
+  const read = await request(port,`${PREFIX}/v1/opportunity-rounds/${target.roundKey}?provenance=test`);
+  assert.equal(read.status,200);
+  assert.equal(read.json.hostedDelivery.configuration,"hosted");
+  assert.equal(read.json.hostedDelivery.roundReadPath,`${target.origin}${PREFIX}/v1/opportunity-rounds/${target.roundKey}`);
+  assert.equal(read.json.hostedDelivery.grantsDelivered,false);
+  assert.equal(read.json.hostedDelivery.settlementAutomatic,false);
+  assert.equal(read.json.hostedDelivery.publicPaidCapacity,0);
+  assert.equal(read.json.offers.every(o=>o.publicRemainingSlots===0),true);
+});
+
+test("malformed, missing admission and mismatched delivery stays unconfigured without leaking values", {timeout:30000}, async(t)=>{
+  const target={origin:"https://samedaydesk.com",prefix:PREFIX,roundKey:"synthetic-refused-222000"};
+  const valid={
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN:target.origin,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX:target.prefix,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY:target.roundKey,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION:JSON.stringify(target),
+  };
+  const cases=[
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION:undefined},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION:'{secret'},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN:'https://user:secret@synthetic.invalid'},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN:'https://secret.synthetic.invalid'},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX:'/secret'},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY:'secret-round'},
+    {...valid,NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX:undefined},
+    {EARNED_WORK_HOSTED_ORIGIN:target.origin,EARNED_WORK_HOSTED_PREFIX:PREFIX,EARNED_WORK_HOSTED_ROUND_KEY:target.roundKey,EARNED_WORK_HOSTED_ADMISSION:JSON.stringify(target)},
+  ];
+  for(const extra of cases) {
+    // Each case gets its own surface/pool; retained DB guards are unchanged.
+    const app=createSdsApp({neomorphicOpportunity:{env:envFor(extra)}});
+    const handle=app.get('neoOpportunity');await handle.ready();
+    const server=await listen(app);const port=server.address().port;
+    try {
+      const root=`${PREFIX}/v1/opportunity-rounds/${target.roundKey}`;
+      const created=await ownerPost(port,`${PREFIX}/v1/opportunity-rounds`,roundBody(target.roundKey,{reserve:true}));
+      assert.ok([200,201].includes(created.status),JSON.stringify(created.json));
+      const r=await request(port,root+'?provenance=test');assert.equal(r.status,200);
+      assert.equal(r.json.deliveryState,'unconfigured');assert.equal(r.json.hostedDelivery.roundReadPath,null);
+      assert.equal(r.text.includes('secret'),false);assert.equal(r.json.hostedDelivery.grantsDelivered,false);
+      assert.equal((await request(port,'/api/health')).status,200);
+    } finally {await handle.close();await new Promise(resolve=>server.close(resolve));await dropSchema();}
+  }
+});
+
+test("even an owner-admitted prefix must match the actual mounted route", async(t)=>{
+  const target={origin:"https://samedaydesk.com",prefix:"/synthetic-other-prefix",roundKey:"synthetic-refused-222000"};
+  const app=createSdsApp({neomorphicOpportunity:{env:envFor({
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN:target.origin,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX:target.prefix,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY:target.roundKey,
+    NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION:JSON.stringify(target),
+  })}});
+  const handle=app.get('neoOpportunity');await handle.ready();const server=await listen(app);
+  t.after(async()=>{await handle.close();await new Promise(resolve=>server.close(resolve));});
+  const port=server.address().port;
+  assert.equal((await request(port,`${PREFIX}/healthz`)).json.reason,'invalid_config');
+  assert.equal((await request(port,'/api/health')).status,200);
+});
+
+test("previous installed host submissions and owed rows survive migration, holder acknowledgement and restart", {
+  timeout:40000, skip:!process.env.NEOMORPHIC_OPPORTUNITY_PREVIOUS_HOST,
+}, async(t)=>{
+  await dropSchema();t.after(dropSchema);
+  const roundKey='synthetic-upgrade-222000';const root=`${PREFIX}/v1/opportunity-rounds/${roundKey}`;
+  const target={origin:'https://samedaydesk.com',prefix:PREFIX,roundKey};
+  const extra={NEOMORPHIC_OPPORTUNITY_HOSTED_ORIGIN:target.origin,NEOMORPHIC_OPPORTUNITY_HOSTED_PREFIX:PREFIX,NEOMORPHIC_OPPORTUNITY_HOSTED_ROUND_KEY:roundKey,NEOMORPHIC_OPPORTUNITY_HOSTED_ADMISSION:JSON.stringify(target)};
+  const children=[];t.after(async()=>{for(const c of children) await stopChild(c);});
+  async function start(previous=false,crash=false){
+    const path=previous ? `${process.env.NEOMORPHIC_OPPORTUNITY_PREVIOUS_HOST}/server/scripts/fixtures/neomorphic-opportunity-process.mjs` : processFixture;
+    const c=spawn(process.execPath,[path],{env:{PATH:process.env.PATH,...envFor(previous?{}:extra),NEOMORPHIC_OPPORTUNITY_CRASH_AFTER_COMMIT:crash?'1':'0'},stdio:['ignore','pipe','pipe','ipc']});
+    children.push(c);const ready=await childMessage(c);assert.equal(ready.error,undefined);return {c,port:ready.port};
+  }
+  const old=await start(true);
+  const created=await ownerPost(old.port,`${PREFIX}/v1/opportunity-rounds`,roundBody(roundKey,{reserve:true}));assert.equal(created.status,201,JSON.stringify(created.json));
+  const holders=[];
+  for(let i=0;i<3;i++) {
+    const holder=await ownerPost(old.port,root+'/imports',{provenance:'test',offerKey:'discovery-trace',publicLabel:`Synthetic${i}`,credentialRef:`test:upgrade-${i}`,importKey:`upgrade-${i}`,deferStart:i===2});
+    assert.equal(holder.status,201,JSON.stringify(holder.json));holders.push(holder.json);
+    if(i<2) assert.equal((await bearerPost(old.port,`${root}/claims/${holder.json.claim.id}/submissions`,packed(),holder.json.token)).status,201);
+  }
+  const owed=await ownerPost(old.port,`${root}/claims/${holders[0].claim.id}/accept`,{provenance:'test'});assert.equal(owed.status,201,JSON.stringify(owed.json));
+  const terms=created.json.termsVersion;const settlement=owed.json.obligation.settlementKey;
+  const oldSubmissions=await sql('SELECT * FROM opportunity_submissions ORDER BY id');
+  const oldObligations=await sql('SELECT * FROM opportunity_obligations ORDER BY id');
+  const oldRound=await request(old.port,root+'?provenance=test');
+  await stopChild(old.c);
+  const upgraded=await start();
+  const before=await request(upgraded.port,root+'/cohort?provenance=test',{headers:{authorization:`Bearer ${OWNER}`}});
+  assert.equal(before.status,200);assert.equal(before.json.funnel.reservations.rows,3);
+  assert.equal(before.json.funnel.holderOriginated.acknowledgementEvents,0);assert.equal(before.json.funnel.holderOriginated.uniqueRecipients,0);
+  assert.deepEqual(before.json.funnel.external,{identity:'unknown',delivery:'unknown',acquisition:'unknown'});
+  assert.equal(before.json.funnel.submissions.rows,2);assert.equal(before.json.funnel.owed.rows,1);
+  await stopChild(upgraded.c);
+  const crashing=await start(false,true);
+  const ack={provenance:'test',offerKey:'discovery-trace',publicLabel:'Synthetic0',termsVersion:terms};const ackKey=idem('upgrade-ack');
+  const lostExit=once(crashing.c,'exit');
+  const lost=bearerPost(crashing.port,root+'/claims',ack,holders[0].token,ackKey);lost.catch(()=>{});
+  const [exit]=await lostExit;assert.equal(exit,86);await lost.catch(()=>{});
+  const now=await start();
+  const replay=await bearerPost(now.port,root+'/claims',ack,holders[0].token,ackKey);assert.equal(replay.status,200,JSON.stringify(replay.json));
+  assert.equal(replay.json.additionalPaidSlot,false);assert.equal(replay.json.claim.id,holders[0].claim.id);
+  const again=await bearerPost(now.port,root+'/claims',ack,holders[0].token,idem('upgrade-fresh-ack'));assert.equal(again.status,200,JSON.stringify(again.json));
+  const after=await request(now.port,root+'/cohort?provenance=test',{headers:{authorization:`Bearer ${OWNER}`}});
+  assert.equal(after.json.funnel.holderOriginated.acknowledgementEvents,1);assert.equal(after.json.funnel.holderOriginated.uniqueRecipients,1);
+  assert.equal(after.json.funnel.holderOriginated.acknowledgementRequests,2);assert.equal(after.json.funnel.reservations.rows,3);
+  assert.equal(after.json.funnel.holderOriginated.verifiedExternalActivity,false);assert.equal(after.json.agentConversion,'unknown');
+  for(const [i,status] of [[0,'owed'],[1,'submitted'],[2,'reserved']]) {
+    const r=await request(now.port,`${root}/claims/${holders[i].claim.id}?provenance=test`,{headers:{authorization:`Bearer ${holders[i].token}`}});
+    assert.equal(r.status,200);assert.equal(r.json.claim.status,status);assert.equal(r.json.claim.termsVersion,terms);assert.equal(r.json.paid,false);
+    assert.equal(r.json.hostedDelivery.configuration,'hosted');assert.equal(r.json.hostedDelivery.grantsDelivered,false);
+    if(i===0) {assert.equal(r.json.obligation.settlementKey,settlement);assert.equal(r.json.obligation.adapter,'null_nonpaying_v0');assert.equal(r.json.obligation.settled,false);assert.equal(r.json.obligation.transfer,null);}
+    if(i===2) assert.equal(r.json.doNotStartWork,true);
+  }
+  const publicRound=await request(now.port,root+'?provenance=test');assert.equal(publicRound.json.termsVersion,terms);assert.equal(publicRound.json.hostedDelivery.publicPaidCapacity,0);
+  assert.equal(publicRound.json.committedAtomic,oldRound.json.committedAtomic);assert.equal(publicRound.json.principalCapAtomic,'300000');
+  assert.deepEqual(publicRound.json.termsDocument,oldRound.json.termsDocument);
+  assert.deepEqual(await sql('SELECT * FROM opportunity_submissions ORDER BY id'),oldSubmissions);
+  assert.deepEqual(await sql('SELECT * FROM opportunity_obligations ORDER BY id'),oldObligations);
+  assert.equal((await request(now.port,`${root}/claims/${holders[0].claim.id}?provenance=test`,{headers:{authorization:`Bearer ${holders[1].token}`}})).status,403);
+  assert.equal((await request(now.port,`${root}/claims/${holders[0].claim.id}?provenance=production`,{headers:{authorization:`Bearer ${holders[0].token}`}})).status,404);
+  const rows=await sql('SELECT COUNT(*)::int AS n FROM opportunity_claims');assert.equal(rows[0].n,3);
+  assert.equal((await sql('SELECT COUNT(*)::int AS n FROM earned_work_obligations'))[0].n,0);
+  await stopChild(now.c);
+});

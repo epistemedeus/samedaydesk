@@ -19,7 +19,7 @@ function provenanceOf(value) {
     throw new ApiError(400, "invalid_input", "provenance must be test, fixture, or production");
 }
 export function mountOpportunityRoutes(app, store, config) {
-    const opportunity = new OpportunityService(store);
+    const opportunity = new OpportunityService(store, config.hostedDelivery);
     app.post("/v1/opportunity-rounds", async (req, res, next) => {
         try {
             assertOwner(readBearer(req), config);

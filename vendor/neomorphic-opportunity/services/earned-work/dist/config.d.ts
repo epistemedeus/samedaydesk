@@ -1,3 +1,4 @@
+import { type HostedDeliveryProjection } from "./opportunity/hosted.js";
 export declare const DEFAULT_CORS_ORIGIN = "https://neomorphic.io";
 export type VerifierMode = "default" | "reproduction";
 export type ReproductionConfig = {
@@ -23,6 +24,7 @@ export type ServiceConfig = {
     poolMax: number;
     verifierMode: VerifierMode;
     reproduction: ReproductionConfig | null;
+    hostedDelivery: HostedDeliveryProjection;
 };
 export declare const PG_SCHEMA_RE: RegExp;
 export declare const DEFAULT_PG_SCHEMA = "public";

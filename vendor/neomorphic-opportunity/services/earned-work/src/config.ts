@@ -1,6 +1,7 @@
 import path from "node:path";
 import { ApiError } from "./errors.js";
 import { hashToken, tokensEqual } from "./crypto.js";
+import { parseHostedEnv, type HostedDeliveryProjection } from "./opportunity/hosted.js";
 
 export const DEFAULT_CORS_ORIGIN = "https://neomorphic.io";
 
@@ -31,6 +32,7 @@ export type ServiceConfig = {
   poolMax: number;
   verifierMode: VerifierMode;
   reproduction: ReproductionConfig | null;
+  hostedDelivery: HostedDeliveryProjection;
 };
 
 export const PG_SCHEMA_RE = /^[a-z][a-z0-9_]{0,62}$/;
@@ -228,6 +230,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServiceConfig 
     poolMax: parsePoolMax(env.EARNED_WORK_POOL_MAX),
     verifierMode,
     reproduction: parseReproductionConfig(env, verifierMode),
+    hostedDelivery: parseHostedEnv(env),
   };
 }
 

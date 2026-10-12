@@ -1,6 +1,13 @@
 import { ApiError } from "../errors.js";
 const PRIVATE_KEY = /^(email|emailaddress|mailbox|wallet|walletdestination|payoutdestination|destination|token|secret|authorization|rawbody|messagebody|sentid|password|privatekey|credentialref|assignedscope|contributortokenid|credentialgrant)$/i;
-const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
+const EMAIL_SOURCE = "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}";
+const PUBLIC_CONTACT = "contact@neomorphic.io";
+function hasPrivateEmail(text) {
+    const matches = text.match(new RegExp(EMAIL_SOURCE, "gi"));
+    if (!matches)
+        return false;
+    return matches.some((item) => item.toLowerCase() !== PUBLIC_CONTACT);
+}
 const WALLET = /0x[a-fA-F0-9]{40}/;
 const BEARER = /Bearer\s+\S+/i;
 const TOKEN_PREFIX = /ew_ctr_[A-Za-z0-9_-]{8,}/;
@@ -27,7 +34,7 @@ export function assertNoPrivate(value, field = "body") {
         if (key && PRIVATE_KEY.test(key.replace(/[-_]/g, "")) && !(field === "import" && key === "credentialRef")) {
             throw new ApiError(400, "private_input", `${field} must not carry personal data, tokens, or destinations`);
         }
-        if (EMAIL.test(text) || WALLET.test(text) || BEARER.test(text) || TOKEN_PREFIX.test(text) || SK.test(text)) {
+        if (hasPrivateEmail(text) || WALLET.test(text) || BEARER.test(text) || TOKEN_PREFIX.test(text) || SK.test(text)) {
             throw new ApiError(400, "private_input", `${field} must not carry personal data, tokens, or destinations`);
         }
     });
@@ -43,7 +50,7 @@ export function publicJson(value, options) {
     return strip(value, options?.retainAssignedScope === true);
 }
 function strip(value, retainAssignedScope) {
-    if (typeof value === "string" && (EMAIL.test(value) || WALLET.test(value) || BEARER.test(value) || TOKEN_PREFIX.test(value) || SK.test(value)))
+    if (typeof value === "string" && (hasPrivateEmail(value) || WALLET.test(value) || BEARER.test(value) || TOKEN_PREFIX.test(value) || SK.test(value)))
         return "[redacted]";
     if (Array.isArray(value))
         return value.map((item) => strip(item, retainAssignedScope));

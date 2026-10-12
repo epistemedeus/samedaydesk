@@ -1,0 +1,703 @@
+{
+  "job": "ROOT-SOL-OPPORTUNITY-CONSUMER-222000",
+  "syntheticOnly": true,
+  "productionMutation": false,
+  "sourceExport": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
+  "producerBehavior": "a7167b3c06d3d5fc71dcd4f13b917e55f7e06916",
+  "heavyOriginalExport": "ed48ee856a7a7d1c97e8bad0b35c1f7f8fc5d55c",
+  "hostBase": "19e65225d0a5b4d141415f4db4fc5ef3ab5decd2",
+  "nativeSession": "01a12fa3-b880-7df2-b886-a8070d6eda4a",
+  "model": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "startedAt": "2026-10-12T10:23:38.978Z",
+  "node": "v22.14.0",
+  "npm": "10.9.7",
+  "disposablePG": "postgres://ubuntu@127.0.0.1:55440/opportunity_consumer_222000",
+  "disposableCorrespondencePG": "postgres://ubuntu@127.0.0.1:55440/correspondence_consumer_222000",
+  "sourceCount": 186,
+  "sourceMismatches": [],
+  "distCount": 103,
+  "sourceDigest": "1a9beb9273428941302c5ea503eff51526786d09da6bab7895ccec2fe3affde6",
+  "generatedDigest": "8ebd5873bdbbc61f1bcbcc743669daa4063c65c0b62c95936dd3117f948c238b",
+  "callerBefore": {
+    "base": "08b90bdef8dbd198023be447942a3119cb268235",
+    "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+    "closureDigest": "sha256:aad3269e988fe205af0fb9c2293e47193ff93b0fda6624121bd151a6a6d646f2"
+  },
+  "callerAfter": {
+    "base": "08b90bdef8dbd198023be447942a3119cb268235",
+    "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+    "closureDigest": "sha256:fc14eac1601172bfbfc9a30480455281ae75d6528e24733740f022939496d68e"
+  },
+  "priorCallerStillAccepted": true,
+  "unchanged": [
+    "root/client locks",
+    "unrelated vendors",
+    "caller base and all prior caller descriptors",
+    "published archives",
+    "human-facing client and producer pages"
+  ],
+  "coldRuntimeTree": "1b084c0227e8c976da4dc1b24cbfa9b91355f8f1",
+  "coldRebuild": {
+    "sourceMatches": 186,
+    "generatedMatches": 103,
+    "mismatches": 0,
+    "gitPresent": false,
+    "productionDevDependenciesPresent": false
+  },
+  "gates": [
+    {
+      "label": "producer-config-first-red",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "node",
+        "--test",
+        "tests/opportunity-hosted-config-222000.test.mjs"
+      ],
+      "startedAt": "2026-10-12T10:26:07.491334+00:00",
+      "finishedAt": "2026-10-12T10:26:07.563704+00:00",
+      "exit": 1,
+      "sha256": "12599dba4979fc4fe95b576ae20805e58954a7bc3c0dd0cec631a80fc6c15f7d",
+      "bytes": 4347,
+      "counts": {
+        "tests": 4,
+        "pass": 0,
+        "fail": 4,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "producer-config-green",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "node",
+        "--test",
+        "tests/opportunity-hosted-config-222000.test.mjs",
+        "tests/opportunity-hosted-delivery.test.mjs",
+        "tests/opportunity-continuation.test.mjs"
+      ],
+      "startedAt": "2026-10-12T10:26:53.370145+00:00",
+      "finishedAt": "2026-10-12T10:26:53.464869+00:00",
+      "exit": 0,
+      "sha256": "be5a82fcf8f1b7c4beb00af085baacd06e2a6c676b15bc7da249a2bc641ad412",
+      "bytes": 2029,
+      "counts": {
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "producer-ci",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "services/earned-work",
+        "ci"
+      ],
+      "startedAt": "2026-10-12T10:26:53.493652+00:00",
+      "finishedAt": "2026-10-12T10:26:54.348282+00:00",
+      "exit": 0,
+      "sha256": "ace5a51af90b777f07d6db305bec245e01a90ac19c63b77496e9d23595840781",
+      "bytes": 231,
+      "counts": {}
+    },
+    {
+      "label": "producer-build",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "services/earned-work",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-12T10:27:59.740655+00:00",
+      "finishedAt": "2026-10-12T10:28:02.529687+00:00",
+      "exit": 0,
+      "sha256": "8e6c71c761f3381a3c014e17bcbde005a1fb2f8044dd1dfb12b6e3d5db7eafff",
+      "bytes": 142,
+      "counts": {}
+    },
+    {
+      "label": "consumer-ci",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "ci"
+      ],
+      "startedAt": "2026-10-12T10:29:56.755893+00:00",
+      "finishedAt": "2026-10-12T10:30:00.536355+00:00",
+      "exit": 0,
+      "sha256": "4d8ad3b140cde8dcf05a23c12dd681dc3329f331d606f153993756b14c0ee742",
+      "bytes": 230,
+      "counts": {}
+    },
+    {
+      "label": "producer-service",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "services/earned-work",
+        "test"
+      ],
+      "startedAt": "2026-10-12T10:28:56.587665+00:00",
+      "finishedAt": "2026-10-12T10:30:01.930237+00:00",
+      "exit": 1,
+      "sha256": "55213500dc1e144ffbd096a809fd5c1563045c2fc017eed43d86bc52fdf78bcf",
+      "bytes": 25401,
+      "counts": {
+        "tests": 119,
+        "pass": 118,
+        "fail": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "heavy-closure-ci",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/heavy-closure/services/earned-work",
+        "ci"
+      ],
+      "startedAt": "2026-10-12T10:30:31.376867+00:00",
+      "finishedAt": "2026-10-12T10:30:32.123782+00:00",
+      "exit": 0,
+      "sha256": "d5879b5e72fd96de2f5e586e092bcb52fa32ea60c6ba7b1c4009f184616743f0",
+      "bytes": 231,
+      "counts": {}
+    },
+    {
+      "label": "mount-first-red",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "explicit owner delivery",
+        "server/scripts/test-neomorphic-opportunity-host.mjs"
+      ],
+      "startedAt": "2026-10-12T10:30:32.271000+00:00",
+      "finishedAt": "2026-10-12T10:30:33.102500+00:00",
+      "exit": 1,
+      "sha256": "fa0bea04942127e3476e473cc8fd2957f972dd592ffd666a5dc3b3e5033771c8",
+      "bytes": 911,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "heavy-closure-build",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/heavy-closure/services/earned-work",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-12T10:30:32.150886+00:00",
+      "finishedAt": "2026-10-12T10:30:34.761311+00:00",
+      "exit": 0,
+      "sha256": "8e6c71c761f3381a3c014e17bcbde005a1fb2f8044dd1dfb12b6e3d5db7eafff",
+      "bytes": 142,
+      "counts": {}
+    },
+    {
+      "label": "heavy-closure-first-red",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "node",
+        "--import",
+        "/tmp/opportunity-consumer-222000/heavy-closure/services/earned-work/node_modules/tsx/dist/loader.mjs",
+        "--test",
+        "--test-name-pattern",
+        "hosted projection",
+        "/tmp/opportunity-consumer-222000/heavy-closure/services/earned-work/tests/opportunity-funnel-221800.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:30:34.789097+00:00",
+      "finishedAt": "2026-10-12T10:30:35.221229+00:00",
+      "exit": 1,
+      "sha256": "c27014c06bda51d56e4aed80289a2d4d70d7fb49644a448d0162c890345a02bb",
+      "bytes": 1377,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "producer-service-final",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "services/earned-work",
+        "test"
+      ],
+      "startedAt": "2026-10-12T10:31:30.504398+00:00",
+      "finishedAt": "2026-10-12T10:32:35.044418+00:00",
+      "exit": 0,
+      "sha256": "f6b953fc489c4fb501bb4f6e45b2a7a1714300aa8785d4e803f9323a1149be51",
+      "bytes": 24635,
+      "counts": {
+        "tests": 119,
+        "pass": 119,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "previous-host-ci",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/previous-host",
+        "ci",
+        "--omit=dev"
+      ],
+      "startedAt": "2026-10-12T10:32:49.825500+00:00",
+      "finishedAt": "2026-10-12T10:32:52.444166+00:00",
+      "exit": 0,
+      "sha256": "ed343117d3d19aaecfa9a619b04db16df990e9e966601f65f48cd5fe06d31fe0",
+      "bytes": 143,
+      "counts": {}
+    },
+    {
+      "label": "vendor-ci",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "vendor/neomorphic-opportunity/services/earned-work",
+        "ci"
+      ],
+      "startedAt": "2026-10-12T10:35:31.743761+00:00",
+      "finishedAt": "2026-10-12T10:35:32.432959+00:00",
+      "exit": 0,
+      "sha256": "3665b89208410f83f2eaafa60e26345aeac7393434e21aaf6acc7513352e6e32",
+      "bytes": 231,
+      "counts": {}
+    },
+    {
+      "label": "vendor-build",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "vendor/neomorphic-opportunity/services/earned-work",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-12T10:35:32.459245+00:00",
+      "finishedAt": "2026-10-12T10:35:34.993666+00:00",
+      "exit": 0,
+      "sha256": "8e6c71c761f3381a3c014e17bcbde005a1fb2f8044dd1dfb12b6e3d5db7eafff",
+      "bytes": 142,
+      "counts": {}
+    },
+    {
+      "label": "vendor-funnel",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--import",
+        "./vendor/neomorphic-opportunity/services/earned-work/node_modules/tsx/dist/loader.mjs",
+        "--test",
+        "--test-concurrency=1",
+        "vendor/neomorphic-opportunity/services/earned-work/tests/opportunity-funnel-221800.test.ts",
+        "vendor/neomorphic-opportunity/services/earned-work/tests/opportunity-hosted-config.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:35:56.425146+00:00",
+      "finishedAt": "2026-10-12T10:36:01.828900+00:00",
+      "exit": 1,
+      "sha256": "d57aa0a56e448c1e198cfa4a13b821b3f920a4d3a1c51ba7ec6b7c2903d5154e",
+      "bytes": 6966,
+      "counts": {
+        "tests": 11,
+        "pass": 9,
+        "fail": 2,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "consumer-host",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-neomorphic-opportunity-host.mjs",
+        "server/scripts/test-neomorphic-opportunity-isolation.mjs"
+      ],
+      "startedAt": "2026-10-12T10:35:55.266613+00:00",
+      "finishedAt": "2026-10-12T10:36:02.663661+00:00",
+      "exit": 1,
+      "sha256": "8e25702f86b416fde0742f391a79dd7ed129579348b081fd414b6db67384b5c2",
+      "bytes": 6406,
+      "counts": {
+        "tests": 20,
+        "pass": 18,
+        "fail": 2,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "managed-build",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-foundry"
+      ],
+      "startedAt": "2026-10-12T10:36:53.971590+00:00",
+      "finishedAt": "2026-10-12T10:37:03.498742+00:00",
+      "exit": 0,
+      "sha256": "dbbaedb40652c0880f43f015fd9dc7c564a8772f07d61a01a731dd41a88a5307",
+      "bytes": 6990,
+      "counts": {}
+    },
+    {
+      "label": "migration-isolation-first-red",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "node",
+        "--import",
+        "./services/earned-work/node_modules/tsx/dist/loader.mjs",
+        "--test",
+        "services/earned-work/tests/opportunity-migration-isolation.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:38:17.484655+00:00",
+      "finishedAt": "2026-10-12T10:38:19.003388+00:00",
+      "exit": 1,
+      "sha256": "17404d851ef92cd69d1847b912e3ba51f8f9afc58b83152a67f6565f427343f1",
+      "bytes": 1104,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "migration-isolation-green",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "node",
+        "--import",
+        "./services/earned-work/node_modules/tsx/dist/loader.mjs",
+        "--test",
+        "--test-concurrency=1",
+        "services/earned-work/tests/opportunity-migration-isolation.test.ts",
+        "services/earned-work/tests/opportunity-funnel-221800.test.ts",
+        "services/earned-work/tests/opportunity-hosted-config.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:38:44.774311+00:00",
+      "finishedAt": "2026-10-12T10:38:49.015291+00:00",
+      "exit": 1,
+      "sha256": "61e3a49693b3bfd68acb50171cf71fa47a601ac60a19128e0f4be1eee584d827",
+      "bytes": 8047,
+      "counts": {
+        "tests": 12,
+        "pass": 10,
+        "fail": 2,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "migration-regression-final",
+      "cwd": "/home/ubuntu/root222000-neo/services/earned-work",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/opportunity-migration-isolation.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:39:43.221721+00:00",
+      "finishedAt": "2026-10-12T10:39:44.573905+00:00",
+      "exit": 0,
+      "sha256": "9ce99a86992ec934528a67eb7c86b582f06acb7a2d4dc70efeff510be796e164",
+      "bytes": 341,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "route-coexistence",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-hosted-startup.js",
+        "server/scripts/test-correspondence-mount-disabled.js",
+        "server/scripts/test-correspondence-shared-host-negative.js",
+        "server/scripts/test-correspondence-shared-host-accept.js",
+        "server/scripts/test-correspondence-s58.js",
+        "server/scripts/test-foundry-host.js",
+        "server/scripts/test-foundry-probe.js",
+        "server/scripts/test-foundry-listener-drain.js",
+        "server/scripts/test-foundry-activation.js",
+        "server/scripts/test-foundry-client-compat.js",
+        "server/scripts/test-proxy-addr-patch.js",
+        "server/scripts/test-public-readiness-mount.js",
+        "server/scripts/test-spa-fallback.js"
+      ],
+      "startedAt": "2026-10-12T10:39:44.233979+00:00",
+      "finishedAt": "2026-10-12T10:40:12.680300+00:00",
+      "exit": 1,
+      "sha256": "98b08d158ee779f944baea1524387f41a3ed2b4f7b65a83616b48031c8f4b41d",
+      "bytes": 14738,
+      "counts": {
+        "tests": 62,
+        "pass": 60,
+        "fail": 2,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "managed-gates",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-managed-node.js",
+        "server/scripts/test-managed-node-receiving.js",
+        "server/scripts/test-managed-platform.js",
+        "server/scripts/test-managed-watch.mjs"
+      ],
+      "startedAt": "2026-10-12T10:39:45.406592+00:00",
+      "finishedAt": "2026-10-12T10:40:17.066003+00:00",
+      "exit": 0,
+      "sha256": "c21bc6429eb1548134b4b5331aacca381cefe5a7d7d9884ed408f7938552a393",
+      "bytes": 14820,
+      "counts": {
+        "tests": 72,
+        "pass": 72,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "producer-service-corrected",
+      "cwd": "/home/ubuntu/root222000-neo",
+      "command": [
+        "npm",
+        "--prefix",
+        "services/earned-work",
+        "test"
+      ],
+      "startedAt": "2026-10-12T10:39:14.137946+00:00",
+      "finishedAt": "2026-10-12T10:40:22.395482+00:00",
+      "exit": 0,
+      "sha256": "6487ad3cc96c4eb06d51d2da7369da4434304758c53cf8a50b57941c07fbf4c9",
+      "bytes": 24861,
+      "counts": {
+        "tests": 120,
+        "pass": 120,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "vendor-build-corrected",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "vendor/neomorphic-opportunity/services/earned-work",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-12T10:41:25.178213+00:00",
+      "finishedAt": "2026-10-12T10:41:27.538862+00:00",
+      "exit": 0,
+      "sha256": "8e6c71c761f3381a3c014e17bcbde005a1fb2f8044dd1dfb12b6e3d5db7eafff",
+      "bytes": 142,
+      "counts": {}
+    },
+    {
+      "label": "proxy-closure-final",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "run",
+        "test:proxy-addr"
+      ],
+      "startedAt": "2026-10-12T10:42:35.561046+00:00",
+      "finishedAt": "2026-10-12T10:42:40.953395+00:00",
+      "exit": 0,
+      "sha256": "71532924d349cb28367bb273ad9ee627f65641cc75fd1701826f87a6fa0ef61d",
+      "bytes": 1585,
+      "counts": {
+        "tests": 7,
+        "pass": 7,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "vendor-funnel-corrected",
+      "cwd": "/home/ubuntu/root222000-sds/vendor/neomorphic-opportunity/services/earned-work",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "--test-concurrency=1",
+        "tests/opportunity-funnel-221800.test.ts",
+        "tests/opportunity-hosted-config.test.ts",
+        "tests/opportunity-migration-isolation.test.ts"
+      ],
+      "startedAt": "2026-10-12T10:42:34.378485+00:00",
+      "finishedAt": "2026-10-12T10:42:42.420139+00:00",
+      "exit": 0,
+      "sha256": "5d8d8d11aaf3bbf0f8b0b93fe6a5073403e2d02ec1012f69b286f488cb505fc2",
+      "bytes": 2756,
+      "counts": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "consumer-host-corrected",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-neomorphic-opportunity-host.mjs",
+        "server/scripts/test-neomorphic-opportunity-isolation.mjs"
+      ],
+      "startedAt": "2026-10-12T10:42:33.056097+00:00",
+      "finishedAt": "2026-10-12T10:42:42.468354+00:00",
+      "exit": 0,
+      "sha256": "c6f0910ff4feb05803848dd47f1fa1a15ac0d09c98473f2b1c755c48350c2f2e",
+      "bytes": 5251,
+      "counts": {
+        "tests": 20,
+        "pass": 20,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "cold-service-ci",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/cold-host/vendor/neomorphic-opportunity/services/earned-work",
+        "ci"
+      ],
+      "startedAt": "2026-10-12T10:43:29.346261+00:00",
+      "finishedAt": "2026-10-12T10:43:30.046938+00:00",
+      "exit": 0,
+      "sha256": "3df61dda2cd6c9b37447305742fdb804122e77eddd330cbd3648e15a72dca923",
+      "bytes": 231,
+      "counts": {}
+    },
+    {
+      "label": "cold-service-build",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/cold-host/vendor/neomorphic-opportunity/services/earned-work",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-10-12T10:43:30.074605+00:00",
+      "finishedAt": "2026-10-12T10:43:32.416761+00:00",
+      "exit": 0,
+      "sha256": "8e6c71c761f3381a3c014e17bcbde005a1fb2f8044dd1dfb12b6e3d5db7eafff",
+      "bytes": 142,
+      "counts": {}
+    },
+    {
+      "label": "cold-production-ci",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "npm",
+        "--prefix",
+        "/tmp/opportunity-consumer-222000/cold-host",
+        "ci",
+        "--omit=dev"
+      ],
+      "startedAt": "2026-10-12T10:43:33.157818+00:00",
+      "finishedAt": "2026-10-12T10:43:35.521976+00:00",
+      "exit": 0,
+      "sha256": "470f4298a6104081999ecbb27ffd6ed0e142ff0ec6af4a0d565871c0ffb613cf",
+      "bytes": 143,
+      "counts": {}
+    },
+    {
+      "label": "cold-mounted-upgrade",
+      "cwd": "/tmp/opportunity-consumer-222000/cold-host",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-name-pattern",
+        "resident shutdown|previous installed host",
+        "server/scripts/test-neomorphic-opportunity-host.mjs"
+      ],
+      "startedAt": "2026-10-12T10:44:28.508077+00:00",
+      "finishedAt": "2026-10-12T10:44:31.471321+00:00",
+      "exit": 0,
+      "sha256": "356594070694bea997716aba68e3db47ecb56a5e455b04b8568ba2f037e61cd4",
+      "bytes": 572,
+      "counts": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "cold-production-processes",
+      "cwd": "/home/ubuntu/root222000-sds",
+      "command": [
+        "node",
+        "--test",
+        "/tmp/opportunity-consumer-222000/cold-production.test.mjs"
+      ],
+      "startedAt": "2026-10-12T10:45:17.162271+00:00",
+      "finishedAt": "2026-10-12T10:45:18.007647+00:00",
+      "exit": 0,
+      "sha256": "cefb04f58a72bb6abcb4c3d005599f57cf27449cb51edb02f7b7784e1ee6c7a0",
+      "bytes": 387,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "notes": [
+    "Raw log files under /tmp/opportunity-consumer-222000 stay on the actual VM. Producer first reds are retained in its receipts/222000, excluded from the vendor. Mount and route initial logs are retained beside this report.",
+    "Initial combined host/funnel runs exposed migration 004 cross-schema constraint-deparse XX000. The dedicated 0/1 regression is preserved; corrected source full suite 120/120 and concurrent receiving gates 20/20 plus 12/12.",
+    "Initial focused 10/12 source command used repository root; tsx child resolution requires service cwd. Supported service npm command passed.",
+    "Initial route/coexistence 60/62 preceded the caller pin refresh; unchanged 55 non-proxy cases passed, and final proxy/caller closure gate passed all seven.",
+    "Received upstream funnel test has an extra blank line at EOF; exact vendor source is retained. Raw first-red TAP whitespace is retained. These are excluded from source whitespace checking.",
+    "Root-received live host evidence is provided by admission/task, not fetched by this worker. No outside participation, grant delivery, payout or revenue was proved."
+  ]
+}
