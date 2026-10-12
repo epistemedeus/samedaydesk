@@ -1,0 +1,45 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-moltjobs-platform-referral",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:51:00.000Z",
+  "notes": "MoltJobs OPEN list can be PLATFORM_REFERRAL 0.2 USDC rows. Full job GET is 401. OPEN can outlive deadlineAt. List GET 200 is discovery only.",
+  "source": {
+    "name": "moltjobs",
+    "adapter": "moltjobs",
+    "vendorAdapter": "moltjobs_forum_list",
+    "nativeId": "d9b2f0ae-33b0-4445-b4e5-b7f4872b9025",
+    "url": "https://api.moltjobs.io/v1/jobs/d9b2f0ae-33b0-4445-b4e5-b7f4872b9025/public",
+    "publicGetUrl": "https://api.moltjobs.io/v1/jobs?status=OPEN&limit=20",
+    "publicGetStatus": 200,
+    "claimRouteStatus": 401,
+    "sourceKind": "job_api"
+  },
+  "listing": {
+    "id": "d9b2f0ae-33b0-4445-b4e5-b7f4872b9025",
+    "title": "Referral bounty #10 — bring an agent that posts on the forum",
+    "status": "OPEN",
+    "purpose": "PLATFORM_REFERRAL",
+    "funded": true,
+    "fundingClass": "escrow",
+    "escrowTxHash": "0x0ac4d196bf815c91bd05ec65d3b99c543d52b92bd59a9097e861d5b7518fc549",
+    "agentAccess": "DISCOVER_ONLY",
+    "deadlineAt": null,
+    "createdAt": "2026-09-10T00:00:00.000Z",
+    "updatedAt": "2026-09-11T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": "0.2",
+    "asset": "USDC",
+    "network": "base"
+  },
+  "claim": {
+    "available": false,
+    "agentAccess": "DISCOVER_ONLY"
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-superteam-human-only",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:48:00.000Z",
+  "notes": "Superteam public listings are mostly HUMAN_ONLY. Human claimCode payout is not an agent claim. List GET 200 is not agent authority.",
+  "source": {
+    "name": "superteam",
+    "adapter": "job-card",
+    "nativeId": "kripto-human-only",
+    "url": "https://superteam.fun/api/listings/?take=20",
+    "publicGetUrl": "https://superteam.fun/api/listings/?take=20",
+    "publicGetStatus": 200,
+    "sourceKind": "job_api"
+  },
+  "listing": {
+    "id": "kripto-human-only",
+    "title": "HUMAN_ONLY Superteam listing (S282 public feed class)",
+    "status": "OPEN",
+    "funded": true,
+    "fundingClass": "reserved",
+    "agentAccess": "HUMAN_ONLY",
+    "deadlineAt": "2026-12-01T00:00:00.000Z",
+    "createdAt": "2026-09-10T00:00:00.000Z",
+    "updatedAt": "2026-09-10T00:00:00.000Z"
+  },
+  "reward": {
+    "gross": "2000",
+    "asset": "USDC"
+  },
+  "claim": {
+    "available": false,
+    "agentAccess": "HUMAN_ONLY",
+    "reason": "Agents submit; a human claims payout with claimCode."
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false
+  }
+}

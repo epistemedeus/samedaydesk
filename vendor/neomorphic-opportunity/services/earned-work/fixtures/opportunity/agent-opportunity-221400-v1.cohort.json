@@ -1,0 +1,81 @@
+{
+  "note": "Synthetic reviewer fixtures only. Ten discovery and three workflow reservations reflect aggregate configuration, not live people, Sent evidence, messages, credentials or destinations.",
+  "imports": [
+    {
+      "publicLabel": "Synthetic01",
+      "credentialRef": "fixture:synthetic-01",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic02",
+      "credentialRef": "fixture:synthetic-02",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic03",
+      "credentialRef": "fixture:synthetic-03",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic04",
+      "credentialRef": "fixture:synthetic-04",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic05",
+      "credentialRef": "fixture:synthetic-05",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic06",
+      "credentialRef": "fixture:synthetic-06",
+      "deferStart": true
+    },
+    {
+      "publicLabel": "Synthetic07",
+      "credentialRef": "fixture:synthetic-07",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic08",
+      "credentialRef": "fixture:synthetic-08",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic09",
+      "credentialRef": "fixture:synthetic-09",
+      "deferStart": false
+    },
+    {
+      "publicLabel": "Synthetic10",
+      "credentialRef": "fixture:synthetic-10",
+      "deferStart": false
+    }
+  ],
+  "assignments": [
+    {
+      "publicLabel": "Synthetic02",
+      "credentialRef": "fixture:synthetic-02",
+      "scope": {
+        "title": "Synthetic workflow 02",
+        "instructions": "Use only synthetic reviewer data for a bounded workflow attempt. Record declared versions, the attempted input and result or limitation. SCOPE-PRIVATE-221400"
+      }
+    },
+    {
+      "publicLabel": "Synthetic05",
+      "credentialRef": "fixture:synthetic-05",
+      "scope": {
+        "title": "Synthetic workflow 05",
+        "instructions": "Use only synthetic reviewer data for a bounded workflow attempt. Record declared versions, the attempted input and result or limitation. SCOPE-PRIVATE-221400"
+      }
+    },
+    {
+      "publicLabel": "Synthetic03",
+      "credentialRef": "fixture:synthetic-03",
+      "scope": {
+        "title": "Synthetic workflow 03",
+        "instructions": "Use only synthetic reviewer data for a bounded workflow attempt. Record declared versions, the attempted input and result or limitation. SCOPE-PRIVATE-221400"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schema": "arena.a3.workability-dimensions.job-card.v1",
+  "dataLabel": "fixture",
+  "fixtureKind": "s282-claimable-frantic",
+  "observationDate": "2026-09-11",
+  "capturedAt": "2026-09-11T15:00:00.000Z",
+  "notes": "Honest claimable fixture from packs/external-job-intake Frantic board capture (bounty 129). Board says funded and POST /v1/claims is identity-gated. No escrow tx hash on the public board row — funding class is promised, not escrowed. Deadline is not invented. This arm never POSTs. Assignment to this agent is not observed.",
+  "source": {
+    "name": "gofrantic",
+    "adapter": "frantic",
+    "vendorAdapter": "frantic_board",
+    "nativeId": "129",
+    "url": "https://gofrantic.com/bounties/129",
+    "publicGetUrl": "https://gofrantic.com/v1/board",
+    "publicGetStatus": 200,
+    "claimRouteStatus": null,
+    "sourceKind": "job_api",
+    "paused": false,
+    "presentedAsJobApi": false,
+    "authBoundary": "POST /v1/claims is identity-gated. This arena arm never calls it."
+  },
+  "listing": {
+    "id": "129",
+    "title": "Earn a citation for Sourcey on a page that already ranks for a startup-credits, agent-readiness, or docs-tooling query",
+    "status": "open",
+    "funded": true,
+    "fundingClass": "reserved",
+    "agentAccess": "AGENT_ALLOWED",
+    "slotsAvailable": 9,
+    "createdAt": "2026-08-27T08:56:40.245Z",
+    "updatedAt": "2026-08-27T08:56:40.245Z",
+    "deadlineAt": null
+  },
+  "reward": {
+    "gross": "16",
+    "asset": "USD",
+    "provenance": "sponsor_stated"
+  },
+  "claim": {
+    "available": true,
+    "state": "claimable_with_prereqs",
+    "method": "POST",
+    "endpoint": "/v1/claims",
+    "identityRequired": true,
+    "requires": [
+      "agent_kid",
+      "agent_token",
+      "verified_email_or_runx_github_identity",
+      "eligible_operator_or_successful_paid_bounty"
+    ],
+    "reason": "This paid bounty is over $10. It requires normal paid eligibility or one successful paid bounty."
+  },
+  "assignment": {
+    "reserved": false,
+    "assigned": false,
+    "awardStatus": "unassigned"
+  },
+  "walletlessIou": false
+}

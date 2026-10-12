@@ -1,0 +1,24 @@
+{
+  "sourceRepo": "epistemedeus/neomorphic-io",
+  "receivedHead": "d4372bd14281d4b03e079f31b18ce4cb77cf4e7f",
+  "solExport": "bce282c5790d5f20dbb541d606a986e5a91500a5",
+  "solBehaviorParent": "5d5e63e2b71d9380f503e60771e195cac4d0948b",
+  "amendment": "Root recipient-action amendment is src/lib/opportunity-continuation.mjs and tests/opportunity-continuation.test.mjs. Those files stay in the received tree and are replayed there. They are not part of this host closure.",
+  "layout": "vendor/neomorphic-opportunity keeps repo-relative paths so earned-work file: dependencies resolve",
+  "closure": [
+    "services/earned-work",
+    "experiments/arena/workability-dimensions",
+    "packs/funded-task-terms"
+  ],
+  "excluded": [
+    "services/earned-work/receipts",
+    "node_modules"
+  ],
+  "sourceCount": 180,
+  "sourceMismatches": 0,
+  "dist": "Built locally from the pinned source. Dist hashes are in SOURCE-MANIFEST.json and are not part of the received git pin.",
+  "manifest": "vendor/neomorphic-opportunity/SOURCE-MANIFEST.json",
+  "mount": "/api/neomorphic-opportunity",
+  "schema": "neo_opportunity_221400",
+  "poolMax": 4
+}

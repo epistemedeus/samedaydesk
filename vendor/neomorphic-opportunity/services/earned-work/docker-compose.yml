@@ -1,0 +1,18 @@
+# Fixture/test provenance: disposable Postgres for services/earned-work.
+# Not a hosted exchange. Not production. Reward 0.10 USDC is a disclosed hypothesis.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: earned_work
+      POSTGRES_PASSWORD: earned_work
+      POSTGRES_DB: earned_work_test
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U earned_work -d earned_work_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+    tmpfs:
+      - /var/lib/postgresql/data

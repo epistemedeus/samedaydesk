@@ -1,0 +1,38 @@
+{
+  "name": "@neomorphic/earned-work",
+  "version": "0.1.0",
+  "private": true,
+  "description": "S275 earned-work kernel: contributor-first agent-effort marketplace prototype. Obligation records only — no payment rails or artifact execution.",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./contract": "./contract/kernel-v1.json",
+    "./openapi.json": "./openapi.json"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "npx tsc -p ../../experiments/arena/workability-dimensions/tsconfig.f01.json && tsc -p tsconfig.json",
+    "pretest": "npx tsc -p ../../experiments/arena/workability-dimensions/tsconfig.f01.json",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "node --import tsx --test --test-concurrency=1 tests/*.test.ts",
+    "opportunity:receive": "node --import tsx scripts/opportunity-receive.mjs",
+    "migrate": "tsx src/migrate.ts"
+  },
+  "dependencies": {
+    "@neomorphic/arena-workability-dimensions": "file:../../experiments/arena/workability-dimensions",
+    "@neomorphic/funded-task-terms": "file:../../packs/funded-task-terms",
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.17.2",
+    "@types/pg": "^8.15.5",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}

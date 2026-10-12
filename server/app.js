@@ -27,6 +27,7 @@ import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
+import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
@@ -101,6 +102,10 @@ app.set("l12ManagedWatch", mountManagedWatch(app, options.managedWatch || {}));
 // Bounded raw intake before the global parser. Admission needs enrolled PG;
 // anonymous snapshot evaluation and current publication facts remain separate.
 app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedUsefulJourney || {}));
+
+// Optional received opportunity surface. Own 32KiB JSON parser and trust proxy.
+// Missing dedicated configuration leaves only this prefix unavailable.
+app.set("neoOpportunity", mountNeomorphicOpportunity(app, options.neomorphicOpportunity || {}));
 
 // 2) MCP owns its machine parser errors; unrelated APIs and raw webhooks retain
 // their existing parsers and error behavior.

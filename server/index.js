@@ -21,7 +21,11 @@ bindListenerLifecycle(server, async () => {
     try {
       await app.get("l12ManagedWatch")?.close?.();
     } finally {
-      if (handle?.close) await handle.close();
+      try {
+        await app.get("neoOpportunity")?.close?.();
+      } finally {
+        if (handle?.close) await handle.close();
+      }
     }
   }
 });

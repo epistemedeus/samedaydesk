@@ -1,0 +1,80 @@
+{
+  "roundKey": "agent-opportunity-221400-v1",
+  "provenance": "fixture",
+  "productionAdmission": false,
+  "principalCapAtomic": 300000,
+  "atomicScale": 6,
+  "asset": "USDC",
+  "network": "base",
+  "chainId": 8453,
+  "submissionDeadline": "2026-10-19T23:59:59Z",
+  "claimTtlSeconds": 691200,
+  "reviewWithinDays": 3,
+  "maxClarifications": 1,
+  "maxEvidenceBytes": 12000,
+  "transferFeeCap": {
+    "amountAtomic": "10000000000000",
+    "asset": "ETH",
+    "note": "0.000010 ETH total cap. No transfer has occurred at admission."
+  },
+  "offers": [
+    {
+      "offerKey": "discovery-trace",
+      "title": "Existing discovery trace",
+      "summary": "Complete a truthful route record from existing history only, including explicit unknowns. Five minutes maximum. Unknown is not filled from a referrer, ranking, or another participant.",
+      "slotCount": 10,
+      "rewardAtomic": 10000,
+      "maxEffortSeconds": 300,
+      "acceptance": "Slot id, exact listing if retained, encounter time with estimates marked, route, exact query or endpoint if retained, pages followed, role, active minutes, and confidence.",
+      "evidenceKind": "discovery_trace",
+      "publicClaimable": true,
+      "rank": 1,
+      "ownerReservedSlots": 10
+    },
+    {
+      "offerKey": "workflow-witness",
+      "title": "Outside workflow witness",
+      "summary": "One sanitized own-environment attempt with a useful result or an actual failure. Twenty minutes maximum. Owner confirms a distinct scoped task before an unassigned slot starts.",
+      "slotCount": 4,
+      "rewardAtomic": 50000,
+      "maxEffortSeconds": 1200,
+      "acceptance": "Declared versions, minimal input, expected result, and the first boundary where behavior changes or disappears. A reproducible no-fit is eligible. No synthetic failure.",
+      "evidenceKind": "workflow_witness",
+      "publicClaimable": false,
+      "rank": 2,
+      "ownerReservedSlots": 3
+    }
+  ],
+  "alternatives": [
+    {
+      "alternativeKey": "caller-recipe",
+      "rank": 1,
+      "title": "Caller-owned client or workflow incompatibility",
+      "summary": "A maintained recipe or regression for a real caller-owned incompatibility. Unfunded until a later round reserves it."
+    },
+    {
+      "alternativeKey": "discovery-history",
+      "rank": 2,
+      "title": "Real discovery and claim history",
+      "summary": "Distribution choice and source attribution from a real encounter. Unfunded until a later round reserves it."
+    },
+    {
+      "alternativeKey": "direct-route",
+      "rank": 3,
+      "title": "Outside operator task with a direct-route comparison",
+      "summary": "Applicability of a direct route against the operator's real task. Unfunded until a later round reserves it."
+    },
+    {
+      "alternativeKey": "handoff-witness",
+      "rank": 4,
+      "title": "Cross-agent handoff of a useful artifact",
+      "summary": "A later consumer witnesses an already useful artifact. Unfunded until a later round reserves it."
+    },
+    {
+      "alternativeKey": "bounty-experience",
+      "rank": 5,
+      "title": "Source-qualified bounty experience",
+      "summary": "Cost, review, and risk data for the aggregator. Unfunded until a later round reserves it."
+    }
+  ]
+}

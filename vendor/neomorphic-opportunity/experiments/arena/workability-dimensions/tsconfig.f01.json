@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": false,
+    "skipLibCheck": true,
+    "rewriteRelativeImportExtensions": true,
+    "declaration": false,
+    "noEmitOnError": false,
+    "noCheck": true,
+    "types": ["node"],
+    "typeRoots": ["../../../services/earned-work/node_modules/@types"]
+  },
+  "files": ["src/f01-bridge.ts"]
+}
