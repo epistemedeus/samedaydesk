@@ -42,7 +42,7 @@
     "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
-    "server/lib/neomorphic-opportunity-mount.js": "a066aab13c5dcad07835aebb1e567d97a0589192b7945f1f94a1864c01afdf97",
+    "server/lib/neomorphic-opportunity-mount.js": "9607dcb4d10773edb323e10b1be6c9f804616287b35f0ba4d0258ab2f820360d",
     "server/lib/original-task/action.mjs": "b68b962166c7923d5f97b4b77c664b13f21d32c302ecdbd3cd68a8d8f98faea8",
     "server/lib/original-task/bundled-descriptor.json": "479b60356b13c64db20d934f4a22d59f1da6a3564db39676c96917c9642ab20c",
     "server/lib/original-task/cli.mjs": "dc205aef381fcb0fc65d259e8ec9fe66955278e42261527e2f7c79cbbbef18c4",
@@ -625,6 +625,11 @@
       "base": "08b90bdef8dbd198023be447942a3119cb268235",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:773bb8a75378282be72b3db794391a4e260c474662a57c7aff5e50edc6d77365"
+    },
+    {
+      "base": "08b90bdef8dbd198023be447942a3119cb268235",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:377ac88bda2568d3527feb21ec07085ad1579d0e13bfaa36e3a76aaf4f22ad12"
     }
   ]
 }

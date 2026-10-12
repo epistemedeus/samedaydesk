@@ -37,6 +37,12 @@ function envFor(extra = {}) {
   };
 }
 
+function databaseAlias(change) {
+  const url = new URL(DATABASE_URL);
+  change(url);
+  return url.href;
+}
+
 function listen(app) {
   return new Promise((resolve) => {
     const server = app.listen(0, "127.0.0.1", () => resolve(server));
@@ -235,6 +241,18 @@ test("missing and invalid opportunity configuration leaves the host up", async (
     ["reproduction verifier", envFor({ NEOMORPHIC_OPPORTUNITY_VERIFIER: "reproduction" })],
     ["same database url", envFor({ DATABASE_URL })],
     ["correspondence database", envFor({ CORRESPONDENCE_DATABASE_URL: DATABASE_URL })],
+    ["database protocol alias", envFor({ DATABASE_URL: DATABASE_URL.replace(/^postgres:/, "postgresql:") })],
+    ["database query alias", envFor({ EARNED_WORK_DATABASE_URL: `${DATABASE_URL}?application_name=other` })],
+    ["database role alias", envFor({ CORRESPONDENCE_DATABASE_URL: DATABASE_URL.replace(/\/\/[^@]*@/, "//other-fixture-role@") })],
+    ["database encoded name", envFor({ DATABASE_URL: databaseAlias((url) => {
+      url.pathname = `/%${url.pathname.charCodeAt(1).toString(16)}${url.pathname.slice(2)}`;
+    }) })],
+    ["database endpoint override", envFor({ CORRESPONDENCE_DATABASE_URL: databaseAlias((url) => {
+      url.searchParams.set("host", url.hostname);
+      url.searchParams.set("port", url.port || "5432");
+      url.hostname = "different.invalid";
+      url.port = "1";
+    }) })],
     ["correspondence owner", envFor({ CORRESPONDENCE_ADMIN_TOKEN: OWNER })],
     ["earned-work owner", envFor({ EARNED_WORK_OWNER_TOKEN: OWNER })],
     ["url only", { NEOMORPHIC_OPPORTUNITY_DATABASE_URL: DATABASE_URL }],
@@ -255,11 +273,50 @@ test("missing and invalid opportunity configuration leaves the host up", async (
     await new Promise((resolve) => server.close(resolve));
   }
   assert.equal(await schemaExists(), false);
+  const separate = databaseAlias((url) => { url.pathname = "/separate_opportunity_fixture"; });
+  assert.equal(inspectOpportunityEnv(envFor({ CORRESPONDENCE_DATABASE_URL: separate })).kind, "configured");
+  assert.equal(inspectOpportunityEnv({
+    NEOMORPHIC_OPPORTUNITY_DATABASE_URL: "postgres://fixture@db.invalid/opportunity",
+    NEOMORPHIC_OPPORTUNITY_OWNER_TOKEN: OWNER,
+    DATABASE_URL: "postgresql://other@DB.invalid:5432/opportunity?sslmode=require",
+  }).kind, "invalid_config");
+});
+
+test("a DML-only configured authority cannot migrate or become ready", { timeout: 20_000 }, async (t) => {
+  await dropSchema();
+  const seeded = createSdsApp({ neomorphicOpportunity: { env: envFor() } }).get("neoOpportunity");
+  await seeded.ready();
+  assert.equal(seeded.state.status, "ready");
+  await seeded.close();
+  await sql("CREATE ROLE opportunity_dml_221700 NOLOGIN");
+  await sql(`GRANT USAGE ON SCHEMA ${OPPORTUNITY_SCHEMA} TO opportunity_dml_221700`);
+  await sql(`GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${OPPORTUNITY_SCHEMA} TO opportunity_dml_221700`);
+  t.after(async () => {
+    await dropSchema();
+    await sql("DROP OWNED BY opportunity_dml_221700");
+    await sql("DROP ROLE opportunity_dml_221700");
+  });
+  const url = new URL(DATABASE_URL);
+  url.searchParams.set("options", "-c role=opportunity_dml_221700");
+  const app = createSdsApp({ neomorphicOpportunity: {
+    env: envFor({ NEOMORPHIC_OPPORTUNITY_DATABASE_URL: url.href }),
+  } });
+  const handle = app.get("neoOpportunity");
+  t.after(() => handle.close());
+  await handle.ready();
+  assert.equal(handle.state.status, "disabled");
+  assert.equal(handle.state.reason, "store_unavailable");
+  const server = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  assert.equal((await request(server.address().port, `${PREFIX}/healthz`)).status, 503);
+  assert.equal((await request(server.address().port, "/api/health")).status, 200);
+  assert.equal(await schemaExists(), true);
+  assert.equal((await sql("SELECT COUNT(*)::int AS n FROM opportunity_rounds"))[0].n, 0);
 });
 
 test("configured but unreachable storage does not claim readiness", { timeout: 20_000 }, async (t) => {
   const env = envFor({
-    NEOMORPHIC_OPPORTUNITY_DATABASE_URL: "postgres://earned_work:earned_work@127.0.0.1:55432/no_such_opportunity_db",
+    NEOMORPHIC_OPPORTUNITY_DATABASE_URL: databaseAlias((url) => { url.pathname = "/no_such_opportunity_db"; }),
     DATABASE_URL,
   });
   const app = createSdsApp({ neomorphicOpportunity: { env } });
@@ -326,6 +383,20 @@ test("prefixed opportunity routes coexist with old host routes", { timeout: 30_0
   assert.equal(openapi.status, 404);
   const unprefixed = await request(port, "/v1/opportunity-rounds/agent-opportunity-221400-v1");
   assert.notEqual(unprefixed.status, 200);
+  for (const path of ["/v1/tasks", "/v1/tasks/task-1/funding/reserve", "/v1/tasks/task-1/payout", "/openapi.json"]) {
+    const refused = await ownerPost(port, `${PREFIX}${path}`, {});
+    assert.equal(refused.status, 404, path);
+  }
+  for (const method of ["PUT", "DELETE"]) {
+    const refused = await request(port, `${PREFIX}/v1/opportunity-rounds`, {
+      method, headers: { authorization: `Bearer ${OWNER}`, "content-type": "application/json", "content-length": "2" }, body: "{}",
+    });
+    assert.equal(refused.status, 404, method);
+  }
+  const wrongType = await request(port, `${PREFIX}/v1/opportunity-rounds`, {
+    method: "POST", headers: { authorization: `Bearer ${OWNER}`, "content-type": "text/plain" }, body: "{}",
+  });
+  assert.equal(wrongType.status, 400);
 
   const roundKey = "h-prefixed";
   const root = `${PREFIX}/v1/opportunity-rounds/${roundKey}`;
@@ -339,6 +410,15 @@ test("prefixed opportunity routes coexist with old host routes", { timeout: 30_0
   assert.equal(read.json.publicView, true);
   assert.equal(read.json.deliveryState, "unconfigured");
   const holder = await issueHolder(port, roundKey);
+  const publicAfterImport = await request(port, `${root}?provenance=test`);
+  assert.equal(publicAfterImport.text.includes(holder.token), false);
+  assert.equal(publicAfterImport.text.includes("credentialRef"), false);
+  for (const path of ["claims", "cohort"]) {
+    const refused = await request(port, `${root}/${path}?provenance=test`, {
+      headers: { authorization: `Bearer ${holder.token}` },
+    });
+    assert.equal(refused.status, 401, path);
+  }
   const roundId = (await sql("SELECT id FROM opportunity_rounds WHERE round_key = $1", [roundKey]))[0].id;
   const scoped = await ownerPost(port, `${PREFIX}/v1/contributor-tokens`, {
     contributorPublicId: "Synthetic02",
@@ -721,8 +801,8 @@ test("resident shutdown closes the opportunity pool and keeps the round", { time
   t.after(async () => {
     await Promise.all(children.map((child) => stopChild(child)));
   });
-  function start() {
-    const child = spawn(process.execPath, ["--import", preload, "server/index.js"], {
+  function start(args = ["server/index.js"]) {
+    const child = spawn(process.execPath, ["--import", preload, ...args], {
       cwd: rootDir,
       env: {
         PATH: process.env.PATH,
@@ -740,6 +820,18 @@ test("resident shutdown closes the opportunity pool and keeps the round", { time
   const ready = await childMessage(first);
   const created = await ownerPost(ready.port, `${PREFIX}/v1/opportunity-rounds`, roundBody("h-shutdown"));
   assert.equal(created.status, 201, JSON.stringify(created.json));
+  const root = `${PREFIX}/v1/opportunity-rounds/h-shutdown`;
+  const holders = [];
+  for (let i = 0; i < 2; i += 1) {
+    const holder = await issueHolder(ready.port, "h-shutdown");
+    holders.push(holder);
+    const submitted = await bearerPost(ready.port, `${root}/claims/${holder.claim.id}/submissions`, packed(), holder.token);
+    assert.equal(submitted.status, 201, JSON.stringify(submitted.json));
+  }
+  const accepted = await ownerPost(ready.port, `${root}/claims/${holders[0].claim.id}/accept`, { provenance: "test" });
+  assert.equal(accepted.status, 201, JSON.stringify(accepted.json));
+  assert.equal(accepted.json.obligation.adapter, "null_nonpaying_v0");
+  assert.equal((await ownerPost(ready.port, `${root}/close`, { provenance: "test" })).status, 200);
   const began = Date.now();
   const exited = once(first, "exit");
   first.kill("SIGTERM");
@@ -747,11 +839,22 @@ test("resident shutdown closes the opportunity pool and keeps the round", { time
   const elapsed = Date.now() - began;
   assert.equal(code, 0);
   assert.ok(elapsed < 4000, `shutdown took ${elapsed}ms`);
-  const second = start();
+  const second = start(["--eval", 'require("./server/index.js")']);
   const again = await childMessage(second);
   const read = await request(again.port, `${PREFIX}/v1/opportunity-rounds/h-shutdown?provenance=test`);
   assert.equal(read.status, 200);
   assert.equal(read.json.roundKey, "h-shutdown");
   assert.equal(read.json.deliveryState, "unconfigured");
   assert.equal(read.json.paid, false);
+  for (const [index, status] of [[0, "owed"], [1, "submitted"]]) {
+    const holder = holders[index];
+    const retained = await request(again.port, `${root}/claims/${holder.claim.id}?provenance=test`, {
+      headers: { authorization: `Bearer ${holder.token}` },
+    });
+    assert.equal(retained.status, 200, JSON.stringify(retained.json));
+    assert.equal(retained.json.claim.status, status);
+    assert.equal(retained.json.paid, false);
+    assert.equal(retained.json.doNotStartWork, true);
+  }
+  assert.equal((await sql("SELECT COUNT(*)::int AS n FROM opportunity_obligations WHERE paid = false"))[0].n, 1);
 });

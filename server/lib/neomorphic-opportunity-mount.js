@@ -29,16 +29,37 @@ function sameReference(left, right) {
   return a.length > 0 && a === b;
 }
 
+function databaseReference(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    if (!["postgres:", "postgresql:"].includes(url.protocol)) return null;
+    // pg accepts host/port query overrides. Credentials, TLS and application
+    // options do not make a shared database dedicated to this feature.
+    const query = Object.fromEntries(url.searchParams);
+    const host = decodeURIComponent(query.host || url.hostname).toLowerCase().replace(/\.$/, "");
+    const port = Number.parseInt(query.port || url.port || "5432", 10);
+    const database = decodeURI(url.pathname.slice(1));
+    return host && database && Number.isInteger(port) ? JSON.stringify([host, port, database]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function sameDatabase(left, right) {
+  const a = databaseReference(left);
+  return sameReference(left, right) || (a !== null && a === databaseReference(right));
+}
+
 export function inspectOpportunityEnv(env = process.env) {
   const url = String(env.NEOMORPHIC_OPPORTUNITY_DATABASE_URL || "").trim();
   const token = String(env.NEOMORPHIC_OPPORTUNITY_OWNER_TOKEN || "").trim();
   if (!url && !token) return { kind: "unconfigured" };
   if (!url || !token) return { kind: "invalid_config", detail: "incomplete" };
   if (token.length < TOKEN_MIN) return { kind: "invalid_config", detail: "owner_token" };
-  if (sameReference(url, env.DATABASE_URL) || sameReference(url, env.EARNED_WORK_DATABASE_URL)) {
+  if (sameDatabase(url, env.DATABASE_URL) || sameDatabase(url, env.EARNED_WORK_DATABASE_URL)) {
     return { kind: "invalid_config", detail: "reused_database_url" };
   }
-  if (sameReference(url, env.CORRESPONDENCE_DATABASE_URL)) {
+  if (sameDatabase(url, env.CORRESPONDENCE_DATABASE_URL)) {
     return { kind: "invalid_config", detail: "reused_correspondence_database" };
   }
   if (sameReference(token, env.CORRESPONDENCE_ADMIN_TOKEN)) {
