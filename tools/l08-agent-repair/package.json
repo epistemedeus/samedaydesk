@@ -1,0 +1,25 @@
+{
+  "name": "@samedaydesk/task-readiness-caller",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "description": "Caller-owned decimal readiness diagnostic for the maintained L08 contract.",
+  "bin": {
+    "task-readiness-caller": "./task-readiness-caller.mjs"
+  },
+  "exports": {
+    ".": "./lib/caller-readiness.mjs",
+    "./contract": "./lib/readiness-contract.mjs"
+  },
+  "files": [
+    "README.md",
+    "task-readiness-caller.mjs",
+    "lib/caller-readiness.mjs",
+    "lib/readiness-contract.mjs",
+    "lib/supplied-bounds.mjs"
+  ],
+  "engines": {
+    "node": "22.x"
+  }
+}
