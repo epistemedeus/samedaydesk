@@ -56,7 +56,7 @@ function databasePrincipal(value) {
     if (!["postgres:", "postgresql:"].includes(url.protocol)) return null;
     const query = Object.fromEntries(url.searchParams);
     // A startup role override is not evidence of an independent application login.
-    if (query.options && /(?:^|\\s)(?:-c\\s*)?(?:role|session_authorization)\\s*=/.test(query.options)) return null;
+    if (query.options && /(?:^|\s)(?:-c\s*)?(?:role|session_authorization)\s*=/.test(query.options)) return null;
     const principal = decodeURIComponent(query.user || url.username);
     return principal || null;
   } catch {
