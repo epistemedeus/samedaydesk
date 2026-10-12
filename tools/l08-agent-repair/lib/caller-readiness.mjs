@@ -219,17 +219,33 @@ function quoteKeywordProblem(quote) {
   return null;
 }
 
+function siblingProblem(node, ownedKey, prefix) {
+  if (!isPlainJson(node.properties)) return null;
+  for (const [key, rule] of Object.entries(node.properties)) {
+    if (key === ownedKey) continue;
+    if (!isPlainJson(rule)) return unsupported("schema_malformed");
+    if (Object.keys(rule).some((keyword) => !ANNOTATIONS.has(keyword))) {
+      return unsupported(`schema_unsupported:sibling:${prefix}${key}`);
+    }
+  }
+  return null;
+}
+
 function guaranteeFor(schema) {
   if (schema == null) {
     return { state: "unproved", code: classifySchema(schema, [OWNED_POINTER]).code };
   }
   const rootProblem = keywordProblem(schema, OBJECT_KEYS);
   if (rootProblem) return rootProblem;
+  const rootSibling = siblingProblem(schema, "data", "");
+  if (rootSibling) return rootSibling;
   const data = isPlainJson(schema.properties) ? schema.properties.data : undefined;
   if (data !== undefined && !isPlainJson(data)) return unsupported("schema_malformed");
   if (isPlainJson(data)) {
     const dataProblem = keywordProblem(data, OBJECT_KEYS);
     if (dataProblem) return dataProblem;
+    const dataSibling = siblingProblem(data, "quote", "data.");
+    if (dataSibling) return dataSibling;
     const quote = isPlainJson(data.properties) ? data.properties.quote : undefined;
     if (quote !== undefined && !isPlainJson(quote)) return unsupported("schema_malformed");
     if (isPlainJson(quote)) {
@@ -291,8 +307,8 @@ function shapeFor(schema, value) {
       if (!Object.hasOwn(schema.properties, key)) return failShape("unexpected_property");
     }
   }
-  if (Array.isArray(schema.required) && schema.required.includes("data") && !Object.hasOwn(value, "data")) {
-    return failShape("required_missing:data");
+  for (const key of schema.required ?? []) {
+    if (!Object.hasOwn(value, key)) return failShape(`required_missing:${key}`);
   }
   const dataSchema = isPlainJson(schema.properties) ? schema.properties.data : undefined;
   if (!isPlainJson(dataSchema) || !Object.hasOwn(value, "data")) return { state: "pass", code: null };
@@ -304,8 +320,8 @@ function shapeFor(schema, value) {
       if (!Object.hasOwn(dataSchema.properties, key)) return failShape("unexpected_property:data");
     }
   }
-  if (Array.isArray(dataSchema.required) && dataSchema.required.includes("quote") && !Object.hasOwn(value.data, "quote")) {
-    return failShape("required_missing:data.quote");
+  for (const key of dataSchema.required ?? []) {
+    if (!Object.hasOwn(value.data, key)) return failShape(`required_missing:data.${key}`);
   }
   if (!Object.hasOwn(value.data, "quote")) return { state: "pass", code: null };
   const quoteSchema = isPlainJson(dataSchema.properties) ? dataSchema.properties.quote : undefined;

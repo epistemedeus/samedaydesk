@@ -47,6 +47,8 @@ The owned semantic contract is pointer `data.quote` and pattern `^\d+(\.\d+)?$`.
 - `quote.type` is `string`
 - one decimal restriction: `pattern` equal to `^\d+(\.\d+)?$`, or `const` a decimal string, or `enum` a non-empty list of decimal strings
 
+All declared root and `data` required keys are checked against this sample. Sibling property schemas may be empty or annotations-only; other sibling constraints return `no_fit` with their location rather than a false schema pass. This is a bounded owned-path checker, not a general JSON Schema validator.
+
 `minLength` and `maxLength` are checked against this sample. They do not prove that future strings are decimals. `additionalProperties` may be `true` or `false`. Annotations `title`, `description`, `examples`, `example`, `default`, `deprecated`, `readOnly`, `writeOnly`, and `$comment` do not change the result.
 
 ## How to read the result
