@@ -31,7 +31,7 @@ Coverage: configuration isolation; storage refusal (`42501`, opportunity 503, ho
 
 First failures preserved outside Git: alias 0/1 (`configured` versus `invalid_config`); expanded harness 10/11 (`ECONNRESET`, repaired DELETE fixture framing); initial managed 69/72, 2 failures/1 skip (missing cached archive, overlap assertion). Parent also reproduced missing artifacts/overlap; prepared runs pass without source changes. Simultaneous useful-visitor runs: input 36/38, parent 37/38; isolated input 37/38. Shared-temp assertion and intermittent watch overlap are not claimed repaired.
 
-Raw logs, copied harness and synthetic databases stay outside Git. `/tmp/opportunity-receive-221700/evidence.json` records commands, counts, bytes and SHA256; its SHA256 is `fb6bd854ce8ad659cdf0c413881fd639e6131db20ff3698e332568b270ca78ac`. Alias-red hash `03623253b953634e5b8e6483a71281895777a174503d8b0aed670439936c6b1f`; final-host hash `f482c898b5a03f91e49284f5a39464f89835db0e02f23dba26960df0bdcc606c`. Disposable cluster stopped.
+Raw logs, copied harness and synthetic databases stay outside Git. `/tmp/opportunity-receive-221700/evidence.json` records commands, counts, bytes and SHA256; its SHA256 is `4f2af5c5206c7c0638b73b2633d9cfd8834506bff886985d9528066384d2489a`. Alias-red hash `03623253b953634e5b8e6483a71281895777a174503d8b0aed670439936c6b1f`; final-host hash `f482c898b5a03f91e49284f5a39464f89835db0e02f23dba26960df0bdcc606c`. Disposable cluster stopped.
 
 ## Root's remaining receiving
 
