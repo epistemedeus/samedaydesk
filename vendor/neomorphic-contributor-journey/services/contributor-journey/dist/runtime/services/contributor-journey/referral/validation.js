@@ -1,3 +1,4 @@
+import { publicationText } from "../showcase/validation.js";
 import { createHash } from 'node:crypto';
 import { containsPrivate } from '../../../experiments/contributor-reuse-trial-100198/src/privacy.mjs';
 export const SHARE_REF = /^rf[0-9a-f]{48}$/;
@@ -46,7 +47,8 @@ const PRIVATE_PUBLIC_TEXT = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\b0x[0-9a-f]{40,64}\
 export function safeProjection(s, f) {
     const texts = [s.title, ...(f.includes('summary') ? [s.summary] : []), ...(f.includes('evidence') ? [s.evidence ?? ''] : [])];
     const privateIds = [s.sourceId, s.ownerAccountId, s.workRef, s.artifactDigest, s.acceptanceRef];
-    return texts.every(text => !containsPrivate(text) && !PRIVATE_PUBLIC_TEXT.test(text) &&
+    return texts.every(text => (text === "" || publicationText(text, 6000, privateIds.filter(value => value.length >= 4))) &&
+        !containsPrivate(text) && !PRIVATE_PUBLIC_TEXT.test(text) &&
         !privateIds.some(value => value.length >= 4 && text.includes(value)));
 }
 /** Version alone is insufficient: bind the exact work, text and consent state. */

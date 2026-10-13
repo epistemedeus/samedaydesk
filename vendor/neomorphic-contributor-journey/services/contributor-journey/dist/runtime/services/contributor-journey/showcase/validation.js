@@ -41,6 +41,10 @@ export function publicationText(value, max, forbidden = []) {
     if (typeof value !== "string" || value.trim() !== value || value.length < 1 || Buffer.byteLength(value) > max)
         return false;
     const normalized = value.normalize("NFKC");
+    // Public projections carry plain text, never an alternate encoded representation.
+    // Reject rather than silently decode and change the exact consented bytes.
+    if (/%[0-9a-f]{2}|&#(?:x[0-9a-f]+|\d+);?|&[a-z][a-z0-9]{1,31};|\\(?:u(?:[0-9a-f]{4}|\{[0-9a-f]{1,6}\})|x[0-9a-f]{2}|[0-7]{1,3})/i.test(normalized))
+        return false;
     if (/[<>\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f]/u.test(normalized) ||
         /(?:https?:|mailto:|ipfs:|data:|:\/\/|www\.|\b[a-z0-9-]+\.(?:com|org|io|net|eth|xyz)\b)/i.test(normalized) ||
         /[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(normalized) || /(?:0x)?[0-9a-f]{40,}/i.test(normalized) ||

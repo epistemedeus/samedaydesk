@@ -1,3 +1,4 @@
+import { publicationText } from "../showcase/validation.js";
 import { z } from "zod";
 export class DiscussionError extends Error {
     code;
@@ -45,6 +46,8 @@ export function parseCommand(input) {
 /** Deliberately conservative for obvious credentials and identifying/financial text.
  * The injected policy additionally handles deployment-known secrets and privacy rules. */
 export function safeText(text, audience) {
+    if (audience === "public" && !publicationText(text, 6000))
+        return false;
     if (/-----BEGIN .*PRIVATE KEY-----|\b(?:sk|ghp|github_pat|neo_(?:wtr|rdr))[-_][A-Za-z0-9_-]{10,}|\bBearer\s+\S+|\b(?:password|api[_ -]?key|secret|access[_ -]?token)\s*[:=]\s*\S+/i.test(text))
         return false;
     if (audience === "public" && /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\b0x[a-f0-9]{40,64}\b|\b(?:https?:\/\/|www\.)\S+|\b(?:\d+(?:\.\d+)?\s*(?:USDC|USD|ETH|BTC)|(?:USDC|USD|ETH|BTC)\s*\d+(?:\.\d+)?)\b|[$€£]\s*\d|\+?\d[\d ()-]{7,}\d/i.test(text))
