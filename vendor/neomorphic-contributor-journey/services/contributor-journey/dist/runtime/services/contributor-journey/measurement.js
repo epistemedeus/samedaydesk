@@ -28,9 +28,15 @@ export async function readInstalledMeasurement(input) {
         emit('signup', row.id, row.id, row.created_at.toISOString(), 'created', {}, parents);
     }
     const accountIds = new Set(accounts.rows.slice(0, 200).map((row) => row.id));
+    // checkReady validates these current config pins against durable enrollment.
+    // Stale stored links grant no scope; filter before the cap and adapter loading.
+    const taskIds = live ? input.installed.admission.config.installed.futureRounds.flatMap(pin => pin.provenance === 'production' ? pin.tasks.map(task => `${pin.roundKey}:${task.offerKey}`) : []) : null;
     const claims = await input.kernel.withOpportunityClient(client => client.query(`SELECT c.id,b.account_id FROM opportunity_claims c
-    JOIN opportunity_rounds r ON r.id=c.round_id JOIN journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
-    WHERE r.round_key=ANY($1::text[]) AND r.provenance=$2 ORDER BY c.created_at,c.id LIMIT 201`, [input.rounds.filter(r => r.provenance === provenance).map(r => r.roundKey), provenance]), 'read');
+    JOIN opportunity_rounds r ON r.id=c.round_id JOIN opportunity_offers f ON f.id=c.offer_id AND f.round_id=r.id
+    JOIN journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
+    WHERE r.round_key=ANY($1::text[]) AND r.provenance=$2
+      AND ($3::text[] IS NULL OR r.round_key || ':' || f.offer_key=ANY($3::text[]))
+    ORDER BY c.created_at,c.id LIMIT 201`, [input.rounds.filter(r => r.provenance === provenance).map(r => r.roundKey), provenance, taskIds]), 'read');
     for (const claim of claims.rows.slice(0, 200)) {
         if (!accountIds.has(claim.account_id))
             continue;

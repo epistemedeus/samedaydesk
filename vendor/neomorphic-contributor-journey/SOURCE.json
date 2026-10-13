@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "ccad608b548c1098f3b9cfc40eee5317cda11840",
+  "sourceCommit": "dc1777a8df0b53389329b6a93eaf23311613ac55",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -932,13 +932,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js",
-      "bytes": 5798,
-      "sha256": "69c3e387f45ea970eeb6ff6c5fc3f0698471356c0ff606724bbfd1afed381675"
+      "bytes": 6335,
+      "sha256": "fe9f4bc49797491696380ec70ccd093ad1565cbf6c93f1c9decd69ec543a0aeb"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js.map",
-      "bytes": 5921,
-      "sha256": "338c77f9c1251f801c6ddbc344abf29e2cdbdc42b5a6d211018dfa0abef03861"
+      "bytes": 6282,
+      "sha256": "a8fa53a6c755615b04200220a99a0048e860cba00896ce74378bed3269ccf7f5"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/migrations/001_composition.sql",
@@ -1968,7 +1968,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "d21475f218c0282a03a414434f2953373f83524ee03a53a50e2a69cb4058248e"
+      "sha256": "4f157250fea10b72eef87bc7120d359d31be90ace4ba0e3d33c35600a32b6796"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

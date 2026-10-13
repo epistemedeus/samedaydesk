@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`ccad608b548c1098f3b9cfc40eee5317cda11840`, built from the committed source
+`dc1777a8df0b53389329b6a93eaf23311613ac55`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -24,7 +24,8 @@ keys and explicit test/fixture future-round allowlist. Live instead requires the
 source's LIVE-PROFILE.md and live.env.example: explicitly enrolled durable
 store/origin/keys and exact existing production round/terms/task/requester bindings.
 It refuses fixture-port adapters, unqualified account-store promotion and legacy
-rounds. No genuine installed settlement registry is supplied; badges remain absent.
+rounds. Private measurement selects only current configured/enrolled live task IDs
+before its row cap; stale links do not admit removed tasks or rounds. No genuine installed settlement registry is supplied; badges remain absent.
 Public derivative reads are separately disabled by default. The SDS live mount
 requires CONTRIBUTOR_JOURNEY_SOURCE_COMMIT equal to the exact manifest and
 validates the compiled closure and unchanged lock before importing it. Root must keep MODE=disabled
