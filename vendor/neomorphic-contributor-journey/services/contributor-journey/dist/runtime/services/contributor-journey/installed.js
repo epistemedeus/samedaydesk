@@ -132,20 +132,20 @@ export async function createInstalledComposition(options) {
     const summaries = { read: async (workId) => kernel.withOpportunityClient(async (client) => (await client.query('SELECT record FROM journey_approved_summaries WHERE work_id=$1', [workId])).rows[0]?.record ?? null, 'read') };
     const showcase = createShowcaseService({ works, summaries, profiles: { read: id => db.profile(id) }, consents,
         settlements: { qualify: async () => ({ qualified: false, reason: 'missing_settlement' }) }, mode: 'staging', stagingReadEnabled: true });
-    const discussions = createDiscussionService({ enabled: true, authenticate,
-        tasks: {
-            forAccount: async (taskId, account) => {
-                const task = await db.task(taskId);
-                if (!task)
-                    return null;
-                const owned = await kernel.withOpportunityClient(async (client) => (await client.query(`SELECT c.id FROM opportunity_claims c JOIN journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
+    const discussionTasks = {
+        forAccount: async (taskId, account) => {
+            const task = await db.task(taskId);
+            if (!task)
+                return null;
+            const owned = await kernel.withOpportunityClient(async (client) => (await client.query(`SELECT c.id FROM opportunity_claims c JOIN journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
           JOIN opportunity_offers f ON f.id=c.offer_id JOIN opportunity_rounds r ON r.id=c.round_id
           WHERE b.account_id=$1 AND r.round_key || ':' || f.offer_key=$2 LIMIT 1`, [account.accountId, taskId])).rows.length > 0, 'read');
-                const requester = task.requester_account_id === account.accountId;
-                return owned || requester ? { taskId, projectId: task.discussion_project_id, canRead: true, canPost: true, canModerate: requester, publicDiscussionEnabled: task.public_discussion } : null;
-            },
-            forPublic: async (taskId) => { const task = await db.task(taskId); return task ? { taskId, projectId: task.discussion_project_id, publicDiscussionEnabled: task.public_discussion } : null; },
+            const requester = task.requester_account_id === account.accountId;
+            return owned || requester ? { taskId, projectId: task.discussion_project_id, canRead: true, canPost: true, canModerate: requester, publicDiscussionEnabled: task.public_discussion } : null;
         },
+        forPublic: async (taskId) => { const task = await db.task(taskId); return task ? { taskId, projectId: task.discussion_project_id, publicDiscussionEnabled: task.public_discussion } : null; },
+    };
+    const discussions = createDiscussionService({ enabled: true, authenticate, tasks: discussionTasks,
         profiles: { publicProfile: async (accountId) => { const result = await db.profileForAccount(accountId), p = result?.publication; return p?.visible ? { profileId: p.profileId, displayName: p.displayName, visibilityConsentVersion: String(p.consentVersion) } : null; } },
         contentPolicy: { check: async (text, audience) => safeText(text, audience) &&
                 !/\b(?:acs|acr|ew-private)_[A-Za-z0-9_-]{16,}/.test(text) &&
@@ -275,6 +275,26 @@ export async function createInstalledComposition(options) {
         }
     };
     const extra = express.Router();
+    // Read the SAME enrolled requester and discussion authority used by mutations.
+    // This projection issues no permission and cannot create/enroll a task.
+    extra.get('/v1/desk', async (req, res, next) => {
+        try {
+            const actor = await authenticate(req);
+            if (!actor) {
+                res.sendStatus(401);
+                return;
+            }
+            const input = z.object({ taskId: z.string().optional() }).strict().parse(req.query);
+            const requesterTaskIds = await kernel.withOpportunityClient(async (client) => (await client.query('SELECT task_id FROM journey_task_links WHERE requester_account_id=$1 AND round_key=ANY($2::text[]) ORDER BY task_id', [actor.accountId, settings.futureRounds.map(round => round.roundKey)])).rows.map(row => row.task_id), 'read');
+            const bound = input.taskId && settings.futureRounds.some(round => input.taskId.startsWith(round.roundKey + ':'))
+                ? await discussionTasks.forAccount(input.taskId, actor) : null;
+            const task = bound ? { taskId: bound.taskId, canRead: bound.canRead, canPost: bound.canPost, canModerate: bound.canModerate, publicDiscussionEnabled: bound.publicDiscussionEnabled } : null;
+            res.json({ requesterTaskIds, task });
+        }
+        catch (error) {
+            next(error);
+        }
+    });
     extra.put('/v1/profile', async (req, res, next) => {
         try {
             const actor = await authenticate(req);

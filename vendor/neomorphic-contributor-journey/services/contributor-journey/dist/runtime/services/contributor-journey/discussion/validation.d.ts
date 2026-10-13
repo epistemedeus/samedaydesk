@@ -22,19 +22,19 @@ export declare const commandSchema: z.ZodDiscriminatedUnion<"kind", [z.ZodObject
 }, "strict", z.ZodTypeAny, {
     body: string;
     kind: "post";
+    audience?: "public" | "private" | undefined;
     consent?: {
         confirmed: true;
         version: "discussion-public-v1";
     } | undefined;
-    audience?: "public" | "private" | undefined;
 }, {
     body: string;
     kind: "post";
+    audience?: "public" | "private" | undefined;
     consent?: {
         confirmed: true;
         version: "discussion-public-v1";
     } | undefined;
-    audience?: "public" | "private" | undefined;
 }>, z.ZodObject<{
     body: z.ZodEffects<z.ZodString, string, string>;
     postId: z.ZodString;
@@ -146,12 +146,12 @@ export declare const profileSchema: z.ZodObject<{
     displayName: z.ZodString;
     visibilityConsentVersion: z.ZodString;
 }, "strict", z.ZodTypeAny, {
-    profileId: string;
     displayName: string;
+    profileId: string;
     visibilityConsentVersion: string;
 }, {
-    profileId: string;
     displayName: string;
+    profileId: string;
     visibilityConsentVersion: string;
 }>;
 export declare const entrySchema: z.ZodObject<{
@@ -177,19 +177,19 @@ export declare const entrySchema: z.ZodObject<{
     }, "strict", z.ZodTypeAny, {
         body: string;
         kind: "post";
+        audience?: "public" | "private" | undefined;
         consent?: {
             confirmed: true;
             version: "discussion-public-v1";
         } | undefined;
-        audience?: "public" | "private" | undefined;
     }, {
         body: string;
         kind: "post";
+        audience?: "public" | "private" | undefined;
         consent?: {
             confirmed: true;
             version: "discussion-public-v1";
         } | undefined;
-        audience?: "public" | "private" | undefined;
     }>, z.ZodObject<{
         body: z.ZodEffects<z.ZodString, string, string>;
         postId: z.ZodString;
@@ -301,12 +301,12 @@ export declare const entrySchema: z.ZodObject<{
         displayName: z.ZodString;
         visibilityConsentVersion: z.ZodString;
     }, "strict", z.ZodTypeAny, {
-        profileId: string;
         displayName: string;
+        profileId: string;
         visibilityConsentVersion: string;
     }, {
-        profileId: string;
         displayName: string;
+        profileId: string;
         visibilityConsentVersion: string;
     }>>;
 }, "strict", z.ZodTypeAny, {
@@ -318,11 +318,11 @@ export declare const entrySchema: z.ZodObject<{
     command: {
         body: string;
         kind: "post";
+        audience?: "public" | "private" | undefined;
         consent?: {
             confirmed: true;
             version: "discussion-public-v1";
         } | undefined;
-        audience?: "public" | "private" | undefined;
     } | {
         body: string;
         kind: "edit";
@@ -358,8 +358,8 @@ export declare const entrySchema: z.ZodObject<{
         postId: string;
     };
     profile: {
-        profileId: string;
         displayName: string;
+        profileId: string;
         visibilityConsentVersion: string;
     } | null;
 }, {
@@ -371,11 +371,11 @@ export declare const entrySchema: z.ZodObject<{
     command: {
         body: string;
         kind: "post";
+        audience?: "public" | "private" | undefined;
         consent?: {
             confirmed: true;
             version: "discussion-public-v1";
         } | undefined;
-        audience?: "public" | "private" | undefined;
     } | {
         body: string;
         kind: "edit";
@@ -411,8 +411,8 @@ export declare const entrySchema: z.ZodObject<{
         postId: string;
     };
     profile: {
-        profileId: string;
         displayName: string;
+        profileId: string;
         visibilityConsentVersion: string;
     } | null;
 }>;

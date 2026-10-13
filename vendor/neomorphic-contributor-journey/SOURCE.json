@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "86779187cb0b03afee06dd9bb52fcdcdbeb0ebfd",
+  "sourceCommit": "78b2544175d880290879775127b5fd97402f48a6",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "entry": "services/contributor-journey/dist/index.js",
@@ -655,18 +655,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/browser.d.ts",
-      "bytes": 183,
-      "sha256": "cee128a1ea1746ac464fa630753632daec6689cb856d068f21814ad3ade9b87b"
+      "bytes": 318,
+      "sha256": "fd86c4488b2a7af44f68cecf7bb32e766e065a9e7410cf16a52a61861d189457"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/browser.js",
-      "bytes": 14555,
-      "sha256": "8ae1d3cb963589c38be60e5eff078b91bbc6127e56d92f32c6a1291089fe9231"
+      "bytes": 28577,
+      "sha256": "cb5d920397293e7aa5ba5e081bfd656f27e38eac55363b4bf11355d8b6001d30"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/browser.js.map",
-      "bytes": 16736,
-      "sha256": "2fa677ca86c71da5986124a76980bd008311f449aa79ee804ee029d0789ca0cd"
+      "bytes": 30446,
+      "sha256": "7fe7338eacb1e67424ab1d90193ec4774ef9435e17fdab0d8ac5f7cd9f01553b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/claims/routes.d.ts",
@@ -866,7 +866,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/validation.d.ts",
       "bytes": 12651,
-      "sha256": "08a2581aa6227d284a070c98e536ad9dcbda99d4a1bc804fb293695a95668169"
+      "sha256": "e0e4f99e46af3b2dd29c29d60643e958ee6ddb933fa15be91b683f9e81c70680"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/validation.js",
@@ -915,13 +915,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js",
-      "bytes": 25786,
-      "sha256": "59ae626129df758c41d4869a4acd28c95d8a7bfdbdf6abe1d3c5f1aeabeb7416"
+      "bytes": 27135,
+      "sha256": "23b4cf030ffd02752d83cd87d25a536040b834079927a43254ce48c8a014a683"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js.map",
-      "bytes": 25808,
-      "sha256": "e5bd6520ce197984a6384d9990632052d54b5c60a7125fc4663eb18e85049338"
+      "bytes": 27212,
+      "sha256": "b4a657246b0b94195465acbe48bf9712f6da75365d8dac42d7f5a960ff380ce2"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.d.ts",
@@ -1931,7 +1931,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "f22a84736ef67251f2d579e845027246ceccbb3925a256aa015f47c31274fa23"
+      "sha256": "a2328c4fbf69f951fa6f6c27af62b8aab2bd4c0397626bab5e501cb94de71670"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",
