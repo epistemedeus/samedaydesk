@@ -121,6 +121,8 @@ test('deployment-bound qualification survives elapsed days but rejects legacy v1
   try{
     Date.now=()=>clock()+3*86400000;
     const loaded=await loadContributorHttpsQualification(currentEnv);assert.equal(loaded.current(),true);
+    currentEnv.CONTRIBUTOR_DESK_HTTPS_QUALIFICATION=undefined;assert.equal(loaded.current(),false);
+    currentEnv.CONTRIBUTOR_DESK_HTTPS_QUALIFICATION=qualification;assert.equal(loaded.current(),true);
     currentEnv.CONTRIBUTOR_DESK_INSTALLATION_ID='new-synthetic-installation';assert.equal(loaded.current(),false);
   }finally{Date.now=clock;}
   const {lifecycle,...finite}=payload;

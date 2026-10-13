@@ -124,7 +124,8 @@ export async function loadContributorHttpsQualification(env){
   // policy is a controller-owned dependency: revoke before changing it and
   // independently receive it again. A clock cannot observe provider drift.
   return Object.freeze({loaderSha256:payload.loaderSha256,lifecycle:payload.lifecycle,current:()=>{
-    try{return b.profile===env.CONTRIBUTOR_JOURNEY_MODE&&b.origin===originFor(env,env.CONTRIBUTOR_JOURNEY_MODE)&&
+    try{return env.CONTRIBUTOR_DESK_HTTPS_QUALIFICATION===value&&
+      b.profile===env.CONTRIBUTOR_JOURNEY_MODE&&b.origin===originFor(env,env.CONTRIBUTOR_JOURNEY_MODE)&&
       b.installationId===env.CONTRIBUTOR_DESK_INSTALLATION_ID&&b.sdsCommit===env.CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT&&b.productCommit===env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT&&
       b.storeBindingHmac===storeBinding(env,env.CONTRIBUTOR_JOURNEY_MODE);}catch{return false;}
   }});
