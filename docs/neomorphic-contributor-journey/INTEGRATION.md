@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`cff42f6eca009e29e9170f269115b20f7fad699c`, built from the committed source
+`d13eb845fc72ad71f949c1fee4400c911e480428`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates419 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -127,7 +127,7 @@ badge is projected by this adapter.
 
 The original vendor is a mixed-source artifact: its retained producer
 7d97fed8f7009b61e7b7d9ebd99f78782c554a2b plus two narrow patches and the exact
-canonical helper from cff42f6eca009e29e9170f269115b20f7fad699c. Its manifest
+canonical helper from d13eb845fc72ad71f949c1fee4400c911e480428. Its manifest
 reports the three explicit source differences rather than mislabelling that
 closure as an entirely new producer. The new source and compiled files are
 manifest-verified. No original migration, schema selection, claim terms, import,

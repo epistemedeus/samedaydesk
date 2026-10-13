@@ -1,6 +1,6 @@
 {
   "schema": "neomorphic.original-continuation.overlay.v1",
-  "sourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c",
+  "sourceCommit": "d13eb845fc72ad71f949c1fee4400c911e480428",
   "sdsInputCommit": "e25b1ed48cf8cf0196aa3d25e59cbeaff8a91c8a",
   "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
   "patchPath": "services/contributor-journey/original-continuation/canonical-overlay.patch",

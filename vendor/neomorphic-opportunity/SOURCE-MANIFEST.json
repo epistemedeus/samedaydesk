@@ -771,14 +771,14 @@
       "sha256": "38b7c98db9451e15a005d02e72500dee3aac00ee827007cd363f885b43d774ea",
       "bytes": 11224,
       "matchesReceived": false,
-      "continuationSourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c"
+      "continuationSourceCommit": "d13eb845fc72ad71f949c1fee4400c911e480428"
     },
     {
       "path": "services/earned-work/src/opportunity/service.ts",
       "sha256": "f2ff1289604fb963a43bbfb277c04aa8d6629cc8a15eb386240693149b858d88",
       "bytes": 84084,
       "matchesReceived": false,
-      "continuationSourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c"
+      "continuationSourceCommit": "d13eb845fc72ad71f949c1fee4400c911e480428"
     },
     {
       "path": "services/earned-work/src/opportunity/terms.ts",
@@ -1127,7 +1127,7 @@
       "matchesReceived": false,
       "bytes": 8281,
       "sha256": "95e953f4a193e9cf096ec21d442695ce408aac0247ae3f1372de964cb16d469c",
-      "continuationSourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c"
+      "continuationSourceCommit": "d13eb845fc72ad71f949c1fee4400c911e480428"
     }
   ],
   "sourceCount": 187,
@@ -1672,7 +1672,7 @@
   "sourceMismatchMeaning": "Two original source overlays and one additive source; all are explicitly pinned in CONTINUATION-SOURCE.json.",
   "continuationOverlay": {
     "schema": "neomorphic.original-continuation.overlay.v1",
-    "sourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c",
+    "sourceCommit": "d13eb845fc72ad71f949c1fee4400c911e480428",
     "sdsInputCommit": "e25b1ed48cf8cf0196aa3d25e59cbeaff8a91c8a",
     "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
     "patchPath": "services/contributor-journey/original-continuation/canonical-overlay.patch",
