@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`24624b38753fae9c8836f59154216525248de787`, built from the committed clean source
+`44d12c51ea96c49f921fd78da4fca87b8d77e81a`, built from the committed clean source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates437 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
