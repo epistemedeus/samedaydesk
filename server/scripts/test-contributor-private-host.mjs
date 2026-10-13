@@ -39,7 +39,7 @@ try{
   const child=spawn(process.execPath,['--import',path.join(neo,'services/contributor-journey/node_modules/tsx/dist/loader.mjs'),
     '--test','--test-concurrency=1',...files],{cwd:scratch,stdio:'inherit',env:{...process.env,
       CONTRIBUTOR_JOURNEY_TEST_SDS_ROOT:sds,CONTRIBUTOR_JOURNEY_TEST_USE_VENDOR:'1',
-      CONTRIBUTOR_JOURNEY_TEST_PUBLIC_MANAGED:'1',CONTRIBUTOR_JOURNEY_TEST_DESK_HOST:'1'}});
+      CONTRIBUTOR_RELATIONSHIP_MANAGED:'1',CONTRIBUTOR_JOURNEY_TEST_DESK_HOST:'1'}});
   const [code,signal]=await once(child,'exit');
   assert.equal(signal,null,'owned test child must exit normally');process.exitCode=code??1;
 }finally{
