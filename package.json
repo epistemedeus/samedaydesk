@@ -13,7 +13,7 @@
     "dev:server": "node --watch --env-file=.env server/index.js",
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client install --include=dev && npm --prefix client run build",
-    "build:managed-contributor": "npm --prefix client ci --include=dev && npm --prefix client run build && node server/scripts/verify-contributor-install.mjs",
+    "build:managed-contributor": "npm run build:managed-foundry && node server/scripts/verify-contributor-install.mjs",
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
     "test:proxy-addr": "node --test --test-concurrency=1 server/scripts/test-proxy-addr-patch.js",
     "start": "node server/index.js",

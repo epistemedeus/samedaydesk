@@ -87,14 +87,15 @@ the existing release process. Branch names are not admission. Both artifact
 manifests must name the same Neo commit as `CONTRIBUTOR_JOURNEY_SOURCE_COMMIT`.
 Hostinger serves compiled artifacts without a Neo checkout, Astro or TS loader.
 
-The optional `build:managed-contributor` package script uses locked SDS client
-dependencies, its normal site build and native artifact verification. It performs
-no database enrollment. It is an offline contributor gate, not the received
-provider selection. Preserve the actual **`build:managed-foundry`** setting,
-Express, Node22, `server/index.js`, npm, root/output directories and the complete
-existing settings object. Validate contributor manifests separately; replacing
-the foundry build could omit unrelated runtime preparation. Normal `npm start`
-and `build` remain available. No settings PUT is required for this probe packet.
+The `build:managed-contributor` package script composes the existing
+`build:managed-foundry` with native contributor artifact verification. This
+retains locked SDS client dependencies, its single normal site build, deployable
+Python/Wasmtime materialization and the Foundry managed capability probe. It
+performs no database enrollment or installation. Use this script for the frozen
+candidate build while preserving Express, Node22, `server/index.js`, npm,
+root/output directories and existing auto-deployment linkage. Normal `npm start`,
+`build` and `build:managed-foundry` remain available. A per-build selection does
+not require a saved-settings PUT for this probe packet.
 
 ## Full authoritative environment
 
