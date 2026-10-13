@@ -28,7 +28,7 @@
   "previousAmendment": "Root recipient-action amendment is src/lib/opportunity-continuation.mjs and tests/opportunity-continuation.test.mjs. Those files stay in the received tree and are replayed there. They are not part of this host closure.",
   "continuationOverlay": {
     "schema": "neomorphic.original-continuation.overlay.v1",
-    "sourceCommit": "bf006179274d9f59596a30dc950698cf6375311e",
+    "sourceCommit": "24624b38753fae9c8836f59154216525248de787",
     "sdsInputCommit": "e25b1ed48cf8cf0196aa3d25e59cbeaff8a91c8a",
     "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
     "patchPath": "services/contributor-journey/original-continuation/canonical-overlay.patch",

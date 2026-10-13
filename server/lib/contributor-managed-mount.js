@@ -14,8 +14,11 @@ const once=(req,name)=>req.rawHeaders.filter((_value,index)=>index%2===0&&req.ra
  * Client address stays conservative. Forwarded client values grant no authority. */
 function edgeGuard(env,ingress,{directOnly=false,qualification=null}={}){
   if(!['staging','live'].includes(env.CONTRIBUTOR_JOURNEY_MODE)||env.CONTRIBUTOR_JOURNEY_INSTALLED!=='1'||
-      env.CONTRIBUTOR_JOURNEY_PUBLIC_READS==='1'||(env.CONTRIBUTOR_JOURNEY_TRUST_PROXY??'0')!=='0')
-    throw new Error('private installed managed profile required');
+      !['0','1'].includes(env.CONTRIBUTOR_JOURNEY_PUBLIC_READS??'0')||(env.CONTRIBUTOR_JOURNEY_TRUST_PROXY??'0')!=='0')
+    throw new Error('explicit installed managed profile required');
+  if(env.CONTRIBUTOR_JOURNEY_PUBLIC_READS==='1'&&(env.CONTRIBUTOR_JOURNEY_MODE!=='live'||
+      !/^review_[A-Za-z0-9_.:-]{8,120}$/.test(env.CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF??'')))
+    throw new Error('reviewed public read composition required');
   const origin=env.CONTRIBUTOR_JOURNEY_MODE==='live'?env.CONTRIBUTOR_JOURNEY_ORIGIN:env.CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN;
   const url=new URL(origin);
   if(url.protocol!=='https:'||url.origin!==origin||url.username||url.password)throw new Error('exact HTTPS origin required');
@@ -94,7 +97,9 @@ export function mountContributorManagedDesk(app,options={}){
       guard=edgeGuard(env,ingress,{qualification});
       assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
       if(state.closed)return;
-      journey=mountNeomorphicContributorJourney(inner,{env});await journey.ready();
+      // The exact compiled producer remains the only app/service loader.
+      // This optional server-owned read port carries no ledger write authority.
+      journey=mountNeomorphicContributorJourney(inner,{env,canonicalReceiving:options.canonicalReceiving});await journey.ready();
       if(journey.state.status!=='ready')throw new Error('installed stores unavailable');
       if(state.closed){await journey.close();return;}
       state.runtime=journey.state.runtime;state.status='ready';state.reason='ready';

@@ -71,7 +71,7 @@ export function createPostgresConsentedSummaryStore(pool) {
                     requestHash: write.requestHash, resultVersion: write.record.version,
                 };
                 await client.query(`INSERT INTO contributor_showcase_consents (work_id, account_id, record) VALUES ($1, $2, $3::jsonb)
-          ON CONFLICT (work_id) DO UPDATE SET record = EXCLUDED.record`, [write.record.workId, write.record.accountId, JSON.stringify(write.record)]);
+          ON CONFLICT (work_id) DO UPDATE SET record = EXCLUDED.record, updated_at=CURRENT_TIMESTAMP`, [write.record.workId, write.record.accountId, JSON.stringify(write.record)]);
                 await client.query(`INSERT INTO contributor_showcase_operations (account_id, work_id, idempotency_key, operation)
           VALUES ($1, $2, $3, $4::jsonb)`, [created.accountId, created.workId, created.idempotencyKey, JSON.stringify(created)]);
                 await client.query("COMMIT");

@@ -64,7 +64,7 @@ export function validatePolicy(policy) {
 }
 export function validateEvent(event, policy) {
   keys(event, ["schema", "producerId", "sourceVersion", "eventId", "factId", "revision", "supersedes", "stage", "outcome",
-    "occurredAt", "observedAt", "populationId", "namespace", "actorId", "actorRelation", "provenance", "evidence", "channel", "attribution", "refs", "parents"]);
+    "occurredAt", "observedAt", "populationId", "namespace", "actorId", "actorRelation", "provenance", "evidence", "channel", "attribution", "refs", "parents"], ["origin", "reported"]);
   if (event.schema !== EVENT_SCHEMA) fail("event_schema");
   for (const field of ["producerId", "sourceVersion", "eventId", "factId", "populationId", "namespace", "actorId"]) token(event[field]);
   oneOf(event.stage, STAGES); oneOf(event.outcome, OUTCOMES[event.stage]); oneOf(event.actorRelation, RELATIONS);
@@ -87,6 +87,19 @@ export function validateEvent(event, policy) {
   boundedArray(event.parents, 3);
   for (const parent of event.parents) { keys(parent, ["producerId", "factId"]); token(parent.producerId); token(parent.factId); }
   unique(event.parents.map(factKey));
+  if(event.origin!==undefined){
+    keys(event.origin,["sourceId","sourceRevision","sourceDigest"]);
+    token(event.origin.sourceId);token(event.origin.sourceRevision);
+    if(!/^[a-f0-9]{64}$/.test(event.origin.sourceDigest))fail("source_digest_required");
+  }
+  if(event.reported!==undefined){
+    keys(event.reported,["role","useful","effortSeconds","recordRef"]);
+    oneOf(event.reported.role,["requester","contributor"]);token(event.reported.recordRef);
+    oneOf(event.reported.useful,[null,"useful","not_useful","unknown"]);
+    if(event.evidence!=="self_report"||!event.origin||
+      (event.reported.role==="contributor"&&event.reported.useful!==null)||
+      !(event.reported.effortSeconds===null||Number.isInteger(event.reported.effortSeconds)&&event.reported.effortSeconds>=0&&event.reported.effortSeconds<=604800))fail("reported_provenance_required");
+  }
   if (policy) {
     const producer = policy.producers.find((row) => row.id === event.producerId);
     if (!producer || producer.sourceVersion !== event.sourceVersion || !producer.stages.includes(event.stage) ||

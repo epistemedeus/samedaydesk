@@ -58,9 +58,10 @@ export const sourceBinding = (s) => hash([
 ]);
 export function shareRecord(v) {
     return exact(v, ['source', 'fields', 'nextAction', 'expiresAt', 'shareRef', 'ownerAccountId',
-        'sourceVersion', 'sourceBindingDigest', 'revision', 'state', 'createdAt', 'updatedAt']) &&
+        'sourceVersion', 'sourceBindingDigest', 'revision', 'state', 'createdAt', 'updatedAt',
+        ...(v && typeof v === 'object' && Object.hasOwn(v, 'acceptedWorkRef') ? ['acceptedWorkRef'] : [])]) &&
         exact(v.source, ['kind', 'id']) && ['showcase', 'discussion'].includes(String(v.source.kind)) &&
-        id(v.source.id) && fields(v.fields) && nextAction(v.nextAction) && instant(v.expiresAt) &&
+        id(v.source.id) && (v.acceptedWorkRef === undefined || id(v.acceptedWorkRef)) && fields(v.fields) && nextAction(v.nextAction) && instant(v.expiresAt) &&
         typeof v.shareRef === 'string' && SHARE_REF.test(v.shareRef) && id(v.ownerAccountId) && id(v.sourceVersion) &&
         typeof v.sourceBindingDigest === 'string' && DIGEST.test(v.sourceBindingDigest) &&
         Number.isSafeInteger(v.revision) && Number(v.revision) >= 1 && ['active', 'withdrawn'].includes(String(v.state)) &&

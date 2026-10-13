@@ -4,9 +4,9 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`5c35cc4b6405f390736e8b5de27f26d202f8cfd3`, built from the committed source
+`24624b38753fae9c8836f59154216525248de787`, built from the committed clean source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
-f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
+f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates437 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
 The manifest itself is committed separately. The original opportunity service keeps
 its original producer plus the explicitly pinned additive continuation overlay in
@@ -28,7 +28,10 @@ source's LIVE-PROFILE.md and live.env.example: explicitly enrolled durable
 store/origin/keys and exact existing production round/terms/task/requester bindings.
 It refuses fixture-port adapters, unqualified account-store promotion and legacy
 rounds. Private measurement selects only current configured/enrolled live task IDs
-before its row cap; stale links do not admit removed tasks or rounds. No genuine installed settlement registry is supplied; badges remain absent.
+before its row cap; stale links do not admit removed tasks or rounds. An optional server-owned canonical read-only port qualifies exact accepted work
+and the owning exclusive receipt allocation. Default startup supplies none, so
+badges remain absent until Root receives that real task-family source. Missing
+or unknown proof never blocks an ordinary accepted consented summary.
 Public derivative reads are separately disabled by default. The SDS live mount
 requires CONTRIBUTOR_JOURNEY_SOURCE_COMMIT equal to the exact manifest and
 validates the compiled closure and unchanged lock before importing it. Root must keep MODE=disabled
@@ -58,7 +61,9 @@ loader, disposable Postgres/HTTPS and Chrome with two private accounts/requester
 race, lost responses, restart/recovery, one original future IOU, preserved old IOU,
 source tampering, synthetic proof/refused counter, withdrawal and referred signup.
 It supplies no loader, fake kernel, Map account binding or mock persistence.
-Synthetic settlement verification remains labelled; public paid status stays false.
+Synthetic settlement fixtures remain owner QA; an amount-free badge requires the
+exact accepted-work/counterparty/terms join and verified exclusive allocation.
+This source receipt does not qualify an actual payment.
 Worker assertions do not replace final Root receiving or the existing operator review.
 
 Browser receiving correction: the exact source clears private DOM on account/session
@@ -159,3 +164,20 @@ runtime identity fact; all its observations remain non-authoritative. Neither
 fixtures, globals, Unix locality nor forwarding grant a provider pass. Keep the
 composed Foundry/contributor build and complete settings/environment/linkage,
 with existing enrollment/keys, no ledger changes and serving/public reads off.
+
+## Combined public relationship candidate
+
+The compiled source preserves the accepted holder bf006179 and relationship
+core6bebe320 histories and composes terminal transport5c35cc4b. SDS preserves
+holder1b5bac94 and transportce0bb6d. `MANAGED-INSTALL.md` describes default-off,
+explicitly reviewed public reads through the actual managed composition and its
+server-owned canonical read port. The producer's `PUBLIC-RELATIONSHIP.md` owns
+summary rights/owner consent, all-reader withdrawal, amount-free proof and
+private usefulness/effort/repeat measurements. A holder link is not a public
+source or publication consent. Old221400 ledger/terms/email remain authoritative.
+
+`LITESPEED-HTTPS-ONLY.md` now describes v2 deployment-bound qualification with
+fresh installation receiving, exact dependency bindings and explicit v1 refusal.
+An unchanged service does not expire daily. New installations and actual policy/
+source/loader/origin/store/key changes require invalidation and fresh receiving.
+No fixture, guide, source branch or installation ID establishes provider evidence.

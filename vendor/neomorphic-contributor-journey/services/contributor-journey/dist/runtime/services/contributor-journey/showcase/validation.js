@@ -69,13 +69,39 @@ export function privatePublicationTokens(work) {
         a.submission?.artifact.ref ?? "", a.obligation?.reward.amount ?? "", amount, decimalToUnits(amount)?.toString() ?? "", a.task.title, a.task.summary,
         a.terms?.summary ?? "", ...(a.verdict?.reasons ?? []), body];
 }
+/** Exact private evidence strings cannot become an unedited public excerpt.
+ * This is scoped to the accepted work; it does not inspect other holders or
+ * change the independent alias policy. Rights-cleared summaries use new copy. */
+export function privateEvidenceTokens(work) {
+    const bytes = work.aggregate.submissionEvidenceBytes;
+    if (!Buffer.isBuffer(bytes))
+        return [];
+    let value;
+    try {
+        value = JSON.parse(bytes.toString('utf8'));
+    }
+    catch {
+        return [];
+    }
+    const queue = [{ value, depth: 0 }], tokens = [];
+    for (let visited = 0; queue.length && visited < 512; visited++) {
+        const next = queue.shift();
+        if (typeof next.value === 'string' && next.value.length >= 8)
+            tokens.push(next.value);
+        else if (next.depth < 8 && next.value && typeof next.value === 'object') {
+            for (const child of Object.values(next.value))
+                queue.push({ value: child, depth: next.depth + 1 });
+        }
+    }
+    return tokens;
+}
 /** Approval binds the exact immutable artifact and obligation, not just the display name or task. */
 export function summaryValid(value, work) {
     if (!isRecord(value) || !identityValid(value) || !sameIdentity(value, work.binding) ||
         value.accountId !== work.binding.accountId || value.profileId !== work.binding.profileId ||
         !privateId(value.approvalId) || value.approvalSource !== "requester_review" || !timestamp(value.approvedAt))
         return false;
-    const forbidden = privatePublicationTokens(work);
+    const forbidden = [...privatePublicationTokens(work), ...privateEvidenceTokens(work)];
     return publicationText(value.summary, 800, forbidden) && publicationText(value.evidenceDescription, 500, forbidden);
 }
 export function profileValid(value, work) {

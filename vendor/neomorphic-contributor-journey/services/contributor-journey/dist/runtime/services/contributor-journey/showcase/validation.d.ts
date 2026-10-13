@@ -14,6 +14,10 @@ export declare function bindingValid(value: unknown): value is WorkBinding;
 /** Plain, bounded publication text only; no link can expose an underlying transaction or offer amount. */
 export declare function publicationText(value: unknown, max: number, forbidden?: string[]): value is string;
 export declare function privatePublicationTokens(work: WorkEvidence): string[];
+/** Exact private evidence strings cannot become an unedited public excerpt.
+ * This is scoped to the accepted work; it does not inspect other holders or
+ * change the independent alias policy. Rights-cleared summaries use new copy. */
+export declare function privateEvidenceTokens(work: WorkEvidence): string[];
 /** Approval binds the exact immutable artifact and obligation, not just the display name or task. */
 export declare function summaryValid(value: unknown, work: WorkEvidence): value is ApprovedSummary;
 export declare function profileValid(value: unknown, work: WorkEvidence): value is ProfilePublication;

@@ -14,19 +14,19 @@ const manifest=JSON.parse(await readFile(new URL('../../vendor/neomorphic-contri
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const sdsCommit='5'.repeat(40);
 const env=()=>({CONTRIBUTOR_JOURNEY_MODE:'disabled',CONTRIBUTOR_DESK_MANAGED_ENABLED:'0',CONTRIBUTOR_JOURNEY_PUBLIC_READS:'0',
-  CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:sdsCommit,CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:manifest.sourceCommit,
+  CONTRIBUTOR_DESK_INSTALLATION_ID:'synthetic-installation-v2',CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:sdsCommit,CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:manifest.sourceCommit,
   CONTRIBUTOR_JOURNEY_ORIGIN:'https://desk.invalid',CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN:'https://desk.invalid',
   CONTRIBUTOR_JOURNEY_DATABASE_URL:'owner-qa-unit-metadata-no-connection',CONTRIBUTOR_JOURNEY_STORE_ID:'owner-qa-binding',
   CONTRIBUTOR_JOURNEY_EARNED_WORK_SCHEMA:'owner_qa_work',CONTRIBUTOR_JOURNEY_CORRESPONDENCE_SCHEMA:'owner_qa_correspondence',
   CONTRIBUTOR_JOURNEY_REPLAY_KEY:'a'.repeat(64),CONTRIBUTOR_JOURNEY_INTEGRITY_KEY:'b'.repeat(64),CONTRIBUTOR_JOURNEY_CURSOR_KEY:'c'.repeat(64),
   CONTRIBUTOR_JOURNEY_OWNER_TOKEN:'private-owner-qa-token',CONTRIBUTOR_JOURNEY_CORRESPONDENCE_ADMIN_TOKEN:'private-owner-qa-admin'});
-const input=()=>({schema:'sds.contributor-https-only-receiving.v1',profile:'live',sdsCommit,loaderSha256:hash('owner QA loader, not provider bytes'),
-  expiresAt:new Date(Date.now()+120000).toISOString(),checks:Object.fromEntries(['providerHttpsPolicy','certificateVerifiedHttps','plaintextRefusal','backendIsolation']
+const input=()=>({schema:'sds.contributor-https-only-receiving.v2',profile:'live',installationId:'synthetic-installation-v2',sdsCommit,loaderSha256:hash('owner QA loader, not provider bytes'),
+  checks:Object.fromEntries(['providerHttpsPolicy','certificateVerifiedHttps','plaintextRefusal','backendIsolation']
     .map(name=>[name,{receivedAt:new Date().toISOString(),receiptSha256:hash('distinct owner QA receipt '+name)}]))});
 const serving=(qualification,overrides={})=>({...env(),CONTRIBUTOR_JOURNEY_MODE:'live',CONTRIBUTOR_DESK_MANAGED_ENABLED:'1',
   CONTRIBUTOR_DESK_INGRESS_MODE:'litespeed-https-only',CONTRIBUTOR_DESK_HTTPS_QUALIFICATION:qualification,...overrides});
 const sign=payload=>{const encoded=Buffer.from(JSON.stringify(payload)).toString('base64url');
-  return encoded+'.'+createHmac('sha256',Buffer.from(env().CONTRIBUTOR_JOURNEY_INTEGRITY_KEY,'hex')).update('sds.contributor-https-only-qualification.v1\0'+encoded).digest('hex');};
+  return encoded+'.'+createHmac('sha256',Buffer.from(env().CONTRIBUTOR_JOURNEY_INTEGRITY_KEY,'hex')).update(payload.schema+'\0'+encoded).digest('hex');};
 
 test('explicit disabled issuer binds complete independent receiving to exact artifacts and existing stable store',async()=>{
   const {qualification,payload}=await issueContributorHttpsQualification(input(),env());
@@ -51,30 +51,30 @@ test('issuer refuses missing, old, future, reused or malformed receiving; no sin
   await assert.rejects(issueContributorHttpsQualification({...input(),httpsTrusted:true},env()));
 });
 
-test('issuer cannot activate or rotate credentials; exact canonical source/origin and bounded expiry required',async()=>{
+test('issuer cannot activate or rotate credentials; exact canonical source/origin and installation identity required',async()=>{
   for(const change of [{CONTRIBUTOR_JOURNEY_MODE:'live'},{CONTRIBUTOR_DESK_MANAGED_ENABLED:'1'},{CONTRIBUTOR_JOURNEY_PUBLIC_READS:'1'},
     {CONTRIBUTOR_JOURNEY_INTEGRITY_KEY:undefined},{CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:undefined},
     {CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:'6'.repeat(40)},{CONTRIBUTOR_JOURNEY_ORIGIN:'http://desk.invalid'},
     {CONTRIBUTOR_JOURNEY_ORIGIN:'https://desk.invalid/'},{CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:'7'.repeat(40)},
     {CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:undefined},
     {CONTRIBUTOR_JOURNEY_STORE_ID:undefined}])await assert.rejects(issueContributorHttpsQualification(input(),{...env(),...change}));
-  for(const expiresAt of [new Date(Date.now()-1).toISOString(),new Date(Date.now()+86401000).toISOString(),'later'])
-    await assert.rejects(issueContributorHttpsQualification({...input(),expiresAt},env()));
+  await assert.rejects(issueContributorHttpsQualification({...input(),expiresAt:new Date(Date.now()+10000).toISOString()},env()));
+  await assert.rejects(issueContributorHttpsQualification({...input(),schema:'sds.contributor-https-only-receiving.v1'},env()));
 });
 
-test('reader refuses modified bytes/signature/unknown shape and expired signed controller state',async()=>{
+test('reader refuses modified bytes/signature/unknown shape and legacy finite controller state',async()=>{
   const {qualification,payload}=await issueContributorHttpsQualification(input(),env());
   for(const value of [undefined,'true','1',qualification+'.extra',qualification.slice(0,-1)+(qualification.endsWith('0')?'1':'0')])
     await assert.rejects(loadContributorHttpsQualification(serving(value)));
   for(const change of [{provider:'guessed-provider'},{scope:'public'},{listener:'tcp'},
-    {expiresAt:new Date(Date.now()-1).toISOString()},{issuedAt:new Date(Date.now()+10000).toISOString()},
+    {expiresAt:new Date(Date.now()+10000).toISOString()},{issuedAt:new Date(Date.now()+10000).toISOString()},
     {untrustedExtra:true},{checks:{...payload.checks,plaintextRefusal:{receivedAt:payload.issuedAt,receiptSha256:'unknown'}}}])
     await assert.rejects(loadContributorHttpsQualification(serving(sign({...payload,...change}))));
 });
 
 test('qualified source/profile/origin/store/key changes require fresh receiving rather than accepting stored stale qualification',async()=>{
   const {qualification}=await issueContributorHttpsQualification(input(),env());
-  for(const change of [{CONTRIBUTOR_JOURNEY_MODE:'staging'},{CONTRIBUTOR_JOURNEY_ORIGIN:'https://other.invalid'},
+  for(const change of [{CONTRIBUTOR_DESK_INSTALLATION_ID:'different-installation'},{CONTRIBUTOR_DESK_INSTALLATION_ID:undefined},{CONTRIBUTOR_JOURNEY_MODE:'staging'},{CONTRIBUTOR_JOURNEY_ORIGIN:'https://other.invalid'},
     {CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:'6'.repeat(40)},{CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:'7'.repeat(40)},
     {CONTRIBUTOR_JOURNEY_SOURCE_COMMIT:undefined},
     {CONTRIBUTOR_JOURNEY_DATABASE_URL:'different-private-unit-binding'},{CONTRIBUTOR_JOURNEY_STORE_ID:'different-store'},
@@ -83,7 +83,7 @@ test('qualified source/profile/origin/store/key changes require fresh receiving 
     await assert.rejects(loadContributorHttpsQualification(serving(qualification,change)));
 });
 
-test('the issuer CLI emits only a finite private overlay and refuses unsafe inputs or overwriting it',async()=>{
+test('the issuer CLI emits only a deployment-bound private overlay and refuses unsafe inputs or overwriting it',async()=>{
   const directory=await mkdtemp(path.join(tmpdir(),'sds-https-qualification-'));
   const receiving=path.join(directory,'receiving.json'),overlay=path.join(directory,'overlay.json');
   try{
@@ -92,7 +92,7 @@ test('the issuer CLI emits only a finite private overlay and refuses unsafe inpu
     const result=await promisify(execFile)(process.execPath,args,{env:{...process.env,...env()},timeout:10000});
     const report=JSON.parse(result.stdout);assert.equal(report.sent,false);assert.equal(report.publicEnabled,false);
     assert.equal((await stat(overlay)).mode&0o777,0o600);
-    const data=JSON.parse(await readFile(overlay,'utf8'));assert.equal(data.env_vars.length,4);
+    const data=JSON.parse(await readFile(overlay,'utf8'));assert.equal(data.env_vars.length,5);
     const setting=data.env_vars.find(row=>row.key==='CONTRIBUTOR_DESK_HTTPS_QUALIFICATION');
     await loadContributorHttpsQualification(serving(setting.value));
     assert.ok(!result.stdout.includes(setting.value));assert.ok(!result.stdout.includes(env().CONTRIBUTOR_JOURNEY_INTEGRITY_KEY));
@@ -111,4 +111,19 @@ test('qualification installation preserves the full authoritative provider envir
     {key:'CONTRIBUTOR_DESK_INGRESS_MODE',value:'litespeed-https-only'},{key:'CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS',value:'[]'}]});
   for(const row of existing)assert.deepEqual(packet.install.env_vars.find(value=>value.key===row.key),row);
   assert.equal(packet.receipt.sent,false);assert.equal(packet.receipt.publicEnabled,false);assert.deepEqual(packet.rollback.env_vars.length,existing.length);
+});
+
+
+test('deployment-bound qualification survives elapsed days but rejects legacy v1 and live binding changes',async()=>{
+  const {qualification,payload}=await issueContributorHttpsQualification(input(),env());
+  assert.equal(payload.lifecycle,'deployment-bound');assert.equal(Object.hasOwn(payload,'expiresAt'),false);
+  const currentEnv=serving(qualification),clock=Date.now;
+  try{
+    Date.now=()=>clock()+3*86400000;
+    const loaded=await loadContributorHttpsQualification(currentEnv);assert.equal(loaded.current(),true);
+    currentEnv.CONTRIBUTOR_DESK_INSTALLATION_ID='new-synthetic-installation';assert.equal(loaded.current(),false);
+  }finally{Date.now=clock;}
+  const {lifecycle,...finite}=payload;
+  for(const expiresAt of [new Date(Date.now()+60000).toISOString(),new Date(Date.now()-1).toISOString()])
+    await assert.rejects(loadContributorHttpsQualification(serving(sign({...finite,schema:'sds.contributor-https-only-qualification.v1',expiresAt}))));
 });

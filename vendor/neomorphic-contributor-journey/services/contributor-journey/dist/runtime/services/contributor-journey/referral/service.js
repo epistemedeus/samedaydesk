@@ -103,6 +103,11 @@ export function createReferralService(ports, config) {
             refuse('revoked');
         if (hash(current) !== hash(r))
             refuse('conflict');
+        const latest = await source(r.source);
+        if (sourceBinding(latest) !== sourceBinding(s))
+            refuse('source_changed');
+        if (r.acceptedWorkRef !== undefined && latest.workRef !== r.acceptedWorkRef)
+            refuse('source_changed');
         if (Date.parse(r.expiresAt) <= Date.parse(now()))
             refuse('expired');
         return { shareRef: r.shareRef, revision: r.revision, title: p.title, summary: p.summary,
@@ -252,7 +257,7 @@ export function createReferralService(ports, config) {
                 const r = { ...input.selection, fields: [...input.selection.fields].sort(),
                     shareRef: `rf${randomBytes(24).toString('hex')}`, ownerAccountId: a.accountId,
                     sourceVersion: s.version, sourceBindingDigest: sourceBinding(s), revision: 1,
-                    state: 'active', createdAt: at, updatedAt: at };
+                    state: 'active', createdAt: at, updatedAt: at, acceptedWorkRef: s.workRef };
                 return commit(r, null, input.operationKey, digest);
             });
         },

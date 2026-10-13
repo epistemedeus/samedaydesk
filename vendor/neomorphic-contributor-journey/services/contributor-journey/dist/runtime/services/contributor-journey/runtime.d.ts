@@ -13,6 +13,8 @@ export declare function createJourneyRuntime(options?: {
     env?: NodeJS.ProcessEnv;
     ports?: JourneyPorts;
     modules?: JourneyModule[];
+    /** Server-owned reader, selected and independently received by the canonical owner. */
+    canonicalReceiving?: import('./canonical-qualification.js').CanonicalReceiving;
 }): Promise<JourneyRuntime>;
 /** Controller-only preparation. Creates references, never accounts, rounds, grants to recipients or payments. */
 export declare function prepareJourneyDeployment(options?: {

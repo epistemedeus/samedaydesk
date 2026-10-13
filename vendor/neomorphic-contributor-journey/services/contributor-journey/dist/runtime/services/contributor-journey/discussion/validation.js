@@ -23,7 +23,7 @@ export const commandSchema = z.discriminatedUnion("kind", [
     z.object({ kind: z.literal("report"), ...target, reason }).strict(),
 ]);
 export const profileSchema = z.object({
-    profileId: idSchema, displayName: z.string().trim().min(1).max(80), visibilityConsentVersion: idSchema,
+    profileId: idSchema, displayName: z.string().trim().min(1).max(80), visibilityConsentVersion: idSchema, sourceBinding: z.string().regex(/^[a-f0-9]{64}$/).optional(),
 }).strict();
 export const entrySchema = z.object({
     schema: z.literal("contributor-discussion-v1"), taskId: idSchema, actorAccountId: idSchema,

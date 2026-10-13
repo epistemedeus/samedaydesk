@@ -21,14 +21,19 @@ export type PublicProfile = {
     profileId: string;
     displayName: string;
     visibilityConsentVersion: string;
+    /** Optional installed exact accepted-work/summary/consent binding. */
+    sourceBinding?: string;
 };
 export interface ProfileDirectory {
     /** Return null for private/revoked profiles. Never return email/wallet/contact. */
-    publicProfile(accountId: string): Promise<PublicProfile | null>;
+    publicProfile(accountId: string, taskId?: string): Promise<PublicProfile | null>;
 }
 export interface ContentPolicy {
     /** Required deployment-specific secret/privacy filter; fail closed on outages. */
-    check(text: string, audience: "private" | "public"): Promise<"allow" | "refuse">;
+    check(text: string, audience: "private" | "public", context?: {
+        taskId: string;
+        accountId: string;
+    }): Promise<"allow" | "refuse">;
 }
 export type Consent = {
     confirmed: true;

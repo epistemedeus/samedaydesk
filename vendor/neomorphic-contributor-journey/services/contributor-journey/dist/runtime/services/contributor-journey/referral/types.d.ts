@@ -67,6 +67,8 @@ export interface ShareRecord extends ShareSelection {
     state: 'active' | 'withdrawn';
     createdAt: string;
     updatedAt: string;
+    /** Private reference from the authoritative published source; never public JSON. */
+    acceptedWorkRef?: string;
 }
 export interface ShareOperation {
     accountId: string;

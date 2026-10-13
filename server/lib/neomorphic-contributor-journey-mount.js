@@ -29,7 +29,8 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
       if (!["staging","live"].includes(config.mode) || config.mountPath !== CONTRIBUTOR_JOURNEY_PREFIX) {
         state.reason = "invalid_config"; return;
       }
-      starting = await service.createJourneyRuntime({ config, ports: options.ports, modules: options.modules });
+      starting = await service.createJourneyRuntime({ config, ports: options.ports, modules: options.modules,
+        canonicalReceiving: options.canonicalReceiving });
       if (state.closed) { await starting.close(); starting = null; return; }
       state.runtime = starting; starting = null;
       state.status = "ready"; state.reason = "ready";

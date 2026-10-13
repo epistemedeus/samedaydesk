@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS contributor_showcase_operations (
   operation JSONB NOT NULL CHECK (jsonb_typeof(operation) = 'object'),
   PRIMARY KEY (account_id, work_id, idempotency_key)
 );
+ALTER TABLE contributor_showcase_consents ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE contributor_showcase_operations ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
 CREATE INDEX IF NOT EXISTS contributor_showcase_visible_idx ON contributor_showcase_consents (work_id)
   WHERE record->>'visibility' = 'visible';
 COMMIT;

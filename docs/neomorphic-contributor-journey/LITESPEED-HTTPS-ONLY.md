@@ -2,7 +2,7 @@
 
 The chosen transport is the existing Hostinger Express/Node22 app and its single
 `server/index.js` listener. `CONTRIBUTOR_DESK_INGRESS_MODE=litespeed-https-only`
-requires a fresh controller-signed deployment qualification. It does not infer
+requires a fresh controller-signed deployment-bound v2 qualification. It does not infer
 TLS from XFP, `Forwarded`, a global, a helper hash, a local address or an env trust
 boolean. Passenger and explicit trusted TCP/direct TLS retain their own contracts.
 Public reads and both contributor serving flags stay off during installation.
@@ -105,11 +105,11 @@ has no qualification until Root supplies the four independently received records
 
 ```json
 {
-  "schema": "sds.contributor-https-only-receiving.v1",
+  "schema": "sds.contributor-https-only-receiving.v2",
+  "installationId": "ACTUAL_RECEIVED_COMPLETED_PROVIDER_BUILD_ID",
   "profile": "live",
   "sdsCommit": "EXACT_CANDIDATE_SDS_COMMIT",
   "loaderSha256": "EXACT_RECEIVED_HELPER_SHA256",
-  "expiresAt": "ABSOLUTE_ISO_UTC_AT_MOST_24_HOURS_FROM_ISSUE",
   "checks": {
     "providerHttpsPolicy": {"receivedAt": "ACTUAL_ISO_UTC", "receiptSha256": "EXACT_RECORD_SHA256"},
     "certificateVerifiedHttps": {"receivedAt": "ACTUAL_ISO_UTC", "receiptSha256": "EXACT_RECORD_SHA256"},
@@ -122,7 +122,9 @@ has no qualification until Root supplies the four independently received records
 The private stable env for issuing must retain the existing credentials/bindings,
 disabled mode, managed0/public0 and final Neo source. Add
 `CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT=EXACT_CANDIDATE_SDS_COMMIT` to that **local**
-private preparation env. Do not put credentials in prompts, Git or CLI arguments.
+private preparation env. Also set `CONTRIBUTOR_DESK_INSTALLATION_ID` to the
+actual completed installation/build identity received in those records; it is
+an identity binding, not an HTTPS trust flag. Do not put credentials in prompts, Git or CLI arguments.
 
 ```sh
 chmod 600 /private/edge-receiving.json
@@ -130,7 +132,7 @@ node --env-file=/private/existing-stable.env server/scripts/qualify-contributor-
   issue /private/edge-receiving.json /private/new-edge-overlay.json
 ```
 
-The output is an exclusive-create0600 file with four contributor settings: mode,
+The output is an exclusive-create0600 file with five contributor settings: installation identity, mode,
 empty trusted TCP peers, exact SDS commit and signed qualification. It does not
 send them. Combine it with the existing disabled installation overlay using the
 received `prepare-contributor-environment.mjs` workflow. Hostinger GET masks
@@ -140,7 +142,7 @@ stable credential, schema, build setting and Git linkage; never PUT masked value
 Root owns the actual provider application/readback. Applying the full environment
 restarts Express on this host, so no speculative second restart/build is needed.
 
-Both prefixes refuse missing/invalid/signature/source/origin/store/expired
+Both prefixes refuse missing/invalid/signature/installation/source/origin/store or old-format
 qualification. Request admission additionally requires the real loaded main
 module/cache, qualified content identity, LiteSpeed EventEmitter, patched selected
 listen/native realListen, actual pipe/request ownership and no physical TCP
@@ -148,7 +150,7 @@ listener. The inherited descriptor's native address may remain unknown. Wrong or
 duplicate Host/origin refuse; forwarding values are discarded. No global proxy
 trust or cookie/CSRF rule changes. Unrelated SDS routes remain available.
 
-## Final private receiving, renewal and rollback
+## Deployment-bound lifecycle, final receiving and rollback
 
 Qualification installation while disabled is not enabled hosted-journey proof.
 Root receives the actual HTTPS compiled desk/assets/missing paths and account/
@@ -157,18 +159,48 @@ release controls. Human preview review, public activation and amount-free public
 reads remain separate. No production customer/task/payment or paid badge follows
 from this source/transport preparation.
 
-Every request checks absolute expiry, at most24hours; restart does not extend it.
-Renewal requires fresh receiving and a new signed packet, never an automatic
-poller. Changes to source, loader, origin/store/credentials or provider policy
-invalidate the prior receiving. Runtime bytes are checked at startup; replace
-sources through an exact received restart/build, not by editing a running tree.
-Provider-policy drift cannot be sensed by Node: Root must revoke before changing
-that policy. Remove `CONTRIBUTOR_DESK_HTTPS_QUALIFICATION` and set disabled/
-managed0/public0 in the **full authoritative** environment for immediate rollback;
-receive the restart and disabled API/desk refusal, with unrelated SDS routes up.
-Expiry limits an unrevoked old attestation, not a guarantee against unseen policy
-changes during its lease. Restore exact previous source/settings/env/key/linkage
-packet if needed; do not rotate keys or reenroll/copy retained ledgers.
+Version2 has **no runtime wall-clock lease**. The old finite v1 receiving and
+signed qualification formats are explicitly rejected, including unexpired v1
+packets. Never remove an old expiry or restamp its dates: independently receive
+and issue v2 on the final installation. Issuance still requires each real receipt
+within ten minutes of issue; startup validates those times relative to the
+original issue, not today's clock. Unchanged restarts/days do not renew anything
+and do not expire a healthy deployment.
+
+The qualification binds the actual completed installation/build identity, exact
+SDS/Neo source, owning entry/edge bytes, complete runtime/desk manifests, origin,
+store/schemas and purpose-separated stable credential binding, loader hash and
+all four external policy/evidence references. Installation/startup verifies the
+bytes; every request checks the current environment binding and actual selected
+loader/pipe/request. Deploy source changes through a received build/restart,
+never by editing a running tree. Removing/replacing the qualification or changing
+installation/source/origin/store/keys refuses only the contributor prefixes.
+A new installation, artifact/loader change, new alias/routing/backend access,
+SSL/HTTPS policy change or suspected invalid receiving requires disabling those
+prefixes and **fresh independent receiving and a new qualification** before
+admission. The controller must invalidate before its deployment/policy mutation;
+retain that invalidation/requalification in the existing deployment receipt.
+There is no resident poller, renewal daemon, model call or second listener.
+
+Node cannot observe external provider-policy drift. A daily lease did not detect
+it during its lease either. Root owns authenticated installation policy and any
+reported/observed change; withdraw qualification on such a change and requalify
+once its actual new contract is received. The received installation identity and
+reference hashes do not inspect provider evidence or prove backend isolation.
+[Hostinger's deployment guide](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/)
+describes managed backend output/routing outside public_html, and its
+[connectivity guide](https://www.hostinger.com/support/which-web-standards-and-connectivity-features-are-supported-at-hostinger/)
+describes fixed Web/Cloud public ports with no additional opened ports. These
+bound the receiving questions; neither proves this account's backend isolation
+or supplies any signed pass. No fresh provider observation or receipt is asserted
+by this source export.
+
+For immediate rollback, remove `CONTRIBUTOR_DESK_HTTPS_QUALIFICATION` and set
+mode disabled/managed0/public0 in the **full authoritative** environment. Receive
+the actual restart and disabled API/desk refusal with unrelated SDS routes up.
+Restore exact previous source/settings/env/key/linkage if needed; do not rotate
+keys, reenroll or copy retained ledgers. The finite one-request diagnostic below
+keeps its own unchanged ten-minute expiry; it is not this qualification lifecycle.
 
 Remove all four temporary v2 probe keys after its one matching log readback, or
 let its absolute ten-minute expiry lapse and then remove them. Keep no poller,

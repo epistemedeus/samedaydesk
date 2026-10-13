@@ -11,11 +11,12 @@ try{
     const {qualification,payload}=await issueContributorHttpsQualification(await readPrivateJson(input),process.env);
     await writePrivateJson(output,{env_vars:[{key:'CONTRIBUTOR_DESK_INGRESS_MODE',value:'litespeed-https-only'},
       {key:'CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS',value:'[]'},
+      {key:'CONTRIBUTOR_DESK_INSTALLATION_ID',value:payload.binding.installationId},
       {key:'CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT',value:payload.binding.sdsCommit},
       {key:'CONTRIBUTOR_DESK_HTTPS_QUALIFICATION',value:qualification}]});
-    process.stdout.write(JSON.stringify({schema:'sds.contributor-https-qualification-issued.v1',
+    process.stdout.write(JSON.stringify({schema:'sds.contributor-https-qualification-issued.v2',
       qualificationIssued:true,sourceCommit:payload.binding.productCommit,sdsCommit:payload.binding.sdsCommit,
-      expiresAt:payload.expiresAt,sent:false,publicEnabled:false,releaseAccepted:false})+'\n');
+      lifecycle:payload.lifecycle,issuedAt:payload.issuedAt,sent:false,publicEnabled:false,releaseAccepted:false})+'\n');
   }else throw new Error('invalid usage');
 }catch{
   process.stderr.write('HTTPS-only qualification refused; use inspect or issue PRIVATE_RECEIVING_JSON NEW_PRIVATE_OVERLAY_JSON with exact sources, fresh full controller receiving and existing stable credentials; no provider call is made\n');

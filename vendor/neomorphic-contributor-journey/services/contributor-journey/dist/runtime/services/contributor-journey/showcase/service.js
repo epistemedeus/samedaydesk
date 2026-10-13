@@ -47,7 +47,7 @@ export function createShowcaseService(deps) {
     async function project(m, includePaidBadge) {
         const qualification = includePaidBadge ? await deps.settlements.qualify(m.work) : null;
         // Synthetic observations can exercise the private verifier, never a public paid badge.
-        const qualified = qualification?.qualified === true && qualification.source === "configured_base_rpc" && production;
+        const qualified = qualification?.qualified === true && qualification.source === "configured_base_rpc" && production && m.work.binding.evidenceClass !== "owner_qa";
         return {
             workId: m.work.binding.workId, profileId: m.profile.profileId, displayName: m.profile.displayName,
             summary: m.summary.summary, evidenceDescription: m.summary.evidenceDescription,
@@ -59,6 +59,10 @@ export function createShowcaseService(deps) {
                 independentVerification: false,
             },
         };
+    }
+    function proofFence(view, observed, current) {
+        return observed.canonicalRevision === current.canonicalRevision ? view : { ...view, paid: false,
+            evidenceClass: current.binding.evidenceClass, verification: { ...view.verification, settlementSource: 'not_qualified' } };
     }
     async function outcome(account, workId, key, expectedHash, recovered = false) {
         const operation = await deps.consents.readOperation(account.accountId, workId, key);
@@ -119,7 +123,7 @@ export function createShowcaseService(deps) {
             const current = await readConsent(workId);
             if (!current || current.version !== record.version || !latest.ok || !consentMatches(current, latest.value))
                 return fail("not_found");
-            return success({ view, version: record.version });
+            return success({ view: proofFence(view, m.value.work, latest.value.work), version: record.version });
         }
         catch {
             return fail("unavailable");
@@ -143,8 +147,11 @@ export function createShowcaseService(deps) {
                 if (record && record.accountId !== account.accountId)
                     return fail("not_found");
                 const candidate = await project(m.value, record?.includePaidBadge ?? true);
+                const latest = await material(workId, account.accountId), current = await readConsent(workId);
+                if (!latest.ok || latest.value.digest !== m.value.digest || (current?.version ?? 0) !== (record?.version ?? 0))
+                    return fail('content_unavailable');
                 return success({ consent: readback(record), summaryDigest: m.value.digest, consentVersion: CONSENT_VERSION,
-                    candidate, publicationCurrent: consentMatches(record, m.value) });
+                    candidate: proofFence(candidate, m.value.work, latest.value.work), publicationCurrent: consentMatches(record, m.value) });
             }
             catch {
                 return fail("unavailable");
@@ -250,8 +257,20 @@ export function createShowcaseService(deps) {
                     new Set(current.map(record => record.workId)).size !== current.length ||
                     current.some(record => !views.some(entry => entry.view.workId === record.workId)))
                     return fail("unavailable");
-                return success(views.filter(entry => current.some(record => record.workId === entry.view.workId &&
-                    record.version === entry.version && record.visibility === "visible")).map(entry => entry.view));
+                const fenced = [];
+                for (const entry of views) {
+                    const record = current.find(record => record.workId === entry.view.workId && record.version === entry.version && record.visibility === 'visible');
+                    if (!record)
+                        continue;
+                    const latest = await material(entry.view.workId);
+                    if (latest.ok && consentMatches(record, latest.value)) {
+                        const fresh = await project(latest.value, record.includePaidBadge);
+                        const consent = await readConsent(entry.view.workId), materialNow = await material(entry.view.workId);
+                        if (consent?.version === record.version && materialNow.ok && consentMatches(consent, materialNow.value))
+                            fenced.push(proofFence(fresh, latest.value.work, materialNow.value.work));
+                    }
+                }
+                return success(fenced);
             }
             catch {
                 return fail("unavailable");

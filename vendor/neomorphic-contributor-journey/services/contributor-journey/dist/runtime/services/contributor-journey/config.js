@@ -119,8 +119,11 @@ export function loadJourneyConfig(env = process.env) {
             throw new Error('stable durable store ID required');
         if (mode === 'live' && !['0', '1'].includes(env.CONTRIBUTOR_JOURNEY_PUBLIC_READS ?? '0'))
             throw new Error('public reads must be explicitly 0 or 1');
+        const publicReviewRef = mode === 'live' ? env.CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF : undefined;
+        if (mode === 'live' && env.CONTRIBUTOR_JOURNEY_PUBLIC_READS === '1' && (!publicReviewRef || !/^review_[A-Za-z0-9_.:-]{8,120}$/.test(publicReviewRef)))
+            throw new Error('public reads require an explicit human review reference');
         base.installed = { origin, replayKey, integrityKey, cursorKey, futureRounds: parsedRounds.data,
-            ...(storeId ? { storeId, publicReads: env.CONTRIBUTOR_JOURNEY_PUBLIC_READS === '1' } : {}) };
+            ...(storeId ? { storeId, publicReads: env.CONTRIBUTOR_JOURNEY_PUBLIC_READS === '1', ...(publicReviewRef ? { publicReviewRef } : {}) } : {}) };
         base.corsOrigins = [origin];
     }
     return base;
@@ -138,7 +141,7 @@ export function validateJourneyConfig(config) {
         ...(installed ? { CONTRIBUTOR_JOURNEY_INSTALLED: '1', CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN: installed.origin, CONTRIBUTOR_JOURNEY_ORIGIN: installed.origin,
             CONTRIBUTOR_JOURNEY_REPLAY_KEY: installed.replayKey, CONTRIBUTOR_JOURNEY_INTEGRITY_KEY: installed.integrityKey,
             CONTRIBUTOR_JOURNEY_CURSOR_KEY: installed.cursorKey, CONTRIBUTOR_JOURNEY_STORE_ID: installed.storeId,
-            CONTRIBUTOR_JOURNEY_PUBLIC_READS: installed.publicReads ? '1' : '0',
+            CONTRIBUTOR_JOURNEY_PUBLIC_READS: installed.publicReads ? '1' : '0', CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF: installed.publicReviewRef,
             CONTRIBUTOR_JOURNEY_FUTURE_ROUNDS: JSON.stringify(installed.futureRounds) } : {}) });
     if (!isDeepStrictEqual(config, checked))
         throw new Error('journey configuration differs from the validated profile');

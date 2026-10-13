@@ -21,12 +21,15 @@ import { safeText } from './discussion/validation.js';
 import { createShowcaseService } from './showcase/service.js';
 import { createShowcaseHttpHandler } from './showcase/http.js';
 import { createPostgresConsentedSummaryStore } from './showcase/postgres.js';
+import { summaryValid, publicationText, privatePublicationTokens, privateEvidenceTokens } from './showcase/validation.js';
 import { createReferralService } from './referral/service.js';
 import { createReferralHttpHandler } from './referral/http.js';
 import { createPostgresReferralPorts } from './referral/postgres.js';
 import { createOpportunityJourneyAdapters } from './opportunity-adapters.js';
 import { migrateJourneyStores } from './storage.js';
 import { validateJourneyConfig } from './config.js';
+import { createInstalledCanonicalQualification } from './canonical-qualification.js';
+import { createRelationshipService } from './relationship.js';
 export const RECEIVED_MODULE_COMMITS = {
     account: 'd341c93357596513b54a6952610b7550830353b4', claims: '9294ac84595a546e93233b188b9afd79c38b6dc6',
     submission: '6efdbaf1ccf36d43c374ddfbff35ddbb0a38d4bc', review: 'bff140b0c66dbb13d71dc865c150772a310bd6e9',
@@ -38,6 +41,8 @@ export async function createInstalledComposition(options) {
     const { services, pool, lockPool } = options;
     const config = validateJourneyConfig(options.config);
     const settings = config.installed;
+    if (config.mode === 'live' && options.canonicalReceiving?.observer.source === 'synthetic_fixture')
+        throw new Error('live canonical receiving cannot use a synthetic proof producer');
     const kernel = services.earnedWork.store;
     const { db, admission, persistence } = await migrateJourneyStores(config, kernel, services.correspondence.store, pool);
     if (config.mode === 'staging')
@@ -119,7 +124,14 @@ export async function createInstalledComposition(options) {
     };
     const review = new ReviewService({ authenticate, binding, kernel: adapters.review,
         clarification: createCorrespondenceReviewPort({ store: services.correspondence.store, projectId: source => db.project(source, 'clarification'), integrityKey: settings.integrityKey }),
-        fulfillment: async (handoff) => ({ ...handoff, state: 'not_observed', verifierVersion: 'canonical-settlement-not-configured/v1' }) });
+        fulfillment: async (handoff) => {
+            const row = await adapters.load(handoff.reservationId, handoff.taskId);
+            if (!row)
+                return { ...handoff, state: 'unknown', verifierVersion: 'canonical-receiving/v1' };
+            const work = await works.read(await db.workId(handoff.taskId, handoff.reservationId, row.owner));
+            const proof = work ? await canonical.qualify(work) : null;
+            return { ...handoff, state: proof?.qualified ? 'verified_paid' : proof?.reason === 'unavailable' ? 'unknown' : 'not_observed', verifierVersion: 'canonical-receiving/v1' };
+        } });
     const works = {
         async read(workId) {
             const link = await db.work(workId);
@@ -137,16 +149,53 @@ export async function createInstalledComposition(options) {
                 submissionId: source.aggregate.submission.id, obligationId: source.aggregate.obligation.id, verdictId: source.aggregate.verdict.id,
                 termsVersion: source.aggregate.submission.termsVersion, artifactDigestSha256: source.aggregate.submission.artifact.digestSha256,
                 authorizedSourceSha256: null, authorizedDestinationSha256: null, evidenceClass: config.mode === 'live' ? 'unclassified' : 'owner_qa' };
-            return { authorityFamily: 'opportunity', binding: b, aggregate: source.aggregate,
+            const work = { authorityFamily: 'opportunity', binding: b, aggregate: source.aggregate,
                 claimPrincipal: { taskId: row.id, reservationId: row.claim.id, contributorPrincipalId: row.principal.id,
                     contributorPublicId: row.principal.publicId, provenance: row.round.provenance } };
+            try {
+                const received = await canonical.read(work);
+                if (received) {
+                    b.authorizedSourceSha256 = received.authorizedSourceSha256;
+                    b.authorizedDestinationSha256 = received.authorizedDestinationSha256;
+                    b.evidenceClass = received.evidenceClass;
+                    work.canonicalRevision = hashRequest(received);
+                }
+            }
+            catch { /* Missing proof does not erase accepted work. */ }
+            return work;
         },
     };
     const consents = createPostgresConsentedSummaryStore(pool);
-    const summaries = { read: async (workId) => kernel.withOpportunityClient(async (client) => (await client.query('SELECT record FROM journey_approved_summaries WHERE work_id=$1', [workId])).rows[0]?.record ?? null, 'read') };
-    const showcase = createShowcaseService({ works, summaries, profiles: { read: id => db.profile(id) }, consents,
-        settlements: { qualify: async () => ({ qualified: false, reason: 'missing_settlement' }) },
+    const canonical = createInstalledCanonicalQualification({ receiving: options.canonicalReceiving, query: async (work) => {
+            const task = await db.task(work.binding.taskId);
+            if (!task)
+                return null;
+            const row = await adapters.load(work.binding.reservationId, work.binding.taskId);
+            return row ? { ...canonical.identity(work), roundId: row.round.id, accountId: row.owner,
+                requesterAccountId: task.requester_account_id, contributorPrincipalId: row.principal.id } : null;
+        } });
+    const relationships = createRelationshipService({ kernel, works, requester: async (id) => (await db.task(id))?.requester_account_id ?? null });
+    const summaries = { read: async (workId) => {
+            const link = await db.work(workId), task = link && await db.task(link.task_id);
+            if (!link || !task)
+                return null;
+            return kernel.withOpportunityClient(async (client) => {
+                const row = (await client.query('SELECT record,requester_account_id FROM journey_approved_summaries WHERE work_id=$1 AND rights_cleared=TRUE AND withdrawn_at IS NULL', [workId])).rows[0];
+                return row?.requester_account_id === task.requester_account_id ? row.record : null;
+            }, 'read');
+        } };
+    const showcase = createShowcaseService({ works, summaries, profiles: { read: id => db.profile(id) }, consents, settlements: canonical,
         mode: config.mode === 'live' ? 'production' : 'staging', stagingReadEnabled: config.mode === 'staging', publicEnabled: settings.publicReads === true });
+    // A discussion derivative is bound to one exact currently consented work and
+    // reviewed summary, never to an alias or another work in the same account.
+    const discussionWork = async (accountId, taskId) => {
+        const links = await kernel.withOpportunityClient(client => client.query('SELECT work_id FROM journey_work_links WHERE account_id=$1 AND task_id=$2 ORDER BY work_id LIMIT 2', [accountId, taskId]), 'read');
+        if (links.rows.length !== 1)
+            return null;
+        const workId = links.rows[0].work_id, view = await showcase.readPublished(workId);
+        const consent = await consents.read(workId), approved = await summaries.read(workId);
+        return view.ok && consent && approved ? { workId, view: view.value, version: hashRequest({ consent, approved }) } : null;
+    };
     const discussionTasks = {
         forAccount: async (taskId, account) => {
             const task = await db.task(taskId);
@@ -166,10 +215,25 @@ export async function createInstalledComposition(options) {
         },
     };
     const discussions = createDiscussionService({ enabled: true, authenticate, tasks: discussionTasks,
-        profiles: { publicProfile: async (accountId) => { const result = await db.profileForAccount(accountId), p = result?.publication; return p?.visible ? { profileId: p.profileId, displayName: p.displayName, visibilityConsentVersion: String(p.consentVersion) } : null; } },
-        contentPolicy: { check: async (text, audience) => safeText(text, audience) &&
-                !/\b(?:acs|acr|ew-private)_[A-Za-z0-9_-]{16,}/.test(text) &&
-                (audience !== 'public' || !/\b(?:acc|ses|ctr|tok|clm|sub|obl)_[A-Za-z0-9_-]{8,}|sha256:[a-f0-9]{64}/.test(text)) ? 'allow' : 'refuse' },
+        profiles: { publicProfile: async (accountId, taskId) => {
+                const result = await db.profileForAccount(accountId), p = result?.publication;
+                const source = taskId && await discussionWork(accountId, taskId);
+                return p?.visible && source ? { profileId: p.profileId, displayName: p.displayName, visibilityConsentVersion: String(p.consentVersion), sourceBinding: source.version } : null;
+            } },
+        contentPolicy: { check: async (text, audience, context) => {
+                if (!safeText(text, audience) || /\b(?:acs|acr|ew-private)_[A-Za-z0-9_-]{16,}/.test(text) ||
+                    audience === 'public' && /\b(?:acc|ses|ctr|tok|clm|sub|obl)_[A-Za-z0-9_-]{8,}|sha256:[a-f0-9]{64}/.test(text))
+                    return 'refuse';
+                if (audience === 'public' && context) {
+                    const links = await kernel.withOpportunityClient(client => client.query('SELECT work_id FROM journey_work_links WHERE task_id=$1 AND account_id=$2 ORDER BY work_id LIMIT 2', [context.taskId, context.accountId]), 'read');
+                    if (links.rows.length !== 1)
+                        return 'refuse';
+                    const work = await works.read(links.rows[0].work_id);
+                    if (!work || !publicationText(text, 6000, [...privatePublicationTokens(work), ...privateEvidenceTokens(work)]))
+                        return 'refuse';
+                }
+                return 'allow';
+            } },
         journal: createCorrespondenceJournal(services.correspondence.store, lock), cursorKey: Buffer.from(settings.cursorKey, 'hex') });
     const referralStore = createPostgresReferralPorts(kernel);
     const visitorCookie = '__Host-neo_journey_visit';
@@ -195,15 +259,20 @@ export async function createInstalledComposition(options) {
     const publishedSource = async (source) => {
         if (source.kind === 'showcase') {
             const view = await showcase.readPublished(source.id), work = await works.read(source.id), consent = await consents.read(source.id), approved = await summaries.read(source.id);
-            if (!view.ok || !work || !consent || !approved)
+            if (!view.ok || !work || !consent || !approved || consent.visibility !== 'visible')
+                return { state: 'withdrawn' };
+            const fence = await showcase.readPublished(source.id);
+            if (!fence.ok || hashRequest(fence.value) !== hashRequest(view.value))
                 return { state: 'withdrawn' };
             return { state: 'published', source: { kind: 'showcase', sourceId: source.id, version: String(consent.version), ownerAccountId: work.binding.accountId,
                     workRef: work.binding.workId, artifactDigest: work.binding.artifactDigestSha256, acceptanceRef: work.binding.obligationId,
-                    consentVersion: hashRequest({ consent, profile: await db.profile(work.binding.profileId) }), publicationExpiresAt: new Date(Date.parse(approved.approvedAt) + 30 * 86400000).toISOString(),
+                    consentVersion: hashRequest({ consent, approved, profile: await db.profile(work.binding.profileId) }), publicationExpiresAt: new Date(Date.parse(approved.approvedAt) + 30 * 86400000).toISOString(),
                     title: 'Useful contributed work', summary: view.value.summary, evidence: view.value.evidenceDescription } };
         }
         // A public discussion post needs an independently accepted-work/author join.
-        const tasks = await kernel.withOpportunityClient(client => client.query('SELECT task_id FROM journey_task_links WHERE public_discussion=TRUE'), 'read');
+        const tasks = await kernel.withOpportunityClient(client => client.query('SELECT task_id FROM journey_task_links WHERE public_discussion=TRUE AND round_key=ANY($1::text[]) ORDER BY task_id LIMIT 1025', [settings.futureRounds.map(r => r.roundKey)]), 'read');
+        if (tasks.rows.length > 1024)
+            return { state: 'unavailable' };
         for (const task of tasks.rows) {
             const page = await discussions.list(task.task_id, null, { limit: 100 });
             if (!page.ok)
@@ -217,9 +286,15 @@ export async function createInstalledComposition(options) {
                 const work = await works.read(link.work_id);
                 if (!work)
                     continue;
+                const derivative = await discussionWork(work.binding.accountId, task.task_id);
+                if (!derivative || derivative.workId !== work.binding.workId)
+                    continue;
+                const finalPosts = await discussions.list(task.task_id, null, { limit: 100 });
+                if (!finalPosts.ok || !finalPosts.value.items.some(item => item.kind === 'post' && item.postId === post.postId && hashRequest(item) === hashRequest(post)))
+                    return { state: 'withdrawn' };
                 return { state: 'published', source: { kind: 'discussion', sourceId: source.id, version: String(post.version), ownerAccountId: work.binding.accountId,
                         workRef: work.binding.workId, artifactDigest: work.binding.artifactDigestSha256, acceptanceRef: work.binding.obligationId,
-                        consentVersion: hashRequest({ post, profile: await db.profile(work.binding.profileId) }), publicationExpiresAt: new Date(Date.parse(post.createdAt) + 30 * 86400000).toISOString(),
+                        consentVersion: hashRequest({ post, workSource: derivative.version, profile: await db.profile(work.binding.profileId) }), publicationExpiresAt: new Date(Date.parse(post.createdAt) + 30 * 86400000).toISOString(),
                         title: 'A useful work discussion', summary: post.body, evidence: null } };
             }
         }
@@ -381,7 +456,7 @@ export async function createInstalledComposition(options) {
     });
     extra.post('/v1/review/summary', async (req, res, next) => {
         try {
-            const input = z.object({ workId: z.string(), summary: z.string().min(1).max(800), evidenceDescription: z.string().min(1).max(400) }).strict().parse(req.body);
+            const input = z.object({ workId: z.string(), summary: z.string().min(1).max(800), evidenceDescription: z.string().min(1).max(400), rightsCleared: z.literal(true).optional() }).strict().parse(req.body);
             const actor = await authenticate(req), work = await works.read(input.workId), task = work && await db.task(work.binding.taskId);
             if (!actor || !work || task?.requester_account_id !== actor.accountId) {
                 res.sendStatus(403);
@@ -391,16 +466,78 @@ export async function createInstalledComposition(options) {
                 res.sendStatus(422);
                 return;
             }
+            const { rightsCleared, ...copy } = input;
             const { workId, taskId, reservationId, submissionId, obligationId, verdictId, termsVersion, artifactDigestSha256, accountId, profileId } = work.binding;
             const approved = { workId, taskId, reservationId, submissionId, obligationId, verdictId, termsVersion, artifactDigestSha256, accountId, profileId,
-                approvalId: 'approval_' + hashRequest(input).slice(0, 32), approvalSource: 'requester_review', approvedAt: new Date().toISOString(), summary: input.summary, evidenceDescription: input.evidenceDescription };
-            await kernel.withOpportunityClient(async (client) => {
-                const old = (await client.query('SELECT request_hash FROM journey_approved_summaries WHERE work_id=$1', [workId])).rows[0];
-                if (old && old.request_hash !== hashRequest(input))
-                    throw new Error('approved summary immutable');
-                await client.query('INSERT INTO journey_approved_summaries(work_id,record,request_hash,requester_account_id) VALUES($1,$2,$3,$4) ON CONFLICT(work_id) DO NOTHING', [workId, approved, hashRequest(input), actor.accountId]);
+                approvalId: 'approval_' + hashRequest(copy).slice(0, 32), approvalSource: 'requester_review', approvedAt: new Date().toISOString(), summary: input.summary, evidenceDescription: input.evidenceDescription };
+            if (!summaryValid(approved, work)) {
+                res.sendStatus(422);
+                return;
+            }
+            const fresh = await authenticate(req), currentTask = await db.task(taskId);
+            if (fresh?.sessionId !== actor.sessionId || currentTask?.requester_account_id !== actor.accountId) {
+                res.sendStatus(403);
+                return;
+            }
+            const approvedNow = await kernel.withOpportunityClient(async (client) => {
+                await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,230101))', [`summary:${workId}`]);
+                const session = (await client.query('SELECT id FROM journey_account_sessions WHERE id=$1 AND account_id=$2 AND revoked_at IS NULL AND expires_at>CURRENT_TIMESTAMP', [actor.sessionId, actor.accountId])).rows[0];
+                const owner = (await client.query('SELECT requester_account_id FROM journey_task_links WHERE task_id=$1', [taskId])).rows[0];
+                if (!session || owner?.requester_account_id !== actor.accountId)
+                    return false;
+                const old = (await client.query('SELECT request_hash,withdrawn_at FROM journey_approved_summaries WHERE work_id=$1', [workId])).rows[0];
+                if (old && (old.request_hash !== hashRequest(copy) || old.withdrawn_at))
+                    return false;
+                await client.query('INSERT INTO journey_approved_summaries(work_id,record,request_hash,requester_account_id,rights_cleared) VALUES($1,$2,$3,$4,$5) ON CONFLICT(work_id) DO UPDATE SET rights_cleared=journey_approved_summaries.rights_cleared OR EXCLUDED.rights_cleared', [workId, approved, hashRequest(copy), actor.accountId, rightsCleared === true]);
+                return true;
             }, 'idempotent');
-            res.json({ approved: true });
+            res.status(approvedNow ? 200 : 409).json(approvedNow ? { approved: true } : { error: { code: 'conflict' } });
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+    extra.delete('/v1/review/summary/:workId', async (req, res, next) => {
+        try {
+            const workId = String(req.params.workId), actor = await authenticate(req), work = await works.read(workId);
+            const task = work && await db.task(work.binding.taskId);
+            const input = z.object({ approvalId: z.string() }).strict().parse(req.body);
+            if (!actor || !work || task?.requester_account_id !== actor.accountId) {
+                res.sendStatus(403);
+                return;
+            }
+            const changed = await kernel.withOpportunityClient(client => client.query(`UPDATE journey_approved_summaries SET withdrawn_at=COALESCE(withdrawn_at,CURRENT_TIMESTAMP)
+      WHERE work_id=$1 AND requester_account_id=$2 AND record->>'approvalId'=$3 RETURNING work_id`, [workId, actor.accountId, input.approvalId]), 'idempotent');
+            res.status(changed.rows.length ? 200 : 409).json({ withdrawn: changed.rows.length === 1 });
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+    extra.get('/v1/relationship/works/:workId', async (req, res, next) => {
+        try {
+            const actor = await authenticate(req);
+            if (!actor) {
+                res.sendStatus(401);
+                return;
+            }
+            const result = await relationships.read(actor, String(req.params.workId));
+            res.status(result.ok ? 200 : 404).json(result);
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+    extra.put('/v1/relationship/works/:workId/:role', async (req, res, next) => {
+        try {
+            const role = z.enum(['requester', 'contributor']).parse(req.params.role), actor = await authenticate(req);
+            if (!actor) {
+                res.sendStatus(401);
+                return;
+            }
+            const result = await relationships.report(actor, String(req.params.workId), role, req.body, req.header('idempotency-key') ?? '');
+            const statuses = { not_found: 404, invalid_input: 422, source_changed: 409, conflict: 409, idempotency_conflict: 409, capacity: 503 };
+            res.status(result.ok ? 200 : statuses[result.code] ?? 503).json(result);
         }
         catch (error) {
             next(error);
@@ -408,7 +545,7 @@ export async function createInstalledComposition(options) {
     });
     const ports = { resolveAccount: async (req) => { const actor = await authenticate(req); return actor ? { ok: true, value: actor } : { ok: false, code: 'unauthenticated' }; } };
     return { modules, middleware, extra, ports, accounts, claims, submissions, review, showcase, discussions, referral, referralStore, db, adapters, opportunity, works, consents,
-        profile: config.mode === 'live' ? 'live' : 'staging', admission };
+        profile: config.mode === 'live' ? 'live' : 'staging', admission, canonical, relationships, summaries, publishedSource };
 }
 import { sourceOf as sourceOfSafe } from './review/validation.js';
 //# sourceMappingURL=installed.js.map

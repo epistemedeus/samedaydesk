@@ -63,7 +63,7 @@ Three explicit managed modes are supported:
   HTTPS-only policy and backend isolation, and its real selected Unix pipe and
   qualified loader identity. No forwarded claim supplies TLS authority. See
   [LITESPEED-HTTPS-ONLY.md](LITESPEED-HTTPS-ONLY.md) for received actual facts,
-  remaining plaintext/bypass checks and exact installation/expiry/rollback.
+  remaining plaintext/bypass checks and exact installation/change invalidation/rollback.
 
 The audited [upstream Node loader](https://github.com/phusion/passenger/blob/c2fde75b26ced690978167e882d3da440188591f/src/helper-scripts/node-loader.js)
 is SHA256 `8fa9ce29cc2b098d03d16027d8f923f10e1d78c26727b5b248138d093acb02d8`.
@@ -289,3 +289,20 @@ preparation keeps serving/public flags disabled and retains enrollment/backup;
 never down-migrate stores or overwrite an obligation to retry. No rollback or
 provider mutation was executed here. Paid badges remain absent without canonical
 settlement, and original221400 email/terms/grants/obligations retain their authority.
+
+## Optional reviewed public composition
+
+The managed guard accepts `CONTRIBUTOR_JOURNEY_PUBLIC_READS=1` only for live
+composition with an explicit `CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF`. The compiled
+producer validates it again. Default is0. That reference does not establish
+human approval, publish a summary or turn an original-holder link into a source.
+Exact current requester rights clearance, contributor consent and withdrawal
+still fence every preview/list/discussion/share derivative. Root owns release.
+
+A server-owned `canonicalReceiving` read port can be supplied to
+`createSdsApp({neomorphicContributorJourney:{env,canonicalReceiving}})` and reaches
+the default compiled runtime. Replacement service loaders/modules/business ports
+remain forbidden. The canonical owner independently receives the exact existing
+task-family acceptance/allocation authority and receipt observer; absent/unknown
+proof omits the badge. No payment/IOU writer or environment module loader is added.
+Private useful/effort measurement remains a server-side producer/reader.

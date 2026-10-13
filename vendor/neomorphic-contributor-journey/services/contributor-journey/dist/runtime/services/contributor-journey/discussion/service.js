@@ -52,13 +52,13 @@ export function createDiscussionService(ports) {
             (!["moderate", "withdraw", "remove"].includes(command.kind) && !t.canPost))
             throw new DiscussionError("forbidden");
     }
-    async function policy(text, audience) {
-        if (!safeText(text, audience) || await ports.contentPolicy.check(text, audience) !== "allow") {
+    async function policy(text, audience, context) {
+        if (!safeText(text, audience) || await ports.contentPolicy.check(text, audience, context) !== "allow") {
             throw new DiscussionError("refused");
         }
     }
-    async function profile(accountId) {
-        const p = await ports.profiles.publicProfile(accountId);
+    async function profile(accountId, taskId) {
+        const p = await ports.profiles.publicProfile(accountId, taskId);
         if (!p)
             return null;
         const parsed = profileSchema.safeParse(p);
@@ -68,9 +68,9 @@ export function createDiscussionService(ports) {
         return parsed.data;
     }
     async function publicAuthor(post, expected, snapshot) {
-        const current = snapshot?.has(post.authorAccountId) ? snapshot.get(post.authorAccountId) : await profile(post.authorAccountId);
+        const current = snapshot?.has(post.authorAccountId) ? snapshot.get(post.authorAccountId) : await profile(post.authorAccountId, post.taskId);
         if (!current || !expected || current.profileId !== expected.profileId ||
-            current.visibilityConsentVersion !== expected.visibilityConsentVersion)
+            current.visibilityConsentVersion !== expected.visibilityConsentVersion || current.sourceBinding !== expected.sourceBinding)
             return null;
         return { profileId: current.profileId, displayName: current.displayName };
     }
@@ -85,7 +85,7 @@ export function createDiscussionService(ports) {
             const author = await publicAuthor(post, publication.profile, snapshot);
             if (!author)
                 return post.everPublished ? { kind: "withdrawn", postId: post.postId, sequence: post.sequence } : null;
-            await policy(publication.text, "public");
+            await policy(publication.text, "public", { taskId: post.taskId, accountId: post.authorAccountId });
             return {
                 kind: "post", postId: post.postId, taskId: post.taskId, body: publication.text, author,
                 audience: "public", moderation: "approved", version: post.version, sequence: post.sequence,
@@ -138,11 +138,11 @@ export function createDiscussionService(ports) {
                         let p = null;
                         if (command.kind === "post") {
                             await policy(command.body, "private");
-                            p = await profile(a.accountId);
+                            p = await profile(a.accountId, taskId);
                             if (command.audience === "public") {
                                 if (!t.publicDiscussionEnabled || !p)
                                     throw new DiscussionError("forbidden");
-                                await policy(command.body, "public");
+                                await policy(command.body, "public", { taskId, accountId: a.accountId });
                             }
                         }
                         else {
@@ -162,8 +162,8 @@ export function createDiscussionService(ports) {
                                     throw new DiscussionError("forbidden");
                                 if (!post.body.includes(command.text))
                                     throw new DiscussionError("invalid_input");
-                                await policy(command.text, "public");
-                                p = await profile(a.accountId);
+                                await policy(command.text, "public", { taskId, accountId: a.accountId });
+                                p = await profile(a.accountId, taskId);
                                 if (!p)
                                     throw new DiscussionError("forbidden");
                             }
@@ -172,7 +172,7 @@ export function createDiscussionService(ports) {
                                 if (post.publication) {
                                     if (!t.publicDiscussionEnabled || !await publicAuthor(post, post.publication.profile))
                                         throw new DiscussionError("forbidden");
-                                    await policy(post.publication.text, "public");
+                                    await policy(post.publication.text, "public", { taskId: post.taskId, accountId: post.authorAccountId });
                                 }
                             }
                         }
@@ -256,7 +256,7 @@ export function createDiscussionService(ports) {
                     const profileSnapshot = new Map();
                     for (const post of posts) {
                         if ((a || post.everPublished) && !profileSnapshot.has(post.authorAccountId)) {
-                            profileSnapshot.set(post.authorAccountId, await profile(post.authorAccountId));
+                            profileSnapshot.set(post.authorAccountId, await profile(post.authorAccountId, post.taskId));
                         }
                     }
                     // A policy update can discover a secret without a new journal event.
@@ -267,7 +267,7 @@ export function createDiscussionService(ports) {
                         if (a && (post.authorAccountId === a.accountId || t.canModerate || post.moderation === "approved"))
                             await policy(post.body, "private");
                         if (!a && post.moderation === "approved" && post.publication && await publicAuthor(post, post.publication.profile, profileSnapshot))
-                            await policy(post.publication.text, "public");
+                            await policy(post.publication.text, "public", { taskId: post.taskId, accountId: post.authorAccountId });
                     }
                     const visibility = digest([a ? ["private", !!t.canModerate] : "public",
                         [...profileSnapshot.entries()].sort(([x], [y]) => x.localeCompare(y))]);
@@ -290,6 +290,27 @@ export function createDiscussionService(ports) {
                     }
                     if (!hasMore)
                         position = end;
+                    // External work/summary/profile withdrawal is outside this journal lock.
+                    // Fence all authors after later slow rows before releasing any body.
+                    const finalProfiles = new Map();
+                    for (const id of profileSnapshot.keys())
+                        finalProfiles.set(id, await profile(id, taskId));
+                    const finalVisibility = digest([a ? ["private", !!t.canModerate] : "public", [...finalProfiles.entries()].sort(([x], [y]) => x.localeCompare(y))]);
+                    if (finalVisibility !== visibility) {
+                        const refreshed = [];
+                        let last = 0, more = false;
+                        for (const post of posts) {
+                            const item = await view(post, a, !!t.canModerate, finalProfiles);
+                            if (item && refreshed.length === limit) {
+                                more = true;
+                                break;
+                            }
+                            last = post.sequence;
+                            if (item)
+                                refreshed.push(item);
+                        }
+                        return { items: refreshed, cursor: cursors.encode(scope, more ? last : end, finalVisibility), hasMore: more, reset: true };
+                    }
                     return { items, cursor: cursors.encode(scope, position, visibility), hasMore, reset };
                 });
             });

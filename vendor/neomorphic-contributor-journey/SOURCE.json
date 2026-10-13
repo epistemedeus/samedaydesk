@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "5c35cc4b6405f390736e8b5de27f26d202f8cfd3",
+  "sourceCommit": "24624b38753fae9c8836f59154216525248de787",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -37,8 +37,8 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-network-measurement-227900/src/contract.mjs",
-      "bytes": 9146,
-      "sha256": "cd5cc29b591934e2f5a9560910f040a33dd40d7ad1e24acd5234b3bfa1735acc"
+      "bytes": 10041,
+      "sha256": "f288f143129d633351eaca2b41e34749bfd9aeb07d95ad262bf89e9933b22ada"
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-network-measurement-227900/src/index.mjs",
@@ -52,8 +52,8 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-network-measurement-227900/src/project.mjs",
-      "bytes": 16341,
-      "sha256": "6cabf3fa2e6944b692f53b7c7d678afc24afc0f7ca0aa6fa49f1bbad02ccdda3"
+      "bytes": 16457,
+      "sha256": "29b3a44fd5fd9950b653d97fd5eb53e7006b984d01175db4c9531f3c88e314b2"
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-network-measurement-227900/src/store.mjs",
@@ -61,9 +61,19 @@
       "sha256": "ebe52cc5fa992efb253a3ec8f0cce14db61588c0c54241a94fd7d97f333f24c7"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/chain-observation.d.mts",
+      "bytes": 1774,
+      "sha256": "e27951c9d663c032c53fb8d47bb9690808b2b721cd6527411f47dc58ea8a39af"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/chain-observation.mjs",
       "bytes": 10938,
       "sha256": "5b9a5c967713b222aa74403491d729391535c3c8ea687736d14d386c089338cc"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/chain-observation.mjs.map",
+      "bytes": 11840,
+      "sha256": "a8262e4114fc58ba46381356cf6b35daf05783fb913b2d881ea6d3c84eceb926"
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/cli.mjs",
@@ -71,9 +81,19 @@
       "sha256": "51a06f06f2926b04c326725fc829937a7b006363ee81521fc0a02430cdcd899c"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/constants.d.mts",
+      "bytes": 3539,
+      "sha256": "c960fe22c31f99cad1fdfb614f8395ea0b97469f24c7f54f2c844870e211b2fb"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/constants.mjs",
       "bytes": 3570,
       "sha256": "3a5513d974ea9c715a0d6d90656c286e58932dd9d7a847b279ba7192b6239502"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/constants.mjs.map",
+      "bytes": 2644,
+      "sha256": "db05c832b33dd184b852b93ef3f19116be0a3f8a3d249031a28f3e29f943145c"
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/control.mjs",
@@ -171,9 +191,19 @@
       "sha256": "9012ed143ad0659fe9270830088175edb4cc791d32466848afab235907a66f47"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/settlement-state.d.mts",
+      "bytes": 664,
+      "sha256": "ee82f3658f93c0d8d8075b0da8804fe0f080620f7a8664780ccec11025130072"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/settlement-state.mjs",
       "bytes": 2723,
       "sha256": "aedd9698da8dbc38783abab3bc457f2c27c2470e3ae4825b2bf55c17f322cf64"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/settlement-state.mjs.map",
+      "bytes": 2897,
+      "sha256": "13f1ebbcbddb61449c088de058d77785eb4e4fe50724472322852cf95adac6a7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/experiments/contributor-reuse-trial-100198/src/terms.mjs",
@@ -642,18 +672,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/app.d.ts",
-      "bytes": 970,
-      "sha256": "55e07a39be008c0627fdf20bf8954fdde380ba34a0fb10e08df9a5fca16c7ac5"
+      "bytes": 1031,
+      "sha256": "4008bcacb4880eb9f529122fe49058daf2c6b3e566ef14208175e839496b9306"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/app.js",
-      "bytes": 16863,
-      "sha256": "1e37778664c01df62b4e5997ee7d927cb911016d798e1344141fd9aad8c6b80d"
+      "bytes": 16887,
+      "sha256": "87d37d5ba3f30281befaef8357f706c7d8d4100d0d92dbf3d240fe0d170b8ea3"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/app.js.map",
-      "bytes": 17602,
-      "sha256": "d67b2e89eb8e23e299baa1f12aac04ef969b9a0590cb8cc9421bacdefdb82315"
+      "bytes": 17632,
+      "sha256": "f06e9a4c1463cb9c94729926d7599900312cfe9bf08583b4ab3bfdbb70f09cc9"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/browser.d.ts",
@@ -669,6 +699,21 @@
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/browser.js.map",
       "bytes": 30446,
       "sha256": "7fe7338eacb1e67424ab1d90193ec4774ef9435e17fdab0d8ac5f7cd9f01553b"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/canonical-qualification.d.ts",
+      "bytes": 3028,
+      "sha256": "d35a72a7ad62e31bb4018e10fc6f9e7cd712cbd1ad5e808d02eef56857b71afa"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/canonical-qualification.js",
+      "bytes": 5435,
+      "sha256": "12d9a3906d673bfd53076f53e277d620b82a45f9c144273f386e03c647f8531f"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/canonical-qualification.js.map",
+      "bytes": 5100,
+      "sha256": "396e3e8e639f9113c16482a2f9d75f573378b17bd2e80c51b0ee2bcb55b8978d"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/claims/routes.d.ts",
@@ -752,13 +797,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/config.js",
-      "bytes": 9920,
-      "sha256": "7d678a9a165c06f350e2563f6d67b56e348a1052fc2851424b494afd690d2501"
+      "bytes": 10387,
+      "sha256": "b7d2bc57466f6ea48a9c1208742ca6b0dbceafb3fb59fc4a486404b8b98af8a2"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/config.js.map",
-      "bytes": 9008,
-      "sha256": "82b6a12fccde5b4d252192a110baaf7ab2cec2db4eb5d8591fad32e374f292be"
+      "bytes": 9375,
+      "sha256": "e43721cf91001e5134971a3e1ce4e5301b8bb987d87b897b3f8d3ff0660a619b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/correspondence.d.ts",
@@ -842,18 +887,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/service.js",
-      "bytes": 20239,
-      "sha256": "5a98caee681e19e6ad61296f40d8c7460d0288b75a6649a814ad18ceec5f97a3"
+      "bytes": 21977,
+      "sha256": "661e66290ff811684575b06b3f735829bbf26b1105d79bffb80dedc6ce46899b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/service.js.map",
-      "bytes": 18221,
-      "sha256": "605160fef224ad1fc0025a4069c347a3b687a70dbfcab229aef2ff35dc7a159f"
+      "bytes": 19826,
+      "sha256": "5eac2e96fd0cb828ae189634c89b117e7e6bcd4990e760da07469603aa1f0799"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/types.d.ts",
-      "bytes": 4587,
-      "sha256": "50d909f9ae5de2f38cb91834ec5ffa232f67c84eb6ec38f103be1b06af56d729"
+      "bytes": 4777,
+      "sha256": "fbbd2e98deca6ae050620f1d72e1f0f7dc3c53d6bd7dfbd9c9983f20e6ff7be5"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/types.js",
@@ -867,18 +912,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/validation.d.ts",
-      "bytes": 12651,
-      "sha256": "e0e4f99e46af3b2dd29c29d60643e958ee6ddb933fa15be91b683f9e81c70680"
+      "bytes": 13005,
+      "sha256": "1474dd613a9887a637a58a8363cea8bc04231eba6cc63c81713d2f521e80fa94"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/validation.js",
-      "bytes": 3377,
-      "sha256": "8a9af775a7decaf3cbbe6afe4708616fcecc8a28b26d55d0e8850714debd3c22"
+      "bytes": 3439,
+      "sha256": "f7c61aeb321ce62124a88bbe533326eb090842ea703351818e3927997828659a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/discussion/validation.js.map",
-      "bytes": 3788,
-      "sha256": "c3cdca5fdce11befda09d34fdbd09d44a74b2863a6d55ea384a5ad6bd7041929"
+      "bytes": 3865,
+      "sha256": "a4f0b6f6acc22d2955a776f56d47d05cb392739adb08513fd482d876280520d0"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/harness.d.ts",
@@ -897,53 +942,53 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.d.ts",
-      "bytes": 762,
-      "sha256": "802201be0da5747b6c2af7e767040c750ea1f371e5c3f631b0df6e7adb347980"
+      "bytes": 887,
+      "sha256": "71edbd2598c7b7dbd04a71148e78e4d16765f8819f1451946d6f2f4c7ecdb58a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.js",
-      "bytes": 631,
-      "sha256": "8dd8d6bcc6cce947eb37dcc442d17710e78fdf279d0fe5a803abe11e7da17db1"
+      "bytes": 756,
+      "sha256": "4cce25792e40b80ba0cc71e160aca01f6e4524d418bc4e656e3ce6648fc9a8a5"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.js.map",
-      "bytes": 534,
-      "sha256": "4c92efea3af58d701f614cc4f8e34425f288d8e991f3c9bfa63b38f62662e0c1"
+      "bytes": 603,
+      "sha256": "6883800dbe3e9abef20df19e52ea8159890d989900f52b335c61352854c5f221"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.d.ts",
-      "bytes": 2818,
-      "sha256": "fa309f4f02ad219ceffbd2f7534212edd060f8eb0ceeaa6ba3e499c9e5097a92"
+      "bytes": 3571,
+      "sha256": "d62f694eec4d13f31fd0f47320d9cbcb3f3d6e69b4d6a5171e41b8bebc16641a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js",
-      "bytes": 28555,
-      "sha256": "416e078da26483e0d8cbd32ec305b458d898d6ece0f581938ac74fce85047538"
+      "bytes": 37468,
+      "sha256": "f17d286e6f6fa529d854a2a43f2d5d0c816e1eb03774790928bc908317942109"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js.map",
-      "bytes": 28841,
-      "sha256": "697b1dfef3220af32b7895ff2ee4603abeebbaaed92e734004cf4c9ebcd5b205"
+      "bytes": 37289,
+      "sha256": "044c013ab6b920fc480932c438a2e9d4569941b1da9afa720eefdf344c87effa"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.d.ts",
-      "bytes": 1124,
-      "sha256": "dac6ee1dcc29a2f6dcee5c4fe7addac64b9826e43e4806355241c31413b7b977"
+      "bytes": 1315,
+      "sha256": "53aa2fad5e7b547c11e6eb28bbaba1ff7f5aaf66bddfcb3928314d59d72a3c33"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js",
-      "bytes": 6335,
-      "sha256": "fe9f4bc49797491696380ec70ccd093ad1565cbf6c93f1c9decd69ec543a0aeb"
+      "bytes": 16845,
+      "sha256": "cfaa6860052223a165cd8685e9a7e519f617fe57db75180f370a5d3b0a3f6651"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js.map",
-      "bytes": 6282,
-      "sha256": "a8fa53a6c755615b04200220a99a0048e860cba00896ce74378bed3269ccf7f5"
+      "bytes": 18063,
+      "sha256": "a5096131ce15c6228c5642e895a795c697791d4738337a89ef3ca1e1478e051a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/migrations/001_composition.sql",
-      "bytes": 2553,
-      "sha256": "e284a09013a9a57e3895253ca8408ba7c6cb01dd0bcc5e58a4e4ca606fc3a963"
+      "bytes": 3461,
+      "sha256": "ad75fc318812f1e8fbcf709e599588ed67f57619037a776ebb2a65f36d5f18b7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/migrations/002_profile.sql",
@@ -964,6 +1009,71 @@
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js.map",
       "bytes": 15678,
       "sha256": "d1b6c65000274ad056383bb35d50a04de7cd661358c83ec502d9d529642c4bc2"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/client.d.ts",
+      "bytes": 656,
+      "sha256": "3d5a2fa210b8162fe613d5332cad37b32bd020df14e881631d1308b886978f42"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/client.js",
+      "bytes": 4416,
+      "sha256": "af2436b7d860c964eb2d15bf15fdd621cc0cfef3a9f2d9a3b92d643748616e21"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/client.js.map",
+      "bytes": 4522,
+      "sha256": "94cdb8ea9a294ecc28ce7380e4b027a56d7c98f0e43649b6e66960da2543121e"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/migrations/001_links.sql",
+      "bytes": 1880,
+      "sha256": "b207fb14e9dc3a1cb7ba4bf05de34b56261aea0104556d691326605344d727fe"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/service.d.ts",
+      "bytes": 5986,
+      "sha256": "be12a8a300ac9a733882bb0e35a0053b56e0d68a2c4110bc70bd5cd4b234c3e3"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/service.js",
+      "bytes": 14744,
+      "sha256": "3c3c06be405d18798b33cd8c14ebc22fa6cb8e15ed34e95e3be38992ce6acae1"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/service.js.map",
+      "bytes": 12888,
+      "sha256": "708887f7268737e3e41839689b6db959eb51ba5a7612b3c9d8c0afcbace306e2"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/types.d.ts",
+      "bytes": 6587,
+      "sha256": "0e0c5f1886b63f1bd430c19abdfb4cf3ccf9ad8dad9d566bc92b96c1754bf500"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/types.js",
+      "bytes": 1549,
+      "sha256": "d95063efda4265752f4f9d867156a1d4bb7115a48bb0b23084bf62595bfe7c46"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/types.js.map",
+      "bytes": 2288,
+      "sha256": "2e5f55a9884d0800aea3beba558f03f9b3364e5c235f65fb70f614f4c4839d3e"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation.d.ts",
+      "bytes": 1130,
+      "sha256": "b7a3498eb0abc1075dfdf33b5bd0703dbcb1727c81607f9dbe5d002ff9fae3d8"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation.js",
+      "bytes": 5290,
+      "sha256": "31bb4ed9ebc4730dd47f091c86eaeec98382799e34d9094751a6cd013f42abfd"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation.js.map",
+      "bytes": 6345,
+      "sha256": "0c43d968a714f7d71e47853817b9115de75bda4a37b9cbc1a1cf0de0edef0e73"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/profile.d.ts",
@@ -1017,18 +1127,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/service.js",
-      "bytes": 23249,
-      "sha256": "2017ed3900ab0d5b5c3258c52d630e62e21cac39f3637db6e3fcdd0d0fade6f6"
+      "bytes": 23541,
+      "sha256": "91931b0be4dd0b18ab33de324de38c22a5ad90c3af97d20327deecb0dd532df6"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/service.js.map",
-      "bytes": 23124,
-      "sha256": "1be9902e18c7df8f00504683109d5b4dc77b92ee5aeb26d90513e57075fc60e7"
+      "bytes": 23411,
+      "sha256": "029401131ac312de493137b2adecd93d15933012963cb796a779206a6633cd78"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/types.d.ts",
-      "bytes": 5788,
-      "sha256": "b8ac4eb3385612750e3aa0e79fc60329844a7eeeda966ae1aa565152b06d7526"
+      "bytes": 5907,
+      "sha256": "d070e79773f26c73ce8f491e5278b09ade1ca9f580960555a556febb23f2fcb1"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/types.js",
@@ -1047,13 +1157,33 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/validation.js",
-      "bytes": 6924,
-      "sha256": "9836fe8388e00a9402590a24b9a7836df07f6911ddf979cd0e56a13f06fc4eea"
+      "bytes": 7093,
+      "sha256": "82dfedc430383cff2a87ce510eadddc4613f7c6a45a672abfb95048c0fc6c718"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/referral/validation.js.map",
-      "bytes": 8364,
-      "sha256": "46fd9fa7bfe8a148f568023ad4d8d02be9720268e08b195b643324821655e2aa"
+      "bytes": 8589,
+      "sha256": "47a9c78496e1da159fdfe9591bcca49945138a3179f1c2db6d1d443388446d1b"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/relationship-cli.mjs",
+      "bytes": 2914,
+      "sha256": "81193d1f2b29576e87ccdcadf0115ff6c6df49c69e06151ac1536a4c328bc1d7"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/relationship.d.ts",
+      "bytes": 1594,
+      "sha256": "1e901cdd92ae53da51b853e21d170728c5a0f2502d5decb1950182ebf18582bd"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/relationship.js",
+      "bytes": 6038,
+      "sha256": "4526e7e7aeb978e83b5b1fa4c3089a46ddf3b365619ca48d347ef9d68f053546"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/relationship.js.map",
+      "bytes": 5642,
+      "sha256": "1aab050045ec8a56ad219c2283aa9dd31927212b0b83e91970f49ccbd675f3d7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/review/adapters.d.ts",
@@ -1132,18 +1262,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.d.ts",
-      "bytes": 1252,
-      "sha256": "5190433f8238ffacb064196c73854852081c847061e2a75b7b14bd9defa42c58"
+      "bytes": 1428,
+      "sha256": "d2742b9a2edfabac181a14a307f0d595d0fde94507ea8908b68e81b450c3bb9e"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.js",
-      "bytes": 10825,
-      "sha256": "2dfc304f66927d96745b1118a0c8007d78c9b360a98240743ea8314085f965da"
+      "bytes": 10953,
+      "sha256": "729727004200cac4782ec06a3e061b38ce5adf417aa0e028e7c2c8a51f05416a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.js.map",
-      "bytes": 8931,
-      "sha256": "2c8a517ddb665b433fcf31069510a81570a3d4dfb9a83e5a76fd2b780facd375"
+      "bytes": 9047,
+      "sha256": "ba0a251350b3b293fd1643d393058a1ce0930c4128a003b304d0813e53cb4628"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/http.d.ts",
@@ -1162,8 +1292,8 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/migrations/001_showcase.sql",
-      "bytes": 971,
-      "sha256": "bc8f119222bec4b971b073405da0081a7286ac921b1a48ff115fd5ac52707623"
+      "bytes": 1225,
+      "sha256": "447e3bc4ea5cfa7c0523d9d8dd820fd02bcf7a09ea0d8167f1a89786e729aa07"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/postgres.d.ts",
@@ -1172,13 +1302,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/postgres.js",
-      "bytes": 5984,
-      "sha256": "87cef60f38bd34ea2aaba6c7d299a82ad96b376d9235656439da4a9273e9c762"
+      "bytes": 6014,
+      "sha256": "244357430a7d39a738bcd0913e218be5ea71e9d611c19da0c769cee374eb520f"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/postgres.js.map",
       "bytes": 5021,
-      "sha256": "c41f6bf21f6ba4313371e44d4d78cab3bb6c407bc2ed754e25eddd7bafa0172d"
+      "sha256": "bcdc07abb58ad8351de5ba79ce4abdb47add3a7c675843734ca3cde93501c7be"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/service.d.ts",
@@ -1187,18 +1317,33 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/service.js",
-      "bytes": 14829,
-      "sha256": "bca0aef9a56f9281247d31303031ca3bf56c448b7b5bcfdfddd634cfeee51190"
+      "bytes": 16335,
+      "sha256": "2babe5a030f31149a5121ddae37a7aaf306c5ced596bc52d3812e9d1d20ec1fc"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/service.js.map",
-      "bytes": 14017,
-      "sha256": "91bcc0c12e74daf63ab45722553069caeb6b78ea715ebf7bc78a0353441dd034"
+      "bytes": 15514,
+      "sha256": "5dbb02edb32f8281b2b11203d6b829ce8beca8b04d1bd974624a4ea96d2b7732"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/settlement.d.ts",
+      "bytes": 704,
+      "sha256": "a4c7bd294e9fc70acfe0d047e2e0c719817349dde19a7135f5a09585cd236b11"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/settlement.js",
+      "bytes": 6496,
+      "sha256": "b3716caf77787a0f47e1fd4952b2ef40eccc206a5205630f37d8205447444044"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/settlement.js.map",
+      "bytes": 5451,
+      "sha256": "d62b283c4317f9e97fe12b44e46e8ad46d9c9f881a0b3f30d995be0627162d60"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/types.d.ts",
-      "bytes": 6892,
-      "sha256": "3af42a86fbc011c0e2eb186126ceb06429e3ee8ba57589b15df26e052a0160b9"
+      "bytes": 7008,
+      "sha256": "1bc9bdbd3de6d6b7a839988f81e9e2b3f7b686747cbbf02dae2c37e89cab9335"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/types.js",
@@ -1212,18 +1357,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/validation.d.ts",
-      "bytes": 2129,
-      "sha256": "e0f3eaab1019c43069291bbd44ea250e322fe4a8bebd86ddcc58c08a713019c8"
+      "bytes": 2442,
+      "sha256": "8f1a1d8f13f2e1c5cdaff8b492958d301c685b71b597b77f4ee6ae627da36cf8"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/validation.js",
-      "bytes": 7778,
-      "sha256": "081da314d474bc74076b7760eba7cc3b6cced3c784b8ab42025f41679c27d493"
+      "bytes": 9121,
+      "sha256": "e7d733051962f7d16f800d17d692d4b5b4d238cd9a84fa993d1b794a1e8d731d"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/validation.js.map",
-      "bytes": 7421,
-      "sha256": "01f1726eaf411b96409f417810a96be6c648b08adf4638e3c54e6977706a36de"
+      "bytes": 8573,
+      "sha256": "04346be6f18d40f02a9ee80c820bb2d2d986dce56ff90416de83a7e402940bdc"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/work-source.d.ts",
@@ -1352,8 +1497,8 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/types.d.ts",
-      "bytes": 5863,
-      "sha256": "13fb0694f59975f118bfdd3b4c3a862a20e0274d0da05a0a8877150d9f6cacde"
+      "bytes": 6010,
+      "sha256": "727e0f6a2f20ed9536562be31c0f00ffcce4724b824a7789fbade408bff655e7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/types.js",
@@ -1726,6 +1871,21 @@
       "sha256": "539337d47a619a2c52b97324fa9e89a2b22b44a9d0f8d221da0dff7dfb1fc578"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/continuation.d.ts",
+      "bytes": 2036,
+      "sha256": "5f5e40d43b6666fa07c3c94c65fda34592bfe440713a9900727182e2fdbc9c9c"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/continuation.js",
+      "bytes": 8466,
+      "sha256": "76570bacc93ebf892f218b8675f00050831d49df06f72b809c38e6c85c7e11eb"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/continuation.js.map",
+      "bytes": 7992,
+      "sha256": "3c658b7929914d41579439a1d8bbf760f9db3cfbb20dc62c420cf57ce7a77b3f"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/hosted.d.ts",
       "bytes": 1495,
       "sha256": "818948a229c0bde8e340675a7f8198d157ff2fc97f42458b7462a6ce1ffe35ba"
@@ -1762,28 +1922,28 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/routes.js",
-      "bytes": 10694,
-      "sha256": "f8c371594cfc901fdb31c2f93e5b0e8324792a7502cc44b11df77b554d0fa17c"
+      "bytes": 10825,
+      "sha256": "34cd4fecad96ca2ad26a371e885d4c488eb9112522475d0ae0bd91fab5f89cd7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/routes.js.map",
-      "bytes": 12055,
-      "sha256": "bca7392a7c1c6d1c90b94e35eaef65c367b5c2d235a30d5fea64c37c35653584"
+      "bytes": 12153,
+      "sha256": "0871d19641462fa4ae00fdf75a8cb9aa9c6ff63d9fb3c8de0ebda27475d253c3"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.d.ts",
-      "bytes": 18913,
-      "sha256": "80a581776ecdd31b2fc88340910f73b48c81056b2750a2d88e31ca19d3948bd4"
+      "bytes": 18975,
+      "sha256": "96996c08f0e6d6cab6d7e0a2c32925e8e6b452cd8ceb75720b66c85a29539890"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js",
-      "bytes": 92691,
-      "sha256": "a9bd16809ac981541299fee15c5998135d1f1852d41c9be29a62e7389c594e44"
+      "bytes": 92953,
+      "sha256": "929c200e9c2d329e529bab888b5baec2331cee1b108c96b645415e7003b9de5f"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js.map",
-      "bytes": 74721,
-      "sha256": "e9950607cbf7b68fe16a80922752583fcb2e3b43f7205b01eb3e5595bc90b551"
+      "bytes": 74949,
+      "sha256": "c645df32929dc015a2792deb84d8f141b327c710447ee509c749d8b0813dce49"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.d.ts",
@@ -1968,7 +2128,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "b110c0d791aafaf8983e10334df68572cefdd60c46d0b933b698a67998448385"
+      "sha256": "0e8aff6918be471c32b7e3684f741285463ce3c3f10d142d264d58e62dc2a1be"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",
@@ -1996,9 +2156,19 @@
       "sha256": "de1ab5f49492809222c836c256af93a507f74b0500a9f30e3f65668f1aafa559"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/src/lib/reward-receiving/evidence.d.mts",
+      "bytes": 1874,
+      "sha256": "43f0156e074b48c16c25b3368cba835cd8b1031ac2ca004ffeac0ac1854ae398"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/src/lib/reward-receiving/evidence.mjs",
       "bytes": 1892,
       "sha256": "33ade7fe2a767ba0f48f318fd5e853e34b0de97b45777db609c9729306d4c0b7"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/src/lib/reward-receiving/evidence.mjs.map",
+      "bytes": 1613,
+      "sha256": "539dc214dcfe5a0469f5d5ffe01e4eeef3a223e22aeba649e5404aa4d64ababb"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/reward-receiving/examples/public-reader-conformance.json",

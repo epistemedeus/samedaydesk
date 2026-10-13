@@ -131,8 +131,8 @@ export async function createJourneyRuntime(options = {}) {
     try {
         const { services, pool, lockPool, close } = resources;
         if (config.installed) {
-            const installed = await createInstalledComposition({ config, services, pool: pool, lockPool: lockPool });
-            return { app: createJourneyApp({ config, services, ports: installed.ports, modules: installed.modules, middleware: installed.middleware, extra: installed.extra }),
+            const installed = await createInstalledComposition({ config, services, pool: pool, lockPool: lockPool, canonicalReceiving: options.canonicalReceiving });
+            return { app: createJourneyApp({ config, services, ports: installed.ports, modules: installed.modules, middleware: installed.middleware, extra: installed.extra, settlement: installed.canonical.configured ? 'canonical_read_only' : undefined }),
                 installed, services, config, close };
         }
         return { app: createJourneyApp({ config, services, ports: options.ports, modules: options.modules }), services, config, close };

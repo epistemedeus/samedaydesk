@@ -145,14 +145,17 @@ export declare const profileSchema: z.ZodObject<{
     profileId: z.ZodString;
     displayName: z.ZodString;
     visibilityConsentVersion: z.ZodString;
+    sourceBinding: z.ZodOptional<z.ZodString>;
 }, "strict", z.ZodTypeAny, {
     displayName: string;
     profileId: string;
     visibilityConsentVersion: string;
+    sourceBinding?: string | undefined;
 }, {
     displayName: string;
     profileId: string;
     visibilityConsentVersion: string;
+    sourceBinding?: string | undefined;
 }>;
 export declare const entrySchema: z.ZodObject<{
     schema: z.ZodLiteral<"contributor-discussion-v1">;
@@ -300,14 +303,17 @@ export declare const entrySchema: z.ZodObject<{
         profileId: z.ZodString;
         displayName: z.ZodString;
         visibilityConsentVersion: z.ZodString;
+        sourceBinding: z.ZodOptional<z.ZodString>;
     }, "strict", z.ZodTypeAny, {
         displayName: string;
         profileId: string;
         visibilityConsentVersion: string;
+        sourceBinding?: string | undefined;
     }, {
         displayName: string;
         profileId: string;
         visibilityConsentVersion: string;
+        sourceBinding?: string | undefined;
     }>>;
 }, "strict", z.ZodTypeAny, {
     taskId: string;
@@ -361,6 +367,7 @@ export declare const entrySchema: z.ZodObject<{
         displayName: string;
         profileId: string;
         visibilityConsentVersion: string;
+        sourceBinding?: string | undefined;
     } | null;
 }, {
     taskId: string;
@@ -414,6 +421,7 @@ export declare const entrySchema: z.ZodObject<{
         displayName: string;
         profileId: string;
         visibilityConsentVersion: string;
+        sourceBinding?: string | undefined;
     } | null;
 }>;
 export declare function parseCommand(input: unknown): Command;

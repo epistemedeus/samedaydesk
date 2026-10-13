@@ -9,3 +9,5 @@ export type * from "./types.js";
 export { createInstalledComposition, RECEIVED_MODULE_COMMITS } from './installed.js';
 export { readInstalledMeasurement } from './measurement.js';
 export * from './original-continuation.js';
+export * from './canonical-qualification.js';
+export * from './relationship.js';

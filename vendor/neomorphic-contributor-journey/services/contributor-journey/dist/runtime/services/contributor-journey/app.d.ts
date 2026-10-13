@@ -1,5 +1,5 @@
 import express, { type Request } from "express";
-import type { AuthenticatedAccount, ExistingServices, JourneyConfig, JourneyModule, JourneyPorts, PortResult } from "./types.js";
+import type { AuthenticatedAccount, ExistingServices, JourneyConfig, JourneyModule, JourneyPorts, JourneyStatus, PortResult } from "./types.js";
 export declare class JourneyBoundaryError extends Error {
     readonly status: number;
     readonly code: string;
@@ -16,4 +16,5 @@ export declare function createJourneyApp(options: {
     clock?: () => number;
     middleware?: express.RequestHandler;
     extra?: express.RequestHandler;
+    settlement?: JourneyStatus['settlement'];
 }): import("express-serve-static-core").Express;

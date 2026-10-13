@@ -8,12 +8,15 @@ import { ReviewService } from './review/service.js';
 import { createDiscussionService } from './discussion/service.js';
 import { createShowcaseService } from './showcase/service.js';
 import { createPostgresConsentedSummaryStore } from './showcase/postgres.js';
-import type { WorkEvidence } from './showcase/types.js';
+import type { WorkEvidence, ApprovedSummary } from './showcase/types.js';
 import { createReferralService } from './referral/service.js';
 import { createPostgresReferralPorts } from './referral/postgres.js';
+import type { PublishedSource } from './referral/types.js';
 import type { CompositionStore } from './composition-store.js';
 import { createOpportunityJourneyAdapters } from './opportunity-adapters.js';
 import type { ExistingServices, JourneyConfig, JourneyModule, JourneyPorts } from './types.js';
+import { createInstalledCanonicalQualification, type CanonicalReceiving } from './canonical-qualification.js';
+import { createRelationshipService } from './relationship.js';
 export declare const RECEIVED_MODULE_COMMITS: {
     readonly account: "d341c93357596513b54a6952610b7550830353b4";
     readonly claims: "9294ac84595a546e93233b188b9afd79c38b6dc6";
@@ -29,8 +32,23 @@ export declare function createInstalledComposition(options: {
     services: ExistingServices;
     pool: pg.Pool;
     lockPool: pg.Pool;
+    canonicalReceiving?: CanonicalReceiving;
 }): Promise<InstalledComposition>;
 export type InstalledComposition = {
+    canonical: ReturnType<typeof createInstalledCanonicalQualification>;
+    relationships: ReturnType<typeof createRelationshipService>;
+    summaries: {
+        read(id: string): Promise<ApprovedSummary | null>;
+    };
+    publishedSource: (source: {
+        kind: 'showcase' | 'discussion';
+        id: string;
+    }) => Promise<{
+        state: 'published';
+        source: PublishedSource;
+    } | {
+        state: 'withdrawn' | 'unavailable';
+    }>;
     profile: 'live' | 'staging';
     admission: import('./profile.js').JourneyAdmission;
     modules: JourneyModule[];

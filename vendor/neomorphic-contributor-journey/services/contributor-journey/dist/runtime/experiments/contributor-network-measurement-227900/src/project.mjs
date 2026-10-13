@@ -6,10 +6,10 @@ const SUCCESS = {
   review: ["accepted_useful", "accepted_unknown"], qualified_fulfillment: ["qualified"],
   consented_publication: ["published"], referral: ["shared"], repeat_useful_work: ["useful"], customer_revenue: ["recognized"],
 };
-const PREVIOUS = { claim: "signup", submission: "claim", review: "submission", qualified_fulfillment: "review", consented_publication: "qualified_fulfillment", referral: "consented_publication" };
+const PREVIOUS = { claim: "signup", submission: "claim", review: "submission", qualified_fulfillment: "review", consented_publication: "review", referral: "consented_publication" };
 const TRANSITIONS = [
   ["discovery", "signup"], ["signup", "claim"], ["claim", "submission"], ["submission", "review"],
-  ["review", "qualified_fulfillment"], ["qualified_fulfillment", "consented_publication"], ["consented_publication", "referral"],
+  ["review", "qualified_fulfillment"], ["qualified_fulfillment", "consented_publication"], ["review", "consented_publication"], ["consented_publication", "referral"],
 ];
 function sameActor(a, b) {
   return actorKey(a) === actorKey(b) && a.populationId === b.populationId && a.provenance === b.provenance && a.actorRelation === b.actorRelation;
@@ -62,7 +62,7 @@ function evaluator(heads) {
     } else {
       const previous = PREVIOUS[event.stage];
       const optionalDiscovery = event.stage === "signup";
-      if (previous && (parents.length !== 1 || parents[0].stage !== previous) ||
+      if (previous && (parents.length !== 1 || parents[0].stage !== previous && !(event.stage === "consented_publication" && parents[0].stage === "qualified_fulfillment")) ||
           optionalDiscovery && (parents.length > 1 || parents.length === 1 && parents[0].stage !== "discovery") ||
           !previous && !optionalDiscovery && parents.length) answer = result("parent_stage_mismatch");
       else if (parents.some((parent) => !sameActor(event, parent) || !sameWork(event, parent))) answer = result("parent_scope_mismatch");

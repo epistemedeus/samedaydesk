@@ -128,6 +128,8 @@ export type JourneyConfig = {
         storeId?: string;
         /** Separately authorized public derivative reads. Live backend enrollment is not publication. */
         publicReads?: boolean;
+        /** Reference supplied by the review owner; syntax alone is never acceptance. */
+        publicReviewRef?: string;
     };
     mode: "disabled" | "staging" | "live";
     port: number;
@@ -154,7 +156,7 @@ export type JourneyStatus = {
     wholeJourney: "integration_pending";
     releaseAccepted: false;
     publicEnabled: boolean;
-    settlement: "synthetic_only" | "not_configured";
+    settlement: "synthetic_only" | "not_configured" | "canonical_read_only";
     storageProfile: "not_configured" | "synthetic_staging" | "durable_enrolled";
     modules: Array<{
         id: ModuleId;

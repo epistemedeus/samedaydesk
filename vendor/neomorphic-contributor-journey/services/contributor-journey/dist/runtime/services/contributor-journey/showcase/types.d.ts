@@ -38,6 +38,8 @@ export interface ClaimPrincipalPort {
 }
 export type WorkEvidence = {
     authorityFamily?: 'kernel' | 'opportunity';
+    /** Private current canonical receiving revision; never serialized publicly. */
+    canonicalRevision?: string;
     binding: WorkBinding;
     aggregate: TaskAggregate;
     claimPrincipal: ClaimPrincipal;

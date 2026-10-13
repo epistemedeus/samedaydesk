@@ -123,7 +123,7 @@ export function createJourneyApp(options) {
         return {
             schema: "neomorphic.contributor-journey.status.v1", mode: config.mode, ready,
             wholeJourney: "integration_pending", releaseAccepted: false, publicEnabled: config.mode === 'live' && config.installed?.publicReads === true,
-            settlement: config.mode === 'live' ? 'not_configured' : "synthetic_only",
+            settlement: options.settlement ?? (config.mode === 'live' ? 'not_configured' : 'synthetic_only'),
             storageProfile: config.mode === 'disabled' ? 'not_configured' : config.mode === 'live' ? (ready ? 'durable_enrolled' : 'not_configured') : 'synthetic_staging',
             modules: MODULE_IDS.map(moduleId => {
                 const installed = modules.find(module => module.id === moduleId);
