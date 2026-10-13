@@ -41,6 +41,10 @@ export function publicationText(value, max, forbidden = []) {
     if (typeof value !== "string" || value.trim() !== value || value.length < 1 || Buffer.byteLength(value) > max)
         return false;
     const normalized = value.normalize("NFKC");
+    // Existing original-holder credentials and private continuation/canonical references
+    // never become public prose, including discussion excerpts and referral summaries.
+    if (/\b(?:ew_ctr|ocl|oclm|osub|oobl)_[A-Za-z0-9_-]{8,}/i.test(normalized))
+        return false;
     // Public projections carry plain text, never an alternate encoded representation.
     // Reject rather than silently decode and change the exact consented bytes.
     if (/%[0-9a-f]{2}|&#(?:x[0-9a-f]+|\d+);?|&[a-z][a-z0-9]{1,31};|\\(?:u(?:[0-9a-f]{4}|\{[0-9a-f]{1,6}\})|x[0-9a-f]{2}|[0-7]{1,3})/i.test(normalized))

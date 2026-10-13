@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { assertContinuationHolder } from "./continuation.js";
 import { hashRequest, newId } from "../crypto.js";
 import { ApiError } from "../errors.js";
 import { atomicToDecimal } from "./atomic.js";
@@ -397,13 +398,15 @@ export class OpportunityService {
             return { replayed: false, statusCode: 201, body: response };
         }, "idempotent");
     }
-    async submit(roundKey, claimId, body, contributor, idempotencyKey) {
+    async submit(roundKey, claimId, body, contributor, idempotencyKey, options) {
         assertNoPrivate(body, "submission");
         const evidenceJson = JSON.stringify(body.evidence);
         const evidenceBytes = Buffer.byteLength(evidenceJson, "utf8");
         const requestHash = hashRequest({ claimId, ...body });
         return this.kernel.withOpportunityClient(async (client) => {
             const round = await this.lockRound(client, roundKey, body.provenance);
+            if (options?.requireContinuationScope)
+                await assertContinuationHolder(client, { roundKey, claimId, provenance: body.provenance }, contributor, this.kernel.now());
             const replay = await loadIdempotency(client, "opportunity_submit", round.id, idempotencyKey, requestHash, contributor.id);
             if (replay.hit)
                 return { replayed: true, statusCode: replay.statusCode, body: replay.body };

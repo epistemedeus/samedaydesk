@@ -8,3 +8,4 @@ export type { JourneyStage, StageReplay, HarnessReceipt } from "./harness.js";
 export type * from "./types.js";
 export { createInstalledComposition, RECEIVED_MODULE_COMMITS } from './installed.js';
 export { readInstalledMeasurement } from './measurement.js';
+export * from './original-continuation.js';

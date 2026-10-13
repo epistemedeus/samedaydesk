@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-desk.assets.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "8823ae589bd7804950c53a9fb8252ec09a572d22",
+  "sourceCommit": "cff42f6eca009e29e9170f269115b20f7fad699c",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
   "apiPath": "/api/neomorphic-contributor-journey",
   "buildCommand": "node services/contributor-journey/export-desk-assets.mjs /absolute/isolated/samedaydesk",

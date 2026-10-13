@@ -59,7 +59,9 @@ export declare class OpportunityService {
         evidence: Record<string, unknown>;
         modelUsage?: string | null;
         contributorActiveMinutes?: number | null;
-    }, contributor: ContributorPrincipal, idempotencyKey: string): Promise<{
+    }, contributor: ContributorPrincipal, idempotencyKey: string, options?: {
+        requireContinuationScope: boolean;
+    }): Promise<{
         replayed: boolean;
         statusCode: number;
         body: unknown;

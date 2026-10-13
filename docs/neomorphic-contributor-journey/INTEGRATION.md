@@ -4,12 +4,15 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`8823ae589bd7804950c53a9fb8252ec09a572d22`, built from the committed source
+`cff42f6eca009e29e9170f269115b20f7fad699c`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
-f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
+f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates419 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
-The manifest itself is committed separately. No existing opportunity/correspondence
-vendor, homepage, package dependency or production configuration was changed.
+The manifest itself is committed separately. The original opportunity service keeps
+its original producer plus the explicitly pinned additive continuation overlay in
+CONTINUATION-SOURCE.json. Correspondence, homepages, dependencies and production
+configuration are unchanged. All45 compiled desk members were rebuilt from this
+source and are byte-identical to the supplied input; only their source manifest changed.
 
 Use existing SDS npm ci. Required host versions are express5.2.1, pg8.23.0 and
 zod3.25.76, already present in its lock. Internal F01 and funded-terms runtime
@@ -100,3 +103,43 @@ direct TLS remain separate contracts. MANAGED-INSTALL.md owns the disabled finit
 private runtime-log probe. VM native-hook replay simulates the provider core and
 does not accept actual Hostinger transport. Preserve `build:managed-foundry` and
 already enrolled credentials/schemas/origin during controller installation.
+
+## Optional original-holder continuation API
+
+The separate integration helper is
+`server/lib/neomorphic-original-continuation-mount.js`. It mounts
+`/api/neomorphic-original-continuation` only when a caller explicitly supplies
+`enabled:true`, the existing ready journey mount, and exact canonical HTTPS
+origin/round/provenance. It has no environment discovery, enrollment or account
+creation. It is not added to server/app.js or any managed hosting control. Root
+can mount it before the general parser/catchall when independently receiving the
+actual original route. Missing account authority stays unavailable; no fallback
+store or future-round adoption is used.
+
+Read the exact producer's services/contributor-journey/ORIGINAL-CONTINUATION.md
+for consent, dual authority, reference-only persistence, current session/holder
+checks, canonical delivery and unknown-operation reconciliation. The original
+service's added holder-only read/submit paths share its unchanged canonical
+ledger and idempotency authority. Existing email/bearer delivery remains valid
+without signup. Revoking the account link cannot revoke a claim or erase earned
+obligations. No public work link, amount, private evidence, credential or paid
+badge is projected by this adapter.
+
+The original vendor is a mixed-source artifact: its retained producer
+7d97fed8f7009b61e7b7d9ebd99f78782c554a2b plus two narrow patches and the exact
+canonical helper from cff42f6eca009e29e9170f269115b20f7fad699c. Its manifest
+reports the three explicit source differences rather than mislabelling that
+closure as an entirely new producer. The new source and compiled files are
+manifest-verified. No original migration, schema selection, claim terms, import,
+acceptance or money authority changed.
+
+```sh
+node --test --test-concurrency=1 \
+  server/scripts/test-neomorphic-contributor-journey-artifact.mjs \
+  server/scripts/test-neomorphic-original-continuation-artifact.mjs
+```
+
+Root's remaining work is independent exact-source synthetic receiving, concrete
+trusted HTTPS/Host/original-route receiving, and the separately reviewed optional
+human preview. The compiled UI stays unchanged. This topic branch supplies no
+release acceptance, deployment, recipient enrollment, invitation or payout.
