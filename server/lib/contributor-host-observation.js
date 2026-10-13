@@ -4,6 +4,7 @@ import {createRequire} from 'node:module';
 import {openSync,fstatSync,readSync,closeSync,constants} from 'node:fs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
+import {EventEmitter} from 'node:events';
 
 const require=createRequire(import.meta.url),MAX_BYTES=64*1024;
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -81,7 +82,8 @@ export function observeContributorHost({listener,req,headerValues,origin}){
     loader:{mainPresent:!!main,mainLoaded:main?.loaded===true,applicationLoaderMarker:main?.isApplicationLoader===true,
       mainKind:kind(main?.filename),mainContent:fingerprint(main?.filename),
       helpers:helpers.map(module=>({kind:kind(module.filename),loaded:module.loaded===true,content:fingerprint(module.filename)})),
-      passengerGlobalPresent:globalThis.PhusionPassenger!==undefined,litespeedGlobalPresent:globalThis.LsNode!==undefined},
+      passengerGlobalPresent:globalThis.PhusionPassenger!==undefined,litespeedGlobalPresent:globalThis.LsNode!==undefined,
+      litespeedGlobalIsEventEmitter:globalThis.LsNode instanceof EventEmitter},
     hooks:{listenIsNative:listener?.listen===NetServer.prototype.listen,addressIsNative:listener?.address===NetServer.prototype.address,
       originalListenIsNative:listener?.originalListen===NetServer.prototype.listen,realListenIsNative:listener?.realListen===NetServer.prototype.listen,
       listenFunctionSha256:functionFingerprint(listener?.listen),addressFunctionSha256:functionFingerprint(listener?.address)},

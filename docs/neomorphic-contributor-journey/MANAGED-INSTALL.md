@@ -43,7 +43,7 @@ port. Its [secure-header contract](https://www.phusionpassenger.com/docs/advance
 rejects external `!~` headers; `!~Passenger-Proto` supplies HTTPS authority.
 Ordinary XFP can contain client claims and is unsuitable for this native path.
 
-Two explicit managed modes are supported:
+Three explicit managed modes are supported:
 
 - `CONTRIBUTOR_DESK_INGRESS_MODE=trusted-tcp` retains the accepted TCP contract
   (also the compatibility default). `CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS` is a
@@ -58,6 +58,12 @@ Two explicit managed modes are supported:
   raw `!~Passenger-Proto` must equal `https`. Flags, fabricated globals/loaders,
   TCP requests and missing/duplicate/wrong markers grant no authority. No XFP
   fallback exists. Ordinary forwarding claims are ignored and discarded.
+- `CONTRIBUTOR_DESK_INGRESS_MODE=litespeed-https-only` requires empty TCP peers,
+  the controller's signed/current qualification of the exact deployment's
+  HTTPS-only policy and backend isolation, and its real selected Unix pipe and
+  qualified loader identity. No forwarded claim supplies TLS authority. See
+  [LITESPEED-HTTPS-ONLY.md](LITESPEED-HTTPS-ONLY.md) for received actual facts,
+  remaining plaintext/bypass checks and exact installation/expiry/rollback.
 
 The audited [upstream Node loader](https://github.com/phusion/passenger/blob/c2fde75b26ced690978167e882d3da440188591f/src/helper-scripts/node-loader.js)
 is SHA256 `8fa9ce29cc2b098d03d16027d8f923f10e1d78c26727b5b248138d093acb02d8`.
@@ -71,8 +77,10 @@ cookies and CSRF, not a particular Passenger helper/header. A different supporte
 edge can meet it through authenticated per-request TLS evidence or independently
 received TLS-only enforcement before the application and isolated backend access.
 Neither Unix locality, helper fingerprints, environmental assertions nor ordinary
-forwarding values establish that policy. The source currently implements the two
-contracts above plus direct TLS; it does not invent a third provider mode.
+forwarding values establish that policy. The source implements the three
+contracts above plus direct TLS. The LiteSpeed mode stays unavailable until the
+controller receives and signs that external deployment contract; source fixtures
+and the existing GET redirects cannot do so.
 
 Root's exact [current receiving](https://github.com/epistemedeus/pilot/blob/47be8f5856a0a783ef11d23d2f4fba98cc68ee47/overview/research/phase-20261013/contributor-live-profile-229500/ROOT-NATIVE-RECEIVING-230010.md)
 records a completed e25b1ed4 build and one real disabled probe: `node`,
@@ -80,20 +88,15 @@ records a completed e25b1ed4 build and one real disabled probe: `node`,
 It neither identifies the actual helper nor establishes a supported HTTPS-only
 edge; the existing native guard correctly refuses. Root removed all probe settings.
 
-**Next actual-host input:** the v2 disabled observation below identifies the
-selected loader/helper fingerprints, real listener/request facts and bounded
-protocol indicators. Audit the observed helper against its actual owning source;
-do not assume the [published LiteSpeed helper](https://github.com/litespeedtech/openlitespeed/blob/master/dist/fcgi-bin/lsnode.js)
-is the deployed source or copy its code into an admission adapter. Hostinger's
-domain documentation establishes SSL availability, not Node-hop provenance or
-TLS-only enforcement. Once these facts are received, choose one bounded follow-on:
-verify a provider-authenticated TLS indicator and its exclusion of client claims,
-or receive a supported HTTPS-only edge policy with plaintext GET/mutation rejection
-or redirection **before Node**, alias/bypass exclusion and protected backend access.
-A health200 or a source fingerprint is insufficient for either. Preserve exact
-origin/cookies/CSRF/account isolation in that next adaptation. Prefer this existing
-app; do not guess IPs, add an HTTPS-only trust flag, change origin/DNS or deploy an
-alternate service. Candidate path remains `https://samedaydesk.com/contribute/`.
+Root's subsequent16:19:26.546UTC v2 receipt identifies the actual LiteSpeed
+helper/native pipe and absent native marker; provider SSL/forced HTTPS and plain
+GET redirects are received. [LITESPEED-HTTPS-ONLY.md](LITESPEED-HTTPS-ONLY.md)
+owns the precise remaining plaintext mutation/bypass receiving and qualification
+packet. The upstream helper differs from the deployed bytes and is not copied
+or called an audited live source. The v2 observation now includes one additional
+non-secret boolean, `litespeedGlobalIsEventEmitter`, for the runtime identity check
+on the exact candidate. It still grants no authority. Candidate path remains
+`https://samedaydesk.com/contribute/` with exact origin/cookies/CSRF and no new host.
 
 Malformed Host/origin is refused. Account limits use the socket's conservative
 shared-edge identity, never secure or ordinary forwarded client addresses. Keep

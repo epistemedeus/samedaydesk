@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`53baf17023fcece662f86791ce96b994221ec0a9`, built from the committed source
+`5c35cc4b6405f390736e8b5de27f26d202f8cfd3`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -101,10 +101,13 @@ private runtime-log probe. VM native-hook replay simulates the provider core and
 does not accept actual Hostinger transport. Preserve `build:managed-foundry` and
 already enrolled credentials/schemas/origin during controller installation.
 
-Root's current immutable receiving47be8f58 establishes actual Unix/node transport
-without the Passenger marker, so serving remains unqualified. The v2 disabled
-diagnostic adds bounded loader/helper/listener/protocol observations for a received
-compatible edge decision; they never create authority. HTTPS-only ingress can meet
-the same guarantees without Passenger-specific headers when its actual supported
-enforcement is independently received. Keep the composed Foundry/contributor build
-and complete settings/environment/linkage, with no ledger or public UI changes.
+Root's subsequent actual receiving identifies LiteSpeed's helper and inherited
+Unix pipe, without the Passenger marker. Provider SSL/GET redirect facts remain
+partial. [LITESPEED-HTTPS-ONLY.md](LITESPEED-HTTPS-ONLY.md) owns the named mode's
+fresh signed deployment qualification, exact source/store/origin binding and
+remaining actual plaintext mutation/backend isolation/hosted journey receiving.
+The finite v2 diagnostic's added EventEmitter boolean supplies only the narrow
+runtime identity fact; all its observations remain non-authoritative. Neither
+fixtures, globals, Unix locality nor forwarding grant a provider pass. Keep the
+composed Foundry/contributor build and complete settings/environment/linkage,
+with existing enrollment/keys, no ledger changes and serving/public reads off.
