@@ -107,6 +107,9 @@ export type ClaimsOptions<Context> = {
     resolveAccount: AuthenticatedAccountResolver<Context>;
     resolvePrincipal: PrivatePrincipalResolver;
     opportunity: OpportunityClaimsPort;
+    /** Installed live owner revalidates canonical source pins and durable enrollment. */
+    checkAdmission?: () => Promise<void>;
+    taskIds?: readonly string[];
     now?: () => Date;
 };
 export type ClaimInput = {

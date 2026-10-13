@@ -74,7 +74,7 @@ export function createJourneyApp(options) {
     const ports = options.ports ?? {};
     const clock = options.clock ?? Date.now;
     const modules = options.modules ?? [];
-    if (config.mode === "staging" && (!services || !config.storage || services.earnedWork.store.kind !== "postgres" ||
+    if (config.mode !== "disabled" && (!services || !config.storage || services.earnedWork.store.kind !== "postgres" ||
         services.correspondence.store.kind !== "postgres" || services.earnedWork.config.pgSchema !== config.storage.earnedWorkSchema ||
         services.correspondence.config.pgSchema !== config.storage.correspondenceSchema))
         throw new Error("real isolated postgres services are required for staging");
@@ -112,7 +112,7 @@ export function createJourneyApp(options) {
     });
     const requireAccount = (req) => resolveAuthenticatedAccount(req, ports, clock());
     const status = async () => {
-        let ready = config.mode === "staging" && services != null;
+        let ready = config.mode !== "disabled" && services != null;
         if (ready) {
             const checks = await Promise.allSettled([
                 services.earnedWork.store.checkReady(), services.correspondence.store.checkReady(),
@@ -122,7 +122,9 @@ export function createJourneyApp(options) {
         }
         return {
             schema: "neomorphic.contributor-journey.status.v1", mode: config.mode, ready,
-            wholeJourney: "integration_pending", releaseAccepted: false, publicEnabled: false, settlement: "synthetic_only",
+            wholeJourney: "integration_pending", releaseAccepted: false, publicEnabled: config.mode === 'live' && config.installed?.publicReads === true,
+            settlement: config.mode === 'live' ? 'not_configured' : "synthetic_only",
+            storageProfile: config.mode === 'disabled' ? 'not_configured' : config.mode === 'live' ? (ready ? 'durable_enrolled' : 'not_configured') : 'synthetic_staging',
             modules: MODULE_IDS.map(moduleId => {
                 const installed = modules.find(module => module.id === moduleId);
                 return { id: moduleId, state: installed?.evidence ?? "integration_pending", sourceCommit: installed?.sourceCommit ?? null };
@@ -132,7 +134,7 @@ export function createJourneyApp(options) {
     app.get("/healthz", async (_req, res) => {
         try {
             const value = await status();
-            res.status(config.mode === "staging" && !value.ready ? 503 : 200).json(value);
+            res.status(config.mode !== "disabled" && !value.ready ? 503 : 200).json(value);
         }
         catch {
             res.status(503).json({ ready: false, publicEnabled: false, error: { code: "unavailable" } });
@@ -145,7 +147,7 @@ export function createJourneyApp(options) {
         next(error);
     } });
     app.use((_req, _res, next) => {
-        if (config.mode !== "staging")
+        if (config.mode === "disabled")
             next(new JourneyBoundaryError(503, "disabled"));
         else
             next();
@@ -316,10 +318,13 @@ export function createJourneyApp(options) {
             }
         });
     }
-    app.use("/v1/core", core);
+    // The foundation's fixture-supplied ports are not live authority. Installed
+    // opportunity adapters exclusively own live tasks, identities and original IOUs.
+    if (config.mode === 'staging')
+        app.use("/v1/core", core);
     for (const moduleId of MODULE_IDS) {
         const module = modules.find(value => value.id === moduleId);
-        if (module && config.mode === "staging")
+        if (module && config.mode !== "disabled")
             app.use(`/v1/${moduleId}`, module.createRouter({ services: services, requireAccount }));
         else
             app.use(`/v1/${moduleId}`, (_req, _res, next) => next(new JourneyBoundaryError(503, "integration_pending")));

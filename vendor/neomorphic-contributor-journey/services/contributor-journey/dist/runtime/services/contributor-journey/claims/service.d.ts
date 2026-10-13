@@ -19,6 +19,7 @@ export declare class ContributorClaimsService<Context> {
     readOperation(context: Context, input: unknown): Promise<Result<OperationReadback>>;
     private account;
     private config;
+    private admitTask;
     private termsId;
     private operationKey;
     private principal;

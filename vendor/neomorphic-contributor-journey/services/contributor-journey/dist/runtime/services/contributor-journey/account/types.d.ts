@@ -59,4 +59,6 @@ export type AccountServiceOptions = {
     sessionTtlSeconds?: number;
     freshAuthSeconds?: number;
     allowedKernelProvenance?: ReadonlyArray<Provenance>;
+    /** Installed owner must admit this exact existing scope before creating/adopting a binding. */
+    allowKernelScope?: (scope: string) => Promise<boolean>;
 };

@@ -10,10 +10,12 @@ export class CompositionStore {
     kernel;
     correspondence;
     integrityKey;
-    constructor(kernel, correspondence, integrityKey) {
+    admission;
+    constructor(kernel, correspondence, integrityKey, admission) {
         this.kernel = kernel;
         this.correspondence = correspondence;
         this.integrityKey = integrityKey;
+        this.admission = admission;
     }
     async migrate() {
         const sql = await readFile(new URL('./migrations/001_composition.sql', import.meta.url), 'utf8');
@@ -23,27 +25,53 @@ export class CompositionStore {
         return this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT account_id FROM journey_account_kernel_bindings WHERE principal_id=$1', [principalId])).rows[0]?.account_id ?? null, 'read');
     }
     async round(roundKey) {
+        if (this.admission?.config.mode === 'live')
+            return this.admission.round(roundKey);
         return this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT id, provenance FROM opportunity_rounds WHERE round_key=$1', [roundKey])).rows[0] ?? null, 'read');
     }
     async task(taskId) {
+        if (this.admission?.config.mode === 'live') {
+            try {
+                return await this.admission.task(taskId);
+            }
+            catch {
+                return null;
+            }
+        }
         return this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT * FROM journey_task_links WHERE task_id=$1', [taskId])).rows[0] ?? null, 'read');
     }
-    /** Controller-only enrollment after a synthetic round is created. No HTTP inventory route. */
+    /** Controller-only references to an existing round, offer and requester. Creates no inventory or account. */
     async enrollTask(taskId, requesterAccountId) {
         const roundKey = taskId.split(':')[0];
         if (['agent-opportunity-221400-v1', 'contributor-reuse-trial-100198'].includes(roundKey))
             throw new Error('historical rounds are not future inventory');
         const round = await this.round(roundKey);
-        if (!round || !['test', 'fixture'].includes(round.provenance))
-            throw new Error('only existing synthetic rounds may be enrolled');
+        const source = this.admission ? await this.admission.taskSource(taskId) : null;
+        if (!round || (!source && !['test', 'fixture'].includes(round.provenance)))
+            throw new Error('selected existing round is required');
+        if (source?.configured && source.configured.requesterAccountId !== requesterAccountId)
+            throw new Error('requester differs from the durable binding');
+        const actual = await this.kernel.withOpportunityClient(async (client) => (await client.query(`SELECT f.id AS offer_id,r.terms_version,a.id AS account_id
+      FROM opportunity_rounds r JOIN opportunity_offers f ON f.round_id=r.id JOIN journey_accounts a ON a.id=$3
+      WHERE r.id=$1 AND f.offer_key=$2`, [round.id, taskId.split(':')[1], requesterAccountId])).rows[0], 'read');
+        if (!actual)
+            throw new Error('existing canonical offer and requester account required');
+        const publicDiscussion = source?.configured?.publicDiscussion ?? true;
         const marker = `discussion:${hashRequest({ taskId })}`;
         const project = await this.correspondence.createProject({ title: 'Task discussion', summary: marker,
             ownerTokenHash: hashRequest({ marker, secret: this.integrityKey }), ownerTokenPlainForReplay: '',
             idempotencyKey: marker, requestHash: hashRequest({ taskId, requesterAccountId }) });
         return this.kernel.withOpportunityClient(async (client) => {
-            await client.query('INSERT INTO journey_task_links(task_id,round_key,requester_account_id,discussion_project_id,public_discussion) VALUES($1,$2,$3,$4,TRUE) ON CONFLICT(task_id) DO NOTHING', [taskId, roundKey, requesterAccountId, project.project.id]);
+            await client.query(`INSERT INTO journey_task_links(task_id,round_key,requester_account_id,discussion_project_id,public_discussion,opportunity_round_id,opportunity_offer_id,terms_version)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(task_id) DO NOTHING`, [taskId, roundKey, requesterAccountId, project.project.id, publicDiscussion, round.id, actual.offer_id, actual.terms_version]);
+            // Upgrade a pre-profile reference only after verifying the same requester/project.
+            // Never overwrite an established canonical source or change public-discussion consent.
+            await client.query(`UPDATE journey_task_links SET opportunity_round_id=$3,opportunity_offer_id=$4,terms_version=$5
+        WHERE task_id=$1 AND requester_account_id=$2 AND discussion_project_id=$6 AND public_discussion=$7
+          AND opportunity_round_id IS NULL AND opportunity_offer_id IS NULL AND terms_version IS NULL`, [taskId, requesterAccountId, round.id, actual.offer_id, actual.terms_version, project.project.id, publicDiscussion]);
             const stored = (await client.query('SELECT * FROM journey_task_links WHERE task_id=$1', [taskId])).rows[0];
-            if (stored.requester_account_id !== requesterAccountId || stored.discussion_project_id !== project.project.id)
+            if (stored.requester_account_id !== requesterAccountId || stored.discussion_project_id !== project.project.id || stored.public_discussion !== publicDiscussion ||
+                stored.opportunity_round_id !== round.id || stored.opportunity_offer_id !== actual.offer_id || stored.terms_version !== actual.terms_version)
                 throw new Error('task authority already enrolled');
             return stored;
         }, 'idempotent');

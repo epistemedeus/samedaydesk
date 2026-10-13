@@ -11,7 +11,7 @@ import { createPostgresConsentedSummaryStore } from './showcase/postgres.js';
 import type { WorkEvidence } from './showcase/types.js';
 import { createReferralService } from './referral/service.js';
 import { createPostgresReferralPorts } from './referral/postgres.js';
-import { CompositionStore } from './composition-store.js';
+import type { CompositionStore } from './composition-store.js';
 import { createOpportunityJourneyAdapters } from './opportunity-adapters.js';
 import type { ExistingServices, JourneyConfig, JourneyModule, JourneyPorts } from './types.js';
 export declare const RECEIVED_MODULE_COMMITS: {
@@ -31,6 +31,8 @@ export declare function createInstalledComposition(options: {
     lockPool: pg.Pool;
 }): Promise<InstalledComposition>;
 export type InstalledComposition = {
+    profile: 'live' | 'staging';
+    admission: import('./profile.js').JourneyAdmission;
     modules: JourneyModule[];
     middleware: RequestHandler;
     extra: RequestHandler;

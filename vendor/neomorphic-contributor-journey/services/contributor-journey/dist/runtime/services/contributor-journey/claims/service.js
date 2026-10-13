@@ -36,6 +36,7 @@ export class ContributorClaimsService {
             const data = exactObject(input, ['taskId']);
             const [roundKey, offerKey] = taskParts(data.taskId);
             const config = this.config(roundKey);
+            this.admitTask(data.taskId);
             const round = await this.options.opportunity.readRound(roundKey, config.provenance);
             const document = verifiedTerms(round);
             const task = this.tasks(round).find(task => task.offerKey === offerKey);
@@ -48,6 +49,7 @@ export class ContributorClaimsService {
         return this.run(async () => {
             const account = await this.account(context);
             const data = claimInput(input);
+            this.admitTask(data.taskId);
             const rawKey = idempotency(operationKey);
             const [roundKey, offerKey] = taskParts(data.taskId);
             const config = this.config(roundKey);
@@ -88,7 +90,8 @@ export class ContributorClaimsService {
                     continue;
                 this.checkPrincipal(principal, config);
                 const current = await this.options.opportunity.readOwnClaims(config.roundKey, config.provenance, principal);
-                claims.push(...current.map(body => this.claimView(account, config, body)));
+                claims.push(...current.filter(body => !this.options.taskIds || record(body) && this.options.taskIds.includes(`${config.roundKey}:${body.offerKey}`))
+                    .map(body => this.claimView(account, config, body)));
             }
             return { claims };
         });
@@ -136,6 +139,8 @@ export class ContributorClaimsService {
     async account(context) {
         if (!this.options.enabled)
             throw new ApiError(503, 'disabled', 'journey is disabled');
+        if (this.options.checkAdmission)
+            await this.options.checkAdmission();
         const account = await this.options.resolveAccount(context);
         const now = this.now().getTime();
         if (!account || !opaque(account.accountId) || !opaque(account.sessionId) ||
@@ -151,6 +156,10 @@ export class ContributorClaimsService {
         if (!config)
             throw new ApiError(404, 'not_found', 'future round not found');
         return config;
+    }
+    admitTask(taskId) {
+        if (this.options.taskIds && !this.options.taskIds.includes(String(taskId)))
+            throw new ApiError(404, 'not_found', 'task is not enrolled');
     }
     termsId(config) { return `opportunity:${config.provenance}:${config.roundKey}`; }
     operationKey(account, action, raw) {
@@ -175,7 +184,7 @@ export class ContributorClaimsService {
         const config = this.config(round.roundKey);
         if (round.provenance !== config.provenance || (round.provenance === 'production' && !round.productionAdmission))
             corrupt();
-        return terms.offers.map(offer => {
+        return terms.offers.filter(offer => !this.options.taskIds || this.options.taskIds.includes(`${round.roundKey}:${offer.offerKey}`)).map(offer => {
             const capacity = round.offers.find(item => item.offerKey === offer.offerKey);
             const closed = round.status !== 'open' || Date.parse(round.submissionDeadline) <= this.now().getTime();
             const slots = closed || !offer.publicClaimable || BigInt(round.availableAtomic) < BigInt(offer.rewardAtomic) ? 0 : capacity.unreservedPublicSlots;
@@ -190,6 +199,7 @@ export class ContributorClaimsService {
     claimView(account, config, body) {
         if (!record(body) || !record(body.claim) || !key(body.offerKey))
             corrupt();
+        this.admitTask(`${config.roundKey}:${body.offerKey}`);
         const claim = body.claim;
         if (!opaque(claim.id) || typeof claim.termsVersion !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(claim.termsVersion) ||
             typeof claim.status !== 'string' || !statuses.includes(claim.status) || typeof claim.expiresAt !== 'string' ||

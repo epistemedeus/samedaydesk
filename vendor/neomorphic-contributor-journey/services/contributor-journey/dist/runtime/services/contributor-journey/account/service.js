@@ -249,6 +249,8 @@ export class ContributorAccountService {
             throw new ApiError(403, "forbidden", "Sign in again before changing account authority.");
     }
     async bindingScope(scope) {
+        if (this.options.allowKernelScope && !await this.options.allowKernelScope(scope))
+            throw new ApiError(403, 'forbidden', 'Kernel scope is not enrolled in this journey.');
         let provenance, taskId = null, roundId = null;
         if (scope.startsWith("opportunity:")) {
             roundId = scope.slice("opportunity:".length);

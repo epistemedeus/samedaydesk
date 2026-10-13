@@ -3,13 +3,12 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { OpportunityService } from '../earned-work/src/opportunity/service.js';
 import { hashRequest } from '../earned-work/src/crypto.js';
-import { ContributorAccountService, migrateContributorAccounts } from './account/service.js';
+import { ContributorAccountService } from './account/service.js';
 import { createAccountRouter, readAccountSessionToken } from './account/http.js';
 import { createContributorClaimsService } from './claims/service.js';
 import { createContributorClaimsRouter } from './claims/routes.js';
 import { createStoredOpportunityPrincipalResolver } from '../earned-work/src/opportunity/account-principal.js';
 import { SubmissionService } from './submission/service.js';
-import { PostgresSubmissionPersistence } from './submission/postgres.js';
 import { createSubmissionRouter } from './submission/http.js';
 import { ReviewService } from './review/service.js';
 import { createReviewHandler } from './review/http.js';
@@ -21,12 +20,13 @@ import { PostgresProjectLock } from './discussion/postgres-lock.js';
 import { safeText } from './discussion/validation.js';
 import { createShowcaseService } from './showcase/service.js';
 import { createShowcaseHttpHandler } from './showcase/http.js';
-import { createPostgresConsentedSummaryStore, migrateShowcase } from './showcase/postgres.js';
+import { createPostgresConsentedSummaryStore } from './showcase/postgres.js';
 import { createReferralService } from './referral/service.js';
 import { createReferralHttpHandler } from './referral/http.js';
 import { createPostgresReferralPorts } from './referral/postgres.js';
-import { CompositionStore } from './composition-store.js';
 import { createOpportunityJourneyAdapters } from './opportunity-adapters.js';
+import { migrateJourneyStores } from './storage.js';
+import { validateJourneyConfig } from './config.js';
 export const RECEIVED_MODULE_COMMITS = {
     account: 'd341c93357596513b54a6952610b7550830353b4', claims: '9294ac84595a546e93233b188b9afd79c38b6dc6',
     submission: '6efdbaf1ccf36d43c374ddfbff35ddbb0a38d4bc', review: 'bff140b0c66dbb13d71dc865c150772a310bd6e9',
@@ -35,16 +35,26 @@ export const RECEIVED_MODULE_COMMITS = {
     measurement: '301711b8eac39cdeda16466bc72e3d379fd91486',
 };
 export async function createInstalledComposition(options) {
-    const { config, services, pool, lockPool } = options;
+    const { services, pool, lockPool } = options;
+    const config = validateJourneyConfig(options.config);
     const settings = config.installed;
     const kernel = services.earnedWork.store;
-    await migrateContributorAccounts(kernel);
-    const accounts = new ContributorAccountService({ database: kernel, kernel, replayKey: Buffer.from(settings.replayKey, 'hex'), enabled: true });
-    const db = new CompositionStore(kernel, services.correspondence.store, settings.integrityKey);
-    await db.migrate();
-    const persistence = new PostgresSubmissionPersistence(pool, config.storage.earnedWorkSchema);
-    await persistence.migrate();
-    await migrateShowcase(pool);
+    const { db, admission, persistence } = await migrateJourneyStores(config, kernel, services.correspondence.store, pool);
+    if (config.mode === 'staging')
+        await admission.enroll();
+    await admission.checkReady();
+    const accounts = new ContributorAccountService({ database: kernel, kernel, replayKey: Buffer.from(settings.replayKey, 'hex'), enabled: true,
+        allowedKernelProvenance: config.mode === 'live' ? ['production'] : ['test', 'fixture'],
+        allowKernelScope: async (scope) => {
+            if (!scope.startsWith('opportunity:'))
+                return false;
+            for (const pin of settings.futureRounds) {
+                const source = await admission.round(pin.roundKey);
+                if (scope === `opportunity:${source.id}`)
+                    return true;
+            }
+            return false;
+        } });
     const opportunity = new OpportunityService(kernel);
     const lock = new PostgresProjectLock(lockPool);
     const fetchRequest = (req) => {
@@ -84,18 +94,22 @@ export async function createInstalledComposition(options) {
         const round = await db.round(roundKey);
         if (!round || !settings.futureRounds.some(value => value.roundKey === roundKey && value.provenance === round.provenance))
             return null;
+        if (config.mode === 'live')
+            await admission.round(roundKey);
         return kernel.withOpportunityClient(async (client) => (await client.query('SELECT principal_id FROM journey_account_kernel_bindings WHERE account_id=$1 AND kernel_scope=$2', [accountId, `opportunity:${round.id}`])).rows[0]?.principal_id ?? null, 'read');
     });
     const resolvePrincipal = async (accountId, roundKey, provenance) => principal(accountId, roundKey, provenance);
     const adapters = createOpportunityJourneyAdapters({ store: kernel, opportunity, futureRounds: settings.futureRounds,
         principal: resolvePrincipal, accountForPrincipal: id => db.accountForPrincipal(id), persistence,
-        correspondence: services.correspondence.store, decisionProject: source => db.project(source, 'decision'), integrityKey: settings.integrityKey, lock });
+        correspondence: services.correspondence.store, decisionProject: source => db.project(source, 'decision'), integrityKey: settings.integrityKey, lock,
+        admitTask: config.mode === 'live' ? async (id) => { await admission.task(id); } : undefined });
     const claims = createContributorClaimsService({ enabled: true, futureRounds: settings.futureRounds, opportunity,
         resolveAccount: authenticate, resolvePrincipal: async (accountId, roundKey, provenance) => {
             // The request resolver below remembers only this request's current session.
             // Durable authority still lives in accounts.resolveKernelPrincipal and its FK.
             return resolvePrincipal(accountId, roundKey, provenance);
-        } });
+        }, checkAdmission: config.mode === 'live' ? () => admission.checkReady() : undefined,
+        taskIds: config.mode === 'live' ? settings.futureRounds.flatMap(pin => pin.provenance === 'production' ? pin.tasks.map(task => `${pin.roundKey}:${task.offerKey}`) : []) : undefined });
     const submissions = new SubmissionService({ claims: adapters.claims, kernel: adapters.submission, persistence });
     const binding = async (account, target) => {
         const row = await adapters.load(target.reservationId, target.taskId), task = await db.task(target.taskId);
@@ -122,7 +136,7 @@ export async function createInstalledComposition(options) {
                 contributorPrincipalId: row.principal.id, contributorPublicId: row.principal.publicId, taskId: row.id, reservationId: row.claim.id,
                 submissionId: source.aggregate.submission.id, obligationId: source.aggregate.obligation.id, verdictId: source.aggregate.verdict.id,
                 termsVersion: source.aggregate.submission.termsVersion, artifactDigestSha256: source.aggregate.submission.artifact.digestSha256,
-                authorizedSourceSha256: null, authorizedDestinationSha256: null, evidenceClass: 'owner_qa' };
+                authorizedSourceSha256: null, authorizedDestinationSha256: null, evidenceClass: config.mode === 'live' ? 'unclassified' : 'owner_qa' };
             return { authorityFamily: 'opportunity', binding: b, aggregate: source.aggregate,
                 claimPrincipal: { taskId: row.id, reservationId: row.claim.id, contributorPrincipalId: row.principal.id,
                     contributorPublicId: row.principal.publicId, provenance: row.round.provenance } };
@@ -131,7 +145,8 @@ export async function createInstalledComposition(options) {
     const consents = createPostgresConsentedSummaryStore(pool);
     const summaries = { read: async (workId) => kernel.withOpportunityClient(async (client) => (await client.query('SELECT record FROM journey_approved_summaries WHERE work_id=$1', [workId])).rows[0]?.record ?? null, 'read') };
     const showcase = createShowcaseService({ works, summaries, profiles: { read: id => db.profile(id) }, consents,
-        settlements: { qualify: async () => ({ qualified: false, reason: 'missing_settlement' }) }, mode: 'staging', stagingReadEnabled: true });
+        settlements: { qualify: async () => ({ qualified: false, reason: 'missing_settlement' }) },
+        mode: config.mode === 'live' ? 'production' : 'staging', stagingReadEnabled: config.mode === 'staging', publicEnabled: settings.publicReads === true });
     const discussionTasks = {
         forAccount: async (taskId, account) => {
             const task = await db.task(taskId);
@@ -141,9 +156,14 @@ export async function createInstalledComposition(options) {
           JOIN opportunity_offers f ON f.id=c.offer_id JOIN opportunity_rounds r ON r.id=c.round_id
           WHERE b.account_id=$1 AND r.round_key || ':' || f.offer_key=$2 LIMIT 1`, [account.accountId, taskId])).rows.length > 0, 'read');
             const requester = task.requester_account_id === account.accountId;
-            return owned || requester ? { taskId, projectId: task.discussion_project_id, canRead: true, canPost: true, canModerate: requester, publicDiscussionEnabled: task.public_discussion } : null;
+            return owned || requester ? { taskId, projectId: task.discussion_project_id, canRead: true, canPost: true, canModerate: requester,
+                publicDiscussionEnabled: task.public_discussion && (config.mode === 'staging' || settings.publicReads === true) } : null;
         },
-        forPublic: async (taskId) => { const task = await db.task(taskId); return task ? { taskId, projectId: task.discussion_project_id, publicDiscussionEnabled: task.public_discussion } : null; },
+        forPublic: async (taskId) => {
+            const task = await db.task(taskId);
+            return task ? { taskId, projectId: task.discussion_project_id,
+                publicDiscussionEnabled: task.public_discussion && (config.mode === 'staging' || settings.publicReads === true) } : null;
+        },
     };
     const discussions = createDiscussionService({ enabled: true, authenticate, tasks: discussionTasks,
         profiles: { publicProfile: async (accountId) => { const result = await db.profileForAccount(accountId), p = result?.publication; return p?.visible ? { profileId: p.profileId, displayName: p.displayName, visibilityConsentVersion: String(p.consentVersion) } : null; } },
@@ -206,7 +226,7 @@ export async function createInstalledComposition(options) {
         return { state: 'withdrawn' };
     };
     const referral = createReferralService({ resolveAccount: context => authenticate(context), readPublishedSource: publishedSource,
-        ...referralStore, resolveVisitor: context => resolveVisitor(context), classify: async () => ({ cohort: 'owner_qa', relation: 'unknown' }),
+        ...referralStore, resolveVisitor: context => resolveVisitor(context), classify: async () => ({ cohort: config.mode === 'live' ? 'unknown' : 'owner_qa', relation: 'unknown' }),
         readMilestone: async (stage, evidenceRef) => {
             if (stage !== 'qualified_signup' || !evidenceRef.startsWith('signup:'))
                 return null;
@@ -232,7 +252,8 @@ export async function createInstalledComposition(options) {
             next(error);
         }
     };
-    const wrap = (id, router) => ({ id, sourceCommit: RECEIVED_MODULE_COMMITS[id], evidence: 'installed', createRouter: () => router, checkReady: () => kernel.checkReady() });
+    const wrap = (id, router) => ({ id, sourceCommit: RECEIVED_MODULE_COMMITS[id], evidence: 'installed', createRouter: () => router,
+        checkReady: async () => { await kernel.checkReady(); await admission.checkReady(); } });
     const accountRouter = createAccountRouter(accounts, { browserOrigin: settings.origin, afterReceipt: async (req, receipt) => {
             const visitor = req.journeyVisitor;
             if (!visitor || !(req.path === '/signup' || req.path === '/readback' && req.body?.operation === 'signup'))
@@ -253,6 +274,8 @@ export async function createInstalledComposition(options) {
         wrap('referral', bridge(createReferralHttpHandler(referral, { basePath: config.mountPath + '/v1/referral', authorizeMutation: authorize, retainArrival })))];
     const middleware = async (req, res, next) => {
         try {
+            if (config.mode === 'live')
+                await admission.checkReady();
             let visitor = visitorId(req);
             if (!visitor) {
                 visitor = 'visit_' + randomBytes(24).toString('hex');
@@ -326,8 +349,8 @@ export async function createInstalledComposition(options) {
                 res.sendStatus(404);
                 return;
             }
-            const round = await db.round(roundKey);
-            const result = await accounts.resolveKernelPrincipal(token(req), `opportunity:${round?.id}`);
+            const round = await admission.round(roundKey);
+            const result = await accounts.resolveKernelPrincipal(token(req), `opportunity:${round.id}`);
             if (!result.ok) {
                 res.status(result.error.status).json({ error: result.error });
                 return;
@@ -384,7 +407,8 @@ export async function createInstalledComposition(options) {
         }
     });
     const ports = { resolveAccount: async (req) => { const actor = await authenticate(req); return actor ? { ok: true, value: actor } : { ok: false, code: 'unauthenticated' }; } };
-    return { modules, middleware, extra, ports, accounts, claims, submissions, review, showcase, discussions, referral, referralStore, db, adapters, opportunity, works, consents };
+    return { modules, middleware, extra, ports, accounts, claims, submissions, review, showcase, discussions, referral, referralStore, db, adapters, opportunity, works, consents,
+        profile: config.mode === 'live' ? 'live' : 'staging', admission };
 }
 import { sourceOf as sourceOfSafe } from './review/validation.js';
 //# sourceMappingURL=installed.js.map

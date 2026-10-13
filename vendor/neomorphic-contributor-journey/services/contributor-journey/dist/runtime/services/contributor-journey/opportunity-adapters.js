@@ -24,6 +24,8 @@ export function createOpportunityJourneyAdapters(options) {
         const id = `${row.round.round_key}:${row.offer.offer_key}`;
         if (taskId && taskId !== id)
             return null;
+        if (options.admitTask)
+            await options.admitTask(id);
         if (row.claim.terms_version !== row.round.terms_version || row.submission && row.submission.terms_version !== row.claim.terms_version ||
             row.obligation && row.obligation.terms_version !== row.claim.terms_version)
             throw new Error('opportunity source terms invalid');

@@ -102,18 +102,34 @@ export type JourneyModule = {
     createRouter: (context: JourneyModuleContext) => RequestHandler;
     checkReady: () => Promise<void>;
 };
+export type LiveRoundBinding = {
+    roundKey: string;
+    provenance: 'production';
+    roundId: string;
+    termsVersion: string;
+    tasks: Array<{
+        offerKey: string;
+        requesterAccountId: string;
+        publicDiscussion: boolean;
+    }>;
+};
+export type JourneyRound = {
+    roundKey: string;
+    provenance: 'test' | 'fixture';
+} | LiveRoundBinding;
 export type JourneyConfig = {
     installed?: null | {
         origin: string;
         replayKey: string;
         integrityKey: string;
         cursorKey: string;
-        futureRounds: Array<{
-            roundKey: string;
-            provenance: 'test' | 'fixture';
-        }>;
+        futureRounds: JourneyRound[];
+        /** Stable operator-selected identity of this one canonical deployment. */
+        storeId?: string;
+        /** Separately authorized public derivative reads. Live backend enrollment is not publication. */
+        publicReads?: boolean;
     };
-    mode: "disabled" | "staging";
+    mode: "disabled" | "staging" | "live";
     port: number;
     listenHost: "127.0.0.1" | "::1";
     mountPath: "/api/neomorphic-contributor-journey";
@@ -124,8 +140,8 @@ export type JourneyConfig = {
     trustProxyHops: number;
     storage: null | {
         databaseUrl: string;
-        earnedWorkSchema: "cj227_earned_work";
-        correspondenceSchema: "cj227_correspondence";
+        earnedWorkSchema: string;
+        correspondenceSchema: string;
         poolMax: 1 | 2;
         ownerToken: string;
         correspondenceAdminToken: string;
@@ -137,8 +153,9 @@ export type JourneyStatus = {
     ready: boolean;
     wholeJourney: "integration_pending";
     releaseAccepted: false;
-    publicEnabled: false;
-    settlement: "synthetic_only";
+    publicEnabled: boolean;
+    settlement: "synthetic_only" | "not_configured";
+    storageProfile: "not_configured" | "synthetic_staging" | "durable_enrolled";
     modules: Array<{
         id: ModuleId;
         state: "integration_pending" | "fixture_only" | "installed";

@@ -1,9 +1,11 @@
 import express from "express";
+import {fileURLToPath} from 'node:url';
+import {verifyContributorRuntime} from './contributor-artifact.js';
 
 export const CONTRIBUTOR_JOURNEY_PREFIX = "/api/neomorphic-contributor-journey";
 const ENTRY_URL = new URL("../../vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js", import.meta.url);
 
-/** Optional staging adapter. No product configuration, database, or authority fallback. */
+/** Optional exact installed adapter. No product configuration, database, or authority fallback. */
 export function mountNeomorphicContributorJourney(app, options = {}) {
   const env = options.env || process.env;
   const state = { status: "disabled", reason: "disabled", runtime: null, inFlight: null, closed: false };
@@ -17,11 +19,14 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
 
   async function initialize() {
     try {
+      if(env.CONTRIBUTOR_JOURNEY_MODE==='live' && (options.loadService||options.ports||options.modules||
+          !/^[a-f0-9]{40}$/.test(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT??'')))throw new Error('live mount requires the exact default artifact and installed adapters');
+      if(!options.loadService)await verifyContributorRuntime(fileURLToPath(new URL('../../vendor/neomorphic-contributor-journey/',import.meta.url)),env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
       // Default loader consumes the committed exact compiled closure and SOURCE.json.
       // An explicit loader remains available for bounded foundation diagnostics.
       const service = options.loadService ? await options.loadService() : await import(ENTRY_URL.href);
       const config = service.loadJourneyConfig(env);
-      if (config.mode !== "staging" || config.mountPath !== CONTRIBUTOR_JOURNEY_PREFIX) {
+      if (!["staging","live"].includes(config.mode) || config.mountPath !== CONTRIBUTOR_JOURNEY_PREFIX) {
         state.reason = "invalid_config"; return;
       }
       starting = await service.createJourneyRuntime({ config, ports: options.ports, modules: options.modules });
@@ -35,7 +40,7 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
         ? "integration_pending" : "unavailable";
     }
   }
-  if (env.CONTRIBUTOR_JOURNEY_MODE === "staging") {
+  if (["staging","live"].includes(env.CONTRIBUTOR_JOURNEY_MODE)) {
     state.status = "starting";
     state.inFlight = initialize().finally(() => {
       if (!state.runtime) state.status = "disabled";

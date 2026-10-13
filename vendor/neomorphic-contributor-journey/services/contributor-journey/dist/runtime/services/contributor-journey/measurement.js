@@ -4,15 +4,17 @@ import { EVENT_SCHEMA, POLICY_SCHEMA, QUERY_SCHEMA, STAGES, emptyState, ingest, 
  * Coverage stays partial: this reader does not capture every failed attempt or a
  * qualified canonical settlement. Historical/unbound rounds are never enrolled. */
 export async function readInstalledMeasurement(input) {
-    const producer = 'installed227800', namespace = 'cj227-private-accounts', populationId = 'cj227-staging-owner-qa';
+    await input.installed.admission.checkReady();
+    const live = input.installed.profile === 'live', provenance = live ? 'production' : 'test', actorRelation = live ? 'unknown' : 'owner_qa';
+    const producer = live ? 'installed229500-live' : 'installed227800', namespace = live ? 'journey-durable-accounts' : 'cj227-private-accounts', populationId = live ? 'journey-live-unclassified' : 'cj227-staging-owner-qa';
     const policy = { schema: POLICY_SCHEMA, producers: [{ id: producer, sourceVersion: 'opportunity-composition-v1',
-                stages: ['discovery', 'signup', 'claim', 'submission', 'review'], namespaces: [namespace], provenances: ['test'] }] };
+                stages: ['discovery', 'signup', 'claim', 'submission', 'review'], namespaces: [namespace], provenances: [provenance] }] };
     const events = [];
     const fact = (stage, id) => `${stage}_${hashRequest(id)}`;
     const parent = (stage, id) => ({ producerId: producer, factId: fact(stage, id) });
     const emit = (stage, id, accountId, at, outcome, refs, parents, attribution = { observed: null, declared: null }) => {
         events.push({ schema: EVENT_SCHEMA, producerId: producer, sourceVersion: 'opportunity-composition-v1', eventId: fact(stage, id), factId: fact(stage, id), revision: 1, supersedes: null,
-            stage, outcome, occurredAt: at, observedAt: at, populationId, namespace, actorId: accountId, actorRelation: 'owner_qa', provenance: 'test', evidence: 'observed', channel: 'http', attribution, refs, parents });
+            stage, outcome, occurredAt: at, observedAt: at, populationId, namespace, actorId: accountId, actorRelation, provenance, evidence: 'observed', channel: 'http', attribution, refs, parents });
     };
     const accounts = await input.kernel.withOpportunityClient(client => client.query(`SELECT id,created_at FROM journey_accounts ORDER BY created_at,id LIMIT 201`), 'read');
     for (const row of accounts.rows.slice(0, 200)) {
@@ -28,7 +30,7 @@ export async function readInstalledMeasurement(input) {
     const accountIds = new Set(accounts.rows.slice(0, 200).map((row) => row.id));
     const claims = await input.kernel.withOpportunityClient(client => client.query(`SELECT c.id,b.account_id FROM opportunity_claims c
     JOIN opportunity_rounds r ON r.id=c.round_id JOIN journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
-    WHERE r.round_key=ANY($1::text[]) ORDER BY c.created_at,c.id LIMIT 201`, [input.rounds.filter(r => r.provenance === 'test').map(r => r.roundKey)]), 'read');
+    WHERE r.round_key=ANY($1::text[]) AND r.provenance=$2 ORDER BY c.created_at,c.id LIMIT 201`, [input.rounds.filter(r => r.provenance === provenance).map(r => r.roundKey), provenance]), 'read');
     for (const claim of claims.rows.slice(0, 200)) {
         if (!accountIds.has(claim.account_id))
             continue;
@@ -48,7 +50,7 @@ export async function readInstalledMeasurement(input) {
         }
     }
     const capped = accounts.rows.length > 200 || claims.rows.length > 200;
-    const query = { schema: QUERY_SCHEMA, window: input.window, retentionSeconds: 86400, populations: [{ id: populationId, namespace, actorRelation: 'owner_qa', provenance: 'test', window: input.window,
+    const query = { schema: QUERY_SCHEMA, window: input.window, retentionSeconds: 86400, populations: [{ id: populationId, namespace, actorRelation, provenance, window: input.window,
                 membership: 'unknown', members: null, coverage: Object.fromEntries(STAGES.map(stage => [stage, { state: ['discovery', 'signup', 'claim', 'submission', 'review'].includes(stage) ? capped ? 'capped' : 'partial' : 'unknown',
                         producerIds: ['discovery', 'signup', 'claim', 'submission', 'review'].includes(stage) ? [producer] : [] }])) }] };
     const received = ingest(emptyState(), events, policy);

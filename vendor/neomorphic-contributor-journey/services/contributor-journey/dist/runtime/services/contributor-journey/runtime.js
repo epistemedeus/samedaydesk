@@ -7,7 +7,8 @@ import { createApp as createCorrespondenceApp } from "../correspondence/src/app.
 import { createPostgresStore as createCorrespondenceStore } from "../correspondence/src/store/postgres.js";
 import { loadConfig as loadCorrespondenceConfig } from "../correspondence/src/config.js";
 import { createJourneyApp } from "./app.js";
-import { loadJourneyConfig } from "./config.js";
+import { loadJourneyConfig, validateJourneyConfig } from "./config.js";
+import { migrateJourneyStores } from "./storage.js";
 import { createInstalledComposition } from './installed.js';
 const identifier = z.string().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
 const termsVersion = z.string().regex(/^sha256:[0-9a-f]{64}$/);
@@ -63,28 +64,8 @@ function canonicalPrivateReadback(pool, schema) {
         return checked.data;
     };
 }
-export async function createJourneyRuntime(options = {}) {
-    const config = options.config ?? loadJourneyConfig(options.env);
-    if (config.mode === "disabled") {
-        return { app: createJourneyApp({ config }), services: null, config, close: async () => { } };
-    }
-    // Config is deliberately reconstructed, so a caller cannot smuggle generic
-    // database/schema/owner configuration past the receiving boundary.
-    if (!config.storage)
-        throw new Error("staging storage required");
-    loadJourneyConfig({
-        CONTRIBUTOR_JOURNEY_MODE: config.mode,
-        CONTRIBUTOR_JOURNEY_DATABASE_URL: config.storage.databaseUrl,
-        CONTRIBUTOR_JOURNEY_OWNER_TOKEN: config.storage.ownerToken,
-        CONTRIBUTOR_JOURNEY_CORRESPONDENCE_ADMIN_TOKEN: config.storage.correspondenceAdminToken,
-        ...(config.installed ? { CONTRIBUTOR_JOURNEY_INSTALLED: '1', CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN: config.installed.origin,
-            CONTRIBUTOR_JOURNEY_REPLAY_KEY: config.installed.replayKey, CONTRIBUTOR_JOURNEY_INTEGRITY_KEY: config.installed.integrityKey,
-            CONTRIBUTOR_JOURNEY_CURSOR_KEY: config.installed.cursorKey, CONTRIBUTOR_JOURNEY_FUTURE_ROUNDS: JSON.stringify(config.installed.futureRounds) } : {}),
-    });
-    if (config.storage.earnedWorkSchema !== "cj227_earned_work" || config.storage.correspondenceSchema !== "cj227_correspondence" ||
-        ![1, 2].includes(config.storage.poolMax))
-        throw new Error("invalid staging storage binding");
-    const { storage } = config;
+async function openJourneyResources(config) {
+    const storage = config.storage;
     const earnedConfig = loadEarnedWorkConfig({
         EARNED_WORK_DATABASE_URL: storage.databaseUrl, EARNED_WORK_OWNER_TOKEN: storage.ownerToken,
         EARNED_WORK_PG_SCHEMA: storage.earnedWorkSchema, EARNED_WORK_POOL_MAX: String(storage.poolMax),
@@ -131,15 +112,64 @@ export async function createJourneyRuntime(options = {}) {
             const lockPool = new pg.Pool({ ...common, max: 1 });
             lockPool.on('error', () => { });
             owned.push({ close: () => lockPool.end() });
-            const installed = await createInstalledComposition({ config, services, pool, lockPool });
+            return { services, pool, lockPool, close };
+        }
+        return { services, pool: null, lockPool: null, close };
+    }
+    catch (error) {
+        await close().catch(() => { });
+        throw error;
+    }
+}
+export async function createJourneyRuntime(options = {}) {
+    const config = validateJourneyConfig(options.config ?? loadJourneyConfig(options.env));
+    if (config.mode === 'disabled')
+        return { app: createJourneyApp({ config }), services: null, config, close: async () => { } };
+    if (config.mode === 'live' && (options.ports || options.modules))
+        throw new Error('live profile requires actual installed adapters');
+    const resources = await openJourneyResources(config);
+    try {
+        const { services, pool, lockPool, close } = resources;
+        if (config.installed) {
+            const installed = await createInstalledComposition({ config, services, pool: pool, lockPool: lockPool });
             return { app: createJourneyApp({ config, services, ports: installed.ports, modules: installed.modules, middleware: installed.middleware, extra: installed.extra }),
                 installed, services, config, close };
         }
         return { app: createJourneyApp({ config, services, ports: options.ports, modules: options.modules }), services, config, close };
     }
     catch (error) {
-        await close().catch(() => { });
+        await resources.close().catch(() => { });
         throw error;
+    }
+}
+/** Controller-only preparation. Creates references, never accounts, rounds, grants to recipients or payments. */
+export async function prepareJourneyDeployment(options = {}) {
+    const config = validateJourneyConfig(options.config ?? loadJourneyConfig(options.env));
+    if (config.mode === 'disabled' || !config.installed)
+        throw new Error('explicit installed staging/live profile required for preparation');
+    const resources = await openJourneyResources(config);
+    try {
+        const { services, pool } = resources;
+        const { admission, db } = await migrateJourneyStores(config, services.earnedWork.store, services.correspondence.store, pool);
+        // Validate selected sources before recording enrollment. An absent production source stays absent.
+        for (const pin of config.installed.futureRounds)
+            await admission.round(pin.roundKey);
+        if (options.enroll) {
+            await admission.enroll();
+            for (const pin of config.installed.futureRounds) {
+                if (pin.provenance === 'production')
+                    for (const task of pin.tasks)
+                        await db.enrollTask(`${pin.roundKey}:${task.offerKey}`, task.requesterAccountId);
+            }
+            await admission.checkReady();
+        }
+        return { schema: 'neomorphic.contributor-journey.preparation.v1', profile: config.mode, migrated: true, enrolled: options.enroll === true,
+            configuredRounds: config.installed.futureRounds.length,
+            configuredTasks: config.installed.futureRounds.reduce((sum, pin) => sum + (pin.provenance === 'production' ? pin.tasks.length : 0), 0),
+            createsAccounts: false, createsRounds: false, createsPayments: false, releaseAccepted: false, publicEnabled: false, settlement: 'not_configured' };
+    }
+    finally {
+        await resources.close();
     }
 }
 //# sourceMappingURL=runtime.js.map

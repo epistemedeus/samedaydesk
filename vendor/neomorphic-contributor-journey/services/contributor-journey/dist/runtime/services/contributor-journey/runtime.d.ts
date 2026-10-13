@@ -14,3 +14,22 @@ export declare function createJourneyRuntime(options?: {
     ports?: JourneyPorts;
     modules?: JourneyModule[];
 }): Promise<JourneyRuntime>;
+/** Controller-only preparation. Creates references, never accounts, rounds, grants to recipients or payments. */
+export declare function prepareJourneyDeployment(options?: {
+    env?: NodeJS.ProcessEnv;
+    config?: JourneyConfig;
+    enroll?: boolean;
+}): Promise<{
+    schema: string;
+    profile: "staging" | "live";
+    migrated: boolean;
+    enrolled: boolean;
+    configuredRounds: number;
+    configuredTasks: number;
+    createsAccounts: boolean;
+    createsRounds: boolean;
+    createsPayments: boolean;
+    releaseAccepted: boolean;
+    publicEnabled: boolean;
+    settlement: string;
+}>;

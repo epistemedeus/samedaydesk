@@ -22,6 +22,7 @@ export declare function createOpportunityJourneyAdapters(options: {
     decisionProject(source: SourceBinding): Promise<string>;
     integrityKey: string;
     lock: ProjectLock;
+    admitTask?: (taskId: string) => Promise<void>;
 }): {
     claims: ClaimLookupPort;
     submission: KernelSubmissionPort;

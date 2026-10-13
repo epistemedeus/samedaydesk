@@ -2,16 +2,18 @@ import type { PostgresStore } from '../earned-work/src/store/postgres.js';
 import type { CorrespondenceStore } from '../correspondence/src/store/types.js';
 import type { SourceBinding } from './review/types.js';
 import type { ProfilePublication } from './showcase/types.js';
+import type { JourneyAdmission } from './profile.js';
 export declare class CompositionStore {
     readonly kernel: PostgresStore;
     private readonly correspondence;
     readonly integrityKey: string;
-    constructor(kernel: PostgresStore, correspondence: CorrespondenceStore, integrityKey: string);
+    private readonly admission?;
+    constructor(kernel: PostgresStore, correspondence: CorrespondenceStore, integrityKey: string, admission?: JourneyAdmission | undefined);
     migrate(): Promise<void>;
     accountForPrincipal(principalId: string): Promise<string | null>;
     round(roundKey: string): Promise<any>;
     task(taskId: string): Promise<any>;
-    /** Controller-only enrollment after a synthetic round is created. No HTTP inventory route. */
+    /** Controller-only references to an existing round, offer and requester. Creates no inventory or account. */
     enrollTask(taskId: string, requesterAccountId: string): Promise<any>;
     project(source: SourceBinding, kind: 'clarification' | 'decision'): Promise<string>;
     workId(taskId: string, reservationId: string, accountId: string): Promise<string>;
