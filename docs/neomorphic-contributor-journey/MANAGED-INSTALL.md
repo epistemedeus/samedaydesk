@@ -38,6 +38,21 @@ exact installation/source and fresh actual policy/HTTPS/plaintext/isolation evid
 before issuing its deployment-bound qualification, retaining existing stable keys.
 Do not reuse or restamp the earlier qualification/receipts for the new source.
 
+## Portable database trust
+
+The managed deployment includes the already verified public database CA at
+`server/certificates/contributor-database-ca.crt`. Set only the owning database
+URL's `sslrootcert` to that path, relative to the actual application working
+directory; retain the hostname and `sslmode=verify-full`. Receive the actual
+authorized TLS connection at the installed working directory. Never carry a
+build-VM-only absolute path into deployment or disable certificate verification.
+
+A CA-path change leaves the same database/schemas/origin/stable-key enrollment
+intact, but changes the raw URL bound by HTTPS qualification. Root must issue
+the successor qualification against that final URL and actual installation;
+an earlier URL-bound qualification is not reusable. This public trust asset
+contains no database credential and does not alter Foundry or global TLS.
+
 ## Transport and remaining provider facts
 
 `server/lib/contributor-managed-mount.js` is called by `createSdsApp` before
