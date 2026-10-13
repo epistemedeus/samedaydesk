@@ -1,48 +1,44 @@
-# Contributor journey staging mount227800
+# Exact private journey staging mount
 
-SDS input pin: `d8cea059213e06d2f263be67f82e498f8052a50f`.
-Isolated export branch: `codex/contributor-runtime-227800`.
-Producer: `epistemedeus/neomorphic-io`, `codex/contributor-integration-227800`.
-Read the producer's `services/contributor-journey/INTEGRATION.md` and exact
-exported types before wiring the concurrently built account and other leaves.
+Default mode is disabled and loads no service or database. The optional mount in
+server/app.js runs before the host parser and closes on shutdown. Its default
+ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
+The received compiled artifact is from Neomorphic86779187cb0b03afee06dd9bb52fcdcdbeb0ebfd,
+built from the committed source. SOURCE.json enumerates396 exact file hashes and
+lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
+The manifest itself is committed separately. No existing opportunity/correspondence
+vendor, homepage, package dependency or production configuration was changed.
 
-`mountNeomorphicContributorJourney(app, { env?, loadService?, ports?, modules? })`
-returns `{ state, ready(): Promise<void>, close(): Promise<void> }`. It registers
-`/api/neomorphic-contributor-journey` before the broader SDS body parser and
-retains truthful disabled health/errors. `createSdsApp` exposes the handle as
-`app.get("neoContributorJourney")`; the existing listener lifecycle closes it.
-The surface defaults to disabled and has no production mode.
+Use existing SDS npm ci. Required host versions are express5.2.1, pg8.23.0 and
+zod3.25.76, already present in its lock. Internal F01 and funded-terms runtime
+closures are included; their explicit node_modules files are part of the artifact,
+not downloaded dependencies. Node imports the installed runtime without a TS loader.
 
-Only `CONTRIBUTOR_JOURNEY_MODE=staging` attempts loading. Default received entry
-is `vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js`.
-This new closure is **not yet vendored**. A missing artifact is
-`integration_pending`, not a replacement/mock service or startup of another
-provider. Root must package the final exact producer plus its existing service
-assets/dependencies after the leaf commits arrive. Existing opportunity vendor,
-database, terms and credentials remain separate.
+The producer's services/contributor-journey/INTEGRATION.md and preview.env.example
+at the exact source commit define complete configuration, migrations, API paths,
+controller enrollment and preview. All service credentials/keys remain server-side.
+Select a dedicated synthetic staging DB and canonical HTTPS preview origin, stable
+keys and explicit test/fixture future-round allowlist. Root must keep MODE=disabled
+until independent receiving and operator preview. No mail, payment or production
+signup/offer activation is authorized by this export.
 
-The loader must expose the actual `loadJourneyConfig(env)` and
-`createJourneyRuntime({ config, ports, modules })`. The latter owns real
-earned-work and correspondence Postgres startup, canonical migrations in new
-staging schemas, errors and teardown. Mount initialization is single-flight;
-close during initialization drains any result before enabling a route.
-Credential/driver exception contents are never published.
+Operator preview: serve the Neomorphic opt-in noindex build at /contribute/ and
+reverse-proxy /api/neomorphic-contributor-journey to this loopback SDS service on
+that same origin. This preserves Neomorphic's own styles and SDS's separate brand.
+The backend runtime does not install a homepage or preview UI into SDS.
 
-Verification: three mount tests and one actual `createSdsApp`+compiled producer
-HTTP/Postgres replay pass. The real replay installs fixture-only account/private
-bindings; it passes seven existing-kernel stages and reports six leaf stages
-pending. It proves neither signup/recovery nor full whole-journey acceptance.
-The dedicated32KiB parser, old opportunity mount and unrelated SDS health are
-checked. No production database, email, payout, deployment or homepage change.
+Tests from SDS root, one worker:
 
-```sh
-node --test --test-concurrency=1 server/scripts/test-neomorphic-contributor-journey-mount.mjs
+node --test --test-concurrency=1 server/scripts/test-neomorphic-contributor-journey-mount.mjs server/scripts/test-neomorphic-contributor-journey-artifact.mjs
 
-# From the exact received producer's services/contributor-journey directory:
-CONTRIBUTOR_JOURNEY_TEST_PRODUCT_ROOT=/absolute/isolated/neomorphic \
+CONTRIBUTOR_JOURNEY_TEST_PRODUCT_ROOT=/absolute/exact/neomorphic \
 CONTRIBUTOR_JOURNEY_TEST_PG_BIN=/path/to/postgresql/16/bin \
-node --import tsx --test --test-concurrency=1 \
-  /absolute/isolated/samedaydesk/server/scripts/test-neomorphic-contributor-journey-staging.mjs
-```
+node --test --test-concurrency=1 server/scripts/test-neomorphic-contributor-journey-staging.mjs
 
-Root receiving and operator preview approval remain separate from this export.
+The latter runs the actual installed compiled producer through SDS's DEFAULT
+loader, disposable Postgres/HTTPS and Chrome with two private accounts/requester,
+race, lost responses, restart/recovery, one original future IOU, preserved old IOU,
+source tampering, synthetic proof/refused counter, withdrawal and referred signup.
+It supplies no loader, fake kernel, Map account binding or mock persistence.
+Synthetic settlement verification remains labelled; public paid status stays false.
+Worker assertions do not replace Root228000 independent receiving or operator review.
