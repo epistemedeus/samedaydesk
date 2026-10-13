@@ -7,6 +7,37 @@ same exact HTTPS origin. Keep the serving configuration disabled. Normal SDS
 routes/static resources and both source homepages retain their existing owners.
 The merchant Railway project and static Neomorphic hosting are separate.
 
+## Private API receiving before human publication
+
+`CONTRIBUTOR_DESK_MANAGED_ENABLED=1` admits the installed account API through
+the received ingress contract. It does not publish human desk assets.
+`CONTRIBUTOR_DESK_ASSETS_ENABLED` defaults off: only the exact string `1` with
+a valid existing `CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF` mounts `/contribute`,
+`/contribute/` and its manifest URLs. Reuse the operator-reviewed human preview's
+`review_…` reference; a fixture reference is only synthetic owner QA. Missing,
+malformed or whitespace-bearing references and invalid switch values leave all
+human desk routes404, without blocking private API receiving. Assets-off never
+falls through to the normal SDS SPA or serves a desk redirect.
+
+For Root's private hosted account/session/Origin/CSRF/recovery receiving, use
+`MODE=live`, `INSTALLED=1`, `CONTRIBUTOR_DESK_MANAGED_ENABLED=1`,
+`CONTRIBUTOR_DESK_ASSETS_ENABLED=0`, `CONTRIBUTOR_JOURNEY_PUBLIC_READS=0`,
+the exact source and existing enrolled bindings/stable credentials/empty future
+rounds. Select the already received native ingress contract. No human-page review
+reference is required while assets and public reads are off. Qualification still
+verifies the unchanged artifact pair; asset verification is not publication.
+
+Human assets-on and public-work reads are independent releases. Assets-on does
+not enable public-work reads; reviewed live public reads can operate while human
+assets are off, with all existing rights/consent/withdrawal controls. The standalone
+private TLS diagnostic receiver is unchanged and is not managed-host publication.
+
+This mounting amendment changes the qualification-bound edge bytes. A qualification
+issued for the earlier SDS mount must refuse this source. Root receives the new
+exact installation/source and fresh actual policy/HTTPS/plaintext/isolation evidence
+before issuing its deployment-bound qualification, retaining existing stable keys.
+Do not reuse or restamp the earlier qualification/receipts for the new source.
+
 ## Transport and remaining provider facts
 
 `server/lib/contributor-managed-mount.js` is called by `createSdsApp` before
@@ -154,8 +185,9 @@ node server/scripts/prepare-contributor-environment.mjs \
   --rollback "$RESTRICTED_DIR/sds-rollback-full.json"
 ```
 
-Serving flags remain `CONTRIBUTOR_JOURNEY_MODE=disabled`,
-`CONTRIBUTOR_DESK_MANAGED_ENABLED=0`, `CONTRIBUTOR_JOURNEY_PUBLIC_READS=0`.
+Preparation flags remain `CONTRIBUTOR_JOURNEY_MODE=disabled`,
+`CONTRIBUTOR_DESK_MANAGED_ENABLED=0`, `CONTRIBUTOR_DESK_ASSETS_ENABLED=0`,
+`CONTRIBUTOR_JOURNEY_PUBLIC_READS=0`.
 Set the exact manifest source commit and future-round array `[]`.
 
 |Setting|Controller-held authoritative input|
@@ -276,9 +308,10 @@ UI activation. No sender in this packet flips flags. Later real source bindings
 use the existing exact-round/task/requester enrollment. Empty inventory grants
 no invented claim; basic account support remains independent of paid proof.
 
-After authorized installation, read back the desk, all manifest URLs, missing
-assets404, API JSON, Host/proxy/origin refusals, cookies/CSRF/recovery, root resources
-and restart. Verify source/public/release flags; HTTP200 and key inventories are
+After authorized private installation, read back every desk/manifest URL404,
+API JSON, Host/proxy/origin refusals, cookies/CSRF/recovery, root resources and
+restart. After separate human preview approval and explicit assets-on, read back
+all manifest bytes and missing assets404. Verify source/public/release flags; HTTP200 and key inventories are
 not live task proof. Back up both schemas together and retain stable keys separately.
 Use the source `LIVE-PROFILE.md` dump/restore recipe; restore the same named
 deployment/schemas/keys/origin without copying a task or money ledger.
@@ -306,3 +339,24 @@ remain forbidden. The canonical owner independently receives the exact existing
 task-family acceptance/allocation authority and receipt observer; absent/unknown
 proof omits the badge. No payment/IOU writer or environment module loader is added.
 Private useful/effort measurement remains a server-side producer/reader.
+
+## Focused source regression replay
+
+After locked SDS and Neo root/service installs and the Neo runtime build, run:
+
+```sh
+CONTRIBUTOR_JOURNEY_TEST_NEO_ROOT=/absolute/isolated/neo \
+CONTRIBUTOR_JOURNEY_TEST_CHROME=/absolute/remote/chrome \
+node server/scripts/test-contributor-private-host.mjs
+```
+
+The runner requires exact Neo44d12c51 and installed PostgreSQL16/Chrome. It copies
+only received contributor test fixtures into disposable scratch and adds explicit
+reviewed assets to the older managed fixture profile. Its legacy both-prefix
+public-config negative uses an invalid read switch, retaining every original
+assertion. The appended matrix separately requires API503/desk404 for absent
+public review. It appends SDS-owned private mounting regressions and replays compiled
+native/Unix/TLS accounts plus installed/public/original-holder journeys. Neo
+tracked source and both production artifact manifests remain unchanged. Owned
+fixture services, PostgreSQL and scratch are closed/removed by their existing
+lifecycle and the runner; this does not receive the actual hosted domain.

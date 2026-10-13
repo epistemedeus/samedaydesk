@@ -69,6 +69,12 @@ function edgeGuard(env,ingress,{directOnly=false,qualification=null}={}){
 /** Existing managed Node ingress. Failure is contained to the owned prefixes. */
 export function mountContributorManagedDesk(app,options={}){
   const env=options.env||process.env;
+  // Human asset publication is independent of API/transport admission and
+  // public-work reads. Reuse the existing human-review reference; malformed or
+  // absent publication configuration never mounts the desk.
+  const assetReview=env.CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF;
+  const publishAssets=env.CONTRIBUTOR_DESK_ASSETS_ENABLED==='1'&&typeof assetReview==='string'&&
+    assetReview.trim()===assetReview&&/^review_[A-Za-z0-9_.:-]{8,120}$/.test(assetReview);
   const ingress=createContributorIngress(env);
   app.use((req,_res,next)=>{ingress.observeProbe(req);next();});
   if(env.CONTRIBUTOR_DESK_MANAGED_ENABLED!=='1'){
@@ -95,7 +101,7 @@ export function mountContributorManagedDesk(app,options={}){
       if(options.loadService||options.ports||options.modules)throw new Error('actual compiled managed composition required');
       const qualification=env.CONTRIBUTOR_DESK_INGRESS_MODE==='litespeed-https-only'?await loadContributorHttpsQualification(env):null;
       guard=edgeGuard(env,ingress,{qualification});
-      assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
+      if(publishAssets)assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
       if(state.closed)return;
       // The exact compiled producer remains the only app/service loader.
       // This optional server-owned read port carries no ledger write authority.
@@ -109,6 +115,7 @@ export function mountContributorManagedDesk(app,options={}){
   })().finally(()=>{state.inFlight=null;});
   app.use(async(req,res,next)=>{
     if(!prefixRequest(req)){next();return;}
+    if(!publishAssets&&!(req.path===JOURNEY_PREFIX||req.path.startsWith(JOURNEY_PREFIX+'/'))){res.sendStatus(404);return;}
     if(state.inFlight)await state.inFlight;
     if(state.status!=='ready'){unavailable(req,res);return;}
     guard(req,res,()=>{
