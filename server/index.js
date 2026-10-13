@@ -24,7 +24,8 @@ bindListenerLifecycle(server, async () => {
       try {
         await app.get("neoOpportunity")?.close?.();
       } finally {
-        if (handle?.close) await handle.close();
+        try { await app.get("neoContributorJourney")?.close?.(); }
+        finally { if (handle?.close) await handle.close(); }
       }
     }
   }

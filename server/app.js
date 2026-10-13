@@ -28,6 +28,7 @@ import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
+import { mountNeomorphicContributorJourney } from "./lib/neomorphic-contributor-journey-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
@@ -106,6 +107,8 @@ app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedU
 // Optional received opportunity surface. Own 32KiB JSON parser and trust proxy.
 // Missing dedicated configuration leaves only this prefix unavailable.
 app.set("neoOpportunity", mountNeomorphicOpportunity(app, options.neomorphicOpportunity || {}));
+// Disabled by default; the contributor journey owns its bounded staging parser.
+app.set("neoContributorJourney", mountNeomorphicContributorJourney(app, options.neomorphicContributorJourney || {}));
 
 // 2) MCP owns its machine parser errors; unrelated APIs and raw webhooks retain
 // their existing parsers and error behavior.
