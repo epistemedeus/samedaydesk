@@ -2,15 +2,16 @@ import express from 'express';
 import ipaddr from 'ipaddr.js';
 import {mountNeomorphicContributorJourney} from './neomorphic-contributor-journey-mount.js';
 import {loadContributorDeskAssets,DESK_PATH,JOURNEY_PREFIX} from './contributor-desk-assets.js';
+import {createContributorIngress,secureProtocol} from './contributor-native-ingress.js';
 
 const address=value=>{try{return ipaddr.process(value).toString();}catch{return null;}};
 const prefixRequest=req=>req.path==='/contribute'||req.path.startsWith(DESK_PATH)||
   req.path===JOURNEY_PREFIX||req.path.startsWith(JOURNEY_PREFIX+'/');
 const once=(req,name)=>req.rawHeaders.filter((_value,index)=>index%2===0&&req.rawHeaders[index].toLowerCase()===name).length<=1;
 
-/** Trust a concrete closest peer and one overwritten protocol header, not a hop count.
- * Client address stays the socket peer. Forwarded client values grant no authority. */
-function edgeGuard(env,{directOnly=false}={}){
+/** Explicit TCP or audited native Unix transport, plus exact HTTPS/Host/origin.
+ * Client address stays conservative. Forwarded client values grant no authority. */
+function edgeGuard(env,ingress,{directOnly=false}={}){
   if(!['staging','live'].includes(env.CONTRIBUTOR_JOURNEY_MODE)||env.CONTRIBUTOR_JOURNEY_INSTALLED!=='1'||
       env.CONTRIBUTOR_JOURNEY_PUBLIC_READS==='1'||(env.CONTRIBUTOR_JOURNEY_TRUST_PROXY??'0')!=='0')
     throw new Error('private installed managed profile required');
@@ -18,24 +19,37 @@ function edgeGuard(env,{directOnly=false}={}){
   const url=new URL(origin);
   if(url.protocol!=='https:'||url.origin!==origin||url.username||url.password)throw new Error('exact HTTPS origin required');
   const peers=JSON.parse(env.CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS??'[]');
-  if(!Array.isArray(peers)||!directOnly&&!peers.length||peers.length>16||peers.some(peer=>typeof peer!=='string'||!address(peer))||
+  const mode=directOnly?'trusted-tcp':env.CONTRIBUTOR_DESK_INGRESS_MODE??'trusted-tcp';
+  if(!['trusted-tcp','passenger-native'].includes(mode))throw new Error('explicit supported ingress mode required');
+  if(!Array.isArray(peers)||mode==='trusted-tcp'&&!directOnly&&!peers.length||mode==='passenger-native'&&peers.length||
+      peers.length>16||peers.some(peer=>typeof peer!=='string'||!address(peer))||
       new Set(peers.map(address)).size!==peers.length)throw new Error('explicit concrete proxy IPs required');
   const trusted=new Set(peers.map(address));
   return (req,res,next)=>{
     res.set({'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','X-Content-Type-Options':'nosniff',
       'Referrer-Policy':'same-origin'});
     if(!once(req,'host')||req.headers.host!==url.host){res.status(421).json({error:{code:'host_refused'}});return;}
-    if(req.headers.forwarded||!once(req,'x-forwarded-host')||req.headers['x-forwarded-host']&&req.headers['x-forwarded-host']!==url.host||
-        !once(req,'x-forwarded-proto')||req.headers['x-forwarded-proto']&&req.headers['x-forwarded-proto']!=='https'){
-      res.status(400).json({error:{code:'proxy_refused'}});return;
+    if(mode==='passenger-native'){
+      if(!ingress.passengerRequest(req)||secureProtocol(req).protocol!=='https'){
+        res.status(426).json({error:{code:'native_https_edge_required'}});return;
+      }
+    }else{
+      if(req.rawHeaders.some((value,index)=>index%2===0&&value.toLowerCase().startsWith('!~'))){
+        res.status(400).json({error:{code:'native_header_refused'}});return;
+      }
+      if(req.headers.forwarded||!once(req,'x-forwarded-host')||req.headers['x-forwarded-host']&&req.headers['x-forwarded-host']!==url.host||
+          !once(req,'x-forwarded-proto')||req.headers['x-forwarded-proto']&&req.headers['x-forwarded-proto']!=='https'){
+        res.status(400).json({error:{code:'proxy_refused'}});return;
+      }
+      if(!req.socket.encrypted&&(directOnly||!ingress.tcpRequest(req)||!trusted.has(address(req.socket.remoteAddress))||req.headers['x-forwarded-proto']!=='https')){
+        res.status(426).json({error:{code:'https_edge_required'}});return;
+      }
     }
-    if(!req.socket.encrypted&&(directOnly||!trusted.has(address(req.socket.remoteAddress))||req.headers['x-forwarded-proto']!=='https')){
-      res.status(426).json({error:{code:'https_edge_required'}});return;
-    }
-    if(req.headers.origin&&req.headers.origin!==origin){res.status(403).json({error:{code:'origin_refused'}});return;}
+    if(!once(req,'origin')||req.headers.origin!==undefined&&req.headers.origin!==origin){res.status(403).json({error:{code:'origin_refused'}});return;}
     // The installed app keeps trustProxy=false. Never reinterpret attacker-supplied
     // forwarding chains or mutate global SDS trust/CORS settings.
-    for(const header of ['x-forwarded-for','x-forwarded-host','x-forwarded-proto','x-real-ip','true-client-ip','cf-connecting-ip'])delete req.headers[header];
+    for(const header of ['forwarded','x-forwarded-for','x-forwarded-host','x-forwarded-proto','x-real-ip','true-client-ip','cf-connecting-ip',
+      ...Object.keys(req.headers).filter(name=>name.startsWith('!~'))])delete req.headers[header];
     next();
   };
 }
@@ -43,19 +57,21 @@ function edgeGuard(env,{directOnly=false}={}){
 /** Existing Node/Passenger ingress. Failure is contained to the owned prefixes. */
 export function mountContributorManagedDesk(app,options={}){
   const env=options.env||process.env;
+  const ingress=createContributorIngress(env);
+  app.use((req,_res,next)=>{ingress.observeProbe(req);next();});
   if(env.CONTRIBUTOR_DESK_MANAGED_ENABLED!=='1'){
     // Preserve the existing verified direct-TLS receiving route. A plaintext
     // managed listener cannot expose an installed journey with the edge opt-in off.
     if(['staging','live'].includes(env.CONTRIBUTOR_JOURNEY_MODE)&&env.CONTRIBUTOR_JOURNEY_INSTALLED==='1'){
       let direct;
-      try{direct=edgeGuard(env,{directOnly:true});}catch{}
+      try{direct=edgeGuard(env,ingress,{directOnly:true});}catch{}
       app.use(JOURNEY_PREFIX,(req,res,next)=>{
         if(!direct||!req.socket.encrypted){res.status(503).json({error:{code:'managed_ingress_disabled'},publicEnabled:false});return;}
         direct(req,res,next);
       });
     }
     const handle=mountNeomorphicContributorJourney(app,options);
-    return handle;
+    return {...handle,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{ingress.close();await handle.close();}};
   }
   const state={status:'starting',reason:'starting',runtime:null,inFlight:null,closed:false};
   let journey=null,assets=null,guard=null;
@@ -65,7 +81,7 @@ export function mountContributorManagedDesk(app,options={}){
     try{
       // No alternate service loader, ports, modules or artifact roots in this path.
       if(options.loadService||options.ports||options.modules)throw new Error('actual compiled managed composition required');
-      guard=edgeGuard(env);
+      guard=edgeGuard(env,ingress);
       assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
       if(state.closed)return;
       journey=mountNeomorphicContributorJourney(inner,{env});await journey.ready();
@@ -85,7 +101,8 @@ export function mountContributorManagedDesk(app,options={}){
       else assets.router(req,res,()=>res.sendStatus(404));
     });
   });
-  return {state,ready:()=>state.inFlight||Promise.resolve(),close:async()=>{
+  return {state,ready:()=>state.inFlight||Promise.resolve(),bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{
+    ingress.close();
     state.closed=true;await state.inFlight;await journey?.close();
     state.runtime=null;state.status='disabled';state.reason='disabled';assets=null;
   }};

@@ -10,8 +10,11 @@ The merchant Railway project and static Neomorphic hosting are separate.
 ## Transport and remaining provider facts
 
 `server/lib/contributor-managed-mount.js` is called by `createSdsApp` before
-host redirects, parsing and SPA fallback. The unchanged entrypoint owns its
-listener/drain. Both exact manifests and installed dependency versions are
+host redirects, parsing and SPA fallback. The existing entrypoint owns its
+single listener/drain and binds that listener to the contributor transport observer.
+The audited loader's stdin-EOF `exit` event uses that same drain/resource closure,
+as do SIGTERM/SIGINT; it does not add a server or separate lifecycle.
+Both exact manifests and installed dependency versions are
 checked before the prefix becomes available. The shared asset receiver retains
 verified bytes; no response-time HTML patching or root asset aliases are used
 in the managed app. Missing owned paths return404, never SPA HTML. A bad
@@ -29,24 +32,50 @@ Hostinger's current [Node domain documentation](https://www.hostinger.com/suppor
 documents automatic SSL after domain connection. Its
 [build-settings model](https://github.com/hostinger/api-python-sdk/blob/main/docs/HostingV1NodeJsUpdateBuildSettingsRequest.md)
 supports Express, Node major version, an entry file and a **package script name**.
-The prior owning packet identifies one Passenger/Node22 process. These sources
-do not establish the deployed nearest-peer IPs, protocol-header overwrite behavior
-or selected origin here. No provider configuration/domain is received by VM tests.
+Root's October13 13:35:47UTC provider readback establishes the existing Express/
+Node22 entrypoint and `build:managed-foundry`, with a completed prior build. It
+does not establish the deployed source or Node transport. No provider mutation
+or actual domain acceptance is part of this VM export.
 
-**One remaining controller edge record:** the existing app's exact HTTPS origin,
-nearest transport peer IP(s), preserved Host, and evidence that the edge overwrites
-`X-Forwarded-Proto` with one `https` value for HTTPS and does not pass caller
-protocol/host claims. The candidate path is `https://samedaydesk.com/contribute/`;
-verify the existing binding before durable enrollment. No DNS change is authorized.
-If Passenger exposes different socket semantics/headers, receive that concrete
-transition before selecting this contract. Do not guess a CIDR or hop-count trust.
+Passenger's [reverse binding](https://www.phusionpassenger.com/docs/advanced_guides/in_depth/node/reverse_port_binding.html)
+selects the first HTTP listener and binds a Unix socket despite a requested TCP
+port. Its [secure-header contract](https://www.phusionpassenger.com/docs/advanced_guides/in_depth/node/secure_http_headers.html)
+rejects external `!~` headers; `!~Passenger-Proto` supplies HTTPS authority.
+Ordinary XFP can contain client claims and is unsuitable for this native path.
 
-`CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS` is a JSON array of literal nearest-peer IPs,
-with no wildcard/CIDR/default trust. Direct TLS is recognized from the socket;
-plaintext backend requests require that peer and the exact protocol header.
-Malformed Host/proxy/origin is refused. Forwarded client values are discarded;
-account rate limits use the socket peer, so shared-edge throttling is conservative.
-This does not infer independent visitors or grant client authority. Keep
+Two explicit managed modes are supported:
+
+- `CONTRIBUTOR_DESK_INGRESS_MODE=trusted-tcp` retains the accepted TCP contract
+  (also the compatibility default). `CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS` is a
+  received literal-IP JSON array, with no CIDR/wildcard/default trust. The actual
+  selected listener must be TCP and the closest peer must supply one overwritten
+  XFP=`https`. Native-looking `!~` headers are refused. No Unix loopback-address
+  getter counts as a TCP peer. Physical direct TLS retains its verified route.
+- `CONTRIBUTOR_DESK_INGRESS_MODE=passenger-native` requires proxy IPs `[]` and
+  the audited loaded Passenger main module, its matching runtime export and
+  installed listen hook, the same selected HTTP server, matching actual Unix
+  address and an actual request socket belonging to that listener. Exactly one
+  raw `!~Passenger-Proto` must equal `https`. Flags, fabricated globals/loaders,
+  TCP requests and missing/duplicate/wrong markers grant no authority. No XFP
+  fallback exists. Ordinary forwarding claims are ignored and discarded.
+
+The audited [upstream Node loader](https://github.com/phusion/passenger/blob/c2fde75b26ced690978167e882d3da440188591f/src/helper-scripts/node-loader.js)
+is SHA256 `8fa9ce29cc2b098d03d16027d8f923f10e1d78c26727b5b248138d093acb02d8`.
+Unknown/modified loaders refuse the native prefix until their exact owning source
+is audited; an environment assertion cannot add a loader. No VM path is pinned.
+Tests invoke this unchanged hook and real Unix sockets, with a simulated TLS
+terminator/Passenger core. They do not qualify actual Hostinger transport.
+
+**Remaining actual-host edge record:** use the disabled probe below to establish
+the selected native hook, Unix request, one secure HTTPS marker and enrolled exact
+Host on the existing app. Receive external secure-header refusal, benign ordinary
+forwarding, origin/cookies/CSRF and cold restart on that actual edge before native
+serving acceptance. The candidate path remains `https://samedaydesk.com/contribute/`;
+retain the existing restricted enrolled origin. Do not guess proxy IPs, switch an
+enrolled origin or change DNS to make a TCP fixture count as this record.
+
+Malformed Host/origin is refused. Account limits use the socket's conservative
+shared-edge identity, never secure or ordinary forwarded client addresses. Keep
 `CONTRIBUTOR_JOURNEY_TRUST_PROXY=0`; origin/CSRF and `__Host-neo_contributor`
 Secure/HttpOnly/SameSite=Strict/Path=/ cookies remain exact. Receiving uses an
 explicit CA with certificate verification; HTTP is only the inner managed hop.
@@ -60,11 +89,12 @@ Hostinger serves compiled artifacts without a Neo checkout, Astro or TS loader.
 
 The optional `build:managed-contributor` package script uses locked SDS client
 dependencies, its normal site build and native artifact verification. It performs
-no database enrollment. Preserve current root/output directories and other
-settings from authoritative readback. Selected managed fields: Node22, Express,
-`server/index.js`, npm and build script **`build:managed-contributor`**. The script
-field is not a shell command. Do not replace the full nullable settings object
-with an incomplete example. Normal `npm start` and `build` remain available.
+no database enrollment. It is an offline contributor gate, not the received
+provider selection. Preserve the actual **`build:managed-foundry`** setting,
+Express, Node22, `server/index.js`, npm, root/output directories and the complete
+existing settings object. Validate contributor manifests separately; replacing
+the foundry build could omit unrelated runtime preparation. Normal `npm start`
+and `build` remain available. No settings PUT is required for this probe packet.
 
 ## Full authoritative environment
 
@@ -102,7 +132,8 @@ Set the exact manifest source commit and future-round array `[]`.
 |Setting|Controller-held authoritative input|
 |---|---|
 |`CONTRIBUTOR_JOURNEY_ORIGIN`|Exact existing HTTPS app origin, selected before enrollment|
-|`CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS`|Received concrete nearest-peer IP array|
+|`CONTRIBUTOR_DESK_INGRESS_MODE`|Received `trusted-tcp` or audited `passenger-native`; serving remains off|
+|`CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS`|Concrete received TCP peer array, or `[]` for native Unix|
 |`CONTRIBUTOR_JOURNEY_DATABASE_URL`|Restricted genuine PG connection to independent candidate `pilot-retained-host`; never Supabase HTTP auth|
 |`CONTRIBUTOR_JOURNEY_STORE_ID`|Stable deployment identifier|
 |`CONTRIBUTOR_JOURNEY_EARNED_WORK_SCHEMA`|Isolated schema, e.g. `contributor_work`|
@@ -115,9 +146,79 @@ the chosen role/schemas on the candidate before migration. Product/foundry/
 opportunity schemas and original221400 authority remain untouched. This package
 supplies no actual credential, connection, account, task, requester or recipient.
 
+## One-request private actual-host diagnostic
+
+Root owns installation and the existing app's authenticated runtime-log API.
+This diagnostic changes no response and creates no endpoint. It observes only
+`GET /api/health` with exactly one matching `X-Contributor-Native-Probe` nonce,
+while `MODE=disabled`, managed0 and public reads0. The absolute expiry is at most
+10minutes from process startup; it emits at most one receipt per process. Restarts
+do not extend expiry. Default/invalid/expired scope and disabling the probe restore
+normal health behavior. There is no poller, daemon or second listener.
+
+1. Independently receive the exact successor sources/artifacts. Keep the selected
+   build/settings and **full** authoritative environment/rollback in restricted
+   mode0600 files. Add these contributor-only overlay values through the existing
+   `prepare-contributor-environment.mjs` command above, retaining all stable
+   credentials, enrolled origin/store/schemas and other products' settings:
+
+   ```text
+   CONTRIBUTOR_JOURNEY_MODE=disabled
+   CONTRIBUTOR_DESK_MANAGED_ENABLED=0
+   CONTRIBUTOR_JOURNEY_PUBLIC_READS=0
+   CONTRIBUTOR_DESK_NATIVE_PROBE=1
+   CONTRIBUTOR_DESK_NATIVE_PROBE_NONCE=CONTROLLER_OPAQUE_32_TO_128_BASE64URL_CHARACTERS
+   CONTRIBUTOR_DESK_NATIVE_PROBE_EXPIRES=CONTROLLER_ABSOLUTE_UTC_ISO_EXPIRY_WITHIN_10_MINUTES
+   ```
+
+   The nonce is a short-lived diagnostic correlator, never an account or stable
+   signing key. Root sends the prepared **full real** environment through its
+   existing authorized installer, preserving key inventory and allowing its
+   normal restart. This builder makes no provider call. Preparing this overlay
+   does not migrate/enroll anything or select a serving mode.
+2. Use a separate owner-only `native-probe.env` with just those disabled probe
+   settings and the same exact `CONTRIBUTOR_JOURNEY_ORIGIN`. After installation,
+   make exactly one request, with system certificate verification:
+
+   ```sh
+   node --env-file="$RESTRICTED_DIR/native-probe.env" server/scripts/probe-contributor-native-ingress.mjs
+   ```
+
+   This finite client sends no cookie/body and follows no redirect; TLS/health
+   failures return a bounded refusal. Its digest/health success requires private
+   log readback and explicitly **does not accept native ingress**.
+3. Read the existing app's authenticated
+   `GET /api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs?period=1h&limit=200`
+   once through Root's existing Hostinger authority. The
+   [official runtime-log reader](https://github.com/hostinger/api-python-sdk/blob/main/docs/HostingNodeJSApi.md#get_node_js_runtime_logs_v1)
+   parses JSON timestamp/level/message entries, which this probe emits. Retain
+   only the message beginning `contributor_native_ingress_probe ` whose
+   `controllerNonceSha256` matches the client's digest and timestamp belongs to
+   this installation. Do not publish other runtime entries or clear shared logs.
+   Missing receipt is a useful negative, not an instruction to keep polling.
+4. The receipt contains only runtime/listener enums, secure protocol count (2
+   means multiple), protocol enum and exact Host-match boolean, plus schema/
+   nonce digest and the required log envelope. No raw headers, socket paths,
+   addresses, environment, cookie, credential or request body is recorded.
+   Native candidate evidence is `passenger-native-hook`, `unix-selected`, count1,
+   `https`, Host=true. `node`, `passenger-hook-unqualified`, TCP, missing/multiple
+   markers or false Host are refusals requiring the exact provider/runtime fact,
+   never a guessed proxy or loader whitelist flag. Even candidate evidence still
+   needs actual upstream filtering and the separately authorized journey checks.
+5. Restore the complete prior authoritative disabled environment, or prepare a
+   full cleanup set with probe0 and nonce/expiry removed. Preserve the current
+   settings/source and enrollment; use prior exact source only for a code rollback.
+   Root performs any environment replacement/restart. Remove its private nonce
+   files after readback; retain the sanitized receipt. Expiry also stops observation
+   without a timer. No runtime-log deletion, store restore/key rotation, serving
+   activation or public release follows from this diagnostic.
+
 ## Enrollment, verification and recovery
 
-Prepare separate private `preparation.env` with the same resolved store/origin/
+Root has already enrolled stable credentials/schemas and received an empty
+real-store/Unix-only restore at229870. This transport amendment must reuse them;
+do not rerun enrollment or regenerate anything merely to install the probe.
+For a later independently authorized host, use separate private `preparation.env` with the same resolved store/origin/
 stable keys, `MODE=live`, `INSTALLED=1`, public reads0 and empty future bindings.
 Serving stays disabled. Existing commands create deployment/reference metadata;
 they do not create an account, round or payment:

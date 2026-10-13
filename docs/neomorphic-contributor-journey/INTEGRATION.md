@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`fc854f3f96d47be3eda2c84c7c65d5f23065dd64`, built from the committed source
+`8823ae589bd7804950c53a9fb8252ec09a572d22`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -92,3 +92,11 @@ flag cannot expose an installed journey over the plaintext native listener.
 Both manifests/source/dependencies and actual enrollment must pass before its
 prefix serves; unrelated SDS routes remain usable on failure. No provider
 environment, deployment, DNS, source ledger or human page was changed.
+
+The existing single `server/index.js` listener now supplies real listener evidence
+to the managed guard. Explicit native Passenger receiving requires the audited
+loaded Node hook, its selected Unix request and one secure HTTPS marker; TCP and
+direct TLS remain separate contracts. MANAGED-INSTALL.md owns the disabled finite
+private runtime-log probe. VM native-hook replay simulates the provider core and
+does not accept actual Hostinger transport. Preserve `build:managed-foundry` and
+already enrolled credentials/schemas/origin during controller installation.

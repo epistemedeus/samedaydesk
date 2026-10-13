@@ -1,6 +1,6 @@
 # Same-origin HTTPS contributor desk preparation
 
-This is a private hosting recipe, with the original SDS entrypoint and both
+This is a private hosting recipe, with the existing single SDS listener and both
 human homepages untouched. It does not deploy, bind DNS or assert that a domain
 is already configured. Static Hostinger assets cannot be assumed to proxy the
 SDS Node API. Keep the existing human preview review and public activation off.
@@ -91,11 +91,12 @@ and canonical obligations; it does not rotate server keys or copy ledgers.
 ## One remaining ingress input
 
 The existing SDS Hostinger Node app is the chosen managed ingress. Root still
-needs one concrete edge record: exact existing HTTPS origin, closest transport
-peer IPs, preserved Host and overwritten single HTTPS protocol header. Select
-that origin before durable enrollment. Current official provider docs do not
-establish the deployed socket/header contract; the source rejects a guessed
-proxy or an untrusted forwarding claim. See MANAGED-INSTALL.md for this input.
+needs its actual native hook/Unix request and secure `!~Passenger-Proto` record,
+exact enrolled Host and upstream secure-header refusal. An accepted TCP/XFP
+fixture does not establish Passenger transport. [MANAGED-INSTALL.md](MANAGED-INSTALL.md)
+owns the disabled one-request private runtime-log probe and exact rollback.
+Keep the existing `build:managed-foundry`, full real environment and already
+enrolled store/origin/stable keys. Do not guess proxy IPs or replace enrollment.
 Only owned certificate-verified HTTPS receiving is proved here. Static Neomorphic
 hosting is not assumed to proxy Node, and no unconfigured domain gets a pass.
 Changing origin requires explicit fresh deployment enrollment, without widening
