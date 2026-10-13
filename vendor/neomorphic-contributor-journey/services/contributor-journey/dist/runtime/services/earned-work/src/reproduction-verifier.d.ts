@@ -1,0 +1,24 @@
+import type { ReproductionConfig, ServiceConfig } from "./config.js";
+import { defaultVerifier, DEFAULT_VERIFIER_VERSION, type VerifierHook } from "./verifier.js";
+export declare const REPRODUCTION_VERIFIER_VERSION = "neomorphic.wave5.e18.reproduction-verifier.v1";
+export declare const REPRODUCTION_SPEC_MARKER = "e18.specDigest:";
+export declare const REPRODUCTION_RUNTIME_MARKER = "e18.runtimeDigest:";
+export declare const SPEC_DIGEST_RE: RegExp;
+export declare const RUNTIME_DIGEST_RE: RegExp;
+export type ReproductionRuntime = {
+    root: string;
+    specPath: string;
+    executable: string;
+    timeoutMs: number;
+    specDigest: string;
+    specId: string;
+    runtimeDigest: string;
+    files: string[];
+};
+export declare function readBoundSpecDigest(summary: string | undefined): string | null;
+export declare function readBoundRuntimeDigest(summary: string | undefined): string | null;
+export declare function boundReproductionSummary(specDigest: string, runtimeDigest: string, prefix?: string): string;
+export declare function loadReproductionRuntime(config: ReproductionConfig): ReproductionRuntime;
+export declare function createReproductionDispatcher(runtime: ReproductionRuntime): VerifierHook;
+export declare function createConfiguredVerifier(config: Pick<ServiceConfig, "verifierMode" | "reproduction">): VerifierHook;
+export { defaultVerifier, DEFAULT_VERIFIER_VERSION };

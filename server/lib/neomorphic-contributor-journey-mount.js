@@ -17,8 +17,8 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
 
   async function initialize() {
     try {
-      // Exact received build is supplied by the integrator. Tests inject the
-      // actual isolated producer build, never a mock kernel or persistence.
+      // Default loader consumes the committed exact compiled closure and SOURCE.json.
+      // An explicit loader remains available for bounded foundation diagnostics.
       const service = options.loadService ? await options.loadService() : await import(ENTRY_URL.href);
       const config = service.loadJourneyConfig(env);
       if (config.mode !== "staging" || config.mountPath !== CONTRIBUTOR_JOURNEY_PREFIX) {

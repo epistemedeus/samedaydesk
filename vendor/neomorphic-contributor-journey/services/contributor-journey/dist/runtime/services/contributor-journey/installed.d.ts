@@ -1,0 +1,53 @@
+import { type Request, type RequestHandler } from 'express';
+import type pg from 'pg';
+import { OpportunityService } from '../earned-work/src/opportunity/service.js';
+import { ContributorAccountService } from './account/service.js';
+import { createContributorClaimsService } from './claims/service.js';
+import { SubmissionService } from './submission/service.js';
+import { ReviewService } from './review/service.js';
+import { createDiscussionService } from './discussion/service.js';
+import { createShowcaseService } from './showcase/service.js';
+import { createPostgresConsentedSummaryStore } from './showcase/postgres.js';
+import type { WorkEvidence } from './showcase/types.js';
+import { createReferralService } from './referral/service.js';
+import { createPostgresReferralPorts } from './referral/postgres.js';
+import { CompositionStore } from './composition-store.js';
+import { createOpportunityJourneyAdapters } from './opportunity-adapters.js';
+import type { ExistingServices, JourneyConfig, JourneyModule, JourneyPorts } from './types.js';
+export declare const RECEIVED_MODULE_COMMITS: {
+    readonly account: "d341c93357596513b54a6952610b7550830353b4";
+    readonly claims: "9294ac84595a546e93233b188b9afd79c38b6dc6";
+    readonly submission: "6efdbaf1ccf36d43c374ddfbff35ddbb0a38d4bc";
+    readonly review: "bff140b0c66dbb13d71dc865c150772a310bd6e9";
+    readonly showcase: "f4db642b644b0a271f963987676d6a476d9c0de5";
+    readonly discussion: "a38a0663cdb004c1ed2b22e14c25e32580f8e98d";
+    readonly referral: "c22d481b4da6ec5a43d8e55680418601d01b2615";
+    readonly measurement: "301711b8eac39cdeda16466bc72e3d379fd91486";
+};
+export declare function createInstalledComposition(options: {
+    config: JourneyConfig;
+    services: ExistingServices;
+    pool: pg.Pool;
+    lockPool: pg.Pool;
+}): Promise<InstalledComposition>;
+export type InstalledComposition = {
+    modules: JourneyModule[];
+    middleware: RequestHandler;
+    extra: RequestHandler;
+    ports: JourneyPorts;
+    accounts: ContributorAccountService;
+    claims: ReturnType<typeof createContributorClaimsService<Request>>;
+    submissions: SubmissionService;
+    review: ReviewService<Request>;
+    showcase: ReturnType<typeof createShowcaseService>;
+    discussions: ReturnType<typeof createDiscussionService<Request | globalThis.Request>>;
+    referral: ReturnType<typeof createReferralService>;
+    referralStore: ReturnType<typeof createPostgresReferralPorts>;
+    db: CompositionStore;
+    adapters: ReturnType<typeof createOpportunityJourneyAdapters>;
+    opportunity: OpportunityService;
+    works: {
+        read(workId: string): Promise<WorkEvidence | null>;
+    };
+    consents: ReturnType<typeof createPostgresConsentedSummaryStore>;
+};

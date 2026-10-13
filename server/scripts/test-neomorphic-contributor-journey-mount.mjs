@@ -28,7 +28,7 @@ test("default mount is disabled, loads no service and leaves unrelated routes us
   } finally { await fixture.close(); }
 });
 test("absent received artifact is integration pending and never starts a replacement service", async () => {
-  const fixture = await host({ env: { CONTRIBUTOR_JOURNEY_MODE: "staging" } });
+  const fixture = await host({ env: { CONTRIBUTOR_JOURNEY_MODE: "staging" }, loadService:()=>import('../fixtures/absent-contributor-journey/index.js') });
   try {
     await fixture.handle.ready();
     assert.equal(fixture.handle.state.reason, "integration_pending");
