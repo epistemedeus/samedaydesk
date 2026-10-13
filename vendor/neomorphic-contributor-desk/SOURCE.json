@@ -1,235 +1,285 @@
 {
   "schema": "neomorphic.contributor-desk.assets.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "dc1777a8df0b53389329b6a93eaf23311613ac55",
+  "sourceCommit": "4efa8ace9254af6f082139745e9a675399ff9097",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
   "apiPath": "/api/neomorphic-contributor-journey",
   "buildCommand": "node services/contributor-journey/export-desk-assets.mjs /absolute/isolated/samedaydesk",
   "previewOnly": true,
   "publicEnabled": false,
+  "placement": {
+    "schema": "neomorphic.contributor-desk.placement.v1",
+    "deskPath": "/contribute/",
+    "assetPrefix": "/contribute/_assets"
+  },
   "files": [
     {
       "path": "_astro/capabilities.astro_astro_type_script_index_0_lang.B68-GIY_.js",
+      "url": "/contribute/_assets/_astro/capabilities.astro_astro_type_script_index_0_lang.B68-GIY_.js",
       "bytes": 19802,
       "sha256": "30334c26b449fa088dc68c8992c520404b30c4ab94d198fa43f1d8e06eaeee11"
     },
     {
       "path": "_astro/client.1eYSHt_W.js",
+      "url": "/contribute/_assets/_astro/client.1eYSHt_W.js",
       "bytes": 14846,
       "sha256": "4db2b7b17ed5495aad05e5f6707347cb9897c23fcc4b3ed0be1e3d9fa8ed656f"
     },
     {
       "path": "_astro/client.S7oMDpEG.js",
+      "url": "/contribute/_assets/_astro/client.S7oMDpEG.js",
       "bytes": 6368,
       "sha256": "06e483f846661999265185b03558fcb4adb1ead5e8477b9300080510bb60ed4b"
     },
     {
       "path": "_astro/contributor-desk.astro_astro_type_script_index_0_lang.BgvqEJGA.js",
+      "url": "/contribute/_assets/_astro/contributor-desk.astro_astro_type_script_index_0_lang.BgvqEJGA.js",
       "bytes": 19279,
       "sha256": "a0ecc0bb569e001af154ae802208383c3077b72715bca3dde990cea77b0e7ce1"
     },
     {
       "path": "_astro/correspondence-kinds.CoH9Mnr1.js",
+      "url": "/contribute/_assets/_astro/correspondence-kinds.CoH9Mnr1.js",
       "bytes": 212,
       "sha256": "5db3ddca97a0ac0395b7d1a471dd90c1d3488eebcc8b633472baeb5ac091d87b"
     },
     {
       "path": "_astro/correspondence.astro_astro_type_script_index_0_lang.D_ceaGJX.js",
+      "url": "/contribute/_assets/_astro/correspondence.astro_astro_type_script_index_0_lang.D_ceaGJX.js",
       "bytes": 24674,
       "sha256": "4b4b683493de0d6de75d6c02c0c1bab0555355bc85af35f713857b3f75ac8435"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.BkH9WNIC.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.BkH9WNIC.js",
       "bytes": 8307,
       "sha256": "d6c331328195e7754f16a19fed75c6a51f9143d92d2908bdd7bef1985096727f"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.C-Qgo-ko.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.C-Qgo-ko.js",
       "bytes": 16282,
       "sha256": "f68a60d55fd3f18b5cd41fcac0ccf2dfa81b3963ccd4e9bb1e580fb32b7fd01b"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.Cr0OFWvy.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.Cr0OFWvy.js",
       "bytes": 5533,
       "sha256": "2f6c7b8f07afde2a823b57dd557040919ce6f764e36e8abaf8a4fed20c8ead33"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.CZHYo9PK.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.CZHYo9PK.js",
       "bytes": 93129,
       "sha256": "3265ef914fd31ca9a7a5e69a1beee11a510f747bbd35972c5de5697f44915466"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.CziAvHVZ.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.CziAvHVZ.js",
       "bytes": 4204,
       "sha256": "009543a810029626878aa0f22c03d94479c7e17464fc5d05d590bd3fa5c3db93"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.DBa5iInT.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.DBa5iInT.js",
       "bytes": 53,
       "sha256": "61af03242f731a597fba23467ad00df401084ed32e0b15a3df47e8ad317e1878"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.DjcMoD4E.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.DjcMoD4E.js",
       "bytes": 4933,
       "sha256": "3cb5d68a98f1ee3ee21f0ed4bc92fb00224cd247b25d8cf5c7fbab7b0c476356"
     },
     {
       "path": "_astro/index.astro_astro_type_script_index_0_lang.nnWwmVPg.js",
+      "url": "/contribute/_assets/_astro/index.astro_astro_type_script_index_0_lang.nnWwmVPg.js",
       "bytes": 10059,
       "sha256": "cc7880b95fd5a06e937e65d8e4510d8c4a6f0f2a6652d79212ab33739632b278"
     },
     {
       "path": "_astro/interface-change-worker-BB-DOtBf.js",
+      "url": "/contribute/_assets/_astro/interface-change-worker-BB-DOtBf.js",
       "bytes": 38924,
       "sha256": "7a5de181a009617419c1c1d7551b342a79f1ad9f316eea67746312d0976314ce"
     },
     {
       "path": "_astro/interface-change.astro_astro_type_script_index_0_lang.BRuprvrb.js",
+      "url": "/contribute/_assets/_astro/interface-change.astro_astro_type_script_index_0_lang.BRuprvrb.js",
       "bytes": 7245,
       "sha256": "1aa0a359fde02e9a430198810c58fe1a04a6eb1fa98dc9c9d17c57388e33111c"
     },
     {
       "path": "_astro/limits.C2s-jk3g.js",
+      "url": "/contribute/_assets/_astro/limits.C2s-jk3g.js",
       "bytes": 298,
       "sha256": "f592bc8b2f51b4da305414c9fba5053ee3c6a9012116d2397c56d7934adfb3f1"
     },
     {
       "path": "_astro/paths.BaZcQgrv.js",
+      "url": "/contribute/_assets/_astro/paths.BaZcQgrv.js",
       "bytes": 298,
       "sha256": "3f97ed4e31db4e354598740e7eb39f9af6ed44f3e2f9ccded7e7234379308a64"
     },
     {
       "path": "_astro/privacy.DGJKhqio.js",
+      "url": "/contribute/_assets/_astro/privacy.DGJKhqio.js",
       "bytes": 5894,
       "sha256": "af95efaf394fb8ce821f53142b9fa07d8868128901c7c404b4639fbc612c7548"
     },
     {
       "path": "_astro/record-bundle.DsvBG47f.js",
+      "url": "/contribute/_assets/_astro/record-bundle.DsvBG47f.js",
       "bytes": 3344,
       "sha256": "b341cf67dfd90bf1a66dc8de317d18c314b47de7b4844586c3a110cf40d30ce7"
     },
     {
       "path": "_astro/record-lab-worker-zAOtZAsF.js",
+      "url": "/contribute/_assets/_astro/record-lab-worker-zAOtZAsF.js",
       "bytes": 165755,
       "sha256": "6e6d80b1c2a02fbbf0ce8d8c97df3cfc7d678e29e7a777bb669a6145ab07ec21"
     },
     {
       "path": "_astro/record-lab.astro_astro_type_script_index_0_lang.CfyJmGol.js",
+      "url": "/contribute/_assets/_astro/record-lab.astro_astro_type_script_index_0_lang.CfyJmGol.js",
       "bytes": 14581,
       "sha256": "e13d0d4b4bfe49392aec43dd85b65d6355ef64fe412eeb704571a15859d8e7d0"
     },
     {
       "path": "_astro/shared-task.astro_astro_type_script_index_0_lang.cHf0UloK.js",
+      "url": "/contribute/_assets/_astro/shared-task.astro_astro_type_script_index_0_lang.cHf0UloK.js",
       "bytes": 18601,
       "sha256": "0e8f8db15f37dc84ee12ed94787a150cba4dea06c34126b517bcbbf275b0982c"
     },
     {
       "path": "_astro/src.Crde4_42.js",
+      "url": "/contribute/_assets/_astro/src.Crde4_42.js",
       "bytes": 14589,
       "sha256": "36978c28b59b05b3470edb5698fa8e374bb06c569fe951a2937263650a00451b"
     },
     {
       "path": "_astro/task-square.astro_astro_type_script_index_0_lang.CKlV7c1w.js",
+      "url": "/contribute/_assets/_astro/task-square.astro_astro_type_script_index_0_lang.CKlV7c1w.js",
       "bytes": 93264,
       "sha256": "bc97bff4116555fd3b0435588c7902e8f35b98dae5a477815a74b73cf6a14f35"
     },
     {
       "path": "_astro/town-square.astro_astro_type_script_index_0_lang.DTUyQYcB.js",
+      "url": "/contribute/_assets/_astro/town-square.astro_astro_type_script_index_0_lang.DTUyQYcB.js",
       "bytes": 27208,
       "sha256": "72d8717297900187bff563d78ba7782aa295284dd64b525048b9a3ba0a06952a"
     },
     {
       "path": "_astro/trial.astro_astro_type_script_index_0_lang.sy0IriNQ.js",
+      "url": "/contribute/_assets/_astro/trial.astro_astro_type_script_index_0_lang.sy0IriNQ.js",
       "bytes": 16840,
       "sha256": "5586401cae031715cb49a43248d3429b5128e7b4275dbe489abd3a74f8730c83"
     },
     {
       "path": "_astro/work-board.astro_astro_type_script_index_0_lang.BJAp_yCQ.js",
+      "url": "/contribute/_assets/_astro/work-board.astro_astro_type_script_index_0_lang.BJAp_yCQ.js",
       "bytes": 4741,
       "sha256": "926fe8bc6693bc85c2f6c64ecc240f8917054e33b7796ea30f00343a613125b1"
     },
     {
       "path": "apple-touch-icon.png",
+      "url": "/contribute/_assets/apple-touch-icon.png",
       "bytes": 17919,
       "sha256": "a83730225bfc45a0758dac9dd0741a479d8c2d9da26734eae6be8ae0420e4633"
     },
     {
       "path": "contribute/account/index.html",
-      "bytes": 14584,
-      "sha256": "9d4ae3e22902496fd86dfa8f17215c8572875e5d8ae6ebcf49b0620186d31b54"
+      "url": "/contribute/account/",
+      "bytes": 14755,
+      "sha256": "f581acf1a77aae0976a14ab1c9732582ae7efa6b98ef1ae20aaf42477f61053e"
     },
     {
       "path": "contribute/discussions/index.html",
-      "bytes": 12341,
-      "sha256": "d92774395df431878c3da5763d6fe5165500b841d5502965b4f6d09134e91638"
+      "url": "/contribute/discussions/",
+      "bytes": 12512,
+      "sha256": "0a99c0e6b3f00f416557bb43392b48630b03f8e15b6e007ff49262dfb3bb586f"
     },
     {
       "path": "contribute/index.html",
-      "bytes": 21985,
-      "sha256": "6fb31d2de473ae11d77f34abc0252ecc1db90c32a894c6d9fbffea472d9f967e"
+      "url": "/contribute/",
+      "bytes": 22156,
+      "sha256": "499436ed030418e61c1251fd59186d7ea4e777b672b374e6d709c1cc313caa92"
     },
     {
       "path": "contribute/review/index.html",
-      "bytes": 17645,
-      "sha256": "9ea4aed8728d276cb5cd48a3d0c4c5047176d4e93f6a53f27ebb6b9268373f7c"
+      "url": "/contribute/review/",
+      "bytes": 17797,
+      "sha256": "eea0069b136a356805185e423c8ec4f2853a9b5bd96cc6ce847f6eaee2ee16d0"
     },
     {
       "path": "contribute/share/index.html",
-      "bytes": 10989,
-      "sha256": "71ec409f7ec283149fdb09b04949aac1b3d76bf9dfdcceb9153b55adbb613147"
+      "url": "/contribute/share/",
+      "bytes": 11160,
+      "sha256": "d3b5eaa2e04cc50f390706b9e177a2e8a5cac8de479b620b16760628f0697af6"
     },
     {
       "path": "contribute/showcase/index.html",
+      "url": "/contribute/showcase/",
       "bytes": 9,
       "sha256": "e3ebaa16dd9d9b9fc107c42183fb6cf9d22927e1af03dbbdfa0ccc38e4e4ac31"
     },
     {
       "path": "contribute/submissions/index.html",
-      "bytes": 11010,
-      "sha256": "e63b5ac627f59366b768a26f1d2c153d2ec542a839cad1880835e4b6b38e17c1"
+      "url": "/contribute/submissions/",
+      "bytes": 11181,
+      "sha256": "aa159c12609c406d1239ff68045ae13cdeb54ddb040af3917ef3b1abf0fffa59"
     },
     {
       "path": "contribute/tasks/index.html",
-      "bytes": 12935,
-      "sha256": "12804a4e015745d44498733cc71402800b3cddcc544b9e6815c97ea8c0ac97de"
+      "url": "/contribute/tasks/",
+      "bytes": 13106,
+      "sha256": "563a52aa9aeffe22411b2c589b8c8ae273f61d1bce5a568ddec5fba6661aec97"
     },
     {
       "path": "favicon.svg",
+      "url": "/contribute/_assets/favicon.svg",
       "bytes": 875,
       "sha256": "d69b17c0ebf231af2fd68e8077dde1a2b9e6c2fce35ac210022f25996928973b"
     },
     {
       "path": "fonts/fraunces-roman.woff2",
+      "url": "/contribute/_assets/fonts/fraunces-roman.woff2",
       "bytes": 67388,
       "sha256": "48282a415ec22e31beaf0a0666e6fae0c8cbddcd0b1f6e729f27c3ade8a64e43"
     },
     {
       "path": "fonts/newsreader-roman.woff2",
+      "url": "/contribute/_assets/fonts/newsreader-roman.woff2",
       "bytes": 56232,
       "sha256": "8f58497f9d0b27115e82eb2dd4be1bf708909848eb8dc4ede2db7ac2696c0e8b"
     },
     {
       "path": "fonts/plexmono-400.woff2",
+      "url": "/contribute/_assets/fonts/plexmono-400.woff2",
       "bytes": 10052,
       "sha256": "c36f509c0a8f9f85f29cb44bc8701d8a9e0b14c499e77a884f789ead7093a7ac"
     },
     {
       "path": "fonts/plexmono-500.woff2",
+      "url": "/contribute/_assets/fonts/plexmono-500.woff2",
       "bytes": 10060,
       "sha256": "a76f53ca6612e7b3828eec2311098675b7f9849ae4169a8bcef6302aec02a6c0"
     },
     {
       "path": "scripts/office.js",
+      "url": "/contribute/_assets/scripts/office.js",
       "bytes": 4717,
       "sha256": "f3ef5128859e372366601d679e6e376e62a843d32124df15345ca8cd32e9a337"
     },
     {
       "path": "styles/main.css",
+      "url": "/contribute/_assets/styles/main.css",
       "bytes": 21257,
       "sha256": "868a2b68d0058aba45ce8ee266ebe6eaa9183cd01936ceff26ed7a7e281bd808"
     },
     {
       "path": "styles/office.css",
+      "url": "/contribute/_assets/styles/office.css",
       "bytes": 26903,
       "sha256": "48124f502e7bc21108528ed250c0637f6b688dced95f74d1c0810bf98203c137"
     }

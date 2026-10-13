@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`dc1777a8df0b53389329b6a93eaf23311613ac55`, built from the committed source
+`4efa8ace9254af6f082139745e9a675399ff9097`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -82,3 +82,13 @@ logout/revocation/expiry, viewer roles, moderation/withdrawal, reload and mobile
 All task/account/share data is synthetic owner QA. The original export and red
 observations remain in Pilot227800. Human publication awaits operator preview
 review and independent receiving; the default mount remains disabled.
+
+Managed composition is now opt-in at the existing native SDS ingress; see
+[MANAGED-INSTALL.md](MANAGED-INSTALL.md). The desk manifest records canonical
+`/contribute/_assets/` resource URLs from its dedicated export-time build
+integration. Managed serving has no root aliases; the shared immutable receiver
+retains aliases only on the separate diagnostic TLS socket. An inactive managed
+flag cannot expose an installed journey over the plaintext native listener.
+Both manifests/source/dependencies and actual enrollment must pass before its
+prefix serves; unrelated SDS routes remain usable on failure. No provider
+environment, deployment, DNS, source ledger or human page was changed.

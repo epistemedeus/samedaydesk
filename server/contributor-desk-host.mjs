@@ -1,13 +1,11 @@
 import express from 'express';
 import {createServer} from 'node:https';
 import {readFile} from 'node:fs/promises';
-import {fileURLToPath,pathToFileURL} from 'node:url';
+import {pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {createSdsApp} from './app.js';
-import {verifyContributorArtifact,verifyContributorRuntime} from './lib/contributor-artifact.js';
+import {loadContributorDeskAssets} from './lib/contributor-desk-assets.js';
 
-const runtimeRoot=fileURLToPath(new URL('../vendor/neomorphic-contributor-journey/',import.meta.url));
-const deskRoot=fileURLToPath(new URL('../vendor/neomorphic-contributor-desk/',import.meta.url));
 const prefix='/api/neomorphic-contributor-journey';
 
 /** Opt-in dedicated HTTPS host. The ordinary SDS entrypoint and both homepages are untouched. */
@@ -20,9 +18,7 @@ export async function createContributorDeskHost({env=process.env,port}={}){
   if(url.protocol!=='https:'||url.origin!==origin||url.username||url.password)throw new Error('canonical same-origin HTTPS host required');
   const expected=env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT;
   if(!/^[a-f0-9]{40}$/.test(expected??''))throw new Error('exact runtime/desk source commit required');
-  await verifyContributorRuntime(runtimeRoot,expected);
-  const assets=await verifyContributorArtifact(deskRoot,'neomorphic.contributor-desk.assets.v1',expected);
-  if(assets.apiPath!==prefix||assets.previewOnly!==true||assets.publicEnabled!==false)throw new Error('same-origin private desk artifact required');
+  const assets=await loadContributorDeskAssets(expected,{legacyAliases:true});
   const keyFile=env.CONTRIBUTOR_DESK_TLS_KEY_FILE,certFile=env.CONTRIBUTOR_DESK_TLS_CERT_FILE;
   if(!keyFile||!certFile||!path.isAbsolute(keyFile)||!path.isAbsolute(certFile))throw new Error('explicit TLS files required');
   const tls={key:await readFile(keyFile),cert:await readFile(certFile),minVersion:'TLSv1.2'};
@@ -34,17 +30,14 @@ export async function createContributorDeskHost({env=process.env,port}={}){
     if(req.headers.host!==url.host){res.status(421).end();return;}
     next();
   });
-  const sds=createSdsApp({neomorphicContributorJourney:{env},neomorphicOpportunity:{env:{}},correspondence:{env:{}},hostedUsefulJourney:{env:{}},managedWatch:{env:{}}});
+  const sds=createSdsApp({neomorphicContributorJourney:{env:{...env,CONTRIBUTOR_DESK_MANAGED_ENABLED:'0'}},neomorphicOpportunity:{env:{}},correspondence:{env:{}},hostedUsefulJourney:{env:{}},managedWatch:{env:{}}});
   const mount=sds.get('neoContributorJourney');
   try{
     await mount.ready();
     if(mount.state.status!=='ready')throw new Error('installed producer not ready');
     // Exact API passes through the SAME SDS mount. Other merchant/customer routes are not exposed by this runner.
     app.use(prefix,(req,res,next)=>{req.url=prefix+req.url;sds(req,res,next);});
-    const staticOptions={dotfiles:'deny',fallthrough:false,index:'index.html',redirect:false,setHeaders:res=>res.setHeader('Cache-Control','no-store')};
-    app.get('/contribute',(req,res,next)=>req.path==='/contribute'?res.redirect(308,'/contribute/'):next());
-    for(const name of ['contribute','_astro','styles','fonts','scripts'])app.use('/'+name,express.static(path.join(deskRoot,name),staticOptions));
-    for(const name of ['favicon.svg','apple-touch-icon.png'])app.get('/'+name,(_req,res)=>res.sendFile(path.join(deskRoot,name)));
+    app.use(assets.router);
     app.use((_req,res)=>res.sendStatus(404));
     app.use((_err,_req,res,_next)=>res.sendStatus(404));
     const server=createServer(tls,app);

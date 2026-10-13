@@ -5,7 +5,14 @@ human homepages untouched. It does not deploy, bind DNS or assert that a domain
 is already configured. Static Hostinger assets cannot be assumed to proxy the
 SDS Node API. Keep the existing human preview review and public activation off.
 
-## Exact topology
+The existing managed SDS Node app now receives the same compiled composition
+through `server/app.js`; see [MANAGED-INSTALL.md](MANAGED-INSTALL.md) for its
+exact environment/build/edge/enrollment/rollback packet. Its asset namespace is
+`/contribute/_assets/`, with no root asset aliases. This guide retains the
+standalone diagnostic TLS recipe and its earlier path compatibility. Both use
+the same verified immutable asset receiver.
+
+## Diagnostic topology
 
 `server/contributor-desk-host.mjs` opens **one loopback HTTPS socket**. It serves
 the unchanged Astro operator desk from `vendor/neomorphic-contributor-desk` at
@@ -83,17 +90,16 @@ and canonical obligations; it does not rotate server keys or copy ledgers.
 
 ## One remaining ingress input
 
-Root needs **one concrete HTTPS desk ingress binding**: its exact origin and a
-TLS route forwarding all of the desk asset paths and the unchanged API prefix
-to this Node receiver on the same host. A supported existing ingress with a
-branded desk host may supply that binding; it must retain the selected Host and
-exact origin, serve a valid certificate and isolate the loopback receiver.
-The certificate/origin must be selected before durable enrollment. A static
-hosting account alone does not provide it. No public origin or provider route
-was available or configured in this assignment; only the exact loopback TLS
-topology is proved. Do not treat these tests as hosted receiving for an
-unconfigured domain. A deployment to a different origin requires explicit
-fresh deployment enrollment, not an alias/CORS exception to an existing store.
+The existing SDS Hostinger Node app is the chosen managed ingress. Root still
+needs one concrete edge record: exact existing HTTPS origin, closest transport
+peer IPs, preserved Host and overwritten single HTTPS protocol header. Select
+that origin before durable enrollment. Current official provider docs do not
+establish the deployed socket/header contract; the source rejects a guessed
+proxy or an untrusted forwarding claim. See MANAGED-INSTALL.md for this input.
+Only owned certificate-verified HTTPS receiving is proved here. Static Neomorphic
+hosting is not assumed to proxy Node, and no unconfigured domain gets a pass.
+Changing origin requires explicit fresh deployment enrollment, without widening
+cookies or CORS.
 
 Actual production account/task/requester bindings and independent qualified
 settlement are separate source inputs. This package does not fabricate them.
