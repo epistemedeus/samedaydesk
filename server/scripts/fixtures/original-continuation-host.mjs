@@ -2,6 +2,7 @@ import express from 'express';
 import {createServer,request as httpsRequest} from 'node:https';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
+import {createHash} from 'node:crypto';
 import {createSdsApp} from '../../app.js';
 import {mountNeomorphicOriginalContinuation} from '../../lib/neomorphic-original-continuation-mount.js';
 
@@ -34,6 +35,15 @@ export async function originalContinuationHost(settings){
     if(canonicalWrite){sends.push({path:req.url,key:req.headers['idempotency-key']});
       if(drop==='before'){drop=null;res.destroy();return;}
       if(drop==='after'){drop=null;res.end=()=>{res.flushHeaders();res.write('{');setImmediate(()=>res.destroy());return res;};}
+      if(drop==='refusal-after'){drop=null;const finish=res.end;res.end=function(...args){res.statusCode=409;return finish.apply(this,args);};}
+      if(drop==='revoke-after'){
+        drop=null;const finish=res.end,hash=createHash('sha256').update(String(req.headers.authorization).slice(7)).digest('hex');
+        res.end=function(...args){
+          original.state.store.withOpportunityClient(async client=>{await client.query('UPDATE earned_work_contributor_tokens SET revoked_at=CURRENT_TIMESTAMP WHERE token_hash=$1',[hash]);},'none')
+            .then(()=>{res.statusCode=401;finish.apply(this,args);},()=>res.destroy());
+          return res;
+        };
+      }
     }
     outer(req,res);
   });

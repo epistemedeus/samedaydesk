@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`d13eb845fc72ad71f949c1fee4400c911e480428`, built from the committed source
+`bf006179274d9f59596a30dc950698cf6375311e`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates419 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -127,7 +127,7 @@ badge is projected by this adapter.
 
 The original vendor is a mixed-source artifact: its retained producer
 7d97fed8f7009b61e7b7d9ebd99f78782c554a2b plus two narrow patches and the exact
-canonical helper from d13eb845fc72ad71f949c1fee4400c911e480428. Its manifest
+canonical helper from bf006179274d9f59596a30dc950698cf6375311e. Its manifest
 reports the three explicit source differences rather than mislabelling that
 closure as an entirely new producer. The new source and compiled files are
 manifest-verified. No original migration, schema selection, claim terms, import,
@@ -143,3 +143,8 @@ Root's remaining work is independent exact-source synthetic receiving, concrete
 trusted HTTPS/Host/original-route receiving, and the separately reviewed optional
 human preview. The compiled UI stays unchanged. This topic branch supplies no
 release acceptance, deployment, recipient enrollment, invitation or payout.
+
+Canonical readback also precedes classification of a completed submit refusal: a
+producer retry can refuse after an earlier commit. A matching original receipt
+confirms that delivery; revoked/unavailable read authority preserves the unknown
+fence. The focused synthetic replay covers both cases without another submit.

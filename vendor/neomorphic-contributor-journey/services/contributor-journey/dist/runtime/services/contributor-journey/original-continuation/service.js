@@ -188,6 +188,12 @@ export class OriginalContinuationService {
                 if (ack.status >= 500)
                     return { operationKey, state: 'unknown' };
                 if (ack.status >= 400 && ack.status < 500) {
+                    // A producer's fenced retry may refuse after an uncertain earlier commit.
+                    // The canonical receipt wins over that acknowledgement; failed readback
+                    // leaves the durable fence unknown, including revoked holder authority.
+                    const readback = await this.reconcile(client, link, holder, reservation.operation);
+                    if (readback.state !== 'unknown')
+                        return readback;
                     await client.query("UPDATE journey_original_continuation_operations SET state='refused',updated_at=$3 WHERE link_id=$1 AND operation_key=$2", [link.id, operationKey, this.options.database.now()]);
                     return { operationKey, state: 'refused' };
                 }
