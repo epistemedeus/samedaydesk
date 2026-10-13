@@ -90,3 +90,64 @@ test('exact method/path/nonce matching and malformed Host/secure protocol have b
 test('closing the probe restores normal harmless health behavior',async()=>{
   await replay(env(),async f=>{f.ingress.close();assert.equal(await f.call({'x-contributor-native-probe':nonce}),200);assert.equal(f.receipts().length,0);});
 });
+
+test('v2 receives the observed Unix/node/missing-native-marker negative without treating standard claims as authority',async()=>{
+  await replay({...env(),CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'2'},async f=>{
+    await f.call({'x-contributor-native-probe':nonce,origin:'https://desk.invalid','x-forwarded-proto':'https',
+      forwarded:'for=DO_NOT_LOG;proto=https;host=DO_NOT_LOG',cookie:'DO_NOT_LOG','x-real-ip':'DO_NOT_LOG'});
+    const r=f.receipts()[0];assert.equal(r.schema,'sds.contributor-native-ingress-probe.v2');assert.equal(r.runtime,'node');
+    assert.equal(r.listener,'unix-selected');assert.equal(r.secureProtocolHeaderCount,0);assert.equal(r.secureProtocol,'missing');assert.equal(r.hostMatches,true);
+    assert.deepEqual(r.observation.selectedServer,{bound:true,requestMatches:true,physicalAddressKind:'unix',nativeHandleKind:'pipe'});
+    assert.equal(r.observation.authorityAccepted,false);assert.equal(f.authority(),false);
+    assert.deepEqual(r.observation.indicators.xForwardedProto,{headerCount:1,protocol:'https'});
+    assert.deepEqual(r.observation.indicators.forwarded,{headerCount:1,protocolCount:1,protocol:'https'});
+    assert.deepEqual(r.observation.origin,{configuredHttps:true,headerPresent:true,headerMatches:true});
+    assert.match(r.observation.hooks.listenFunctionSha256,/^[a-f0-9]{64}$/);
+    assert.ok(!f.logs.join('').includes('DO_NOT_LOG'));
+    assert.ok(!f.logs.join('').includes('/tmp/'));assert.ok(!f.logs.join('').includes('desk.invalid'));
+    await f.call({'x-contributor-native-probe':nonce});assert.equal(f.receipts().length,1);
+  },{unix:true});
+});
+
+test('v2 protocol observations retain duplicate/malformed/ordinary claims as non-authoritative enums',async()=>{
+  const cases=[
+    {headers:{'x-forwarded-proto':['https','https']},xfp:{headerCount:2,protocol:'duplicate'}},
+    {headers:{'x-forwarded-proto':'http, https'},xfp:{headerCount:1,protocol:'mixed'}},
+    {headers:{'x-forwarded-proto':'https, https'},xfp:{headerCount:1,protocol:'https-list'}},
+    {headers:{'x-forwarded-proto':'https, DO_NOT_LOG'},xfp:{headerCount:1,protocol:'malformed'}},
+    {headers:{'x-forwarded-proto':'DO_NOT_LOG'},xfp:{headerCount:1,protocol:'other'}},
+  ];
+  for(const c of cases)await replay({...env(),CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'2'},async f=>{
+    await f.call({'x-contributor-native-probe':nonce,...c.headers,'!~passenger-proto':'https',
+      'x-forwarded-ssl':['on','off'],'front-end-https':'off',origin:'https://foreign.invalid'});
+    const r=f.receipts()[0];assert.deepEqual(r.observation.indicators.xForwardedProto,c.xfp);
+    assert.deepEqual(r.observation.indicators.xForwardedSsl,{headerCount:2,protocol:'duplicate'});
+    assert.deepEqual(r.observation.indicators.frontEndHttps,{headerCount:1,protocol:'http'});
+    assert.equal(r.observation.origin.headerMatches,false);assert.equal(r.observation.authorityAccepted,false);assert.equal(f.authority(),false);
+    assert.ok(!f.logs.join('').includes('DO_NOT_LOG'));assert.ok(!f.logs.join('').includes('foreign.invalid'));
+  });
+  for(const [value,expected] of [['for="DO_NOT_LOG;proto=https";proto=http',{headerCount:1,protocolCount:1,protocol:'http'}],
+    ['for=DO_NOT_LOG;proto="https"',{headerCount:1,protocolCount:1,protocol:'https'}],
+    ['for="DO_NOT_LOG;proto=https',{headerCount:1,protocolCount:0,protocol:'malformed'}]]){
+    await replay({...env(),CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'2'},async f=>{
+      await f.call({'x-contributor-native-probe':nonce,forwarded:value});
+      assert.deepEqual(f.receipts()[0].observation.indicators.forwarded,expected);assert.ok(!f.logs.join('').includes('DO_NOT_LOG'));
+    });
+  }
+});
+
+test('v2 requires all explicit off flags and refuses unknown diagnostic versions',async()=>{
+  for(const override of [{CONTRIBUTOR_JOURNEY_PUBLIC_READS:undefined},{CONTRIBUTOR_DESK_MANAGED_ENABLED:undefined},
+    {CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'3'}])await replay({...env(),CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'2',...override},async f=>{
+    await f.call({'x-contributor-native-probe':nonce});assert.equal(f.receipts().length,0);
+  });
+});
+
+test('v2 fabricated helper globals and fingerprints cannot change the selected native admission',async()=>{
+  const old=globalThis.LsNode;globalThis.LsNode={listenDone:true,options:{HTTPS:'on'}};
+  try{await replay({...env(),CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION:'2'},async f=>{
+    await f.call({'x-contributor-native-probe':nonce,'!~passenger-proto':'https','x-forwarded-proto':'https'});
+    const r=f.receipts()[0];assert.equal(r.observation.loader.litespeedGlobalPresent,true);
+    assert.equal(r.observation.authorityAccepted,false);assert.equal(f.authority(),false);assert.equal(r.runtime,'node');
+  },{unix:true});}finally{old===undefined?delete globalThis.LsNode:globalThis.LsNode=old;}
+});

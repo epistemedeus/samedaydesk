@@ -90,13 +90,18 @@ and canonical obligations; it does not rotate server keys or copy ledgers.
 
 ## One remaining ingress input
 
-The existing SDS Hostinger Node app is the chosen managed ingress. Root still
-needs its actual native hook/Unix request and secure `!~Passenger-Proto` record,
-exact enrolled Host and upstream secure-header refusal. An accepted TCP/XFP
-fixture does not establish Passenger transport. [MANAGED-INSTALL.md](MANAGED-INSTALL.md)
-owns the disabled one-request private runtime-log probe and exact rollback.
-Keep the existing `build:managed-foundry`, full real environment and already
-enrolled store/origin/stable keys. Do not guess proxy IPs or replace enrollment.
+The existing SDS Hostinger Node app is the chosen managed ingress. The source now
+supports an explicitly qualified LiteSpeed HTTPS-only deployment; see
+[LITESPEED-HTTPS-ONLY.md](LITESPEED-HTTPS-ONLY.md) for exact controller receiving,
+signed qualification, installation and rollback. Actual provider SSL/GET redirects
+and LiteSpeed/native-pipe identity are received; plaintext mutations and alias/
+backend isolation still must be received before Root can issue qualification.
+The earlier Unix/node/missing native marker remains a preserved negative; a
+Passenger-specific marker is not itself the product requirement. Qualification
+does not follow from a forwarding claim, source fixture or environment boolean.
+Keep the composed `build:managed-contributor` (including `build:managed-foundry`),
+complete environment/settings/linkage and enrolled store/origin/stable keys.
+Do not guess proxy IPs, add an unreceived trust flag or replace enrollment.
 Only owned certificate-verified HTTPS receiving is proved here. Static Neomorphic
 hosting is not assumed to proxy Node, and no unconfigured domain gets a pass.
 Changing origin requires explicit fresh deployment enrollment, without widening
