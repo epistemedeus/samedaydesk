@@ -66,13 +66,34 @@ is audited; an environment assertion cannot add a loader. No VM path is pinned.
 Tests invoke this unchanged hook and real Unix sockets, with a simulated TLS
 terminator/Passenger core. They do not qualify actual Hostinger transport.
 
-**Remaining actual-host edge record:** use the disabled probe below to establish
-the selected native hook, Unix request, one secure HTTPS marker and enrolled exact
-Host on the existing app. Receive external secure-header refusal, benign ordinary
-forwarding, origin/cookies/CSRF and cold restart on that actual edge before native
-serving acceptance. The candidate path remains `https://samedaydesk.com/contribute/`;
-retain the existing restricted enrolled origin. Do not guess proxy IPs, switch an
-enrolled origin or change DNS to make a TCP fixture count as this record.
+The product boundary is received HTTPS-only ingress, exact origin/Host, secure
+cookies and CSRF, not a particular Passenger helper/header. A different supported
+edge can meet it through authenticated per-request TLS evidence or independently
+received TLS-only enforcement before the application and isolated backend access.
+Neither Unix locality, helper fingerprints, environmental assertions nor ordinary
+forwarding values establish that policy. The source currently implements the two
+contracts above plus direct TLS; it does not invent a third provider mode.
+
+Root's exact [current receiving](https://github.com/epistemedeus/pilot/blob/47be8f5856a0a783ef11d23d2f4fba98cc68ee47/overview/research/phase-20261013/contributor-live-profile-229500/ROOT-NATIVE-RECEIVING-230010.md)
+records a completed e25b1ed4 build and one real disabled probe: `node`,
+`unix-selected`, native marker missing, exact Host true. That negative is preserved.
+It neither identifies the actual helper nor establishes a supported HTTPS-only
+edge; the existing native guard correctly refuses. Root removed all probe settings.
+
+**Next actual-host input:** the v2 disabled observation below identifies the
+selected loader/helper fingerprints, real listener/request facts and bounded
+protocol indicators. Audit the observed helper against its actual owning source;
+do not assume the [published LiteSpeed helper](https://github.com/litespeedtech/openlitespeed/blob/master/dist/fcgi-bin/lsnode.js)
+is the deployed source or copy its code into an admission adapter. Hostinger's
+domain documentation establishes SSL availability, not Node-hop provenance or
+TLS-only enforcement. Once these facts are received, choose one bounded follow-on:
+verify a provider-authenticated TLS indicator and its exclusion of client claims,
+or receive a supported HTTPS-only edge policy with plaintext GET/mutation rejection
+or redirection **before Node**, alias/bypass exclusion and protected backend access.
+A health200 or a source fingerprint is insufficient for either. Preserve exact
+origin/cookies/CSRF/account isolation in that next adaptation. Prefer this existing
+app; do not guess IPs, add an HTTPS-only trust flag, change origin/DNS or deploy an
+alternate service. Candidate path remains `https://samedaydesk.com/contribute/`.
 
 Malformed Host/origin is refused. Account limits use the socket's conservative
 shared-edge identity, never secure or ordinary forwarded client addresses. Keep
@@ -96,6 +117,10 @@ candidate build while preserving Express, Node22, `server/index.js`, npm,
 root/output directories and existing auto-deployment linkage. Normal `npm start`,
 `build` and `build:managed-foundry` remain available. A per-build selection does
 not require a saved-settings PUT for this probe packet.
+Root's actual API receiving found that a build selection changes Git linkage.
+After every terminal candidate build, read back and restore the complete original
+enabled `main` linkage through Root's existing controller. No source reset or
+partial settings/environment replacement is implied.
 
 ## Full authoritative environment
 
@@ -168,6 +193,7 @@ normal health behavior. There is no poller, daemon or second listener.
    CONTRIBUTOR_DESK_MANAGED_ENABLED=0
    CONTRIBUTOR_JOURNEY_PUBLIC_READS=0
    CONTRIBUTOR_DESK_NATIVE_PROBE=1
+   CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION=2
    CONTRIBUTOR_DESK_NATIVE_PROBE_NONCE=CONTROLLER_OPAQUE_32_TO_128_BASE64URL_CHARACTERS
    CONTRIBUTOR_DESK_NATIVE_PROBE_EXPIRES=CONTROLLER_ABSOLUTE_UTC_ISO_EXPIRY_WITHIN_10_MINUTES
    ```
@@ -185,7 +211,8 @@ normal health behavior. There is no poller, daemon or second listener.
    node --env-file="$RESTRICTED_DIR/native-probe.env" server/scripts/probe-contributor-native-ingress.mjs
    ```
 
-   This finite client sends no cookie/body and follows no redirect; TLS/health
+   Version2 sends the configured exact Origin as a diagnostic input, which grants
+   no authority. This finite client sends no cookie/body and follows no redirect; TLS/health
    failures return a bounded refusal. Its digest/health success requires private
    log readback and explicitly **does not accept native ingress**.
 3. Read the existing app's authenticated
@@ -193,21 +220,29 @@ normal health behavior. There is no poller, daemon or second listener.
    once through Root's existing Hostinger authority. The
    [official runtime-log reader](https://github.com/hostinger/api-python-sdk/blob/main/docs/HostingNodeJSApi.md#get_node_js_runtime_logs_v1)
    parses JSON timestamp/level/message entries, which this probe emits. Retain
-   only the message beginning `contributor_native_ingress_probe ` whose
+   only the v2 message beginning `contributor_native_ingress_probe ` whose
    `controllerNonceSha256` matches the client's digest and timestamp belongs to
    this installation. Do not publish other runtime entries or clear shared logs.
+   The actual API returns an object containing `logs`; Hostinger may additionally
+   wrap this application's JSON envelope inside an entry's `message`. Validate
+   and unwrap both typed envelopes before schema/digest/time matching, as Root's
+   current receiving does. Do not treat a zero match or shape refusal as a pass.
    Missing receipt is a useful negative, not an instruction to keep polling.
-4. The receipt contains only runtime/listener enums, secure protocol count (2
-   means multiple), protocol enum and exact Host-match boolean, plus schema/
-   nonce digest and the required log envelope. No raw headers, socket paths,
-   addresses, environment, cookie, credential or request body is recorded.
-   Native candidate evidence is `passenger-native-hook`, `unix-selected`, count1,
-   `https`, Host=true. `node`, `passenger-hook-unqualified`, TCP, missing/multiple
-   markers or false Host are refusals requiring the exact provider/runtime fact,
-   never a guessed proxy or loader whitelist flag. Even candidate evidence still
-   needs actual upstream filtering and the separately authorized journey checks.
+4. Schema `sds.contributor-native-ingress-probe.v2` retains the prior runtime/
+   listener/native marker/Host facts and adds selected-server/request booleans,
+   physical address/native-handle enums, bounded main/helper presence/content
+   SHA256 and listen/address hook fingerprints/facts. Module labels/globals are
+   observations, never qualification. The native address call bypasses a helper's
+   virtual `server.address()`; fd-backed cases may be `unknown` with a `pipe` handle.
+   Standard XFP/Forwarded/X-Forwarded-SSL/Front-End-HTTPS appear only as counts and
+   allowlisted enums, with exact configured-origin/present/match booleans. Counts2
+   mean multiple. No raw source, filename/path/socket bytes, IPs, headers, cookies,
+   body, credentials, unrelated environment or customer records are logged.
+   `observation.authorityAccepted` is always false: this identifies facts for the
+   next received contract, never a serving gate. The v1 diagnostic/default and
+   its original exact assertions remain compatible when VERSION is omitted.
 5. Restore the complete prior authoritative disabled environment, or prepare a
-   full cleanup set with probe0 and nonce/expiry removed. Preserve the current
+   full cleanup set with probe0 and version/nonce/expiry removed. Preserve the current
    settings/source and enrollment; use prior exact source only for a code rollback.
    Root performs any environment replacement/restart. Remove its private nonce
    files after readback; retain the sanitized receipt. Expiry also stops observation

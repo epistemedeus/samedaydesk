@@ -4,6 +4,7 @@ import {createRequire} from 'node:module';
 import {readFileSync,statSync} from 'node:fs';
 import {createHash,timingSafeEqual} from 'node:crypto';
 import path from 'node:path';
+import {observeContributorHost} from './contributor-host-observation.js';
 
 const require=createRequire(import.meta.url);
 // Audited unchanged upstream Node hook, not a generated provider attestation.
@@ -77,9 +78,11 @@ export function createContributorIngress(env){
     try{
       const nonce=env.CONTRIBUTOR_DESK_NATIVE_PROBE_NONCE,expiry=Date.parse(env.CONTRIBUTOR_DESK_NATIVE_PROBE_EXPIRES);
       const origin=env.CONTRIBUTOR_JOURNEY_ORIGIN,url=new URL(origin);
+      const version=env.CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION??'1';
       if(/^[A-Za-z0-9_-]{32,128}$/.test(nonce??'')&&url.protocol==='https:'&&url.origin===origin&&
-          !url.username&&!url.password&&Number.isFinite(expiry)&&expiry>Date.now()&&expiry-Date.now()<=600000){
-        probe={nonce:Buffer.from(nonce),expiry,host:url.host,digest:createHash('sha256').update(nonce).digest('hex')};
+          !url.username&&!url.password&&Number.isFinite(expiry)&&expiry>Date.now()&&expiry-Date.now()<=600000&&
+          ['1','2'].includes(version)&&(version!=='2'||env.CONTRIBUTOR_DESK_MANAGED_ENABLED==='0'&&env.CONTRIBUTOR_JOURNEY_PUBLIC_READS==='0')){
+        probe={nonce:Buffer.from(nonce),expiry,host:url.host,origin,version,digest:createHash('sha256').update(nonce).digest('hex')};
       }
     }catch{}
   }
@@ -93,6 +96,10 @@ export function createContributorIngress(env){
     const receipt={schema:'sds.contributor-native-ingress-probe.v1',
       controllerNonceSha256:probe.digest,runtime:runtime(),listener:listenerKind(req),
       secureProtocolHeaderCount:secure.count,secureProtocol:secure.protocol,hostMatches:hosts.length===1&&hosts[0]===probe.host};
+    if(probe.version==='2'){
+      receipt.schema='sds.contributor-native-ingress-probe.v2';
+      receipt.observation=observeContributorHost({listener,req,headerValues:rawHeaderValues,origin:probe.origin});
+    }
     // Hostinger's authenticated runtime-log reader requires these three JSON
     // envelope fields; a plain console prefix is skipped by that reader.
     console.log(JSON.stringify({timestamp:new Date().toISOString(),level:'INFO',message:'contributor_native_ingress_probe '+JSON.stringify(receipt)}));

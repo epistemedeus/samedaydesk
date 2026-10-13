@@ -91,12 +91,15 @@ and canonical obligations; it does not rotate server keys or copy ledgers.
 ## One remaining ingress input
 
 The existing SDS Hostinger Node app is the chosen managed ingress. Root still
-needs its actual native hook/Unix request and secure `!~Passenger-Proto` record,
-exact enrolled Host and upstream secure-header refusal. An accepted TCP/XFP
-fixture does not establish Passenger transport. [MANAGED-INSTALL.md](MANAGED-INSTALL.md)
-owns the disabled one-request private runtime-log probe and exact rollback.
-Keep the existing `build:managed-foundry`, full real environment and already
-enrolled store/origin/stable keys. Do not guess proxy IPs or replace enrollment.
+needs a supported received HTTPS-only ingress contract, exact enrolled Host/origin
+and protection against caller forwarding claims. The actual Unix/node/missing
+native marker is a preserved negative; a Passenger-specific hook/header is not
+itself the product requirement. [MANAGED-INSTALL.md](MANAGED-INSTALL.md) owns the
+v2 disabled one-request private observation and concrete follow-on choice between
+authenticated TLS evidence and independently received TLS-only edge enforcement.
+Keep the composed `build:managed-contributor` (including `build:managed-foundry`),
+complete environment/settings/linkage and enrolled store/origin/stable keys.
+Do not guess proxy IPs, add an unreceived trust flag or replace enrollment.
 Only owned certificate-verified HTTPS receiving is proved here. Static Neomorphic
 hosting is not assumed to proxy Node, and no unconfigured domain gets a pass.
 Changing origin requires explicit fresh deployment enrollment, without widening

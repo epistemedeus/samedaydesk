@@ -5,13 +5,14 @@ import {createHash} from 'node:crypto';
 // sends no cookie/body, follows no redirect and never updates the provider.
 try{
   const env=process.env,nonce=env.CONTRIBUTOR_DESK_NATIVE_PROBE_NONCE,url=new URL(env.CONTRIBUTOR_JOURNEY_ORIGIN);
+  const version=env.CONTRIBUTOR_DESK_NATIVE_PROBE_VERSION??'1';
   const expiry=Date.parse(env.CONTRIBUTOR_DESK_NATIVE_PROBE_EXPIRES);
   if(env.CONTRIBUTOR_JOURNEY_MODE!=='disabled'||env.CONTRIBUTOR_DESK_MANAGED_ENABLED!=='0'||env.CONTRIBUTOR_JOURNEY_PUBLIC_READS!=='0'||
       env.CONTRIBUTOR_DESK_NATIVE_PROBE!=='1'||! /^[A-Za-z0-9_-]{32,128}$/.test(nonce??'')||
       url.protocol!=='https:'||url.origin!==env.CONTRIBUTOR_JOURNEY_ORIGIN||url.username||url.password||
-      !Number.isFinite(expiry)||expiry<=Date.now()||expiry-Date.now()>600000)throw new Error('probe scope refused');
+      !Number.isFinite(expiry)||expiry<=Date.now()||expiry-Date.now()>600000||!['1','2'].includes(version))throw new Error('probe scope refused');
   const ok=await new Promise((resolve,reject)=>{
-    const req=request(new URL('/api/health',url),{method:'GET',headers:{'x-contributor-native-probe':nonce,connection:'close'},
+    const req=request(new URL('/api/health',url),{method:'GET',headers:{'x-contributor-native-probe':nonce,connection:'close',...version==='2'?{origin:url.origin}:{}},
       rejectUnauthorized:true,agent:false,timeout:8000},res=>{
       let bytes=0,body='';res.on('data',chunk=>{bytes+=chunk.length;if(bytes>8192)req.destroy(new Error('bounded health response'));else body+=chunk;});
       res.on('error',reject);res.on('end',()=>{try{resolve(res.statusCode===200&&JSON.parse(body).ok===true);}catch{reject(new Error('health JSON refused'));}});

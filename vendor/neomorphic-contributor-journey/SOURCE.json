@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "8823ae589bd7804950c53a9fb8252ec09a572d22",
+  "sourceCommit": "53baf17023fcece662f86791ce96b994221ec0a9",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -1968,7 +1968,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "1d8ba44a62756197b84e42193a3444997b0dc844a97dcec73b38f84df1a23ee8"
+      "sha256": "923bd64851b50b86d7dbc9c9cb0d4c37326e499b54bdd1058b1c3c57fd4eff05"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

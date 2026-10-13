@@ -4,7 +4,7 @@ Default mode is disabled and loads no service or database. The optional mount in
 server/app.js runs before the host parser and closes on shutdown. Its default
 ENTRY_URL is vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js.
 The received compiled artifact is from Neomorphic
-`8823ae589bd7804950c53a9fb8252ec09a572d22`, built from the committed source
+`53baf17023fcece662f86791ce96b994221ec0a9`, built from the committed source
 on received base2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4 and SDS
 f864cadceaa7d2ee80077058992e95102ef361ae. SOURCE.json enumerates403 exact file hashes and
 lengths, integrated source/base pins, build command and the unchanged SDS lock hash.
@@ -100,3 +100,11 @@ direct TLS remain separate contracts. MANAGED-INSTALL.md owns the disabled finit
 private runtime-log probe. VM native-hook replay simulates the provider core and
 does not accept actual Hostinger transport. Preserve `build:managed-foundry` and
 already enrolled credentials/schemas/origin during controller installation.
+
+Root's current immutable receiving47be8f58 establishes actual Unix/node transport
+without the Passenger marker, so serving remains unqualified. The v2 disabled
+diagnostic adds bounded loader/helper/listener/protocol observations for a received
+compatible edge decision; they never create authority. HTTPS-only ingress can meet
+the same guarantees without Passenger-specific headers when its actual supported
+enforcement is independently received. Keep the composed Foundry/contributor build
+and complete settings/environment/linkage, with no ledger or public UI changes.
