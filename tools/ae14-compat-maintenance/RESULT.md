@@ -15,7 +15,7 @@ The finite acceptance template was not already in SameDayDesk. This package is t
 | Writer path | `tools/ae14-compat-maintenance/` |
 | Next integration owner | dr eggbot, then Root |
 
-This file is the receipt commit after `71840cf63454635e5826831080967113b8eb95e2`. That parent is the implementation, including the tests and evidence logs. This file does not contain its own commit hash. The exact receipt head is `git rev-parse HEAD` on this branch. Confirm `git rev-parse HEAD^` is the implementation commit.
+This file is the receipt commit after `71840cf63454635e5826831080967113b8eb95e2`. That parent is the implementation, including the tests and evidence logs. This file does not contain its own commit hash. The exact head is `git rev-parse HEAD` on this branch. The implementation commit is `71840cf63454635e5826831080967113b8eb95e2`. The inherited rerun and base-lint note below is a later commit on this file. Its parent is `38d4636e47e2541483203176d4984764b4fe4c8e`.
 
 ## What landed
 
@@ -57,6 +57,32 @@ Commands and outputs are in `evidence/`. Node v22.14.0. npm 10.9.9.
 The inherited failures are the missing local `x402-merchant` checkout (`expected sibling x402-url-extractor` or `MERCHANT_INPUT_ROOT` absent). The skipped mounted, buyer-setup, and failure-injection cases name the same missing checkout. This branch does not edit those suites.
 
 Tests: 28/28 owned pass; result-reuse 25/25 pass; recurring-job-recipes 83/90 pass, 4 fail, 3 skip, exit 1.
+
+## Inherited rerun
+
+Rerun on this branch before the note commit, parent `38d4636e47e2541483203176d4984764b4fe4c8e`. Node v22.14.0. npm 10.9.9.
+
+| Command | Reporter | Exit |
+| --- | --- | --- |
+| `npm run test:recurring-job-recipes` | tests 90, pass 83, fail 4, cancelled 0, skipped 3, todo 0 | 1 |
+| `node --test tools/result-reuse/test/*.test.mjs` | tests 25, pass 25, fail 0, cancelled 0, skipped 0, todo 0 | 0 |
+
+The four recipe failures and three skips are the same missing local `x402-merchant` checkout named above. Those suites were not edited.
+
+## Full lint at base
+
+Command: `npm run lint` in detached worktree `/tmp/ae14-e11-lint-base` at `d8cea059213e06d2f263be67f82e498f8052a50f`, after `npm ci --prefix client --include=dev`. Exit 1. ESLint reported 6 errors and 0 warnings:
+
+| File | Rule |
+| --- | --- |
+| `client/src/lib/auth.tsx:14` | `react-refresh/only-export-components` |
+| `client/src/lib/auth.tsx:22` | `react-hooks/set-state-in-effect` |
+| `client/src/lib/theme.tsx:99` | `react-refresh/only-export-components` |
+| `client/src/pages/Checkout.tsx:73` | `react-hooks/set-state-in-effect` |
+| `client/src/pages/Checkout.tsx:79` | `no-useless-assignment` |
+| `client/src/pages/SellerConformance.tsx:68` | `react-hooks/immutability` |
+
+All six are present at base `d8cea059`. `git diff` of `client/` from that base to this branch is empty. None of the files are under `tools/ae14-compat-maintenance/`. They were left unchanged.
 
 ## Limits
 
