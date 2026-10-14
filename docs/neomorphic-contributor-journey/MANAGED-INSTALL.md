@@ -1,5 +1,16 @@
 # Existing managed SDS Node installation packet
 
+For a machine-only runtime successor, export the exact committed Neo runtime and
+use its maintained `export-desk-assets.mjs --rebind-unchanged` mode to check and
+retain all 45 desk bytes. Only their manifest source reference changes. The
+private host test runner binds its Neo checkout to this received runtime manifest.
+A changed runtime/source/manifest requires Root's fresh deployment-bound native
+qualification for the actual completed successor build; do not reuse the prior
+qualification. Preserve the complete existing 59-key configuration and stable
+store/keys, updating only the actual source/build/qualification bindings. Keep
+managed API admission 1, assets/public reads 0 and future bindings empty until
+Root separately invokes the authorized zero-value private assigned QA sequence.
+
 The chosen path is the existing SameDayDesk Hostinger **Node22/Express** app,
 with `server/index.js` as its entry file. It serves `/contribute/`, its private
 `/contribute/_assets/` namespace and `/api/neomorphic-contributor-journey` on the

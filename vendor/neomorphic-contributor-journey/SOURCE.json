@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "44d12c51ea96c49f921fd78da4fca87b8d77e81a",
+  "sourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -1937,13 +1937,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js",
-      "bytes": 92953,
-      "sha256": "929c200e9c2d329e529bab888b5baec2331cee1b108c96b645415e7003b9de5f"
+      "bytes": 93319,
+      "sha256": "2071ede2586b362cf5f8ae8a6d240b5157c9d317c956c6688aab052aece4fa79"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js.map",
-      "bytes": 74949,
-      "sha256": "c645df32929dc015a2792deb84d8f141b327c710447ee509c749d8b0813dce49"
+      "bytes": 75021,
+      "sha256": "1b51beae53b92c270a58c5653869ae8046f45df6cc33836f0b43b1a411596499"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.d.ts",
@@ -2128,7 +2128,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "cb30d052e385f6b534d7f963917d27973cd7d75b18d4c34566d278dbbe99a746"
+      "sha256": "a3dae94035b449a1a84196ee38b85e59549e757570cdbb2d40e9a2b1e4fd0fc9"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

@@ -7,13 +7,14 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 // Reuse the received native/Unix fixtures and every original assertion without
-// changing Neo source or its compiled producer. Only the older fixture profile
+// changing the selected Neo source or its compiled producer. Only the older fixture profile
 // that assumes desk publication is explicitly opted into reviewed QA assets.
 const neo=process.env.CONTRIBUTOR_JOURNEY_TEST_NEO_ROOT;
 const sds=fileURLToPath(new URL('../../',import.meta.url));
 assert.ok(neo&&path.isAbsolute(neo),'isolated exact Neo checkout required');
+const received=JSON.parse(await readFile(new URL('../../vendor/neomorphic-contributor-journey/SOURCE.json',import.meta.url),'utf8'));
 assert.equal(execFileSync('git',['rev-parse','HEAD'],{cwd:neo,encoding:'utf8'}).trim(),
-  '44d12c51ea96c49f921fd78da4fca87b8d77e81a');
+  received.sourceCommit);
 const scratch=await mkdtemp(path.join(tmpdir(),'sds-private-host-tests-'));
 try{
   for(const entry of await readdir(neo))if(!['.git','tests','node_modules'].includes(entry))

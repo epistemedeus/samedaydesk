@@ -690,7 +690,12 @@ export class OpportunityService {
             await this.assertStoredPrincipal(client, round, contributor);
             await this.expireUnlearned(client, round.id);
             const stored = await client.query(`SELECT status_code, response_json, principal_id FROM earned_work_idempotency
-         WHERE scope = $1 AND task_id = $2 AND key = $3`, [action === "claim" ? "opportunity_claim" : "opportunity_waitlist", round.id, idempotencyKey]);
+         WHERE scope = ANY($1::text[]) AND task_id = $2 AND key = $3
+         ORDER BY array_position($1::text[], scope) LIMIT 1`, 
+            // Match claim's replay precedence, including imported/assigned holder
+            // acknowledgements. Check the selected principal before any fallback:
+            // another holder's higher-priority receipt must still refuse recovery.
+            [action === "claim" ? ["opportunity_holder_ack", "opportunity_claim"] : ["opportunity_waitlist"], round.id, idempotencyKey]);
             const row = stored.rows[0];
             if (!row)
                 return null;
