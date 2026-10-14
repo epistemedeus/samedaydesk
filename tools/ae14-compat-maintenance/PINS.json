@@ -1,0 +1,108 @@
+{
+  "schema": "samedaydesk.ae14-compat-maintenance.pins.v1",
+  "base": {
+    "repo": "https://github.com/epistemedeus/samedaydesk.git",
+    "commit": "d8cea059213e06d2f263be67f82e498f8052a50f",
+    "branch": "codex/ae14-e11-compat-maintenance"
+  },
+  "writerPath": "tools/ae14-compat-maintenance",
+  "portfolio": {
+    "repo": "https://github.com/epistemedeus/pilot.git",
+    "commit": "7428845d6429b78573801ee8035953e26c610eaf",
+    "path": "overview/self-evaluations/2026-10-14-agent-economy/EXPANSION-PORTFOLIO.md"
+  },
+  "joinedMatrix": {
+    "repo": "https://github.com/epistemedeus/pilot.git",
+    "commit": "ecf78d29c2c592dd03b5daef4eeba2f29772c8ae",
+    "path": "overview/self-evaluations/2026-10-14-agent-economy/GRAND-PLAN.md",
+    "section": "Composed receiving matrix for the actual amended exports",
+    "executedHere": false,
+    "label": "pending-join"
+  },
+  "stageNativeSource": {
+    "repo": "https://github.com/epistemedeus/pilot.git",
+    "commit": "c3436e8647bd111a04359193c55f2c97be77e180",
+    "blob": "613e3e336fc315650ea195270c010b1ef75ecf2a",
+    "path": "tools/ops/stage-native-source.sh"
+  },
+  "consumed": {
+    "e01": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "branch": "codex/ae14-e01-repeat-procurement",
+      "receiptHead": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+      "parent": "fc8a82ba16d68cba0aa805c0a3d0fd76fd5b6751",
+      "resultPath": "experiments/ae14-repeat-procurement/RESULT.md",
+      "verdict": "delta",
+      "base": "ccffedf34f356ed6a90123b80f655df9ae7ce850"
+    },
+    "e02": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "branch": "codex/ae14-e02-compat-repair",
+      "receiptHead": "338b9dfebf415d00ee0a21773d4d7f848d9ba4d6",
+      "implementation": "085791bde7e01e0c57f25dec4562e21c3f565b07",
+      "resultPath": "experiments/ae14-compat-repair/RESULT.md",
+      "verdict": "received",
+      "base": "ccffedf34f356ed6a90123b80f655df9ae7ce850"
+    },
+    "e06": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "branch": "codex/ae14-e06-task-economics",
+      "receiptHead": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+      "resultPath": "experiments/ae14-task-economics/RESULT.md",
+      "verdict": "delta",
+      "base": "ccffedf34f356ed6a90123b80f655df9ae7ce850"
+    },
+    "recurringJobRecipes": {
+      "path": "tools/recurring-job-recipes",
+      "commit": "d8cea059213e06d2f263be67f82e498f8052a50f",
+      "recipe": "source-change-alert"
+    },
+    "resultReuse": {
+      "path": "tools/result-reuse",
+      "commit": "d8cea059213e06d2f263be67f82e498f8052a50f"
+    },
+    "finiteQueue228300": {
+      "repo": "https://github.com/epistemedeus/x402-url-extractor.git",
+      "commit": "b0fe7246211318e0df183a733a62c047bae4b4fb",
+      "path": "experiments/phase-20261011/211150-finite-queue",
+      "disposition": "executed-no-delta",
+      "copied": false
+    },
+    "supplier228200": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "4133cde2ad11e7c58e5913c95c4134b253ab7bdc",
+      "path": "experiments/phase-20261011/211150-supplier-case",
+      "disposition": "no-delta",
+      "rerun": false
+    },
+    "feeRule": {
+      "sourceRepo": "https://github.com/base/commerce-payments",
+      "commit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "path": "docs/Fees.md",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2025 Coinbase",
+      "formula": "floor(capture * 500 / 10000) per capture",
+      "codeCopied": false
+    },
+    "legacy221400": {
+      "rewardsAtoms": [
+        "10000",
+        "50000"
+      ],
+      "feeApplied": false,
+      "source": "E06 RESULT at 75312c3ac1590dbf913ae516b7fb76c9db6e74d9"
+    },
+    "legacy234100": {
+      "netUsdc": "0.10",
+      "termsId": "continuity-234100-v1",
+      "termsVersion": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+      "feeApplied": false,
+      "atomicCount": null,
+      "source": "pilot ROOT-PREPARATION.md at 7428845d6429b78573801ee8035953e26c610eaf"
+    }
+  },
+  "nextIntegrationOwner": [
+    "dr eggbot",
+    "Root"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "samedaydesk.compat-maintenance-request.v1",
+  "occurrenceId": "compat-maint-cedar-1",
+  "clock": "2026-10-14T16:40:00.000Z",
+  "expiry": "2026-10-14T18:00:00.000Z",
+  "taskId": "cedar-chair-reuse",
+  "distinctTaskId": "desk-batch-retain",
+  "subject": "compat-contract-fields",
+  "sequence": 2,
+  "priorPath": "fixtures/prior.json",
+  "currentFixturePath": "fixtures/current-changed.json",
+  "fields": ["contractVersion", "sku"],
+  "tenant": "owner",
+  "authorityTenant": "owner",
+  "applicability": {
+    "sourceChanged": true,
+    "licensePlane": "mit",
+    "accessWithdrawn": false,
+    "rightsCleared": true,
+    "applicabilityMiss": false,
+    "inheritFull": false
+  },
+  "procurement": {
+    "mandateState": "revoked",
+    "coldProfile": "agency-harbor",
+    "incumbentProfile": "incumbent-desk",
+    "incumbentPid": 111,
+    "actorPid": 222,
+    "actorIsMandatePrincipal": false,
+    "priorSpend": "outcome_unknown",
+    "reusableOutput": true,
+    "inheritedAuthorityRequested": false
+  },
+  "economics": {
+    "termsVersion": "new-market",
+    "grossAtoms": "20",
+    "declaredEffort": "declared",
+    "observedEffort": "unknown",
+    "reviewBurden": "unknown",
+    "modeledCost": "unknown",
+    "operation": "quote",
+    "feeMode": "per-capture",
+    "tokenPriceRecommendation": null
+  },
+  "review": {
+    "reviewer": "authorized-reviewer",
+    "decision": "accept",
+    "operatorCapture": false,
+    "presentedReceipt": false,
+    "expectedReviewer": "authorized-reviewer"
+  }
+}

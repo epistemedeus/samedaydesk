@@ -1,0 +1,15 @@
+Node v22.14.0. npm 10.9.9. Suites were not edited.
+
+Owned, exit 0, 28 passed, 0 failed, 28 total:
+node --test --test-concurrency=1 tools/ae14-compat-maintenance/test/*.test.mjs
+Log: evidence/owned-suite.txt
+
+Inherited recurring-job-recipes, unchanged, exit 1, 83 passed, 4 failed, 3 skipped, 90 total:
+npm run test:recurring-job-recipes
+Log: evidence/inherited-recurring-job-recipes.txt
+The four failures and three skips are the missing local x402-merchant checkout
+(sibling x402-url-extractor or MERCHANT_INPUT_ROOT). This branch does not edit that suite.
+
+Inherited result-reuse, unchanged, exit 0, 25 passed, 0 failed, 25 total:
+node --test tools/result-reuse/test/*.test.mjs
+Log: evidence/inherited-result-reuse.txt
