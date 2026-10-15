@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import test, { before, after } from "node:test";
 import { createSdsApp } from "../app.js";
 import { acceptedCallerPin, verifyCallerClosure } from "../foundry/activation/remote-private-journey.mjs";
+import { digest } from "../foundry/private-pass-core.mjs";
 import { clientKey, TRUSTED_PROXIES_ENV } from "../lib/agent-readiness/rate-limit.js";
 import { inspectCorrespondenceEnv } from "../lib/correspondence-mount.js";
 import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
@@ -115,11 +116,22 @@ before(async () => {
     "package-lock.json",
     "vendor/agent-payment-integrity",
     "vendor/visitor-foundry-receiver/services/correspondence",
+    "vendor/neomorphic-opportunity/services/earned-work",
+    "vendor/neomorphic-opportunity/experiments/arena/workability-dimensions",
+    "vendor/neomorphic-opportunity/packs/funded-task-terms",
+    "server/vendor/machine-gateway",
   ]) {
     await cp(path.join(root, relative), path.join(coldDir, relative), {
       recursive: true,
       filter: (source) => !source.split(path.sep).includes("node_modules"),
     });
+  }
+  // Exercise the received caller in the same cold production installation,
+  // including immutable artifact metadata and every newly received member.
+  const control = "server/foundry/activation/private-control-pin.json";
+  const pin = JSON.parse(await readFile(path.join(root, control), "utf8"));
+  for (const relative of [...Object.keys(pin.files), control]) {
+    await cp(path.join(root, relative), path.join(coldDir, relative), { recursive: true });
   }
   // Same root lock the managed layout installs with `npm ci`. This command is the
   // hosted production install: dev dependencies are omitted and scripts do not run.
@@ -137,6 +149,70 @@ after(async () => {
 test("production dependencies retain a valid private caller control closure", () => {
   const received = verifyCallerClosure();
   assert.match(received.closureDigest, /^sha256:[a-f0-9]{64}$/);
+});
+
+test("composed caller closure receives the machine host and continuation without dropping prior callers", async () => {
+  const pin = JSON.parse(await readFile(path.join(root, "server/foundry/activation/private-control-pin.json"), "utf8"));
+  const prior = JSON.parse(await readFile(path.join(root, "server/lib/machine-services/test/fixtures/caller-predecessor.json"), "utf8"));
+  for (const member of Object.keys(prior.files)) assert.ok(Object.hasOwn(pin.files, member), member);
+  for (const received of prior.receivedCallerClosures) assert.ok(acceptedCallerPin(received), received.closureDigest);
+  assert.ok(acceptedCallerPin({ base: prior.base, sourcePinSha256: prior.files["vendor/visitor-foundry-receiver/SOURCE-PIN.json"], closureDigest: digest(prior) }));
+  for (const member of [
+    "server/lib/machine-services/mount.mjs", "server/lib/machine-services/postgres.mjs",
+    "server/lib/machine-services/private-config.mjs", "server/lib/machine-services/install.mjs",
+    "server/lib/machine-services/deploy/gateway-001.sql", "server/lib/machine-services/deploy/monitor-001.sql",
+    "server/vendor/machine-gateway/src/store-pg.mjs", "server/vendor/machine-gateway/src/providers.mjs",
+    "server/vendor/machine-gateway/src/worker.mjs", "server/vendor/machine-gateway/src/facilitator-worker.mjs",
+    "server/vendor/machine-gateway/vendor/extractor/public-fetch.mjs",
+    "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
+    "server/vendor/continuous-monitoring/src/store-pg.mjs", "server/vendor/continuous-monitoring/src/worker.mjs",
+    "server/vendor/continuous-monitoring/src/http.mjs", "server/vendor/continuous-monitoring/migrations/001.sql",
+    "server/vendor/continuous-monitoring/vendor/change-monitor/src/transition.mjs",
+    "vendor/neomorphic-opportunity/CONTINUATION-SOURCE.json",
+    "vendor/neomorphic-opportunity/services/earned-work/src/opportunity/continuation.ts",
+    "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/continuation.js",
+    "server/lib/contributor-artifact.js", "server/lib/contributor-https-qualification.js",
+    "vendor/neomorphic-contributor-journey/SOURCE.json",
+  ]) assert.ok(Object.hasOwn(pin.files, member), member);
+  assert.equal(acceptedCallerPin({ ...verifyCallerClosure(), closureDigest: `sha256:${"b".repeat(64)}` }), false);
+});
+
+test("cold production caller receives exact contributor bytes and both Postgres ports", async () => {
+  const result = await run(process.execPath, ["--input-type=module", "-e", `
+    import {verifyCallerClosure} from './server/foundry/activation/remote-private-journey.mjs';
+    import {verifyContributorRuntime} from './server/lib/contributor-artifact.js';
+    import {PostgresGatewayStore} from './server/vendor/machine-gateway/src/store-pg.mjs';
+    import {PostgresMonitorStore} from './server/vendor/continuous-monitoring/src/store-pg.mjs';
+    const caller=verifyCallerClosure();
+    const artifact=await verifyContributorRuntime('vendor/neomorphic-contributor-journey');
+    console.log(JSON.stringify({caller,product:artifact.sourceCommit,gateway:typeof PostgresGatewayStore,monitor:typeof PostgresMonitorStore}));
+  `], coldDir);
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  const received = JSON.parse(result.stdout);
+  assert.deepEqual(received.caller, verifyCallerClosure());
+  assert.equal(received.product, "872c4f3006db6c70b45d124480cd019e0af50e69");
+  assert.equal(received.gateway, "function"); assert.equal(received.monitor, "function");
+});
+
+test("cold caller refuses changed machine/PG/continuation/artifact/authority members before execution", async () => {
+  for (const member of [
+    "server/lib/machine-services/mount.mjs", "server/lib/machine-services/postgres.mjs",
+    "server/vendor/machine-gateway/src/store-pg.mjs", "server/vendor/continuous-monitoring/src/worker.mjs",
+    "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/continuation.js",
+    "vendor/neomorphic-contributor-journey/SOURCE.json", "server/lib/contributor-https-qualification.js",
+  ]) {
+    const target = path.join(coldDir, member);
+    const original = await readFile(target);
+    try {
+      await writeFile(target, Buffer.concat([original, Buffer.from("\nchanged-by-receiving-control\n")]));
+      const refused = await run(process.execPath, ["--input-type=module", "-e", `
+        import {verifyCallerClosure} from './server/foundry/activation/remote-private-journey.mjs';
+        try { verifyCallerClosure(); process.exitCode=1; }
+        catch(error) { if(error.code!=='caller_source_changed') throw error; }
+      `], coldDir);
+      assert.equal(refused.code, 0, member + ": " + refused.stderr);
+    } finally { await writeFile(target, original); }
+  }
 });
 
 test("caller closure binds original-task runtime and retains received callers", async () => {
