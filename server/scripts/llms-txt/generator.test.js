@@ -104,3 +104,21 @@ test("no nav and under the cap: output keeps the original single Pages section, 
   assert.ok(json.llmsTxt.includes("## Pages"));
   assert.notEqual(json.truncated, true);
 });
+
+test("homepage fallback reports omitted pages without inventing a sitemap link", async () => {
+  const O = "https://fallback.example";
+  const links = Array.from({ length: 60 }, (_, i) => `<a href="/p${i}">Page ${i}</a>`).join("");
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return `<html><head><title>Fallback</title></head><body>${links}</body></html>`;
+    if (u === O + "/sitemap.xml") return null;
+    if (u.startsWith(O + "/p")) return page("Page", "");
+    return null;
+  });
+  const { status, json } = await generate(O);
+  assert.equal(status, 200);
+  assert.equal(json.totalFound, 60);
+  assert.equal(json.omitted, 10);
+  assert.equal(json.truncated, true);
+  assert.doesNotMatch(json.llmsTxt, /\[Full sitemap\]/);
+  assert.match(json.llmsTxt, /10 (?:more|additional discovered) pages (?:not listed here|are not listed)/);
+});
