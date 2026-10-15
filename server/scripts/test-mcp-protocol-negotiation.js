@@ -446,4 +446,7 @@ test("GET /mcp stays a public read when the protocol header is unsupported", asy
   const text = await response.text();
   assert.equal(response.status, 200);
   assert.match(text, /samedaydesk agent tools MCP server/);
+  assert.match(text, new RegExp(`Tools \\(${EXPECTED_TOOL_NAMES.length}\\): ${EXPECTED_TOOL_NAMES.join(", ")}`));
+  assert.match(text, /project_funnel_evidence/);
+  assert.match(text, /Next: POST JSON-RPC initialize, then tools\/list/);
 });
