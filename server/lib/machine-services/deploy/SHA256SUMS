@@ -1,2 +1,3 @@
-9a36fd1f0397a06a24f4d73769776fc748a0ed858129a08d7d113213aaa20059  sds-ae18-repaired-cc85b7b5-source.tgz
-ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d  neomorphic-machine-gateway-0.1.1.tgz
+be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32  /tmp/sds-ae18-lifecycle-ab0a7752-source.tgz
+1dc564b671a7b347c5056aa643f60cfcbcf15f5509f4b2d816a5a180350a9efe  /tmp/sds-ae18-lifecycle-ab0a7752-amendment.patch
+ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d  server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz

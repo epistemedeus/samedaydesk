@@ -1,8 +1,8 @@
 {
   "schema": "sds.machine-services.deployment-package.v1",
-  "sourceHead": "cc85b7b59a46605090049be06431eebb7c873c24",
+  "sourceHead": "ab0a7752780995421da5752d9d6811d56e6d3891",
   "branch": "codex/ae18-host-integration-243001",
-  "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
+  "previousExport": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
   "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
   "serviceRepairPin": "667fba353e9082d8a0842437442dabc42843abf8",
   "adapter": "postgres",
@@ -16,21 +16,22 @@
   },
   "startCommand": "node server/index.js",
   "overlayPackage": {
-    "path": "/tmp/sds-ae18-repaired-cc85b7b5-source.tgz",
-    "sha256": "9a36fd1f0397a06a24f4d73769776fc748a0ed858129a08d7d113213aaa20059",
-    "bytes": 397576,
+    "path": "/tmp/sds-ae18-lifecycle-ab0a7752-source.tgz",
+    "sha256": "be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32",
+    "bytes": 413442,
     "requiresExistingSdsCheckout": true,
     "reportingFilesExcluded": [
       "server/lib/machine-services/RESULT.md",
       "server/lib/machine-services/deploy/DEPLOYMENT.json",
-      "server/lib/machine-services/test/evidence/"
+      "server/lib/machine-services/deploy/SHA256SUMS",
+      "server/lib/machine-services/test/evidence"
     ],
     "report": "final feature branch server/lib/machine-services/RESULT.md"
   },
   "amendmentSourcePatch": {
-    "base": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
-    "path": "/tmp/sds-ae18-repaired-cc85b7b5-amendment.patch",
-    "sha256": "4071e6cb9b591fb6b99016d18662174bc93beb68b74ea9da64b31aeb95b9fb1c"
+    "base": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "path": "/tmp/sds-ae18-lifecycle-ab0a7752-amendment.patch",
+    "sha256": "1dc564b671a7b347c5056aa643f60cfcbcf15f5509f4b2d816a5a180350a9efe"
   },
   "sourceScope": [
     "package.json",
@@ -60,9 +61,32 @@
       "selectedReceivedArtifact": true
     }
   ],
-  "previousOverlaySha256": "788aee9e88c025e86a012c7c68743e53f609789e0e24207850118bd266413ee8",
+  "previousOverlaySha256": "9a36fd1f0397a06a24f4d73769776fc748a0ed858129a08d7d113213aaa20059",
   "configurationContractChangedByAmendment": false,
   "migrationSchemaChangedByAmendment": false,
-  "installationAuthority": "inspect retained role capability; no username-based privilege assumption or credentials in this package",
-  "deployed": false
+  "installationAuthority": "Root independently verified retained TLS Postgres role additive CREATE; migration rechecks actual capability without username assumptions",
+  "deployed": false,
+  "previousTestedImplementation": "cc85b7b59a46605090049be06431eebb7c873c24",
+  "sourceOnlyLifecycleAmendment": true,
+  "codeRollback": {
+    "head": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "disableFirst": "deploy/rollback.json",
+    "retainSchemasAndReceipts": true,
+    "preserveCompleteEnvironment": true
+  },
+  "lifecycle": {
+    "backoffMs": [
+      1000,
+      2000,
+      4000,
+      8000,
+      16000,
+      30000
+    ],
+    "oneRecoveryTimer": true,
+    "singleFlightInitialization": true,
+    "sameExistingScheduler": true,
+    "shutdownDrainsPlansAndTicks": true,
+    "newEnvironmentKeys": []
+  }
 }
