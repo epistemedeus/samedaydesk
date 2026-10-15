@@ -194,6 +194,20 @@ test("cold production caller receives exact contributor bytes and both Postgres 
   assert.equal(received.gateway, "function"); assert.equal(received.monitor, "function");
 });
 
+test("predecessor caller manifest cannot authorize the composed source", async () => {
+  const target = path.join(coldDir, "server/foundry/activation/private-control-pin.json");
+  const current = await readFile(target);
+  try {
+    await cp(path.join(root, "server/lib/machine-services/test/fixtures/caller-predecessor.json"), target);
+    const refused = await run(process.execPath, ["--input-type=module", "-e", `
+      import {verifyCallerClosure} from './server/foundry/activation/remote-private-journey.mjs';
+      try { verifyCallerClosure(); process.exitCode=1; }
+      catch(error) { if(error.code!=='caller_source_changed') throw error; }
+    `], coldDir);
+    assert.equal(refused.code, 0, refused.stderr);
+  } finally { await writeFile(target, current); }
+});
+
 test("cold caller refuses changed machine/PG/continuation/artifact/authority members before execution", async () => {
   for (const member of [
     "server/lib/machine-services/mount.mjs", "server/lib/machine-services/postgres.mjs",
