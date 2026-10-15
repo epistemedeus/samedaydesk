@@ -17,8 +17,8 @@
     "zod": "3.25.76"
   },
   "previousReceipt": "producer-receiving.json",
-  "callerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
-  "priorCallerClosureDigest": "sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3",
-  "priorCallerDescriptorsAccepted": 25,
+  "callerClosureDigest": "sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200",
+  "priorCallerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
+  "priorCallerDescriptorsAccepted": 26,
   "deploymentQualificationIssued": false
 }

@@ -50,7 +50,9 @@ The closure that accepted the previous 23 descriptors was
 That descriptor remains an accepted prior. The hosted discovery-log export
 closure
 `sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3`
-is now one of 25 accepted priors. The verifier is unchanged. Member count
+is now one of 26 accepted priors, as is the previous host-lock closure
+`sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161`.
+The verifier is unchanged. Member count
 remains 1,171. Base remains
 `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`.
 
@@ -66,8 +68,8 @@ checkout of this lock and the qualified build. Its manifest differed only in
 `hostLockSha256`. All 437 compiled and static members matched. Product source,
 the source stamp, and required dependencies Express 5.2.1, pg 8.23.0, and zod
 3.25.76 are unchanged. The strict runtime check still refuses a different lock
-or dependency. The current closure, after that host binding, is
-`sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161`.
+or dependency. The current closure, after that host binding and the install-time lock restore, is
+`sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200`.
 Replaying the predecessor manifest against these bytes still refuses. Cold
 production installation verifies the caller and contributor artifact, imports
 both Postgres ports, and refuses changed machine, PG, continuation, artifact and
