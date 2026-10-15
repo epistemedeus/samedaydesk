@@ -14,7 +14,7 @@
 
 ## Agent interfaces
 
-- [SkillGuard free scanner](https://samedaydesk.com/skillguard): Free static malware scan for a skill, plugin or MCP server before install. Run: npx -y github:epistemedeus/skillguard <path-or-git-url>. Not a CVE audit or sandbox; for the paid hosted repo scan use /scan on the gateway.
+- [SkillGuard free scanner](https://samedaydesk.com/skillguard): Free static malware scan for a skill, plugin or MCP server before install. Run: git clone --depth 1 https://github.com/epistemedeus/skillguard.git skillguard && node skillguard/index.js <path-or-git-url>. Not a CVE audit or sandbox; for the paid hosted repo scan use /scan on the gateway.
 - [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
 - [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway. Live MCP inventory is authoritative.
 - Practical paid job: `POST https://agents.samedaydesk.com/extract/batch` (1 to 5 public HTTPS URLs, 0.01 USDC bounded attempt). Backward-compatible `GET https://agents.samedaydesk.com/extract?url=https://example.com` remains available.
