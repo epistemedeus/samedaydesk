@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: changed mounted source -> real recipe/template -> explicit reviewer -> durable new-process handback
+ok 1 - changed mounted source -> real recipe/template -> explicit reviewer -> durable new-process handback
+  ---
+  duration_ms: 503.983046
+  ...
+# Subtest: unchanged is not-yet-due and cannot acquire acceptance
+ok 2 - unchanged is not-yet-due and cannot acquire acceptance
+  ---
+  duration_ms: 246.172734
+  ...
+# Subtest: stale prior executes recipe stale path without source fetch
+ok 3 - stale prior executes recipe stale path without source fetch
+  ---
+  duration_ms: 207.760574
+  ...
+# Subtest: partial fields retain coverage and cannot masquerade as complete useful delivery
+ok 4 - partial fields retain coverage and cannot masquerade as complete useful delivery
+  ---
+  duration_ms: 228.246522
+  ...
+# Subtest: insufficient reuse rights produce useful no-fit
+ok 5 - insufficient reuse rights produce useful no-fit
+  ---
+  duration_ms: 210.32939
+  ...
+# Subtest: authorized reviewer can reject bounded assessment
+ok 6 - authorized reviewer can reject bounded assessment
+  ---
+  duration_ms: 246.343403
+  ...
+# Subtest: expiry wins over late approval
+ok 7 - expiry wins over late approval
+  ---
+  duration_ms: 239.63162
+  ...
+# Subtest: revoked mandate after observation defeats approval under current rights
+ok 8 - revoked mandate after observation defeats approval under current rights
+  ---
+  duration_ms: 250.590543
+  ...
+# Subtest: ambiguous prior payment is reconciliation work and causes no replay
+ok 9 - ambiguous prior payment is reconciliation work and causes no replay
+  ---
+  duration_ms: 239.478376
+  ...
+# Subtest: foreign task, digest, source and reviewer never become accepted handback
+ok 10 - foreign task, digest, source and reviewer never become accepted handback
+  ---
+  duration_ms: 1009.882433
+  ...
+# Subtest: retry and new idempotency key after restart read same effect without another source observation
+ok 11 - retry and new idempotency key after restart read same effect without another source observation
+  ---
+  duration_ms: 427.053617
+  ...
+# Subtest: one finite review cannot flip acceptance with another key
+ok 12 - one finite review cannot flip acceptance with another key
+  ---
+  duration_ms: 460.512561
+  ...
+# Subtest: owner cannot self-review and reviewer cannot observe; foreign mount scopes are refused
+ok 13 - owner cannot self-review and reviewer cannot observe; foreign mount scopes are refused
+  ---
+  duration_ms: 240.432337
+  ...
+# Subtest: source drift and tampered immutable prior fail without fabricating output
+ok 14 - source drift and tampered immutable prior fail without fabricating output
+  ---
+  duration_ms: 417.708913
+  ...
+# (node:2213391) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: read-only callable check reports due with no durable operation or scheduler
+ok 15 - read-only callable check reports due with no durable operation or scheduler
+  ---
+  duration_ms: 344.029343
+  ...
+# Subtest: reviewer may accept a useful rights no-fit without reusing or reading restricted content
+ok 16 - reviewer may accept a useful rights no-fit without reusing or reading restricted content
+  ---
+  duration_ms: 207.450873
+  ...
+# Subtest: revoked read rights and revoked mandate yield useful no-fit before fetching source
+ok 17 - revoked read rights and revoked mandate yield useful no-fit before fetching source
+  ---
+  duration_ms: 410.437849
+  ...
+# Subtest: lost operation response and interrupted owner remain recoverable and never repeat observation
+ok 18 - lost operation response and interrupted owner remain recoverable and never repeat observation
+  ---
+  duration_ms: 15247.442498
+  ...
+# Subtest: request and rights descriptors are bound to owner, prior identity and supplied version
+ok 19 - request and rights descriptors are bound to owner, prior identity and supplied version
+  ---
+  duration_ms: 643.762452
+  ...
+# Subtest: mounted source snapshot runs through the unmodified template HTTP and CLI contracts
+ok 20 - mounted source snapshot runs through the unmodified template HTTP and CLI contracts
+  ---
+  duration_ms: 273.018427
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22101.906611

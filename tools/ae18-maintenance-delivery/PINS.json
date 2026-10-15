@@ -1,0 +1,3437 @@
+{
+  "schema": "samedaydesk.ae18-maintenance-delivery.pins.v1",
+  "job": "244005",
+  "writerPath": "tools/ae18-maintenance-delivery",
+  "base": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "inputs": {
+    "sds": {
+      "repo": "https://github.com/epistemedeus/samedaydesk.git",
+      "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "recipeOriginalCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
+      "materialization": "/home/ubuntu/root-sol-window100337/244005/source",
+      "files": [
+        {
+          "path": "tools/ae14-compat-maintenance/INVENTORY.md",
+          "repoPath": "tools/ae14-compat-maintenance/INVENTORY.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "e11749a84cd1fc1212a0d90232579420fa3845a8",
+          "sha256": "7250535eea46bbaf4272033707c7a70663e8f3da6d53b31d657f120a5b4ea795"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/PINS.json",
+          "repoPath": "tools/ae14-compat-maintenance/PINS.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "eefe81d479046fa80d8523197136df0f153f9570",
+          "sha256": "dc2848c8aeb85fb5f71ec83d543203a86bc0b08a841feaa274f3733665fd1574"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/README.md",
+          "repoPath": "tools/ae14-compat-maintenance/README.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "f0c289f33988120a500341a71d9d77a1892f025d",
+          "sha256": "a558fce877d597e4e463ffba4d5d96f87ed4452cf7c5a39888a4880cbd2ef385"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/RESULT.md",
+          "repoPath": "tools/ae14-compat-maintenance/RESULT.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8f14cfce59110a7c338cf7aa82c562a7b9e88510",
+          "sha256": "f01b0111692c36f70df8bff2e06e5fddcee580d89dd8f6b863d7ee1c06a3e9ab"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/SOURCE-NOTICE.md",
+          "repoPath": "tools/ae14-compat-maintenance/SOURCE-NOTICE.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b414d9d0b90dfac742396574dde59b2ff7e51c92",
+          "sha256": "9d0001ea97f141e359ef15719906a4e2fb3121013ca28201daa64112b2f8a7e6"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/cli.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/cli.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "1837c5bdb59c3f3d9b4fd81cc84be4d88d77c7bf",
+          "sha256": "4361a536373196c64e4d5c69bb6109a969071960d82b383c40c45cfc0cee62e9"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/evidence/COMMANDS.txt",
+          "repoPath": "tools/ae14-compat-maintenance/evidence/COMMANDS.txt",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "4af11a1f9f9a6f5f88323fb7bdd070673f9a14b1",
+          "sha256": "85196d115fa5210fcfe178c9d893f5eae1dbd511e0becd5b834befea3905dec5"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/evidence/inherited-recurring-job-recipes.txt",
+          "repoPath": "tools/ae14-compat-maintenance/evidence/inherited-recurring-job-recipes.txt",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "9570b576205b47538dc58dec61ee60e3c73005d0",
+          "sha256": "ee594fc43a7272db417b0686d67cec0d4c6b5883ba537fa41b6ae2578715ebdd"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/evidence/inherited-result-reuse.txt",
+          "repoPath": "tools/ae14-compat-maintenance/evidence/inherited-result-reuse.txt",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "2e83c8e897a9ef2c79f28d9e535895ad435579ed",
+          "sha256": "4824e2ae6e9aeb9a9127bd9cf7cf60a5330a491d345459708ecff0322a2893df"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/evidence/owned-suite.txt",
+          "repoPath": "tools/ae14-compat-maintenance/evidence/owned-suite.txt",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8949434ecc565cee9058aec8f0312708900848f2",
+          "sha256": "1d4f1ef24f002e665dabe9c130a8c6f0704b8761b54babe177be5dfc023ba6cb"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/fixtures/current-changed.json",
+          "repoPath": "tools/ae14-compat-maintenance/fixtures/current-changed.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c92c279e837dedd87704532957dd6de706d5dacb",
+          "sha256": "3f5f1e80dd459f9eb87edf918440c9dca126be8d67972bfbc28cb026947cb41f"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/fixtures/current-missing-sku.json",
+          "repoPath": "tools/ae14-compat-maintenance/fixtures/current-missing-sku.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "d89043b53fbe4a4e3eb0fa60e3bed8405c8bae8c",
+          "sha256": "74d733297f191a385c246f1b06b2592b9e4b40a175ab10bd601abb91c1fcc11f"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/fixtures/current-unchanged.json",
+          "repoPath": "tools/ae14-compat-maintenance/fixtures/current-unchanged.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "5b0fc763b7ec0a61ac3cbd43181bc20680f609bc",
+          "sha256": "32c5c139e6c16f699d239362715b276153736847888d6a92ffa04588d2baba1e"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/fixtures/prior.json",
+          "repoPath": "tools/ae14-compat-maintenance/fixtures/prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "834453db7e4a776d36e8b0c1fda2790313081d9d",
+          "sha256": "3d5a9763fb65596a7d4f25e05bd27ac0fc07d6e8f9c18ce3586a95e04041c32f"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/fixtures/request-repair-accept.json",
+          "repoPath": "tools/ae14-compat-maintenance/fixtures/request-repair-accept.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b0d3f4a28df37dba81e1b3f4e069a5956867f636",
+          "sha256": "49534eb78ba2ab333926f10d37d141bfc7c4c3f5b34692ea6710f26df86d4282"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/brief.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/brief.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "177a347e08c5a38dac6d2b7ee2abd5bb6af1ed49",
+          "sha256": "a2ef0fc17cbe5152500fea256b4e51514fc7256608b4da265bed8e9d3eb86bf7"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/fee.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/fee.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8081d52067bcfdc505a6c925751cd753e7f40f19",
+          "sha256": "dab44d9dc45e17f90d09861f704d7b8b9d08f05fb1b273761d38d86db37a4ca9"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/http.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/http.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b889ce4ed210d6e33425ef863358ebe0e6a32c94",
+          "sha256": "b4da0f711b6a30d9cb1314c8bc3a5132f4c792d8f9dcd8dd39ab79d241b3ab93"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/occurrence.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/occurrence.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "44003d6569ede61d0863eda6b230eeea3fa480c3",
+          "sha256": "2eca41ceae9b0d9c662957aca1eda9b36b33cdd1bd51105b208ac3eca4d262b8"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/pins.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/pins.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "31c298afdedf93fbb764fdc4bd42b4ec832480d4",
+          "sha256": "79a0ce40aca4aa97ca91874c579e6a126c9a1d87f7a3785a8b17ff46e5f5218b"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/result.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/result.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "eb73b754c3539a640720386d5d5ee8a8edda14ef",
+          "sha256": "ac4d253f5f8cfbf373b9e70c951870583a0cac5d078f3b7f2dfedd9d7e3bffad"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/template.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/template.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a5f0c5a38835787e9d62f34d24f318aec6879dfb",
+          "sha256": "c43d742a3429d581c58b9bab1dcb830c75d3166299e124d1ed5323af774d49b6"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/src/validate.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/src/validate.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a01b103b6f121da0472fd1031acaeae46da25568",
+          "sha256": "fc027520be9168142cf1350c34627c2fee7543289782135a63f975786e2dcda1"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/template.json",
+          "repoPath": "tools/ae14-compat-maintenance/template.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "d56174b752408bd49759cba7079d1fd32baea4f2",
+          "sha256": "959c0978c8d3aa7f60b29465a89ff107304b35e78ebe5898e07d963be9fe2064"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "009cab5035b5d0d8b8352184eaf4ae32a69e193f",
+          "sha256": "83b7e52c4e8592f90c2675c201a5245be44cb8fd308c7a1b2d4c6adc09b5e0e2"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/test/economics.test.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/test/economics.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "42cf967082d8588f6999dff1fa46c98fdfcefd5f",
+          "sha256": "be0d6884ef1a082482b307c3e13732c521ae08cddb180ebb33284e813c0e6184"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "319db640db87f34e1c1ad66f35d1b35009e3e3b5",
+          "sha256": "6ff998518f7a619a9a28d37e8d76b97ba2c93cf4ad176b5322f2ce35bc1e5c25"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "bc72e4f0efb924c27d750818d3f5a56b169db378",
+          "sha256": "86b60242d35b220d4a26f10304b02200c90dc4f417ce1bc7d4088f2409a896cb"
+        },
+        {
+          "path": "tools/ae14-compat-maintenance/test/support.mjs",
+          "repoPath": "tools/ae14-compat-maintenance/test/support.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a43dd1405d5f9f89c126d5ced2b0310e4166b237",
+          "sha256": "f4bafd720f1b70d271436a5f4a8a466bf65f8174d8fa84b9f46ad3c22088e6e5"
+        },
+        {
+          "path": "tools/recurring-job-recipes/FIRST-CUSTOMER-EXPERIMENT.md",
+          "repoPath": "tools/recurring-job-recipes/FIRST-CUSTOMER-EXPERIMENT.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "57ae5977b92017d5985e653c0f3ed5c55112afe7",
+          "sha256": "494f5709f760e6a1a7d0541b6f9316a58283de143f50174dab3fb42ac10a542d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/README.md",
+          "repoPath": "tools/recurring-job-recipes/README.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "eb3abd259b3f579e5150d3d5e0c8a5df53905b86",
+          "sha256": "ffdb692b5a7844914a450c7c6642e3f42fe2298156d0cd6da2890f4e2b4db672"
+        },
+        {
+          "path": "tools/recurring-job-recipes/RESULT-S12.md",
+          "repoPath": "tools/recurring-job-recipes/RESULT-S12.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c903d26e86d61ab60af5596e43156df9aa7ee690",
+          "sha256": "405c406d0c96d912420437f706b00938efc1c9b8f2de9173bec613634faab88d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/RESULT-S21.md",
+          "repoPath": "tools/recurring-job-recipes/RESULT-S21.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "4b521de22f716da5a1a635b3ede1b6f77b495410",
+          "sha256": "edfc4d12d06a0c2f15eb05c76f15e3c56cf607b2850de879099c5dfdc1800466"
+        },
+        {
+          "path": "tools/recurring-job-recipes/cli.mjs",
+          "repoPath": "tools/recurring-job-recipes/cli.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "da16132355557e03856b38540a393f2ea628bcc4",
+          "sha256": "52cc429bf382cc10c2fcb199b6760feff7e43f238ca3f486ce12adce155eda79"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/current/example-changed.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/current/example-changed.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "582448cf4e962af87df1fec24023481ebb78cec4",
+          "sha256": "65246562f86f89b250e6fe6e0b0870f713b66b36b6e2207be2f317541b50cc08"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/current/example-unchanged.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/current/example-unchanged.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "5796a1ffbe9075b249a0600666c4d0aa36f56a26",
+          "sha256": "9886f2edce7ee38cc8c7a67cba47edb621f0ca2497ca2aa1e5fbde34c37d0dea"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/current/verify-candidate-changed.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/current/verify-candidate-changed.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a1e27dd8057d492ab76b3b5200d373bfbf502b4a",
+          "sha256": "fc0beec56088ae3acfc5275946c6e2082bd698c1a58a71d1a993ed45f2ba3196"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/current/verify-candidate-payment-replay.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/current/verify-candidate-payment-replay.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "da439a7eaf0543c69df8e0cb4247694cb7e380a0",
+          "sha256": "71d618fa9ae6212182b519d661acdb61cca6a832bfc10fb2358c37954b49af71"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/current/verify-candidate-unchanged.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "d8e53f1431a9e377458fef5adeda86ed87391b4a",
+          "sha256": "3dd910af97ad54f3a36d4bf0e628d4a1234dbb4a9f3f3a0901f564d993f4f96d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/106904-base.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/106904-base.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "58fb394bced20d8b641834206b1376f6144d293f",
+          "sha256": "d2080c8cf2c5a26ee64eba9b41a7d567b0ff9d245f1abdbe77da6bfb2f8cbe6e"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-base.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-base.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "26d9c76a80624281cd7f276bd9b44282bb118f06",
+          "sha256": "fe295dacfb090ec54a2b6feeebaf41c39eb4b01fed6fea2a113710c96b1f2383"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-closed.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-closed.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "ce29330fbd46b2f36dd0a67c53fee79c65de5040",
+          "sha256": "81a1a0d126fd8c52c510178d958015299aebe4693fdfd4bddb45024d6cab8e85"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-deleted-comment.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-deleted-comment.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "db0279943cecb359a8e87f11767078a2f9650444",
+          "sha256": "5606850df5b73e0dadb95c9c5857209b8c2f882104e78d86d912cb422763481c"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-partial-pages.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-partial-pages.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "6b44a8e451d9c8f035d1b44dcf28d19d072a6ae1",
+          "sha256": "c467efbad57e5a6a963623dc477d2741a56e68999069a7c3c5978b32eac75f1f"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-reopened.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-reopened.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3f1756f55ea3bffaae0e3c2c8411cf55639c7f72",
+          "sha256": "5dad11bb101bdc0a06d3cd2c2b60f15b00138b32fd049144c61c646ac0cfc84a"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-reordered.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-reordered.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "d0284b54a004a1d8163cf956612591c03a4fe6d0",
+          "sha256": "ddbc6d04fc852addd1716d9d41aba6478eda46c14f6b7b56b5f3e84747b774e1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-same-length-edit.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/99533-same-length-edit.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "2831ba31f10050c3d3089051da9c5a0552b552f5",
+          "sha256": "e7c798c731231e8d7db3899baba8360d709ede53c96c9a2e04d46ec23910b3a6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/README.md",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/README.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "260d0335117abd63d50e8bcfd4480b5646af96b3",
+          "sha256": "0ece35ee4c37179e2809a30069fc8342fbc638d2767b1756f00b7b5f65829c7b"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/cancelled.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/cancelled.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "74787b530691a465c89ef2c7d9a140b42717677e",
+          "sha256": "484998d1a6e388dc4dac19f07e1daaec2d2c14cd43a8da29c7395bc12fadb0f8"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/http-403.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/http-403.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8df6e7945e8595782834551e0b298f20f14fe165",
+          "sha256": "0b03174462799a9402840070ef27a3bea87467aa5cd8759f4360833e13144a46"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/http-429.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/http-429.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "e09360f1b71356e69fac940cce7bed42b9a84935",
+          "sha256": "22b24b30a5d5e3820baad8beddc30279fa22f9d0a44f2d7d246e9d47c3ac460b"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/http-503.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/http-503.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8df594e02ca67adf1c562988e7d0b5c78bd473e1",
+          "sha256": "8b821c46edd649e5a07ac68871036acf91222c0591ce768cc1d0f63fb1a83e4e"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/identity-mismatch-body.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/identity-mismatch-body.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3cc8ea8d8b0c83fca3a6d4f60cabc904faf1fe85",
+          "sha256": "2070764d9081861c91f029c4f9ae68edb939b0d8f801b70e24b145bc2fa30e2c"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/malformed-comments-page.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/malformed-comments-page.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "275a362c39488f5e7b0d3cb1de5dc8a2f7e7c3f6",
+          "sha256": "8de69828c02f0d31bf07273306f6dd6a3e4324a4b92f5f1845237ba545295c11"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/oversize-comment.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/oversize-comment.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "87f866b4d17b7cff5c2465db0028c3b219a113ec",
+          "sha256": "1ef3125f335cf3cac9952166d6609a7d4999790ea8680e2ce531b017cb280112"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issue-evidence/redirect-blocked.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issue-evidence/redirect-blocked.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "cbe21b90da266b28e702d42babbd61e84bdec72d",
+          "sha256": "2627f27dbb229edb2d806fd7a7d4c7160ae3b95f029841b39e698d73831a05b1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/issues/samedaydesk-1.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/issues/samedaydesk-1.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a7425b599b877abdacc19993e24dca203ff9af8b",
+          "sha256": "4dfab36ab468076e9b4a4626228a5f471cc79990accc24211ca58dc3fcfcc0e1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/after.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/after.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "6e9881dfd8d60b96179571640e14b68f45c08578",
+          "sha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/before.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/before.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "77aad7fced2fa021a3fa220159897709ede1c349",
+          "sha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/job.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/customer-job/job.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "7de33faff267d9d4b0ee805dacf6256e20abbf50",
+          "sha256": "53936f83455f1b0acb24690c2994600dd31a51d95426b96bd7290e15d281fffb"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/duplicate-active.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/duplicate-active.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "f5931861d6fa4b5a7bc3279256962404813eae2b",
+          "sha256": "a6c23fc785ea81afdaf9059e275298c07c980404a8fcc34f77a71fd70543b9d1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/reordered-after.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/reordered-after.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "16e16c9a5bde714ed603f047963bd871a93e297c",
+          "sha256": "a44f784fc2bd2f1b39807d465c792258f7f82039b86c5de2188cb5da7e47ccae"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/unchanged-after.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/unchanged-after.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "0f5b6cbf78859a6fb01b8f411e772230b63ed2d6",
+          "sha256": "28f7cd06efb62b861c023a9908acd13be1674a207577f36776a2775a58c501c5"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/unchanged-before.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/page-change/merchant/unchanged-before.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "142d6f57e8297fb35d71799cf63278b59f15ab11",
+          "sha256": "3f2a70609bf38f973fe20161b3068556798bd43373d039874b19bf3365fb593d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/record/product-jsonld/delivery/extract-batch.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/record/product-jsonld/delivery/extract-batch.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b1609e80af2e83f7580e822a62e58b61f7127857",
+          "sha256": "810df3da8c8df91bb97dcdb17d175b252f728689554a81a5fcd7fdc84854f4a2"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/record/required-sku/mapping.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/record/required-sku/mapping.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "141ec82d7fd00613685e88d56b6eaba1e5a7b106",
+          "sha256": "bbf33650830a4598c81cc4977482d4d2e49689001070b96f3d7704f6b94d4d69"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/merchant/record/required-sku/schema.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/merchant/record/required-sku/schema.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "7f57c70d0ba36662c328d82cdbc66821770bc92b",
+          "sha256": "13c150b09f8f6421117608e0bcfa5d18dbee1c7e7b5338813b54db8a449c0ed3"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/mounted/fixture-origin.mjs",
+          "repoPath": "tools/recurring-job-recipes/fixtures/mounted/fixture-origin.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "e06374d2660e31ab53e78393c5e8871502c9f2d0",
+          "sha256": "48037a857ba643dddbb2e1bb08e9fa7cdea816b99ce453ea8d5549a52c7f477f"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/mounted/warmup.mjs",
+          "repoPath": "tools/recurring-job-recipes/fixtures/mounted/warmup.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "7f90b20aba5a1219f28e81922d70ae00940325d2",
+          "sha256": "52d8824edf5018d426f3f063d668373493f393c12a29bd95d0a91b327032b13a"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/pages/example-a.html",
+          "repoPath": "tools/recurring-job-recipes/fixtures/pages/example-a.html",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8d87a7f5100b5465a8d410d3ff4418a6767fc396",
+          "sha256": "c5f5060efe81ebab23304034a63c1db0fe2faea4c4eacf34fe4769b51435faaf"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/pages/example-all-missing.html",
+          "repoPath": "tools/recurring-job-recipes/fixtures/pages/example-all-missing.html",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c3c27cb6408ac058363c2c376b06541cfba17f22",
+          "sha256": "631da93e3e286a46882e56ffb7fdb2ca412b2e5a1a2e7fa3886e5860910f8c7c"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/pages/example-b-partial.html",
+          "repoPath": "tools/recurring-job-recipes/fixtures/pages/example-b-partial.html",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "12b0cbca1791228c8965907e9175c5f353e9eece",
+          "sha256": "ce85ed7d5d8b46618769f76f0450879d6aad04d055c7280675a062dcff906a59"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/pages/example-empty.html",
+          "repoPath": "tools/recurring-job-recipes/fixtures/pages/example-empty.html",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b409d35b52d2cb41d1e8c2fdb6341aab52b7a9e6",
+          "sha256": "9290299a0fd2b8863054ffc31e69cac492b3c00839176ca2cf36fd08a78e25f6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/issue-brief-stale.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/issue-brief-stale.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "cfa97daa8644813dea3ce98d8799a565b26800a7",
+          "sha256": "9f576eaaf30327338eea754ad6545fa17940d0d780a2859afcae7b998e446842"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "63f04303e03f38bae325184973fef9238c7ff226",
+          "sha256": "04c82ae4ce9666e2eb0f670957a8598eb82df6b896661ed40f512ce92ac6fed7"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/record-extract.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "bdb9fc3e3035c3837d38ae98973acde341e66a8c",
+          "sha256": "1d8dd44c6ce37b98bcaae7d10bb8adb0bc935a23fc696a895ddac05046cb4b64"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/source-change-mounted.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/source-change-mounted.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "27340c81814967d009af9f84ae9491a0611c817b",
+          "sha256": "eb4fdbafff6dd8132f0647e29458956935ee7898bcee27cf58a3bc080d72eeec"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/source-change-paid.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/source-change-paid.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "484ed23e2717d8d24e31e9fd23b67c18535c6d74",
+          "sha256": "107d4764cdd8a3ef70a9b51b4d1bb09142f6b557fab8512acc981684c4f12c6e"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/source-change-stale.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/source-change-stale.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3f669b695ff976943f752cb3a48e65b0f03ef3dc",
+          "sha256": "0d9937de55cb8fc0a5aaba48419a779fe5d8efc13f0cc5d7ccc728997584359f"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c2a324e82bef0b6409814515c88c6dcb77df1cff",
+          "sha256": "6c35116e799baefdf1c82a5379076251401dbb518f398f95865c92f959634761"
+        },
+        {
+          "path": "tools/recurring-job-recipes/fixtures/priors/verify.prior.json",
+          "repoPath": "tools/recurring-job-recipes/fixtures/priors/verify.prior.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "0fa8880779594dd36bcc468efef2287bd4e0ff7d",
+          "sha256": "4a99acd49ab30e345f3964ea02bcc324d2d660df49d787b72583150ada86d3a8"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/cost.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/cost.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b5e9f0f2ef0614b9bd34b8a147dc9fe43dcffc59",
+          "sha256": "eca3b06a6ed22d3760c90bfdc59faf0dab8b8e7a8553971f3c9c6e10cacfc69d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/fetch.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/fetch.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b55d927d8c44459863e2a7770e53addfaf0f7e68",
+          "sha256": "9630bc6be92720e50a66fb0a165f2e90aaf6c8b56711d5ee6ad94cef34f1b432"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/github-comments.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/github-comments.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "cb58e2b626faa894b36e019b70771064901f6029",
+          "sha256": "095ae083d19bebaed066d786ba8d1d334f3f3b1a1bfdc771806bfc6c55fc6401"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/github-issue.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/github-issue.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "009108cb5b5f3c2207a3b89d1feac8844a0aa997",
+          "sha256": "c08208cf4e60232996cb19e9306a274cfb8aefb2fd0e7f67ebab294c99f54844"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/hash.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/hash.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "41d4db606282b9c0640e9a8ff541e2e081f17cc0",
+          "sha256": "538108315ae956f3699ac845398dc27f1567eb0b108d28e8f8dc4bcbb7eaff35"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/issue-evidence-brief.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/issue-evidence-brief.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "951a99993c2cc9d5e7b373f41a207c69421e30f9",
+          "sha256": "9710632c5a346fe650c5553e6a35e4ec3346e5980354308e30e68dc82bc29680"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/issue-evidence-delta.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/issue-evidence-delta.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "72c6ad83fb8001b08491fa7b83ba7a688a58cf01",
+          "sha256": "47be1843df9d8e0b5fccd6ca7ae7d497639f49ae0712d0b753c40098856acfa2"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/issue-evidence-model.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/issue-evidence-model.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "974d5287ed97c64bf0e3b5079862f9dade876348",
+          "sha256": "7578528317dca0b2febe8e634ac41fbf4cf5d70c4f3b765cddb8ba8470cc6e40"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/issue-evidence-prior.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/issue-evidence-prior.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c48c45cc8b7db613f3ddf8c62da32a00d60de311",
+          "sha256": "16e20eeda5a58cd7e50e670fff24a57435605e9fcf620e68cc1efd2549a5afea"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/issue-evidence-transport.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/issue-evidence-transport.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "fffee20063635d013600f088d18e1e0cc8022008",
+          "sha256": "ff8c0dfd8808c95cf574d656d528c219c1240a1d1e96c9fdd036283edf3004e1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/payment-guard.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/payment-guard.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "1f0c6374f552a544cfebdf43107c335fc1b5f521",
+          "sha256": "e402850ec49f6974f74f6e0f4349c3d063095594288218a73c8ad557cd9bbc1d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/prior.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/prior.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "16d22deef13ad0f4e9ce08162e3c3c2ee162d1c8",
+          "sha256": "ded35cce2d844b5b282c71f0cfa02c9d21bc569d9e3a874a25a029880710d4ad"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/recovery.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/recovery.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "d16c872836c6e833af15d9d6df8c5e0482d9a5d4",
+          "sha256": "93fd569a3d6e845dccadcbf610f2c21f31845a15f0bfb6a21938ab555d264005"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/run.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/run.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "cc9476b9b4aa45597fbebefd614ee095335f9693",
+          "sha256": "eb008c21b935fe6646d9cfa7f9c42d8e9d398f81890bab3c92f2021401db38a8"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/validate.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/validate.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "2959aaaf547ca9ea99c52d16b38046de33e870b1",
+          "sha256": "e817b9970f90060ce4700fd7f5c10e6fc34b26cf3596e84101d8000d068a3a52"
+        },
+        {
+          "path": "tools/recurring-job-recipes/lib/work-brief.mjs",
+          "repoPath": "tools/recurring-job-recipes/lib/work-brief.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "c6f7aa09066cd5b278419e848708a901758e1bbc",
+          "sha256": "fcda0a5f5a190d816b088c8885b2abf829e090779ae6c9e5fe951da1094656b7"
+        },
+        {
+          "path": "tools/recurring-job-recipes/neomorphic-import/local.mjs",
+          "repoPath": "tools/recurring-job-recipes/neomorphic-import/local.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "e707ab19b396206036b9a2c1072dac4e65b212a3",
+          "sha256": "4bcb415ed4903cee9f9231f99cd3acfffe60cb8ab83c3341916c8350f694d7df"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/buyer-setup-trace.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/buyer-setup-trace.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "ffa617da57efc09c753feb135b1a318f7aeeff28",
+          "sha256": "b132615ddb7f60c36339c8d08862570ee08b1f753ca7899d57ef122a36577f24"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/comparable-record-extraction.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/comparable-record-extraction.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "9be7c9be950e2bd9872416944ff9bc247d58313e",
+          "sha256": "f8dac8e7e7d1403589819c6fb4804511e00f373a009833df62cfb3bec7a1d09e"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/issue-evidence.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/issue-evidence.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8ba87eaa1af1e6a4856caf81d07048a922433197",
+          "sha256": "565de5e0fcbe38f46c4de7e2e20d99c443c47e7f8af5f8644d0f5eb4c3602165"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/issue-to-work-brief.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/issue-to-work-brief.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "0379b59113c0948e9551c101ffd0ce786f9247ed",
+          "sha256": "5d4b33a7f4c03c3f7ec108d64ee661e5af9f22cce822aa566fca05fffaad6cbc"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/source-change-alert.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/source-change-alert.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "2feeff14e3fa3ddb4c3a40f3dfc3d61ada5bf5f2",
+          "sha256": "30056db485be4a8cb0229ddc58447e2aee2bce6292ea53c1de5baeac2f8b851f"
+        },
+        {
+          "path": "tools/recurring-job-recipes/recipes/verification-reconcile.mjs",
+          "repoPath": "tools/recurring-job-recipes/recipes/verification-reconcile.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "17ac8962c22667dff399bc16f5e71a9af19e3613",
+          "sha256": "9e45749dc492483337639b9cbcad1fd2373ad69034cbb1f58902f06290b783ad"
+        },
+        {
+          "path": "tools/recurring-job-recipes/scripts/baseline-compare.mjs",
+          "repoPath": "tools/recurring-job-recipes/scripts/baseline-compare.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "588e6c4e2c88fe9965cfe05f36c976ad98984d1f",
+          "sha256": "487df545c20b3bf390a43f63d2586a63bd0c1fb8762f6e3c5e25430db2bbebe0"
+        },
+        {
+          "path": "tools/recurring-job-recipes/scripts/s62-live-replay.mjs",
+          "repoPath": "tools/recurring-job-recipes/scripts/s62-live-replay.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "364c27ea5937833a6e7f39341e91da1ca0f0920e",
+          "sha256": "2fff8d8848a85d179b0fe8c240f1cf51d17c56006da417daed26de319d0a792d"
+        },
+        {
+          "path": "tools/recurring-job-recipes/specs/buyer-setup-trace.recipe.json",
+          "repoPath": "tools/recurring-job-recipes/specs/buyer-setup-trace.recipe.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "09ef5d786e92b0954d6bae6f010b99508fbb1cf0",
+          "sha256": "c646a4febba75ac05fae1a7f926f04847d53f49b976e14a7e2f06136b8dcdc23"
+        },
+        {
+          "path": "tools/recurring-job-recipes/specs/issue-evidence.recipe.json",
+          "repoPath": "tools/recurring-job-recipes/specs/issue-evidence.recipe.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8e7b4bd9e05d193d5ec2536ee59a0b265c2b75e3",
+          "sha256": "0fb664c5782b68f60ff6653640f1409995bae05b3a79f71442560bac9117d6a6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/specs/issue-to-work-brief.recipe.json",
+          "repoPath": "tools/recurring-job-recipes/specs/issue-to-work-brief.recipe.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "ba41c245b988908a2fca4ec282b6dec029940354",
+          "sha256": "ec5e4df6c677cd2e927559e33d3a96566a1be3a8ae3cc534d3fb99ab680886f5"
+        },
+        {
+          "path": "tools/recurring-job-recipes/specs/source-change-alert.recipe.json",
+          "repoPath": "tools/recurring-job-recipes/specs/source-change-alert.recipe.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "faf3565444d6d19c4b155e4374e89e5f637edb9a",
+          "sha256": "6f6fbae7290122aa431518e0aea71e8bcbf3ceced238a6f5d924fa81f349b7a8"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/cli-journeys.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/cli-journeys.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "dba5efea132c08b6862e909c075613a1e7db6ab1",
+          "sha256": "723702167abfa583a0449509ffc865f089f584796665f87eecb352616694884b"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/client-contract.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/client-contract.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "eeb4f97fe68f7ccef46694286d7a5470e8015dc8",
+          "sha256": "d0be52c37a0a3f4e6e8b03f7b3462af4fdf906c02d11903496b1e651336e00c7"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/export-boundary.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/export-boundary.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "29e72fb66b76601fac3e87c325e45ad8709572a2",
+          "sha256": "dd77c7545de6fa283addca6cde2c40779cb222685ef9cc09f9b07b264cf8ddfa"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/fetch-policy.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/fetch-policy.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "68637d400d190bb6d3837a7510acf1108c18de04",
+          "sha256": "6356754b2df5566214a1ee6ed18fb124cd0392fea5a72eab064ac6511e548b16"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/mounted-e2e.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/mounted-e2e.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "cc74acbbcd726bfd9b40fada2da46f7b28992506",
+          "sha256": "18090910e88871c2570ea65eba8734269a27557ed1e7a1a107d56688785426a4"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/recipes.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/recipes.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a80818cb4b02275cda9125cc1f0f9cbc60edde85",
+          "sha256": "b89a2a9d12fa13452e1e34d2f69fb64925d2062e04a535f35561f40b040be8c6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/s21-e2e.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/s21-e2e.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "17458c2161a246a00ba74dd3d32ddf5693543c67",
+          "sha256": "5b14709074ae05cbe69e9f2dd4d49cdedd1b1a844bb351b862df721d44554b75"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/s37r-release.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/s37r-release.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "24607f63702fdef667d60596b9328e2ee9b43225",
+          "sha256": "f827d3edd2b167b72f37173836ad92ec64153a875d5558fc63376b450132eae8"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/s62-issue-evidence.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/s62-issue-evidence.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "72f73657033690f2a176e3ba18dfc3bee749118e",
+          "sha256": "884e48f1890dfabfb975786e00b5f0cccb532126d254af0bb8d66fc7846eb0ad"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/s71-issue-evidence.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/s71-issue-evidence.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "16daa40df547e5264a09e2d7bc64ef79eeb89b0d",
+          "sha256": "6e091de6672f1bf1067d4fda7b98cba9a1b37f12ff68a36571502f101c9b8466"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/source-change-cli.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/source-change-cli.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "83ce89e2ba858e73e47bea31cca234cfe8264b55",
+          "sha256": "50a604a5d49b9e1d23b7a61457ef030ac583cb18bfce46c67ed53fbf1364f7d0"
+        },
+        {
+          "path": "tools/recurring-job-recipes/test/work-brief-actions.test.mjs",
+          "repoPath": "tools/recurring-job-recipes/test/work-brief-actions.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b98059490dabb7d8c1f13092102dfc935ddff557",
+          "sha256": "efda425987bf916281f1cfd8b41f354915b772de70ace08704b872e2f90435d6"
+        },
+        {
+          "path": "tools/recurring-job-recipes/vendor/extract-batch-bridge.mjs",
+          "repoPath": "tools/recurring-job-recipes/vendor/extract-batch-bridge.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "14ce8d6c693a6895ddafd78e0a43762fba0998db",
+          "sha256": "426c900adcbdee33b55dca6b0a1164c1fa8ad121ada1a8f242883cc571cfd4fe"
+        },
+        {
+          "path": "tools/recurring-job-recipes/vendor/merchant-contracts.mjs",
+          "repoPath": "tools/recurring-job-recipes/vendor/merchant-contracts.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "f71ce567fcef2850aa5e66d9498716a78d385a45",
+          "sha256": "cda0ea0ca32c27cbd684638c553ae607de205781a3af06ce398afffb1028b4b4"
+        },
+        {
+          "path": "tools/recurring-job-recipes/vendor/page-change-bridge.mjs",
+          "repoPath": "tools/recurring-job-recipes/vendor/page-change-bridge.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "73b94e17889cef51dbefa76db36e21a14eb09e4c",
+          "sha256": "4146337cdb12afd3391af570217619126513c270b29aa74b1680e882c1aa5dd1"
+        },
+        {
+          "path": "tools/recurring-job-recipes/vendor/resolve-merchant-root.mjs",
+          "repoPath": "tools/recurring-job-recipes/vendor/resolve-merchant-root.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "16a556b97a3430c70a9ba2f6282fbff6cd62e53c",
+          "sha256": "08e318d0f5f084ea9bb7feb87afd038adc1c992da3a1330640455bef40f0dbe0"
+        },
+        {
+          "path": "tools/result-reuse/README.md",
+          "repoPath": "tools/result-reuse/README.md",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "e6ed7b025126a68c723a6b77cbaff6d31077b438",
+          "sha256": "a2e205713ccf6c749a3cc54eb0d9fd7047152f4d8f4f002aa529389261843bed"
+        },
+        {
+          "path": "tools/result-reuse/cli.mjs",
+          "repoPath": "tools/result-reuse/cli.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "5c6d82f3d09374bc92007f638bf728086fcf871c",
+          "sha256": "629c393ab3df93a3bff347d8a95d03f360394db375fdb5c637e8cc314be62233"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/accepted-complete-changed-page-change.json",
+          "repoPath": "tools/result-reuse/fixtures/accepted-complete-changed-page-change.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "367edd7f0d3ed09f116f35fdfe2ab01006f6cee7",
+          "sha256": "214e3593e866fac0ee790d906515a8e7f7a775827fbdf12d390440ab6bd84b9d"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/accepted-extract-batch.json",
+          "repoPath": "tools/result-reuse/fixtures/accepted-extract-batch.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "b1609e80af2e83f7580e822a62e58b61f7127857",
+          "sha256": "810df3da8c8df91bb97dcdb17d175b252f728689554a81a5fcd7fdc84854f4a2"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/accepted-page-change.json",
+          "repoPath": "tools/result-reuse/fixtures/accepted-page-change.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "abfeda548246a287c51633374a389a6f47c5b023",
+          "sha256": "fd8b54d816947fa2ccf4567fed7a1c254cbced48deac319b448fafe8e7f07f65"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/accepted-record-report.json",
+          "repoPath": "tools/result-reuse/fixtures/accepted-record-report.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "70daaea566a19dd311da49d2189a5606860ab324",
+          "sha256": "a6ec1723a1a0c3af88cffbde931881fc4ca02eac85134e840ef412066e8e594a"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/credential-strings.json",
+          "repoPath": "tools/result-reuse/fixtures/credential-strings.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a6f4da6f236a13df76c357060a4d532f35142ceb",
+          "sha256": "a7fa57e2780bab79e8211a9a728d6fe79ca51d4e3a4a7f67919b9314123ab109"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/hostile-urls-html.json",
+          "repoPath": "tools/result-reuse/fixtures/hostile-urls-html.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3946362a5a99c90f92189fa63adb00c056ba6380",
+          "sha256": "fca179d0eb81fac14e50434d46d7a3eacb6211f589053723a16c69d563c43065"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/incomplete-failed-extract.json",
+          "repoPath": "tools/result-reuse/fixtures/incomplete-failed-extract.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "87497f6de543ce118d6d8b1f687735863a299edc",
+          "sha256": "41e46ab6582f8702f27c871bdcadfe869c525c1b185f4e8384e340ad455669c3"
+        },
+        {
+          "path": "tools/result-reuse/fixtures/n45-page-change-result.json",
+          "repoPath": "tools/result-reuse/fixtures/n45-page-change-result.json",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "182f82d529ec3f1c4c9b012c59628768a99b62cf",
+          "sha256": "550104198731623173ab2cfc6872170987a60f58709a68aa4698f22640625fc3"
+        },
+        {
+          "path": "tools/result-reuse/src/export.mjs",
+          "repoPath": "tools/result-reuse/src/export.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "ae31de599119b971f3bd68100024ce60c060ba96",
+          "sha256": "4bb4ea35bcc485f69c0e2474ea8f6838eb3aafae1653068f5398a4635165246d"
+        },
+        {
+          "path": "tools/result-reuse/src/kinds.mjs",
+          "repoPath": "tools/result-reuse/src/kinds.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "a926375894012c936f470a25c65b34e86d8a05a8",
+          "sha256": "b37a1f57d631b4526caf7cf8a11d46b88fa4396de15b75e35e8669547fc0884a"
+        },
+        {
+          "path": "tools/result-reuse/src/limits.mjs",
+          "repoPath": "tools/result-reuse/src/limits.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "77bdae7a97df8a41ff82e771b7dcf263f1145f82",
+          "sha256": "e8a21b6eb47497787b32a722a58ef12cb1ea62a744e0cbf20602f63bdd7e1159"
+        },
+        {
+          "path": "tools/result-reuse/src/map.mjs",
+          "repoPath": "tools/result-reuse/src/map.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "8dd669b8d94142b17369567126e88a354d0c47ab",
+          "sha256": "9c38373b4ac017ee068be068c9f861ca5d284571b23baa89d0f7c21cc494908d"
+        },
+        {
+          "path": "tools/result-reuse/src/omit.mjs",
+          "repoPath": "tools/result-reuse/src/omit.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "bd40cfc9b76824f758e1a532429ccba5d4525a8c",
+          "sha256": "9d1795aace337b8588bb819c3ee4cc5392897b0418a65619f97fc2489166cecf"
+        },
+        {
+          "path": "tools/result-reuse/src/pins.mjs",
+          "repoPath": "tools/result-reuse/src/pins.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3a3ce14eb42d215692f13b99361d31139809ec2f",
+          "sha256": "87518e2e52fecc05b39fa7d1712d625e92f30ca9abf2c3bbbc50265e9e931f6f"
+        },
+        {
+          "path": "tools/result-reuse/src/project.mjs",
+          "repoPath": "tools/result-reuse/src/project.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "da590948f43daa695d64de2e1fc5e7da27a69061",
+          "sha256": "e2de0b5a9be7432dada78120390d901d96ecc18d6fdf0b5ebd61ed38560eb22c"
+        },
+        {
+          "path": "tools/result-reuse/test/export.test.mjs",
+          "repoPath": "tools/result-reuse/test/export.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "3472867746ae168366a4ffb7c1ee41221807fcfa",
+          "sha256": "c296b7196d7d2ed5f9e6a80071132ce9b07ffc11bb22a785c5c5e7b98763b1dd"
+        },
+        {
+          "path": "tools/result-reuse/test/record-fields.test.mjs",
+          "repoPath": "tools/result-reuse/test/record-fields.test.mjs",
+          "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "blob": "5b30f1f0c3a25b17a04ea9d0e615d923aa28d131",
+          "sha256": "b401a4bb652af860d48a9210d5ec2fd067efebd11c6fb878a923db1c299acdbd"
+        }
+      ]
+    },
+    "gateway": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+      "mountSubdir": "services/machine-gateway",
+      "materialization": "/tmp/ae18-244005-inputs-TjCnvs/gateway/services/machine-gateway",
+      "files": [
+        {
+          "path": "npm-shrinkwrap.json",
+          "repoPath": "services/machine-gateway/npm-shrinkwrap.json",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "3d4682c014d5b35eb86456952d8e9538fcaf6d89",
+          "sha256": "7785bd985bd79e932c9dfaeb6aaf13a09fc469efffecc283bcb147bc36bb383e"
+        },
+        {
+          "path": "package.json",
+          "repoPath": "services/machine-gateway/package.json",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "d5a6194eccea0d0d759a29f91bd9b7139c1ca508",
+          "sha256": "11d4bd788ae6ba577563612b7f0028be401a7b1be715a35250b0c3fcaf4786a5"
+        },
+        {
+          "path": "src/config.mjs",
+          "repoPath": "services/machine-gateway/src/config.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "2b9d7c00fa08d98535485a13415f8401539bba31",
+          "sha256": "49f3d00e4f2b96e247816b386adc4bb1400555b14438f7a05a5e02d56eae8003"
+        },
+        {
+          "path": "src/contracts.mjs",
+          "repoPath": "services/machine-gateway/src/contracts.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "497042e93a1e7ceac3e01708140450e32e627ad0",
+          "sha256": "2b8423b1285728572afaa87788f2c12d51a9814f953a8d6b87f6012911a57de6"
+        },
+        {
+          "path": "src/errors.mjs",
+          "repoPath": "services/machine-gateway/src/errors.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "2250e395b77d213db3a87921379ac4f4df02be9b",
+          "sha256": "56317ae7cb5a920f952fb493022fb409fe5fbc893ff38603baaa62d2bbbec303"
+        },
+        {
+          "path": "src/facilitator-io.mjs",
+          "repoPath": "services/machine-gateway/src/facilitator-io.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "4e70e5845f8890cd747ce52b9d72d287dcf4ec2a",
+          "sha256": "072400aea68af3883a8f035453af7fa62ba8f34879e92d9bf34472b029bc3dcf"
+        },
+        {
+          "path": "src/facilitator-worker.mjs",
+          "repoPath": "services/machine-gateway/src/facilitator-worker.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "40ae737c735edfa8d24431e26e1d8a99b3353832",
+          "sha256": "e3c985442a260c1ceca61ed03fa0183b0e554dad5c5c5a9be7aca4dd67ef6b7f"
+        },
+        {
+          "path": "src/gateway.mjs",
+          "repoPath": "services/machine-gateway/src/gateway.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "58758457d968e93bf23d7ad91557ff303aba3111",
+          "sha256": "def84b1c381d788c79032f075e964d926cbed807e0f7fcea60823b5fe50a29ca"
+        },
+        {
+          "path": "src/http.mjs",
+          "repoPath": "services/machine-gateway/src/http.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "28dbecef8b28c87db1e67300952c0305d3144860",
+          "sha256": "c5a30925ee670c92c90d79ecc06ef1433800b0075ff286c4409c722299897415"
+        },
+        {
+          "path": "src/index.mjs",
+          "repoPath": "services/machine-gateway/src/index.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "7715ecc5d4e2a01cbb0566ba1758c8fa0eb67c5d",
+          "sha256": "cfb5eabfc80a2bfddca09d804fa8310b5902913d762d5833640b07e616894cce"
+        },
+        {
+          "path": "src/payments.mjs",
+          "repoPath": "services/machine-gateway/src/payments.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "c6035cabce5ff48d04db9a23e125dcfac409d90f",
+          "sha256": "0269ede6ed5fe3fb1e1553713801111bbf95e61eede21dfbe9bf382325e258ca"
+        },
+        {
+          "path": "src/providers.mjs",
+          "repoPath": "services/machine-gateway/src/providers.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "a28a9a3649a71132cd0fe79c0dbdc185bcbb6086",
+          "sha256": "8ee7edbdcbcf0851bc05ca8cf68f4d19f13a235a78acfc079c689ce0dfa2976a"
+        },
+        {
+          "path": "src/registry.mjs",
+          "repoPath": "services/machine-gateway/src/registry.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "393397f1798db271b7ce5a4f0f9293ebf5da62d1",
+          "sha256": "701f17a89cd0c5b4d60df8b033e668d3fba3de9a032ab3dce0ec01650ad838ff"
+        },
+        {
+          "path": "src/schemas.mjs",
+          "repoPath": "services/machine-gateway/src/schemas.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "9b3f7f978052b01e47eabcb8a623a10c31050de4",
+          "sha256": "bbcbf2327c902f2d24e6402ce87d2efcd64a7da4d7886e4506bedc6e8da3708c"
+        },
+        {
+          "path": "src/server.mjs",
+          "repoPath": "services/machine-gateway/src/server.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "ab5d8d7e8636dc5da6f840dd9bd468a9fd35b996",
+          "sha256": "ab82aee68c1acf1b542c713fd6d1f167ffea389740928a821e7c28d9f116cb4a"
+        },
+        {
+          "path": "src/store.mjs",
+          "repoPath": "services/machine-gateway/src/store.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "adaed244158392b5d204f62889d61e50c7c21ba1",
+          "sha256": "861d65f104a61c9c49c0c0f1c2573141f468553c826dffec858da64195c3c4ef"
+        },
+        {
+          "path": "src/util.mjs",
+          "repoPath": "services/machine-gateway/src/util.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "e17eadbbdfde0192f26fb55dca8ffe5702960561",
+          "sha256": "0d6835e1bc32a3d2224bfee3ce0e56fe9b8ef6b899d2a498bc4ccf51e1fea4b8"
+        },
+        {
+          "path": "src/worker.mjs",
+          "repoPath": "services/machine-gateway/src/worker.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "ba226c5ad85417efc23e9874a9a1e76d6f8f85d4",
+          "sha256": "8c521071bbd61e6b05a5f7e4d16ec6b56fb9218a751a801ef893fc4036dd04c1"
+        },
+        {
+          "path": "vendor/extractor/LICENSE",
+          "repoPath": "services/machine-gateway/vendor/extractor/LICENSE",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "34e784554d75f424552ad2198708c8d99c5b4b67",
+          "sha256": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
+        },
+        {
+          "path": "vendor/extractor/lockfile/LICENSE",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/LICENSE",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "34e784554d75f424552ad2198708c8d99c5b4b67",
+          "sha256": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
+        },
+        {
+          "path": "vendor/extractor/lockfile/PROVENANCE.json",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/PROVENANCE.json",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "c8f5f6db991875f390e06c6f43546c1318fcd4ef",
+          "sha256": "4d84c229bf9cb14d2a54148c98c698e9c7a27015e75fa8523d7df9bbd3f4e356"
+        },
+        {
+          "path": "vendor/extractor/lockfile/compare.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/compare.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "d9c830a88aa2975e99f4be0a066f5673a470ac3c",
+          "sha256": "2d437b7684ebe3b19259f42122c1f08446441a6d4806d4f3acdc0bb7d28c8a81"
+        },
+        {
+          "path": "vendor/extractor/lockfile/errors.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/errors.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "4e7f6d6b65f8ccd7b56abeb64eb479dcdc962af9",
+          "sha256": "1c85418f2599141216057a0e5a28b07f33216a36a86fc322d7ebd0863680665f"
+        },
+        {
+          "path": "vendor/extractor/lockfile/hash-terms.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/hash-terms.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "84b49f794569fdbd3fb0e2de96bd58c3b7b0e02e",
+          "sha256": "14f6994c9641d38915f2dc2783beb84612bd409c025fd05b21c9bc5d04a77494"
+        },
+        {
+          "path": "vendor/extractor/lockfile/parse-lockfile.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/lockfile/parse-lockfile.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "b4d3c1eb876d5e46b5f6f396a06871f3330e59a3",
+          "sha256": "d5e5be6d9f79eba5ab31e744fcb31391bef3ffda176acce186c0a01c0f7670a0"
+        },
+        {
+          "path": "vendor/extractor/public-fetch.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/public-fetch.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "8eadcd92ffb0dd04303dfabd268241847bc82da1",
+          "sha256": "780264c1f85a32c7dda9432d6590775553f1a8afd21d677d53d7f34c0048a082"
+        },
+        {
+          "path": "vendor/extractor/url-guard.mjs",
+          "repoPath": "services/machine-gateway/vendor/extractor/url-guard.mjs",
+          "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+          "blob": "cd6f4a0a9ac1c2ead689075ce4550dc579ccb56b",
+          "sha256": "85931890091efa2b91399b4356764e8bb6adb7f1f81bcf61ad8e5b0e5935193d"
+        }
+      ]
+    },
+    "merchant": {
+      "repo": "https://github.com/epistemedeus/x402-url-extractor.git",
+      "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+      "declaredOriginalMasterPin": "f9dd59aeeb200881bc1313ed846ba002e7081258",
+      "descendantVerified": true,
+      "materialization": "/tmp/ae18-244005-inputs-TjCnvs/merchant",
+      "files": [
+        {
+          "path": "examples/customer-x402/.gitignore",
+          "repoPath": "examples/customer-x402/.gitignore",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "bff62ac5614c81e57cf89434f870472a2a4c1f9b",
+          "sha256": "9faf2ff189a74c50df7c8659cb760d4a8aaf6f5ad0c4a0dbedfac1e845184ed2"
+        },
+        {
+          "path": "examples/customer-x402/README.md",
+          "repoPath": "examples/customer-x402/README.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "01d17b3a908434889867d3be484f93c97bad4c05",
+          "sha256": "b7e6e34b72eef18fb921ea54cc78d65e5e97b601a0f438c387f0b3689b4b8e8c"
+        },
+        {
+          "path": "examples/customer-x402/bin/cli.mjs",
+          "repoPath": "examples/customer-x402/bin/cli.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e51c7552d532bdfca3743dc689b62fcf15d5c6b3",
+          "sha256": "a22b3f5b5e99be267cc59bc9a7165888c6464e3f0886039b16177b639c5118d3"
+        },
+        {
+          "path": "examples/customer-x402/bin/page-change.mjs",
+          "repoPath": "examples/customer-x402/bin/page-change.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "eebf8d0547ec9d3ad01000fde38cd9374463b4f5",
+          "sha256": "68b7b8157a3fbbd19c142040aca43589aca301b337fb80bba5f2ccd782742a2a"
+        },
+        {
+          "path": "examples/customer-x402/bin/record.mjs",
+          "repoPath": "examples/customer-x402/bin/record.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "0859ce49616cf1f0680dbabfe21d1d4a1b736617",
+          "sha256": "8749f45d47180ac88d027db96f416e508b076bf455ef1be70d178dc78a207477"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/authorization-batch-homepages.json",
+          "repoPath": "examples/customer-x402/fixtures/authorization-batch-homepages.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "96bcb5a233c9c94e47bf869d9f25a5fecac97b64",
+          "sha256": "a0ad940976cc78339b8c08a53ea0a9566d4355a9bc64a26a9c5d907045e54e5d"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/authorization-batch.json",
+          "repoPath": "examples/customer-x402/fixtures/authorization-batch.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "8b507f31e86b9c34c2906196b8c91751b31afb1b",
+          "sha256": "f76838a732e0a4811cf193736bf628627ccfdb0d9d2c056616411ea74c0713e1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/authorization-lockfile-no-change.json",
+          "repoPath": "examples/customer-x402/fixtures/authorization-lockfile-no-change.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ddfcd591be62dc60ff1b14bffa10d5bbb1493bb1",
+          "sha256": "136eb49d2c926a781dc549ad4642faf8a967d9258127ef6f2376f2c01843deb7"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/authorization-lockfile.json",
+          "repoPath": "examples/customer-x402/fixtures/authorization-lockfile.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ca2191ef439dbe4c53ef1f33b416a3b317f21492",
+          "sha256": "79cf954a5bd9f41221837064744a4c51e9de9a962c64214cfa7d4cf4ae2d32dd"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/authorization.json",
+          "repoPath": "examples/customer-x402/fixtures/authorization.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5eefee18ddc33693e3079e220cef6c1107aaa831",
+          "sha256": "385a86c500493d22bfa9cf8119039310ce524c04af2b10ab6d8db482694606a7"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/crash-stage-receipt.json",
+          "repoPath": "examples/customer-x402/fixtures/crash-stage-receipt.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c20e7538d6ae9f512a93b164eb7a4b59c574e5d7",
+          "sha256": "57fe3ce99d6bed4ce7f62f696785141673ccef121c32ba42845d4ffc9bbaeabc"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/fake-reconcile-client.mjs",
+          "repoPath": "examples/customer-x402/fixtures/fake-reconcile-client.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "222d985491f6d46be64032874198dcc74720ca6d",
+          "sha256": "7c8ec1c6c0a2c152238a0cdae49566babf5029f415c3f10fc8d348b276f72929"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/README.md",
+          "repoPath": "examples/customer-x402/fixtures/page-change/README.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f52841de9379fd827d7583e7725fedaf325d142e",
+          "sha256": "504976285fe561fa892ed0d1dad5bb9688aa7d9d89bc376a18c0b0c3d1e29401"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/c1/after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/c1/after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cc0c916e758f8fe41904fd4413f55387373ce42b",
+          "sha256": "fa6d0dabe4c014faa48b2aaea46d849e31b281cc7cc738d106e58a29375c5c81"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/c1/before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/c1/before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "bf74380e1cba80e88912b5f6149d5d92dabe2ae9",
+          "sha256": "1164b99ab6b322dc0b83a6f827b254c305729a9100a9f48d2c38db11d82cb7f1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/c1/job.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/c1/job.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5491d031b94876501c4a493d6311c91042d0c456",
+          "sha256": "230af609a4942006ad95c1a5d7528c487379222ff1ea216b765d2de9f23c69fb"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/customer-job/after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/customer-job/after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6e9881dfd8d60b96179571640e14b68f45c08578",
+          "sha256": "a7fdf95f161c67529a7254b1d2e1c4efa068506ac01edaee3c2561a5d09c9bd6"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/customer-job/before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/customer-job/before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "77aad7fced2fa021a3fa220159897709ede1c349",
+          "sha256": "23833bf7b28ca27a074cb9d73daaa2ec3beed14a55d767567c5fab50b66605f4"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/customer-job/job.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/customer-job/job.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7de33faff267d9d4b0ee805dacf6256e20abbf50",
+          "sha256": "53936f83455f1b0acb24690c2994600dd31a51d95426b96bd7290e15d281fffb"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/hostile/malformed.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/hostile/malformed.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "74d7b706e672ee213cad5ba50840b65a7a488adb",
+          "sha256": "92072df399cb74703f8e86f450d552bc0bb01eeeb98a90985a1b7772c8fd0016"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/merchant/duplicate-active.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/merchant/duplicate-active.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f5931861d6fa4b5a7bc3279256962404813eae2b",
+          "sha256": "a6c23fc785ea81afdaf9059e275298c07c980404a8fcc34f77a71fd70543b9d1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/merchant/reordered-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/merchant/reordered-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "16e16c9a5bde714ed603f047963bd871a93e297c",
+          "sha256": "a44f784fc2bd2f1b39807d465c792258f7f82039b86c5de2188cb5da7e47ccae"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/merchant/unchanged-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/merchant/unchanged-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "0f5b6cbf78859a6fb01b8f411e772230b63ed2d6",
+          "sha256": "28f7cd06efb62b861c023a9908acd13be1674a207577f36776a2775a58c501c5"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/merchant/unchanged-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/merchant/unchanged-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "142d6f57e8297fb35d71799cf63278b59f15ab11",
+          "sha256": "3f2a70609bf38f973fe20161b3068556798bd43373d039874b19bf3365fb593d"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cb1a19c07d9812ddda1a05fb58288b4dd16b30df",
+          "sha256": "ae1ccc3501a52e8861966a47bf414cb33cd492c0f1449b2aaaf8813472707640"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d02d4f2eef288d91fc0c71ebe4a27fdf74ebf2cf",
+          "sha256": "9c89aa9e033d6c89d0880dd0a3d86a3e0496cf5715259b76c615c502be10cad1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "254a01a6559be1fe912d8035347f4b96c32e0206",
+          "sha256": "1db31a2d52aa99c11752aab7519fecf42df445aaba0fa9171e21d4be9c4b21e8"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "9b795bdc9560280b4691622ac646e1b0873791bf",
+          "sha256": "8a294b4f93305ba15ca46422f717deac75b0811750de35058d17832642a68fd7"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0000-unchanged_pages/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "9b795bdc9560280b4691622ac646e1b0873791bf",
+          "sha256": "8a294b4f93305ba15ca46422f717deac75b0811750de35058d17832642a68fd7"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "39e87f55b42b775e6e63e48c4fd1d2dbba5c2bd6",
+          "sha256": "d12d1640879b2d6f449590f230d1269788aab87570c466df2a83b4dcce010f68"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "60c248c1a2f1ee7c42fef8a3ab6daf9a40560fdd",
+          "sha256": "d6911b820a8e47fe5f57866abd117bd908bfbe2f888638db6a00503a72351b47"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e9ff65c0999d0f7ed02d54aab20bc377479dc5f5",
+          "sha256": "2eaebf7c7622faa4d2f89f3e6c51aeab1dabfeea73172cd8d923829d55e9ef6b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a6ab186f9fdbf0cafa9e93edb75cbf97d72d6136",
+          "sha256": "24294238243951bc8096a08d9fd89e6f6c1f1f9027a667bfaa2ac6ff0a411912"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0001-changed_selected_fields/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a6ab186f9fdbf0cafa9e93edb75cbf97d72d6136",
+          "sha256": "24294238243951bc8096a08d9fd89e6f6c1f1f9027a667bfaa2ac6ff0a411912"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5b64135de95e10b45194e6d07547da61082e097f",
+          "sha256": "bd05d9c0ce24e00fbd5b166e63c20792bdccbfdf172d006f0b15a9d1a117a391"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c9dad42fd76d75f01fd1bf86230be73129cad31a",
+          "sha256": "7176fcaf7927661a7fc653eb55ce49959c8b9c68aca28b1d8e18dff250391dcf"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e335d8ded07418d9196b51c1b3bf4259dd0c811d",
+          "sha256": "2583ddfe3f5a57ad28d932b71c9279f483046ba18e046fd447dba6211d9c9af5"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cd586c8a4566072ea4b6b2b4c9c3d7e276afb5ac",
+          "sha256": "6bf96ad884e5fd09af7f7f0c37f36b1428f8d0f6dddc9af78ac8a57a7a664ea8"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0002-row_reorder/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "49a1b1cb5c9cf65a7f3e59aa497ff27aae5153eb",
+          "sha256": "2d30ea503336bf1b822002e57fda3853884f22329b7a6f3b9fef9715ee784bd8"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6a71c25bce0d7f84b59af53742757e9f8d7e6ee9",
+          "sha256": "b707cd342ed8bd8b0b2da6737b1e27a1f3322e0bd9d32dade2328d1bf7419742"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "796b874b48a892d9a34f6f3424b87699deef376c",
+          "sha256": "dfcc9973a0f31b73df4a064b14e64078ab235dfe820dd41bb10fc6b7c212e989"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "88203ff7f7923e4bedc8b0031d969cd88f729a05",
+          "sha256": "f9473293a45a056a8c784fe1272cfdbd696fd6e56935302ef420b2c4bb5a7ad8"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ad43302f2897e43543cb1942f5096eb02b950c37",
+          "sha256": "37b9d596a9fc5b7cf765ef4b59efd81c10061443e2d71b4ab827b62446a380a3"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0003-duplicate_urls/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ad43302f2897e43543cb1942f5096eb02b950c37",
+          "sha256": "37b9d596a9fc5b7cf765ef4b59efd81c10061443e2d71b4ab827b62446a380a3"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e7d36af8213fb7a7c7c8f2b00a0aba1c4a047549",
+          "sha256": "d191d4dcac607be621cef0a7846aa7a5bbc711a1c07b697c9105f597c6e8335c"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "061cd7e8ee6a2b7804777f01361118d66d9e320e",
+          "sha256": "ed747f9fe3569ac832e0906e127ef8cc77f25909efd9d7feb039f3f442e00124"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "8fabcd8e2b6ccf0b4b63f82d4ab0b9f425fb37df",
+          "sha256": "ec3dec7e77e3a9f72f27e303590a4cf194b430b2ca31be4f87248df8d8bd92ac"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6f0547d3d123c4c453ca11ea23a8e022e4ed5e32",
+          "sha256": "1ca57e6dff2381c659b5413f2d7dc50b0fc68c2a30a413d6d00a4fd6fc594f14"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0004-missing_requested_field/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6f0547d3d123c4c453ca11ea23a8e022e4ed5e32",
+          "sha256": "1ca57e6dff2381c659b5413f2d7dc50b0fc68c2a30a413d6d00a4fd6fc594f14"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5f35cf01ac82e6c9a559f765e83b65404d84fb76",
+          "sha256": "bae4aa207f795856fca0fb30dacf7170e802246c21728eb78d49015646162bb8"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cb431c280eee991e7544ce35721746036e5da7b3",
+          "sha256": "063e73544a032da70dbfac8d6241b8737424176b565924a6c39f71ec8feaaf4b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cae4714317b9a06875ec7188506bb2a217bb8889",
+          "sha256": "ac49ea27993f9e1d3c7a288b530e318a6a31c71a229c77cb5668985dc4336a2b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c5ed8794bfde11cebf8b8e4397c04f49dccbcc5d",
+          "sha256": "93a187a22154159a1fb1c69645f3535beed3c5e3fdf808bacd5989e06a9fc7b2"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0005-failed_fetch/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c5ed8794bfde11cebf8b8e4397c04f49dccbcc5d",
+          "sha256": "93a187a22154159a1fb1c69645f3535beed3c5e3fdf808bacd5989e06a9fc7b2"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2696d345443c8844bce8ff6f144858b9fffbf893",
+          "sha256": "9ee14b68ac8c477081cb482bdc89166e7473e86dad99b05b03ed504f6a7eefbf"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "41fa1b8e078618764e74629e312c6f84b4794501",
+          "sha256": "46c00ceba60a83d0e05b0f29cbae4bbd968a04790bb4184080b7017fa633a4b1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "25f73c904fb441a5d27d8ceadc053841bf193dbd",
+          "sha256": "f1a6cf449f6a19c887a7a84c4802f75b00663e4044eaf4beb837cc9b4357f76a"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ab762be9b417b785152ad3e84f95ca8f89efcd79",
+          "sha256": "a477e735b08fc41a3cc8568af280214c2dd8024f60f16bd5e63bf95e61bcb693"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0006-partial_batch/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ab762be9b417b785152ad3e84f95ca8f89efcd79",
+          "sha256": "a477e735b08fc41a3cc8568af280214c2dd8024f60f16bd5e63bf95e61bcb693"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6525cc70e9956392135ae2bc8f0ea4bcd04bb6fb",
+          "sha256": "16a303c021f500c330a4ec236d215616595ecf49924630cbaf7eddf6053e2f19"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5da42dd66187f52756c731ae37314801b8372747",
+          "sha256": "6d1de531ba6f3ce584ce1d57f86ddbea13f69987d478f105a103dc273a97805b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5e9bbdfac6b57a157856a85092d2b39ccee6bea9",
+          "sha256": "374bcc48152eac53f0c82e4d6f877669304e48657775e16666ed4da40216204b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "8afd6482c84cc2a2dc1dd46ec25b161b02d967be",
+          "sha256": "34fe386ba67e297ec22a212763d38f2a8faaa0a1b4dc09dbb08ca05bbe725346"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0007-differing_requested_fields/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2f1267d93421f5e7ae9ee16672aaab233d05afde",
+          "sha256": "2fe73e63483beee9e90946b221864ad2d824db098b4c0c6c234fa66441d4ee44"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/expected.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/expected.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c905212fd09278e6b1e830502be7bc1000ef4269",
+          "sha256": "a62a601e515602d29995b7f51192906653a01d6b7af337ef8be2d493e52f392b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/observation-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/observation-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c48eae45b4cb5bfdd25f1441f8124788dc8b1774",
+          "sha256": "0c85d3bb48cd9d980e69e2e20b4f466f78f94fcab16ed61e88d6cfbfab9dd3af"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/observation-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/observation-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5304d2c65d42f6fc1a975005444e1c7fc1411c9e",
+          "sha256": "62b2c110749229e125e36c1c9f069cdde825f4f6f19fad6f2939568895b4678e"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/request-after.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/request-after.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3acb57dfaffeb7bc9610a4d36b25e0fecc927997",
+          "sha256": "6d7f981e5eb8cc1c27d13037c090ba40bf2d7642da20de0e6117af9953792cf1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/request-before.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/cases/case-0008-unknown_observation_freshness/request-before.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3acb57dfaffeb7bc9610a4d36b25e0fecc927997",
+          "sha256": "6d7f981e5eb8cc1c27d13037c090ba40bf2d7642da20de0e6117af9953792cf1"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/page-change/w5-corpus/manifest.json",
+          "repoPath": "examples/customer-x402/fixtures/page-change/w5-corpus/manifest.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "dfb364ec3a2452edd5f4e76ae122b1a21389e376",
+          "sha256": "7d127b983b57643283aff4e0042b992ad5bfb2ded1149ea994ff408ca8bea21b"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/README.md",
+          "repoPath": "examples/customer-x402/fixtures/record/README.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "15c6bc5dc6a71262c97d13b4376e4973428488f1",
+          "sha256": "747042e9bc9ac8790c0924e9bf8e6be673cc127e5139dac4b538697579b7fb5f"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/hostile/malformed.json",
+          "repoPath": "examples/customer-x402/fixtures/record/hostile/malformed.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e0c93d7c1c0390305bca1032bb2de6d77fb20a09",
+          "sha256": "23790cf84da5ce5aa8d3f1334fd03b9f55f822513916071a7b2c38e78a2cacef"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/org-contact/delivery/extract.json",
+          "repoPath": "examples/customer-x402/fixtures/record/org-contact/delivery/extract.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f8a41fc35c0f63138bec6b3ae9a2edf58714de59",
+          "sha256": "79d16755141135b037792e894d1ae26f32e387d554eabd62368450ce458d5bb4"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/org-contact/mapping.json",
+          "repoPath": "examples/customer-x402/fixtures/record/org-contact/mapping.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3de36d6ec2d51488d8c48c4238e3c793b03a109d",
+          "sha256": "a5e33e0870f2d385b6eeff38bf487259cb0b4162e5cb484951f0fbc4e96c7c39"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/org-contact/schema.json",
+          "repoPath": "examples/customer-x402/fixtures/record/org-contact/schema.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "774939f04339c74cb97608a8967313840835a97a",
+          "sha256": "0918ecca5bc04f6bff2177bceac0a03f3357c0d59bfb8c73179a5ed16d768948"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/product-jsonld/delivery/extract-batch.json",
+          "repoPath": "examples/customer-x402/fixtures/record/product-jsonld/delivery/extract-batch.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b1609e80af2e83f7580e822a62e58b61f7127857",
+          "sha256": "810df3da8c8df91bb97dcdb17d175b252f728689554a81a5fcd7fdc84854f4a2"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/product-jsonld/mapping.json",
+          "repoPath": "examples/customer-x402/fixtures/record/product-jsonld/mapping.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f8401a2461f13fce633d856a9341539932c7cc80",
+          "sha256": "c1ddf32e385a12f546c0d7d689e06180ce096fbd7b25d0c48b6e8f909a0220db"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/product-jsonld/schema.json",
+          "repoPath": "examples/customer-x402/fixtures/record/product-jsonld/schema.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "23edaf1c7ad5fc9850ac5dfa00c4b0daa288d443",
+          "sha256": "2a2f44332d08484d7134b0d14cb5f48d82f625fce428fc59a05ec69f0746e43c"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/required-sku/mapping.json",
+          "repoPath": "examples/customer-x402/fixtures/record/required-sku/mapping.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "141ec82d7fd00613685e88d56b6eaba1e5a7b106",
+          "sha256": "bbf33650830a4598c81cc4977482d4d2e49689001070b96f3d7704f6b94d4d69"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/required-sku/schema.json",
+          "repoPath": "examples/customer-x402/fixtures/record/required-sku/schema.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7f57c70d0ba36662c328d82cdbc66821770bc92b",
+          "sha256": "13c150b09f8f6421117608e0bcfa5d18dbee1c7e7b5338813b54db8a449c0ed3"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a8ebe48cb7b87c60fcff5a8f2505e684eb16ec64",
+          "sha256": "8d65da10d482db10b169ec5955a56090c6e552be24c11fd98581e657c47c7d11"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6f81ea5e50d65b813fc91f48f46ccbb7ac7498c0",
+          "sha256": "39f40607c4abb2b73fe5dbc26fcf58d1fd851cd9c3af9226002cae71fa6b7a2a"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/01-product-catalog/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6490401510862246c59883867c6b1a159b73870b",
+          "sha256": "f400b5e74054f399ba119a63947d3c464750dff37d08cf61f04a56fbfa36c6ea"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d69fa0376006e3f0b07fbf65d7411a70e337f802",
+          "sha256": "2cec9ea549223b4b9ae138d0a788cdbc3836e97f973ac28ff5a2a10e17d1a734"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "9482c078b99486f012e151fea197d4ae134fd7b0",
+          "sha256": "188955682f21d3b46b590c91bf6d1b2afa713ecadc9185c10d65d2da4a24813f"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/02-supplier-contact/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a6048d1de16f9bd06e302a1fc64977e7d08657e8",
+          "sha256": "cde76e391a1ec32862149f6d3c7d0d98bcd4511d9f5d13ccbcc4ad56c30a7043"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3cfc83c2e50cf4bd3acbaf9b2bb1c6811916db60",
+          "sha256": "0285e92905b430af7acc8e2327144cf40ba42d115f7c1bfc066e806474e50014"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4ec4ea3507cb89a8daa2849c1a868326d1c3ad3d",
+          "sha256": "65ff3a30ebf959d6153cf2f50864d543d405729fc8478f60ca640c080609a049"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/03-nested-offers/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a5bf7be894a877bb84de6a33678dbfacf7d3d175",
+          "sha256": "bb6ae6d7d9899f4ccdbc1398ad3399ff467731dcc300fe355092105bea401364"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3b45e3d85d345e54e47463ecee26bb1b7f2fc0fb",
+          "sha256": "6bbf41620b249c5bdf85d70339cdbba3ef811ac5414980e9a1c070f2d93c1755"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e8d34977dff7ed17b4d6f8b5ceb3eb22438c3ab3",
+          "sha256": "3d8579fe7da1f5cc443b69c519eae847819acf73229931caaf192a984da9af75"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/04-contact-points/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "81e092f6d23b9c439a00888551a72f41a0c947ac",
+          "sha256": "9ea05832635538877d6558b3a991b7836c7b9730c4f61f269ccdad8ba8456722"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d4029c1a09cce398be768bb26799855ed7f9e686",
+          "sha256": "0040abbcbd0ae9423a0d546951254ecbe03639c61030278b2109abd5afe07a83"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "991a8af66b4322a9ff569e4b3a50342c47e22a61",
+          "sha256": "6f08c7b7fea1ab6e1ca989f0a4d3f2bac3499a9751cd80f3204561919ce27130"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/05-sameas-not-authority/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f6b82119bf3ec1cea574d4b0f7a00558ab9ce7ae",
+          "sha256": "0b2d8aa4643cf011d57c20d0ee9c122adf32d64ecc9c9d31abcf8f14961a9129"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "23b69f073992dd4ffd1dcb12e9fda02620ebc23c",
+          "sha256": "2a10b7ca6da24cb07a0f1fdbb3046727a44eddc5986aaf3c5c6dc1b7c1510daa"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a69b3a30e711c8dbea65cc4e79135034614a2189",
+          "sha256": "87371dda7a578975d4b84bf7ae4786505f4ad08089478a70bb005dd40fa84bcd"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/06-ambiguous-products/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4d6b8bec6856201575f4c1a85bb86df32eeb2c6d",
+          "sha256": "653d617dd87a213c0cb6650c2f7dd408c71150d5fc73327ec5525f18c50d3521"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b6de6174977da4536c9a50269d1c3a00f425e76b",
+          "sha256": "44d8b64f735ab12f44e9c4d5df8eea43e64d43a8c245dfd9ef7b81632678601e"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "794c558ae267a04a4763644be4fa744b1d7cf5a3",
+          "sha256": "812e0423890641c0c5e2b577fe865c2e81760fe57a09e1ba075582c4f0d710bb"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/07-missing-required-sku/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f00d2d09dcde540e91f7a8ee2430e3269e7bbb38",
+          "sha256": "4c9679d57b57b845417446b3c4d6163fc20a1e8265468bb42c42757a782b4f9d"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "15dc402ae1a520224a9a86015393cf186cffc764",
+          "sha256": "6bfaed15c6efe01f4fc64d023ff973824a5e96a5f8f7570734ba9e361fffd5dd"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d5cb8c44bfc46dd62adefe92a8d15593b25d3cb7",
+          "sha256": "7a9732bbc7b71c2990cd0fc39ca62cfaa8799cff85893d15bb2c99834bc82dfa"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/08-malformed-jsonld/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4d582475f37d875ff3463e2311cbdd295c7b61f6",
+          "sha256": "f7dbe006226c70b758581a7acad0e570843048b250de3f033efa5a1842bdbb59"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7d42855f52cc488a7c5f261032b062d24f64dd59",
+          "sha256": "eb5b20647ebea20b6b712418f41a2057ffa9b2c7601d399c9365b70ef1ff96cf"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "0f4fadf222b462af78904751edd819dae355d0f7",
+          "sha256": "f36adae50f2b17f13acb31d5fe8a876828649ec75bf2e22817b1613bb7dfa701"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/source.html",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/09-no-silent-coercion/source.html",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2f998ace83b659e15cbc187a6bd61ccc32d7e993",
+          "sha256": "bff40e4122ccd3363620b5201189823ac1c09f33ce1ad95e351dad28722d80e9"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/case.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/case.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7573b3fbef2d2da6729727a8eeca9d6b03afbb3c",
+          "sha256": "dddb2655e6d9af30993d13ba4f770642601477a50354269d63c12bda8fd2f534"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/delivery.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/delivery.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "03a1e514690b277e0169cb1fe190c50ebbb7054a",
+          "sha256": "a6ff7a357bf9181ee6cffbbf7e0eff2dac9fbc02ed362347c0985b1e5400ca1e"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/source-unavailable.txt",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/cases/10-fetch-failure/source-unavailable.txt",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b438d0f376e87d2fdc564ead67d27b217bb789ea",
+          "sha256": "8b726fb7cdd8117c10e906c1c6bd3db5954ed920784cdd54b097545a6f069d9f"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/record/w6-corpus/manifest.json",
+          "repoPath": "examples/customer-x402/fixtures/record/w6-corpus/manifest.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "dd5ab278ab8cea0db8af4be09afb0462325f84b5",
+          "sha256": "69b80f2da0c5ca9e08e9095d189abe4455a64d173495742018985743da8950e4"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/rpc-server.mjs",
+          "repoPath": "examples/customer-x402/fixtures/rpc-server.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "18329f5cece2dc8b379c858cc25c08822add3383",
+          "sha256": "034e53bd3f79a62cbaf318036a48f2bbb78cf758638143c26ca38bc4baac0c12"
+        },
+        {
+          "path": "examples/customer-x402/fixtures/transport.mjs",
+          "repoPath": "examples/customer-x402/fixtures/transport.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2c338b298d62002f2b815184cd0f370d3d75db3a",
+          "sha256": "44074adb4e2226c4a2b19a1aa7a17ad0ab320533fe27ce8795423bfccdd01800"
+        },
+        {
+          "path": "examples/customer-x402/package-lock.json",
+          "repoPath": "examples/customer-x402/package-lock.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6b8bccc0ba63c4447e1b2c1ddb94544a846931a1",
+          "sha256": "7cccc471f7c63a257daefb8cbb8e385f15ad4e0298f15c958874059ee36eb057"
+        },
+        {
+          "path": "examples/customer-x402/package.json",
+          "repoPath": "examples/customer-x402/package.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "80096bde70375efa3e000f3df86a9ec25227b2c4",
+          "sha256": "3b245098997afbb94bace5186906535e92d11de47156f55dab50d646bc028192"
+        },
+        {
+          "path": "examples/customer-x402/recipes/caller-result-feedback-loopback.mjs",
+          "repoPath": "examples/customer-x402/recipes/caller-result-feedback-loopback.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2f4bbb787b7721a3ae4167b37ed20ea31c1a49d1",
+          "sha256": "da21210bdfed957fc17377911de1f72d299d54df14e1df428e11dbfff854865c"
+        },
+        {
+          "path": "examples/customer-x402/recipes/caller-result-feedback.mjs",
+          "repoPath": "examples/customer-x402/recipes/caller-result-feedback.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "251187650d3711a48f907219a7e8807060c85282",
+          "sha256": "4dc7ffc79e0f9d2e37e18974e71583ff446ff9af4541cf74b2c6d227beac6fac"
+        },
+        {
+          "path": "examples/customer-x402/results/attempt-receipt.sample.json",
+          "repoPath": "examples/customer-x402/results/attempt-receipt.sample.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "93475aa307fb9f3d16ef4fbf9f330b82720ede0d",
+          "sha256": "be3bf071681ac1149aebe3ebd04b195a7d40e09009c2a8cffdd128b6f105d62b"
+        },
+        {
+          "path": "examples/customer-x402/results/c22-receipt.json",
+          "repoPath": "examples/customer-x402/results/c22-receipt.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a9c0d308995253f2b5c6f0700a5cba7525c0c954",
+          "sha256": "1626f63c3ee0423032b090c9799b7b193504f1279a64bb95b975f1435452954c"
+        },
+        {
+          "path": "examples/customer-x402/results/example-result.json",
+          "repoPath": "examples/customer-x402/results/example-result.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d82fbb81feb22518ab07ed2d53b83ecd3b8fc448",
+          "sha256": "6bad8301d9da35de0e5a90f3309ca63377615afaa913627d789b731cd033d136"
+        },
+        {
+          "path": "examples/customer-x402/src/attempt-receipt.mjs",
+          "repoPath": "examples/customer-x402/src/attempt-receipt.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "bce8141efff34ead501e71a1bc59411d6df5800a",
+          "sha256": "bb56a4a8cca510c29bafbb7fe1876d7cb6fea35109b6206e07d8aeaefa624d70"
+        },
+        {
+          "path": "examples/customer-x402/src/authorization.mjs",
+          "repoPath": "examples/customer-x402/src/authorization.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "08d199f42266a988d8dfc1ddcfc9faa552f0cbff",
+          "sha256": "a5dcbef79312a60f27ace8560dd917af623ab46311f5b320dc26e5eac0b8f5e1"
+        },
+        {
+          "path": "examples/customer-x402/src/batch-admission.mjs",
+          "repoPath": "examples/customer-x402/src/batch-admission.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "ec3ca87ffcf00721ad4fe919ddb9241671802db7",
+          "sha256": "46069b0c532fb6e91caad2de1baba118cacd369fa6639c882fa8d24c3bedd690"
+        },
+        {
+          "path": "examples/customer-x402/src/batch-output.mjs",
+          "repoPath": "examples/customer-x402/src/batch-output.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a0e8bf1a4b25e714a11c126d821bb128d501c826",
+          "sha256": "00aa1168a63f0207dc7519b6be05f6e652cb271fb6e35a3f5473a557f2074093"
+        },
+        {
+          "path": "examples/customer-x402/src/caller-result.mjs",
+          "repoPath": "examples/customer-x402/src/caller-result.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "593ee20cc09cf3df93e857dbaf9721a88fda13e3",
+          "sha256": "e3ba69514cd8382f281cb7d091d5df15d491caac03d774bd6128abd8db969e47"
+        },
+        {
+          "path": "examples/customer-x402/src/challenge.mjs",
+          "repoPath": "examples/customer-x402/src/challenge.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3696d2069b169570ff9702091732ecd413d27aae",
+          "sha256": "eec77cfaa67bf5642dd2bcbba79fe01a49eb8b771a33ee8cffe3c9ac28227a95"
+        },
+        {
+          "path": "examples/customer-x402/src/constants.mjs",
+          "repoPath": "examples/customer-x402/src/constants.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "8762fba0cf9128bd919f8c3c2f814294198f38b4",
+          "sha256": "dc81f67330f0b1f060ebcc0b3a42732ef5df023d1a704349a2d9869b7bd97e08"
+        },
+        {
+          "path": "examples/customer-x402/src/extract-task.mjs",
+          "repoPath": "examples/customer-x402/src/extract-task.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7e55d304cbf385efaf138eee80bea2aae05a51ae",
+          "sha256": "88ad6307ff2691a1b5de6117025c5c8bae9e8807603fe5d7fd173cf00332cd8f"
+        },
+        {
+          "path": "examples/customer-x402/src/outcome.mjs",
+          "repoPath": "examples/customer-x402/src/outcome.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "42f2a1f486b6916f39fcda2fc608ba558da721f9",
+          "sha256": "96d59df279326cfa874d322b2e0360f6044b7b84e0f241db7a9eec087c628af7"
+        },
+        {
+          "path": "examples/customer-x402/src/output.mjs",
+          "repoPath": "examples/customer-x402/src/output.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1e32bb4b47e3056fd36f1a34f33da47c50d395a6",
+          "sha256": "6564c8ea541a866b7c3f36e91191ff8d35dccb1fb217adab8efaa2457078666d"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/NOTICE.md",
+          "repoPath": "examples/customer-x402/src/page-change/NOTICE.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "98ff3ec161a2fcd2cc817e33ecea15d0360edc10",
+          "sha256": "4b0d35a995458be3c2096cbcf493f7989a2611235f06271b78ccfb3fbfdca8a5"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/cli.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/cli.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1c5b8e020a80cbb9fcde124064bffa24a178a79f",
+          "sha256": "6168eff64aa099c4f27a81d4905bf7bd7e847b5e301f741e959eff38da854f6b"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/compare.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/compare.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e91711b11a5e322b564e55f4e5614c67691873d6",
+          "sha256": "a99ae334dddab75b635f7d0ccff8b304a08b215fa8420621dc5fd9e14fa99b66"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/constants.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/constants.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "295be77168b22715e2c2f15f32e584e3b50552bd",
+          "sha256": "790f42e4e94d8a6ab042b1b430f4b76b6f498d2ff1f1f4f117f1713f48aa416e"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/fields.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/fields.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5a16713fcc06dffeccfd2687daca80a4fd326ba5",
+          "sha256": "86fbcb379f17186f3b1929c216f37b2de7888f0307dc90126de68583ebbdc452"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/index.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/index.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cc0b49883fd5ef93cf88399e916f012d60c892ef",
+          "sha256": "6732100c3fbea4236ea139f398efb97784573682ae03cefd0c89234e46ce2fca"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/limits.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/limits.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4e6935a20d46b3fef7bdca7d895bbdc323554dba",
+          "sha256": "5d592fb9c41b272098224c460a6a0afa217d26c5a2a8c21ab7de29cbde503ee6"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/match.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/match.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2c2cfd85357cf68ffd2426c7561200b9eca82b4d",
+          "sha256": "e8962a72135167540c0a285b34f17f899570d7ed297106cb6ab6028de4e2c728"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/parse-batch.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/parse-batch.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d06bdc80dcfe286e9d85ba95980548f693fa41cd",
+          "sha256": "437a4e41d98b9297cc3130e5e09d588468d291d42c5f1c7a9d6fa06ec2e83606"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/provenance.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/provenance.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f205ea9c11265210611605f1063517647817737a",
+          "sha256": "33a24d32c42baa8ce650f73e158971a7b93ca65aac402c662335b34150b4728d"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/schema-contract.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/schema-contract.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5e2e5e57918e0e7b2becb492390aedd1b505e0c7",
+          "sha256": "a95d7ee4bfbb3eff29a9fce2eaa3854aa17ac739d27e2ca02c4bdb79ea6a1b5b"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/util.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/util.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "aa5dd06cb1ba02a3cc6c14559cb28b83efdeba58",
+          "sha256": "344c34a63462a17b5371ae9b163891e6e6f72e0be807a3da82aefdec94271109"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/NOTICE.md",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/NOTICE.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f1114f84a2a770df1d665bbf36cd9104a7c2a5e4",
+          "sha256": "ec4e92f58b79cd145c535d1f3c95b2eb21a893bad7f559939c0e93a176dd6ab7"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/compare.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/compare.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "019eeed804da75775c93a81f6d1ac52ca6f92f7d",
+          "sha256": "86c9c0368755634a0a0674615bc38cc7d04664ab4aea9d54b1b60b611ec2ddec"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/html-diff.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/html-diff.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "7740f5b5f4911fc00ffaaa247bb0cb0b25f452b3",
+          "sha256": "f6a401d751e14ad2ab9559cd7c5a4079d7e3b96402afc46f5bf0f8dec5254b8c"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/index.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/index.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "96ebbce8d01c2f49ab886a844f4801764d04c837",
+          "sha256": "d452847daf499950238f3318799e8efee437faba4fd00ec0a6228026f8dacd7d"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/json-diff.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/json-diff.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1a5fbbdc952c96a94b9df939db56a0b40d68f28b",
+          "sha256": "45f022627f64d4acb2ff9029092bc7919a21ab64cc5bdc0f0600e72857689f2c"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/limits.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/limits.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4eda8aadbf86ab84e7ed1911647fe6fa23ea14c9",
+          "sha256": "58c264c931d87f7ef0d3b9303174c99b14dc4542592c24a1a49a4d4245cad739"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/snapshot.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/snapshot.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "4fb8961ab04b3296c5a01e084a8a073e176c3ca0",
+          "sha256": "6853761f3c51a956c7252afac0b77f29d2d23f42ca729e5368022670b1681850"
+        },
+        {
+          "path": "examples/customer-x402/src/page-change/vendor/change-digest/text-diff.mjs",
+          "repoPath": "examples/customer-x402/src/page-change/vendor/change-digest/text-diff.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1ad532c4d12dd04ea4a5c42878c9c7fb9a1ee181",
+          "sha256": "7cc47a0df5e03335f79c24550c5839d0f5c4d1c75b1a4ff519b335bcd24c61ab"
+        },
+        {
+          "path": "examples/customer-x402/src/preflight.mjs",
+          "repoPath": "examples/customer-x402/src/preflight.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b5e89d91d0700c38ee29e42f7e75489cabd92007",
+          "sha256": "4ff99aafb76226d6859622d2c82edc8f74913fc6be5bef40257848558d01cfd5"
+        },
+        {
+          "path": "examples/customer-x402/src/purchase.mjs",
+          "repoPath": "examples/customer-x402/src/purchase.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2be420cff9992af80fa362166bbac29638a8f328",
+          "sha256": "6cc2318e736e2f8a888ef2926abdbf6b620856eb1951c0b44e9d2303642fc492"
+        },
+        {
+          "path": "examples/customer-x402/src/reconcile.mjs",
+          "repoPath": "examples/customer-x402/src/reconcile.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "766ea1d4fa5fa1d4f586bd3ce54c4d92bfcfb035",
+          "sha256": "ddbea0cca58e53b5f854691919a6fd86df5882c0d549c1c197bbd7bf3f5c1996"
+        },
+        {
+          "path": "examples/customer-x402/src/record/NOTICE.md",
+          "repoPath": "examples/customer-x402/src/record/NOTICE.md",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "bed70da3ac29d56f87806e0ac401862a70f1bc2c",
+          "sha256": "4e2bddddad90a832a607da7d972a25d26012523d78742b3c941c61cf7fcb40f9"
+        },
+        {
+          "path": "examples/customer-x402/src/record/cli.mjs",
+          "repoPath": "examples/customer-x402/src/record/cli.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "424d046f38ad584becedc9f2c13cac9ae197a01a",
+          "sha256": "85b5faea5011c7872e414834f2d6869bd2d1d592ca1d3466f996ff2a73793464"
+        },
+        {
+          "path": "examples/customer-x402/src/record/constants.mjs",
+          "repoPath": "examples/customer-x402/src/record/constants.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "add01d21ed5837d6e5517543014f41e75b720e2c",
+          "sha256": "d566187188636dc1cb13d8331b4d866278c6ade0a377882290acae56f24838d3"
+        },
+        {
+          "path": "examples/customer-x402/src/record/index.mjs",
+          "repoPath": "examples/customer-x402/src/record/index.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "a3414a1fd66033f78d9e26b36d9390804b3a7be3",
+          "sha256": "ee475b437fb47a1fde43c88b2fe83e5f138cbf9fb17343ba89dea0b582512157"
+        },
+        {
+          "path": "examples/customer-x402/src/record/io.mjs",
+          "repoPath": "examples/customer-x402/src/record/io.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6be03a4be0670561fdc87f1632087f5045c1abc6",
+          "sha256": "e1de44c4e815fc14322b51f13eb5fe96d22bf1b043f50d20d4cc10e7ffd64b20"
+        },
+        {
+          "path": "examples/customer-x402/src/record/issues.mjs",
+          "repoPath": "examples/customer-x402/src/record/issues.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5161c7f9e88e38bc9b377367cbd57a189459b6c6",
+          "sha256": "89288b69642c7aaffbf3aa0234528d76ac20d425c366ed26ca2b5d41e188a04a"
+        },
+        {
+          "path": "examples/customer-x402/src/record/mapping.mjs",
+          "repoPath": "examples/customer-x402/src/record/mapping.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "9d00934ed9cd4213b85d13d26c10cc3aadbc3773",
+          "sha256": "b99222ea7e80b8ea9bd96b5babef495758628d73385e4fd1cd45dcc611e563c5"
+        },
+        {
+          "path": "examples/customer-x402/src/record/merchant-batch-schema.json",
+          "repoPath": "examples/customer-x402/src/record/merchant-batch-schema.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b460db20e24fc85b36fad4aec9f871640e877ae2",
+          "sha256": "0adbeee2462d752d82998f12e8155634fea12bff82c13db771772a52d8ab1d14"
+        },
+        {
+          "path": "examples/customer-x402/src/record/merchant.mjs",
+          "repoPath": "examples/customer-x402/src/record/merchant.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "2ea48c6f957ff671dd555b78b72d454debd55035",
+          "sha256": "d01cf0fb618ca8caafaffc0d62f98cb7d576b978112d3b059f48bee3a8a5fea6"
+        },
+        {
+          "path": "examples/customer-x402/src/record/pointer.mjs",
+          "repoPath": "examples/customer-x402/src/record/pointer.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "517c6aedfc18c573378830a9cb3274d752e12e5e",
+          "sha256": "0a4d86456ebafc3e743e6338618174bc0a20ba502b4ed46b8f5ffc7a7d171d2a"
+        },
+        {
+          "path": "examples/customer-x402/src/record/project.mjs",
+          "repoPath": "examples/customer-x402/src/record/project.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f6b3ec4e85ea1b7b605b0f77125cd35c7168b742",
+          "sha256": "fae926c8dabc40c5cafb78d24efee90b6b1e470015cc04b73e6fefdc4920d872"
+        },
+        {
+          "path": "examples/customer-x402/src/record/schema.mjs",
+          "repoPath": "examples/customer-x402/src/record/schema.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6d981e532ebbad074cf1cfe4aa9a81f3480efdf9",
+          "sha256": "43ed2757684ea3144a292913c308e81769389d37f6c0f036a33bb561e2823c92"
+        },
+        {
+          "path": "examples/customer-x402/src/redact.mjs",
+          "repoPath": "examples/customer-x402/src/redact.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "87ab30c1b0468df1e3d5e833fde49219e70737e7",
+          "sha256": "5e3c70466eafe405405a3d118cb758b64dca88d1de367253f6d4135795089176"
+        },
+        {
+          "path": "examples/customer-x402/src/request-construction.mjs",
+          "repoPath": "examples/customer-x402/src/request-construction.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "012bd6356a9cba29360246731689f9fecafda7bd",
+          "sha256": "48ad9e19471b02524062251aaabc17e4583a092cc0a3d26cc80845e32f77f06e"
+        },
+        {
+          "path": "examples/customer-x402/src/transport.mjs",
+          "repoPath": "examples/customer-x402/src/transport.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "81d74c396f3a4c9f734332ad1c1669283f61f3fa",
+          "sha256": "21fd294af698078d7b3b8dc6fab06d9eef8d5bca6d8a53002d1f8a4db760d265"
+        },
+        {
+          "path": "examples/customer-x402/src/wallet.mjs",
+          "repoPath": "examples/customer-x402/src/wallet.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5b9df28ebba8872f0ba25eb496d93c425af14e79",
+          "sha256": "a94122bf307c2cf7b1c651c5851c954c042fa4f2cd6164c1d514c318c9d4ab08"
+        },
+        {
+          "path": "examples/customer-x402/test/attempt-receipt.test.mjs",
+          "repoPath": "examples/customer-x402/test/attempt-receipt.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6b976c12cb508aa73702082809f888220104363d",
+          "sha256": "d3f98e7fb93b7cf8ca48c1c1d24bd7d40898f55c6f80e9969169dd32cd9145fe"
+        },
+        {
+          "path": "examples/customer-x402/test/batch-customer-x402.test.mjs",
+          "repoPath": "examples/customer-x402/test/batch-customer-x402.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "6b50915e262e13597c241cf36e444b3cc22565f5",
+          "sha256": "b55d72a8c5f7a02439925ea338b445e715dc353213eed5ece9c8e4b4d3c7ff42"
+        },
+        {
+          "path": "examples/customer-x402/test/caller-result-feedback.loopback.test.mjs",
+          "repoPath": "examples/customer-x402/test/caller-result-feedback.loopback.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "e3ab7d8ce6a1db9b648fbd854db18506b3694624",
+          "sha256": "2836d3e5dbe9d127b31976f6934d0d6cd8a6632b577a0c55b68944feb88bb405"
+        },
+        {
+          "path": "examples/customer-x402/test/caller-result-feedback.test.mjs",
+          "repoPath": "examples/customer-x402/test/caller-result-feedback.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3454efe37b2df79ef36b8d2e3e00289125634a67",
+          "sha256": "89da28f8a6bf5675a0cb4aed84a0015c7fa98f58571adf58e0fa31ded483f887"
+        },
+        {
+          "path": "examples/customer-x402/test/cli-fixture.mjs",
+          "repoPath": "examples/customer-x402/test/cli-fixture.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "848593c150d82a01f90dd0f50ab0b6a335796587",
+          "sha256": "ba1d85f96062de4962a37b699b5283e5a6f24bcf3a3c67e8464679bc6f5c3c91"
+        },
+        {
+          "path": "examples/customer-x402/test/customer-x402.test.mjs",
+          "repoPath": "examples/customer-x402/test/customer-x402.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "8b521894d53c3d3e33fa88579c94b078c262e0bf",
+          "sha256": "e9fc7a2412b48000e71ff1bf79dea7fd8d03144b1144503ea8f6304c48c83021"
+        },
+        {
+          "path": "examples/customer-x402/test/lockfile-authorization.test.mjs",
+          "repoPath": "examples/customer-x402/test/lockfile-authorization.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "11df88952bf768cea15ee1b795d6a6cc28bfec18",
+          "sha256": "96d520b404dfe933d5d75a25f8184a5c7eccd14d20c5b36c6337d3c0af274e56"
+        },
+        {
+          "path": "examples/customer-x402/test/lockfile-pin-delta.mounted.test.mjs",
+          "repoPath": "examples/customer-x402/test/lockfile-pin-delta.mounted.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cee7135ca9dde75100a1d0ea62348767854329e5",
+          "sha256": "b96d8d97b963b071db0dc6e975ae45bdea156a1f8f6c6ee7613df1720e801f05"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-cli.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-cli.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5c8ef534fa6517d56428f4a33863d9b8bb93c4a1",
+          "sha256": "28eb89c7b6be8476d11a9741b101dc4846e591e0ff425c02d09290a00774c2cb"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-merchant-runtime.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-merchant-runtime.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d741b19defa2bb565d861fe9494d06c6ad586f32",
+          "sha256": "d83b74eb896eee9da3196e880a47d42bae05fd2a56e328825209e656c9a65666"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-pins.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-pins.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "b08be601b0851c87998af2069a206ccf51ebdede",
+          "sha256": "d656a2d7c3e39eb82d54c16a153523a7693cbe2550f4ebf3524e26ffa85d6a8f"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-public-install.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-public-install.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d465fb110c59111d3c8f6f161453a1e8e8c2b622",
+          "sha256": "012d6ff6a4a898c6c162498dec9012ca8c0776faf0374e81b85d07d6bd3e5fbc"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-regressions.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-regressions.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "068f6b347cf150820d9b06f7a485c12d928fd5a2",
+          "sha256": "d962bf391dde8ff76a1e8b0686dc980e856422412b67a6ea7ff5ff7ba0d853cd"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change-w5.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change-w5.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d7b1d95b600381934b0236b72ef551a7e45aaa45",
+          "sha256": "8e4f7596f4b85faa209f484036e6cba68e007a98a68b6beda1ab989c7d18a73c"
+        },
+        {
+          "path": "examples/customer-x402/test/page-change.test.mjs",
+          "repoPath": "examples/customer-x402/test/page-change.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "bb70e8d9f2f350a3b4ae90b85b1f95ac0fd5ec32",
+          "sha256": "ebc0811cec061a542fd72c9343976f3da30672e12e80737d97d1f6f8aa2d9641"
+        },
+        {
+          "path": "examples/customer-x402/test/post-review-extract-boundaries.test.mjs",
+          "repoPath": "examples/customer-x402/test/post-review-extract-boundaries.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1c1a7fc2dad1ce3054be1b6acc778d7c16c18af1",
+          "sha256": "3d958687de11b83b66ad5c6ac08f6c378fb235bb9addd35ef2a34762415450c9"
+        },
+        {
+          "path": "examples/customer-x402/test/reconcile-final-review.test.mjs",
+          "repoPath": "examples/customer-x402/test/reconcile-final-review.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "19dbab1c1c18988d02f7283d0c62c763765198ac",
+          "sha256": "ee8332f8004dcbd28245eb111ae243393953e2cc396dc2cd6e9dc97058869dca"
+        },
+        {
+          "path": "examples/customer-x402/test/reconcile-rpc.http.test.mjs",
+          "repoPath": "examples/customer-x402/test/reconcile-rpc.http.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "be6d17326196a570ad958dd0603bb7deef34fec7",
+          "sha256": "4402f0674d28b128b2c68f0e21512151bed1d73e684c6265f4a16dc471d7ff7a"
+        },
+        {
+          "path": "examples/customer-x402/test/record-adversarial.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-adversarial.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "9a090bd20d27d834b22cb90a80e7e576c50b40c7",
+          "sha256": "6768c6940afeea1905f485c3ede45ca2dfc7f9d7dc402608e66faabbb6ed52b3"
+        },
+        {
+          "path": "examples/customer-x402/test/record-cli.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-cli.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "58d9df22e9826b758cfafe0d21d003de20e5c77f",
+          "sha256": "34b9f1a2753cf100d9dd9ad7b2dd0a05cb83ad3d2c35d000c98eff1ee0694e87"
+        },
+        {
+          "path": "examples/customer-x402/test/record-merchant-compat.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-merchant-compat.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c380f7f9baac00d1436f55a66a18900dd9ace2d5",
+          "sha256": "428655792486c93f888ad8f3320aa93532ce0563a3430e48c3f25533ebd35fa2"
+        },
+        {
+          "path": "examples/customer-x402/test/record-merchant-runtime.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-merchant-runtime.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f0d9828896dd1be7ccbfaf3373b04e65d8115bfa",
+          "sha256": "b320184cf2f9cac9169adad7796134b74d16ba80056aa081a90ceefc6e0f1aac"
+        },
+        {
+          "path": "examples/customer-x402/test/record-pins.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-pins.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5d5deacc5fabc615e249c0fb708881871abf2f65",
+          "sha256": "c2ef321b798e45b03197fb8038167f3157dc82383eb39bc5aa404ecddae70100"
+        },
+        {
+          "path": "examples/customer-x402/test/record-pointer.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-pointer.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "5a5efa84131e5404ee6d59d0e5953c877a88aa39",
+          "sha256": "4f24675ebf6f365e7db1f25993f1a6545992906b7bc7bf4ddb17a4e456a7cef9"
+        },
+        {
+          "path": "examples/customer-x402/test/record-project.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-project.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "400d741dc224612534fefb493244795324f4d43d",
+          "sha256": "a075b981ecb9f6b933bb01d53cf2f87c7c3165482cc428c6c6089fa3da4753df"
+        },
+        {
+          "path": "examples/customer-x402/test/record-regressions.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-regressions.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "3f1085619e55051375ba3031e047d349871bafcb",
+          "sha256": "faea7d868e8185173fcdbaef78c05a53f48518832d981e2ec4d0920911206f28"
+        },
+        {
+          "path": "examples/customer-x402/test/record-w6.test.mjs",
+          "repoPath": "examples/customer-x402/test/record-w6.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d9c44ebfe4ab407b16b81ee26ec8dea763a5ac17",
+          "sha256": "6cc8e1a38b644c8e507545aac7b2d8755e8c25b6d94d0583bbcb47d8423594a2"
+        },
+        {
+          "path": "examples/customer-x402/test/request-construction.mounted.test.mjs",
+          "repoPath": "examples/customer-x402/test/request-construction.mounted.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "34eeec47aa60a8d19503c3e05c9efb70656bdcf4",
+          "sha256": "a02c3ac642bc73a8ee3e827d401a92e553da532c353085d57cbafe7e90e17638"
+        },
+        {
+          "path": "examples/customer-x402/test/request-construction.test.mjs",
+          "repoPath": "examples/customer-x402/test/request-construction.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "0a1a2aafc801be046d74c5ece49defcd91389f05",
+          "sha256": "6052f4cfb2cef0996a418857fd02758a43103fcda104d8d419749e9603cf77c8"
+        },
+        {
+          "path": "examples/customer-x402/test/review-batch-boundaries.test.mjs",
+          "repoPath": "examples/customer-x402/test/review-batch-boundaries.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "78de1996bda0b4144f8f03059d503e38cbc7bacd",
+          "sha256": "93f068bf11f4bac1c92a6a9a21d283da4714d64a76700bf6441d766ab88fc8ba"
+        },
+        {
+          "path": "examples/customer-x402/test/review-boundaries.test.mjs",
+          "repoPath": "examples/customer-x402/test/review-boundaries.test.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "d6a95418c1c249313969affe5f54265dbe9438e6",
+          "sha256": "a26c49d72fbc7720150b933014af4b1be5ba1e3285ffbf836a35219f884b6f1b"
+        },
+        {
+          "path": "extract-batch-c1/url-guard.mjs",
+          "repoPath": "extract-batch-c1/url-guard.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "cd6f4a0a9ac1c2ead689075ce4550dc579ccb56b",
+          "sha256": "85931890091efa2b91399b4356764e8bb6adb7f1f81bcf61ad8e5b0e5935193d"
+        },
+        {
+          "path": "package-lock.json",
+          "repoPath": "package-lock.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "eb8b199d640a4bd78e94e78f6d37dc41d921cc2d",
+          "sha256": "84b4105e59e7c71ed04337c44c801dcb6fefc7fb5bd75f6bc5906feb6f7c0be3"
+        },
+        {
+          "path": "package.json",
+          "repoPath": "package.json",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "f6a710a4320b770550730cec70f8584962256b17",
+          "sha256": "e8424ebd5e1a6d42d6afbca4a40bc6d1f90a60d475b40c7bf9e145563c745848"
+        },
+        {
+          "path": "page-change-http.mjs",
+          "repoPath": "page-change-http.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "1df789b0767efc2818dcd7155777cc51c2f885ab",
+          "sha256": "55f6705f761f1fc1b07ff184d5a2ee303532d435d3497f74c6f0e56b45a6b0f3"
+        },
+        {
+          "path": "well-known-skills.mjs",
+          "repoPath": "well-known-skills.mjs",
+          "commit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+          "blob": "c5c741fec27464180c560b5ad50306635bd8afd9",
+          "sha256": "6bb79420c4bcadd43fe4cdd941f4aeaf046868df517719bd033378d65a4e4325"
+        }
+      ]
+    }
+  },
+  "readOnlyContracts": [
+    {
+      "name": "e01",
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+      "paths": [
+        "experiments/ae14-repeat-procurement"
+      ],
+      "files": [
+        {
+          "path": "experiments/ae14-repeat-procurement/INVENTORY.md",
+          "repoPath": "experiments/ae14-repeat-procurement/INVENTORY.md",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "5358835098633aba5e904602e7b1c9230197f3d3",
+          "sha256": "5d7e1960eff53c92e0f15833beacf6f9fee60323ce8e6fcc85d53e27092983f3"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/PINS.json",
+          "repoPath": "experiments/ae14-repeat-procurement/PINS.json",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "edadf297ecacddebf5bb76f32754b79cd7e3db23",
+          "sha256": "65d01de6e1706967c354bc45c042bfd914d446b63362e1daaa25ecae34043a89"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/README.md",
+          "repoPath": "experiments/ae14-repeat-procurement/README.md",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "42a47e858cad435339d5c428863eb5d61ff18355",
+          "sha256": "4d38db387e33a65ffcda0a1d160384ae1da80fd67b8140dfe909e33ccc158a53"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/RESULT.md",
+          "repoPath": "experiments/ae14-repeat-procurement/RESULT.md",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "e437b43519afb88aec4950da600a5fdb79876446",
+          "sha256": "c3267ef456a07a3216680e315050bfc718fc4dc4a6c270bd5f43f9a814634b00"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/bin/repeat-procurement.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/bin/repeat-procurement.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "bcf37a9fc98954030e3995f3c1c96c3a113c3bcf",
+          "sha256": "64079cbd2c867fac5fc4c93e5ceea69ae537d77b7f49c2a7fa1dc0dad76d5d49"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/acceptance.json",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/acceptance.json",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "74a9434858fad75015cc18a905f0cca2d8f022a2",
+          "sha256": "5be303c7c1cbeafe0616e80a0f092ebf1b9254e403686a03bf2daa4be1839b9f"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/amend1-inherited-buyer-mandate.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/amend1-inherited-buyer-mandate.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "5e1006e1b111d7437ebfd9b465f0eb167884d080",
+          "sha256": "a594b4ac3a2aa68f2135880a7b8a5825324bcadb58a4f106b49ba65fe083410e"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/amend1-inherited-caller-composition.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/amend1-inherited-caller-composition.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "6d8296bb7a1c2f519478a31142ce22e0e6da46bf",
+          "sha256": "36ace67fed398fe23aca38d1d9a2ad475b228ee8dc9d3a8898df3b6787851392"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/clean-replay.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/clean-replay.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "2168cf20b8283413f15716ea92c6e9490c093f4d",
+          "sha256": "dce5839546b11174a3d28e6a785490cb913b062236246e29f531da346aef5abe"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/dependency-closure.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/dependency-closure.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "e12f1c3a979cb1b9e4f6ebefe1e27d09a787df42",
+          "sha256": "36abcdba3e46efbdc1c0a325ba72f1fd5ce19d0e67d340e1ee29e846dcf024b4"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/inherited-buyer-mandate.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/inherited-buyer-mandate.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "2ac4452fe9f1087bd10b7c736a0b9f42a253a769",
+          "sha256": "0f657fa2e21b794adc3a09b84cf57cc9f3a8ed2f2f3bb39e580a1136a3abd0db"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/inherited-caller-composition.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/inherited-caller-composition.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "bcd9f4b324c584bcbd1d40995bc96ce602d5da01",
+          "sha256": "1ef2b77ae390949f6505ae2700e1c0f57eba8bdc483c4ec998e30e2a49565e44"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/evidence/owned-suite.txt",
+          "repoPath": "experiments/ae14-repeat-procurement/evidence/owned-suite.txt",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "ba8f1c7654d27a00b55e51b95afc1dc9cf5f4522",
+          "sha256": "54492fb320663a90fefeca88dbcf3ebd644482757d7583fea4327a9a279dcdd7"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/examples/tasks.json",
+          "repoPath": "experiments/ae14-repeat-procurement/examples/tasks.json",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "78e34ab383d0482c0b9dd1474bcefafb564062c3",
+          "sha256": "fd230189ee421fc7cd58be18009af88f5711f3529b5e64fe439e33f72e2a5dc4"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/package-lock.json",
+          "repoPath": "experiments/ae14-repeat-procurement/package-lock.json",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "492c716270c0d669878db50865d1ce9a5ee33498",
+          "sha256": "b3da376ddf00956b9b797713690ef804e2c4a4cd5a78952f0fba77f5afc3d6af"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/package.json",
+          "repoPath": "experiments/ae14-repeat-procurement/package.json",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "4b15ab6fc33e8f7e6d280a63024a56209fc03785",
+          "sha256": "227db06089fc9dbdf4873bbbc5bd5a4c5d28a325ed5f4499481a1d93e9756a58"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/dependency-hooks.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/dependency-hooks.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "a52c347719c9063bfc4ea6b66ca06a929d801dc0",
+          "sha256": "cb97c890542f40c1c215406b3a595e6cc1bd57a7b8326da652c466dbbe8606e6"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/dependency-register.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/dependency-register.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "ca3db17090d4ee232c59546da66f9bfc0947162d",
+          "sha256": "1dce0c806e07a961a16f040444bbd00409a6621ca6f3f3c5612e3a2c657f9408"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/errors.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/errors.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "54e25bf3d1b2f66417a5041462d1471155aca1fd",
+          "sha256": "c00da664276098a8175c415b3adde0a21ed68171b6ee18ebb04fb1a13f4501a2"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/incumbent.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/incumbent.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "443b8e00ea939964caeca4206788f959934f6e81",
+          "sha256": "0e5e531d93bcb82eef84c072328a1c58734bf786fbbb0928c30e1110a385bba1"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/local-https.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/local-https.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "3947833237af0a29a224ab43ecdf9ce9f73409a8",
+          "sha256": "7c8f5eb3a67ebacf7e1c27da51fe44787aa098d919df5c4d2f6a04fcb40eaba6"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/reuse.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/reuse.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "195474baadd09d0ffc44d3cf3b683ab8771407b7",
+          "sha256": "e0a142db7112989bd85b2ef854e20ddec8aab9ff2b41324a72fef9087727e7ce"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/takeover.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/takeover.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "ec343eb00ac887e2513eab5a29392d71fffb38bb",
+          "sha256": "a14fdbc85282d76d569cb3ac22603d3601a0d3a9a26c4c72fd7c33294f7d74b2"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/src/terms.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/src/terms.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "834ce6e86887bd49e82a969abda35b8e06e9687a",
+          "sha256": "ca1bb1a44f99eda71180fa58b94a6223f6d1986f1bbd17b6326044908ce0c957"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/test/acceptance.test.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/test/acceptance.test.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "0f5ebd38cbaf64b52ba05c0e4c40da4513ff75c6",
+          "sha256": "bafcd5dbf9e51bb81af2a1632e137d9d9cc4d8b3ac4bab8f9aea9e2ef62e964a"
+        },
+        {
+          "path": "experiments/ae14-repeat-procurement/test/terms.test.mjs",
+          "repoPath": "experiments/ae14-repeat-procurement/test/terms.test.mjs",
+          "commit": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+          "blob": "1e27ea776d50c48a272f2500aed6901e8c3cba31",
+          "sha256": "84c3feeccf0afe293938babcd3d69df18cbf83a9cc826ec8c635b38eb34d4816"
+        }
+      ]
+    },
+    {
+      "name": "e06",
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+      "paths": [
+        "experiments/ae14-task-economics"
+      ],
+      "files": [
+        {
+          "path": "experiments/ae14-task-economics/LICENSE",
+          "repoPath": "experiments/ae14-task-economics/LICENSE",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "917d313625224f717f1e9895c1e9d8ec736f267e",
+          "sha256": "24a5b88893d78ef372153aea9ee3b0ccbca7aab04d914eeaa7717df77a6759ad"
+        },
+        {
+          "path": "experiments/ae14-task-economics/README.md",
+          "repoPath": "experiments/ae14-task-economics/README.md",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "32f133b215101fd4c3ab8a7ad6f3b6b8ac646f8d",
+          "sha256": "963f82df97c88fbcd4f0b729ff292f70c844a2db3eef524b61267f55914508cc"
+        },
+        {
+          "path": "experiments/ae14-task-economics/RESULT.md",
+          "repoPath": "experiments/ae14-task-economics/RESULT.md",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "f47c294755ed813632e677bfed4188bac1cb8cdc",
+          "sha256": "b38805b3c5c9a8ae06cfebe4328b210ea2ba086f6bb26ccb26b76f32664b2dc5"
+        },
+        {
+          "path": "experiments/ae14-task-economics/SOURCE-NOTICE.txt",
+          "repoPath": "experiments/ae14-task-economics/SOURCE-NOTICE.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "6f688abd0d6ef80d09cbb73f09ab158447098cfa",
+          "sha256": "5dd2e04aa212afc1e91d4793c6486fc9244c8fa49b182674e4202c2185219151"
+        },
+        {
+          "path": "experiments/ae14-task-economics/bin/decide.mjs",
+          "repoPath": "experiments/ae14-task-economics/bin/decide.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "9e07582ad9620d8db39088a1470fa22e8f93ff1b",
+          "sha256": "de6865c08b03b6eec9dc5895053f6fdedbc217186e6eefff685d954610772afb"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/COMMANDS.txt",
+          "repoPath": "experiments/ae14-task-economics/evidence/COMMANDS.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "13dea5741ef2de973fce7b8437f328bcfd8ff15d",
+          "sha256": "58c97a9d7bcbbce4e3de46d85606f223dfb3312918be1840a54bb401fd7618df"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/fee-19.json",
+          "repoPath": "experiments/ae14-task-economics/evidence/fee-19.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "8f16a3d78b84b9aea86ef39c5e2e77ca58c47126",
+          "sha256": "81480ddae9caa7745e93c541921b7bd6a2770539ad13a54555044857ec9a5719"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/fee-20.json",
+          "repoPath": "experiments/ae14-task-economics/evidence/fee-20.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "50b6802575b350fc354d1295ffc7abe504560bee",
+          "sha256": "1404f9f1fdb5e941e75cc0ab9634d39cf96d8822ac58c9bfeffd348cea893bc1"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/fee-21.json",
+          "repoPath": "experiments/ae14-task-economics/evidence/fee-21.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "0c1bc41f3711011f3ddf192257970adf9664740a",
+          "sha256": "9f6fd9a04442202dae0f0a65fe5205444689a8a1974f6c52612eadc9fff11268"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/inherited-bounty-economics.txt",
+          "repoPath": "experiments/ae14-task-economics/evidence/inherited-bounty-economics.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "ef575478d5804d01a05db9e9d7e403543551af8e",
+          "sha256": "f66ad4c3158ada4760710a0dcb2c1d4769d2e454840e4ef17127d0cfeef38f90"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/inherited-l09-bounty-next.txt",
+          "repoPath": "experiments/ae14-task-economics/evidence/inherited-l09-bounty-next.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "064dfc2b10ac4297a9c301f86c372fadff5c9411",
+          "sha256": "a118234043412a7db344d45a07dbfe40d908dbfc3f570616643279a1454d2211"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/inherited-task-economics-delivery.txt",
+          "repoPath": "experiments/ae14-task-economics/evidence/inherited-task-economics-delivery.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "0e2a26033dab3192e6f27713f17bb8f040433de9",
+          "sha256": "1f9041a76f4aeff811b4e99201c40bd136c907d8e9587f61d74f47d1d5f52392"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/owned-tests.txt",
+          "repoPath": "experiments/ae14-task-economics/evidence/owned-tests.txt",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "e03936d09a0f3a8a8aa19fef2c8bb408631270ae",
+          "sha256": "6f8d8d88492f8eb295b252249f2cc290d2b3c1e1eae43ea7c098d8415e10c2e9"
+        },
+        {
+          "path": "experiments/ae14-task-economics/evidence/retained-decision.json",
+          "repoPath": "experiments/ae14-task-economics/evidence/retained-decision.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "631c06f42105aa23801d9d0db2d57822bfeffb08",
+          "sha256": "d5e66a5e2629ee456df612743f8a4f331f8a0651a7877cb70a2ee79d81192e51"
+        },
+        {
+          "path": "experiments/ae14-task-economics/fixtures/synthetic-boundary.quotes.json",
+          "repoPath": "experiments/ae14-task-economics/fixtures/synthetic-boundary.quotes.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "a78e8c41abc4771955e5fbb38e1af193e1b2a039",
+          "sha256": "89fc41dc0efaf334669603b5d0f27c14046883d18ff7e478e96649d63fb88ff8"
+        },
+        {
+          "path": "experiments/ae14-task-economics/package.json",
+          "repoPath": "experiments/ae14-task-economics/package.json",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "4932c83052f709e0a2e219e6114012d90a3a7e8d",
+          "sha256": "30fe56861b018ed2a644b9a76c7ce040608bd5cc02ad7c4ef64a321393f0bff6"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/cli.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/cli.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "b5211688453c9c7b3d4464f3e9768386d606d238",
+          "sha256": "0204f0c7cb6f150d3c2ec93d7ef070c299fd3c167e8059d1472e1d2abcafdc51"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/decide.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/decide.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "d00f1b3f3519362677dc160440fbb63c75869dd2",
+          "sha256": "7049f148f711ba7f0df04ff99316fda26f7638a7827e6fd1ccdd1dacd573709e"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/fail.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/fail.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "e9dd63ab2d970a9a85276b6c84d2b7d1f80f6874",
+          "sha256": "1f17bde1e461053dd740b81645bfeaeaa4286c09a7dd45780d7f6a5d56849689"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/fee.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/fee.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "c58bb93c90c3ea4da8dd3ee224d317c528745d10",
+          "sha256": "45479dff3323d6ab0804602113e8a401e0ae86d634e46680b77b97a59bb7f54b"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/http.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/http.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "91579baa39f60bfbcaa0e0182cd023880b15b18f",
+          "sha256": "9d67d23e55e17968166239cb0cab42c1580d0d48868307f9614d1a792a5971e5"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/pins.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/pins.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "23d06c5a807278c87210cf3d8cecc678fe3ece53",
+          "sha256": "e38dd631710dcb2f5bd83270c3ceeef7efe8a9b6bd7239af1c5d3330b3b56c27"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/quotes.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/quotes.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "9b3af8344af68a9ffdc6d8064754a0fa3553ec0a",
+          "sha256": "0c191bc6ce8fdce757be72a8628cd8f8ccdb91b81c4375c036e6b6bb7f9514a1"
+        },
+        {
+          "path": "experiments/ae14-task-economics/src/retained.mjs",
+          "repoPath": "experiments/ae14-task-economics/src/retained.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "3877826a2526a27275f916ebc50c59ffbe634cdf",
+          "sha256": "0a1ee1297e1c71d8be1bbac45039520107c0350606be0d7a7cd7a6cd2fa40a4d"
+        },
+        {
+          "path": "experiments/ae14-task-economics/tests/cli-http.test.mjs",
+          "repoPath": "experiments/ae14-task-economics/tests/cli-http.test.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "1ea029e8cb83b648617c086dedf9b6f8f9deacad",
+          "sha256": "bf8bd0deca491be98275c3549a2d54e5cf30221c59d12483a5907f9538ae0d80"
+        },
+        {
+          "path": "experiments/ae14-task-economics/tests/decision.test.mjs",
+          "repoPath": "experiments/ae14-task-economics/tests/decision.test.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "0452c0804d95522c3ad69d4d935c59a7a946a0e8",
+          "sha256": "df6441959e623c63dfcda25454917e3c415a04a69992bfae78124a4ccc53f952"
+        },
+        {
+          "path": "experiments/ae14-task-economics/tests/fee.test.mjs",
+          "repoPath": "experiments/ae14-task-economics/tests/fee.test.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "e4f14a3b4068b892729bd2a95d94c12e1abd4998",
+          "sha256": "b8e41c5da00a400ce6bef8175e10ef74d6aec0230a683be36954f3a066490ddb"
+        },
+        {
+          "path": "experiments/ae14-task-economics/tests/helpers.mjs",
+          "repoPath": "experiments/ae14-task-economics/tests/helpers.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "6d3dd6f96c310ec33f6626c7c9a2bb4ac7eea618",
+          "sha256": "d3ed2edc5a1bebd1d71784c4784b4fadad3fa960458b8035cc9bd31e4cf51f4e"
+        },
+        {
+          "path": "experiments/ae14-task-economics/tests/quotes.test.mjs",
+          "repoPath": "experiments/ae14-task-economics/tests/quotes.test.mjs",
+          "commit": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+          "blob": "1989389f7ae6071164a1e689ae645fe5f3fc0799",
+          "sha256": "c6cad48ab14fc1e8e1020188cfe8736358ff7440e5456f2a16dff125338f1aff"
+        }
+      ]
+    },
+    {
+      "name": "monitor",
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+      "paths": [
+        "services/continuous-monitoring"
+      ],
+      "files": [
+        {
+          "path": "services/continuous-monitoring/.gitignore",
+          "repoPath": "services/continuous-monitoring/.gitignore",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "af0863a28dc76928751af40b888254b428d57ab9",
+          "sha256": "6e6e119e2a7223be512ea81e5e71ddaca86594bbde7c194d87ccf8a10f0ca927"
+        },
+        {
+          "path": "services/continuous-monitoring/README.md",
+          "repoPath": "services/continuous-monitoring/README.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "7bfedacf6c92be462dee1977ecd6f8f14629f62b",
+          "sha256": "dd19b8ce2d9c414199587a7a467a03a4e4dcdee1bea0dae6b5096ceb0043423c"
+        },
+        {
+          "path": "services/continuous-monitoring/RESULT.md",
+          "repoPath": "services/continuous-monitoring/RESULT.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "32842618da5e57c07b25e6ca7449ef4e86c7112a",
+          "sha256": "68cba93cba7cb24c31c26d70ea6ab3d948a0f0088ce5194bbdc43426aae70ed0"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/README.md",
+          "repoPath": "services/continuous-monitoring/deploy/README.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "b261f1067ad1d3e92696d6b728a872f0d89f0f28",
+          "sha256": "4bdd55055bf059b5a42daa0d6968e79d261f6c2a9e62fb3d84784c03e4367005"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/grant.example.json",
+          "repoPath": "services/continuous-monitoring/deploy/grant.example.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "326e6b8c8cd96af1675810d5113b1dc73c90da58",
+          "sha256": "bafa1ddbe76117f2388e2c9f2c62bb163d3061afb272aa7bb933193d9205560f"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/neomorphic-monitor-api.service",
+          "repoPath": "services/continuous-monitoring/deploy/neomorphic-monitor-api.service",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "070c53a6a82bc91239dbc98eb5ba30ced7c3fd56",
+          "sha256": "33a5e4a8a6c1e17a2aa81462c60f7844f0b184720bd0993d063b9ea6ba98237a"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/neomorphic-monitor-worker.service",
+          "repoPath": "services/continuous-monitoring/deploy/neomorphic-monitor-worker.service",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "aa43155d47ddd0fd0dad35f38001366b5698a92d",
+          "sha256": "37f15afdc1100e53316fed7c88e53f32fc876f932b1d5ab1871487f9fa306cb9"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/neomorphic-monitor-worker.timer",
+          "repoPath": "services/continuous-monitoring/deploy/neomorphic-monitor-worker.timer",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "897609b631e86f082d1df6beac420d6d6b0f9ed9",
+          "sha256": "bbae6716ae6ee7a5acb7d0935e60d87297d62d8386a5fb108af70687119f34dc"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/render-units.mjs",
+          "repoPath": "services/continuous-monitoring/deploy/render-units.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "abaf223048de1659bd8243426e724956662165bf",
+          "sha256": "f4346dc7342af701633c1ebbbb4ab1c47aed45c71234692943fff3f34141b1a2"
+        },
+        {
+          "path": "services/continuous-monitoring/deploy/runtime.example.json",
+          "repoPath": "services/continuous-monitoring/deploy/runtime.example.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "ddd151f16caf317a51ed3490ba6c210df6f3b628",
+          "sha256": "a1a1cf23288f4f563786fad69ee3807e7644101bacc871bcbdffee35c14328dc"
+        },
+        {
+          "path": "services/continuous-monitoring/docs/LAUNCH-INTEGRATION.md",
+          "repoPath": "services/continuous-monitoring/docs/LAUNCH-INTEGRATION.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "2791cc743287cb5d33c4114262c39fdea6da9e82",
+          "sha256": "4c71c9dfa6f0711b06654b7de02a2b6e9d09b92c2006bdd66e4566f8a16e2662"
+        },
+        {
+          "path": "services/continuous-monitoring/docs/OPERATIONS.md",
+          "repoPath": "services/continuous-monitoring/docs/OPERATIONS.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "91853fa2c5d361705a92943a5e5c1f911e7a6d61",
+          "sha256": "39ab06a16354ba8f61cd89a6e97e35f9ab1f71ba2ac6382bf7bc92b4bc2e96dd"
+        },
+        {
+          "path": "services/continuous-monitoring/docs/SOURCE-REUSE.md",
+          "repoPath": "services/continuous-monitoring/docs/SOURCE-REUSE.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "bea64f5e9e1a6d115a666fc7de83ec9f03f60738",
+          "sha256": "499a19c6ad0b8d1450b04534a188161f998df7dc7ece8b458163cbba209af438"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/VALIDATION.md",
+          "repoPath": "services/continuous-monitoring/evidence/VALIDATION.md",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "92e243b72fe0ea23001f775f63a5e05c19d38cda",
+          "sha256": "d68091b2ca2a75c31a181caab957b4beb7ea81e12403af8b2a6f7ce0b2dc45be"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/first-mounted-run.json",
+          "repoPath": "services/continuous-monitoring/evidence/first-mounted-run.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "1a6909e5ce2e9351251717d7a0b522f1cccc4183",
+          "sha256": "0cce7cdc0f01e1cca9c938d6e07ef4eff157685df2a5c66614d33ca778a9110d"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/foundation-offline-tests.tap",
+          "repoPath": "services/continuous-monitoring/evidence/foundation-offline-tests.tap",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "cc1293781857c66a11a1c0b26715365c353192e9",
+          "sha256": "d3ff9b9b7fccc29cb3242ec19b54f54ed0ef6b8cf3e6a0c22e8de59e5f52e3c3"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/foundation-tests.tap",
+          "repoPath": "services/continuous-monitoring/evidence/foundation-tests.tap",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "14093e2d81e66ff9992f9700a4e4e37a0d0867c0",
+          "sha256": "873990955f885f29376872f1d45c461c37ada0632ae5c32c084a43f3c7a08b2d"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/public-observatory-read-initial.json",
+          "repoPath": "services/continuous-monitoring/evidence/public-observatory-read-initial.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "093d79c8b640b691eb4a6e73b3dc643cd2c107e7",
+          "sha256": "65bc433d660c7c2480860ef40b14238cf11f5458bb1edd2ca1391761784cc127"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/public-observatory-read.json",
+          "repoPath": "services/continuous-monitoring/evidence/public-observatory-read.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "ed1eeaba418b8ce98d962464ee9c369bc212b972",
+          "sha256": "1cf4ba8087796747fd0ff186c4687acdb5d74c7164de793a36f7c2183ae97af6"
+        },
+        {
+          "path": "services/continuous-monitoring/evidence/service-tests.tap",
+          "repoPath": "services/continuous-monitoring/evidence/service-tests.tap",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "6849f3e438f97320c64c61fd877cbd211de04061",
+          "sha256": "9c24201a3afdf01934fcefa02f5d1e74de4a46276e8973b33e9b4b0b3046a883"
+        },
+        {
+          "path": "services/continuous-monitoring/machine-manifest.json",
+          "repoPath": "services/continuous-monitoring/machine-manifest.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "a1e4b561972322a50824a21e85519b81f1f91f16",
+          "sha256": "313c13b32a07b874cbe5bc861bfaba6e1bbd3b68702c21e870ed882d54479340"
+        },
+        {
+          "path": "services/continuous-monitoring/migrations/001.sql",
+          "repoPath": "services/continuous-monitoring/migrations/001.sql",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "a5dfb3d7a50d5fad5ba38a210a7645c4d58a4247",
+          "sha256": "faf3bc53293f493144e0ef1fa72e68ba4e2fd80033b96941c41b0717a42a1f17"
+        },
+        {
+          "path": "services/continuous-monitoring/openapi.json",
+          "repoPath": "services/continuous-monitoring/openapi.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "e2cad2241bc522cd0d6339058d89bd1c338f1489",
+          "sha256": "c48d2be1c5b42512e87a98810d1c582ec84db87024e7439949b4039767bb2e5f"
+        },
+        {
+          "path": "services/continuous-monitoring/package.json",
+          "repoPath": "services/continuous-monitoring/package.json",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "ffafefbd2c7f1a4a55614bb3994cfa8b9cfe8df2",
+          "sha256": "b20ac48a5ceec2d7a1c5c05a1d855a8e4726ce0ebe9c8546fa7235fe6492e974"
+        },
+        {
+          "path": "services/continuous-monitoring/scripts/demo.mjs",
+          "repoPath": "services/continuous-monitoring/scripts/demo.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "578a7ce26beb53b5d3ce7762de28213048503b60",
+          "sha256": "b35fab77f67c0c8db2f10118a8e5ce52bed5f8dfec0527e82fb0a615a7231f15"
+        },
+        {
+          "path": "services/continuous-monitoring/scripts/public-read.mjs",
+          "repoPath": "services/continuous-monitoring/scripts/public-read.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "ec80d4ecbfc33ef83eb5a49dd046280ff166c4fd",
+          "sha256": "fdafd9f382f3183ee7f96628c95902ca70c64dd3104464c6b530c6bdc201c7b5"
+        },
+        {
+          "path": "services/continuous-monitoring/src/api.mjs",
+          "repoPath": "services/continuous-monitoring/src/api.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "995e157ee06afeedd23cf2c8dc3622aaf8a7e82a",
+          "sha256": "b1f5f0ce486001edc739cbba122911d4d6ed6f2e59f18ea2dd3ae9b1821777f6"
+        },
+        {
+          "path": "services/continuous-monitoring/src/cli.mjs",
+          "repoPath": "services/continuous-monitoring/src/cli.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "14ddd5beec7aba2809cd1fa02960b6d4555e1ea0",
+          "sha256": "1f1b9cfe90bea26fa0c81ce0b777a154aaeb9361d918dddebcdda2157e4ed210"
+        },
+        {
+          "path": "services/continuous-monitoring/src/config.mjs",
+          "repoPath": "services/continuous-monitoring/src/config.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "ca61803b0d5ec74b7036a4744da32aa0bd8a0a35",
+          "sha256": "7b959566a4f8400b651f0b6db96d91828ecff05e82a308698b3639f320f26073"
+        },
+        {
+          "path": "services/continuous-monitoring/src/errors.mjs",
+          "repoPath": "services/continuous-monitoring/src/errors.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "3875079c01c6d56aa92ad17d2d40440b44a29d8e",
+          "sha256": "1da13145da856869a51d0f81c4ad38c63aad921d02e945e8da5bc9c275756405"
+        },
+        {
+          "path": "services/continuous-monitoring/src/http.mjs",
+          "repoPath": "services/continuous-monitoring/src/http.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "813b5ee66956cb05e5405a7d9b61121cf2bf54d2",
+          "sha256": "b52cba127417d8c08339a67dac27db5b4aeb3ce30f0da9e16d010d88cac175b2"
+        },
+        {
+          "path": "services/continuous-monitoring/src/observation.mjs",
+          "repoPath": "services/continuous-monitoring/src/observation.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "eee953b0995300bdc5d2eaa4dd6a08be9a6c3db7",
+          "sha256": "fb50a492f05de6c3ceb935c9a82ea012ce0c703fe49983a56e849cf12f9e6625"
+        },
+        {
+          "path": "services/continuous-monitoring/src/policy.mjs",
+          "repoPath": "services/continuous-monitoring/src/policy.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "6923193667116420372a75f23794d170f9c894c3",
+          "sha256": "833c12a3fee69dbaa6e3c313c412e1a9ffc158bf630deb7cd3fae9d7afae5327"
+        },
+        {
+          "path": "services/continuous-monitoring/src/store.mjs",
+          "repoPath": "services/continuous-monitoring/src/store.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "3602ebac2581628157e1185d3872bad24f0ae151",
+          "sha256": "37b04c9f7b4dfa7e26e59bdb50518cfdaa63b8a3f42d017dcecd218ec22778ed"
+        },
+        {
+          "path": "services/continuous-monitoring/src/worker.mjs",
+          "repoPath": "services/continuous-monitoring/src/worker.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "b144644744eedb4369a5014d1bd78ddadac77166",
+          "sha256": "cc788ddcf099228c037b39d16311729ae7aaa1973e0b91521fa88a2ce8a5f72b"
+        },
+        {
+          "path": "services/continuous-monitoring/test/00-mounted-journey.test.mjs",
+          "repoPath": "services/continuous-monitoring/test/00-mounted-journey.test.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "fc9a526c8d535dd4c106066958b07f355e65c671",
+          "sha256": "d7cf698d56370f691f84e13ad63473339c3f734b005f8ce55ee94b7a2622b952"
+        },
+        {
+          "path": "services/continuous-monitoring/test/01-safety.test.mjs",
+          "repoPath": "services/continuous-monitoring/test/01-safety.test.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "5b5eda14edda10e83eb51267559efddbafa7d1ca",
+          "sha256": "ea661805dbe2aac348e73b2dd44c69de1b42ed0677efeccc3dc8cd25c2625e88"
+        },
+        {
+          "path": "services/continuous-monitoring/test/02-service.test.mjs",
+          "repoPath": "services/continuous-monitoring/test/02-service.test.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "20930e1a086b78efe43178b47776241f143aed11",
+          "sha256": "3b3fd0f54710ab19183c7a9adcc434c044b62e469cfc3087e45a2c1d8e7b76e2"
+        },
+        {
+          "path": "services/continuous-monitoring/test/03-durability.test.mjs",
+          "repoPath": "services/continuous-monitoring/test/03-durability.test.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "3286d55832d8b2969d37e7da2f7fabe98d2e9353",
+          "sha256": "07fd9f9f598b2f6095664754c1d3e660e6d9626c2c2565a58249cddd405a500a"
+        },
+        {
+          "path": "services/continuous-monitoring/test/04-entitlement-contract.test.mjs",
+          "repoPath": "services/continuous-monitoring/test/04-entitlement-contract.test.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "b67c9fc532822cbc85a867b7618a32b0f4a20169",
+          "sha256": "f2f8749b939d8c7c1b50a77e6699c7e10400c4813183479e2cb74dfa063a9e4a"
+        },
+        {
+          "path": "services/continuous-monitoring/test/crash-worker.mjs",
+          "repoPath": "services/continuous-monitoring/test/crash-worker.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "d54218df92972d05e34e563ce5ba9adf6a9e174c",
+          "sha256": "7ba0815cecb9b53af583b7efddc07e447b78962d33673e6ca8b9f8aab0421bb4"
+        },
+        {
+          "path": "services/continuous-monitoring/test/harness.mjs",
+          "repoPath": "services/continuous-monitoring/test/harness.mjs",
+          "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+          "blob": "c5526ded84bf9bf22f6fecda17d55ccaa8bdb21c",
+          "sha256": "b7668899db5fa01df528e3e4cd1b31f06986b45a6e3a743b8bd0002cdff9f4ed"
+        }
+      ]
+    },
+    {
+      "name": "cli",
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+      "paths": [
+        "src/data/cli.ts",
+        "src/pages/cli.astro",
+        "public/downloads/agent-economy-client/0.1.0-c4"
+      ],
+      "files": [
+        {
+          "path": "public/downloads/agent-economy-client/0.1.0-c4/SHA256SUMS",
+          "repoPath": "public/downloads/agent-economy-client/0.1.0-c4/SHA256SUMS",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "fa1848dca02a7a9e2737f83f735ab4d56ab02e2c",
+          "sha256": "87743172472b6badf7550ae6543956967835dca4175f2e02ffe40849c39e5f95"
+        },
+        {
+          "path": "public/downloads/agent-economy-client/0.1.0-c4/agent-economy-client-0.1.0.tgz",
+          "repoPath": "public/downloads/agent-economy-client/0.1.0-c4/agent-economy-client-0.1.0.tgz",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "c1972af6554d907abdef9d86e69e80f2a195cdc3",
+          "sha256": "8dad55d66f446d0c0772ec33a4711be7c43fc1521e05c545b23c3316084e728d"
+        },
+        {
+          "path": "public/downloads/agent-economy-client/0.1.0-c4/inventory.json",
+          "repoPath": "public/downloads/agent-economy-client/0.1.0-c4/inventory.json",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "48d627662d34e5d73428f765e1b8cd44aa68617c",
+          "sha256": "18c017cdcd723ca66f8359fcf4e485fcd6b1e449c416a52c3588911562218371"
+        },
+        {
+          "path": "public/downloads/agent-economy-client/0.1.0-c4/release-status.json",
+          "repoPath": "public/downloads/agent-economy-client/0.1.0-c4/release-status.json",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "b2d81faf1659a3d7b3a9c80fc60fe05b4504ab0c",
+          "sha256": "0e46607be8715cba59f911a6619ee8f5be647a94882301a399de7fc39308df9d"
+        },
+        {
+          "path": "src/data/cli.ts",
+          "repoPath": "src/data/cli.ts",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "c29a52796bae1b5e3b8fd6a3dc67eacf200126ee",
+          "sha256": "f3b539a564a1fd73caf774e4a5d12a11c1ad7c746185d8088cd4aa1a727af8b3"
+        },
+        {
+          "path": "src/pages/cli.astro",
+          "repoPath": "src/pages/cli.astro",
+          "commit": "85075d36578740d8cad659b7a5c44da32517e6c9",
+          "blob": "7d445beb5aeee0865f4ae32e6ad08686160870e7",
+          "sha256": "6d2384d9b28a39a2fe7c73641682e24c04313629982acf37efe8c69094773315"
+        }
+      ]
+    }
+  ]
+}

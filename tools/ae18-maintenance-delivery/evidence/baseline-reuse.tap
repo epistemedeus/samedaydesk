@@ -1,0 +1,135 @@
+TAP version 13
+# Subtest: accepted page-change fixture previews a bounded observation without writing
+ok 1 - accepted page-change fixture previews a bounded observation without writing
+  ---
+  duration_ms: 3.778214
+  ...
+# Subtest: accepted extract-batch keeps failed rows and omits jsonLd by default
+ok 2 - accepted extract-batch keeps failed rows and omits jsonLd by default
+  ---
+  duration_ms: 0.99339
+  ...
+# Subtest: explicit selection can include jsonLd and still omits forbidden keys
+ok 3 - explicit selection can include jsonLd and still omits forbidden keys
+  ---
+  duration_ms: 1.209777
+  ...
+# Subtest: omission defaults strip credential strings without echoing them
+ok 4 - omission defaults strip credential strings without echoing them
+  ---
+  duration_ms: 0.774606
+  ...
+# Subtest: preview omits nested payment credentials and does not echo them
+ok 5 - preview omits nested payment credentials and does not echo them
+  ---
+  duration_ms: 0.900438
+  ...
+# Subtest: extract-batch titles and opt-in export files strip Stripe and PEM material
+ok 6 - extract-batch titles and opt-in export files strip Stripe and PEM material
+  ---
+  duration_ms: 0.916556
+  ...
+# Subtest: selecting payment or receipt fields is refused
+ok 7 - selecting payment or receipt fields is refused
+  ---
+  duration_ms: 1.573316
+  ...
+# Subtest: hostile javascript URLs and HTML are omitted; recipe URI remains http(s)
+ok 8 - hostile javascript URLs and HTML are omitted; recipe URI remains http(s)
+  ---
+  duration_ms: 0.754983
+  ...
+# Subtest: incomplete failed extract stays exportable with failure codes
+ok 9 - incomplete failed extract stays exportable with failure codes
+  ---
+  duration_ms: 0.990086
+  ...
+# Subtest: actual accepted complete changed page-change is complete, not unchanged
+ok 10 - actual accepted complete changed page-change is complete, not unchanged
+  ---
+  duration_ms: 0.96961
+  ...
+# Subtest: all page-change branches use one scrub path and diagnostics do not echo hostile values
+ok 11 - all page-change branches use one scrub path and diagnostics do not echo hostile values
+  ---
+  duration_ms: 0.451425
+  ...
+# Subtest: explicit record report and n45 page-change result both map
+ok 12 - explicit record report and n45 page-change result both map
+  ---
+  duration_ms: 1.0976
+  ...
+# Subtest: correction is one-way B.supersedes=A; prior A stays immutable
+ok 13 - correction is one-way B.supersedes=A; prior A stays immutable
+  ---
+  duration_ms: 0.777163
+  ...
+# Subtest: schema-valid export is not automatic public-safe certification
+ok 14 - schema-valid export is not automatic public-safe certification
+  ---
+  duration_ms: 0.527581
+  ...
+# Subtest: source versions are deterministic for the same selection and clock
+ok 15 - source versions are deterministic for the same selection and clock
+  ---
+  duration_ms: 0.816542
+  ...
+# Subtest: identity, revision, correction, and wall clock are explicit and never truncated
+ok 16 - identity, revision, correction, and wall clock are explicit and never truncated
+  ---
+  duration_ms: 0.368517
+  ...
+# Subtest: explicit task identity prevents same-subject collisions across unrelated tasks
+ok 17 - explicit task identity prevents same-subject collisions across unrelated tasks
+  ---
+  duration_ms: 0.350797
+  ...
+# Subtest: programmatic and CLI inputs fail cleanly at depth, count, byte, and JSON boundaries
+ok 18 - programmatic and CLI inputs fail cleanly at depth, count, byte, and JSON boundaries
+  ---
+  duration_ms: 61.239035
+  ...
+# Subtest: missing original evidence URL stays disclosed and is not promoted to observed
+ok 19 - missing original evidence URL stays disclosed and is not promoted to observed
+  ---
+  duration_ms: 0.322869
+  ...
+# Subtest: export refuses to write without opt-in; CLI preview does not write a file
+ok 20 - export refuses to write without opt-in; CLI preview does not write a file
+  ---
+  duration_ms: 59.683399
+  ...
+# Subtest: pins name the exact accepted task-memory, N45, and W15 site commits
+ok 21 - pins name the exact accepted task-memory, N45, and W15 site commits
+  ---
+  duration_ms: 0.083648
+  ...
+# Subtest: W15 overflow CSS and overflow test stay untouched
+ok 22 - W15 overflow CSS and overflow test stay untouched
+  ---
+  duration_ms: 4.259112
+  ...
+# Subtest: payment, homepage, and browser-path files are unchanged in this helper tree
+ok 23 - payment, homepage, and browser-path files are unchanged in this helper tree
+  ---
+  duration_ms: 2.799262
+  ...
+# Subtest: selected explicit record fields retain useful recipe evidence through the existing scrubber
+ok 24 - selected explicit record fields retain useful recipe evidence through the existing scrubber
+  ---
+  duration_ms: 3.239504
+  ...
+# Subtest: oversized selected record fields fail the existing payload bound
+ok 25 - oversized selected record fields fail the existing payload bound
+  ---
+  duration_ms: 1.54479
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 198.910026

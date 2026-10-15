@@ -1,0 +1,30 @@
+{
+  "name": "@samedaydesk/maintenance-delivery",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.14.0 <23"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./client": "./src/client.mjs",
+    "./schemas": "./src/schemas.mjs",
+    "./runtime": "./src/runtime.mjs"
+  },
+  "bin": {
+    "sds-maintenance-accept": "./bin/accept.mjs"
+  },
+  "files": [
+    "src",
+    "bin",
+    "fixtures",
+    "PINS.json",
+    "README.md",
+    "INSTALL.md",
+    "INTEGRATION.md"
+  ],
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  },
+  "license": "MIT"
+}

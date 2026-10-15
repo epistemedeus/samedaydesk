@@ -1,0 +1,6 @@
+{
+  "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "command": "node --test tools/result-reuse/test/record-fields.test.mjs tools/result-reuse/test/export.test.mjs",
+  "exit": 0,
+  "summary": "1..25\n# tests 25\n# suites 0\n# pass 25\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 198.910026\n"
+}

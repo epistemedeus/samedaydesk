@@ -1,0 +1,18 @@
+{
+  "base": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "branch": "codex/ae18-maintenance-delivery-244005",
+  "origin": "https://github.com/epistemedeus/samedaydesk.git",
+  "remoteBranchInitiallyAbsent": true,
+  "merchant": {
+    "root": "/tmp/ae18-244005-inputs-TjCnvs/merchant",
+    "consumedCommit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+    "originalDeclaredMasterPin": "f9dd59aeeb200881bc1313ed846ba002e7081258",
+    "ancestorCommand": "git merge-base --is-ancestor f9dd59aeeb200881bc1313ed846ba002e7081258 82a51274e7dc7a7600b90f1317a6be6b28442592",
+    "ancestorExit": 0,
+    "packageName": "x402-merchant",
+    "rootAndCustomerLockedInstalls": true
+  },
+  "runtime": "Node v22.14.0, npm 10.9.9",
+  "dependencyPolicy": "read-only; not automatically Root accepted, installed or deployed",
+  "applicableAgentFiles": []
+}

@@ -1,0 +1,6 @@
+{
+  "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "command": "node --test --test-concurrency=1 tools/ae14-compat-maintenance/test/boundaries.test.mjs tools/ae14-compat-maintenance/test/http-cli.test.mjs tools/ae14-compat-maintenance/test/occurrence.test.mjs tools/ae14-compat-maintenance/test/economics.test.mjs",
+  "exit": 0,
+  "summary": "1..28\n# tests 28\n# suites 0\n# pass 28\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 375.492094\n"
+}

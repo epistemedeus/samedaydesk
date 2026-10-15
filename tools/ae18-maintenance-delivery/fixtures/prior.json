@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.recurring-job-prior.v1",
+  "recipeId": "source-change-alert",
+  "createdAt": "2026-10-15T00:00:00.000Z",
+  "sequence": 1,
+  "immutable": true,
+  "taskId": "retained-contract-inspection",
+  "sourceId": "owner-contract",
+  "payload": {
+    "fields": {
+      "title": "extract-contract-v1",
+      "description": "retained SKU CC-4; owner QA permitted"
+    }
+  },
+  "payment": {
+    "attempted": false
+  },
+  "sha256": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f"
+}
