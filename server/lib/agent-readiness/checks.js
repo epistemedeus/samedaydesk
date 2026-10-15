@@ -1,7 +1,10 @@
 import { detectWebMcp, discoverMcpLinks, resolveMcp } from "./discovery.js";
+import { assessLlmsLinkage } from "./linkage.js";
 import { usabilityChecks } from "./usability.js";
 import { buildIdentityMatrix, extractNamesFromText } from "./normalize.js";
 import { classifyRetrieval, contentTypeOf, inspectJsonBody, isHtmlDocument, retrievalDiagnostic, selectDocument, textDocumentVerdict } from "./retrieval.js";
+import { staticSummaryReason, summarizeStaticHtml } from "./static-summary.js";
+import { countX402Entries, x402EmptyDeclaration } from "./x402-entries.js";
 export const LATEST_MCP_VERSION = "2025-11-25";
 export const AI_AGENTS = ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended"];
 export const OPENAPI_PATHS = ["/openapi.json", "/.well-known/openapi.json"];
@@ -76,25 +79,18 @@ function discoveryChecks(ctx) {
         });
     }
     else {
-        const hasApi = /openapi|\/api\b|api\.json/i.test(llmsBody);
-        const hasMcp = /mcp/i.test(llmsBody);
-        const hasCard = /agent-card|agent\.json|a2a/i.test(llmsBody);
-        const missing = [
-            !hasApi ? "API" : null,
-            !hasMcp ? "MCP" : null,
-            !hasCard ? "agent card" : null,
-        ].filter(Boolean);
+        const assessed = assessLlmsLinkage(llmsBody, bundle);
         out.push({
             id: "discovery.llms.links",
             category: "discovery",
             title: "llms.txt links API, MCP and agent card",
-            status: missing.length === 0 ? "pass" : missing.length === 3 ? "fail" : "warn",
-            reason: missing.length === 0
-                ? "llms.txt links the API, the MCP endpoint and the agent card."
-                : `llms.txt does not link: ${missing.join(", ")}.`,
-            fix: "Add absolute links to /openapi.json, /mcp and /.well-known/agent-card.json inside llms.txt.",
+            status: assessed.status,
+            reason: assessed.reason,
+            fix: assessed.fix,
+            linkage: assessed.linkage,
         });
     }
+    out.push(staticSummaryCheck(bundle));
     const skillVerdict = textDocumentVerdict(skill, "/skill.md", "Publish /skill.md with step by step instructions an agent can follow to use the site.");
     out.push({
         id: "discovery.skill",
@@ -142,6 +138,69 @@ function discoveryChecks(ctx) {
         });
     }
     return out;
+}
+function staticSummaryCheck(bundle) {
+    const base = {
+        id: "static.summary",
+        category: "discovery",
+        title: "Homepage visible text without scripts",
+    };
+    const res = bundle.responses["/"];
+    if (!res) {
+        return {
+            ...base,
+            status: "na",
+            applicability: "not-probed",
+            reason: "No homepage response was recorded, so visible text was not summarized.",
+            fix: "Record GET / before treating the homepage as empty. An unprobed page is not a failed page.",
+            staticSummary: { wordCount: 0, saysWhatItIs: false, excerpt: "", pointers: [] },
+        };
+    }
+    const outcome = classifyRetrieval(res);
+    const diagnostic = retrievalDiagnostic("/", outcome, "homepage");
+    if (diagnostic) {
+        return { ...base, status: "fail", reason: diagnostic.reason, fix: diagnostic.fix };
+    }
+    if (outcome.kind !== "retrieved") {
+        return {
+            ...base,
+            status: "fail",
+            reason: `/ returned ${res.status ?? "no response"}.`,
+            fix: "Serve a homepage whose HTML says what the product is, without relying on script.",
+        };
+    }
+    const staticSummary = summarizeStaticHtml(res.body || "");
+    const status = staticSummary.wordCount < 40 && !staticSummary.saysWhatItIs
+        ? "fail"
+        : staticSummary.saysWhatItIs && staticSummary.pointers.length
+            ? "pass"
+            : "warn";
+    const fix = status === "pass"
+        ? "Keep the visible product sentence and the machine links in the HTML, not only in script."
+        : status === "fail"
+            ? "Put a sentence in the HTML that says what the product is. Script text does not count."
+            : "Add a visible HTML link to the API, OpenAPI, MCP, or llms.txt. A link that exists only in script is invisible here.";
+    return { ...base, status, reason: staticSummaryReason(staticSummary), fix, staticSummary };
+}
+/** Redirect chain plus the final status, when a GET did not complete an MCP handshake. */
+export function describeMcpTransport(mcpGet) {
+    if (!mcpGet || typeof mcpGet.status !== "number")
+        return null;
+    const redirects = Array.isArray(mcpGet.redirects)
+        ? mcpGet.redirects.filter((hop) => hop && typeof hop.status === "number" && typeof hop.location === "string" && hop.location)
+        : [];
+    const status = mcpGet.status;
+    if (!redirects.length && (status === 404 || status === 405))
+        return null;
+    const type = contentTypeOf(mcpGet);
+    const html = isHtmlDocument(mcpGet);
+    const jsonish = type.includes("json") || type.includes("event-stream");
+    const interesting = redirects.length > 0 || html || (!!type && !jsonish && status >= 200 && status < 300);
+    if (!interesting)
+        return null;
+    const finalType = type || (html ? "text/html" : "unknown");
+    const hops = redirects.map((hop) => `${hop.status} → ${hop.location}`).join(" ");
+    return `${hops ? `${hops} ` : ""}${status} ${finalType} (no MCP handshake)`;
 }
 export function blockedAgents(robots) {
     const lines = robots.split(/\r?\n/).map((l) => l.replace(/#.*/, "").trim());
@@ -314,6 +373,7 @@ function mcpChecks(ctx) {
     const mcpDiagnostic = !initResult && !mcp
         ? retrievalDiagnostic("/mcp", classifyRetrieval(mcpGet), "endpoint response")
         : null;
+    const transportGap = !initResult ? describeMcpTransport(mcpGet) : null;
     const present = {
         id: "mcp.initialize",
         category: "mcp",
@@ -323,7 +383,7 @@ function mcpChecks(ctx) {
             ? `initialize returned a result from ${mcp.url}.`
             : mcp
                 ? "initialize returned no result object."
-                : mcpDiagnostic?.reason || `No MCP server (/mcp returned ${mcpGet?.status ?? "no response"}).`,
+                : mcpDiagnostic?.reason || transportGap || `No MCP server (/mcp returned ${mcpGet?.status ?? "no response"}).`,
         fix: mcpDiagnostic?.fix || "Expose an MCP endpoint at /mcp that answers the initialize handshake.",
     };
     if (!initResult) {
@@ -577,25 +637,23 @@ function x402Checks(ctx) {
             },
         ];
     }
-    const resources = Array.isArray(doc.resources)
-        ? doc.resources
-        : Array.isArray((rec(doc.x402) ?? {}).resources)
-            ? (rec(doc.x402).resources)
-            : [];
-    const declaresEmpty = resources.length === 0 &&
-        (doc.resources !== undefined || rec(doc.x402)?.resources !== undefined) &&
-        /none|no paid|empty|free/i.test(JSON.stringify(doc));
+    const x402Entries = countX402Entries(doc);
+    const declaration = x402Entries.valid === 0 ? x402EmptyDeclaration(doc) : "";
+    const listed = x402Entries.invalid > 0;
     out.push({
         id: "x402.resources",
         category: "x402",
         title: "Paid resource list is truthful",
-        status: resources.length > 0 || declaresEmpty ? "pass" : "warn",
-        reason: resources.length > 0
-            ? `${resources.length} paid resources are published.`
-            : declaresEmpty
-                ? "The manifest publishes an empty resource list and says so plainly."
-                : "The manifest has no resources and does not say whether that is intentional.",
+        status: x402Entries.valid > 0 || declaration ? "pass" : "warn",
+        reason: x402Entries.valid > 0
+            ? `${x402Entries.valid} valid paid resources are published.`
+            : declaration
+                ? `The manifest declares no paid resources: ${declaration}`
+                : listed
+                    ? `The manifest lists ${x402Entries.invalid} entries but none are valid paid resources.`
+                    : "The manifest has no resources and does not say whether that is intentional.",
         fix: "List paid resources, or keep an empty list with a note stating there are no paid endpoints.",
+        x402Entries,
     });
     return out;
 }
@@ -808,5 +866,70 @@ export function runChecks(input) {
         ...usabilityChecks(bundle),
         webMcpCheck(input),
     ];
+    applyDeclaredAbsence(checks, bundle);
     return { checks, identity };
+}
+function hasLiveMcp(bundle) {
+    return !!rec(rec(bundle.mcp?.initialize)?.result);
+}
+function hasLiveAgentCard(bundle) {
+    for (const path of AGENT_CARD_PATHS) {
+        const res = bundle.responses?.[path];
+        if (!res || classifyRetrieval(res).kind !== "retrieved" || isHtmlDocument(res))
+            continue;
+        const doc = json(res);
+        if (doc && typeof doc.name === "string" && doc.name.trim() && typeof doc.description === "string" && doc.description.trim()) {
+            return true;
+        }
+    }
+    return false;
+}
+function identityFixForAbsence(linkage) {
+    const dropMcp = linkage.mcp?.state === "declared-absent";
+    const dropCard = linkage.agentCard?.state === "declared-absent";
+    if (!dropMcp && !dropCard)
+        return "";
+    const names = ["llms.txt", "skill.md", "OpenAPI"];
+    if (!dropMcp)
+        names.push("MCP");
+    if (!dropCard)
+        names.push("the agent card");
+    const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+    return `Describe the same operations in ${list}. Do not add a surface llms.txt declares absent.`;
+}
+function applyDeclaredAbsence(checks, bundle) {
+    const linkage = checks.find((check) => check.id === "discovery.llms.links")?.linkage;
+    if (!linkage)
+        return;
+    const identityFix = identityFixForAbsence(linkage);
+    if (identityFix) {
+        const surfaces = checks.find((check) => check.id === "identity.surfaces");
+        if (surfaces)
+            surfaces.fix = identityFix;
+    }
+    if (linkage.mcp?.state === "declared-absent" && !hasLiveMcp(bundle)) {
+        const quote = linkage.mcp.quote;
+        const transport = describeMcpTransport(bundle.responses?.["/mcp"]);
+        for (const check of checks) {
+            if (!check.id.startsWith("mcp.") && !check.id.startsWith("usability.mcp."))
+                continue;
+            check.status = "na";
+            check.applicability = "declared-absent";
+            check.reason = `not applicable: declared absent ("${quote}")`;
+            if (check.id === "mcp.initialize" && transport)
+                check.reason += `. ${transport}`;
+            check.fix = "No publish action: llms.txt declares MCP absent.";
+        }
+    }
+    if (linkage.agentCard?.state === "declared-absent" && !hasLiveAgentCard(bundle)) {
+        const quote = linkage.agentCard.quote;
+        for (const check of checks) {
+            if (!check.id.startsWith("agentCard."))
+                continue;
+            check.status = "na";
+            check.applicability = "declared-absent";
+            check.reason = `not applicable: declared absent ("${quote}")`;
+            check.fix = "No publish action: llms.txt declares the agent card absent.";
+        }
+    }
 }
