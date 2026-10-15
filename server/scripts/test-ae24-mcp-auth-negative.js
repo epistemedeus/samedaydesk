@@ -84,7 +84,11 @@ function refused(r) {
   assert.doesNotMatch(r.json.result.content[0].text, /Verified/);
 }
 test("AE24 auth: missing license is refused", async () => { refused(await call({})); });
-test("AE24 auth: wrong-offer license is refused", async () => { refused(await call({ license: "cs_test_other_offer" })); });
+// A paid session for a different payment link is the wrong credential (same mock as test-mcp-boundary's denied case).
+test("AE24 auth: license for a different payment link is refused", async () => {
+  failLicense = true;
+  try { refused(await call({ license: "cs_test_other_offer" })); } finally { failLicense = false; }
+});
 test("AE24 auth: malformed license type is rejected without a license read", async () => {
   const before = licenseReads;
   const r = await call({ license: ["cs_test_boundary_paid"] });

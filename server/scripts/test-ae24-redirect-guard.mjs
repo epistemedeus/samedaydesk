@@ -1,7 +1,7 @@
 // AE24 growth: redirects that leave public http(s) are refused, never followed (guardedExchange, ca826091).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { guardedExchange } from "../lib/agent-readiness/probe.js";
+import { guardedExchange, MAX_REDIRECTS } from "../lib/agent-readiness/probe.js";
 const lookup = async (host) => [{ address: host.endsWith(".internal") ? "10.0.0.5" : "93.184.216.34", family: 4 }];
 function rig(location) {
   const hits = [];
@@ -19,9 +19,11 @@ for (const [name, loc, re] of [
     assert.equal(hits.length, 1, "the off-origin target was never fetched");
   });
 }
-test("AE24 redirect loop capped (Too many redirects)", async () => {
+test("AE24 redirect loop capped: stops after MAX_REDIRECTS hops and returns the 3xx unfollowed", async () => {
   let n = 0;
-  await assert.rejects(guardedExchange("https://example.com/", { lookup, rawExchange: async () => ({ status: 302, headers: { location: `/r${++n}` } }) }), /Too many redirects/);
+  const r = await guardedExchange("https://example.com/", { lookup, rawExchange: async () => ({ status: 302, headers: { location: `/r${++n}` } }) });
+  assert.equal(n, MAX_REDIRECTS + 1);
+  assert.equal(r.status, 302);
 });
 test("AE24 control: a public same-scheme redirect is followed", async () => {
   const { hits, opts } = rig("https://example.org/ok");
