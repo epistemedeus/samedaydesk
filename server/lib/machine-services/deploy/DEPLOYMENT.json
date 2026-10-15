@@ -1,0 +1,29 @@
+{
+  "schema": "sds.machine-services.deployment-package.v1",
+  "sourceHead": "d1b63983f0320d6b6213501cab72cc487c8464b2",
+  "branch": "codex/ae18-host-integration-243001",
+  "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
+  "adapter": "postgres",
+  "schemas": [
+    "pilot_gateway",
+    "pilot_monitor"
+  ],
+  "startCommand": "node server/index.js",
+  "overlayPackage": {
+    "path": "/tmp/sds-ae18-d1b63983-source.tgz",
+    "sha256": "788aee9e88c025e86a012c7c68743e53f609789e0e24207850118bd266413ee8",
+    "bytes": 316193,
+    "requiresExistingSdsCheckout": true
+  },
+  "sourcePatch": {
+    "path": "/tmp/sds-ae18-d1b63983.patch",
+    "sha256": "d84532f211ed29f2ca2e7799138a755b9b4b1a30b6e33f82ce970bdd3cc2759a"
+  },
+  "files": {
+    "deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
+    "deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",
+    "deploy/env.keys": "d7c95af50cc41e991315ae41875d903e31c018c2395e47139b1ced01ddefd530",
+    "deploy/rollback.json": "70209fc508279819560d7e067ff903310f07227c537b943c1efde056592f91fb"
+  },
+  "deployed": false
+}
