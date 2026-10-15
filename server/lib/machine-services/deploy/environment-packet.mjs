@@ -9,6 +9,11 @@ const allowed = new Set([
   'MONITOR_ENABLED', 'MONITOR_SCHEDULER', 'MONITOR_STORE', 'MONITOR_RUNTIME_FILE', 'MONITOR_RUNTIME_JSON',
   'MACHINE_SERVICES_PRIVATE_DIR', 'MACHINE_SERVICES_DATABASE_URL', 'MACHINE_SERVICES_PGSSL_CA_FILE', 'MACHINE_SERVICES_PGSSL_CA_PEM',
 ]);
+// Additive discovery enrollment on the same preserving overlay. Optional.
+// A named key that already exists is refused; these values never replace a baseline row.
+const discovery = new Set(['DISCOVERY_LOG_DIR', 'DISCOVERY_LOG_QA_SECRET', 'DISCOVERY_LOG_JOURNEY_SECRET']);
+const discoverySecrets = new Set(['DISCOVERY_LOG_QA_SECRET', 'DISCOVERY_LOG_JOURNEY_SECRET']);
+const absoluteDir = value => path.isAbsolute(value) && !value.split(path.sep).includes('..');
 function entries(input) {
   const rows = Array.isArray(input) ? input : input?.env_vars;
   if (!Array.isArray(rows) || rows.length > 512) throw new Error('environment_shape_refused');
@@ -29,7 +34,15 @@ export function prepareMachineEnvironment({ existing, listed, overlay }) {
   const list = Array.isArray(listed) ? listed : listed?.data;
   if (!baseline.size || !Array.isArray(list) || list.length !== baseline.size ||
       new Set(list.map(row => row?.key)).size !== baseline.size || list.some(row => !baseline.has(row?.key))) throw new Error('environment_coverage_refused');
-  for (const key of changes.keys()) if (!allowed.has(key)) throw new Error('unrelated_environment_change_refused');
+  let machineKeyCount = 0, discoveryKeyCount = 0;
+  for (const [key, value] of changes) {
+    const machine = allowed.has(key);
+    if (!machine && !discovery.has(key)) throw new Error('unrelated_environment_change_refused');
+    if (baseline.has(key)) throw new Error('existing_environment_key_not_overwritten');
+    if (discoverySecrets.has(key) && value.length < 32) throw new Error('discovery_secret_refused');
+    if (key === 'DISCOVERY_LOG_DIR' && !absoluteDir(value)) throw new Error('discovery_dir_refused');
+    if (machine) machineKeyCount += 1; else discoveryKeyCount += 1;
+  }
   const merged = new Map([...baseline, ...changes]);
   if ((merged.get('MACHINE_GATEWAY_PAYMENTS_ENABLED') || '0') !== '0' ||
       ['MACHINE_GATEWAY_STORE', 'MONITOR_STORE'].some(key => merged.has(key) && merged.get(key) !== 'postgres')) throw new Error('production_adapter_refused');
@@ -38,7 +51,7 @@ export function prepareMachineEnvironment({ existing, listed, overlay }) {
   }
   return { install: payload(merged), rollback: payload(baseline), receipt: {
     schema: 'sds.machine-services.environment-packet.v1', preservesExistingValues: true,
-    existingKeys: baseline.size, machineKeys: changes.size, sent: false,
+    existingKeys: baseline.size, machineKeys: machineKeyCount, discoveryKeys: discoveryKeyCount, sent: false,
   } };
 }
 
