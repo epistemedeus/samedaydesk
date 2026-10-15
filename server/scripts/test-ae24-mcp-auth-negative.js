@@ -43,6 +43,7 @@ function request({ body, path = "/mcp", method = "POST", headers = {} } = {}) {
   });
 }
 
+before(async () => {
   dns.lookup = async () => [{ address: "8.8.8.8", family: 4 }];
   globalThis.fetch = async () => {
     siteFetches++;
