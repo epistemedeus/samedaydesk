@@ -83,8 +83,9 @@ let keys = 0;
 async function call(origin, routeId, input, credential = tokenA) {
   const quote = await request(origin, '/api/machine-gateway/v1/quote', { body: { routeId, input }, credential });
   assert.equal(quote.status, 200, `quote ${routeId}: ${JSON.stringify(quote.body)}`);
+  const key = `u2exec${String(process.pid).padStart(8, '0')}${String(++keys).padStart(6, '0')}`;
   return (await request(origin, '/api/machine-gateway/v1/execute', { credential,
-    body: { quoteId: quote.body.quoteId, input, maxUnits: 0 }, key: `u2-exec-${process.pid}-${++keys}` })).body;
+    body: { quoteId: quote.body.quoteId, input, maxUnits: 0 }, key })).body;
 }
 const errorCode = receipt => receipt?.error?.code ?? null;
 const submitInput = key => ({ url: LOOPBACK, idempotencyKey: key });
@@ -219,7 +220,8 @@ test('NC6 a closed extraction pool makes url.extract calls fail cleanly; lifecyc
   await handle.close(); // idempotent
   // Mounted lifecycle: closing the services closes the extraction pool and unbinds the routes.
   const host = await mounted(t);
-  assert.equal((await call(host.base, 'url.extract.submit', submitInput('u2-nc6-mounted'))).status, 'completed');
+  const mountedReceipt = await call(host.base, 'url.extract.submit', submitInput('u2-nc6-mounted'));
+  assert.equal(mountedReceipt.status, 'completed', JSON.stringify(mountedReceipt));
   await host.services.close();
   await assert.rejects(route('url.extract.submit').run(submitInput('u2-nc6-after-services-close'), { tenantId: 'tenant-0' }),
     error => error.code === 'url_extract_unbound' && error.status === 503);
