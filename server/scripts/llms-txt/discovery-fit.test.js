@@ -197,6 +197,7 @@ test("GET /llms-txt automatic and supplied modes; v2 markdown alternate and desc
     if (u === O + "/" || u === O) return pageHtml("V2", "front");
     if (u === O + "/sitemap.xml") return `<urlset><url><loc>${O}/docs/quickstart</loc></url></urlset>`;
     if (u === O + "/docs/quickstart") return doc;
+    if (u === "https://github.com/krabka-io" || u === "https://github.com/krabka-io/") return pageHtml("krabka-io", "org");
     return null;
   };
   stubSite(site);
