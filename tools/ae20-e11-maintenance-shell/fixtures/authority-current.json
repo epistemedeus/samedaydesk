@@ -1,0 +1,13 @@
+{
+  "state": "current",
+  "revision": 1,
+  "review": "independent_reproduction",
+  "sharing": "contributor_control_safe_derivative",
+  "binding": {
+    "contextId": "ctx-cedar"
+  },
+  "knowledge": {
+    "coverage": ["accepted_artifact"],
+    "expiresAt": "2026-10-14T18:00:00.000Z"
+  }
+}

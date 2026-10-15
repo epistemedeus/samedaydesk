@@ -1,0 +1,161 @@
+{
+  "schema": "samedaydesk.compat-maintenance-occurrence.v1",
+  "template": "samedaydesk.compat-maintenance-acceptance.v1",
+  "ok": true,
+  "useful": true,
+  "usefulness": "useful_positive",
+  "executed": true,
+  "readback": false,
+  "secondPost": false,
+  "posts": 1,
+  "acceptancePosts": 1,
+  "quoteWrites": 1,
+  "code": null,
+  "message": "the authorized reviewer accepted the occurrence; capture is not joined",
+  "occurrenceId": "compat-maint-cedar-1",
+  "taskId": "cedar-chair-reuse",
+  "distinctTaskId": "desk-batch-retain",
+  "detected": "changed",
+  "disposition": "repair",
+  "usefulnessClass": "useful_positive",
+  "acceptance": "accepted",
+  "acceptanceWinner": true,
+  "expiryWinner": false,
+  "defects": [],
+  "consumed": {
+    "e01": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+    "e02": "338b9dfebf415d00ee0a21773d4d7f848d9ba4d6",
+    "e06": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9"
+  },
+  "incident": null,
+  "blockingReasons": [],
+  "retainedSkuReused": true,
+  "artifactRetained": true,
+  "localAcceptanceOnly": true,
+  "settled": false,
+  "change": [
+    {
+      "field": "contractVersion",
+      "before": "compat-1",
+      "after": "compat-2"
+    }
+  ],
+  "prior": {
+    "sequence": 1,
+    "sha256": "c496136ec991d3e7ca7e4bf84985ae2b1d489ef346a2313717ca8e24d96fed28",
+    "createdAt": "2026-10-01T00:00:00.000Z",
+    "immutable": true
+  },
+  "procurement": {
+    "mandateState": "revoked",
+    "mandateInherited": false,
+    "coldProfileDistinct": true,
+    "priorSpend": "outcome_unknown",
+    "reusableOutput": true,
+    "repeatPurchase": null
+  },
+  "priorSpend": "outcome_unknown",
+  "economics": {
+    "applicable": true,
+    "quoteOnly": true,
+    "termsVersion": "new-market",
+    "operation": "quote",
+    "authorization": "not_a_reservation",
+    "submission": "not_submitted",
+    "capture": "not_captured",
+    "purchaseOffered": true,
+    "perCaptureFeeAtoms": [
+      "1"
+    ],
+    "perCaptureNetAtoms": [
+      "19"
+    ],
+    "feeAtoms": "1",
+    "combinedGrossAtoms": "20",
+    "combinedGrossFeeAtoms": "1",
+    "perCaptureDiffersFromCombined": false,
+    "secondFeeAtoms": "0",
+    "lowestReliableReward": "unknown",
+    "tokenPriceRecommendation": null,
+    "declaredEffort": "declared",
+    "observedEffort": "unknown",
+    "observedCompleteEffort": "unknown",
+    "reviewBurden": "unknown",
+    "reviewBurdenIsMoney": false,
+    "modeledCost": "unknown",
+    "cashCost": "unknown",
+    "chainQualified": false
+  },
+  "reuse": {
+    "permission": "unavailable",
+    "granted": false,
+    "previewOk": true,
+    "previewMode": "preview",
+    "publicSafeCertified": false,
+    "message": null,
+    "observation": null
+  },
+  "slots": {
+    "schema": "samedaydesk.compat-maintenance-acceptance.v1",
+    "compatibility-change": "filled",
+    "repair-or-useful-no-fit": "filled",
+    "accept-or-reject": "filled",
+    "repeat-procurement": "filled",
+    "cold-takeover": "filled",
+    "task-economics": "filled",
+    "result-reuse": "filled",
+    "legacy-terms": "filled",
+    "h-join": "pending-join"
+  },
+  "httpStatusIsNotUsefulWork": true,
+  "recovery": {
+    "status": "pending-join",
+    "signing": false,
+    "delegatedHandleCanSign": false
+  },
+  "funding": {
+    "signature": "absent",
+    "submitted": false,
+    "confirmedUsableFunding": false,
+    "paymentSent": false,
+    "priorSpend": "outcome_unknown"
+  },
+  "paid": false,
+  "captured": false,
+  "canonicalSettlement": "not_joined",
+  "captureJoined": false,
+  "paidTaskIncrement": 0,
+  "repurchaseForced": false,
+  "reuseGranted": false,
+  "wrotePrior": false,
+  "wroteQueue": false,
+  "timerStarted": false,
+  "publicEnabled": false,
+  "chainQualified": false,
+  "railPosts": 0,
+  "networkPosts": 0,
+  "hJoin": "pending-join",
+  "serving": {
+    "publicEnabled": false,
+    "productionMoney": false,
+    "scope": "local-shape-only"
+  },
+  "supplier228200": {
+    "commit": "4133cde2ad11e7c58e5913c95c4134b253ab7bdc",
+    "disposition": "no-delta",
+    "rerun": false
+  },
+  "finiteQueue228300": {
+    "commit": "b0fe7246211318e0df183a733a62c047bae4b4fb",
+    "disposition": "executed-no-delta",
+    "copied": false
+  },
+  "consumedHeads": {
+    "e01": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+    "e02": "338b9dfebf415d00ee0a21773d4d7f848d9ba4d6",
+    "e06": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9"
+  },
+  "lowestReliableReward": "unknown",
+  "tokenPriceRecommendation": null,
+  "digest": "491364c4d07e2902d1f7bb77688a8d601cebfa1daa613591adb32d49d7631a51"
+}

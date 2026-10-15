@@ -1,0 +1,99 @@
+{
+  "schema": "samedaydesk.ae20-e11-maintenance-shell.pins.v1",
+  "session": "7ea530ad-206a-4cb7-bb7b-990396b46be4",
+  "writerPath": "tools/ae20-e11-maintenance-shell",
+  "base": {
+    "repo": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/ae20-e11-maintenance-shell",
+    "from": "codex/ae14-e11-compat-maintenance",
+    "startHead": "50210d0dbd2e24194c84b486bf31dc3c705ba06b"
+  },
+  "consumed": {
+    "e11": {
+      "repo": "https://github.com/epistemedeus/samedaydesk.git",
+      "branch": "codex/ae14-e11-compat-maintenance",
+      "commit": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "implementation": "71840cf63454635e5826831080967113b8eb95e2",
+      "receipt": "38d4636e47e2541483203176d4984764b4fe4c8e",
+      "path": "tools/ae14-compat-maintenance",
+      "resultSchema": "samedaydesk.compat-maintenance-occurrence.v1",
+      "resultModule": "tools/ae14-compat-maintenance/src/result.mjs",
+      "role": "retained finite compatibility-maintenance template result"
+    },
+    "e21": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "branch": "codex/ae14-e21-contribution-handback",
+      "commit": "2db38faab2f79cd7b3dc3110c54d301834c9611b",
+      "ownerSession": "27e934e7",
+      "path": "experiments/ae14-contribution-handback/INTERFACE.md",
+      "interfaceBlob": "e73727c9a7d5b5837568fb138d4c2db9e2bc3106",
+      "agentSchemaBlob": "27d04214b93f41fbc87956f4d4d9d5a0ce9be10d",
+      "agentModuleBlob": "7cb557ebc6c5a4ac0036e5edfc2b19549a9b35ad",
+      "role": "G2 permission contract. Read, not modified."
+    },
+    "e02ReadCurrent": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "commit": "89033e06ed6f2a455051ad8612c36394ad87a7a4",
+      "path": "experiments/ae14-compat-repair/staged/229400/service.ts",
+      "citedBy": "experiments/ae14-contribution-handback/INTERFACE.md",
+      "role": "existing readCurrent authority. Not called and not copied."
+    },
+    "j2": {
+      "repo": "https://github.com/epistemedeus/neomorphic-io.git",
+      "branch": "codex/ae14-j2-work-network-composition",
+      "commit": "016b38838d1fcc66128e000f39487d044dc497be",
+      "ownerSession": "72d499d5",
+      "path": "experiments/ae14-work-network-composition",
+      "e11Status": "pending-join:E11@50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "role": "E11 is listed pending-join (maintained applicability). Not modified."
+    },
+    "amend4": {
+      "repo": "https://github.com/epistemedeus/pilot.git",
+      "commit": "d478ae8621d2f1ac90002e5a248286d784cc283c",
+      "j2": {
+        "path": "ae14-transport/g2/amend4/J2-AMEND4.md",
+        "blob": "711c682a0eaeccd314d4643b78955cfbdcb25895"
+      },
+      "e21": {
+        "path": "ae14-transport/g2/amend4/E21-AMEND4.md",
+        "blob": "961b41ed815aba1cc1d429961c16a8f81441219e"
+      }
+    },
+    "portfolio": {
+      "repo": "https://github.com/epistemedeus/pilot.git",
+      "commit": "b8ead33382b7007df337e8adf7c1536e9fb2b5c3",
+      "path": "overview/self-evaluations/2026-10-14-agent-economy/AE20-WHOLE-PORTFOLIO-COMPLETION.md",
+      "blob": "bfc28b3471ac2cdfa7be10946597b72a9b7e0041",
+      "sections": ["P3", "P8"]
+    },
+    "supplier228200": {
+      "commit": "4133cde2ad11e7c58e5913c95c4134b253ab7bdc",
+      "rerun": false,
+      "role": "recorded on the consumed template result; this shell does not rerun it"
+    },
+    "finiteQueue228300": {
+      "commit": "b0fe7246211318e0df183a733a62c047bae4b4fb",
+      "copied": false,
+      "role": "recorded on the consumed template result; this shell does not copy it"
+    }
+  },
+  "canonicalGrant": "safe_derivative_only",
+  "requiredCoverage": "accepted_artifact",
+  "sharing": "contributor_control_safe_derivative",
+  "review": "independent_reproduction",
+  "laterConsumer": "J2 maintained-applicability step",
+  "pendingJoins": [
+    {
+      "id": "g2-terminal-export",
+      "waitsOn": "neomorphic-io codex/ae14-j2-work-network-composition@016b38838d1fcc66128e000f39487d044dc497be terminal G2 export agentInterface.reuse composed with E02 readCurrent; interface codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/INTERFACE.md",
+      "pin": "016b38838d1fcc66128e000f39487d044dc497be",
+      "laterConsumer": "J2 maintained-applicability step"
+    },
+    {
+      "id": "e21-contribution-handback-reader",
+      "waitsOn": "neomorphic-io codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/src/agent.mjs#agentInterface.reuse",
+      "pin": "2db38faab2f79cd7b3dc3110c54d301834c9611b",
+      "laterConsumer": "E21 contribution handback reader"
+    }
+  ]
+}
