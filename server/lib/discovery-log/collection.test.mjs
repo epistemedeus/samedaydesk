@@ -3,12 +3,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import { buildRecord } from "./log.js";
 import { prepareDiscoveryLogDir } from "./prepare-host.mjs";
 import { exportDiscoveryLog } from "./export-log.mjs";
 import { retainDiscoveryLogs } from "./retain.mjs";
-import { MAX_BYTES, MAX_LINES } from "./bounds.mjs";
+import { assertEnrolledAuthFile, MAX_BYTES, MAX_LINE, MAX_LINES } from "./bounds.mjs";
 
 const SECRET = "j".repeat(32);
 const DATE = "2026-10-15";
@@ -63,68 +62,72 @@ test("prepare refuses a directory that is not mode 0700 and a discovery file tha
 });
 
 test("export emits journeyDigest for one allowlisted day and no raw token", () => {
-  const { dir, auth } = workspace();
+  const { dir } = workspace();
   prepareDiscoveryLogDir(dir);
   const line = recordLine();
   assert.equal(line.includes("tok_abcdefghijklmnop"), false);
   assert.match(line, /hmac-sha256:[0-9a-f]{64}/);
   fs.writeFileSync(path.join(dir, `discovery-${DATE}.ndjson`), `${line}\n`, { mode: 0o600 });
-  const out = exportDiscoveryLog({ dir, date: DATE, authFile: auth });
+  const page = exportDiscoveryLog({ dir, date: DATE });
+  const out = page.lines.join("\n");
+  assert.equal(page.complete, true);
+  assert.equal(page.nextCursor, null);
   assert.match(out, /"journeyDigest":"hmac-sha256:[0-9a-f]{64}"/);
   assert.equal(out.includes("tok_abcdefghijklmnop"), false);
   assert.equal(out.includes("x-samedaydesk-journey"), false);
   assert.equal(out.includes(SECRET), false);
 });
 
-test("export refuses traversal, a missing date, an oversize file, and an unbounded line count", () => {
-  const { root, dir, auth } = workspace();
+test("export refuses traversal, a missing date, an oversize line, and a file past the ceiling", () => {
+  const { root, dir } = workspace();
   prepareDiscoveryLogDir(dir);
   const outside = path.join(root, "outside.ndjson");
   fs.writeFileSync(outside, `${recordLine()}\n`);
   fs.symlinkSync(outside, path.join(dir, `discovery-${DATE}.ndjson`));
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_traversal/);
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE }), /discovery_export_traversal/);
   fs.unlinkSync(path.join(dir, `discovery-${DATE}.ndjson`));
-  assert.throws(() => exportDiscoveryLog({ dir, date: "../etc/passwd", authFile: auth }), /discovery_export_traversal/);
-  assert.throws(() => exportDiscoveryLog({ dir, date: "", authFile: auth }), /discovery_export_unbounded/);
-  assert.throws(() => exportDiscoveryLog({ dir: `${dir}/../discovery-log-v1`, date: DATE, authFile: auth }), /discovery_export_traversal/);
+  assert.throws(() => exportDiscoveryLog({ dir, date: "../etc/passwd" }), /discovery_export_traversal/);
+  assert.throws(() => exportDiscoveryLog({ dir, date: "" }), /discovery_export_unbounded/);
+  assert.throws(() => exportDiscoveryLog({ dir: `${dir}/../discovery-log-v1`, date: DATE }), /discovery_export_traversal/);
   const huge = path.join(dir, `discovery-${DATE}.ndjson`);
-  fs.writeFileSync(huge, Buffer.alloc(MAX_BYTES + 1, 10), { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_unbounded/);
-  const lines = `${"{\"schema\":\"samedaydesk.discovery-log.v1\"}\n".repeat(MAX_LINES + 1)}`;
-  assert.ok(Buffer.byteLength(lines) < MAX_BYTES);
-  fs.writeFileSync(huge, lines, { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_unbounded/);
+  fs.writeFileSync(huge, Buffer.alloc(MAX_BYTES + 1, 0x41), { mode: 0o600 });
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE }), /discovery_export_unbounded/);
+  fs.writeFileSync(huge, Buffer.alloc(MAX_BYTES * 8 + 1, 0x0a), { mode: 0o600 });
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE }), /discovery_export_unbounded/);
 });
 
-test("export refuses unauthenticated access and does not print the enrolled bytes", () => {
+test("the enrolled file check is a local precondition and is not export authentication", () => {
   const { root, dir, auth } = workspace();
   prepareDiscoveryLogDir(dir);
   fs.writeFileSync(path.join(dir, `discovery-${DATE}.ndjson`), `${recordLine()}\n`, { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: path.join(root, "missing.key") }), /discovery_export_unauthenticated/);
+  const page = exportDiscoveryLog({ dir, date: DATE });
+  assert.equal(page.lines.length, 1);
+  assert.equal(JSON.stringify(page).includes(SECRET), false);
+  assert.throws(() => assertEnrolledAuthFile(path.join(root, "missing.key")), /discovery_export_unauthenticated/);
   fs.chmodSync(auth, 0o644);
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_unauthenticated/);
+  assert.throws(() => assertEnrolledAuthFile(auth), /discovery_export_unauthenticated/);
   fs.chmodSync(auth, 0o600);
   fs.writeFileSync(auth, "j".repeat(31), { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_unauthenticated/);
+  assert.throws(() => assertEnrolledAuthFile(auth), /discovery_export_unauthenticated/);
   const link = path.join(root, "linked.key");
   fs.writeFileSync(auth, SECRET, { mode: 0o600 });
   fs.symlinkSync(auth, link);
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: link }), /discovery_export_unauthenticated/);
+  assert.throws(() => assertEnrolledAuthFile(link), /discovery_export_unauthenticated/);
 });
 
 test("export refuses a raw token and does not emit it", () => {
-  const { dir, auth } = workspace();
+  const { dir } = workspace();
   prepareDiscoveryLogDir(dir);
   const token = "tok_abcdefghijklmnop";
   const planted = JSON.parse(recordLine());
   planted["x-samedaydesk-journey"] = token;
   const file = path.join(dir, `discovery-${DATE}.ndjson`);
   fs.writeFileSync(file, `${JSON.stringify(planted)}\n`, { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_token_refused/);
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE }), /discovery_export_token_refused/);
   planted.journeyDigest = token;
   delete planted["x-samedaydesk-journey"];
   fs.writeFileSync(file, `${JSON.stringify(planted)}\n`, { mode: 0o600 });
-  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, authFile: auth }), /discovery_export_token_refused/);
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE }), /discovery_export_token_refused/);
 });
 
 test("retain removes only daily files older than the explicit period", () => {
@@ -147,17 +150,29 @@ test("retain removes only daily files older than the explicit period", () => {
   assert.equal(fs.existsSync(path.join(dir, "discovery-2026-09-01.ndjson")), true);
 });
 
-test("the command line refuses a missing auth file and prints no record", () => {
+test("a large valid day continues from a cursor and stays inside the page caps", () => {
   const { dir } = workspace();
   prepareDiscoveryLogDir(dir);
-  fs.writeFileSync(path.join(dir, `discovery-${DATE}.ndjson`), `${recordLine()}\n`, { mode: 0o600 });
-  const result = spawnSync(process.execPath, [
-    path.join(import.meta.dirname, "export-log.mjs"),
-    "--dir", dir,
-    "--date", DATE,
-  ], { encoding: "utf8" });
-  assert.equal(result.status, 1);
-  assert.equal(result.stdout, "");
-  assert.match(result.stderr, /discovery_export_unauthenticated/);
-  assert.equal(result.stderr.includes(SECRET), false);
+  const one = JSON.parse(recordLine());
+  one.discoveryRef = "a".repeat(400);
+  const line = `${JSON.stringify(one)}\n`;
+  assert.ok(Buffer.byteLength(line) <= MAX_LINE);
+  const count = Math.ceil((MAX_BYTES + line.length) / line.length);
+  assert.ok(count < MAX_LINES);
+  assert.ok(Buffer.byteLength(line) * count < MAX_BYTES * 8);
+  fs.writeFileSync(path.join(dir, `discovery-${DATE}.ndjson`), line.repeat(count), { mode: 0o600 });
+  const first = exportDiscoveryLog({ dir, date: DATE });
+  assert.equal(first.complete, false);
+  assert.equal(typeof first.nextCursor, "string");
+  assert.ok(first.lines.length > 0);
+  assert.ok(first.lines.length <= MAX_LINES);
+  assert.ok(Buffer.byteLength(first.lines.join("\n")) <= MAX_BYTES);
+  const second = exportDiscoveryLog({ dir, date: DATE, cursor: first.nextCursor });
+  assert.equal(second.complete, true);
+  assert.equal(second.nextCursor, null);
+  assert.equal(first.lines.length + second.lines.length, count);
+  const joined = [...first.lines, ...second.lines].join("\n");
+  assert.equal(joined.includes("tok_abcdefghijklmnop"), false);
+  assert.equal(joined.includes(SECRET), false);
+  assert.throws(() => exportDiscoveryLog({ dir, date: DATE, cursor: "not-a-cursor" }), /discovery_export_cursor_refused/);
 });

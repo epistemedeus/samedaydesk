@@ -1,54 +1,88 @@
-// One-shot reader for one allowlisted daily discovery file.
-// No public route, no listing, no resident process. app.js remains the only writer.
-// Authorization is an enrolled file path (mode 0600, at least 32 bytes). The value is never printed.
-// Emitted lines keep journeyDigest and drop every raw token.
+// Bounded reader for one allowlisted daily discovery file.
+// The hosted route is the export. This module does not authenticate and does not
+// accept a caller-supplied directory from HTTP. app.js remains the only writer.
+// Each page stays within the byte and line caps. A cursor continues a large valid day.
 import fs from "node:fs";
-import path from "node:path";
-import { pathToFileURL } from "node:url";
-import { MAX_BYTES, MAX_LINES, assertEnrolledAuthFile, projectRecord, resolveDailyFile } from "./bounds.mjs";
+import { MAX_BYTES, MAX_FILE_BYTES, MAX_LINE, MAX_LINES, decodeCursor, encodeCursor, projectRecord, resolveDailyFile } from "./bounds.mjs";
 
-export function exportDiscoveryLog({ dir, date, authFile }) {
-  assertEnrolledAuthFile(authFile);
+function readAt(file, offset, length) {
+  const fd = fs.openSync(file, "r");
+  try {
+    const chunk = Buffer.alloc(length);
+    const got = length === 0 ? 0 : fs.readSync(fd, chunk, 0, length, offset);
+    return chunk.subarray(0, got);
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+
+function precedingByteIsNewline(file, offset) {
+  return readAt(file, offset, 1)[0] === 0x0a;
+}
+
+function takeLines(chunk, fileContinuesPastChunk) {
+  const lines = [];
+  let start = 0;
+  let consumed = 0;
+  for (let index = 0; index <= chunk.length; index += 1) {
+    const atEnd = index === chunk.length;
+    const newline = !atEnd && chunk[index] === 0x0a;
+    if (!atEnd && !newline) continue;
+    if (atEnd && start === chunk.length) break;
+    if (atEnd && fileContinuesPastChunk) throw new Error("discovery_export_unbounded");
+    const lineBuf = chunk.subarray(start, newline ? index : chunk.length);
+    if (lineBuf.length + 1 > MAX_LINE) throw new Error("discovery_export_unbounded");
+    if (lines.length === MAX_LINES) return { lines, consumed, more: true };
+    lines.push(lineBuf.toString("utf8"));
+    if (newline) {
+      consumed = index + 1;
+      start = index + 1;
+    } else {
+      consumed = chunk.length;
+      start = chunk.length;
+    }
+  }
+  return { lines, consumed, more: fileContinuesPastChunk };
+}
+
+export function readDiscoveryPage({ dir, date, cursor = null }) {
   const located = resolveDailyFile(dir, date);
-  if (located.size > MAX_BYTES) throw new Error("discovery_export_unbounded");
-  const text = fs.readFileSync(located.file);
-  if (text.length > MAX_BYTES) throw new Error("discovery_export_unbounded");
-  const raw = text.toString("utf8");
-  const lines = raw.length === 0 ? [] : raw.split("\n");
-  if (lines.length && lines[lines.length - 1] === "") lines.pop();
-  if (lines.length > MAX_LINES) throw new Error("discovery_export_unbounded");
+  if (located.size > MAX_FILE_BYTES) throw new Error("discovery_export_unbounded");
+  let offset = 0;
+  if (cursor !== null && cursor !== undefined && cursor !== "") {
+    offset = decodeCursor(cursor, date);
+    if (offset > located.size) throw new Error("discovery_export_cursor_refused");
+    if (offset > 0 && !precedingByteIsNewline(located.file, offset - 1)) throw new Error("discovery_export_cursor_refused");
+  }
+  if (offset === located.size) return { lines: [], nextCursor: null, complete: true };
+  const remaining = located.size - offset;
+  const fileContinuesPastChunk = remaining > MAX_BYTES;
+  const chunk = readAt(located.file, offset, Math.min(MAX_BYTES, remaining));
+  let body = chunk;
+  if (fileContinuesPastChunk) {
+    const newline = chunk.lastIndexOf(0x0a);
+    if (newline < 0) throw new Error("discovery_export_unbounded");
+    body = chunk.subarray(0, newline + 1);
+  }
+  const taken = takeLines(body, false);
+  if (taken.more && taken.consumed === 0) throw new Error("discovery_export_unbounded");
   const projected = [];
-  for (const line of lines) {
+  for (const line of taken.lines) {
     if (!line) throw new Error("discovery_export_record_refused");
     let record;
     try { record = JSON.parse(line); } catch { throw new Error("discovery_export_record_refused"); }
     projected.push(projectRecord(record, date, line));
   }
-  return projected.length ? `${projected.join("\n")}\n` : "";
+  const more = taken.more || fileContinuesPastChunk;
+  const next = offset + taken.consumed;
+  if (more && (next <= offset || next > located.size)) throw new Error("discovery_export_unbounded");
+  return {
+    lines: projected,
+    nextCursor: more ? encodeCursor(date, next) : null,
+    complete: !more,
+  };
 }
 
-function flags(argv) {
-  const out = {};
-  for (let index = 2; index < argv.length; index += 2) {
-    const key = argv[index];
-    const value = argv[index + 1];
-    if (!/^--[a-z-]{1,32}$/.test(key || "") || value === undefined || value.startsWith("--") || Object.hasOwn(out, key)) {
-      throw new Error("discovery_export_unauthenticated");
-    }
-    out[key] = value;
-  }
-  return out;
-}
-
-if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
-  try {
-    const args = flags(process.argv);
-    const known = ["--dir", "--date", "--auth-file"];
-    if (Object.keys(args).length !== known.length || known.some(key => !Object.hasOwn(args, key))) throw new Error("discovery_export_unauthenticated");
-    process.stdout.write(exportDiscoveryLog({ dir: args["--dir"], date: args["--date"], authFile: args["--auth-file"] }));
-  } catch (error) {
-    const code = /^discovery_export_/.test(error?.message || "") ? error.message : "discovery_export_refused";
-    process.stderr.write(`${code}\n`);
-    process.exitCode = 1;
-  }
+export function exportDiscoveryLog({ dir, date, cursor = null }) {
+  return readDiscoveryPage({ dir, date, cursor });
 }

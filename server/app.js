@@ -26,6 +26,7 @@ import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { discoveryLogMiddleware, fileSink } from "./lib/discovery-log/log.js";
+import { mountDiscoveryLogExport } from "./lib/discovery-log/http.mjs";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
@@ -149,6 +150,10 @@ app.use("/api/observatory", observatoryRouter);
 // Optional public-readiness adapter. Vendored MIT checker, no private Git.
 // A disabled checker answers healthz and leaves every other route up.
 mountPublicReadiness(app, options.publicReadiness || {});
+
+// Private discovery-log read. The writer above is unchanged. This route does not
+// list days, take a directory, or start another process.
+mountDiscoveryLogExport(app, options.discoveryLog || {});
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));

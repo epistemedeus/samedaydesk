@@ -1,13 +1,19 @@
 // Delete only allowlisted daily discovery files older than an explicit retain-days value.
-// The number is required. A proposal of 30 is documentation; this command does not assume it.
+// There is no timer. The hosted route runs this once, after the caller says the records
+// were received, and only for 30 days. The local file check below is a precondition for
+// the host command, not export authentication.
 // Fixture runs are not hosted retention proof.
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { FILE_RE, absolutePrivatePath, assertEnrolledAuthFile, shiftDate, validDate } from "./bounds.mjs";
 
-export function retainDiscoveryLogs({ dir, retainDays, asOf, authFile }) {
-  assertEnrolledAuthFile(authFile);
+export function retainDiscoveryLogs({ dir, retainDays, asOf, authFile, preauthorized = false }) {
+  if (preauthorized) {
+    if (authFile) throw new Error("discovery_export_unauthenticated");
+  } else {
+    assertEnrolledAuthFile(authFile);
+  }
   if (!absolutePrivatePath(dir)) throw new Error("discovery_export_traversal");
   if (!Number.isInteger(retainDays) || retainDays < 1 || retainDays > 3650) throw new Error("discovery_retain_days_required");
   if (!validDate(asOf)) throw new Error("discovery_retain_days_required");

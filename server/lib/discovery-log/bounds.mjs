@@ -11,6 +11,9 @@ export const FILE_RE = /^discovery-([0-9]{4}-[0-9]{2}-[0-9]{2})\.ndjson$/;
 export const MAX_BYTES = 1048576;
 export const MAX_LINES = 10000;
 export const MAX_LINE = 2048;
+// One response stays within MAX_BYTES and MAX_LINES. A valid day may continue
+// up to this file ceiling. Past it, the export refuses rather than reading on.
+export const MAX_FILE_BYTES = MAX_BYTES * 8;
 export const FIELDS = Object.freeze([
   "schema", "stage", "ts", "requestId", "surface", "route", "mcpMethod",
   "requesterId", "callerClass", "qaClaimUnverified", "declaredSource", "declaredSourceDropped",
@@ -56,7 +59,36 @@ export function shiftDate(value, days) {
   return stamp.toISOString().slice(0, 10);
 }
 
-/** Local authorization: an enrolled regular file, mode 0600, 32–256 bytes. The bytes are never returned. */
+const CURSOR_TEXT = /^v1:([0-9]{4}-[0-9]{2}-[0-9]{2}):([0-9]{1,10})$/;
+
+/** Opaque page cursor. It names a date and a byte offset, never a directory. */
+export function encodeCursor(date, offset) {
+  if (!validDate(date) || !Number.isInteger(offset) || offset < 0 || offset > MAX_FILE_BYTES) {
+    throw new Error("discovery_export_cursor_refused");
+  }
+  return Buffer.from(`v1:${date}:${offset}`).toString("base64url");
+}
+
+export function decodeCursor(cursor, date) {
+  if (typeof cursor !== "string" || cursor.length < 4 || cursor.length > 80 || !/^[A-Za-z0-9_-]+$/.test(cursor)) {
+    throw new Error("discovery_export_cursor_refused");
+  }
+  const text = Buffer.from(cursor, "base64url").toString("utf8");
+  if (Buffer.from(text).toString("base64url") !== cursor) throw new Error("discovery_export_cursor_refused");
+  const match = CURSOR_TEXT.exec(text);
+  if (!match || match[1] !== date) throw new Error("discovery_export_cursor_refused");
+  const offset = Number(match[2]);
+  if (!Number.isInteger(offset) || match[2] !== String(offset) || offset < 0 || offset > MAX_FILE_BYTES) {
+    throw new Error("discovery_export_cursor_refused");
+  }
+  return offset;
+}
+
+/**
+ * Local precondition for the controller: a regular file, mode 0600, 32–256 bytes.
+ * This is not export authentication. The hosted route compares CORRESPONDENCE_ADMIN_TOKEN.
+ * The bytes are never returned.
+ */
 export function assertEnrolledAuthFile(file) {
   if (!absolutePrivatePath(file)) throw new Error("discovery_export_unauthenticated");
   let stat;
