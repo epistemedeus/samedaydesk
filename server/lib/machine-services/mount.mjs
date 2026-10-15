@@ -102,6 +102,7 @@ export function mountMachineServices(app, options = {}) {
         } else {
           state.service = monitorScheduleService(store, { signal: abort.signal });
           state.handler = createApiHandler(store, { basePath: prefix.monitor,
+            healthDetails: () => ({ scheduler: { enabled: !!scheduler, armed: !!scheduler?.armed, nextDueAt: scheduler?.nextDueAt ?? null } }),
             onMutation: async () => { await scheduler?.plan(); } });
         }
         return state;

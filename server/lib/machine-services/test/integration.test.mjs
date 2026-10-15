@@ -117,6 +117,7 @@ test('production adapter requires verify-full, trusts the enrolled CA and refuse
     CORRESPONDENCE_DATABASE_URL: env.CORRESPONDENCE_DATABASE_URL.replace('localhost', 'localhost.localdomain') }) });
   await assert.rejects(() => mismatch.checkReady(), /cert|altname|hostname/i); await mismatch.close();
   await assert.rejects(() => openInstalledStore('gateway', { ...env, MACHINE_GATEWAY_STORE: 'sqlite' }), /postgres/);
+  await assert.rejects(() => openInstalledStore('gateway', { ...env, NODE_ENV: undefined, MACHINE_GATEWAY_STORE: 'sqlite' }), /postgres/);
   assert.throws(() => installedDatabaseUrl({ ...env, MACHINE_SERVICES_DATABASE_URL: env.CORRESPONDENCE_DATABASE_URL.replace('/postgres?', '/foreign?') }), /binding_refused/);
   await gatewayPort.query("UPDATE schema_identity SET identity='foreign'");
   await assert.rejects(() => gatewayPort.migrate(), /version_refused/);
@@ -337,6 +338,20 @@ test('existing bounded scheduler performs monitor work and stops after cancel; r
   await waitUntil(async () => (await f.store.owned('customer', f.id)).current_run === null);
   await scheduler.plan(); assert.equal(scheduler.armed, false);
   const before = f.source.requests; await new Promise(resolve => setTimeout(resolve, 40)); assert.equal(f.source.requests, before);
+});
+
+test('actual index scheduler arms an empty Postgres store and runs finite private-target refusals without IO', async t => {
+  const f = await monitorFixture(t);
+  await monitorPort.write('UPDATE monitors SET config=? WHERE id=?', JSON.stringify({ ...f.store.publicMonitor(await f.store.owned('customer', f.id)).config,
+    budget: { ...f.store.publicMonitor(await f.store.owned('customer', f.id)).config.budget, maxChecks: 1 } }), f.id);
+  const host = await coldHost(t, { MONITOR_SCHEDULER: '1' });
+  await waitUntil(async () => (await f.store.owned('customer', f.id)).status === 'budget_exhausted');
+  const health = await request(host.base, '/api/monitor/healthz');
+  assert.equal(health.body.persistence, 'postgres'); assert.equal(health.body.scheduler.enabled, true);
+  await waitUntil(async () => !(await request(host.base, '/api/monitor/healthz')).body.scheduler.armed);
+  assert.equal(f.source.requests, 0);
+  const outputs = await f.store.all('SELECT document FROM run_outputs WHERE monitor_id=?', f.id);
+  assert.equal(outputs.length, 1); assert.equal(JSON.parse(outputs[0].document).metrics.requests, 0);
 });
 
 test('existing health, raw webhooks, contributor prefixes, MCP and SPA preserve their disabled/enabled behavior', async t => {

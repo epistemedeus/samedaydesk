@@ -33,7 +33,7 @@ function write(res, status, value) {
     'x-content-type-options': 'nosniff' });
   res.end(JSON.stringify(value));
 }
-export function createApiHandler(store, { now = Date.now, onMutation = async () => {}, basePath = "" } = {}) {
+export function createApiHandler(store, { now = Date.now, onMutation = async () => {}, basePath = "", healthDetails = () => ({}) } = {}) {
   let inflight = 0;
   return async (req, res) => {
     req.setTimeout(10000, () => req.destroy());
@@ -44,7 +44,7 @@ export function createApiHandler(store, { now = Date.now, onMutation = async () 
       const url = new URL(req.url, 'http://service.local');
       const path = url.pathname;
       if (req.method === 'GET' && path === '/healthz' && !url.search) {
-        (await store.one('SELECT 1')); return write(res, 200, { ok: true, service: 'continuous-monitoring' });
+        (await store.one('SELECT 1')); return write(res, 200, { ok: true, service: 'continuous-monitoring', persistence: store.kind || 'sqlite-wal', ...healthDetails() });
       }
       if (req.method === 'GET' && path === '/v1/manifest' && !url.search) return write(res, 200, { ...manifest, basePath: basePath + '/v1', worker: 'bounded tick in existing SDS scheduler' });
       requireThat([...url.searchParams.keys()].every(key => ['after', 'limit'].includes(key))
