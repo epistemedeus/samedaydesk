@@ -40,6 +40,7 @@ max_wal_size='64MB'
   const child = spawn(process.execPath, ['--test', '--test-concurrency=1', ...process.argv.slice(2), ...[
     'server/lib/machine-services/test/lifecycle.test.mjs',
     'server/lib/machine-services/test/integration.test.mjs',
+    'server/lib/machine-services/test/url-extract.test.mjs',
   ]], { stdio: 'inherit', env: { ...environment,
     AE18_FIXTURE_DATABASE_URL: `postgres://postgres@localhost:${port}/postgres?sslmode=verify-full`, AE18_FIXTURE_CA_FILE: ca,
     AE18_FIXTURE_DIR: directory,

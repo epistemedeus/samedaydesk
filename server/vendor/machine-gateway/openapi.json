@@ -380,6 +380,174 @@
           }
         }
       }
+    },
+    "/v1/routes/url.extract.submit/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_submit_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.submit input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.submit/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_submit_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.submit output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.poll/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_poll_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.poll input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.poll/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_poll_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.poll output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.result/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_result_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.result input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.result/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_result_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.result output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -416,6 +584,54 @@
               },
               "input": {
                 "$ref": "#/components/schemas/http_capture_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.submit"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_submit_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.poll"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_poll_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.result"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_result_input"
               }
             },
             "required": [
@@ -1696,6 +1912,445 @@
           "bytes",
           "sha256",
           "bodyBase64"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_submit_input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_.-]{8,128}$"
+          }
+        },
+        "required": [
+          "url",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_submit_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "ready"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "status",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "fetch_mode",
+          "completion"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_poll_input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_poll_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requestedUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "const": "unknown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "title",
+          "status",
+          "requestedUrl",
+          "fetch_mode",
+          "completion",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "verdict",
+          "code"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_result_input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_result_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requestedUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "const": "unknown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "title",
+          "status",
+          "requestedUrl",
+          "fetch_mode",
+          "completion",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "verdict",
+          "code"
         ],
         "additionalProperties": false
       }

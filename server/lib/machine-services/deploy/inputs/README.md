@@ -18,3 +18,11 @@ This bundle is the input for the SameDayDesk runtime integration (243001). It ho
 **Rollback:** `MACHINE_GATEWAY_ENABLED` unset, `MONITOR_ENABLED` unset, `MONITOR_SCHEDULER` unset.
 
 See `inputs.json` for the full shapes, smoke inputs and health checks.
+
+## AE21 U2 status (supersedes the storage lines above)
+The SQLite/"proposed" lines above describe the pre-AE18 input bundle and are historical.
+The authoritative environment packet is `../env.keys`; `gateway.env.names` and
+`monitor.env.names` are checked subsets of it. Both services run on the enrolled
+Postgres (`pilot_gateway`, `pilot_monitor`, and `ae19_paid_continuation` for url.extract).
+The N2 `runtime.example.json` is accepted by `monitorOptions`: `database`/`host`/`port`
+map to the PG store and the SDS listener and are ignored; only `options` applies.

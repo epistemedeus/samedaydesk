@@ -101,7 +101,7 @@ export class MachineGateway {
         assertActive();
         await this.store.settled(receiptId, payment);
       }
-      const output = this.registry.output(route, await work(() => route.run(body.input, { signal, receiptId })));
+      const output = this.registry.output(route, await work(() => route.run(body.input, { signal, receiptId, tenantId: tenant.id })));
       assertActive();
       return { receipt: await this.store.finish(receiptId, { output }), replay: false };
     } catch (error) {

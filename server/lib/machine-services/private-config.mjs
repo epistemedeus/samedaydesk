@@ -6,7 +6,9 @@ const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
 // regenerated from enrolled values; all durable execution state lives in PG.
 export function prepareMachineConfig(env = process.env, { grant = false, service } = {}) {
   const files = [
-    ...(service === 'monitor' ? [] : [['MACHINE_GATEWAY_TENANTS_JSON', 'MACHINE_GATEWAY_TENANTS_FILE', 'gateway-tenants.json', 'json']]),
+    ...(service === 'monitor' ? [] : [['MACHINE_GATEWAY_TENANTS_JSON', 'MACHINE_GATEWAY_TENANTS_FILE', 'gateway-tenants.json', 'json'],
+      // AE21 U2: optional url.extract binding, same JSON/FILE pairing as tenants.
+      ['MACHINE_GATEWAY_URL_EXTRACT_JSON', 'MACHINE_GATEWAY_URL_EXTRACT_FILE', 'gateway-url-extract.json', 'json']]),
     ...(service === 'gateway' ? [] : [['MONITOR_RUNTIME_JSON', 'MONITOR_RUNTIME_FILE', 'monitor-runtime.json', 'json']]),
     ['MACHINE_SERVICES_PGSSL_CA_PEM', 'MACHINE_SERVICES_PGSSL_CA_FILE', 'database-ca.pem', 'pem'],
     ...(grant ? [['MONITOR_GRANT_JSON', 'MONITOR_GRANT_FILE', 'monitor-grant.json', 'json']] : []),

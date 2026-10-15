@@ -37,7 +37,9 @@
     "migration inspects connected-role CREATE capability without inferring privilege from a role name",
     "immutable received 0.1.1 archive is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations",
     "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
-    "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown"
+    "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown",
+    "AE21 U2: gateway url.extract.* from the U1 complete patch (pilot blob 5d55b293cf6b971dd2bfabae26cc590aed87085d) applied over neo 667fba35 + SDS async adaptations; local: owner-scoped unbind and url_extract_store_closed->503",
+    "AE21 U2: url.extract store on the enrolled async Postgres (ae19_paid_continuation), provisioned by install migrate only, lifecycle bound to the gateway store"
   ],
   "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
   "previousTestedImplementation": "d1b63983f0320d6b6213501cab72cc487c8464b2",
@@ -96,5 +98,14 @@
     "actualTransportQualificationIssued": false,
     "companionControllerExport": "931b7166842cbb0aa6db2041150041f9798dc49a",
     "companionTestedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149"
+  },
+  "urlExtract": {
+    "repository": "epistemedeus/x402-url-extractor",
+    "commit": "6dd7a040f80f3e3ce1d914383172721751de59a2",
+    "vendorDir": "server/vendor/url-extract",
+    "files": 10,
+    "verify": "bash server/vendor/url-extract/vendor-url-extract.sh --verify",
+    "gatewayPatch": "epistemedeus/pilot tools/ae21-whole-journey-integration/patches/U1-gateway-url-extract-tenant.patch blob 5d55b293cf6b971dd2bfabae26cc590aed87085d",
+    "x1": "79b5e55f"
   }
 }

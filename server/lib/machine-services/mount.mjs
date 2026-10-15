@@ -4,6 +4,8 @@ import { MachineGateway } from '../../vendor/machine-gateway/src/gateway.mjs';
 import { RouteRegistry } from '../../vendor/machine-gateway/src/registry.mjs';
 import { builtinRoutes } from '../../vendor/machine-gateway/src/providers.mjs';
 import { createHttpHandler } from '../../vendor/machine-gateway/src/http.mjs';
+import { bindUrlExtractService, unbindUrlExtractService } from '../../vendor/machine-gateway/src/url-extract-routes.mjs';
+import { extractionBindingConfigured, openExtractionService } from './extraction.mjs';
 import { PostgresGatewayStore } from '../../vendor/machine-gateway/src/store-pg.mjs';
 import { PostgresMonitorStore } from '../../vendor/continuous-monitoring/src/store-pg.mjs';
 import { createApiHandler } from '../../vendor/continuous-monitoring/src/api.mjs';
@@ -18,9 +20,18 @@ const flag = (env, key) => {
   return env[key] === '1';
 };
 
+// AE21 U2 (J-C): the N2 standalone runtime.example.json shape is accepted.
+// Mapping: `database` (standalone SQLite path) -> the enrolled Postgres
+// pilot_monitor schema; `host`/`port` (standalone listener) -> the SDS listener
+// mount /api/monitor. Those three are type-checked and otherwise ignored;
+// they never select storage or open a port. Only `options` is applied.
+const N2_STANDALONE = { database: value => typeof value === 'string' && value.length > 0 && value.length <= 4096,
+  host: value => typeof value === 'string' && value.length > 0 && value.length <= 255,
+  port: value => Number.isInteger(value) && value > 0 && value < 65536 };
 export function monitorOptions(env) {
   const config = env.MONITOR_RUNTIME_FILE ? readPrivateJson(env.MONITOR_RUNTIME_FILE) : {};
-  if (Object.keys(config).some(key => key !== 'options') ||
+  if (!config || typeof config !== 'object' || Array.isArray(config) ||
+      Object.entries(config).some(([key, value]) => key !== 'options' && !(Object.hasOwn(N2_STANDALONE, key) && N2_STANDALONE[key](value))) ||
       config.options && Object.keys(config.options).some(key => ![
         'maxTick', 'maxMonitors', 'maxDeliveryAttempts', 'visibilityMs', 'leaseSlackMs',
         'minIntervalMs', 'sourceCooldownMs', 'originCooldownMs',
@@ -185,6 +196,21 @@ export function mountMachineServices(app, options = {}) {
         owned.add(store);
         if (closing) throw new Error('machine_services_closed');
         if (gateway) {
+          // AE21 U2: url.extract.* fail closed (url_extract_unbound) unless the
+          // private binding is configured. The extraction pool opens after the
+          // gateway store is ready, binds before the handler is published, and
+          // closes (and unbinds) with that store.
+          if (extractionBindingConfigured(activeEnv)) {
+            const extraction = await openExtractionService(activeEnv);
+            let bound = null;
+            const closeStore = store.close.bind(store);
+            store.close = async () => {
+              unbindUrlExtractService(bound ?? {});
+              try { await extraction.close(); } finally { await closeStore(); }
+            };
+            if (closing) throw new Error('machine_services_closed');
+            bound = bindUrlExtractService(extraction);
+          }
           gateway.store = store;
           state.gateway = gateway;
           state.handler = createHttpHandler(gateway, { stripPrefix: '' });

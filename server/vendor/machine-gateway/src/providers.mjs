@@ -7,6 +7,7 @@ import { parseLockfileText } from "../vendor/extractor/lockfile/parse-lockfile.m
 import { object, text, integer, nullable, hashSchema } from "./schemas.mjs";
 import { boundedJson, sha256 } from "./util.mjs";
 import { fail, GatewayError } from "./errors.mjs";
+import { urlExtractRoutes } from "./url-extract-routes.mjs";
 
 const countSchema = object(Object.fromEntries(["beforePins", "afterPins", "added", "removed", "changed", "unchanged", "missingIntegrity"].map(key => [key, integer(512)])));
 const pinSchema = object({
@@ -120,5 +121,6 @@ export function builtinRoutes({ budgetUnit = "usd-micros" } = {}) {
       preflight: capturePreflight, run: capture,
       test: () => ({ schema: "neomorphic.machine-gateway.http-capture.v1", status: 200,
         contentType: "text/plain", bytes: 7, sha256: sha256("fixture"), bodyBase64: Buffer.from("fixture").toString("base64") }) },
+    ...urlExtractRoutes({ budgetUnit }),
   ];
 }

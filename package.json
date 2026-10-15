@@ -119,7 +119,8 @@
     "machine-services:maintenance": "node server/lib/machine-services/install.mjs maintenance",
     "test:machine-services": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node server/lib/machine-services/test/run.mjs",
     "test:machine-services:sqlite": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/vendor/machine-gateway/tests/*.test.mjs server/vendor/continuous-monitoring/test/*.test.mjs",
-    "test:machine-services:regression": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/scripts/test-hosted-startup.js server/scripts/test-spa-fallback.js server/scripts/test-correspondence-mount-disabled.js server/scripts/test-seller-repair-webhook.js server/scripts/test-foundry-listener-drain.js"
+    "test:machine-services:regression": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/scripts/test-hosted-startup.js server/scripts/test-spa-fallback.js server/scripts/test-correspondence-mount-disabled.js server/scripts/test-seller-repair-webhook.js server/scripts/test-foundry-listener-drain.js",
+    "test:machine-services:url-extract-vendor": "bash server/vendor/url-extract/vendor-url-extract.sh --verify"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
@@ -133,7 +134,8 @@
     "resend": "^6.14.0",
     "stripe": "^22.2.2",
     "zod": "^3.25.76",
-    "@neomorphic/machine-gateway": "file:./server/vendor/machine-gateway"
+    "@neomorphic/machine-gateway": "file:./server/vendor/machine-gateway",
+    "@exodus/bytes": "1.16.0"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

@@ -4,6 +4,7 @@ import { PgPort, installedDatabaseUrl, SCHEMAS } from './postgres.mjs';
 import { openInstalledStore } from './mount.mjs';
 import { readPrivateJson } from '../../vendor/machine-gateway/src/config.mjs';
 import { prepareMachineConfig } from './private-config.mjs';
+import { EXTRACTION_SCHEMA, migrateExtraction, inspectExtraction } from './extraction.mjs';
 
 export async function install(args, env = process.env) {
   const command = args[0];
@@ -18,7 +19,11 @@ export async function install(args, env = process.env) {
         else await port.checkReady();
       } finally { await port.close(); }
     }
-    return { ok: true, adapter: 'postgres', schemas: SCHEMAS, migrated: command === 'migrate', deployed: false };
+    // AE21 U2: the vendored url.extract store schema is provisioned here only;
+    // serving checks it and never migrates (extraction.mjs).
+    if (command === 'migrate') await migrateExtraction(env);
+    else await inspectExtraction(env);
+    return { ok: true, adapter: 'postgres', schemas: { ...SCHEMAS, extraction: EXTRACTION_SCHEMA }, migrated: command === 'migrate', deployed: false };
   }
   const store = await openInstalledStore('monitor', env);
   try {
