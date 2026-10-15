@@ -5,8 +5,8 @@
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
-    "package-lock.json": "4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7",
-    "package.json": "6d2367235fecb9ac6d46a9e3cbe829b841fbd9ce715f862fb96a9d58ad727537",
+    "package-lock.json": "d5f029befb51b9a10dc6bcf12ce7d3a985c29fa6914ed0e3b542bc845cda15aa",
+    "package.json": "ad46faf5a4785481df0f545fbb35e18309a9fc0000616157700c2bc5f6426dec",
     "server/app.js": "f8a663c5ba524a0c10fc8dd7db679c349a3e7ffb194bd4a025c6aff519d61bf6",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -235,7 +235,7 @@
     "vendor/neomorphic-contributor-desk/styles/main.css": "868a2b68d0058aba45ce8ee266ebe6eaa9183cd01936ceff26ed7a7e281bd808",
     "vendor/neomorphic-contributor-desk/styles/office.css": "48124f502e7bc21108528ed250c0637f6b688dced95f74d1c0810bf98203c137",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "eb0ceb318b4f61ba82e4df0a628b2345ed111613d69529e318569e41ad44c4aa",
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "6b973681ee78cdf9cbe5cbd862554d6fe5169f6fb91ddbde22d4066e4be79220",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1304,6 +1304,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161"
+    },
+    {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200"
     }
   ]
 }

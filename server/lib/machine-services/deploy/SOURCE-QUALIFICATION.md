@@ -50,26 +50,38 @@ The closure that accepted the previous 23 descriptors was
 That descriptor remains an accepted prior. The hosted discovery-log export
 closure
 `sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3`
-is now one of 26 accepted priors, as is the previous host-lock closure
-`sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161`.
+is now one of 27 accepted priors, as is the previous host-lock closure
+`sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161`
+and the host-install closure
+`sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200`.
 The verifier is unchanged. Member count
 remains 1,171. Base remains
 `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`.
 
 The composed root lock moved after the artifact receiving recorded in
 `test/evidence/qualification/producer-receiving.json`. That receipt keeps host
-lock `9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129`. The
-committed `package-lock.json` is now
-`4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7`, and the
-caller pin already bound that file. The same producer,
+lock `9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129`.
+An intermediate lock
+`4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7` still
+recorded linked machine-gateway 0.1.1 while its package declared 0.1.2, so
+root `npm install` rewrote that one byte. The committed `package-lock.json`
+now records 0.1.2 and is
+`d5f029befb51b9a10dc6bcf12ce7d3a985c29fa6914ed0e3b542bc845cda15aa`. A further
+root `npm install` does not change it, and there is no post-install byte
+repair. The same producer,
 `services/contributor-journey/export-runtime.mjs` at
 `872c4f3006db6c70b45d124480cd019e0af50e69`, was run against an isolated
-checkout of this lock and the qualified build. Its manifest differed only in
-`hostLockSha256`. All 437 compiled and static members matched. Product source,
-the source stamp, and required dependencies Express 5.2.1, pg 8.23.0, and zod
-3.25.76 are unchanged. The strict runtime check still refuses a different lock
-or dependency. The current closure, after that host binding and the install-time lock restore, is
-`sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200`.
+checkout of this lock and the already qualified build. Its manifest differed
+only in `hostLockSha256`. All 437 compiled and static members matched. The
+desk exporter `export-desk-assets.mjs --rebind-unchanged` at that same source
+changed no desk bytes. Product source, the source stamp, and required
+dependencies Express 5.2.1, pg 8.23.0, and zod 3.25.76 are unchanged. The
+strict runtime check still refuses a different lock or dependency. When
+`CONTRIBUTOR_JOURNEY_SOURCE_COMMIT` is absent, the managed build derives it
+from the runtime manifest, the runtime stamp, and the desk manifest, and
+refuses if they disagree. A set value that does not match is still refused by
+the unchanged verifier. The current closure is
+`sha256:a7c8221a09a4ed27f0655cca316eba00e08c542250fa46cefdce864e109832f5`.
 Replaying the predecessor manifest against these bytes still refuses. Cold
 production installation verifies the caller and contributor artifact, imports
 both Postgres ports, and refuses changed machine, PG, continuation, artifact and

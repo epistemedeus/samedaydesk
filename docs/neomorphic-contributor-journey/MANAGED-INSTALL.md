@@ -166,7 +166,10 @@ explicit CA with certificate verification; HTTP is only the inner managed hop.
 Root receives the exact Neo/SDS commits from the successor Pilot receipt and uses
 the existing release process. Branch names are not admission. Both artifact
 manifests must name the same Neo commit as `CONTRIBUTOR_JOURNEY_SOURCE_COMMIT`.
-Hostinger serves compiled artifacts without a Neo checkout, Astro or TS loader.
+When that variable is absent, `build:managed-contributor` derives it from the
+checked-in runtime and desk manifests and refuses if they disagree. A value
+that is set and does not match those manifests is still refused. Hostinger
+serves compiled artifacts without a Neo checkout, Astro or TS loader.
 
 The `build:managed-contributor` package script composes the existing
 `build:managed-foundry` with native contributor artifact verification. This

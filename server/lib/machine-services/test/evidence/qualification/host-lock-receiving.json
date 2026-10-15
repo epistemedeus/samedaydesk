@@ -8,8 +8,8 @@
   "changedManifestFields": [
     "hostLockSha256"
   ],
-  "priorHostLockSha256": "9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129",
-  "hostLockSha256": "4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7",
+  "priorHostLockSha256": "4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7",
+  "hostLockSha256": "d5f029befb51b9a10dc6bcf12ce7d3a985c29fa6914ed0e3b542bc845cda15aa",
   "sourceCommitUnchanged": "872c4f3006db6c70b45d124480cd019e0af50e69",
   "requiredDependenciesUnchanged": {
     "express": "5.2.1",
@@ -17,8 +17,8 @@
     "zod": "3.25.76"
   },
   "previousReceipt": "producer-receiving.json",
-  "callerClosureDigest": "sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200",
-  "priorCallerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
-  "priorCallerDescriptorsAccepted": 26,
+  "callerClosureDigest": "sha256:a7c8221a09a4ed27f0655cca316eba00e08c542250fa46cefdce864e109832f5",
+  "priorCallerClosureDigest": "sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200",
+  "priorCallerDescriptorsAccepted": 27,
   "deploymentQualificationIssued": false
 }
