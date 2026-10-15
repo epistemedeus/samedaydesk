@@ -211,13 +211,28 @@ function recordFailure(state, retryable) {
   state.retryAt = Date.now() + Math.min(30000, 1000 * 2 ** (state.count - 1));
 }
 
-async function e08AsyncRoutes(env) {
+// Optional neo journey-x402-async e08.async.* providers. Absent file leaves the
+// vendored registry unchanged. Config is the same private-file boundary as
+// tenants/monitor runtime (readPrivateJson: absolute, O_NOFOLLOW, 0600, nlink 1).
+// createE08Client always uses mode:'test' (unpaid / pending-rail stand-in only).
+export function readE08AsyncBinding(env) {
   const file = env.MACHINE_GATEWAY_E08_ASYNC_FILE;
-  if (!file) return [];
+  if (!file) return null;
+  let config;
+  try { config = readPrivateJson(file); }
+  catch { throw new Error('invalid_e08_async_binding'); }
+  if (!config || typeof config !== 'object' || Array.isArray(config) ||
+      typeof config.packageRoot !== 'string' || !config.packageRoot.startsWith('/')) {
+    throw new Error('invalid_e08_async_binding');
+  }
+  return config;
+}
+
+async function e08AsyncRoutes(env) {
+  const config = readE08AsyncBinding(env);
+  if (!config) return [];
   const { readFileSync } = await import('node:fs');
   const { pathToFileURL } = await import('node:url');
-  const config = JSON.parse(readFileSync(file, 'utf8'));
-  if (typeof config.packageRoot !== 'string' || !config.packageRoot.startsWith('/')) throw new Error('invalid_e08_async_binding');
   const { createE08Client } = await import(pathToFileURL(`${config.packageRoot}/src/e08-client.mjs`));
   const { createAsyncProviders } = await import(pathToFileURL(`${config.packageRoot}/adapters/gateway-240200/index.mjs`));
   const { GatewayError } = await import('../../vendor/machine-gateway/src/errors.mjs');
