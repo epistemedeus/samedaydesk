@@ -1,0 +1,6 @@
+{
+  "database": "/var/lib/neomorphic-monitor/monitor.sqlite",
+  "host": "127.0.0.1",
+  "port": 8791,
+  "options": { "maxMonitors": 200, "maxTick": 10 }
+}

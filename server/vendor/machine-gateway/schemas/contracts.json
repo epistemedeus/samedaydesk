@@ -1,0 +1,728 @@
+{
+  "quoteRequest": {
+    "type": "object",
+    "properties": {
+      "routeId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      },
+      "input": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "routeId",
+      "input"
+    ],
+    "additionalProperties": false
+  },
+  "executeRequest": {
+    "type": "object",
+    "properties": {
+      "quoteId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 36,
+        "pattern": "^[a-f0-9-]{36}$"
+      },
+      "input": {
+        "type": "object"
+      },
+      "maxUnits": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 1000000000
+      }
+    },
+    "required": [
+      "quoteId",
+      "input",
+      "maxUnits"
+    ],
+    "additionalProperties": false
+  },
+  "testRequest": {
+    "type": "object",
+    "properties": {
+      "routeId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      }
+    },
+    "required": [
+      "routeId"
+    ],
+    "additionalProperties": false
+  },
+  "quote": {
+    "type": "object",
+    "properties": {
+      "schema": {
+        "const": "neomorphic.machine-gateway.quote.v1"
+      },
+      "quoteId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "routeId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      },
+      "routeDigest": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "inputDigest": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "expiresAt": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "tenantBound": {
+        "type": "boolean"
+      },
+      "executable": {
+        "type": "boolean"
+      },
+      "price": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          }
+        },
+        "required": [
+          "amount",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "requirements": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "scheme": {
+                "const": "exact"
+              },
+              "network": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "asset": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "amount": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32,
+                "pattern": "^[1-9][0-9]*$"
+              },
+              "payTo": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "maxTimeoutSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3600
+              },
+              "extra": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "scheme",
+              "network",
+              "asset",
+              "amount",
+              "payTo",
+              "maxTimeoutSeconds"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "schema",
+      "quoteId",
+      "routeId",
+      "routeDigest",
+      "inputDigest",
+      "expiresAt",
+      "tenantBound",
+      "executable",
+      "price",
+      "requirements"
+    ],
+    "additionalProperties": false
+  },
+  "receipt": {
+    "type": "object",
+    "properties": {
+      "schema": {
+        "const": "neomorphic.machine-gateway.receipt.v1"
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 36
+      },
+      "quoteId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 36
+      },
+      "routeId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      },
+      "routeVersion": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
+      "requestDigest": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "inputDigest": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "createdAt": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "deadlineAt": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "completedAt": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "status": {
+        "enum": [
+          "running",
+          "completed",
+          "failed",
+          "uncertain"
+        ]
+      },
+      "price": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          }
+        },
+        "required": [
+          "amount",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "payment": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "enum": [
+              "not_required",
+              "not_attempted",
+              "possible",
+              "settled",
+              "declined"
+            ]
+          },
+          "adapter": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "enum": [
+              "none",
+              "unsigned_fixture",
+              "facilitator_response"
+            ]
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "network": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "state",
+          "adapter",
+          "evidence",
+          "reference",
+          "network"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "anyOf": [
+          {
+            "type": "object",
+            "additionalProperties": true
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            },
+            "required": [
+              "code"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "readbackPath": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }
+    },
+    "required": [
+      "schema",
+      "id",
+      "quoteId",
+      "routeId",
+      "routeVersion",
+      "requestDigest",
+      "inputDigest",
+      "createdAt",
+      "deadlineAt",
+      "completedAt",
+      "status",
+      "price",
+      "payment",
+      "output",
+      "error",
+      "readbackPath"
+    ],
+    "additionalProperties": false
+  },
+  "test": {
+    "type": "object",
+    "properties": {
+      "schema": {
+        "const": "neomorphic.machine-gateway.test.v1"
+      },
+      "routeId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      },
+      "fixture": {
+        "const": true
+      },
+      "paymentAttempts": {
+        "const": 0
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "required": [
+      "schema",
+      "routeId",
+      "fixture",
+      "paymentAttempts",
+      "output"
+    ],
+    "additionalProperties": false
+  },
+  "discovery": {
+    "type": "object",
+    "properties": {
+      "schema": {
+        "const": "neomorphic.machine-gateway.discovery.v1"
+      },
+      "version": {
+        "const": "0.1.0"
+      },
+      "basePath": {
+        "type": "string",
+        "maxLength": 128
+      },
+      "budgetUnit": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+      },
+      "paymentsEnabled": {
+        "type": "boolean"
+      },
+      "paths": {
+        "type": "object",
+        "properties": {
+          "quote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "test": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "execute": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "receipt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "quote",
+          "test",
+          "execute",
+          "receipt"
+        ],
+        "additionalProperties": false
+      },
+      "routes": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 100,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "provider": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "price": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000000
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+                }
+              },
+              "required": [
+                "amount",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            "timeoutMs": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 30000
+            },
+            "maxOutputBytes": {
+              "type": "integer",
+              "minimum": 128,
+              "maximum": 262144
+            },
+            "routeDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "inputSchemaPath": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "outputSchemaPath": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "executable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "provider",
+            "description",
+            "price",
+            "timeoutMs",
+            "maxOutputBytes",
+            "routeDigest",
+            "inputSchemaPath",
+            "outputSchemaPath",
+            "executable"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "schema",
+      "version",
+      "basePath",
+      "budgetUnit",
+      "paymentsEnabled",
+      "paths",
+      "routes"
+    ],
+    "additionalProperties": false
+  },
+  "health": {
+    "type": "object",
+    "properties": {
+      "schema": {
+        "const": "neomorphic.machine-gateway.health.v1"
+      },
+      "ready": {
+        "type": "boolean"
+      },
+      "runtime": {
+        "const": "mounted-node"
+      },
+      "persistence": {
+        "const": "sqlite-wal"
+      },
+      "paymentsEnabled": {
+        "type": "boolean"
+      },
+      "routeCount": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      }
+    },
+    "required": [
+      "schema",
+      "ready",
+      "runtime",
+      "persistence",
+      "paymentsEnabled",
+      "routeCount"
+    ],
+    "additionalProperties": false
+  },
+  "error": {
+    "type": "object",
+    "properties": {
+      "error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "error"
+    ],
+    "additionalProperties": false
+  },
+  "tenantConfig": {
+    "type": "object",
+    "properties": {
+      "tenants": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 1000,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+            },
+            "tokenSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "routes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+              }
+            },
+            "maxUnits": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "maxCalls": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "maxConcurrent": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            }
+          },
+          "required": [
+            "id",
+            "tokenSha256",
+            "routes",
+            "maxUnits",
+            "maxCalls",
+            "maxConcurrent"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "tenants"
+    ],
+    "additionalProperties": false
+  }
+}

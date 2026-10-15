@@ -1,0 +1,19 @@
+{
+  "schema": "neomorphic.continuous-monitoring.manifest.v1",
+  "version": "0.1.0",
+  "service": "continuous-monitoring",
+  "deploymentState": "feature-branch-not-deployed",
+  "basePath": "/v1",
+  "authentication": "operator-provisioned tenant bearer credential; separate reader role; SHA-256 at rest",
+  "methods": ["bounded public HTTPS GET observations", "selected JSON pointers", "maintained Observatory source projection"],
+  "delivery": "durable API inbox; at-least-once polling; stable event key; explicit idempotent acknowledgement and readback",
+  "freePath": "npm run demo --prefix services/continuous-monitoring",
+  "publicDemo": null,
+  "subscription": { "activation": "operator-provisioned entitlement with subscription reference and finite expiry", "checkout": null, "automaticCharge": false, "price": null },
+  "limits": { "minimumProductionIntervalMs": 60000, "maxLifetimeDays": 30, "maxRequestMs": 10000, "maxBodyBytes": 262144, "maxMaterialBytes": 16384, "maxHostMonitors": 200 },
+  "worker": "one-shot node src/cli.mjs tick --config /private/path/runtime.json on existing Linux infrastructure",
+  "openapi": "openapi.json",
+  "documentation": ["README.md", "docs/OPERATIONS.md", "docs/LAUNCH-INTEGRATION.md", "docs/SOURCE-REUSE.md"],
+  "notImplemented": ["paid or authenticated upstream probes", "automatic payments", "webhooks or email", "automatic release or authority changes", "full certificate inventory or arbitrary HTML selectors"],
+  "publicStateOwner": "Root"
+}

@@ -1,0 +1,1718 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Neomorphic Continuous Monitoring",
+    "version": "0.1.0",
+    "description": "Undeployed feature-branch service. Finite read-only upstream GETs and durable authenticated inbox delivery. No automatic charges or billing automation."
+  },
+  "servers": [
+    {
+      "url": "https://monitoring.example.invalid",
+      "description": "Replace only after Root verifies the actual deployment; not a live endpoint"
+    }
+  ],
+  "security": [
+    {
+      "tenantBearer": []
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "service"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "service": {
+                      "const": "continuous-monitoring"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/manifest": {
+      "get": {
+        "operationId": "manifest",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Dedicated deployment and capability contract",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/monitors": {
+      "get": {
+        "operationId": "listMonitors",
+        "description": "List at most 50 of this tenant's retained monitors.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Monitor"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 25
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createMonitor",
+        "description": "Owner only. A stable Idempotency-Key and identical raw JSON replay the original monitor. No payment or provider credential accepted.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    },
+                    "replay": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "201": {
+            "description": "Created; replay returns 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    },
+                    "replay": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitorInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/monitors/{monitorId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getMonitor",
+        "description": "Inspect this tenant's configuration, lifecycle, evidence pointers and usage.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "reviseMonitor",
+        "description": "Owner only. Monitor must be paused and have no outstanding claim. Counters never reset. Source, mode and fields cannot change.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Revision"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/events": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listEvents",
+        "description": "Read immutable factual events. after=0 explicitly resyncs from the oldest retained event; an expired nonzero cursor returns 410.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "events",
+                    "nextCursor",
+                    "cursorFloor"
+                  ],
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "integer"
+                    },
+                    "cursorFloor": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "after",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 25
+            }
+          }
+        ]
+      }
+    },
+    "/v1/monitors/{monitorId}/deliveries": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "pollDeliveries",
+        "description": "Owner only. Durably claims due inbox events. An unread/lost reply retries with the same event key after visibility backoff, at most eight attempts. GET has delivery-state side effects.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deliveries": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DeliveryMessage"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25,
+              "default": 10
+            }
+          }
+        ]
+      }
+    },
+    "/v1/monitors/{monitorId}/deliveries/{deliveryId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "in": "path",
+          "name": "deliveryId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "readDelivery",
+        "description": "Read delivery state and attempt history. delivered is true only after the authenticated consumer acknowledges.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeliveryState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/deliveries/{deliveryId}/ack": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "in": "path",
+          "name": "deliveryId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "acknowledgeDelivery",
+        "description": "Owner only. Echo stable event key after consuming it idempotently. Requires a prior inbox read. Repeating the acknowledgement preserves its original timestamp.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeliveryState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "idempotencyKey"
+                ],
+                "properties": {
+                  "idempotencyKey": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/usage": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getUsage",
+        "description": "Measured and conservatively reserved cost inputs. Cost total and provider rates remain unknown. No automatic charge.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/runs": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listRuns",
+        "description": "Recent immutable run receipts, latest first. At most 100 retained; this endpoint returns at most 50.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Run"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 25
+            }
+          }
+        ]
+      }
+    },
+    "/v1/monitors/{monitorId}/runs/{runId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "in": "path",
+          "name": "runId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "readRun",
+        "description": "Read one retained immutable run receipt. 404 if unknown, different tenant or purged.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/snapshots/{evidenceId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "in": "path",
+          "name": "evidenceId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "readSnapshot",
+        "description": "Read retained immutable evidence. Original and current baseline are pinned until terminal-monitor retention. Failure evidence never becomes a numeric zero.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/pause": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "pauseMonitor",
+        "description": "Owner only. Pause/resume retain baseline; cancel and expiry are terminal. Existing events stay deliverable.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/resume": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "resumeMonitor",
+        "description": "Owner only. Pause/resume retain baseline; cancel and expiry are terminal. Existing events stay deliverable.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/monitors/{monitorId}/cancel": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "monitorId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "cancelMonitor",
+        "description": "Owner only. Pause/resume retain baseline; cancel and expiry are terminal. Existing events stay deliverable.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monitor": {
+                      "$ref": "#/components/schemas/Monitor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/CursorExpired"
+          },
+          "413": {
+            "$ref": "#/components/responses/BodyLimit"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "tenantBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Operator-provisioned opaque token, scoped to tenant and owner/reader role. No provider secrets."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "Budget": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "maxChecks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "maxBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 67108864
+          },
+          "maxRuntimeMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3000000
+          },
+          "maxEvents": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 50,
+            "maximum": 10000
+          },
+          "maxBodyBytes": {
+            "type": "integer",
+            "minimum": 256,
+            "maximum": 262144
+          }
+        }
+      },
+      "MonitorInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Public HTTPS:443 only, no credentials/query/fragment/opaque credential paths. Exact mounted loopback origin is private demo configuration only."
+          },
+          "mode": {
+            "enum": [
+              "http",
+              "json",
+              "observatory"
+            ],
+            "default": "http"
+          },
+          "pointers": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "pattern": "^/"
+            }
+          },
+          "sourceId": {
+            "enum": [
+              "moltjobs",
+              "x402stats",
+              "smithery_mcp"
+            ]
+          },
+          "intervalMs": {
+            "type": "integer",
+            "minimum": 60000,
+            "maximum": 604800000,
+            "default": 3600000
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "budget": {
+            "$ref": "#/components/schemas/Budget"
+          },
+          "retentionDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30,
+            "default": 7
+          }
+        },
+        "description": "Tenant plan ceilings apply. json requires pointers; observatory requires sourceId; expiry cannot exceed entitlement. maxBytes must reserve maxBodyBytes + 65536, and maxRuntimeMs must reserve timeoutMs."
+      },
+      "Revision": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "intervalMs": {
+            "type": "integer",
+            "minimum": 60000,
+            "maximum": 604800000,
+            "default": 3600000
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "budget": {
+            "$ref": "#/components/schemas/Budget"
+          },
+          "retentionDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30,
+            "default": 7
+          }
+        }
+      },
+      "Monitor": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "config",
+          "usage"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "paused",
+              "cancelled",
+              "expired",
+              "budget_exhausted"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nextDueAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "config": {
+            "type": "object"
+          },
+          "initialEvidenceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currentEvidenceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "eventCursorFloor": {
+            "type": "integer"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "required": [
+          "id",
+          "idempotencyKey",
+          "monitorId",
+          "transition",
+          "diff",
+          "capture",
+          "publicSourceChanged"
+        ],
+        "properties": {
+          "schema": {
+            "const": "continuous-monitoring.change.v1"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "cursor": {
+            "type": "integer"
+          },
+          "monitorId": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "transition": {
+            "enum": [
+              "content_changed",
+              "evidence_unavailable",
+              "service_restored"
+            ]
+          },
+          "evidenceClass": {
+            "type": "string"
+          },
+          "failureCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "beforeEvidenceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "afterEvidenceId": {
+            "type": "string"
+          },
+          "before": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "after": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "diff": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "before",
+                "after"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "before": {},
+                "after": {}
+              }
+            }
+          },
+          "capture": {
+            "enum": [
+              "mounted_http",
+              "public_http"
+            ]
+          },
+          "publicSourceChanged": {
+            "type": "boolean"
+          },
+          "task": {
+            "type": "object"
+          }
+        }
+      },
+      "DeliveryMessage": {
+        "type": "object",
+        "required": [
+          "event",
+          "deliveryId",
+          "attempt",
+          "delivered",
+          "retryAt"
+        ],
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/Event"
+          },
+          "deliveryId": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "delivered": {
+            "const": false
+          },
+          "retryAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeliveryState": {
+        "type": "object",
+        "required": [
+          "deliveryId",
+          "state",
+          "delivered",
+          "attempts"
+        ],
+        "properties": {
+          "deliveryId": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "awaiting_ack",
+              "accepted",
+              "exhausted"
+            ]
+          },
+          "delivered": {
+            "type": "boolean"
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8
+          },
+          "acknowledgedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "attemptsLog": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object"
+            }
+          },
+          "replay": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "required": [
+          "runId",
+          "outcome",
+          "metrics"
+        ],
+        "properties": {
+          "schema": {
+            "const": "continuous-monitoring.run.v1"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "monitorId": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "observation": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": "object"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "required": [
+          "checksReserved",
+          "sourceRequestsKnown",
+          "sourceRequestsUnknownUpperBound",
+          "receivedBytesKnown",
+          "runtimeMsKnown",
+          "cost"
+        ],
+        "properties": {
+          "checksReserved": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sourceRequestsKnown": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sourceRequestsUnknownUpperBound": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "receivedBytesKnown": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "runtimeMsKnown": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "budgetBytesCharged": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "budgetRuntimeMsCharged": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "deliveryAttempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "acknowledgedEvents": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "retainedPayloadBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "transitions": {
+            "type": "object"
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "null"
+              },
+              "automaticCharge": {
+                "const": false
+              },
+              "billable": {
+                "const": false
+              },
+              "basis": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid configuration, key or query",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or revoked credential",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Reader credential, expired entitlement for new work, or browser Origin refused",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Unknown or different-tenant resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Idempotency, lifecycle, budget or acknowledgement conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "CursorExpired": {
+        "description": "Nonzero event cursor outside retention",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "BodyLimit": {
+        "description": "Request exceeds 8192 bytes",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "Request must be uncompressed JSON",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Store or host capacity unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
