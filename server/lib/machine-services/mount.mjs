@@ -211,6 +211,29 @@ function recordFailure(state, retryable) {
   state.retryAt = Date.now() + Math.min(30000, 1000 * 2 ** (state.count - 1));
 }
 
+async function e08AsyncRoutes(env) {
+  const file = env.MACHINE_GATEWAY_E08_ASYNC_FILE;
+  if (!file) return [];
+  const { readFileSync } = await import('node:fs');
+  const { pathToFileURL } = await import('node:url');
+  const config = JSON.parse(readFileSync(file, 'utf8'));
+  if (typeof config.packageRoot !== 'string' || !config.packageRoot.startsWith('/')) throw new Error('invalid_e08_async_binding');
+  const { createE08Client } = await import(pathToFileURL(`${config.packageRoot}/src/e08-client.mjs`));
+  const { createAsyncProviders } = await import(pathToFileURL(`${config.packageRoot}/adapters/gateway-240200/index.mjs`));
+  const { GatewayError } = await import('../../vendor/machine-gateway/src/errors.mjs');
+  const ca = readFileSync(config.caFile);
+  const urlToken = readFileSync(config.tokenFile, 'utf8').trim();
+  const client = createE08Client({
+    origin: config.origin, ca, actor: config.actor, mode: 'test',
+    extractionOrigin: config.extractionOrigin,
+    extractionCa: config.extractionCaFile ? readFileSync(config.extractionCaFile) : ca,
+    urlToken, timeoutMs: Number(config.timeoutMs || 20000),
+  });
+  return createAsyncProviders({ client, allowedJobIds: config.allowedJobIds,
+    gatewayError: (code, status) => new GatewayError(code, status),
+    timeoutMs: Number(config.timeoutMs || 20000) });
+}
+
 export function mountMachineServices(app, options = {}) {
   const env = options.env || process.env;
   const prefix = { gateway: '/api/machine-gateway', monitor: '/api/monitor' };
@@ -280,10 +303,11 @@ export function mountMachineServices(app, options = {}) {
         if (service === 'gateway') {
           const config = readPrivateJson(activeEnv.MACHINE_GATEWAY_TENANTS_FILE);
           validate('tenantConfig', config);
+          const routes = [...builtinRoutes(), ...await e08AsyncRoutes(activeEnv)];
           // Constructor validates duplicate authority/routes before any DB open.
           // This object is private until the actual store is bound below.
           gateway = new MachineGateway({ store: {}, tenants: config.tenants,
-            registry: new RouteRegistry(builtinRoutes()), paymentsEnabled: false });
+            registry: new RouteRegistry(routes), paymentsEnabled: false });
         } else monitorOptions(activeEnv);
         const adapter = activeEnv[service === 'gateway' ? 'MACHINE_GATEWAY_STORE' : 'MONITOR_STORE'] || 'postgres';
         if (adapter === 'postgres') installedDatabaseUrl(activeEnv);
