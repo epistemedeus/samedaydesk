@@ -3,6 +3,7 @@
 import dns from "node:dns/promises";
 import net from "node:net";
 import ipaddr from "ipaddr.js";
+import { createRequestBudget, withAbort } from "./request-budget.js";
 
 export class PublicHostError extends Error {
   constructor(message) {
@@ -64,7 +65,8 @@ export function normalizeIp(ip) {
   if (!net.isIP(value)) return "";
   // Collapse IPv4-mapped IPv6 (including hex form) and canonicalize IPv6 so
   // textual equivalents cannot acquire different rate buckets.
-  return ipaddr.process(value).toString();
+  try { return ipaddr.process(value).toString(); }
+  catch { return ""; } // fail closed if the parser cannot canonicalize it
 }
 
 export function isPrivateIp(ip) {
@@ -85,6 +87,7 @@ export function isPrivateIp(ip) {
       ["172.16.0.0", 12],
       ["192.0.0.0", 24],
       ["192.0.2.0", 24],
+      ["192.88.99.0", 24],
       ["192.168.0.0", 16],
       ["198.18.0.0", 15],
       ["198.51.100.0", 24],
@@ -98,19 +101,21 @@ export function isPrivateIp(ip) {
     const hextets = ipv6Hextets(value);
     if (!hextets || hextets.some((n) => Number.isNaN(n))) return true;
     const first = hextets[0];
-    if (hextets.every((n) => n === 0)) return true;
-    if (hextets.slice(0, 7).every((n) => n === 0) && hextets[7] === 1) return true;
-    if ((first & 0xfe00) === 0xfc00) return true;
-    if ((first & 0xffc0) === 0xfe80) return true;
-    if ((first & 0xff00) === 0xff00) return true;
+    // Only global unicast, excluding special-purpose/tunnelling destinations.
+    // In particular 100::/64 is discard-only, not a public rebinding control.
+    // https://www.iana.org/assignments/iana-ipv6-special-registry/
+    if ((first & 0xe000) !== 0x2000) return true;
+    if (first === 0x2001 && hextets[1] < 0x0200) return true;
     if (first === 0x2001 && hextets[1] === 0x0db8) return true;
+    if (first === 0x2002) return true;
+    if (first === 0x3fff && (hextets[1] & 0xf000) === 0) return true;
     return false;
   }
   return true;
 }
 
 export function assertPublicHostname(hostname) {
-  const host = String(hostname || "").trim().replace(/\.$/, "").toLowerCase();
+  const host = String(hostname || "").trim().replace(/^\[|\]$/g, "").replace(/\.$/, "").toLowerCase();
   if (!host || host.includes(" ") || host.includes("@")) {
     throw new PublicHostError("Enter a public host such as example.com");
   }
@@ -128,56 +133,72 @@ export function assertPublicHostname(hostname) {
   return host;
 }
 
-export async function resolvePublicAddresses(hostname, lookup = dns.lookup) {
+// dns.lookup/getaddrinfo cannot be cancelled. Use an owned c-ares resolver for
+// public HTTP destinations so abort releases its A/AAAA requests as well. All
+// returned families are admitted together; a failed family cannot hide a
+// non-public address behind a successful one. No OS search/hosts-file aliases.
+export async function lookupPublicAddresses(host, { signal } = {}) {
+  signal?.throwIfAborted();
+  const resolver = new dns.Resolver({ timeout: 4000, tries: 1 });
+  resolver.setServers(dns.getServers());
+  const cancel = () => resolver.cancel();
+  signal?.addEventListener("abort", cancel, { once: true });
+  try {
+    const results = await Promise.allSettled([resolver.resolve4(host), resolver.resolve6(host)]);
+    signal?.throwIfAborted();
+    const addresses = [];
+    for (const [index, result] of results.entries()) {
+      if (result.status === "fulfilled") {
+        addresses.push(...result.value.map((address) => ({ address, family: index === 0 ? 4 : 6 })));
+      } else if (!["ENODATA", "ENOTFOUND"].includes(result.reason?.code)) throw result.reason;
+    }
+    return addresses;
+  } finally {
+    signal?.removeEventListener("abort", cancel);
+    resolver.cancel();
+  }
+}
+
+export async function resolvePublicAddresses(hostname, lookup = lookupPublicAddresses, options = {}) {
+  options.signal?.throwIfAborted();
   const host = assertPublicHostname(hostname);
   if (net.isIP(host)) {
     return [{ address: host, family: net.isIPv6(host) ? 6 : 4 }];
   }
   let addrs;
-  let timer;
-  const looked = lookup(host, { all: true, verbatim: true }).then(
-    (value) => ({ ok: true, value }),
-    (err) => ({ ok: false, err }),
-  );
+  const budget = createRequestBudget(Math.min(4000, options.timeoutMs ?? 4000), options.signal);
   try {
-    const outcome = await Promise.race([
-      looked,
-      new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error("dns timeout")), 4000);
-        if (typeof timer.unref === "function") timer.unref();
-      }),
-    ]);
-    if (!outcome.ok) throw outcome.err;
-    addrs = outcome.value;
+    addrs = await withAbort(lookup(host, { all: true, verbatim: true, signal: budget.signal }), budget.signal);
   } catch (err) {
+    options.signal?.throwIfAborted();
     if (err instanceof PublicHostError) throw err;
     throw new PublicHostError("Could not resolve that host");
   } finally {
-    clearTimeout(timer);
+    budget.dispose();
   }
   if (!Array.isArray(addrs) || addrs.length === 0) {
     throw new PublicHostError("Could not resolve that host");
   }
   for (const entry of addrs) {
-    if (!entry?.address || isPrivateIp(entry.address)) {
+    if (!net.isIP(entry?.address || "") || isPrivateIp(entry.address)) {
       throw new PublicHostError("That host is not a public address");
     }
   }
   return addrs.map((entry) => ({
     address: entry.address,
-    family: entry.family === 6 ? 6 : 4,
+    family: net.isIP(entry.address),
   }));
 }
 
 
 // ---- URL-level guard (shared): http(s), no credentials, public addresses only ----
 /** Returns { url, addresses } so callers can pin the connection to the admitted set. */
-export async function assertPublicUrl(raw, lookup = dns.lookup) {
+export async function assertPublicUrl(raw, lookup = lookupPublicAddresses, options = {}) {
   let u;
   try { u = raw instanceof URL ? new URL(raw.toString()) : new URL(String(raw)); }
   catch { throw new PublicHostError("That doesn't look like a valid URL"); }
   if (u.protocol !== "http:" && u.protocol !== "https:") throw new PublicHostError("Only http(s) URLs are supported");
   if (u.username || u.password) throw new PublicHostError("URLs with credentials are not allowed");
-  const addresses = await resolvePublicAddresses(u.hostname, lookup);
+  const addresses = await resolvePublicAddresses(u.hostname, lookup, options);
   return { url: u, addresses };
 }

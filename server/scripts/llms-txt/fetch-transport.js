@@ -9,7 +9,7 @@ export function installFetchTransport() {
       const r = await globalThis.fetch(url.toString(), { redirect: "manual", headers: o.headers, signal: o.signal });
       const headers = {};
       r.headers.forEach((v, k) => { headers[k] = v; });
-      if (o.discardRedirectBody && r.status >= 300 && r.status < 400 && headers.location) {
+      if (r.status >= 300) {
         if (r.body) await r.body.cancel();
         disposed.push(url.toString());
         return { status: r.status, headers, body: "", disposed: true };

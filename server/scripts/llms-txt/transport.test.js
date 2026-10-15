@@ -11,6 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { fetchPublicBounded, createRequestBudget, setTransportForTests } from "../../lib/agent-readiness/bounded-fetch.js";
 import { rawExchange } from "../../lib/agent-readiness/probe.js";
+import { PUBLIC_IP, wireSockets } from "../agent-readiness/fixtures/socket-controls.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,13 +26,16 @@ async function localServer(handler) {
 test("REBINDING: check-time public, connect-time private -> connection pinned, local server never reached", async () => {
   setTransportForTests(null); // real probe.js rawExchange
   const s = await localServer((req, res) => res.end("<title>internal</title>"));
+  const publicEndpoint = await localServer((_req, res) => res.destroy());
   // Connect-time resolver: anything that re-resolves through node:dns gets 127.0.0.1.
   const origLookup = dnsCb.lookup;
   let connectTimeLookups = 0;
   dnsCb.lookup = (host, opts, cb) => { connectTimeLookups += 1; (typeof opts === "function" ? opts : cb)(null, "127.0.0.1", 4); };
-  // Check-time resolver: a public, unroutable address (100::/64 discard prefix).
+  // A real, separately wired public endpoint closes its connection. The private
+  // server above must never receive it, even with a poisoned system lookup.
+  const wiring = wireSockets([{ address: PUBLIC_IP, server: publicEndpoint.srv }]);
   let checkLookups = 0;
-  const lookup = async () => { checkLookups += 1; return [{ address: "100::1", family: 6 }]; };
+  const lookup = async () => { checkLookups += 1; return [{ address: PUBLIC_IP, family: 4 }]; };
   const budget = createRequestBudget(1500);
   try {
     await assert.rejects(
@@ -42,8 +46,10 @@ test("REBINDING: check-time public, connect-time private -> connection pinned, l
     assert.equal(s.connections, 0, "SIG:REBIND_REACHED_PRIVATE_SERVER");
     assert.equal(connectTimeLookups, 0, "SIG:CONNECT_TIME_RERESOLVE");
     assert.equal(checkLookups, 1);
+    assert.deepEqual(wiring.attempts.map((x) => x.address), [PUBLIC_IP]);
   } finally {
-    dnsCb.lookup = origLookup; budget.dispose(); await s.close();
+    dnsCb.lookup = origLookup; budget.dispose(); wiring.restore();
+    await Promise.all([s.close(), publicEndpoint.close()]);
   }
 });
 

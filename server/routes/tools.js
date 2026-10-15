@@ -301,7 +301,6 @@ router.get("/llms-txt", async (req, res) => {
   const budget = createRequestBudget(LLMS_TOTAL_BUDGET_MS);
   try {
     const u = normalizeUrl(req.query.url);
-    await assertPublicUrl(u); // shared guard (server/lib/agent-readiness/ssrf.js)
     const headers = { "User-Agent": UA, Accept: "text/html,*/*" };
 
     let page;

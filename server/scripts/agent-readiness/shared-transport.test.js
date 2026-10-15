@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { setImmediate as immediate } from "node:timers/promises";
+import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { rawExchange, guardedExchange } from "../../lib/agent-readiness/probe.js";
 import { createRequestBudget, fetchPublicBounded } from "../../lib/agent-readiness/bounded-fetch.js";
 import { isPrivateIp } from "../../lib/agent-readiness/ssrf.js";
@@ -35,6 +37,20 @@ test("a second admission cannot reuse a socket to the previous address", async (
     wiring.restore(); first.closeAllConnections(); second.closeAllConnections();
     await Promise.all([closeServer(first), closeServer(second)]);
   }
+});
+
+test("a public IPv6 literal uses its admitted socket address and bracketed Host", async () => {
+  let host;
+  const server = await localServer((req, res) => { host = req.headers.host; res.end("ipv6 pinned"); });
+  const address = "2606:4700:4700::1111";
+  const wiring = wireSockets([{ address, server }]);
+  try {
+    const port = server.address().port;
+    const got = await rawExchange(new URL(`http://[${address}]:${port}/`), { address: { address, family: 6 } });
+    assert.equal(got.body, "ipv6 pinned");
+    assert.equal(host, `[${address}]:${port}`);
+    assert.deepEqual(wiring.attempts, [{ address, port }]);
+  } finally { wiring.restore(); server.closeAllConnections(); await closeServer(server); }
 });
 
 test("budget abort after response headers is a failure, never a successful prefix", async () => {
@@ -105,3 +121,78 @@ test("special-purpose IPv6 addresses are not public socket targets", () => {
   }
   for (const address of ["2606:4700:4700::1111", "2001:4860:4860::8888"]) assert.equal(isPrivateIp(address), false, address);
 });
+
+test("an expired budget and a pre-aborted signal start no DNS or socket work", async () => {
+  let lookups = 0;
+  const lookup = async () => { lookups++; return publicLookup(); };
+  const budget = createRequestBudget(0);
+  const ctrl = new AbortController(); ctrl.abort();
+  try {
+    await assert.rejects(fetchPublicBounded("http://expired.example/", { lookup, budget }), { code: "budget_exhausted" });
+    await assert.rejects(fetchPublicBounded("http://expired.example/", { lookup, signal: ctrl.signal }), { code: "budget_exhausted" });
+    const got = await rawExchange(new URL("http://expired.example/"), { address: { address: PUBLIC_IP, family: 4 }, signal: ctrl.signal });
+    assert.equal(got.error, "aborted");
+    assert.equal(lookups, 0);
+  } finally { budget.dispose(); }
+});
+
+async function childControl(mode, trusted = false) {
+  const env = { ...process.env };
+  delete env.NODE_TLS_REJECT_UNAUTHORIZED;
+  delete env.NODE_EXTRA_CA_CERTS;
+  if (trusted) env.NODE_EXTRA_CA_CERTS = fileURLToPath(new URL("./fixtures/tls/cert.pem", import.meta.url));
+  const child = spawn(process.execPath, [fileURLToPath(new URL("./fixtures/transport-child.mjs", import.meta.url)), mode], { env, stdio: ["ignore", "pipe", "pipe"] });
+  let out = "", err = "";
+  child.stdout.on("data", (data) => { out += data; });
+  child.stderr.on("data", (data) => { err += data; });
+  const code = await new Promise((resolve) => {
+    const timer = setTimeout(() => child.kill("SIGKILL"), 5000);
+    child.once("exit", (code) => { clearTimeout(timer); resolve(code); });
+  });
+  assert.equal(code, 0, `SIG:CHILD_DID_NOT_EXIT mode=${mode} ${err}`);
+  const result = JSON.parse(out.trim());
+  assert.deepEqual(result.leaked, [], `SIG:OPEN_HANDLES mode=${mode}`);
+  return result;
+}
+
+test("TLS pins the socket while validating the logical hostname and certificate", async () => {
+  const r = await childControl("tls", true);
+  assert.equal(r.valid.body, "verified");
+  assert.equal(r.mismatch.status, 0);
+  assert.equal(r.mismatch.error, "connection", "SIG:TLS_IDENTITY_NOT_CHECKED");
+  assert.equal(r.requests.length, 1);
+  assert.equal(r.requests[0].servername, "pin.example");
+  assert.equal(r.requests[0].host, `pin.example:${r.attempts[0].port}`);
+  assert.equal(r.requests[0].path, "/doc?q=1");
+  assert.equal(r.requests[0].headers.authorization, undefined);
+  assert.equal(r.requests[0].headers.cookie, undefined);
+  assert.deepEqual(r.attempts.map((x) => x.address), [PUBLIC_IP, PUBLIC_IP]);
+});
+
+test("TLS refuses an untrusted certificate and releases the failed connections", async () => {
+  const r = await childControl("tls");
+  assert.equal(r.valid.status, 0, "SIG:TLS_UNTRUSTED_CERT_ACCEPTED");
+  assert.equal(r.requests.length, 0);
+});
+
+test("a budget cancels the actual DNS queries and leaves no query/timer handles", async () => {
+  const r = await childControl("dns");
+  assert.equal(r.code, "budget_exhausted");
+  assert.equal(r.queries, 2, "SIG:DNS_CONTROL_DID_NOT_QUERY_BOTH_FAMILIES");
+});
+
+test("invalid input disposes the probe deadline before any connection", async () => {
+  await childControl("invalid");
+});
+
+for (const mode of ["abort-body", "tls-hang", "redirect", "error"]) {
+  test(`natural process exit after ${mode}: no owned sockets, agents or timers`, async () => {
+    const r = await childControl(mode);
+    if (mode === "abort-body") assert.equal(r.code, "budget_exhausted");
+    else if (mode === "tls-hang") assert.equal(r.response.error, "timeout");
+    else {
+      assert.equal(r.response.body, "");
+      assert.equal(r.response.disposed, true);
+    }
+  });
+}

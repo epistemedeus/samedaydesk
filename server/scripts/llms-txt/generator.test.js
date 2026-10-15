@@ -17,7 +17,8 @@ const fx = (p) => fs.readFileSync(path.join(here, "fixtures", p), "utf8");
 const realFetch = globalThis.fetch;
 
 function stubSite(routes) {
-  mock.method(dns, "lookup", async () => [{ address: "93.184.216.34", family: 4 }]);
+  mock.method(dns.Resolver.prototype, "resolve4", async () => ["93.184.216.34"]);
+  mock.method(dns.Resolver.prototype, "resolve6", async () => []);
   globalThis.fetch = async (url, opts) => {
     const u = String(url);
     if (u.startsWith("http://127.0.0.1")) return realFetch(url, opts);

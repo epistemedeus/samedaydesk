@@ -19,7 +19,8 @@ const calls = [];
 // routes(u) -> string body | {status, location} | {body, status} | null (404)
 function stubSite(routes, { addr = () => "93.184.216.34" } = {}) {
   calls.length = 0;
-  mock.method(dns, "lookup", async (host) => [{ address: addr(host), family: 4 }]);
+  mock.method(dns.Resolver.prototype, "resolve4", async (host) => [addr(host)]);
+  mock.method(dns.Resolver.prototype, "resolve6", async () => []);
   globalThis.fetch = async (url, opts) => {
     const u = String(url);
     if (u.startsWith("http://127.0.0.1")) return realFetch(url, opts);
