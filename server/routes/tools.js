@@ -1,6 +1,7 @@
 import { Router } from "express";
 import dns from "node:dns/promises";
 import net from "node:net";
+import { emissionUrl, installLlmsHooks, orderDiscovered } from "../scripts/llms-txt/fit.js";
 
 // Free "AI Readiness Checker" — a zero-marginal-cost lead magnet. Given a URL it fetches
 // the page + robots.txt and checks whether AI search engines (ChatGPT/Claude/Perplexity/
@@ -15,7 +16,7 @@ router.use((req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
   if (req.method === "OPTIONS") return res.sendStatus(204);
-  next();
+  if (!installLlmsHooks(req, res, next)) next();
 });
 
 const AI_CRAWLERS = [
@@ -278,12 +279,7 @@ export function extractNavLinks(html, origin) {
 // Navigation first (site order), then remaining sitemap/link URLs; trailing-slash-insensitive
 // dedupe; explicit truncation accounting instead of a silent cap.
 export function orderLlmsUrls({ navLinks = [], urls = [], cap = 50 }) {
-  const seen = new Set();
-  const all = [];
-  for (const n of navLinks) { const k = n.url.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: n.url, label: n.label, nav: true }); } }
-  for (const x of urls) { const k = x.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: x, label: null, nav: false }); } }
-  const kept = all.slice(0, cap);
-  return { items: kept, totalFound: all.length, truncated: all.length > kept.length, omitted: all.length - kept.length };
+  return orderDiscovered({ navLinks, urls, cap });
 }
 
 // Free llms.txt generator: build a spec-shaped llms.txt from a site's sitemap (or homepage
@@ -352,7 +348,7 @@ router.get("/llms-txt", async (req, res) => {
     const hostname = new URL(origin).hostname;
     const siteName = decodeEntities((h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim()).slice(0, 60) || hostname;
     const clean = (x, n) => decodeEntities(String(x)).replace(/\s+/g, " ").trim().slice(0, n);
-    const line = (p) => `- [${clean(p.title || p.url, 80)}](${p.url})${p.desc ? ": " + clean(p.desc, 130) : ""}\n`;
+    const line = (p) => { const href = emissionUrl(p.url); return href ? `- [${clean(p.title || p.url, 80)}](${href})${p.desc ? ": " + clean(p.desc, 130) : ""}\n` : ""; };
     let out = `# ${siteName}\n\n`;
     if (h.description) out += `> ${clean(h.description, 500)}\n\n`;
     const navPages = pages.filter((p) => p.nav);
