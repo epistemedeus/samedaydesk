@@ -374,6 +374,22 @@ describe("no-JS summary", () => {
     expect(summary.status).toBe("warn");
   });
 
+  it("counts noscript copy, which is what a no-JS client sees", () => {
+    const page = runChecks(bundle("noscript.example", {
+      "/": {
+        status: 200,
+        contentType: "text/html",
+        body: "<html><head><title>Desk</title><script>const hidden = 'api openapi mcp llms.txt '.repeat(80)</script></head><body><div id=\"root\"></div><noscript><p>This service books desks for teams that need a place to work today.</p><a href=\"/llms.txt\">Guide</a></noscript></body></html>",
+      },
+    }));
+    const pageCheck = checkOf(page.checks, "static.summary");
+    expect(pageCheck.staticSummary.wordCount).toBeGreaterThan(8);
+    expect(pageCheck.staticSummary.saysWhatItIs).toBe(true);
+    expect(pageCheck.staticSummary.pointers).toContain("/llms.txt");
+    expect(pageCheck.status).toBe("pass");
+    expect(pageCheck.reason).toContain("books desks");
+  });
+
   it("ignores script text and passes a static sentence that links llms.txt", () => {
     const shell = runChecks(bundle("shell.example", {
       "/": {
