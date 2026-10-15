@@ -1,6 +1,7 @@
 import test, { before, after, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import express from 'express';
 import https from 'node:https';
 import dns from 'node:dns/promises';
 import { gzipSync } from 'node:zlib';
@@ -13,7 +14,7 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PgPort, installedDatabaseUrl } from '../postgres.mjs';
-import { openInstalledStore, monitorScheduleService } from '../mount.mjs';
+import { mountMachineServices, openInstalledStore, monitorScheduleService } from '../mount.mjs';
 import { install } from '../install.mjs';
 import { prepareMachineEnvironment } from '../deploy/environment-packet.mjs';
 import { prepareMachineConfig } from '../private-config.mjs';
@@ -626,4 +627,106 @@ test('received PG: fresh adapted CLI callers execute useful work and resume the 
   assert.deepEqual(JSON.parse((await exec(process.execPath, [...command, '--resume'])).stdout), receipt);
   assert.equal((await gatewayPort.one('SELECT count(*) n FROM attempts')).n, 1);
   assert.equal((await gatewayPort.one('SELECT calls FROM usage WHERE tenant=?', 'tenant-0')).calls, 1);
+});
+
+async function mountedLifecycle(t, scheduler = '0') {
+  const app = express();
+  const services = mountMachineServices(app, { env: { ...env, MONITOR_SCHEDULER: scheduler } });
+  t.after(() => services.close());
+  return { services, base: await listen(t, http.createServer(app)) };
+}
+const recoveringFailureSql = `DO $$ BEGIN RAISE EXCEPTION 'private fixture availability diagnostic' USING ERRCODE='57P03'; END $$`;
+
+test('lifecycle PG: concurrent cold HTTP failure recovers on a later caller, executes free work and survives restart', async t => {
+  const check = PgPort.prototype.checkReady, ports = new Set(); let fail = true;
+  t.mock.method(PgPort.prototype, 'checkReady', async function () {
+    if (this.service === 'gateway') {
+      ports.add(this);
+      if (fail) { fail = false; await this.query(recoveringFailureSql); }
+    }
+    return check.call(this);
+  });
+  const host = await mountedLifecycle(t);
+  const first = await Promise.all(Array.from({ length: 12 }, () => request(host.base, '/api/machine-gateway/healthz')));
+  assert.ok(first.every(value => value.status === 503 && JSON.stringify(value.body) === '{"error":{"code":"gateway_unavailable"}}'));
+  assert.equal(ports.size, 1, 'one failed TLS pool for concurrent cold callers');
+  await new Promise(resolve => setTimeout(resolve, 1050));
+  assert.equal((await request(host.base, '/api/machine-gateway/healthz')).status, 200);
+  assert.equal(ports.size, 2, 'one replacement TLS pool');
+  const ready = await host.services.ready('gateway');
+  assert.equal((await host.services.ready('gateway')).store, ready.store);
+  const quote = await request(host.base, '/api/machine-gateway/v1/quote', { body: { routeId: 'lockfile.delta', input: sampleInput } });
+  const body = { quoteId: quote.body.quoteId, input: sampleInput, maxUnits: 0 };
+  const run = await request(host.base, '/api/machine-gateway/v1/execute', { body, key: 'lifecycle-pg-free-work' });
+  assert.equal(run.body.status, 'completed'); assert.equal(run.body.output.counts.changed, 1);
+  await host.services.close();
+  const cold = await coldHost(t);
+  assert.deepEqual((await request(cold.base, run.body.readbackPath)).body, run.body);
+  assert.deepEqual((await request(cold.base, '/api/machine-gateway/v1/execute', { body, key: 'lifecycle-pg-free-work' })).body, run.body);
+  assert.equal((await gatewayPort.one('SELECT calls FROM usage WHERE tenant=?', 'tenant-0')).calls, 1);
+});
+
+for (const boundary of ['readiness', 'initial-plan'])
+test(`lifecycle PG: ${boundary} failure recovers scheduled due work without a second arm or caller`, async t => {
+  const f = await monitorFixture(t);
+  const config = JSON.parse((await f.store.owned('customer', f.id)).config);
+  config.budget.maxChecks = 1;
+  await monitorPort.write('UPDATE monitors SET config=? WHERE id=?', JSON.stringify(config), f.id);
+  const ports = new Set(); let failures = 0;
+  const check = PgPort.prototype.checkReady;
+  t.mock.method(PgPort.prototype, 'checkReady', async function () {
+    if (this.service === 'monitor') {
+      ports.add(this);
+      if (boundary === 'readiness' && failures++ === 0) await this.query(recoveringFailureSql);
+    }
+    return check.call(this);
+  });
+  const one = PostgresMonitorStore.prototype.one;
+  t.mock.method(PostgresMonitorStore.prototype, 'one', async function (sql, ...args) {
+    if (boundary === 'initial-plan' && sql.startsWith('SELECT min(due)') && failures++ === 0) await this.port.query(recoveringFailureSql);
+    return one.call(this, sql, ...args);
+  });
+  const errors = []; t.mock.method(console, 'error', value => errors.push(value));
+  const host = await mountedLifecycle(t, '1');
+  await assert.rejects(host.services.arm(), { message: 'monitor_unavailable' });
+  // Query through an independent TLS port only. No HTTP request or arm call can
+  // trigger the recovery under test.
+  await waitUntil(async () => (await f.store.owned('customer', f.id)).status === 'budget_exhausted');
+  await waitUntil(async () => !host.services.schedulerState().armed);
+  assert.equal(ports.size, boundary === 'readiness' ? 2 : 1);
+  assert.equal(host.services.schedulerState().enabled, true);
+  assert.equal(f.source.requests, 0, 'production private-target refusal remains inherited');
+  const outputs = await f.store.all('SELECT document FROM run_outputs WHERE monitor_id=?', f.id);
+  assert.equal(outputs.length, 1); assert.equal(JSON.parse(outputs[0].document).metrics.requests, 0);
+  assert.ok(errors.every(value => value === 'monitor_scheduler_unavailable'));
+  assert.equal((await request(host.base, '/api/monitor/healthz')).body.persistence, 'postgres');
+});
+
+test('lifecycle environment overlay preserves an authoritative 59-value baseline and exact rollback', () => {
+  // Synthetic values only. The retained host baseline is bound privately by Root.
+  const existing = { env_vars: Array.from({ length: 59 }, (_, index) => ({ key: `RETAINED_FIXTURE_${index}`, value: `synthetic-value-${index}` })) };
+  const listed = existing.env_vars.map(({ key }) => ({ key, value: '********' }));
+  const overlay = { env_vars: [{ key: 'MONITOR_SCHEDULER', value: '1' }, { key: 'MACHINE_GATEWAY_PAYMENTS_ENABLED', value: '0' }] };
+  const packet = prepareMachineEnvironment({ existing, listed, overlay });
+  assert.equal(packet.receipt.existingKeys, 59);
+  for (const row of existing.env_vars) assert.deepEqual(packet.install.env_vars.find(value => value.key === row.key), row);
+  assert.deepEqual(new Map(packet.rollback.env_vars.map(value => [value.key, value.value])), new Map(existing.env_vars.map(value => [value.key, value.value])));
+});
+
+test('lifecycle PG: scheduler-plan failure after a committed mutation preserves its HTTP acknowledgement', async t => {
+  const f = await monitorFixture(t);
+  await f.store.lifecycle('customer', f.id, 'pause', Date.now());
+  const host = await mountedLifecycle(t, '1'); await host.services.arm();
+  const one = PostgresMonitorStore.prototype.one; let plans = 0;
+  t.mock.method(PostgresMonitorStore.prototype, 'one', async function (sql, ...args) {
+    if (sql.startsWith('SELECT min(due)') && ++plans === 1) await this.port.query(recoveringFailureSql);
+    return one.call(this, sql, ...args);
+  });
+  t.mock.method(console, 'error', () => {});
+  const resumed = await request(host.base, `/api/monitor/v1/monitors/${f.id}/resume`, { body: {} });
+  assert.equal(resumed.status, 200); assert.equal((await f.store.owned('customer', f.id)).status, 'active');
+  assert.equal((await request(host.base, `/api/monitor/v1/monitors/${f.id}/pause`, { body: {} })).status, 200);
+  await waitUntil(async () => host.services.schedulerState().enabled && !host.services.schedulerState().armed);
+  assert.equal(plans, 2); assert.equal(f.source.requests, 0);
+  assert.equal((await f.store.owned('customer', f.id)).status, 'paused');
 });

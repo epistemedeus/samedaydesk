@@ -35,12 +35,21 @@
     "monitor authorize explicitly awaits PG authority and shares the monotonic source deadline",
     "Postgres revoke atomically expires monitors and advances generation; lock/query waits consume run leases",
     "migration inspects connected-role CREATE capability without inferring privilege from a role name",
-    "immutable received 0.1.1 archive is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations"
+    "immutable received 0.1.1 archive is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations",
+    "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
+    "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown"
   ],
   "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
   "previousTestedImplementation": "d1b63983f0320d6b6213501cab72cc487c8464b2",
   "repairSource": "667fba353e9082d8a0842437442dabc42843abf8",
   "repairTestedImplementation": "4248874f2fa63636659fad164fb29ed193018104",
+  "lifecycleReceiving": {
+    "receivedExport": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "receivedTestedImplementation": "cc85b7b59a46605090049be06431eebb7c873c24",
+    "failingControlsCommit": "a7c5490b08e589b7c610abf116be70166b6daf82",
+    "schemaOrEnvironmentContractChanged": false,
+    "newServiceOrDependencies": false
+  },
   "originalServiceSources": [
     {
       "repository": "epistemedeus/neomorphic-io",

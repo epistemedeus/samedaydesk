@@ -38,6 +38,7 @@ max_wal_size='64MB'
 `, { mode: 0o600 });
   await exec(path.join(pgBin, 'pg_ctl'), ['-D', data, '-l', path.join(directory, 'postgres.log'), '-w', 'start']); started = true;
   const child = spawn(process.execPath, ['--test', '--test-concurrency=1', ...process.argv.slice(2), ...[
+    'server/lib/machine-services/test/lifecycle.test.mjs',
     'server/lib/machine-services/test/integration.test.mjs',
   ]], { stdio: 'inherit', env: { ...environment,
     AE18_FIXTURE_DATABASE_URL: `postgres://postgres@localhost:${port}/postgres?sslmode=verify-full`, AE18_FIXTURE_CA_FILE: ca,

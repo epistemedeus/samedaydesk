@@ -39,7 +39,8 @@ Supabase HTTP credentials, a new database service, and ephemeral SQLite are not 
 Two additive schemas, `pilot_gateway` and `pilot_monitor`, use the existing DB
 and its enrolled role. Root confirmed that the retained correspondence URL
 already uses verify-full on the retained Supabase project with its existing
-project role. Actual migration checks `has_database_privilege` and
+project role, and independently verified that role's additive schema CREATE
+privilege. Actual migration still checks `has_database_privilege` and
 `has_schema_privilege` before DDL; its username is never evidence of privilege.
 That role needs CREATE SCHEMA for initial installation and normal
 SELECT/INSERT/UPDATE/DELETE/sequence access in these schemas for serving. No
@@ -100,7 +101,7 @@ plan event caps and 1–30 day payload retention).
 Use the reviewed feature branch/HEAD from `../RESULT.md` in the existing
 Hostinger source checkout. The existing startup remains `node server/index.js`;
 `PORT` continues to be injected by Hostinger. Preserve the complete current
-environment and build command, including contributor/foundry configuration.
+environment (all 59 retained values) and build command, including contributor/foundry configuration.
 This package never submits a Hostinger environment or publishes a page.
 
 On the owner VM, after checkout (all heavy commands share the prescribed lock):
@@ -176,8 +177,28 @@ Run `npm run machine-services:maintenance` from an already available maintenance
 job if the store remains idle/paused for long periods; normal ticks also recover
 and prune. No new maintenance job is installed by this package.
 
-Shutdown aborts monitor IO, stops its timer, waits for its bounded tick and closes
-pools through the existing four-second listener lifecycle. A forced host exit
+Initialization is single flight per API, including failed first opens. A transient
+connection/recovery/capacity or bounded query/lock failure permits another open
+after 1, 2, 4, 8, 16, then at most 30 seconds. Gateway callers share that cooldown;
+they cannot cause a connection storm. Once a store opens successfully it is
+retained, allowing the existing bounded PG pool to reconnect normally.
+
+`arm()` establishes one scheduler recovery owner even if the first store open
+or initial due query fails. The same backoff handles failed automatic due queries,
+ticks and mutation replans. It replaces the stopped scheduler only after any
+previous bounded tick has finished, reuses the successful store, and resumes
+persisted due/lease/staged work without another caller. Successful idle planning
+leaves no timer. Disabled flags, invalid configuration, TLS trust/authentication,
+missing/foreign schema and unknown errors never enter automatic retry. Correct
+permanent refusals through the existing configuration/install workflow and restart.
+Errors contain fixed service codes only. A scheduler failure after a durable
+mutation does not discard its successful HTTP acknowledgement.
+
+Shutdown aborts monitor IO, stops both due and retry timers, waits for pending
+initialization/planning and its bounded tick, and closes every owned store once,
+even if another store's close fails. A plan finishing after shutdown cannot install
+a timer. This uses the existing scheduler and listener resource lifecycle, with
+the existing four-second shutdown deadline. A forced host exit
 follows the durable unknown/lease-recovery protocol. The old shutdown deadline
 and other resources are unchanged. Data backup/restore uses the existing
 Postgres backup procedure, including both new schemas; do not copy SQLite/WAL
@@ -191,6 +212,10 @@ npm run test:machine-services:sqlite
 npm run test:machine-services:regression
 ```
 
+Each of these three npm scripts already acquires
+`/home/ubuntu/.cache/pilot-ae18-build.lock`; do not wrap it in another acquisition
+of that non-reentrant lock. Serialize other heavy commands with one acquisition.
+
 The first command creates an owned, disposable PostgreSQL 16 cluster with a
 fixture CA and verify-full server certificate, runs cold Node app processes and
 HTTP callers, then stops only that cluster. It tests matching TLS, hostname
@@ -201,6 +226,12 @@ foreign keys/cursors, full environment preservation and old app routes. It uses
 no production credentials or source data. The second runs the vendored native
 SQLite suites, including SSRF and actual crash/cold-client cases. The third runs
 existing app startup, parser/webhook, SPA and listener-drain regressions.
+The first also runs controlled clock/failure lifecycle tests and mounted TLS PG
+cases raising real transient database failures. Recovery without another caller,
+future caller recovery, initial/automatic planning, bounded repeated failures,
+single-flight stores/ticks, shutdown races and disabled/permanent refusals have
+separate controls. These local fixture observations do not establish the retained
+host's actual startup/recovery latency or installation result.
 
 After Root deploys this exact source, record the actual HTTPS hostname and
 deployment HEAD. Use `/api/machine-gateway/healthz` (persistence `postgres`,
