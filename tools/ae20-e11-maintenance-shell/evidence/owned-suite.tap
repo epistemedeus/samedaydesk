@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: an unrelated tenant is refused
+ok 1 - an unrelated tenant is refused
+  ---
+  duration_ms: 3.786659
+  type: 'test'
+  ...
+# Subtest: a wrong later task is refused
+ok 2 - a wrong later task is refused
+  ---
+  duration_ms: 0.470902
+  type: 'test'
+  ...
+# Subtest: the source task cannot be reused as the later task
+ok 3 - the source task cannot be reused as the later task
+  ---
+  duration_ms: 0.707316
+  type: 'test'
+  ...
+# Subtest: a work task that is not the template task is refused
+ok 4 - a work task that is not the template task is refused
+  ---
+  duration_ms: 0.494206
+  type: 'test'
+  ...
+# Subtest: a safe-only grant asking for raw bytes is refused
+ok 5 - a safe-only grant asking for raw bytes is refused
+  ---
+  duration_ms: 0.384351
+  type: 'test'
+  ...
+# Subtest: a safe-only grant asking for private bytes is refused
+ok 6 - a safe-only grant asking for private bytes is refused
+  ---
+  duration_ms: 0.36958
+  type: 'test'
+  ...
+# Subtest: a claimed raw right is not honored
+ok 7 - a claimed raw right is not honored
+  ---
+  duration_ms: 0.338162
+  type: 'test'
+  ...
+# Subtest: a permission row state of granted is not a current grant
+ok 8 - a permission row state of granted is not a current grant
+  ---
+  duration_ms: 1.105512
+  type: 'test'
+  ...
+# Subtest: withdrawn consent is refused
+ok 9 - withdrawn consent is refused
+  ---
+  duration_ms: 0.80951
+  type: 'test'
+  ...
+# Subtest: an expired permission is refused
+ok 10 - an expired permission is refused
+  ---
+  duration_ms: 0.601224
+  type: 'test'
+  ...
+# Subtest: a missing permission is refused
+ok 11 - a missing permission is refused
+  ---
+  duration_ms: 0.559889
+  type: 'test'
+  ...
+# Subtest: the contributor and the requester are not the distinct consumer
+ok 12 - the contributor and the requester are not the distinct consumer
+  ---
+  duration_ms: 0.426191
+  type: 'test'
+  ...
+# Subtest: a tampered template digest is refused
+ok 13 - a tampered template digest is refused
+  ---
+  duration_ms: 0.266694
+  type: 'test'
+  ...
+# Subtest: a template result that reran the supplier is refused
+ok 14 - a template result that reran the supplier is refused
+  ---
+  duration_ms: 0.35763
+  type: 'test'
+  ...
+# Subtest: a widened sharing value is refused
+ok 15 - a widened sharing value is refused
+  ---
+  duration_ms: 0.306748
+  type: 'test'
+  ...
+# Subtest: coverage without accepted_artifact is refused
+ok 16 - coverage without accepted_artifact is refused
+  ---
+  duration_ms: 0.356668
+  type: 'test'
+  ...
+# Subtest: a context that is not the work context is refused
+ok 17 - a context that is not the work context is refused
+  ---
+  duration_ms: 0.331791
+  type: 'test'
+  ...
+# Subtest: an authority sharing_denied answer is refused
+ok 18 - an authority sharing_denied answer is refused
+  ---
+  duration_ms: 0.269298
+  type: 'test'
+  ...
+# Subtest: pending joins name the terminal G2 export and the later consumers
+ok 19 - pending joins name the terminal G2 export and the later consumers
+  ---
+  duration_ms: 2.525837
+  type: 'test'
+  ...
+# Subtest: pending-join g2-terminal-export
+ok 20 - pending-join g2-terminal-export # SKIP pending-join waitsOn neomorphic-io codex/ae14-j2-work-network-composition@016b38838d1fcc66128e000f39487d044dc497be terminal G2 export agentInterface.reuse composed with E02 readCurrent; interface codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/INTERFACE.md pin 016b38838d1fcc66128e000f39487d044dc497be laterConsumer J2 maintained-applicability step
+  ---
+  duration_ms: 0.087177
+  type: 'test'
+  ...
+# Subtest: pending-join e21-contribution-handback-reader
+ok 21 - pending-join e21-contribution-handback-reader # SKIP pending-join waitsOn neomorphic-io codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/src/agent.mjs\#agentInterface.reuse pin 2db38faab2f79cd7b3dc3110c54d301834c9611b laterConsumer E21 contribution handback reader
+  ---
+  duration_ms: 0.061844
+  type: 'test'
+  ...
+# Subtest: every consumed pin is a full sha
+ok 22 - every consumed pin is a full sha
+  ---
+  duration_ms: 1.230665
+  type: 'test'
+  ...
+# Subtest: a current safe-derivative grant reads the retained repair once
+ok 23 - a current safe-derivative grant reads the retained repair once
+  ---
+  duration_ms: 3.231702
+  type: 'test'
+  ...
+# Subtest: the same occurrence id is idempotent and a matching replay does not post again
+ok 24 - the same occurrence id is idempotent and a matching replay does not post again
+  ---
+  duration_ms: 1.025738
+  type: 'test'
+  ...
+# Subtest: a conflicting same-id replay does not post a second effect
+ok 25 - a conflicting same-id replay does not post a second effect
+  ---
+  duration_ms: 0.726779
+  type: 'test'
+  ...
+# Subtest: a session token is not a grant and is not echoed
+ok 26 - a session token is not a grant and is not echoed
+  ---
+  duration_ms: 0.782948
+  type: 'test'
+  ...
+# Subtest: extra coverage does not widen a safe grant into raw bytes
+ok 27 - extra coverage does not widen a safe grant into raw bytes
+  ---
+  duration_ms: 1.295239
+  type: 'test'
+  ...
+# Subtest: the consumed fixture is the prior finite template result
+ok 28 - the consumed fixture is the prior finite template result
+  ---
+  duration_ms: 0.237971
+  type: 'test'
+  ...
+# Subtest: the cli returns the same json as the function
+ok 29 - the cli returns the same json as the function
+  ---
+  duration_ms: 28.303619
+  type: 'test'
+  ...
+# Subtest: the cli refuses a raw ask and refuses to write a receipt
+ok 30 - the cli refuses a raw ask and refuses to write a receipt
+  ---
+  duration_ms: 58.888105
+  type: 'test'
+  ...
+# Subtest: owned lint passes
+ok 31 - owned lint passes
+  ---
+  duration_ms: 250.920818
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 534.349357

@@ -1,0 +1,15 @@
+Node v22.22.2
+
+node --test --test-concurrency=1 --test-reporter=tap tools/ae20-e11-maintenance-shell/test/*.test.mjs
+# tests 31
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 2
+# todo 0
+# exit 0
+
+node tools/ae20-e11-maintenance-shell/lint.mjs
+# exit 0
+
+Pending skips are the joins. pending = skipped + todo = 2.
