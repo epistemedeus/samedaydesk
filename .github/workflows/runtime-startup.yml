@@ -22,6 +22,34 @@ permissions:
   contents: read
 
 jobs:
+  provider-install-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      # Exercise the provider's npm install path too: npm ci alone did not
+      # expose a linked-package version that rewrote the committed host lock.
+      - name: Receive the default install without lock repair
+        run: |
+          npm install
+          git diff --exit-code -- package-lock.json
+      - name: Receive the production install without lock repair
+        run: |
+          NODE_ENV=production npm install
+          git diff --exit-code -- package-lock.json
+      - name: Exercise the source contract and refusal controls
+        run: node --test server/scripts/test-resolve-contributor-source.mjs
+      - name: Build through the actual managed contributor gate
+        run: |
+          env -u CONTRIBUTOR_JOURNEY_SOURCE_COMMIT npm run build:managed-contributor
+          git diff --exit-code -- package-lock.json
+
   runtime-startup:
     runs-on: ubuntu-latest
     timeout-minutes: 10
