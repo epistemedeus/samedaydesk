@@ -25,7 +25,12 @@ export function mcpBodyError(error, req, res, next) {
   // cannot reach this earlier handler.
   const status = error.status >= 400 && error.status < 500 ? error.status : 400;
   const parseError = error.type === "entity.parse.failed";
-  req.mcpAdmission = rejectedMcpAdmission(status, parseError ? -32700 : -32000, parseError ? "Parse error" : status === 413 ? `Request body exceeds ${MCP_BODY_LIMIT}` : "Invalid request body");
+  const message = parseError
+    ? "Parse error. Next: send one JSON-RPC 2.0 object. Do not send a payment header."
+    : status === 413
+      ? `Request body exceeds ${MCP_BODY_LIMIT}. Next: send one JSON-RPC body at or below ${MCP_BODY_LIMIT}. Do not retry with a payment header.`
+      : "Invalid request body. Next: send Content-Type application/json with one JSON-RPC 2.0 object. Do not send a payment header.";
+  req.mcpAdmission = rejectedMcpAdmission(status, parseError ? -32700 : -32000, message);
   // This error occurs before the normal observer. Receive its safe decision
   // explicitly; never emit body-parser's raw body/message to console or HTML.
   pulseMiddleware(req, res, () => {});

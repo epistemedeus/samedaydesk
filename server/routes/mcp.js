@@ -22,7 +22,7 @@ import {
   buildTaskMarketDelegationPlan,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
-import { TOOLS } from "../lib/mcp-tool-inventory.js";
+import { MCP_TOOL_NAMES, TOOLS } from "../lib/mcp-tool-inventory.js";
 import { projectDeclaredEvidence, safeCode } from "../lib/funnel-evidence/project-evidence.mjs";
 import { formatAgentReadiness, runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 import {
@@ -54,6 +54,23 @@ export { TOOLS };
 
 const okMsg = (id, result) => ({ jsonrpc: "2.0", id, result });
 const errMsg = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
+
+const FUNNEL_NEXT = {
+  request_schema: "Next: pass arguments.packet as one object, either a core observation or one consumer plane. This call does not fetch.",
+  private_field: "Next: remove private fields and retry the same declared packet. This call does not fetch.",
+  url_fetch_refused: "Next: remove fetch keys. This tool does not fetch URLs.",
+  oversize: "Next: send a smaller packet. This call does not fetch.",
+  mixed_packet: "Next: send either a core packet or one consumer plane, not both. This call does not fetch.",
+  nested_bound: "Next: reduce nesting and retry. This call does not fetch.",
+  count_bound: "Next: reduce sources, records, or nodes and retry. This call does not fetch.",
+  invalid_body: "Next: send a JSON object packet. This call does not fetch.",
+  projection_failed: "Next: match the declared packet schema and retry. This call does not fetch.",
+};
+
+function funnelErrorText(code) {
+  const next = FUNNEL_NEXT[code] || "Next: correct the packet and retry. This call does not fetch.";
+  return `${code}. ${next}`;
+}
 
 function formatReport(r) {
   const lines = [`AI Readiness for ${r.url}`, `Score: ${r.score}/100   Grade: ${r.grade}`, ""];
@@ -140,7 +157,7 @@ async function handle(msg, ctx = {}) {
         } catch (error) {
           const code = safeCode(error);
           return okMsg(id, {
-            content: [{ type: "text", text: code }],
+            content: [{ type: "text", text: funnelErrorText(code) }],
             structuredContent: { error: { code } },
             isError: true,
           });
@@ -149,7 +166,7 @@ async function handle(msg, ctx = {}) {
 
       const url = String(params?.arguments?.url || "").trim();
       if (name !== "check_ai_readiness" && name !== "generate_complete_fix_pack")
-        return errMsg(id, -32602, `Unknown tool: ${name}`);
+        return errMsg(id, -32602, `Unknown tool: ${name}. Next: call tools/list and use one returned name. Do not send a payment header.`);
       if (!url) return okMsg(id, { content: [{ type: "text", text: "Provide a url, e.g. example.com" }], isError: true });
 
       if (name === "generate_complete_fix_pack") {
@@ -187,7 +204,7 @@ async function handle(msg, ctx = {}) {
       }
     }
     default:
-      return id !== undefined ? errMsg(id, -32601, `Method not found: ${method}`) : null;
+      return id !== undefined ? errMsg(id, -32601, `Method not found: ${method}. Next: use initialize, tools/list, or tools/call.`) : null;
   }
 }
 
@@ -207,7 +224,8 @@ router.get("/", (req, res) => {
   res.type("text/plain").send(
     "samedaydesk agent tools MCP server (Streamable HTTP).\n" +
       'Add to a remote-MCP-capable client: { "mcpServers": { "samedaydesk": { "url": "https://samedaydesk.com/mcp" } } }\n' +
-      "Tools: free AI-readiness and agent-readiness checks, a paid Fix Pack, plus free TaskMarket delegation planning, task browsing, and task tracking.\n" +
+      `Tools (${MCP_TOOL_NAMES.length}): ${MCP_TOOL_NAMES.join(", ")}.\n` +
+      "Next: POST JSON-RPC initialize, then tools/list, then one tools/call. tools/list is the inventory. Do not send a payment header. generate_complete_fix_pack needs a license bought separately.\n" +
       "TaskMarket integration: https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md\n",
   );
 });

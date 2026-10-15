@@ -67,7 +67,7 @@ export function mcpMethodClass(method) {
 }
 
 function validateEntry(entry) {
-  const invalid = () => ({ error: rpcError(null, -32600, "Invalid Request") });
+  const invalid = () => ({ error: rpcError(null, -32600, "Invalid Request. Next: send jsonrpc \"2.0\" and a method string. Notifications omit id.") });
   if (!record(entry) || field(entry, "jsonrpc") !== "2.0") return invalid();
   const hasId = Object.hasOwn(entry, "id");
   const id = field(entry, "id");
@@ -89,7 +89,7 @@ function validateEntry(entry) {
   const kind = hasId ? "request" : "notification";
   const out = { kind, entry, observation: { methodClass: mcpMethodClass(method) } };
   const params = field(entry, "params");
-  const invalidParams = () => ({ ...out, error: rpcError(id ?? null, -32602, "Invalid params") });
+  const invalidParams = () => ({ ...out, error: rpcError(id ?? null, -32602, "Invalid params. Next: for tools/call send a string name and an object arguments, or call tools/list. Do not send a payment header.") });
   if (!dataField(entry, "params") || (Object.hasOwn(entry, "params") && !record(params))) return invalidParams();
   if (method === "tools/call") {
     const name = field(params, "name");
