@@ -1,14 +1,22 @@
-// Bounded same-origin page discovery for generators (llms.txt).
-// Sources: caller-supplied paths, robots.txt Sitemap: lines, /sitemap.xml;
-// sitemap indexes are followed exactly one level. Every fetch goes through the
-// shared public-host guard in ./ssrf.js; nothing a user supplies can name
-// another origin or a private address.
+// Bounded page discovery for generators (llms.txt).
+// AUTOMATIC discovery (robots.txt Sitemap: lines, /sitemap.xml, one index level)
+// is strictly same-origin: nothing it finds can make it fetch another origin.
+// EXPLICIT supplied references (?paths=) may be same-origin paths or absolute
+// public http(s) URLs on other origins (llmstxt.org allows external links, e.g.
+// GitHub). Each supplied reference is fetched on its own: shared pinned-address
+// guard (./ssrf.js), anonymous headers, redirects scoped to that reference's own
+// origin, shared total budget and size bounds. Private addresses, credentials in
+// the URL and non-http(s) schemes are refused. Supplied references are never
+// crawled further, so there is no automatic offsite traversal.
 import { PublicHostError } from "./ssrf.js";
 import { fetchPublicBounded, BoundedFetchError, FETCH_FAILURE } from "./bounded-fetch.js";
 
 export const DISCOVERY_FAILURE = Object.freeze({
   CROSS_ORIGIN_SITEMAP: "cross_origin_sitemap",
-  CROSS_ORIGIN_PATH: "cross_origin_path",
+  CROSS_ORIGIN_PATH: "cross_origin_path", // legacy; supplied external refs are now admitted
+  NON_HTTP_SCHEME: "non_http_scheme",
+  CREDENTIALS_IN_URL: "credentials_in_url",
+  INVALID_REFERENCE: "invalid_reference",
   OFF_ORIGIN_REDIRECT: FETCH_FAILURE.OFF_ORIGIN_REDIRECT,
   TOO_MANY_REDIRECTS: FETCH_FAILURE.TOO_MANY_REDIRECTS,
   BUDGET_EXHAUSTED: FETCH_FAILURE.BUDGET_EXHAUSTED,
@@ -68,9 +76,35 @@ function sameOriginUrl(raw, origin) {
   } catch { return null; }
 }
 
+export const PROVENANCE = Object.freeze({
+  SUPPLIED_SAME_ORIGIN: "supplied-same-origin",
+  SUPPLIED_EXTERNAL: "supplied-external",
+});
+
+// Headers for an off-origin supplied reference: no cookies/auth of any kind.
+const SENSITIVE_HEADERS = new Set(["authorization", "cookie", "cookie2", "proxy-authorization", "x-api-key"]);
+export function anonymousHeaders(headers = {}) {
+  const out = {};
+  for (const [k, v] of Object.entries(headers || {})) if (!SENSITIVE_HEADERS.has(k.toLowerCase())) out[k] = v;
+  return out;
+}
+
+/** Classify one supplied reference without network: {url, origin, external} or {reason}. */
+export function classifySuppliedReference(raw, origin) {
+  const text = String(raw || "").trim();
+  if (!text) return { reason: DISCOVERY_FAILURE.INVALID_REFERENCE };
+  let u;
+  try { u = new URL(text, origin + "/"); } catch { return { reason: DISCOVERY_FAILURE.INVALID_REFERENCE }; }
+  if (u.protocol !== "http:" && u.protocol !== "https:") return { reason: DISCOVERY_FAILURE.NON_HTTP_SCHEME };
+  if (u.username || u.password) return { reason: DISCOVERY_FAILURE.CREDENTIALS_IN_URL };
+  u.hash = "";
+  return { url: u.toString(), origin: u.origin, external: u.origin !== origin };
+}
+
 /**
  * discoverSiteUrls({ origin, suppliedPaths?, headers?, limits? })
  * => { urls, provenance: {url: source}, mode, sitemaps, missing, redirected, rejected, limited }
+ * provenance values: "supplied-same-origin" | "supplied-external" | "sitemap:<url>" 
  */
 export async function discoverSiteUrls({ origin, suppliedPaths = null, headers = {}, limits = {}, budget = null, lookup }) {
   const L = { ...DISCOVERY_LIMITS, ...limits };
@@ -89,10 +123,10 @@ export async function discoverSiteUrls({ origin, suppliedPaths = null, headers =
     seen.add(k); urls.push(u); provenance[u] = source;
   };
 
-  const get = async (url, maxBytes) => {
+  const get = async (url, maxBytes, scope = { allowedOrigin: origin, headers }) => {
     if (budget?.exhausted) { budgetOut(url); return null; }
     try {
-      const r = await fetchPublicBounded(url, { allowedOrigin: origin, maxRedirects: L.maxRedirects, maxBytes, timeoutMs: L.timeoutMs, headers, budget, ...(lookup ? { lookup } : {}) });
+      const r = await fetchPublicBounded(url, { allowedOrigin: scope.allowedOrigin, maxRedirects: L.maxRedirects, maxBytes, timeoutMs: L.timeoutMs, headers: scope.headers, budget, ...(lookup ? { lookup } : {}) });
       if (r.redirects.length) report.redirected.push({ from: url, to: r.finalUrl });
       return r;
     } catch (e) {
@@ -104,18 +138,21 @@ export async function discoverSiteUrls({ origin, suppliedPaths = null, headers =
     }
   };
 
-  // ---- supplied list: explicit paths, same origin only, existence checked ----
+  // ---- supplied list: explicit references, each existence-checked in its own origin scope ----
   if (Array.isArray(suppliedPaths) && suppliedPaths.length) {
     report.mode = "supplied";
     const list = suppliedPaths.slice(0, L.maxSuppliedPaths);
     if (suppliedPaths.length > list.length) report.limited.push("max_supplied_paths");
     for (const raw of list) {
-      const abs = sameOriginUrl(String(raw).trim(), origin);
-      if (!abs) { report.rejected.push({ url: String(raw), reason: DISCOVERY_FAILURE.CROSS_ORIGIN_PATH }); continue; }
-      const r = await get(abs, 512_000);
+      const ref = classifySuppliedReference(raw, origin);
+      if (ref.reason) { report.rejected.push({ url: String(raw), reason: ref.reason, supplied: true }); continue; }
+      const scope = ref.external
+        ? { allowedOrigin: ref.origin, headers: anonymousHeaders(headers) }
+        : { allowedOrigin: origin, headers };
+      const r = await get(ref.url, 512_000, scope);
       if (!r) continue;
-      if (!r.ok) { report.missing.push({ url: abs, status: r.status }); continue; }
-      addUrl(r.finalUrl, "supplied");
+      if (!r.ok) { report.missing.push({ url: ref.url, status: r.status }); continue; }
+      addUrl(r.finalUrl, ref.external ? PROVENANCE.SUPPLIED_EXTERNAL : PROVENANCE.SUPPLIED_SAME_ORIGIN);
     }
     return { urls, provenance, ...report };
   }

@@ -13,7 +13,7 @@ import { fetchPublicBounded, createRequestBudget } from "../lib/agent-readiness/
 // One total budget per /llms-txt request: DNS (4s bound each) + redirects + bodies.
 export const LLMS_TOTAL_BUDGET_MS = 25_000;
 const isHtml = (ct) => !ct || /text\/html|application\/xhtml\+xml/i.test(ct);
-import { discoverSiteUrls } from "../lib/agent-readiness/sitemap-discovery.js";
+import { discoverSiteUrls, anonymousHeaders, PROVENANCE } from "../lib/agent-readiness/sitemap-discovery.js";
 
 const router = Router();
 
@@ -336,6 +336,7 @@ router.get("/llms-txt", async (req, res) => {
       source: urls.length ? (found.mode === "supplied" ? "supplied" : "sitemap") : "homepage-links",
       sitemaps: found.sitemaps, missing: found.missing, redirected: found.redirected,
       rejected: found.rejected, limited: found.limited, skipped: found.skipped,
+      provenance: found.provenance,
     };
 
     if (!urls.length && found.mode !== "supplied") {
@@ -355,10 +356,15 @@ router.get("/llms-txt", async (req, res) => {
 
     // fetch title/description for the first N pages in parallel; label the rest from the path
     const TITLE_N = 14;
+    // Each item is read in its own origin scope: a supplied external reference is
+    // fetched anonymously and its redirects must stay on that reference's origin.
+    const provOf = (x) => found.provenance?.[x] || (found.mode === "supplied" ? PROVENANCE.SUPPLIED_SAME_ORIGIN : discovery.source);
+    for (const it of ordered.items) it.external = provOf(it.url) === PROVENANCE.SUPPLIED_EXTERNAL;
     const head = await Promise.all(ordered.items.slice(0, TITLE_N).map(async (it) => {
       try {
         if (budget.exhausted) throw new Error("budget");
-        const r = await fetchPublicBounded(it.url, { allowedOrigin: origin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers, budget });
+        const itOrigin = it.external ? new URL(it.url).origin : origin;
+        const r = await fetchPublicBounded(it.url, { allowedOrigin: itOrigin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers: it.external ? anonymousHeaders(headers) : headers, budget });
         if (!r.ok || !isHtml(r.contentType)) throw new Error("not a page");
         const a = analyzeHtml(r.body);
         return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
@@ -374,18 +380,23 @@ router.get("/llms-txt", async (req, res) => {
     let out = `# ${siteName}\n\n`;
     if (h.description) out += `> ${clean(h.description, 500)}\n\n`;
     const navPages = pages.filter((p) => p.nav);
-    const restPages = pages.filter((p) => !p.nav);
+    const restPages = pages.filter((p) => !p.nav && !p.external);
+    const externalPages = pages.filter((p) => !p.nav && p.external);
     if (navPages.length) { out += `## Sections\n\n`; for (const p of navPages) out += line(p); out += `\n`; }
     if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
+    if (externalPages.length) { out += `${restPages.length ? "\n" : ""}## External references\n\n`; for (const p of externalPages) out += line(p); }
     if (ordered.truncated) out += `\n> This bounded output omits ${ordered.omitted} additional discovered pages.\n`;
 
     // Honest coverage labels: automatic mode is bounded by the 50 cap; supplied mode
     // qualifies only the requester's list, never automatic full coverage.
     const emittedKeys = new Set(ordered.items.map((it) => it.url.replace(/\/+$/, "")));
     const omittedUrls = urls.filter((x) => !emittedKeys.has(x.replace(/\/+$/, ""))).slice(0, 200);
+    const extN = pages.filter((p) => p.external).length;
     discovery.coverage = found.mode === "supplied"
       ? { mode: "requester-supplied", emitted: pages.length, supplied: suppliedPaths.length,
-          label: `requester-supplied: ${pages.length} of ${suppliedPaths.length} supplied paths emitted; qualifies the supplied list only, not automatic full coverage` }
+          suppliedSameOrigin: pages.length - extN, suppliedExternal: extN,
+          references: pages.map((p) => ({ url: p.url, provenance: provOf(p.url) })),
+          label: `requester-supplied: ${pages.length} of ${suppliedPaths.length} supplied references emitted (${pages.length - extN} supplied-same-origin, ${extN} supplied-external); qualifies the supplied list only, not automatic full coverage` }
       : { mode: "automatic", emitted: pages.length, discovered: ordered.totalFound, cap: 50, omittedUrls,
           label: `automatic: ${pages.length} of ${ordered.totalFound} discovered pages emitted (cap 50); ${ordered.omitted} omitted` };
     if (budget.exhausted) discovery.coverage.partial = "budget_exhausted";

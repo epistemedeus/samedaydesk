@@ -73,7 +73,7 @@ test("POSITIVE krabka pattern: no /sitemap.xml, robots Sitemap: -> sitemap-index
   assert.ok(json.discovery.missing.some((m) => m.url === O + "/sitemap.xml" && m.status === 404), "SIG:MISSING_SITEMAP_NOT_REPORTED");
 });
 
-test("POSITIVE supplied list: explicit paths, provenance=supplied, missing + redirected reported", async () => {
+test("POSITIVE supplied list: explicit paths, provenance=supplied-same-origin, missing + redirected reported", async () => {
   stubSite((u) => {
     if (u === O + "/" || u === O) return home;
     if (u === O + "/docs/quickstart") return page("Quickstart");
@@ -82,7 +82,7 @@ test("POSITIVE supplied list: explicit paths, provenance=supplied, missing + red
     if (u.endsWith("sitemap.xml") || u.endsWith("robots.txt")) throw new Error("SIG:AUTO_DISCOVERY_RAN_IN_SUPPLIED_MODE");
     return null;
   });
-  const { status, json } = await generate(O, "&paths=" + encodeURIComponent("/docs/quickstart,/old,/gone,https://evil.example/x,http://169.254.169.254/latest"));
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent("/docs/quickstart,/old,/gone,http://169.254.169.254/latest"));
   assert.equal(status, 200);
   contract(json);
   assert.equal(json.discovery.mode, "supplied");
@@ -90,8 +90,89 @@ test("POSITIVE supplied list: explicit paths, provenance=supplied, missing + red
   assert.match(json.llmsTxt, /krabka\.example\/new\)/);
   assert.ok(json.discovery.missing.some((m) => m.url === O + "/gone"), "SIG:SUPPLIED_MISSING_NOT_REPORTED");
   assert.ok(json.discovery.redirected.some((r) => r.from === O + "/old" && r.to === O + "/new"), "SIG:SUPPLIED_REDIRECT_NOT_REPORTED");
-  assert.equal(reasons(json).filter((r) => r === "cross_origin_path").length, 2, "SIG:SUPPLIED_URL_BYPASS");
-  assert.ok(!calls.some((c) => c.includes("evil.example") || c.includes("169.254")), "SIG:SUPPLIED_URL_FETCHED_OFF_ORIGIN");
+  // Redefined: an off-origin public reference is admitted (llmstxt.org allows external links);
+  // the private-address one is still refused and never fetched.
+  assert.ok(json.discovery.rejected.some((r) => r.url.includes("169.254") && r.reason === "not_public"), "SIG:SUPPLIED_URL_BYPASS");
+  assert.ok(!calls.some((c) => c.includes("169.254")), "SIG:SUPPLIED_EXTERNAL_PRIVATE_FETCHED");
+  assert.equal(json.discovery.provenance[O + "/docs/quickstart"], "supplied-same-origin", "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+});
+
+test("POSITIVE supplied external: off-origin public reference admitted, labelled, fetched anonymously", async () => {
+  const seenHeaders = [];
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return home;
+    if (u === O + "/docs") return page("Docs");
+    if (u === "https://github.com/krabka-io") return page("krabka-io · GitHub");
+    if (u.endsWith("sitemap.xml") || u.endsWith("robots.txt") || u.includes("github.com/krabka-io/")) throw new Error("SIG:AUTO_OFFSITE_TRAVERSAL");
+    return null;
+  });
+  const wrap = globalThis.fetch;
+  globalThis.fetch = async (url, opts) => { if (String(url).includes("github.com")) seenHeaders.push(opts?.headers || {}); return wrap(url, opts); };
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent("/docs,https://github.com/krabka-io"));
+  assert.equal(status, 200);
+  contract(json);
+  assert.ok(!reasons(json).includes("cross_origin_path"), "SIG:SUPPLIED_EXTERNAL_REFUSED");
+  assert.match(json.llmsTxt, /\(https:\/\/github\.com\/krabka-io\)/, "SIG:SUPPLIED_EXTERNAL_REFUSED");
+  assert.match(json.llmsTxt, /## External references\n\n- \[[^\]]*\]\(https:\/\/github\.com\/krabka-io\)/, "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  assert.equal(json.discovery.provenance["https://github.com/krabka-io"], "supplied-external", "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  assert.equal(json.discovery.provenance[O + "/docs"], "supplied-same-origin", "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  assert.equal(json.discovery.coverage.suppliedExternal, 1, "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  assert.equal(json.discovery.coverage.suppliedSameOrigin, 1, "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  assert.match(json.discovery.coverage.label, /1 supplied-external/, "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+  for (const h of seenHeaders) {
+    const names = Object.keys(h).map((k) => k.toLowerCase());
+    assert.ok(!names.some((n) => ["cookie", "authorization", "proxy-authorization"].includes(n)), "SIG:SUPPLIED_EXTERNAL_NOT_ANONYMOUS");
+  }
+});
+
+test("FAIL supplied external private / credentials / non-http are refused and never fetched", async () => {
+  stubSite((u) => (u === O + "/" || u === O ? home : u.startsWith(O + "/") ? page("P") : null),
+    { addr: (h) => (h === "internal.example" ? "10.0.0.7" : "93.184.216.34") });
+  const refs = ["https://internal.example/x", "http://127.0.0.1:9/x", "https://user:pw@github.com/krabka-io", "ftp://files.example/x", "javascript:alert(1)", "file:///etc/passwd"];
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent(refs.join(",")));
+  assert.equal(status, 200);
+  const by = (needle) => json.discovery.rejected.find((r) => r.url.includes(needle))?.reason;
+  assert.equal(by("internal.example"), "not_public", "SIG:SUPPLIED_EXTERNAL_PRIVATE_FETCHED");
+  assert.equal(by("127.0.0.1"), "not_public", "SIG:SUPPLIED_EXTERNAL_PRIVATE_FETCHED");
+  assert.ok(!calls.some((c) => c.includes("internal.example") || c.includes("127.0.0.1:9")), "SIG:SUPPLIED_EXTERNAL_PRIVATE_FETCHED");
+  assert.equal(by("user:pw@"), "credentials_in_url", "SIG:SUPPLIED_EXTERNAL_CREDENTIALS_ADMITTED");
+  assert.ok(!calls.some((c) => c.includes("github.com")), "SIG:SUPPLIED_EXTERNAL_CREDENTIALS_ADMITTED");
+  assert.equal(by("ftp://"), "non_http_scheme", "SIG:SUPPLIED_NON_HTTP_ADMITTED");
+  assert.equal(by("javascript:"), "non_http_scheme", "SIG:SUPPLIED_NON_HTTP_ADMITTED");
+  assert.equal(by("file://"), "non_http_scheme", "SIG:SUPPLIED_NON_HTTP_ADMITTED");
+  assert.equal(json.count, 0);
+});
+
+test("FAIL supplied external redirect to another origin is not followed", async () => {
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return home;
+    if (u === "https://github.com/krabka-io") return { status: 301, location: "https://attacker.example/krabka" };
+    if (u === "https://docs.thirdparty.example/a") return { status: 302, location: "/b" };
+    if (u === "https://docs.thirdparty.example/b") return page("B");
+    return null;
+  });
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent("https://github.com/krabka-io,https://docs.thirdparty.example/a"));
+  assert.equal(status, 200);
+  assert.ok(json.discovery.rejected.some((r) => r.url === "https://github.com/krabka-io" && r.reason === "off_origin_redirect"), "SIG:EXTERNAL_REDIRECT_CROSS_ORIGIN_FOLLOWED");
+  assert.ok(!calls.some((c) => c.includes("attacker.example")), "SIG:EXTERNAL_REDIRECT_CROSS_ORIGIN_FOLLOWED");
+  assert.ok(!json.llmsTxt.includes("attacker.example"), "SIG:EXTERNAL_REDIRECT_CROSS_ORIGIN_FOLLOWED");
+  // same-origin redirect within the external reference's own origin is allowed
+  assert.equal(json.discovery.provenance["https://docs.thirdparty.example/b"], "supplied-external", "SIG:SUPPLIED_EXTERNAL_UNLABELLED");
+});
+
+test("FAIL auto discovery stays same-origin even when the homepage links offsite", async () => {
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return `<html><head><title>K</title></head><body><nav><a href="https://github.com/krabka-io">GitHub</a><a href="/docs">Docs</a></nav><a href="https://offsite.example/x">x</a></body></html>`;
+    if (u === O + "/sitemap.xml") return urlset("/docs", "https://offsite.example/y");
+    if (u.startsWith(O + "/")) return page("P");
+    return null;
+  });
+  const { status, json } = await generate(O);
+  assert.equal(status, 200);
+  assert.equal(json.discovery.mode, "auto");
+  assert.ok(!calls.some((c) => c.includes("github.com") || c.includes("offsite.example")), "SIG:AUTO_OFFSITE_TRAVERSAL");
+  assert.ok(!json.llmsTxt.includes("offsite.example") && !json.llmsTxt.includes("github.com"), "SIG:AUTO_OFFSITE_TRAVERSAL");
+  assert.ok(!Object.values(json.discovery.provenance).some((v) => String(v).startsWith("supplied")), "SIG:AUTO_OFFSITE_TRAVERSAL");
 });
 
 test("FAIL cross-origin sitemap: robots and index entries on other origins are refused, not fetched", async () => {
