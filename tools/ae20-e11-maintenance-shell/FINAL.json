@@ -1,0 +1,26 @@
+{
+  "EXIT": 0,
+  "session": "7ea530ad-206a-4cb7-bb7b-990396b46be4",
+  "head": "9fc2ac3879647316cc377e83b1fefdcd9c412c28",
+  "dirty": false,
+  "tests": {
+    "pass": 29,
+    "fail": 0,
+    "pending": 2
+  },
+  "pendingJoins": [
+    {
+      "id": "g2-terminal-export",
+      "waitsOn": "neomorphic-io codex/ae14-j2-work-network-composition@016b38838d1fcc66128e000f39487d044dc497be terminal G2 export agentInterface.reuse composed with E02 readCurrent; interface codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/INTERFACE.md",
+      "pin": "016b38838d1fcc66128e000f39487d044dc497be",
+      "laterConsumer": "J2 maintained-applicability step"
+    },
+    {
+      "id": "e21-contribution-handback-reader",
+      "waitsOn": "neomorphic-io codex/ae14-e21-contribution-handback@2db38faab2f79cd7b3dc3110c54d301834c9611b experiments/ae14-contribution-handback/src/agent.mjs#agentInterface.reuse",
+      "pin": "2db38faab2f79cd7b3dc3110c54d301834c9611b",
+      "laterConsumer": "E21 contribution handback reader"
+    }
+  ],
+  "laterConsumer": "J2 maintained-applicability step"
+}
