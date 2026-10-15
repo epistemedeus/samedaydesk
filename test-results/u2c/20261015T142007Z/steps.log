@@ -1,0 +1,9 @@
+=== U2c cursor 2026-10-15T14:20:07Z head=435872eac2fd52ae0edc808ebf919c6a256b48cc node=v22.14.0
+WRITER_PATHS ok
+PG ok ssl=on
+ARCHIVE ok server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.2.tgz
+VENDOR_VERIFY rc=0 verified 10 vendored files
+FULL_PG rc=0 # tests 69 # pass 69 # fail 0 # cancelled 0 # skipped 0 
+FULL_SQLITE rc=0 # tests 100 # pass 100 # fail 0 # cancelled 0 # skipped 0 
+FULL_REGRESSION rc=0 # tests 49 # pass 49 # fail 0 # cancelled 0 # skipped 0 
+U2C_VERDICT=pass
