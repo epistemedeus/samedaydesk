@@ -13,7 +13,16 @@ const allowed = new Set([
 // A named key that already exists is refused; these values never replace a baseline row.
 const discovery = new Set(['DISCOVERY_LOG_DIR', 'DISCOVERY_LOG_QA_SECRET', 'DISCOVERY_LOG_JOURNEY_SECRET']);
 const discoverySecrets = new Set(['DISCOVERY_LOG_QA_SECRET', 'DISCOVERY_LOG_JOURNEY_SECRET']);
+const discoveryChild = 'discovery-log-v1';
 const absoluteDir = value => path.isAbsolute(value) && !value.split(path.sep).includes('..');
+// FOUNDRY_PRIVATE_DIR is a retained baseline key. When it is present, the additive
+// log directory is that directory plus discovery-log-v1. The baseline value is not overwritten.
+function discoveryDirAllowed(value, baseline) {
+  if (!absoluteDir(value)) return false;
+  if (!baseline.has('FOUNDRY_PRIVATE_DIR')) return true;
+  const root = baseline.get('FOUNDRY_PRIVATE_DIR');
+  return absoluteDir(root) && value === path.join(root, discoveryChild);
+}
 function entries(input) {
   const rows = Array.isArray(input) ? input : input?.env_vars;
   if (!Array.isArray(rows) || rows.length > 512) throw new Error('environment_shape_refused');
@@ -40,7 +49,7 @@ export function prepareMachineEnvironment({ existing, listed, overlay }) {
     if (!machine && !discovery.has(key)) throw new Error('unrelated_environment_change_refused');
     if (baseline.has(key)) throw new Error('existing_environment_key_not_overwritten');
     if (discoverySecrets.has(key) && value.length < 32) throw new Error('discovery_secret_refused');
-    if (key === 'DISCOVERY_LOG_DIR' && !absoluteDir(value)) throw new Error('discovery_dir_refused');
+    if (key === 'DISCOVERY_LOG_DIR' && !discoveryDirAllowed(value, baseline)) throw new Error('discovery_dir_refused');
     if (machine) machineKeyCount += 1; else discoveryKeyCount += 1;
   }
   const merged = new Map([...baseline, ...changes]);

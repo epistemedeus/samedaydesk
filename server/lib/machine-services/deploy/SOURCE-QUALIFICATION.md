@@ -45,12 +45,12 @@ bindings were preserved. No new signer or qualification was issued.
 The corrected caller pin covers 1,171 exact members, including both machine
 ports and their transitive runtime, migrations, immutable gateway archives,
 continuation helper, existing contributor edge and unchanged received artifacts.
-The closure that accepted the previous 21 descriptors was
-`sha256:fb7f1607a09fac2527a394ec26fee28d240f0db3d14dc43eb5a15f83141cdc63`.
-That descriptor is now one of 22 accepted priors. The verifier is unchanged.
-The current closure, after the U1 0.1.2 archive pin and the discovery-log
-graph, is
+The closure that accepted the previous 22 descriptors was
 `sha256:e5b471be52d72fc83eddd18e7feca72539fccd20c1b69611b06371c7b318774e`.
+That descriptor is now one of 23 accepted priors. The verifier is unchanged.
+The current closure, after the discovery-log child directory and one-shot
+collector, is
+`sha256:e68e962358940132de5701f48b94842db2ea465782ef9f450521aa471d468495`.
 Member count remains 1,171. Base remains
 `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`.
 Replaying the predecessor manifest against these bytes still refuses. Cold

@@ -72,3 +72,15 @@ test('a discovery directory must be absolute and must not contain a parent segme
   assert.throws(() => packet([{ key: 'DISCOVERY_LOG_DIR', value: 'discovery-log' }]), /discovery_dir_refused/);
   assert.throws(() => packet([{ key: 'DISCOVERY_LOG_DIR', value: '/private/../discovery-log' }]), /discovery_dir_refused/);
 });
+
+test('when the baseline already has FOUNDRY_PRIVATE_DIR, the log dir is that directory plus discovery-log-v1', () => {
+  const foundry = '/private/foundry';
+  const child = '/private/foundry/discovery-log-v1';
+  const existing = [...baseline59(), { key: 'FOUNDRY_PRIVATE_DIR', value: foundry }];
+  const result = packet([{ key: 'DISCOVERY_LOG_DIR', value: child }], existing);
+  assert.equal(row(result, 'FOUNDRY_PRIVATE_DIR').value, foundry);
+  assert.equal(row(result, 'DISCOVERY_LOG_DIR').value, child);
+  assert.throws(() => packet([{ key: 'DISCOVERY_LOG_DIR', value: dir }], existing), /discovery_dir_refused/);
+  assert.throws(() => packet([{ key: 'DISCOVERY_LOG_DIR', value: '/private/foundry/other' }], existing), /discovery_dir_refused/);
+  assert.throws(() => packet([{ key: 'FOUNDRY_PRIVATE_DIR', value: '/home/elsewhere' }], existing), /unrelated_environment_change_refused/);
+});

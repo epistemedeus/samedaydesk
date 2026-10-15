@@ -49,7 +49,7 @@
   "files": {
     "deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
     "deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",
-    "deploy/env.keys": "d7c95af50cc41e991315ae41875d903e31c018c2395e47139b1ced01ddefd530",
+    "deploy/env.keys": "4f40ea8b2a5044285509edf8afc174a42430ddd3909f196966e0383f3e5bf80f",
     "deploy/rollback.json": "70209fc508279819560d7e067ff903310f07227c537b943c1efde056592f91fb"
   },
   "gatewayArchives": [
@@ -114,9 +114,9 @@
     "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
     "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
     "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
-    "callerClosureDigest": "sha256:e5b471be52d72fc83eddd18e7feca72539fccd20c1b69611b06371c7b318774e",
+    "callerClosureDigest": "sha256:e68e962358940132de5701f48b94842db2ea465782ef9f450521aa471d468495",
     "callerMembers": 1171,
-    "priorCallerDescriptorsAccepted": 22,
+    "priorCallerDescriptorsAccepted": 23,
     "compiledContributorMembersUnchanged": 437,
     "opportunitySourceMembersReproduced": 187,
     "opportunityCompiledMembersReproduced": 106,
