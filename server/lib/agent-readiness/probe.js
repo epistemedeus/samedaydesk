@@ -184,6 +184,7 @@ export async function guardedExchange(urlString, options = {}) {
   let current = new URL(urlString);
   let method = options.method || "GET";
   let body = options.body ?? null;
+  const redirects = [];
   for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
     let addresses;
     try {
@@ -202,6 +203,7 @@ export async function guardedExchange(urlString, options = {}) {
         throw new PublicHostError("Redirect left http(s)");
       }
       if (next.username || next.password) throw new PublicHostError("Redirect included credentials");
+      redirects.push({ status: res.status, location: redirectLocation(current, next) });
       if (res.status !== 307 && res.status !== 308) {
         method = "GET";
         body = null;
@@ -209,9 +211,18 @@ export async function guardedExchange(urlString, options = {}) {
       current = next;
       continue;
     }
-    return { ...res, finalUrl: current.toString() };
+    return { ...res, finalUrl: current.toString(), ...(redirects.length ? { redirects } : {}) };
   }
   throw new PublicHostError("Too many redirects");
+}
+
+function redirectLocation(fromUrl, nextUrl) {
+  const port = (url) => url.port || (url.protocol === "https:" ? "443" : "80");
+  const same = nextUrl.hostname === fromUrl.hostname
+    && nextUrl.protocol === fromUrl.protocol
+    && port(nextUrl) === port(fromUrl);
+  if (same) return `${nextUrl.pathname}${nextUrl.search}`;
+  return nextUrl.toString();
 }
 
 function toResponse(got) {
@@ -223,6 +234,13 @@ function toResponse(got) {
   if (rawBody) entry.body = bodyBytes.subarray(0, MAX_BODY_BYTES).toString("utf8");
   if (got?.truncated || bodyBytes.length > MAX_BODY_BYTES) entry.truncated = true;
   if (got?.error) entry.error = String(got.error);
+  if (Array.isArray(got?.redirects)) {
+    const redirects = got.redirects
+      .filter((hop) => hop && typeof hop.status === "number" && typeof hop.location === "string" && hop.location)
+      .map((hop) => ({ status: hop.status, location: hop.location }));
+    if (redirects.length) entry.redirects = redirects;
+  }
+  if (typeof got?.finalUrl === "string" && got.finalUrl) entry.finalUrl = got.finalUrl;
   return entry;
 }
 

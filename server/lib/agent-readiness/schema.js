@@ -1,6 +1,6 @@
 export class BundleError extends Error {
 }
-const RESPONSE_KEYS = ["status", "contentType", "headers", "body", "truncated", "error"];
+const RESPONSE_KEYS = ["status", "contentType", "headers", "body", "truncated", "error", "redirects", "finalUrl"];
 function isObject(v) {
     return typeof v === "object" && v !== null && !Array.isArray(v);
 }
@@ -36,6 +36,19 @@ export function validateBundle(input) {
         }
         if (value.error !== undefined && (typeof value.error !== "string" || value.error === "")) {
             throw new BundleError(`Response for ${path} field error must be a string.`);
+        }
+        if (value.finalUrl !== undefined && (typeof value.finalUrl !== "string" || value.finalUrl === "")) {
+            throw new BundleError(`Response for ${path} field finalUrl must be a string.`);
+        }
+        if (value.redirects !== undefined) {
+            if (!Array.isArray(value.redirects)) {
+                throw new BundleError(`Response for ${path} field redirects must be an array.`);
+            }
+            for (const hop of value.redirects) {
+                if (!isObject(hop) || typeof hop.status !== "number" || typeof hop.location !== "string" || hop.location === "") {
+                    throw new BundleError(`Response for ${path} field redirects must list status and location.`);
+                }
+            }
         }
     }
     if (input.mcp !== undefined) {
