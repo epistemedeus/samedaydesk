@@ -1,4 +1,5 @@
 // Visible homepage text after scripts and styles are removed.
+// noscript is kept: a no-JS client sees that copy and does not see the script.
 // A product sentence can be short: the first sentence of 4 to 40 words counts.
 // Six words is enough for "A custodial institution of good standing."
 
@@ -41,7 +42,6 @@ export function summarizeStaticHtml(html) {
   source = source.replace(/<!--[\s\S]*?-->/g, " ");
   source = source.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
   source = source.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ");
-  source = source.replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ");
   const hrefs = [];
   for (const match of source.matchAll(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
     hrefs.push(match[1] || match[2] || match[3] || "");
