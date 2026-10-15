@@ -5,6 +5,12 @@ Root binds existing secrets and performs the existing Hostinger deployment. No
 new host, port, systemd unit, timer, billing integration or cloud service is needed.
 Human pages, navigation, existing route configuration and proxy authority are unchanged.
 
+The latest [composed source qualification and finite preserving-release sequence](SOURCE-QUALIFICATION.md)
+supersedes older candidate pins. Use the current installation bundle's exact
+source/manifest, the unchanged Pilot PR412 controller and Root's authoritative
+complete baseline. Source qualification does not replace Root's actual transport
+qualification or hosted receiving.
+
 The authoritative source pins are [PINS.json](../PINS.json). Both repaired
 services are received from Neomorphic `667fba353e9082d8a0842437442dabc42843abf8`
 (independently tested runtime `4248874f2fa63636659fad164fb29ed193018104`).

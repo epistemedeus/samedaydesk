@@ -76,5 +76,25 @@
       "bytes": 49637,
       "selectedReceivedArtifact": true
     }
-  ]
+  ],
+  "sourceQualification": {
+    "predecessorExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "failedActionsRun": 38707454771,
+    "failingControlsCommit": "c57c92cf05ab022e1f22cdfba3a6b0506a8a4836",
+    "artifactProducer": "872c4f3006db6c70b45d124480cd019e0af50e69",
+    "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
+    "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerClosureDigest": "sha256:fb7f1607a09fac2527a394ec26fee28d240f0db3d14dc43eb5a15f83141cdc63",
+    "callerMembers": 1171,
+    "priorCallerDescriptorsAccepted": 21,
+    "compiledContributorMembersUnchanged": 437,
+    "opportunitySourceMembersReproduced": 187,
+    "opportunityCompiledMembersReproduced": 106,
+    "productionAdapter": "postgres",
+    "schemaEnvironmentKeysOrServiceKernelsChanged": false,
+    "actualTransportQualificationIssued": false,
+    "companionControllerExport": "931b7166842cbb0aa6db2041150041f9798dc49a",
+    "companionTestedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149"
+  }
 }
