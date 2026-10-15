@@ -17,6 +17,7 @@ export const DISCOVERY_FAILURE = Object.freeze({
   NON_HTTP_SCHEME: "non_http_scheme",
   CREDENTIALS_IN_URL: "credentials_in_url",
   INVALID_REFERENCE: "invalid_reference",
+  EXTERNAL_LIMIT: "external_limit",
   OFF_ORIGIN_REDIRECT: FETCH_FAILURE.OFF_ORIGIN_REDIRECT,
   TOO_MANY_REDIRECTS: FETCH_FAILURE.TOO_MANY_REDIRECTS,
   BUDGET_EXHAUSTED: FETCH_FAILURE.BUDGET_EXHAUSTED,
@@ -37,7 +38,8 @@ export const DISCOVERY_LIMITS = Object.freeze({
   maxXmlBytes: 2_000_000, // per sitemap document
   maxRobotsBytes: 256_000,
   maxRedirects: 3,
-  maxSuppliedPaths: 50,
+  maxSuppliedPaths: 50,      // total supplied references per request (same-origin + external)
+  maxExternalReferences: 10, // supplied-external references fetched per request; the rest are skipped with reason external_limit
   timeoutMs: 10_000,
 });
 
@@ -81,11 +83,12 @@ export const PROVENANCE = Object.freeze({
   SUPPLIED_EXTERNAL: "supplied-external",
 });
 
-// Headers for an off-origin supplied reference: no cookies/auth of any kind.
-const SENSITIVE_HEADERS = new Set(["authorization", "cookie", "cookie2", "proxy-authorization", "x-api-key"]);
-export function anonymousHeaders(headers = {}) {
+// Headers for an off-origin supplied reference: an ALLOWLIST of public request
+// headers only. Anything else (cookies, auth, x-custom-secret, ...) is dropped.
+export const PUBLIC_REQUEST_HEADERS = Object.freeze(["user-agent", "accept", "accept-language"]);
+export function publicRequestHeaders(headers = {}) {
   const out = {};
-  for (const [k, v] of Object.entries(headers || {})) if (!SENSITIVE_HEADERS.has(k.toLowerCase())) out[k] = v;
+  for (const [k, v] of Object.entries(headers || {})) if (PUBLIC_REQUEST_HEADERS.includes(k.toLowerCase())) out[k] = v;
   return out;
 }
 
@@ -143,17 +146,35 @@ export async function discoverSiteUrls({ origin, suppliedPaths = null, headers =
     report.mode = "supplied";
     const list = suppliedPaths.slice(0, L.maxSuppliedPaths);
     if (suppliedPaths.length > list.length) report.limited.push("max_supplied_paths");
+    // One declared outcome per supplied reference: nothing is silently omitted.
+    report.references = [];
+    let externalUsed = 0;
     for (const raw of list) {
       const ref = classifySuppliedReference(raw, origin);
-      if (ref.reason) { report.rejected.push({ url: String(raw), reason: ref.reason, supplied: true }); continue; }
+      const entry = { input: String(raw), url: ref.url || null, provenance: ref.reason ? null : (ref.external ? PROVENANCE.SUPPLIED_EXTERNAL : PROVENANCE.SUPPLIED_SAME_ORIGIN) };
+      report.references.push(entry);
+      if (ref.reason) { Object.assign(entry, { status: "rejected", reason: ref.reason }); report.rejected.push({ url: String(raw), reason: ref.reason, supplied: true }); continue; }
+      if (ref.external && externalUsed >= L.maxExternalReferences) {
+        Object.assign(entry, { status: "skipped", reason: DISCOVERY_FAILURE.EXTERNAL_LIMIT, limit: L.maxExternalReferences });
+        if (!report.limited.includes("max_external_references")) report.limited.push("max_external_references");
+        continue;
+      }
+      if (ref.external) externalUsed += 1;
       const scope = ref.external
-        ? { allowedOrigin: ref.origin, headers: anonymousHeaders(headers) }
+        ? { allowedOrigin: ref.origin, headers: publicRequestHeaders(headers) }
         : { allowedOrigin: origin, headers };
+      const nRej = report.rejected.length, nSkip = report.skipped.length;
       const r = await get(ref.url, 512_000, scope);
-      if (!r) continue;
-      if (!r.ok) { report.missing.push({ url: ref.url, status: r.status }); continue; }
-      addUrl(r.finalUrl, ref.external ? PROVENANCE.SUPPLIED_EXTERNAL : PROVENANCE.SUPPLIED_SAME_ORIGIN);
+      if (!r) {
+        const rej = report.rejected.slice(nRej).find((x) => x.url === ref.url);
+        Object.assign(entry, report.skipped.length > nSkip ? { status: "skipped", reason: "budget_exhausted" } : { status: "rejected", reason: rej?.reason || DISCOVERY_FAILURE.FETCH_FAILED });
+        continue;
+      }
+      if (!r.ok) { Object.assign(entry, { status: "missing", httpStatus: r.status }); report.missing.push({ url: ref.url, status: r.status }); continue; }
+      Object.assign(entry, { status: "admitted", finalUrl: r.finalUrl });
+      addUrl(r.finalUrl, entry.provenance);
     }
+    for (const raw of suppliedPaths.slice(list.length)) report.references.push({ input: String(raw), status: "skipped", reason: "max_supplied_paths" });
     return { urls, provenance, ...report };
   }
 

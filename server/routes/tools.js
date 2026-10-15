@@ -13,7 +13,7 @@ import { fetchPublicBounded, createRequestBudget } from "../lib/agent-readiness/
 // One total budget per /llms-txt request: DNS (4s bound each) + redirects + bodies.
 export const LLMS_TOTAL_BUDGET_MS = 25_000;
 const isHtml = (ct) => !ct || /text\/html|application\/xhtml\+xml/i.test(ct);
-import { discoverSiteUrls, anonymousHeaders, PROVENANCE } from "../lib/agent-readiness/sitemap-discovery.js";
+import { discoverSiteUrls, publicRequestHeaders, DISCOVERY_LIMITS, PROVENANCE } from "../lib/agent-readiness/sitemap-discovery.js";
 
 const router = Router();
 
@@ -364,9 +364,11 @@ router.get("/llms-txt", async (req, res) => {
       try {
         if (budget.exhausted) throw new Error("budget");
         const itOrigin = it.external ? new URL(it.url).origin : origin;
-        const r = await fetchPublicBounded(it.url, { allowedOrigin: itOrigin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers: it.external ? anonymousHeaders(headers) : headers, budget });
+        const r = await fetchPublicBounded(it.url, { allowedOrigin: itOrigin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers: it.external ? publicRequestHeaders(headers) : headers, budget });
         if (!r.ok || !isHtml(r.contentType)) throw new Error("not a page");
         const a = analyzeHtml(r.body);
+        // Only the parsed <title> and meta description are used (bounded again at emit time:
+        // title 80, description 130 chars); no page body is ever passed through.
         return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
       } catch { return { ...it, title: it.label || pathLabel(it.url), desc: "" }; }
     }));
@@ -395,7 +397,12 @@ router.get("/llms-txt", async (req, res) => {
     discovery.coverage = found.mode === "supplied"
       ? { mode: "requester-supplied", emitted: pages.length, supplied: suppliedPaths.length,
           suppliedSameOrigin: pages.length - extN, suppliedExternal: extN,
-          references: pages.map((p) => ({ url: p.url, provenance: provOf(p.url) })),
+          references: (found.references || []).map((x) => {
+            const fin = String(x.finalUrl || "").replace(/\/+$/, "");
+            return { ...x, emitted: x.status === "admitted" && pages.some((p) => p.url.replace(/\/+$/, "") === fin) };
+          }),
+          externalLimit: DISCOVERY_LIMITS.maxExternalReferences,
+          externalSkipped: (found.references || []).filter((x) => x.reason === "external_limit").length,
           label: `requester-supplied: ${pages.length} of ${suppliedPaths.length} supplied references emitted (${pages.length - extN} supplied-same-origin, ${extN} supplied-external); qualifies the supplied list only, not automatic full coverage` }
       : { mode: "automatic", emitted: pages.length, discovered: ordered.totalFound, cap: 50, omittedUrls,
           label: `automatic: ${pages.length} of ${ordered.totalFound} discovered pages emitted (cap 50); ${ordered.omitted} omitted` };

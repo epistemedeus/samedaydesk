@@ -7,6 +7,8 @@ import dns from "node:dns/promises";
 import express from "express";
 import router from "../../routes/tools.js";
 import { installFetchTransport, disposed } from "./fetch-transport.js";
+import { discoverSiteUrls, publicRequestHeaders } from "../../lib/agent-readiness/sitemap-discovery.js";
+import { setTransportForTests } from "../../lib/agent-readiness/bounded-fetch.js";
 
 installFetchTransport();
 
@@ -323,4 +325,74 @@ test("supplied coverage label qualifies the requester list only", async () => {
   const { json } = await generate(O, "&paths=" + encodeURIComponent("/a,/b"));
   assert.equal(json.discovery.coverage.mode, "requester-supplied");
   assert.match(json.discovery.coverage.label, /not automatic full coverage/, "SIG:SUPPLIED_CLAIMS_FULL_COVERAGE");
+});
+
+// ---- external-reference bounds (limit, header allowlist, no body passthrough) ----
+const KRABKA = "https://krabka.io";
+const P132 = ["/docs/", "/docs/quickstart/", "/docs/migration/", "/docs/kip-matrix/", "/verification/", "/benchmarks/", "/versions/", "/brand/"].map((p) => KRABKA + p).concat("https://github.com/krabka-io");
+
+test("POSITIVE krabka #132 case: 8 same-origin + 1 external supplied are 9/9 emitted and labelled", async () => {
+  stubSite((u) => {
+    if (u === KRABKA + "/" || u === KRABKA) return home;
+    if (u.startsWith(KRABKA + "/") && P132.includes(u)) return page("K " + u.slice(KRABKA.length));
+    if (u === "https://github.com/krabka-io") return page("krabka-io · GitHub");
+    return null;
+  });
+  const { status, json } = await generate(KRABKA, "&paths=" + encodeURIComponent(P132.join(",")));
+  assert.equal(status, 200, "SIG:KRABKA_9_CASE_BROKEN");
+  const refs = json.discovery.coverage.references;
+  assert.equal(refs.length, 9, "SIG:KRABKA_9_CASE_BROKEN");
+  assert.equal(refs.filter((r) => r.emitted).length, 9, "SIG:KRABKA_9_CASE_BROKEN " + JSON.stringify(refs.filter((r) => !r.emitted)));
+  for (const u of P132) assert.ok(json.llmsTxt.includes(`(${u})`), "SIG:KRABKA_9_CASE_BROKEN " + u);
+  assert.equal(json.discovery.coverage.suppliedExternal, 1, "SIG:KRABKA_9_CASE_BROKEN");
+  assert.equal(json.discovery.coverage.suppliedSameOrigin, 8, "SIG:KRABKA_9_CASE_BROKEN");
+  assert.equal(json.discovery.coverage.externalSkipped, 0, "SIG:KRABKA_9_CASE_BROKEN");
+});
+
+test("FAIL external limit: more than 10 supplied-external refs -> 10 fetched, excess skipped with declared reason", async () => {
+  const ext = Array.from({ length: 13 }, (_, i) => `https://ext${i}.example/p`);
+  stubSite((u) => (u === O + "/" || u === O ? home : u.startsWith(O + "/") || /^https:\/\/ext\d+\.example\/p$/.test(u) ? page("P") : null));
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent(["/a", ...ext, "/b"].join(",")));
+  assert.equal(status, 200);
+  const fetchedExt = new Set(calls.filter((c) => /ext\d+\.example/.test(c)).map((c) => new URL(c).host));
+  assert.equal(fetchedExt.size, 10, "SIG:EXTERNAL_LIMIT_NOT_ENFORCED " + fetchedExt.size);
+  for (const i of [10, 11, 12]) assert.ok(!fetchedExt.has(`ext${i}.example`), "SIG:EXTERNAL_LIMIT_NOT_ENFORCED");
+  const refs = json.discovery.coverage.references;
+  const skipped = refs.filter((r) => r.status === "skipped" && r.reason === "external_limit").map((r) => r.input);
+  assert.deepEqual(skipped, ext.slice(10), "SIG:EXTERNAL_SKIP_SILENT");
+  assert.equal(json.discovery.coverage.externalSkipped, 3, "SIG:EXTERNAL_SKIP_SILENT");
+  assert.ok(json.discovery.limited.includes("max_external_references"), "SIG:EXTERNAL_SKIP_SILENT");
+  assert.equal(refs.length, 15, "SIG:EXTERNAL_SKIP_SILENT");
+  // same-origin refs after the excess are still served (separate limit)
+  assert.ok(json.llmsTxt.includes(`(${O}/b)`), "SIG:EXTERNAL_LIMIT_NOT_ENFORCED same-origin starved");
+});
+
+test("FAIL header allowlist: a custom secret / cookie / auth header never goes off-origin", async () => {
+  assert.deepEqual(Object.keys(publicRequestHeaders({ "User-Agent": "u", Accept: "a", "Accept-Language": "en", "X-Custom-Secret": "s", Cookie: "c", Authorization: "b", "X-Api-Key": "k" })).sort(),
+    ["Accept", "Accept-Language", "User-Agent"], "SIG:CUSTOM_HEADER_LEAKED_OFFSITE");
+  const sent = [];
+  setTransportForTests(async (url, o) => { sent.push({ url: url.toString(), headers: { ...(o.headers || {}) } }); return { status: 200, headers: { "content-type": "text/html" }, body: page("x") }; });
+  try {
+    await discoverSiteUrls({ origin: O, suppliedPaths: ["/in", "https://github.com/krabka-io"],
+      headers: { "User-Agent": "u", Accept: "*/*", "X-Custom-Secret": "s3cret", Cookie: "sid=1", Authorization: "Bearer t" },
+      lookup: async () => [{ address: "93.184.216.34", family: 4 }] });
+  } finally { installFetchTransport(); }
+  const off = sent.filter((x) => x.url.startsWith("https://github.com"));
+  assert.equal(off.length, 1);
+  const names = Object.keys(off[0].headers).map((k) => k.toLowerCase());
+  for (const bad of ["x-custom-secret", "cookie", "authorization"]) assert.ok(!names.includes(bad), "SIG:CUSTOM_HEADER_LEAKED_OFFSITE " + bad);
+  assert.ok(!JSON.stringify(off[0].headers).includes("s3cret"), "SIG:CUSTOM_HEADER_LEAKED_OFFSITE");
+});
+
+test("FAIL external body passthrough: only a bounded title/description is emitted for an external reference", async () => {
+  const longDesc = "D".repeat(2000);
+  const ext = `<html><head><title>${"T".repeat(300)}</title><meta name="description" content="${longDesc}"></head><body><p>BODY_SECRET_MARKER</p><script>BODY_SCRIPT_MARKER</script></body></html>`;
+  stubSite((u) => (u === O + "/" || u === O ? home : u === "https://github.com/krabka-io" ? ext : null));
+  const { status, json } = await generate(O, "&paths=" + encodeURIComponent("https://github.com/krabka-io"));
+  assert.equal(status, 200);
+  const all = JSON.stringify(json);
+  assert.ok(!all.includes("BODY_SECRET_MARKER") && !all.includes("BODY_SCRIPT_MARKER"), "SIG:EXTERNAL_BODY_PASSTHROUGH");
+  const line = json.llmsTxt.split("\n").find((l) => l.includes("(https://github.com/krabka-io)"));
+  assert.ok(line, "SIG:SUPPLIED_EXTERNAL_REFUSED");
+  assert.ok(line.length <= 80 + 130 + 64, "SIG:EXTERNAL_BODY_PASSTHROUGH line length " + line.length);
 });
