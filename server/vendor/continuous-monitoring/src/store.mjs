@@ -27,6 +27,11 @@ export class MonitorStore {
       requireThat(lstatSync(file).isFile() && (lstatSync(file).mode & 0o077) === 0, 'store_requires_private_regular_file', 503);
     }
     this.db = new DatabaseSync(file);
+    const tables = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all();
+    if (tables.length && (!tables.some(row => row.name === 'schema_version') ||
+        this.db.prepare('SELECT version FROM schema_version').get()?.version !== 1)) {
+      this.db.close(); throw new ServiceError('foreign_or_unsupported_database', 503);
+    }
     this.db.exec('PRAGMA busy_timeout=2000; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
     this.db.exec(readFileSync(new URL('../migrations/001.sql', import.meta.url), 'utf8'));
   }
@@ -299,6 +304,7 @@ export class MonitorStore {
     const row = this.owned(tenantId, id);
     integer(after, 0, Number.MAX_SAFE_INTEGER); integer(limit, 1, 50);
     requireThat(after === 0 || after >= row.event_floor, 'cursor_expired', 410);
+    requireThat(after === 0 || after === row.event_floor || this.one('SELECT 1 FROM events WHERE monitor_id=? AND seq=?', id, after), 'foreign_or_unknown_cursor', 409);
     const events = this.all('SELECT seq,document FROM events WHERE monitor_id=? AND seq>? ORDER BY seq LIMIT ?', id, after, limit)
       .map(event => ({ cursor: event.seq, ...parse(event.document) }));
     return { events, nextCursor: events.at(-1)?.cursor ?? Math.max(after, row.event_floor), cursorFloor: row.event_floor };

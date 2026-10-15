@@ -16,10 +16,16 @@ if (process.env.MANAGED_WATCH_SCHEDULER === "1") {
     console.error("managed_watch_scheduler_refused", error?.code || "error");
   });
 }
+if (process.env.MONITOR_SCHEDULER === "1") {
+  app.get("machineServices")?.arm?.().catch(() => {
+    console.error("monitor_scheduler_unavailable");
+  });
+}
 const shutdown = bindListenerLifecycle(server, async () => {
   const handle = app.get("s51Correspondence");
   try {
-    await app.get("s346HostedUsefulJourney")?.close();
+    try { await app.get("machineServices")?.close?.(); }
+    finally { await app.get("s346HostedUsefulJourney")?.close(); }
   } finally {
     try {
       await app.get("l12ManagedWatch")?.close?.();

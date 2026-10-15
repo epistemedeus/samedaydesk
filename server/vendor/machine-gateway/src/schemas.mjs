@@ -58,7 +58,7 @@ export const schemas = {
   }),
   health: object({
     schema: { const: "neomorphic.machine-gateway.health.v1" }, ready: { type: "boolean" },
-    runtime: { const: "mounted-node" }, persistence: { const: "sqlite-wal" },
+    runtime: { const: "mounted-node" }, persistence: { enum: ["sqlite-wal", "postgres"] },
     paymentsEnabled: { type: "boolean" }, routeCount: integer(100, 1),
   }),
   error: object({ error: object({ code: text() }) }),

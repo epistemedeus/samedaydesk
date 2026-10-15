@@ -24,7 +24,12 @@
     }
   ],
   "localChanges": [
-    "monitor foundation relative imports",
-    "async store ports and mounted handlers documented in deploy/README.md"
+    "vendored monitor foundation relative imports",
+    "async Postgres store ports derived from pinned SQLite transitions",
+    "gateway async HTTP/store calls and truthful Postgres health schema",
+    "monitor extracted HTTP handler, async worker and finite IO cancellation",
+    "monitor foreign cursor and SQLite foreign-database refusal",
+    "upstream deployment recipes labeled as historical; use integrated SDS install package",
+    "gateway release contract regenerated and repository-relative manifest relocated for vendor tests"
   ]
 }

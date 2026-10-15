@@ -16,6 +16,8 @@ export function runtimeOptions(input = {}) {
   integer(options.maxTick, 1, 10, 'invalid_tick_limit');
   integer(options.maxDeliveryAttempts, 1, 8, 'invalid_delivery_attempt_limit');
   integer(options.visibilityMs, 1, 3600000, 'invalid_visibility');
+  for (const key of ['minIntervalMs', 'sourceCooldownMs', 'originCooldownMs']) integer(options[key], 1, 7 * 86400000, 'invalid_runtime_cadence');
+  integer(options.leaseSlackMs, 1, 30000, 'invalid_lease_slack');
   if (options.mountedOrigin) {
     assertMountedOrigin(options.mountedOrigin);
     requireThat(options.demo === true && process.env.NODE_ENV !== 'production', 'demo_refused_in_production');

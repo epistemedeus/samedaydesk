@@ -1024,7 +1024,10 @@
             "const": "mounted-node"
           },
           "persistence": {
-            "const": "sqlite-wal"
+            "enum": [
+              "sqlite-wal",
+              "postgres"
+            ]
           },
           "paymentsEnabled": {
             "type": "boolean"

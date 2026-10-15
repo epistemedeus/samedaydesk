@@ -61,14 +61,14 @@ export function createHttpHandler(gateway, { stripPrefix = gateway.prefix, bodyL
       const readPaths = path === "/healthz" || path === "/v1/discover" || path.startsWith("/v1/routes/") || path.startsWith("/v1/receipts/");
       const writePaths = ["/v1/quote", "/v1/test", "/v1/execute"].includes(path);
       if ((readPaths && req.method !== "GET") || (writePaths && req.method !== "POST")) fail("method_not_allowed", 405);
-      if (path === "/healthz") return json(res, 200, gateway.health());
+      if (path === "/healthz") return json(res, 200, await gateway.health());
       if (path === "/v1/discover") return json(res, 200, gateway.registry.discover(gateway.prefix, gateway.paymentsEnabled));
       const schemaMatch = /^\/v1\/routes\/([A-Za-z0-9_.-]+)\/(input|output)\.schema\.json$/.exec(path);
       if (schemaMatch) return json(res, 200, gateway.registry.get(schemaMatch[1])[`${schemaMatch[2]}Schema`]);
       const receiptMatch = /^\/v1\/receipts\/([a-f0-9-]{36})$/.exec(path);
       if (receiptMatch) {
         const tenant = gateway.authenticate(req.headers.authorization);
-        const receipt = gateway.store.receipt(tenant.id, receiptMatch[1]);
+        const receipt = await gateway.store.receipt(tenant.id, receiptMatch[1]);
         gateway.allow(tenant, receipt.routeId);
         return json(res, 200, receipt);
       }
@@ -76,7 +76,7 @@ export function createHttpHandler(gateway, { stripPrefix = gateway.prefix, bodyL
       const tenant = path === "/v1/execute" ? gateway.authenticate(req.headers.authorization)
         : path === "/v1/quote" ? gateway.authenticate(req.headers.authorization, true) : null;
       const body = await readBody(req, bodyLimit);
-      if (path === "/v1/quote") return json(res, 200, gateway.quote(body, tenant));
+      if (path === "/v1/quote") return json(res, 200, await gateway.quote(body, tenant));
       if (path === "/v1/test") return json(res, 200, await gateway.test(body, AbortSignal.any([controller.signal, AbortSignal.timeout(5000)])));
       const result = await gateway.execute(body, { tenant, idempotencyKey: req.headers["idempotency-key"],
         paymentHeader: req.headers["payment-signature"] || "", signal: controller.signal });

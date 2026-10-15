@@ -1,5 +1,9 @@
 # Existing-infrastructure deployment recipe
 
+SDS adaptation: use [the shared Node/Postgres install package](../../../lib/machine-services/deploy/README.md).
+The actual mount uses the existing app listener and scheduler. Do not install the
+historical upstream systemd units below for this integration.
+
 These files are a reviewable recipe, not a record of installation. No service, timer, cron, provider or process is installed by this branch. Run production only on an existing Linux application host with an approved persistent local filesystem, spare capacity, existing TLS ingress and Node 22. Do not put a new resident process on the Mac or Bot VM. Static hosting alone cannot run this API or worker.
 
 1. Root pins and reviews this feature branch's implementation commit, checks the target host's existing Node 22 binary, service account, local disk headroom and free loopback port 8791. The recipes assume `/opt/neomorphic/current`, `/usr/bin/node`, and an existing `www-data` account. Adjust these three values to the actual existing application environment before installing. Read access to the repo and write access only to a dedicated store directory are required. `ProtectHome=true` means a checkout or Node binary under `/home` needs a reviewed adjustment. Keep `packages/change-monitor/src` and its Observatory vendor directory with the checkout. No install or build is needed.

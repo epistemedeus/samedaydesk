@@ -1,5 +1,9 @@
 # Existing-host installation
 
+SDS adaptation: use [the integrated Postgres install package](../../../lib/machine-services/deploy/README.md).
+The historical upstream SQLite recipe below is retained for provenance/local use;
+the actual SDS mount selects Postgres and rejects production SQLite.
+
 This is an executable deployment configuration for the existing SameDayDesk
 Hostinger Node 22 process. No new plan, paid service, wallet or funded test is
 needed. Nothing here changes the static Neomorphic host or publishes a human

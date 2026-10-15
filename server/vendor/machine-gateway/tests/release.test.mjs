@@ -9,7 +9,7 @@ import { sampleInput } from "./helpers.mjs";
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 
 test("dedicated machine manifest and existing-host configuration do not claim production activation or funded tests", () => {
-  const manifest = read("../../../public/machine/machine-gateway.json");
+  const manifest = read("../deploy/upstream-machine-manifest.json");
   const deployment = read("../deploy/hostinger.json");
   assert.equal(manifest.state, "prepared-not-deployed");
   assert.equal(manifest.deployment.verifiedLiveBaseUrl, null);

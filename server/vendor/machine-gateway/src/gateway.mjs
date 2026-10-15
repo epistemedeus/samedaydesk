@@ -29,18 +29,18 @@ export class MachineGateway {
     return tenant;
   }
   allow(tenant, routeId) { if (!tenant.routes.includes(routeId)) fail("route_forbidden", 403); }
-  health() {
-    if (!this.store.ready()) fail("store_unavailable", 503);
+  async health() {
+    if (!await this.store.ready()) fail("store_unavailable", 503);
     return validate("health", { schema: "neomorphic.machine-gateway.health.v1", ready: true,
-      runtime: "mounted-node", persistence: "sqlite-wal", paymentsEnabled: this.paymentsEnabled, routeCount: this.registry.list().length }, { response: true });
+      runtime: "mounted-node", persistence: this.store.kind || "sqlite-wal", paymentsEnabled: this.paymentsEnabled, routeCount: this.registry.list().length }, { response: true });
   }
-  quote(body, tenant = null) {
+  async quote(body, tenant = null) {
     validate("quoteRequest", body);
     const route = this.registry.get(body.routeId);
     if (tenant) this.allow(tenant, route.id);
     this.registry.input(route, body.input);
     const inputDigest = digest(body.input);
-    const quote = tenant ? this.store.quote({ tenant: tenant.id, route, inputDigest }) : null;
+    const quote = tenant ? await this.store.quote({ tenant: tenant.id, route, inputDigest }) : null;
     return validate("quote", {
       schema: "neomorphic.machine-gateway.quote.v1", quoteId: quote?.id ?? null, routeId: route.id,
       routeDigest: route.routeDigest, inputDigest, expiresAt: quote?.expires ?? this.store.now() + 60000,
@@ -63,9 +63,9 @@ export class MachineGateway {
     const idem = sha256(idempotencyKey);
     const requestDigest = digest({ ...body, paymentHeaderDigest: sha256(paymentHeader) });
     // Recovery remains available after quote expiry and provider redeployment.
-    const replay = this.store.replay(tenant.id, idem, requestDigest);
+    const replay = await this.store.replay(tenant.id, idem, requestDigest);
     if (replay) { this.allow(tenant, replay.routeId); return { receipt: replay, replay: true }; }
-    const quote = this.store.getQuote(tenant.id, body.quoteId);
+    const quote = await this.store.getQuote(tenant.id, body.quoteId);
     this.allow(tenant, quote.route_id);
     const route = this.registry.get(quote.route_id);
     this.registry.input(route, body.input);
@@ -76,7 +76,7 @@ export class MachineGateway {
       if (!prepared || !/^[a-f0-9]{64}$/.test(prepared.identity)) fail("invalid_payment");
     } else if (paymentHeader) fail("payment_on_free_route");
     callerSignal?.throwIfAborted();
-    const admission = this.store.admit({ tenant, idem, requestDigest, quoteId: body.quoteId,
+    const admission = await this.store.admit({ tenant, idem, requestDigest, quoteId: body.quoteId,
       inputDigest: digest(body.input), route, maxUnits: body.maxUnits, paymentIdentity: prepared?.identity, prefix: this.prefix });
     if (!admission.owner) return { receipt: admission.receipt, replay: true };
     const receiptId = admission.receipt.id;
@@ -89,18 +89,18 @@ export class MachineGateway {
         signal.throwIfAborted();
         // No adapter can be entered twice for this quote/credential, including
         // when the reply is lost or the process dies immediately after commit.
-        this.store.possiblePayment(receiptId, this.adapter.kind, this.adapter.evidence, prepared.identity);
+        await this.store.possiblePayment(receiptId, this.adapter.kind, this.adapter.evidence, prepared.identity);
         const payment = await abortable(() => this.adapter.settle(prepared, { signal }), signal);
         signal.throwIfAborted();
-        this.store.settled(receiptId, payment);
+        await this.store.settled(receiptId, payment);
       }
       const output = this.registry.output(route, await abortable(() => route.run(body.input, { signal, receiptId }), signal));
       signal.throwIfAborted();
-      return { receipt: this.store.finish(receiptId, { output }), replay: false };
+      return { receipt: await this.store.finish(receiptId, { output }), replay: false };
     } catch (error) {
       const code = signal.aborted ? (deadline.signal.aborted ? "deadline_exceeded" : "execution_aborted")
         : error instanceof GatewayError ? error.code : "provider_failed";
-      return { receipt: this.store.finish(receiptId, { error: { code }, declined: code === "payment_declined" }), replay: false };
+      return { receipt: await this.store.finish(receiptId, { error: { code }, declined: code === "payment_declined" }), replay: false };
     } finally { clearTimeout(timer); }
   }
 }
