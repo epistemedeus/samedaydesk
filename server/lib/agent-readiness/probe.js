@@ -7,7 +7,7 @@ import { LATEST_MCP_VERSION } from "./checks.js";
 import { classifyRetrieval } from "./retrieval.js";
 import { discoverMcpLinks, needsWwwFallback, parseLlmsTxt } from "./discovery.js";
 import { PROBE_PATHS } from "./probeScript.js";
-import { PublicHostError, assertPublicHostname, resolvePublicAddresses } from "./ssrf.js";
+import { PublicHostError, assertPublicHostname, isPrivateIp, resolvePublicAddresses } from "./ssrf.js";
 
 export const FETCH_TIMEOUT_MS = 8000;
 export const MAX_BODY_BYTES = 200_000;
@@ -113,6 +113,7 @@ export function rawExchange(url, options = {}) {
       headers,
       servername: url.hostname,
       timeout: timeoutMs,
+      ...(options.signal ? { signal: options.signal } : {}),
       lookup(_hostname, lookupOptions, cb) {
         if (typeof lookupOptions === "function") {
           cb = lookupOptions;
@@ -122,12 +123,23 @@ export function rawExchange(url, options = {}) {
           cb(new Error("missing pinned address"));
           return;
         }
+        // Connect only to the address admitted at check time; never re-resolve.
+        if (isPrivateIp(address.address)) {
+          cb(new Error("pinned address is not public"));
+          return;
+        }
         const family = address.family === 6 ? 6 : 4;
         if (lookupOptions && lookupOptions.all) cb(null, [{ address: address.address, family }]);
         else cb(null, address.address, family);
       },
     }, (res) => {
       sawResponse = true;
+      if (options.discardRedirectBody && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        // Dispose of the redirect body before the caller follows Location.
+        res.destroy();
+        finish({ status: res.statusCode, headers: headerMap(res.headers), body: "", disposed: true });
+        return;
+      }
       const chunks = [];
       let size = 0;
       let responseError = null;
@@ -171,7 +183,7 @@ export function rawExchange(url, options = {}) {
     });
     req.on("error", () => {
       if (sawResponse) return;
-      finish({ status: 0, headers: {}, body: "", error: timedOut ? "timeout" : "connection" });
+      finish({ status: 0, headers: {}, body: "", error: options.signal?.aborted ? "aborted" : timedOut ? "timeout" : "connection" });
     });
     if (options.body && method !== "GET" && method !== "HEAD") req.write(options.body);
     req.end();

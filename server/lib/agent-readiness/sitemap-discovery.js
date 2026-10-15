@@ -3,13 +3,15 @@
 // sitemap indexes are followed exactly one level. Every fetch goes through the
 // shared public-host guard in ./ssrf.js; nothing a user supplies can name
 // another origin or a private address.
-import { fetchPublicBounded, BoundedFetchError, PublicHostError, FETCH_FAILURE } from "./ssrf.js";
+import { PublicHostError } from "./ssrf.js";
+import { fetchPublicBounded, BoundedFetchError, FETCH_FAILURE } from "./bounded-fetch.js";
 
 export const DISCOVERY_FAILURE = Object.freeze({
   CROSS_ORIGIN_SITEMAP: "cross_origin_sitemap",
   CROSS_ORIGIN_PATH: "cross_origin_path",
   OFF_ORIGIN_REDIRECT: FETCH_FAILURE.OFF_ORIGIN_REDIRECT,
   TOO_MANY_REDIRECTS: FETCH_FAILURE.TOO_MANY_REDIRECTS,
+  BUDGET_EXHAUSTED: FETCH_FAILURE.BUDGET_EXHAUSTED,
   OVERSIZE_XML: "oversize_xml",
   MALFORMED_INDEX: "malformed_index",
   MALFORMED_SITEMAP: "malformed_sitemap",
@@ -70,9 +72,13 @@ function sameOriginUrl(raw, origin) {
  * discoverSiteUrls({ origin, suppliedPaths?, headers?, limits? })
  * => { urls, provenance: {url: source}, mode, sitemaps, missing, redirected, rejected, limited }
  */
-export async function discoverSiteUrls({ origin, suppliedPaths = null, headers = {}, limits = {} }) {
+export async function discoverSiteUrls({ origin, suppliedPaths = null, headers = {}, limits = {}, budget = null, lookup }) {
   const L = { ...DISCOVERY_LIMITS, ...limits };
-  const report = { mode: "auto", sitemaps: [], missing: [], redirected: [], rejected: [], limited: [] };
+  const report = { mode: "auto", sitemaps: [], missing: [], redirected: [], rejected: [], limited: [], skipped: [] };
+  const budgetOut = (url) => {
+    if (!report.limited.includes("budget_exhausted")) report.limited.push("budget_exhausted");
+    report.skipped.push(url);
+  };
   const urls = [];
   const provenance = {};
   const seen = new Set();
@@ -84,11 +90,13 @@ export async function discoverSiteUrls({ origin, suppliedPaths = null, headers =
   };
 
   const get = async (url, maxBytes) => {
+    if (budget?.exhausted) { budgetOut(url); return null; }
     try {
-      const r = await fetchPublicBounded(url, { allowedOrigin: origin, maxRedirects: L.maxRedirects, maxBytes, timeoutMs: L.timeoutMs, headers });
+      const r = await fetchPublicBounded(url, { allowedOrigin: origin, maxRedirects: L.maxRedirects, maxBytes, timeoutMs: L.timeoutMs, headers, budget, ...(lookup ? { lookup } : {}) });
       if (r.redirects.length) report.redirected.push({ from: url, to: r.finalUrl });
       return r;
     } catch (e) {
+      if (e?.code === FETCH_FAILURE.BUDGET_EXHAUSTED) { budgetOut(url); return null; }
       const reason = e instanceof BoundedFetchError ? e.code
         : e instanceof PublicHostError ? DISCOVERY_FAILURE.NOT_PUBLIC : DISCOVERY_FAILURE.FETCH_FAILED;
       report.rejected.push({ url, reason, ...(e.location ? { location: e.location } : {}) });

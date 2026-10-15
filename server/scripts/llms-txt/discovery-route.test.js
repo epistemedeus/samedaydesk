@@ -6,6 +6,9 @@ import assert from "node:assert/strict";
 import dns from "node:dns/promises";
 import express from "express";
 import router from "../../routes/tools.js";
+import { installFetchTransport, disposed } from "./fetch-transport.js";
+
+installFetchTransport();
 
 const realFetch = globalThis.fetch;
 const O = "https://krabka.example";
@@ -21,9 +24,10 @@ function stubSite(routes, { addr = () => "93.184.216.34" } = {}) {
     calls.push(u);
     const r = routes(u);
     if (r === null || r === undefined) return new Response("not found", { status: 404 });
-    if (typeof r === "string") return new Response(r, { status: 200 });
-    if (r.location) return new Response(null, { status: r.status || 301, headers: { location: r.location } });
-    return new Response(r.body, { status: r.status || 200 });
+    const html = { "content-type": "text/html; charset=utf-8" };
+    if (typeof r === "string") return new Response(r, { status: 200, headers: html });
+    if (r.location) return new Response(r.body ?? null, { status: r.status || 301, headers: { location: r.location } });
+    return new Response(r.body, { status: r.status || 200, headers: r.headers || html });
   };
 }
 
@@ -181,4 +185,61 @@ test("cap stays 50 with sitemap discovery", async () => {
   const { json } = await generate(O);
   assert.equal(json.count, 50, "SIG:CAP_CHANGED");
   assert.equal(json.truncated, true);
+});
+
+test("FAIL homepage 404: an HTML error page with a title is not a reached homepage", async () => {
+  stubSite((u) => (u === O + "/" || u === O ? { status: 404, body: "<html><head><title>Page not found | Krabka</title></head></html>" } : null));
+  const { status, json } = await generate(O);
+  assert.equal(status, 502);
+  assert.equal(json.code, "homepage_not_ok", "SIG:HOMEPAGE_404_TREATED_AS_SUCCESS");
+  assert.equal(json.httpStatus, 404);
+  assert.equal(json.llmsTxt, undefined);
+});
+
+test("FAIL homepage non-HTML: a 200 JSON body is not a reached homepage", async () => {
+  stubSite((u) => (u === O + "/" || u === O ? { status: 200, body: "{\"title\":\"x\"}", headers: { "content-type": "application/json" } } : null));
+  const { status, json } = await generate(O);
+  assert.equal(status, 502);
+  assert.equal(json.code, "homepage_not_html", "SIG:HOMEPAGE_NON_HTML_ACCEPTED");
+});
+
+test("redirect bodies are disposed before Location is followed", async () => {
+  disposed.length = 0;
+  let cancelled = false;
+  const stream = () => new ReadableStream({ pull(c) { c.enqueue(new TextEncoder().encode("x".repeat(65536))); }, cancel() { cancelled = true; } });
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return home;
+    if (u === O + "/sitemap.xml") return { status: 301, location: "/sitemap-real.xml", body: stream() };
+    if (u === O + "/sitemap-real.xml") return urlset("/a");
+    return null;
+  });
+  const { status, json } = await generate(O);
+  assert.equal(status, 200);
+  assert.ok(disposed.includes(O + "/sitemap.xml"), "SIG:REDIRECT_BODY_NOT_DISPOSED");
+  assert.ok(cancelled, "SIG:REDIRECT_STREAM_NOT_CANCELLED");
+  assert.ok(json.discovery.redirected.some((r) => r.from === O + "/sitemap.xml" && r.to === O + "/sitemap-real.xml"));
+});
+
+test("automatic coverage label: discovered-but-omitted pages are listed, cap stays 50", async () => {
+  stubSite((u) => {
+    if (u === O + "/" || u === O) return home;
+    if (u === O + "/robots.txt") return `Sitemap: ${O}/sitemap-index.xml\n`;
+    if (u === O + "/sitemap-index.xml") return index("/sitemap-0.xml");
+    if (u === O + "/sitemap-0.xml") return urlset(...Array.from({ length: 95 }, (_, i) => `/p${i}`), "/docs/quickstart");
+    if (u.startsWith(O + "/")) return page("P");
+    return null;
+  });
+  const { json } = await generate(O);
+  assert.equal(json.count, 50, "SIG:CAP_CHANGED");
+  assert.equal(json.discovery.coverage.mode, "automatic");
+  assert.ok(json.discovery.coverage.omittedUrls.includes(O + "/docs/quickstart"), "SIG:OMITTED_QUICKSTART_NOT_LABELLED");
+  assert.ok(!json.llmsTxt.includes("/docs/quickstart"), "SIG:CAP_BYPASSED");
+  assert.match(json.discovery.coverage.label, /^automatic: 50 of \d+ discovered pages emitted \(cap 50\)/);
+});
+
+test("supplied coverage label qualifies the requester list only", async () => {
+  stubSite((u) => (u === O + "/" || u === O ? home : u.startsWith(O + "/") ? page("P") : null));
+  const { json } = await generate(O, "&paths=" + encodeURIComponent("/a,/b"));
+  assert.equal(json.discovery.coverage.mode, "requester-supplied");
+  assert.match(json.discovery.coverage.label, /not automatic full coverage/, "SIG:SUPPLIED_CLAIMS_FULL_COVERAGE");
 });

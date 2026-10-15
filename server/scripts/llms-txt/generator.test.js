@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
 import dns from "node:dns/promises";
 import express from "express";
 import router from "../../routes/tools.js";
+import { installFetchTransport } from "./fetch-transport.js";
+
+installFetchTransport();
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const fx = (p) => fs.readFileSync(path.join(here, "fixtures", p), "utf8");
@@ -20,7 +23,7 @@ function stubSite(routes) {
     if (u.startsWith("http://127.0.0.1")) return realFetch(url, opts);
     const body = routes(u);
     const ok = body !== null;
-    return new Response(ok ? body : "not found", { status: ok ? 200 : 404 });
+    return new Response(ok ? body : "not found", { status: ok ? 200 : 404, headers: { "content-type": "text/html; charset=utf-8" } });
   };
 }
 

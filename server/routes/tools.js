@@ -7,7 +7,12 @@ import net from "node:net";
 // Gemini) can crawl + understand the site, then returns a score + concrete fixes. The deep
 // version (real citation testing vs competitors) is the paid AI-Search Visibility Audit.
 // runCheck() is exported so the server-rendered /scan proof page can reuse it.
-import { fetchPublicBounded, assertPublicUrl } from "../lib/agent-readiness/ssrf.js";
+import { assertPublicUrl } from "../lib/agent-readiness/ssrf.js";
+import { fetchPublicBounded, createRequestBudget } from "../lib/agent-readiness/bounded-fetch.js";
+
+// One total budget per /llms-txt request: DNS (4s bound each) + redirects + bodies.
+export const LLMS_TOTAL_BUDGET_MS = 25_000;
+const isHtml = (ct) => !ct || /text\/html|application\/xhtml\+xml/i.test(ct);
 import { discoverSiteUrls } from "../lib/agent-readiness/sitemap-discovery.js";
 
 const router = Router();
@@ -293,18 +298,22 @@ export function orderLlmsUrls({ navLinks = [], urls = [], cap = 50 }) {
 // links), with page titles/descriptions. Genuinely useful dev-doc hygiene; honestly NOT a
 // citation-ranking lever (we say so on the tool page). Funnels to the paid audit.
 router.get("/llms-txt", async (req, res) => {
+  const budget = createRequestBudget(LLMS_TOTAL_BUDGET_MS);
   try {
     const u = normalizeUrl(req.query.url);
     await assertPublicUrl(u); // shared guard (server/lib/agent-readiness/ssrf.js)
     const headers = { "User-Agent": UA, Accept: "text/html,*/*" };
 
     let page;
-    try { page = await fetchPublicBounded(u.toString(), { allowHostVariants: true, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers }); }
+    try { page = await fetchPublicBounded(u.toString(), { allowHostVariants: true, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers, budget }); }
     catch (e) {
       if (e.code === "ssrf") throw e;
       const err = httpErr(e.code === "off_origin_redirect" ? 400 : 502, e.code === "off_origin_redirect" ? "That site redirects to a different host" : "Could not reach that site");
       err.code = e.code; throw err;
     }
+    // A reached homepage needs a 2xx HTML response; a 404 page's <title> is not success.
+    if (!page.ok) { const err = httpErr(502, `That site's homepage answered HTTP ${page.status}`); err.code = "homepage_not_ok"; err.httpStatus = page.status; throw err; }
+    if (!isHtml(page.contentType)) { const err = httpErr(502, "That site's homepage is not an HTML page"); err.code = "homepage_not_html"; throw err; }
     const origin = new URL(page.finalUrl).origin;
     const h = analyzeHtml(page.body);
 
@@ -320,13 +329,13 @@ router.get("/llms-txt", async (req, res) => {
     const rawPaths = req.query.paths;
     const suppliedPaths = rawPaths == null ? null
       : (Array.isArray(rawPaths) ? rawPaths : String(rawPaths).split(",")).map((x) => String(x).trim()).filter(Boolean);
-    const found = await discoverSiteUrls({ origin, suppliedPaths, headers: { "User-Agent": UA, Accept: "application/xml,text/plain,*/*" } });
+    const found = await discoverSiteUrls({ origin, suppliedPaths, budget, headers: { "User-Agent": UA, Accept: "application/xml,text/plain,*/*" } });
     let urls = found.urls;
     const discovery = {
       mode: found.mode,
       source: urls.length ? (found.mode === "supplied" ? "supplied" : "sitemap") : "homepage-links",
       sitemaps: found.sitemaps, missing: found.missing, redirected: found.redirected,
-      rejected: found.rejected, limited: found.limited,
+      rejected: found.rejected, limited: found.limited, skipped: found.skipped,
     };
 
     if (!urls.length && found.mode !== "supplied") {
@@ -348,7 +357,9 @@ router.get("/llms-txt", async (req, res) => {
     const TITLE_N = 14;
     const head = await Promise.all(ordered.items.slice(0, TITLE_N).map(async (it) => {
       try {
-        const r = await fetchPublicBounded(it.url, { allowedOrigin: origin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers });
+        if (budget.exhausted) throw new Error("budget");
+        const r = await fetchPublicBounded(it.url, { allowedOrigin: origin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers, budget });
+        if (!r.ok || !isHtml(r.contentType)) throw new Error("not a page");
         const a = analyzeHtml(r.body);
         return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
       } catch { return { ...it, title: it.label || pathLabel(it.url), desc: "" }; }
@@ -368,9 +379,21 @@ router.get("/llms-txt", async (req, res) => {
     if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
     if (ordered.truncated) out += `\n> This bounded output omits ${ordered.omitted} additional discovered pages.\n`;
 
+    // Honest coverage labels: automatic mode is bounded by the 50 cap; supplied mode
+    // qualifies only the requester's list, never automatic full coverage.
+    const emittedKeys = new Set(ordered.items.map((it) => it.url.replace(/\/+$/, "")));
+    const omittedUrls = urls.filter((x) => !emittedKeys.has(x.replace(/\/+$/, ""))).slice(0, 200);
+    discovery.coverage = found.mode === "supplied"
+      ? { mode: "requester-supplied", emitted: pages.length, supplied: suppliedPaths.length,
+          label: `requester-supplied: ${pages.length} of ${suppliedPaths.length} supplied paths emitted; qualifies the supplied list only, not automatic full coverage` }
+      : { mode: "automatic", emitted: pages.length, discovered: ordered.totalFound, cap: 50, omittedUrls,
+          label: `automatic: ${pages.length} of ${ordered.totalFound} discovered pages emitted (cap 50); ${ordered.omitted} omitted` };
+    if (budget.exhausted) discovery.coverage.partial = "budget_exhausted";
     res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length, discovery });
   } catch (e) {
-    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt", ...(e.code ? { code: e.code } : {}) });
+    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt", ...(e.code ? { code: e.code } : {}), ...(e.httpStatus ? { httpStatus: e.httpStatus } : {}) });
+  } finally {
+    budget.dispose();
   }
 });
 

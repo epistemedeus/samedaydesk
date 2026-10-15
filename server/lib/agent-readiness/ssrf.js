@@ -169,101 +169,15 @@ export async function resolvePublicAddresses(hostname, lookup = dns.lookup) {
   }));
 }
 
-// ---- Bounded public fetch (shared): every hop is re-validated ----
-// Redirects are followed manually so each Location is checked against the
-// public-host guard and the caller's origin policy before it is requested.
-export const FETCH_FAILURE = Object.freeze({
-  OFF_ORIGIN_REDIRECT: "off_origin_redirect",
-  TOO_MANY_REDIRECTS: "too_many_redirects",
-  BAD_REDIRECT: "bad_redirect",
-  NOT_HTTP: "not_http",
-});
 
-export class BoundedFetchError extends Error {
-  constructor(code, message, detail = {}) {
-    super(message);
-    this.name = "BoundedFetchError";
-    this.code = code;
-    this.status = 502;
-    Object.assign(this, detail);
-  }
-}
-
-/** Parse and guard a URL: http(s), no credentials, host resolves only to public addresses. */
+// ---- URL-level guard (shared): http(s), no credentials, public addresses only ----
+/** Returns { url, addresses } so callers can pin the connection to the admitted set. */
 export async function assertPublicUrl(raw, lookup = dns.lookup) {
   let u;
   try { u = raw instanceof URL ? new URL(raw.toString()) : new URL(String(raw)); }
   catch { throw new PublicHostError("That doesn't look like a valid URL"); }
-  if (u.protocol !== "http:" && u.protocol !== "https:") {
-    throw new BoundedFetchError(FETCH_FAILURE.NOT_HTTP, "Only http(s) URLs are supported", { url: u.toString() });
-  }
+  if (u.protocol !== "http:" && u.protocol !== "https:") throw new PublicHostError("Only http(s) URLs are supported");
   if (u.username || u.password) throw new PublicHostError("URLs with credentials are not allowed");
-  await resolvePublicAddresses(u.hostname, lookup);
-  return u;
-}
-
-const stripWww = (h) => String(h || "").toLowerCase().replace(/^www\./, "");
-
-/**
- * fetchPublicBounded(url, opts)
- *  - allowedOrigin: every hop must stay on this exact origin (string) or
- *  - allowHostVariants: true lets a hop change scheme or toggle "www." on the same host
- *  - maxRedirects, maxBytes, timeoutMs, headers
- * Returns { ok, status, finalUrl, body, redirects: [url...], oversize, headers }.
- */
-export async function fetchPublicBounded(url, opts = {}) {
-  const {
-    allowedOrigin = null,
-    allowHostVariants = false,
-    maxRedirects = 3,
-    maxBytes = 2_500_000,
-    timeoutMs = 10_000,
-    headers = {},
-    lookup = dns.lookup,
-  } = opts;
-  let current = await assertPublicUrl(url, lookup);
-  const startHost = stripWww(current.hostname);
-  const redirects = [];
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-  if (typeof timer.unref === "function") timer.unref();
-  try {
-    for (let hop = 0; ; hop += 1) {
-      const res = await fetch(current.toString(), { signal: ctrl.signal, redirect: "manual", headers });
-      if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
-        if (hop >= maxRedirects) {
-          throw new BoundedFetchError(FETCH_FAILURE.TOO_MANY_REDIRECTS, "Too many redirects", { url: current.toString(), redirects });
-        }
-        let next;
-        try { next = new URL(res.headers.get("location"), current); }
-        catch { throw new BoundedFetchError(FETCH_FAILURE.BAD_REDIRECT, "Invalid redirect", { url: current.toString() }); }
-        const sameOrigin = allowedOrigin ? next.origin === allowedOrigin : true;
-        const variantOk = allowHostVariants && stripWww(next.hostname) === startHost;
-        if (allowedOrigin ? !sameOrigin : (!variantOk && next.hostname !== current.hostname)) {
-          throw new BoundedFetchError(FETCH_FAILURE.OFF_ORIGIN_REDIRECT, "Redirect left the site origin", {
-            url: current.toString(), location: next.toString(), redirects,
-          });
-        }
-        next = await assertPublicUrl(next, lookup);
-        redirects.push(next.toString());
-        current = next;
-        continue;
-      }
-      let body = "";
-      let oversize = false;
-      if (res.body) {
-        const chunks = [];
-        let total = 0;
-        for await (const chunk of res.body) {
-          total += chunk.length;
-          if (total > maxBytes) { oversize = true; chunks.push(Buffer.from(chunk).subarray(0, maxBytes - (total - chunk.length))); break; }
-          chunks.push(Buffer.from(chunk));
-        }
-        body = Buffer.concat(chunks).toString("utf8");
-      }
-      return { ok: res.ok, status: res.status, finalUrl: current.toString(), body, redirects, oversize, headers: res.headers };
-    }
-  } finally {
-    clearTimeout(timer);
-  }
+  const addresses = await resolvePublicAddresses(u.hostname, lookup);
+  return { url: u, addresses };
 }
