@@ -9,7 +9,7 @@ on:
       - 'package-lock.json'
       - '.github/workflows/runtime-startup.yml'
   push:
-    branches: [main]
+    branches: [main, codex/ae25-243001-hosted-export]
     paths:
       - 'server/**'
       - 'vendor/**'
