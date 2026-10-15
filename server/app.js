@@ -25,6 +25,7 @@ import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { discoveryLogMiddleware, fileSink } from "./lib/discovery-log/log.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
@@ -128,6 +129,8 @@ app.use(express.json({ limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
+// 2a) AE21 J9-LOG: append-only, privacy-limited stage-1 discovery log for apex MCP/llms routes. Off unless DISCOVERY_LOG_DIR is set.
+if (process.env.DISCOVERY_LOG_DIR) app.use(discoveryLogMiddleware({ sink: fileSink(process.env.DISCOVERY_LOG_DIR) }));
 app.use(pulseMiddleware);
 
 // 3) API routes.
