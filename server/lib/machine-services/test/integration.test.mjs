@@ -610,3 +610,20 @@ test('received PG: both mounted app APIs keep monitoring credentials out of gate
   assert.equal((await gatewayPort.one('SELECT count(*) n FROM attempts')).n, 1);
   assert.deepEqual((await request(host.base, run.body.readbackPath)).body, run.body);
 });
+
+test('received PG: fresh adapted CLI callers execute useful work and resume the same persisted receipt after app restart', async t => {
+  const credentialFile = path.join(directory, 'cold-pg-cli.credential'), stateFile = path.join(directory, 'cold-pg-cli-state.json');
+  const inputFile = path.join(directory, 'cold-pg-cli-input.json');
+  await writeFile(credentialFile, token + '\n', { mode: 0o600 });
+  await writeFile(inputFile, JSON.stringify(sampleInput), { mode: 0o600 });
+  let host = await coldHost(t); const port = new URL(host.base).port;
+  const command = ['server/vendor/machine-gateway/bin/caller.mjs', '--base-url', host.base + '/api/machine-gateway',
+    '--token-file', credentialFile, '--state-file', stateFile, '--allow-loopback'];
+  const first = await exec(process.execPath, [...command, '--route', 'lockfile.delta', '--input-file', inputFile]);
+  const receipt = JSON.parse(first.stdout);
+  assert.equal(receipt.status, 'completed'); assert.equal(receipt.output.counts.changed, 1); assert.equal(receipt.payment.state, 'not_required');
+  await host.close(); host = await coldHost(t, { PORT: port });
+  assert.deepEqual(JSON.parse((await exec(process.execPath, [...command, '--resume'])).stdout), receipt);
+  assert.equal((await gatewayPort.one('SELECT count(*) n FROM attempts')).n, 1);
+  assert.equal((await gatewayPort.one('SELECT calls FROM usage WHERE tenant=?', 'tenant-0')).calls, 1);
+});
