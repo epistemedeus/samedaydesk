@@ -1,6 +1,8 @@
 import test, { before, after, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import https from 'node:https';
+import dns from 'node:dns/promises';
 import { once } from 'node:events';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -25,6 +27,8 @@ import { MonitorStore } from '../../../vendor/continuous-monitoring/src/store.mj
 import { createApi } from '../../../vendor/continuous-monitoring/src/api.mjs';
 import { tick } from '../../../vendor/continuous-monitoring/src/worker.mjs';
 import { normalize } from '../../../vendor/continuous-monitoring/src/observation.mjs';
+import { object, text } from '../../../vendor/machine-gateway/src/schemas.mjs';
+import { unsignedPaymentAdapter, requirements } from '../../../vendor/machine-gateway/tests/helpers.mjs';
 
 const exec = promisify(execFile);
 const directory = process.env.AE18_FIXTURE_DIR;
@@ -375,4 +379,97 @@ test('existing health, raw webhooks, contributor prefixes, MCP and SPA preserve 
     assert.equal(mcp.status, 200);
   }
   assert.equal((await request(current.base, '/api/monitor/healthz')).status, 200);
+});
+
+test('received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider', async t => {
+  let now = Date.now(), calls = 0;
+  const store = new PostgresGatewayStore(gatewayPort, { now: () => now });
+  const routes = builtinRoutes(); routes[0] = { ...routes[0], run: input => { calls++; return routes[0].test(); } };
+  const gateway = new MachineGateway({ store, registry: new RouteRegistry(routes), tenants });
+  const tenant = gateway.authenticate('Bearer ' + token);
+  const quote = await gateway.quote({ routeId: 'lockfile.delta', input: sampleInput }, tenant);
+  const admit = store.admit.bind(store);
+  store.admit = async input => { const result = await admit(input); now = result.receipt.deadlineAt; return result; };
+  const body = { quoteId: quote.quoteId, input: sampleInput, maxUnits: 0 };
+  const result = await gateway.execute(body, { tenant, idempotencyKey: 'received-pg-deadline' });
+  assert.equal(calls, 0); assert.equal(result.receipt.status, 'uncertain'); assert.equal(result.receipt.output, null);
+  assert.deepEqual((await gateway.execute(body, { tenant, idempotencyKey: 'received-pg-deadline' })).receipt, result.receipt);
+});
+
+test('received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline', async () => {
+  let now = Date.now(), providers = 0;
+  const store = new PostgresGatewayStore(gatewayPort, { now: () => now });
+  const adapter = unsignedPaymentAdapter();
+  const route = { id: 'fixture.paid', version: '1', provider: 'unsigned-local-only', description: 'local fence test',
+    price: { amount: 5, unit: 'usd-micros' }, timeoutMs: 1000, maxOutputBytes: 1024,
+    inputSchema: object({ value: text() }), outputSchema: object({ value: text() }), paymentRequirements: requirements,
+    run: input => { providers++; return input; }, test: () => ({ value: 'fixture' }) };
+  const grant = { ...tenants[0], routes: [route.id], maxUnits: 10 };
+  const gateway = new MachineGateway({ store, registry: new RouteRegistry([route]), tenants: [grant],
+    paymentAdapter: adapter, paymentsEnabled: true, environment: 'test' });
+  const tenant = gateway.authenticate('Bearer ' + token), input = { value: 'no dispatch' };
+  const quote = await gateway.quote({ routeId: route.id, input }, tenant);
+  const possible = store.possiblePayment.bind(store);
+  store.possiblePayment = async (...args) => { await possible(...args); now += 1001; };
+  const result = await gateway.execute({ quoteId: quote.quoteId, input, maxUnits: 5 }, {
+    tenant, idempotencyKey: 'received-pg-payment-deadline', paymentHeader: 'unsigned-local-fixture-fence' });
+  assert.equal(adapter.calls.verify, 1); assert.equal(adapter.calls.settle, 0); assert.equal(providers, 0);
+  assert.equal(result.receipt.status, 'uncertain'); assert.equal(result.receipt.payment.state, 'possible');
+  assert.equal((await gatewayPort.one('SELECT units FROM usage')).units, 5);
+});
+
+test('received PG: cancel after dispatch claim and before socket entry emits no request', async t => {
+  const f = await monitorFixture(t);
+  await tick(f.store, { afterStart: async () => { await f.store.lifecycle('customer', f.id, 'cancel', Date.now()); } });
+  assert.equal(f.source.requests, 0); assert.equal((await f.store.owned('customer', f.id)).initial_evidence, null);
+});
+
+test('received PG: revoke then regrant cannot revive a live old generation', async t => {
+  const f = await monitorFixture(t), claim = await f.store.claim(Date.now());
+  await f.store.revoke('customer'); await f.store.provision({ id: 'customer', token, readerToken: reader });
+  assert.equal(await f.store.start(claim, Date.now()), false);
+  assert.equal((await f.store.owned('customer', f.id)).status, 'expired'); assert.equal(f.source.requests, 0);
+});
+
+test('received PG: async fence awaited during DNS refuses a committed revocation before socket entry', async t => {
+  const f = await monitorFixture(t);
+  const owner = await f.store.authenticate(token, Date.now());
+  await f.store.lifecycle('customer', f.id, 'cancel', Date.now());
+  const created = await f.store.create(owner, { ...f.input, url: 'https://public.example.com/price' }, 'received-dns-create', Date.now());
+  t.mock.method(dns, 'lookup', async () => {
+    await f.store.revoke('customer'); await f.store.provision({ id: 'customer', token, readerToken: reader });
+    return [{ address: '8.8.8.8', family: 4 }];
+  });
+  let sockets = 0;
+  t.mock.method(https, 'request', () => { sockets++; throw new Error('fixture forbidden socket'); });
+  await tick(f.store);
+  assert.equal(sockets, 0); assert.equal((await f.store.owned('customer', created.monitor.id)).initial_evidence, null);
+});
+
+test('received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy', async t => {
+  const f = await monitorFixture(t), owner = await f.store.authenticate(token, Date.now());
+  await f.store.lifecycle('customer', f.id, 'cancel', Date.now());
+  const created = await f.store.create(owner, { ...f.input, mode: 'observatory', pointers: undefined, sourceId: 'moltjobs' }, 'received-projection', Date.now());
+  const metric = { key: 'completedCount', value: 2, state: 'ok' };
+  const projection = metrics => ({ schemaVersion: 'pilot.external-observatory.v1', sourceId: 'moltjobs',
+    availability: 'available', coverage: { comparable: true, status: 'complete' }, metrics });
+  const observations = [projection([metric]),
+    { status: 'source_failure', fetchFailure: { code: 'fixture_private_notification_text' } },
+    projection([{ ...metric, value: null }]), projection([metric, { ...metric, value: 3 }]),
+    { projectionId: 'agent-economy-observatory.source-projection', sources: [{ sourceId: 'moltjobs', availability: 'available',
+      freshness: { state: 'fresh' }, coverage: { state: 'covered', presentPopulations: [{ toString: null }, { toString: null }] }, metrics: [metric] }] }];
+  let baseline;
+  for (const [index, document] of observations.entries()) {
+    const claim = await f.store.claim(Date.now() + index * 20); assert.ok(claim);
+    await f.store.start(claim, Date.now() + index * 20);
+    const normalized = normalize(claim.config, { status: 200, headers: {}, body: Buffer.from(JSON.stringify(document)) }, Date.now());
+    await f.store.stage(claim, { normalized, failure: null, metrics: { bytes: 10, requests: 1, durationMs: 1, unknown: false } }, Date.now());
+    const result = await f.store.finish(claim.id, Date.now());
+    if (!index) { assert.equal(result.outcome, 'baseline_established'); baseline = (await f.store.owned('customer', created.monitor.id)).current_evidence; }
+    else {
+      assert.equal(result.observation.evidenceClass, 'source_failure');
+      assert.equal((await f.store.owned('customer', created.monitor.id)).current_evidence, baseline);
+      assert.equal(JSON.stringify(result).includes('fixture_private_notification_text'), false);
+    }
+  }
 });
