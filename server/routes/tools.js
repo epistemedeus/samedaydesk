@@ -237,6 +237,55 @@ router.get("/ai-readiness", async (req, res) => {
   }
 });
 
+// ---- llms.txt generator helpers (pure; exported for tests) ----
+const NAMED_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "–", mdash: "—", hellip: "…", rsquo: "’", lsquo: "‘", rdquo: "”", ldquo: "“", copy: "©", reg: "®", trade: "™" };
+export function decodeEntities(str) {
+  if (!str) return str;
+  return String(str).replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, (m, e) => {
+    if (e[0] === "#") {
+      const cp = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      return Number.isFinite(cp) && cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    }
+    const v = NAMED_ENTITIES[e.toLowerCase()];
+    return v === undefined ? m : v;
+  });
+}
+
+// Same-origin links inside <nav> elements, in document order, with their visible label.
+// The site root and in-page/asset links are skipped.
+export function extractNavLinks(html, origin) {
+  const out = [];
+  const seen = new Set();
+  for (const nav of String(html || "").match(/<nav\b[\s\S]*?<\/nav>/gi) || []) {
+    for (const m of nav.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+      const href = (m[1].match(/href\s*=\s*["']([^"']+)["']/i) || [])[1];
+      if (!href || href.startsWith("#") || /^(mailto|tel|javascript):/i.test(href)) continue;
+      let abs;
+      try { abs = new URL(href, origin); } catch { continue; }
+      if (abs.origin !== origin) continue;
+      const url = abs.toString().replace(/[#?].*$/, "");
+      const key = url.replace(/\/+$/, "");
+      if (key === origin || seen.has(key)) continue;
+      if (/\.(png|jpe?g|gif|svg|webp|ico|css|js|pdf|zip)$/i.test(abs.pathname)) continue;
+      const label = decodeEntities(m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+      seen.add(key);
+      out.push({ url, label: label || null });
+    }
+  }
+  return out;
+}
+
+// Navigation first (site order), then remaining sitemap/link URLs; trailing-slash-insensitive
+// dedupe; explicit truncation accounting instead of a silent cap.
+export function orderLlmsUrls({ navLinks = [], urls = [], cap = 50 }) {
+  const seen = new Set();
+  const all = [];
+  for (const n of navLinks) { const k = n.url.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: n.url, label: n.label, nav: true }); } }
+  for (const x of urls) { const k = x.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: x, label: null, nav: false }); } }
+  const kept = all.slice(0, cap);
+  return { items: kept, totalFound: all.length, truncated: all.length > kept.length, omitted: all.length - kept.length };
+}
+
 // Free llms.txt generator: build a spec-shaped llms.txt from a site's sitemap (or homepage
 // links), with page titles/descriptions. Genuinely useful dev-doc hygiene; honestly NOT a
 // citation-ranking lever (we say so on the tool page). Funnels to the paid audit.
@@ -284,38 +333,35 @@ router.get("/llms-txt", async (req, res) => {
       urls = [...set];
     }
 
-    // dedupe (trailing slash insensitive) + cap
-    const seen = new Set();
-    const deduped = [];
-    for (const x of urls) {
-      const key = x.replace(/\/+$/, "");
-      if (!seen.has(key)) { seen.add(key); deduped.push(x); }
-    }
-    urls = deduped.slice(0, 50);
+    // navigation sections first, then the rest; explicit truncation (no silent cap)
+    const navLinks = extractNavLinks(page.body, origin);
+    const ordered = orderLlmsUrls({ navLinks, urls, cap: 50 });
 
     // fetch title/description for the first N pages in parallel; label the rest from the path
     const TITLE_N = 14;
-    const head = await Promise.all(urls.slice(0, TITLE_N).map(async (link) => {
+    const head = await Promise.all(ordered.items.slice(0, TITLE_N).map(async (it) => {
       try {
-        const r = await fetchText(link, { acceptHtml: true });
+        const r = await fetchText(it.url, { acceptHtml: true });
         const a = analyzeHtml(r.body);
-        return { url: link, title: a.title || pathLabel(link), desc: a.description || "" };
-      } catch { return { url: link, title: pathLabel(link), desc: "" }; }
+        return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
+      } catch { return { ...it, title: it.label || pathLabel(it.url), desc: "" }; }
     }));
-    const tail = urls.slice(TITLE_N).map((link) => ({ url: link, title: pathLabel(link), desc: "" }));
+    const tail = ordered.items.slice(TITLE_N).map((it) => ({ ...it, title: it.label || pathLabel(it.url), desc: "" }));
     const pages = [...head, ...tail];
 
     const hostname = new URL(origin).hostname;
-    const siteName = (h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim().slice(0, 60) || hostname;
+    const siteName = decodeEntities((h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim()).slice(0, 60) || hostname;
+    const clean = (x, n) => decodeEntities(String(x)).replace(/\s+/g, " ").trim().slice(0, n);
+    const line = (p) => `- [${clean(p.title || p.url, 80)}](${p.url})${p.desc ? ": " + clean(p.desc, 130) : ""}\n`;
     let out = `# ${siteName}\n\n`;
-    if (h.description) out += `> ${h.description.replace(/\s+/g, " ").trim()}\n\n`;
-    out += `## Pages\n\n`;
-    for (const p of pages) {
-      const t = (p.title || p.url).replace(/\s+/g, " ").trim().slice(0, 80);
-      out += `- [${t}](${p.url})${p.desc ? ": " + p.desc.replace(/\s+/g, " ").trim().slice(0, 130) : ""}\n`;
-    }
+    if (h.description) out += `> ${clean(h.description, 500)}\n\n`;
+    const navPages = pages.filter((p) => p.nav);
+    const restPages = pages.filter((p) => !p.nav);
+    if (navPages.length) { out += `## Sections\n\n`; for (const p of navPages) out += line(p); out += `\n`; }
+    if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
+    if (ordered.truncated) out += `\n## Optional\n\n- [Full sitemap](${origin}/sitemap.xml): ${ordered.omitted} more pages not listed here\n`;
 
-    res.json({ origin, siteName, count: pages.length, llmsTxt: out });
+    res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length });
   } catch (e) {
     res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt" });
   }
