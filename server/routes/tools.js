@@ -359,7 +359,7 @@ router.get("/llms-txt", async (req, res) => {
     const restPages = pages.filter((p) => !p.nav);
     if (navPages.length) { out += `## Sections\n\n`; for (const p of navPages) out += line(p); out += `\n`; }
     if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
-    if (ordered.truncated) out += `\n## Optional\n\n- [Full sitemap](${origin}/sitemap.xml): ${ordered.omitted} more pages not listed here\n`;
+    if (ordered.truncated) out += `\n> This bounded output omits ${ordered.omitted} additional discovered pages.\n`;
 
     res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length });
   } catch (e) {

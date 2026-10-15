@@ -88,7 +88,7 @@ test("truncation is reported explicitly instead of a silent cap at 50", async ()
   assert.equal(json.totalFound, 60);
   assert.equal(json.truncated, true);
   assert.equal(json.omitted, 10);
-  assert.match(json.llmsTxt, /## Optional[\s\S]*sitemap\.xml\): 10 more pages not listed here/);
+  assert.match(json.llmsTxt, /> This bounded output omits 10 additional discovered pages\./);
 });
 
 test("no nav and under the cap: output keeps the original single Pages section, not truncated", async () => {
@@ -120,5 +120,5 @@ test("homepage fallback reports omitted pages without inventing a sitemap link",
   assert.equal(json.omitted, 10);
   assert.equal(json.truncated, true);
   assert.doesNotMatch(json.llmsTxt, /\[Full sitemap\]/);
-  assert.match(json.llmsTxt, /10 (?:more|additional discovered) pages (?:not listed here|are not listed)/);
+  assert.match(json.llmsTxt, /> This bounded output omits 10 additional discovered pages\./);
 });
