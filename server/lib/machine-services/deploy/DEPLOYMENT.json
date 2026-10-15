@@ -1,29 +1,68 @@
 {
   "schema": "sds.machine-services.deployment-package.v1",
-  "sourceHead": "d1b63983f0320d6b6213501cab72cc487c8464b2",
+  "sourceHead": "cc85b7b59a46605090049be06431eebb7c873c24",
   "branch": "codex/ae18-host-integration-243001",
+  "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
   "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
+  "serviceRepairPin": "667fba353e9082d8a0842437442dabc42843abf8",
   "adapter": "postgres",
   "schemas": [
     "pilot_gateway",
     "pilot_monitor"
   ],
+  "schemaVersions": {
+    "gateway": 1,
+    "monitor": 1
+  },
   "startCommand": "node server/index.js",
   "overlayPackage": {
-    "path": "/tmp/sds-ae18-d1b63983-source.tgz",
-    "sha256": "788aee9e88c025e86a012c7c68743e53f609789e0e24207850118bd266413ee8",
-    "bytes": 316193,
-    "requiresExistingSdsCheckout": true
+    "path": "/tmp/sds-ae18-repaired-cc85b7b5-source.tgz",
+    "sha256": "9a36fd1f0397a06a24f4d73769776fc748a0ed858129a08d7d113213aaa20059",
+    "bytes": 397576,
+    "requiresExistingSdsCheckout": true,
+    "reportingFilesExcluded": [
+      "server/lib/machine-services/RESULT.md",
+      "server/lib/machine-services/deploy/DEPLOYMENT.json",
+      "server/lib/machine-services/test/evidence/"
+    ],
+    "report": "final feature branch server/lib/machine-services/RESULT.md"
   },
-  "sourcePatch": {
-    "path": "/tmp/sds-ae18-d1b63983.patch",
-    "sha256": "d84532f211ed29f2ca2e7799138a755b9b4b1a30b6e33f82ce970bdd3cc2759a"
+  "amendmentSourcePatch": {
+    "base": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
+    "path": "/tmp/sds-ae18-repaired-cc85b7b5-amendment.patch",
+    "sha256": "4071e6cb9b591fb6b99016d18662174bc93beb68b74ea9da64b31aeb95b9fb1c"
   },
+  "sourceScope": [
+    "package.json",
+    "package-lock.json",
+    "server/app.js",
+    "server/index.js",
+    "server/lib/machine-services",
+    "server/vendor/machine-gateway",
+    "server/vendor/continuous-monitoring"
+  ],
   "files": {
     "deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
     "deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",
     "deploy/env.keys": "d7c95af50cc41e991315ae41875d903e31c018c2395e47139b1ced01ddefd530",
     "deploy/rollback.json": "70209fc508279819560d7e067ff903310f07227c537b943c1efde056592f91fb"
   },
+  "gatewayArchives": [
+    {
+      "version": "0.1.0",
+      "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+      "unchanged": true
+    },
+    {
+      "version": "0.1.1",
+      "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+      "bytes": 49637,
+      "selectedReceivedArtifact": true
+    }
+  ],
+  "previousOverlaySha256": "788aee9e88c025e86a012c7c68743e53f609789e0e24207850118bd266413ee8",
+  "configurationContractChangedByAmendment": false,
+  "migrationSchemaChangedByAmendment": false,
+  "installationAuthority": "inspect retained role capability; no username-based privilege assumption or credentials in this package",
   "deployed": false
 }
