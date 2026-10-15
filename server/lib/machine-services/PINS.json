@@ -1,0 +1,131 @@
+{
+  "schema": "sds.machine-services.pins.v1",
+  "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
+  "inputsCommit": "ae1d2d22322a95bce0195d28cfb4811dc448b23d",
+  "sources": [
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "667fba353e9082d8a0842437442dabc42843abf8",
+      "path": "services/machine-gateway",
+      "tree": "83ae081b5fc9ce0f39b6e951a217cd6eede9b7e7"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "667fba353e9082d8a0842437442dabc42843abf8",
+      "path": "services/continuous-monitoring",
+      "tree": "46e4be5460168417d702de864dbd3ac71bf07b29"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+      "path": "packages/change-monitor",
+      "tree": "37048fa8f369ef1a6c0a8104a8eab8c2b7820535"
+    }
+  ],
+  "localChanges": [
+    "vendored monitor foundation relative imports",
+    "async Postgres store ports derived from pinned SQLite transitions",
+    "gateway async HTTP/store calls and truthful Postgres health schema",
+    "monitor extracted HTTP handler, async worker and finite IO cancellation",
+    "monitor foreign cursor and SQLite foreign-database refusal",
+    "upstream deployment recipes labeled as historical; use integrated SDS install package",
+    "gateway release contract regenerated and repository-relative manifest relocated for vendor tests",
+    "received deadline/diagnostic/privacy/normalization/linked-store fixes at the exact repair commit",
+    "gateway persisted deadline checks retain all async PG awaits; output UPDATE has a DB wall-clock fence",
+    "monitor authorize explicitly awaits PG authority and shares the monotonic source deadline",
+    "Postgres revoke atomically expires monitors and advances generation; lock/query waits consume run leases",
+    "migration inspects connected-role CREATE capability without inferring privilege from a role name",
+    "immutable received 0.1.0 and 0.1.1 archives stay byte-for-byte; selected received 0.1.2 archive (U1 09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3, sha256 0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6) is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations",
+    "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
+    "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown",
+    "AE21 U2: gateway url.extract.* from the U1 complete patch (pilot blob 5d55b293cf6b971dd2bfabae26cc590aed87085d) applied over neo 667fba35 + SDS async adaptations; local: owner-scoped unbind and url_extract_store_closed->503",
+    "AE21 U1 archive 0.1.2 contains package/src/url-extract-routes.mjs; the vendored file is that member plus the two landed U2 hunks. K2 is closed. Async gateway.mjs, http.mjs, schemas and OpenAPI were not replaced by the sqlite pack",
+    "AE21 U2: url.extract store on the enrolled async Postgres (ae19_paid_continuation), provisioned by install migrate only, lifecycle bound to the gateway store"
+  ],
+  "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
+  "previousTestedImplementation": "d1b63983f0320d6b6213501cab72cc487c8464b2",
+  "repairSource": "667fba353e9082d8a0842437442dabc42843abf8",
+  "repairTestedImplementation": "4248874f2fa63636659fad164fb29ed193018104",
+  "lifecycleReceiving": {
+    "receivedExport": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "receivedTestedImplementation": "cc85b7b59a46605090049be06431eebb7c873c24",
+    "failingControlsCommit": "a7c5490b08e589b7c610abf116be70166b6daf82",
+    "schemaOrEnvironmentContractChanged": false,
+    "newServiceOrDependencies": false
+  },
+  "originalServiceSources": [
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+      "path": "services/machine-gateway",
+      "tree": "ed7af49b808b3f38c6b2af00e302fa3801c766e1"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+      "path": "services/continuous-monitoring",
+      "tree": "aaf5cc82b2f9f4031c309f3858955e56868a23f0"
+    }
+  ],
+  "gatewayArchives": [
+    {
+      "version": "0.1.0",
+      "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+      "unchanged": true
+    },
+    {
+      "version": "0.1.1",
+      "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+      "bytes": 49637,
+      "unchanged": true
+    },
+    {
+      "version": "0.1.2",
+      "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+      "bytes": 53193,
+      "selectedReceivedArtifact": true,
+      "repository": "epistemedeus/neomorphic-io",
+      "branch": "codex/ae21-u1-gateway-url-extract",
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3"
+    }
+  ],
+  "sourceQualification": {
+    "predecessorExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "failedActionsRun": 38707454771,
+    "failingControlsCommit": "c57c92cf05ab022e1f22cdfba3a6b0506a8a4836",
+    "artifactProducer": "872c4f3006db6c70b45d124480cd019e0af50e69",
+    "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
+    "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
+    "callerMembers": 1171,
+    "priorCallerDescriptorsAccepted": 25,
+    "priorCallerClosureDigest": "sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3",
+    "compiledContributorMembersUnchanged": 437,
+    "opportunitySourceMembersReproduced": 187,
+    "opportunityCompiledMembersReproduced": 106,
+    "productionAdapter": "postgres",
+    "schemaEnvironmentKeysOrServiceKernelsChanged": false,
+    "actualTransportQualificationIssued": false,
+    "companionControllerExport": "931b7166842cbb0aa6db2041150041f9798dc49a",
+    "companionTestedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149"
+  },
+  "urlExtract": {
+    "repository": "epistemedeus/x402-url-extractor",
+    "commit": "6dd7a040f80f3e3ce1d914383172721751de59a2",
+    "vendorDir": "server/vendor/url-extract",
+    "files": 10,
+    "verify": "bash server/vendor/url-extract/vendor-url-extract.sh --verify",
+    "gatewayPatch": "epistemedeus/pilot tools/ae21-whole-journey-integration/patches/U1-gateway-url-extract-tenant.patch blob 5d55b293cf6b971dd2bfabae26cc590aed87085d",
+    "x1": "79b5e55f",
+    "u1": {
+      "repository": "epistemedeus/neomorphic-io",
+      "branch": "codex/ae21-u1-gateway-url-extract",
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
+      "archive": "neomorphic-machine-gateway-0.1.2.tgz",
+      "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+      "k2": "closed",
+      "vendoredRoutes": "archive member package/src/url-extract-routes.mjs plus the two landed U2 hunks (owner-scoped unbind, url_extract_store_closed mapped to 503)"
+    }
+  }
+}

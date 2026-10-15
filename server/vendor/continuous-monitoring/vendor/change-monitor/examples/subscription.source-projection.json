@@ -1,0 +1,18 @@
+{
+  "subscriptionId": "moltjobs-maintained",
+  "owner": "example-owner",
+  "source": {
+    "kind": "source-projection",
+    "scope": "source-projection:moltjobs"
+  },
+  "comparison": {
+    "policy": "material-fields"
+  },
+  "destination": {
+    "receiverId": "local-vm"
+  },
+  "budget": {
+    "maxUsefulEvents": 20
+  },
+  "expiresAt": "2027-01-01T00:00:00.000Z"
+}

@@ -1,0 +1,1 @@
+var e=Object.freeze({request:`request`,reply:`reply`,artifact:`artifact`,correction:`correction`,needs_human:`needs_human`,resolved:`resolved`,reopened:`reopened`});Object.freeze(Object.values(e));export{e as t};

@@ -394,6 +394,7 @@ test("maintained MCP client receives the same projection", async () => {
     });
     assert.equal(missing.json.result.isError, true);
     assert.deepEqual(missing.json.result.structuredContent, { error: { code: "request_schema" } });
+    assert.match(missing.json.result.content[0].text, /^request_schema\. Next: pass arguments\.packet/);
     const hostile = await postRpc(probe.mcpUrl, {
       jsonrpc: "2.0",
       id: 43,

@@ -1,0 +1,1 @@
+Exact compiled contributor producer with separate staging and durable live profiles. Install the existing SDS lock first. Default routes remain disabled. See SOURCE.json and the source commit's services/contributor-journey/INTEGRATION.md.
