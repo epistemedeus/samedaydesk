@@ -194,6 +194,53 @@ test("cold production caller receives exact contributor bytes and both Postgres 
   assert.equal(received.gateway, "function"); assert.equal(received.monitor, "function");
 });
 
+test("altered host lock or required dependency is refused", async () => {
+  const artifact = "vendor/neomorphic-contributor-journey";
+  const check = `
+    import {verifyContributorRuntime} from './server/lib/contributor-artifact.js';
+    const manifest = await verifyContributorRuntime(${JSON.stringify(artifact)});
+    if (manifest.sourceCommit !== '872c4f3006db6c70b45d124480cd019e0af50e69') throw new Error('product');
+    const required = manifest.requiredDependencies;
+    if (required.express !== '5.2.1' || required.pg !== '8.23.0' || required.zod !== '3.25.76') throw new Error('deps');
+  `;
+  const accepted = await run(process.execPath, ["--input-type=module", "-e", check], coldDir);
+  assert.equal(accepted.code, 0, accepted.stderr || accepted.stdout);
+
+  async function refuse(message) {
+    const refused = await run(process.execPath, ["--input-type=module", "-e", `
+      import {verifyContributorRuntime} from './server/lib/contributor-artifact.js';
+      try { await verifyContributorRuntime(${JSON.stringify(artifact)}); process.exitCode = 1; }
+      catch (error) { if (error.message !== ${JSON.stringify(message)}) throw error; }
+    `], coldDir);
+    assert.equal(refused.code, 0, refused.stderr || refused.stdout);
+  }
+
+  const lockPath = path.join(coldDir, "package-lock.json");
+  const lock = await readFile(lockPath);
+  try {
+    const altered = JSON.parse(lock);
+    altered.packages["node_modules/express"].version = "0.0.0";
+    await writeFile(lockPath, JSON.stringify(altered));
+    await refuse("host lock differs");
+  } finally {
+    await writeFile(lockPath, lock);
+  }
+
+  const expressPath = path.join(coldDir, "node_modules/express/package.json");
+  const expressPackage = await readFile(expressPath);
+  try {
+    const altered = JSON.parse(expressPackage);
+    altered.version = "5.2.0";
+    await writeFile(expressPath, JSON.stringify(altered));
+    await refuse("host dependency differs");
+  } finally {
+    await writeFile(expressPath, expressPackage);
+  }
+
+  const restored = await run(process.execPath, ["--input-type=module", "-e", check], coldDir);
+  assert.equal(restored.code, 0, restored.stderr || restored.stdout);
+});
+
 test("predecessor caller manifest cannot authorize the composed source", async () => {
   const target = path.join(coldDir, "server/foundry/activation/private-control-pin.json");
   const current = await readFile(target);

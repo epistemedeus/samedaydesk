@@ -25,6 +25,9 @@ const STATUS = new Map([
   ["discovery_export_method", 405],
   ["discovery_retain_not_received", 400],
   ["discovery_retain_days_required", 400],
+  ["discovery_retain_receipt_required", 400],
+  ["discovery_retain_partial", 400],
+  ["discovery_retain_asof_refused", 400],
   ["discovery_prepare_mode_refused", 409],
   ["discovery_prepare_parent_missing", 409],
 ]);
@@ -90,6 +93,8 @@ export function mountDiscoveryLogExport(app, options = {}) {
         lines: page.lines,
         nextCursor: page.nextCursor,
         complete: page.complete,
+        offset: page.offset,
+        ...(page.complete ? { watermark: page.watermark, bytes: page.bytes } : {}),
       });
     } catch (error) {
       fail(res, error);
@@ -104,13 +109,14 @@ export function mountDiscoveryLogExport(app, options = {}) {
       const body = req.body;
       if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("discovery_retain_not_received");
       for (const key of Object.keys(body)) {
-        if (key !== "retainDays" && key !== "asOf" && key !== "received") throw new Error("discovery_export_dir_refused");
+        if (key !== "retainDays" && key !== "asOf" && key !== "received" && key !== "receipts") throw new Error("discovery_export_dir_refused");
       }
       if (body.received !== true) throw new Error("discovery_retain_not_received");
       if (body.retainDays !== RETAIN_DAYS) throw new Error("discovery_retain_days_required");
-      const asOf = body.asOf === undefined ? new Date().toISOString().slice(0, 10) : body.asOf;
-      if (!validDate(asOf)) throw new Error("discovery_retain_days_required");
-      const receipt = retainDiscoveryLogs({ dir, retainDays: RETAIN_DAYS, asOf, preauthorized: true });
+      if (body.asOf !== undefined && !validDate(body.asOf)) throw new Error("discovery_retain_days_required");
+      const receipt = retainDiscoveryLogs({
+        dir, retainDays: RETAIN_DAYS, asOf: body.asOf, receipts: body.receipts, preauthorized: true,
+      });
       send(res, 200, receipt);
     } catch (error) {
       fail(res, error);

@@ -47,12 +47,27 @@ ports and their transitive runtime, migrations, immutable gateway archives,
 continuation helper, existing contributor edge and unchanged received artifacts.
 The closure that accepted the previous 23 descriptors was
 `sha256:e68e962358940132de5701f48b94842db2ea465782ef9f450521aa471d468495`.
-That descriptor is now one of 24 accepted priors. The verifier is unchanged.
-The current closure, after the hosted discovery-log export route in the
-existing process, is
-`sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3`.
-Member count remains 1,171. Base remains
+That descriptor remains an accepted prior. The hosted discovery-log export
+closure
+`sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3`
+is now one of 25 accepted priors. The verifier is unchanged. Member count
+remains 1,171. Base remains
 `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`.
+
+The composed root lock moved after the artifact receiving recorded in
+`test/evidence/qualification/producer-receiving.json`. That receipt keeps host
+lock `9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129`. The
+committed `package-lock.json` is now
+`4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7`, and the
+caller pin already bound that file. The same producer,
+`services/contributor-journey/export-runtime.mjs` at
+`872c4f3006db6c70b45d124480cd019e0af50e69`, was run against an isolated
+checkout of this lock and the qualified build. Its manifest differed only in
+`hostLockSha256`. All 437 compiled and static members matched. Product source,
+the source stamp, and required dependencies Express 5.2.1, pg 8.23.0, and zod
+3.25.76 are unchanged. The strict runtime check still refuses a different lock
+or dependency. The current closure, after that host binding, is
+`sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161`.
 Replaying the predecessor manifest against these bytes still refuses. Cold
 production installation verifies the caller and contributor artifact, imports
 both Postgres ports, and refuses changed machine, PG, continuation, artifact and

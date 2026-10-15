@@ -1,5 +1,6 @@
 // Shared bounds for the one-shot discovery-log reader and retention command.
 // app.js remains the only writer. These modules never append a discovery line.
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { DECLARED, ROUTES } from "./log.js";
@@ -11,9 +12,9 @@ export const FILE_RE = /^discovery-([0-9]{4}-[0-9]{2}-[0-9]{2})\.ndjson$/;
 export const MAX_BYTES = 1048576;
 export const MAX_LINES = 10000;
 export const MAX_LINE = 2048;
-// One response stays within MAX_BYTES and MAX_LINES. A valid day may continue
-// up to this file ceiling. Past it, the export refuses rather than reading on.
-export const MAX_FILE_BYTES = MAX_BYTES * 8;
+// A page bounds one read, one response, and one line. A valid day has no total ceiling.
+// Cursor offsets stay inside the safe integer range and never grant a larger read.
+export const MAX_OFFSET = 999999999999999;
 export const FIELDS = Object.freeze([
   "schema", "stage", "ts", "requestId", "surface", "route", "mcpMethod",
   "requesterId", "callerClass", "qaClaimUnverified", "declaredSource", "declaredSourceDropped",
@@ -59,18 +60,18 @@ export function shiftDate(value, days) {
   return stamp.toISOString().slice(0, 10);
 }
 
-const CURSOR_TEXT = /^v1:([0-9]{4}-[0-9]{2}-[0-9]{2}):([0-9]{1,10})$/;
+const CURSOR_TEXT = /^v2:([0-9]{4}-[0-9]{2}-[0-9]{2}):([0-9]{1,15}):([0-9a-f]{64})$/;
 
-/** Opaque page cursor. It names a date and a byte offset, never a directory. */
-export function encodeCursor(date, offset) {
-  if (!validDate(date) || !Number.isInteger(offset) || offset < 0 || offset > MAX_FILE_BYTES) {
+/** Opaque page cursor. It names a date, a byte offset, and the prefix watermark. Never a directory. */
+export function encodeCursor(date, offset, watermark) {
+  if (!validDate(date) || !Number.isInteger(offset) || offset < 0 || offset > MAX_OFFSET || !/^[0-9a-f]{64}$/.test(watermark || "")) {
     throw new Error("discovery_export_cursor_refused");
   }
-  return Buffer.from(`v1:${date}:${offset}`).toString("base64url");
+  return Buffer.from(`v2:${date}:${offset}:${watermark}`).toString("base64url");
 }
 
 export function decodeCursor(cursor, date) {
-  if (typeof cursor !== "string" || cursor.length < 4 || cursor.length > 80 || !/^[A-Za-z0-9_-]+$/.test(cursor)) {
+  if (typeof cursor !== "string" || cursor.length < 16 || cursor.length > 256 || !/^[A-Za-z0-9_-]+$/.test(cursor)) {
     throw new Error("discovery_export_cursor_refused");
   }
   const text = Buffer.from(cursor, "base64url").toString("utf8");
@@ -78,10 +79,31 @@ export function decodeCursor(cursor, date) {
   const match = CURSOR_TEXT.exec(text);
   if (!match || match[1] !== date) throw new Error("discovery_export_cursor_refused");
   const offset = Number(match[2]);
-  if (!Number.isInteger(offset) || match[2] !== String(offset) || offset < 0 || offset > MAX_FILE_BYTES) {
+  if (!Number.isSafeInteger(offset) || match[2] !== String(offset) || offset < 0 || offset > MAX_OFFSET) {
     throw new Error("discovery_export_cursor_refused");
   }
-  return offset;
+  return { offset, watermark: match[3] };
+}
+
+/** Hash an exact byte range in bounded reads. A short read is a changed file. */
+export function hashFileRange(file, size) {
+  if (!Number.isSafeInteger(size) || size < 0 || size > MAX_OFFSET) throw new Error("discovery_export_cursor_refused");
+  const hash = createHash("sha256");
+  const fd = fs.openSync(file, "r");
+  try {
+    const buf = Buffer.alloc(Math.min(MAX_BYTES, Math.max(size, 1)));
+    let offset = 0;
+    while (offset < size) {
+      const length = Math.min(buf.length, size - offset);
+      const got = fs.readSync(fd, buf, 0, length, offset);
+      if (got !== length) throw new Error("discovery_export_cursor_refused");
+      hash.update(buf.subarray(0, got));
+      offset += got;
+    }
+  } finally {
+    fs.closeSync(fd);
+  }
+  return { bytes: size, watermark: hash.digest("hex") };
 }
 
 /**

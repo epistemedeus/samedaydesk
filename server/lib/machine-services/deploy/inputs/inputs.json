@@ -1,153 +1,151 @@
 {
- "schema": "pilot.ae14.sds-deploy-inputs.v1",
- "forJob": "243001 SDS runtime integration",
- "host": {
-  "name": "existing SameDayDesk Hostinger Node 22 app",
-  "repo": "epistemedeus/samedaydesk",
-  "base": "d8cea059213e06d2f263be67f82e498f8052a50f",
-  "start": "node server/index.js",
-  "portEnv": "PORT injected by Hostinger (do not set)",
-  "liveEvidence": [
-   "GET https://samedaydesk.com/api/health 200",
-   "GET https://samedaydesk.com/api/correspondence/healthz 200 {enabled:true, store:postgres}"
-  ]
- },
- "gateway": {
-  "source": "neo@7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
-  "mountPrefix": "/api/machine-gateway",
-  "tarball": {
-   "path": "services/machine-gateway/releases/neomorphic-machine-gateway-0.1.0.tgz",
-   "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
-   "vendorDir": "server/vendor/neomorphic-machine-gateway",
-   "install": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --prefix server/vendor/neomorphic-machine-gateway"
+  "schema": "sds.machine-services.deploy-inputs.v2",
+  "active": true,
+  "forJob": "243001 SDS runtime integration",
+  "historicalSnapshot": "inputs.historical.json",
+  "host": {
+    "name": "existing SameDayDesk Hostinger Node 22 app",
+    "repo": "epistemedeus/samedaydesk",
+    "base": "b069bad3abd40b53e826003d924c7f0ac786f856",
+    "historicalPatchBase": "d8cea059213e06d2f263be67f82e498f8052a50f",
+    "start": "node server/index.js",
+    "portEnv": "PORT injected by Hostinger (do not set)",
+    "deployed": false
   },
-  "patch": {
-   "path": "services/machine-gateway/deploy/samedaydesk.patch",
-   "blob": "044d7656d49863e8d6e4228380b09ea3db1eac72",
-   "base": "d8cea059213e06d2f263be67f82e498f8052a50f",
-   "touches": [
-    "server/app.js (mountMachineGateway before the global JSON parser)",
-    "server/index.js (close the store in the listener lifecycle)"
-   ]
+  "environment": {
+    "authoritativePacket": "env.keys",
+    "retainedBaselineCount": 59,
+    "preservesExistingValues": true,
+    "productionStores": "postgres",
+    "paymentsEnabled": "0",
+    "sqliteProduction": false
   },
-  "env": [
-   "NODE_ENV",
-   "MACHINE_GATEWAY_ENABLED",
-   "MACHINE_GATEWAY_PAYMENTS_ENABLED (must be false)",
-   "MACHINE_GATEWAY_STATE_FILE",
-   "MACHINE_GATEWAY_TENANTS_FILE"
-  ],
-  "storage": {
-   "kind": "SQLite WAL file",
-   "shape": "$GATEWAY_STATE_DIR/{state.sqlite (via MACHINE_GATEWAY_STATE_FILE), tenants.json (via MACHINE_GATEWAY_TENANTS_FILE), <tenant>.credential (0600)}",
-   "location": "an existing durable local dir outside the build tree; persistence across redeploys UNVERIFIED (decision D2)",
-   "postgres": "none"
+  "closure": {
+    "preserved": true,
+    "record": "server/foundry/activation/private-control-pin.json",
+    "replacesPriors": false
   },
-  "health": [
-   "/api/machine-gateway/healthz",
-   "node server/vendor/neomorphic-machine-gateway/bin/readiness.mjs"
-  ],
-  "enroll": "node server/vendor/neomorphic-machine-gateway/bin/enroll.mjs --tenant <id> --config <tenants.json> --token-file <private path>",
-  "smoke": {
-   "input": "a free public https URL via the http.capture route (and lockfile.delta with a real lockfile pair)",
-   "steps": [
-    "bin/caller.mjs discover",
-    "quote",
-    "test",
-    "execute http.capture",
-    "GET /v1/receipts/{id}",
-    "restart the app",
-    "caller.mjs --resume; the receipt is byte-identical"
-   ],
-   "mustStay": [
-    "GET /api/health 200",
-    "GET /api/correspondence/healthz unchanged"
-   ]
+  "names": {
+    "gateway": [
+      "CORRESPONDENCE_DATABASE_URL",
+      "CORRESPONDENCE_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_DATABASE_URL",
+      "MACHINE_SERVICES_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_PGSSL_CA_PEM",
+      "MACHINE_SERVICES_PRIVATE_DIR",
+      "MACHINE_GATEWAY_ENABLED",
+      "MACHINE_GATEWAY_PAYMENTS_ENABLED",
+      "MACHINE_GATEWAY_STORE",
+      "MACHINE_GATEWAY_TENANTS_FILE",
+      "MACHINE_GATEWAY_TENANTS_JSON",
+      "MACHINE_GATEWAY_URL_EXTRACT_FILE",
+      "MACHINE_GATEWAY_URL_EXTRACT_JSON",
+      "NODE_ENV"
+    ],
+    "monitor": [
+      "CORRESPONDENCE_DATABASE_URL",
+      "CORRESPONDENCE_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_DATABASE_URL",
+      "MACHINE_SERVICES_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_PGSSL_CA_PEM",
+      "MACHINE_SERVICES_PRIVATE_DIR",
+      "MONITOR_ENABLED",
+      "MONITOR_SCHEDULER",
+      "MONITOR_STORE",
+      "MONITOR_RUNTIME_FILE",
+      "MONITOR_RUNTIME_JSON",
+      "NODE_ENV"
+    ],
+    "installerOnly": [
+      "MONITOR_GRANT_FILE",
+      "MONITOR_GRANT_JSON"
+    ],
+    "discovery": [
+      "DISCOVERY_LOG_DIR",
+      "DISCOVERY_LOG_QA_SECRET",
+      "DISCOVERY_LOG_JOURNEY_SECRET"
+    ]
   },
-  "rollback": {
-   "flags": [
-    "MACHINE_GATEWAY_ENABLED unset/false \u2192 only the prefix returns 503"
-   ],
-   "revert": "revert the patch commit on SDS; keep the state dir"
-  }
- },
- "monitor": {
-  "source": "neo@0ad6691f79225cfba782971a910c0e79d371c8f3",
-  "mountPrefix": "/api/monitor (proposed)",
-  "tarball": {
-   "path": "npm pack services/continuous-monitoring at 0ad6691f79225cfba782971a910c0e79d371c8f3 (no committed release tgz)",
-   "sha256": "to be recorded by 243001 at pack time",
-   "vendorDir": "server/vendor/neomorphic-continuous-monitoring (proposed)"
+  "gateway": {
+    "source": "neo@667fba353e9082d8a0842437442dabc42843abf8",
+    "originalSource": "neo@7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+    "mountPrefix": "/api/machine-gateway",
+    "vendorDir": "server/vendor/machine-gateway",
+    "paymentsEnabled": "0",
+    "archives": [
+      {
+        "version": "0.1.0",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.0.tgz",
+        "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+        "bytes": 48464,
+        "selected": false,
+        "unchanged": true
+      },
+      {
+        "version": "0.1.1",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
+        "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+        "bytes": 49637,
+        "selected": false,
+        "unchanged": true
+      },
+      {
+        "version": "0.1.2",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.2.tgz",
+        "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+        "bytes": 53193,
+        "selected": true,
+        "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
+        "contains": "package/src/url-extract-routes.mjs"
+      }
+    ],
+    "storage": {
+      "kind": "postgres",
+      "schema": "pilot_gateway",
+      "sslmode": "verify-full",
+      "sqliteProduction": false
+    },
+    "health": [
+      "/api/machine-gateway/healthz"
+    ],
+    "enroll": "node server/vendor/machine-gateway/bin/enroll.mjs --tenant <id> --config <tenants.json> --token-file <private path>"
   },
-  "patch": {
-   "path": "NONE yet: 243001 must write the SDS mount adapter + patch (mirror the gateway: mount the API under the prefix; ticks via the existing armScheduler pattern, server/index.js:11, gated by a new env flag)",
-   "base": "d8cea059213e06d2f263be67f82e498f8052a50f"
+  "monitor": {
+    "source": "neo@667fba353e9082d8a0842437442dabc42843abf8",
+    "foundation": "neo@0ad6691f79225cfba782971a910c0e79d371c8f3",
+    "mountPrefix": "/api/monitor",
+    "proposed": false,
+    "vendorDir": "server/vendor/continuous-monitoring",
+    "storage": {
+      "kind": "postgres",
+      "schema": "pilot_monitor",
+      "sslmode": "verify-full",
+      "sqliteProduction": false
+    },
+    "runtime": {
+      "ignoredStandaloneKeys": ["database", "host", "port"],
+      "applied": "options"
+    },
+    "health": [
+      "/api/monitor/healthz",
+      "/api/monitor/v1/manifest"
+    ]
   },
-  "env": [
-   "NODE_ENV",
-   "MONITOR_ENABLED (proposed)",
-   "MONITOR_SCHEDULER (proposed, like MANAGED_WATCH_SCHEDULER)",
-   "MONITOR_RUNTIME_FILE (proposed; points to runtime.json)"
-  ],
-  "configShape": {
-   "runtimeJson": {
-    "database": "str (SQLite path)",
-    "host": "str",
-    "port": "int (unused when mounted)",
-    "options": {
-     "maxMonitors": "int",
-     "maxTick": "int"
-    }
-   },
-   "grantJson": {
-    "id": "str",
-    "token": "secret",
-    "readerToken": "secret",
-    "plan": "str (free|paid)",
-    "entitlementUntil": "ISO str"
-   }
+  "extraction": {
+    "schema": "ae19_paid_continuation",
+    "bindingKeys": ["schema", "tenantId", "actorId"],
+    "vendorDir": "server/vendor/url-extract",
+    "provision": "machine-services:migrate",
+    "servingMigrates": false
   },
-  "storage": {
-   "kind": "SQLite file",
-   "migrations": "services/continuous-monitoring/migrations/001.sql",
-   "alternative": "the existing SDS Postgres (in use by correspondence, schema pilot_correspondence) would need a new store port; proposed schema name pilot_monitor; NOT implemented"
+  "install": {
+    "commands": [
+      "npm run machine-services:prepare",
+      "npm run machine-services:migrate",
+      "npm run machine-services:inspect",
+      "npm run machine-services:provision"
+    ],
+    "schemas": ["pilot_gateway", "pilot_monitor", "ae19_paid_continuation"]
   },
-  "health": [
-   "/api/monitor/healthz",
-   "/api/monitor/v1/manifest"
-  ],
-  "provision": "node .../src/cli.mjs provision --config <runtime.json> --grant <private grant> (prints charged:false)",
-  "smoke": {
-   "input": "a customer-authorized free public changing resource",
-   "steps": [
-    "POST /v1/monitors",
-    "wait for a tick",
-    "GET /v1/monitors/{id}/events and /deliveries",
-    "POST /deliveries/{d}/ack",
-    "restart",
-    "read back the same delivery state"
-   ]
-  },
-  "rollback": {
-   "flags": [
-    "MONITOR_ENABLED unset",
-    "MONITOR_SCHEDULER unset"
-   ],
-   "keep": "SQLite store + backup"
-  }
- },
- "cliDownload": {
-  "source": "neo@85075d36578740d8cad659b7a5c44da32517e6c9",
-  "path": "public/downloads/agent-economy-client/0.1.0-c4/agent-economy-client-0.1.0.tgz",
-  "sha256": "8dad55d66f446d0c0772ec33a4711be7c43fc1521e05c545b23c3316084e728d",
-  "host": "neomorphic.io static (Hostinger Deploy from GitHub), not SDS",
-  "state": "prepared-for-review; production 404"
- },
- "secrets": "names only; values live in the Hostinger panel / enrolled stores; never commit or print",
- "decisionsOpen": [
-  "D1 monitor SDS mount",
-  "D2 durable disk vs SDS Postgres",
-  "D4 SDS main auto-redeploys a live host: staging first",
-  "D5 alert destination"
- ]
+  "secrets": "names only; values live in the Hostinger panel and enrolled stores; never commit or print"
 }

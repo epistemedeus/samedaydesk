@@ -235,7 +235,7 @@
     "vendor/neomorphic-contributor-desk/styles/main.css": "868a2b68d0058aba45ce8ee266ebe6eaa9183cd01936ceff26ed7a7e281bd808",
     "vendor/neomorphic-contributor-desk/styles/office.css": "48124f502e7bc21108528ed250c0637f6b688dced95f74d1c0810bf98203c137",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "b372e0f1a6c9feec8cc1883b486bbd968ea4903b8da9f747a726a4ac9f478bde",
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "eb0ceb318b4f61ba82e4df0a628b2345ed111613d69529e318569e41ad44c4aa",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1294,6 +1294,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:e68e962358940132de5701f48b94842db2ea465782ef9f450521aa471d468495"
+    },
+    {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3"
     }
   ]
 }

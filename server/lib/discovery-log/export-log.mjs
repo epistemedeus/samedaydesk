@@ -2,8 +2,9 @@
 // The hosted route is the export. This module does not authenticate and does not
 // accept a caller-supplied directory from HTTP. app.js remains the only writer.
 // Each page stays within the byte and line caps. A cursor continues a large valid day.
+import { createHash } from "node:crypto";
 import fs from "node:fs";
-import { MAX_BYTES, MAX_FILE_BYTES, MAX_LINE, MAX_LINES, decodeCursor, encodeCursor, projectRecord, resolveDailyFile } from "./bounds.mjs";
+import { MAX_BYTES, MAX_LINE, MAX_LINES, decodeCursor, encodeCursor, hashFileRange, projectRecord, resolveDailyFile } from "./bounds.mjs";
 
 function readAt(file, offset, length) {
   const fd = fs.openSync(file, "r");
@@ -18,6 +19,13 @@ function readAt(file, offset, length) {
 
 function precedingByteIsNewline(file, offset) {
   return readAt(file, offset, 1)[0] === 0x0a;
+}
+
+function prefixWatermark(file, offset) {
+  const length = Math.min(MAX_LINE, offset);
+  const bytes = readAt(file, offset - length, length);
+  if (bytes.length !== length) throw new Error("discovery_export_cursor_refused");
+  return createHash("sha256").update(bytes).digest("hex");
 }
 
 function takeLines(chunk, fileContinuesPastChunk) {
@@ -47,14 +55,18 @@ function takeLines(chunk, fileContinuesPastChunk) {
 
 export function readDiscoveryPage({ dir, date, cursor = null }) {
   const located = resolveDailyFile(dir, date);
-  if (located.size > MAX_FILE_BYTES) throw new Error("discovery_export_unbounded");
   let offset = 0;
   if (cursor !== null && cursor !== undefined && cursor !== "") {
-    offset = decodeCursor(cursor, date);
+    const decoded = decodeCursor(cursor, date);
+    offset = decoded.offset;
     if (offset > located.size) throw new Error("discovery_export_cursor_refused");
     if (offset > 0 && !precedingByteIsNewline(located.file, offset - 1)) throw new Error("discovery_export_cursor_refused");
+    if (offset > 0 && prefixWatermark(located.file, offset) !== decoded.watermark) throw new Error("discovery_export_cursor_refused");
   }
-  if (offset === located.size) return { lines: [], nextCursor: null, complete: true };
+  if (offset === located.size) {
+    const marked = hashFileRange(located.file, located.size);
+    return { lines: [], nextCursor: null, complete: true, offset, watermark: marked.watermark, bytes: marked.bytes };
+  }
   const remaining = located.size - offset;
   const fileContinuesPastChunk = remaining > MAX_BYTES;
   const chunk = readAt(located.file, offset, Math.min(MAX_BYTES, remaining));
@@ -76,10 +88,15 @@ export function readDiscoveryPage({ dir, date, cursor = null }) {
   const more = taken.more || fileContinuesPastChunk;
   const next = offset + taken.consumed;
   if (more && (next <= offset || next > located.size)) throw new Error("discovery_export_unbounded");
+  const finished = !more;
+  const marked = finished ? hashFileRange(located.file, located.size) : null;
   return {
     lines: projected,
-    nextCursor: more ? encodeCursor(date, next) : null,
-    complete: !more,
+    nextCursor: more ? encodeCursor(date, next, prefixWatermark(located.file, next)) : null,
+    complete: finished,
+    offset: next,
+    watermark: marked ? marked.watermark : null,
+    bytes: marked ? marked.bytes : null,
   };
 }
 
