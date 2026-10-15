@@ -1,0 +1,34 @@
+{
+  "source": "first-use/MAINTAINED-CALL-R2-owner-qa.json",
+  "host": "agents.samedaydesk.com",
+  "score": 75,
+  "checks": [
+    {
+      "id": "discovery.llms.links",
+      "category": "discovery",
+      "title": "llms.txt links API, MCP and agent card",
+      "status": "pass",
+      "reason": "llms.txt links the API, the MCP endpoint and the agent card.",
+      "fix": "Add absolute links to /openapi.json, /mcp and /.well-known/agent-card.json inside llms.txt.",
+      "evidenceUrl": "https://agents.samedaydesk.com/llms.txt"
+    },
+    {
+      "id": "x402.parses",
+      "category": "x402",
+      "title": "x402 payment manifest parses",
+      "status": "pass",
+      "reason": "/.well-known/x402 parsed as JSON.",
+      "fix": "Publish a JSON x402 manifest at /.well-known/x402, even if it lists no paid resources yet.",
+      "evidenceUrl": "https://agents.samedaydesk.com/.well-known/x402"
+    },
+    {
+      "id": "x402.resources",
+      "category": "x402",
+      "title": "Paid resource list is truthful",
+      "status": "warn",
+      "reason": "The manifest has no resources and does not say whether that is intentional.",
+      "fix": "List paid resources, or keep an empty list with a note stating there are no paid endpoints.",
+      "evidenceUrl": "https://agents.samedaydesk.com/.well-known/x402"
+    }
+  ]
+}
