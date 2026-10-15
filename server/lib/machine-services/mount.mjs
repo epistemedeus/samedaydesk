@@ -88,6 +88,18 @@ function unavailable(res, service) {
   res.status(503).json({ error: { code: `${service}_unavailable` } });
 }
 
+// U1 execute requires Idempotency-Key /^[A-Za-z0-9_.-]{16,128}$/. The mounted
+// caller key is the same charset from 8 characters (url-extract controls use
+// `u2-exec-<pid>-<n>`, which is 15 characters for a 5-digit pid). Map a short
+// valid key onto one stable 16+ key so replay stays idempotent. Anything else
+// is left for the gateway to refuse.
+const SHORT_IDEMPOTENCY = /^[A-Za-z0-9_.-]{8,15}$/;
+function widenIdempotencyKey(req) {
+  const key = req?.headers?.['idempotency-key'];
+  if (typeof key !== 'string' || !SHORT_IDEMPOTENCY.test(key)) return;
+  req.headers['idempotency-key'] = `sds-idem-${key}`;
+}
+
 // Retry connection availability, server recovery/capacity and bounded query/lock
 // timeouts only. Config, TLS trust, authentication, missing/foreign schemas and
 // unknown programmer errors stay refused until a corrected process is started.
@@ -292,7 +304,10 @@ export function mountMachineServices(app, options = {}) {
   }
   for (const service of ['gateway', 'monitor']) {
     app.use(prefix[service], async (req, res) => {
-      try { const state = await ready(service); await state.handler(req, res); }
+      try {
+        if (service === 'gateway') widenIdempotencyKey(req);
+        const state = await ready(service); await state.handler(req, res);
+      }
       catch { unavailable(res, service); }
     });
   }

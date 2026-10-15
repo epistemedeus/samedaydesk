@@ -5,9 +5,9 @@
   "sources": [
     {
       "repository": "epistemedeus/neomorphic-io",
-      "commit": "667fba353e9082d8a0842437442dabc42843abf8",
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
       "path": "services/machine-gateway",
-      "tree": "83ae081b5fc9ce0f39b6e951a217cd6eede9b7e7"
+      "tree": "26b4e9c2b734d2607d6ccaeaf040758b4e7808f8"
     },
     {
       "repository": "epistemedeus/neomorphic-io",
@@ -38,7 +38,7 @@
     "immutable received 0.1.1 archive is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations",
     "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
     "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown",
-    "AE21 U2: gateway url.extract.* from the U1 complete patch (pilot blob 5d55b293cf6b971dd2bfabae26cc590aed87085d) applied over neo 667fba35 + SDS async adaptations; local: owner-scoped unbind and url_extract_store_closed->503",
+    "AE21 U2c: gateway re-vendored from U1 09d37501 archive neomorphic-machine-gateway-0.1.2.tgz sha256 0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6 blob 3cdd89c7a46b7edb1ab4148e9558220f879bd4b6; SDS async/PG adaptations retained; local: owner-scoped unbind, url_extract_store_closed->503, and a stable widen of charset-valid Idempotency-Key values of length 8-15 up to the U1 16-character minimum",
     "AE21 U2: url.extract store on the enrolled async Postgres (ae19_paid_continuation), provisioned by install migrate only, lifecycle bound to the gateway store"
   ],
   "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
@@ -77,6 +77,14 @@
       "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
       "bytes": 49637,
       "selectedReceivedArtifact": true
+    },
+    {
+      "version": "0.1.2",
+      "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+      "bytes": 53193,
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
+      "blob": "3cdd89c7a46b7edb1ab4148e9558220f879bd4b6",
+      "u1Archive": true
     }
   ],
   "sourceQualification": {
@@ -105,7 +113,7 @@
     "vendorDir": "server/vendor/url-extract",
     "files": 10,
     "verify": "bash server/vendor/url-extract/vendor-url-extract.sh --verify",
-    "gatewayPatch": "epistemedeus/pilot tools/ae21-whole-journey-integration/patches/U1-gateway-url-extract-tenant.patch blob 5d55b293cf6b971dd2bfabae26cc590aed87085d",
+    "gatewayPatch": "superseded by U1 09d37501 services/machine-gateway archive neomorphic-machine-gateway-0.1.2.tgz sha256 0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
     "x1": "79b5e55f"
   }
 }
