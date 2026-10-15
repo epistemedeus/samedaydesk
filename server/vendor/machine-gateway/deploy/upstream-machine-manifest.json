@@ -1,10 +1,10 @@
 {
   "schema": "neomorphic.machine-gateway.release.v1",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "state": "prepared-not-deployed",
   "package": "@neomorphic/machine-gateway",
   "sourcePath": "services/machine-gateway",
-  "branch": "codex/ae18-service-review-243002",
+  "branch": "codex/ae21-u1-gateway-url-extract",
   "runtime": "node-22.14-or-newer-with-native-sqlite",
   "deployment": {
     "target": "existing-samedaydesk-hostinger-node",
@@ -39,9 +39,9 @@
   },
   "humanVisibility": "separate-reviewed-integration",
   "sourceArchive": {
-    "repositoryPath": "services/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
-    "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
-    "bytes": 49637,
+    "repositoryPath": "services/machine-gateway/releases/neomorphic-machine-gateway-0.1.2.tgz",
+    "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+    "bytes": 53193,
     "hostedDownloadVerified": false
   }
 }

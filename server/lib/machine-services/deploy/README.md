@@ -14,12 +14,18 @@ qualification or hosted receiving.
 The authoritative source pins are [PINS.json](../PINS.json). Both repaired
 services are received from Neomorphic `667fba353e9082d8a0842437442dabc42843abf8`
 (independently tested runtime `4248874f2fa63636659fad164fb29ed193018104`).
-The selected upstream gateway **0.1.1** archive is retained byte-for-byte at
+The upstream gateway **0.1.1** archive stays byte-for-byte at
 `server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz`,
 SHA-256 `ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d`
-(49,637 bytes). `deploy/RECEIVED-0.1.1.json` verifies every shipped file against
-the exact received source. SDS adds explicit async/PG adaptations in this feature
-branch; extracting the SQLite upstream archive must not overwrite them.
+(49,637 bytes). The selected received archive is **0.1.2** from neomorphic-io
+`codex/ae21-u1-gateway-url-extract` at `09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3`,
+file `neomorphic-machine-gateway-0.1.2.tgz`, SHA-256
+`0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6` (53,193 bytes).
+`deploy/RECEIVED-0.1.1.json` and `deploy/RECEIVED-0.1.2.json` verify every shipped
+file against the exact received source. That 0.1.2 archive contains
+`package/src/url-extract-routes.mjs`. The vendored copy keeps the two landed U2
+lines on top of that member. SDS async/PG adaptations stay in the working tree.
+Extracting either SQLite archive must not overwrite them. This package is not deployed.
 
 The original gateway source was `7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8`;
 its immutable **0.1.0** archive remains unchanged with SHA-256

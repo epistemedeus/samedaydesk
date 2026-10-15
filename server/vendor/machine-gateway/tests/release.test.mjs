@@ -52,17 +52,12 @@ test("vendored source hashes and shipped SDK lock match their exact pins", () =>
   assert.ok(pkg.files.includes("npm-shrinkwrap.json"));
 });
 
-test("the selected immutable candidate archive matches every shipped source file and manifest digest", async () => {
-  const manifest = read("../deploy/upstream-machine-manifest.json");
-  const archive = fileURLToPath(new URL(`../releases/${manifest.sourceArchive.repositoryPath.split("/").at(-1)}`, import.meta.url));
+async function archiveMatchesReceived(archiveName, receivedName) {
+  const archive = fileURLToPath(new URL(`../releases/${archiveName}`, import.meta.url));
   const bytes = readFileSync(archive);
-  assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.sourceArchive.sha256);
-  assert.equal(bytes.length, manifest.sourceArchive.bytes);
+  const received = read(`../deploy/${receivedName}`);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), received.archiveSha256);
   const members = (await execFile("tar", ["-tzf", archive])).stdout.trim().split("\n").filter(name => !name.endsWith("/"));
-  // The received artifact is immutable. SDS has explicit PG/async adaptations,
-  // so compare the archive to pinned received-source hashes, never a repack.
-  const received = read('../deploy/RECEIVED-0.1.1.json');
-  assert.equal(received.archiveSha256, manifest.sourceArchive.sha256);
   assert.deepEqual(members.toSorted(), Object.keys(received.files).map(name => `package/${name}`).toSorted());
   for (const member of members) {
     assert.match(member, /^package\/(?:src\/|bin\/|vendor\/|deploy\/|schemas\/|package\.json$|npm-shrinkwrap\.json$|README\.md$|SOURCE\.json$|openapi\.json$)/);
@@ -70,6 +65,20 @@ test("the selected immutable candidate archive matches every shipped source file
     const archived = (await execFile("tar", ["-xOf", archive, member])).stdout;
     assert.equal(createHash("sha256").update(archived).digest("hex"), received.files[member.slice("package/".length)], member);
   }
+  return bytes;
+}
+
+test("the selected immutable candidate archive matches every shipped source file and manifest digest", async () => {
+  const manifest = read("../deploy/upstream-machine-manifest.json");
+  // 0.1.0 and 0.1.1 stay immutable. SDS PG/async adaptations are not repacked into either archive.
+  await archiveMatchesReceived("neomorphic-machine-gateway-0.1.1.tgz", "RECEIVED-0.1.1.json");
+  const bytes = await archiveMatchesReceived("neomorphic-machine-gateway-0.1.2.tgz", "RECEIVED-0.1.2.json");
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.sourceArchive.sha256);
+  assert.equal(bytes.length, manifest.sourceArchive.bytes);
+  assert.equal(manifest.sourceArchive.repositoryPath.endsWith("neomorphic-machine-gateway-0.1.2.tgz"), true);
   assert.equal(manifest.version, read("../package.json").version);
-  assert.equal(JSON.parse((await execFile("tar", ["-xOf", archive, "package/package.json"])).stdout).version, manifest.version);
+  const selected = fileURLToPath(new URL(`../releases/${manifest.sourceArchive.repositoryPath.split("/").at(-1)}`, import.meta.url));
+  assert.equal(JSON.parse((await execFile("tar", ["-xOf", selected, "package/package.json"])).stdout).version, manifest.version);
+  const routes = (await execFile("tar", ["-xOf", selected, "package/src/url-extract-routes.mjs"])).stdout;
+  assert.match(routes, /export function bindUrlExtractService/);
 });

@@ -62,7 +62,14 @@
       "version": "0.1.1",
       "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
       "bytes": 49637,
-      "selectedReceivedArtifact": true
+      "unchanged": true
+    },
+    {
+      "version": "0.1.2",
+      "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+      "bytes": 53193,
+      "selectedReceivedArtifact": true,
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3"
     }
   ],
   "previousOverlaySha256": "be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32",
@@ -107,9 +114,9 @@
     "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
     "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
     "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
-    "callerClosureDigest": "sha256:fb7f1607a09fac2527a394ec26fee28d240f0db3d14dc43eb5a15f83141cdc63",
+    "callerClosureDigest": "sha256:e5b471be52d72fc83eddd18e7feca72539fccd20c1b69611b06371c7b318774e",
     "callerMembers": 1171,
-    "priorCallerDescriptorsAccepted": 21,
+    "priorCallerDescriptorsAccepted": 22,
     "compiledContributorMembersUnchanged": 437,
     "opportunitySourceMembersReproduced": 187,
     "opportunityCompiledMembersReproduced": 106,
