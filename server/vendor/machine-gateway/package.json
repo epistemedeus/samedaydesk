@@ -1,0 +1,38 @@
+{
+  "name": "@neomorphic/machine-gateway",
+  "version": "0.1.1",
+  "description": "Mounted, tenant-bound HTTP execution with durable recovery and existing facilitator adapters",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./payments": "./src/payments.mjs"
+  },
+  "files": [
+    "src",
+    "bin",
+    "schemas",
+    "openapi.json",
+    "vendor",
+    "deploy",
+    "README.md",
+    "SOURCE.json",
+    "npm-shrinkwrap.json"
+  ],
+  "engines": {
+    "node": ">=22.14.0 <23"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "check": "node bin/check.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "caller": "node bin/caller.mjs",
+    "readiness": "node bin/readiness.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "@x402/core": "2.16.0"
+  },
+  "devDependencies": {
+    "express": "5.2.1"
+  }
+}

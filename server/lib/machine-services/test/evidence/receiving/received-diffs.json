@@ -1,0 +1,10 @@
+{
+  "continuous-monitoring-received.patch.gz": {
+    "uncompressedSha256": "40b5dc37f6b9b74db9d47f6da9ce9cf6bf8f5d7b2d716a128dce1f01fa89be0c",
+    "sourceCommit": "667fba353e9082d8a0842437442dabc42843abf8"
+  },
+  "machine-gateway-received.patch.gz": {
+    "uncompressedSha256": "3e49bd11e6ab5b113c56ee11681be6a68b343896a07ba9aaae00a884971400bd",
+    "sourceCommit": "667fba353e9082d8a0842437442dabc42843abf8"
+  }
+}

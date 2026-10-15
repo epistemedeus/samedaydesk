@@ -1,0 +1,32 @@
+TAP version 13
+# (node:2213233) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: credential rotation during an uploaded mutation rechecks the current owner role
+ok 1 - credential rotation during an uploaded mutation rechecks the current owner role
+  ---
+  duration_ms: 158.830544
+  ...
+# Subtest: actual sockets use one validated DNS answer; an authority change during DNS opens no socket
+ok 2 - actual sockets use one validated DNS answer; an authority change during DNS opens no socket
+  ---
+  duration_ms: 5.610498
+  ...
+# Subtest: lease recovery fences a live old worker, preserves unknown cost, and emits only one result
+ok 3 - lease recovery fences a live old worker, preserves unknown cost, and emits only one result
+  ---
+  duration_ms: 139.960966
+  ...
+# Subtest: the documented dependency-free monitor demo works from a cold source tree with only its maintained foundation
+ok 4 - the documented dependency-free monitor demo works from a cold source tree with only its maintained foundation
+  ---
+  duration_ms: 763.939205
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1159.008625

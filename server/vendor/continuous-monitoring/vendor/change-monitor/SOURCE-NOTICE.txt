@@ -1,0 +1,18 @@
+change-monitor 0.1.0 candidate
+
+Received from epistemedeus/neomorphic-io branch heavy/s13-change-monitor-0930
+commit 929dc4b3a8402fab5e4f3dec9c8b26c1b46bad1d, writer scope packages/change-monitor.
+
+Observatory projection bytes are commit 1d9e6eb50ded038acd9511bc689a23f2fbb15eac
+path public/labs/agent-economy-observatory/projection.js
+sha256 3a4559e2150694e61cc40868a37711b4f50496960234d337b8693bcfdcaceba4.
+page.js is not included. Human observatory pages are not included.
+
+Release Gate runtime is the public archive
+https://neomorphic.io/downloads/release-gate/0.1.4/release-gate-0.1.4.tgz
+sha256 f14eac0c4c10bba3f3d8b2e89d6eed1a87f47077bb06a7c70f96409ced9d7bef
+(16254 bytes). The private packages/release-gate tree is not imported and is
+not copied into this package.
+
+This candidate is not a served public download. launched, ownerPayment, and
+paidServiceLaunch stay false. Root accepts publication.

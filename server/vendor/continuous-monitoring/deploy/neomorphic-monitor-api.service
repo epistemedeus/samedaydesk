@@ -1,0 +1,29 @@
+[Unit]
+Description=Neomorphic tenant continuous-monitoring API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Replace this user and checkout path with the existing Linux application's account and checkout.
+User=www-data
+WorkingDirectory=/opt/neomorphic/current
+Environment=NODE_ENV=production
+Environment=MONITOR_CONFIG=/etc/neomorphic-monitor/runtime.json
+# Verify /usr/bin/node is the existing supported Node 22 executable before installing.
+ExecStart=/usr/bin/node services/continuous-monitoring/src/cli.mjs serve
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/neomorphic-monitor
+MemoryMax=192M
+TasksMax=32
+LimitNOFILE=256
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,101 @@
+{
+  "schema": "sds.composed-caller.receiving-before.v1",
+  "source": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+  "failedActions": {
+    "id": 38707454771,
+    "url": "https://github.com/epistemedeus/samedaydesk/actions/runs/38707454771",
+    "conclusion": "failure",
+    "proxyAddr": {
+      "pass": 5,
+      "fail": 2
+    }
+  },
+  "manifestBase": "08b90bdef8dbd198023be447942a3119cb268235",
+  "previousCaller": {
+    "base": "08b90bdef8dbd198023be447942a3119cb268235",
+    "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+    "closureDigest": "sha256:fc14eac1601172bfbfc9a30480455281ae75d6528e24733740f022939496d68e"
+  },
+  "members": 548,
+  "receivedCallers": 20,
+  "changed": [
+    {
+      "file": "package-lock.json",
+      "expected": "b1967d7aab10dc77a308c4fff7e2adb892a2ea749c69e7ea434de58eff103e21",
+      "actual": "9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129",
+      "lastChange": "267e9189b96087ff15886691f27e639d8534ae33"
+    },
+    {
+      "file": "package.json",
+      "expected": "bf5ac27326b8b2302055d31cc4619d4c3550b245f4272ad7bd7802c092d4bbee",
+      "actual": "59ac19fcbb5fa5a1b1a5f8e8e9e73f46b3a6f464eeebe3b8059280b0fb1d7072",
+      "lastChange": "2788c1445ade651131c1e61e76c01725a2e54f8e"
+    },
+    {
+      "file": "server/app.js",
+      "expected": "83a2e96316ff09f1ccb768aa8d83cf198bf218ac62a0a9f03b3d9a6b7c88f006",
+      "actual": "24cd3c32ba4708af21552ff6d9d2774ca01dfb5c6cfad79b30e5c424f43a15be",
+      "lastChange": "2788c1445ade651131c1e61e76c01725a2e54f8e"
+    },
+    {
+      "file": "server/index.js",
+      "expected": "4d8ab3681f47dedd87579783c98874c5983803f87a4a6e80faff4dc8b45cdaef",
+      "actual": "49a4713b38c7a6b610551d5d4c39c444ccf6b80b5149ec479eee9c032343aa9b",
+      "lastChange": "2788c1445ade651131c1e61e76c01725a2e54f8e"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/routes.js",
+      "expected": "f8c371594cfc901fdb31c2f93e5b0e8324792a7502cc44b11df77b554d0fa17c",
+      "actual": "34cd4fecad96ca2ad26a371e885d4c488eb9112522475d0ae0bd91fab5f89cd7",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/routes.js.map",
+      "expected": "44a1d165834c4a6daf9bbdc8894dc40a2ecd17856180fedb899ef4c418596e3c",
+      "actual": "fff000684717fe427f59c565eab5788f667959adf99fc9f2e4ddd37952315c61",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/service.d.ts",
+      "expected": "ac0c6969bde1d9cb40d20b3f9dd0ca8449ebceecc74d538e29b50bc879299248",
+      "actual": "3160e49bf977cb577ec02bfac71d03c4255b3aee64c35d7d3b1b47e8ddb61624",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/service.js",
+      "expected": "487fd3ce69a20f2e35a7d179f15f109e8737861e2d62259c47e52eff1d76f684",
+      "actual": "570da87553de1c527ab11301d2f4da18d8b60c8b24c86ea4bc89c0a988b34ff6",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/service.js.map",
+      "expected": "ef08ecd92e67bf1e86540e214a4490c637a9259f66f0e43132df9c14a61add59",
+      "actual": "aebd32624db49936cb776f1787c66727a785713d481e2949641de5f8da0a8ae4",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/src/opportunity/routes.ts",
+      "expected": "de2da11a2744a41e7107e5ad77d419c127a4c3e2ab4bf5916e636aac2cdcdd94",
+      "actual": "38b7c98db9451e15a005d02e72500dee3aac00ee827007cd363f885b43d774ea",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/services/earned-work/src/opportunity/service.ts",
+      "expected": "ec5f18df161d0edc6dd2ee121e92a23641062fde811701a14e5d6effe9f95e10",
+      "actual": "f2ff1289604fb963a43bbfb277c04aa8d6629cc8a15eb386240693149b858d88",
+      "lastChange": "4ad77a20e2ca2d694a1903c2969326a826728813"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/SOURCE-MANIFEST.json",
+      "expected": "8f7306fbed34a202cc0d15c9d05d608af19e80da657a53a9611198c0ddbc284e",
+      "actual": "30c020ce2630bc9b93e536fd0f4a468274dc7bdfe1d07cdd5c7dd8ae21797521",
+      "lastChange": "6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc"
+    },
+    {
+      "file": "vendor/neomorphic-opportunity/SOURCE-PIN.json",
+      "expected": "a9de8c7b86894ca04d30ace0249e541c28ea1f4d7f78f27f23358bd03a33ac3c",
+      "actual": "a09cbc09dfde794fa0cfacb856a6a7680037ac02d70d14078fb961339000fc3e",
+      "lastChange": "6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc"
+    }
+  ]
+}

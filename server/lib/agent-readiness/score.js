@@ -26,11 +26,18 @@ export function statusValue(status) {
             return 0;
     }
 }
+/**
+ * STATIC_SUMMARY_SCORING: the no-JS summary is one discovery check (category weight 14).
+ * It can move the score by at most one share of that weight. A homepage that was
+ * not-probed is reported and omitted from the average, so it cannot move the score.
+ * This weight is conservative: it is evidence, not a gate.
+ */
 export function scoreCategories(checks) {
     return CATEGORY_WEIGHTS.map(({ id, label, weight }) => {
         const own = checks.filter((c) => c.category === id);
-        const ratio = own.length
-            ? own.reduce((sum, c) => sum + statusValue(c.status), 0) / own.length
+        const scored = own.filter((c) => !(c.id === "static.summary" && c.applicability === "not-probed"));
+        const ratio = scored.length
+            ? scored.reduce((sum, c) => sum + statusValue(c.status), 0) / scored.length
             : 0;
         return { id, label, weight, ratio, points: ratio * weight, checks: own };
     });
@@ -42,7 +49,7 @@ const SEVERITY = { fail: 0, na: 1, warn: 2, pass: 3 };
 export function topFixes(checks, categories, limit = 3) {
     const weightOf = (id) => categories.find((c) => c.id === id)?.weight ?? 0;
     return checks
-        .filter((c) => c.status !== "pass")
+        .filter((c) => c.status !== "pass" && c.applicability !== "declared-absent" && c.applicability !== "not-probed")
         .sort((a, b) => SEVERITY[a.status] - SEVERITY[b.status] ||
         weightOf(b.category) - weightOf(a.category) ||
         a.id.localeCompare(b.id))

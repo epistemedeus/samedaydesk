@@ -1,0 +1,523 @@
+{
+  "schema": "sds.composed-caller.source-qualification.v1",
+  "sourceHead": "bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+  "predecessorExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+  "predecessorFailedRun": 38707454771,
+  "failingSourceControlsCommit": "c57c92cf05ab022e1f22cdfba3a6b0506a8a4836",
+  "sourceQualificationCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
+  "sourceMemberMismatchesBefore": 13,
+  "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+  "callerDigest": "sha256:fb7f1607a09fac2527a394ec26fee28d240f0db3d14dc43eb5a15f83141cdc63",
+  "callerMembers": 1171,
+  "priorMembersRetained": 548,
+  "receivedDescriptorsAccepted": 21,
+  "verifierOrAuthorityChecksWeakened": false,
+  "gates": [
+    {
+      "name": "proxy-addr",
+      "command": "npm run test:proxy-addr",
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "proxy-addr.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "startup-diagnostic",
+      "command": "node --test server/scripts/test-correspondence-startup-diagnostic.js",
+      "counts": {
+        "tests": 7,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "startup-diagnostic.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "hosted-startup",
+      "command": "npm run test:hosted-startup",
+      "counts": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "hosted-startup.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "machine-discovery",
+      "command": "npm run test:machine-discovery",
+      "counts": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "machine-discovery.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "pulse",
+      "command": "npm run test:pulse",
+      "counts": {
+        "tests": 80,
+        "pass": 80,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "pulse.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "original-task",
+      "command": "PULSE_PG_BIN=\"$(pg_config --bindir)\" npm run test:original-task",
+      "counts": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "original-task.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "agent-readiness",
+      "command": "npm run test:agent-readiness",
+      "counts": {
+        "tests": 185,
+        "pass": 185,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "agent-readiness.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "l08-agent-repair",
+      "command": "npm run test:l08-agent-repair",
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "l08-agent-repair.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "mcp",
+      "command": "npm run test:mcp",
+      "counts": {
+        "tests": 46,
+        "pass": 46,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "mcp.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "readiness-load-failure",
+      "command": "node --test server/scripts/test-public-readiness-load-failure.js",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "readiness-load-failure.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "observatory",
+      "command": "npm run test:observatory",
+      "counts": {
+        "tests": 80,
+        "pass": 78,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 2
+      },
+      "log": "observatory.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "foundry-private-pass",
+      "command": "npm run test:foundry-private-pass",
+      "counts": {
+        "tests": 33,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "foundry-private-pass.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "contributor-private-host",
+      "command": "CONTRIBUTOR_JOURNEY_TEST_NEO_ROOT=/home/ubuntu/root-sol-window100337/243001/qualification-neo CONTRIBUTOR_JOURNEY_TEST_CHROME=/usr/bin/google-chrome node server/scripts/test-contributor-private-host.mjs",
+      "counts": {
+        "tests": 80,
+        "pass": 80,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "contributor-private-host.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "foundry-runtime-layout",
+      "command": "npm run test:foundry-runtime-layout",
+      "counts": {
+        "tests": 8,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "foundry-runtime-layout.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "contributor-artifacts",
+      "command": "node --test --test-concurrency=1 server/scripts/test-neomorphic-contributor-journey-artifact.mjs server/scripts/test-neomorphic-original-continuation-artifact.mjs",
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "contributor-artifacts.tap",
+      "lock": "single external flock"
+    },
+    {
+      "name": "machine-services",
+      "command": "npm run test:machine-services",
+      "counts": {
+        "tests": 63,
+        "pass": 63,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "machine-services.tap",
+      "lock": "script owns flock"
+    },
+    {
+      "name": "sqlite",
+      "command": "npm run test:machine-services:sqlite",
+      "counts": {
+        "tests": 95,
+        "pass": 95,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "sqlite.tap",
+      "lock": "script owns flock"
+    },
+    {
+      "name": "retained-runtime",
+      "command": "npm run test:machine-services:regression",
+      "counts": {
+        "tests": 49,
+        "pass": 49,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "log": "retained-runtime.tap",
+      "lock": "script owns flock"
+    }
+  ],
+  "coldProductionInstall": {
+    "sourceHead": "bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+    "passed": 238,
+    "failed": 0,
+    "skipped": 0,
+    "record": "cold-source.json"
+  },
+  "observedOnCursorVm": [
+    "exact predecessor CI failure reproduced 5/7",
+    "pinned producer rebuild with all 437 compiled/static members unchanged",
+    "canonical continuation re-export 187 source and 106 compiled members exact",
+    "current and old private callers; unknown caller and changed members refuse",
+    "verified HTTPS/private contributor signup/Origin/CSRF/recovery/restart on disposable PG; provider ingress simulations",
+    "foundry A/restart/B, physical outcome/readback/authority refusals and minimal-PATH managed build",
+    "production-selected verify-full TLS PG gateway free execution, lost reply/readback, monitor change/delivery/duplicate ack/restart and scheduler lifecycle",
+    "fresh exact-source offline production install and 238 controls"
+  ],
+  "notObservedHere": [
+    "actual private Hostinger serving or release",
+    "actual retained 59 private values",
+    "actual retained project DB migration",
+    "actual deployment transport qualification",
+    "actual private delivery, paid rail qualification, payment movement or outside activity"
+  ],
+  "firstFailures": {
+    "predecessorProxy": "predecessor-proxy-addr.tap.gz (5 pass / 2 fail)",
+    "composedControlsBefore": "composed-controls-before.tap.gz (5 pass / 5 fail)",
+    "contributorManifestBefore": "predecessor-contributor-artifacts.tap.gz (4 pass / 2 fail)",
+    "privateCallerVmFixtureBefore": "foundry-private-pass-before.tap.gz (32 pass / 1 fail); npm was assumed adjacent to /exec-daemon/node; reuse existing npmCli locator; no assertion removed",
+    "clientInstallCacheMiss": "private-host-prerequisites.log.gz; missing cached npm tarball; same lock installed normally before tests"
+  },
+  "adapter": "postgres",
+  "schemaEnvironmentOrKernelChanged": false,
+  "priorReceiptsAndArchivesUnchanged": true,
+  "paymentsEnabled": false,
+  "deployed": false,
+  "actions": {
+    "conclusion": "success",
+    "databaseId": 38717282151,
+    "headSha": "f2c12acb21ab9ce46bd51bb57ed32c41749fe1fb",
+    "jobs": [
+      {
+        "completedAt": "2026-10-15T10:03:23Z",
+        "conclusion": "success",
+        "databaseId": 116362934155,
+        "name": "runtime-startup",
+        "startedAt": "2026-10-15T10:01:40Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-15T10:01:42Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-15T10:01:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:01:46Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-10-15T10:01:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:01:47Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v4",
+            "number": 3,
+            "startedAt": "2026-10-15T10:01:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:01:56Z",
+            "conclusion": "success",
+            "name": "Run npm ci --omit=dev --ignore-scripts",
+            "number": 4,
+            "startedAt": "2026-10-15T10:01:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:08Z",
+            "conclusion": "success",
+            "name": "Run npm run test:proxy-addr",
+            "number": 5,
+            "startedAt": "2026-10-15T10:01:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:08Z",
+            "conclusion": "success",
+            "name": "Run node --test server/scripts/test-correspondence-startup-diagnostic.js",
+            "number": 6,
+            "startedAt": "2026-10-15T10:02:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:10Z",
+            "conclusion": "success",
+            "name": "Run npm run test:hosted-startup",
+            "number": 7,
+            "startedAt": "2026-10-15T10:02:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:13Z",
+            "conclusion": "success",
+            "name": "Run npm run test:machine-discovery",
+            "number": 8,
+            "startedAt": "2026-10-15T10:02:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:21Z",
+            "conclusion": "success",
+            "name": "Run PULSE_PG_BIN=\"$(pg_config --bindir)\" npm run test:pulse",
+            "number": 9,
+            "startedAt": "2026-10-15T10:02:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:39Z",
+            "conclusion": "success",
+            "name": "Run PULSE_PG_BIN=\"$(pg_config --bindir)\" npm run test:original-task",
+            "number": 10,
+            "startedAt": "2026-10-15T10:02:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:02:41Z",
+            "conclusion": "success",
+            "name": "Run npm run test:agent-readiness",
+            "number": 11,
+            "startedAt": "2026-10-15T10:02:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:15Z",
+            "conclusion": "success",
+            "name": "Run npm run test:l08-agent-repair",
+            "number": 12,
+            "startedAt": "2026-10-15T10:02:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:16Z",
+            "conclusion": "success",
+            "name": "Run npm run test:mcp",
+            "number": 13,
+            "startedAt": "2026-10-15T10:03:15Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:17Z",
+            "conclusion": "success",
+            "name": "Run node --test server/scripts/test-public-readiness-load-failure.js",
+            "number": 14,
+            "startedAt": "2026-10-15T10:03:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:19Z",
+            "conclusion": "success",
+            "name": "Run npm run test:observatory",
+            "number": 15,
+            "startedAt": "2026-10-15T10:03:17Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:21Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v4",
+            "number": 29,
+            "startedAt": "2026-10-15T10:03:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:21Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 30,
+            "startedAt": "2026-10-15T10:03:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-15T10:03:21Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 31,
+            "startedAt": "2026-10-15T10:03:21Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/epistemedeus/samedaydesk/actions/runs/38717282151/job/116362934155"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/epistemedeus/samedaydesk/actions/runs/38717282151"
+  },
+  "evidenceSha256": {
+    "actions-f2c12acb.json": "8f6f61be865bb4975d5ae47de178338fd281fc63fa35f139d525c7bfdbe92642",
+    "agent-readiness.tap": "0f45ed828c3244fb2cd5fff1866320318c2f892723b4b0be24ed3472b9106159",
+    "before.json": "d9b76d0fe3e9fe96b84f2175f3e52e3a68d6c3a3d818126f15b70a005f2a1053",
+    "client-build.log.gz": "f4041d7bfb45e27a4fa2d3b8df923811754b39753aa1e5199a8c7d1380ed3888",
+    "cold-console.log.gz": "b0346deb4cb0909cd23d9c13230b4f5a623558af5033e316cb91e443896c724d",
+    "cold-contributor-artifacts.tap": "d94ce16ccdd63b098022fecde644e27444249f419586e07fbd936bc03a9c00a0",
+    "cold-install.log.gz": "2c7a14fd2dc41693b5eeedf9f127e39cefcee99f221fea2613c1360485607f71",
+    "cold-machine-services.tap": "f8c714d36f0cb8bc8001b858ce5a9d6a74a2b9b25722a91d0a45736f6df525c5",
+    "cold-original-task.tap": "ed56a22083bf0f36e475778868d01c1c0c763deaa5a8630c73f0fa5228c263c7",
+    "cold-proxy-addr.tap": "132250ce2db1fe9e1ad31485c6bea00cabe6e4d9252abe0d257ba90c0cae2eb3",
+    "cold-retained-runtime.tap": "3d8030fcaf0482d37fdec0e2deab87e0a5b26d558ab59726a2678df460b5bd21",
+    "cold-source-verify.py": "80c62472434bfb7df3e0ad51aabe489fa657a31770e36ea4f11aedb50c4f1e44",
+    "cold-source.json": "efa24b3c1f79199e0b73865c0c7403a17c8e127468fc4d83b628a2f2b32470c0",
+    "cold-sqlite.tap": "ce0437da101cb560e95dcccafda28ff65428a069aebda36d3ee50fdfbebf99d4",
+    "composed-controls-before.tap.gz": "aaff8886b436b6a4d7d2a22316c25a2324e423ae1c804341758211e2b3cf7c18",
+    "continuation-producer.log.gz": "d4fad3f7a019ffedb0ea78b85ea55b4c90a7119b88b9e298ba570de7dd90d341",
+    "continuation-receiving.json": "03e375a4b3fa948ddadb1546871b6bf13ca603e3039dd51bb11aba3b5f3432da",
+    "contributor-artifacts.tap": "aac52d7f145ee541847a27674af92284b3d17989876c6a019ac592e9887b1980",
+    "contributor-managed-receipt.json": "eb7e25788de7dd13f90a99e0cb31881d84474968d10bc44e6a452d1c830e3303",
+    "contributor-private-console.log.gz": "500c76df79723fed8481b602d97de63d8530fb465a3ce671768be339e670c4e4",
+    "contributor-private-host.tap": "fac2a4ed06334b440d9d684b2cf1ee6120e2ab29f0ef660e1277c7748f9214e9",
+    "foundry-private-console-after.log.gz": "d8b4b7a877a4b5ac461e1678019616c483f3e17da4fff08a561dada15fbe414a",
+    "foundry-private-console.log.gz": "e98954ab13f1b4c5ce667b47d51405667f62bb1050f6928e45c25b68d926561b",
+    "foundry-private-pass-before.tap.gz": "533ad377da7f501ef5589de5e0803a6b370d65792287bfebc26aa6446c9a6c34",
+    "foundry-private-pass.tap": "50d64a33943326bdf8141dc21bc09bb61ea244e461627a0cd1ebb72de1e15135",
+    "foundry-runtime-layout.tap": "aabf3590a7b0c6841f82ea1f514f1183dcee1404fc80dabfce1a3574c1942c4e",
+    "hosted-startup.tap": "10518d6e499dfe053e6e454f311d3bd76c2c73ec240f336331f4789a6ee2e106",
+    "l08-agent-repair.tap": "5a69ac13788aa0ffeec093b29f48c497b26c9cec59e8f896d99442a5674813f7",
+    "machine-discovery.tap": "d5987827909c8f28886b898635291519622ae30ef048cfa6f713c1f6bb6cd9c7",
+    "machine-services.tap": "4dea02be7c52b457ca01760eeb7fb3eadd76bd246da08b4ea2d567a9a0c0bfe3",
+    "mcp.tap": "5b3f025db5176d19abe60a602674dac181b8f8c068a4a4080a99399e42d82c71",
+    "observatory.tap": "7551eee94b91e407d9eeea294a40d195873614b7509a724b63963ab550c34596",
+    "original-task.tap": "77ceb6d7ba84e97ff35a6d0207c194cd1624404bd53cc6396417944ae9fc3b52",
+    "package-source.json": "a8e33908983fe10b9e1e32d66e2cdf567577ffcc1da1b31f03313ef78fc6edde",
+    "package-source.py": "f36f255b57abfa7d6dc55eb4f70968ba929941cc5f8e0028d480f55730fc85c3",
+    "package-verification.json": "e2fae957ad8ec9a35e32727714a8bba0357f1547bd456961070ad21112655afe",
+    "predecessor-contributor-artifacts.tap.gz": "13874e3add64248ddb0801eff790d6ce65e315c0ff8058a565dde79977229e54",
+    "predecessor-proxy-addr.tap.gz": "5d25cc694eafbac8ffe957637fa5ef294eb346fa76905c3354ed852b5b0efd3f",
+    "private-host-prerequisites.log.gz": "feaf1046863f6c676af25eaa7d962df8d445c744012923f8d91282bb9be4cefd",
+    "producer-build.log.gz": "2bbc5fef0707d5159f52b0b05d6906b899533237de05698dbdb0d87abd7587c8",
+    "producer-receiving.json": "352306156c0db44b3b82eab65dca4510a96adc17f7496335e0198f8c777ced02",
+    "proxy-addr.tap": "e2346eb822a21eb50023df5c2966c5172cbf3ac3ee057cc616390fce29775607",
+    "pulse.tap": "9b3c1e0e35e499d87a66c720680721d209b8df2d3c93fbda0941fe9cf2daf2cb",
+    "readiness-load-failure.tap": "5a3b6a4ebd94889e883299bb2ff68dc6ef8f93feeaba18f4690d4501ca1d1486",
+    "received-DEPLOYMENT.json": "d53b544151a72b7d4b0b57022b3d1bf65c54d8337fd3528e4985a8c32753f188",
+    "received-lifecycle-RESULT.md": "6a944ad50133e9205a08a5154902ffc6ef8f194dbc738fbb289277bea6f4b8ca",
+    "retained-runtime.tap": "1289e04a4d786c8b6e7a2c62099e4b9ec79ed12302d2c5a835eef6f47bc3a34a",
+    "runtime-ci-console.log.gz": "adb6b543d5e92f988693dc2bba64e48d2d79a9c9e162799fd80392f81215cfbe",
+    "sqlite.tap": "a420e0108b432b1d2678e152d0cb031ebaa34a01c554214dab9deb9f9a9fcb0a",
+    "startup-diagnostic.tap": "ea3790ac223cc0286c3f68301d8f834e7115be5eb79f9096f41e8848c25e1a3f"
+  },
+  "firstFailureEncoding": "gzip; decompress to exact original TAP bytes; no whitespace normalization",
+  "rawFirstFailureSha256": {
+    "composed-controls-before.tap": "2d135fb68af16bf2bca0140f8d6dcdc245e3a2b95a5abea3c914fe0c6dae1649",
+    "foundry-private-pass-before.tap": "978faae441ff7338aa49abb86623f6fe8cdff02cb5bd43a0926a243a94a957fd",
+    "predecessor-contributor-artifacts.tap": "f36c0685c6ba595f14ef13cb84a6a14479775e7a98756b3122bd8c4b1c8bbe5f",
+    "predecessor-proxy-addr.tap": "09996f5ff243d00def36421b755d9f29e93e3e2f1bc09e039a35ddb0b4308da9"
+  },
+  "rawLogSha256": {
+    "cold-install.log": "61b1d675d44b7b8bf928b2af1b8e10ff330709fe6435b7042bd092fe23ab9ba8",
+    "foundry-private-console.log": "af726d680d18b95bb73b93b9c1462b97eb3a57a3b97b44493d6d027b5530a25a",
+    "cold-console.log": "17eb8b73f526878979198b22408e293d816a37390c25823aafebce3a1ed81779",
+    "private-host-prerequisites.log": "3a3d454e4dd7a7d3082f3ea82b6096d0113a5a43ee05236e8309f7eb5d78ba83",
+    "producer-build.log": "90be0a0963e4323987503b9550a3bab5b222a3343f7288e0440560fb05ca4376",
+    "foundry-private-console-after.log": "50d64a33943326bdf8141dc21bc09bb61ea244e461627a0cd1ebb72de1e15135",
+    "client-build.log": "8a5fb03a4cc2f9c45d82973f8d38de42ca9c7ba2d10a18a11989adbcc8f56a3b",
+    "runtime-ci-console.log": "131a32538b7d43c17f084843377da36f5ae22a06b7a0319b7bfc413bca5b5014",
+    "continuation-producer.log": "d4c2378c86f485a83e530a12e9d3af2d19f893309d38333a7602a55954e15096",
+    "contributor-private-console.log": "fac2a4ed06334b440d9d684b2cf1ee6120e2ab29f0ef660e1277c7748f9214e9"
+  },
+  "logEncoding": "gzip preserves exact command output, including original whitespace"
+}

@@ -7,6 +7,14 @@ import net from "node:net";
 // Gemini) can crawl + understand the site, then returns a score + concrete fixes. The deep
 // version (real citation testing vs competitors) is the paid AI-Search Visibility Audit.
 // runCheck() is exported so the server-rendered /scan proof page can reuse it.
+import { assertPublicUrl } from "../lib/agent-readiness/ssrf.js";
+import { fetchPublicBounded, createRequestBudget } from "../lib/agent-readiness/bounded-fetch.js";
+
+// One total budget per /llms-txt request: DNS (4s bound each) + redirects + bodies.
+export const LLMS_TOTAL_BUDGET_MS = 25_000;
+const isHtml = (ct) => !ct || /text\/html|application\/xhtml\+xml/i.test(ct);
+import { discoverSiteUrls, publicRequestHeaders, DISCOVERY_LIMITS, PROVENANCE } from "../lib/agent-readiness/sitemap-discovery.js";
+
 const router = Router();
 
 // Public, read-only tool APIs: allow cross-origin calls (our github.io study page,
@@ -237,18 +245,75 @@ router.get("/ai-readiness", async (req, res) => {
   }
 });
 
+// ---- llms.txt generator helpers (pure; exported for tests) ----
+const NAMED_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "–", mdash: "—", hellip: "…", rsquo: "’", lsquo: "‘", rdquo: "”", ldquo: "“", copy: "©", reg: "®", trade: "™" };
+export function decodeEntities(str) {
+  if (!str) return str;
+  return String(str).replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, (m, e) => {
+    if (e[0] === "#") {
+      const cp = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      return Number.isFinite(cp) && cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    }
+    const v = NAMED_ENTITIES[e.toLowerCase()];
+    return v === undefined ? m : v;
+  });
+}
+
+// Same-origin links inside <nav> elements, in document order, with their visible label.
+// The site root and in-page/asset links are skipped.
+export function extractNavLinks(html, origin) {
+  const out = [];
+  const seen = new Set();
+  for (const nav of String(html || "").match(/<nav\b[\s\S]*?<\/nav>/gi) || []) {
+    for (const m of nav.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+      const href = (m[1].match(/href\s*=\s*["']([^"']+)["']/i) || [])[1];
+      if (!href || href.startsWith("#") || /^(mailto|tel|javascript):/i.test(href)) continue;
+      let abs;
+      try { abs = new URL(href, origin); } catch { continue; }
+      if (abs.origin !== origin) continue;
+      const url = abs.toString().replace(/[#?].*$/, "");
+      const key = url.replace(/\/+$/, "");
+      if (key === origin || seen.has(key)) continue;
+      if (/\.(png|jpe?g|gif|svg|webp|ico|css|js|pdf|zip)$/i.test(abs.pathname)) continue;
+      const label = decodeEntities(m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+      seen.add(key);
+      out.push({ url, label: label || null });
+    }
+  }
+  return out;
+}
+
+// Navigation first (site order), then remaining sitemap/link URLs; trailing-slash-insensitive
+// dedupe; explicit truncation accounting instead of a silent cap.
+export function orderLlmsUrls({ navLinks = [], urls = [], cap = 50 }) {
+  const seen = new Set();
+  const all = [];
+  for (const n of navLinks) { const k = n.url.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: n.url, label: n.label, nav: true }); } }
+  for (const x of urls) { const k = x.replace(/\/+$/, ""); if (!seen.has(k)) { seen.add(k); all.push({ url: x, label: null, nav: false }); } }
+  const kept = all.slice(0, cap);
+  return { items: kept, totalFound: all.length, truncated: all.length > kept.length, omitted: all.length - kept.length };
+}
+
 // Free llms.txt generator: build a spec-shaped llms.txt from a site's sitemap (or homepage
 // links), with page titles/descriptions. Genuinely useful dev-doc hygiene; honestly NOT a
 // citation-ranking lever (we say so on the tool page). Funnels to the paid audit.
 router.get("/llms-txt", async (req, res) => {
+  const budget = createRequestBudget(LLMS_TOTAL_BUDGET_MS);
   try {
     const u = normalizeUrl(req.query.url);
-    await assertPublicHost(u.hostname);
+    const headers = { "User-Agent": UA, Accept: "text/html,*/*" };
 
     let page;
-    try { page = await fetchText(u.toString(), { acceptHtml: true }); }
-    catch { throw httpErr(502, "Could not reach that site"); }
-    const origin = (() => { try { return new URL(page.finalUrl || u.toString()).origin; } catch { return u.origin; } })();
+    try { page = await fetchPublicBounded(u.toString(), { allowHostVariants: true, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers, budget }); }
+    catch (e) {
+      if (e.code === "ssrf") throw e;
+      const err = httpErr(e.code === "off_origin_redirect" ? 400 : 502, e.code === "off_origin_redirect" ? "That site redirects to a different host" : "Could not reach that site");
+      err.code = e.code; throw err;
+    }
+    // A reached homepage needs a 2xx HTML response; a 404 page's <title> is not success.
+    if (!page.ok) { const err = httpErr(502, `That site's homepage answered HTTP ${page.status}`); err.code = "homepage_not_ok"; err.httpStatus = page.status; throw err; }
+    if (!isHtml(page.contentType)) { const err = httpErr(502, "That site's homepage is not an HTML page"); err.code = "homepage_not_html"; throw err; }
+    const origin = new URL(page.finalUrl).origin;
     const h = analyzeHtml(page.body);
 
     const pathLabel = (link) => {
@@ -259,21 +324,21 @@ router.get("/llms-txt", async (req, res) => {
       } catch { return link; }
     };
 
-    // Collect URLs from sitemap.xml (follow one level of sitemap index), else homepage links.
-    let urls = [];
-    try {
-      const sm = await fetchText(origin + "/sitemap.xml");
-      if (sm.ok) {
-        let locs = [...sm.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
-        if (/<sitemapindex/i.test(sm.body) && locs.length) {
-          const child = await fetchText(locs[0]).catch(() => null);
-          if (child && child.ok) locs = [...child.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
-        }
-        urls = locs;
-      }
-    } catch { /* fall through to link scrape */ }
+    // Supplied list (?paths=/a,/b) or robots.txt Sitemap: lines + /sitemap.xml, one index level.
+    const rawPaths = req.query.paths;
+    const suppliedPaths = rawPaths == null ? null
+      : (Array.isArray(rawPaths) ? rawPaths : String(rawPaths).split(",")).map((x) => String(x).trim()).filter(Boolean);
+    const found = await discoverSiteUrls({ origin, suppliedPaths, budget, headers: { "User-Agent": UA, Accept: "application/xml,text/plain,*/*" } });
+    let urls = found.urls;
+    const discovery = {
+      mode: found.mode,
+      source: urls.length ? (found.mode === "supplied" ? "supplied" : "sitemap") : "homepage-links",
+      sitemaps: found.sitemaps, missing: found.missing, redirected: found.redirected,
+      rejected: found.rejected, limited: found.limited, skipped: found.skipped,
+      provenance: found.provenance,
+    };
 
-    if (!urls.length) {
+    if (!urls.length && found.mode !== "supplied") {
       const set = new Set();
       for (const m of page.body.matchAll(/<a[^>]+href\s*=\s*["']([^"']+)["']/gi)) {
         try {
@@ -284,40 +349,68 @@ router.get("/llms-txt", async (req, res) => {
       urls = [...set];
     }
 
-    // dedupe (trailing slash insensitive) + cap
-    const seen = new Set();
-    const deduped = [];
-    for (const x of urls) {
-      const key = x.replace(/\/+$/, "");
-      if (!seen.has(key)) { seen.add(key); deduped.push(x); }
-    }
-    urls = deduped.slice(0, 50);
+    // navigation sections first, then the rest; explicit truncation (no silent cap)
+    const navLinks = found.mode === "supplied" ? [] : extractNavLinks(page.body, origin);
+    const ordered = orderLlmsUrls({ navLinks, urls, cap: 50 });
 
     // fetch title/description for the first N pages in parallel; label the rest from the path
     const TITLE_N = 14;
-    const head = await Promise.all(urls.slice(0, TITLE_N).map(async (link) => {
+    // Each item is read in its own origin scope: a supplied external reference is
+    // fetched anonymously and its redirects must stay on that reference's origin.
+    const provOf = (x) => found.provenance?.[x] || (found.mode === "supplied" ? PROVENANCE.SUPPLIED_SAME_ORIGIN : discovery.source);
+    for (const it of ordered.items) it.external = provOf(it.url) === PROVENANCE.SUPPLIED_EXTERNAL;
+    const head = await Promise.all(ordered.items.slice(0, TITLE_N).map(async (it) => {
       try {
-        const r = await fetchText(link, { acceptHtml: true });
+        if (budget.exhausted) throw new Error("budget");
+        const itOrigin = it.external ? new URL(it.url).origin : origin;
+        const r = await fetchPublicBounded(it.url, { allowedOrigin: itOrigin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers: it.external ? publicRequestHeaders(headers) : headers, budget });
+        if (!r.ok || !isHtml(r.contentType)) throw new Error("not a page");
         const a = analyzeHtml(r.body);
-        return { url: link, title: a.title || pathLabel(link), desc: a.description || "" };
-      } catch { return { url: link, title: pathLabel(link), desc: "" }; }
+        // Only the parsed <title> and meta description are used (bounded again at emit time:
+        // title 80, description 130 chars); no page body is ever passed through.
+        return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
+      } catch { return { ...it, title: it.label || pathLabel(it.url), desc: "" }; }
     }));
-    const tail = urls.slice(TITLE_N).map((link) => ({ url: link, title: pathLabel(link), desc: "" }));
+    const tail = ordered.items.slice(TITLE_N).map((it) => ({ ...it, title: it.label || pathLabel(it.url), desc: "" }));
     const pages = [...head, ...tail];
 
     const hostname = new URL(origin).hostname;
-    const siteName = (h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim().slice(0, 60) || hostname;
+    const siteName = decodeEntities((h.title || hostname).split(/[|–—:·]|\s-\s/)[0].trim()).slice(0, 60) || hostname;
+    const clean = (x, n) => decodeEntities(String(x)).replace(/\s+/g, " ").trim().slice(0, n);
+    const line = (p) => `- [${clean(p.title || p.url, 80)}](${p.url})${p.desc ? ": " + clean(p.desc, 130) : ""}\n`;
     let out = `# ${siteName}\n\n`;
-    if (h.description) out += `> ${h.description.replace(/\s+/g, " ").trim()}\n\n`;
-    out += `## Pages\n\n`;
-    for (const p of pages) {
-      const t = (p.title || p.url).replace(/\s+/g, " ").trim().slice(0, 80);
-      out += `- [${t}](${p.url})${p.desc ? ": " + p.desc.replace(/\s+/g, " ").trim().slice(0, 130) : ""}\n`;
-    }
+    if (h.description) out += `> ${clean(h.description, 500)}\n\n`;
+    const navPages = pages.filter((p) => p.nav);
+    const restPages = pages.filter((p) => !p.nav && !p.external);
+    const externalPages = pages.filter((p) => !p.nav && p.external);
+    if (navPages.length) { out += `## Sections\n\n`; for (const p of navPages) out += line(p); out += `\n`; }
+    if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
+    if (externalPages.length) { out += `${restPages.length ? "\n" : ""}## External references\n\n`; for (const p of externalPages) out += line(p); }
+    if (ordered.truncated) out += `\n> This bounded output omits ${ordered.omitted} additional discovered pages.\n`;
 
-    res.json({ origin, siteName, count: pages.length, llmsTxt: out });
+    // Honest coverage labels: automatic mode is bounded by the 50 cap; supplied mode
+    // qualifies only the requester's list, never automatic full coverage.
+    const emittedKeys = new Set(ordered.items.map((it) => it.url.replace(/\/+$/, "")));
+    const omittedUrls = urls.filter((x) => !emittedKeys.has(x.replace(/\/+$/, ""))).slice(0, 200);
+    const extN = pages.filter((p) => p.external).length;
+    discovery.coverage = found.mode === "supplied"
+      ? { mode: "requester-supplied", emitted: pages.length, supplied: suppliedPaths.length,
+          suppliedSameOrigin: pages.length - extN, suppliedExternal: extN,
+          references: (found.references || []).map((x) => {
+            const fin = String(x.finalUrl || "").replace(/\/+$/, "");
+            return { ...x, emitted: x.status === "admitted" && pages.some((p) => p.url.replace(/\/+$/, "") === fin) };
+          }),
+          externalLimit: DISCOVERY_LIMITS.maxExternalReferences,
+          externalSkipped: (found.references || []).filter((x) => x.reason === "external_limit").length,
+          label: `requester-supplied: ${pages.length} of ${suppliedPaths.length} supplied references emitted (${pages.length - extN} supplied-same-origin, ${extN} supplied-external); qualifies the supplied list only, not automatic full coverage` }
+      : { mode: "automatic", emitted: pages.length, discovered: ordered.totalFound, cap: 50, omittedUrls,
+          label: `automatic: ${pages.length} of ${ordered.totalFound} discovered pages emitted (cap 50); ${ordered.omitted} omitted` };
+    if (budget.exhausted) discovery.coverage.partial = "budget_exhausted";
+    res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length, discovery });
   } catch (e) {
-    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt" });
+    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt", ...(e.code ? { code: e.code } : {}), ...(e.httpStatus ? { httpStatus: e.httpStatus } : {}) });
+  } finally {
+    budget.dispose();
   }
 });
 

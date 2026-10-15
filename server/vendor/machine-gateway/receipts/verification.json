@@ -1,0 +1,34 @@
+{
+  "schema": "neomorphic.machine-gateway.verification.v1",
+  "branch": "codex/ae18-gateway-240200",
+  "fullSuite": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/machine-gateway",
+    "tests": 54,
+    "pass": 54,
+    "fail": 0,
+    "skipped": 0,
+    "receipt": "tests.tap"
+  },
+  "finalColdPackageRecheck": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 services/machine-gateway/tests/cold.test.mjs",
+    "tests": 1,
+    "pass": 1,
+    "receipt": "cold-final.tap"
+  },
+  "syntaxSchemasOpenapiSourcePins": "passed",
+  "hostPatchApplyCheck": {
+    "repository": "epistemedeus/samedaydesk",
+    "sha": "d8cea059213e06d2f263be67f82e498f8052a50f",
+    "passed": true
+  },
+  "archive": {
+    "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+    "bytes": 48464,
+    "sourceFilesCompared": 42,
+    "payloadMatchesWorkingSource": true,
+    "containsTestsCredentialsOrState": false
+  },
+  "publicFreeHttpSmoke": "public-smoke.json",
+  "productionActivationPerformed": false,
+  "livePaymentCalls": 0
+}

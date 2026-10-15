@@ -1,0 +1,100 @@
+{
+  "schema": "sds.machine-services.pins.v1",
+  "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
+  "inputsCommit": "ae1d2d22322a95bce0195d28cfb4811dc448b23d",
+  "sources": [
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "667fba353e9082d8a0842437442dabc42843abf8",
+      "path": "services/machine-gateway",
+      "tree": "83ae081b5fc9ce0f39b6e951a217cd6eede9b7e7"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "667fba353e9082d8a0842437442dabc42843abf8",
+      "path": "services/continuous-monitoring",
+      "tree": "46e4be5460168417d702de864dbd3ac71bf07b29"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+      "path": "packages/change-monitor",
+      "tree": "37048fa8f369ef1a6c0a8104a8eab8c2b7820535"
+    }
+  ],
+  "localChanges": [
+    "vendored monitor foundation relative imports",
+    "async Postgres store ports derived from pinned SQLite transitions",
+    "gateway async HTTP/store calls and truthful Postgres health schema",
+    "monitor extracted HTTP handler, async worker and finite IO cancellation",
+    "monitor foreign cursor and SQLite foreign-database refusal",
+    "upstream deployment recipes labeled as historical; use integrated SDS install package",
+    "gateway release contract regenerated and repository-relative manifest relocated for vendor tests",
+    "received deadline/diagnostic/privacy/normalization/linked-store fixes at the exact repair commit",
+    "gateway persisted deadline checks retain all async PG awaits; output UPDATE has a DB wall-clock fence",
+    "monitor authorize explicitly awaits PG authority and shares the monotonic source deadline",
+    "Postgres revoke atomically expires monitors and advances generation; lock/query waits consume run leases",
+    "migration inspects connected-role CREATE capability without inferring privilege from a role name",
+    "immutable received 0.1.1 archive is checked against exact upstream shipped-file hashes, separate from SDS async/PG adaptations",
+    "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
+    "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown"
+  ],
+  "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
+  "previousTestedImplementation": "d1b63983f0320d6b6213501cab72cc487c8464b2",
+  "repairSource": "667fba353e9082d8a0842437442dabc42843abf8",
+  "repairTestedImplementation": "4248874f2fa63636659fad164fb29ed193018104",
+  "lifecycleReceiving": {
+    "receivedExport": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "receivedTestedImplementation": "cc85b7b59a46605090049be06431eebb7c873c24",
+    "failingControlsCommit": "a7c5490b08e589b7c610abf116be70166b6daf82",
+    "schemaOrEnvironmentContractChanged": false,
+    "newServiceOrDependencies": false
+  },
+  "originalServiceSources": [
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+      "path": "services/machine-gateway",
+      "tree": "ed7af49b808b3f38c6b2af00e302fa3801c766e1"
+    },
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+      "path": "services/continuous-monitoring",
+      "tree": "aaf5cc82b2f9f4031c309f3858955e56868a23f0"
+    }
+  ],
+  "gatewayArchives": [
+    {
+      "version": "0.1.0",
+      "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+      "unchanged": true
+    },
+    {
+      "version": "0.1.1",
+      "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+      "bytes": 49637,
+      "selectedReceivedArtifact": true
+    }
+  ],
+  "sourceQualification": {
+    "predecessorExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "failedActionsRun": 38707454771,
+    "failingControlsCommit": "c57c92cf05ab022e1f22cdfba3a6b0506a8a4836",
+    "artifactProducer": "872c4f3006db6c70b45d124480cd019e0af50e69",
+    "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
+    "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerClosureDigest": "sha256:fb7f1607a09fac2527a394ec26fee28d240f0db3d14dc43eb5a15f83141cdc63",
+    "callerMembers": 1171,
+    "priorCallerDescriptorsAccepted": 21,
+    "compiledContributorMembersUnchanged": 437,
+    "opportunitySourceMembersReproduced": 187,
+    "opportunityCompiledMembersReproduced": 106,
+    "productionAdapter": "postgres",
+    "schemaEnvironmentKeysOrServiceKernelsChanged": false,
+    "actualTransportQualificationIssued": false,
+    "companionControllerExport": "931b7166842cbb0aa6db2041150041f9798dc49a",
+    "companionTestedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149"
+  }
+}

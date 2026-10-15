@@ -1,0 +1,15 @@
+import { canonicalRoundTerms } from '../../earned-work/src/opportunity/terms.js';
+import type { OpportunityClaimsPort, ClaimInput, WaitlistInput } from './types.js';
+export declare const keyPattern: RegExp;
+export declare function record(value: unknown): value is Record<string, unknown>;
+export declare function invalid(): never;
+export declare function exactObject(value: unknown, keys: string[]): Record<string, unknown>;
+export declare function opaque(value: unknown): value is string;
+export declare function key(value: unknown): value is string;
+export declare function idempotency(value: unknown): string;
+export declare function taskParts(value: unknown): [string, string];
+export declare function claimInput(value: unknown): ClaimInput;
+export declare function waitlistInput(value: unknown): WaitlistInput;
+export type RoundView = Awaited<ReturnType<OpportunityClaimsPort['readRound']>>;
+export declare function verifiedTerms(round: RoundView): ReturnType<typeof canonicalRoundTerms>;
+export declare function corrupt(): never;

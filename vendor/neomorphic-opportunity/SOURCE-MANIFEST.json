@@ -768,15 +768,17 @@
     },
     {
       "path": "services/earned-work/src/opportunity/routes.ts",
-      "sha256": "de2da11a2744a41e7107e5ad77d419c127a4c3e2ab4bf5916e636aac2cdcdd94",
-      "bytes": 11099,
-      "matchesReceived": true
+      "sha256": "38b7c98db9451e15a005d02e72500dee3aac00ee827007cd363f885b43d774ea",
+      "bytes": 11224,
+      "matchesReceived": false,
+      "continuationSourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69"
     },
     {
       "path": "services/earned-work/src/opportunity/service.ts",
-      "sha256": "ec5f18df161d0edc6dd2ee121e92a23641062fde811701a14e5d6effe9f95e10",
-      "bytes": 83815,
-      "matchesReceived": true
+      "sha256": "f2ff1289604fb963a43bbfb277c04aa8d6629cc8a15eb386240693149b858d88",
+      "bytes": 84084,
+      "matchesReceived": false,
+      "continuationSourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69"
     },
     {
       "path": "services/earned-work/src/opportunity/terms.ts",
@@ -1119,10 +1121,17 @@
       "sha256": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
       "bytes": 384,
       "matchesReceived": true
+    },
+    {
+      "path": "services/earned-work/src/opportunity/continuation.ts",
+      "matchesReceived": false,
+      "bytes": 8281,
+      "sha256": "95e953f4a193e9cf096ec21d442695ce408aac0247ae3f1372de964cb16d469c",
+      "continuationSourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69"
     }
   ],
-  "sourceCount": 186,
-  "sourceMismatches": [],
+  "sourceCount": 187,
+  "sourceMismatches": 3,
   "distFiles": [
     {
       "path": "experiments/arena/workability-dimensions/dist/card.js",
@@ -1421,28 +1430,28 @@
     },
     {
       "path": "services/earned-work/dist/opportunity/routes.js",
-      "sha256": "f8c371594cfc901fdb31c2f93e5b0e8324792a7502cc44b11df77b554d0fa17c",
-      "bytes": 10694
+      "sha256": "34cd4fecad96ca2ad26a371e885d4c488eb9112522475d0ae0bd91fab5f89cd7",
+      "bytes": 10825
     },
     {
       "path": "services/earned-work/dist/opportunity/routes.js.map",
-      "sha256": "44a1d165834c4a6daf9bbdc8894dc40a2ecd17856180fedb899ef4c418596e3c",
-      "bytes": 12028
+      "sha256": "fff000684717fe427f59c565eab5788f667959adf99fc9f2e4ddd37952315c61",
+      "bytes": 12126
     },
     {
       "path": "services/earned-work/dist/opportunity/service.d.ts",
-      "sha256": "ac0c6969bde1d9cb40d20b3f9dd0ca8449ebceecc74d538e29b50bc879299248",
-      "bytes": 14797
+      "sha256": "3160e49bf977cb577ec02bfac71d03c4255b3aee64c35d7d3b1b47e8ddb61624",
+      "bytes": 14859
     },
     {
       "path": "services/earned-work/dist/opportunity/service.js",
-      "sha256": "487fd3ce69a20f2e35a7d179f15f109e8737861e2d62259c47e52eff1d76f684",
-      "bytes": 82872
+      "sha256": "570da87553de1c527ab11301d2f4da18d8b60c8b24c86ea4bc89c0a988b34ff6",
+      "bytes": 83134
     },
     {
       "path": "services/earned-work/dist/opportunity/service.js.map",
-      "sha256": "ef08ecd92e67bf1e86540e214a4490c637a9259f66f0e43132df9c14a61add59",
-      "bytes": 66133
+      "sha256": "aebd32624db49936cb776f1787c66727a785713d481e2949641de5f8da0a8ae4",
+      "bytes": 66361
     },
     {
       "path": "services/earned-work/dist/opportunity/terms.d.ts",
@@ -1638,11 +1647,46 @@
       "path": "services/earned-work/dist/work-gate.js.map",
       "sha256": "cbfb0ebd5e0e1233091292dea94bfbe7e7fa7736bc05dec6719fce1cdfd21a10",
       "bytes": 1594
+    },
+    {
+      "path": "services/earned-work/dist/opportunity/continuation.js",
+      "bytes": 8466,
+      "sha256": "76570bacc93ebf892f218b8675f00050831d49df06f72b809c38e6c85c7e11eb"
+    },
+    {
+      "path": "services/earned-work/dist/opportunity/continuation.js.map",
+      "bytes": 7965,
+      "sha256": "343c1fa4c1438b184aa6c42489d986edff539ad3fd70793d145c086dad1a69e4"
+    },
+    {
+      "path": "services/earned-work/dist/opportunity/continuation.d.ts",
+      "bytes": 2036,
+      "sha256": "5f5e40d43b6666fa07c3c94c65fda34592bfe440713a9900727182e2fdbc9c9c"
     }
   ],
-  "distCount": 103,
+  "distCount": 106,
   "excluded": [
     "services/earned-work/receipts",
     "node_modules"
-  ]
+  ],
+  "sourceMismatchMeaning": "Two original source overlays and one additive source; all are explicitly pinned in CONTINUATION-SOURCE.json.",
+  "continuationOverlay": {
+    "schema": "neomorphic.original-continuation.overlay.v1",
+    "sourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69",
+    "sdsInputCommit": "e25b1ed48cf8cf0196aa3d25e59cbeaff8a91c8a",
+    "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
+    "patchPath": "services/contributor-journey/original-continuation/canonical-overlay.patch",
+    "patchSha256": "baa7d3bdb3fd1c451bd8ae9cd15eb8f2ec08c8f95beabc9b9b52597ebebbcd0c",
+    "helperPath": "services/earned-work/src/opportunity/continuation.ts",
+    "helperSha256": "95e953f4a193e9cf096ec21d442695ce408aac0247ae3f1372de964cb16d469c",
+    "changedOriginalSources": [
+      "services/earned-work/src/opportunity/routes.ts",
+      "services/earned-work/src/opportunity/service.ts"
+    ],
+    "canonicalRoute": "/api/neomorphic-opportunity",
+    "canonicalSchema": "neo_opportunity_221400",
+    "buildCommand": "node services/contributor-journey/export-original-continuation.mjs /absolute/isolated/samedaydesk",
+    "sourceModel": "Exact original producer plus two narrow additive patches and one exact producer helper. No wholesale future-round vendor replacement.",
+    "releaseAccepted": false
+  }
 }
