@@ -1,0 +1,98 @@
+[
+  {
+    "url": "https://krabka.io/docs/",
+    "status": 200,
+    "bytes": 80686,
+    "sha256": "8ebda0c24e526da0409e65247765420702f9b78ba927cef000b43fa9e51f7374",
+    "title": "Introduction | krabka docs",
+    "description": "Documentation for the krabka Kafka-compatible broker, KRaft metadata quorum, clients, stream processing libraries, connectors, and Kubernetes operator.",
+    "canonical": "https://krabka.io/docs/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/docs/migration/",
+    "status": 200,
+    "bytes": 81578,
+    "sha256": "7c4650f6402092c002bf7f3a791675b063a210cd229d746db9493b20b02efab4",
+    "title": "Migrating from Apache Kafka | krabka docs",
+    "description": "How krabka differs from Apache Kafka, which Kafka tools work against it, and how to move a running Kafka cluster onto krabka with MirrorMaker 2.",
+    "canonical": "https://krabka.io/docs/migration/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/docs/kip-matrix/",
+    "status": 200,
+    "bytes": 118330,
+    "sha256": "1635512e0d52c3fb870b11218d16c355e5180bac48d0b3177a260d87ca5dfb27",
+    "title": "Kafka KIP Matrix | krabka docs",
+    "description": "krabka",
+    "canonical": "https://krabka.io/docs/kip-matrix/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/verification/",
+    "status": 200,
+    "bytes": 1166346,
+    "sha256": "17ff29c4f9a365850dab37bc02cb68835b9015bf533c5f6c453a64b9b021476d",
+    "title": "Correctness &amp; Verification: Safe Rust, Creusot, Stateright | krabka",
+    "description": "How krabka checks correctness: no unsafe Rust, Creusot-proved kernels, bounded Stateright models, mutation testing, and differential tests against Kafka.",
+    "canonical": "https://krabka.io/verification/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/benchmarks/",
+    "status": 200,
+    "bytes": 493570,
+    "sha256": "6177b821443d1ec60dc1f078ad9885992fbd17c00f129b1db5b990a17d209a81",
+    "title": "Broker benchmarks | krabka",
+    "description": "OpenMessaging Benchmark rates and latency for krabka, Apache Kafka, and Redpanda, with published results and reproducible methodology.",
+    "canonical": "https://krabka.io/benchmarks/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/versions/",
+    "status": 200,
+    "bytes": 70345,
+    "sha256": "bec8082923fa290b26245e63cbbcb0f5ca3ce74e9d3b151d4d0a192a8fd4ed4f",
+    "title": "Release status and Kafka wire compatibility | krabka",
+    "description": "Repository branch and release status at build time, Apache Kafka wire-protocol compatibility targets (Kafka 2.8 to 4.x), and runtime requirements.",
+    "canonical": "https://krabka.io/versions/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/brand/",
+    "status": 200,
+    "bytes": 42790,
+    "sha256": "091ce219b68dae0c68f77378a477e4f998ed4c45b48a5a79317246e7832f338f",
+    "title": "Brand Assets | krabka",
+    "description": "The krabka marks, lockups, and colors, with the stable URL of every file. Helm charts and component repositories link to these paths directly.",
+    "canonical": "https://krabka.io/brand/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  },
+  {
+    "url": "https://krabka.io/docs/quickstart/",
+    "status": 200,
+    "bytes": 93306,
+    "sha256": "5402007976712e62c5f196cc1f380ea8bbce7ca0327c8cc9f6f91941311dc3ac",
+    "title": "Quickstart Guide | krabka docs",
+    "description": "Start a local krabka broker, check readiness, create a topic, and produce and read a record with containerized Kafka tools. Kubernetes steps included.",
+    "canonical": "https://krabka.io/docs/quickstart/",
+    "capturedAt": "2026-10-15T10:56:07Z",
+    "markdownAlternate": false,
+    "describedby": false
+  }
+]
