@@ -7,6 +7,9 @@ import net from "node:net";
 // Gemini) can crawl + understand the site, then returns a score + concrete fixes. The deep
 // version (real citation testing vs competitors) is the paid AI-Search Visibility Audit.
 // runCheck() is exported so the server-rendered /scan proof page can reuse it.
+import { fetchPublicBounded, assertPublicUrl } from "../lib/agent-readiness/ssrf.js";
+import { discoverSiteUrls } from "../lib/agent-readiness/sitemap-discovery.js";
+
 const router = Router();
 
 // Public, read-only tool APIs: allow cross-origin calls (our github.io study page,
@@ -292,12 +295,17 @@ export function orderLlmsUrls({ navLinks = [], urls = [], cap = 50 }) {
 router.get("/llms-txt", async (req, res) => {
   try {
     const u = normalizeUrl(req.query.url);
-    await assertPublicHost(u.hostname);
+    await assertPublicUrl(u); // shared guard (server/lib/agent-readiness/ssrf.js)
+    const headers = { "User-Agent": UA, Accept: "text/html,*/*" };
 
     let page;
-    try { page = await fetchText(u.toString(), { acceptHtml: true }); }
-    catch { throw httpErr(502, "Could not reach that site"); }
-    const origin = (() => { try { return new URL(page.finalUrl || u.toString()).origin; } catch { return u.origin; } })();
+    try { page = await fetchPublicBounded(u.toString(), { allowHostVariants: true, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers }); }
+    catch (e) {
+      if (e.code === "ssrf") throw e;
+      const err = httpErr(e.code === "off_origin_redirect" ? 400 : 502, e.code === "off_origin_redirect" ? "That site redirects to a different host" : "Could not reach that site");
+      err.code = e.code; throw err;
+    }
+    const origin = new URL(page.finalUrl).origin;
     const h = analyzeHtml(page.body);
 
     const pathLabel = (link) => {
@@ -308,21 +316,20 @@ router.get("/llms-txt", async (req, res) => {
       } catch { return link; }
     };
 
-    // Collect URLs from sitemap.xml (follow one level of sitemap index), else homepage links.
-    let urls = [];
-    try {
-      const sm = await fetchText(origin + "/sitemap.xml");
-      if (sm.ok) {
-        let locs = [...sm.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
-        if (/<sitemapindex/i.test(sm.body) && locs.length) {
-          const child = await fetchText(locs[0]).catch(() => null);
-          if (child && child.ok) locs = [...child.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
-        }
-        urls = locs;
-      }
-    } catch { /* fall through to link scrape */ }
+    // Supplied list (?paths=/a,/b) or robots.txt Sitemap: lines + /sitemap.xml, one index level.
+    const rawPaths = req.query.paths;
+    const suppliedPaths = rawPaths == null ? null
+      : (Array.isArray(rawPaths) ? rawPaths : String(rawPaths).split(",")).map((x) => String(x).trim()).filter(Boolean);
+    const found = await discoverSiteUrls({ origin, suppliedPaths, headers: { "User-Agent": UA, Accept: "application/xml,text/plain,*/*" } });
+    let urls = found.urls;
+    const discovery = {
+      mode: found.mode,
+      source: urls.length ? (found.mode === "supplied" ? "supplied" : "sitemap") : "homepage-links",
+      sitemaps: found.sitemaps, missing: found.missing, redirected: found.redirected,
+      rejected: found.rejected, limited: found.limited,
+    };
 
-    if (!urls.length) {
+    if (!urls.length && found.mode !== "supplied") {
       const set = new Set();
       for (const m of page.body.matchAll(/<a[^>]+href\s*=\s*["']([^"']+)["']/gi)) {
         try {
@@ -334,14 +341,14 @@ router.get("/llms-txt", async (req, res) => {
     }
 
     // navigation sections first, then the rest; explicit truncation (no silent cap)
-    const navLinks = extractNavLinks(page.body, origin);
+    const navLinks = found.mode === "supplied" ? [] : extractNavLinks(page.body, origin);
     const ordered = orderLlmsUrls({ navLinks, urls, cap: 50 });
 
     // fetch title/description for the first N pages in parallel; label the rest from the path
     const TITLE_N = 14;
     const head = await Promise.all(ordered.items.slice(0, TITLE_N).map(async (it) => {
       try {
-        const r = await fetchText(it.url, { acceptHtml: true });
+        const r = await fetchPublicBounded(it.url, { allowedOrigin: origin, maxRedirects: 3, maxBytes: MAX_BYTES, timeoutMs: FETCH_TIMEOUT_MS, headers });
         const a = analyzeHtml(r.body);
         return { ...it, title: it.label || a.title || pathLabel(it.url), desc: a.description || "" };
       } catch { return { ...it, title: it.label || pathLabel(it.url), desc: "" }; }
@@ -361,9 +368,9 @@ router.get("/llms-txt", async (req, res) => {
     if (restPages.length) { out += `## Pages\n\n`; for (const p of restPages) out += line(p); }
     if (ordered.truncated) out += `\n> This bounded output omits ${ordered.omitted} additional discovered pages.\n`;
 
-    res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length });
+    res.json({ origin, siteName, count: pages.length, llmsTxt: out, totalFound: ordered.totalFound, truncated: ordered.truncated, omitted: ordered.omitted, navSections: navPages.length, discovery });
   } catch (e) {
-    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt" });
+    res.status(e.status || 502).json({ error: e.message || "Could not generate llms.txt", ...(e.code ? { code: e.code } : {}) });
   }
 });
 
