@@ -28,6 +28,12 @@ never authorizes resending a possible payment. Incomplete executions become
 `uncertain` at their persisted deadline and remain recoverable. Receipts and
 payment identity tombstones are retained, including after restart.
 
+The 0.1.1 receiving candidate checks the persisted deadline at provider and
+adapter entry even when a JavaScript timer is delayed. Isolated facilitator
+workers discard SDK stdout/stderr so upstream diagnostics cannot enter host
+logs. The original 0.1.0 archive remains unchanged; the dedicated machine
+manifest selects the new immutable candidate and still records no live route.
+
 Paid routes are disabled by default. The optional adapter accepts an existing
 enrolled `@x402/core` facilitator client; it delegates `verify` and `settle`
 without constructing a wallet, signer or escrow. This version admits exact
@@ -42,6 +48,14 @@ flock /home/ubuntu/.cache/pilot-ae18-build.lock npm ci --ignore-scripts --no-aud
 flock /home/ubuntu/.cache/pilot-ae18-build.lock npm run check --prefix services/machine-gateway
 flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/machine-gateway
 ```
+
+Installed-package command help requires no credential or running server:
+`node bin/enroll.mjs --help`, `node bin/readiness.mjs --help`, and
+`node bin/caller.mjs --help`. To exercise the exact selected archive instead of
+packing current source, set `MACHINE_GATEWAY_TEST_ARCHIVE` to its absolute path
+when running `node --test services/machine-gateway/tests/cold.test.mjs` under
+the same host lock. That check installs only the archive's locked production
+dependencies, executes useful lockfile work, restarts, and resumes its receipt.
 
 `SOURCE.json` records the exact fetched sibling SHAs, inspected integration
 boundaries, unchanged vendored files and checksums. No shared navigation,

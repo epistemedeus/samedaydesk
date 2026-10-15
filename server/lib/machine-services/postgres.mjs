@@ -95,11 +95,22 @@ export class PgPort {
   async migrate() {
     const migration = await readFile(new URL(`./deploy/${this.service}-001.sql`, import.meta.url), 'utf8');
     await this.tx(async () => {
+      await this.checkMigrationAuthority();
       const present = await this.one('SELECT count(*) n FROM information_schema.tables WHERE table_schema=?', this.schema);
       if (present.n) await this.checkReady(); // refuse a foreign/unsupported schema before DDL
       await this.query(migration);
       await this.checkReady();
     });
+  }
+  async checkMigrationAuthority() {
+    const authority = await this.one(`SELECT
+      has_database_privilege(current_user,current_database(),'CREATE') database_create,
+      to_regnamespace(?) IS NOT NULL schema_exists,
+      coalesce(has_schema_privilege(current_user,to_regnamespace(?),'CREATE'),false) schema_create`, this.schema, this.schema);
+    // Supabase's project role name grants no authority by itself. Inspect the
+    // connected role's actual additive-schema capability; never request elevation.
+    if (authority.schema_exists ? !authority.schema_create : !authority.database_create) throw code('machine_additive_schema_privilege_required');
+    return authority;
   }
   close() { return this.pool.end(); }
 }

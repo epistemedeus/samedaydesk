@@ -40,15 +40,19 @@ export class PostgresGatewayStore {
     if (row.reservation) (await this.write("UPDATE usage SET units=units-? WHERE tenant=?", row.reservation, row.tenant));
   }
   async #expire() {
-    for (const row of (await this.all("SELECT * FROM attempts WHERE active=1 AND deadline<=?", this.now()))) {
+    for (const row of (await this.all("SELECT * FROM attempts WHERE active=1 AND (deadline<=? OR deadline<=extract(epoch FROM clock_timestamp())*1000)", this.now()))) {
+      await this.#interrupt(row);
+    }
+  }
+  async #interrupt(row) {
       const body = this.#body(row);
       body.status = "uncertain";
-      body.completedAt = this.now();
+      body.completedAt = Math.max(this.now(), row.deadline);
       body.error = { code: "execution_interrupted" };
       // No payment can start past deadline. Possible spend is never refunded.
       if (!row.possible) await this.#release(row);
       await this.#save(row, body, { active: 0, reservation: row.possible ? row.reservation : 0 });
-    }
+      return body;
   }
   async replay(tenant, idem, requestDigest) {
     return this.transaction(async () => {
@@ -123,14 +127,20 @@ export class PostgresGatewayStore {
       const row = (await this.one("SELECT * FROM attempts WHERE id=?", id));
       if (!row) fail("receipt_not_found", 404);
       if (!row.active) return this.#body(row);
+      if (row.deadline <= this.now()) return this.#interrupt(row);
       const body = this.#body(row);
       body.output = output;
       body.error = error;
       body.status = error ? (body.payment.state === "possible" ? "uncertain" : "failed") : "completed";
       body.completedAt = this.now();
       if (declined && !row.possible) body.payment.state = "declined";
+      // Recheck at the write itself: the SELECT/lock/query await can consume
+      // the remaining lease even when the caller's timeout callback is delayed.
+      const saved = await this.write(`UPDATE attempts SET body=?,active=0,reservation=?
+        WHERE id=? AND active=1 AND deadline>? AND deadline>extract(epoch FROM clock_timestamp())*1000`,
+        JSON.stringify(body), !row.possible && error ? 0 : row.reservation, id, this.now());
+      if (!saved.changes) return this.#interrupt(row);
       if (!row.possible && error) await this.#release(row);
-      await this.#save(row, body, { active: 0, reservation: !row.possible && error ? 0 : row.reservation });
       return body;
     });
   }

@@ -1,0 +1,157 @@
+TAP version 13
+# (node:678073) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production adapter requires verify-full, trusts the enrolled CA and refuses weaker TLS/foreign identity
+ok 1 - production adapter requires verify-full, trusts the enrolled CA and refuses weaker TLS/foreign identity
+  ---
+  duration_ms: 165.807165
+  ...
+# Subtest: cold Node runtime executes useful free work; lost HTTP acknowledgement resumes after restart without duplicate admission
+ok 2 - cold Node runtime executes useful free work; lost HTTP acknowledgement resumes after restart without duplicate admission
+  ---
+  duration_ms: 1124.178439
+  ...
+# Subtest: multi-pool gateway claims commit before effect; duplicate request and lost COMMIT response never repeat the effect
+ok 3 - multi-pool gateway claims commit before effect; duplicate request and lost COMMIT response never repeat the effect
+  ---
+  duration_ms: 109.441661
+  ...
+# Subtest: gateway request, route, tenant and lifetime budgets are enforced across restarts
+ok 4 - gateway request, route, tenant and lifetime budgets are enforced across restarts
+  ---
+  duration_ms: 160.395926
+  ...
+# Subtest: postgres monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+ok 5 - postgres monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+  ---
+  duration_ms: 963.089187
+  ...
+# Subtest: sqlite monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+ok 6 - sqlite monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+  ---
+  duration_ms: 80.612387
+  ...
+# Subtest: monitor claims and lease fences survive worker loss, concurrent ticks, pause, cancel and revoked grants
+ok 7 - monitor claims and lease fences survive worker loss, concurrent ticks, pause, cancel and revoked grants
+  ---
+  duration_ms: 52.196791
+  ...
+# Subtest: monitor staged write recovery emits one event without another upstream request; grant and budget limits persist
+ok 8 - monitor staged write recovery emits one event without another upstream request; grant and budget limits persist
+  ---
+  duration_ms: 91.990563
+  ...
+# Subtest: two Postgres workers race one due slot; pause during IO fences the result and stops subsequent reads
+ok 9 - two Postgres workers race one due slot; pause during IO fences the result and stops subsequent reads
+  ---
+  duration_ms: 59.761959
+  ...
+# Subtest: private Hostinger materialization and install/rollback packets preserve unrelated full configuration
+ok 10 - private Hostinger materialization and install/rollback packets preserve unrelated full configuration
+  ---
+  duration_ms: 21.030312
+  ...
+# Subtest: Postgres composite foreign keys and immutable artifacts refuse cross-monitor substitution
+ok 11 - Postgres composite foreign keys and immutable artifacts refuse cross-monitor substitution
+  ---
+  duration_ms: 69.287503
+  ...
+# Subtest: Postgres enforces finite monitor budgets, entitlement expiry, reader scope and free tenant monitor limits
+ok 12 - Postgres enforces finite monitor budgets, entitlement expiry, reader scope and free tenant monitor limits
+  ---
+  duration_ms: 69.754587
+  ...
+# Subtest: existing bounded scheduler performs monitor work and stops after cancel; restart readback has no timer requirement
+ok 13 - existing bounded scheduler performs monitor work and stops after cancel; restart readback has no timer requirement
+  ---
+  duration_ms: 102.73803
+  ...
+# Subtest: actual index scheduler arms an empty Postgres store and runs finite private-target refusals without IO
+ok 14 - actual index scheduler arms an empty Postgres store and runs finite private-target refusals without IO
+  ---
+  duration_ms: 478.796068
+  ...
+# Subtest: existing health, raw webhooks, contributor prefixes, MCP and SPA preserve their disabled/enabled behavior
+ok 15 - existing health, raw webhooks, contributor prefixes, MCP and SPA preserve their disabled/enabled behavior
+  ---
+  duration_ms: 844.165179
+  ...
+# Subtest: received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+ok 16 - received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+  ---
+  duration_ms: 44.00235
+  ...
+# Subtest: received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+ok 17 - received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+  ---
+  duration_ms: 26.658675
+  ...
+# Subtest: received PG: cancel after dispatch claim and before socket entry emits no request
+ok 18 - received PG: cancel after dispatch claim and before socket entry emits no request
+  ---
+  duration_ms: 42.988651
+  ...
+# Subtest: received PG: revoke then regrant cannot revive a live old generation
+ok 19 - received PG: revoke then regrant cannot revive a live old generation
+  ---
+  duration_ms: 38.270675
+  ...
+# Subtest: received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+ok 20 - received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+  ---
+  duration_ms: 42.974103
+  ...
+# Subtest: received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+ok 21 - received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+  ---
+  duration_ms: 64.782061
+  ...
+# Subtest: received PG: completion waits cannot commit an output after the persisted deadline
+ok 22 - received PG: completion waits cannot commit an output after the persisted deadline
+  ---
+  duration_ms: 164.041034
+  ...
+# Subtest: received PG: transaction wait consumes the monitor start and staging lease
+ok 23 - received PG: transaction wait consumes the monitor start and staging lease
+  ---
+  duration_ms: 117.380219
+  ...
+# Subtest: received PG: decoded SDK overflow retains one possible settlement and identical mounted HTTP replay
+ok 24 - received PG: decoded SDK overflow retains one possible settlement and identical mounted HTTP replay
+  ---
+  duration_ms: 193.518572
+  ...
+# Subtest: received PG: migration inspects additive-schema privilege rather than relying on a role name
+ok 25 - received PG: migration inspects additive-schema privilege rather than relying on a role name
+  ---
+  duration_ms: 33.463479
+  ...
+# Subtest: received PG: deadline moving during verify await fences the next adapter/provider entry
+ok 26 - received PG: deadline moving during verify await fences the next adapter/provider entry
+  ---
+  duration_ms: 35.956369
+  ...
+# Subtest: received PG: deadline moving during settled await fences the next adapter/provider entry
+ok 27 - received PG: deadline moving during settled await fences the next adapter/provider entry
+  ---
+  duration_ms: 30.326512
+  ...
+# Subtest: received PG: awaited database authorization consumes the source elapsed deadline before socket entry
+ok 28 - received PG: awaited database authorization consumes the source elapsed deadline before socket entry
+  ---
+  duration_ms: 125.961484
+  ...
+# Subtest: received PG: both mounted app APIs keep monitoring credentials out of gateway observations
+ok 29 - received PG: both mounted app APIs keep monitoring credentials out of gateway observations
+  ---
+  duration_ms: 630.331203
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6166.829767

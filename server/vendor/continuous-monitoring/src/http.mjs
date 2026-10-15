@@ -18,7 +18,7 @@ function abortable(promise, signal) {
 // DNS answers are all checked, and the checked address is pinned at connect time.
 export async function boundedGet(text, {
   mountedOrigin = null, timeoutMs = 5000, maxBytes = 65536, signal,
-  lookup = dns.lookup, headers = {},
+  lookup = dns.lookup, headers = {}, authorize = () => true,
 } = {}) {
   const start = performance.now();
   const deadline = new AbortController();
@@ -34,8 +34,16 @@ export async function boundedGet(text, {
     requireThat(answers.length > 0 && answers.length <= 32 && answers.every(answer => mounted
       ? answer.address === '127.0.0.1' : publicAddress(answer.address)), 'private_dns');
     const pinned = answers[0];
+    // Postgres authority is asynchronous. An unresolved Promise is never an
+    // affirmative grant, and the DB round trip consumes the same elapsed budget.
+    requireThat(await abortable(Promise.resolve().then(authorize), combined) === true, 'cancelled');
     const response = await new Promise((resolve, reject) => {
       if (combined.aborted) return reject(new ServiceError('aborted'));
+      // A DNS continuation can run before an overdue JS timer. The monotonic
+      // elapsed budget still forbids opening a late socket.
+      requireThat(performance.now() - start < timeoutMs, 'timeout');
+      // Recheck the durable fence after asynchronous DNS, immediately before
+      // creating a socket. The worker's periodic cancellation is not authority.
       requests = 1;
       const req = (url.protocol === 'https:' ? https : http).request(url, {
         method: 'GET', agent: false, signal: combined, maxHeaderSize: 16384,
@@ -75,6 +83,7 @@ export async function boundedGet(text, {
       req.on('error', reject);
       req.end();
     });
+    requireThat(performance.now() - start < timeoutMs, 'timeout');
     return { ...response, bytes, requests, durationMs: Math.ceil(performance.now() - start), failure: null };
   } catch (error) {
     const failure = signal?.aborted ? 'cancelled' : deadline.signal.aborted ? 'timeout'

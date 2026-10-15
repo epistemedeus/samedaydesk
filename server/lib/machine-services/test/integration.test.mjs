@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import https from 'node:https';
 import dns from 'node:dns/promises';
+import { gzipSync } from 'node:zlib';
+import { HTTPFacilitatorClient } from '@x402/core/http';
+import { existingFacilitatorAdapter } from '../../../vendor/machine-gateway/src/payments.mjs';
 import { once } from 'node:events';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -436,7 +439,9 @@ test('received PG: async fence awaited during DNS refuses a committed revocation
   const owner = await f.store.authenticate(token, Date.now());
   await f.store.lifecycle('customer', f.id, 'cancel', Date.now());
   const created = await f.store.create(owner, { ...f.input, url: 'https://public.example.com/price' }, 'received-dns-create', Date.now());
-  t.mock.method(dns, 'lookup', async () => {
+  const realLookup = dns.lookup.bind(dns);
+  t.mock.method(dns, 'lookup', async (host, ...args) => {
+    if (host !== 'public.example.com') return realLookup(host, ...args);
     await f.store.revoke('customer'); await f.store.provision({ id: 'customer', token, readerToken: reader });
     return [{ address: '8.8.8.8', family: 4 }];
   });
@@ -472,4 +477,136 @@ test('received PG: notification failures and malformed/missing/duplicate project
       assert.equal(JSON.stringify(result).includes('fixture_private_notification_text'), false);
     }
   }
+});
+
+test('received PG: completion waits cannot commit an output after the persisted deadline', async t => {
+  let now = Date.now();
+  const store = new PostgresGatewayStore(gatewayPort, { now: () => now });
+  const gateway = new MachineGateway({ store, registry: new RouteRegistry(builtinRoutes()), tenants });
+  const tenant = gateway.authenticate('Bearer ' + token);
+  const quote = await gateway.quote({ routeId: 'lockfile.delta', input: sampleInput }, tenant);
+  const body = { quoteId: quote.quoteId, input: sampleInput, maxUnits: 0 };
+  const finish = store.finish.bind(store);
+  store.finish = async (...args) => {
+    const read = store.one.bind(store);
+    const mock = t.mock.method(store, 'one', async (sql, ...values) => {
+      const row = await read(sql, ...values);
+      if (sql === 'SELECT * FROM attempts WHERE id=?' && row?.active) now = row.deadline;
+      return row;
+    });
+    try { return await finish(...args); } finally { mock.mock.restore(); }
+  };
+  const result = await gateway.execute(body, { tenant, idempotencyKey: 'received-completion-wait' });
+  assert.equal(result.receipt.status, 'uncertain'); assert.equal(result.receipt.output, null);
+});
+
+test('received PG: transaction wait consumes the monitor start and staging lease', async t => {
+  const f = await monitorFixture(t);
+  const row = await f.store.owned('customer', f.id);
+  const config = JSON.parse(row.config); config.budget.timeoutMs = 50;
+  await monitorPort.write('UPDATE monitors SET config=? WHERE id=?', JSON.stringify(config), f.id);
+  f.store.options.leaseSlackMs = 1;
+  const claim = await f.store.claim(Date.now());
+  const one = f.store.one.bind(f.store);
+  const mock = t.mock.method(f.store, 'one', async (sql, ...args) => {
+    const result = await one(sql, ...args);
+    if (sql.startsWith('SELECT r.*')) await new Promise(resolve => setTimeout(resolve, 80));
+    return result;
+  });
+  assert.equal(await f.store.start(claim, Date.now()), false);
+  mock.mock.restore(); assert.equal(f.source.requests, 0);
+});
+
+test('received PG: decoded SDK overflow retains one possible settlement and identical mounted HTTP replay', async t => {
+  const network = 'eip155:999999', asset = '0x' + '1'.repeat(40), payTo = '0x' + '2'.repeat(40), calls = [];
+  const facilitator = await listen(t, http.createServer((req, res) => {
+    calls.push(req.url); req.resume(); res.setHeader('content-type', 'application/json');
+    if (req.url === '/verify') return res.end('{"isValid":true}');
+    res.setHeader('content-encoding', 'gzip');
+    res.end(gzipSync(JSON.stringify({ success: true, transaction: '0x' + '0'.repeat(64), network, extra: { fixture: 'x'.repeat(1048576) } })));
+  }));
+  const adapter = existingFacilitatorAdapter({ client: new HTTPFacilitatorClient({ url: facilitator }), budgetUnit: 'usd-micros', network, asset, payTo, allowLoopback: true });
+  const reqs = { scheme: 'exact', network, asset, amount: '5', payTo, maxTimeoutSeconds: 30 };
+  let providers = 0;
+  const route = { id: 'fixture.sdk', version: '1', provider: 'unsigned-local-only', description: 'fixture SDK bound',
+    price: { amount: 5, unit: 'usd-micros' }, timeoutMs: 3000, maxOutputBytes: 1024, paymentRequirements: reqs,
+    inputSchema: object({ value: text() }), outputSchema: object({ value: text() }), run: input => { providers++; return input; }, test: () => ({ value: 'fixture' }) };
+  const grant = { ...tenants[0], routes: [route.id], maxUnits: 10 };
+  const registry = new RouteRegistry([route]);
+  const gateway = new MachineGateway({ store: new PostgresGatewayStore(gatewayPort), registry, tenants: [grant], paymentAdapter: adapter, paymentsEnabled: true, environment: 'test' });
+  const base = await listen(t, createGatewayServer(gateway));
+  const input = { value: 'must not enter provider' };
+  const quote = await request(base, '/api/machine-gateway/v1/quote', { body: { routeId: route.id, input } });
+  const body = { quoteId: quote.body.quoteId, input, maxUnits: 5 };
+  const payment = Buffer.from(JSON.stringify({ x402Version: 2, accepted: reqs, payload: { signature: '0x' + '0'.repeat(130), authorization: {
+    from: '0x' + '3'.repeat(40), to: payTo, value: '5', validAfter: '0', validBefore: '9999999999', nonce: '0x' + '4'.repeat(64) } } })).toString('base64');
+  const send = async url => {
+    const response = await fetch(url + '/api/machine-gateway/v1/execute', { method: 'POST', headers: { authorization: 'Bearer ' + token,
+      'content-type': 'application/json', 'idempotency-key': 'received-pg-sdk-overflow', 'payment-signature': payment }, body: JSON.stringify(body) });
+    return response.json();
+  };
+  const receipt = await send(base);
+  assert.equal(receipt.status, 'uncertain'); assert.equal(receipt.payment.state, 'possible'); assert.equal(providers, 0);
+  const port = new PgPort({ service: 'gateway', databaseUrl: installedDatabaseUrl(env) }); t.after(() => port.close());
+  const restarted = new MachineGateway({ store: new PostgresGatewayStore(port), registry, tenants: [grant], paymentAdapter: adapter, paymentsEnabled: true, environment: 'test' });
+  assert.deepEqual(await send(await listen(t, createGatewayServer(restarted))), receipt);
+  assert.deepEqual(calls, ['/verify', '/settle']); assert.equal((await gatewayPort.one('SELECT units FROM usage')).units, 5);
+});
+
+test('received PG: migration inspects additive-schema privilege rather than relying on a role name', async t => {
+  await gatewayPort.query('CREATE ROLE ae18_no_schema_create LOGIN');
+  const url = new URL(installedDatabaseUrl(env)); url.username = 'ae18_no_schema_create';
+  const denied = new PgPort({ databaseUrl: url.toString(), service: 'gateway' }); t.after(() => denied.close());
+  await assert.rejects(() => denied.migrate(), { code: 'machine_additive_schema_privilege_required' });
+  const metadata = await gatewayPort.checkMigrationAuthority();
+  assert.equal(metadata.database_create, true); assert.equal(metadata.schema_create, true);
+  assert.equal((await gatewayPort.one('SELECT count(*) n FROM information_schema.tables WHERE table_schema=?', 'pilot_gateway')).n >= 5, true);
+});
+
+for (const boundary of ['verify', 'settled']) test(`received PG: deadline moving during ${boundary} await fences the next adapter/provider entry`, async () => {
+  let now = Date.now(), providers = 0;
+  const store = new PostgresGatewayStore(gatewayPort, { now: () => now });
+  const adapter = unsignedPaymentAdapter({ verify: async () => { if (boundary === 'verify') now += 1001; } });
+  const route = { id: 'fixture.boundary', version: '1', provider: 'unsigned-local-only', description: 'async boundary test',
+    price: { amount: 5, unit: 'usd-micros' }, timeoutMs: 1000, maxOutputBytes: 1024, paymentRequirements: requirements,
+    inputSchema: object({ value: text() }), outputSchema: object({ value: text() }),
+    run: input => { providers++; return input; }, test: () => ({ value: 'fixture' }) };
+  const gateway = new MachineGateway({ store, registry: new RouteRegistry([route]), tenants: [{ ...tenants[0], routes: [route.id], maxUnits: 10 }],
+    paymentAdapter: adapter, paymentsEnabled: true, environment: 'test' });
+  if (boundary === 'settled') { const settle = store.settled.bind(store); store.settled = async (...args) => { await settle(...args); now += 1001; }; }
+  const tenant = gateway.authenticate('Bearer ' + token), input = { value: 'fixture' };
+  const quote = await gateway.quote({ routeId: route.id, input }, tenant);
+  const receipt = (await gateway.execute({ quoteId: quote.quoteId, input, maxUnits: 5 }, { tenant,
+    idempotencyKey: 'received-await-' + boundary, paymentHeader: 'unsigned-local-fixture-boundary' })).receipt;
+  assert.equal(providers, 0); assert.equal(receipt.status, 'uncertain'); assert.equal(receipt.output, null);
+  assert.equal(adapter.calls.settle, boundary === 'verify' ? 0 : 1);
+  assert.equal((await gatewayPort.one('SELECT units FROM usage')).units, boundary === 'verify' ? 0 : 5);
+});
+
+test('received PG: awaited database authorization consumes the source elapsed deadline before socket entry', async t => {
+  const f = await monitorFixture(t);
+  const config = JSON.parse((await f.store.owned('customer', f.id)).config); config.budget.timeoutMs = 50;
+  await monitorPort.write('UPDATE monitors SET config=? WHERE id=?', JSON.stringify(config), f.id);
+  const active = f.store.stillActive.bind(f.store);
+  t.mock.method(f.store, 'stillActive', async (...args) => {
+    const allowed = await active(...args);
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 80);
+    return allowed;
+  });
+  await tick(f.store); assert.equal(f.source.requests, 0);
+});
+
+test('received PG: both mounted app APIs keep monitoring credentials out of gateway observations', async t => {
+  const f = await monitorFixture(t); await f.store.lifecycle('customer', f.id, 'cancel', Date.now());
+  const host = await coldHost(t);
+  const quote = await request(host.base, '/api/machine-gateway/v1/quote', { body: { routeId: 'lockfile.delta', input: sampleInput } });
+  const run = await request(host.base, '/api/machine-gateway/v1/execute', { body: { quoteId: quote.body.quoteId, input: sampleInput, maxUnits: 0 }, key: 'received-mounted-authority' });
+  assert.equal(run.body.status, 'completed');
+  const store = new PostgresMonitorStore(monitorPort, { ...f.options, mountedOrigin: host.base });
+  const created = await store.create(await store.authenticate(token, Date.now()), { url: host.base + run.body.readbackPath, mode: 'http', intervalMs: 5000 }, 'received-shared-monitor', Date.now());
+  const result = await tick(store);
+  assert.equal(result.completed[0].observation.material.status, 401);
+  assert.equal((await store.listEvents('customer', created.monitor.id)).events.length, 0);
+  assert.equal((await gatewayPort.one('SELECT count(*) n FROM attempts')).n, 1);
+  assert.deepEqual((await request(host.base, run.body.readbackPath)).body, run.body);
 });

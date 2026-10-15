@@ -37,6 +37,7 @@ export async function tick(store, { now = Date.now, limit = store.options.maxTic
         signal: signal ? AbortSignal.any([signal, controller.signal]) : controller.signal,
         timeoutMs: Math.max(1, Math.min(claim.config.budget.timeoutMs, claim.expiresAt - now())),
         maxBytes: claim.config.budget.maxBodyBytes,
+        authorize: () => store.stillActive(claim, now()),
       });
     } finally { checking = false; clearTimeout(cancellation); }
     let normalized;

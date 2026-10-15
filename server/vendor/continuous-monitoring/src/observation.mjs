@@ -6,6 +6,14 @@ import { sealObservation } from '../vendor/change-monitor/src/transition.mjs';
 
 export { canonical, digestJson, sha256 };
 export const iso = ms => new Date(ms).toISOString();
+// Upstream documents can supply adapter failure strings. Only known factual
+// codes may enter the immutable inbox; arbitrary text is not a public error.
+const projectionFailures = new Set(['source_unreachable', 'incomparable', 'document_not_object',
+  'projection_pending', 'projection_unreadable', 'mixed_population_sum', 'market_wide_traffic',
+  'schema_mismatch', 'scope_mismatch', 'source_absent', 'kept_prior', 'stale', 'missing',
+  'unavailable', 'error', 'source_error', 'missing_from_snapshot', 'unprojected',
+  'coverage_population', 'coverage_not_comparable', 'partial_coverage', 'partial_metrics',
+  'metrics_unreadable', 'freshness_clock_missing', 'freshness_clock_unparsed', 'freshness_clock_ahead']);
 export function jsonPointer(document, pointer) {
   let value = document;
   for (const key of pointer.slice(1).split('/').map(x => x.replace(/~1/g, '/').replace(/~0/g, '~'))) {
@@ -36,12 +44,17 @@ export function normalize(config, result, now) {
     if (config.mode === 'observatory') {
       // Published envelopes need the maintained projection's coverage/population
       // normalization, exactly as readMaintainedProjection does after its GET.
-      const input = document?.schemaVersion === 'pilot.external-observatory.v1' && Array.isArray(document.observations)
-        ? { projection: projectSnapshot(parseSnapshot(document, { fetchedAt: iso(now) }), { observedAt: iso(now) }) }
-        : document;
-      const adapted = sourceProjectionAdapter.normalize({ source: { kind: 'source-projection', scope: `source-projection:${config.sourceId}` } }, input);
-      if (adapted.evidenceClass !== 'comparable') return fail(adapted.failureCode || 'incomparable');
-      material = adapted.material;
+      try {
+        const input = document?.schemaVersion === 'pilot.external-observatory.v1' && Array.isArray(document.observations)
+          ? { projection: projectSnapshot(parseSnapshot(document, { fetchedAt: iso(now) }), { observedAt: iso(now) }) }
+          : document;
+        const adapted = sourceProjectionAdapter.normalize({ source: { kind: 'source-projection', scope: `source-projection:${config.sourceId}` } }, input);
+        if (adapted.evidenceClass !== 'comparable') return fail(projectionFailures.has(adapted.failureCode) ? adapted.failureCode : 'source_unreachable');
+        const metrics = adapted.material?.metrics;
+        if (!Array.isArray(metrics) || new Set(metrics.map(metric => metric.key)).size !== metrics.length) return fail('metrics_unreadable');
+        if (!metrics.length || metrics.some(metric => metric.value == null || metric.state !== 'ok')) return fail('partial_metrics');
+        material = adapted.material;
+      } catch { return fail('unsafe_material'); }
     } else {
       material = { status: result.status, fields: {} };
       for (const pointer of config.pointers) {

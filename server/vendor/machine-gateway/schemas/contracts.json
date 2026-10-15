@@ -451,7 +451,7 @@
         "const": "neomorphic.machine-gateway.discovery.v1"
       },
       "version": {
-        "const": "0.1.0"
+        "const": "0.1.1"
       },
       "basePath": {
         "type": "string",

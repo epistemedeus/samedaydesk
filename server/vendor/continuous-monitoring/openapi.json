@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Neomorphic Continuous Monitoring",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Undeployed feature-branch service. Finite read-only upstream GETs and durable authenticated inbox delivery. No automatic charges or billing automation."
   },
   "servers": [

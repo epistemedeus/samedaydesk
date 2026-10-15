@@ -1,6 +1,6 @@
 {
   "name": "@neomorphic/machine-gateway",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mounted, tenant-bound HTTP execution with durable recovery and existing facilitator adapters",
   "type": "module",
   "exports": {

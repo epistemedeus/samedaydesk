@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import { mkdirSync, readFileSync, openSync, closeSync, lstatSync } from 'node:fs';
+import { constants, mkdirSync, readFileSync, openSync, closeSync, fstatSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { emptyState, emptyUsage, applyObservation } from '../vendor/change-monitor/src/transition.mjs';
@@ -9,6 +9,18 @@ import { LIMITS, monitorConfig, runtimeOptions } from './config.mjs';
 
 const parse = JSON.parse;
 const encode = JSON.stringify;
+const migration = readFileSync(new URL('../migrations/001.sql', import.meta.url), 'utf8');
+const applicationId = 0x4e434d31; // NCM1, dedicated monitoring state
+const schemaRows = db => db.prepare("SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name").all();
+let legacySchema;
+function isLegacyStore(db) {
+  if (!legacySchema) {
+    const reference = new DatabaseSync(':memory:');
+    try { reference.exec(migration); legacySchema = encode(schemaRows(reference)); }
+    finally { reference.close(); }
+  }
+  return encode(schemaRows(db)) === legacySchema && db.prepare('SELECT version FROM schema_version').get()?.version === 1;
+}
 function coreFor(id, config, now) {
   return { subscription: {
     subscriptionId: id, owner: 'tenant', source: { kind: 'http', scope: config.scopeKey },
@@ -22,18 +34,32 @@ export class MonitorStore {
   constructor(file, options = {}) {
     this.options = runtimeOptions(options);
     if (file !== ':memory:') {
-      mkdirSync(path.dirname(path.resolve(file)), { recursive: true, mode: 0o700 });
-      const handle = openSync(file, 'a', 0o600); closeSync(handle);
-      requireThat(lstatSync(file).isFile() && (lstatSync(file).mode & 0o077) === 0, 'store_requires_private_regular_file', 503);
+      requireThat(path.isAbsolute(file), 'absolute_store_path_required', 503);
+      const directory = path.dirname(file);
+      mkdirSync(directory, { recursive: true, mode: 0o700 });
+      requireThat(realpathSync(directory) === path.resolve(directory) && !(lstatSync(directory).mode & 0o077),
+        'store_requires_private_canonical_directory', 503);
+      const handle = openSync(file, constants.O_RDWR | constants.O_CREAT | constants.O_NOFOLLOW, 0o600);
+      try {
+        const stat = fstatSync(handle);
+        requireThat(stat.isFile() && stat.nlink === 1 && !(stat.mode & 0o077), 'store_requires_private_regular_file_without_links', 503);
+      } finally { closeSync(handle); }
     }
     this.db = new DatabaseSync(file);
-    const tables = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all();
-    if (tables.length && (!tables.some(row => row.name === 'schema_version') ||
-        this.db.prepare('SELECT version FROM schema_version').get()?.version !== 1)) {
-      this.db.close(); throw new ServiceError('foreign_or_unsupported_database', 503);
-    }
-    this.db.exec('PRAGMA busy_timeout=2000; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
-    this.db.exec(readFileSync(new URL('../migrations/001.sql', import.meta.url), 'utf8'));
+    try {
+      this.db.exec('PRAGMA busy_timeout=2000; PRAGMA foreign_keys=ON;');
+      this.tx(() => {
+        const application = this.one('PRAGMA application_id').application_id;
+        const version = this.one('PRAGMA user_version').user_version;
+        const empty = schemaRows(this.db).length === 0;
+        requireThat(application === applicationId || (application === 0 && version === 0 && (empty || isLegacyStore(this.db))), 'foreign_state_database', 503);
+        requireThat(version === 0 || version === 1, 'unsupported_store_version', 503);
+        if (empty) this.db.exec('PRAGMA auto_vacuum=INCREMENTAL;');
+        this.db.exec(migration);
+        this.db.exec(`PRAGMA application_id=${applicationId}; PRAGMA user_version=1;`);
+      });
+      this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
+    } catch (error) { this.db.close(); throw error; }
   }
   close() { this.db.close(); }
   one(sql, ...args) { return this.db.prepare(sql).get(...args); }
@@ -71,7 +97,14 @@ export class MonitorStore {
       return { tenantId: input.id, plan, entitlementUntil: iso(until), charged: false };
     });
   }
-  revoke(tenantId) { this.write('UPDATE tenants SET revoked=1 WHERE id=?', tenantId); }
+  revoke(tenantId) {
+    return this.tx(() => {
+      this.write('UPDATE tenants SET revoked=1 WHERE id=?', tenantId);
+      // Persist the generation change with revocation. A fast regrant must
+      // never revive an outstanding claim or an already revoked monitor.
+      this.write("UPDATE monitors SET status='expired',generation=generation+1 WHERE tenant_id=? AND status IN ('active','paused')", tenantId);
+    });
+  }
   authenticate(token, now) {
     if (typeof token !== 'string' || token.length < 32 || token.length > 256) throw new ServiceError('unauthorized', 401);
     const row = this.one(`SELECT t.*, c.role FROM tenants t JOIN credentials c ON c.tenant_id=t.id

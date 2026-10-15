@@ -27,17 +27,27 @@ flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/machi
 flock /home/ubuntu/.cache/pilot-ae18-build.lock npm pack ./services/machine-gateway --ignore-scripts --pack-destination /tmp
 ```
 
-The package is `neomorphic-machine-gateway-0.1.0.tgz`. It includes the runtime,
+The receiving candidate is `neomorphic-machine-gateway-0.1.1.tgz`. It includes the runtime,
 schemas, MIT source notices, and **npm-shrinkwrap.json**. It excludes fixtures,
 test credentials, state files and other repository packages. `npm ci` uses that
 shipped dependency lock. Record the archive SHA-256 with the deployment commit.
+The checked-in candidate is under `services/machine-gateway/releases/`; its
+digest is in `SHA256SUMS` and the dedicated machine manifest. Preserve the
+previous 0.1.0 artifact. Never replace a published archive at an existing version.
+The release test compares the selected archive's entire payload with current
+shipped source. The exact archived package can also be cold-tested from this checkout:
+
+```sh
+MACHINE_GATEWAY_TEST_ARCHIVE="$(pwd)/services/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz" \
+  flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test services/machine-gateway/tests/cold.test.mjs
+```
 
 In an operator-owned SameDayDesk staging checkout (never an unrelated live
 worktree), with the archive and patch available:
 
 ```sh
 mkdir -p server/vendor/neomorphic-machine-gateway
-tar -xzf /tmp/neomorphic-machine-gateway-0.1.0.tgz --strip-components=1 -C server/vendor/neomorphic-machine-gateway
+tar -xzf /tmp/neomorphic-machine-gateway-0.1.1.tgz --strip-components=1 -C server/vendor/neomorphic-machine-gateway
 flock /home/ubuntu/.cache/pilot-ae18-build.lock npm ci --omit=dev --ignore-scripts --no-audit --no-fund --prefix server/vendor/neomorphic-machine-gateway
 git apply --check /absolute/gateway-checkout/services/machine-gateway/deploy/samedaydesk.patch
 git apply /absolute/gateway-checkout/services/machine-gateway/deploy/samedaydesk.patch
@@ -140,7 +150,9 @@ network, asset, payTo })` and bind those same requirements to the route. The
 adapter reuses SDK 2.16.0 and the enrollment's operation-specific auth headers
 in a bounded worker. Worker-local transport forbids redirects, caps facilitator
 responses at 16 KiB and closes sockets on deadline/abort. It never changes the
-host-global fetch or signs a payment. The initial adapter supports the declared
+host-global fetch or signs a payment. SDK output is privately drained so
+facilitator diagnostics do not reach host stdout/stderr. The response cap also
+applies after SDK decompression. The adapter supports the declared
 minimal EIP-3009 v2 payload and optional resource/payment-identifier metadata;
 other rails/extensions require a reviewed adapter, not permissive parsing.
 

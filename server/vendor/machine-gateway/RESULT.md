@@ -1,23 +1,22 @@
-# RESULT
+Received and repaired the gateway: persisted deadlines now fence provider/adapter
+entry, and SDK diagnostics cannot print upstream text into host output. Added
+decoded response bounds/replay integration, mounted monitoring isolation, CLI
+help and an exact-source immutable 0.1.1 candidate. Homepages and SameDayDesk
+source are unchanged.
 
-Implemented a mounted, reusable gateway with strict provider schemas, free
-discovery/quote/test, tenant-bound execution, persistent budgets and receipts,
-DNS-pinned HTTP capture, the accepted lockfile engine, and the existing x402 SDK
-adapter with bounded isolated transport. Ambiguous payment attempts cannot resend.
+- Branch: `codex/ae18-service-review-243002`.
+- Validated implementation head: `4248874f2fa63636659fad164fb29ed193018104`;
+  subsequent result/evidence-only commit changes no shipped runtime or archive.
+- Actual tests: original **54/54** reproduced; final **59/59**, plus a separate
+  exact-archive cold install/restart/recovery and final mounted integration recheck.
+  Syntax, exported contracts and vendor pins pass. [Evidence](receipts/receiving/VALIDATION.md).
+- Candidate: [0.1.1 archive](releases/neomorphic-machine-gateway-0.1.1.tgz), SHA-256
+  `ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d`.
+  The 0.1.0 archive is unchanged. Public read: 167 bytes, one GET, identical
+  restarted receipt, zero payment calls. Paid evidence is unsigned local fixtures.
 
-- Branch: `codex/ae18-gateway-240200`.
-- Validated delivery head, before this result-only commit: `465388d3e59c40ac61383d06536a176b3916bdd4`.
-- Actual checks: **54/54 tests passed**, plus the final cold package/CLI recheck;
-  syntax, schemas, OpenAPI, source pins and the pinned SameDayDesk patch check passed.
-- Real free public capture: HTTP 200, 167 bytes; identical persisted receipt after
-  restart and a second cold CLI process; one upstream call, zero payment calls.
-- [Verification records](receipts/verification.json), [public readback evidence](receipts/public-smoke.json).
-- [Release archive](releases/neomorphic-machine-gateway-0.1.0.tgz), SHA-256
-  `730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3`.
-
-Remaining deployment action: apply the focused host patch on the existing
-SameDayDesk Node app, bind its existing durable local directory and free tenant
-configuration, deploy through that host's workflow, then run the
-[operator readiness and authenticated caller commands](deploy/RUNBOOK.md).
-Production activation and live settlement remain unverified. Payments were tested
-only with unsigned local fixtures; no funds moved. Shared human pages are unchanged.
+Remaining deployment action: 243001 consumes these scoped service fixes, installs
+the candidate through the existing host integration, binds durable storage and
+tenant grants, and records production authenticated execution/restart readback.
+The manifest remains prepared, with no verified live route. No production
+installation, live payment, main push, new model job or provider purchase occurred.

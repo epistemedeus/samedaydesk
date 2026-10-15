@@ -16,7 +16,11 @@ export async function invokeFacilitator(client, method, prepared, signal, { allo
     const worker = new Worker(new URL("./facilitator-worker.mjs", import.meta.url), {
       workerData: { url: client.url, method, authHeaders: auth.headers, prepared },
       resourceLimits: { maxOldGenerationSizeMb: 64, maxYoungGenerationSizeMb: 8, stackSizeMb: 2 },
+      stdout: true, stderr: true,
     });
+    // SDK diagnostics may include facilitator-controlled extension headers.
+    // Only the bounded structured result crosses into the host process.
+    worker.stdout.resume(); worker.stderr.resume();
     let finished = false;
     const finish = (error, result) => {
       if (finished) return;

@@ -7,6 +7,15 @@ flock /home/ubuntu/.cache/pilot-ae18-build.lock npm run demo --prefix services/c
 flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/continuous-monitoring
 ```
 
+`node services/continuous-monitoring/src/cli.mjs --help` lists administrative
+commands without opening a store. The 0.1.1 receiving repair rechecks the durable
+generation after DNS and immediately before socket creation, persists revocation
+fences even across a fast regrant, and refuses foreign or linked state files.
+Unknown upstream error text and malformed, duplicate or missing Observatory
+metrics become unavailable evidence. Existing baselines and unknown usage remain
+intact. [Receiving evidence](evidence/receiving/VALIDATION.md) includes the original
+command replay, failing-first repairs, cold source demo and mounted race checks.
+
 The free demo starts a mounted changing HTTP origin, a separate API process and one-shot worker processes using a private temporary SQLite database. It changes a price from 10 to 14, restarts the API, has a consumer read and acknowledge the delivered diff, restarts again and reads back both delivery and original baseline. It stops its own processes and deletes the temporary store. No external URL, account, provider, model, purchase or production change is involved. Metrics identify this as mounted HTTP evidence, not customer demand or public-source drift.
 
 Production observations permit public HTTPS on port 443 only. Each run makes at most one GET. DNS and body reading share a deadline; every DNS address must be public and the chosen address is pinned to the connection. Redirects, URL credentials, queries, fragments, suspicious credential paths, compressed bodies and partial responses are refused. Private-network access exists only for one exact `127.0.0.1` demo origin supplied in private runtime configuration, with `demo: true`; production refuses that exception.

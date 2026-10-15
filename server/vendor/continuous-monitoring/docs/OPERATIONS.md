@@ -16,6 +16,24 @@ A known complete response uses its actual measured bytes/runtime and refunds unu
 
 ## Observation and recovery
 
+The receiving version requires an absolute database path with a private,
+canonical parent directory and a private regular file with one link. It checks
+SQLite application/schema identity before migrations or journal changes. An
+unaltered legacy monitoring schema is recognized exactly and adopted in place;
+its WAL history, counters and immutable outputs survive. An unrelated database
+is refused without adding service tables or changing its journal mode.
+
+Cancellation, pause, expiry and lease loss are checked again after DNS,
+immediately before socket creation. Revocation expires active and paused
+monitors and increments their generation in the same transaction; regranting
+credentials cannot resurrect those monitors or claims. Owner credentials are
+rechecked after reading mutation bodies, so a slow upload cannot retain a role
+that was removed while the body arrived.
+
+The HTTP deadline is checked against monotonic elapsed time at socket entry and
+response completion as well as by an abort timer. A stalled event loop cannot
+spend an already expired DNS budget by running its continuation before the timer.
+
 The worker makes a durable claim before a read and sets a separate dispatch phase before network work. A lease spans the configured request deadline plus five seconds; no second worker may reuse it. The schedule advances from the later of the previous slot or present time, with no backlog replay. A shared SQLite transaction chooses the claim, reserves usage and source cooldown, and advances the schedule. The store uses WAL, full synchronous commits, foreign keys and bounded busy time. It requires a local, durable filesystem shared by API and worker; multiple hosts and NFS are unsupported.
 
 A complete response is normalized and staged durably, then immutable evidence, event, inbox entry, usage and cursor commit together. A restart finishes a staged response without another HTTP read. A lease lost after dispatch without a staged result becomes `interrupted_unknown`, preserves the previous baseline and emits unavailable evidence when appropriate. The service never automatically fetches that same slot again. A known future scheduled slot may read again under the original budget and cooldown. Unknown is not success, zero content or a verified change. A stale worker token cannot stage after its lease expires; a cancelled or superseded generation cannot admit an observation.
@@ -23,6 +41,12 @@ A complete response is normalized and staged durably, then immutable evidence, e
 Conditional GET uses a saved ETag or Last-Modified only after a comparable baseline exists. A 304 with a sent validator confirms that baseline without replacing it. A 304 without one is unavailable. Redirects and HTTP 206 are refused, bodies must complete, and decompression is not performed. DNS results are validated again for each observation and all answers must be public. The selected validated address is used directly by the socket lookup; the hostname remains in TLS certificate validation and SNI. The service does not use proxy environment variables or retain cookies. HTTPS certificate failures become unavailable evidence. Full TLS/domain inventory, certificate-expiry scheduling and arbitrary HTML extraction are outside this implementation.
 
 ## Consumer delivery
+
+Adapter failure codes are restricted to known factual codes. Unknown upstream
+strings become `source_unreachable`; malformed projection structures become
+`unsafe_material`. Empty/null metrics remain partial, and duplicate metric keys
+are unreadable evidence. These observations preserve the previous comparable
+baseline and use the normal unavailable-evidence delivery path.
 
 - `GET /v1/monitors/{id}/events?after=0&limit=25` reads immutable events without claiming deliveries. `nextCursor` is monotonic; each event contains stable identity, transition, before/after evidence ids, factual diff, capture origin and task disposition. Reader credentials can use this path.
 - `GET /v1/monitors/{id}/deliveries?limit=10` is owner-only and durably claims due inbox messages before replying. Each message has the immutable event, `deliveryId`, attempt number and retry time. A read alone reports `delivered: false`.

@@ -83,19 +83,26 @@ export class MachineGateway {
     const deadline = new AbortController();
     const timer = setTimeout(() => deadline.abort(new GatewayError("deadline_exceeded", 504)), Math.max(1, admission.receipt.deadlineAt - this.store.now()));
     const signal = callerSignal ? AbortSignal.any([callerSignal, deadline.signal]) : deadline.signal;
+    const assertActive = () => {
+      // A WAL commit or synchronous adapter work can outlast the deadline
+      // before the event loop gets a chance to deliver its timeout callback.
+      if (this.store.now() >= admission.receipt.deadlineAt) deadline.abort(new GatewayError("deadline_exceeded", 504));
+      signal.throwIfAborted();
+    };
+    const work = fn => abortable(() => { assertActive(); return fn(); }, signal);
     try {
       if (prepared) {
-        await abortable(() => this.adapter.verify(prepared, { signal }), signal);
-        signal.throwIfAborted();
+        await work(() => this.adapter.verify(prepared, { signal }));
+        assertActive();
         // No adapter can be entered twice for this quote/credential, including
         // when the reply is lost or the process dies immediately after commit.
         await this.store.possiblePayment(receiptId, this.adapter.kind, this.adapter.evidence, prepared.identity);
-        const payment = await abortable(() => this.adapter.settle(prepared, { signal }), signal);
-        signal.throwIfAborted();
+        const payment = await work(() => this.adapter.settle(prepared, { signal }));
+        assertActive();
         await this.store.settled(receiptId, payment);
       }
-      const output = this.registry.output(route, await abortable(() => route.run(body.input, { signal, receiptId }), signal));
-      signal.throwIfAborted();
+      const output = this.registry.output(route, await work(() => route.run(body.input, { signal, receiptId })));
+      assertActive();
       return { receipt: await this.store.finish(receiptId, { output }), replay: false };
     } catch (error) {
       const code = signal.aborted ? (deadline.signal.aborted ? "deadline_exceeded" : "execution_aborted")

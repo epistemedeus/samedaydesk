@@ -5,6 +5,8 @@ import { createHash } from "node:crypto";
 import Ajv from "ajv";
 import { openapi } from "../src/contracts.mjs";
 import { sampleInput } from "./helpers.mjs";
+import { execFile } from "./process-helpers.mjs";
+import { fileURLToPath } from "node:url";
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 
@@ -48,4 +50,26 @@ test("vendored source hashes and shipped SDK lock match their exact pins", () =>
   assert.equal(lock.packages["node_modules/@x402/core"].version, "2.16.0");
   assert.equal(lock.packages["node_modules/@x402/core"].integrity, source.paymentSdk.integrity);
   assert.ok(pkg.files.includes("npm-shrinkwrap.json"));
+});
+
+test("the selected immutable candidate archive matches every shipped source file and manifest digest", async () => {
+  const manifest = read("../deploy/upstream-machine-manifest.json");
+  const archive = fileURLToPath(new URL(`../releases/${manifest.sourceArchive.repositoryPath.split("/").at(-1)}`, import.meta.url));
+  const bytes = readFileSync(archive);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.sourceArchive.sha256);
+  assert.equal(bytes.length, manifest.sourceArchive.bytes);
+  const members = (await execFile("tar", ["-tzf", archive])).stdout.trim().split("\n").filter(name => !name.endsWith("/"));
+  // The received artifact is immutable. SDS has explicit PG/async adaptations,
+  // so compare the archive to pinned received-source hashes, never a repack.
+  const received = read('../deploy/RECEIVED-0.1.1.json');
+  assert.equal(received.archiveSha256, manifest.sourceArchive.sha256);
+  assert.deepEqual(members.toSorted(), Object.keys(received.files).map(name => `package/${name}`).toSorted());
+  for (const member of members) {
+    assert.match(member, /^package\/(?:src\/|bin\/|vendor\/|deploy\/|schemas\/|package\.json$|npm-shrinkwrap\.json$|README\.md$|SOURCE\.json$|openapi\.json$)/);
+    assert.equal(member.includes(".."), false);
+    const archived = (await execFile("tar", ["-xOf", archive, member])).stdout;
+    assert.equal(createHash("sha256").update(archived).digest("hex"), received.files[member.slice("package/".length)], member);
+  }
+  assert.equal(manifest.version, read("../package.json").version);
+  assert.equal(JSON.parse((await execFile("tar", ["-xOf", archive, "package/package.json"])).stdout).version, manifest.version);
 });

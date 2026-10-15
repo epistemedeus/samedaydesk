@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 import { randomUUID } from "node:crypto";
-import { argumentsFor, privateText, inputText, savePrivate, baseUrl, request } from "./client-io.mjs";
+import { argumentsFor, privateText, inputText, savePrivate, baseUrl, request, showHelp } from "./client-io.mjs";
 import { boundedJson, digest, sha256 } from "../src/util.mjs";
 import { validate } from "../src/schemas.mjs";
+
+showHelp('node bin/caller.mjs --base-url HTTPS_URL --token-file ABS_PRIVATE_FILE --state-file ABS_PRIVATE_FILE --route ROUTE --input-file FILE\n'
+  + '       node bin/caller.mjs --base-url HTTPS_URL --token-file ABS_PRIVATE_FILE --state-file ABS_PRIVATE_FILE --resume\n'
+  + 'Free routes only. Add --allow-loopback for an explicitly local HTTP test. Saves intent before execution; resume keeps its idempotency key.');
 
 try {
   const args = argumentsFor(process.argv.slice(2), ["base-url", "token-file", "state-file", "input-file", "route", "resume", "allow-loopback"], ["resume", "allow-loopback"]);

@@ -1,0 +1,35 @@
+TAP version 13
+# (node:2238461) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: an elapsed DNS budget fences socket entry before a delayed timeout callback runs
+not ok 1 - an elapsed DNS budget fences socket entry before a delayed timeout callback runs
+  ---
+  duration_ms: 85.903309
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/06-mounted-boundaries.test.mjs:95:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'source_unreachable'
+    - 'timeout'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'timeout'
+  actual: 'source_unreachable'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/06-mounted-boundaries.test.mjs:104:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 154.614886

@@ -43,7 +43,7 @@ export function openapi() {
     };
   }
   components.quoteRequest = { oneOf: quoteInputs };
-  return { openapi: "3.1.0", info: { title: "Neomorphic Machine gateway", version: "0.1.0",
+  return { openapi: "3.1.0", info: { title: "Neomorphic Machine gateway", version: "0.1.1",
     description: "Mounted service contract. Prepared for deployment; this document is not evidence of a live endpoint." },
     "x-release-state": "prepared-not-deployed", servers: [{ url: "/api/machine-gateway" }], paths,
     components: { securitySchemes: { tenantBearer: { type: "http", scheme: "bearer" } }, schemas: components },

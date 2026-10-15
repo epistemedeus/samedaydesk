@@ -12,6 +12,12 @@ function privateJson(file) {
 }
 export async function main(args) {
   process.umask(0o077);
+  if (args.length === 1 && args[0] === '--help') {
+    process.stdout.write('Usage: node src/cli.mjs <serve|tick|provision|revoke|maintenance> --config PRIVATE_FILE\n'
+      + 'provision also requires --grant PRIVATE_FILE; revoke requires --tenant ID.\n'
+      + 'serve binds loopback; tick performs bounded public GETs without payments. No command installs a supervisor.\n');
+    return;
+  }
   const command = args[0], configIndex = args.indexOf('--config');
   const configFile = configIndex >= 0 ? args[configIndex + 1] : process.env.MONITOR_CONFIG;
   const input = privateJson(configFile);

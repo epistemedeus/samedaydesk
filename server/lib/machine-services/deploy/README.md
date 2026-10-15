@@ -5,12 +5,22 @@ Root binds existing secrets and performs the existing Hostinger deployment. No
 new host, port, systemd unit, timer, billing integration or cloud service is needed.
 Human pages, navigation, existing route configuration and proxy authority are unchanged.
 
-The authoritative source pins are [PINS.json](../PINS.json). Gateway source is
-Neomorphic `7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8`; its unmodified supplied
-release is retained in `server/vendor/machine-gateway/releases/` with SHA-256
+The authoritative source pins are [PINS.json](../PINS.json). Both repaired
+services are received from Neomorphic `667fba353e9082d8a0842437442dabc42843abf8`
+(independently tested runtime `4248874f2fa63636659fad164fb29ed193018104`).
+The selected upstream gateway **0.1.1** archive is retained byte-for-byte at
+`server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz`,
+SHA-256 `ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d`
+(49,637 bytes). `deploy/RECEIVED-0.1.1.json` verifies every shipped file against
+the exact received source. SDS adds explicit async/PG adaptations in this feature
+branch; extracting the SQLite upstream archive must not overwrite them.
+
+The original gateway source was `7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8`;
+its immutable **0.1.0** archive remains unchanged with SHA-256
 `730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3`.
-Monitor and its complete change-monitor foundation are from
-`0ad6691f79225cfba782971a910c0e79d371c8f3`. Names/shapes are from Pilot
+The original monitor and its complete change-monitor foundation were from
+`0ad6691f79225cfba782971a910c0e79d371c8f3`; that foundation remains unchanged.
+Names/shapes are from Pilot
 `ae1d2d22322a95bce0195d28cfb4811dc448b23d` (original inputs retained beside this file).
 The old gateway patch targeted SDS `d8cea059213e06d2f263be67f82e498f8052a50f`;
 this integration was adapted to actual SDS base
@@ -27,7 +37,11 @@ correspondence URL and CA variables stay untouched. Generic `DATABASE_URL`,
 Supabase HTTP credentials, a new database service, and ephemeral SQLite are not fallbacks.
 
 Two additive schemas, `pilot_gateway` and `pilot_monitor`, use the existing DB
-and its enrolled role. That role needs CREATE SCHEMA for installation and normal
+and its enrolled role. Root confirmed that the retained correspondence URL
+already uses verify-full on the retained Supabase project with its existing
+project role. Actual migration checks `has_database_privilege` and
+`has_schema_privilege` before DDL; its username is never evidence of privilege.
+That role needs CREATE SCHEMA for initial installation and normal
 SELECT/INSERT/UPDATE/DELETE/sequence access in these schemas for serving. No
 objects in correspondence, contributor, product or public schemas are changed.
 Each pool has at most two connections (four total), a three-second connect
@@ -53,6 +67,23 @@ deadline; an already committed completed receipt remains stable. HTTP capture
 retains the upstream all-answer public DNS check, pinned connection address,
 redirect refusal and size/deadline bounds. Useful free `lockfile.delta` executes
 the real worker/engine. Payments remain disabled, with no fund movement.
+
+Received safety repairs are active code, including every async PG boundary.
+Gateway provider/adapter entry checks the persisted deadline after each awaited
+admission/payment transition. A conditional PG write fences late completion at
+the database clock. SDK diagnostics are privately drained; decoded settlement
+bounds and unknown-outcome replay retain one spend reservation. These unsigned
+fixture tests do not qualify a paid rail.
+
+Monitor authority is awaited after DNS and immediately before socket creation;
+a Promise is never a grant. The same monotonic elapsed deadline covers that DB
+round trip, socket entry and response completion. Run lease checks include time
+spent awaiting PG locks/queries. Revoke expires active/paused monitors and advances
+the generation in the same transaction, so a fast regrant cannot revive old work.
+Malformed projections, missing/duplicate metrics and arbitrary failure strings
+produce bounded unavailable evidence, preserve prior baselines and cannot leak
+notification text. Native local stores reject foreign/linked/shared paths and
+safely adopt only the exact legacy schema with WAL history intact.
 
 Monitor claims reserve budgets before dispatch. Run token, generation, finite
 lease, current-run identity, tenant entitlement and status fence completion.
@@ -187,6 +218,7 @@ environment values, and restarts the existing app. Keep both schemas, tenant IDs
 credential authority and receipts; no down migration deletes state. The private
 packet's `rollback.json` restores the exact prior complete environment if that
 snapshot is still current. Refresh it if another owner has since changed the
-environment. Code rollback uses the reviewed integration commits on this branch;
+environment. Disable the flags before any code rollback; re-enable only a runtime containing
+the received safety repairs. Code rollback uses the reviewed integration commits on this branch;
 it must preserve data, unrelated jobs and prior private contributor configuration.
 Re-enabling the same installed adapter reads the same receipts and inbox.

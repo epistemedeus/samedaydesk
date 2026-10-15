@@ -1,12 +1,20 @@
 // Postgres port of the pinned monitor state machine. Claims, staging, finalization,
 // delivery visibility and acknowledgement are transactional across API/worker replicas.
 import { randomUUID } from 'node:crypto';
+import { performance } from 'node:perf_hooks';
 import { emptyState, emptyUsage, applyObservation } from '../vendor/change-monitor/src/transition.mjs';
 import { digestJson, sha256, iso, normalize, materialDiff } from './observation.mjs';
 import { ServiceError, requireThat, integer, object } from './errors.mjs';
 import { LIMITS, monitorConfig, runtimeOptions } from './config.mjs';
 const parse = JSON.parse;
 const encode = JSON.stringify;
+// Preserve an explicitly supplied logical instant while charging real elapsed
+// time across async PG lock/query waits. Never reuse a pre-await lease check.
+function movingClock(at) {
+  if (typeof at === 'function') return at;
+  const started = performance.now();
+  return () => Math.ceil(at + performance.now() - started);
+}
 function coreFor(id, config, now) {
   return { subscription: {
     subscriptionId: id, owner: 'tenant', source: { kind: 'http', scope: config.scopeKey },
@@ -47,7 +55,12 @@ export class PostgresMonitorStore {
       return { tenantId: input.id, plan, entitlementUntil: iso(until), charged: false };
     });
   }
-  async revoke(tenantId) { (await this.write('UPDATE tenants SET revoked=1 WHERE id=?', tenantId)); }
+  async revoke(tenantId) {
+    return this.tx(async () => {
+      await this.write('UPDATE tenants SET revoked=1 WHERE id=?', tenantId);
+      await this.write("UPDATE monitors SET status='expired',generation=generation+1 WHERE tenant_id=? AND status IN ('active','paused')", tenantId);
+    });
+  }
   async authenticate(token, now) {
     if (typeof token !== 'string' || token.length < 32 || token.length > 256) throw new ServiceError('unauthorized', 401);
     const row = (await this.one(`SELECT t.*, c.role FROM tenants t JOIN credentials c ON c.tenant_id=t.id
@@ -166,21 +179,23 @@ export class PostgresMonitorStore {
     });
   }
   async start(claim, now) {
+    const clock = movingClock(now);
     return this.tx(async () => {
-      (await this.expire(now));
+      (await this.expire(clock()));
       const live = (await this.one(`SELECT r.*,m.status,m.generation live_generation,m.current_run FROM runs r
         JOIN monitors m ON m.id=r.monitor_id WHERE r.id=? AND r.lease_token=?`, claim.id, claim.token));
-      if (!live || live.phase !== 'claimed' || live.lease_until <= now || live.status !== 'active'
+      if (!live || live.phase !== 'claimed' || live.lease_until <= clock() || live.status !== 'active'
         || live.live_generation !== claim.generation || live.current_run !== claim.id) return false;
-      return (await this.write("UPDATE runs SET phase='started' WHERE id=? AND phase='claimed'", claim.id)).changes === 1;
+      return (await this.write("UPDATE runs SET phase='started' WHERE id=? AND phase='claimed' AND lease_until>? AND lease_until>extract(epoch FROM clock_timestamp())*1000", claim.id, clock())).changes === 1;
     });
   }
   async stillActive(claim, now) {
+    const clock = movingClock(now);
     const row = (await this.one(`SELECT m.status,m.generation,m.expires_at,t.entitlement_until,t.revoked,r.lease_until
       FROM monitors m JOIN tenants t ON t.id=m.tenant_id JOIN runs r ON r.id=m.current_run
       WHERE m.id=? AND r.id=? AND r.lease_token=?`, claim.monitorId, claim.id, claim.token));
-    return row && row.status === 'active' && row.generation === claim.generation && row.expires_at > now
-      && row.entitlement_until > now && !row.revoked && row.lease_until > now;
+    return !!row && row.status === 'active' && row.generation === claim.generation && row.expires_at > clock()
+      && row.entitlement_until > clock() && !row.revoked && row.lease_until > clock();
   }
   async baseline(monitorId) {
     const row = (await this.one(`SELECT s.document FROM snapshots s JOIN monitors m ON m.id=s.monitor_id
@@ -188,23 +203,29 @@ export class PostgresMonitorStore {
     return row ? parse(row.document) : null;
   }
   async stage(claim, result, now) {
+    const clock = movingClock(now);
     return this.tx(async () => {
       const run = (await this.one('SELECT * FROM runs WHERE id=? AND lease_token=?', claim.id, claim.token));
-      if (!run || !['started', 'claimed'].includes(run.phase) || run.lease_until <= now) return false;
-      (await this.write("UPDATE runs SET phase='staged',staged=? WHERE id=?", encode(result), claim.id)); return true;
+      if (!run || !['started', 'claimed'].includes(run.phase) || run.lease_until <= clock()) return false;
+      return (await this.write("UPDATE runs SET phase='staged',staged=? WHERE id=? AND lease_until>? AND lease_until>extract(epoch FROM clock_timestamp())*1000", encode(result), claim.id, clock())).changes === 1;
     });
   }
   async finish(runId, now) {
-    return this.tx(async () => (await this.finishInside(runId, now)));
+    const clock = movingClock(now);
+    return this.tx(async () => (await this.finishInside(runId, clock)));
   }
   async finishInside(runId, now) {
+    const clock = movingClock(now);
+    now = clock();
     (await this.expire(now));
     const run = (await this.one('SELECT * FROM runs WHERE id=?', runId));
     if (!run || run.phase !== 'staged') return null;
     const row = (await this.one('SELECT * FROM monitors WHERE id=?', run.monitor_id)), staged = parse(run.staged);
     const config = parse(row.config), saved = parse(row.core), state = emptyState();
     state.subscriptions[row.id] = saved.subscription; state.usage[row.id] = saved.usage;
-    const authorized = row.current_run === run.id && row.generation === run.generation && row.status === 'active';
+    const tenant = await this.one('SELECT revoked,entitlement_until FROM tenants WHERE id=?', row.tenant_id);
+    const authorized = row.current_run === run.id && row.generation === run.generation && row.status === 'active'
+      && row.expires_at > clock() && !tenant.revoked && tenant.entitlement_until > clock();
     let admitted = { outcome: 'discarded', eventId: null }, before = (await this.baseline(row.id));
     if (authorized && staged.normalized) {
       admitted = applyObservation(state, { subscriptionId: row.id, normalized: staged.normalized, now: iso(now) });

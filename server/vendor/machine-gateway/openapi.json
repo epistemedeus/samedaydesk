@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Neomorphic Machine gateway",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Mounted service contract. Prepared for deployment; this document is not evidence of a live endpoint."
   },
   "x-release-state": "prepared-not-deployed",
@@ -859,7 +859,7 @@
             "const": "neomorphic.machine-gateway.discovery.v1"
           },
           "version": {
-            "const": "0.1.0"
+            "const": "0.1.1"
           },
           "basePath": {
             "type": "string",

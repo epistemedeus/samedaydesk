@@ -53,7 +53,7 @@ export class RouteRegistry {
   }
   discover(prefix, paymentsEnabled) {
     return validate("discovery", {
-      schema: "neomorphic.machine-gateway.discovery.v1", version: "0.1.0", basePath: prefix,
+      schema: "neomorphic.machine-gateway.discovery.v1", version: "0.1.1", basePath: prefix,
       budgetUnit: this.budgetUnit, paymentsEnabled,
       paths: { quote: `${prefix}/v1/quote`, test: `${prefix}/v1/test`, execute: `${prefix}/v1/execute`, receipt: `${prefix}/v1/receipts/{id}` },
       routes: this.list().map(r => this.describe(r.id, prefix, paymentsEnabled)),

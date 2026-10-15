@@ -13,11 +13,18 @@ test("cold npm package installs production dependencies only; fresh CLI processe
   const dir = await mkdtemp(join(tmpdir(), "machine-gateway-cold-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
   // The outer test command holds pilot-ae18-build.lock; no nested flock.
-  const packed = await execFile("npm", ["pack", "--ignore-scripts", "--json", "--pack-destination", dir], { cwd: root, timeout: 30000 });
-  const archive = join(dir, JSON.parse(packed.stdout)[0].filename);
+  let archive = process.env.MACHINE_GATEWAY_TEST_ARCHIVE;
+  if (!archive) {
+    const packed = await execFile("npm", ["pack", "--ignore-scripts", "--json", "--pack-destination", dir], { cwd: root, timeout: 30000 });
+    archive = join(dir, JSON.parse(packed.stdout)[0].filename);
+  }
   await execFile("tar", ["-xzf", archive, "-C", dir], { timeout: 10000 });
   const installed = join(dir, "package");
   await execFile("npm", ["ci", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund", "--offline"], { cwd: installed, timeout: 30000 });
+  for (const name of ["caller", "enroll", "readiness"]) {
+    const help = await execFile(process.execPath, [join(installed, `bin/${name}.mjs`), "--help"]);
+    assert.match(help.stdout, new RegExp(`Usage:.*${name}\\.mjs`));
+  }
   const config = join(dir, "tenants.json"), tokenFile = join(dir, "tenant.credential"), stateFile = join(dir, "caller.json");
   const enrolled = await execFile(process.execPath, [join(installed, "bin/enroll.mjs"), "--tenant", "cold-caller", "--config", config, "--token-file", tokenFile]);
   const token = (await readFile(tokenFile, "utf8")).trim();

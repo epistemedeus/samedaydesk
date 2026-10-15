@@ -2,6 +2,13 @@ import { constants, closeSync, fstatSync, openSync, readFileSync, writeFileSync,
 import { randomUUID } from "node:crypto";
 import { isAbsolute } from "node:path";
 
+export function showHelp(usage) {
+  if (process.argv.length === 3 && process.argv[2] === "--help") {
+    process.stdout.write(`Usage: ${usage}\n`);
+    process.exit(0);
+  }
+}
+
 export function privateText(file, limit = 524288) {
   if (!isAbsolute(file || "")) throw new Error("absolute_private_file_required");
   const fd = openSync(file, constants.O_RDONLY | constants.O_NOFOLLOW);

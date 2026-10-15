@@ -50,7 +50,7 @@ export const schemas = {
     fixture: { const: true }, paymentAttempts: { const: 0 }, output: { type: "object" },
   }),
   discovery: object({
-    schema: { const: "neomorphic.machine-gateway.discovery.v1" }, version: { const: "0.1.0" },
+    schema: { const: "neomorphic.machine-gateway.discovery.v1" }, version: { const: "0.1.1" },
     basePath: { type: "string", maxLength: 128 }, budgetUnit: idSchema,
     paymentsEnabled: { type: "boolean" },
     paths: object({ quote: text(256), test: text(256), execute: text(256), receipt: text(256) }),
