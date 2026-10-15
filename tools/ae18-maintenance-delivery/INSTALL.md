@@ -117,3 +117,12 @@ Drain the existing host before code replacement; keep a SQLite-consistent
 backup. Do not copy only a live WAL database's main file, delete state or reset
 usage. No timer/service was installed by this package to remove. Public pages,
 status copy, payment settings and other controllers remain their owners' work.
+
+The inherited recipe suite also contains two checks that deliberately delete
+MERCHANT_INPUT_ROOT and resolve a sibling checkout. For that **test layout only**,
+materialize the clean SDS checkout as `/exclusive/replay/source` and put the
+same pinned dependency-ready merchant at `/exclusive/replay/x402-url-extractor`
+(or a read-only symlink created within that exclusive scratch directory).
+Still set MERCHANT_INPUT_ROOT explicitly. Do not edit the inherited tests or
+create sibling mounts in an unrelated controller's tree. The receipt separates
+this environment issue from the passing clean mounted run.

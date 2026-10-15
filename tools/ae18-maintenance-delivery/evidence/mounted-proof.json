@@ -1,0 +1,20 @@
+{
+  "input": "actual owner-controlled file served over mounted HTTP, changed while mounted",
+  "consumer": "packed external npm installation, four separate CLI processes",
+  "api": "two separate API processes, same gateway SQLite WAL store",
+  "evidence": "cold-acceptance.json",
+  "archiveSha256": "5d45e5d707fd3731c59532f2b847af3f5fa1058ab4ae58a98b5996713bdc174f",
+  "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+  "durableStateEvidence": {
+    "admissions": 2,
+    "ownerCalls": 1,
+    "reviewCalls": 1,
+    "units": 0,
+    "possiblePayments": 0,
+    "paymentIdentities": 0,
+    "reservedUnits": 0
+  },
+  "effectEvidence": "No payment adapter or obligation/repair creation operation is installed; free route receipts plus read-only persisted state and independent source GET counts checked. paidTaskIncrement is zero reuse semantics, not a new paid task counter.",
+  "publicServingEvidence": null,
+  "stateLifecycle": "Disposable acceptance store is removed after successful two-process readback. Root runtime uses its existing durable store and receipt retention; no periodic process is installed."
+}

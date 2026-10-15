@@ -1,0 +1,295 @@
+{
+  "ok": true,
+  "destination": "/tmp/ae18-244005-replay-EANA1z/cold",
+  "mounts": {
+    "sds": "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+    "gateway": "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input/services/machine-gateway",
+    "merchant": "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input"
+  },
+  "installed": "/tmp/ae18-244005-replay-EANA1z/cold/consumer/node_modules/@samedaydesk/maintenance-delivery",
+  "archive": "samedaydesk-maintenance-delivery-0.1.0.tgz",
+  "archiveSha256": "5d45e5d707fd3731c59532f2b847af3f5fa1058ab4ae58a98b5996713bdc174f",
+  "records": [
+    {
+      "label": "sds-init",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "sds-origin",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/epistemedeus/samedaydesk.git"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "sds-fetch",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+        "fetch",
+        "-q",
+        "--filter=blob:none",
+        "--depth=1",
+        "origin",
+        "50210d0dbd2e24194c84b486bf31dc3c705ba06b"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "sds-sparse-init",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+        "sparse-checkout",
+        "init",
+        "--no-cone"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "sds-sparse-paths",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "/tools/ae14-compat-maintenance/",
+        "/tools/recurring-job-recipes/",
+        "/tools/result-reuse/"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "sds-checkout",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/sds-input",
+        "checkout",
+        "-q",
+        "--detach",
+        "50210d0dbd2e24194c84b486bf31dc3c705ba06b"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-init",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-origin",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/epistemedeus/neomorphic-io.git"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-fetch",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input",
+        "fetch",
+        "-q",
+        "--filter=blob:none",
+        "--depth=1",
+        "origin",
+        "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-sparse-init",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input",
+        "sparse-checkout",
+        "init",
+        "--no-cone"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-sparse-paths",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "/services/machine-gateway/"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-checkout",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input",
+        "checkout",
+        "-q",
+        "--detach",
+        "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merchant-init",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merchant-origin",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/epistemedeus/x402-url-extractor.git"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merchant-fetch",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input",
+        "fetch",
+        "-q",
+        "--filter=blob:none",
+        "--depth=1",
+        "origin",
+        "82a51274e7dc7a7600b90f1317a6be6b28442592"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merchant-checkout",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input",
+        "checkout",
+        "-q",
+        "--detach",
+        "82a51274e7dc7a7600b90f1317a6be6b28442592"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "merchant-install",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--prefix",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "customer-install",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--prefix",
+        "/tmp/ae18-244005-replay-EANA1z/cold/merchant-input/examples/customer-x402"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "gateway-install",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--prefix",
+        "/tmp/ae18-244005-replay-EANA1z/cold/gateway-input/services/machine-gateway"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "pack",
+      "command": [
+        "npm",
+        "pack",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae18-maintenance-delivery/",
+        "--ignore-scripts",
+        "--json",
+        "--pack-destination",
+        "/tmp/ae18-244005-replay-EANA1z/cold/archives"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "consumer-install",
+      "command": [
+        "npm",
+        "install",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "--prefix",
+        "/tmp/ae18-244005-replay-EANA1z/cold/consumer",
+        "/tmp/ae18-244005-replay-EANA1z/cold/archives/samedaydesk-maintenance-delivery-0.1.0.tgz"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "acceptance",
+      "command": [
+        "/exec-daemon/node",
+        "/tmp/ae18-244005-replay-EANA1z/cold/consumer/node_modules/@samedaydesk/maintenance-delivery/bin/accept.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/cold/acceptance.json"
+      ],
+      "exit": 0
+    }
+  ],
+  "acceptance": "/tmp/ae18-244005-replay-EANA1z/cold/acceptance.json"
+}

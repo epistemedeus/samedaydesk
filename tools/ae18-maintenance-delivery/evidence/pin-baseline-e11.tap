@@ -1,0 +1,150 @@
+TAP version 13
+# Subtest: pins and the acceptance template match the checked-in files
+ok 1 - pins and the acceptance template match the checked-in files
+  ---
+  duration_ms: 2.009089
+  ...
+# Subtest: a caller cannot substitute a different consumed head
+ok 2 - a caller cannot substitute a different consumed head
+  ---
+  duration_ms: 1.414552
+  ...
+# Subtest: supplier rerun, queue, scheduler, and forced repurchase do not run
+ok 3 - supplier rerun, queue, scheduler, and forced repurchase do not run
+  ---
+  duration_ms: 1.38221
+  ...
+# Subtest: cold takeover refuses the same profile, incumbent pid, principal, and inherited authority
+ok 4 - cold takeover refuses the same profile, incumbent pid, principal, and inherited authority
+  ---
+  duration_ms: 1.217764
+  ...
+# Subtest: tenant mismatch, client fee annotation, and identical task ids are refused
+ok 5 - tenant mismatch, client fee annotation, and identical task ids are refused
+  ---
+  duration_ms: 1.216565
+  ...
+# Subtest: a conflicting readback does not adopt a second acceptance
+ok 6 - a conflicting readback does not adopt a second acceptance
+  ---
+  duration_ms: 5.01698
+  ...
+# Subtest: a tampered prior digest and a non-advancing sequence are refused
+ok 7 - a tampered prior digest and a non-advancing sequence are refused
+  ---
+  duration_ms: 1.075351
+  ...
+# Subtest: opt-in reuse exports an observation and still grants no permission
+ok 8 - opt-in reuse exports an observation and still grants no permission
+  ---
+  duration_ms: 1.225203
+  ...
+# Subtest: the package source does not start a timer, queue, or supplier rerun
+ok 9 - the package source does not start a timer, queue, or supplier rerun
+  ---
+  duration_ms: 0.669806
+  ...
+# Subtest: legacy 221400 and 234100 stay unpriced by the new fee
+ok 10 - legacy 221400 and 234100 stay unpriced by the new fee
+  ---
+  duration_ms: 2.68003
+  ...
+# Subtest: per-capture floor keeps 19, 20, 21, and a large integer exact
+ok 11 - per-capture floor keeps 19, 20, 21, and a large integer exact
+  ---
+  duration_ms: 0.876782
+  ...
+# Subtest: a quoted occurrence uses one capture floor and does not fold rail cost into it
+ok 12 - a quoted occurrence uses one capture floor and does not fold rail cost into it
+  ---
+  duration_ms: 6.494636
+  ...
+# Subtest: cumulative fee, guessed token price, unknown-as-zero, and cash-shaped cost are refused
+ok 13 - cumulative fee, guessed token price, unknown-as-zero, and cash-shaped cost are refused
+  ---
+  duration_ms: 1.696491
+  ...
+# Subtest: withdrawal, unearned reclaim, and post-capture refund take no second fee and stay distinct
+ok 14 - withdrawal, unearned reclaim, and post-capture refund take no second fee and stay distinct
+  ---
+  duration_ms: 2.363529
+  ...
+# Subtest: a stale supplied horizon stops before acceptance
+ok 15 - a stale supplied horizon stops before acceptance
+  ---
+  duration_ms: 0.905511
+  ...
+# Subtest: payment replay is blocked by the recipe guard
+ok 16 - payment replay is blocked by the recipe guard
+  ---
+  duration_ms: 1.971577
+  ...
+# Subtest: CLI and HTTP return the same occurrence JSON
+ok 17 - CLI and HTTP return the same occurrence JSON
+  ---
+  duration_ms: 70.567371
+  ...
+# Subtest: CLI opt-in writes an observation and refuses a write without opt-in
+ok 18 - CLI opt-in writes an observation and refuses a write without opt-in
+  ---
+  duration_ms: 75.062959
+  ...
+# Subtest: one changed contract is a repair, accepted locally, and not a repurchase
+ok 19 - one changed contract is a repair, accepted locally, and not a repurchase
+  ---
+  duration_ms: 6.638805
+  ...
+# Subtest: withdrawn access is a useful no-fit and does not grant reuse
+ok 20 - withdrawn access is a useful no-fit and does not grant reuse
+  ---
+  duration_ms: 1.008755
+  ...
+# Subtest: a missing sku is a useful no-fit
+ok 21 - a missing sku is a useful no-fit
+  ---
+  duration_ms: 0.864787
+  ...
+# Subtest: a non-MIT license plane and inherit-full are no-fits
+ok 22 - a non-MIT license plane and inherit-full are no-fits
+  ---
+  duration_ms: 2.42144
+  ...
+# Subtest: an authorized reviewer can reject the repair
+ok 23 - an authorized reviewer can reject the repair
+  ---
+  duration_ms: 0.876191
+  ...
+# Subtest: an unchanged contract is not yet due and HTTP 200 is not useful work
+ok 24 - an unchanged contract is not yet due and HTTP 200 is not useful work
+  ---
+  duration_ms: 1.805283
+  ...
+# Subtest: operator capture without a reviewer is not acceptance
+ok 25 - operator capture without a reviewer is not acceptance
+  ---
+  duration_ms: 1.212182
+  ...
+# Subtest: expiry wins over a late accept and keeps the artifact unsettled
+ok 26 - expiry wins over a late accept and keeps the artifact unsettled
+  ---
+  duration_ms: 0.704257
+  ...
+# Subtest: a receipt for another task is refused
+ok 27 - a receipt for another task is refused
+  ---
+  duration_ms: 0.836841
+  ...
+# Subtest: readback of the same digest does not post a second effect
+ok 28 - readback of the same digest does not post a second effect
+  ---
+  duration_ms: 1.565445
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 405.024619

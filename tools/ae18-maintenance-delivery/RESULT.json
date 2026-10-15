@@ -1,0 +1,393 @@
+{
+  "schema": "samedaydesk.ae18-maintenance-delivery.result.v1",
+  "job": "244005",
+  "status": "done",
+  "deliveryScope": "One finite changed-source bounded assessment, authorized review, durable gateway handback and new-process readback. Repair not supplied or simulated.",
+  "repository": "epistemedeus/samedaydesk",
+  "branch": "codex/ae18-maintenance-delivery-244005",
+  "writerPath": "tools/ae18-maintenance-delivery",
+  "base": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "sourceCommit": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+  "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+  "receiptCommitTested": false,
+  "cleanMaterialization": {
+    "path": "/tmp/ae18-244005-replay-EANA1z/source",
+    "detached": true,
+    "dirtyCountAfterTests": 0,
+    "dependencyRoots": {
+      "SDS_INPUT_ROOT": "/tmp/ae18-244005-replay-EANA1z/source",
+      "GATEWAY_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/gateway/services/machine-gateway",
+      "MERCHANT_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/merchant"
+    },
+    "merchantSiblingMount": "/tmp/ae18-244005-replay-EANA1z/x402-url-extractor"
+  },
+  "baseline": {
+    "historicalE11": {
+      "receipt": "tools/ae14-compat-maintenance/RESULT.md at 50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "e11": {
+        "pass": 28,
+        "fail": 0
+      },
+      "resultReuse": {
+        "pass": 25,
+        "fail": 0
+      },
+      "recipes": {
+        "tests": 90,
+        "pass": 83,
+        "fail": 4,
+        "skipped": 3,
+        "exit": 1
+      },
+      "cause": "E11 reported absent merchant checkout; stateless local fixture acceptance, no persisted paid task, PG/chain join or live service"
+    },
+    "initialBaseEnvironmentRun": {
+      "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "recipesCommand": "MERCHANT_INPUT_ROOT=/tmp/ae18-244005-inputs-TjCnvs/merchant npm run test:recurring-job-recipes",
+      "tests": 97,
+      "pass": 95,
+      "fail": 2,
+      "skipped": 0,
+      "exit": 1,
+      "cause": "Two inherited tests deliberately remove MERCHANT_INPUT_ROOT and require a sibling merchant root. No inherited assertions edited.",
+      "log": "evidence/baseline-recipes-mounted.tap"
+    },
+    "fullPinnedMountedRerun": {
+      "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "MERCHANT_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/merchant",
+      "merchantCommit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+      "siblingMount": "/tmp/ae18-244005-replay-EANA1z/x402-url-extractor",
+      "runs": [
+        {
+          "label": "pin-baseline-e11",
+          "command": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/economics.test.mjs"
+          ],
+          "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+          "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "exit": 0,
+          "counts": {
+            "tests": 28,
+            "pass": 28,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          }
+        },
+        {
+          "label": "pin-baseline-recipes",
+          "command": [
+            "npm",
+            "run",
+            "test:recurring-job-recipes"
+          ],
+          "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+          "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "exit": 0,
+          "counts": {
+            "tests": 97,
+            "pass": 97,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          }
+        },
+        {
+          "label": "pin-baseline-reuse",
+          "command": [
+            "node",
+            "--test",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/result-reuse/test/record-fields.test.mjs",
+            "/tmp/ae18-244005-replay-EANA1z/source-base/tools/result-reuse/test/export.test.mjs"
+          ],
+          "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+          "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+          "exit": 0,
+          "counts": {
+            "tests": 25,
+            "pass": 25,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          }
+        }
+      ],
+      "dirtyState": ""
+    }
+  },
+  "ownedTests": {
+    "label": "clean-owned",
+    "command": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "/tmp/ae18-244005-replay-EANA1z/source/tools/ae18-maintenance-delivery/test/occurrence.test.mjs"
+    ],
+    "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+    "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+    "exit": 0,
+    "counts": {
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "contentVerified": true
+  },
+  "inheritedTests": [
+    {
+      "label": "clean-e11",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/economics.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    },
+    {
+      "label": "clean-recipes",
+      "command": [
+        "npm",
+        "run",
+        "test:recurring-job-recipes"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 97,
+        "pass": 97,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    },
+    {
+      "label": "clean-reuse",
+      "command": [
+        "node",
+        "--test",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/result-reuse/test/record-fields.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/result-reuse/test/export.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    }
+  ],
+  "realInputMounted": {
+    "evidence": "evidence/cold-acceptance.json",
+    "before": {
+      "fields": {
+        "title": "extract-contract-v1",
+        "description": "retained SKU CC-4; owner QA permitted"
+      }
+    },
+    "after": {
+      "fields": {
+        "title": "extract-contract-v2",
+        "description": "retained SKU CC-4; owner QA permitted"
+      }
+    },
+    "sourceOwner": "local-source-owner",
+    "sourceId": "owner-contract",
+    "sourceDigest": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5",
+    "priorDigest": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+    "descriptorSupplied": true,
+    "rightsSupplied": true,
+    "reviewerSupplied": true,
+    "assessmentReceiptId": "60434290-c28a-4af3-8408-b1fbe450be91",
+    "handbackReceiptId": "32e842b7-888f-4493-a77f-4ee6bf3c101e",
+    "acceptedScope": "changed-source assessment and handback only",
+    "templateOutcome": "changed",
+    "templateHttpCliParity": "owned regression runs real captured snapshot through unmodified E11 HTTP and CLI",
+    "merchantComparison": {
+      "contract": "C31",
+      "verdict": "changed",
+      "complete": true
+    },
+    "authorizedReview": "accepted",
+    "durableExactReadback": true,
+    "apiProcesses": 2,
+    "consumerProcesses": 4,
+    "sourceGetCountBeforeAndAfterReplayReadback": [
+      3,
+      3
+    ],
+    "persistedGatewayState": {
+      "usage": [
+        {
+          "tenant": "local-owner",
+          "calls": 1,
+          "units": 0
+        },
+        {
+          "tenant": "local-reviewer",
+          "calls": 1,
+          "units": 0
+        }
+      ],
+      "attempts": {
+        "count": 2,
+        "possiblePayments": 0,
+        "reservedUnits": 0
+      },
+      "paymentIdentities": 0
+    },
+    "effects": {
+      "paymentAttempts": 0,
+      "captures": 0,
+      "obligations": 0,
+      "paidTaskIncrement": 0,
+      "repairExecutions": 0
+    },
+    "evidenceCheckedBeyondHttpStatusAndWorkerAssertions": true,
+    "publicServingEvidence": null,
+    "storeLifecycle": "Disposable acceptance state removed only after actual API restart and exact new-process readback. Production runtime retains existing gateway state."
+  },
+  "coldInstall": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node /tmp/ae18-244005-replay-EANA1z/source/tools/ae18-maintenance-delivery/bin/install-accept.mjs --destination /tmp/ae18-244005-replay-EANA1z/cold",
+    "exit": 0,
+    "installedOutsideRepository": true,
+    "destination": "/tmp/ae18-244005-replay-EANA1z/cold",
+    "installedPackage": "/tmp/ae18-244005-replay-EANA1z/cold/consumer/node_modules/@samedaydesk/maintenance-delivery",
+    "archive": "samedaydesk-maintenance-delivery-0.1.0.tgz",
+    "archiveSha256": "5d45e5d707fd3731c59532f2b847af3f5fa1058ab4ae58a98b5996713bdc174f",
+    "installedAndArchiveFilesMatchTestedHead": true,
+    "sourceByteVerification": "evidence/cold-verification.json",
+    "receipt": "evidence/cold-install-receipt.json",
+    "lockedDependencyInstalls": "merchant root, customer example, current gateway; scripts disabled",
+    "acceptance": "pass; changed assessment accepted; same receipt after restart; zero possible payments/units/identities"
+  },
+  "sourcePins": {
+    "sdsTemplate": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+    "sdsRecipesAndResultReuseOriginal": "d8cea059213e06d2f263be67f82e498f8052a50f",
+    "recipesAndResultReuseBytesUnchangedAtConsumedSdsHead": true,
+    "merchantDeclaredOriginalMaster": "f9dd59aeeb200881bc1313ed846ba002e7081258",
+    "merchantConsumedCompatibleDescendant": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+    "merchantOriginalIsAncestor": true,
+    "merchantCompatibilityEvidence": "Full inherited suite 97/97 including mounted C31 HTTP/CLI, C34 batch/skills and official record CLI. Owned changed input C31 comparison complete. Original internal merchant report provenance not rewritten.",
+    "e01": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+    "e06": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9",
+    "gatewayCurrent": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+    "monitor": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+    "cliDiscovery": "85075d36578740d8cad659b7a5c44da32517e6c9",
+    "fileRepoCommitPathBlobAndSha256": "PINS.json",
+    "upstreamPinsAutomaticallyRootAccepted": false
+  },
+  "pendingJoins": [
+    {
+      "owner": "Root",
+      "path": "SameDayDesk server/index.js and current gateway registry/mount configuration",
+      "expected": "Receive/install source, merge provider pair into one common registry, bind existing owner/reviewer scopes and existing durable state; no mount or live config changed here."
+    },
+    {
+      "owner": "242001",
+      "path": "packages/agent-journey/**",
+      "expected": "Use exported callable operations and schemas in INTEGRATION.md; joined dispatch remains outside this scope."
+    },
+    {
+      "owner": "Neo monitor",
+      "path": "services/continuous-monitoring/src/worker.mjs and src/api.mjs",
+      "expected": "No arbitrary check hook exists at supplied pin. Add owning check-registration/config seam if explicitly installed later. This export supplies createReadOnlyCheck; no timer installed."
+    },
+    {
+      "owner": "E02",
+      "path": "experiments/ae14-compat-repair/**",
+      "expected": "Supply actual reviewed repair artifact bound to taskId, sourceId, sourceDigest, priorDigest, artifactDigest and acceptance scope. Missing for this changed v2 input; no repair is claimed."
+    },
+    {
+      "owner": "Root/monitor acquisition owner",
+      "path": "existing DNS-pinned public acquisition transport",
+      "expected": "Current adapter supports the exact authorized owner-controlled loopback mount. Connect existing public acquisition before external public source operation; no arbitrary public fetch added."
+    },
+    {
+      "owner": "H receiving owner",
+      "path": "canonical chain/PG receiving harness",
+      "expected": "Optional future chain/PG join not executed. No H1 changes, live funds or settlement."
+    }
+  ],
+  "remainingInstallationActions": [
+    "Root runs the executable install/acceptance entry in INSTALL.md from the received exact export.",
+    "Root configures current descriptor/rights/prior paths and existing authority scopes in its existing Node gateway, retaining history.",
+    "242001 consumes operation/schema exports; monitor scheduling only after an explicit owner-installed check join.",
+    "Supply E02 repair only if repair rather than this bounded assessment is requested."
+  ],
+  "untouched": [
+    "all product paths outside tools/ae18-maintenance-delivery/**",
+    "human copy and public statuses",
+    "live services/configuration",
+    "legacy published receipts, obligations, 221400/234100 terms",
+    "credentials/enrollment and controller shells",
+    "default branch; no PR or publication"
+  ],
+  "finalExport": {
+    "branch": "codex/ae18-maintenance-delivery-244005",
+    "exactFinalAndRemoteHeadReceipt": "evidence/runner-receipt.local.json (written after push and ignored to avoid a self-referential commit)",
+    "metadataOnlyPathsBetweenTestedHeadAndFinalExport": [
+      "tools/ae18-maintenance-delivery/.gitignore",
+      "tools/ae18-maintenance-delivery/INSTALL.md",
+      "tools/ae18-maintenance-delivery/INTEGRATION.md",
+      "tools/ae18-maintenance-delivery/README.md",
+      "tools/ae18-maintenance-delivery/RESULT.json",
+      "tools/ae18-maintenance-delivery/evidence/clean-e11.tap",
+      "tools/ae18-maintenance-delivery/evidence/clean-owned.tap",
+      "tools/ae18-maintenance-delivery/evidence/clean-recipes.tap",
+      "tools/ae18-maintenance-delivery/evidence/clean-reuse.tap",
+      "tools/ae18-maintenance-delivery/evidence/clean-tests.json",
+      "tools/ae18-maintenance-delivery/evidence/cold-acceptance.json",
+      "tools/ae18-maintenance-delivery/evidence/cold-acceptance.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-consumer-install.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-customer-install.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-gateway-install.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-install-receipt.json",
+      "tools/ae18-maintenance-delivery/evidence/cold-merchant-install.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-pack.txt",
+      "tools/ae18-maintenance-delivery/evidence/cold-verification.json",
+      "tools/ae18-maintenance-delivery/evidence/historical-e11-baseline.json",
+      "tools/ae18-maintenance-delivery/evidence/mounted-proof.json",
+      "tools/ae18-maintenance-delivery/evidence/pin-baseline-e11.tap",
+      "tools/ae18-maintenance-delivery/evidence/pin-baseline-recipes.tap",
+      "tools/ae18-maintenance-delivery/evidence/pin-baseline-reuse.tap",
+      "tools/ae18-maintenance-delivery/evidence/pin-baseline.json",
+      "tools/ae18-maintenance-delivery/evidence/receipt-evidence-manifest.json"
+    ]
+  }
+}

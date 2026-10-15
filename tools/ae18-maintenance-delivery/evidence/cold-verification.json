@@ -1,0 +1,92 @@
+{
+  "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+  "sourceAndInstalledArchiveBytesMatch": true,
+  "archiveSha256": "5d45e5d707fd3731c59532f2b847af3f5fa1058ab4ae58a98b5996713bdc174f",
+  "files": [
+    {
+      "path": "package.json",
+      "sha256": "305983e2cffc48f9f62700b15df58792581adc4a785f06821839e91944f09e2b"
+    },
+    {
+      "path": "PINS.json",
+      "sha256": "2e82d9ba269aca2bffe3674afa472ddcf9afbd73e8855c54d0d53aa6b780e658"
+    },
+    {
+      "path": "fixtures/prior.json",
+      "sha256": "a5d1da59de500a34e2c388ba5d667662aff6b1d4beb680ec58c1eceb2408b727"
+    },
+    {
+      "path": "fixtures/source-after.json",
+      "sha256": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5"
+    },
+    {
+      "path": "fixtures/source-before.json",
+      "sha256": "e6cda45131779e069c92fe399cd5909e951eec174e6ff162d9b19e7b95f47f84"
+    },
+    {
+      "path": "INSTALL.md",
+      "sha256": "a4a8514d251267fa4c6f3a111a5a73c70b24f8672a01abf5717d2f25944b91d6"
+    },
+    {
+      "path": "INTEGRATION.md",
+      "sha256": "747a43952415120be5d9e76316f0df61d024e0980fc9b31ee4f2d9d079aa43e0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "9047fdaab823a8b91a425f84577064603adaafd338f35ad486002e347a8902bf"
+    },
+    {
+      "path": "bin/accept.mjs",
+      "sha256": "db629d2eb585d68603f08dda354e36e37c1ceecee2374decbf0b711a4a175323"
+    },
+    {
+      "path": "src/client.mjs",
+      "sha256": "e3f4aafc4fc716b827b318fa7e0f8afa40e8a004e3ff6027c6505cb3cc8e0e90"
+    },
+    {
+      "path": "bin/companion.mjs",
+      "sha256": "93f1816bba79c77a934cc02f64a700fc87ccfb5d0c1d5c694df11e606bd95911"
+    },
+    {
+      "path": "src/core.mjs",
+      "sha256": "aade8319529cbf38b03c6183c9df5c8fc75bdb87aca611e2bee12a1e83c5d479"
+    },
+    {
+      "path": "bin/harness.mjs",
+      "sha256": "9949453df0f66a8689fc913b58d2b9a8c5afefcb29ea9579a67602f592f2c9c1"
+    },
+    {
+      "path": "src/index.mjs",
+      "sha256": "47c2af459632927434cf8ee4af7bdff5deeac6642d5cb8c476eda4687e9f11f1"
+    },
+    {
+      "path": "src/inputs.mjs",
+      "sha256": "dcec241ff59ab6fa110b60020ae28fcfe8d273bcc857ce2658ab95f830f2acac"
+    },
+    {
+      "path": "bin/install-accept.mjs",
+      "sha256": "d4855d3d6fcae4627ed19d797eeafa35928eeecda38a167b1052f6908b7b474a"
+    },
+    {
+      "path": "src/runtime.mjs",
+      "sha256": "dc9103a0a0f0e8d883620f2598e78948e37149295d9780d1b4605e76fc064eb2"
+    },
+    {
+      "path": "src/schemas.mjs",
+      "sha256": "e4922f33bca8f79257f0db0ffb20352079ab2d1199291bde787758b14dfa9e16"
+    },
+    {
+      "path": "bin/serve-local.mjs",
+      "sha256": "f6c20cf8fd73a626f189905d5640103e3ff65932daef23c69e5ac6ed1206d540"
+    }
+  ],
+  "verifiedAssertions": [
+    "changed source actual supplied bytes",
+    "authorized accepted bounded assessment",
+    "new-process readback exact receipt equality",
+    "immutable prior payload digest unchanged",
+    "independent source GET counter unchanged by retry/readback",
+    "read-only persisted gateway usage and payment identity evidence",
+    "no paid task, capture, obligation, payment or repair execution API installed"
+  ]
+}

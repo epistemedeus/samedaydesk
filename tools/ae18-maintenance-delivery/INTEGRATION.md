@@ -97,3 +97,9 @@ external repair artifact or production-serving evidence was supplied or claimed.
 Next owners: Root receives/mounts; 242001 dispatches; monitor owner integrates
 checks if explicitly installed; E02 supplies any repair; H owner handles any
 future canonical chain/PG acceptance.
+
+The precise missing repair input for E02 is a reviewed artifact under its owning
+`experiments/ae14-compat-repair/**`, bound to this occurrence's taskId, sourceId,
+sourceDigest, priorDigest, artifactDigest and acceptance scope. E11's old E02
+receipt at 338b9dfe is provenance, not a repair for the supplied v2 source. Root
+can accept the bounded assessment delivered here without claiming that artifact.

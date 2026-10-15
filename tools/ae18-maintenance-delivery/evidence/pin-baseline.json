@@ -1,0 +1,71 @@
+{
+  "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "MERCHANT_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/merchant",
+  "merchantCommit": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+  "siblingMount": "/tmp/ae18-244005-replay-EANA1z/x402-url-extractor",
+  "runs": [
+    {
+      "label": "pin-baseline-e11",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/ae14-compat-maintenance/test/economics.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+      "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "exit": 0,
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "label": "pin-baseline-recipes",
+      "command": [
+        "npm",
+        "run",
+        "test:recurring-job-recipes"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+      "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "exit": 0,
+      "counts": {
+        "tests": 97,
+        "pass": 97,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "label": "pin-baseline-reuse",
+      "command": [
+        "node",
+        "--test",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/result-reuse/test/record-fields.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source-base/tools/result-reuse/test/export.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source-base",
+      "head": "50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+      "exit": 0,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  ],
+  "dirtyState": ""
+}

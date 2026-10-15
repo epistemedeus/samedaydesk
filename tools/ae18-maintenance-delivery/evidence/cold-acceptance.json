@@ -1,0 +1,901 @@
+{
+  "schema": "samedaydesk.ae18-mounted-acceptance.v1",
+  "ok": true,
+  "runtime": "current-machine-gateway-sqlite-wal",
+  "mountedSourceChanged": true,
+  "before": {
+    "fields": {
+      "title": "extract-contract-v1",
+      "description": "retained SKU CC-4; owner QA permitted"
+    }
+  },
+  "after": {
+    "fields": {
+      "title": "extract-contract-v2",
+      "description": "retained SKU CC-4; owner QA permitted"
+    }
+  },
+  "descriptor": {
+    "schema": "samedaydesk.maintenance-descriptor.v1",
+    "occurrenceId": "owner-contract-change",
+    "taskId": "maintenance-assessment",
+    "distinctTaskId": "retained-contract-inspection",
+    "subject": "contract-change-assessment",
+    "sequence": 2,
+    "owner": "local-source-owner",
+    "source": {
+      "id": "owner-contract",
+      "owner": "local-source-owner",
+      "url": "http://127.0.0.1:46155/owner-source.json",
+      "expectedDigest": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5"
+    },
+    "priorDigest": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+    "fields": [
+      "title",
+      "description"
+    ],
+    "expiry": "2026-10-15T07:01:08.581Z",
+    "horizonHours": 24,
+    "optIn": true,
+    "retained": {
+      "taskId": "retained-contract-inspection",
+      "sourceId": "owner-contract",
+      "payloadDigest": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+      "entitled": true
+    }
+  },
+  "rights": {
+    "schema": "samedaydesk.maintenance-rights.v1",
+    "owner": "local-source-owner",
+    "sourceId": "owner-contract",
+    "taskId": "maintenance-assessment",
+    "revision": "rights-1",
+    "licensePlane": "owner_qa",
+    "readAllowed": true,
+    "reviewAllowed": true,
+    "reuseAllowed": true,
+    "mandateState": "active",
+    "validUntil": "2026-10-15T07:31:08.581Z",
+    "expectedReviewer": "supplied-reviewer"
+  },
+  "priorDigest": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+  "priorReadbackDigest": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+  "assessmentReceipt": {
+    "schema": "neomorphic.machine-gateway.receipt.v1",
+    "id": "60434290-c28a-4af3-8408-b1fbe450be91",
+    "quoteId": "44e22aa3-2ef7-4345-91ae-9123b79f3d9d",
+    "routeId": "maintenance.owner-contract-change.assess",
+    "routeVersion": "1",
+    "requestDigest": "9ea7891d4e3db12fc8aed4aa592f73fb299e24929510dc454d8126924268a369",
+    "inputDigest": "239b575ab8bc570e17e700b37dfa62ea0c3bf00b16751191c9def4ff5a76ddd2",
+    "createdAt": 1792045868831,
+    "deadlineAt": 1792045883831,
+    "completedAt": 1792045868863,
+    "status": "completed",
+    "price": {
+      "amount": 0,
+      "unit": "usd-micros"
+    },
+    "payment": {
+      "state": "not_required",
+      "adapter": null,
+      "evidence": "none",
+      "reference": null,
+      "network": null
+    },
+    "output": {
+      "schema": "samedaydesk.maintenance-delivery.v1",
+      "phase": "assessment",
+      "binding": {
+        "occurrenceId": "owner-contract-change",
+        "taskId": "maintenance-assessment",
+        "sourceId": "owner-contract",
+        "sourceDigest": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5",
+        "descriptorDigest": "ada405ae2da6cd6f17c1262f2865f0a37d881ec9a54c024774d5915b0e682372"
+      },
+      "disposition": "bounded_assessment",
+      "acceptance": "approval_pending",
+      "useful": true,
+      "assessment": {
+        "clock": "2026-10-15T06:31:08.834Z",
+        "sourceBytes": 117,
+        "sourceRequests": 1,
+        "selected": {
+          "title": "extract-contract-v2",
+          "description": "retained SKU CC-4; owner QA permitted"
+        },
+        "missing": [],
+        "reasons": [],
+        "rightsRevision": "rights-1",
+        "template": {
+          "schema": "samedaydesk.compat-maintenance-occurrence.v1",
+          "template": "samedaydesk.compat-maintenance-acceptance.v1",
+          "ok": true,
+          "useful": true,
+          "usefulness": "useful_positive",
+          "executed": true,
+          "readback": false,
+          "secondPost": false,
+          "posts": 1,
+          "acceptancePosts": 1,
+          "quoteWrites": 1,
+          "code": null,
+          "message": "acceptance waits for an authorized reviewer",
+          "occurrenceId": "owner-contract-change",
+          "taskId": "maintenance-assessment",
+          "distinctTaskId": "retained-contract-inspection",
+          "detected": "changed",
+          "disposition": "repair",
+          "usefulnessClass": "useful_positive",
+          "acceptance": "approval_pending",
+          "acceptanceWinner": false,
+          "expiryWinner": false,
+          "defects": [
+            "missing_reviewer"
+          ],
+          "consumed": {
+            "e01": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+            "e02": "338b9dfebf415d00ee0a21773d4d7f848d9ba4d6",
+            "e06": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9"
+          },
+          "incident": null,
+          "blockingReasons": [],
+          "retainedSkuReused": false,
+          "artifactRetained": true,
+          "localAcceptanceOnly": true,
+          "settled": false,
+          "change": [
+            {
+              "field": "title",
+              "before": "extract-contract-v1",
+              "after": "extract-contract-v2"
+            }
+          ],
+          "prior": {
+            "sequence": 1,
+            "sha256": "2302392bff83f64e1cdfd3eda7d9c8f62af2ad46946f5b05b51983aaf9334e2f",
+            "createdAt": "2026-10-15T06:30:08.509Z",
+            "immutable": true
+          },
+          "procurement": {
+            "mandateState": "active",
+            "mandateInherited": false,
+            "coldProfileDistinct": true,
+            "priorSpend": "none",
+            "reusableOutput": true,
+            "repeatPurchase": null
+          },
+          "priorSpend": "none",
+          "economics": {
+            "applicable": true,
+            "quoteOnly": true,
+            "termsVersion": "new-market",
+            "operation": "quote",
+            "authorization": "not_a_reservation",
+            "submission": "not_submitted",
+            "capture": "not_captured",
+            "purchaseOffered": false,
+            "perCaptureFeeAtoms": [
+              "1"
+            ],
+            "perCaptureNetAtoms": [
+              "19"
+            ],
+            "feeAtoms": "1",
+            "combinedGrossAtoms": "20",
+            "combinedGrossFeeAtoms": "1",
+            "perCaptureDiffersFromCombined": false,
+            "secondFeeAtoms": "0",
+            "lowestReliableReward": "unknown",
+            "tokenPriceRecommendation": null,
+            "declaredEffort": "unknown",
+            "observedEffort": "unknown",
+            "observedCompleteEffort": "unknown",
+            "reviewBurden": "unknown",
+            "reviewBurdenIsMoney": false,
+            "modeledCost": "unknown",
+            "cashCost": "unknown",
+            "chainQualified": false
+          },
+          "reuse": {
+            "permission": "unavailable",
+            "granted": false,
+            "previewOk": true,
+            "previewMode": "preview",
+            "exportOk": true,
+            "publicSafeCertified": false,
+            "message": null,
+            "observation": {
+              "schema": "neomorphic.task-memory.observation.v1",
+              "contractVersion": 1,
+              "observationId": "obs_3e410911d1520ce7abde46bb9127e7d7",
+              "revisionId": "rev_2",
+              "taskScope": {
+                "taskId": "maintenance-assessment",
+                "taskFamily": "samedaydesk.result-reuse",
+                "ownerScope": "samedaydesk.result-reuse"
+              },
+              "source": {
+                "uri": "https://samedaydesk.com/for-agents",
+                "version": "sha256:3f519f71538ddac67f6fc53548667fa78059765e27fffd9ca60560ff1eb4bb32"
+              },
+              "epistemicStatus": "source_unavailable",
+              "lifecycleStatus": "active",
+              "statement": "reuse page_change_brief; verdict changed; original evidence URL unavailable; source URI is the reuse recipe locator",
+              "payload": {
+                "schema": "pilot/page-change-brief/v1",
+                "kind": "compat_maintenance",
+                "verdict": "changed",
+                "fields": [
+                  "title",
+                  "description"
+                ],
+                "freshness": "unknown",
+                "claims": {
+                  "noChangeProven": false,
+                  "contentUnchangedProven": false,
+                  "comparable": true,
+                  "complete": true,
+                  "current": false,
+                  "fresh": false,
+                  "usefulOutputProven": true,
+                  "paymentImpliesUsefulOutput": false
+                },
+                "summary": {
+                  "matched": 1,
+                  "missing": 0,
+                  "failed": 0,
+                  "unknown": 0,
+                  "duplicates": 0,
+                  "coverageUnknown": 0,
+                  "semantic": 1
+                },
+                "rows": {
+                  "matched": [],
+                  "missing": [],
+                  "failed": []
+                },
+                "coverageUnknown": [],
+                "jobId": "owner-contract-change",
+                "contentHash": "sha256:3f519f71538ddac67f6fc53548667fa78059765e27fffd9ca60560ff1eb4bb32",
+                "url": "https://samedaydesk.com/for-agents",
+                "reuseProvenance": {
+                  "originalEvidenceUrlAvailable": false,
+                  "sourceRole": "recipe_locator_not_evidence"
+                }
+              },
+              "recordedAt": {
+                "instant": "2026-10-15T06:31:08.834Z",
+                "domain": "wall_utc"
+              },
+              "execute": false
+            }
+          },
+          "slots": {
+            "schema": "samedaydesk.compat-maintenance-acceptance.v1",
+            "compatibility-change": "filled",
+            "repair-or-useful-no-fit": "filled",
+            "accept-or-reject": "approval_pending",
+            "repeat-procurement": "filled",
+            "cold-takeover": "filled",
+            "task-economics": "filled",
+            "result-reuse": "filled",
+            "legacy-terms": "filled",
+            "h-join": "pending-join"
+          },
+          "httpStatusIsNotUsefulWork": true,
+          "recovery": {
+            "status": "pending-join",
+            "signing": false,
+            "delegatedHandleCanSign": false
+          },
+          "funding": {
+            "signature": "absent",
+            "submitted": false,
+            "confirmedUsableFunding": false,
+            "paymentSent": false,
+            "priorSpend": "none"
+          },
+          "paid": false,
+          "captured": false,
+          "canonicalSettlement": "not_joined",
+          "captureJoined": false,
+          "paidTaskIncrement": 0,
+          "repurchaseForced": false,
+          "reuseGranted": false,
+          "wrotePrior": false,
+          "wroteQueue": false,
+          "timerStarted": false,
+          "publicEnabled": false,
+          "chainQualified": false,
+          "railPosts": 0,
+          "networkPosts": 0,
+          "hJoin": "pending-join",
+          "serving": {
+            "publicEnabled": false,
+            "productionMoney": false,
+            "scope": "local-shape-only"
+          },
+          "supplier228200": {
+            "commit": "4133cde2ad11e7c58e5913c95c4134b253ab7bdc",
+            "disposition": "no-delta",
+            "rerun": false
+          },
+          "finiteQueue228300": {
+            "commit": "b0fe7246211318e0df183a733a62c047bae4b4fb",
+            "disposition": "executed-no-delta",
+            "copied": false
+          },
+          "consumedHeads": {
+            "e01": "7f458d5156fb308a5586bdba30a2ff7ae01357ab",
+            "e02": "338b9dfebf415d00ee0a21773d4d7f848d9ba4d6",
+            "e06": "75312c3ac1590dbf913ae516b7fb76c9db6e74d9"
+          },
+          "lowestReliableReward": "unknown",
+          "tokenPriceRecommendation": null,
+          "digest": "31981de4b53bca42c545e733958ba48052025361b492bdbe99912a0d9dcd2f8c"
+        },
+        "templateRequest": {
+          "schema": "samedaydesk.compat-maintenance-request.v1",
+          "occurrenceId": "owner-contract-change",
+          "taskId": "maintenance-assessment",
+          "distinctTaskId": "retained-contract-inspection",
+          "subject": "contract-change-assessment",
+          "sequence": 2,
+          "clock": "2026-10-15T06:31:08.834Z",
+          "expiry": "2026-10-15T07:01:08.581Z",
+          "priorPath": "immutable-prior",
+          "currentFixturePath": "bound-current",
+          "fields": [
+            "title",
+            "description"
+          ],
+          "tenant": "local-owner",
+          "authorityTenant": "local-owner",
+          "horizonHours": 24,
+          "applicability": {
+            "sourceChanged": true,
+            "licensePlane": "owner_qa",
+            "accessWithdrawn": false,
+            "rightsCleared": true,
+            "applicabilityMiss": false,
+            "inheritFull": false
+          },
+          "procurement": {
+            "mandateState": "active",
+            "coldProfile": "finite-reader",
+            "incumbentProfile": "retained-owner",
+            "actorPid": 222,
+            "incumbentPid": 111,
+            "actorIsMandatePrincipal": false,
+            "priorSpend": "none",
+            "reusableOutput": true,
+            "inheritedAuthorityRequested": false
+          },
+          "economics": {
+            "termsVersion": "new-market",
+            "grossAtoms": "20",
+            "operation": "quote",
+            "feeMode": "per-capture",
+            "observedEffort": "unknown",
+            "reviewBurden": "unknown",
+            "modeledCost": "unknown",
+            "cashCost": "unknown",
+            "tokenPriceRecommendation": null
+          },
+          "review": {
+            "reviewer": null,
+            "decision": null
+          },
+          "optIn": true
+        },
+        "recipe": {
+          "schema": "samedaydesk.recurring-job-recipe-result.v1",
+          "recipeId": "source-change-alert",
+          "outcome": "changed",
+          "evidence": {
+            "kind": "field_diff",
+            "source": {
+              "kind": "owner_mounted_http",
+              "id": "owner-contract"
+            },
+            "contentHash": "sha256:b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5",
+            "status": 200,
+            "changed": [
+              {
+                "field": "title",
+                "before": "extract-contract-v1",
+                "after": "extract-contract-v2"
+              }
+            ],
+            "unchanged": [
+              {
+                "field": "description",
+                "value": "retained SKU CC-4; owner QA permitted"
+              }
+            ],
+            "retriesUsed": 0,
+            "attempts": [
+              {
+                "attempt": 1,
+                "ok": true
+              }
+            ]
+          },
+          "payment": {
+            "ok": true,
+            "attempted": false,
+            "replayBlocked": true,
+            "hasPriorReceipt": false
+          }
+        },
+        "merchant": {
+          "contract": "C31",
+          "schema": "pilot/page-change-brief/v1",
+          "verdict": "changed",
+          "report": {
+            "schema": "pilot/page-change-brief/v1",
+            "kind": "merchant_extract_batch",
+            "verdict": "changed",
+            "fields": [
+              "title",
+              "description"
+            ],
+            "claims": {
+              "noChangeProven": false,
+              "contentUnchangedProven": false,
+              "comparable": true,
+              "complete": true,
+              "current": false,
+              "fresh": false,
+              "usefulOutputProven": true,
+              "paymentImpliesUsefulOutput": false
+            },
+            "freshness": "unknown",
+            "snapshot": {
+              "schema": "pilot/change-digest/v1",
+              "verdict": "changed",
+              "claims": {
+                "noChangeProven": false,
+                "current": false,
+                "comparable": true,
+                "fresh": false
+              },
+              "freshness": "unknown",
+              "before": {
+                "status": "present",
+                "mediaType": "application/json",
+                "observedAt": null,
+                "truncated": false,
+                "byteLength": 501,
+                "sha256": "8d1c129fd3004f3800f5ad56489914d39e0d1edf54a491d819a0e78b5f8d87a3",
+                "source": {
+                  "kind": "file",
+                  "path": "/tmp/ae18-observe-8715Ok/before-batch.json",
+                  "role": "before"
+                },
+                "issues": []
+              },
+              "after": {
+                "status": "present",
+                "mediaType": "application/json",
+                "observedAt": null,
+                "truncated": false,
+                "byteLength": 501,
+                "sha256": "0771a5718aeb514e4a277827c72a1839b00406acddc4725f07632f404fca25e2",
+                "source": {
+                  "kind": "file",
+                  "path": "/tmp/ae18-observe-8715Ok/after-batch.json",
+                  "role": "after"
+                },
+                "issues": []
+              },
+              "limitsHit": []
+            },
+            "summary": {
+              "matched": 1,
+              "missing": 0,
+              "failed": 0,
+              "unknown": 0,
+              "duplicates": 0,
+              "coverageUnknown": 0,
+              "semantic": 1,
+              "order": 0
+            },
+            "rows": {
+              "matched": [
+                {
+                  "sourceKey": "http://127.0.0.1:46155/owner-source.json",
+                  "source": "http://127.0.0.1:46155/owner-source.json",
+                  "before": {
+                    "id": "owner-contract",
+                    "status": "success"
+                  },
+                  "after": {
+                    "id": "owner-contract",
+                    "status": "success"
+                  }
+                }
+              ],
+              "missing": [],
+              "failed": [],
+              "unknown": [],
+              "duplicates": []
+            },
+            "coverageUnknown": [],
+            "changes": [
+              {
+                "class": "semantic",
+                "op": "replace",
+                "path": "/title",
+                "before": "extract-contract-v1",
+                "after": "extract-contract-v2",
+                "sourceKey": "http://127.0.0.1:46155/owner-source.json",
+                "beforeEvidence": "extract-contract-v1",
+                "afterEvidence": "extract-contract-v2",
+                "evidenceTruncated": false
+              }
+            ],
+            "observations": {
+              "before": {
+                "jobId": "retained-comparison",
+                "jobStatus": "completed",
+                "charged": false,
+                "ok": true,
+                "snapshotObservedAt": null,
+                "artifactObservedAt": null,
+                "rows": [
+                  {
+                    "sourceKey": "http://127.0.0.1:46155/owner-source.json",
+                    "itemId": "owner-contract",
+                    "requestedAt": null,
+                    "completedAt": null,
+                    "fetchedAt": null,
+                    "requestedAtIsNotFreshness": true,
+                    "fetchedAtIsNotFreshness": true
+                  }
+                ]
+              },
+              "after": {
+                "jobId": "retained-comparison",
+                "jobStatus": "completed",
+                "charged": false,
+                "ok": true,
+                "snapshotObservedAt": null,
+                "artifactObservedAt": null,
+                "rows": [
+                  {
+                    "sourceKey": "http://127.0.0.1:46155/owner-source.json",
+                    "itemId": "owner-contract",
+                    "requestedAt": null,
+                    "completedAt": null,
+                    "fetchedAt": null,
+                    "requestedAtIsNotFreshness": true,
+                    "fetchedAtIsNotFreshness": true
+                  }
+                ]
+              },
+              "note": "Source URL identity is separate from two-time observation identity. fetchedAt and completedAt are observation metadata, not content freshness."
+            },
+            "provenance": {
+              "c1": {
+                "commit": "c247d0381ea41ab0975a666b53fc75c09db8a071",
+                "module": "extract-batch-c1/url-guard.mjs",
+                "license": "MIT",
+                "acceptance": "in_repo_public_identity_helper"
+              },
+              "c2": {
+                "commit": "f4c6cff982f662ccfe65171b2ebb03b74cf4a986",
+                "merge": "670ce6e926dc5543d29c5a8afb2c9025846b46d6",
+                "pullRequest": 28,
+                "source": "examples/customer-x402/src/page-change/vendor/change-digest",
+                "license": "MIT",
+                "acceptance": "reviewed_source_vendored"
+              },
+              "merchant": {
+                "commit": "d7ceb857de7c25a0113e5b6914ff73a1c8afd760",
+                "files": [
+                  "extract-batch.mjs",
+                  "extract-batch-config.mjs"
+                ],
+                "acceptance": "in_repo_public_batch_schema"
+              },
+              "comparedWithClock": "2026-10-15T06:31:08.834Z",
+              "beforeSha256": "8d1c129fd3004f3800f5ad56489914d39e0d1edf54a491d819a0e78b5f8d87a3",
+              "afterSha256": "0771a5718aeb514e4a277827c72a1839b00406acddc4725f07632f404fca25e2",
+              "elapsedMs": 3.495,
+              "digestSha256": "bccce0057819342f714eb2a4db5d17e4b7574ebcf4660d27bebc10bdbb584119"
+            }
+          }
+        },
+        "reuse": {
+          "ok": true,
+          "mode": "export",
+          "kind": "page_change_brief",
+          "incomplete": false,
+          "publicSafeCertified": false,
+          "evidenceKind": "user_selected_unverified",
+          "purchaseRequiresPublish": false,
+          "optInRequiredToWrite": true,
+          "included": [
+            "schema",
+            "kind",
+            "verdict",
+            "fields",
+            "freshness",
+            "claims",
+            "summary",
+            "rows",
+            "coverageUnknown",
+            "contentHash"
+          ],
+          "omitted": [],
+          "sourceDisclosure": {
+            "originalEvidenceUrlAvailable": false,
+            "sourceRole": "recipe_locator_not_evidence"
+          },
+          "n45": {
+            "class": "observation",
+            "subject": "contract-change-assessment",
+            "correctsSequence": null
+          },
+          "observation": {
+            "schema": "neomorphic.task-memory.observation.v1",
+            "contractVersion": 1,
+            "observationId": "obs_3e410911d1520ce7abde46bb9127e7d7",
+            "revisionId": "rev_2",
+            "taskScope": {
+              "taskId": "maintenance-assessment",
+              "taskFamily": "samedaydesk.result-reuse",
+              "ownerScope": "samedaydesk.result-reuse"
+            },
+            "source": {
+              "uri": "https://samedaydesk.com/for-agents",
+              "version": "sha256:2ec7798f0e3d9cbfdce45a8a2fd471655ea52d658be6ce1aea221622695f567b"
+            },
+            "epistemicStatus": "source_unavailable",
+            "lifecycleStatus": "active",
+            "statement": "reuse page_change_brief; verdict changed; original evidence URL unavailable; source URI is the reuse recipe locator",
+            "payload": {
+              "schema": "pilot/page-change-brief/v1",
+              "kind": "merchant_extract_batch",
+              "verdict": "changed",
+              "fields": [
+                "title",
+                "description"
+              ],
+              "freshness": "unknown",
+              "claims": {
+                "noChangeProven": false,
+                "contentUnchangedProven": false,
+                "comparable": true,
+                "complete": true,
+                "current": false,
+                "fresh": false,
+                "usefulOutputProven": true,
+                "paymentImpliesUsefulOutput": false
+              },
+              "summary": {
+                "matched": 1,
+                "missing": 0,
+                "failed": 0,
+                "unknown": 0,
+                "duplicates": 0,
+                "coverageUnknown": 0,
+                "semantic": 1,
+                "order": 0
+              },
+              "rows": {
+                "matched": [
+                  {
+                    "sourceKey": null,
+                    "status": "success"
+                  }
+                ],
+                "missing": [],
+                "failed": []
+              },
+              "coverageUnknown": [],
+              "contentHash": "sha256:2ec7798f0e3d9cbfdce45a8a2fd471655ea52d658be6ce1aea221622695f567b",
+              "url": "https://samedaydesk.com/for-agents",
+              "reuseProvenance": {
+                "originalEvidenceUrlAvailable": false,
+                "sourceRole": "recipe_locator_not_evidence"
+              }
+            },
+            "recordedAt": {
+              "instant": "2026-10-15T06:31:08.834Z",
+              "domain": "wall_utc"
+            },
+            "execute": false
+          },
+          "pins": {
+            "mapping": "n45 n49-adapter field map",
+            "observationSchema": "neomorphic.task-memory.observation.v1"
+          },
+          "optIn": true
+        },
+        "publicSafeCertified": false,
+        "reuseGranted": false,
+        "repairOutput": "not_supplied_by_E02",
+        "workAcceptedAs": "changed-source assessment and handback only",
+        "priorSpend": "none",
+        "nextAction": "E02 must supply a separately reviewed repair artifact if repair is required."
+      },
+      "review": {},
+      "effects": {
+        "paymentAttempts": 0,
+        "captures": 0,
+        "obligations": 0,
+        "paidTaskIncrement": 0,
+        "repairExecutions": 0
+      },
+      "digest": "e543056cbc84854d9bb6b5dc1ca6502b89f84c129b0931157324cb46812db4fc"
+    },
+    "error": null,
+    "readbackPath": "/api/machine-gateway/v1/receipts/60434290-c28a-4af3-8408-b1fbe450be91"
+  },
+  "handbackReceipt": {
+    "schema": "neomorphic.machine-gateway.receipt.v1",
+    "id": "32e842b7-888f-4493-a77f-4ee6bf3c101e",
+    "quoteId": "fa389236-9a9d-41eb-ae8b-52e1d2468032",
+    "routeId": "maintenance.owner-contract-change.review",
+    "routeVersion": "1",
+    "requestDigest": "f4679908f2a17c49b7472a8c3be77cf961a2053840dd7345e7caed9c77aeb593",
+    "inputDigest": "e46723ed52ab8a6fc9fa69d7cce43d17960d8db24a8378a053d4d7e768ff2a4d",
+    "createdAt": 1792045868964,
+    "deadlineAt": 1792045883964,
+    "completedAt": 1792045868969,
+    "status": "completed",
+    "price": {
+      "amount": 0,
+      "unit": "usd-micros"
+    },
+    "payment": {
+      "state": "not_required",
+      "adapter": null,
+      "evidence": "none",
+      "reference": null,
+      "network": null
+    },
+    "output": {
+      "schema": "samedaydesk.maintenance-delivery.v1",
+      "phase": "handback",
+      "binding": {
+        "occurrenceId": "owner-contract-change",
+        "taskId": "maintenance-assessment",
+        "sourceId": "owner-contract",
+        "sourceDigest": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5",
+        "descriptorDigest": "ada405ae2da6cd6f17c1262f2865f0a37d881ec9a54c024774d5915b0e682372"
+      },
+      "disposition": "bounded_assessment",
+      "acceptance": "accepted",
+      "useful": true,
+      "assessment": {
+        "assessmentId": "60434290-c28a-4af3-8408-b1fbe450be91",
+        "assessmentDigest": "e543056cbc84854d9bb6b5dc1ca6502b89f84c129b0931157324cb46812db4fc",
+        "repairOutput": "not_supplied_by_E02",
+        "workAcceptedAs": "changed-source assessment and handback only"
+      },
+      "review": {
+        "reviewer": "supplied-reviewer",
+        "decision": "accept",
+        "reviewedAt": "2026-10-15T06:31:08.969Z",
+        "rightsRevision": "rights-1",
+        "reasons": [],
+        "acceptanceWinner": true,
+        "expiryWinner": false
+      },
+      "effects": {
+        "paymentAttempts": 0,
+        "captures": 0,
+        "obligations": 0,
+        "paidTaskIncrement": 0,
+        "repairExecutions": 0
+      },
+      "digest": "6fc29549553620e5154b34b75fd9614483fa208c3948a955cdacd3737f484bf6"
+    },
+    "error": null,
+    "readbackPath": "/api/machine-gateway/v1/receipts/32e842b7-888f-4493-a77f-4ee6bf3c101e"
+  },
+  "durableReadbackReceipt": {
+    "schema": "neomorphic.machine-gateway.receipt.v1",
+    "id": "32e842b7-888f-4493-a77f-4ee6bf3c101e",
+    "quoteId": "fa389236-9a9d-41eb-ae8b-52e1d2468032",
+    "routeId": "maintenance.owner-contract-change.review",
+    "routeVersion": "1",
+    "requestDigest": "f4679908f2a17c49b7472a8c3be77cf961a2053840dd7345e7caed9c77aeb593",
+    "inputDigest": "e46723ed52ab8a6fc9fa69d7cce43d17960d8db24a8378a053d4d7e768ff2a4d",
+    "createdAt": 1792045868964,
+    "deadlineAt": 1792045883964,
+    "completedAt": 1792045868969,
+    "status": "completed",
+    "price": {
+      "amount": 0,
+      "unit": "usd-micros"
+    },
+    "payment": {
+      "state": "not_required",
+      "adapter": null,
+      "evidence": "none",
+      "reference": null,
+      "network": null
+    },
+    "output": {
+      "schema": "samedaydesk.maintenance-delivery.v1",
+      "phase": "handback",
+      "binding": {
+        "occurrenceId": "owner-contract-change",
+        "taskId": "maintenance-assessment",
+        "sourceId": "owner-contract",
+        "sourceDigest": "b6ffd8267b19c1f4580a529bb0156369f97fe503c3521980e24d19e7dd1335a5",
+        "descriptorDigest": "ada405ae2da6cd6f17c1262f2865f0a37d881ec9a54c024774d5915b0e682372"
+      },
+      "disposition": "bounded_assessment",
+      "acceptance": "accepted",
+      "useful": true,
+      "assessment": {
+        "assessmentId": "60434290-c28a-4af3-8408-b1fbe450be91",
+        "assessmentDigest": "e543056cbc84854d9bb6b5dc1ca6502b89f84c129b0931157324cb46812db4fc",
+        "repairOutput": "not_supplied_by_E02",
+        "workAcceptedAs": "changed-source assessment and handback only"
+      },
+      "review": {
+        "reviewer": "supplied-reviewer",
+        "decision": "accept",
+        "reviewedAt": "2026-10-15T06:31:08.969Z",
+        "rightsRevision": "rights-1",
+        "reasons": [],
+        "acceptanceWinner": true,
+        "expiryWinner": false
+      },
+      "effects": {
+        "paymentAttempts": 0,
+        "captures": 0,
+        "obligations": 0,
+        "paidTaskIncrement": 0,
+        "repairExecutions": 0
+      },
+      "digest": "6fc29549553620e5154b34b75fd9614483fa208c3948a955cdacd3737f484bf6"
+    },
+    "error": null,
+    "readbackPath": "/api/machine-gateway/v1/receipts/32e842b7-888f-4493-a77f-4ee6bf3c101e"
+  },
+  "exactReadback": true,
+  "separateConsumerProcesses": 4,
+  "apiProcesses": 2,
+  "replaySameReceipt": true,
+  "sourceRequestsForOccurrence": 1,
+  "sourceGetsIncludingHarnessBeforeAfter": 3,
+  "sourceGetsAfterReplayReadback": 3,
+  "effects": {
+    "paymentAttempts": 0,
+    "captures": 0,
+    "obligations": 0,
+    "paidTaskIncrement": 0,
+    "repairExecutions": 0
+  },
+  "persistedGatewayState": {
+    "usage": [
+      {
+        "tenant": "local-owner",
+        "calls": 1,
+        "units": 0
+      },
+      {
+        "tenant": "local-reviewer",
+        "calls": 1,
+        "units": 0
+      }
+    ],
+    "attempts": {
+      "count": 2,
+      "possiblePayments": 0,
+      "reservedUnits": 0
+    },
+    "paymentIdentities": 0
+  },
+  "publicServingEvidence": null,
+  "missingRepairOutput": "E02 reviewed repair artifact not supplied",
+  "usageProof": "Read-only SQLite inspection after API exit: exactly two calls, zero units/reservations/possible payments/payment identities. Independent source counter is three (two harness reads, one occurrence GET) and unchanged by replay/readback."
+}

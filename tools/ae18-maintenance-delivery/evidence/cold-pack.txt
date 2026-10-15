@@ -1,0 +1,111 @@
+[
+  {
+    "id": "@samedaydesk/maintenance-delivery@0.1.0",
+    "name": "@samedaydesk/maintenance-delivery",
+    "version": "0.1.0",
+    "size": 59186,
+    "unpackedSize": 257655,
+    "shasum": "7057b5fb01c923c67ac9c4b1923c0c6f346bd661",
+    "integrity": "sha512-SpVxp48Ft9gMCMz5uf7aph5mbUhQvgC9hr7Lxlnt+U2PQdH9gqsGdDCrT2okzt3RYI7wpSPHprZHU7mPIJIBcA==",
+    "filename": "samedaydesk-maintenance-delivery-0.1.0.tgz",
+    "files": [
+      {
+        "path": "INSTALL.md",
+        "size": 6816,
+        "mode": 420
+      },
+      {
+        "path": "INTEGRATION.md",
+        "size": 6217,
+        "mode": 420
+      },
+      {
+        "path": "PINS.json",
+        "size": 195870,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 3351,
+        "mode": 420
+      },
+      {
+        "path": "bin/accept.mjs",
+        "size": 4711,
+        "mode": 493
+      },
+      {
+        "path": "bin/companion.mjs",
+        "size": 538,
+        "mode": 493
+      },
+      {
+        "path": "bin/harness.mjs",
+        "size": 7956,
+        "mode": 420
+      },
+      {
+        "path": "bin/install-accept.mjs",
+        "size": 4455,
+        "mode": 493
+      },
+      {
+        "path": "bin/serve-local.mjs",
+        "size": 858,
+        "mode": 493
+      },
+      {
+        "path": "fixtures/prior.json",
+        "size": 511,
+        "mode": 420
+      },
+      {
+        "path": "fixtures/source-after.json",
+        "size": 117,
+        "mode": 420
+      },
+      {
+        "path": "fixtures/source-before.json",
+        "size": 117,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 596,
+        "mode": 420
+      },
+      {
+        "path": "src/client.mjs",
+        "size": 2319,
+        "mode": 420
+      },
+      {
+        "path": "src/core.mjs",
+        "size": 13109,
+        "mode": 420
+      },
+      {
+        "path": "src/index.mjs",
+        "size": 4047,
+        "mode": 420
+      },
+      {
+        "path": "src/inputs.mjs",
+        "size": 2272,
+        "mode": 420
+      },
+      {
+        "path": "src/runtime.mjs",
+        "size": 1535,
+        "mode": 420
+      },
+      {
+        "path": "src/schemas.mjs",
+        "size": 2260,
+        "mode": 420
+      }
+    ],
+    "entryCount": 19,
+    "bundled": []
+  }
+]

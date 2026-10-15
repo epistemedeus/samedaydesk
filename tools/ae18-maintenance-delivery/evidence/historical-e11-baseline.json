@@ -1,0 +1,19 @@
+{
+  "receipt": "tools/ae14-compat-maintenance/RESULT.md at 50210d0dbd2e24194c84b486bf31dc3c705ba06b",
+  "e11": {
+    "pass": 28,
+    "fail": 0
+  },
+  "resultReuse": {
+    "pass": 25,
+    "fail": 0
+  },
+  "recipes": {
+    "tests": 90,
+    "pass": 83,
+    "fail": 4,
+    "skipped": 3,
+    "exit": 1
+  },
+  "cause": "E11 reported absent merchant checkout; stateless local fixture acceptance, no persisted paid task, PG/chain join or live service"
+}

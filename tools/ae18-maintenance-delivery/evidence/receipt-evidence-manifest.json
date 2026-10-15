@@ -1,0 +1,122 @@
+{
+  "evidence/baseline-e11.json": {
+    "sha256": "ad5e3bbd410189d7cceaca3100b695e350a2ede50ef7f13a40536d10e63020f6",
+    "bytes": 469
+  },
+  "evidence/baseline-e11.tap": {
+    "sha256": "4884aaf18922bf99e6024678eaa89b19bba45b6b41ad4f891b4e38a0cc99470a",
+    "bytes": 5116
+  },
+  "evidence/baseline-recipes-mounted-exit.json": {
+    "sha256": "66f8dc51d13ba3ee81b71913528824d9c1a3812c325fc59d4b60dda8e8520d2b",
+    "bytes": 11
+  },
+  "evidence/baseline-recipes-mounted.tap": {
+    "sha256": "1010c5845b6b28df1da5502da2085b38b74ffd9de9d9a8010fe33c22bdedf2c3",
+    "bytes": 21065
+  },
+  "evidence/baseline-reuse.json": {
+    "sha256": "e2555cf467b22f9bae8ae7bc04339eba05fcd7f02d768c988a1403a31637a22b",
+    "bytes": 318
+  },
+  "evidence/baseline-reuse.tap": {
+    "sha256": "0bcd3c58b208830326e8b6424defb6ff8927deed1131ca8592ab195b04fbb5bd",
+    "bytes": 4995
+  },
+  "evidence/clean-e11.tap": {
+    "sha256": "5dc458a5fb2d07798476b60f68c255522a72fc58b6bd28b4ae4342eed877225e",
+    "bytes": 5110
+  },
+  "evidence/clean-owned.tap": {
+    "sha256": "bff938b0f117245237784dd163bb1663af58137d2d0417cd0e4dbec0944dffdf",
+    "bytes": 4363
+  },
+  "evidence/clean-recipes.tap": {
+    "sha256": "b920c745582535412f1b4a1b24865aa431e49ff4e4325ac45e233185e9ffa345",
+    "bytes": 19329
+  },
+  "evidence/clean-reuse.tap": {
+    "sha256": "6e217066d83e420b3a2a50084a4f972280ea15f3b0ad1609a29fc91019b8b7a6",
+    "bytes": 4998
+  },
+  "evidence/clean-tests.json": {
+    "sha256": "7dfba8d94c767baa32c955affd80db82e96d272608204e92009a5783bb6a4472",
+    "bytes": 2897
+  },
+  "evidence/cold-acceptance.json": {
+    "sha256": "56da352c5f67744ea7f91dc58d29f2a0534dff46c2a40733551ba6ceb5f993c2",
+    "bytes": 32180
+  },
+  "evidence/cold-acceptance.txt": {
+    "sha256": "fbbd55779a50c080ac00be65d6a6b12bb9b81715ccc44bd1aeeceaf2ac9b8f72",
+    "bytes": 473
+  },
+  "evidence/cold-consumer-install.txt": {
+    "sha256": "cd0877829ceb3885ab2a2df7a6ec45c91b2708cb9991ec1af17ec9f7243b7902",
+    "bytes": 26
+  },
+  "evidence/cold-customer-install.txt": {
+    "sha256": "53982b9708472b1e744d6378385bffc025600b7a814d00fd25607378b952b043",
+    "bytes": 25
+  },
+  "evidence/cold-gateway-install.txt": {
+    "sha256": "8debe1405d142b99988f082895b9b85d2d16c77d489e0787cf266de1295f7715",
+    "bytes": 28
+  },
+  "evidence/cold-install-receipt.json": {
+    "sha256": "cae8c3ab75c9835ced3e6471613d73b958203c390ee568ee5590cd7613dcd641",
+    "bytes": 6927
+  },
+  "evidence/cold-merchant-install.txt": {
+    "sha256": "f27aca8a1221472f6aeb6a91c144ccd4816c0d32b45fd9e073eb087a5f249062",
+    "bytes": 26
+  },
+  "evidence/cold-pack.txt": {
+    "sha256": "e040a523ca385a261e9cb7435bd49d4358a2f4bd445300fff620b45768a8439a",
+    "bytes": 2276
+  },
+  "evidence/cold-verification.json": {
+    "sha256": "57fab56440ae80e313ec585657f381931b35d21ced62fd3231a1375801a9e718",
+    "bytes": 3116
+  },
+  "evidence/development-accept.log": {
+    "sha256": "d7a1027e1709d5b2d441a44b6634d0f8057233fa03cced2d2d8751259db7c169",
+    "bytes": 473
+  },
+  "evidence/development-mounted.json": {
+    "sha256": "60593ec877e09890ab253a108fa30f485dc077c7945b61c837602ffc1a0d92e8",
+    "bytes": 32183
+  },
+  "evidence/development-owned.tap": {
+    "sha256": "fc738c0bd61e9f1e99735dc1e40b86c8e0c66014e0c97b06f2653f179fef9d04",
+    "bytes": 4363
+  },
+  "evidence/historical-e11-baseline.json": {
+    "sha256": "c36434beae0a58c09a7f85498e0773e4d1aa3e2ced4b8bd53083b84da2060db5",
+    "bytes": 446
+  },
+  "evidence/input-verification.json": {
+    "sha256": "6809e70630349d6a1caa2711e65c4d77e04dde268fe3d27dcb253ce3ee251f37",
+    "bytes": 833
+  },
+  "evidence/mounted-proof.json": {
+    "sha256": "9ee1e89c6e839652f8d2a322b2b88d1720534d2f90a0c136056484cdae5cefb8",
+    "bytes": 1117
+  },
+  "evidence/pin-baseline-e11.tap": {
+    "sha256": "3aaab01fc29950c817655ff7efd4e0e8ede8054320fd510859942b419819f3f4",
+    "bytes": 5115
+  },
+  "evidence/pin-baseline-recipes.tap": {
+    "sha256": "76881eec2953fa31332f49c4fc44f2c7a7b7ab06eca7f4f5bb3bc9c008141c50",
+    "bytes": 19333
+  },
+  "evidence/pin-baseline-reuse.tap": {
+    "sha256": "dfe268b3bb410090933828e1c946bc3119955eded9fb6343912d33440afe9ca8",
+    "bytes": 4994
+  },
+  "evidence/pin-baseline.json": {
+    "sha256": "7b412066df6290b0eceadda5e6f485f43b649acf6cd498d0e659ec6c888b21d1",
+    "bytes": 2175
+  }
+}

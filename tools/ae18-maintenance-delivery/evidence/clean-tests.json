@@ -1,0 +1,98 @@
+{
+  "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+  "env": {
+    "SDS_INPUT_ROOT": "/tmp/ae18-244005-replay-EANA1z/source",
+    "GATEWAY_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/gateway/services/machine-gateway",
+    "MERCHANT_INPUT_ROOT": "/tmp/ae18-244005-inputs-TjCnvs/merchant"
+  },
+  "siblingMount": "/tmp/ae18-244005-replay-EANA1z/x402-url-extractor",
+  "gitStatusAfter": "",
+  "runs": [
+    {
+      "label": "clean-owned",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae18-maintenance-delivery/test/occurrence.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 20,
+        "pass": 20,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    },
+    {
+      "label": "clean-e11",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/boundaries.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/http-cli.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/occurrence.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/ae14-compat-maintenance/test/economics.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    },
+    {
+      "label": "clean-recipes",
+      "command": [
+        "npm",
+        "run",
+        "test:recurring-job-recipes"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 97,
+        "pass": 97,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    },
+    {
+      "label": "clean-reuse",
+      "command": [
+        "node",
+        "--test",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/result-reuse/test/record-fields.test.mjs",
+        "/tmp/ae18-244005-replay-EANA1z/source/tools/result-reuse/test/export.test.mjs"
+      ],
+      "cwd": "/tmp/ae18-244005-replay-EANA1z/source",
+      "testedHead": "7c902ac54a992666aea1b2c044c145caaa0901ae",
+      "exit": 0,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "contentVerified": true
+    }
+  ]
+}

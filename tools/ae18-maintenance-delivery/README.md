@@ -53,3 +53,9 @@ certification or automatic permission grant.
 See [INSTALL.md](INSTALL.md) for an executable cold install and the real host
 mount, [INTEGRATION.md](INTEGRATION.md) for callable operations, schemas and exact
 pending joins, and [RESULT.json](RESULT.json) for immutable test-head evidence.
+
+The clean source replay passes owned 20/20, E11 28/28, recurring recipes 97/97
+(including seven nested mounted checks), and result-reuse 25/25 with no skips.
+The cold-installed consumer passes useful mounted acceptance and exact readback
+after API restart. Source/tested commit and archive digest are in RESULT.json;
+receipt/documentation commits are not represented as executable test runs.
