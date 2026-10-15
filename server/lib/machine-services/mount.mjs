@@ -28,15 +28,24 @@ const flag = (env, key) => {
 const N2_STANDALONE = { database: value => typeof value === 'string' && value.length > 0 && value.length <= 4096,
   host: value => typeof value === 'string' && value.length > 0 && value.length <= 255,
   port: value => Number.isInteger(value) && value > 0 && value < 65536 };
+const MONITOR_TOP = new Set(['options', 'mountedOrigin', 'integrated', 'targetReaders']);
+const OPTION_KEYS = [
+  'maxTick', 'maxMonitors', 'maxDeliveryAttempts', 'visibilityMs', 'leaseSlackMs',
+  'minIntervalMs', 'sourceCooldownMs', 'originCooldownMs',
+];
 export function monitorOptions(env) {
   const config = env.MONITOR_RUNTIME_FILE ? readPrivateJson(env.MONITOR_RUNTIME_FILE) : {};
   if (!config || typeof config !== 'object' || Array.isArray(config) ||
-      Object.entries(config).some(([key, value]) => key !== 'options' && !(Object.hasOwn(N2_STANDALONE, key) && N2_STANDALONE[key](value))) ||
-      config.options && Object.keys(config.options).some(key => ![
-        'maxTick', 'maxMonitors', 'maxDeliveryAttempts', 'visibilityMs', 'leaseSlackMs',
-        'minIntervalMs', 'sourceCooldownMs', 'originCooldownMs',
-      ].includes(key))) throw new Error('invalid_monitor_runtime');
-  return runtimeOptions({ maxTick: 1, ...config.options });
+      Object.entries(config).some(([key, value]) => !MONITOR_TOP.has(key) && !(Object.hasOwn(N2_STANDALONE, key) && N2_STANDALONE[key](value))) ||
+      (config.integrated !== undefined && config.integrated !== true && config.integrated !== false) ||
+      config.options && Object.keys(config.options).some(key => !OPTION_KEYS.includes(key))) throw new Error('invalid_monitor_runtime');
+  return runtimeOptions({
+    maxTick: 1,
+    ...config.options,
+    ...(config.mountedOrigin !== undefined ? { mountedOrigin: config.mountedOrigin } : {}),
+    ...(config.integrated !== undefined ? { integrated: config.integrated } : {}),
+    ...(config.targetReaders !== undefined ? { targetReaders: config.targetReaders } : {}),
+  });
 }
 
 export async function openInstalledStore(service, env = process.env) {
@@ -86,6 +95,82 @@ export function monitorScheduleService(store, { now = Date.now, signal } = {}) {
 
 function unavailable(res, service) {
   res.status(503).json({ error: { code: `${service}_unavailable` } });
+}
+
+const COMPLETION_REQUEST = /^\/v1\/jobs\/([A-Za-z0-9_-]{1,80})\/completion$/;
+const GATEWAY_TENANT = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$/;
+const SCHEMA_NAME = /^[a-z_][a-z0-9_]{0,62}$/;
+
+function completionOf(state) {
+  if (state === 'queued' || state === 'running') return 'pending';
+  if (state === 'ready' || state === 'no_fit' || state === 'fit') return 'ready';
+  return 'failed';
+}
+
+// The vendored route module does not export its tenant join. Keep the same
+// `<binding>:<gateway tenant>` scope and the same length ceiling.
+async function writeJobCompletion(req, res, gateway, extraction, jobId) {
+  let tenant;
+  try { tenant = gateway.authenticate(req.headers.authorization); }
+  catch (error) {
+    const status = Number.isInteger(error?.status) ? error.status : 401;
+    const code = typeof error?.code === 'string' ? error.code : 'unauthorized';
+    res.status(status).json({ error: { code } });
+    return;
+  }
+  const gatewayTenantId = tenant?.id;
+  if (!extraction?.service?.pool || typeof extraction.tenantId !== 'string' || !SCHEMA_NAME.test(extraction.schema || '')
+      || typeof gatewayTenantId !== 'string' || !GATEWAY_TENANT.test(gatewayTenantId)) {
+    res.status(503).json({ error: { code: 'url_extract_unbound' } });
+    return;
+  }
+  const tenantId = `${extraction.tenantId}:${gatewayTenantId}`;
+  if (tenantId.length > 81) {
+    res.status(400).json({ error: { code: 'invalid_tenant' } });
+    return;
+  }
+  const { rows } = await extraction.service.pool.query(
+    `SELECT state, result_digest FROM ${extraction.schema}.extraction_job WHERE job_id = $1 AND tenant_id = $2`,
+    [jobId, tenantId],
+  );
+  const row = rows[0];
+  if (!row) {
+    res.status(404).json({ error: 'not_found' });
+    return;
+  }
+  const completion = completionOf(row.state);
+  const digest = typeof row.result_digest === 'string' && /^[a-f0-9]{64}$/.test(row.result_digest) ? row.result_digest : null;
+  res.status(200).json({
+    jobId,
+    complete: completion === 'ready' || completion === 'failed',
+    completion,
+    qualification: null,
+    evidence: digest ? { digest } : null,
+  });
+}
+
+function wrapGateway(handler, gateway, extraction) {
+  if (!extraction) return handler;
+  return async (req, res) => {
+    const match = req.method === 'GET' ? COMPLETION_REQUEST.exec(req.url || '') : null;
+    if (!match) return handler(req, res);
+    try { await writeJobCompletion(req, res, gateway, extraction, match[1]); }
+    catch { if (!res.headersSent) res.status(503).json({ error: { code: 'provider_failed' } }); }
+  };
+}
+
+// This process is the only extraction worker. A hard kill leaves queued rows
+// and running rows whose lease still belongs to the dead process. recover()
+// requeues an expired lease; the update requeues a still-live one. pump does
+// not block the listener.
+function resumeExtraction(extraction) {
+  if (!extraction?.service?.recover || !SCHEMA_NAME.test(extraction.schema || '')) return;
+  void extraction.service.recover()
+    .then(() => extraction.service.pool.query(
+      `UPDATE ${extraction.schema}.extraction_job SET state = 'queued', lease_until = NULL, updated_at = now() WHERE state = 'running'`,
+    ))
+    .then(() => extraction.service.pump({ limit: 8 }))
+    .catch(() => {});
 }
 
 // U1 execute requires Idempotency-Key /^[A-Za-z0-9_.-]{16,128}$/. The mounted
@@ -207,13 +292,14 @@ export function mountMachineServices(app, options = {}) {
         store = await openInstalledStore(service, activeEnv);
         owned.add(store);
         if (closing) throw new Error('machine_services_closed');
+        let extraction = null;
         if (gateway) {
           // AE21 U2: url.extract.* fail closed (url_extract_unbound) unless the
           // private binding is configured. The extraction pool opens after the
           // gateway store is ready, binds before the handler is published, and
           // closes (and unbinds) with that store.
           if (extractionBindingConfigured(activeEnv)) {
-            const extraction = await openExtractionService(activeEnv);
+            extraction = await openExtractionService(activeEnv);
             let bound = null;
             const closeStore = store.close.bind(store);
             store.close = async () => {
@@ -222,10 +308,11 @@ export function mountMachineServices(app, options = {}) {
             };
             if (closing) throw new Error('machine_services_closed');
             bound = bindUrlExtractService(extraction);
+            resumeExtraction(extraction);
           }
           gateway.store = store;
           state.gateway = gateway;
-          state.handler = createHttpHandler(gateway, { stripPrefix: '' });
+          state.handler = wrapGateway(createHttpHandler(gateway, { stripPrefix: '' }), gateway, extraction);
         } else {
           state.service = monitorScheduleService(store, { signal: abort.signal });
           state.handler = createApiHandler(store, { basePath: prefix.monitor,

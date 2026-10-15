@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { emptyState, emptyUsage, applyObservation } from '../vendor/change-monitor/src/transition.mjs';
 import { digestJson, sha256, iso, normalize, materialDiff } from './observation.mjs';
+import { COMPLETION_PATH } from './completion.mjs';
 import { ServiceError, requireThat, integer, object } from './errors.mjs';
 import { LIMITS, monitorConfig, runtimeOptions } from './config.mjs';
 const parse = JSON.parse;
@@ -132,7 +133,8 @@ export class PostgresMonitorStore {
         ...(old.mode === 'json' ? { pointers: old.pointers } : {}),
         ...(old.mode === 'observatory' ? { sourceId: old.sourceId } : {}),
         intervalMs: patch.intervalMs ?? old.intervalMs, expiresAt: patch.expiresAt ?? iso(old.expiresAt),
-        retentionDays: patch.retentionDays ?? old.retentionDays, budget: { ...old.budget, ...patch.budget } }, tenant, now, this.options);
+        retentionDays: patch.retentionDays ?? old.retentionDays, budget: { ...old.budget, ...patch.budget },
+        ...(old.targetAuth ? { targetAuth: old.targetAuth } : {}) }, tenant, now, this.options);
       requireThat(config.budget.maxChecks >= row.checks && config.budget.maxBytes >= row.charged_bytes
         && config.budget.maxRuntimeMs >= row.charged_ms && config.budget.maxEvents >= core.usage.usefulEvents, 'budget_below_usage');
       core.subscription.revision += 1;
@@ -173,7 +175,7 @@ export class PostgresMonitorStore {
         (await this.write(`UPDATE monitors SET current_run=?,checks=checks+1,charged_bytes=charged_bytes+?,charged_ms=charged_ms+?,next_due=? WHERE id=?`,
           id, reservedBytes, reservedMs, Math.max(now + config.intervalMs, row.next_due + config.intervalMs), row.id));
         (await this.write('UPDATE tenants SET checks=checks+1,charged_bytes=charged_bytes+?,charged_ms=charged_ms+? WHERE id=?', reservedBytes, reservedMs, row.tenant_id));
-        return { id, monitorId: row.id, token, generation: row.generation, config, expiresAt: row.expires_at };
+        return { id, monitorId: row.id, token, generation: row.generation, config, expiresAt: row.expires_at, tenantId: row.tenant_id };
       }
       return null;
     });
@@ -209,6 +211,28 @@ export class PostgresMonitorStore {
       if (!run || !['started', 'claimed'].includes(run.phase) || run.lease_until <= clock()) return false;
       return (await this.write("UPDATE runs SET phase='staged',staged=? WHERE id=? AND lease_until>? AND lease_until>extract(epoch FROM clock_timestamp())*1000", encode(result), claim.id, clock())).changes === 1;
     });
+  }
+  async recordCompletionBaseline(row, config, staged, runId, now) {
+    const normalized = staged?.normalized;
+    if (normalized?.evidenceClass !== 'comparable' || normalized.material?.fields?.['/complete'] !== true) return;
+    let pathname = '';
+    try { pathname = new URL(config.url).pathname; } catch { return; }
+    if (!COMPLETION_PATH.test(pathname)) return;
+    const evidenceId = normalized.evidenceId;
+    if (typeof evidenceId !== 'string' || !/^[a-f0-9]{64}$/.test(evidenceId)) return;
+    const eventId = sha256(`completion:${row.id}:${evidenceId}`);
+    if (await this.one('SELECT 1 FROM events WHERE id=?', eventId)) return;
+    const material = normalized.material;
+    const body = { schema: 'continuous-monitoring.change.v1', id: eventId, idempotencyKey: eventId,
+      monitorId: row.id, runId, observedAt: iso(now), transition: 'content_changed',
+      evidenceClass: 'comparable', failureCode: null, capture: 'mounted_http',
+      beforeEvidenceId: null, afterEvidenceId: evidenceId,
+      before: null, after: material, diff: materialDiff(null, material),
+      publicSourceChanged: false,
+      task: { rerun: true, disposition: 'rerun_affected_task', reason: 'Gateway job completion is already true.' } };
+    (await this.write(`INSERT INTO events(id,monitor_id,created_at,before_evidence,after_evidence,document) VALUES(?,?,?,?,?,?)`,
+      eventId, row.id, now, null, evidenceId, encode(body)));
+    (await this.write('INSERT INTO deliveries(event_id,monitor_id,next_attempt) VALUES(?,?,?)', eventId, row.id, now));
   }
   async finish(runId, now) {
     const clock = movingClock(now);
@@ -246,6 +270,14 @@ export class PostgresMonitorStore {
         (await this.write(`INSERT INTO events(id,monitor_id,created_at,before_evidence,after_evidence,document) VALUES(?,?,?,?,?,?)`,
           event.eventId, row.id, now, before?.evidenceId ?? null, event.evidenceId, encode(body)));
         (await this.write('INSERT INTO deliveries(event_id,monitor_id,next_attempt) VALUES(?,?,?)', event.eventId, row.id, now));
+      }
+      // A job that is already complete on the first comparable snapshot is a
+      // baseline (emit false). Record that completion once. A later unchanged
+      // tick, including one after restart, keeps the same evidence id and does
+      // not insert again. Ordinary monitors are not completion URLs, so their
+      // baseline stays at zero events.
+      if (admitted.outcome === 'baseline_established') {
+        await this.recordCompletionBaseline(row, config, staged, runId, now);
       }
       (await this.write(`UPDATE monitors SET core=?,current_evidence=?,initial_evidence=COALESCE(initial_evidence,?),
         status=CASE WHEN ?='budget_exhausted' THEN 'budget_exhausted' ELSE status END WHERE id=?`,

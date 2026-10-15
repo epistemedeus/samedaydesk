@@ -39,7 +39,8 @@
     "shared mounted initialization/scheduler lifecycle retains single-flight opens, classifies permanent refusals and recovers transient failures with bounded backoff",
     "owned due/retry timers, pending plans and bounded ticks are fenced and drained before single-flight store shutdown",
     "AE21 U2c: gateway re-vendored from U1 09d37501 archive neomorphic-machine-gateway-0.1.2.tgz sha256 0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6 blob 3cdd89c7a46b7edb1ab4148e9558220f879bd4b6; SDS async/PG adaptations retained; local: owner-scoped unbind, url_extract_store_closed->503, and a stable widen of charset-valid Idempotency-Key values of length 8-15 up to the U1 16-character minimum",
-    "AE21 U2: url.extract store on the enrolled async Postgres (ae19_paid_continuation), provisioned by install migrate only, lifecycle bound to the gateway store"
+    "AE21 U2: url.extract store on the enrolled async Postgres (ae19_paid_continuation), provisioned by install migrate only, lifecycle bound to the gateway store",
+    "AE21 U2: mounted monitor accepts targetAuth and an integrated loopback origin in production, GETs the gateway job completion projection with the enrolled reader, records one completion event when the first snapshot is already complete, and resumes extraction jobs whose worker died with the process"
   ],
   "previousExport": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
   "previousTestedImplementation": "d1b63983f0320d6b6213501cab72cc487c8464b2",

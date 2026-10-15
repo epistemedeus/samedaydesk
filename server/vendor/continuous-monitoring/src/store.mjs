@@ -176,7 +176,8 @@ export class MonitorStore {
         ...(old.mode === 'json' ? { pointers: old.pointers } : {}),
         ...(old.mode === 'observatory' ? { sourceId: old.sourceId } : {}),
         intervalMs: patch.intervalMs ?? old.intervalMs, expiresAt: patch.expiresAt ?? iso(old.expiresAt),
-        retentionDays: patch.retentionDays ?? old.retentionDays, budget: { ...old.budget, ...patch.budget } }, tenant, now, this.options);
+        retentionDays: patch.retentionDays ?? old.retentionDays, budget: { ...old.budget, ...patch.budget },
+        ...(old.targetAuth ? { targetAuth: old.targetAuth } : {}) }, tenant, now, this.options);
       requireThat(config.budget.maxChecks >= row.checks && config.budget.maxBytes >= row.charged_bytes
         && config.budget.maxRuntimeMs >= row.charged_ms && config.budget.maxEvents >= core.usage.usefulEvents, 'budget_below_usage');
       core.subscription.revision += 1;
@@ -217,7 +218,7 @@ export class MonitorStore {
         this.write(`UPDATE monitors SET current_run=?,checks=checks+1,charged_bytes=charged_bytes+?,charged_ms=charged_ms+?,next_due=? WHERE id=?`,
           id, reservedBytes, reservedMs, Math.max(now + config.intervalMs, row.next_due + config.intervalMs), row.id);
         this.write('UPDATE tenants SET checks=checks+1,charged_bytes=charged_bytes+?,charged_ms=charged_ms+? WHERE id=?', reservedBytes, reservedMs, row.tenant_id);
-        return { id, monitorId: row.id, token, generation: row.generation, config, expiresAt: row.expires_at };
+        return { id, monitorId: row.id, token, generation: row.generation, config, expiresAt: row.expires_at, tenantId: row.tenant_id };
       }
       return null;
     });

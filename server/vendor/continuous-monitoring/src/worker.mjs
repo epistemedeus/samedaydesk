@@ -1,4 +1,5 @@
 import { boundedGet } from './http.mjs';
+import { completionHeaders } from './completion.mjs';
 import { normalize, iso } from './observation.mjs';
 
 // Invoked by an existing cron/timer. No daemon, model calls or process spawning.
@@ -27,6 +28,7 @@ export async function tick(store, { now = Date.now, limit = store.options.maxTic
     };
     cancellation = setTimeout(check, 100);
     const baseline = await store.baseline(claim.monitorId), headers = {};
+    Object.assign(headers, completionHeaders(claim.config, store.options.targetReaders, claim.tenantId));
     const validators = baseline?.nonSemantic?.validators;
     if (validators?.etag) headers['if-none-match'] = validators.etag;
     else if (validators?.lastModified) headers['if-modified-since'] = validators.lastModified;
