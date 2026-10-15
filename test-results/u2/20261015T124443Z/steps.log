@@ -1,0 +1,13 @@
+=== U2 cursor 20261015T123750Z base=daa3bdee79c441ba89559ea4eb2c749e312435fd u2=d6988a152f8a8bdbea348e91a99c3b6647a90803 node=v22.14.0
+PG ok bin=/usr/lib/postgresql/16/bin ssl=on
+BRANCH_DOES_NOT_CONTAIN_U2 tip=daa3bdee79c441ba89559ea4eb2c749e312435fd
+=== U2 cursor 20261015T124443Z base=daa3bdee79c441ba89559ea4eb2c749e312435fd u2=d6988a152f8a8bdbea348e91a99c3b6647a90803 node=v22.14.0
+PG ok bin=/usr/lib/postgresql/16/bin ssl=on
+RED rc=1 NC_failed=6 NC_passed=0 # tests 8 # pass 2 # fail 6 # cancelled 0 # skipped 0 
+client build ok
+VENDOR_VERIFY rc=0 verified 10 vendored files
+GREEN rc=1 NC_passed=1 # tests 8 # pass 3 # fail 5 # cancelled 0 # skipped 0 
+FULL_PG rc=1 # tests 69 # pass 64 # fail 5 # cancelled 0 # skipped 0 
+FULL_SQLITE rc=0 # tests 100 # pass 100 # fail 0 # cancelled 0 # skipped 0 
+FULL_REGRESSION rc=0 # tests 49 # pass 49 # fail 0 # cancelled 0 # skipped 0 
+VERDICT=fail

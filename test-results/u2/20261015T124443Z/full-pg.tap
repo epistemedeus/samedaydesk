@@ -1,0 +1,447 @@
+TAP version 13
+# (node:12045) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production adapter requires verify-full, trusts the enrolled CA and refuses weaker TLS/foreign identity
+ok 1 - production adapter requires verify-full, trusts the enrolled CA and refuses weaker TLS/foreign identity
+  ---
+  duration_ms: 168.723864
+  ...
+# Subtest: cold Node runtime executes useful free work; lost HTTP acknowledgement resumes after restart without duplicate admission
+ok 2 - cold Node runtime executes useful free work; lost HTTP acknowledgement resumes after restart without duplicate admission
+  ---
+  duration_ms: 1046.792814
+  ...
+# Subtest: multi-pool gateway claims commit before effect; duplicate request and lost COMMIT response never repeat the effect
+ok 3 - multi-pool gateway claims commit before effect; duplicate request and lost COMMIT response never repeat the effect
+  ---
+  duration_ms: 111.057321
+  ...
+# Subtest: gateway request, route, tenant and lifetime budgets are enforced across restarts
+ok 4 - gateway request, route, tenant and lifetime budgets are enforced across restarts
+  ---
+  duration_ms: 180.404952
+  ...
+# Subtest: postgres monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+ok 5 - postgres monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+  ---
+  duration_ms: 951.913822
+  ...
+# Subtest: sqlite monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+ok 6 - sqlite monitor: changing HTTP source, consumer polling, duplicate ack and restart readback
+  ---
+  duration_ms: 82.204262
+  ...
+# Subtest: monitor claims and lease fences survive worker loss, concurrent ticks, pause, cancel and revoked grants
+ok 7 - monitor claims and lease fences survive worker loss, concurrent ticks, pause, cancel and revoked grants
+  ---
+  duration_ms: 35.538296
+  ...
+# Subtest: monitor staged write recovery emits one event without another upstream request; grant and budget limits persist
+ok 8 - monitor staged write recovery emits one event without another upstream request; grant and budget limits persist
+  ---
+  duration_ms: 72.298575
+  ...
+# Subtest: two Postgres workers race one due slot; pause during IO fences the result and stops subsequent reads
+ok 9 - two Postgres workers race one due slot; pause during IO fences the result and stops subsequent reads
+  ---
+  duration_ms: 48.509775
+  ...
+# Subtest: private Hostinger materialization and install/rollback packets preserve unrelated full configuration
+ok 10 - private Hostinger materialization and install/rollback packets preserve unrelated full configuration
+  ---
+  duration_ms: 20.813598
+  ...
+# Subtest: Postgres composite foreign keys and immutable artifacts refuse cross-monitor substitution
+ok 11 - Postgres composite foreign keys and immutable artifacts refuse cross-monitor substitution
+  ---
+  duration_ms: 76.182495
+  ...
+# Subtest: Postgres enforces finite monitor budgets, entitlement expiry, reader scope and free tenant monitor limits
+ok 12 - Postgres enforces finite monitor budgets, entitlement expiry, reader scope and free tenant monitor limits
+  ---
+  duration_ms: 66.443012
+  ...
+# Subtest: existing bounded scheduler performs monitor work and stops after cancel; restart readback has no timer requirement
+ok 13 - existing bounded scheduler performs monitor work and stops after cancel; restart readback has no timer requirement
+  ---
+  duration_ms: 95.799629
+  ...
+# Subtest: actual index scheduler arms an empty Postgres store and runs finite private-target refusals without IO
+ok 14 - actual index scheduler arms an empty Postgres store and runs finite private-target refusals without IO
+  ---
+  duration_ms: 471.063438
+  ...
+# Subtest: existing health, raw webhooks, contributor prefixes, MCP and SPA preserve their disabled/enabled behavior
+ok 15 - existing health, raw webhooks, contributor prefixes, MCP and SPA preserve their disabled/enabled behavior
+  ---
+  duration_ms: 810.528578
+  ...
+# Subtest: received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+ok 16 - received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+  ---
+  duration_ms: 46.032649
+  ...
+# Subtest: received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+ok 17 - received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+  ---
+  duration_ms: 29.127075
+  ...
+# Subtest: received PG: cancel after dispatch claim and before socket entry emits no request
+ok 18 - received PG: cancel after dispatch claim and before socket entry emits no request
+  ---
+  duration_ms: 38.610281
+  ...
+# Subtest: received PG: revoke then regrant cannot revive a live old generation
+ok 19 - received PG: revoke then regrant cannot revive a live old generation
+  ---
+  duration_ms: 23.325489
+  ...
+# Subtest: received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+ok 20 - received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+  ---
+  duration_ms: 43.102617
+  ...
+# Subtest: received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+ok 21 - received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+  ---
+  duration_ms: 63.081809
+  ...
+# Subtest: received PG: completion waits cannot commit an output after the persisted deadline
+ok 22 - received PG: completion waits cannot commit an output after the persisted deadline
+  ---
+  duration_ms: 164.286397
+  ...
+# Subtest: received PG: transaction wait consumes the monitor start and staging lease
+ok 23 - received PG: transaction wait consumes the monitor start and staging lease
+  ---
+  duration_ms: 110.199538
+  ...
+# Subtest: received PG: decoded SDK overflow retains one possible settlement and identical mounted HTTP replay
+ok 24 - received PG: decoded SDK overflow retains one possible settlement and identical mounted HTTP replay
+  ---
+  duration_ms: 189.390289
+  ...
+# Subtest: received PG: migration inspects additive-schema privilege rather than relying on a role name
+ok 25 - received PG: migration inspects additive-schema privilege rather than relying on a role name
+  ---
+  duration_ms: 20.192826
+  ...
+# Subtest: received PG: deadline moving during verify await fences the next adapter/provider entry
+ok 26 - received PG: deadline moving during verify await fences the next adapter/provider entry
+  ---
+  duration_ms: 19.852396
+  ...
+# Subtest: received PG: deadline moving during settled await fences the next adapter/provider entry
+ok 27 - received PG: deadline moving during settled await fences the next adapter/provider entry
+  ---
+  duration_ms: 30.902465
+  ...
+# Subtest: received PG: awaited database authorization consumes the source elapsed deadline before socket entry
+ok 28 - received PG: awaited database authorization consumes the source elapsed deadline before socket entry
+  ---
+  duration_ms: 122.469973
+  ...
+# Subtest: received PG: both mounted app APIs keep monitoring credentials out of gateway observations
+ok 29 - received PG: both mounted app APIs keep monitoring credentials out of gateway observations
+  ---
+  duration_ms: 589.342515
+  ...
+# Subtest: received PG: fresh adapted CLI callers execute useful work and resume the same persisted receipt after app restart
+ok 30 - received PG: fresh adapted CLI callers execute useful work and resume the same persisted receipt after app restart
+  ---
+  duration_ms: 1293.543754
+  ...
+# Subtest: lifecycle PG: concurrent cold HTTP failure recovers on a later caller, executes free work and survives restart
+ok 31 - lifecycle PG: concurrent cold HTTP failure recovers on a later caller, executes free work and survives restart
+  ---
+  duration_ms: 1709.097041
+  ...
+# Subtest: lifecycle PG: readiness failure recovers scheduled due work without a second arm or caller
+ok 32 - lifecycle PG: readiness failure recovers scheduled due work without a second arm or caller
+  ---
+  duration_ms: 1088.548613
+  ...
+# Subtest: lifecycle PG: initial-plan failure recovers scheduled due work without a second arm or caller
+ok 33 - lifecycle PG: initial-plan failure recovers scheduled due work without a second arm or caller
+  ---
+  duration_ms: 1082.594481
+  ...
+# Subtest: lifecycle environment overlay preserves an authoritative 59-value baseline and exact rollback
+ok 34 - lifecycle environment overlay preserves an authoritative 59-value baseline and exact rollback
+  ---
+  duration_ms: 23.716257
+  ...
+# Subtest: lifecycle PG: scheduler-plan failure after a committed mutation preserves its HTTP acknowledgement
+ok 35 - lifecycle PG: scheduler-plan failure after a committed mutation preserves its HTTP acknowledgement
+  ---
+  duration_ms: 1061.200332
+  ...
+# Subtest: later caller recovers a concurrent failed first open, with one new store and private errors
+ok 36 - later caller recovers a concurrent failed first open, with one new store and private errors
+  ---
+  duration_ms: 71.818582
+  ...
+# Subtest: scheduler recovers readiness without another caller and installs one scheduler/store
+ok 37 - scheduler recovers readiness without another caller and installs one scheduler/store
+  ---
+  duration_ms: 4.32535
+  ...
+# Subtest: repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+ok 38 - repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+  ---
+  duration_ms: 6.558325
+  ...
+# Subtest: initial scheduler plan failure recovers autonomously using the existing store
+ok 39 - initial scheduler plan failure recovers autonomously using the existing store
+  ---
+  duration_ms: 2.343268
+  ...
+# Subtest: scheduled replan failure recovers and repeated tick errors use bounded backoff
+ok 40 - scheduled replan failure recovers and repeated tick errors use bounded backoff
+  ---
+  duration_ms: 3.042087
+  ...
+# Subtest: close during initialization waits for and closes the returned store exactly once
+ok 41 - close during initialization waits for and closes the returned store exactly once
+  ---
+  duration_ms: 1.623927
+  ...
+# Subtest: close during backoff cancels autonomous recovery
+ok 42 - close during backoff cancels autonomous recovery
+  ---
+  duration_ms: 1.321175
+  ...
+# Subtest: close during asynchronous planning never installs a timer after shutdown
+ok 43 - close during asynchronous planning never installs a timer after shutdown
+  ---
+  duration_ms: 1.848515
+  ...
+# Subtest: close during in-flight work waits, aborts its signal and prevents rearming
+ok 44 - close during in-flight work waits, aborts its signal and prevents rearming
+  ---
+  duration_ms: 1.942847
+  ...
+# Subtest: disabled never retries or opens a store
+ok 45 - disabled never retries or opens a store
+  ---
+  duration_ms: 1.126932
+  ...
+# Subtest: flag never retries or opens a store
+ok 46 - flag never retries or opens a store
+  ---
+  duration_ms: 1.564989
+  ...
+# Subtest: schedulerFlag never retries or opens a store
+ok 47 - schedulerFlag never retries or opens a store
+  ---
+  duration_ms: 0.729454
+  ...
+# Subtest: sqliteProduction never retries or opens a store
+ok 48 - sqliteProduction never retries or opens a store
+  ---
+  duration_ms: 1.069035
+  ...
+# Subtest: missingDatabase never retries or opens a store
+ok 49 - missingDatabase never retries or opens a store
+  ---
+  duration_ms: 1.549881
+  ...
+# Subtest: weakTls never retries or opens a store
+ok 50 - weakTls never retries or opens a store
+  ---
+  duration_ms: 3.596408
+  ...
+# Subtest: invalidRuntime never retries or opens a store
+ok 51 - invalidRuntime never retries or opens a store
+  ---
+  duration_ms: 2.318926
+  ...
+# Subtest: scheduler disabled leaves request serving independent and opens no autonomous work
+ok 52 - scheduler disabled leaves request serving independent and opens no autonomous work
+  ---
+  duration_ms: 1.078283
+  ...
+# Subtest: permanent 42P01 failure does not retry while the other service remains usable
+ok 53 - permanent 42P01 failure does not retry while the other service remains usable
+  ---
+  duration_ms: 22.861286
+  ...
+# Subtest: permanent 28P01 failure does not retry while the other service remains usable
+ok 54 - permanent 28P01 failure does not retry while the other service remains usable
+  ---
+  duration_ms: 20.557364
+  ...
+# Subtest: permanent machine_schema_version_refused failure does not retry while the other service remains usable
+ok 55 - permanent machine_schema_version_refused failure does not retry while the other service remains usable
+  ---
+  duration_ms: 22.299742
+  ...
+# Subtest: permanent CERT_HAS_EXPIRED failure does not retry while the other service remains usable
+ok 56 - permanent CERT_HAS_EXPIRED failure does not retry while the other service remains usable
+  ---
+  duration_ms: 23.314227
+  ...
+# Subtest: invalid runtime and duplicate gateway authority are refused before the first DB open
+ok 57 - invalid runtime and duplicate gateway authority are refused before the first DB open
+  ---
+  duration_ms: 22.63664
+  ...
+# Subtest: close is single flight and releases every pool even when one close rejects privately
+ok 58 - close is single flight and releases every pool even when one close rejects privately
+  ---
+  duration_ms: 25.602943
+  ...
+# Subtest: a failed open retains its transient classification even if its pool close also fails
+ok 59 - a failed open retains its transient classification even if its pool close also fails
+  ---
+  duration_ms: 39.1307
+  ...
+# Subtest: close during scheduler-plan backoff cancels its retry and keeps the store closed
+ok 60 - close during scheduler-plan backoff cancels its retry and keeps the store closed
+  ---
+  duration_ms: 1.747796
+  ...
+# Subtest: close also waits for the scheduler automatic post-tick due query
+ok 61 - close also waits for the scheduler automatic post-tick due query
+  ---
+  duration_ms: 1.63531
+  ...
+# Subtest: a plan failure while work awaits cannot overlap ticks or have its refusal erased by the old completion
+ok 62 - a plan failure while work awaits cannot overlap ticks or have its refusal erased by the old completion
+  ---
+  duration_ms: 1.766502
+  ...
+# Subtest: a transient plan failure during work waits for that bounded tick before installing its successor
+ok 63 - a transient plan failure during work waits for that bounded tick before installing its successor
+  ---
+  duration_ms: 1.207931
+  ...
+# Subtest: NC1 url.extract.* is mounted and discoverable on the SDS gateway
+not ok 64 - NC1 url.extract.* is mounted and discoverable on the SDS gateway
+  ---
+  duration_ms: 142.29419
+  location: '/home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:92:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":{"code":"idempotency_key_required"}}
+    + actual - expected
+    
+    + undefined
+    - 'completed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'completed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:99:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: NC2 a job persisted in Postgres survives a process restart (same jobId, digest, one row)
+not ok 65 - NC2 a job persisted in Postgres survives a process restart (same jobId, digest, one row)
+  ---
+  duration_ms: 416.808024
+  location: '/home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:106:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":{"code":"idempotency_key_required"}}
+    + actual - expected
+    
+    + undefined
+    - 'completed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'completed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:109:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: NC3 a cross-tenant read is refused
+not ok 66 - NC3 a cross-tenant read is refused
+  ---
+  duration_ms: 46.65117
+  location: '/home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:124:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":{"code":"idempotency_key_required"}}
+    + actual - expected
+    
+    + undefined
+    - 'completed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'completed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:127:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: NC4 a missing env name fails closed with a named error; the env packet is one coherent set
+not ok 67 - NC4 a missing env name fails closed with a named error; the env packet is one coherent set
+  ---
+  duration_ms: 39.684967
+  location: '/home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:138:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'failed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'failed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:143:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: NC5 the vendor script refuses a tampered vendored file (git blob mismatch)
+ok 68 - NC5 the vendor script refuses a tampered vendored file (git blob mismatch)
+  ---
+  duration_ms: 59.053918
+  ...
+# Subtest: NC6 a closed extraction pool makes url.extract calls fail cleanly; lifecycle follows the store
+not ok 69 - NC6 a closed extraction pool makes url.extract calls fail cleanly; lifecycle follows the store
+  ---
+  duration_ms: 57.201501
+  location: '/home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:202:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'completed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'completed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae21-u2/w/repo/server/lib/machine-services/test/url-extract.test.mjs:222:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 64
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13579.402817
