@@ -153,6 +153,7 @@ test('a supplied adapter receives the prefix and other paths fall through', asyn
   assert.equal(health.statusCode, 200);
   assert.equal(JSON.parse(health.body).label, 'PRIVATE');
   assert.equal(seen.payments, 'off');
+  assert.equal(seen.sdsRoot, root);
   assert.equal(seen.chain, 'eip155:9');
   assert.equal(seen.databaseUrl.includes('10.0.0.8'), true);
   const missed = await dispatch(app, `${PREFIX}/v1/status`);

@@ -1,4 +1,5 @@
-import {pathToFileURL} from 'node:url';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const PREFIX = '/api/neomorphic-contributor-journey';
 const PUBLIC_CHAINS = new Set(['eip155:1', 'eip155:8453', 'eip155:84532']);
@@ -92,7 +93,7 @@ export function assertHostedWalletMarketConfig(input) {
   return input;
 }
 
-async function openAdapter(adapter, entry, input) {
+async function openAdapter(adapter, entry, input, sdsRoot) {
   let loaded = adapter;
   if (!loaded) {
     if (typeof entry !== 'string' || !entry.startsWith('/') || entry.includes('://')) refuse('integration_pending');
@@ -100,14 +101,16 @@ async function openAdapter(adapter, entry, input) {
   }
   if (typeof loaded.mountHostedWalletMarket !== 'function') refuse('integration_pending');
   let layer;
-  const market = await loaded.mountHostedWalletMarket({use(fn) { layer = fn; }}, input);
+  const market = await loaded.mountHostedWalletMarket({use(fn) { layer = fn; }}, {...input, sdsRoot});
   if (typeof layer !== 'function' || !market || typeof market.close !== 'function') refuse('integration_pending');
   return {layer, close: market.close.bind(market)};
 }
 
 /**
  * Mode unset registers nothing. Invalid config throws. A missing adapter entry
- * answers 503 on the packed-client prefix and does not fall through.
+ * answers 503 on the packed-client prefix and does not fall through. A rejected
+ * open also answers 503 on that prefix and does not call next().
+ * sdsRoot is this installation. Substituting another tree edits this pinned file.
  */
 export function mountHostedWalletMarketAdapter(app, options = {}) {
   if (!app || typeof app.use !== 'function') refuse('mount_required');
@@ -125,7 +128,8 @@ export function mountHostedWalletMarketAdapter(app, options = {}) {
     });
     return {mounted: false, status: 'integration_pending', async close() {}};
   }
-  const pending = openAdapter(adapter, entry, input);
+  const sdsRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+  const pending = openAdapter(adapter, entry, input, sdsRoot);
   pending.catch(() => {});
   app.use((req, res, next) => {
     const path = String(req.originalUrl || req.url || '').split('?')[0];
