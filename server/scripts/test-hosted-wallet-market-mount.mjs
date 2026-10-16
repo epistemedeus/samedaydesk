@@ -147,6 +147,8 @@ test('a supplied adapter receives the prefix and other paths fall through', asyn
   };
   const mounted = mountHostedWalletMarketAdapter(app, valid({adapter}));
   assert.equal(mounted.mounted, true);
+  assert.equal(typeof mounted.opened?.then, 'function');
+  await mounted.opened;
   const health = await dispatch(app, `${PREFIX}/healthz`);
   assert.equal(health.statusCode, 200);
   assert.equal(JSON.parse(health.body).label, 'PRIVATE');
@@ -157,5 +159,20 @@ test('a supplied adapter receives the prefix and other paths fall through', asyn
   assert.equal(missed.statusCode, 204);
   const outside = await dispatch(app, '/outside');
   assert.equal(outside.statusCode, 204);
+  await mounted.close();
+});
+
+test('opened surfaces adapter startup refusal', async () => {
+  const app = fakeApp();
+  const adapter = {
+    async mountHostedWalletMarket() {
+      throw Object.assign(new Error('guard_unsealed'), {codeName: 'guard_unsealed'});
+    },
+  };
+  const mounted = mountHostedWalletMarketAdapter(app, valid({adapter}));
+  await assert.rejects(mounted.opened, error => error.codeName === 'guard_unsealed');
+  const hit = await dispatch(app, `${PREFIX}/healthz`);
+  assert.equal(hit.statusCode, 503);
+  assert.equal(JSON.parse(hit.body).code, 'guard_unsealed');
   await mounted.close();
 });

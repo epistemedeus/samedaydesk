@@ -138,6 +138,7 @@ export function mountHostedWalletMarketAdapter(app, options = {}) {
   return {
     mounted: true,
     status: 'opening',
+    opened: pending,
     async close() {
       const market = await pending.catch(() => null);
       if (market) await market.close();
