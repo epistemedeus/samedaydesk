@@ -30,7 +30,7 @@
     "server/lib/contributor-desk-assets.js": "def4c9d85fc6c44a25b7380c20816040ee807627aa8166ab49863e6d17e8d87c",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
     "server/lib/contributor-host-observation.js": "42df6596dc4b1554f4d0ad78fea39deee5fafdcb0cc698187c787adea91fefcd",
-    "server/lib/contributor-https-qualification.js": "65e4da4e5e1ce075467e86c6c722d2854a1ce686cee0d5514540a3398280ea67",
+    "server/lib/contributor-https-qualification.js": "584795f12781709407cd77d312f3c468f57e8dcdfc1a3d4408998fdceda52fe2",
     "server/lib/contributor-managed-mount.js": "784c8a3b0f47abbdedce8d59515dd538cb5147573af1beaa9374500621c11f05",
     "server/lib/contributor-mount-recovery.js": "b36d3160a351eb055149edbff0bc4bcaa0279454ded016acc7d2e97bdd53cdf1",
     "server/lib/contributor-native-ingress.js": "4092ff40f5a58f28ec6d617b3fe855d1c1a8166b64c32caf7cf8294398306df3",
@@ -1315,6 +1315,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:a7c8221a09a4ed27f0655cca316eba00e08c542250fa46cefdce864e109832f5"
+    },
+    {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:8ee1ebdd763574c478560134c992e41319a7ccb8595130bc91bb603b68600071"
     }
   ]
 }

@@ -26,9 +26,9 @@ At that commit, `server/lib/contributor-managed-mount.js` and
 `server/lib/neomorphic-contributor-journey-mount.js` start one init and, on
 failure, keep `unavailable` for the process lifetime. The managed outer catch
 discards the error. The public 503 is that managed handler, not the journey
-disabled router. The stage that failed on the host is unknown. Do not treat the
-503 as a missing password, an expiring lease, a new signup, or an empty claim
-list.
+disabled router. The listening lines at 00:26:35Z and 00:27:02Z still contain
+no initializer cause, because that catch logged nothing. Do not treat the 503
+as a missing password, an expiring lease, a new signup, or an empty claim list.
 
 A metadata-only read of logs that already exist can still name the stage.
 Locator: Hostinger `get_node_js_runtime_logs_v1`,
@@ -38,7 +38,51 @@ Locator: Hostinger `get_node_js_runtime_logs_v1`,
 Do not combine `period` with `from_line`. Do not send `levels`. Do not call
 `DELETE .../runtime-logs`. Keep only entries from `2026-10-17T00:15:00Z` through
 `2026-10-17T00:40:00Z`. The deployed catch writes nothing, so the window may be
-absent or unclassified. That leaves the stage unknown. It does not change this fix.
+absent or unclassified. That does not change this fix.
+
+## ROOT132 source-binding refusal
+
+ROOT132, incorporating ROOT130, names the 503 after the 00:26Z restart. Private
+health was still 503 at 00:31:34Z. This is a permanent source-binding mismatch.
+It is not certificate expiry and not a transient database failure. Bounded
+request retry stays in place for real transient failures. It is not this
+incident's trigger.
+
+ROOT133 keeps the evidence types distinct. The full-value read is native hPanel
+at 2026-10-17 00:44:35Z. Root read all 71 unmasked values and printed or changed
+nothing. Profile was live, managed was 1, public reads were 0, and human assets
+were 0. HMAC, store, product, origin, and installation bindings validated.
+`CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT` and the signed qualification still name SDS
+`6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc`, issued 2026-10-14 02:28:19Z. The
+serving build is `e56c4d84f1c59f02307d5aa9a2c330957a28aa6d`. Root has not mutated
+config or source on Hostinger. Host filesystem identity is still unreceived.
+
+The source-member comparison at 2026-10-17 00:46:34Z is exact Git, recomputed
+from the blobs in this repository. It is not host filesystem proof. Across the
+15 qualification members at those two commits, the signed edge digest is
+`bb5b9a7c2bc03f183af22ba8d1edcd6a9c46a976cf5b6478fe6b7c51686ec13d` and the
+serving edge digest is
+`024bb6ad40337e8751cde96b9d323b81fa95ad1bdb5a27214cbe778211565514`. The changed
+members are `package.json`, `package-lock.json`, `server/index.js`, and
+`server/app.js`.
+
+`loadContributorHttpsQualification` keeps the static refusal
+`qualified source/origin/store differs`. When the SDS commit or a source
+identity field differs, the error code is `installed_source_changed`. A
+profile, origin, installation, or store-only mismatch uses
+`installed_verification_changed`. The public body stays `unavailable`. The log
+is `{stage, code}` only. A later request does not retry it. This 503 is not an
+empty claim list. Commit `21d9deda9cf53eacce6445d4d05a24ffe9366ab1` (draft PR
+311) is received source. It is not restored production.
+
+A preserve-values deployment must not keep a qualification bound to another SDS
+commit and report the old private service as preserved. The Pilot preflight at
+`bc041c06cb813fd4a2b4d1602af174e65cc333e0` now refuses before a provider write
+unless `CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT` and the decoded qualification
+payload `binding.sdsCommit` both equal `manifest.commit`. It decodes the
+payload only. It does not check or forge a signature, and it does not restamp
+the retained bytes. Root owns the fresh four-policy HTTPS qualification, the
+provider, TLS, and the production install. Allocations and debt stay reserved.
 
 ## Fix
 
@@ -117,17 +161,21 @@ terminal. A later request did not resume it. A bad artifact
 (`qualification_load`), mode `production` (`ingress_profile` / `INVALID_INPUT`),
 and a SCRAM authentication refusal (`28P01`) stayed terminal. A direct journey
 mount in mode `production` with an injected loader stayed `invalid_config` and
-did not init. The three recovery sources contain no timer call. The suite was
-6 passed, 0 failed.
+did not init. The three recovery sources contain no timer call. This
+amendment's recovery suite was 7 passed, 0 failed. The prior export of that
+file was 6 passed, 0 failed.
 
 `server/scripts/test-neomorphic-contributor-journey-mount.mjs` passed.
 `server/scripts/test-correspondence-startup-diagnostic.js` passed, including the
 added stages. `server/scripts/test-contributor-https-qualification.mjs` passed
-the edge-hash load and the other admission cases. Its issuer-CLI overwrite case
-fails on this VM because umask `0077` masks mode `0644` to `0600`, so the
-private-file reader accepts the file the test expects to reject. That case is
-unchanged by this recovery and was not weakened. The caller closure check
-`verifyCallerClosure()` accepts the updated pin.
+the edge-hash load, the older-edge refusal, and the other admission cases.
+The unsafe-input case now sets mode `0644` after the private write, so umask
+`0077` cannot hide the rejection. `readPrivateJson` is unchanged. The caller
+closure check `verifyCallerClosure()` accepts the updated pin. The focused
+recovery suite still records the transient store outage and its recovery, and
+it also keeps the older-edge qualification closed at `qualification_load` /
+`installed_source_changed` with session and claims on 503 `unavailable` and no
+claims array.
 
 ## Installed journey regression
 
@@ -183,9 +231,13 @@ Root installs through the existing controller. This packet does not.
    `CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN`, `CONTRIBUTOR_JOURNEY_FUTURE_ROUNDS`,
    and `CONTRIBUTOR_JOURNEY_TRUST_PROXY` (`0`).
 4. If `CONTRIBUTOR_DESK_INGRESS_MODE` is `litespeed-https-only`, leave serving
-   closed until a fresh qualification is signed for this SDS commit. The member
-   set changed. Reusing the qualification from `e56c4d84` is a permanent
-   `qualification_load` refusal, not a transient outage.
+   closed until Root signs a fresh qualification for this SDS commit. The
+   serving qualification names `6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc` while
+   the serving build is `e56c4d84f1c59f02307d5aa9a2c330957a28aa6d`. Reusing it
+   is a permanent `qualification_load` / `installed_source_changed` refusal.
+   Do not preserve-values deploy a new commit while that qualification, or
+   `CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT`, names a different commit. The Pilot
+   preflight refuses that pair before a provider write.
 5. After Root's own install, read healthz and `/v1/account/session`. A transient
    store failure is 503 `unavailable` and can become ready on a later request
    without another process start. A source, qualification, credential, or config

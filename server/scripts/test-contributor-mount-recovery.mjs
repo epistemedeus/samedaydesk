@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, createHmac, randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
 import { once } from "node:events";
 import { mkdtemp, rm, writeFile, chmod, readFile } from "node:fs/promises";
@@ -14,6 +14,7 @@ import pg from "pg";
 import { createSdsApp } from "../app.js";
 import { mountNeomorphicContributorJourney } from "../lib/neomorphic-contributor-journey-mount.js";
 import { contributorFailure } from "../lib/contributor-mount-recovery.js";
+import { issueContributorHttpsQualification, readContributorEdgeIdentity } from "../lib/contributor-https-qualification.js";
 import { hashRequest, hashToken } from "../../vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/crypto.js";
 
 const exec = promisify(execFile);
@@ -74,6 +75,9 @@ test("startup classes keep the cause and drop the message", () => {
   const enrollment = contributorFailure("store_create", new Error("deployment is not enrolled for these exact store, origin and stable keys"));
   assert.equal(enrollment.permanent, true);
   assert.equal(enrollment.code, "INVALID_INPUT");
+  const edge = contributorFailure("qualification_load", Object.assign(new Error("qualified source/origin/store differs"), { code: "installed_source_changed" }));
+  assert.deepEqual(edge, { stage: "qualification_load", code: "installed_source_changed", permanent: true });
+  assert.equal(JSON.stringify(edge).includes("qualified source"), false);
 });
 
 async function freePort() {
@@ -531,6 +535,83 @@ test("direct journey mount records a transient store failure and does not replac
   await handle.ensure();
   assert.equal(handle.state.initializations, 0);
   await handle.close();
+});
+
+test("a valid older edge qualification stays closed and is not retried", async (t) => {
+  const lines = [];
+  t.mock.method(console, "error", (...args) => { lines.push(args); });
+  const olderEdge = "bb5b9a7c2bc03f183af22ba8d1edcd6a9c46a976cf5b6478fe6b7c51686ec13d";
+  const sdsCommit = "5".repeat(40);
+  const database = "postgres://sds@127.0.0.1:9/contributor_journey_staging";
+  const issueEnv = profile(database, {
+    CONTRIBUTOR_JOURNEY_MODE: "disabled",
+    CONTRIBUTOR_DESK_MANAGED_ENABLED: "0",
+    CONTRIBUTOR_JOURNEY_PUBLIC_READS: "0",
+    CONTRIBUTOR_DESK_INSTALLATION_ID: "synthetic-installation-v2",
+    CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT: sdsCommit,
+  });
+  const checks = Object.fromEntries(["providerHttpsPolicy", "certificateVerifiedHttps", "plaintextRefusal", "backendIsolation"]
+    .map((name) => [name, {
+      receivedAt: new Date().toISOString(),
+      receiptSha256: createHash("sha256").update(`distinct owner QA receipt ${name}`).digest("hex"),
+    }]));
+  const { payload } = await issueContributorHttpsQualification({
+    schema: "sds.contributor-https-only-receiving.v2",
+    profile: "staging",
+    installationId: "synthetic-installation-v2",
+    sdsCommit,
+    loaderSha256: createHash("sha256").update("owner QA loader, not provider bytes").digest("hex"),
+    checks,
+  }, issueEnv);
+  const identity = await readContributorEdgeIdentity(sourceCommit);
+  assert.equal(payload.binding.sdsCommit, sdsCommit);
+  assert.equal(payload.binding.productCommit, identity.productCommit);
+  assert.notEqual(identity.edgeSha256, olderEdge);
+  const stale = { ...payload, binding: { ...payload.binding, edgeSha256: olderEdge } };
+  const encoded = Buffer.from(JSON.stringify(stale)).toString("base64url");
+  const qualification = `${encoded}.${createHmac("sha256", Buffer.from(issueEnv.CONTRIBUTOR_JOURNEY_INTEGRITY_KEY, "hex")).update(`${stale.schema}\0${encoded}`).digest("hex")}`;
+  const serving = profile(database, {
+    CONTRIBUTOR_DESK_INGRESS_MODE: "litespeed-https-only",
+    CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS: "[]",
+    CONTRIBUTOR_DESK_HTTPS_QUALIFICATION: qualification,
+    CONTRIBUTOR_DESK_INSTALLATION_ID: "synthetic-installation-v2",
+    CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT: sdsCommit,
+  });
+  const mounted = await mountManaged(serving, () => 3_000_000);
+  try {
+    await mounted.handle.ready();
+    assert.equal(mounted.handle.state.terminal, true);
+    assert.equal(mounted.handle.state.reason, "unavailable");
+    assert.equal(mounted.handle.state.status, "disabled");
+    assert.deepEqual(mounted.handle.state.diagnostic, { stage: "qualification_load", code: "installed_source_changed" });
+    const inits = mounted.handle.state.initializations;
+    assert.equal(inits, 0);
+    const session = safeView(await request(mounted.server, "GET", "/api/neomorphic-contributor-journey/v1/account/session", { origin: false }));
+    const claims = safeView(await request(mounted.server, "GET", "/api/neomorphic-contributor-journey/v1/claims/claims", { origin: false }));
+    assert.equal(session.status, 503);
+    assert.equal(session.code, "unavailable");
+    assert.equal(session.ready, false);
+    assert.equal(session.publicEnabled, false);
+    assert.equal(session.releaseAccepted, false);
+    assert.equal(session.claimsArray, false);
+    assert.deepEqual(session.keys, ["error", "publicEnabled", "ready", "releaseAccepted"]);
+    assert.equal(claims.status, 503);
+    assert.equal(claims.code, "unavailable");
+    assert.equal(claims.claimsArray, false);
+    assert.equal(mounted.handle.state.initializations, inits);
+    assert.equal(mounted.handle.state.terminal, true);
+    assert.equal(mounted.handle.state.attempts, 0);
+    const cause = lines.flat().find((item) => item && item.stage);
+    assert.deepEqual(cause, { stage: "qualification_load", code: "installed_source_changed" });
+    const rendered = JSON.stringify(lines);
+    assert.equal(rendered.includes(olderEdge), false);
+    assert.equal(rendered.includes(sdsCommit), false);
+    assert.equal(rendered.includes(qualification), false);
+    assert.equal(rendered.includes(issueEnv.CONTRIBUTOR_JOURNEY_INTEGRITY_KEY), false);
+    assert.equal(rendered.includes("no claim"), false);
+  } finally {
+    await mounted.close();
+  }
 });
 
 test("recovery modules do not schedule a resident timer", async () => {

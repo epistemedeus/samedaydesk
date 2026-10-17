@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {createHash,createHmac} from 'node:crypto';
-import {readFile,mkdtemp,writeFile,stat,rm} from 'node:fs/promises';
+import {readFile,mkdtemp,writeFile,stat,rm,chmod} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {issueContributorHttpsQualification,loadContributorHttpsQualification,readContributorEdgeIdentity} from '../lib/contributor-https-qualification.js';
@@ -97,8 +98,11 @@ test('the issuer CLI emits only a deployment-bound private overlay and refuses u
     await loadContributorHttpsQualification(serving(setting.value));
     assert.ok(!result.stdout.includes(setting.value));assert.ok(!result.stdout.includes(env().CONTRIBUTOR_JOURNEY_INTEGRITY_KEY));
     await assert.rejects(promisify(execFile)(process.execPath,args,{env:{...process.env,...env()},timeout:10000}),{code:1});
-    await writeFile(path.join(directory,'unsafe.json'),JSON.stringify(input()),{mode:0o644});
-    await assert.rejects(promisify(execFile)(process.execPath,[args[0],'issue',path.join(directory,'unsafe.json'),path.join(directory,'new.json')],
+    const unsafe=path.join(directory,'unsafe.json');
+    await writeFile(unsafe,JSON.stringify(input()),{mode:0o600});
+    await chmod(unsafe,0o644);
+    assert.equal((await stat(unsafe)).mode&0o777,0o644);
+    await assert.rejects(promisify(execFile)(process.execPath,[args[0],'issue',unsafe,path.join(directory,'new.json')],
       {env:{...process.env,...env()},timeout:10000}),{code:1});
   }finally{await rm(directory,{recursive:true,force:true});}
 });
@@ -113,6 +117,65 @@ test('qualification installation preserves the full authoritative provider envir
   assert.equal(packet.receipt.sent,false);assert.equal(packet.receipt.publicEnabled,false);assert.deepEqual(packet.rollback.env_vars.length,existing.length);
 });
 
+
+const OLD_EDGE='bb5b9a7c2bc03f183af22ba8d1edcd6a9c46a976cf5b6478fe6b7c51686ec13d';
+const SERVING_EDGE='024bb6ad40337e8751cde96b9d323b81fa95ad1bdb5a27214cbe778211565514';
+const OLD_COMMIT='6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc';
+const SERVING_COMMIT='e56c4d84f1c59f02307d5aa9a2c330957a28aa6d';
+const repo=fileURLToPath(new URL('../..',import.meta.url));
+const gitBytes=async(commit,file)=>(await promisify(execFile)('git',['-C',repo,'cat-file','blob',`${commit}:${file}`],{encoding:'buffer',maxBuffer:8*1024*1024})).stdout;
+async function historicalEdge(commit){
+  const source=(await gitBytes(commit,'server/lib/contributor-https-qualification.js')).toString('utf8');
+  const block=source.match(/const MEMBERS=Object\.freeze\(\[([\s\S]*?)\]\)/);
+  assert.ok(block);
+  const members=[...block[1].matchAll(/'([^']+)'/g)].map(match=>match[1]);
+  const rows=[];
+  for(const member of members){
+    const bytes=await gitBytes(commit,member);
+    rows.push({path:member,bytes:bytes.length,sha256:hash(bytes)});
+  }
+  return {members,edge:hash(JSON.stringify(rows)),rows};
+}
+
+test('exact Git edges name the older qualification and the serving build, not a host filesystem',async()=>{
+  const older=await historicalEdge(OLD_COMMIT),serving=await historicalEdge(SERVING_COMMIT);
+  assert.equal(older.members.length,15);
+  assert.deepEqual(older.members,serving.members);
+  assert.equal(older.edge,OLD_EDGE);
+  assert.equal(serving.edge,SERVING_EDGE);
+  assert.deepEqual(older.rows.filter((row,index)=>row.sha256!==serving.rows[index].sha256).map(row=>row.path),
+    ['package.json','package-lock.json','server/index.js','server/app.js']);
+  const current=await readContributorEdgeIdentity(manifest.sourceCommit);
+  assert.notEqual(current.edgeSha256,OLD_EDGE);
+  assert.notEqual(current.edgeSha256,SERVING_EDGE);
+});
+
+test('a valid older edge stays closed when the named SDS commit still matches',async()=>{
+  const {qualification,payload}=await issueContributorHttpsQualification(input(),env());
+  const identity=await readContributorEdgeIdentity(manifest.sourceCommit);
+  assert.equal(payload.binding.sdsCommit,sdsCommit);
+  assert.equal(payload.binding.productCommit,identity.productCommit);
+  assert.equal(payload.binding.runtimeManifestSha256,identity.runtimeManifestSha256);
+  assert.equal(payload.binding.deskManifestSha256,identity.deskManifestSha256);
+  assert.notEqual(identity.edgeSha256,OLD_EDGE);
+  const stale={...payload,binding:{...payload.binding,edgeSha256:OLD_EDGE}};
+  const refused=sign(stale);
+  await assert.rejects(loadContributorHttpsQualification(serving(refused)),error=>{
+    assert.equal(error.message,'qualified source/origin/store differs');
+    assert.equal(error.code,'installed_source_changed');
+    const rendered=JSON.stringify({message:error.message,code:error.code});
+    assert.equal(rendered.includes(OLD_EDGE),false);
+    assert.equal(rendered.includes(sdsCommit),false);
+    assert.equal(rendered.includes(env().CONTRIBUTOR_JOURNEY_INTEGRITY_KEY),false);
+    return true;
+  });
+  await assert.rejects(loadContributorHttpsQualification(serving(qualification,{CONTRIBUTOR_DESK_INSTALLATION_ID:'different-installation'})),
+    error=>error.message==='qualified source/origin/store differs'&&error.code==='installed_verification_changed');
+  await assert.rejects(loadContributorHttpsQualification(serving(qualification,{CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT:'6'.repeat(40)})),
+    error=>error.message==='qualified source/origin/store differs'&&error.code==='installed_source_changed');
+  await assert.rejects(loadContributorHttpsQualification(serving(refused,{CONTRIBUTOR_DESK_INSTALLATION_ID:'different-installation'})),
+    error=>error.message==='qualified source/origin/store differs'&&error.code==='installed_source_changed');
+});
 
 test('deployment-bound qualification survives elapsed days but rejects legacy v1 and live binding changes',async()=>{
   const {qualification,payload}=await issueContributorHttpsQualification(input(),env());

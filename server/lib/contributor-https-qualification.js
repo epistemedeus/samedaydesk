@@ -116,9 +116,17 @@ export async function loadContributorHttpsQualification(env){
   if(!timingSafeEqual(Buffer.from(signature,'hex'),mac))throw new Error('controller qualification signature refused');
   const bytes=Buffer.from(encoded,'base64url');if(bytes.toString('base64url')!==encoded)throw new Error('qualification encoding refused');
   const payload=validate(JSON.parse(bytes.toString('utf8'))),b=payload.binding,identity=await readContributorEdgeIdentity(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
+  // Commit strings can still match while the signed edge names older bytes.
+  // That is a source refusal. It is not a lease, a store outage, or an empty claim.
+  const sourceDiffers=b.sdsCommit!==env.CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT||
+    ['productCommit','edgeSha256','runtimeManifestSha256','deskManifestSha256'].some(name=>identity[name]!==b[name]);
   if(b.profile!==env.CONTRIBUTOR_JOURNEY_MODE||b.origin!==originFor(env,env.CONTRIBUTOR_JOURNEY_MODE)||
-      b.installationId!==env.CONTRIBUTOR_DESK_INSTALLATION_ID||b.sdsCommit!==env.CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT||b.storeBindingHmac!==storeBinding(env,env.CONTRIBUTOR_JOURNEY_MODE)||
-      Object.keys(identity).some(name=>identity[name]!==b[name]))throw new Error('qualified source/origin/store differs');
+      b.installationId!==env.CONTRIBUTOR_DESK_INSTALLATION_ID||sourceDiffers||
+      b.storeBindingHmac!==storeBinding(env,env.CONTRIBUTOR_JOURNEY_MODE)){
+    throw Object.assign(new Error('qualified source/origin/store differs'),{
+      code:sourceDiffers?'installed_source_changed':'installed_verification_changed',
+    });
+  }
   // Source/artifact bytes are verified at this installation/startup boundary;
   // the actual loader/selected pipe is checked for every request. Deployment
   // changes use a received restart, never in-place edits. External provider
