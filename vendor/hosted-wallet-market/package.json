@@ -1,0 +1,20 @@
+{
+  "name": "@pilot/root71-hosted-wallet-market",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Private hosted wallet/market mount on existing account, task, grant, and obligation tables.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "hosted-wallet-market": "./bin/hosted-wallet-market.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=300000 test/*.test.mjs",
+    "test:preserve": "node --test --test-concurrency=1 test/preserve.test.mjs"
+  },
+  "dependencies": {
+    "pg": "8.23.0"
+  }
+}
