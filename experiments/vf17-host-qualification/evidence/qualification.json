@@ -1,0 +1,467 @@
+{
+  "schema": "sds.vf17.host-qualification.report.v1",
+  "status": "complete",
+  "failureReason": null,
+  "traffic": "synthetic",
+  "silentReduction": false,
+  "hostingerMeasured": false,
+  "workloadPlan": {
+    "offeredClients": [
+      1,
+      8,
+      32,
+      128
+    ],
+    "axes": [
+      "concurrency",
+      "corpus",
+      "backlog"
+    ],
+    "corpusRowsPerClient": 8,
+    "corpusBodyBytes": 256,
+    "backlogItemsPerClient": 4,
+    "traffic": "synthetic",
+    "cluster": {
+      "maxConnections": 24,
+      "sharedBuffers": "32MB",
+      "workMem": "2MB",
+      "fsync": true,
+      "synchronousCommit": true,
+      "listenHost": "127.0.0.1"
+    }
+  },
+  "cluster": {
+    "version": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "pid": 206364,
+    "listen": {
+      "host": "127.0.0.1",
+      "port": 42463
+    },
+    "settings": {
+      "fsync": "on",
+      "listen_addresses": "127.0.0.1",
+      "max_connections": "24",
+      "port": "42463",
+      "shared_buffers": "4096",
+      "superuser_reserved_connections": "3",
+      "synchronous_commit": "on",
+      "work_mem": "2048"
+    },
+    "units": {
+      "fsync": null,
+      "listen_addresses": null,
+      "max_connections": null,
+      "port": null,
+      "shared_buffers": "8kB",
+      "superuser_reserved_connections": null,
+      "synchronous_commit": null,
+      "work_mem": "kB"
+    },
+    "roles": {
+      "ownerIsSuperuser": true,
+      "clientIsSuperuser": false
+    },
+    "ownerSessionDuringFanout": 1
+  },
+  "seededRejections": [
+    {
+      "label": "empty-corpus-body",
+      "rejected": true,
+      "sqlstate": "23514"
+    },
+    {
+      "label": "negative-corpus-slot",
+      "rejected": true,
+      "sqlstate": "23514"
+    },
+    {
+      "label": "backlog-state-live",
+      "rejected": true,
+      "sqlstate": "23514"
+    }
+  ],
+  "cells": [
+    {
+      "id": "concurrency:1",
+      "axis": "concurrency",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 1,
+      "actualUnits": 1,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 16,
+      "p50Ms": 0,
+      "p95Ms": 0,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "corpus:1",
+      "axis": "corpus",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 8,
+      "actualUnits": 8,
+      "actualBytes": 2048,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 23,
+      "p50Ms": 2,
+      "p95Ms": 2,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "backlog:1",
+      "axis": "backlog",
+      "offeredClients": 1,
+      "acquiredClients": 1,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 1,
+      "offeredUnits": 4,
+      "actualUnits": 4,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 29,
+      "p50Ms": 5,
+      "p95Ms": 5,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "concurrency:8",
+      "axis": "concurrency",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 8,
+      "actualUnits": 8,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 55,
+      "p50Ms": 0,
+      "p95Ms": 1,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "corpus:8",
+      "axis": "corpus",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 64,
+      "actualUnits": 64,
+      "actualBytes": 16384,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 67,
+      "p50Ms": 5,
+      "p95Ms": 5,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "backlog:8",
+      "axis": "backlog",
+      "offeredClients": 8,
+      "acquiredClients": 8,
+      "refusedClients": 0,
+      "unknownClients": 0,
+      "holderRows": 8,
+      "offeredUnits": 32,
+      "actualUnits": 32,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 79,
+      "p50Ms": 8,
+      "p95Ms": 11,
+      "errorCodes": {},
+      "errorSamples": {},
+      "limit": null,
+      "status": "qualified"
+    },
+    {
+      "id": "concurrency:32",
+      "axis": "concurrency",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 32,
+      "actualUnits": 20,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 181,
+      "p50Ms": 0,
+      "p95Ms": 1,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "corpus:32",
+      "axis": "corpus",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 256,
+      "actualUnits": 160,
+      "actualBytes": 40960,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 182,
+      "p50Ms": 7,
+      "p95Ms": 8,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "backlog:32",
+      "axis": "backlog",
+      "offeredClients": 32,
+      "acquiredClients": 20,
+      "refusedClients": 12,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 128,
+      "actualUnits": 128,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 190,
+      "p50Ms": 15,
+      "p95Ms": 21,
+      "errorCodes": {
+        "53300": 12
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "concurrency:128",
+      "axis": "concurrency",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 128,
+      "actualUnits": 20,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 536,
+      "p50Ms": 0,
+      "p95Ms": 5,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "corpus:128",
+      "axis": "corpus",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 1024,
+      "actualUnits": 160,
+      "actualBytes": 40960,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 527,
+      "p50Ms": 5,
+      "p95Ms": 6,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    },
+    {
+      "id": "backlog:128",
+      "axis": "backlog",
+      "offeredClients": 128,
+      "acquiredClients": 20,
+      "refusedClients": 108,
+      "unknownClients": 0,
+      "holderRows": 20,
+      "offeredUnits": 512,
+      "actualUnits": 512,
+      "actualBytes": null,
+      "leftover": 0,
+      "badRows": 0,
+      "accountingMismatch": false,
+      "elapsedMs": 602,
+      "p50Ms": 59,
+      "p95Ms": 66,
+      "errorCodes": {
+        "53300": 108
+      },
+      "errorSamples": {
+        "53300": "remaining connection slots are reserved for roles with the SUPERUSER attribute"
+      },
+      "limit": "max_connections",
+      "status": "limited"
+    }
+  ],
+  "measuredAt": "2026-09-30T18:44:13.516Z",
+  "gitHead": "622d82e50dd4430610e92138f1d3b3aa69fd8ac4",
+  "pins": {
+    "jobId": "S08-VF17-RECOVER-0930",
+    "attemptOf": "VF17-HOST-QUALIFICATION-0926",
+    "operationId": "b01f46c8-7045-4edc-b6db-1f224b5aae5c",
+    "sds254": "39a1ed7ceff813e9f490bd399fcea30f3451a53b",
+    "neoReceiver": "1652533b1823ac33b86591ec4e931a8c4ea4aa97",
+    "vf11Export": "14fef551e4d13e2ccd95d0fb049c19d13404a5ac",
+    "vf11Pattern": "neomorphic-io scripts/visitor-foundry/scale/src/pg.mjs privatePG",
+    "repoBase": "622d82e50dd4430610e92138f1d3b3aa69fd8ac4",
+    "offeredClients": [
+      1,
+      8,
+      32,
+      128
+    ],
+    "axes": [
+      "concurrency",
+      "corpus",
+      "backlog"
+    ]
+  },
+  "budgets": {
+    "schema": "sds.vf17.host-qualification-budget.v1",
+    "purpose": "Review triggers for this disposable cluster. Not a production SLA.",
+    "unknownOutcomePolicy": "reconcile; never count as success",
+    "setupRefusalPolicy": "retain requested and actual sizes; do not silently reduce workload",
+    "poisonRejectionBudget": 0,
+    "semanticMismatchBudget": 0,
+    "traffic": "synthetic"
+  },
+  "harnessFiles": [
+    {
+      "path": "cli.mjs",
+      "sha256": "0beae9258e49c304f963a2493abd6b0d451b4b10e4186dd5a5fbf98f919f7176"
+    },
+    {
+      "path": "PINS.json",
+      "sha256": "5e928bbfc4e048f2b943d4bdae031571cd70995660987ead3108dc45e514a5b6"
+    },
+    {
+      "path": "budgets.json",
+      "sha256": "f27ef0860ec5a3779ad04a583b9415a2decda92e0db904dd23fec5606cbf2939"
+    },
+    {
+      "path": "src/aggregate.mjs",
+      "sha256": "2d96e4372c75027ad98024cf0b37ee24eb8246b66033566c4f6d74e8e7174f71"
+    },
+    {
+      "path": "src/compare.mjs",
+      "sha256": "c6519f53504c9cd83033ec26de3b73ac1a5f79136f5a21f11b3f4318940c5ee2"
+    },
+    {
+      "path": "src/envelope.mjs",
+      "sha256": "57a1adcb912fcfbb8fb4d81baa78deb5fb0d13c85a16e1c5b3b6d6cf56b66550"
+    },
+    {
+      "path": "src/fanout.mjs",
+      "sha256": "c3124babff51fd935f9626674b4161211b999bfddca27c16916d9bbda6f34f20"
+    },
+    {
+      "path": "src/metrics.mjs",
+      "sha256": "16afe7f6f31285fc9a29b2c612c7dc55a9c8075c45242d68305bdd5b88b95b6b"
+    },
+    {
+      "path": "src/pg.mjs",
+      "sha256": "0b7b4a882deab8349e4bb64971165ebba5f540fb2ac473cdf11d838477c1a9db"
+    },
+    {
+      "path": "src/plan.mjs",
+      "sha256": "4ac1e09dd106b719df46773df6d03b97bcded04ced9ab63b0054186027806651"
+    },
+    {
+      "path": "src/qualify.mjs",
+      "sha256": "7ada110e35f593ac6fdc4ec9d24875ab9c3712e3d2d4d055e33667704291eba0"
+    },
+    {
+      "path": "src/redact.mjs",
+      "sha256": "2fc0e0f410edf20b17bf8982879d23eba6c7ba039870e984c70110ea7a166995"
+    },
+    {
+      "path": "src/reject.mjs",
+      "sha256": "34f51bdc0e4947fa712b5574e1c4cee26e2e790a2842583214b7a9fa9c6bf882"
+    },
+    {
+      "path": "src/status.mjs",
+      "sha256": "24bbf5c7a9231d771c75f9769029c074d1401e14328db9214070ff50a480ce6a"
+    },
+    {
+      "path": "src/summary.mjs",
+      "sha256": "a287bef2892b9c462eda938773f66e175770046c0aac1578afd3db7f77a90a1f"
+    }
+  ]
+}
