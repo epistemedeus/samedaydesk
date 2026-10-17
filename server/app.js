@@ -58,8 +58,23 @@ app.disable("x-powered-by");
 // The packaged wallet market owns the packed-client routes on this prefix and
 // falls through for every path it does not serve. Unset mode registers nothing.
 // The entry is vendor/hosted-wallet-market inside this tree when unset.
-app.set("hostedWalletMarket", mountHostedWalletMarketAdapter(app, options.hostedWalletMarket || {}));
-app.set("neoContributorJourney", mountContributorManagedDesk(app, options.neomorphicContributorJourney || {}));
+let contributor;
+const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarket,
+  env: options.hostedWalletMarket?.env ?? {...process.env,...options.neomorphicContributorJourney?.env},
+  ownerToken: options.neomorphicContributorJourney?.env?.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? options.hostedWalletMarket?.ownerToken,
+  readAcceptedSource: async target => {
+    await contributor?.ensure();
+    const installed = contributor?.state.runtime?.installed;
+    if (!installed) throw Object.assign(new Error('discharge_consumer_unbound'), {http:409, codeName:'discharge_consumer_unbound'});
+    return installed.adapters.review.read(target);
+  },
+  ingress: (req,res,next) => contributor.guardRequest(req,res,next),
+});
+app.set("hostedWalletMarket", market);
+contributor = mountContributorManagedDesk(app, {...options.neomorphicContributorJourney,
+  nativeDebtReceiving: async () => market.opened ? (await market.opened.catch(()=>null))?.canonicalReceiving : undefined,
+});
+app.set("neoContributorJourney", contributor);
 
 // Include bearer-return redirects in the same cache/referrer protection as the
 // endpoint. This does not change the canonical host or redirect destination.

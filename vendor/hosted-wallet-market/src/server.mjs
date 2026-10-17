@@ -4,13 +4,14 @@ import https from 'node:https';
 import pg from 'pg';
 import {assertAdmitted} from './admission.mjs';
 import {digest} from './canonical.mjs';
+import {createCanonicalReceiving} from './canonical-receiving.mjs';
 import {readAccountCode, readBaseTokenDecimals, readConfiguredChain, readPublicChain, verifyDeposit} from './chain.mjs';
 import {continuityEvidence} from './evidence.mjs';
+import {pendingRegistryDisposition} from './discharge-authority.mjs';
 import {quoteEconomics, ROUNDING_PROFILE} from './fee.mjs';
 import {addressOf, id, sha256} from './ids.mjs';
 import {assertObligationGuard, inspectInstallation} from './migrate.mjs';
-import {assertImportShape, enrollInstalledConsumer, IMPORT_BODY_KEYS, readEnrollment, readNativeDebt} from './native-debt.mjs';
-import {importNativeDischarge} from './native-obligation-discharge.mjs';
+import {assertImportShape, createInstalledDebtConsumer, IMPORT_BODY_KEYS} from './native-debt.mjs';
 import {loadOwnerAuthority} from './owner-authority.mjs';
 import {frozenMarker} from './preserve.mjs';
 import {ADDITIVE_ENV_KEYS, loadDeploymentProfile} from './profile.mjs';
@@ -129,7 +130,7 @@ export async function openHostedMarket(options) {
   }
   const replayKey = options.replayKey ?? process.env.CONTRIBUTOR_JOURNEY_REPLAY_KEY;
   assertReplayKey(replayKey);
-  const ownerAuthority = options.ownerAuthority || (options.sdsRoot ? await loadOwnerAuthority(options.sdsRoot) : null);
+  const ownerAuthority = options.ownerAuthority || (options.sdsRoot ? await loadOwnerAuthority(options.sdsRoot,{ownerToken:options.ownerToken}) : null);
   const dropOnce = options.dropOnce instanceof Set ? options.dropOnce : new Set();
   const originBox = {origin: profile.origin || ''};
   const nowMs = () => {
@@ -149,12 +150,10 @@ export async function openHostedMarket(options) {
     );
   }
   const observation = {blockNumber: null, remoteRead: null, remoteDecimals: null};
-  const priorRpc = process.env.HOSTED_WALLET_MARKET_RPC;
-  process.env.HOSTED_WALLET_MARKET_RPC = options.rpcUrl;
-  const restoreRpc = () => {
-    if (priorRpc === undefined) delete process.env.HOSTED_WALLET_MARKET_RPC;
-    else process.env.HOSTED_WALLET_MARKET_RPC = priorRpc;
-  };
+  const dischargeRegistry = options.dischargeRegistry ?? process.env.HOSTED_WALLET_MARKET_DISCHARGE_REGISTRY;
+  const debtConsumer = createInstalledDebtConsumer({profile, sdsRoot: options.sdsRoot,
+    registryRoot: dischargeRegistry,
+    readAcceptedSource: options.readAcceptedSource});
   let observed;
   try {
     observed = profile.publicChain
@@ -166,7 +165,6 @@ export async function openHostedMarket(options) {
       observation.remoteDecimals = await readBaseTokenDecimals(options.rpcUrl, profile.chain);
     }
   } catch (error) {
-    restoreRpc();
     throw error;
   }
 
@@ -176,6 +174,7 @@ export async function openHostedMarket(options) {
     application_name: 'root71-hosted-wallet-market',
     connectionTimeoutMillis: 10000,
   });
+  pool.on('error', () => {});
   function qualify(client) {
     return {
       query(sql, params) {
@@ -233,7 +232,6 @@ export async function openHostedMarket(options) {
       }
     });
   } catch (error) {
-    restoreRpc();
     await pool.end();
     throw error;
   }
@@ -294,7 +292,10 @@ export async function openHostedMarket(options) {
   async function mutate(client, req, body, account, apply) {
     const key = req.headers['idempotency-key'];
     if (typeof key !== 'string' || !IDEMPOTENCY.test(key)) throw httpError(400, 'idempotency_required');
-    const requestHash = digest(body);
+    const route = new URL(req.originalUrl || req.url, 'https://local.invalid').pathname;
+    const requestHash = digest({method: req.method, route, body});
+    // Absent idempotency rows cannot be locked by SELECT FOR UPDATE.
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [`hosted-wallet-market:${key}`]);
     const existing = await client.query(
       `SELECT request_hash, response_json, principal_id FROM earned_work_idempotency
        WHERE scope = 'hosted-wallet-market' AND task_id = '' AND key = $1 FOR UPDATE`,
@@ -460,7 +461,6 @@ export async function openHostedMarket(options) {
       chain: profile.chain,
       migration005Applied: column.rows.length > 0,
       schema: 'pilot.root71.hosted-wallet-market.v1',
-      databaseHost: profile.host,
       mounted: true,
     };
   }
@@ -1058,8 +1058,9 @@ export async function openHostedMarket(options) {
     assertImportShape(body);
     const principal = ownerPrincipal(req);
     const produced = await withTx(async client => {
+      await debtConsumer.assertBinding(client);
       return mutate(client, req, body, {accountId: principal}, async tx => {
-        return {value: await importNativeDischarge({receipt: body, client: tx, createdAt: nowDate()})};
+        return {value: await debtConsumer.importNativeDischarge(tx, body, nowDate())};
       });
     });
     finish(res, produced);
@@ -1069,8 +1070,9 @@ export async function openHostedMarket(options) {
     keysOf(body, []);
     const principal = ownerPrincipal(req);
     const produced = await withTx(async client => {
+      await debtConsumer.assertEnrollmentCandidate(client);
       return mutate(client, req, body, {accountId: principal}, async tx => {
-        return {value: await enrollInstalledConsumer(tx, nowDate())};
+        return {value: await debtConsumer.enroll(tx, nowDate())};
       });
     });
     finish(res, produced);
@@ -1078,7 +1080,7 @@ export async function openHostedMarket(options) {
 
   async function readEnrollmentView(req, res) {
     ownerPrincipal(req);
-    const value = await withClient(client => readEnrollment(client));
+    const value = await withClient(client => debtConsumer.readEnrollment(client));
     send(res, 200, {ok: true, value});
   }
 
@@ -1086,7 +1088,7 @@ export async function openHostedMarket(options) {
     ownerPrincipal(req);
     const names = [...url.searchParams.keys()];
     if (names.some(name => name !== 'obligationId')) throw httpError(400, 'body_refused');
-    const value = await withClient(client => readNativeDebt(client, url.searchParams.get('obligationId') || ''));
+    const value = await withClient(client => debtConsumer.readNativeDebt(client, url.searchParams.get('obligationId') || ''));
     send(res, 200, {ok: true, value});
   }
 
@@ -1223,6 +1225,7 @@ export async function openHostedMarket(options) {
 
   async function discover(res, url) {
     const {limit, cursor} = page(url);
+    if (profile.publicReads === '0') return send(res,200,{ok:true,value:{items:[],nextCursor:null,publicEnabled:false}});
     const rows = await withClient(client => client.query(
       `SELECT q.task_id, t.title, t.summary AS public_text, q.funding_wire, q.terms_version
        FROM hosted_wallet_market.quotes q
@@ -1277,6 +1280,7 @@ export async function openHostedMarket(options) {
       payoutState: row.payout_state,
       walletRequired: false,
       legacy: false,
+      externalDischargeHold: ['external_discharge_pending','payment_outcome_pending'].includes(pendingRegistryDisposition(dischargeRegistry,row.id)),
       measurements: {
         feeBaseAtomic: String(row.gross_atomic),
         confirmedFundingAtomic: String(row.gross_atomic),
@@ -1538,13 +1542,16 @@ export async function openHostedMarket(options) {
   return {
     profile,
     database: profile.databaseName,
+    debtConsumer,
+    withReadClient: withClient,
+    canonicalReceiving: createCanonicalReceiving({consumer: debtConsumer, withReadClient: withClient,
+      registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl}),
     handle: handler,
     setOrigin(value) {
       originBox.origin = value;
     },
     async close() {
-      restoreRpc();
-      await pool.end();
+        await pool.end();
     },
   };
 }
@@ -1562,6 +1569,9 @@ export async function mountHostedWalletMarket(app, options) {
   return {
     profile: market.profile,
     database: market.database,
+    debtConsumer: market.debtConsumer,
+    withReadClient: market.withReadClient,
+    canonicalReceiving: market.canonicalReceiving,
     close: market.close,
   };
 }

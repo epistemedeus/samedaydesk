@@ -164,6 +164,11 @@ CREATE TABLE IF NOT EXISTS hosted_wallet_market.consumer_enrollment (
   tenant TEXT NOT NULL CHECK (tenant ~ '^[a-z][a-z0-9_-]{2,63}$'),
   network TEXT NOT NULL CHECK (network = 'eip155:8453'),
   token TEXT NOT NULL CHECK (token = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'),
+  host_source_sha256 TEXT NOT NULL CHECK (host_source_sha256 ~ '^[0-9a-f]{64}$'),
+  earned_schema TEXT NOT NULL CHECK (earned_schema ~ '^[a-z][a-z0-9_]{0,62}$'),
+  rpc_endpoint_sha256 TEXT NOT NULL CHECK (rpc_endpoint_sha256 ~ '^[0-9a-f]{64}$'),
+  registry_sha256 TEXT NOT NULL CHECK (registry_sha256 ~ '^[0-9a-f]{64}$'),
+  profile_sha256 TEXT NOT NULL CHECK (profile_sha256 ~ '^[0-9a-f]{64}$'),
   rpc_origin_sha256 TEXT NOT NULL CHECK (rpc_origin_sha256 ~ '^[0-9a-f]{64}$'),
   profile_chain TEXT NOT NULL CHECK (profile_chain = 'eip155:8453'),
   created_at TIMESTAMPTZ NOT NULL
@@ -192,10 +197,15 @@ CREATE TRIGGER consumer_enrollment_preserve
 -- archival obligation row is not rewritten. A repeated apply of this file does
 -- not alter a table that already exists. This file does not apply it live.
 CREATE TABLE IF NOT EXISTS hosted_wallet_market.native_debt_dispositions (
-  obligation_id TEXT PRIMARY KEY REFERENCES cj227_earned_work.earned_work_obligations(id),
+  obligation_id TEXT PRIMARY KEY,
+  obligation_family TEXT NOT NULL CHECK (obligation_family IN ('earned', 'opportunity')),
   tenant TEXT NOT NULL CHECK (tenant ~ '^[a-z][a-z0-9_-]{2,63}$'),
-  reservation_id TEXT NOT NULL REFERENCES cj227_earned_work.earned_work_reservations(id),
-  task_id TEXT NOT NULL REFERENCES cj227_earned_work.earned_work_tasks(id),
+  reservation_id TEXT NOT NULL,
+  claim_id TEXT NOT NULL,
+  submission_id TEXT NOT NULL,
+  verdict_id TEXT NOT NULL,
+  artifact_digest_sha256 TEXT NOT NULL CHECK (artifact_digest_sha256 ~ '^[0-9a-f]{64}$'),
+  task_id TEXT NOT NULL,
   terms_version TEXT NOT NULL CHECK (terms_version ~ '^sha256:[0-9a-f]{64}$'),
   network TEXT NOT NULL CHECK (network = 'eip155:8453'),
   token TEXT NOT NULL CHECK (token = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'),
@@ -203,7 +213,12 @@ CREATE TABLE IF NOT EXISTS hosted_wallet_market.native_debt_dispositions (
   transaction_hash TEXT NOT NULL CHECK (transaction_hash ~ '^0x[a-f0-9]{64}$'),
   log_index INTEGER NOT NULL CHECK (log_index >= 0),
   block_number TEXT NOT NULL CHECK (block_number ~ '^[0-9]+$'),
-  amount_atomic TEXT NOT NULL CHECK (amount_atomic ~ '^(0|[1-9][0-9]{0,18})$'),
+  block_hash TEXT NOT NULL CHECK (block_hash ~ '^0x[0-9a-f]{64}$'),
+  block_timestamp TIMESTAMPTZ NOT NULL,
+  consumer_contract_sha256 TEXT NOT NULL CHECK (consumer_contract_sha256 ~ '^[0-9a-f]{64}$'),
+  authority_receipt_sha256 TEXT NOT NULL CHECK (authority_receipt_sha256 ~ '^[0-9a-f]{64}$'),
+  request_sha256 TEXT NOT NULL CHECK (request_sha256 ~ '^[0-9a-f]{64}$'),
+  amount_atomic TEXT NOT NULL CHECK (amount_atomic ~ '^[1-9][0-9]{0,18}$'),
   receipt_id TEXT NOT NULL CHECK (receipt_id ~ '^[0-9a-f]{64}$'),
   received_at TIMESTAMPTZ NOT NULL,
   import_contract_sha256 TEXT NOT NULL CHECK (import_contract_sha256 = '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063'),
@@ -243,30 +258,46 @@ LANGUAGE plpgsql
 SET search_path = hosted_wallet_market, pg_temp
 AS $$
 DECLARE
-  stored RECORD;
-  installed_tenant TEXT;
+  matches INTEGER;
 BEGIN
-  SELECT tenant INTO installed_tenant FROM hosted_wallet_market.installation WHERE id IS TRUE;
-  IF installed_tenant IS NULL OR installed_tenant IS DISTINCT FROM NEW.tenant THEN
+  IF NOT EXISTS (SELECT 1 FROM hosted_wallet_market.installation i
+      JOIN hosted_wallet_market.consumer_enrollment e ON e.id=i.id
+      WHERE i.id IS TRUE AND i.tenant=NEW.tenant AND e.tenant=i.tenant AND e.earned_schema=i.earned_schema
+      AND i.chain=NEW.network AND i.payments='off' AND e.consumer_contract_sha256=NEW.consumer_contract_sha256) THEN
     RAISE EXCEPTION 'disposition_hold' USING ERRCODE = 'P0001';
   END IF;
-  SELECT task_id, reservation_id, terms_version, reward_amount, reward_asset, reward_network,
-         payout_state, payout_destination
-    INTO stored
-    FROM cj227_earned_work.earned_work_obligations
-    WHERE id = NEW.obligation_id;
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'disposition_hold' USING ERRCODE = 'P0001';
+  IF NEW.obligation_family = 'earned' THEN
+    SELECT count(*) INTO matches FROM cj227_earned_work.earned_work_obligations o
+      JOIN cj227_earned_work.earned_work_terms t ON t.task_id=o.task_id AND t.version=o.terms_version
+      JOIN cj227_earned_work.earned_work_reservations r ON r.id=o.reservation_id
+      JOIN cj227_earned_work.earned_work_submissions s ON s.id=o.submission_id
+      JOIN cj227_earned_work.earned_work_verdicts v ON v.id=o.verdict_id
+      WHERE o.id=NEW.obligation_id AND o.task_id=NEW.task_id AND o.reservation_id=NEW.claim_id
+      AND NEW.claim_id=r.id AND r.status='completed' AND s.id=NEW.submission_id AND v.id=NEW.verdict_id AND v.outcome='pass'
+      AND s.reservation_id=r.id AND v.reservation_id=r.id AND v.submission_id=s.id
+      AND s.artifact_digest_sha256=NEW.artifact_digest_sha256 AND v.artifact_digest_sha256=s.artifact_digest_sha256
+      AND o.payout_state='owed' AND o.terms_version=NEW.terms_version AND r.terms_version=o.terms_version
+      AND s.terms_version=o.terms_version AND v.terms_version=o.terms_version
+      AND o.reward_amount ~ '^[0-9]+([.][0-9]{1,6})?$' AND o.reward_amount::numeric*1000000=NEW.amount_atomic::numeric AND t.reward_amount=o.reward_amount
+      AND o.reward_asset='USDC' AND t.reward_asset=o.reward_asset AND o.reward_network IN ('base','eip155:8453') AND t.reward_network=o.reward_network
+      AND lower(o.payout_destination)=NEW.recipient;
+  ELSE
+    SELECT count(*) INTO matches FROM cj227_earned_work.opportunity_obligations o
+      JOIN cj227_earned_work.opportunity_claims c ON c.id=o.claim_id AND c.round_id=o.round_id
+      JOIN cj227_earned_work.opportunity_rounds r ON r.id=o.round_id
+      JOIN cj227_earned_work.opportunity_offers f ON f.id=c.offer_id AND f.round_id=r.id
+      JOIN cj227_earned_work.opportunity_submissions s ON s.claim_id=c.id AND s.round_id=r.id
+      WHERE o.id=NEW.obligation_id AND c.id=NEW.claim_id AND s.id=NEW.submission_id
+      AND r.round_key || ':' || f.offer_key=NEW.task_id AND c.status='owed'
+      AND o.settlement_key=c.settlement_key AND o.terms_version=NEW.terms_version
+      AND c.terms_version=o.terms_version AND r.terms_version=o.terms_version AND s.terms_version=o.terms_version
+      AND s.artifact_digest_sha256=NEW.artifact_digest_sha256
+      AND o.reward_atomic::text=NEW.amount_atomic AND c.reward_atomic=o.reward_atomic AND f.reward_atomic=o.reward_atomic
+      AND o.asset='USDC' AND r.asset=o.asset AND o.network=r.network AND o.network IN ('base','eip155:8453')
+      AND o.chain_id=8453 AND r.chain_id=8453 AND r.atomic_scale=6
+      AND o.payout_state='owed' AND NOT o.paid AND o.transfer IS NULL AND NOT o.settled AND NOT o.revenue;
   END IF;
-  IF stored.payout_state IS DISTINCT FROM 'owed'
-     OR stored.reward_asset IS DISTINCT FROM 'USDC'
-     OR stored.reward_network IS DISTINCT FROM NEW.network
-     OR stored.reward_amount IS DISTINCT FROM NEW.amount_atomic
-     OR stored.terms_version IS DISTINCT FROM NEW.terms_version
-     OR stored.task_id IS DISTINCT FROM NEW.task_id
-     OR stored.reservation_id IS DISTINCT FROM NEW.reservation_id
-     OR lower(stored.payout_destination) IS DISTINCT FROM NEW.recipient
-  THEN
+  IF matches IS DISTINCT FROM 1 THEN
     RAISE EXCEPTION 'disposition_hold' USING ERRCODE = 'P0001';
   END IF;
   RETURN NEW;
@@ -307,3 +338,27 @@ CREATE TRIGGER earned_work_obligations_preserve_legacy
   FOR EACH ROW
   EXECUTE FUNCTION hosted_wallet_market_guard.reject_legacy_debt_mutation();
 
+
+-- The original opportunity ledger is also archival earned authority.
+DROP TRIGGER IF EXISTS opportunity_obligations_preserve ON cj227_earned_work.opportunity_obligations;
+CREATE TRIGGER opportunity_obligations_preserve BEFORE UPDATE OR DELETE ON cj227_earned_work.opportunity_obligations
+  FOR EACH ROW EXECUTE FUNCTION hosted_wallet_market_guard.reject_legacy_debt_mutation();
+
+-- Once Root has sealed the initial inventory, future obligations join that
+-- inventory atomically at their owning insert, including the opportunity
+-- producer. Startup cannot strand newly accepted work behind a manual id copy.
+CREATE OR REPLACE FUNCTION hosted_wallet_market_guard.track_new_obligation()
+RETURNS trigger LANGUAGE plpgsql SET search_path = hosted_wallet_market_guard, pg_temp AS $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM hosted_wallet_market_guard.obligation_guard_seal WHERE id IS TRUE) THEN
+    INSERT INTO hosted_wallet_market_guard.preserved_obligation_ids(id) VALUES(NEW.id) ON CONFLICT DO NOTHING;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS track_new_earned_obligation ON cj227_earned_work.earned_work_obligations;
+CREATE TRIGGER track_new_earned_obligation AFTER INSERT ON cj227_earned_work.earned_work_obligations
+  FOR EACH ROW EXECUTE FUNCTION hosted_wallet_market_guard.track_new_obligation();
+DROP TRIGGER IF EXISTS track_new_opportunity_obligation ON cj227_earned_work.opportunity_obligations;
+CREATE TRIGGER track_new_opportunity_obligation AFTER INSERT ON cj227_earned_work.opportunity_obligations
+  FOR EACH ROW EXECUTE FUNCTION hosted_wallet_market_guard.track_new_obligation();

@@ -47,9 +47,9 @@ export async function createContributorDeskHost({env=process.env,port}={}){
     await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(selected,'127.0.0.1',resolve);});
     return {app,server,mount,sourceCommit:expected,origin,close:async()=>{
       server.closeAllConnections();await new Promise((resolve,reject)=>server.close(error=>error?reject(error):resolve()));
-      for(const name of ['neoContributorJourney','s51Correspondence','neoOpportunity','s346HostedUsefulJourney','l12ManagedWatch'])await sds.get(name)?.close?.();
+      for(const name of ['hostedWalletMarket','neoContributorJourney','s51Correspondence','neoOpportunity','s346HostedUsefulJourney','l12ManagedWatch'])await sds.get(name)?.close?.();
     }};
-  }catch(error){for(const name of ['neoContributorJourney','s51Correspondence','neoOpportunity','s346HostedUsefulJourney','l12ManagedWatch'])await sds.get(name)?.close?.();throw error;}
+  }catch(error){for(const name of ['hostedWalletMarket','neoContributorJourney','s51Correspondence','neoOpportunity','s346HostedUsefulJourney','l12ManagedWatch'])await sds.get(name)?.close?.();throw error;}
 }
 
 if(process.argv[1]&&pathToFileURL(path.resolve(process.argv[1])).href===import.meta.url){

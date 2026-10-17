@@ -45,7 +45,7 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
       }
       stage = "store_create";
       starting = await service.createJourneyRuntime({
-        config, ports: options.ports, modules: options.modules, canonicalReceiving: options.canonicalReceiving,
+        config, ports: options.ports, modules: options.modules, canonicalReceiving: options.canonicalReceiving ?? await options.nativeDebtReceiving?.(),
       });
       if (state.closed) { await starting.close(); starting = null; return; }
       state.runtime = starting;
