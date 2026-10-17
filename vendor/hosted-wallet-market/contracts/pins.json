@@ -1,0 +1,22 @@
+{
+  "schema": "pilot.root71.hosted-wallet-market.pins.v1",
+  "pilotBase": "4f17dc688725f6f998ab59a0f93c78e1b5c0aaa5",
+  "servingSds": "e56c4d84f1c59f02307d5aa9a2c330957a28aa6d",
+  "installedSds": "6d6c70d73d5e3fc841b9bf90cea390e948b7e4dc",
+  "installedNeo": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "successorNeo": "d17323eb4c9873a358d3dafee03c0df0d50e9211",
+  "migration005": "disposable-database-only",
+  "clientTarballSha256": "90597603cb9b8330faf437968d3953db61f6357eefe7039ac61153eb34abf18d",
+  "installedContractDigest": "fb78839b02a893552f5aaaf1868f35975f72ac086cc8d9a37d46df0047d43333",
+  "installedContractNameCount": 60,
+  "syntheticFixtureNameDigest": "2ee7bd57a68b3d5a485bd0537225f3fdf3b1cc332e650a983a63dd5099c15203",
+  "installedReadbackNameDigest": "fbd70f8e66e0c3d6695a4368f2f439c39f32407152d9b6650c519e8d321c6a33",
+  "a4Manifest": "8ec8c178897009ea5beda5a23f783a7491f30acd",
+  "a4Impl": "62c6736912a9ec11eb52ee390ea0b5b9e5c27550",
+  "a4Amend3": "919dc8d576724339785124d928eacbe3c4d5e3b8",
+  "c922": "922fa859830b1eca0a73d4bf9fcc20d06edd1d17",
+  "j1": "83e6337daa849fd84ebce8c0d9f32f1979095d86",
+  "historicalRoot53ClientTarballSha256": "3fba4d7341f85f215487680fe760c2f45bfbd5c7c3754c821f8fb4067086ff19",
+  "clientCommit": "480c8199629fa4b35bc05e878b640d3fb9442b50",
+  "servingPinsAreHistoricalFixtureInputs": true
+}

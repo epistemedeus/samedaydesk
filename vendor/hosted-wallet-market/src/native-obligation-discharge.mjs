@@ -1,8 +1,6 @@
-// Exclusive native-obligation registry and the installed debt-disposition join.
+// Exclusive native-obligation registry and the unbound debt-disposition contract.
 // Filesystem keys are hashes. Domain identifiers are never used as path segments.
-// The registry seam does not record a debt disposition and does not broadcast.
-// Production receiving is the enrolled consumer in native-debt.mjs. A supplied
-// installed flag, baseline, store, or RPC URL cannot authorize that path.
+// This module does not set kernel paid or transfer, and it does not import P2.
 import assert from 'node:assert/strict';
 import { createHash, randomBytes } from 'node:crypto';
 import {
@@ -449,24 +447,10 @@ function nonproductionImport({ receipt, binding = null, baseline = null, registr
   };
 }
 
-function callerSuppliedAuthority(input) {
-  if (!input || typeof input !== 'object') return false;
-  if (input.installed === true || input.baseline != null || input.rpcUrl != null || input.store != null) return true;
-  const binding = input.binding;
-  if (binding && typeof binding === 'object') {
-    if (binding.installed === true || binding.assumedAlreadyHonored === true || binding.p2AlreadyHonors === true) return true;
-  }
-  return false;
-}
-
+// Production import stays closed while IMPORT_CONTRACT has no trusted consumer.
+// Supplied installed/baseline values are not consulted on that path.
 // The test seam validates registry semantics and does not record a debt disposition.
-// A public installed flag, baseline, store, or RPC URL stays unbound.
-// A bare call stays unbound. The installed path requires the server transaction
-// and reads the persistent enrollment. It does not broadcast.
 export function importNativeDischarge(input = {}) {
-  if (input?.testSeam === NONPRODUCTION_TEST_SEAM) return nonproductionImport(input);
-  if (callerSuppliedAuthority(input) || input?.client == null || input?.testSeam != null) {
-    throw new Error('discharge_consumer_unbound');
-  }
-  return import('./native-debt.mjs').then((mod) => mod.receiveBoundDischarge(input));
+  if (input?.testSeam !== NONPRODUCTION_TEST_SEAM) throw new Error('discharge_consumer_unbound');
+  return nonproductionImport(input);
 }

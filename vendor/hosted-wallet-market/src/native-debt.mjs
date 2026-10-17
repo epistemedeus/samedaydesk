@@ -1,24 +1,15 @@
 import {createHash} from 'node:crypto';
-import {readFileSync} from 'node:fs';
+import {readFileSync, readdirSync, lstatSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import {join, resolve} from 'node:path';
 import {digest} from './canonical.mjs';
-import {readPublicChain, readRailTransfer} from './chain.mjs';
-
-// Installed receiving projection. The archival obligation row stays owed.
-// A bound row is an append-only allocation of one verified Base/USDC transfer.
-// Trust: the process profile RPC (HOSTED_WALLET_MARKET_RPC), the enrollment row,
-// and the stored obligation are the authority. Caller paid, installed, verified,
-// baseline, store, and RPC fields are not. The receipt id is the stable external
-// correlation id for one allocation. It does not authorize the transfer.
-// receivedAt is the off-chain receive time. It must be at or after the block
-// timestamp and not in the future. It is not a chain field.
+import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
+import {readAuthoritativeDischarge, registryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
+import {matchDebt, storedDebt} from './debt-source.mjs';
 
 export const IMPORT_CONTRACT_SHA256 = '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063';
 export const RAIL_NETWORK = 'eip155:8453';
 export const RAIL_TOKEN = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913';
-
-// Exact Root receipt kept for tests and receiving evidence. It is not an
-// acceptance whitelist. A second verified obligation uses the same code.
 export const CANONICAL_DISCHARGE = Object.freeze({
   obligationId: 'oobl_izUh7nn9vd_APjsR',
   reservationId: 'root-fund-continuity-234100',
@@ -28,6 +19,7 @@ export const CANONICAL_DISCHARGE = Object.freeze({
   transactionHash: '0xc90108e141b78d6581b4bc39dc810723570d492fd0fdd57622137aa2a6efc2de',
   logIndex: 102,
   blockNumber: '52729611',
+  blockHash: '0xbd9b0483c98a4fd41708b0385bf476a1d7bc724ce8e239f44f1272b3e3db6699',
   amountAtomic: '100000',
   receiptId: '83b4331a83480cce74a2d5142b66149c986f913621cc121a859e25c6bef3ac4e',
   receivedAt: '2026-10-17T14:49:36.737Z',
@@ -36,404 +28,185 @@ export const CANONICAL_DISCHARGE = Object.freeze({
   blockTimestamp: '2026-10-17T14:49:29.000Z',
 });
 
+
 export const NATIVE_DEBT_CONSUMER = Object.freeze({
-  schema: 'pilot.root71.native-debt.consumer.v1',
-  version: 2,
-  role: 'receivingConsumer',
-  bindsImportContract: 'pilot.native-obligation.import-contract.v1',
-  bindsImportContractVersion: 2,
-  bindsImportContractSha256: IMPORT_CONTRACT_SHA256,
-  store: 'hosted_wallet_market.native_debt_dispositions',
-  enrollment: 'hosted_wallet_market.consumer_enrollment',
-  rail: RAIL_NETWORK,
-  token: RAIL_TOKEN,
-  archivalObligationPayoutState: 'owed',
-  projectionWhenBound: 'native_paid',
-  suppliedBooleansAreNotPaidAuthority: true,
-  secondTransfer: false,
+  schema: 'pilot.root71.native-debt.consumer.v1', version: 3, role: 'receivingConsumer',
+  bindsImportContract: 'pilot.native-obligation.import-contract.v1', bindsImportContractVersion: 2,
+  bindsImportContractSha256: IMPORT_CONTRACT_SHA256, store: 'hosted_wallet_market.native_debt_dispositions',
+  enrollment: 'hosted_wallet_market.consumer_enrollment', rail: RAIL_NETWORK, token: RAIL_TOKEN,
+  archivalObligationPayoutState: 'owed', projectionWhenBound: 'native_paid',
+  allocationAuthority: 'existing_root_controller_registry', sourceBinding: 'complete_package_and_host_closure',
+  finality: 'finalized_canonical_block', suppliedBooleansAreNotPaidAuthority: true, secondTransfer: false,
   persistedBaseline: 'hosted_wallet_market_native_debt_disposition',
 });
-
-export const IMPORT_BODY_KEYS = Object.freeze([
-  'importContractSha256',
-  'tenant',
-  'obligationId',
-  'reservationId',
-  'taskId',
-  'termsVersion',
-  'network',
-  'token',
-  'transactionHash',
-  'logIndex',
-  'blockNumber',
-  'amountAtomic',
-  'receiptId',
-  'receivedAt',
-]);
-
-const DISPOSITION_SCHEMA = 'pilot.root71.native-debt.disposition.v1';
-const ENROLL_SCHEMA = 'pilot.root71.native-debt.enrollment.v1';
-const SOURCE_FILES = Object.freeze(['native-debt.mjs', 'native-obligation-discharge.mjs']);
-
-function refuse(status, code) {
-  throw Object.assign(new Error(code), {http: status, codeName: code});
+export const IMPORT_BODY_KEYS = Object.freeze(['importContractSha256','tenant','obligationId','reservationId','taskId','termsVersion',
+  'network','token','transactionHash','logIndex','blockNumber','amountAtomic','receiptId','receivedAt']);
+const sha = value => createHash('sha256').update(value).digest('hex');
+const root = fileURLToPath(new URL('../', import.meta.url));
+const fail = (code = 'disposition_hold', http = 409) => { throw Object.assign(new Error(code), {http, codeName: code}); };
+export const consumerContractSha256 = () => digest(NATIVE_DEBT_CONSUMER);
+export function installedSourceFiles() {
+  return ['package.json', ...['bin', 'client', 'contracts', 'schema', 'src'].flatMap(dir => readdirSync(join(root, dir)).sort().map(name => `${dir}/${name}`))].sort();
 }
-
-export function consumerContractSha256() {
-  return digest(NATIVE_DEBT_CONSUMER);
-}
-
-export function installedSourceSha256() {
+function hashFiles(base, files) {
   const hash = createHash('sha256');
-  for (const name of SOURCE_FILES) {
-    const file = fileURLToPath(new URL(`./${name}`, import.meta.url));
-    hash.update(name);
-    hash.update('\0');
-    hash.update(readFileSync(file));
-    hash.update('\0');
+  for (const name of [...files].sort()) {
+    const file = join(base, name);
+    const stat = lstatSync(file);
+    if (!stat.isFile() || stat.isSymbolicLink()) fail('binding_stale');
+    hash.update(name); hash.update('\0'); hash.update(readFileSync(file)); hash.update('\0');
   }
   return hash.digest('hex');
 }
-
-export function rpcOriginSha256(rpcUrl) {
-  const url = new URL(rpcUrl);
-  return createHash('sha256').update(url.origin).digest('hex');
+export const installedSourceSha256 = () => hashFiles(root, installedSourceFiles());
+export const rpcOriginSha256 = url => sha(assertRpcUrl(url).origin);
+const endpointHash = url => sha(assertRpcUrl(url).href);
+export function hostSourceSha256(sdsRoot) {
+  if (!sdsRoot) fail('discharge_consumer_unbound');
+  const pinFile='server/foundry/activation/private-control-pin.json';
+  const pin=JSON.parse(readFileSync(join(sdsRoot,pinFile),'utf8'));
+  const files=Object.keys(pin.files);
+  if(!files.length||files.length>4000||files.some(name=>name.startsWith('/')||name.includes('..')||name.includes('\\'))) fail('binding_stale');
+  for(const file of files) if(sha(readFileSync(join(sdsRoot,file)))!==pin.files[file]) fail('binding_stale');
+  return hashFiles(sdsRoot,[...files,pinFile]);
 }
-
-function plainId(value) {
-  return typeof value === 'string'
-    && value.length >= 1
-    && value.length <= 200
-    && !value.includes('/')
-    && !value.includes('\\')
-    && !value.includes('\0')
-    && !value.includes('..');
-}
-
+const plainId = value => typeof value === 'string' && value.length > 0 && value.length <= 200 && !/[\u0000-\u001f\u007f/\\]/.test(value) && !value.includes('..');
 export function assertImportShape(body) {
-  if (!body || typeof body !== 'object' || Array.isArray(body)) refuse(400, 'body_refused');
-  if (typeof body.importContractSha256 !== 'string' || !/^[0-9a-f]{64}$/.test(body.importContractSha256)) refuse(400, 'body_refused');
-  if (typeof body.tenant !== 'string' || !/^[a-z][a-z0-9_-]{2,63}$/.test(body.tenant)) refuse(400, 'body_refused');
-  if (!plainId(body.obligationId) || !plainId(body.reservationId) || !plainId(body.taskId)) refuse(400, 'body_refused');
-  if (typeof body.termsVersion !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(body.termsVersion)) refuse(400, 'body_refused');
-  if (typeof body.network !== 'string' || !/^eip155:[0-9]+$/.test(body.network)) refuse(400, 'body_refused');
-  if (typeof body.token !== 'string' || !/^0x[0-9a-f]{40}$/.test(body.token)) refuse(400, 'body_refused');
-  if (typeof body.transactionHash !== 'string' || !/^0x[0-9a-f]{64}$/.test(body.transactionHash)) refuse(400, 'body_refused');
-  if (!Number.isInteger(body.logIndex) || body.logIndex < 0) refuse(400, 'body_refused');
-  if (typeof body.blockNumber !== 'string' || !/^[0-9]+$/.test(body.blockNumber)) refuse(400, 'body_refused');
-  if (typeof body.amountAtomic !== 'string' || !/^(0|[1-9][0-9]{0,18})$/.test(body.amountAtomic)) refuse(400, 'body_refused');
-  if (typeof body.receiptId !== 'string' || !/^[0-9a-f]{64}$/.test(body.receiptId)) refuse(400, 'body_refused');
-  if (typeof body.receivedAt !== 'string' || Number.isNaN(Date.parse(body.receivedAt))) refuse(400, 'body_refused');
-  if (new Date(body.receivedAt).toISOString() !== body.receivedAt) refuse(400, 'body_refused');
+  if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k => !IMPORT_BODY_KEYS.includes(k)) || IMPORT_BODY_KEYS.some(k => body[k] === undefined)) fail('body_refused', 400);
+  if (!/^[0-9a-f]{64}$/.test(body.importContractSha256) || !/^[a-z][a-z0-9_-]{2,63}$/.test(body.tenant) ||
+      !plainId(body.obligationId) || !plainId(body.reservationId) || !plainId(body.taskId) || !/^sha256:[0-9a-f]{64}$/.test(body.termsVersion) ||
+      typeof body.network !== 'string' || !/^eip155:[0-9]+$/.test(body.network) || !/^0x[0-9a-f]{40}$/.test(body.token) ||
+      !/^0x[0-9a-f]{64}$/.test(body.transactionHash) || !Number.isSafeInteger(body.logIndex) || body.logIndex < 0 || body.logIndex > 2147483647 ||
+      typeof body.blockNumber !== 'string' || !/^(0|[1-9][0-9]{0,19})$/.test(body.blockNumber) ||
+      typeof body.amountAtomic !== 'string' || !/^[1-9][0-9]{0,18}$/.test(body.amountAtomic) || !/^[0-9a-f]{64}$/.test(body.receiptId) ||
+      typeof body.receivedAt !== 'string' || !Number.isFinite(Date.parse(body.receivedAt)) || new Date(body.receivedAt).toISOString() !== body.receivedAt) fail('body_refused', 400);
 }
-
-function flagsBound(row) {
-  return row.import_state === 'bound'
-    && row.disposition === 'external_discharge_allocated'
-    && row.kernel_paid === true
-    && row.kernel_transfer === row.transaction_hash
-    && row.native_paid_observation === true
-    && row.transfer_initiated === false
-    && row.payout_state === 'owed';
-}
-
-function sameBound(row, body, observed) {
-  return flagsBound(row)
-    && row.obligation_id === body.obligationId
-    && row.tenant === body.tenant
-    && row.reservation_id === body.reservationId
-    && row.task_id === body.taskId
-    && row.terms_version === body.termsVersion
-    && row.network === body.network
-    && row.token === body.token
-    && row.recipient === observed.recipient
-    && row.transaction_hash === body.transactionHash
-    && Number(row.log_index) === body.logIndex
-    && String(row.block_number) === body.blockNumber
-    && row.amount_atomic === body.amountAtomic
-    && row.receipt_id === body.receiptId
-    && new Date(row.received_at).toISOString() === body.receivedAt
-    && row.import_contract_sha256 === IMPORT_CONTRACT_SHA256
-    && row.observed_source === observed.source;
-}
-
+const ROW_SQL = 'SELECT * FROM hosted_wallet_market.native_debt_dispositions';
+const ENROLL_SQL = 'SELECT * FROM hosted_wallet_market.consumer_enrollment WHERE id IS TRUE';
 export function dispositionView(row) {
-  if (!flagsBound(row)) refuse(409, 'disposition_hold');
-  return {
-    schema: DISPOSITION_SCHEMA,
-    state: 'bound',
-    disposition: row.disposition,
-    importState: row.import_state,
-    projection: 'native_paid',
-    payable: false,
-    newPayable: false,
-    kernelPaid: true,
-    kernelTransfer: row.kernel_transfer,
-    nativePaidObservation: true,
-    transferInitiated: false,
-    payoutState: row.payout_state,
-    obligationId: row.obligation_id,
-    tenant: row.tenant,
-    reservationId: row.reservation_id,
-    taskId: row.task_id,
-    termsVersion: row.terms_version,
-    network: row.network,
-    token: row.token,
-    recipient: row.recipient,
-    observedSource: row.observed_source,
-    transactionHash: row.transaction_hash,
-    logIndex: Number(row.log_index),
-    blockNumber: String(row.block_number),
-    amountAtomic: row.amount_atomic,
-    receiptId: row.receipt_id,
-    receivedAt: new Date(row.received_at).toISOString(),
-    importContractSha256: row.import_contract_sha256,
-    consumerContractSha256: consumerContractSha256(),
-  };
+  if (row.import_state !== 'bound' || !row.kernel_paid || row.kernel_transfer !== row.transaction_hash ||
+      !row.native_paid_observation || row.transfer_initiated || row.payout_state !== 'owed') fail();
+  return {schema: 'pilot.root71.native-debt.disposition.v1', state: 'bound', disposition: row.disposition, importState: 'bound',
+    projection: 'native_paid', payable: false, newPayable: false, kernelPaid: true, kernelTransfer: row.kernel_transfer,
+    nativePaidObservation: true, transferInitiated: false, payoutState: 'owed', obligationId: row.obligation_id,
+    obligationFamily: row.obligation_family, tenant: row.tenant, reservationId: row.reservation_id, claimId: row.claim_id,
+    taskId: row.task_id, termsVersion: row.terms_version, network: row.network, token: row.token, recipient: row.recipient,
+    observedSource: row.observed_source, transactionHash: row.transaction_hash, logIndex: row.log_index, blockNumber: row.block_number,
+    blockHash: row.block_hash, amountAtomic: row.amount_atomic, receiptId: row.receipt_id, receivedAt: new Date(row.received_at).toISOString(),
+    importContractSha256: row.import_contract_sha256, consumerContractSha256: row.consumer_contract_sha256};
 }
 
-const ROW_SQL = `SELECT obligation_id, tenant, reservation_id, task_id, terms_version, network, token, recipient,
-  transaction_hash, log_index, block_number, amount_atomic, receipt_id, received_at, import_contract_sha256,
-  import_state, disposition, kernel_paid, kernel_transfer, native_paid_observation, transfer_initiated,
-  payout_state, observed_source
-  FROM hosted_wallet_market.native_debt_dispositions`;
-
-const ENROLL_SQL = `SELECT source_sha256, import_contract_sha256, consumer_contract_sha256, tenant, network, token,
-  rpc_origin_sha256, profile_chain, created_at
-  FROM hosted_wallet_market.consumer_enrollment WHERE id IS TRUE`;
-
-function currentOriginHash() {
-  const rpcUrl = process.env.HOSTED_WALLET_MARKET_RPC;
-  if (typeof rpcUrl !== 'string' || rpcUrl.length === 0) return null;
-  try {
-    return rpcOriginSha256(rpcUrl);
-  } catch {
-    return null;
+/** Called only by the installed server with its closed-over profile. No JSON
+ * binding, public baseline, environment reassignment, or test seam is consulted. */
+export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, readAcceptedSource}) {
+  const configured = Object.freeze({...profile});
+  const databaseUrl = new URL(profile.databaseUrl);
+  const databaseIdentity = {host: databaseUrl.hostname, port: databaseUrl.port || '5432', database:decodeURIComponent(databaseUrl.pathname)};
+  const profileSha256 = digest({databaseIdentity, tenant: profile.tenant, earnedSchema: profile.earnedSchema, chain: profile.chain,
+    payments: profile.payments, publicReads: profile.publicReads, fundedTasks: profile.fundedTasks, humanAssets: profile.humanAssets,
+    tls: profile.tls, origin: profile.origin || null, token: profile.settlementToken, feeRecipient: profile.feeRecipient});
+  function expected() {
+    if (!registryRoot) fail('discharge_consumer_unbound');
+    if (configured.chain !== RAIL_NETWORK || configured.payments !== 'off' || configured.settlementToken !== RAIL_TOKEN) fail('binding_stale');
+    return {source_sha256: installedSourceSha256(), host_source_sha256: hostSourceSha256(sdsRoot),
+      import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
+      tenant: configured.tenant, earned_schema: configured.earnedSchema, network: RAIL_NETWORK, token: RAIL_TOKEN,
+      rpc_origin_sha256: rpcOriginSha256(configured.rpcUrl), rpc_endpoint_sha256: endpointHash(configured.rpcUrl),
+      registry_sha256: registryIdentity(registryRoot), profile_sha256: profileSha256, profile_chain: configured.chain};
   }
-}
-
-function enrollmentQualified(row) {
-  return row.source_sha256 === installedSourceSha256()
-    && row.import_contract_sha256 === IMPORT_CONTRACT_SHA256
-    && row.consumer_contract_sha256 === consumerContractSha256()
-    && row.network === RAIL_NETWORK
-    && row.token === RAIL_TOKEN
-    && row.rpc_origin_sha256 === currentOriginHash();
-}
-
-function enrollmentView(row) {
-  return {
-    schema: ENROLL_SCHEMA,
-    state: 'enrolled',
-    qualified: enrollmentQualified(row),
-    sourceSha256: row.source_sha256,
-    importContractSha256: row.import_contract_sha256,
-    consumerContractSha256: row.consumer_contract_sha256,
-    tenant: row.tenant,
-    network: row.network,
-    token: row.token,
-    rpcOriginSha256: row.rpc_origin_sha256,
-    profileChain: row.profile_chain,
-    boundConsumer: 'hosted_wallet_market.native_debt_dispositions',
-  };
-}
-
-function profileRpc() {
-  const rpcUrl = process.env.HOSTED_WALLET_MARKET_RPC;
-  if (typeof rpcUrl !== 'string' || rpcUrl.length === 0) refuse(409, 'discharge_consumer_unbound');
-  return rpcUrl;
-}
-
-export async function enrollInstalledConsumer(tx, createdAt) {
-  const rpcUrl = profileRpc();
-  const observed = await readPublicChain(rpcUrl, RAIL_NETWORK);
-  if (observed.chain !== RAIL_NETWORK) refuse(409, 'binding_stale');
-  const installation = await tx.query(
-    'SELECT tenant, chain, payments FROM hosted_wallet_market.installation WHERE id IS TRUE',
-  );
-  const installed = installation.rows[0];
-  if (!installed || installed.payments !== 'off' || installed.chain !== RAIL_NETWORK) refuse(409, 'binding_stale');
-  const next = {
-    source_sha256: installedSourceSha256(),
-    import_contract_sha256: IMPORT_CONTRACT_SHA256,
-    consumer_contract_sha256: consumerContractSha256(),
-    tenant: installed.tenant,
-    network: RAIL_NETWORK,
-    token: RAIL_TOKEN,
-    rpc_origin_sha256: rpcOriginSha256(rpcUrl),
-    profile_chain: installed.chain,
-  };
-  const existing = await tx.query(ENROLL_SQL);
-  if (existing.rows[0]) {
-    const row = existing.rows[0];
-    const same = row.source_sha256 === next.source_sha256
-      && row.import_contract_sha256 === next.import_contract_sha256
-      && row.consumer_contract_sha256 === next.consumer_contract_sha256
-      && row.tenant === next.tenant
-      && row.network === next.network
-      && row.token === next.token
-      && row.rpc_origin_sha256 === next.rpc_origin_sha256
-      && row.profile_chain === next.profile_chain;
-    if (!same) refuse(409, 'enrollment_conflict');
+  const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
+  function enrollmentView(row) {
+    let qualified = false;
+    try { qualified = equal(row, expected()); } catch { /* explicit unavailable */ }
+    return {schema: 'pilot.root71.native-debt.enrollment.v1', state: 'enrolled', qualified,
+      sourceSha256: row.source_sha256, hostSourceSha256: row.host_source_sha256, importContractSha256: row.import_contract_sha256,
+      consumerContractSha256: row.consumer_contract_sha256, tenant: row.tenant, network: row.network, token: row.token,
+      rpcOriginSha256: row.rpc_origin_sha256, rpcEndpointSha256: row.rpc_endpoint_sha256, profileChain: row.profile_chain,
+      profileSha256: row.profile_sha256, boundConsumer: 'hosted_wallet_market.native_debt_dispositions'};
+  }
+  async function assertBinding(tx) {
+    const row = (await tx.query(ENROLL_SQL)).rows[0];
+    if (!row) fail('discharge_consumer_unbound');
+    if (!equal(row, expected())) fail('binding_stale');
+    const installation = (await tx.query('SELECT * FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0];
+    if (!installation || installation.tenant !== configured.tenant || installation.earned_schema !== configured.earnedSchema ||
+        installation.chain !== configured.chain || installation.payments !== 'off') fail('binding_stale');
+    return row;
+  }
+  async function assertEnrollmentCandidate(tx) {
+    const next = expected(), row = (await tx.query(ENROLL_SQL)).rows[0];
+    if (row && !equal(row,next)) fail('enrollment_conflict');
+  }
+  async function enroll(tx, createdAt) {
+    const next = expected();
+    const observed = await readPublicChain(configured.rpcUrl, RAIL_NETWORK);
+    if (observed.chain !== configured.chain) fail('binding_stale');
+    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-enrollment', 0))");
+    let row = (await tx.query(ENROLL_SQL)).rows[0];
+    if (row && !equal(row, next)) fail('enrollment_conflict');
+    if (!row) {
+      const fields = Object.keys(next);
+      await tx.query(`INSERT INTO hosted_wallet_market.consumer_enrollment (id, ${fields.join(',')}, created_at)
+        VALUES (TRUE, ${fields.map((_,i) => '$' + (i+1)).join(',')}, $${fields.length+1})`, [...Object.values(next), createdAt]);
+      row = (await tx.query(ENROLL_SQL)).rows[0];
+    }
+    await assertBinding(tx);
     return enrollmentView(row);
   }
-  await tx.query(
-    `INSERT INTO hosted_wallet_market.consumer_enrollment (
-      id, source_sha256, import_contract_sha256, consumer_contract_sha256, tenant, network, token,
-      rpc_origin_sha256, profile_chain, created_at
-    ) VALUES (TRUE, $1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-    [
-      next.source_sha256,
-      next.import_contract_sha256,
-      next.consumer_contract_sha256,
-      next.tenant,
-      next.network,
-      next.token,
-      next.rpc_origin_sha256,
-      next.profile_chain,
-      createdAt,
-    ],
-  );
-  const inserted = await tx.query(ENROLL_SQL);
-  return enrollmentView(inserted.rows[0]);
-}
-
-export async function readEnrollment(tx) {
-  const existing = await tx.query(ENROLL_SQL);
-  if (!existing.rows[0]) {
-    return {schema: ENROLL_SCHEMA, state: 'absent', qualified: false, boundConsumer: null};
+  async function importNativeDischarge(tx, body, createdAt) {
+    assertImportShape(body);
+    await assertBinding(tx);
+    if (body.importContractSha256 !== IMPORT_CONTRACT_SHA256 || body.tenant !== configured.tenant || body.network !== RAIL_NETWORK || body.token !== RAIL_TOKEN) fail();
+    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-projection', 0))");
+    const {receipt, allocation} = readAuthoritativeDischarge(registryRoot, body);
+    const stored = await storedDebt(tx, body.obligationId, {readAcceptedSource});
+    matchDebt(stored, receipt);
+    // The financial reservation is separate from the kernel claim id.
+    const taken = (await tx.query(`${ROW_SQL} WHERE (network=$1 AND token=$2 AND transaction_hash=$3 AND log_index=$4) OR reservation_id=$5`,
+      [body.network, body.token, body.transactionHash, body.logIndex, body.reservationId])).rows;
+    if (taken.some(row => row.obligation_id !== body.obligationId)) fail(taken.some(row => row.transaction_hash === body.transactionHash && row.log_index === body.logIndex) ? 'transfer_already_allocated' : 'reservation_already_allocated');
+    const existing = (await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0];
+    const receiptSha = digest(receipt), requestSha = digest(body);
+    if (existing) {
+      if (existing.authority_receipt_sha256 !== receiptSha || existing.request_sha256 !== requestSha) fail();
+      return dispositionView(existing);
+    }
+    let observed;
+    try { observed = await readRailTransfer(configured.rpcUrl, body); }
+    catch (error) { if (error.codeName === 'transfer_unverified') fail(); throw error; }
+    for (const key of ['source','recipient','amountAtomic','blockNumber','blockHash','blockTimestamp','logIndex']) if (observed[key] !== receipt[key]) fail();
+    if (Date.parse(body.receivedAt) < observed.blockTimestampMs || Date.parse(body.receivedAt) > Date.now()+5000) fail();
+    const row = {obligation_id: body.obligationId, obligation_family: stored.family, tenant: body.tenant, reservation_id: body.reservationId,
+      claim_id: stored.claimId, task_id: body.taskId, terms_version: body.termsVersion, submission_id: stored.submissionId,
+      verdict_id: stored.verdictId, artifact_digest_sha256: stored.artifactDigestSha256, network: body.network, token: body.token,
+      recipient: observed.recipient, transaction_hash: body.transactionHash, log_index: body.logIndex, block_number: body.blockNumber,
+      block_hash: observed.blockHash, block_timestamp: observed.blockTimestamp, amount_atomic: body.amountAtomic, receipt_id: body.receiptId,
+      received_at: body.receivedAt, import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
+      authority_receipt_sha256: receiptSha, request_sha256: requestSha, import_state: 'bound', disposition: 'external_discharge_allocated',
+      kernel_paid: true, kernel_transfer: body.transactionHash, native_paid_observation: true, transfer_initiated: false,
+      payout_state: 'owed', observed_source: observed.source, created_at: createdAt};
+    const fields = Object.keys(row);
+    await tx.query(`INSERT INTO hosted_wallet_market.native_debt_dispositions (${fields.join(',')}) VALUES (${fields.map((_,i) => '$'+(i+1)).join(',')})`, Object.values(row));
+    return dispositionView((await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0]);
   }
-  return enrollmentView(existing.rows[0]);
-}
-
-function assertReceivedWindow(body, blockTimestampMs) {
-  const received = Date.parse(body.receivedAt);
-  if (received < blockTimestampMs) refuse(409, 'disposition_hold');
-  if (received > Date.now() + 5000) refuse(409, 'disposition_hold');
-}
-
-export async function receiveBoundDischarge(input) {
-  const body = input?.receipt;
-  const tx = input?.client;
-  if (!tx || typeof tx.query !== 'function') refuse(409, 'discharge_consumer_unbound');
-  assertImportShape(body);
-  if (body.importContractSha256 !== IMPORT_CONTRACT_SHA256) refuse(409, 'disposition_hold');
-  if (body.network !== RAIL_NETWORK || body.token !== RAIL_TOKEN) refuse(409, 'disposition_hold');
-  const rpcUrl = profileRpc();
-  const enrolled = await tx.query(ENROLL_SQL);
-  const enrollment = enrolled.rows[0];
-  if (!enrollment) refuse(409, 'discharge_consumer_unbound');
-  if (!enrollmentQualified(enrollment) || enrollment.tenant !== body.tenant) {
-    if (!enrollmentQualified(enrollment)) refuse(409, 'binding_stale');
-    refuse(409, 'disposition_hold');
+  async function readEnrollment(tx) {
+    const row = (await tx.query(ENROLL_SQL)).rows[0];
+    if (row) { const view = enrollmentView(row); try { await assertBinding(tx); } catch { view.qualified=false; } return view; }
+    return {schema: 'pilot.root71.native-debt.enrollment.v1', state: 'absent', qualified: false, boundConsumer: null};
   }
-  const installation = await tx.query(
-    'SELECT tenant, chain, payments FROM hosted_wallet_market.installation WHERE id IS TRUE',
-  );
-  const installed = installation.rows[0];
-  if (!installed || installed.tenant !== enrollment.tenant || installed.chain !== enrollment.profile_chain || installed.payments !== 'off') {
-    refuse(409, 'binding_stale');
+  async function readNativeDebt(tx, obligationId) {
+    if (!plainId(obligationId)) fail('obligation_refused', 400);
+    const row = (await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [obligationId])).rows[0];
+    if (row) return dispositionView(row); // Durable consumed proof survives disabled/stale code.
+    const found = await tx.query(`SELECT payout_state FROM earned_work_obligations WHERE id=$1
+      UNION ALL SELECT payout_state FROM opportunity_obligations WHERE id=$1`, [obligationId]);
+    if (!found.rows.length) fail('not_found', 404);
+    if (found.rows.length !== 1) fail();
+    const pending = pendingRegistryDisposition(registryRoot,obligationId);
+    return {schema: 'pilot.root71.native-debt.disposition.v1', state: pending?'hold':'absent', obligationId, payoutState: found.rows[0].payout_state,
+      payable: !pending && found.rows[0].payout_state === 'owed', newPayable: !pending && found.rows[0].payout_state === 'owed', projection: 'owed',
+      importState: pending?'unbound_fail_closed':'unbound', holdReason:pending,
+      kernelPaid: false, kernelTransfer: null, nativePaidObservation: false, transferInitiated: false, consumerContractSha256: consumerContractSha256()};
   }
-  let observed;
-  try {
-    observed = await readRailTransfer(rpcUrl, body);
-  } catch (error) {
-    if (error?.codeName === 'transfer_unverified') refuse(409, 'disposition_hold');
-    throw error;
-  }
-  if (observed.amountAtomic !== body.amountAtomic || observed.blockNumber !== body.blockNumber || observed.logIndex !== body.logIndex) {
-    refuse(409, 'disposition_hold');
-  }
-  assertReceivedWindow(body, observed.blockTimestampMs);
-  const taken = await tx.query(
-    `SELECT obligation_id, reservation_id FROM hosted_wallet_market.native_debt_dispositions
-     WHERE network = $1 AND token = $2 AND transaction_hash = $3 AND log_index = $4`,
-    [body.network, body.token, body.transactionHash, body.logIndex],
-  );
-  if (taken.rows[0] && taken.rows[0].obligation_id !== body.obligationId) refuse(409, 'transfer_already_allocated');
-  const reserved = await tx.query(
-    'SELECT obligation_id FROM hosted_wallet_market.native_debt_dispositions WHERE reservation_id = $1',
-    [body.reservationId],
-  );
-  if (reserved.rows[0] && reserved.rows[0].obligation_id !== body.obligationId) refuse(409, 'reservation_already_allocated');
-  const found = await tx.query(
-    `SELECT id, task_id, reservation_id, terms_version, reward_amount, reward_asset, reward_network,
-            payout_state, payout_destination
-     FROM earned_work_obligations WHERE id = $1`,
-    [body.obligationId],
-  );
-  const stored = found.rows[0];
-  if (!stored || stored.payout_state !== 'owed' || stored.reward_asset !== 'USDC') refuse(409, 'disposition_hold');
-  if (stored.task_id !== body.taskId || stored.reservation_id !== body.reservationId || stored.terms_version !== body.termsVersion) {
-    refuse(409, 'disposition_hold');
-  }
-  if (stored.reward_amount !== body.amountAtomic || stored.reward_network !== body.network) refuse(409, 'disposition_hold');
-  if (String(stored.payout_destination || '').toLowerCase() !== observed.recipient) refuse(409, 'disposition_hold');
-  const existing = await tx.query(`${ROW_SQL} WHERE obligation_id = $1`, [body.obligationId]);
-  if (existing.rows[0]) {
-    if (!sameBound(existing.rows[0], body, observed)) refuse(409, 'disposition_hold');
-    return dispositionView(existing.rows[0]);
-  }
-  await tx.query(
-    `INSERT INTO hosted_wallet_market.native_debt_dispositions (
-      obligation_id, tenant, reservation_id, task_id, terms_version, network, token, recipient,
-      transaction_hash, log_index, block_number, amount_atomic, receipt_id, received_at,
-      import_contract_sha256, import_state, disposition, kernel_paid, kernel_transfer,
-      native_paid_observation, transfer_initiated, payout_state, observed_source, created_at
-    ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8,
-      $9, $10, $11, $12, $13, $14, $15,
-      'bound', 'external_discharge_allocated', TRUE, $9, TRUE, FALSE, 'owed', $16, $17
-    )`,
-    [
-      body.obligationId,
-      body.tenant,
-      body.reservationId,
-      body.taskId,
-      body.termsVersion,
-      body.network,
-      body.token,
-      observed.recipient,
-      body.transactionHash,
-      body.logIndex,
-      body.blockNumber,
-      body.amountAtomic,
-      body.receiptId,
-      body.receivedAt,
-      IMPORT_CONTRACT_SHA256,
-      observed.source,
-      input.createdAt || new Date(),
-    ],
-  );
-  const inserted = await tx.query(`${ROW_SQL} WHERE obligation_id = $1`, [body.obligationId]);
-  return dispositionView(inserted.rows[0]);
-}
-
-export async function readNativeDebt(tx, obligationId) {
-  if (!plainId(obligationId)) refuse(400, 'obligation_refused');
-  const obligation = await tx.query(
-    'SELECT id, payout_state FROM earned_work_obligations WHERE id = $1',
-    [obligationId],
-  );
-  if (!obligation.rows[0]) refuse(404, 'not_found');
-  const row = await tx.query(`${ROW_SQL} WHERE obligation_id = $1`, [obligationId]);
-  if (!row.rows[0]) {
-    const owed = obligation.rows[0].payout_state === 'owed';
-    return {
-      schema: DISPOSITION_SCHEMA,
-      state: 'absent',
-      obligationId,
-      payoutState: obligation.rows[0].payout_state,
-      payable: owed,
-      newPayable: owed,
-      projection: 'owed',
-      importState: 'unbound',
-      kernelPaid: false,
-      kernelTransfer: null,
-      nativePaidObservation: false,
-      transferInitiated: false,
-      consumerContractSha256: consumerContractSha256(),
-    };
-  }
-  return dispositionView(row.rows[0]);
+  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate});
 }

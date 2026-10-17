@@ -1,0 +1,21 @@
+{
+  "schema": "pilot.root191.native-debt.source-lineage.v1",
+  "canonicalCommit": "84a6c5bdd459f4a670951b722020b2b57fe1ae81",
+  "files": [
+    {
+      "path": "src/native-obligation-discharge.mjs",
+      "sourcePath": "tools/ops/lib/native-obligation-discharge.mjs",
+      "sha256": "5c9a2affcdf8a43e93ef04fbc66c10743a32d9e5a33919826e4ccffe6fc2fe65",
+      "intentionalDifferences": []
+    },
+    {
+      "path": "src/retained-award-validate.mjs",
+      "sourcePath": "tools/ops/lib/retained-award-validate.mjs",
+      "sha256": "4a53d4167163c47de3862caf9a03b1cfe686c5a61cc9deddb530caa69c7e27d6",
+      "intentionalDifferences": []
+    }
+  ],
+  "defaultImportContractSha256": "414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063",
+  "installedEntry": "src/server.mjs -> createInstalledDebtConsumer",
+  "allocationAuthority": "Root controller registry; SQL is its append-only projection"
+}

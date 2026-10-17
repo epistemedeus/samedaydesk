@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {existsSync, readFileSync} from 'node:fs';
+import {existsSync, readFileSync, symlinkSync, unlinkSync} from 'node:fs';
 import {dirname, join} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import test from 'node:test';
@@ -37,7 +37,7 @@ function valid(overrides = {}) {
 
 function dispatch(app, url) {
   return new Promise(resolve => {
-    const req = {url, originalUrl: url, method: 'GET', headers: {}};
+    const req = {url, originalUrl: url, method: 'GET', headers: {'x-ae-wire-version':'c0-1'}, socket:{encrypted:true}};
     const res = {
       statusCode: 0,
       headersSent: false,
@@ -207,4 +207,16 @@ test('opened surfaces adapter startup refusal', async () => {
   assert.equal(hit.statusCode, 503);
   assert.equal(JSON.parse(hit.body).code, 'guard_unsealed');
   await mounted.close();
+});
+
+test('existing contributor requests do not acquire the packed-client consumer', async()=>{
+ const app=fakeApp();const handle=mountHostedWalletMarketAdapter(app,valid({entry:'vendor/hosted-wallet-market/missing-server.mjs'}));
+ const req={url:PREFIX+'/v1/account/session',method:'GET',headers:{},socket:{encrypted:true}};
+ let passed=false;await app.layers[0](req,{},()=>{passed=true;});assert.equal(passed,true);await handle.close();
+});
+test('a relative symlink cannot import an external checkout',()=>{
+ const file=join(root,'vendor/hosted-wallet-market/root191-outside-link.mjs');
+ symlinkSync('/etc/hosts',file);
+ try {assert.throws(()=>resolveHostedWalletMarketEntry(root,'vendor/hosted-wallet-market/root191-outside-link.mjs'),e=>e.codeName==='integration_pending');}
+ finally{unlinkSync(file);}
 });

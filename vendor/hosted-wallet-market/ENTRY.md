@@ -1,11 +1,7 @@
-# Packaged hosted wallet market
+# Packaged private wallet market
 
-Cold receiving uses this directory. The module is `src/server.mjs`, resolved from the SDS installation root as `vendor/hosted-wallet-market/src/server.mjs`. Leave `HOSTED_WALLET_MARKET_ENTRY` unset. An absolute path to a Pilot checkout or an old provider build directory is refused.
+Entry: `vendor/hosted-wallet-market/src/server.mjs` inside this SDS artifact. Leave `HOSTED_WALLET_MARKET_ENTRY` unset. External checkout paths and escaping symlinks refuse.
 
-The declared dependency is `pg` `8.23.0`. The SDS package already depends on `pg`. This directory does not vendor `node_modules`.
+The runtime dependency `pg` is declared in the SDS lockfile. The existing compiled contributor runtime remains byte-for-byte at its original source pin and supplies accepted-work validation. The on-artifact Root command is `bin/installed-debt.mjs`; use the adjacent `INSTALL-ROLLBACK.md`.
 
-Enrollment is `POST /api/neomorphic-contributor-journey/v1/native-debt/enroll` with body `{}` and the existing owner bearer. Import is `POST /v1/native-debt/import` on that same prefix. The process profile RPC is the only chain reader. Caller paid, installed, verified, baseline, and RPC fields are not authority. The archival obligation stays owed. A bound projection is not a new payable and does not send a transfer.
-
-Production rollback unsets the adapter mode and restores the previous process. It does not `DROP SCHEMA hosted_wallet_market`. The full statements are in `INSTALL-ROLLBACK.md` beside this file.
-
-Public reads, payments, funded tasks, and human assets stay off. Root performs the real enrollment and the original discharge receiving.
+Root supplies its existing restricted allocation/discharge registry and read-only Base RPC as private runtime configuration. No signer or wallet is installed. The consumer records only a durable projection of a previously allocated payment. Default canonical import remains unbound. Public/human/payment flags stay off; rollback retains every obligation, proof, allocation and recoverable operation.

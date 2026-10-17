@@ -1,7 +1,15 @@
+import {realpathSync} from 'node:fs';
 import {dirname, relative, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const PREFIX = '/api/neomorphic-contributor-journey';
+// Existing contributor browser/session/review routes retain their consumer.
+// The maintained client sends this wire header on every request.
+export const isWalletRequest = req => {
+  const path = String(req.originalUrl || req.url || '').split('?')[0];
+  return path.startsWith(PREFIX + '/v1/native-debt') ||
+    (path.startsWith(PREFIX + '/') && typeof req.headers?.['x-ae-wire-version'] === 'string');
+};
 const PUBLIC_CHAINS = new Set(['eip155:1', 'eip155:8453', 'eip155:84532']);
 const LABEL = /^[A-Z][A-Z0-9_-]{1,32}$/;
 const TENANT = /^[a-z][a-z0-9_-]{2,63}$/;
@@ -49,12 +57,18 @@ function configured(options, env) {
     earnedSchema: pick('earnedSchema', 'HOSTED_WALLET_MARKET_EARNED_SCHEMA'),
     schemaName: pick('schemaName', 'HOSTED_WALLET_MARKET_SCHEMA'),
     listenHost: pick('listenHost', 'HOSTED_WALLET_MARKET_LISTEN_HOST') || '127.0.0.1',
-    databaseUrl: options.databaseUrl !== undefined ? options.databaseUrl : env.DATABASE_URL,
+    databaseUrl: options.databaseUrl !== undefined ? options.databaseUrl : env.CONTRIBUTOR_JOURNEY_DATABASE_URL ?? env.DATABASE_URL,
     rpcUrl: options.rpcUrl !== undefined ? options.rpcUrl : env.HOSTED_WALLET_MARKET_RPC,
     cert: options.cert,
     key: options.key,
     contract: options.contract,
     now: options.now,
+    dischargeRegistry: options.dischargeRegistry ?? env.HOSTED_WALLET_MARKET_DISCHARGE_REGISTRY,
+    feeRecipient: options.feeRecipient ?? env.HOSTED_WALLET_MARKET_FEE_RECIPIENT,
+    settlementToken: options.settlementToken ?? env.HOSTED_WALLET_MARKET_SETTLEMENT_TOKEN,
+    replayKey: options.replayKey ?? env.CONTRIBUTOR_JOURNEY_REPLAY_KEY,
+    readAcceptedSource: options.readAcceptedSource,
+    ownerToken: options.ownerToken ?? env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? env.EARNED_WORK_OWNER_TOKEN,
   };
 }
 
@@ -104,13 +118,17 @@ export function assertHostedWalletMarketConfig(input) {
  */
 export function resolveHostedWalletMarketEntry(sdsRoot, entry) {
   const root = resolve(sdsRoot);
-  if (entry === undefined || entry === null || entry === '') return resolve(root, ARTIFACT_ENTRY);
+  if (entry === undefined || entry === null || entry === '') entry = ARTIFACT_ENTRY;
   if (typeof entry !== 'string' || entry.startsWith('/') || entry.includes('://') || entry.includes('\\') || entry.split('/').includes('..')) {
     refuse('integration_pending');
   }
   const resolved = resolve(root, entry);
   const rel = relative(root, resolved);
   if (rel.startsWith('..') || rel.startsWith('/')) refuse('integration_pending');
+  try {
+    const actual=relative(realpathSync(root),realpathSync(resolved));
+    if(actual.startsWith('..')||actual.startsWith('/')) refuse('integration_pending');
+  } catch(error) {if(error.code!=='ENOENT')throw error;}
   return resolved;
 }
 
@@ -124,7 +142,7 @@ async function openAdapter(adapter, entry, input, sdsRoot) {
   let layer;
   const market = await loaded.mountHostedWalletMarket({use(fn) { layer = fn; }}, {...input, sdsRoot});
   if (typeof layer !== 'function' || !market || typeof market.close !== 'function') refuse('integration_pending');
-  return {layer, close: market.close.bind(market)};
+  return {layer, canonicalReceiving: market.canonicalReceiving, close: market.close.bind(market)};
 }
 
 /**
@@ -146,12 +164,14 @@ export function mountHostedWalletMarketAdapter(app, options = {}) {
   const pending = openAdapter(adapter, entry, input, sdsRoot);
   pending.catch(() => {});
   app.use((req, res, next) => {
-    const path = String(req.originalUrl || req.url || '').split('?')[0];
-    if (!path.startsWith(PREFIX)) return next();
-    return pending.then(
+    if (!isWalletRequest(req)) return next();
+    const enter = () => pending.then(
       market => Promise.resolve(market.layer(req, res, next)).catch(error => send(res, 503, {ok: false, code: publicCode(error)})),
       error => send(res, 503, {ok: false, code: publicCode(error)}),
     );
+    if (req.socket?.encrypted) return enter();
+    if (typeof options.ingress === 'function') return options.ingress(req, res, enter);
+    return send(res, 426, {ok: false, code: 'https_edge_required'});
   });
   return {
     mounted: true,

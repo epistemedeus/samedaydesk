@@ -105,8 +105,19 @@ export async function applyMigration005Disposable(client, {
   return assertEarnedWorkShape(client, {earnedSchema});
 }
 
+export async function assertNativeSchemaShape(client) {
+  const fields = await client.query(`SELECT table_name,column_name FROM information_schema.columns
+    WHERE table_schema='hosted_wallet_market' AND table_name IN ('consumer_enrollment','native_debt_dispositions')`);
+  const required={consumer_enrollment:['host_source_sha256','earned_schema','rpc_endpoint_sha256','registry_sha256','profile_sha256'],
+    native_debt_dispositions:['obligation_family','claim_id','submission_id','verdict_id','block_hash','authority_receipt_sha256','request_sha256']};
+  for(const [table,names] of Object.entries(required)){
+    const present=fields.rows.filter(row=>row.table_name===table).map(row=>row.column_name);
+    if(present.length && names.some(name=>!present.includes(name))) throw Object.assign(new Error('native_schema_incompatible'),{codeName:'native_schema_incompatible'});
+  }
+}
 export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
+  await assertNativeSchemaShape(client);
   let sql = readFileSync(join(here, '../schema/006_hosted_wallet_market.sql'), 'utf8');
   if (sql.includes(REFUSED_MIGRATION) || /preserved_config|additive_config/.test(sql)) {
     throw Object.assign(new Error('schema_refused'), {codeName: 'schema_refused'});
@@ -140,7 +151,8 @@ export async function evaluateObligationGuard(client, {earnedSchema = 'cj227_ear
   if (!seal.rows.length) return {guardSealed: false, guardComplete: false, missingCount: null};
   const missing = await client.query(
     `SELECT o.id
-     FROM ${earnedSchema}.earned_work_obligations o
+     FROM (SELECT id FROM ${earnedSchema}.earned_work_obligations
+       UNION SELECT id FROM ${earnedSchema}.opportunity_obligations) o
      WHERE NOT EXISTS (
        SELECT 1 FROM hosted_wallet_market_guard.preserved_obligation_ids p WHERE p.id = o.id
      )`,
@@ -233,6 +245,7 @@ export async function disposeAdapterSchema(client, {earnedSchema = 'cj227_earned
 export async function inspectInstallation(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
   const base = await assertEarnedWorkShape(client, {earnedSchema});
+  await assertNativeSchemaShape(client);
   const checks = await client.query(
     `SELECT conname, pg_get_constraintdef(oid) AS definition
      FROM pg_constraint

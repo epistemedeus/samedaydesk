@@ -81,8 +81,8 @@ export function mountContributorManagedDesk(app,options={}){
   if(env.CONTRIBUTOR_DESK_MANAGED_ENABLED!=='1'){
     // Preserve the existing verified direct-TLS receiving route. A plaintext
     // managed listener cannot expose an installed journey with the edge opt-in off.
+    let direct;
     if(['staging','live'].includes(env.CONTRIBUTOR_JOURNEY_MODE)&&env.CONTRIBUTOR_JOURNEY_INSTALLED==='1'){
-      let direct;
       try{direct=edgeGuard(env,ingress,{directOnly:true});}catch{}
       app.use(JOURNEY_PREFIX,(req,res,next)=>{
         if(!direct||!req.socket.encrypted){res.status(503).json({error:{code:'managed_ingress_disabled'},publicEnabled:false});return;}
@@ -90,7 +90,7 @@ export function mountContributorManagedDesk(app,options={}){
       });
     }
     const handle=mountNeomorphicContributorJourney(app,options);
-    return {...handle,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{ingress.close();await handle.close();}};
+    return {...handle,guardRequest:(req,res,next)=>{if(direct)return direct(req,res,next);res.status(426).json({error:{code:'https_edge_required'}});},bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{ingress.close();await handle.close();}};
   }
   const now=options.now||Date.now;
   const state=createRecoveryState('starting');
@@ -126,7 +126,7 @@ export function mountContributorManagedDesk(app,options={}){
       // The exact compiled producer remains the only app/service loader.
       // This optional server-owned read port carries no ledger write authority.
       stage='service_import';
-      if(!journey)journey=mountNeomorphicContributorJourney(inner,{env,canonicalReceiving:options.canonicalReceiving,now});
+      if(!journey)journey=mountNeomorphicContributorJourney(inner,{env,canonicalReceiving:options.canonicalReceiving,nativeDebtReceiving:options.nativeDebtReceiving,now});
       await journey.ready();
       if(state.closed)return;
       adopt();
@@ -164,7 +164,7 @@ export function mountContributorManagedDesk(app,options={}){
       else assets.router(req,res,()=>res.sendStatus(404));
     });
   });
-  return {state,ready:()=>state.inFlight||Promise.resolve(),ensure,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{
+  return {state,guardRequest:async(req,res,next)=>{await ensure();if(state.status!=='ready'||!guard)return unavailable(req,res);return guard(req,res,next);},ready:()=>state.inFlight||Promise.resolve(),ensure,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{
     ingress.close();
     state.closed=true;state.terminal=true;
     if(journey)journey.state.closed=true;
