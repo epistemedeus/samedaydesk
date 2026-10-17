@@ -140,6 +140,23 @@ export class PostgresStore {
         const row = result.rows[0];
         return row ? projectFromRow(row) : null;
     }
+    async readProjectCreate(idempotencyKey) {
+        const result = await this.query(`SELECT request_hash, created_at, response_json
+       FROM correspondence_idempotency
+       WHERE scope = 'project_create' AND project_id = '' AND key = $1`, [idempotencyKey]);
+        const row = result.rows[0];
+        if (!row)
+            return null;
+        const project = row.response_json?.project;
+        return {
+            requestHash: row.request_hash,
+            createdAt: toIso(row.created_at),
+            projectId: typeof project?.id === "string" ? project.id : "",
+            title: typeof project?.title === "string" ? project.title : "",
+            summary: typeof project?.summary === "string" ? project.summary : "",
+            ownerTokenHash: typeof row.response_json?.ownerTokenHash === "string" ? row.response_json.ownerTokenHash : "",
+        };
+    }
     async createProject(input) {
         const client = await this.connectScoped();
         try {

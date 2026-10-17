@@ -1,11 +1,16 @@
 import { readFile } from 'node:fs/promises';
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { hashRequest } from '../earned-work/src/crypto.js';
 import { reviewProjectSummary } from './review/adapters.js';
 import { publicationText } from './showcase/validation.js';
 const profile = z.object({ profileId: z.string(), accountId: z.string(), displayName: z.string().min(1).max(80),
     visible: z.boolean(), consentVersion: z.number().int().positive() }).strict();
+function sameText(left, right) {
+    if (typeof left !== 'string' || left.length !== right.length)
+        return false;
+    return timingSafeEqual(Buffer.from(left), Buffer.from(right));
+}
 export class CompositionStore {
     kernel;
     correspondence;
@@ -58,19 +63,35 @@ export class CompositionStore {
             throw new Error('existing canonical offer and requester account required');
         const publicDiscussion = source?.configured?.publicDiscussion ?? true;
         const marker = `discussion:${hashRequest({ taskId })}`;
-        const project = await this.correspondence.createProject({ title: 'Task discussion', summary: marker,
-            ownerTokenHash: hashRequest({ marker, secret: this.integrityKey }), ownerTokenPlainForReplay: '',
-            idempotencyKey: marker, requestHash: hashRequest({ taskId, requesterAccountId }) });
+        const expected = { title: 'Task discussion', summary: marker, ownerTokenHash: hashRequest({ marker, secret: this.integrityKey }),
+            requestHash: hashRequest({ taskId, requesterAccountId }), idempotencyKey: marker };
+        const linked = await this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT requester_account_id, discussion_project_id FROM journey_task_links WHERE task_id=$1', [taskId])).rows[0] ?? null, 'read');
+        if (linked && linked.requester_account_id !== requesterAccountId)
+            throw new Error('task authority already enrolled');
+        const projectId = linked ? String(linked.discussion_project_id) : await this.discussionProject(expected);
+        if (linked)
+            await this.requireBoundProject(projectId, expected, 'task authority already enrolled');
+        return this.finishEnrollment(taskId, roundKey, requesterAccountId, projectId, publicDiscussion, round, actual);
+    }
+    /** Correspondence replay expires after 24h. An existing discussion is bound without entering that bootstrap. */
+    async discussionProject(expected) {
+        const bootstrap = await this.correspondence.readProjectCreate(expected.idempotencyKey);
+        const projectId = bootstrap ? bootstrap.projectId : (await this.correspondence.createProject({ title: expected.title, summary: expected.summary,
+            ownerTokenHash: expected.ownerTokenHash, ownerTokenPlainForReplay: '', idempotencyKey: expected.idempotencyKey, requestHash: expected.requestHash })).project.id;
+        await this.requireBoundProject(projectId, expected, 'task authority already enrolled');
+        return projectId;
+    }
+    async finishEnrollment(taskId, roundKey, requesterAccountId, projectId, publicDiscussion, round, actual) {
         return this.kernel.withOpportunityClient(async (client) => {
             await client.query(`INSERT INTO journey_task_links(task_id,round_key,requester_account_id,discussion_project_id,public_discussion,opportunity_round_id,opportunity_offer_id,terms_version)
-        VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(task_id) DO NOTHING`, [taskId, roundKey, requesterAccountId, project.project.id, publicDiscussion, round.id, actual.offer_id, actual.terms_version]);
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(task_id) DO NOTHING`, [taskId, roundKey, requesterAccountId, projectId, publicDiscussion, round.id, actual.offer_id, actual.terms_version]);
             // Upgrade a pre-profile reference only after verifying the same requester/project.
             // Never overwrite an established canonical source or change public-discussion consent.
             await client.query(`UPDATE journey_task_links SET opportunity_round_id=$3,opportunity_offer_id=$4,terms_version=$5
         WHERE task_id=$1 AND requester_account_id=$2 AND discussion_project_id=$6 AND public_discussion=$7
-          AND opportunity_round_id IS NULL AND opportunity_offer_id IS NULL AND terms_version IS NULL`, [taskId, requesterAccountId, round.id, actual.offer_id, actual.terms_version, project.project.id, publicDiscussion]);
+          AND opportunity_round_id IS NULL AND opportunity_offer_id IS NULL AND terms_version IS NULL`, [taskId, requesterAccountId, round.id, actual.offer_id, actual.terms_version, projectId, publicDiscussion]);
             const stored = (await client.query('SELECT * FROM journey_task_links WHERE task_id=$1', [taskId])).rows[0];
-            if (stored.requester_account_id !== requesterAccountId || stored.discussion_project_id !== project.project.id || stored.public_discussion !== publicDiscussion ||
+            if (stored.requester_account_id !== requesterAccountId || stored.discussion_project_id !== projectId || stored.public_discussion !== publicDiscussion ||
                 stored.opportunity_round_id !== round.id || stored.opportunity_offer_id !== actual.offer_id || stored.terms_version !== actual.terms_version)
                 throw new Error('task authority already enrolled');
             return stored;
@@ -79,15 +100,37 @@ export class CompositionStore {
     async project(source, kind) {
         const sourceHash = hashRequest(source);
         const summary = kind === 'clarification' ? reviewProjectSummary(source) : `opportunity-decision:${sourceHash}`;
-        // Existing correspondence bootstrap/readback is idempotent; the raw owner
-        // grant is never exposed and no participant can bypass the module journal.
-        const project = await this.correspondence.createProject({ title: 'Private requester review', summary,
-            ownerTokenHash: createHmac('sha256', this.integrityKey).update(summary).digest('hex'), ownerTokenPlainForReplay: '',
-            idempotencyKey: `journey-${kind}-${sourceHash}`, requestHash: hashRequest({ source, kind }) });
+        // integrityKey stays the original 64-character string. Do not hex-decode it.
+        const expected = { title: 'Private requester review', summary, ownerTokenHash: createHmac('sha256', this.integrityKey).update(summary).digest('hex'),
+            requestHash: hashRequest({ source, kind }), idempotencyKey: `journey-${kind}-${sourceHash}` };
+        const linked = await this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT project_id FROM journey_review_links WHERE source_hash=$1 AND kind=$2', [sourceHash, kind])).rows[0]?.project_id, 'read');
+        // A saved link is reused after bootstrap expiry. Creation remains only for a missing mapping.
+        if (linked) {
+            await this.requireBoundProject(linked, expected);
+            return linked;
+        }
+        const bootstrap = await this.correspondence.readProjectCreate(expected.idempotencyKey);
+        const projectId = bootstrap ? bootstrap.projectId : (await this.correspondence.createProject({ title: expected.title, summary,
+            ownerTokenHash: expected.ownerTokenHash, ownerTokenPlainForReplay: '', idempotencyKey: expected.idempotencyKey, requestHash: expected.requestHash })).project.id;
+        await this.requireBoundProject(projectId, expected);
+        return this.bindReviewLink(sourceHash, kind, projectId);
+    }
+    async requireBoundProject(projectId, expected, refusal = 'review project mapping conflict') {
+        const project = await this.correspondence.getProject(projectId);
+        const grant = await this.correspondence.findActiveGrantByTokenHash(expected.ownerTokenHash);
+        const bootstrap = await this.correspondence.readProjectCreate(expected.idempotencyKey);
+        const bound = !!project && project.id === projectId && sameText(project.title, expected.title) && sameText(project.summary, expected.summary)
+            && !!grant && grant.role === 'owner' && grant.projectId === projectId && !!bootstrap && bootstrap.projectId === projectId
+            && sameText(bootstrap.title, expected.title) && sameText(bootstrap.summary, expected.summary)
+            && sameText(bootstrap.requestHash, expected.requestHash) && sameText(bootstrap.ownerTokenHash, expected.ownerTokenHash);
+        if (!bound)
+            throw new Error(refusal);
+    }
+    async bindReviewLink(sourceHash, kind, projectId) {
         return this.kernel.withOpportunityClient(async (client) => {
-            await client.query('INSERT INTO journey_review_links(source_hash,kind,project_id) VALUES($1,$2,$3) ON CONFLICT(source_hash,kind) DO NOTHING', [sourceHash, kind, project.project.id]);
+            await client.query('INSERT INTO journey_review_links(source_hash,kind,project_id) VALUES($1,$2,$3) ON CONFLICT(source_hash,kind) DO NOTHING', [sourceHash, kind, projectId]);
             const id = (await client.query('SELECT project_id FROM journey_review_links WHERE source_hash=$1 AND kind=$2', [sourceHash, kind])).rows[0].project_id;
-            if (id !== project.project.id)
+            if (id !== projectId)
                 throw new Error('review project mapping conflict');
             return id;
         }, 'idempotent');
