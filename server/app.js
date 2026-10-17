@@ -31,6 +31,7 @@ import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
 import { mountContributorManagedDesk } from "./lib/contributor-managed-mount.js";
+import { mountHostedWalletMarketAdapter } from "./lib/hosted-wallet-market-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountMachineServices } from "./lib/machine-services/mount.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
@@ -54,6 +55,10 @@ app.disable("x-powered-by");
 
 // Exact contributor assets/API own their edge checks and failures before host
 // redirects, parsers and SPA fallback. No global proxy or CORS policy changes.
+// The packaged wallet market owns the packed-client routes on this prefix and
+// falls through for every path it does not serve. Unset mode registers nothing.
+// The entry is vendor/hosted-wallet-market inside this tree when unset.
+app.set("hostedWalletMarket", mountHostedWalletMarketAdapter(app, options.hostedWalletMarket || {}));
 app.set("neoContributorJourney", mountContributorManagedDesk(app, options.neomorphicContributorJourney || {}));
 
 // Include bearer-return redirects in the same cache/referrer protection as the
