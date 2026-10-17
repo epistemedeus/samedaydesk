@@ -4,6 +4,7 @@ import {mountNeomorphicContributorJourney} from './neomorphic-contributor-journe
 import {loadContributorDeskAssets,DESK_PATH,JOURNEY_PREFIX} from './contributor-desk-assets.js';
 import {createContributorIngress,secureProtocol} from './contributor-native-ingress.js';
 import {loadContributorHttpsQualification} from './contributor-https-qualification.js';
+import {contributorFailure,createRecoveryState,noteContributorFailure} from './contributor-mount-recovery.js';
 
 const address=value=>{try{return ipaddr.process(value).toString();}catch{return null;}};
 const prefixRequest=req=>req.path==='/contribute'||req.path.startsWith(DESK_PATH)||
@@ -91,41 +92,84 @@ export function mountContributorManagedDesk(app,options={}){
     const handle=mountNeomorphicContributorJourney(app,options);
     return {...handle,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{ingress.close();await handle.close();}};
   }
-  const state={status:'starting',reason:'starting',runtime:null,inFlight:null,closed:false};
+  const now=options.now||Date.now;
+  const state=createRecoveryState('starting');
   let journey=null,assets=null,guard=null;
   const unavailable=(_req,res)=>res.status(503).json({error:{code:state.reason},ready:false,publicEnabled:false,releaseAccepted:false});
   const inner=express();inner.disable('x-powered-by');
-  state.inFlight=(async()=>{
+  function adopt(){
+    if(!journey)return;
+    state.initializations=journey.state.initializations;
+    state.diagnostic=journey.state.diagnostic;
+    if(journey.state.status==='ready'&&journey.state.runtime){
+      state.runtime=journey.state.runtime;state.status='ready';state.reason='ready';
+      state.terminal=false;state.diagnostic=null;state.attempts=0;state.nextAttemptAt=0;
+      return;
+    }
+    state.runtime=null;state.status='disabled';state.reason='unavailable';
+    state.terminal=journey.state.terminal===true;
+    state.attempts=journey.state.attempts;state.nextAttemptAt=journey.state.nextAttemptAt;
+  }
+  async function initialize(){
+    let stage='ingress_profile';
     try{
       // No alternate service loader, ports, modules or artifact roots in this path.
-      if(options.loadService||options.ports||options.modules)throw new Error('actual compiled managed composition required');
+      if(options.loadService||options.ports||options.modules){
+        throw Object.assign(new Error('actual compiled managed composition required'),{code:'INVALID_INPUT'});
+      }
+      stage='qualification_load';
       const qualification=env.CONTRIBUTOR_DESK_INGRESS_MODE==='litespeed-https-only'?await loadContributorHttpsQualification(env):null;
+      stage='ingress_profile';
       guard=edgeGuard(env,ingress,{qualification});
-      if(publishAssets)assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);
+      if(publishAssets){stage='asset_load';assets=await loadContributorDeskAssets(env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT);}
       if(state.closed)return;
       // The exact compiled producer remains the only app/service loader.
       // This optional server-owned read port carries no ledger write authority.
-      journey=mountNeomorphicContributorJourney(inner,{env,canonicalReceiving:options.canonicalReceiving});await journey.ready();
-      if(journey.state.status!=='ready')throw new Error('installed stores unavailable');
-      if(state.closed){await journey.close();return;}
-      state.runtime=journey.state.runtime;state.status='ready';state.reason='ready';
-    }catch{
-      await journey?.close();state.runtime=null;state.status='disabled';state.reason='unavailable';
+      stage='service_import';
+      if(!journey)journey=mountNeomorphicContributorJourney(inner,{env,canonicalReceiving:options.canonicalReceiving,now});
+      await journey.ready();
+      if(state.closed)return;
+      adopt();
+    }catch(error){
+      if(state.closed)return;
+      // Profile, qualification, source and asset refusals do not change without a new process.
+      const failure=contributorFailure(stage,error);
+      if(!failure.permanent)noteContributorFailure(state,stage,error,now,'contributor_managed_unavailable');
+      else{
+        state.runtime=null;state.status='disabled';state.reason='unavailable';state.terminal=true;
+        state.diagnostic={stage:failure.stage,code:failure.code};
+        console.error('contributor_managed_unavailable',{stage:state.diagnostic.stage,code:state.diagnostic.code});
+      }
     }
-  })().finally(()=>{state.inFlight=null;});
+  }
+  function ensure(){
+    if(state.closed||state.inFlight)return state.inFlight||Promise.resolve();
+    if(state.status==='ready'||state.terminal)return Promise.resolve();
+    if(now()<state.nextAttemptAt)return Promise.resolve();
+    if(journey){
+      state.inFlight=journey.ensure().then(()=>{if(!state.closed)adopt();}).finally(()=>{state.inFlight=null;});
+      return state.inFlight;
+    }
+    state.inFlight=initialize().finally(()=>{state.inFlight=null;});
+    return state.inFlight;
+  }
+  state.inFlight=initialize().finally(()=>{state.inFlight=null;});
   app.use(async(req,res,next)=>{
     if(!prefixRequest(req)){next();return;}
     if(!publishAssets&&!(req.path===JOURNEY_PREFIX||req.path.startsWith(JOURNEY_PREFIX+'/'))){res.sendStatus(404);return;}
-    if(state.inFlight)await state.inFlight;
-    if(state.status!=='ready'){unavailable(req,res);return;}
+    await ensure();
+    if(state.status!=='ready'||!guard){unavailable(req,res);return;}
     guard(req,res,()=>{
       if(req.path===JOURNEY_PREFIX||req.path.startsWith(JOURNEY_PREFIX+'/'))inner(req,res,next);
       else assets.router(req,res,()=>res.sendStatus(404));
     });
   });
-  return {state,ready:()=>state.inFlight||Promise.resolve(),bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{
+  return {state,ready:()=>state.inFlight||Promise.resolve(),ensure,bindListener:ingress.bindListener,bindLifecycle:ingress.bindLifecycle,close:async()=>{
     ingress.close();
-    state.closed=true;await state.inFlight;await journey?.close();
-    state.runtime=null;state.status='disabled';state.reason='disabled';assets=null;
+    state.closed=true;state.terminal=true;
+    if(journey)journey.state.closed=true;
+    await state.inFlight;
+    if(journey)await journey.close();
+    state.runtime=null;state.status='disabled';state.reason='disabled';assets=null;guard=null;
   }};
 }

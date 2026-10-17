@@ -24,14 +24,15 @@
     "server/foundry/runtime-artifacts.mjs": "c5b59f3dfe0ba6f79ed39a38e35364a38f7e1aaba24d23a8da6df63a0a65dfb7",
     "server/foundry/runtime-layout.mjs": "2bee71a837f7da6cd266553b3bc96abdc98c64826c9ed25a0ddf3c710c1573b8",
     "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
-    "server/foundry/startup-diagnostic.js": "1f7d4e7b45076a9a31dea9215b9ff7c5e39571a69afbcb24a834ca3a8ab5c7c4",
+    "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "49a4713b38c7a6b610551d5d4c39c444ccf6b80b5149ec479eee9c032343aa9b",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "def4c9d85fc6c44a25b7380c20816040ee807627aa8166ab49863e6d17e8d87c",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
     "server/lib/contributor-host-observation.js": "42df6596dc4b1554f4d0ad78fea39deee5fafdcb0cc698187c787adea91fefcd",
-    "server/lib/contributor-https-qualification.js": "a6a1329bf547386e2807b12550ff9b5f80baa82f4a5be698fc9940447d290f4b",
-    "server/lib/contributor-managed-mount.js": "d9e6dd154d46f32940e28052ebe6b25c59743a2fbd00cae6fc3ca3d550aa4817",
+    "server/lib/contributor-https-qualification.js": "65e4da4e5e1ce075467e86c6c722d2854a1ce686cee0d5514540a3398280ea67",
+    "server/lib/contributor-managed-mount.js": "784c8a3b0f47abbdedce8d59515dd538cb5147573af1beaa9374500621c11f05",
+    "server/lib/contributor-mount-recovery.js": "b36d3160a351eb055149edbff0bc4bcaa0279454ded016acc7d2e97bdd53cdf1",
     "server/lib/contributor-native-ingress.js": "4092ff40f5a58f28ec6d617b3fe855d1c1a8166b64c32caf7cf8294398306df3",
     "server/lib/correspondence-mount.js": "0eed54a732ebefdebf78e4eff59d5b3a0b309c5ba060f74fe3caaa38d1d125f7",
     "server/lib/machine-services/deploy/environment-packet.mjs": "2fa1f9b2f707ebe50613af4291eb6374d347907e454dd135059e82f2dd3dcfdc",
@@ -60,7 +61,7 @@
     "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
-    "server/lib/neomorphic-contributor-journey-mount.js": "e112e9c6967cfd3ce976aadc116ce5f6afad67f6ccf321b3d9ee12031661e2fe",
+    "server/lib/neomorphic-contributor-journey-mount.js": "45673014ce1c2464e541ca237a42d1f83192a2ab4424ca6d62721cfd96170f1b",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",
     "server/lib/original-task/action.mjs": "b68b962166c7923d5f97b4b77c664b13f21d32c302ecdbd3cd68a8d8f98faea8",
@@ -1309,6 +1310,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:552575d66f243402829446f868e93234f53a7a7ec2563a4601f5ea58647c4200"
+    },
+    {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:a7c8221a09a4ed27f0655cca316eba00e08c542250fa46cefdce864e109832f5"
     }
   ]
 }

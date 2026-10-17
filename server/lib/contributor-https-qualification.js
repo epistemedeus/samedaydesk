@@ -17,6 +17,7 @@ const root=new URL('../../',import.meta.url);
 // bytes bind its qualification to the owning edge, entrypoint and artifact pair.
 const MEMBERS=Object.freeze(['package.json','package-lock.json','server/index.js','server/app.js',
   'server/foundry/listener-lifecycle.js','server/lib/contributor-managed-mount.js',
+  'server/lib/contributor-mount-recovery.js',
   'server/lib/contributor-native-ingress.js','server/lib/contributor-host-observation.js',
   'server/lib/contributor-https-qualification.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-artifact.js','server/lib/neomorphic-contributor-journey-mount.js',

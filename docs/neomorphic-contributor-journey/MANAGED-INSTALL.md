@@ -349,7 +349,10 @@ Rollback uses the retained **full real** prior environment and prior exact sourc
 through the existing controller, never GET masks or a partial set. Holding this
 preparation keeps serving/public flags disabled and retains enrollment/backup;
 never down-migrate stores or overwrite an obligation to retry. No rollback or
-provider mutation was executed here. Paid badges remain absent without canonical
+provider mutation was executed here. A transient contributor init no longer stays
+unavailable for the process lifetime; the request-driven recovery and its
+rollback inputs are in `ROOT129-RECOVERY.md`. That recovery adds no environment
+key and does not restart the host. Paid badges remain absent without canonical
 settlement, and original221400 email/terms/grants/obligations retain their authority.
 
 ## Optional reviewed public composition
