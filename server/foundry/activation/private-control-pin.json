@@ -34,7 +34,7 @@
     "server/lib/contributor-managed-mount.js": "d9e6dd154d46f32940e28052ebe6b25c59743a2fbd00cae6fc3ca3d550aa4817",
     "server/lib/contributor-native-ingress.js": "4092ff40f5a58f28ec6d617b3fe855d1c1a8166b64c32caf7cf8294398306df3",
     "server/lib/correspondence-mount.js": "0eed54a732ebefdebf78e4eff59d5b3a0b309c5ba060f74fe3caaa38d1d125f7",
-    "server/lib/hosted-wallet-market-mount.js": "a0ecd136781db1d42b4d914f6a338dd8d3eb87cab7396b09569805d12647ecfb",
+    "server/lib/hosted-wallet-market-mount.js": "49bf3ae797a434117f609fb571aebe3aece2e8d21fbca7c3d17bcb6aa5dfe5c6",
     "server/lib/machine-services/deploy/environment-packet.mjs": "2fa1f9b2f707ebe50613af4291eb6374d347907e454dd135059e82f2dd3dcfdc",
     "server/lib/machine-services/deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
     "server/lib/machine-services/deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",

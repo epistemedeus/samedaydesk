@@ -61,8 +61,9 @@ function configured(options, env) {
 export function assertHostedWalletMarketConfig(input) {
   if (input.mode !== 'private') refuse('mode_refused');
   if (!LABEL.test(input.label || '')) refuse('label_refused');
-  if (typeof input.chain !== 'string' || !/^eip155:[0-9]+$/.test(input.chain) || PUBLIC_CHAINS.has(input.chain)) refuse('chain_refused');
   if (input.payments !== 'off') refuse('payments_refused');
+  if (typeof input.chain !== 'string' || !/^eip155:[0-9]+$/.test(input.chain)) refuse('chain_refused');
+  if (input.chain === 'eip155:1' || (PUBLIC_CHAINS.has(input.chain) && input.chain !== 'eip155:8453' && input.chain !== 'eip155:84532')) refuse('chain_refused');
   if (input.publicReads !== '0') refuse('public_reads_refused');
   if (input.fundedTasks !== 'off') refuse('funded_tasks_refused');
   if (input.humanAssets !== 'off') refuse('human_assets_refused');

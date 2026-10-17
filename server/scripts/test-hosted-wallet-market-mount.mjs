@@ -106,8 +106,17 @@ test('invalid config refuses before the adapter is called', () => {
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({mode: 'live', adapter})), error => error.codeName === 'mode_refused');
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({payments: 'on', adapter})), error => error.codeName === 'payments_refused');
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({chain: 'eip155:1', adapter})), error => error.codeName === 'chain_refused');
-  assert.throws(() => mountHostedWalletMarketAdapter(app, valid({chain: 'eip155:8453', adapter})), error => error.codeName === 'chain_refused');
-  assert.throws(() => mountHostedWalletMarketAdapter(app, valid({chain: 'eip155:84532', adapter})), error => error.codeName === 'chain_refused');
+  const baseApp = fakeApp();
+  const baseMounted = mountHostedWalletMarketAdapter(baseApp, valid({
+    chain: 'eip155:8453',
+    adapter: {async mountHostedWalletMarket() { throw Object.assign(new Error('stop'), {codeName: 'stop'}); }},
+  }));
+  assert.equal(baseMounted.mounted, true);
+  const sepoliaMounted = mountHostedWalletMarketAdapter(fakeApp(), valid({
+    chain: 'eip155:84532',
+    adapter: {async mountHostedWalletMarket() { throw Object.assign(new Error('stop'), {codeName: 'stop'}); }},
+  }));
+  assert.equal(sepoliaMounted.mounted, true);
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({databaseUrl: 'postgresql://ae14_j1@10.0.0.8/private_wallet', adapter})), error => error.codeName === 'database_refused');
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({fundedTasks: 'on', adapter})), error => error.codeName === 'funded_tasks_refused');
   assert.throws(() => mountHostedWalletMarketAdapter(app, valid({humanAssets: 'on', adapter})), error => error.codeName === 'human_assets_refused');
