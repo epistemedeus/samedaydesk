@@ -1,0 +1,23 @@
+{
+  "id": "liquidity-funnel-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/moltjobs.js",
+  "expectedReasons": ["absence_as_demand", "liquidity_funnel_as_demand"],
+  "defect": "Liquidity agent sets (distinct populations) treated as a registration-to-paid conversion funnel.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "sourceId": "moltjobs",
+    "liquidityNotFunnel": true,
+    "liquidityFunnelAsDemand": true,
+    "conversionFunnel": true,
+    "demand": true,
+    "paidDemand": true,
+    "paidCustomers": 62,
+    "demandSignal": "paid",
+    "message": "liquidity populations invented as conversion-funnel demand"
+  }
+}

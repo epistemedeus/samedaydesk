@@ -1,0 +1,25 @@
+{
+  "id": "series-buyers-as-unique-humans",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/x402stats.js",
+  "expectedReasons": ["absence_as_demand", "series_buyers_as_unique_humans"],
+  "defect": "x402stats series buyers summed and classified as unique humans / paid demand.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "observatory",
+    "sourceId": "x402stats",
+    "seriesBuyersNotHumans": true,
+    "seriesBuyersAsUniqueHumans": true,
+    "paidDemand": true,
+    "paidCustomers": 1200,
+    "demandSignal": "paid",
+    "paidActivity": {
+      "available": false,
+      "reason": "Series buyers are not summed into snapshot metrics and are not classified as unique humans."
+    },
+    "message": "series buyers invented as unique-human paid demand"
+  }
+}
