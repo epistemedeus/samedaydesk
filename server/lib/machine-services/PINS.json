@@ -99,7 +99,7 @@
     "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
     "callerClosureDigest": "sha256:a7c8221a09a4ed27f0655cca316eba00e08c542250fa46cefdce864e109832f5",
     "callerMembers": 1171,
-    "priorCallerDescriptorsAccepted": 27,
+    "priorCallerDescriptorsAccepted": 30,
     "priorCallerClosureDigest": "sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3",
     "compiledContributorMembersUnchanged": 437,
     "opportunitySourceMembersReproduced": 187,

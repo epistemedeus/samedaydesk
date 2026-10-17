@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "sourceCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -777,18 +777,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/composition-store.d.ts",
-      "bytes": 1545,
-      "sha256": "ead25bac88f2fa8ebe965b99b9f62b25ac5a478bc925ba430feaf98caced1c9e"
+      "bytes": 1784,
+      "sha256": "30bee5baaba09016c18d939b38363752d79fc9b143953565e7a548f8986d92a7"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/composition-store.js",
-      "bytes": 10922,
-      "sha256": "1a89affe85464135bdd128f7a887a5130e34d0714489eac47871a4f391aa709b"
+      "bytes": 14393,
+      "sha256": "a00f6d4a1641b99c150ada668acca5e511a707180792fae6f77122e117e2eecd"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/composition-store.js.map",
-      "bytes": 9212,
-      "sha256": "ba36d13c91bc535ded65d509988300321d25afa0a08bfb2298cdde6631105069"
+      "bytes": 12346,
+      "sha256": "ccda29e87fc648eb1126e4a181f915bf1db0fd459d71a2040faa925164cb9778"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/config.d.ts",
@@ -1627,23 +1627,23 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/correspondence/src/store/postgres.d.ts",
-      "bytes": 1424,
-      "sha256": "12e6b010b9685ca1bc99b2281abf1761eb25f70bb49484cf606ab4c1ca299df6"
+      "bytes": 1529,
+      "sha256": "9c3a1601c19c38ae061479a6ddd68221b48aa133ee1a7b3bd32516c7c48f56d6"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/correspondence/src/store/postgres.js",
-      "bytes": 14981,
-      "sha256": "3779a9ef26b9d1afb5d54d32f1242558fbb6e7a5e42a21c458903c5fdcb22858"
+      "bytes": 15855,
+      "sha256": "517b073e0adf257a6a65ccecef47244a057cff2966fea0db8f095a8997cf5348"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/correspondence/src/store/postgres.js.map",
-      "bytes": 12608,
-      "sha256": "b701b004a85a1d1db76a3f7f17f06f98212c89b73fbc0da72a9fd9e14d5fe146"
+      "bytes": 13387,
+      "sha256": "5ffc18c3601f205233fc0376853d8650642f42d960a7077895a33b7f6786a2b1"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/correspondence/src/store/types.d.ts",
-      "bytes": 1222,
-      "sha256": "4d674c487d2a0745ac134feff253357f591f090f4e78afe5295fd6b648da8e16"
+      "bytes": 1565,
+      "sha256": "3cfe7cf06d8824c087036f056e61b665b1d6378b9f65cec69b5688c9d249c407"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/correspondence/src/store/types.js",
@@ -2128,7 +2128,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "a3dae94035b449a1a84196ee38b85e59549e757570cdbb2d40e9a2b1e4fd0fc9"
+      "sha256": "f3b1a4bb9dbbb65c2281e57014465f365013bc5c8d3091e69b47f9bd8bd73d67"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

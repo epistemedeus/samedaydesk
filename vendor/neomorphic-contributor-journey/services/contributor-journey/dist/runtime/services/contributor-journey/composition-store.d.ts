@@ -15,7 +15,12 @@ export declare class CompositionStore {
     task(taskId: string): Promise<any>;
     /** Controller-only references to an existing round, offer and requester. Creates no inventory or account. */
     enrollTask(taskId: string, requesterAccountId: string): Promise<any>;
+    /** Correspondence replay expires after 24h. An existing discussion is bound without entering that bootstrap. */
+    private discussionProject;
+    private finishEnrollment;
     project(source: SourceBinding, kind: 'clarification' | 'decision'): Promise<string>;
+    private requireBoundProject;
+    private bindReviewLink;
     workId(taskId: string, reservationId: string, accountId: string): Promise<string>;
     work(workId: string): Promise<any>;
     profile(profileId: string): Promise<ProfilePublication | null>;

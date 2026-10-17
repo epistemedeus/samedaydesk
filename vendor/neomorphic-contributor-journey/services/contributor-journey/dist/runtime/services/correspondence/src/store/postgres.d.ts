@@ -1,5 +1,5 @@
 import type { ActiveGrant, CreateEventInput, CreateGrantInput, CreateProjectInput, GrantRecord, ListEventsInput, Project } from "../types.js";
-import type { CorrespondenceStore, CreateEventResult, CreateProjectResult, ListEventsResult } from "./types.js";
+import type { CorrespondenceStore, CreateEventResult, CreateProjectResult, ListEventsResult, ProjectCreateRecord } from "./types.js";
 export type PostgresStoreOptions = {
     schema?: string;
     poolMax?: number;
@@ -17,6 +17,7 @@ export declare class PostgresStore implements CorrespondenceStore {
     close(): Promise<void>;
     findActiveGrantByTokenHash(tokenHash: string): Promise<ActiveGrant | null>;
     getProject(projectId: string): Promise<Project | null>;
+    readProjectCreate(idempotencyKey: string): Promise<ProjectCreateRecord | null>;
     createProject(input: CreateProjectInput): Promise<CreateProjectResult>;
     createGrant(input: CreateGrantInput): Promise<{
         grant: GrantRecord;

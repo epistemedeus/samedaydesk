@@ -190,7 +190,7 @@ test("cold production caller receives exact contributor bytes and both Postgres 
   assert.equal(result.code, 0, result.stderr || result.stdout);
   const received = JSON.parse(result.stdout);
   assert.deepEqual(received.caller, verifyCallerClosure());
-  assert.equal(received.product, "872c4f3006db6c70b45d124480cd019e0af50e69");
+  assert.equal(received.product, "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556");
   assert.equal(received.gateway, "function"); assert.equal(received.monitor, "function");
 });
 
@@ -199,7 +199,7 @@ test("altered host lock or required dependency is refused", async () => {
   const check = `
     import {verifyContributorRuntime} from './server/lib/contributor-artifact.js';
     const manifest = await verifyContributorRuntime(${JSON.stringify(artifact)});
-    if (manifest.sourceCommit !== '872c4f3006db6c70b45d124480cd019e0af50e69') throw new Error('product');
+    if (manifest.sourceCommit !== '0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556') throw new Error('product');
     const required = manifest.requiredDependencies;
     if (required.express !== '5.2.1' || required.pg !== '8.23.0' || required.zod !== '3.25.76') throw new Error('deps');
   `;
