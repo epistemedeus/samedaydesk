@@ -1,0 +1,8 @@
+{
+  "id": "checkout-path",
+  "seededId": "checkout-path",
+  "feature": "double-charge-guard",
+  "opts": { "path": "/api/checkout" },
+  "expectExit": 1,
+  "errorCode": "CHECKOUT_PATH_REFUSE"
+}
