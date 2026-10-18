@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { digest, immutable, requireThat, BoundaryError } from '../../agent-economy-foundation/dist/index.js';
+import { qualifyCandidate } from './candidate.js';
 export const DEPLOYED_PUBLIC_ESCROW = '0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff';
 export const PARENT_RUNTIME_VERSION = 'parent-98b592b8';
 export const PARENT_ABI_DIGEST = '96b14602568973ece900933659479073e3889be813797a184ad70da91313d2e7';
@@ -66,7 +67,9 @@ export function loadVendoredReceipt(chain) {
     return JSON.parse(readFileSync(new URL(`../fixtures/${file}`, import.meta.url), 'utf8'));
 }
 /** Public profile from an N3 receipt. Refused stays refused and keeps the receipt's reasons. */
-export function qualifyPublic(receipt) {
+export function qualifyPublic(receipt, runtime, bytecode) {
+    if (runtime !== undefined || bytecode !== undefined)
+        return qualifyCandidate(receipt, runtime, bytecode);
     requireThat(receipt?.schema === 'ae14.network-admission.v1', 'admission_schema');
     requireThat(Array.isArray(receipt.reasons), 'admission_schema');
     const reasons = [...receipt.reasons];

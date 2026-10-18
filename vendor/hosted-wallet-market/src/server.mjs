@@ -16,6 +16,7 @@ import {loadOwnerAuthority} from './owner-authority.mjs';
 import {frozenMarker} from './preserve.mjs';
 import {ADDITIVE_ENV_KEYS, loadDeploymentProfile} from './profile.mjs';
 import {publicFieldLeaks} from './public-text.mjs';
+import {protectNativeMarket} from './native-market-privacy.mjs';
 import {assertReplayKey, openSecrets, sealSecrets} from './seal.mjs';
 import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
@@ -1518,7 +1519,7 @@ export async function openHostedMarket(options) {
     try {
       if (!url.pathname.startsWith(PREFIX)) return miss(res, next);
       const path = url.pathname.slice(PREFIX.length);
-      if (machine && await machine.protectNative(path, res)) return miss(res, next);
+      if (await protectNativeMarket(path,res,{withClient,earnedSchema:profile.earnedSchema})) return miss(res,next);
       if (req.headers[WIRE_HEADER] && req.headers[WIRE_HEADER] !== WIRE_VERSION && path !== '/healthz') {
         return send(res, 409, {ok: false, code: 'wire_version_unsupported'});
       }
@@ -1534,6 +1535,9 @@ export async function openHostedMarket(options) {
         const operation=path.split('/').at(-1);
         const produced=await withTx(client=>mutate(client,req,body,null,tx=>machine.issueSession(operation,req,body,tx)));
         return finish(res,produced);
+      }
+      if (path === '/v1/market/profile' && req.method === 'GET' && machine) {
+        return send(res,200,{ok:true,value:machine.publicProfile()});
       }
       if (path === '/v1/market/discover' && req.method === 'GET' && machine) {
         return send(res, 200, {ok: true, value: await machine.discover(page(url))});

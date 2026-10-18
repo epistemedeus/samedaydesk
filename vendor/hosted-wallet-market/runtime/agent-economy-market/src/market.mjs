@@ -16,13 +16,14 @@ const exact = (value, keys) => {
 const operation = (actor, action, id) => digest({actor,action,id:key(id)});
 const profile = {id:'commerce-payments-v1.1.0-single-capture',rounding:'per_capture_floor',mode:'single_capture',escrow:COMMERCE_PAYMENTS_PIN};
 
-/** Source-only requester adapter. All account and kernel authorities are injected. */
+/** Requester adapter. All account and kernel authorities are injected. */
 export class RequesterMarket {
-  constructor({ store, kernel, accounts, authenticate, members, money, feeRecipient, fundingTarget, settlementAuthorityId, costs, partyTerms, assets = PRODUCTION_ASSETS, asset = BASE_USDC, now = () => new Date() }) {
-    requireThat(['fake','local_chain','unavailable'].includes(money.qualification),'sandbox_money_required');
+  constructor({ store, kernel, accounts, authenticate, members, money, feeRecipient, fundingTarget, settlementAuthorityId, costs, partyTerms, kernelProvenance='test', assets = PRODUCTION_ASSETS, asset = BASE_USDC, now = () => new Date() }) {
+    requireThat(['fake','local_chain','production','unavailable'].includes(money.qualification),'sandbox_money_required');
     assets.registration(asset);
     requireThat(store.assets === assets, 'asset_registry_binding');
-    Object.assign(this,{store,kernel,accounts,authenticate,members,money,feeRecipient,fundingTarget,settlementAuthorityId,costs,partyTerms,assets,asset,now});
+    requireThat(['test','fixture','production'].includes(kernelProvenance)&&(kernelProvenance!=='production'||money.qualification==='production'),'kernel_provenance');
+    Object.assign(this,{store,kernel,accounts,authenticate,members,money,feeRecipient,fundingTarget,settlementAuthorityId,costs,partyTerms,kernelProvenance,assets,asset,now});
     this.funding = new PostgresFundingReservations(store);
     this.fundingService = new FundingService(money,this.funding,now,assets);
     this.approvals = new PostgresApprovalJournal(store.pool,store.schema);
@@ -124,7 +125,7 @@ export class RequesterMarket {
       const reward = canonicalRewardForQuote(draft,this.assets);
       const parties=this.partyTerms?await this.partyTerms(a,m):null;
       const summary = JSON.stringify({...(parties?{parties}:{}),spec:row.spec,contributorId:m.actorId,payoutDestination:m.payoutDestination,asset:this.asset,gross:input.gross,fee,feeRecipient:this.feeRecipient,profile,railCostCap:input.railCostCap,expiresAt:input.expiresAt});
-      const created = await this.kernel.createTask({title:row.spec.title,summary:row.spec.summary,provenance:'test',budget:reward,correctionMaxRevisions:0,
+      const created = await this.kernel.createTask({title:row.spec.title,summary:row.spec.summary,provenance:this.kernelProvenance,budget:reward,correctionMaxRevisions:0,
         terms:{summary,reward,claimTtlSeconds:3600,maxArtifactBytes:65536,allowedMediaTypes:['application/json'],slotLimit:1},
         idempotencyKey:qid,requestHash:digest({input,summary})});
       const canonical = created.body.task;

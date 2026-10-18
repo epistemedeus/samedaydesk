@@ -5,7 +5,7 @@ export function requesterMoneyFromRail(rail) {
   requireThat(rail && typeof rail.readProof==='function' && typeof rail.captureOutcome==='function' && typeof rail.capture==='function','a_interface_required');
   requireThat(digest(rail.protocol)===digest(COMMERCE_PAYMENTS_PIN),'capture_adapter_pin');
   return {
-    authorityId:rail.authorityId,protocol:rail.protocol,qualification:'local_chain',
+    authorityId:rail.authorityId,protocol:rail.protocol,qualification:rail.qualification??'local_chain',
     async readProof(id){const p=await rail.readProof(id);return p?checkedFundingProof(p):null;},
     async authorizationDeadline(id){return rail.authorizationDeadline(id);},
     async authorizationTimestamp(id){return rail.authorizationTimestamp(id);},

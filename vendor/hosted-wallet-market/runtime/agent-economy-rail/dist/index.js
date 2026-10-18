@@ -6,6 +6,7 @@ export * from './wallet.js';
 export * from './byow.js';
 export * from './review-authority.js';
 export * from './network-profile.js';
+export * from './candidate.js';
 export * from './network-ext.js';
 export * from './network-fees.js';
 export * from './owner-export.js';

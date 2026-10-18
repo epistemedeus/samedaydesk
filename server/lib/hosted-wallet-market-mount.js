@@ -69,7 +69,7 @@ function configured(options, env) {
     replayKey: options.replayKey ?? env.CONTRIBUTOR_JOURNEY_REPLAY_KEY,
     readAcceptedSource: options.readAcceptedSource,
     machineProfile: options.machineProfile ?? env.HOSTED_WALLET_MARKET_MACHINE_PROFILE,
-    machineAuthority: options.machineAuthority,
+    machineAuthority: options.machineAuthority ?? env.HOSTED_WALLET_MARKET_MACHINE_AUTHORITY_MODULE,
     ownerToken: options.ownerToken ?? env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? env.EARNED_WORK_OWNER_TOKEN,
   };
 }

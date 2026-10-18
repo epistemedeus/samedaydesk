@@ -12,6 +12,7 @@ import {RequesterMarket} from '../runtime/agent-economy-market/src/market.mjs';
 import {MarketStore} from '../runtime/agent-economy-market/src/store.mjs';
 import {requesterMoneyFromRail} from '../runtime/agent-economy-market/src/a-money-adapter.mjs';
 import {installedSourceSha256,hostSourceSha256} from './native-debt.mjs';
+import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
@@ -24,7 +25,10 @@ export function readMachineCapability(input,{sdsRoot,origin,tenant}){
  }
  if(input.schema!=='pilot.machine-market.capability.v1'||input.profile!=='machine-market'||input.origin!==origin||input.tenant!==tenant||
   input.sourceSha256!==installedSourceSha256()||input.hostSha256!==hostSourceSha256(sdsRoot)||
-  input.discovery!=='qualified-source'||!['unfunded','sandbox'].includes(input.money))refuse('machine_profile_refused');
+  input.discovery!=='qualified-source'||!['unfunded','sandbox','qualified'].includes(input.money))refuse('machine_profile_refused');
+ if(input.networkSource)machineNetworkSource(input.networkSource);
+ if(input.money==='qualified'&&!input.networkSource)refuse('machine_profile_refused');
+ if(input.money==='qualified'&&(!['public','owned-fork'].includes(input.execution?.class)||(input.execution.class==='owned-fork'&&!/^[-a-zA-Z0-9_.]{1,64}$/.test(input.execution.forkId||''))))refuse('machine_profile_refused');
  return Object.freeze({...input});
 }
 export async function openMachineMarket({capability,authority,sdsRoot,profile,authenticate,withClient,now=()=>Date.now()}){
@@ -36,15 +40,25 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
  const kernel=await createPostgresStore(profile.databaseUrl,{schema:profile.earnedSchema,poolMax:4});
  const accountService=new ContributorAccountService({database:kernel,kernel,enabled:true,replayKey:Buffer.from(profile.replayKey,'hex'),allowedKernelProvenance:['test','fixture']});
  const pool=new pg.Pool({connectionString:profile.databaseUrl,max:6,connectionTimeoutMillis:10000});
- let journal,rail,market;
- const moneyUnavailable=()=>refuse('public_money_unqualified_source_drift');
+ let journal,rail,market,networkSource,contracts,operator,networkClass='sandbox';
+ const moneyUnavailable=()=>refuse('machine_authority_required');
  try{
   const columns=(await withClient(c=>c.query("SELECT column_name FROM information_schema.columns WHERE table_schema='hosted_wallet_market' AND table_name='wallets'"))).rows.map(r=>r.column_name);
   if(['control_epoch','control_digest','control_challenge'].some(name=>!columns.includes(name)))refuse('machine_schema_required');
   let assets=PRODUCTION_ASSETS,asset=BASE_USDC;
+  if(capability.networkSource){
+   networkSource=machineNetworkSource(capability.networkSource);
+   if(profile.chain!==networkSource.chain||profile.settlementToken!==networkSource.token)refuse('machine_authority_required');
+   asset={chain:networkSource.chain,token:networkSource.token,decimals:6,symbol:'USDC'};
+   const environment=capability.execution?.class==='owned-fork'?'sandbox':'production';
+   assets=new AssetRegistry(environment,[{asset,environment,canonical:{asset:'USDC',network:environment==='production'&&networkSource.chainId===8453?'base':networkSource.chain}}]);
+  }
   let money={qualification:'unavailable',authorityId:'unqualified',protocol:COMMERCE_PAYMENTS_PIN,
     readProof:moneyUnavailable,captureOutcome:moneyUnavailable,capture:moneyUnavailable};
-  if(capability.money==='sandbox'){
+  if(capability.money==='qualified'){
+   const opened=await openQualifiedMoney({capability,authority,profile,assertCurrent,approve:request=>{assertCurrent();return market.authorizeCaptureRequest(request);},now});
+   ({journal,rail,assets,asset,contracts,operator,networkClass}=opened);networkSource=opened.candidate;money=requesterMoneyFromRail(rail);
+  }else if(capability.money==='sandbox'){
    if(!authority||authority.networkClass!=='sandbox'||authority.contracts?.chain!=='eip155:31337'||profile.chain!==authority.contracts.chain||profile.settlementToken!==authority.contracts.token||!authority.operator?.signTransaction)refuse('machine_authority_required');
    const u=new URL(authority.rpcUrl);if(u.protocol!=='http:'||u.hostname!=='127.0.0.1'||u.username||u.password||u.hash)refuse('machine_authority_required');
    const chain=defineChain({id:31337,name:'disposable machine-market',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[u.href]}}});
@@ -59,6 +73,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    rail=new CommercePaymentsRail(journal,client,authority.operator,'machine-commerce-v1',authority.contracts,
      request=>{assertCurrent();return market.authorizeCaptureRequest(request);},1n,assets);
    money=requesterMoneyFromRail(rail);
+   contracts=authority.contracts;operator=authority.operator;
   }else if(authority)refuse('machine_authority_refused');
   const store=new MarketStore(pool,profile.earnedSchema,assets);
   const query=(sql,args)=>withClient(c=>c.query(sql,args));
@@ -84,7 +99,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
       .update('machine-market-principal:'+digest({tenant,id,allocation})).digest('base64url'));
     let p=await kernel.findContributorByTokenHash(tokenHash);
     if(!p){try{await kernel.createContributorToken({publicId:'market-'+digest({tenant,id,allocation}).slice(0,32),payoutDestination:q.payoutDestination,
-      taskScope:allocation,provenance:'test',tokenHash,expiresAt:null});}catch(e){if(e.code!=='conflict'&&e.code!=='23505')throw e;}
+      taskScope:allocation,provenance:networkClass==='public'?'production':'test',tokenHash,expiresAt:null});}catch(e){if(e.code!=='conflict'&&e.code!=='23505')throw e;}
       p=await kernel.findContributorByTokenHash(tokenHash);}
     await query(`INSERT INTO journey_account_kernel_bindings(account_id,kernel_scope,earned_task_id,public_id,token_hash,principal_id,source,created_at)
       VALUES($1,$2,$2,$3,$4,$5,'created',now()) ON CONFLICT DO NOTHING`,[id,allocation,p.publicId,tokenHash,p.id]);return p;
@@ -93,14 +108,14 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   const partyTerms=async(a,contributor)=>{
    const payer=await member(a.tenantId,a.actorId);
    if(!payer?.payoutDestination||!contributor.payoutDestination)refuse('wallet_control_required');
-   return {origin:capability.origin,sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256,profile:capability.profile,money:capability.money,
+   return {origin:capability.origin,sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256,profile:capability.profile,money:capability.money,...(networkSource?{networkIdentityDigest:networkSource.identityDigest}:{}),
     payer:payer.payoutDestination,payerEpoch:payer.epoch,payerControl:payer.controlDigest,
     receiver:contributor.payoutDestination,receiverEpoch:contributor.epoch,receiverControl:contributor.controlDigest};
   };
   market=new RequesterMarket({store,kernel,accounts,members:{resolve:member},authenticate:async req=>{
     const a=await authenticate(req);return {tenantId:profile.tenant,actorId:a.accountId};},money,assets,asset,
-    feeRecipient:profile.feeRecipient,fundingTarget:rail?authority.contracts.escrow:'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',
-    settlementAuthorityId:'machine-requester-review-v1',partyTerms,now:()=>new Date(now())});
+    feeRecipient:profile.feeRecipient,fundingTarget:rail?contracts.escrow:capability.networkSource?.escrow??'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',
+    settlementAuthorityId:'machine-requester-review-v1',partyTerms,kernelProvenance:networkClass==='public'?'production':'test',now:()=>new Date(now())});
   await market.prepare();
   async function issueSession(operation,req,body,client){
    const input=operation==='signup'?{password:body.password,displayName:body.displayName}:body;
@@ -150,15 +165,15 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    const previous=journal.all('funding').find(x=>digest(x.quote)===digest(q));
    const payer=await member(q.tenantId,q.requesterId),receiver=await member(q.tenantId,q.contributorId);
    if(!parties)refuse('wallet_authority_changed');
-   if(!previous?.authorizationTx&&(parties.sourceSha256!==capability.sourceSha256||parties.hostSha256!==capability.hostSha256||parties.profile!==capability.profile||parties.money!==capability.money))refuse('machine_profile_refused');
+   if(!previous?.authorizationTx&&(parties.sourceSha256!==capability.sourceSha256||parties.hostSha256!==capability.hostSha256||parties.profile!==capability.profile||parties.money!==capability.money||parties.networkIdentityDigest!==networkSource?.identityDigest))refuse('machine_profile_refused');
    if(!previous?.authorizationTx&&(payer.controlDigest!==parties.payerControl||payer.epoch!==parties.payerEpoch||payer.payoutDestination!==parties.payer||
     receiver.controlDigest!==parties.receiverControl||receiver.epoch!==parties.receiverEpoch||receiver.payoutDestination!==parties.receiver))refuse('wallet_authority_changed');
    const expiry=Math.floor(Date.parse(q.expiresAt)/1000),authorizationExpiry=expiry+REVIEW_WINDOW_SECONDS+CAPTURE_MARGIN_SECONDS+1;
-   const payment={operator:authority.operator.address,payer:parties.payer,receiver:q.payoutDestination,token:q.asset.token,maxAmount:BigInt(q.gross),
+   const payment={operator:operator.address,payer:parties.payer,receiver:q.payoutDestination,token:q.asset.token,maxAmount:BigInt(q.gross),
     preApprovalExpiry:expiry,authorizationExpiry,refundExpiry:authorizationExpiry,minFeeBps:500,maxFeeBps:500,feeReceiver:q.feeRecipient,salt:BigInt('0x'+digest(q))};
    const proofId=await rail.bindQuote(q,payment),typedData=await rail.authorizationTypedData(proofId);
-   return JSON.parse(JSON.stringify({schema:'pilot.machine-funding-intent.v1',networkClass:'sandbox',chain:q.asset.chain,
-    quote:q,quoteDigest:digest(q),proofId,payment,typedData,contracts:authority.contracts,origin:capability.origin,
+   return JSON.parse(JSON.stringify({schema:'pilot.machine-funding-intent.v1',networkClass,chain:q.asset.chain,...(networkSource?{networkSource,execution:capability.execution}:{}),
+    quote:q,quoteDigest:digest(q),proofId,payment,typedData,contracts,origin:capability.origin,
     profile:capability.profile,sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256},(_,v)=>typeof v==='bigint'?v.toString():v));
   }
   async function fundingSubmitted(req,input){
@@ -243,20 +258,14 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    const items=rows.map(r=>({taskId:r.id,title:r.spec.title,summary:r.spec.summary,criteria:r.spec.criteria,payableKinds:r.spec.payableKinds,assigned:Boolean(r.selected_quote),fundingState:r.funding_started?'funding_started':'unfunded_interest'}));
    for(const r of rows)await store.measure(profile.tenant,r.id,'discovery',randomBytes(16).toString('hex'),'anonymous',
     {verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null});
-   return {items,nextCursor:rows.length===limit?rows.at(-1).id:null,publicEnabled:true,moneyQualified:false,provenance:money.qualification};
+   return {items,nextCursor:rows.length===limit?rows.at(-1).id:null,publicEnabled:true,moneyQualified:Boolean(networkSource&&rail),signerAuthority:false,provenance:money.qualification};
   }
-  async function protectNative(path,res){
-   if(!path.startsWith('/v1/core/tasks'))return false;
-   const ids=new Set((await pool.query(`SELECT allocation_id FROM "${profile.earnedSchema}".ae14_market_quotes`)).rows.map(r=>r.allocation_id));
-   const task=path.match(/^\/v1\/core\/tasks\/([^/]+)/)?.[1];
-   if(task&&ids.has(decodeURIComponent(task)))refuse('not_found',404);
-   if(path==='/v1/core/tasks'){
-    const json=res.json.bind(res);res.json=body=>json(Array.isArray(body?.tasks)?{...body,tasks:body.tasks.filter(t=>!ids.has(t.id))}:body);
-   }
-   return true;
+  function publicProfile(){
+   assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution'];
+   return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false};
   }
-  return {invoke,discover,protectNative,issueSession,market,rail,readActions,
-   descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,publicMoney:false},
+  return {invoke,discover,publicProfile,issueSession,market,rail,readActions,
+   descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,sourceQualified:Boolean(networkSource),publicMoney:networkClass==='public'?'authority_checked_per_operation':false,signerAuthority:false},
    async close(){journal?.close();await pool.end();await kernel.close();}};
  }catch(e){journal?.close();await pool.end();await kernel.close();throw e;}
 }

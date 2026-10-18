@@ -47,12 +47,19 @@ export class CommercePaymentsRail {
             requireThat(abiDigest === digest(abiIndex(pinnedAbi)) && abiDigest === selectedReleaseAbiDigest(), 'rail_abi_pin');
         // Refuses the selected 1.1.0 digest when the address is the deployed public escrow.
         bindVersionedContract({ versionId: contracts.contractVersion ?? 'sandbox-selected-v1.1.0', abiDigest, address: contracts.escrow });
-        this.contracts = structuredClone(contracts);
+        this.contracts = { ...structuredClone({ ...contracts, network: undefined }), network: contracts.network };
     }
-    identity() { return { configuredChain: this.contracts.chain, asset: { chain: this.contracts.chain, token: this.contracts.token, decimals: 6, symbol: 'USDC' }, assets: this.assets }; }
+    get qualification() { return this.contracts.network?.networkClass === 'public' ? 'production' : 'local_chain'; }
+    common(r) { return { ...common(r), provenance: this.qualification }; }
+    identity() { return { ...this.contracts.network, configuredChain: this.contracts.chain, asset: { chain: this.contracts.chain, token: this.contracts.token, decimals: 6, symbol: 'USDC' }, assets: this.assets }; }
     intentIdentity() { return { ...this.identity(), codeHashes: this.contracts.codeHashes }; }
     async configured() {
         await checkChainIdentity(this.client, this.identity(), false);
+        const candidate = this.contracts.network?.candidate;
+        if (candidate) {
+            const slot = await this.client.getStorageAt({ address: candidate.token, slot: candidate.implementationSlot });
+            requireThat(slot?.toLowerCase() === '0x' + '0'.repeat(24) + candidate.implementation.slice(2), 'asset_implementation_changed');
+        }
         for (const address of new Set([this.contracts.escrow, this.contracts.collector, this.contracts.refundCollector, this.contracts.token, ...Object.keys(this.contracts.codeHashes)])) {
             const code = await this.client.getCode({ address });
             requireThat(code && code.length > 2, 'contract_code_absent');
@@ -216,10 +223,11 @@ export class CommercePaymentsRail {
                     return null;
                 }
             }
-            const events = await this.client.getContractEvents({ address: this.contracts.escrow, abi: this.contracts.abi, fromBlock: 0n, toBlock: 'latest' });
+            const start = this.contracts.network && b.authorizationTx ? (await this.client.getTransactionReceipt({ hash: b.authorizationTx })).blockNumber : 0n;
+            const events = await this.client.getContractEvents({ address: this.contracts.escrow, abi: this.contracts.abi, fromBlock: start, toBlock: 'latest' });
             const selected = events.filter((e) => e.args.paymentInfoHash === b.hash);
             const state = await this.client.readContract({ address: this.contracts.escrow, abi: this.contracts.abi, functionName: 'paymentState', args: [b.hash] });
-            const head = await this.client.getBlockNumber({ cacheTime: 0 });
+            const head = this.qualification === 'production' ? (await this.client.getBlock({ blockTag: 'finalized' })).number : await this.client.getBlockNumber({ cacheTime: 0 });
             for (const e of selected) {
                 const receipt = await this.client.getTransactionReceipt({ hash: e.transactionHash });
                 const block = await this.client.getBlock({ blockNumber: e.blockNumber });
@@ -259,7 +267,7 @@ export class CommercePaymentsRail {
                     if (e.head - authorization.blockNumber + 1n >= this.confirmationDepth && Number((await this.client.getBlock()).timestamp) < b.payment.authorizationExpiry) {
                         state = 'confirmed';
                         b.stage = 'confirmed_usable';
-                        finalityRef = `local:${authorization.blockHash}:${authorization.transactionHash}:${authorization.logIndex}`;
+                        finalityRef = `${this.qualification === 'production' ? 'public:' + this.contracts.chain : 'local'}:${authorization.blockHash}:${authorization.transactionHash}:${authorization.logIndex}`;
                     }
                     else {
                         state = 'pending';
@@ -300,7 +308,7 @@ export class CommercePaymentsRail {
                 if (sum(refunds, 'amount') !== BigInt(r.amount) || refundable !== 0n)
                     return unknown(r);
                 const last = refunds.at(-1);
-                return checked('CaptureOutcome', { ...common(r), state: 'refunded', txRef: `${last.transactionHash}:${last.logIndex}` });
+                return checked('CaptureOutcome', { ...this.common(r), state: 'refunded', txRef: `${last.transactionHash}:${last.logIndex}` });
             }
             if (captures.length) {
                 // Unjournaled operator capture is an incident, not authorized application acceptance.
@@ -313,14 +321,14 @@ export class CommercePaymentsRail {
                 if (!op || !intent || captures.length !== 1 || captures[0].transactionHash !== intent.txId || digest(op.request) !== digest(r) || reclaimed || sum(captures, 'amount') !== BigInt(r.amount) || sum(captures, 'feeAmount') !== BigInt(r.feeAmount) || captures.some(x => x.args.feeReceiver.toLowerCase() !== r.feeRecipient.toLowerCase()) || capturable !== 0n || refundable !== BigInt(r.amount))
                     return unknown(r);
                 const last = captures.at(-1), final = e.head - last.blockNumber + 1n >= this.confirmationDepth;
-                return checked('CaptureOutcome', { ...common(r), state: 'captured', amount: r.amount, feeAmount: r.feeAmount, feeRecipient: r.feeRecipient, txRef: `${last.transactionHash}:${last.logIndex}`, finality: final ? 'final' : 'pending', finalityRef: final ? `local:${last.blockHash}:${last.blockNumber}` : null });
+                return checked('CaptureOutcome', { ...this.common(r), state: 'captured', amount: r.amount, feeAmount: r.feeAmount, feeRecipient: r.feeRecipient, txRef: `${last.transactionHash}:${last.logIndex}`, finality: final ? 'final' : 'pending', finalityRef: final ? `${this.qualification === 'production' ? 'public:' + this.contracts.chain : 'local'}:${last.blockHash}:${last.blockNumber}` : null });
             }
             if (reclaimed && capturable === 0n)
-                return checked('CaptureOutcome', { ...common(r), state: 'expired_reclaimed', txRef: `${reclaimed.transactionHash}:${reclaimed.logIndex}` });
+                return checked('CaptureOutcome', { ...this.common(r), state: 'expired_reclaimed', txRef: `${reclaimed.transactionHash}:${reclaimed.logIndex}` });
             const timestamp = Number((await this.client.getBlock()).timestamp);
             if (capturable !== BigInt(r.amount) || timestamp >= b.payment.authorizationExpiry || e.head - auth.blockNumber + 1n < this.confirmationDepth)
                 return unknown(r);
-            return checked('CaptureOutcome', { ...common(r), state: 'authorized', backing: 'escrowed', authorizationRef: b.proofId, expiresAt: new Date(b.payment.authorizationExpiry * 1000).toISOString() });
+            return checked('CaptureOutcome', { ...this.common(r), state: 'authorized', backing: 'escrowed', authorizationRef: b.proofId, expiresAt: new Date(b.payment.authorizationExpiry * 1000).toISOString() });
         });
     }
     async captureOutcome(request) { return this.readback(request); }
