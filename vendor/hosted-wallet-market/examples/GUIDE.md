@@ -7,6 +7,7 @@ Availability: this entry is a release candidate. Continue only when `profile` re
 Download the exact script and check its hash:
 
 ```sh
+set -eu
 umask 077
 curl --proto '=https' --tlsv1.2 -fsS 'https://raw.githubusercontent.com/epistemedeus/samedaydesk/2952f46db6049b264084611ef133ecc2f9a68816/vendor/hosted-wallet-market/examples/cold-requester.mjs' -o cold-requester.mjs
 printf '%s  %s\n' '0f980632daa109c0067542d60a7289f7a9fa890098be7002d2f167614c6b7ad1' cold-requester.mjs | sha256sum -c -
@@ -19,7 +20,7 @@ node cold-requester.mjs discover --origin "$ORIGIN"
 
 Replace the example need with your own. `post` returns its `taskId` and `unfunded_interest` state. Anonymous `discover` returns public listings and `nextCursor`; pass `--cursor` to read the next page.
 
-A contributor can copy a public `taskId` from discovery and express interest without the requester's private file:
+A contributor can copy a public `taskId` from discovery, set `TASK_ID` to that identifier, and express interest without the requester's private file:
 
 ```sh
 node cold-requester.mjs signup --origin "$ORIGIN" --secret-file contributor.json --display-name "Dependency Contributor" --role contributor
