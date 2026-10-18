@@ -110,7 +110,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    if(payer?.epoch!==p.payerEpoch||payer?.controlDigest!==p.payerControl||payer?.payoutDestination!==p.payer||receiver?.epoch!==p.receiverEpoch||receiver?.controlDigest!==p.receiverControl||receiver?.payoutDestination!==p.receiver)refuse('wallet_authority_changed');
   }
   market=new RequesterMarket({store,kernel,accounts,members:{resolve:member},authenticate:async req=>{
-    const a=await authenticate(req);return {tenantId:profile.tenant,actorId:a.accountId};},money,assets,asset,
+    const a=await authenticate(req);return {tenantId:profile.tenant,actorId:a.accountId};},money,assets,asset,coldOrigin:profile.origin,
     feeRecipient:profile.feeRecipient,fundingTarget:rail?contracts.escrow:capability.networkSource?.escrow??'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',
     settlementAuthorityId:'machine-requester-review-v1',partyTerms,kernelProvenance:networkClass==='public'?'production':'test',now:()=>new Date(now())});
   await market.prepare();
@@ -197,13 +197,15 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    return market.fund(req,{taskId:input.taskId,quoteDigest:input.quoteDigest,proofId:input.proofId});
   }
   const readActions=new Set(['list','read','retained','measurement','payoutDisposition','reconcile']);
-  const methods=new Set(['post','list','interest','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
+  const methods=new Set(['post','list','interest','readback','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
   async function dispatch(req,action,input,operationId){
    assertCurrent();
    if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
    const account=await authenticate(req,{write:true});
-   if(['post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(action)&&account.role!=='requester')refuse('requester_required',403);
-   if(['interest','assent','claim','deliver'].includes(action)&&account.role!=='contributor')refuse('contributor_required',403);
+   if(action==='readback' && !['post','interest'].includes(input.action))refuse('body_refused',400);
+   const roleAction=action==='readback'?input.action:action;
+   if(['post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(roleAction)&&account.role!=='requester')refuse('requester_required',403);
+   if(['interest','assent','claim','deliver'].includes(roleAction)&&account.role!=='contributor')refuse('contributor_required',403);
    if(action==='walletChallenge')return walletChallenge(account,input);
    if(action==='walletProve')return walletProve(account,input);
    if(action==='fundingIntent')return fundingIntent(req,input);
@@ -228,7 +230,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
      acquisition:{observed:'unknown',selfReported:'unknown'},profit:null,coverage:'observed_records_only'};
    }
    const taskId=input.taskId||result?.taskId;
-   if(taskId&&methods.has(action)&&action!=='measurement'){
+   if(taskId&&methods.has(action)&&!['measurement','post','interest','readback'].includes(action)){
     await store.measure(profile.tenant,taskId,'transition',digest({actor:account.accountId,action,operationId:operationId??digest(input)}),account.accountId,
      {action,verification:'server_observed',source:'hosted-machine-market',operationId:operationId??null,moneyProvenance:money.qualification,acquisition:'unknown'});
    }
@@ -259,7 +261,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   }
   function publicProfile(){
    assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution'];
-   return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false};
+   return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
+    mutationReceipts:{schema:'pilot.machine-market.cold-mutation-receipt.v1',actions:['post','interest'],readback:'/v1/market/readback'}};
   }
   return {invoke,discover,publicProfile,issueSession,market,rail,readActions,
    descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,sourceQualified:Boolean(networkSource),publicMoney:networkClass==='public'?'authority_checked_per_operation':false,signerAuthority:false},

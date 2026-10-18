@@ -1549,7 +1549,7 @@ export async function openHostedMarket(options) {
           return send(res, 200, {ok: true, value: {action: machineAction[1], result}});
         } catch (error) {
           if (error?.name === 'Error' && error?.constructor?.name === 'BoundaryError' && /^[a-zA-Z0-9_]+$/.test(error.code)) {
-            throw httpError(['forbidden', 'unauthorized'].includes(error.code) ? 403 : 409, error.code);
+            throw httpError(error.code==='operation_absent'?404:['forbidden', 'unauthorized'].includes(error.code) ? 403 : 409, error.code);
           }
           throw error;
         }

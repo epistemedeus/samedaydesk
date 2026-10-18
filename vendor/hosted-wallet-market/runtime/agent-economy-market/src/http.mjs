@@ -2,7 +2,7 @@ import { requireThat } from '../../agent-economy-foundation/dist/index.js';
 
 /** Private bearer API adapter. authenticate receives the request, never JSON. */
 export function marketHttpHandler(market) {
-  const actions = new Set(['post','list','interest','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
+  const actions = new Set(['post','list','interest','readback','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
   return async (req,res) => {
     try {
       const match = /^\/v1\/market\/([A-Za-z]+)$/.exec(req.url);
@@ -22,7 +22,7 @@ export function marketHttpHandler(market) {
       res.end(JSON.stringify({ok:true,result}));
     } catch (error) {
       const code = error.code ?? (error instanceof SyntaxError ? 'invalid_json' : 'internal_error');
-      const status = code === 'unauthorized' ? 401 : code === 'forbidden' ? 403 : code === 'not_found' ? 404 : code === 'internal_error' ? 500 : 409;
+      const status = code === 'unauthorized' ? 401 : code === 'forbidden' ? 403 : ['not_found','operation_absent'].includes(code) ? 404 : code === 'internal_error' ? 500 : 409;
       res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'}); res.end(JSON.stringify({ok:false,error:{code}}));
     }
   };
