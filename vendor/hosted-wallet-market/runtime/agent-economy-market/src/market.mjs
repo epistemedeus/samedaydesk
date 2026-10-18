@@ -263,8 +263,16 @@ export class RequesterMarket {
     const approval = q ? await this.approval(a.tenantId,q.canonicalTaskId) : null;
     const measures = await this.store.measures(a.tenantId,row.id);
     const state = approval?.state ?? (canonical?.verdict ? 'reviewed' : canonical?.submission ? 'delivered' : canonical?.reservation ? 'claimed' : f?.available ? 'funded' : 'unfunded_interest');
+    let currentFulfillment={state:approval?'hold':'not_captured',observation:'unavailable'};
+    if(approval){
+      let observed;try{observed=await this.money.captureOutcome(approval.request);}catch{observed=null;}
+      const settled=approval.settlement;
+      const confirmed=settled&&observed?.state==='captured'&&observed.finality==='final'&&observed.txRef===settled.txRef&&
+        observed.finalityRef===settled.finalityRef&&observed.amount===q.gross&&observed.feeAmount===q.platformFee&&observed.feeRecipient===q.feeRecipient;
+      currentFulfillment={state:confirmed?'confirmed_capture':'hold',observation:observed?.state??'unknown'};
+    }
     const incident=f&&typeof this.money.readIncident==='function'?await this.money.readIncident(f.proof.proofId):null;
-    return {taskId:row.id,spec:row.spec,quote:q??null,quoteDigest:q?digest(q):null,selected:row.selected_quote === q?.quoteId,state,funding:f,claim:canonical?.reservation??null,submission:canonical?.submission??null,verdict:canonical?.verdict??null,obligation:canonical?.obligation??null,settlement:approval?.settlement??null,captureOutcome:approval?.outcome??null,incident,measures};
+    return {taskId:row.id,spec:row.spec,quote:q??null,quoteDigest:q?digest(q):null,selected:row.selected_quote === q?.quoteId,state,funding:f,claim:canonical?.reservation??null,submission:canonical?.submission??null,verdict:canonical?.verdict??null,obligation:canonical?.obligation??null,settlement:approval?.settlement??null,captureOutcome:approval?.outcome??null,currentFulfillment,incident,measures};
   }
   async grantConsumer(context,input) {
     const a = await this.actor(context); exact(input,['taskId','consumerId']);
@@ -322,6 +330,6 @@ export class RequesterMarket {
     return {taskId:view.taskId,feeBase:view.quote?.gross??null,quotedFee:view.quote?.platformFee??null,roundingProfile:view.quote?.fee.profile??null,declaredRailCostCap:view.quote?.rail.costCap??null,
       confirmedFunding:view.funding?.available??false,serviceCosts:costs,reviews:view.measures.filter(m=>m.kind === 'review'),usefulOutcomes:view.measures.filter(m=>m.kind === 'review' && m.payload.useful),
       downstreamUse:view.measures.filter(m=>m.kind === 'downstream_use'),repeatPurchases:view.measures.filter(m=>m.kind === 'repeat_purchase'),
-      qualifiedCapture:view.settlement?.qualified??false,provenance:view.settlement?.provenance??null,paidWork:view.settlement?.provenance === 'production' && view.spec.cohort === 'outside',cohort:view.spec.cohort};
+      qualifiedCapture:view.settlement?.qualified??false,currentFulfillment:view.currentFulfillment,provenance:view.settlement?.provenance??null,paidWork:view.currentFulfillment.state==='confirmed_capture' && view.settlement?.provenance === 'production' && view.spec.cohort === 'outside',cohort:view.spec.cohort};
   }
 }

@@ -44,7 +44,7 @@
     "runtime/agent-economy-market/src/a-money-adapter.mjs": "15758b751b6087dcf10aeb7ab1c739a17010e96d2673e8ac622b4849514e4f02",
     "runtime/agent-economy-market/src/canonical-accounts.mjs": "7eb54d59f6409091f87c3d1351e6e9229cf3b89846076392a8954b117e156539",
     "runtime/agent-economy-market/src/http.mjs": "bb308e02c5f5f3ebf2cb7465bf441b8f921ea3accfe8bdfa9f726f59814b68ba",
-    "runtime/agent-economy-market/src/market.mjs": "eb331136a8e9dd56625b0ad22d0e0f8a24264e252c64a314c5d5ee8b3769d32b",
+    "runtime/agent-economy-market/src/market.mjs": "9be65613869ad6823bbb750a94b9f01d5ebc4a176d77db0738e4eff77d71ed44",
     "runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "runtime/agent-economy-market/src/store.mjs": "2b3ba45d4a73a59f1ffc04aeb6c9cc42bdc2a8855c0c3e09f48db65af5171a9e",
     "runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487"

@@ -235,7 +235,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    const task=path.match(/^\/v1\/core\/tasks\/([^/]+)/)?.[1];
    if(task&&ids.has(decodeURIComponent(task)))refuse('not_found',404);
    if(path==='/v1/core/tasks'){
-    const json=res.json.bind(res);res.json=body=>json({...body,tasks:body.tasks.filter(t=>!ids.has(t.id))});
+    const json=res.json.bind(res);res.json=body=>json(Array.isArray(body?.tasks)?{...body,tasks:body.tasks.filter(t=>!ids.has(t.id))}:body);
    }
    return true;
   }
