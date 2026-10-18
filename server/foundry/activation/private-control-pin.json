@@ -225,7 +225,7 @@
     "vendor/hosted-wallet-market/src/retained-outcome.mjs": "b4b4a90eee771f7709c126474c99bb4203cb1364808d85027bb05fe2b05562a3",
     "vendor/hosted-wallet-market/src/seal.mjs": "2c74ff45622e590286d9902c9e29e91d72e4f5edfee90ea28bdc7450dacc2c6a",
     "vendor/hosted-wallet-market/src/seed.mjs": "ecf605d362916ba1e00f718c4b5167d8945d514820c78f104d7435a4ff355c4c",
-    "vendor/hosted-wallet-market/src/server.mjs": "8937d7ad62832442cad827ac12c7dd0a476f0bca209dfc8ec8ecd2b2f83c8553",
+    "vendor/hosted-wallet-market/src/server.mjs": "3a77ed0c49d443a8e6f9b50e990ba4f7fe4df82d8501ad47af2b52bafdf3cf91",
     "vendor/hosted-wallet-market/src/signature.mjs": "50d1efc5a642eaf9dfd03c0467427082c1e0536162bcfe6e6172a24866628f44",
     "vendor/hosted-wallet-market/src/target.mjs": "d14b3c3ee74ad10ddb095090d6f57cf8ddb2c5c651320fb3170437e7704a4963",
     "vendor/hosted-wallet-market/src/tls.mjs": "eeaf7ddee253857540e0c043c849c69124afe06fd881d1df52b8d60cbc16ef76",
@@ -1217,7 +1217,7 @@
     "vendor/hosted-wallet-market/package-lock.json": "0a995e05481e417920877929f5695ea60269e36f9d8c7579c8b445623bd8031d",
     "vendor/hosted-wallet-market/ROOT267-RECEIVING.md": "3d3ba2525efffe18333a3df730bc0c8be198a000bf93a20dd1ed4ffe2ef10a39",
     "vendor/hosted-wallet-market/contracts/machine-runtime.json": "56046aa486bdd5f43fd8dc2e6b13f409d13d0d96ac52c25e06f570c2bcd3e50f",
-    "vendor/hosted-wallet-market/src/machine-market.mjs": "6f3d2d1f1006fa412b9ac6b3e8bd6c06a477d1571b14a19c33a470fba67ea208",
+    "vendor/hosted-wallet-market/src/machine-market.mjs": "062643e442b3d3bb2431a57d127b9b8b0dbd4c39823ffec799090cdb35ea6071",
     "vendor/hosted-wallet-market/src/machine-funnel.mjs": "c9e849ad0e189fa940e0b5e96b76b2aece1e8acb5e332a2676e60bce19b73b82",
     "vendor/hosted-wallet-market/src/machine-profile-document.mjs": "dfd31f3b9e531f4981cd5ede6ed35edb8a3b2ef5be323c0ed304a14d1f3a48c0",
     "vendor/hosted-wallet-market/schema/007_machine_market.sql": "e4787f415d8ca6e4f73aa653def56115f794e497b4425840a7267b8625e525bb",
@@ -1259,11 +1259,11 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/byow.js": "129300bb0456416731b82106c576fdb170a0424103841369bebb64d140f8db10",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/network-ext.js": "435e05a2227662d7a12c4ea82a3eaf07a08187a9e4311c4c0ddaee4e978e7dcf",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/wallet.js": "05ff6b4d3835ca79eac8872820b3a442d3940d26c7ab9a46b15799e49059f523",
-    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/market.mjs": "b68914b672ef6f3b87d007e30b049cd104e2f98d648ae82efe9dfa3a3b20ca23",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/market.mjs": "ab401b98b67eb8d4a3c8189c7b8f892c4cf654beeb4d75efee9ada4cd3dfc9bd",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/canonical-accounts.mjs": "7eb54d59f6409091f87c3d1351e6e9229cf3b89846076392a8954b117e156539",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/a-money-adapter.mjs": "3bce51cff1437d5967a2cc5d685e8b0f314e576b0e51ab3dabc4dbc48c23e77c",
-    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/http.mjs": "bb308e02c5f5f3ebf2cb7465bf441b8f921ea3accfe8bdfa9f726f59814b68ba",
-    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/store.mjs": "2b3ba45d4a73a59f1ffc04aeb6c9cc42bdc2a8855c0c3e09f48db65af5171a9e",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/http.mjs": "7997948a494b85c645dab7eb615a00ead9d85aebb979b823d82870dc45f2d702",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/store.mjs": "7ad1fa54b213857d82a1c3f104971cba738f87ada841644a59a6c17db5ec970e",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
     "vendor/hosted-wallet-market/bin/machine-profile.mjs": "8dd43c0c9b4f4ec79a4b1449644f3e13cc15d972494f4b4d2160679901aa32d1",
@@ -1283,7 +1283,8 @@
     "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz": "95784dc255bd9952cec1b95e82b84cf214be8a88c0915f357c45ce8100d00f3f",
     "vendor/hosted-wallet-market/contracts/machine-client-0.3.0.json": "7e26a98e711338f2908612a54933a5a35b67cc87b8cc3eae5bab0e5d414a9ca7",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/fixtures/versioned/consumer-contract.json": "b33b66935d752f7f44cbcb72b5418074f02b1d05828d76d819199e3be8489bab",
-    "vendor/hosted-wallet-market/src/machine-network-source.mjs": "ba8464defda49cdb3c6a58314416494e6973e358dabb35e88bef09888721d3e2"
+    "vendor/hosted-wallet-market/src/machine-network-source.mjs": "ba8464defda49cdb3c6a58314416494e6973e358dabb35e88bef09888721d3e2",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/cold-receipt.mjs": "86735d5b5be8f810774bd456991faa273c7125491aee94cbc25e2d247a7bbc7a"
   },
   "receivedCallerClosures": [
     {

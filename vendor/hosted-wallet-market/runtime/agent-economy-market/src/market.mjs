@@ -18,12 +18,12 @@ const profile = {id:'commerce-payments-v1.1.0-single-capture',rounding:'per_capt
 
 /** Requester adapter. All account and kernel authorities are injected. */
 export class RequesterMarket {
-  constructor({ store, kernel, accounts, authenticate, members, money, feeRecipient, fundingTarget, settlementAuthorityId, costs, partyTerms, kernelProvenance='test', assets = PRODUCTION_ASSETS, asset = BASE_USDC, now = () => new Date() }) {
+  constructor({ store, kernel, accounts, authenticate, members, money, feeRecipient, fundingTarget, settlementAuthorityId, costs, partyTerms, coldOrigin=null, kernelProvenance='test', assets = PRODUCTION_ASSETS, asset = BASE_USDC, now = () => new Date() }) {
     requireThat(['fake','local_chain','production','unavailable'].includes(money.qualification),'sandbox_money_required');
     assets.registration(asset);
     requireThat(store.assets === assets, 'asset_registry_binding');
     requireThat(['test','fixture','production'].includes(kernelProvenance)&&(kernelProvenance!=='production'||money.qualification==='production'),'kernel_provenance');
-    Object.assign(this,{store,kernel,accounts,authenticate,members,money,feeRecipient,fundingTarget,settlementAuthorityId,costs,partyTerms,kernelProvenance,assets,asset,now});
+    Object.assign(this,{store,kernel,accounts,authenticate,members,money,feeRecipient,fundingTarget,settlementAuthorityId,costs,partyTerms,coldOrigin,kernelProvenance,assets,asset,now});
     this.funding = new PostgresFundingReservations(store);
     this.fundingService = new FundingService(money,this.funding,now,assets);
     this.approvals = new PostgresApprovalJournal(store.pool,store.schema);
@@ -80,26 +80,40 @@ export class RequesterMarket {
     input.criteria.forEach(k=>key(k));
     requireThat(Array.isArray(input.payableKinds) && input.payableKinds.length > 0 && new Set(input.payableKinds).size === input.payableKinds.length && input.payableKinds.every(k=>['usable','no_fit','failure'].includes(k)),'invalid_input');
     const member = await this.member(a.actorId,a.tenantId);
-    const spec = {...input,slotLimit:1,milestoneLimit:1,cohort:a.actorId === 'acc_8cY03lc065K9iIpk' ? 'owner_qa' : member.cohort};
+    const spec = {...input,slotLimit:1,milestoneLimit:1,cohort:member.cohort ?? 'unknown'};
     requireThat(['owner_qa','sponsored','outside','unknown'].includes(spec.cohort),'cohort_authority_required');
     const id = `market-${operation(a,'post',operationId)}`, hash = digest(spec);
-    await this.store.pool.query(`INSERT INTO ${this.store.table('tasks')}(tenant_id,id,requester_id,spec,request_digest) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`,[a.tenantId,id,a.actorId,JSON.stringify(spec),hash]);
-    const row = await this.store.task(a.tenantId,id);
-    requireThat(row.requester_id === a.actorId && row.request_digest === hash,'operation_conflict');
-    return {taskId:id,spec:row.spec,state:'unfunded_interest'};
+    return this.store.coldMutation({origin:this.coldOrigin,actor:a,action:'post',input,operationId,moneyProvenance:this.money.qualification},async client=>{
+      await client.query(`INSERT INTO ${this.store.table('tasks')}(tenant_id,id,requester_id,spec,request_digest) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`,[a.tenantId,id,a.actorId,JSON.stringify(spec),hash]);
+      const row = await this.store.task(a.tenantId,id,client);
+      requireThat(row.requester_id === a.actorId && row.request_digest === hash,'operation_conflict');
+      return {taskId:id,spec:row.spec,state:'unfunded_interest'};
+    });
   }
   async list(context) {
     const a = await this.actor(context);
     const rows = (await this.store.pool.query(`SELECT id,spec,current_quote,selected_quote FROM ${this.store.table('tasks')} WHERE tenant_id=$1 ORDER BY id`,[a.tenantId])).rows;
     return rows.map(row=>({taskId:row.id,title:row.spec.title,summary:row.spec.summary,criteria:row.spec.criteria,payableKinds:row.spec.payableKinds,assigned:Boolean(row.selected_quote)}));
   }
-  async interest(context,input) {
+  async interest(context,input,operationId) {
     const a = await this.actor(context); exact(input,['taskId','note']); text(input.note);
-    return this.store.locked(a.tenantId,key(input.taskId),async (row,client)=>{
+    key(operationId);key(input.taskId);
+    return this.store.coldMutation({origin:this.coldOrigin,actor:a,action:'interest',input,operationId,moneyProvenance:this.money.qualification},async client=>{
+      const row=await this.store.task(a.tenantId,input.taskId,client,true);
       requireThat(a.actorId !== row.requester_id,'actor_conflict');
       await client.query(`INSERT INTO ${this.store.table('interests')}(tenant_id,task_id,actor_id,note) VALUES($1,$2,$3,$4) ON CONFLICT(tenant_id,task_id,actor_id) DO UPDATE SET note=EXCLUDED.note`,[a.tenantId,row.id,a.actorId,input.note]);
       return {taskId:row.id,actorId:a.actorId,state:'unfunded_interest'};
     });
+  }
+  async readback(context,input,operationId) {
+    const a=await this.actor(context);exact(input,['action','input']);key(operationId);
+    requireThat(['post','interest'].includes(input.action),'invalid_input');
+    const body=input.input;
+    if(input.action==='post'){
+      exact(body,['title','summary','criteria','payableKinds']);
+    }else{exact(body,['taskId','note']);key(body.taskId);text(body.note);}
+    return this.store.coldReadback({origin:this.coldOrigin,actor:a,action:input.action,input:body,operationId,
+      postTaskId:input.action==='post'?`market-${operation(a,'post',operationId)}`:null});
   }
   async quote(context,input,operationId) {
     const a = await this.actor(context);
@@ -320,7 +334,7 @@ export class RequesterMarket {
     const first = await this.read(context,{taskId:input.taskId}), next = await this.read(context,{taskId:input.repeatTaskId});
     requireThat(first.quote?.requesterId === a.actorId && next.quote?.requesterId === a.actorId,'forbidden');
     requireThat(first.state === 'accepted_settled' && next.state === 'accepted_settled','actual_capture_required');
-    const outside = first.spec.cohort === 'outside' && next.spec.cohort === 'outside' && a.actorId !== 'acc_8cY03lc065K9iIpk';
+    const outside = first.spec.cohort === 'outside' && next.spec.cohort === 'outside';
     const actualPaidDemand = outside && first.settlement.provenance === 'production' && next.settlement.provenance === 'production';
     return this.store.measure(a.tenantId,first.taskId,'repeat_purchase',next.taskId,a.actorId,{repeatTaskId:next.taskId,reason:input.reason,voluntaryAssent:true,actualPaidDemand,provenance:next.settlement.provenance});
   }

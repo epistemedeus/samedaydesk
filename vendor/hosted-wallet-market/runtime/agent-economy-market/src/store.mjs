@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { checkedFundingProof, digest, requireThat, PRODUCTION_ASSETS } from '../../agent-economy-foundation/dist/index.js';
+import { COLD_SCOPE, coldKey, coldRequest, coldReceipt, checkedColdResult, transitionId } from './cold-receipt.mjs';
 
 export class MarketStore {
   constructor(pool, schema, assets = PRODUCTION_ASSETS) {
@@ -45,6 +46,72 @@ export class MarketStore {
   }
   async measures(tenant, taskId) {
     return (await this.pool.query(`SELECT kind,event_id,actor_id,payload FROM ${this.table('measures')} WHERE tenant_id=$1 AND task_id=$2 ORDER BY kind,event_id`, [tenant,taskId])).rows;
+  }
+  coldTable() { return `"${this.schema}"."earned_work_idempotency"`; }
+  async coldPrior(client, actor, operationId) {
+    return (await client.query(`SELECT request_hash,response_json,principal_id FROM ${this.coldTable()}
+      WHERE scope=$1 AND task_id='' AND key=$2`,[COLD_SCOPE,coldKey(actor,operationId)])).rows[0];
+  }
+  async coldTransitions(client, actor, operationId) {
+    return (await client.query(`SELECT task_id,event_id,payload FROM ${this.table('measures')}
+      WHERE tenant_id=$1 AND actor_id=$2 AND kind='transition' AND payload->>'operationId'=$3
+      AND payload->>'action' IN ('post','interest')`,[actor.tenantId,actor.actorId,operationId])).rows;
+  }
+  // Only cold post/interest use this transaction. External money callbacks never enter it.
+  async coldMutation({origin,actor,action,input,operationId,moneyProvenance}, effect) {
+    const request=coldRequest(origin,actor,action,input,operationId), requestHash=digest(request);
+    return this.transaction(async client=>{
+      // Serialize the actor's key across both actions, including an absent prior row.
+      await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[COLD_SCOPE+':'+coldKey(actor,operationId)]);
+      const prior=await this.coldPrior(client,actor,operationId);
+      if(prior){
+        requireThat(prior.principal_id===actor.actorId && prior.request_hash===requestHash,'operation_conflict');
+        return checkedColdResult(request,prior.response_json);
+      }
+      requireThat((await this.coldTransitions(client,actor,operationId)).length===0,'legacy_operation_readback_required');
+      const result=coldReceipt(request,await effect(client));
+      await this.measure(actor.tenantId,result.taskId,'transition',transitionId(actor,action,operationId),actor.actorId,
+        {action,verification:'server_observed',source:'hosted-machine-market',operationId,moneyProvenance,acquisition:'unknown',
+          bodyDigest:request.bodyDigest,receiptId:result.receipt.receiptId},client);
+      await client.query(`INSERT INTO ${this.coldTable()}(scope,task_id,key,request_hash,status_code,response_json,principal_id,created_at)
+        VALUES($1,'',$2,$3,200,$4,$5,now())`,[COLD_SCOPE,coldKey(actor,operationId),requestHash,JSON.stringify(result),actor.actorId]);
+      return result;
+    });
+  }
+  async coldReadback({origin,actor,action,input,operationId,postTaskId}) {
+    const request=coldRequest(origin,actor,action,input,operationId);
+    return this.transaction(async client=>{
+      // One consistent read-only snapshot; this port cannot create a business effect or receipt row.
+      await client.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY');
+      const prior=await this.coldPrior(client,actor,operationId);
+      if(prior){
+        requireThat(prior.principal_id===actor.actorId && prior.request_hash===digest(request),'operation_conflict');
+        return checkedColdResult(request,prior.response_json);
+      }
+      const events=await this.coldTransitions(client,actor,operationId);
+      requireThat(events.length>0,'operation_absent');
+      requireThat(events.length===1,'legacy_receipt_ambiguous');
+      const event=events[0],taskId=action==='post'?postTaskId:input.taskId;
+      requireThat(event.task_id===taskId && event.event_id===transitionId(actor,action,operationId) &&
+        event.payload.action===action && event.payload.verification==='server_observed' &&
+        event.payload.source==='hosted-machine-market' && !event.payload.receiptId,'operation_conflict');
+      const task=await this.task(actor.tenantId,taskId,client);
+      let result;
+      if(action==='post'){
+        const recorded=Object.fromEntries(['title','summary','criteria','payableKinds'].map(k=>[k,task.spec[k]]));
+        requireThat(task.requester_id===actor.actorId && digest(recorded)===digest(input),'operation_conflict');
+        result={taskId,spec:task.spec,state:'unfunded_interest'};
+      }else{
+        const interests=(await client.query(`SELECT note FROM ${this.table('interests')} WHERE tenant_id=$1 AND task_id=$2 AND actor_id=$3`,[actor.tenantId,taskId,actor.actorId])).rows;
+        const count=(await client.query(`SELECT count(*)::int n FROM ${this.table('measures')} WHERE tenant_id=$1 AND task_id=$2
+          AND actor_id=$3 AND kind='transition' AND payload->>'action'='interest'`,[actor.tenantId,taskId,actor.actorId])).rows[0].n;
+        requireThat(count===1,'legacy_receipt_ambiguous');
+        requireThat(interests.length===1 && interests[0].note===input.note && task.requester_id!==actor.actorId,'operation_conflict');
+        result={taskId,actorId:actor.actorId,state:'unfunded_interest'};
+      }
+      // Historical transitions did not record the original body or HTTP bytes. Do not invent them.
+      return coldReceipt(request,result,'legacy_transition_and_current_effect');
+    });
   }
 }
 

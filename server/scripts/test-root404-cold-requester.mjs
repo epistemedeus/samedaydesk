@@ -18,7 +18,9 @@ const example = join(sds, 'vendor/hosted-wallet-market/examples/cold-requester.m
 const profileBin = join(sds, 'vendor/hosted-wallet-market/bin/machine-profile.mjs');
 const debtBin = join(sds, 'vendor/hosted-wallet-market/bin/installed-debt.mjs');
 const prefix = '/api/neomorphic-contributor-journey';
-const commands = [...guide.matchAll(/^node cold-requester\.mjs .+$/gm)].map(match => match[0]);
+// Only the first shell block is this legacy fixture; later blocks explain separate recovery exercises.
+const fixture = guide.match(/```sh\n([\s\S]*?)\n```/)?.[1] ?? '';
+const commands = [...fixture.matchAll(/^node cold-requester\.mjs .+$/gm)].map(match => match[0]);
 
 function opensslCert(dir) {
   execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1', '-keyout', join(dir, 'tls.key'), '-out', join(dir, 'tls.crt')], {stdio: 'ignore'});
