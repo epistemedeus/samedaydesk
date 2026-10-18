@@ -56,7 +56,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   let money={qualification:'unavailable',authorityId:'unqualified',protocol:COMMERCE_PAYMENTS_PIN,
     readProof:moneyUnavailable,captureOutcome:moneyUnavailable,capture:moneyUnavailable};
   if(capability.money==='qualified'){
-   const opened=await openQualifiedMoney({capability,authority,profile,assertCurrent,approve:request=>{assertCurrent();return market.authorizeCaptureRequest(request);},now});
+   const opened=await openQualifiedMoney({capability,authority,profile,assertCurrent,assertFundingConsent,approve:request=>{assertCurrent();return market.authorizeCaptureRequest(request);},now});
    ({journal,rail,assets,asset,contracts,operator,networkClass}=opened);networkSource=opened.candidate;money=requesterMoneyFromRail(rail);
   }else if(capability.money==='sandbox'){
    if(!authority||authority.networkClass!=='sandbox'||authority.contracts?.chain!=='eip155:31337'||profile.chain!==authority.contracts.chain||profile.settlementToken!==authority.contracts.token||!authority.operator?.signTransaction)refuse('machine_authority_required');
@@ -70,7 +70,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    asset={chain:'eip155:31337',token:authority.contracts.token,decimals:6,symbol:'USDC'};
    assets=new AssetRegistry('sandbox',[{asset,environment:'sandbox',canonical:{asset:'USDC',network:'eip155:31337'}}]);
    journal=new RailStore(authority.journalPath);
-   rail=new CommercePaymentsRail(journal,client,authority.operator,'machine-commerce-v1',authority.contracts,
+   rail=new CommercePaymentsRail(journal,client,authority.operator,'machine-commerce-v1',{...authority.contracts,network:{networkClass:'sandbox',authorizeIntent:(_phase,id)=>assertFundingConsent(id)}},
      request=>{assertCurrent();return market.authorizeCaptureRequest(request);},1n,assets);
    money=requesterMoneyFromRail(rail);
    contracts=authority.contracts;operator=authority.operator;
@@ -112,6 +112,14 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
     payer:payer.payoutDestination,payerEpoch:payer.epoch,payerControl:payer.controlDigest,
     receiver:contributor.payoutDestination,receiverEpoch:contributor.epoch,receiverControl:contributor.controlDigest};
   };
+  async function assertFundingConsent(id){
+   if(!id.startsWith('fund:'))return;
+   assertCurrent();const saved=journal.get('funding',id.slice(5));if(!saved)refuse('funding_absent');
+   const q=saved.quote,{binding}=await market.selected({tenantId:q.tenantId,actorId:q.requesterId},q.taskId,digest(q),'requester');
+   const p=binding.parties,payer=await member(q.tenantId,q.requesterId),receiver=await member(q.tenantId,q.contributorId);
+   if(!p||p.sourceSha256!==capability.sourceSha256||p.hostSha256!==capability.hostSha256||p.profile!==capability.profile||p.money!==capability.money||p.networkIdentityDigest!==networkSource?.identityDigest)refuse('machine_profile_refused');
+   if(payer?.epoch!==p.payerEpoch||payer?.controlDigest!==p.payerControl||payer?.payoutDestination!==p.payer||receiver?.epoch!==p.receiverEpoch||receiver?.controlDigest!==p.receiverControl||receiver?.payoutDestination!==p.receiver)refuse('wallet_authority_changed');
+  }
   market=new RequesterMarket({store,kernel,accounts,members:{resolve:member},authenticate:async req=>{
     const a=await authenticate(req);return {tenantId:profile.tenant,actorId:a.accountId};},money,assets,asset,
     feeRecipient:profile.feeRecipient,fundingTarget:rail?contracts.escrow:capability.networkSource?.escrow??'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',

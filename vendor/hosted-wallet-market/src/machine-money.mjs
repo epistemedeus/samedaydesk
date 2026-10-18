@@ -9,7 +9,7 @@ export function machineNetworkSource(value){
  const source=versionedSource(value?.chain);
  if(digest(source)!==digest(value))refuse('candidate_identity_changed');return source;
 }
-export async function openQualifiedMoney({capability,authority,profile,assertCurrent,approve,now=()=>Date.now()}){
+export async function openQualifiedMoney({capability,authority,profile,assertCurrent,assertFundingConsent,approve,now=()=>Date.now()}){
  if(typeof authority==='string'){
   const st=lstatSync(authority);
   if(!authority.startsWith('/')||!st.isFile()||st.isSymbolicLink()||(st.mode&0o077))refuse('machine_authority_required');
@@ -43,6 +43,7 @@ export async function openQualifiedMoney({capability,authority,profile,assertCur
    network:candidate.identityDigest,executionClass:mode,forkId:authority.forkId??null,operator,feeRecipient:profile.feeRecipient,epoch:authority.grantEpoch,
    feeLimits:Object.fromEntries(Object.entries(feeLimits).map(([key,value])=>[key,String(value)])),nativeBudget:authority.nativeBudget});
   async function authorizeIntent(phase,id,witness){
+   await assertFundingConsent(id);
    assertCurrent();const a=await authority.readAuthorization({phase,operationId:id});
    if(!a||a.schema!=='pilot.machine-rail-authority.v1'||a.revoked!==false||a.origin!==profile.origin||a.tenant!==profile.tenant||
     a.profile!=='machine-market'||a.executionClass!==mode||(mode==='owned-fork'&&a.forkId!==authority.forkId)||a.sourceSha256!==capability.sourceSha256||a.hostSha256!==capability.hostSha256||a.networkIdentityDigest!==candidate.identityDigest||
