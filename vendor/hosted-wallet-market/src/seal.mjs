@@ -1,6 +1,6 @@
 import {createCipheriv, createDecipheriv, randomBytes} from 'node:crypto';
 
-// Lost-signup readback window. The account session itself stays 24h.
+// Lost account-operation readback window. The account session stays 24h.
 export const RECOVERY_TTL_MS = 15 * 60 * 1000;
 
 export function assertReplayKey(value) {
@@ -39,8 +39,10 @@ export function openSecrets(keyHex, sealed, nowMs) {
     decipher.setAuthTag(Buffer.from(sealed.tag, 'base64url'));
     const plain = Buffer.concat([decipher.update(Buffer.from(sealed.ct, 'base64url')), decipher.final()]);
     const parsed = JSON.parse(plain.toString('utf8'));
-    if (typeof parsed.recoveryCode !== 'string' || typeof parsed.cookie !== 'string') return null;
-    return {recoveryCode: parsed.recoveryCode, cookie: parsed.cookie};
+    // Login delivers only a session cookie. Signup and recovery also rotate a
+    // recovery code. An absent code is valid for cookie-only delivery.
+    if (typeof parsed.cookie !== 'string' || (Object.hasOwn(parsed,'recoveryCode') && typeof parsed.recoveryCode !== 'string')) return null;
+    return {...(parsed.recoveryCode !== undefined ? {recoveryCode: parsed.recoveryCode} : {}), cookie: parsed.cookie};
   } catch {
     return null;
   }

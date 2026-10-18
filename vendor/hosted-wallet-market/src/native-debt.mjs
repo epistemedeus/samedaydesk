@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
-import {readFileSync, readdirSync, lstatSync} from 'node:fs';
+import {constants,openSync,closeSync,fstatSync,readFileSync, readdirSync, lstatSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {join, resolve} from 'node:path';
+import {join, resolve, parse, dirname} from 'node:path';
 import {digest} from './canonical.mjs';
 import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
 import {readAuthoritativeDischarge, registryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
@@ -53,13 +53,28 @@ export function installedSourceFiles() {
   });
   return ['package.json', 'package-lock.json', ...['bin', 'client', 'contracts', 'schema', 'src', 'runtime'].flatMap(walk)].sort();
 }
+function boundSourceBytes(base,name) {
+    const file = resolve(base, name);
+    let current = parse(file).root;
+    for (const part of dirname(file).slice(current.length).split('/').filter(Boolean)) {
+      current = join(current, part);
+      const parent = lstatSync(current);
+      if (!parent.isDirectory() || parent.isSymbolicLink()) fail('binding_stale');
+    }
+    let fd;
+    try {
+      fd=openSync(file,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);
+      const stat=fstatSync(fd);
+      if(!stat.isFile())fail('binding_stale');
+      const bytes=readFileSync(fd);
+      if(bytes.length!==stat.size)fail('binding_stale');
+      return bytes;
+    }catch{fail('binding_stale');}finally{if(fd!==undefined)closeSync(fd);}
+}
 function hashFiles(base, files) {
   const hash = createHash('sha256');
   for (const name of [...files].sort()) {
-    const file = join(base, name);
-    const stat = lstatSync(file);
-    if (!stat.isFile() || stat.isSymbolicLink()) fail('binding_stale');
-    hash.update(name); hash.update('\0'); hash.update(readFileSync(file)); hash.update('\0');
+    hash.update(name); hash.update('\0'); hash.update(boundSourceBytes(base,name)); hash.update('\0');
   }
   return hash.digest('hex');
 }
@@ -69,10 +84,10 @@ const endpointHash = url => sha(assertRpcUrl(url).href);
 export function hostSourceSha256(sdsRoot) {
   if (!sdsRoot) fail('discharge_consumer_unbound');
   const pinFile='server/foundry/activation/private-control-pin.json';
-  const pin=JSON.parse(readFileSync(join(sdsRoot,pinFile),'utf8'));
+  const pin=JSON.parse(boundSourceBytes(sdsRoot,pinFile).toString('utf8'));
   const files=Object.keys(pin.files);
   if(!files.length||files.length>4000||files.some(name=>name.startsWith('/')||name.includes('..')||name.includes('\\'))) fail('binding_stale');
-  for(const file of files) if(sha(readFileSync(join(sdsRoot,file)))!==pin.files[file]) fail('binding_stale');
+  for(const file of files) if(sha(boundSourceBytes(sdsRoot,file))!==pin.files[file]) fail('binding_stale');
   return hashFiles(sdsRoot,[...files,pinFile]);
 }
 const plainId = value => typeof value === 'string' && value.length > 0 && value.length <= 200 && !/[\u0000-\u001f\u007f/\\]/.test(value) && !value.includes('..');

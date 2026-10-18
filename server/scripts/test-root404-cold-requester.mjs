@@ -13,7 +13,7 @@ import pg from 'pg';
 import {startCluster} from './root404-pg-cluster.mjs';
 
 const sds = resolve(import.meta.dirname, '../..');
-const guide = readFileSync(join(sds, 'vendor/hosted-wallet-market/examples/GUIDE.md'), 'utf8');
+const guide = readFileSync(join(sds, 'vendor/hosted-wallet-market/examples/OPERATOR-TESTS.md'), 'utf8');
 const example = join(sds, 'vendor/hosted-wallet-market/examples/cold-requester.mjs');
 const profileBin = join(sds, 'vendor/hosted-wallet-market/bin/machine-profile.mjs');
 const debtBin = join(sds, 'vendor/hosted-wallet-market/bin/installed-debt.mjs');

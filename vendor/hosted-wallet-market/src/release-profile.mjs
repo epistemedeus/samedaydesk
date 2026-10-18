@@ -3,9 +3,7 @@
 // qualification, credential creation, installation or payment authority.
 import {ADDITIVE_ENV_KEYS,OPTIONAL_ENV_KEYS,loadDeploymentProfile} from './profile.mjs';
 import {assertRpcUrl} from './chain.mjs';
-import {hostSourceSha256,installedSourceSha256} from './native-debt.mjs';
-import {classifyMachineProfileValue,loadMachineProfile} from './machine-profile-document.mjs';
-import {machineNetworkSource} from './machine-money.mjs';
+import {classifyMachineProfileValue,admitMachineCapability} from './machine-profile-document.mjs';
 export const PRIVATE_WALLET_PROFILE='private-wallet-source';
 const fail=code=>{throw Object.assign(new Error(code),{code,codeName:code});};
 const requireFact=(ok,code)=>{if(!ok)fail(code);};
@@ -41,18 +39,15 @@ export function validateWalletEnvironment({manifest,original,installed,rollback,
  requireFact(assertRpcUrl(get('RPC')).protocol==='https:','wallet_rpc_tls_required');
  const registry=get('DISCHARGE_REGISTRY');requireFact(typeof registry==='string'&&registry.startsWith('/')&&!registry.includes('..')&&!/[\r\n\0]/.test(registry),'wallet_registry_binding_refused');
  const profileValue=after.get('HOSTED_WALLET_MARKET_MACHINE_PROFILE');
- const machineProfile=profileValue===undefined?null:admitMachineProfileRelease(profileValue,{origin,tenant:get('TENANT'),sdsRoot}).form;
+ const machineProfile=profileValue===undefined?null:admitMachineProfileRelease(profileValue,{origin,tenant:get('TENANT'),sdsRoot,authority:get('MACHINE_AUTHORITY_MODULE')}).form;
  return {original,installed,machineProfile};
 }
-function admitMachineProfileRelease(value,{origin,tenant,sdsRoot}){
+function admitMachineProfileRelease(value,{origin,tenant,sdsRoot,authority}){
  let classified;try{classified=classifyMachineProfileValue(value);}catch(error){fail(error.codeName||'machine_profile_refused');}
  if(classified.form==='absolute-path'&&!sdsRoot)return {form:'path-unopened'};
- if(classified.form==='relative-path'&&!sdsRoot)return {form:'path-unopened'};
- if(classified.form==='source-bound'&&!sdsRoot)fail('machine_profile_unbound');
- let document;try{document=loadMachineProfile(value,{sdsRoot});}catch(error){fail(error.codeName||'machine_profile_refused');}
- if(document.origin!==origin||document.tenant!==tenant)fail('machine_profile_refused');
- if(document.sourceSha256!==installedSourceSha256()||document.hostSha256!==hostSourceSha256(sdsRoot))fail('machine_profile_refused');
- if(document.networkSource){try{machineNetworkSource(document.networkSource);}catch{fail('machine_profile_refused');}}
+ if(!sdsRoot)fail('machine_profile_unbound');
+ let document;try{document=admitMachineCapability(value,{origin,tenant,sdsRoot});}catch(error){fail(error.codeName||'machine_profile_refused');}
+ if(document.money==='unfunded'&&authority)fail('machine_authority_refused');
  return {form:classified.form==='source-bound'?'source-bound':classified.form+'-bound'};
 }
 export function walletEnvironmentPacket({manifest,existing,wallet,sdsRoot}){
@@ -64,4 +59,29 @@ export function walletEnvironmentPacket({manifest,existing,wallet,sdsRoot}){
  const validated=validateWalletEnvironment({manifest,original,installed,rollback:original,sdsRoot});
  return {install:{env_vars:installed},rollback:{env_vars:original},receipt:{schema:'pilot.private-wallet.environment-packet.v1',existingKeys:original.length,
    walletKeys:extension.length,preservesRetainedAuthority:true,rolloutServingDisabled:true,sent:false,qualified:false,...(validated.machineProfile?{machineProfile:validated.machineProfile}:{})}};
+}
+
+// Post-qualification entry packet. The canonical release packet remains closed
+// and keeps every old wallet value through build, qualification and activation.
+// This separate preparer adds only the source-admitted unfunded capability to a
+// freshly received installed environment. It never sends or qualifies anything.
+export function machineEntryEnvironmentPacket({manifest,existing,machineProfile,sdsRoot}){
+ const original=normalized(existing),before=new Map(original.map(row=>[row.key,row.value]));
+ requireFact(/^[a-f0-9]{40}$/.test(manifest?.commit||'')&&before.get('CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT')===manifest.commit&&
+   before.get('CONTRIBUTOR_DESK_INGRESS_MODE')==='litespeed-https-only'&&!!before.get('CONTRIBUTOR_DESK_INSTALLATION_ID')&&
+   !!before.get('CONTRIBUTOR_DESK_HTTPS_QUALIFICATION'),'installed_source_required');
+ const document=admitMachineCapability(machineProfile,{sdsRoot,origin:'https://'+manifest.domain,tenant:before.get('HOSTED_WALLET_MARKET_TENANT')});
+ requireFact(document?.money==='unfunded','unfunded_entry_required');
+ requireFact(!before.get('HOSTED_WALLET_MARKET_MACHINE_AUTHORITY_MODULE'),'machine_authority_refused');
+ const key='HOSTED_WALLET_MARKET_MACHINE_PROFILE';
+ requireFact(!before.has(key)||before.get(key)===machineProfile,'retained_environment_binding_changed');
+ const wallet=original.filter(row=>[...ADDITIVE_ENV_KEYS,...OPTIONAL_ENV_KEYS].includes(row.key)&&row.key!==key);
+ wallet.push({key,value:machineProfile});
+ // Reuse the ordinary strict private-wallet validation; discard its disabled
+ // rollout postimage. The only actual postimage difference below is the entry.
+ walletEnvironmentPacket({manifest,existing:original,wallet,sdsRoot});
+ const install=normalized([...original.filter(row=>row.key!==key),{key,value:machineProfile}]);
+ return {install:{env_vars:install},rollback:{env_vars:original},receipt:{schema:'pilot.unfunded-machine-entry.environment-packet.v1',
+   sourceCommit:manifest.commit,installedSourceSha256:document.sourceSha256,hostSourceSha256:document.hostSha256,
+   changedKeys:before.has(key)?[]:[key],existingKeys:original.length,preservesExistingValues:true,money:'unfunded',sent:false,qualified:false}};
 }

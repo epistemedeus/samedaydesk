@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 // Emits a reviewable, source-bound machine capability; never installs it.
-import {realpathSync} from 'node:fs';
 import {open} from 'node:fs/promises';
-import {isAbsolute, relative, resolve} from 'node:path';
 import {installedSourceSha256, hostSourceSha256} from '../src/native-debt.mjs';
-import {canonicalMachineProfile, confinedRelative} from '../src/machine-profile-document.mjs';
+import {canonicalMachineProfile, machineProfileFile} from '../src/machine-profile-document.mjs';
 import {readMachineCapability} from '../src/machine-market.mjs';
 import {versionedSource} from '../runtime/agent-economy-rail/dist/index.js';
 const args = process.argv.slice(2), get = name => { const i = args.indexOf('--' + name); return i < 0 ? undefined : args[i + 1]; };
@@ -13,16 +11,8 @@ const url = new URL(origin);
 const tenantOk = /^[a-z][a-z0-9_-]{2,63}$/.test(tenant || '') && /^[-a-z0-9_]{3,64}$/.test(tenant || '');
 if (url.protocol !== 'https:' || url.origin !== origin || !tenantOk || !sds?.startsWith('/') || !out || !['unfunded', 'sandbox', 'qualified'].includes(money)) throw Error('machine_profile_arguments_refused');
 function outputPath() {
-  if (out.startsWith('/')) {
-    if (out.includes('..') || /[\r\n\0]/.test(out)) throw Error('machine_profile_arguments_refused');
-    return out;
-  }
-  if (!confinedRelative(out)) throw Error('machine_profile_arguments_refused');
-  const root = realpathSync(sds);
-  const resolved = resolve(root, out);
-  const rel = relative(root, resolved);
-  if (rel.startsWith('..') || isAbsolute(rel)) throw Error('machine_profile_arguments_refused');
-  return resolved;
+  try {return machineProfileFile(out,{sdsRoot:sds});}
+  catch {throw Error('machine_profile_arguments_refused');}
 }
 const destination = outputPath();
 const value = {schema: 'pilot.machine-market.capability.v1', profile: 'machine-market', origin, tenant,

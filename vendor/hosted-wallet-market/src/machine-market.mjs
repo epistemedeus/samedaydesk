@@ -12,21 +12,13 @@ import {MarketStore} from '../runtime/agent-economy-market/src/store.mjs';
 import {requesterMoneyFromRail} from '../runtime/agent-economy-market/src/a-money-adapter.mjs';
 import {installedSourceSha256,hostSourceSha256} from './native-debt.mjs';
 import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
-import {loadMachineProfile} from './machine-profile-document.mjs';
+import {admitMachineCapability} from './machine-profile-document.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
 const sha=value=>createHash('sha256').update(value).digest('hex');
 export function readMachineCapability(input,{sdsRoot,origin,tenant}){
- if(!input)return null;
- input=loadMachineProfile(input,{sdsRoot});
- if(input.schema!=='pilot.machine-market.capability.v1'||input.profile!=='machine-market'||input.origin!==origin||input.tenant!==tenant||
-  input.sourceSha256!==installedSourceSha256()||input.hostSha256!==hostSourceSha256(sdsRoot)||
-  input.discovery!=='qualified-source'||!['unfunded','sandbox','qualified'].includes(input.money))refuse('machine_profile_refused');
- if(input.networkSource)machineNetworkSource(input.networkSource);
- if(input.money==='qualified'&&!input.networkSource)refuse('machine_profile_refused');
- if(input.money==='qualified'&&(!['public','owned-fork'].includes(input.execution?.class)||(input.execution.class==='owned-fork'&&!/^[-a-zA-Z0-9_.]{1,64}$/.test(input.execution.forkId||''))))refuse('machine_profile_refused');
- return Object.freeze({...input});
+ return admitMachineCapability(input,{sdsRoot,origin,tenant});
 }
 export async function openMachineMarket({capability,authority,sdsRoot,profile,authenticate,withClient,now=()=>Date.now()}){
  if(!address(profile.feeRecipient))refuse('fee_recipient_refused');
