@@ -333,6 +333,18 @@ test('mounted entitled read keeps no-header fallthrough, paid and owed, and succ
         next.host_source_sha256, next.earned_schema, next.rpc_endpoint_sha256, next.registry_sha256, next.profile_sha256,
         next.rpc_origin_sha256, next.profile_chain, stamp],
     );
+    // Synthetic predecessor enrollment includes its original authenticated
+    // operation, just as the real old artifact records in the cold handoff test.
+    await admin.query(`INSERT INTO cj227_earned_work.earned_work_idempotency
+      (scope,task_id,key,request_hash,status_code,response_json,principal_id,created_at)
+      VALUES ('hosted-wallet-market','','fixture-original-enroll',$1,200,$2::jsonb,$3,$4)`,[
+      canonicalDigest({method:'POST',route:`${PREFIX}/v1/native-debt/enroll`,body:{}}),
+      JSON.stringify({value:{schema:'pilot.root71.native-debt.enrollment.v1',state:'enrolled',qualified:true,
+        sourceSha256:predecessor,hostSourceSha256:next.host_source_sha256,importContractSha256:next.import_contract_sha256,
+        consumerContractSha256:next.consumer_contract_sha256,tenant:next.tenant,network:next.network,token:next.token,
+        rpcOriginSha256:next.rpc_origin_sha256,rpcEndpointSha256:next.rpc_endpoint_sha256,profileChain:next.profile_chain,
+        profileSha256:next.profile_sha256,boundConsumer:'hosted_wallet_market.native_debt_dispositions'}}),
+      sha256(ownerToken),stamp]);
     await admin.query(
       `INSERT INTO hosted_wallet_market.native_debt_dispositions (
         obligation_id, obligation_family, tenant, reservation_id, claim_id, submission_id, verdict_id,

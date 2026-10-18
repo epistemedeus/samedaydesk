@@ -14,7 +14,7 @@
 // the Root registry receipt, and the canonical transfer.
 import {digest} from './canonical.mjs';
 import {readRailTransfer} from './chain.mjs';
-import {storedDebt} from './debt-source.mjs';
+import {matchDebt, storedDebt} from './debt-source.mjs';
 import {readAuthoritativeDischarge, pendingRegistryDisposition} from './discharge-authority.mjs';
 import {sha256} from './ids.mjs';
 
@@ -183,6 +183,7 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
     await assertBound(client);
     stored = await storedDebt(client, row.obligation_id, {readAcceptedSource});
     ({receipt} = readAuthoritativeDischarge(registryRoot, bodyFrom(row)));
+    matchDebt(stored, receipt);
   } catch {
     fail(409, 'stale_evidence');
   }
@@ -247,11 +248,10 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
     && row.native_paid_observation === true
     && row.transfer_initiated === false
     && row.payout_state === 'owed'
-    && row.reservation_id === reservationId
+    && row.claim_id === reservationId
     && row.task_id === taskId
     && row.terms_version === termsVersion
-    && row.artifact_digest_sha256 === artifactDigest
-    && (row.claim_id === reservationId || row.claim_id === row.reservation_id);
+    && row.artifact_digest_sha256 === artifactDigest;
   if (!joined || payoutState !== 'owed') fail(409, 'stale_evidence');
   await verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound});
   return {

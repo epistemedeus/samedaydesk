@@ -155,6 +155,7 @@ export async function openHostedMarket(options) {
   const dischargeRegistry = options.dischargeRegistry ?? process.env.HOSTED_WALLET_MARKET_DISCHARGE_REGISTRY;
   const debtConsumer = createInstalledDebtConsumer({profile, sdsRoot: options.sdsRoot,
     registryRoot: dischargeRegistry,
+    authorityPrincipalId: ownerAuthority?.principalId,
     readAcceptedSource: options.readAcceptedSource});
   let observed;
   try {
@@ -1086,9 +1087,11 @@ export async function openHostedMarket(options) {
     const principal = ownerPrincipal(req);
     const produced = await withTx(async client => {
       await debtConsumer.assertEnrollmentCandidate(client);
-      return mutate(client, req, body, {accountId: principal}, async tx => {
+      const result = await mutate(client, req, body, {accountId: principal}, async tx => {
         return {value: await debtConsumer.enroll(tx, nowDate())};
       });
+      await debtConsumer.assertBinding(client);
+      return result;
     });
     finish(res, produced);
   }
