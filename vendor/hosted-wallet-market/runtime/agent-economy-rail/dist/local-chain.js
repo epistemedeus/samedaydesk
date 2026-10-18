@@ -124,9 +124,30 @@ export async function broadcast(client, intent, identity) {
     const networkClass = intent.witness?.networkClass ?? identity.networkClass;
     await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'broadcast');
     try {
-        await client.sendRawTransaction({ serializedTransaction: intent.raw });
+        const receipt = await client.getTransactionReceipt({ hash: intent.txId });
+        if (receipt)
+            return receipt;
     }
-    catch { /* Transport failure is unknown; the persisted hash/readback owns the outcome. */ }
+    catch (error) {
+        if (error?.name !== 'TransactionReceiptNotFoundError')
+            return null;
+    }
+    let absent = false;
+    try {
+        absent = !await client.getTransaction({ hash: intent.txId });
+    }
+    catch (error) {
+        if (error?.name === 'TransactionNotFoundError')
+            absent = true;
+        else
+            return null;
+    }
+    if (absent) {
+        try {
+            await client.sendRawTransaction({ serializedTransaction: intent.raw });
+        }
+        catch { /* Original signed bytes remain durable; read their hash below. */ }
+    }
     try {
         return await client.waitForTransactionReceipt({ hash: intent.txId, timeout: 3000, pollingInterval: 20 });
     }

@@ -122,13 +122,21 @@ export class CommercePaymentsRail {
         await this.configured();
         if (!b.authorizationTx)
             requireThat(Number((await this.client.getBlock()).timestamp) < Date.parse(b.quote.expiresAt) / 1000, 'quote_expired');
-        const data = encodeFunctionData({ abi: this.contracts.abi, functionName: 'authorize', args: [payment(b.payment), BigInt(b.quote.gross), this.contracts.collector, signature] });
         let intent;
         await this.store.transaction(async () => {
             this.store.fence('funding-op', proofId, { operationId }, 'funding_operation_conflict');
             const current = this.binding(proofId);
             requireThat(!current.quarantined, 'funding_quarantined');
-            intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data }), this.client, this.operator, this.contracts.escrow, data, this.intentIdentity());
+            if (current.authorizationTx) {
+                // Recover the original signed operation. A second wallet signature
+                // (including a randomized hardware signature) cannot replace its data.
+                intent = this.store.get('tx', `fund:${proofId}`);
+                requireThat(intent && intent.txId === current.authorizationTx, 'funding_tx_conflict');
+            }
+            else {
+                const data = encodeFunctionData({ abi: this.contracts.abi, functionName: 'authorize', args: [payment(current.payment), BigInt(current.quote.gross), this.contracts.collector, signature] });
+                intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data }), this.client, this.operator, this.contracts.escrow, data, this.intentIdentity());
+            }
             current.authorizationTx = intent.txId;
             current.stage = 'submitted';
             this.store.put('funding', proofId, current);
