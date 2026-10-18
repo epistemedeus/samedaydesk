@@ -1,7 +1,9 @@
 // Source-bound machine capability documents. No signer, qualification, or file trust
 // beyond a mode-0600 regular file. Hash equality is the caller's check.
-import {lstatSync, readFileSync, realpathSync} from 'node:fs';
-import {isAbsolute, relative, resolve} from 'node:path';
+import {constants, openSync, closeSync, fstatSync, lstatSync, readFileSync} from 'node:fs';
+import {dirname, isAbsolute, relative, resolve, parse, join} from 'node:path';
+import {installedSourceSha256, hostSourceSha256} from './native-debt.mjs';
+import {machineNetworkSource} from './machine-network-source.mjs';
 
 const PREFIX = 'source-bound:';
 const SWITCH = /^(?:0|1|true|false|on|off|yes|no|unfunded|sandbox|qualified)$/i;
@@ -71,34 +73,52 @@ export function classifyMachineProfileValue(value) {
   return {form: 'relative-path'};
 }
 
-function readConfined(file, sdsRoot, relativeValue) {
-  if (!sdsRoot) refuse('machine_profile_refused');
-  let root;
-  try { root = realpathSync(sdsRoot); }
-  catch { refuse('machine_profile_refused'); }
-  const resolved = resolve(root, relativeValue);
-  const rel = relative(root, resolved);
-  if (rel.startsWith('..') || isAbsolute(rel)) refuse('machine_profile_refused');
-  return readRegular(resolved, root);
-}
-
-function readRegular(file, root) {
-  let st;
-  try { st = lstatSync(file); }
-  catch (error) { throw error; }
-  if (!st.isFile() || st.isSymbolicLink() || (st.mode & 0o077) || st.size > 65536 || st.size < 2) refuse('machine_profile_refused');
-  if (root) {
-    let actual;
-    try { actual = realpathSync(file); }
-    catch { refuse('machine_profile_refused'); }
-    const rel = relative(root, actual);
+// Check every directory before reading or creating a leaf. In particular, a
+// relative generator output must not write through a symlink before refusal.
+export function machineProfileFile(value, {sdsRoot} = {}) {
+  const {form} = classifyMachineProfileValue(value);
+  if (!['absolute-path','relative-path'].includes(form)) refuse('machine_profile_refused');
+  if (form === 'relative-path' && (!sdsRoot || !isAbsolute(sdsRoot))) refuse('machine_profile_refused');
+  const file = form === 'absolute-path' ? value : resolve(sdsRoot, value);
+  if (form === 'relative-path') {
+    const rel = relative(resolve(sdsRoot), file);
     if (rel.startsWith('..') || isAbsolute(rel)) refuse('machine_profile_refused');
   }
-  try { return normalize(JSON.parse(readFileSync(file, 'utf8'))); }
-  catch (error) {
-    if (error?.codeName === 'machine_profile_refused') throw error;
-    refuse('machine_profile_refused');
+  let current = parse(file).root;
+  try {
+    for (const part of dirname(file).slice(current.length).split('/').filter(Boolean)) {
+      current = join(current, part);
+      const st = lstatSync(current);
+      if (!st.isDirectory() || st.isSymbolicLink()) refuse('machine_profile_refused');
+    }
+  } catch { refuse('machine_profile_refused'); }
+  return file;
+}
+
+function readRegular(file) {
+  let fd;
+  try {
+    fd = openSync(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const st = fstatSync(fd);
+    if (!st.isFile() || (st.mode & 0o077) || st.size > 65536 || st.size < 2) refuse('machine_profile_refused');
+    const bytes = readFileSync(fd);
+    if (bytes.length !== st.size) refuse('machine_profile_refused');
+    return normalize(JSON.parse(bytes.toString('utf8')));
+  } catch { refuse('machine_profile_refused'); }
+  finally { if (fd !== undefined) closeSync(fd); }
+}
+
+export function admitMachineCapability(input, {sdsRoot, origin, tenant} = {}) {
+  if (!input) return null;
+  const document = loadMachineProfile(input, {sdsRoot});
+  if (document.origin !== origin || document.tenant !== tenant ||
+      document.sourceSha256 !== installedSourceSha256() || document.hostSha256 !== hostSourceSha256(sdsRoot)) refuse('machine_profile_refused');
+  if (document.networkSource) {
+    try { machineNetworkSource(document.networkSource); }
+    catch { refuse('machine_profile_refused'); }
   }
+  if (document.money === 'qualified' && (!document.networkSource || !document.execution)) refuse('machine_profile_refused');
+  return Object.freeze({...document});
 }
 
 /** Parse a profile object, source-bound document, absolute file, or sdsRoot-relative file. */
@@ -106,8 +126,7 @@ export function loadMachineProfile(input, {sdsRoot} = {}) {
   if (typeof input === 'string') {
     const classified = classifyMachineProfileValue(input);
     if (classified.form === 'source-bound') return classified.document;
-    if (classified.form === 'relative-path') return readConfined(input, sdsRoot, input);
-    return readRegular(input);
+    return readRegular(machineProfileFile(input, {sdsRoot}));
   }
   return normalize(input);
 }

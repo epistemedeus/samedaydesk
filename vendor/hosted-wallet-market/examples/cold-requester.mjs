@@ -1,281 +1,156 @@
 #!/usr/bin/env node
-// Agent HTTP example for the existing unfunded machine market.
-// The public 0.1.1 client posts /v1/tasks and discovers /v1/discover.
-// This script uses the machine routes already mounted on the host.
-// Passwords, recovery codes, cookies, and proofs stay in the mode 0600 file.
+// HTTPS client for the existing account and unfunded machine-market routes.
+// Credentials and operation proofs are written before sending, in one private file.
 import {randomBytes} from 'node:crypto';
-import {chmodSync, readFileSync, renameSync, statSync, writeFileSync} from 'node:fs';
+import {constants, openSync, closeSync, fstatSync, fsyncSync, readFileSync, renameSync, writeFileSync, existsSync, unlinkSync} from 'node:fs';
 import https from 'node:https';
 import net from 'node:net';
 
-const PREFIX = '/api/neomorphic-contributor-journey';
-const args = process.argv.slice(2);
-const command = args[0];
-const flag = name => {
-  const index = args.indexOf('--' + name);
-  return index < 0 ? undefined : args[index + 1];
-};
-const refusedFlags = ['password', 'cookie', 'token', 'secret', 'recovery-code', 'private-key', 'seed', 'csrf', 'session'];
-if (args.some(arg => refusedFlags.includes(String(arg).replace(/^--/, '')))) {
-  console.log(JSON.stringify({ok: false, code: 'secret_flag_refused'}));
-  process.exit(1);
+const PREFIX='/api/neomorphic-contributor-journey',args=process.argv.slice(2),command=args[0];
+const flag=name=>{const i=args.indexOf('--'+name);return i<0?undefined:args[i+1];};
+function emit(value,exit=value.ok===false?1:0){console.log(JSON.stringify(value));process.exit(exit);}
+const fail=code=>{throw Object.assign(Error(code),{codeName:code});};
+const token=()=>randomBytes(32).toString('base64url');
+const operation=name=>'cold-'+name+'-'+randomBytes(8).toString('hex');
+const codeOf=response=>response.body?.code||response.body?.error?.code||null;
+let origin,secretFile;
+function loadSecret(file){
+  let fd;
+  try{
+    fd=openSync(file,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);
+    const st=fstatSync(fd);
+    if(!st.isFile()||(st.mode&0o077)||st.nlink!==1||st.size>131072||(process.getuid&&st.uid!==process.getuid()))fail('secret_file_refused');
+    const value=JSON.parse(readFileSync(fd,'utf8'));
+    if(value?.schema!=='ae.password-file.v1'||typeof value.password!=='string'||value.password.length<16)fail('secret_file_refused');
+    if(value.origin!==origin)fail('secret_origin_refused');
+    return value;
+  }finally{if(fd!==undefined)closeSync(fd);}
 }
-
-function originOf() {
-  const origin = flag('origin');
-  let url;
-  try { url = new URL(origin); }
-  catch { fail('origin_required', 1); }
-  if (url.protocol !== 'https:' || url.origin !== origin || url.username || url.password) fail('origin_required', 1);
-  return origin;
+function saveSecret(file,value,{initial=false}={}){
+  const bytes=JSON.stringify(value)+'\n';
+  if(initial){
+    const fd=openSync(file,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);
+    try{writeFileSync(fd,bytes);fsyncSync(fd);}finally{closeSync(fd);}
+    return;
+  }
+  const tmp=file+'.'+randomBytes(8).toString('hex')+'.tmp';
+  const fd=openSync(tmp,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);
+  try{writeFileSync(fd,bytes);fsyncSync(fd);}finally{closeSync(fd);}
+  try{renameSync(tmp,file);}finally{if(existsSync(tmp))unlinkSync(tmp);}
 }
-
-function fail(code, status = 1, extra = {}) {
-  console.log(JSON.stringify({ok: false, code, ...extra}));
-  process.exit(status);
-}
-
-function loadSecret(file) {
-  const st = statSync(file);
-  if (!st.isFile() || (st.mode & 0o077)) fail('secret_file_refused');
-  const parsed = JSON.parse(readFileSync(file, 'utf8'));
-  if (parsed?.schema !== 'ae.password-file.v1' || typeof parsed.password !== 'string' || parsed.password.length < 16) fail('secret_file_refused');
-  return parsed;
-}
-
-function saveSecret(file, value) {
-  const tmp = file + '.tmp';
-  writeFileSync(tmp, JSON.stringify(value) + '\n', {mode: 0o600});
-  chmodSync(tmp, 0o600);
-  renameSync(tmp, file);
-  chmodSync(file, 0o600);
-}
-
-function request(origin, route, {method = 'GET', body, headers = {}} = {}) {
-  const payload = body === undefined ? null : Buffer.from(JSON.stringify(body));
-  const ca = flag('ca-file') ? readFileSync(flag('ca-file')) : undefined;
-  const hostname = new URL(origin).hostname;
-  return new Promise(resolve => {
-    let settled = false;
-    const finish = value => { if (!settled) { settled = true; resolve(value); } };
-    const req = https.request(origin + route, {
-      method, ca, ...(net.isIP(hostname) ? {} : {servername: hostname}), headers: {
-        'x-ae-wire-version': flag('wire') || 'c0-1',
-        ...(payload ? {'content-type': 'application/json', 'content-length': String(payload.length)} : {}),
-        ...headers,
-      }, timeout: 20000,
-    }, res => {
-      let text = '';
-      res.setEncoding('utf8');
-      res.on('data', chunk => { text += chunk; });
-      res.on('end', () => {
-        let parsed = null;
-        try { parsed = text ? JSON.parse(text) : null; } catch { parsed = null; }
-        const setCookie = res.headers['set-cookie'];
-        const cookie = (Array.isArray(setCookie) ? setCookie : [setCookie]).find(row => String(row || '').startsWith('__Host-neo_contributor='));
-        finish({
-          status: res.statusCode,
-          body: parsed,
-          cookie: cookie ? String(cookie).split(';')[0] : null,
-          csrf: res.headers['x-cj-csrf'] || null,
-        });
+function request(route,{method='GET',body,headers={}}={}){
+  const data=body===undefined?null:Buffer.from(JSON.stringify(body));
+  const ca=flag('ca-file')?readFileSync(flag('ca-file')):undefined,hostname=new URL(origin).hostname;
+  return new Promise(resolve=>{
+    let settled=false;
+    const finish=value=>{if(!settled){settled=true;resolve(value);}};
+    const unavailable=()=>finish({status:0,body:null,cookie:null,csrf:null});
+    const req=https.request(origin+PREFIX+route,{method,ca,...(net.isIP(hostname)?{}:{servername:hostname}),
+      headers:{'x-ae-wire-version':flag('wire')||'c0-1',...(data?{'content-type':'application/json','content-length':String(data.length)}:{}),...headers}},res=>{
+      let text='';res.setEncoding('utf8');
+      res.on('error',unavailable);res.on('aborted',unavailable);
+      res.on('data',chunk=>{text+=chunk;if(text.length>1048576)req.destroy();});
+      res.on('end',()=>{
+        let parsed;try{parsed=JSON.parse(text);}catch{}
+        const cookies=res.headers['set-cookie'];
+        const cookie=(Array.isArray(cookies)?cookies:[cookies]).find(row=>String(row||'').startsWith('__Host-neo_contributor='));
+        finish({status:res.statusCode,body:parsed,cookie:cookie?String(cookie).split(';')[0]:null,csrf:res.headers['x-cj-csrf']||null});
       });
     });
-    req.on('error', () => finish({status: 0, body: null, cookie: null, csrf: null}));
-    req.on('timeout', () => req.destroy());
-    req.end(payload);
+    req.on('error',unavailable);req.setTimeout(20000,()=>req.destroy());req.end(data);
   });
 }
-
-function proof() { return randomBytes(32).toString('base64url'); }
-function operation(name) { return `cold-${name}-${randomBytes(8).toString('hex')}`; }
-function emit(value, ok = value.ok !== false) {
-  console.log(JSON.stringify(value));
-  process.exit(ok ? 0 : 1);
-}
-function codeOf(response) {
-  return response.body?.code || response.body?.error?.code || null;
-}
-
-const origin = originOf();
-const secretFile = flag('secret-file');
-
-if (command === 'profile') {
-  const response = await request(origin, PREFIX + '/v1/market/profile');
-  const capability = response.body?.value?.capability;
-  emit({
-    ok: response.status === 200 && response.body?.ok === true,
-    status: response.status,
-    code: codeOf(response),
-    money: capability?.money ?? null,
-    signerAuthority: response.body?.value?.signerAuthority ?? null,
-    discovery: capability?.discovery ?? null,
-  });
-}
-
-if (command === 'wrong-wire') {
-  const response = await request(origin, PREFIX + '/v1/market/profile', {headers: {'x-ae-wire-version': '1'}});
-  emit({ok: false, status: response.status, code: codeOf(response)});
-}
-
-if (command === 'discover') {
-  const response = await request(origin, PREFIX + '/v1/market/discover?limit=20');
-  const items = response.body?.value?.items || [];
-  let matched = null;
-  if (secretFile) {
-    const taskId = loadSecret(secretFile).taskId;
-    matched = taskId ? items.find(item => item.taskId === taskId) || null : null;
+const sessionHeaders=(secret,csrf=true)=>({origin,cookie:secret.cookie,...(csrf?{'x-cj-csrf':secret.csrf}:{})});
+const proofHeaders=stored=>({origin,'idempotency-key':stored.idempotencyKey,'x-account-operation-proof':stored.proof});
+function receiveAccount(secret,name,response){
+  const value=response.body?.value,stored=secret.operations[name];
+  const same=Boolean(value?.account?.accountId&&(!secret.accountId||value.account.accountId===secret.accountId));
+  if(response.status===0||(response.status===200&&(!same||!response.cookie||!response.csrf))){
+    emit({ok:false,status:response.status,code:'unknown_outcome',operation:name,nextAction:'readback'},2);
   }
-  emit({
-    ok: response.status === 200 && response.body?.ok === true,
-    status: response.status,
-    code: codeOf(response),
-    publicEnabled: response.body?.value?.publicEnabled ?? null,
-    moneyQualified: response.body?.value?.moneyQualified ?? null,
-    signerAuthority: response.body?.value?.signerAuthority ?? null,
-    count: items.length,
-    matched: Boolean(matched),
-    fundingState: matched?.fundingState ?? null,
-    assigned: matched?.assigned ?? null,
-  });
+  if(response.status!==200){stored.state='refused';saveSecret(secretFile,secret);emit({ok:false,status:response.status,code:codeOf(response)});}
+  secret.accountId=value.account.accountId;secret.role=value.account.role;
+  if(name==='recover')secret.password=stored.body.newPassword;
+  if(value.recoveryCode)secret.recoveryCode=value.recoveryCode;
+  secret.cookie=response.cookie;secret.csrf=response.csrf;stored.state='received';
+  saveSecret(secretFile,secret);
+  emit({ok:true,status:200,role:secret.role,...(command==='readback'||command==='replay-signup'?{replay:true}:{}),recoveryStored:Boolean(secret.recoveryCode)});
 }
-
-function sessionHeaders(secret, {csrf = true, originHeader = true} = {}) {
-  return {
-    ...(originHeader ? {origin} : {}),
-    cookie: secret.cookie,
-    ...(csrf ? {'x-cj-csrf': secret.csrf} : {}),
-  };
-}
-
-if (command === 'signup') {
-  const displayName = flag('display-name');
-  const role = flag('role');
-  if (!secretFile || !displayName || !['requester', 'contributor'].includes(role)) fail('signup_arguments_refused');
-  const password = randomBytes(24).toString('hex');
-  const idempotencyKey = operation('signup');
-  const proofValue = proof();
-  const body = {password, displayName, role};
-  const response = await request(origin, PREFIX + '/v1/account/signup', {
-    method: 'POST', body, headers: {origin, 'idempotency-key': idempotencyKey, 'x-account-operation-proof': proofValue},
-  });
-  if (response.status !== 200 || !response.cookie || !response.csrf) emit({ok: false, status: response.status, code: codeOf(response)});
-  saveSecret(secretFile, {
-    schema: 'ae.password-file.v1', password, displayName, role,
-    accountId: response.body?.value?.account?.accountId,
-    recoveryCode: response.body?.value?.recoveryCode,
-    cookie: response.cookie, csrf: response.csrf,
-    operations: {signup: {idempotencyKey, proof: proofValue, body: {displayName, role}}},
-  });
-  emit({ok: true, status: response.status, role: response.body?.value?.account?.role ?? null, recoveryStored: Boolean(response.body?.value?.recoveryCode)});
-}
-
-if (command === 'replay-signup' || command === 'readback') {
-  const secret = loadSecret(secretFile);
-  const stored = secret.operations?.signup;
-  if (!stored) fail('signup_operation_required');
-  const body = command === 'readback'
-    ? {operation: flag('operation') || 'signup'}
-    : {password: secret.password, displayName: stored.body.displayName, role: stored.body.role};
-  const route = command === 'readback' ? '/v1/account/readback' : '/v1/account/signup';
-  const response = await request(origin, PREFIX + route, {
-    method: 'POST', body, headers: {origin, 'idempotency-key': stored.idempotencyKey, 'x-account-operation-proof': stored.proof},
-  });
-  const same = response.body?.value?.account?.accountId === secret.accountId;
-  if (response.body?.value?.recoveryCode) secret.recoveryCode = response.body.value.recoveryCode;
-  if (response.cookie) secret.cookie = response.cookie;
-  if (response.csrf) secret.csrf = response.csrf;
-  saveSecret(secretFile, secret);
-  emit({ok: response.status === 200 && same, status: response.status, code: codeOf(response), replay: same, recoveryStored: Boolean(secret.recoveryCode)});
-}
-
-if (command === 'login' || command === 'recover') {
-  const secret = loadSecret(secretFile);
-  const idempotencyKey = operation(command);
-  const proofValue = proof();
-  const newPassword = command === 'recover' ? randomBytes(24).toString('hex') : null;
-  const body = command === 'login'
-    ? {accountId: secret.accountId, password: secret.password}
-    : {accountId: secret.accountId, recoveryCode: secret.recoveryCode, newPassword};
-  const response = await request(origin, PREFIX + '/v1/account/' + command, {
-    method: 'POST', body, headers: {origin, 'idempotency-key': idempotencyKey, 'x-account-operation-proof': proofValue},
-  });
-  if (response.status !== 200) emit({ok: false, status: response.status, code: codeOf(response)});
-  if (newPassword) secret.password = newPassword;
-  if (response.body?.value?.recoveryCode) secret.recoveryCode = response.body.value.recoveryCode;
-  secret.cookie = response.cookie;
-  secret.csrf = response.csrf;
-  secret.operations[command] = {idempotencyKey, proof: proofValue};
-  saveSecret(secretFile, secret);
-  emit({ok: response.body?.value?.account?.accountId === secret.accountId, status: response.status, role: response.body?.value?.account?.role ?? null});
-}
-
-function postBody(secret, title) {
-  return {
-    title: title || secret.operations.post.body.title,
-    summary: flag('summary') || secret.operations.post.body.summary,
-    criteria: [flag('criterion') || secret.operations.post.body.criteria[0]],
-    payableKinds: ['usable'],
-  };
-}
-
-if (command === 'post' || command === 'replay-post' || command === 'conflict-post' || command === 'post-without-csrf') {
-  const secret = loadSecret(secretFile);
-  const fresh = command === 'post';
-  const idempotencyKey = fresh ? operation('post') : secret.operations?.post?.idempotencyKey;
-  const body = command === 'conflict-post'
-    ? {...secret.operations.post.body, title: 'Different unfunded title'}
-    : fresh
-      ? {title: flag('title'), summary: flag('summary'), criteria: [flag('criterion')], payableKinds: ['usable']}
-      : secret.operations.post.body;
-  const response = await request(origin, PREFIX + '/v1/market/post', {
-    method: 'POST', body, headers: {
-      ...sessionHeaders(secret, {csrf: command !== 'post-without-csrf'}),
-      'idempotency-key': idempotencyKey,
-    },
-  });
-  if (fresh && response.status === 200) {
-    secret.taskId = response.body?.value?.result?.taskId;
-    secret.operations.post = {idempotencyKey, body};
-    saveSecret(secretFile, secret);
+async function main(){
+  if(args.some(arg=>/^--(?:password|cookie|token|secret|recovery-code|private-key|seed|csrf|session)(?:=|$)/.test(arg)))fail('secret_flag_refused');
+  origin=flag('origin');let url;try{url=new URL(origin);}catch{fail('origin_required');}
+  if(url.protocol!=='https:'||url.origin!==origin||url.username||url.password)fail('origin_required');
+  secretFile=flag('secret-file');
+  if(command==='profile'||command==='wrong-wire'){
+    const response=await request('/v1/market/profile',command==='wrong-wire'?{headers:{'x-ae-wire-version':'1'}}:{});
+    const value=response.body?.value;
+    emit({ok:command==='profile'&&response.status===200&&response.body?.ok===true,status:response.status,code:codeOf(response),
+      money:value?.capability?.money??null,signerAuthority:value?.signerAuthority??null,discovery:value?.capability?.discovery??null});
   }
-  const state = response.body?.value?.result?.state ?? null;
-  const replay = command === 'replay-post' && response.status === 200 && response.body?.value?.result?.taskId === secret.taskId;
-  const created = command === 'post' && response.status === 200 && state === 'unfunded_interest';
-  emit({
-    ok: created || replay,
-    status: response.status,
-    code: codeOf(response),
-    state,
-    ...(command === 'replay-post' ? {replay} : {}),
-  }, created || replay);
+  if(command==='discover'){
+    const response=await request('/v1/market/discover?limit=20'+(flag('cursor')?'&cursor='+encodeURIComponent(flag('cursor')):''));
+    const value=response.body?.value,items=value?.items||[],taskId=secretFile?loadSecret(secretFile).taskId:undefined;
+    const matched=taskId?items.find(item=>item.taskId===taskId):null;
+    emit({ok:response.status===200&&response.body?.ok===true,status:response.status,code:codeOf(response),
+      publicEnabled:value?.publicEnabled??null,moneyQualified:value?.moneyQualified??null,signerAuthority:value?.signerAuthority??null,
+      items,nextCursor:value?.nextCursor??null,count:items.length,matched:Boolean(matched),fundingState:matched?.fundingState??null,assigned:matched?.assigned??null});
+  }
+  if(command==='signup'){
+    const displayName=flag('display-name'),role=flag('role');
+    if(!secretFile||!displayName||!['requester','contributor'].includes(role))fail('signup_arguments_refused');
+    if(existsSync(secretFile))fail('secret_file_exists');
+    const password=randomBytes(24).toString('hex'),body={password,displayName,role};
+    const stored={idempotencyKey:operation('signup'),proof:token(),body,state:'pending'};
+    const secret={schema:'ae.password-file.v1',origin,password,displayName,role,operations:{signup:stored}};
+    saveSecret(secretFile,secret,{initial:true});
+    receiveAccount(secret,'signup',await request('/v1/account/signup',{method:'POST',body,headers:proofHeaders(stored)}));
+  }
+  if(command==='readback'||command==='replay-signup'){
+    const secret=loadSecret(secretFile),name=command==='replay-signup'?'signup':flag('operation')||'signup';
+    if(!['signup','login','recover'].includes(name)||!secret.operations?.[name])fail('account_operation_required');
+    const stored=secret.operations[name];
+    const response=await request(command==='readback'?'/v1/account/readback':'/v1/account/signup',
+      {method:'POST',body:command==='readback'?{operation:name}:stored.body,headers:proofHeaders(stored)});
+    receiveAccount(secret,name,response);
+  }
+  if(command==='login'||command==='recover'){
+    const secret=loadSecret(secretFile),name=command;
+    if(Object.values(secret.operations).some(op=>op.state==='pending'))fail('pending_account_operation_readback_required');
+    const body=name==='login'?{accountId:secret.accountId,password:secret.password}:
+      {accountId:secret.accountId,recoveryCode:secret.recoveryCode,newPassword:randomBytes(24).toString('hex')};
+    const stored={idempotencyKey:operation(name),proof:token(),body,state:'pending'};
+    secret.operations[name]=stored;saveSecret(secretFile,secret);
+    receiveAccount(secret,name,await request('/v1/account/'+name,{method:'POST',body,headers:proofHeaders(stored)}));
+  }
+  if(['post','replay-post','conflict-post','post-without-csrf'].includes(command)){
+    const secret=loadSecret(secretFile),fresh=command==='post';
+    const stored=fresh?{idempotencyKey:operation('post'),body:{title:flag('title'),summary:flag('summary'),criteria:[flag('criterion')],payableKinds:['usable']}}:secret.operations.post;
+    if(!stored)fail('post_operation_required');
+    if(fresh){secret.operations.post=stored;saveSecret(secretFile,secret);}
+    const body=command==='conflict-post'?{...stored.body,title:'Different unfunded title'}:stored.body;
+    const response=await request('/v1/market/post',{method:'POST',body,headers:{...sessionHeaders(secret,command!=='post-without-csrf'),'idempotency-key':stored.idempotencyKey}});
+    if(response.status===0)emit({ok:false,status:0,code:'unknown_outcome',nextAction:'replay-post'},2);
+    const result=response.body?.value?.result,state=result?.state??null;
+    if(fresh&&response.status===200){secret.taskId=result.taskId;saveSecret(secretFile,secret);}
+    const replay=command==='replay-post'&&response.status===200&&(!secret.taskId||result?.taskId===secret.taskId);
+    if(replay){secret.taskId=result.taskId;saveSecret(secretFile,secret);}
+    emit({ok:(fresh&&response.status===200&&state==='unfunded_interest')||replay,status:response.status,code:codeOf(response),state,
+      ...(result?.taskId?{taskId:result.taskId}:{}),...(command==='replay-post'?{replay}:{}),commissioned:false});
+  }
+  if(command==='interest'){
+    const secret=loadSecret(secretFile),taskId=flag('task-id')||(flag('peer-secret')?loadSecret(flag('peer-secret')).taskId:null);
+    if(!/^market-[0-9a-f]{64}$/.test(taskId||'')||!flag('note'))fail('interest_arguments_refused');
+    const stored={idempotencyKey:operation('interest'),body:{taskId,note:flag('note')}};
+    secret.operations.interest=stored;saveSecret(secretFile,secret);
+    const response=await request('/v1/market/interest',{method:'POST',body:stored.body,headers:{...sessionHeaders(secret),'idempotency-key':stored.idempotencyKey}});
+    emit({ok:response.status===200&&response.body?.value?.result?.state==='unfunded_interest',status:response.status,code:codeOf(response),
+      state:response.body?.value?.result?.state??null,commissioned:false});
+  }
+  if(command==='fund'){
+    const secret=loadSecret(secretFile),response=await request('/v1/market/fund',{method:'POST',body:{taskId:secret.taskId,quoteDigest:'unfunded',proofId:'unfunded'},
+      headers:{...sessionHeaders(secret),'idempotency-key':operation('fund')}});
+    emit({ok:false,status:response.status,code:codeOf(response),paidWork:false});
+  }
+  fail('usage');
 }
-
-if (command === 'interest') {
-  const secret = loadSecret(secretFile);
-  const peer = loadSecret(flag('peer-secret'));
-  const response = await request(origin, PREFIX + '/v1/market/interest', {
-    method: 'POST',
-    body: {taskId: peer.taskId, note: flag('note')},
-    headers: {...sessionHeaders(secret), 'idempotency-key': operation('interest')},
-  });
-  emit({
-    ok: response.status === 200 && response.body?.value?.result?.state === 'unfunded_interest',
-    status: response.status,
-    code: codeOf(response),
-    state: response.body?.value?.result?.state ?? null,
-    commissioned: false,
-  });
-}
-
-if (command === 'fund') {
-  const secret = loadSecret(secretFile);
-  const response = await request(origin, PREFIX + '/v1/market/fund', {
-    method: 'POST',
-    body: {taskId: secret.taskId, quoteDigest: 'unfunded', proofId: 'unfunded'},
-    headers: {...sessionHeaders(secret), 'idempotency-key': operation('fund')},
-  });
-  emit({ok: false, status: response.status, code: codeOf(response), paidWork: false});
-}
-
-fail('usage');
+main().catch(error=>emit({ok:false,code:error.codeName||'client_input_refused'}));
