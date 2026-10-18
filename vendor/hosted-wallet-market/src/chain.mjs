@@ -19,9 +19,9 @@ export function acceptProfileChain(chain) {
   return {chain: parseChain(chain), publicChain: false};
 }
 
-export async function publicRead(raw, method, params = []) {
+export async function publicRead(raw, method, params = [], timeoutMs = 20000) {
   if (!PUBLIC_READ_METHODS.has(method)) refuse('chain_method_refused');
-  return rpc(assertRpcUrl(raw), method, params);
+  return rpc(assertRpcUrl(raw), method, params, timeoutMs);
 }
 
 export function assertRpcUrl(raw) {
@@ -61,7 +61,7 @@ const BASE_READ_TOKEN = {
   'eip155:84532': '0x036cbd53842c5426634e7929541ec2318f3dcf7e',
 };
 
-function rpc(url, method, params = []) {
+function rpc(url, method, params = [], timeoutMs = 20000) {
   if (REFUSED_METHODS.has(method)) refuse('chain_method_refused');
   const body = Buffer.from(JSON.stringify({jsonrpc: '2.0', id: 1, method, params}));
   const transport = url.protocol === 'https:' ? https : http;
@@ -91,7 +91,7 @@ function rpc(url, method, params = []) {
     });
     // A deadline bounds streaming responses too. No redirects, bearer forwarding,
     // proxy environment, or credentials other than the configured endpoint.
-    const deadline = setTimeout(() => request.destroy(Object.assign(new Error('chain_unreachable'),{codeName:'chain_unreachable'})), 20000);
+    const deadline = setTimeout(() => request.destroy(Object.assign(new Error('chain_unreachable'),{codeName:'chain_unreachable'})), timeoutMs);
     request.on('close', () => clearTimeout(deadline));
     request.on('error', error => { clearTimeout(deadline); reject(error?.codeName ? error : Object.assign(new Error('chain_unreachable'), {codeName:'chain_unreachable'})); });
     request.end(body);
@@ -131,10 +131,10 @@ function topicAddress(address) {
  * log is deposit_unverified. A transaction sender other than the payer is
  * payer_unbound. This does not enable a payment rail.
  */
-export async function readPublicChain(raw, expectedChain) {
+export async function readPublicChain(raw, expectedChain, timeoutMs = 20000) {
   if (expectedChain !== 'eip155:8453' && expectedChain !== 'eip155:84532') refuse('chain_refused');
-  const chainId = await publicRead(raw, 'eth_chainId');
-  const block = await publicRead(raw, 'eth_blockNumber');
+  const chainId = await publicRead(raw, 'eth_chainId', [], timeoutMs);
+  const block = await publicRead(raw, 'eth_blockNumber', [], timeoutMs);
   if (typeof chainId !== 'string' || typeof block !== 'string') refuse('chain_rpc_refused');
   let id;
   try { id = BigInt(chainId); }
@@ -229,18 +229,21 @@ function hexQuantity(value) {
 }
 const hashOf = value => typeof value === 'string' && /^0x[0-9a-f]{64}$/i.test(value) ? value.toLowerCase() : null;
 
-/** Canonical, finalized read only. Caller URLs and signing methods are absent. */
+/** Canonical, finalized read only. Caller URLs and signing methods are absent.
+ * A prior authenticated review took 21703ms. Receiving waits 60000ms before an
+ * unanswered read is chain_unreachable. That deadline is not a failed transfer. */
 export async function readRailTransfer(raw, body) {
-  const chain = await readPublicChain(raw, 'eip155:8453');
-  const receipt = await publicRead(raw, 'eth_getTransactionReceipt', [body.transactionHash]);
+  const timeoutMs = 60000;
+  const chain = await readPublicChain(raw, 'eip155:8453', timeoutMs);
+  const receipt = await publicRead(raw, 'eth_getTransactionReceipt', [body.transactionHash], timeoutMs);
   const block = hexQuantity(receipt?.blockNumber);
   const blockHash = hashOf(receipt?.blockHash);
   if (hexQuantity(receipt?.status) !== 1n || block === null || !blockHash || hashOf(receipt?.transactionHash) !== body.transactionHash) refuse('transfer_unverified');
   if (block > BigInt(chain.blockNumber) || block.toString() !== body.blockNumber) refuse('transfer_unverified');
   const [header, finalized, transaction] = await Promise.all([
-    publicRead(raw, 'eth_getBlockByNumber', [receipt.blockNumber, false]),
-    publicRead(raw, 'eth_getBlockByNumber', ['finalized', false]),
-    rpc(assertRpcUrl(raw), 'eth_getTransactionByHash', [body.transactionHash]),
+    publicRead(raw, 'eth_getBlockByNumber', [receipt.blockNumber, false], timeoutMs),
+    publicRead(raw, 'eth_getBlockByNumber', ['finalized', false], timeoutMs),
+    rpc(assertRpcUrl(raw), 'eth_getTransactionByHash', [body.transactionHash], timeoutMs),
   ]);
   const timestamp = hexQuantity(header?.timestamp);
   const finalBlock = hexQuantity(finalized?.number);

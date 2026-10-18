@@ -17,6 +17,7 @@ import {frozenMarker} from './preserve.mjs';
 import {ADDITIVE_ENV_KEYS, loadDeploymentProfile} from './profile.mjs';
 import {publicFieldLeaks} from './public-text.mjs';
 import {assertReplayKey, openSecrets, sealSecrets} from './seal.mjs';
+import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
 
 export const PREFIX = '/api/neomorphic-contributor-journey';
@@ -78,6 +79,7 @@ function mapError(error) {
     if (message.includes('disposition_hold')) return httpError(409, 'disposition_hold');
     if (message.includes('disposition_immutable')) return httpError(409, 'disposition_immutable');
     if (message.includes('enrollment_immutable')) return httpError(409, 'enrollment_immutable');
+    if (message.includes('succession_immutable')) return httpError(409, 'succession_immutable');
     if (message.includes('legacy_debt_immutable')) return httpError(409, 'legacy_debt_immutable');
     if (message.includes('preserved_key_overlap')) return httpError(409, 'preserved_key_overlap');
     return httpError(409, 'constraint_refused');
@@ -929,7 +931,20 @@ export async function openHostedMarket(options) {
   }
 
   async function reviewRead(req, res, url) {
+    const taskId = url.searchParams.get('taskId') || '';
     const reservationId = url.searchParams.get('reservationId') || '';
+    if (taskId && reservationId) {
+      const value = await withClient(client => readEntitledOutcome(client, req, {
+        taskId,
+        reservationId,
+        readAcceptedSource: options.readAcceptedSource,
+        nowMs,
+        registryRoot: dischargeRegistry,
+        rpcUrl: options.rpcUrl,
+        assertBound: bound => debtConsumer.assertBinding(bound),
+      }));
+      return send(res, 200, {ok: true, value});
+    }
     const account = await withClient(client => accountFrom(client, req));
     const row = await withClient(client => reservationView(client, reservationId));
     if (!visible(account, row)) throw httpError(404, 'not_found');

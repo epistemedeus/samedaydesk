@@ -115,6 +115,30 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       registry_sha256: registryIdentity(registryRoot), profile_sha256: profileSha256, profile_chain: configured.chain};
   }
   const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
+  const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
+  async function observationSeal(tx) {
+    const rows = (await tx.query(`SELECT ${PRESERVE.join(', ')} FROM hosted_wallet_market.native_debt_dispositions ORDER BY obligation_id`)).rows;
+    return digest(rows.map(row => {
+      const item = {};
+      for (const key of PRESERVE) item[key] = key === 'log_index' ? Number(row[key]) : String(row[key]);
+      return item;
+    }));
+  }
+  function packageDriftOnly(row, next) {
+    // The packaged wallet bytes changed. The SDS host pin may change with
+    // those same bytes. Tenant, contract, rail, registry, and profile may not.
+    if (row.source_sha256 === next.source_sha256) return false;
+    return equal(row, {...next, source_sha256: row.source_sha256, host_source_sha256: row.host_source_sha256});
+  }
+  async function successionMatches(tx, row, next) {
+    if (!packageDriftOnly(row, next)) return false;
+    const succession = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [row.source_sha256])).rows[0];
+    return Boolean(succession)
+      && succession.successor_source_sha256 === next.source_sha256
+      && succession.successor_host_source_sha256 === next.host_source_sha256
+      && succession.consumer_contract_sha256 === next.consumer_contract_sha256
+      && succession.preservation_sha256 === await observationSeal(tx);
+  }
   function enrollmentView(row) {
     let qualified = false;
     try { qualified = equal(row, expected()); } catch { /* explicit unavailable */ }
@@ -127,7 +151,8 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   async function assertBinding(tx) {
     const row = (await tx.query(ENROLL_SQL)).rows[0];
     if (!row) fail('discharge_consumer_unbound');
-    if (!equal(row, expected())) fail('binding_stale');
+    const next = expected();
+    if (!equal(row, next) && !await successionMatches(tx, row, next)) fail('binding_stale');
     const installation = (await tx.query('SELECT * FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0];
     if (!installation || installation.tenant !== configured.tenant || installation.earned_schema !== configured.earnedSchema ||
         installation.chain !== configured.chain || installation.payments !== 'off') fail('binding_stale');
@@ -135,7 +160,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   }
   async function assertEnrollmentCandidate(tx) {
     const next = expected(), row = (await tx.query(ENROLL_SQL)).rows[0];
-    if (row && !equal(row,next)) fail('enrollment_conflict');
+    if (row && !equal(row, next) && !packageDriftOnly(row, next)) fail('enrollment_conflict');
   }
   async function enroll(tx, createdAt) {
     const next = expected();
@@ -143,15 +168,31 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     if (observed.chain !== configured.chain) fail('binding_stale');
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-enrollment', 0))");
     let row = (await tx.query(ENROLL_SQL)).rows[0];
-    if (row && !equal(row, next)) fail('enrollment_conflict');
     if (!row) {
       const fields = Object.keys(next);
       await tx.query(`INSERT INTO hosted_wallet_market.consumer_enrollment (id, ${fields.join(',')}, created_at)
         VALUES (TRUE, ${fields.map((_,i) => '$' + (i+1)).join(',')}, $${fields.length+1})`, [...Object.values(next), createdAt]);
       row = (await tx.query(ENROLL_SQL)).rows[0];
+    } else if (!equal(row, next)) {
+      // The enrolled package hash changed because installed bytes changed.
+      // The enrollment row is not updated or deleted. A caller body cannot
+      // supply the successor hash or a baseline. Preservation is the live
+      // disposition seal, not a supplied snapshot.
+      if (!packageDriftOnly(row, next)) fail('enrollment_conflict');
+      const seal = await observationSeal(tx);
+      const existing = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [row.source_sha256])).rows[0];
+      if (existing) {
+        if (existing.successor_source_sha256 !== next.source_sha256 || existing.successor_host_source_sha256 !== next.host_source_sha256 || existing.consumer_contract_sha256 !== next.consumer_contract_sha256 || existing.preservation_sha256 !== seal) fail('enrollment_conflict');
+      } else {
+        await tx.query(`INSERT INTO hosted_wallet_market.source_succession
+          (predecessor_source_sha256, successor_source_sha256, successor_host_source_sha256, consumer_contract_sha256, preservation_sha256, created_at)
+          VALUES ($1, $2, $3, $4, $5, $6)`, [row.source_sha256, next.source_sha256, next.host_source_sha256, next.consumer_contract_sha256, seal, createdAt]);
+      }
     }
     await assertBinding(tx);
-    return enrollmentView(row);
+    const view = enrollmentView(row);
+    view.qualified = true;
+    return view;
   }
   async function importNativeDischarge(tx, body, createdAt) {
     assertImportShape(body);
@@ -191,7 +232,12 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   }
   async function readEnrollment(tx) {
     const row = (await tx.query(ENROLL_SQL)).rows[0];
-    if (row) { const view = enrollmentView(row); try { await assertBinding(tx); } catch { view.qualified=false; } return view; }
+    if (row) {
+      const view = enrollmentView(row);
+      try { await assertBinding(tx); view.qualified = true; }
+      catch { view.qualified = false; }
+      return view;
+    }
     return {schema: 'pilot.root71.native-debt.enrollment.v1', state: 'absent', qualified: false, boundConsumer: null};
   }
   async function readNativeDebt(tx, obligationId) {
@@ -208,5 +254,5 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       importState: pending?'unbound_fail_closed':'unbound', holdReason:pending,
       kernelPaid: false, kernelTransfer: null, nativePaidObservation: false, transferInitiated: false, consumerContractSha256: consumerContractSha256()};
   }
-  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate});
+  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate, expectedBinding: expected});
 }
