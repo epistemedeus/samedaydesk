@@ -3,7 +3,7 @@
 import {constants, openSync, closeSync, fstatSync, lstatSync, readFileSync} from 'node:fs';
 import {dirname, isAbsolute, relative, resolve, parse, join} from 'node:path';
 import {installedSourceSha256, hostSourceSha256} from './native-debt.mjs';
-import {machineNetworkSource} from './machine-money.mjs';
+import {machineNetworkSource} from './machine-network-source.mjs';
 
 const PREFIX = 'source-bound:';
 const SWITCH = /^(?:0|1|true|false|on|off|yes|no|unfunded|sandbox|qualified)$/i;

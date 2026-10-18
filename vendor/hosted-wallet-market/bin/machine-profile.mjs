@@ -2,9 +2,8 @@
 // Emits a reviewable, source-bound machine capability; never installs it.
 import {open} from 'node:fs/promises';
 import {installedSourceSha256, hostSourceSha256} from '../src/native-debt.mjs';
-import {canonicalMachineProfile, machineProfileFile} from '../src/machine-profile-document.mjs';
-import {readMachineCapability} from '../src/machine-market.mjs';
-import {versionedSource} from '../runtime/agent-economy-rail/dist/index.js';
+import {canonicalMachineProfile, machineProfileFile,admitMachineCapability} from '../src/machine-profile-document.mjs';
+import {versionedSource} from '../runtime/agent-economy-rail/dist/candidate.js';
 const args = process.argv.slice(2), get = name => { const i = args.indexOf('--' + name); return i < 0 ? undefined : args[i + 1]; };
 const origin = get('origin'), tenant = get('tenant'), sds = get('sds-root'), out = get('out'), money = get('money') || 'unfunded';
 const url = new URL(origin);
@@ -27,6 +26,6 @@ const body = canonicalMachineProfile(value);
 const file = await open(destination, 'wx', 0o600);
 try { await file.writeFile(body + '\n'); await file.sync(); }
 finally { await file.close(); }
-const loaded = readMachineCapability(out.startsWith('/') ? destination : out, {sdsRoot: sds, origin, tenant});
+const loaded = admitMachineCapability(out.startsWith('/') ? destination : out, {sdsRoot: sds, origin, tenant});
 if (loaded?.money !== money || loaded.signerAuthority === true) throw Error('machine_profile_refused');
 console.log(JSON.stringify({file: destination, relative: out.startsWith('/') ? null : out, sourceBound: 'source-bound:' + body, ...value, installed: false, signerAuthority: false}));

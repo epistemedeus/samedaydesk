@@ -4,11 +4,9 @@ import {pathToFileURL} from 'node:url';
 import {createPublicClient,http,defineChain} from 'viem';
 import {digest,AssetRegistry} from '../runtime/agent-economy-foundation/dist/index.js';
 import {versionedSource,attestCandidate,candidateFeeQuote,RailStore,CommercePaymentsRail} from '../runtime/agent-economy-rail/dist/index.js';
+import {machineNetworkSource} from './machine-network-source.mjs';
+export {machineNetworkSource} from './machine-network-source.mjs';
 const refuse=code=>{throw Object.assign(Error(code),{code,codeName:code,http:409});};
-export function machineNetworkSource(value){
- const source=versionedSource(value?.chain);
- if(digest(source)!==digest(value))refuse('candidate_identity_changed');return source;
-}
 export async function openQualifiedMoney({capability,authority,profile,assertCurrent,assertFundingConsent,approve,now=()=>Date.now()}){
  if(typeof authority==='string'){
   const st=lstatSync(authority);
