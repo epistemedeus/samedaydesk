@@ -46,7 +46,12 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const fail = (code = 'disposition_hold', http = 409) => { throw Object.assign(new Error(code), {http, codeName: code}); };
 export const consumerContractSha256 = () => digest(NATIVE_DEBT_CONSUMER);
 export function installedSourceFiles() {
-  return ['package.json', ...['bin', 'client', 'contracts', 'schema', 'src'].flatMap(dir => readdirSync(join(root, dir)).sort().map(name => `${dir}/${name}`))].sort();
+  const walk = dir => readdirSync(join(root, dir)).sort().flatMap(name => {
+    const file = `${dir}/${name}`, stat = lstatSync(join(root, file));
+    if (stat.isSymbolicLink()) fail('binding_stale');
+    return stat.isDirectory() ? walk(file) : [file];
+  });
+  return ['package.json', 'package-lock.json', ...['bin', 'client', 'contracts', 'schema', 'src', 'runtime'].flatMap(walk)].sort();
 }
 function hashFiles(base, files) {
   const hash = createHash('sha256');
@@ -116,8 +121,9 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   }
   const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
-  async function observationSeal(tx) {
-    const rows = (await tx.query(`SELECT ${PRESERVE.join(', ')} FROM hosted_wallet_market.native_debt_dispositions ORDER BY obligation_id`)).rows;
+  async function observationSeal(tx, through = null) {
+    const rows = (await tx.query(`SELECT ${PRESERVE.join(', ')} FROM hosted_wallet_market.native_debt_dispositions
+      WHERE ($1::timestamptz IS NULL OR created_at <= $1) ORDER BY obligation_id`, [through])).rows;
     return digest(rows.map(row => {
       const item = {};
       for (const key of PRESERVE) item[key] = key === 'log_index' ? Number(row[key]) : String(row[key]);
@@ -130,14 +136,21 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     if (row.source_sha256 === next.source_sha256) return false;
     return equal(row, {...next, source_sha256: row.source_sha256, host_source_sha256: row.host_source_sha256});
   }
+  async function successionChain(tx, row) {
+    const seen = new Set([row.source_sha256]), edges = [];
+    let source = row.source_sha256;
+    for (;;) {
+      const edge = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [source])).rows[0];
+      if (!edge) return {edges, tail: source};
+      if (edges.length >= 64 || seen.has(edge.successor_source_sha256) || edge.consumer_contract_sha256 !== row.consumer_contract_sha256 ||
+          edge.preservation_sha256 !== await observationSeal(tx, edge.created_at)) fail('binding_stale');
+      seen.add(edge.successor_source_sha256); edges.push(edge); source = edge.successor_source_sha256;
+    }
+  }
   async function successionMatches(tx, row, next) {
     if (!packageDriftOnly(row, next)) return false;
-    const succession = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [row.source_sha256])).rows[0];
-    return Boolean(succession)
-      && succession.successor_source_sha256 === next.source_sha256
-      && succession.successor_host_source_sha256 === next.host_source_sha256
-      && succession.consumer_contract_sha256 === next.consumer_contract_sha256
-      && succession.preservation_sha256 === await observationSeal(tx);
+    return (await successionChain(tx, row)).edges.some(edge => edge.successor_source_sha256 === next.source_sha256 &&
+      edge.successor_host_source_sha256 === next.host_source_sha256);
   }
   function enrollmentView(row) {
     let qualified = false;
@@ -201,13 +214,14 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       if (!packageDriftOnly(row, next)) fail('enrollment_conflict');
       await assertEnrollmentAuthority(tx, row);
       const seal = await observationSeal(tx);
-      const existing = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [row.source_sha256])).rows[0];
+      const chain = await successionChain(tx, row);
+      const existing = chain.edges.find(edge => edge.successor_source_sha256 === next.source_sha256);
       if (existing) {
-        if (existing.successor_source_sha256 !== next.source_sha256 || existing.successor_host_source_sha256 !== next.host_source_sha256 || existing.consumer_contract_sha256 !== next.consumer_contract_sha256 || existing.preservation_sha256 !== seal) fail('enrollment_conflict');
+        if (existing.successor_host_source_sha256 !== next.host_source_sha256) fail('enrollment_conflict');
       } else {
         await tx.query(`INSERT INTO hosted_wallet_market.source_succession
           (predecessor_source_sha256, successor_source_sha256, successor_host_source_sha256, consumer_contract_sha256, preservation_sha256, created_at)
-          VALUES ($1, $2, $3, $4, $5, $6)`, [row.source_sha256, next.source_sha256, next.host_source_sha256, next.consumer_contract_sha256, seal, createdAt]);
+          VALUES ($1, $2, $3, $4, $5, $6)`, [chain.tail, next.source_sha256, next.host_source_sha256, next.consumer_contract_sha256, seal, createdAt]);
       }
     }
     // mutate stores initial consent in this transaction after this returns.

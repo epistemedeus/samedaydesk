@@ -1,0 +1,68 @@
+{
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "settings": {
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi"
+        ]
+      }
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "src/AuthCaptureEscrow.sol",
+      "sha256": "31c6a0c3efec3acacb351e9cefe72b23a56d734474f1785dbf3e4ab45ef1477d"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+      "sha256": "44bd6f7d973f6e28ced08c5f28484a3777947bf0adb5a286db0468637b5320a7"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+      "sha256": "0d3abd9a0322b98154a10dac4b5b549562e24aaa7a62a1b28b12d8d03f37ef5e"
+    },
+    {
+      "path": "lib/solady/src/utils/ReentrancyGuardTransient.sol",
+      "sha256": "2b93c6839a60b5e261cbaec24a8ca93441138e3220537466566bfe25bd3bad0d"
+    },
+    {
+      "path": "lib/solady/src/utils/LibClone.sol",
+      "sha256": "7fb37a17148081bfc6bc7e354e9bd651be942fe0a76d33e41536f285c1655cfd"
+    },
+    {
+      "path": "src/TokenStore.sol",
+      "sha256": "86c2d4a08dca7a18bc7aaefac8796e22043367c766a238803ac872b9455e293f"
+    },
+    {
+      "path": "src/collectors/TokenCollector.sol",
+      "sha256": "0dadc5b9129d1e56fffb70b22fb9532c1736827a7ec7734dc0dbc0b3c1e8b9df"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+      "sha256": "1a226fed003d459b1249678aaf83f6e2fd76842545a0d6d86bfab82051c2d2a6"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/utils/Address.sol",
+      "sha256": "979fdf9e0ef17a6e5936aff82345d031333b448da6ba61ccdc89d58b4b0b8bc2"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+      "sha256": "cb42f0b4d269ba8ef2629c176a7f99bf4fb50837c92f45596b54822b26e3df4b"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+      "sha256": "49abfb8fa26e3f1715fe05948a96e3762b805bd4a77d103eb40ba96b1acfa144"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/utils/Errors.sol",
+      "sha256": "c25c4c0a72dc288f84565df65a37637a8147c6542a8a1403f877034fbf03e97f"
+    },
+    {
+      "path": "lib/spend-permissions/lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+      "sha256": "d5ec9a03c954d63b427a451c16abc99e1bfb7896725be8cc56c5d6d73040cb6f"
+    }
+  ],
+  "purpose": "ABI interface only; no bytecode/collector/wallet qualification"
+}

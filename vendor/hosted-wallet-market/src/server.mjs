@@ -274,22 +274,39 @@ export async function openHostedMarket(options) {
     const cookie = req.headers.cookie?.split(';')[0]?.trim();
     if (!cookie) throw httpError(401, 'unauthenticated');
     const rows = await client.query(
-      `SELECT s.revoked_at, s.expires_at, a.id AS account_id, r.role, d.csrf, d.cookie_hash
+      `SELECT s.revoked_at, s.expires_at, s.auth_version, a.auth_version AS current_auth_version, a.id AS account_id, r.role, d.csrf, d.cookie_hash
        FROM journey_account_sessions s
        JOIN journey_accounts a ON a.id = s.account_id
        JOIN hosted_wallet_market.roles r ON r.account_id = a.id
        JOIN hosted_wallet_market.session_delivery d ON d.account_id = a.id
-       WHERE s.token_hash = $1`,
-      [sha256(cookie)],
+       WHERE s.token_hash = $1 OR s.token_hash = $2`,
+      [sha256(cookie),sha256(cookie.slice(cookie.indexOf('=')+1))],
     );
     const row = rows.rows[0];
     if (!row || row.cookie_hash !== sha256(cookie)) throw httpError(401, 'unauthenticated');
-    if (row.revoked_at || row.expires_at.getTime() <= nowMs()) throw httpError(401, 'revoked');
+    if (row.revoked_at || row.auth_version !== row.current_auth_version || row.expires_at.getTime() <= nowMs()) throw httpError(401, 'revoked');
     if (write) {
       if (req.headers.origin !== originBox.origin) throw httpError(401, 'origin_required');
       if (req.headers['x-cj-csrf'] !== row.csrf) throw httpError(401, 'csrf_required');
     }
     return {accountId: row.account_id, role: row.role, csrf: row.csrf, cookie};
+  }
+
+  // The legacy private profile is retained. A separately source-qualified
+  // machine capability admits discovery; only the closed rail authority can
+  // admit disposable-chain money. A profile flag never supplies a signer.
+  let machine;
+  const machineInput = options.machineProfile ?? process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
+  if (machineInput) {
+    try {
+      const {readMachineCapability, openMachineMarket} = await import('./machine-market.mjs');
+      const capability = readMachineCapability(machineInput, {sdsRoot: options.sdsRoot,
+        origin: profile.origin || options.origin, tenant: profile.tenant});
+      originBox.origin = capability.origin;
+      machine = await openMachineMarket({capability, authority: options.machineAuthority,
+        sdsRoot: options.sdsRoot, profile: {...profile,replayKey}, now: nowMs, withClient,
+        authenticate: (req, policy) => withClient(c => accountFrom(c, req, policy))});
+    } catch (error) { await pool.end(); throw error; }
   }
 
   async function mutate(client, req, body, account, apply) {
@@ -476,6 +493,11 @@ export async function openHostedMarket(options) {
     must(['requester', 'contributor'].includes(body.role), 'role_required');
     const proof = req.headers['x-account-operation-proof'];
     must(typeof proof === 'string' && /^[A-Za-z0-9_-]{43}$/.test(proof), 'proof_required');
+    if (machine) {
+      must(req.headers.origin === originBox.origin, 'origin_required',401);
+      const produced=await withTx(client=>mutate(client,req,body,null,tx=>machine.issueSession('signup',req,body,tx)));
+      return finish(res,produced);
+    }
     const produced = await withTx(client => mutate(client, req, body, null, async tx => {
       const accountId = id('acc_');
       const profileId = id('prf_');
@@ -520,7 +542,7 @@ export async function openHostedMarket(options) {
 
   async function signupReadback(req, res, body) {
     keysOf(body, ['operation']);
-    must(body.operation === 'signup', 'operation_refused');
+    must(body.operation === 'signup' || (machine && ['login','recover'].includes(body.operation)), 'operation_refused');
     const key = req.headers['idempotency-key'];
     const proof = req.headers['x-account-operation-proof'];
     must(typeof key === 'string' && typeof proof === 'string', 'not_found', 404);
@@ -1495,6 +1517,7 @@ export async function openHostedMarket(options) {
     try {
       if (!url.pathname.startsWith(PREFIX)) return miss(res, next);
       const path = url.pathname.slice(PREFIX.length);
+      if (machine && await machine.protectNative(path, res)) return miss(res, next);
       if (req.headers[WIRE_HEADER] && req.headers[WIRE_HEADER] !== WIRE_VERSION && path !== '/healthz') {
         return send(res, 409, {ok: false, code: 'wire_version_unsupported'});
       }
@@ -1503,6 +1526,29 @@ export async function openHostedMarket(options) {
         return send(res, 200, {ok: true, value});
       }
       const body = req.method === 'GET' || req.method === 'HEAD' ? {} : await readJson(req);
+      if (machine && req.method === 'POST' && ['/v1/account/login','/v1/account/recover'].includes(path)) {
+        must(req.headers.origin === originBox.origin, 'origin_required',401);
+        const proof=req.headers['x-account-operation-proof'];
+        must(typeof proof==='string'&&/^[A-Za-z0-9_-]{43}$/.test(proof),'proof_required');
+        const operation=path.split('/').at(-1);
+        const produced=await withTx(client=>mutate(client,req,body,null,tx=>machine.issueSession(operation,req,body,tx)));
+        return finish(res,produced);
+      }
+      if (path === '/v1/market/discover' && req.method === 'GET' && machine) {
+        return send(res, 200, {ok: true, value: await machine.discover(page(url))});
+      }
+      const machineAction = path.match(/^\/v1\/market\/([A-Za-z]+)$/);
+      if (machineAction && req.method === 'POST' && machine) {
+        try {
+          const result = await machine.invoke(req, machineAction[1], body, req.headers['idempotency-key']);
+          return send(res, 200, {ok: true, value: {action: machineAction[1], result}});
+        } catch (error) {
+          if (error?.name === 'Error' && error?.constructor?.name === 'BoundaryError' && /^[a-zA-Z0-9_]+$/.test(error.code)) {
+            throw httpError(['forbidden', 'unauthorized'].includes(error.code) ? 403 : 409, error.code);
+          }
+          throw error;
+        }
+      }
       if (path === '/v1/discover' && req.method === 'GET') return await discover(res, url);
       if (path === '/v1/account/signup' && req.method === 'POST') return await signup(req, res, body);
       if (path === '/v1/account/readback' && req.method === 'POST') return await signupReadback(req, res, body);
@@ -1566,10 +1612,12 @@ export async function openHostedMarket(options) {
       registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl}),
     handle: handler,
     setOrigin(value) {
+      if (machine && value !== originBox.origin) throw httpError(409, 'machine_origin_changed');
       originBox.origin = value;
     },
     async close() {
-        await pool.end();
+      await machine?.close();
+      await pool.end();
     },
   };
 }

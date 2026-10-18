@@ -123,9 +123,13 @@
     "test:machine-services:url-extract-vendor": "bash server/vendor/url-extract/vendor-url-extract.sh --verify"
   },
   "dependencies": {
+    "@exodus/bytes": "1.16.0",
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
     "@neomorphic/earned-work": "file:./vendor/neomorphic-opportunity/services/earned-work",
+    "@neomorphic/machine-gateway": "file:./server/vendor/machine-gateway",
     "@supabase/supabase-js": "^2.108.2",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "express": "^5.2.1",
     "ipaddr.js": "1.9.1",
     "jose": "^6.2.3",
@@ -133,9 +137,8 @@
     "proxy-addr": "2.0.8",
     "resend": "^6.14.0",
     "stripe": "^22.2.2",
-    "zod": "^3.25.76",
-    "@neomorphic/machine-gateway": "file:./server/vendor/machine-gateway",
-    "@exodus/bytes": "1.16.0"
+    "viem": "2.55.11",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

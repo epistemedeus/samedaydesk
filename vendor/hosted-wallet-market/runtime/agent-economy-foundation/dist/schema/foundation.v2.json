@@ -1,0 +1,856 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pilot.invalid/contracts/agent-economy/foundation.v2.json",
+  "title": "AE14 approval/capture and portable capability amendment",
+  "$defs": {
+    "CommercePaymentsPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "repository",
+        "tag",
+        "commit",
+        "abiSha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "commerce_payments"
+        },
+        "repository": {
+          "const": "https://github.com/base/commerce-payments"
+        },
+        "tag": {
+          "const": "v1.1.0"
+        },
+        "commit": {
+          "const": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9"
+        },
+        "abiSha256": {
+          "const": "4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5"
+        }
+      }
+    },
+    "FeeProfile": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "rounding",
+            "mode",
+            "escrow"
+          ],
+          "properties": {
+            "id": {
+              "const": "direct-cumulative-v1"
+            },
+            "rounding": {
+              "const": "floor_cumulative_increment"
+            },
+            "mode": {
+              "const": "cumulative"
+            },
+            "escrow": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "direct"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "rounding",
+            "mode",
+            "escrow"
+          ],
+          "properties": {
+            "id": {
+              "const": "commerce-payments-v1.1.0-single-capture"
+            },
+            "rounding": {
+              "const": "per_capture_floor"
+            },
+            "mode": {
+              "const": "single_capture"
+            },
+            "escrow": {
+              "$ref": "#/$defs/CommercePaymentsPin"
+            }
+          }
+        }
+      ]
+    },
+    "FeeV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "bps",
+        "basis",
+        "profile"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "bps": {
+          "const": 500
+        },
+        "basis": {
+          "const": "new_job_gross"
+        },
+        "profile": {
+          "$ref": "#/$defs/FeeProfile"
+        }
+      }
+    },
+    "QuoteV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "quoteId",
+        "tenantId",
+        "taskId",
+        "canonicalTaskId",
+        "taskVersion",
+        "termsVersion",
+        "requesterId",
+        "evaluatorId",
+        "contributorId",
+        "payoutDestination",
+        "fundingAuthorityId",
+        "settlementAuthorityId",
+        "asset",
+        "gross",
+        "contributorNet",
+        "platformFee",
+        "subsidy",
+        "fee",
+        "rail",
+        "fundingTarget",
+        "expiresAt",
+        "rules",
+        "feeRecipient"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "taskId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "canonicalTaskId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "taskVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "termsVersion": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "requesterId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "evaluatorId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "contributorId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "payoutDestination": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "fundingAuthorityId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "settlementAuthorityId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "asset": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Asset"
+        },
+        "gross": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "contributorNet": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "platformFee": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "subsidy": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "fee": {
+          "$ref": "#/$defs/FeeV2"
+        },
+        "rail": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "costCap"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "deduct_gross",
+                "platform_subsidy"
+              ]
+            },
+            "costCap": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]{0,77})$"
+            }
+          }
+        },
+        "fundingTarget": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "partial",
+            "refund",
+            "dispute",
+            "reversal",
+            "rightsTermsRef"
+          ],
+          "properties": {
+            "partial": {
+              "const": "accepted_gross_only"
+            },
+            "refund": {
+              "const": "unaccepted_gross_only"
+            },
+            "dispute": {
+              "const": "hold_until_authoritative_resolution"
+            },
+            "reversal": {
+              "const": "reconcile_without_repricing_earned_obligation"
+            },
+            "rightsTermsRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            }
+          }
+        },
+        "feeRecipient": {
+          "type": "string",
+          "pattern": "^0x[a-f0-9]{40}$",
+          "not": {
+            "const": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      }
+    },
+    "CaptureRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "operationId",
+        "tenantId",
+        "actorId",
+        "authorityId",
+        "quoteId",
+        "quoteDigest",
+        "approvalDigest",
+        "allocationId",
+        "asset",
+        "amount",
+        "feeAmount",
+        "feeRecipient",
+        "payoutDestination",
+        "fundingProofId",
+        "escrowTarget"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "actorId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "authorityId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "quoteDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "approvalDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "allocationId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "asset": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Asset"
+        },
+        "amount": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "feeAmount": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+        },
+        "feeRecipient": {
+          "type": "string",
+          "pattern": "^0x[a-f0-9]{40}$",
+          "not": {
+            "const": "0x0000000000000000000000000000000000000000"
+          }
+        },
+        "payoutDestination": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "fundingProofId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "escrowTarget": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        }
+      }
+    },
+    "CaptureOutcome": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "state",
+            "requestDigest",
+            "backing",
+            "authorizationRef",
+            "expiresAt",
+            "provenance"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v2"
+            },
+            "state": {
+              "const": "authorized"
+            },
+            "requestDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "backing": {
+              "const": "escrowed"
+            },
+            "authorizationRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "expiresAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "provenance": {
+              "enum": [
+                "fake",
+                "local_chain",
+                "production"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "state",
+            "requestDigest",
+            "amount",
+            "feeAmount",
+            "feeRecipient",
+            "txRef",
+            "finality",
+            "finalityRef",
+            "provenance"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v2"
+            },
+            "state": {
+              "const": "captured"
+            },
+            "requestDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "amount": {
+              "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+            },
+            "feeAmount": {
+              "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Atomic"
+            },
+            "feeRecipient": {
+              "type": "string",
+              "pattern": "^0x[a-f0-9]{40}$",
+              "not": {
+                "const": "0x0000000000000000000000000000000000000000"
+              }
+            },
+            "txRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "finality": {
+              "enum": [
+                "pending",
+                "final"
+              ]
+            },
+            "finalityRef": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "provenance": {
+              "enum": [
+                "fake",
+                "local_chain",
+                "production"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "state",
+            "requestDigest",
+            "txRef",
+            "provenance"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v2"
+            },
+            "state": {
+              "const": "expired_reclaimed"
+            },
+            "requestDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "txRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "provenance": {
+              "enum": [
+                "fake",
+                "local_chain",
+                "production"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "state",
+            "requestDigest",
+            "txRef",
+            "provenance"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v2"
+            },
+            "state": {
+              "const": "refunded"
+            },
+            "requestDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "txRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "provenance": {
+              "enum": [
+                "fake",
+                "local_chain",
+                "production"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "state",
+            "requestDigest",
+            "provenance"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v2"
+            },
+            "state": {
+              "const": "unknown"
+            },
+            "requestDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "provenance": {
+              "enum": [
+                "fake",
+                "local_chain",
+                "production",
+                "unknown"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "WalletCapabilityDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "wallet",
+        "capabilities"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "kind": {
+          "const": "capability_descriptor"
+        },
+        "wallet": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Wallet"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Capability"
+          }
+        }
+      }
+    },
+    "EncryptedExportResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "provenance",
+        "walletId",
+        "tenantId",
+        "ownerId",
+        "ownerRecipientRef",
+        "envelopeRef",
+        "providerRetainsCopy"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "kind": {
+          "const": "encrypted_export"
+        },
+        "provenance": {
+          "enum": [
+            "fake",
+            "provider"
+          ]
+        },
+        "walletId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerRecipientRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "envelopeRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "providerRetainsCopy": {
+          "type": "boolean"
+        }
+      }
+    },
+    "WalletRecoveryResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "provenance",
+        "walletId",
+        "tenantId",
+        "ownerId",
+        "revocationEpoch",
+        "operationLineage"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "kind": {
+          "const": "wallet_recovery"
+        },
+        "provenance": {
+          "enum": [
+            "fake",
+            "provider"
+          ]
+        },
+        "walletId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "revocationEpoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operationLineage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "operationId",
+              "requestDigest",
+              "state"
+            ],
+            "properties": {
+              "operationId": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+              },
+              "requestDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "state": {
+                "enum": [
+                  "unknown",
+                  "pending",
+                  "confirmed",
+                  "failed"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "FundingProofV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "proofId",
+        "tenantId",
+        "allocationId",
+        "quoteId",
+        "taskId",
+        "requesterId",
+        "fundingAuthorityId",
+        "asset",
+        "recipient",
+        "amount",
+        "state",
+        "finalityRef",
+        "backing",
+        "quoteDigest"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v2"
+        },
+        "proofId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "allocationId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "quoteId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "taskId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "requesterId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "fundingAuthorityId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "asset": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Asset"
+        },
+        "recipient": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,77})$"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "unknown",
+            "confirmed",
+            "failed"
+          ]
+        },
+        "finalityRef": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "backing": {
+          "const": "escrowed"
+        },
+        "quoteDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/FeeV2"
+    },
+    {
+      "$ref": "#/$defs/QuoteV2"
+    },
+    {
+      "$ref": "#/$defs/CaptureRequest"
+    },
+    {
+      "$ref": "#/$defs/CaptureOutcome"
+    },
+    {
+      "$ref": "#/$defs/WalletCapabilityDescriptor"
+    },
+    {
+      "$ref": "#/$defs/EncryptedExportResult"
+    },
+    {
+      "$ref": "#/$defs/WalletRecoveryResult"
+    },
+    {
+      "$ref": "#/$defs/FundingProofV2"
+    }
+  ]
+}

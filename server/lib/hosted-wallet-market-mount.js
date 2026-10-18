@@ -7,7 +7,7 @@ const PREFIX = '/api/neomorphic-contributor-journey';
 // The maintained client sends this wire header on every request.
 export const isWalletRequest = req => {
   const path = String(req.originalUrl || req.url || '').split('?')[0];
-  return path.startsWith(PREFIX + '/v1/native-debt') ||
+  return path.startsWith(PREFIX + '/v1/core/tasks') || path.startsWith(PREFIX + '/v1/market/') || path.startsWith(PREFIX + '/v1/native-debt') ||
     (path.startsWith(PREFIX + '/') && typeof req.headers?.['x-ae-wire-version'] === 'string');
 };
 const PUBLIC_CHAINS = new Set(['eip155:1', 'eip155:8453', 'eip155:84532']);
@@ -68,6 +68,8 @@ function configured(options, env) {
     settlementToken: options.settlementToken ?? env.HOSTED_WALLET_MARKET_SETTLEMENT_TOKEN,
     replayKey: options.replayKey ?? env.CONTRIBUTOR_JOURNEY_REPLAY_KEY,
     readAcceptedSource: options.readAcceptedSource,
+    machineProfile: options.machineProfile ?? env.HOSTED_WALLET_MARKET_MACHINE_PROFILE,
+    machineAuthority: options.machineAuthority,
     ownerToken: options.ownerToken ?? env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? env.EARNED_WORK_OWNER_TOKEN,
   };
 }

@@ -1,0 +1,690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pilot.invalid/contracts/agent-economy/foundation.v3.json",
+  "title": "AE14 versioned portable wallet contracts; economic quotes remain v1/v2",
+  "$defs": {
+    "WalletV3": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "rootId",
+            "recoveryId",
+            "address",
+            "chain",
+            "token",
+            "custody",
+            "revocationEpoch"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "rootId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "recoveryId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "chain": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "token": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "custody": {
+              "enum": [
+                "fake_provider_root",
+                "fake_safe_module"
+              ]
+            },
+            "revocationEpoch": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "rootId",
+            "recoveryId",
+            "address",
+            "chain",
+            "token",
+            "custody",
+            "revocationEpoch"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "rootId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "recoveryId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            },
+            "chain": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "token": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "custody": {
+              "enum": [
+                "local_keystore",
+                "byow"
+              ]
+            },
+            "revocationEpoch": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
+    },
+    "WalletCapabilityDescriptorV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "wallet",
+        "capabilities"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v3"
+        },
+        "kind": {
+          "const": "capability_descriptor"
+        },
+        "wallet": {
+          "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v3.json#/$defs/WalletV3"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "https://pilot.invalid/contracts/agent-economy/foundation.v1.json#/$defs/Capability"
+          }
+        }
+      }
+    },
+    "EncryptedExportResultV3": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "ownerRecipientRef",
+            "envelopeRef",
+            "providerRetainsCopy",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "encrypted_export"
+            },
+            "provenance": {
+              "const": "fake"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerRecipientRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "envelopeRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "providerRetainsCopy": {
+              "type": "boolean"
+            },
+            "custody": {
+              "enum": [
+                "fake_provider_root",
+                "fake_safe_module"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "ownerRecipientRef",
+            "envelopeRef",
+            "providerRetainsCopy",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "encrypted_export"
+            },
+            "provenance": {
+              "const": "local_keystore"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerRecipientRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "envelopeRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "providerRetainsCopy": {
+              "type": "boolean"
+            },
+            "custody": {
+              "enum": [
+                "local_keystore"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "ownerRecipientRef",
+            "envelopeRef",
+            "providerRetainsCopy",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "encrypted_export"
+            },
+            "provenance": {
+              "const": "byow"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerRecipientRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "envelopeRef": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "providerRetainsCopy": {
+              "type": "boolean"
+            },
+            "custody": {
+              "enum": [
+                "byow"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "WalletRecoveryResultV3": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "revocationEpoch",
+            "operationLineage",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "wallet_recovery"
+            },
+            "provenance": {
+              "const": "fake"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "revocationEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "operationLineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operationId",
+                  "requestDigest",
+                  "state"
+                ],
+                "properties": {
+                  "operationId": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+                  },
+                  "requestDigest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "state": {
+                    "enum": [
+                      "unknown",
+                      "pending",
+                      "confirmed",
+                      "failed"
+                    ]
+                  }
+                }
+              }
+            },
+            "custody": {
+              "enum": [
+                "fake_provider_root",
+                "fake_safe_module"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "revocationEpoch",
+            "operationLineage",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "wallet_recovery"
+            },
+            "provenance": {
+              "const": "local_keystore"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "revocationEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "operationLineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operationId",
+                  "requestDigest",
+                  "state"
+                ],
+                "properties": {
+                  "operationId": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+                  },
+                  "requestDigest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "state": {
+                    "enum": [
+                      "unknown",
+                      "pending",
+                      "confirmed",
+                      "failed"
+                    ]
+                  }
+                }
+              }
+            },
+            "custody": {
+              "enum": [
+                "local_keystore"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "provenance",
+            "walletId",
+            "tenantId",
+            "ownerId",
+            "revocationEpoch",
+            "operationLineage",
+            "custody"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "pilot.agent-economy.v3"
+            },
+            "kind": {
+              "const": "wallet_recovery"
+            },
+            "provenance": {
+              "const": "byow"
+            },
+            "walletId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "tenantId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "ownerId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+            },
+            "revocationEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "operationLineage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operationId",
+                  "requestDigest",
+                  "state"
+                ],
+                "properties": {
+                  "operationId": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+                  },
+                  "requestDigest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "state": {
+                    "enum": [
+                      "unknown",
+                      "pending",
+                      "confirmed",
+                      "failed"
+                    ]
+                  }
+                }
+              }
+            },
+            "custody": {
+              "enum": [
+                "byow"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "WalletCreateRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "walletId",
+        "chain",
+        "token",
+        "rootId",
+        "recoveryId",
+        "custody"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v3"
+        },
+        "walletId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "chain": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "token": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "rootId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "recoveryId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "custody": {
+          "enum": [
+            "fake_provider_root",
+            "fake_safe_module",
+            "local_keystore"
+          ]
+        }
+      }
+    },
+    "OwnerEnvelopeImport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "walletId",
+        "ownerRecipientRef",
+        "envelopeRef"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "pilot.agent-economy.v3"
+        },
+        "walletId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerRecipientRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "envelopeRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        }
+      }
+    },
+    "OwnerExportTargetContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ownerRecipientRef"
+      ],
+      "properties": {
+        "ownerRecipientRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        }
+      }
+    },
+    "ResolvedOwnerExportTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantId",
+        "ownerId",
+        "ownerRecipientRef",
+        "publicRecipientRef",
+        "artifactSinkRef"
+      ],
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "ownerRecipientRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "publicRecipientRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        },
+        "artifactSinkRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,159}$"
+        }
+      }
+    }
+  }
+}
