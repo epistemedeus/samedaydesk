@@ -186,7 +186,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   }
   const readActions=new Set(['list','read','retained','measurement','payoutDisposition','reconcile']);
   const methods=new Set(['post','list','interest','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
-  async function invoke(req,action,input,operationId){
+  async function dispatch(req,action,input,operationId){
    assertCurrent();
    if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
    const account=await authenticate(req,{write:true});
@@ -221,6 +221,17 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
      {action,verification:'server_observed',source:'hosted-machine-market',operationId:operationId??null,moneyProvenance:money.qualification,acquisition:'unknown'});
    }
    return result;
+  }
+  // Each capture can hold a task transaction and an approval transaction
+  // while making receipt queries. Reserve those queries in the six-slot pool.
+  let activeRequests=0;const waiting=[];
+  async function invoke(...args){
+   if(activeRequests>=2){
+    if(waiting.length>=64)refuse('market_busy',503);
+    await new Promise(resolve=>waiting.push(resolve));
+   }else activeRequests++;
+   try{return await dispatch(...args);}
+   finally{if(waiting.length)waiting.shift()();else activeRequests--;}
   }
   async function discover({limit=50,cursor=''}={}){
    assertCurrent();
