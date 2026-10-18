@@ -1,7 +1,7 @@
 // Strict source-rollout extension, consumed by the existing release producer.
 // It prepares/validates private environment packets only. No provider calls,
 // qualification, credential creation, installation or payment authority.
-import {ADDITIVE_ENV_KEYS,loadDeploymentProfile} from './profile.mjs';
+import {ADDITIVE_ENV_KEYS,OPTIONAL_ENV_KEYS,loadDeploymentProfile} from './profile.mjs';
 import {assertRpcUrl} from './chain.mjs';
 export const PRIVATE_WALLET_PROFILE='private-wallet-source';
 const fail=code=>{throw new Error(code);};
@@ -20,7 +20,7 @@ export function validateWalletEnvironment({manifest,original,installed,rollback}
    typeof before.get('CONTRIBUTOR_JOURNEY_OWNER_TOKEN')==='string'&&before.get('CONTRIBUTOR_JOURNEY_OWNER_TOKEN').length>=8&&
    before.get('CONTRIBUTOR_DESK_MANAGED_ENABLED')==='1'&&before.get('CONTRIBUTOR_JOURNEY_PUBLIC_READS')==='0'&&before.get('CONTRIBUTOR_DESK_ASSETS_ENABLED')==='0','private_installed_baseline_required');
  requireFact(original.every(r=>after.has(r.key)&&(disabledKeys.has(r.key)||after.get(r.key)===r.value)),'retained_environment_binding_changed');
- requireFact(installed.filter(r=>!before.has(r.key)).every(r=>ADDITIVE_ENV_KEYS.includes(r.key))&&
+ requireFact(installed.filter(r=>!before.has(r.key)).every(r=>[...ADDITIVE_ENV_KEYS,...OPTIONAL_ENV_KEYS].includes(r.key))&&
    ADDITIVE_ENV_KEYS.every(k=>after.has(k)),'unrelated_environment_change_refused');
  requireFact(after.get('CONTRIBUTOR_JOURNEY_MODE')==='disabled'&&after.get('CONTRIBUTOR_DESK_MANAGED_ENABLED')==='0'&&
    after.get('CONTRIBUTOR_JOURNEY_PUBLIC_READS')==='0'&&after.get('CONTRIBUTOR_DESK_ASSETS_ENABLED')==='0','wallet_rollout_must_be_disabled');
@@ -41,7 +41,7 @@ export function validateWalletEnvironment({manifest,original,installed,rollback}
 }
 export function walletEnvironmentPacket({manifest,existing,wallet}){
  const original=normalized(existing),extension=normalized(wallet),before=new Map(original.map(r=>[r.key,r.value]));
- requireFact(extension.length===ADDITIVE_ENV_KEYS.length&&extension.every(r=>ADDITIVE_ENV_KEYS.includes(r.key)),'wallet_profile_binding_refused');
+ requireFact(ADDITIVE_ENV_KEYS.every(key=>extension.some(r=>r.key===key))&&extension.every(r=>[...ADDITIVE_ENV_KEYS,...OPTIONAL_ENV_KEYS].includes(r.key)),'wallet_profile_binding_refused');
  for(const row of extension)requireFact(!before.has(row.key)||before.get(row.key)===row.value,'retained_environment_binding_changed');
  const merged=new Map([...before,...extension.map(r=>[r.key,r.value])]);for(const key of disabledKeys)merged.set(key,key==='CONTRIBUTOR_JOURNEY_MODE'?'disabled':'0');
  const installed=[...merged].map(([key,value])=>({key,value})).sort((a,b)=>a.key.localeCompare(b.key));
