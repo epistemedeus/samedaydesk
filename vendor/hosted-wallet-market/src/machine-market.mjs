@@ -39,6 +39,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
  let journal,rail,market;
  const moneyUnavailable=()=>refuse('public_money_unqualified_source_drift');
  try{
+  const columns=(await withClient(c=>c.query("SELECT column_name FROM information_schema.columns WHERE table_schema='hosted_wallet_market' AND table_name='wallets'"))).rows.map(r=>r.column_name);
+  if(['control_epoch','control_digest','control_challenge'].some(name=>!columns.includes(name)))refuse('machine_schema_required');
   let assets=PRODUCTION_ASSETS,asset=BASE_USDC;
   let money={qualification:'unavailable',authorityId:'unqualified',protocol:COMMERCE_PAYMENTS_PIN,
     readProof:moneyUnavailable,captureOutcome:moneyUnavailable,capture:moneyUnavailable};
