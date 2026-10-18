@@ -32,7 +32,7 @@
     "runtime/agent-economy-rail/dist/candidate.js": "e77ed910fde187ada216cb4970823b91ad6a1958a1db886d30cfe865fe6b7d7f",
     "runtime/agent-economy-rail/dist/fees.js": "f709fd4801ae5b1dfd7b1f11878f81fcf1c92f73699ad78b96e3ba9a6c2099c8",
     "runtime/agent-economy-rail/dist/index.js": "e7016396d34cd29e5990108b84584f91f9377663b5aa607ca69cc10d3b077d1b",
-    "runtime/agent-economy-rail/dist/local-chain.js": "99a403746400a7c5c016bf88e0d4ccbd7629947b1d8a792974f4e3275a8d419a",
+    "runtime/agent-economy-rail/dist/local-chain.js": "8758265c6fa6247347fdde516b19a8132975b7508e0f7616e7d6adcee5ae52c3",
     "runtime/agent-economy-rail/dist/network-ext.js": "435e05a2227662d7a12c4ea82a3eaf07a08187a9e4311c4c0ddaee4e978e7dcf",
     "runtime/agent-economy-rail/dist/network-fees.js": "db2c3466f369db1c5859e6620bc1d396371d2ae2a8d9e47e13c47774780a0455",
     "runtime/agent-economy-rail/dist/network-profile.js": "7e487a2ba5764b4cd8494e8db886117bf4f6ce8e7378e9a3d3f8bea8499b8d85",

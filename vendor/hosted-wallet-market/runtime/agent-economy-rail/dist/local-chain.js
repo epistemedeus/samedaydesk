@@ -123,6 +123,8 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
             store.put('fee-estimate', id, assessment);
         }
         const intent = { id, binding, raw, txId: keccak256(raw) };
+        if (identity.candidate && identity.attestation)
+            store.put('source-attestation', identity.attestation.ref, identity.attestation);
         if (identity.identityDigest)
             intent.witness = { identityDigest: identity.identityDigest, attestationRef: identity.attestation?.ref ?? '', grantEpoch: identity.grantEpoch ?? 0, configuredChain: identity.configuredChain, networkClass, abiDigest: identity.abiDigest ?? '', ...(identity.authorityDigest ? { authorityDigest: identity.authorityDigest } : {}) };
         store.put('nonce', nonceKey, { next: nonce + 1 });
