@@ -1,4 +1,4 @@
-import { decodeFunctionData, encodeFunctionData, keccak256 } from 'viem';
+import { decodeFunctionData, decodeEventLog, encodeFunctionData, keccak256 } from 'viem';
 import { readFileSync } from 'node:fs';
 import { checked, requireThat, digest, freezeQuote, COMMERCE_PAYMENTS_PIN } from '../../agent-economy-foundation/dist/index.js';
 import { checkChainIdentity, prepareIntent, broadcast } from './local-chain.js';
@@ -223,11 +223,49 @@ export class CommercePaymentsRail {
                     return null;
                 }
             }
-            const start = this.contracts.network && b.authorizationTx ? (await this.client.getTransactionReceipt({ hash: b.authorizationTx })).blockNumber : 0n;
-            const events = await this.client.getContractEvents({ address: this.contracts.escrow, abi: this.contracts.abi, fromBlock: start, toBlock: 'latest' });
-            const selected = events.filter((e) => e.args.paymentInfoHash === b.hash);
+            // A retained result must not depend on querying an ever-growing RPC log
+            // range. Re-read the original operations and every previously seen effect.
+            const hashes = new Set(b.seen.map(seen => seen.tx));
+            if (b.authorizationTx)
+                hashes.add(b.authorizationTx);
+            for (const prefix of ['capture', 'refund', 'void']) {
+                const intent = this.store.get('tx', `${prefix}:${b.proofId}`);
+                if (intent)
+                    hashes.add(intent.txId);
+            }
+            const events = [];
+            for (const hash of hashes) {
+                let receipt;
+                try {
+                    receipt = await this.client.getTransactionReceipt({ hash });
+                }
+                catch (error) {
+                    if (error?.name === 'TransactionReceiptNotFoundError' && !b.seen.some(seen => seen.tx === hash))
+                        continue;
+                    throw error;
+                }
+                for (const log of receipt.logs) {
+                    if (log.address.toLowerCase() !== this.contracts.escrow.toLowerCase())
+                        continue;
+                    try {
+                        const decoded = decodeEventLog({ abi: this.contracts.abi, data: log.data, topics: log.topics });
+                        events.push({ ...log, eventName: decoded.eventName, args: decoded.args });
+                    }
+                    catch { /* Other escrow events do not prove this payment. */ }
+                }
+            }
             const state = await this.client.readContract({ address: this.contracts.escrow, abi: this.contracts.abi, functionName: 'paymentState', args: [b.hash] });
-            const head = this.qualification === 'production' ? (await this.client.getBlock({ blockTag: 'finalized' })).number : await this.client.getBlockNumber({ cacheTime: 0 });
+            const latest = await this.client.getBlockNumber({ cacheTime: 0 });
+            const own = events.filter(e => e.args.paymentInfoHash === b.hash), sum = (name) => own.filter(e => e.eventName === name).reduce((n, e) => n + e.args.amount, 0n);
+            const captured = sum('PaymentCaptured'), refunded = sum('PaymentRefunded'), closed = own.some(e => ['PaymentVoided', 'PaymentReclaimed'].includes(e.eventName));
+            const explained = state[0] && (closed ? state[1] === 0n : captured === BigInt(b.quote.gross) ? state[1] === 0n && state[2] === captured - refunded : captured === 0n && state[1] === BigInt(b.quote.gross));
+            if (!explained) {
+                const fromBlock = latest > 999n ? latest - 999n : 0n;
+                events.push(...await this.client.getContractEvents({ address: this.contracts.escrow, abi: this.contracts.abi, fromBlock, toBlock: latest }));
+            }
+            const unique = new Map(events.filter(e => e.args.paymentInfoHash === b.hash).map(e => [`${e.transactionHash}:${e.logIndex}`, e]));
+            const selected = [...unique.values()].sort((a, b) => a.blockNumber < b.blockNumber ? -1 : a.blockNumber > b.blockNumber ? 1 : a.logIndex - b.logIndex);
+            const head = this.qualification === 'production' ? (await this.client.getBlock({ blockTag: 'finalized' })).number : latest;
             for (const e of selected) {
                 const receipt = await this.client.getTransactionReceipt({ hash: e.transactionHash });
                 const block = await this.client.getBlock({ blockNumber: e.blockNumber });
