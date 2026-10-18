@@ -45,7 +45,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   let money={qualification:'unavailable',authorityId:'unqualified',protocol:COMMERCE_PAYMENTS_PIN,
     readProof:moneyUnavailable,captureOutcome:moneyUnavailable,capture:moneyUnavailable};
   if(capability.money==='sandbox'){
-   if(!authority||authority.networkClass!=='sandbox'||authority.contracts?.chain!=='eip155:31337'||!authority.operator?.signTransaction)refuse('machine_authority_required');
+   if(!authority||authority.networkClass!=='sandbox'||authority.contracts?.chain!=='eip155:31337'||profile.chain!==authority.contracts.chain||profile.settlementToken!==authority.contracts.token||!authority.operator?.signTransaction)refuse('machine_authority_required');
    const u=new URL(authority.rpcUrl);if(u.protocol!=='http:'||u.hostname!=='127.0.0.1'||u.username||u.password||u.hash)refuse('machine_authority_required');
    const chain=defineChain({id:31337,name:'disposable machine-market',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[u.href]}}});
    const client=createPublicClient({chain,transport:http(u.href,{retryCount:0}),cacheTime:0,pollingInterval:25});
