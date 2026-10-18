@@ -98,7 +98,7 @@ export function dispositionView(row) {
 
 /** Called only by the installed server with its closed-over profile. No JSON
  * binding, public baseline, environment reassignment, or test seam is consulted. */
-export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, readAcceptedSource}) {
+export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, readAcceptedSource, authorityPrincipalId}) {
   const configured = Object.freeze({...profile});
   const databaseUrl = new URL(profile.databaseUrl);
   const databaseIdentity = {host: databaseUrl.hostname, port: databaseUrl.port || '5432', database:decodeURIComponent(databaseUrl.pathname)};
@@ -148,19 +148,38 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       rpcOriginSha256: row.rpc_origin_sha256, rpcEndpointSha256: row.rpc_endpoint_sha256, profileChain: row.profile_chain,
       profileSha256: row.profile_sha256, boundConsumer: 'hosted_wallet_market.native_debt_dispositions'};
   }
+  async function assertEnrollmentAuthority(tx, row) {
+    // Predecessor packages already stored their authenticated owner principal
+    // with the successful empty-body enroll operation. Reuse that consent;
+    // changing the configured bearer cannot adopt it. Missing history is a hold.
+    if (!/^[0-9a-f]{64}$/.test(authorityPrincipalId || '')) fail('enrollment_conflict');
+    const consent = {...enrollmentView(row), qualified: true};
+    const operations = (await tx.query(`SELECT DISTINCT principal_id FROM earned_work_idempotency
+      WHERE scope='hosted-wallet-market' AND task_id='' AND status_code=200
+      AND request_hash=$1 AND response_json->'value' @> $2::jsonb`, [
+      digest({method: 'POST', route: '/api/neomorphic-contributor-journey/v1/native-debt/enroll', body: {}}),
+      JSON.stringify(consent),
+    ])).rows;
+    if (operations.length !== 1 || operations[0].principal_id !== authorityPrincipalId) fail('enrollment_conflict');
+  }
+  async function assertInstallation(tx) {
+    const installation = (await tx.query('SELECT * FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0];
+    if (!installation || installation.tenant !== configured.tenant || installation.earned_schema !== configured.earnedSchema ||
+        installation.chain !== configured.chain || installation.payments !== 'off') fail('binding_stale');
+  }
   async function assertBinding(tx) {
     const row = (await tx.query(ENROLL_SQL)).rows[0];
     if (!row) fail('discharge_consumer_unbound');
     const next = expected();
     if (!equal(row, next) && !await successionMatches(tx, row, next)) fail('binding_stale');
-    const installation = (await tx.query('SELECT * FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0];
-    if (!installation || installation.tenant !== configured.tenant || installation.earned_schema !== configured.earnedSchema ||
-        installation.chain !== configured.chain || installation.payments !== 'off') fail('binding_stale');
+    await assertEnrollmentAuthority(tx, row);
+    await assertInstallation(tx);
     return row;
   }
   async function assertEnrollmentCandidate(tx) {
     const next = expected(), row = (await tx.query(ENROLL_SQL)).rows[0];
     if (row && !equal(row, next) && !packageDriftOnly(row, next)) fail('enrollment_conflict');
+    if (row) await assertEnrollmentAuthority(tx, row);
   }
   async function enroll(tx, createdAt) {
     const next = expected();
@@ -168,6 +187,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     if (observed.chain !== configured.chain) fail('binding_stale');
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-enrollment', 0))");
     let row = (await tx.query(ENROLL_SQL)).rows[0];
+    const fresh = !row;
     if (!row) {
       const fields = Object.keys(next);
       await tx.query(`INSERT INTO hosted_wallet_market.consumer_enrollment (id, ${fields.join(',')}, created_at)
@@ -179,6 +199,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       // supply the successor hash or a baseline. Preservation is the live
       // disposition seal, not a supplied snapshot.
       if (!packageDriftOnly(row, next)) fail('enrollment_conflict');
+      await assertEnrollmentAuthority(tx, row);
       const seal = await observationSeal(tx);
       const existing = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [row.source_sha256])).rows[0];
       if (existing) {
@@ -189,7 +210,11 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
           VALUES ($1, $2, $3, $4, $5, $6)`, [row.source_sha256, next.source_sha256, next.host_source_sha256, next.consumer_contract_sha256, seal, createdAt]);
       }
     }
-    await assertBinding(tx);
+    // mutate stores initial consent in this transaction after this returns.
+    // The HTTP owner entry checks the complete binding after that insert,
+    // including on a cached response, and before COMMIT.
+    if (fresh) await assertInstallation(tx);
+    else await assertBinding(tx);
     const view = enrollmentView(row);
     view.qualified = true;
     return view;

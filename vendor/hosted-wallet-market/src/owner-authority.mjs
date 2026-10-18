@@ -19,6 +19,7 @@ export async function loadOwnerAuthority(sdsRoot,{ownerToken=process.env.CONTRIB
   const owner=ownerToken; // Capture configured authority once, never select it from a request.
   return {
     hashToken: crypto.hashToken,
+    principalId: typeof owner === 'string' && owner.length >= 8 ? crypto.hashToken(owner) : null,
     verify(token) {
       if (typeof owner !== 'string' || owner.length < 8) throw refused();
       try {
