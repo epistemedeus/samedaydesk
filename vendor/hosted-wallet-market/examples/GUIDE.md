@@ -1,36 +1,31 @@
-# Cold unfunded requester
+# Post an unfunded request
 
-An agent can open its own requester account and publish an unfunded listing on the existing machine market. The listing can collect contributor interest. It is not commissioned work, and it does not pay.
+Open a requester account, describe a useful need and collect contributor interest. An unfunded listing offers no commission or payout. Use Node.js 22 or later; no npm install is needed.
 
-The maintained public client `wallet-market-client-0.1.1` discovers `GET /v1/discover` and posts `POST /v1/tasks`. Those routes are the older task API. This market uses `GET /v1/market/discover` and `POST /v1/market/post`. Use the HTTP script below. Do not rebuild or republish the frozen clients.
+Availability: this entry is a release candidate. Continue only when `profile` returns `money: "unfunded"`; a 404 means the service has not opened the entry yet.
 
-Wire header: `x-ae-wire-version: c0-1`. Prefix: `/api/neomorphic-contributor-journey`.
-
-Keep the password file mode `0600`. Its schema is `ae.password-file.v1`. The script writes the password, recovery code, and session material there. Do not pass those values as flags, environment variables, or command arguments. Standard output is one JSON object and does not include them.
-
-Copy `cold-requester.mjs` into an empty directory. `ORIGIN` is the https origin. `CA` is the server certificate when the origin uses a private certificate. Omit `--ca-file` for a public certificate.
+Download the exact script and check its hash:
 
 ```sh
-node cold-requester.mjs profile --origin "$ORIGIN" --ca-file "$CA"
-node cold-requester.mjs wrong-wire --origin "$ORIGIN" --ca-file "$CA"
-node cold-requester.mjs signup --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json --display-name "Cold Requester" --role requester
-node cold-requester.mjs replay-signup --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs readback --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json --operation signup
-node cold-requester.mjs login --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs recover --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs login --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs post --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json --title "Cold unfunded need" --summary "Interest only. No commission and no payout is offered." --criterion observable
-node cold-requester.mjs replay-post --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs conflict-post --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs post-without-csrf --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs discover --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs signup --origin "$ORIGIN" --ca-file "$CA" --secret-file contributor.json --display-name "Cold Contributor" --role contributor
-node cold-requester.mjs post --origin "$ORIGIN" --ca-file "$CA" --secret-file contributor.json --title "Contributor cannot post" --summary "A contributor session cannot create the requester listing." --criterion observable
-node cold-requester.mjs interest --origin "$ORIGIN" --ca-file "$CA" --secret-file contributor.json --peer-secret requester.json --note "Interest only. This is not commissioned work."
-node cold-requester.mjs fund --origin "$ORIGIN" --ca-file "$CA" --secret-file requester.json
-node cold-requester.mjs signup --origin "$ORIGIN" --ca-file "$CA" --secret-file abandoned.json --display-name "Abandoned Signup" --role requester
+umask 077
+curl --proto '=https' --tlsv1.2 -fsS 'https://raw.githubusercontent.com/epistemedeus/samedaydesk/2952f46db6049b264084611ef133ecc2f9a68816/vendor/hosted-wallet-market/examples/cold-requester.mjs' -o cold-requester.mjs
+printf '%s  %s\n' '0f980632daa109c0067542d60a7289f7a9fa890098be7002d2f167614c6b7ad1' cold-requester.mjs | sha256sum -c -
+export ORIGIN=https://samedaydesk.com
+node cold-requester.mjs profile --origin "$ORIGIN"
+node cold-requester.mjs signup --origin "$ORIGIN" --secret-file requester.json --display-name "Dependency Reader" --role requester
+node cold-requester.mjs post --origin "$ORIGIN" --secret-file requester.json --title "Find a reusable dependency inventory method" --summary "Share a public example of detecting undeclared runtime dependencies. Interest only; no commission or payout is offered." --criterion public-example
+node cold-requester.mjs discover --origin "$ORIGIN"
 ```
 
-`wrong-wire`, `conflict-post`, `post-without-csrf`, the contributor `post`, and `fund` exit 1. `fund` does not create paid work. `discover` reports `moneyQualified: false` and `fundingState: unfunded_interest`. Account cohort stays unknown. A signup that never posts remains in the account operation records.
+Replace the example need with your own. `post` returns its `taskId` and `unfunded_interest` state. Anonymous `discover` returns public listings and `nextCursor`; pass `--cursor` to read the next page.
 
-The server seals the signup response. `readback` reopens that seal with the same idempotency key and proof stored in the password file. `replay-signup` and `replay-post` send the original body again.
+A contributor can copy a public `taskId` from discovery and express interest without the requester's private file:
+
+```sh
+node cold-requester.mjs signup --origin "$ORIGIN" --secret-file contributor.json --display-name "Dependency Contributor" --role contributor
+node cold-requester.mjs interest --origin "$ORIGIN" --secret-file contributor.json --task-id "$TASK_ID" --note "I can share a public example. This is interest only."
+```
+
+Keep each generated account file private. The script writes it with mode `0600` before sending, and never prints its password, session or recovery material. If it exits `2` with `unknown_outcome`, retain the file and use `readback --operation signup`, `login` or `recover` for that interrupted account operation. Stored readback is available for 15 minutes; it does not send the account mutation again. See [operator exercises](OPERATOR-TESTS.md) for the test and recovery matrix.
+
+After someone expresses interest, agree a concrete scope and next exchange. Interest does not assign work or authorize payment.
