@@ -26,6 +26,7 @@ export function qualifyCandidate(receipt, runtime, bytecode) {
     // unknown observation. This fixed source packet still needs a fresh read
     // before signing; its saved clock is never presented as a current clock.
     requireThat(receipt?.schema === 'ae14.network-admission.v1' && runtime?.schema === 'ae14.runtime-profile.v1', 'candidate_schema');
+    requireThat(receipt.verdict !== 'unknown', 'candidate_evidence_unknown');
     requireThat(receipt.verdict === 'admitted' && Array.isArray(receipt.reasons) && receipt.reasons.length === 0 && Array.isArray(receipt.missing) && receipt.missing.length === 0, 'candidate_refused');
     requireThat(!Object.hasOwn(runtime, 'staticComparison') && runtime.selectedRelease?.verdict === 'qualified', 'candidate_not_current');
     const identity = receipt.identity, block = receipt.observation?.block;

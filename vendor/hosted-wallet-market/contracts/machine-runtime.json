@@ -29,7 +29,7 @@
     "runtime/agent-economy-foundation/interfaces/commerce-payments.LICENSE.txt": "b31484feb7895a682fc359f225daf290def866d9ba065837f12fc0149392960c",
     "runtime/agent-economy-foundation/package.json": "a226ed5b54cd5d851b22488080a08f7494508cff86908f32309f385a38896a81",
     "runtime/agent-economy-rail/dist/byow.js": "129300bb0456416731b82106c576fdb170a0424103841369bebb64d140f8db10",
-    "runtime/agent-economy-rail/dist/candidate.js": "f479ea864d12616d57f4fbd88386f22bb3cedd64d632cae31d7f784c6c84e37f",
+    "runtime/agent-economy-rail/dist/candidate.js": "bfea228cd0982d1f906b29e38423c76ea4784b80aacf3423d329712108737202",
     "runtime/agent-economy-rail/dist/fees.js": "f709fd4801ae5b1dfd7b1f11878f81fcf1c92f73699ad78b96e3ba9a6c2099c8",
     "runtime/agent-economy-rail/dist/index.js": "e7016396d34cd29e5990108b84584f91f9377663b5aa607ca69cc10d3b077d1b",
     "runtime/agent-economy-rail/dist/local-chain.js": "8758265c6fa6247347fdde516b19a8132975b7508e0f7616e7d6adcee5ae52c3",
