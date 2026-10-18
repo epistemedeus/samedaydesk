@@ -3,8 +3,11 @@
 // qualification, credential creation, installation or payment authority.
 import {ADDITIVE_ENV_KEYS,OPTIONAL_ENV_KEYS,loadDeploymentProfile} from './profile.mjs';
 import {assertRpcUrl} from './chain.mjs';
+import {hostSourceSha256,installedSourceSha256} from './native-debt.mjs';
+import {classifyMachineProfileValue,loadMachineProfile} from './machine-profile-document.mjs';
+import {machineNetworkSource} from './machine-money.mjs';
 export const PRIVATE_WALLET_PROFILE='private-wallet-source';
-const fail=code=>{throw new Error(code);};
+const fail=code=>{throw Object.assign(new Error(code),{code,codeName:code});};
 const requireFact=(ok,code)=>{if(!ok)fail(code);};
 const normalized=value=>{
  const rows=value?.env_vars??value;requireFact(Array.isArray(rows)&&rows.length>0&&rows.length<=512,'complete_environment_required');
@@ -12,7 +15,7 @@ const normalized=value=>{
  return rows.map(({key,value})=>({key,value})).sort((a,b)=>a.key.localeCompare(b.key));
 };
 const disabledKeys=new Set(['CONTRIBUTOR_JOURNEY_MODE','CONTRIBUTOR_DESK_MANAGED_ENABLED','CONTRIBUTOR_JOURNEY_PUBLIC_READS','CONTRIBUTOR_DESK_ASSETS_ENABLED']);
-export function validateWalletEnvironment({manifest,original,installed,rollback}){
+export function validateWalletEnvironment({manifest,original,installed,rollback,sdsRoot}){
  original=normalized(original);installed=normalized(installed);rollback=normalized(rollback);
  requireFact(JSON.stringify(rollback)===JSON.stringify(original),'rollback_authority_changed');
  const before=new Map(original.map(r=>[r.key,r.value])),after=new Map(installed.map(r=>[r.key,r.value]));
@@ -37,15 +40,28 @@ export function validateWalletEnvironment({manifest,original,installed,rollback}
    get('EARNED_SCHEMA')===before.get('CONTRIBUTOR_JOURNEY_EARNED_WORK_SCHEMA'),'wallet_profile_binding_refused');
  requireFact(assertRpcUrl(get('RPC')).protocol==='https:','wallet_rpc_tls_required');
  const registry=get('DISCHARGE_REGISTRY');requireFact(typeof registry==='string'&&registry.startsWith('/')&&!registry.includes('..')&&!/[\r\n\0]/.test(registry),'wallet_registry_binding_refused');
- return {original,installed};
+ const profileValue=after.get('HOSTED_WALLET_MARKET_MACHINE_PROFILE');
+ const machineProfile=profileValue===undefined?null:admitMachineProfileRelease(profileValue,{origin,tenant:get('TENANT'),sdsRoot}).form;
+ return {original,installed,machineProfile};
 }
-export function walletEnvironmentPacket({manifest,existing,wallet}){
+function admitMachineProfileRelease(value,{origin,tenant,sdsRoot}){
+ let classified;try{classified=classifyMachineProfileValue(value);}catch(error){fail(error.codeName||'machine_profile_refused');}
+ if(classified.form==='absolute-path'&&!sdsRoot)return {form:'path-unopened'};
+ if(classified.form==='relative-path'&&!sdsRoot)return {form:'path-unopened'};
+ if(classified.form==='source-bound'&&!sdsRoot)fail('machine_profile_unbound');
+ let document;try{document=loadMachineProfile(value,{sdsRoot});}catch(error){fail(error.codeName||'machine_profile_refused');}
+ if(document.origin!==origin||document.tenant!==tenant)fail('machine_profile_refused');
+ if(document.sourceSha256!==installedSourceSha256()||document.hostSha256!==hostSourceSha256(sdsRoot))fail('machine_profile_refused');
+ if(document.networkSource){try{machineNetworkSource(document.networkSource);}catch{fail('machine_profile_refused');}}
+ return {form:classified.form==='source-bound'?'source-bound':classified.form+'-bound'};
+}
+export function walletEnvironmentPacket({manifest,existing,wallet,sdsRoot}){
  const original=normalized(existing),extension=normalized(wallet),before=new Map(original.map(r=>[r.key,r.value]));
  requireFact(ADDITIVE_ENV_KEYS.every(key=>extension.some(r=>r.key===key))&&extension.every(r=>[...ADDITIVE_ENV_KEYS,...OPTIONAL_ENV_KEYS].includes(r.key)),'wallet_profile_binding_refused');
  for(const row of extension)requireFact(!before.has(row.key)||before.get(row.key)===row.value,'retained_environment_binding_changed');
  const merged=new Map([...before,...extension.map(r=>[r.key,r.value])]);for(const key of disabledKeys)merged.set(key,key==='CONTRIBUTOR_JOURNEY_MODE'?'disabled':'0');
  const installed=[...merged].map(([key,value])=>({key,value})).sort((a,b)=>a.key.localeCompare(b.key));
- validateWalletEnvironment({manifest,original,installed,rollback:original});
+ const validated=validateWalletEnvironment({manifest,original,installed,rollback:original,sdsRoot});
  return {install:{env_vars:installed},rollback:{env_vars:original},receipt:{schema:'pilot.private-wallet.environment-packet.v1',existingKeys:original.length,
-   walletKeys:extension.length,preservesRetainedAuthority:true,rolloutServingDisabled:true,sent:false,qualified:false}};
+   walletKeys:extension.length,preservesRetainedAuthority:true,rolloutServingDisabled:true,sent:false,qualified:false,...(validated.machineProfile?{machineProfile:validated.machineProfile}:{})}};
 }

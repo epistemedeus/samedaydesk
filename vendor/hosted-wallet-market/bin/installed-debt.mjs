@@ -4,6 +4,7 @@ import {constants,openSync,readFileSync,fstatSync,closeSync,writeFileSync,mkdirS
 import https from 'node:https';
 import path from 'node:path';
 import {walletEnvironmentPacket} from '../src/release-profile.mjs';
+import {unfundedFunnelSnapshot} from '../src/machine-funnel.mjs';
 import pg from 'pg';
 import {applyAdditiveSchema,assertObligationGuard,inspectInstallation,rollbackAdapter} from '../src/migrate.mjs';
 import {IMPORT_BODY_KEYS,assertImportShape} from '../src/native-debt.mjs';
@@ -62,10 +63,24 @@ async function request(method,route,body){
 async function main(){
  if(['inspect','migrate','seal','rollback-check'].includes(command))return database();
  if(command==='prepare-release'){
-  const packet=walletEnvironmentPacket({manifest:privateJson(flag('manifest')),existing:privateJson(flag('input')),wallet:privateJson(flag('wallet'))});
+  const packet=walletEnvironmentPacket({manifest:privateJson(flag('manifest')),existing:privateJson(flag('input')),wallet:privateJson(flag('wallet')),sdsRoot:flag('sds-root')});
   const dir=flag('output');mkdirSync(dir,{mode:0o700});
   for(const name of ['install','rollback','receipt'])writeFileSync(path.join(dir,name+'.json'),JSON.stringify(packet[name],null,2)+'\n',{mode:0o600,flag:'wx'});
-  return {prepared:true,keys:packet.install.env_vars.length,sent:false,qualified:false};
+  return {prepared:true,keys:packet.install.env_vars.length,sent:false,qualified:false,machineProfile:packet.receipt.machineProfile??'absent'};
+ }
+ if(command==='funnel'){
+  const raw=process.env.DATABASE_URL;let url;try{url=new URL(raw);}catch{stop('database_refused');}
+  if(!['postgres:','postgresql:'].includes(url.protocol)||url.searchParams.get('sslmode')!=='verify-full')stop('database_refused');
+  const schema=assertIdent(process.env.HOSTED_WALLET_MARKET_EARNED_SCHEMA);
+  const exclude=flag('exclude')?privateJson(flag('exclude')):{};
+  const client=new pg.Client({connectionString:raw,connectionTimeoutMillis:10000});
+  await client.connect();
+  try{
+   await client.query('BEGIN READ ONLY');
+   const result=await unfundedFunnelSnapshot(client,{earnedSchema:schema,tenant:process.env.HOSTED_WALLET_MARKET_TENANT,exclude});
+   await client.query('COMMIT');
+   return result;
+  }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{await client.end();}
  }
  if(command==='prepare'){
   const receipt=privateJson(flag('input'));
