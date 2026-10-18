@@ -310,6 +310,36 @@ CREATE TRIGGER native_debt_dispositions_match
   FOR EACH ROW
   EXECUTE FUNCTION hosted_wallet_market.native_debt_matches_obligation();
 
+-- One owner-authorized successor of the enrolled package. The enrollment row
+-- stays. The successor hash is the installed package, never a caller baseline.
+CREATE TABLE IF NOT EXISTS hosted_wallet_market.source_succession (
+  predecessor_source_sha256 TEXT PRIMARY KEY CHECK (predecessor_source_sha256 ~ '^[0-9a-f]{64}$'),
+  successor_source_sha256 TEXT NOT NULL CHECK (
+    successor_source_sha256 ~ '^[0-9a-f]{64}$'
+    AND successor_source_sha256 <> predecessor_source_sha256
+  ),
+  successor_host_source_sha256 TEXT NOT NULL CHECK (successor_host_source_sha256 ~ '^[0-9a-f]{64}$'),
+  consumer_contract_sha256 TEXT NOT NULL CHECK (consumer_contract_sha256 ~ '^[0-9a-f]{64}$'),
+  preservation_sha256 TEXT NOT NULL CHECK (preservation_sha256 ~ '^[0-9a-f]{64}$'),
+  created_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION hosted_wallet_market.reject_succession_mutation()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = hosted_wallet_market, pg_temp
+AS $$
+BEGIN
+  RAISE EXCEPTION 'succession_immutable' USING ERRCODE = 'P0001';
+END;
+$$;
+
+DROP TRIGGER IF EXISTS source_succession_preserve ON hosted_wallet_market.source_succession;
+CREATE TRIGGER source_succession_preserve
+  BEFORE UPDATE OR DELETE ON hosted_wallet_market.source_succession
+  FOR EACH ROW
+  EXECUTE FUNCTION hosted_wallet_market.reject_succession_mutation();
+
 CREATE SCHEMA IF NOT EXISTS hosted_wallet_market_guard;
 
 CREATE TABLE IF NOT EXISTS hosted_wallet_market_guard.preserved_obligation_ids (
