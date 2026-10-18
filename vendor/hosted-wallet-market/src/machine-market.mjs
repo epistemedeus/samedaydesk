@@ -1,6 +1,5 @@
 // Joins the existing account/kernel, requester market and money adapter.
 // No account, obligation, balance or settlement ledger is implemented here.
-import {readFileSync,lstatSync} from 'node:fs';
 import {randomBytes,createHash,createHmac} from 'node:crypto';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -13,16 +12,14 @@ import {MarketStore} from '../runtime/agent-economy-market/src/store.mjs';
 import {requesterMoneyFromRail} from '../runtime/agent-economy-market/src/a-money-adapter.mjs';
 import {installedSourceSha256,hostSourceSha256} from './native-debt.mjs';
 import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
+import {loadMachineProfile} from './machine-profile-document.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
 const sha=value=>createHash('sha256').update(value).digest('hex');
 export function readMachineCapability(input,{sdsRoot,origin,tenant}){
  if(!input)return null;
- if(typeof input==='string'){
-  const st=lstatSync(input);if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)||st.size>65536)refuse('machine_profile_refused');
-  input=JSON.parse(readFileSync(input,'utf8'));
- }
+ input=loadMachineProfile(input,{sdsRoot});
  if(input.schema!=='pilot.machine-market.capability.v1'||input.profile!=='machine-market'||input.origin!==origin||input.tenant!==tenant||
   input.sourceSha256!==installedSourceSha256()||input.hostSha256!==hostSourceSha256(sdsRoot)||
   input.discovery!=='qualified-source'||!['unfunded','sandbox','qualified'].includes(input.money))refuse('machine_profile_refused');
