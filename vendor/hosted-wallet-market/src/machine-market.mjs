@@ -1,7 +1,7 @@
 // Joins the existing account/kernel, requester market and money adapter.
 // No account, obligation, balance or settlement ledger is implemented here.
 import {readFileSync,lstatSync} from 'node:fs';
-import {randomBytes,createHash} from 'node:crypto';
+import {randomBytes,createHash,createHmac} from 'node:crypto';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createPublicClient,http,defineChain,keccak256,recoverMessageAddress} from 'viem';
@@ -80,7 +80,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
     if(!q||q.contributorId!==id||q.payoutDestination!==m.payoutDestination)refuse('principal_binding');
     // Stable private token identity; only the existing kernel owns creation and
     // claim. An INSERT race re-reads the same canonical token after a restart.
-    const tokenHash=digest({tenant,id,allocation,kind:'machine-market-principal'});
+    const tokenHash=sha(createHmac('sha256',Buffer.from(profile.replayKey,'hex'))
+      .update('machine-market-principal:'+digest({tenant,id,allocation})).digest('base64url'));
     let p=await kernel.findContributorByTokenHash(tokenHash);
     if(!p){try{await kernel.createContributorToken({publicId:'market-'+digest({tenant,id,allocation}).slice(0,32),payoutDestination:q.payoutDestination,
       taskScope:allocation,provenance:'test',tokenHash,expiresAt:null});}catch(e){if(e.code!=='conflict'&&e.code!=='23505')throw e;}

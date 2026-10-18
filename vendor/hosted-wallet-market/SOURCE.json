@@ -1,9 +1,9 @@
 {
   "schema": "pilot.root319.machine-source.v1",
-  "pilotCommit": "b177b261e70946010d64d032fe42ee6df9f30cc1",
+  "pilotCommit": "89dacaa1b6c42a22c21b7e6a287b57d80d914e88",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "9a036d836f419b084c49a2a388947b4c7f919e877a4ba8fff3a52c1a17d355b1",
+  "installedSourceSha256": "58ca2128e6eb5cae6f8d9d96f87bb4894f03e820aa5baca1bc105c92d2cbce84",
   "publicMoney": "unqualified_source_drift",
   "installed": false
 }

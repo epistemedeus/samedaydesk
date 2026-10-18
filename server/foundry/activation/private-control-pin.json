@@ -1217,7 +1217,7 @@
     "vendor/hosted-wallet-market/package-lock.json": "0a995e05481e417920877929f5695ea60269e36f9d8c7579c8b445623bd8031d",
     "vendor/hosted-wallet-market/ROOT267-RECEIVING.md": "3d3ba2525efffe18333a3df730bc0c8be198a000bf93a20dd1ed4ffe2ef10a39",
     "vendor/hosted-wallet-market/contracts/machine-runtime.json": "a26f45d11d13f4d04dbe420c9bb6f45ea7f3514f0d81a0ee142c28f87f464147",
-    "vendor/hosted-wallet-market/src/machine-market.mjs": "83ed882be41d21bbab5b9a43142495bb5e2b7898f2d7bd7d52dd88d50d297097",
+    "vendor/hosted-wallet-market/src/machine-market.mjs": "9a8907f94e42a04c07960df47626d27311ebbf9dd99084efe7b7c3dfac393328",
     "vendor/hosted-wallet-market/schema/007_machine_market.sql": "e4787f415d8ca6e4f73aa653def56115f794e497b4425840a7267b8625e525bb",
     "vendor/hosted-wallet-market/runtime/agent-economy-foundation/package.json": "a226ed5b54cd5d851b22488080a08f7494508cff86908f32309f385a38896a81",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/package.json": "9ddc1ec1abb80cd9178fbe1d22c47437bd143a5defa3d9a0428af9dd839aecab",
@@ -1265,7 +1265,7 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
     "vendor/hosted-wallet-market/bin/machine-profile.mjs": "df25818d3f77c8d6e02e9ce6144118f03354ad6518ad5f3f4dd3bc727753463b",
-    "vendor/hosted-wallet-market/SOURCE.json": "9d4949a5cc5e4c16f30c097e7a9d1bfe7bd4534df35316783d90e982f108a602",
+    "vendor/hosted-wallet-market/SOURCE.json": "159723fc05d82901c1af72c699c8838c5189bcac2ccc01845b535b984188feee",
     "vendor/hosted-wallet-market/client/agent-economy-client-0.2.0.tgz": "c9074d9b598d0e1b5afa12ba0ca602ad9c9c55480a9583c444907af8e12cfe57",
     "vendor/hosted-wallet-market/contracts/machine-client.json": "b388d9d8017cd571010849e49f1610a33dda9befad89fc3c05c4da33e8291422"
   },
