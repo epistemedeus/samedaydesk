@@ -90,7 +90,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   const partyTerms=async(a,contributor)=>{
    const payer=await member(a.tenantId,a.actorId);
    if(!payer?.payoutDestination||!contributor.payoutDestination)refuse('wallet_control_required');
-   return {origin:capability.origin,payer:payer.payoutDestination,payerEpoch:payer.epoch,payerControl:payer.controlDigest,
+   return {origin:capability.origin,sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256,profile:capability.profile,money:capability.money,
+    payer:payer.payoutDestination,payerEpoch:payer.epoch,payerControl:payer.controlDigest,
     receiver:contributor.payoutDestination,receiverEpoch:contributor.epoch,receiverControl:contributor.controlDigest};
   };
   market=new RequesterMarket({store,kernel,accounts,members:{resolve:member},authenticate:async req=>{
@@ -146,6 +147,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    const previous=journal.all('funding').find(x=>digest(x.quote)===digest(q));
    const payer=await member(q.tenantId,q.requesterId),receiver=await member(q.tenantId,q.contributorId);
    if(!parties)refuse('wallet_authority_changed');
+   if(!previous?.authorizationTx&&(parties.sourceSha256!==capability.sourceSha256||parties.hostSha256!==capability.hostSha256||parties.profile!==capability.profile||parties.money!==capability.money))refuse('mandate_source_changed');
    if(!previous?.authorizationTx&&(payer.controlDigest!==parties.payerControl||payer.epoch!==parties.payerEpoch||payer.payoutDestination!==parties.payer||
     receiver.controlDigest!==parties.receiverControl||receiver.epoch!==parties.receiverEpoch||receiver.payoutDestination!==parties.receiver))refuse('wallet_authority_changed');
    const expiry=Math.floor(Date.parse(q.expiresAt)/1000),authorizationExpiry=expiry+REVIEW_WINDOW_SECONDS+CAPTURE_MARGIN_SECONDS+1;

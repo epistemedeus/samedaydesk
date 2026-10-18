@@ -272,7 +272,7 @@ export class RequesterMarket {
       currentFulfillment={state:confirmed?'confirmed_capture':'hold',observation:observed?.state??'unknown'};
     }
     const incident=f&&typeof this.money.readIncident==='function'?await this.money.readIncident(f.proof.proofId):null;
-    return {taskId:row.id,spec:row.spec,quote:q??null,quoteDigest:q?digest(q):null,selected:row.selected_quote === q?.quoteId,state,funding:f,claim:canonical?.reservation??null,submission:canonical?.submission??null,verdict:canonical?.verdict??null,obligation:canonical?.obligation??null,settlement:approval?.settlement??null,captureOutcome:approval?.outcome??null,currentFulfillment,incident,measures};
+    return {taskId:row.id,spec:row.spec,quote:q??null,partyTerms:binding?.parties??null,quoteDigest:q?digest(q):null,selected:row.selected_quote === q?.quoteId,state,funding:f,claim:canonical?.reservation??null,submission:canonical?.submission??null,verdict:canonical?.verdict??null,obligation:canonical?.obligation??null,settlement:approval?.settlement??null,captureOutcome:approval?.outcome??null,currentFulfillment,incident,measures};
   }
   async grantConsumer(context,input) {
     const a = await this.actor(context); exact(input,['taskId','consumerId']);
