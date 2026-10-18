@@ -29,6 +29,7 @@ export function readMachineCapability(input,{sdsRoot,origin,tenant}){
 }
 export async function openMachineMarket({capability,authority,sdsRoot,profile,authenticate,withClient,now=()=>Date.now()}){
  if(!address(profile.feeRecipient))refuse('fee_recipient_refused');
+ function assertCurrent(){if(capability.sourceSha256!==installedSourceSha256()||capability.hostSha256!==hostSourceSha256(sdsRoot))refuse('machine_profile_refused');}
  const source=pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/store/postgres.js'));
  const {createPostgresStore}=await import(source.href);
  const {ContributorAccountService}=await import(pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/account/service.js')).href);
@@ -54,7 +55,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    assets=new AssetRegistry('sandbox',[{asset,environment:'sandbox',canonical:{asset:'USDC',network:'eip155:31337'}}]);
    journal=new RailStore(authority.journalPath);
    rail=new CommercePaymentsRail(journal,client,authority.operator,'machine-commerce-v1',authority.contracts,
-     request=>market.authorizeCaptureRequest(request),1n,assets);
+     request=>{assertCurrent();return market.authorizeCaptureRequest(request);},1n,assets);
    money=requesterMoneyFromRail(rail);
   }else if(authority)refuse('machine_authority_refused');
   const store=new MarketStore(pool,profile.earnedSchema,assets);
@@ -181,6 +182,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   const readActions=new Set(['list','read','retained','measurement','payoutDisposition','reconcile']);
   const methods=new Set(['post','list','interest','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
   async function invoke(req,action,input,operationId){
+   assertCurrent();
    if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
    const account=await authenticate(req,{write:true});
    if(['post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(action)&&account.role!=='requester')refuse('requester_required',403);
@@ -216,6 +218,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    return result;
   }
   async function discover({limit=50,cursor=''}={}){
+   assertCurrent();
    if(!Number.isSafeInteger(limit)||limit<1||limit>100||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
    const rows=(await pool.query(`SELECT t.id,t.spec,t.selected_quote,EXISTS(SELECT 1 FROM "${profile.earnedSchema}".ae14_market_funding f
      JOIN "${profile.earnedSchema}".ae14_market_quotes q ON q.allocation_id=f.allocation_id AND q.tenant_id=f.tenant_id
@@ -236,6 +239,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    }
    return true;
   }
-  return {invoke,discover,protectNative,issueSession,market,rail,readActions,async close(){journal?.close();await pool.end();await kernel.close();}};
+  return {invoke,discover,protectNative,issueSession,market,rail,readActions,
+   descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,publicMoney:false},
+   async close(){journal?.close();await pool.end();await kernel.close();}};
  }catch(e){journal?.close();await pool.end();await kernel.close();throw e;}
 }

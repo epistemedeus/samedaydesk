@@ -482,6 +482,7 @@ export async function openHostedMarket(options) {
       migration005Applied: column.rows.length > 0,
       schema: 'pilot.root71.hosted-wallet-market.v1',
       mounted: true,
+      ...(machine?{machineCapability:machine.descriptor}:{}),
     };
   }
 
