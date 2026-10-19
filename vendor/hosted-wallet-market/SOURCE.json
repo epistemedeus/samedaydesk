@@ -3,8 +3,15 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "9b2a778e1847482819b02205c376010d9c31e85f1bb555826106e4c9f8da8f05",
+  "installedSourceSha256": "36dc4d34b003349ed5a6fd5ba5a50229ab4779291712ff84412e8e76125b451b",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
-  "installed": false
+  "installed": false,
+  "receivingSource": {
+    "repository": "epistemedeus/samedaydesk",
+    "baseCommit": "2ebdd605708d91d3638ecbc9c640e570a9ad483e",
+    "predecessorConsumerSha256": "36dc4d34b003349ed5a6fd5ba5a50229ab4779291712ff84412e8e76125b451b",
+    "exportCommand": "node server/scripts/refresh-installed-receiving-source.mjs",
+    "scope": "interpreted native discharge reader; existing runtime dependencies preserved"
+  }
 }

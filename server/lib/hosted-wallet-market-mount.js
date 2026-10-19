@@ -1,6 +1,7 @@
 import {realpathSync} from 'node:fs';
 import {dirname, relative, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import pg from 'pg';
 
 const PREFIX = '/api/neomorphic-contributor-journey';
 // Existing contributor browser/session/review routes retain their consumer.
@@ -145,6 +146,31 @@ async function openAdapter(adapter, entry, input, sdsRoot) {
   const market = await loaded.mountHostedWalletMarket({use(fn) { layer = fn; }}, {...input, sdsRoot});
   if (typeof layer !== 'function' || !market || typeof market.close !== 'function') refuse('integration_pending');
   return {layer, canonicalReceiving: market.canonicalReceiving, close: market.close.bind(market)};
+}
+
+/** Root CLI read-only counterpart of the installed mount. It cannot migrate,
+ * enroll, import, sign, or select another package. The configured consumer must
+ * already be bound; failure is retained as an unavailable proof, never paid. */
+export async function openRootNativeDebtReceiving(env,readAcceptedSource) {
+  if(!env.HOSTED_WALLET_MARKET_MODE)return null;
+  const input=assertHostedWalletMarketConfig(configured({},env));
+  const sdsRoot=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+  const member=name=>pathToFileURL(resolve(sdsRoot,'vendor/hosted-wallet-market/src',name)).href;
+  const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer},{createCanonicalReceiving}]=await Promise.all([
+    import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs')),import(member('canonical-receiving.mjs'))]);
+  const profile=loadDeploymentProfile(input),authority=await loadOwnerAuthority(sdsRoot,{ownerToken:input.ownerToken});
+  const pool=new pg.Pool({connectionString:input.databaseUrl,max:1,connectionTimeoutMillis:5000,statement_timeout:5000,idleTimeoutMillis:1000,allowExitOnIdle:true});
+  pool.on('error',()=>{});
+  const withReadClient=async fn=>{
+    const client=await pool.connect();
+    try{await client.query('BEGIN READ ONLY');await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
+      const value=await fn(client);await client.query('COMMIT');return value;
+    }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
+  };
+  const consumer=createInstalledDebtConsumer({profile,sdsRoot,registryRoot:input.dischargeRegistry,
+    authorityPrincipalId:authority.principalId,readAcceptedSource});
+  return {canonicalReceiving:createCanonicalReceiving({consumer,withReadClient,registryRoot:input.dischargeRegistry,rpcUrl:profile.rpcUrl}),
+    readNativeDebt:obligationId=>withReadClient(tx=>consumer.readNativeDebt(tx,obligationId)),close:()=>pool.end()};
 }
 
 /**
