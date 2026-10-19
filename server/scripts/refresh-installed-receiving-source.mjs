@@ -2,6 +2,9 @@
 // .mjs files are the maintained SDS source, not generated TypeScript output.
 // The Neo TypeScript runtime uses its separate declared runtime exporter first.
 import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {isDeepStrictEqual} from 'node:util';
+import {digest} from '../foundry/private-pass-core.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -9,6 +12,15 @@ import {installedSourceSha256} from '../../vendor/hosted-wallet-market/src/nativ
 import {verifyContributorRuntime} from '../lib/contributor-artifact.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const read=name=>readFile(path.join(root,name));
+// Receive explicitly named installed source, never infer it from a dirty export.
+// The same predecessor is idempotent; ordinary refresh adds no new descriptor.
+const args=process.argv.slice(2), predecessorRefs=[];
+while(args.length){
+  const option=args.shift(), ref=args.shift();
+  if(option!=='--receive-caller-from'||!(/^[a-f0-9]{40}$/.test(ref??'')))throw Error('full predecessor commit required');
+  execFileSync('git',['merge-base','--is-ancestor',ref,'HEAD'],{cwd:root,stdio:'pipe'});
+  predecessorRefs.push(ref);
+}
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const manifestName='vendor/hosted-wallet-market/SOURCE.json';
 const manifest=JSON.parse(await read(manifestName));
@@ -20,6 +32,14 @@ manifest.receivingSource={repository:'epistemedeus/samedaydesk',baseCommit:'2ebd
 const manifestBytes=JSON.stringify(manifest,null,2)+'\n';
 const pinName='server/foundry/activation/private-control-pin.json';
 const pin=JSON.parse(await read(pinName));
+const received=[...(pin.receivedCallerClosures??[])];
+for(const ref of predecessorRefs){
+  const prior=JSON.parse(execFileSync('git',['show',ref+':'+pinName],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024}));
+  if(typeof prior.base!=='string'||!(/^[a-f0-9]{64}$/.test(prior.files?.['vendor/visitor-foundry-receiver/SOURCE-PIN.json']??'')))throw Error('invalid predecessor caller pin');
+  const descriptor={base:prior.base,sourcePinSha256:prior.files['vendor/visitor-foundry-receiver/SOURCE-PIN.json'],closureDigest:digest(prior)};
+  for(const candidate of [...(prior.receivedCallerClosures??[]),descriptor])
+    if(!received.some(saved=>isDeepStrictEqual(saved,candidate)))received.push(candidate);
+}
 const next={...pin.files};
 const hostOwned=new Set(['server/lib/hosted-wallet-market-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
@@ -38,5 +58,5 @@ for(const name of Object.keys(next)){
 // The read-only Root CLI entry and this source exporter are part of the host.
 for(const name of hostOwned)next[name]=sha(await read(name));
 await writeFile(path.join(root,manifestName),manifestBytes);
-await writeFile(path.join(root,pinName),JSON.stringify({...pin,files:next},null,2)+'\n');
+await writeFile(path.join(root,pinName),JSON.stringify({...pin,receivedCallerClosures:received,files:next},null,2)+'\n');
 process.stdout.write(JSON.stringify({consumerSourceSha256:manifest.installedSourceSha256,hostMembers:Object.keys(next).length,qualified:false,installed:false})+'\n');

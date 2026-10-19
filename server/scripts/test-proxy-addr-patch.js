@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import http from "node:http";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { mkdtemp, cp, readFile, writeFile, rm, readdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -16,6 +16,7 @@ import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const MIN_PATCH = [2, 0, 8];
+const contributorSource = JSON.parse(await readFile(new URL('../../vendor/neomorphic-contributor-journey/SOURCE.json', import.meta.url), 'utf8'));
 let coldDir;
 let coldProxyaddr;
 let coldExpress;
@@ -190,7 +191,7 @@ test("cold production caller receives exact contributor bytes and both Postgres 
   assert.equal(result.code, 0, result.stderr || result.stdout);
   const received = JSON.parse(result.stdout);
   assert.deepEqual(received.caller, verifyCallerClosure());
-  assert.equal(received.product, "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556");
+  assert.equal(received.product, contributorSource.sourceCommit);
   assert.equal(received.gateway, "function"); assert.equal(received.monitor, "function");
 });
 
@@ -199,7 +200,7 @@ test("altered host lock or required dependency is refused", async () => {
   const check = `
     import {verifyContributorRuntime} from './server/lib/contributor-artifact.js';
     const manifest = await verifyContributorRuntime(${JSON.stringify(artifact)});
-    if (manifest.sourceCommit !== '0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556') throw new Error('product');
+    if (manifest.sourceCommit !== ${JSON.stringify(contributorSource.sourceCommit)}) throw new Error('product');
     const required = manifest.requiredDependencies;
     if (required.express !== '5.2.1' || required.pg !== '8.23.0' || required.zod !== '3.25.76') throw new Error('deps');
   `;
@@ -461,4 +462,15 @@ test("host trust proxy stays closed and request identity keeps ordinary hops", a
     assert.equal(clientKey(req("8.8.8.8", "9.9.9.9")), "peer:8.8.8.8", policy);
     assert.equal(clientKey(req("::ffff:8.8.8.8", "9.9.9.9")), "peer:8.8.8.8", policy);
   }
+});
+
+// The installed source is an immutable received predecessor, not a copied member
+// of the current pin's own accepted list. CI fetches history for this contract.
+test("actual installed predecessor caller survives the source export", async () => {
+  const prior = JSON.parse(execFileSync("git", ["show", "946ccd2fafe934a0a58e7a92a441103ed25bddeb:server/foundry/activation/private-control-pin.json"], {cwd:root, encoding:"utf8", maxBuffer:4*1024*1024}));
+  const descriptor = {base: prior.base, sourcePinSha256: prior.files["vendor/visitor-foundry-receiver/SOURCE-PIN.json"], closureDigest: digest(prior)};
+  assert.equal(descriptor.closureDigest, "sha256:c064d697b343cdd02d29ae50bb60aaf198ca5a111edea390f1f60714c81507f0");
+  assert.ok(acceptedCallerPin(descriptor));
+  assert.equal(acceptedCallerPin({...descriptor, sourcePinSha256: "0".repeat(64)}), false);
+  assert.equal(acceptedCallerPin({...descriptor, base: "0".repeat(40)}), false);
 });

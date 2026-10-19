@@ -847,7 +847,8 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/fixtures/versioned/consumer-contract.json": "b33b66935d752f7f44cbcb72b5418074f02b1d05828d76d819199e3be8489bab",
     "vendor/hosted-wallet-market/src/machine-network-source.mjs": "ba8464defda49cdb3c6a58314416494e6973e358dabb35e88bef09888721d3e2",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/cold-receipt.mjs": "86735d5b5be8f810774bd456991faa273c7125491aee94cbc25e2d247a7bbc7a",
-    "server/scripts/refresh-installed-receiving-source.mjs": "ff75d88ab28eb141b9fc104e704b7e0459327c96af12e30ed64c63733d0427ea",
+    "server/scripts/refresh-installed-receiving-source.mjs": "f8093f5a224facc7b12fc34355d4e0c23dddd0089e83fae95953a0f1065ab5ef",
+    "server/scripts/resolve-contributor-source.mjs": "303ccf41a660340836a8667ec0764797169ee06713fd51124f0e2be12ff0bd72",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1288,8 +1289,7 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "724557d1716b64149dc825f7b9f0591598b028ef242f04e9c5e30f664a1a014f",
-    "server/scripts/resolve-contributor-source.mjs": "303ccf41a660340836a8667ec0764797169ee06713fd51124f0e2be12ff0bd72"
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "724557d1716b64149dc825f7b9f0591598b028ef242f04e9c5e30f664a1a014f"
   },
   "receivedCallerClosures": [
     {
@@ -1441,6 +1441,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:db9c5660e6a673ba2cc7fc81a9a87ac77977d955ee74f414926162f5fcb5f0f7"
+    },
+    {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:c064d697b343cdd02d29ae50bb60aaf198ca5a111edea390f1f60714c81507f0"
     }
   ]
 }
