@@ -199,7 +199,10 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
   }
   let observed;
   try { observed = await readRailTransfer(rpcUrl, bodyFrom(row),{signal}); }
-  catch { fail(409, 'stale_evidence'); }
+  catch(error) {
+    if(['chain_unreachable','chain_cancelled','chain_rpc_refused'].includes(error?.codeName))fail(503,'fulfillment_unavailable');
+    fail(409,'stale_evidence');
+  }
   for (const key of ['source', 'recipient', 'amountAtomic', 'blockNumber', 'blockHash', 'blockTimestamp', 'logIndex']) {
     if (observed[key] !== receipt[key]) fail(409, 'stale_evidence');
   }
@@ -256,7 +259,7 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
   const received=fulfillmentReceiving?await fulfillmentReceiving.read(async(signal,phase)=>{
     phase('registry_and_chain');
     await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound,signal});return true;
-  },(reason,error)=>{if(error)throw error;return false;}):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
+  },(reason,error)=>{if(error&&error.codeName!=='fulfillment_unavailable')throw error;return false;}):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
   if(!received)return {schema:'pilot.root71.native-debt.disposition.v1',projection:'unknown',payable:false,newPayable:false,kernelPaid:false,nativePaidObservation:false,transferInitiated:false,payoutState:'owed',obligationId,obligationFamily:row.obligation_family,termsVersion,artifactDigestSha256:artifactDigest,reservationId,taskId,holdReason:'fulfillment_unavailable'};
   return {
     schema: 'pilot.root71.native-debt.disposition.v1',
