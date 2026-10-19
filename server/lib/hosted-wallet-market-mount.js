@@ -1,4 +1,5 @@
-import {realpathSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {realpathSync,readFileSync} from 'node:fs';
 import {dirname, relative, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import pg from 'pg';
@@ -42,9 +43,32 @@ function send(res, status, body) {
   res.end(payload);
 }
 
+// Closed-over host configuration, served only by the authenticated owner read
+// port after package/host/consent validation. Request bodies never supply it.
+export function sourceInstallationReader(env) {
+  const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+  return async()=>{
+    if(env.CONTRIBUTOR_DESK_INGRESS_MODE==='litespeed-https-only'){
+      const {loadContributorHttpsQualification}=await import('./contributor-https-qualification.js');
+      const qualification=await loadContributorHttpsQualification(env);
+      if(!qualification.current())refuse('installation_receiving_unavailable');
+    }
+    const names={origin:'CONTRIBUTOR_JOURNEY_ORIGIN',sdsCommit:'CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT',
+      neoCommit:'CONTRIBUTOR_JOURNEY_SOURCE_COMMIT',buildId:'CONTRIBUTOR_DESK_INSTALLATION_ID',
+      storeId:'CONTRIBUTOR_JOURNEY_STORE_ID',earnedWorkSchema:'CONTRIBUTOR_JOURNEY_EARNED_WORK_SCHEMA',
+      correspondenceSchema:'CONTRIBUTOR_JOURNEY_CORRESPONDENCE_SCHEMA'};
+    const result=Object.fromEntries(Object.entries(names).map(([name,key])=>[name,env[key]]));
+    if(Object.values(result).some(value=>typeof value!=='string'||!value.length))refuse('installation_receiving_unavailable');
+    for(const [key,name]of [['runtimeManifestSha256','vendor/neomorphic-contributor-journey/SOURCE.json'],['deskManifestSha256','vendor/neomorphic-contributor-desk/SOURCE.json']])
+      result[key]=createHash('sha256').update(readFileSync(resolve(root,name))).digest('hex');
+    return result;
+  };
+}
+
 function configured(options, env) {
   const pick = (field, key) => (options[field] !== undefined ? options[field] : env[key]);
   return {
+    readSourceInstallation:sourceInstallationReader(env),
     mode: pick('mode', 'HOSTED_WALLET_MARKET_MODE'),
     label: pick('label', 'HOSTED_WALLET_MARKET_LABEL'),
     chain: pick('chain', 'HOSTED_WALLET_MARKET_CHAIN'),
@@ -148,6 +172,20 @@ async function openAdapter(adapter, entry, input, sdsRoot) {
   return {layer, canonicalReceiving: market.canonicalReceiving, close: market.close.bind(market)};
 }
 
+/** Describe the expected closed source/profile without opening DB or registry.
+ * Remote controllers use this only to validate the installed authenticated port. */
+export async function describeRootNativeDebtReceiving(env) {
+  const input=assertHostedWalletMarketConfig(configured({},env));
+  const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+  const member=name=>pathToFileURL(resolve(root,'vendor/hosted-wallet-market/src',name)).href;
+  const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer}]=await Promise.all([
+    import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs'))]);
+  const profile=loadDeploymentProfile(input),authority=await loadOwnerAuthority(root,{ownerToken:input.ownerToken});
+  const binding=createInstalledDebtConsumer({profile,sdsRoot:root,registryRoot:input.dischargeRegistry,authorityPrincipalId:authority.principalId}).describeRemoteBinding();
+  return {binding,ownerPrincipalSha256:authority.principalId,
+    ...Object.fromEntries([['runtimeManifestSha256','vendor/neomorphic-contributor-journey/SOURCE.json'],['deskManifestSha256','vendor/neomorphic-contributor-desk/SOURCE.json']].map(([key,file])=>[key,createHash('sha256').update(readFileSync(resolve(root,file))).digest('hex')]))};
+}
+
 /** Root CLI read-only counterpart of the installed mount. It cannot migrate,
  * enroll, import, sign, or select another package. The configured consumer must
  * already be bound; failure is retained as an unavailable proof, never paid. */
@@ -170,6 +208,7 @@ export async function openRootNativeDebtReceiving(env,readAcceptedSource) {
   const consumer=createInstalledDebtConsumer({profile,sdsRoot,registryRoot:input.dischargeRegistry,
     authorityPrincipalId:authority.principalId,readAcceptedSource});
   return {canonicalReceiving:createCanonicalReceiving({consumer,withReadClient,registryRoot:input.dischargeRegistry,rpcUrl:profile.rpcUrl,readAcceptedSource}),
+    readSourceSuccession:()=>withReadClient(tx=>consumer.readSourceSuccession(tx)),
     readNativeDebt:obligationId=>withReadClient(tx=>consumer.readNativeDebt(tx,obligationId)),close:()=>pool.end()};
 }
 

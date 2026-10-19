@@ -7,11 +7,17 @@ import {DISCHARGE_SCHEMA, TRANSFER_SCHEMA, dischargeReceiptId, importContractSha
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const fail = () => { throw Object.assign(new Error('disposition_hold'), {http: 409, codeName: 'disposition_hold'}); };
+// A configured path digest is a comparison value, never registry authority.
+// Only registryIdentity/read below validate the installed filesystem.
+export function configuredRegistryIdentity(root) {
+  if(typeof root!=='string'||!root.startsWith('/')||root.includes('\0'))fail();
+  return sha(resolve(root));
+}
 export function registryIdentity(root) {
   try {
     const stat = lstatSync(root);
     if (!stat.isDirectory() || stat.isSymbolicLink() || (stat.mode & 0o077) || realpathSync(root) !== resolve(root)) fail();
-    return sha(resolve(root));
+    return configuredRegistryIdentity(resolve(root));
   } catch { fail(); }
 }
 function read(root, kind, key) {

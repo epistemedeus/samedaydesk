@@ -175,7 +175,7 @@ function bodyFrom(row) {
   };
 }
 
-async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound}) {
+async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound,signal}) {
   if (typeof assertBound !== 'function') fail(409, 'stale_evidence');
   let stored;
   let receipt;
@@ -198,14 +198,17 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
     fail(409, 'stale_evidence');
   }
   let observed;
-  try { observed = await readRailTransfer(rpcUrl, bodyFrom(row)); }
-  catch { fail(409, 'stale_evidence'); }
+  try { observed = await readRailTransfer(rpcUrl, bodyFrom(row),{signal}); }
+  catch(error) {
+    if(['chain_unreachable','chain_cancelled','chain_rpc_refused'].includes(error?.codeName))fail(503,'fulfillment_unavailable');
+    fail(409,'stale_evidence');
+  }
   for (const key of ['source', 'recipient', 'amountAtomic', 'blockNumber', 'blockHash', 'blockTimestamp', 'logIndex']) {
     if (observed[key] !== receipt[key]) fail(409, 'stale_evidence');
   }
 }
 
-async function dispositionFor(client, {obligationId, reservationId, taskId, termsVersion, digest: artifactDigest, registryRoot, fallbackPayoutState = null, readAcceptedSource, rpcUrl, assertBound}) {
+async function dispositionFor(client, {obligationId, reservationId, taskId, termsVersion, digest: artifactDigest, registryRoot, fallbackPayoutState = null, readAcceptedSource, rpcUrl, assertBound,fulfillmentReceiving}) {
   if (!obligationId) fail(409, 'incomplete_evidence');
   const owed = await client.query(
     `SELECT payout_state FROM earned_work_obligations WHERE id = $1
@@ -253,7 +256,11 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
     && row.terms_version === termsVersion
     && row.artifact_digest_sha256 === artifactDigest;
   if (!joined || payoutState !== 'owed') fail(409, 'stale_evidence');
-  await verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound});
+  const received=fulfillmentReceiving?await fulfillmentReceiving.read(async(signal,phase)=>{
+    phase('registry_and_chain');
+    await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound,signal});return true;
+  },(reason,error)=>{if(error&&error.codeName!=='fulfillment_unavailable')throw error;return false;}):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
+  if(!received)return {schema:'pilot.root71.native-debt.disposition.v1',projection:'unknown',payable:false,newPayable:false,kernelPaid:false,nativePaidObservation:false,transferInitiated:false,payoutState:'owed',obligationId,obligationFamily:row.obligation_family,termsVersion,artifactDigestSha256:artifactDigest,reservationId,taskId,holdReason:'fulfillment_unavailable'};
   return {
     schema: 'pilot.root71.native-debt.disposition.v1',
     projection: 'native_paid',
@@ -284,7 +291,7 @@ function fulfillmentOf(disposition) {
     && disposition.payoutState === 'owed'
     && disposition.payable === false
     && disposition.newPayable === false;
-  return {state: paid ? 'verified_paid' : 'not_observed', paid};
+  return {state: disposition.projection==='unknown'?'unknown':disposition.holdReason?'pending':paid ? 'verified_paid' : 'not_observed', paid};
 }
 
 function entitledValue({role, taskId, reservationId, termsVersion, artifact, verdict, disposition, businessStatus, evidenceHash, usefulOutcome}) {
@@ -312,7 +319,7 @@ function entitledValue({role, taskId, reservationId, termsVersion, artifact, ver
   };
 }
 
-async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound}) {
+async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving}) {
   const submission = (await client.query(
     'SELECT * FROM earned_work_submissions WHERE reservation_id = $1',
     [reservation.id],
@@ -351,7 +358,7 @@ async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAccept
     fallbackPayoutState: obligation.payout_state,
     readAcceptedSource,
     rpcUrl,
-    assertBound,
+    assertBound,fulfillmentReceiving,
   });
   const businessStatus = SAFE_STATUS.test(delivery?.business_status || '') ? delivery.business_status : null;
   return entitledValue({
@@ -368,7 +375,7 @@ async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAccept
   });
 }
 
-async function fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound}) {
+async function fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving}) {
   const aggregate = accepted?.aggregate;
   const submission = aggregate?.submission;
   const verdict = aggregate?.verdict;
@@ -398,7 +405,7 @@ async function fromAccepted(client, accepted, {taskId, reservationId, registryRo
     fallbackPayoutState: obligation.payoutState || obligation.payout_state || null,
     readAcceptedSource,
     rpcUrl,
-    assertBound,
+    assertBound,fulfillmentReceiving,
   });
   const supplied = typeof aggregate.usefulOutcome === 'string' && SAFE_OUTCOME.test(aggregate.usefulOutcome) ? aggregate.usefulOutcome : null;
   return entitledValue({
@@ -415,7 +422,7 @@ async function fromAccepted(client, accepted, {taskId, reservationId, registryRo
   });
 }
 
-export async function readEntitledOutcome(client, req, {taskId, reservationId, readAcceptedSource, nowMs, registryRoot, rpcUrl, assertBound}) {
+export async function readEntitledOutcome(client, req, {taskId, reservationId, readAcceptedSource, nowMs, registryRoot, rpcUrl, assertBound,fulfillmentReceiving}) {
   plain(taskId, 'task_refused');
   plain(reservationId, 'reservation_refused');
   const account = await authenticate(client, req, nowMs);
@@ -425,7 +432,7 @@ export async function readEntitledOutcome(client, req, {taskId, reservationId, r
     const role = roleOf(account.accountId, parties);
     if (!role) fail(404, 'not_found');
     if (reservation.task_id !== taskId) fail(409, 'mismatch');
-    const value = await fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound});
+    const value = await fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving});
     value.viewer = role;
     value.entitled.role = role;
     return value;
@@ -454,7 +461,7 @@ export async function readEntitledOutcome(client, req, {taskId, reservationId, r
     fail(409, 'stale_evidence');
   }
   if (!accepted) fail(404, 'not_found');
-  const value = await fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound});
+  const value = await fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving});
   value.viewer = role;
   value.entitled.role = role;
   return value;

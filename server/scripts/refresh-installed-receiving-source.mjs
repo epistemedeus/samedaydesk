@@ -8,7 +8,7 @@ import {digest} from '../foundry/private-pass-core.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {installedSourceSha256} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
+import {installedSourceSha256,installedSourceFiles} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
 import {verifyContributorRuntime} from '../lib/contributor-artifact.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const read=name=>readFile(path.join(root,name));
@@ -41,7 +41,7 @@ for(const ref of predecessorRefs){
     if(!received.some(saved=>isDeepStrictEqual(saved,candidate)))received.push(candidate);
 }
 const next={...pin.files};
-const hostOwned=new Set(['server/lib/hosted-wallet-market-mount.js','server/lib/contributor-desk-assets.js',
+const hostOwned=new Set(['server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
   'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
 const neoPrefix='vendor/neomorphic-contributor-journey/';
@@ -55,6 +55,8 @@ for(const name of Object.keys(next)){
   if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name))next[name]=got;
   else if(next[name]!==got)throw Error('unrelated source pin drift: '+name);
 }
+// New additive migrations and modules join the complete host closure.
+for(const name of installedSourceFiles())next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
 // The read-only Root CLI entry and this source exporter are part of the host.
 for(const name of hostOwned)next[name]=sha(await read(name));
 await writeFile(path.join(root,manifestName),manifestBytes);

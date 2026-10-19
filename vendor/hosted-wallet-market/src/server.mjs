@@ -1,3 +1,4 @@
+import {boundedReview} from './bounded-review.mjs';
 import {readFileSync} from 'node:fs';
 import {scryptSync, randomBytes} from 'node:crypto';
 import https from 'node:https';
@@ -195,6 +196,22 @@ export async function openHostedMarket(options) {
       client.release();
     }
   }
+  // Cancellation destroys only this acquired read connection; no SQL cancel
+  // signal or operation on another owner's process is used.
+  async function withReadClient(fn,{signal}={}) {
+    signal?.throwIfAborted();const client=await pool.connect();let released=false;
+    const abort=()=>{if(!released){released=true;client.release(true);}};
+    try {
+      signal?.addEventListener('abort',abort,{once:true});signal?.throwIfAborted();
+      await client.query('BEGIN READ ONLY');await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
+      await client.query("SET LOCAL statement_timeout='2500ms'");
+      const q=qualify(client),value=await fn({query:(...args)=>{signal?.throwIfAborted();return q.query(...args);}});
+      signal?.throwIfAborted();await client.query('COMMIT');return value;
+    } catch(error){if(!released)await client.query('ROLLBACK').catch(()=>{});throw error;}
+    finally{signal?.removeEventListener('abort',abort);if(!released)client.release();}
+  }
+  const fulfillmentReceiving=boundedReview(),reviewReadReceiving=boundedReview({timeoutMs:10000}),authorityReceiving=boundedReview({timeoutMs:5000});
+  const readAuthority=fn=>authorityReceiving.read(signal=>withReadClient(fn,{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'installed_authority_unavailable');});
   async function withTx(fn) {
     return withClient(async client => {
       await client.query('BEGIN');
@@ -959,15 +976,15 @@ export async function openHostedMarket(options) {
     const taskId = url.searchParams.get('taskId') || '';
     const reservationId = url.searchParams.get('reservationId') || '';
     if (taskId && reservationId) {
-      const value = await withClient(client => readEntitledOutcome(client, req, {
+      const value = await reviewReadReceiving.read(signal=>withReadClient(client => readEntitledOutcome(client, req, {
         taskId,
         reservationId,
         readAcceptedSource: options.readAcceptedSource,
-        nowMs,
+        fulfillmentReceiving,nowMs,
         registryRoot: dischargeRegistry,
         rpcUrl: options.rpcUrl,
         assertBound: bound => debtConsumer.assertBinding(bound),
-      }));
+      }),{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'review_receiving_unavailable');});
       return send(res, 200, {ok: true, value});
     }
     const account = await withClient(client => accountFrom(client, req));
@@ -1122,15 +1139,23 @@ export async function openHostedMarket(options) {
 
   async function readEnrollmentView(req, res) {
     ownerPrincipal(req);
-    const value = await withClient(client => debtConsumer.readEnrollment(client));
+    const value = await readAuthority(client => debtConsumer.readEnrollment(client));
     send(res, 200, {ok: true, value});
+  }
+
+  async function readInstallationSuccession(req, res) {
+    ownerPrincipal(req);
+    if(typeof options.readSourceInstallation!=='function')throw httpError(409,'installation_receiving_unavailable');
+    const graph=await readAuthority(client=>debtConsumer.readSourceSuccession(client));
+    const installation=await options.readSourceInstallation();
+    send(res,200,{ok:true,value:{schema:'pilot.funded-installed-source.v1',installation,graph}});
   }
 
   async function readNativeDebtView(req, res, url) {
     ownerPrincipal(req);
     const names = [...url.searchParams.keys()];
     if (names.some(name => name !== 'obligationId')) throw httpError(400, 'body_refused');
-    const value = await withClient(client => debtConsumer.readNativeDebt(client, url.searchParams.get('obligationId') || ''));
+    const value = await readAuthority(client => debtConsumer.readNativeDebt(client, url.searchParams.get('obligationId') || ''));
     send(res, 200, {ok: true, value});
   }
 
@@ -1586,6 +1611,7 @@ export async function openHostedMarket(options) {
       if (path === '/v1/operations' && req.method === 'GET') return await readback(req, res, url);
       if (path === '/v1/native-debt/import' && req.method === 'POST') return await importNativeDebt(req, res, body);
       if (path === '/v1/native-debt/enroll' && req.method === 'POST') return await enrollNativeDebt(req, res, body);
+      if (path === '/v1/native-debt/installation' && req.method === 'GET') return await readInstallationSuccession(req, res);
       if (path === '/v1/native-debt/enrollment' && req.method === 'GET') return await readEnrollmentView(req, res);
       if (path === '/v1/native-debt' && req.method === 'GET') return await readNativeDebtView(req, res, url);
       return miss(res, next);
@@ -1613,7 +1639,8 @@ export async function openHostedMarket(options) {
     database: profile.databaseName,
     debtConsumer,
     withReadClient: withClient,
-    canonicalReceiving: createCanonicalReceiving({consumer: debtConsumer, withReadClient: withClient,
+    reviewReceivingStatus:()=>({authority:authorityReceiving.status(),review:reviewReadReceiving.status(),fulfillment:fulfillmentReceiving.status()}),
+    canonicalReceiving: createCanonicalReceiving({consumer: debtConsumer, withReadClient,
       registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl,readAcceptedSource:options.readAcceptedSource}),
     handle: handler,
     setOrigin(value) {

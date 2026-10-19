@@ -1,3 +1,4 @@
+import {boundedReview} from './bounded-review.mjs';
 // Supplies the existing installed journey's canonical-receiving port. The
 // journey keeps its original accepted-work and settlement validator. This port
 // consumes the durable projection and rechecks its original registry authority.
@@ -40,12 +41,13 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
       });
     });
   }
-  return Object.freeze({pin,
+  const review=boundedReview();
+  const port=Object.freeze({pin,
     // External correspondence has no journey account or work-link row. Join
     // the original native IOU to its installed discharge instead of requiring
     // signup retroactively. Registry and current finalized chain proof remain
     // mandatory; the projection's paid Boolean alone is never authority.
-    async readExternalDischarge(query) {
+    async readExternalDischarge(query,{signal}={}) {
       const read=()=>withReadClient(async tx=>{
         await consumer.assertBinding(tx);
         const view=await consumer.readNativeDebt(tx,query.obligationId);
@@ -76,10 +78,10 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
           if(receipt[key]!==value)throw Error('disposition_hold');
         }
         return {body,receipt};
-      });
+      },{signal});
       const result=await read();
       if(!result.receipt)return result;
-      const observed=await readRailTransfer(rpcUrl,result.body);
+      const observed=await readRailTransfer(rpcUrl,result.body,{signal});
       for(const key of ['source','recipient','amountAtomic','blockNumber','blockHash','blockTimestamp','logIndex']){
         if(observed[key]!==result.receipt[key])throw Error('disposition_hold');
       }
@@ -87,6 +89,26 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
       if(digest(await read())!==digest(result))throw Error('disposition_hold');
       return {source:pin,query,state:'verified_paid',transactionHash:result.body.transactionHash,
         logIndex:result.body.logIndex,receiptId:result.body.receiptId};
+    },
+    reviewReceivingStatus:review.status,
+    async reviewFulfillment(handoff) {
+      const unknown=()=>({...handoff,state:'unknown',verifierVersion:'canonical-receiving/v2'});
+      return review.read(async(signal,phase)=>{
+        const query=await withReadClient(async tx=>{
+          await consumer.assertBinding(tx);
+          const native=await storedDebt(tx,handoff.obligationId,{readAcceptedSource});
+          const bound={taskId:native.taskId,reservationId:native.claimId,workId:native.submissionId,obligationId:native.obligationId,termsVersion:native.termsVersion,verdictId:native.verdictId};
+          if(digest(bound)!==digest(handoff)||native.family!=='opportunity')throw Error('disposition_hold');
+          const rows=(await tx.query(`SELECT c.contributor_token_id,j.requester_account_id FROM opportunity_claims c
+            JOIN journey_task_links j ON j.opportunity_round_id=c.round_id AND j.task_id=$2 WHERE c.id=$1`,[native.claimId,native.taskId])).rows;
+          if(rows.length!==1)throw Error('disposition_hold');
+          return {taskId:native.taskId,reservationId:native.claimId,submissionId:native.submissionId,obligationId:native.obligationId,verdictId:native.verdictId,termsVersion:native.termsVersion,artifactDigestSha256:native.artifactDigestSha256,roundId:native.roundId,requesterAccountId:rows[0].requester_account_id,contributorPrincipalId:rows[0].contributor_token_id};
+        },{signal});
+        phase('discharge_registry_and_chain');
+        const proof=await port.readExternalDischarge(query,{signal});
+        signal.throwIfAborted();
+        return {...handoff,state:proof.state,verifierVersion:'canonical-receiving/v2',...(proof.state==='verified_paid'?{transactionHash:proof.transactionHash,logIndex:proof.logIndex,receiptId:proof.receiptId}:{})};
+      },unknown);
     },
     observer: {source: 'configured_base_rpc', async observe(transactionHash) {
       const row = (await withReadClient(tx => tx.query('SELECT * FROM hosted_wallet_market.native_debt_dispositions WHERE transaction_hash=$1', [transactionHash]))).rows;
@@ -104,4 +126,5 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
     },
     async readReceiptAllocations(tx, index) { return records('d.transaction_hash=$1 AND d.log_index=$2', [tx, index]); },
   });
+  return port;
 }
