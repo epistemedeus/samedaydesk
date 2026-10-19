@@ -829,7 +829,7 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
     "vendor/hosted-wallet-market/bin/machine-profile.mjs": "8dd43c0c9b4f4ec79a4b1449644f3e13cc15d972494f4b4d2160679901aa32d1",
-    "vendor/hosted-wallet-market/SOURCE.json": "1e1ea83270ea5bfba103c199471d44168644951ec06522e03a79347fb6445ee4",
+    "vendor/hosted-wallet-market/SOURCE.json": "550065228a4b39f02cb1e17925f900986939905b8c07c66243ed93e6330d5978",
     "vendor/hosted-wallet-market/client/agent-economy-client-0.2.0.tgz": "c9074d9b598d0e1b5afa12ba0ca602ad9c9c55480a9583c444907af8e12cfe57",
     "vendor/hosted-wallet-market/contracts/machine-client.json": "b388d9d8017cd571010849e49f1610a33dda9befad89fc3c05c4da33e8291422",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/candidate.js": "bfea228cd0982d1f906b29e38423c76ea4784b80aacf3423d329712108737202",

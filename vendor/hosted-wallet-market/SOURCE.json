@@ -16,7 +16,7 @@
   },
   "successionSource": {
     "repository": "epistemedeus/pilot",
-    "commit": "fa6aa38e074fd039070f21572ff49ca68ee12345",
+    "commit": "f0d8db3f20c09e8522a9d3e68e5bd0f3f2b62c0b",
     "maintainedConsumer": "7a7916eed64d37f13f2c2cdec1e90275be99620b",
     "exportCommand": "node tools/root71-hosted-wallet-market/scripts/package-sds.mjs ABSOLUTE_SDS_ROOT",
     "files": {
