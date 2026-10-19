@@ -210,7 +210,8 @@ export async function openHostedMarket(options) {
     } catch(error){if(!released)await client.query('ROLLBACK').catch(()=>{});throw error;}
     finally{signal?.removeEventListener('abort',abort);if(!released)client.release();}
   }
-  const fulfillmentReceiving=boundedReview(),reviewReadReceiving=boundedReview({timeoutMs:10000});
+  const fulfillmentReceiving=boundedReview(),reviewReadReceiving=boundedReview({timeoutMs:10000}),authorityReceiving=boundedReview({timeoutMs:5000});
+  const readAuthority=fn=>authorityReceiving.read(signal=>withReadClient(fn,{signal}),()=>{throw httpError(503,'installed_authority_unavailable');});
   async function withTx(fn) {
     return withClient(async client => {
       await client.query('BEGIN');
@@ -1138,14 +1139,14 @@ export async function openHostedMarket(options) {
 
   async function readEnrollmentView(req, res) {
     ownerPrincipal(req);
-    const value = await withClient(client => debtConsumer.readEnrollment(client));
+    const value = await readAuthority(client => debtConsumer.readEnrollment(client));
     send(res, 200, {ok: true, value});
   }
 
   async function readInstallationSuccession(req, res) {
     ownerPrincipal(req);
     if(typeof options.readSourceInstallation!=='function')throw httpError(409,'installation_receiving_unavailable');
-    const graph=await withClient(client=>debtConsumer.readSourceSuccession(client));
+    const graph=await readAuthority(client=>debtConsumer.readSourceSuccession(client));
     const installation=await options.readSourceInstallation();
     send(res,200,{ok:true,value:{schema:'pilot.funded-installed-source.v1',installation,graph}});
   }
@@ -1154,7 +1155,7 @@ export async function openHostedMarket(options) {
     ownerPrincipal(req);
     const names = [...url.searchParams.keys()];
     if (names.some(name => name !== 'obligationId')) throw httpError(400, 'body_refused');
-    const value = await withClient(client => debtConsumer.readNativeDebt(client, url.searchParams.get('obligationId') || ''));
+    const value = await readAuthority(client => debtConsumer.readNativeDebt(client, url.searchParams.get('obligationId') || ''));
     send(res, 200, {ok: true, value});
   }
 
@@ -1638,7 +1639,7 @@ export async function openHostedMarket(options) {
     database: profile.databaseName,
     debtConsumer,
     withReadClient: withClient,
-    reviewReceivingStatus:()=>({review:reviewReadReceiving.status(),fulfillment:fulfillmentReceiving.status()}),
+    reviewReceivingStatus:()=>({authority:authorityReceiving.status(),review:reviewReadReceiving.status(),fulfillment:fulfillmentReceiving.status()}),
     canonicalReceiving: createCanonicalReceiving({consumer: debtConsumer, withReadClient,
       registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl,readAcceptedSource:options.readAcceptedSource}),
     handle: handler,
