@@ -10,8 +10,8 @@ const fail = () => { throw Object.assign(new Error('disposition_hold'), {http: 4
 // A configured path digest is a comparison value, never registry authority.
 // Only registryIdentity/read below validate the installed filesystem.
 export function configuredRegistryIdentity(root) {
-  if(typeof root!=='string'||!root.startsWith('/')||root.includes('\0')||resolve(root)!==root)fail();
-  return sha(root);
+  if(typeof root!=='string'||!root.startsWith('/')||root.includes('\0'))fail();
+  return sha(resolve(root));
 }
 export function registryIdentity(root) {
   try {

@@ -126,18 +126,18 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   const profileSha256 = digest({databaseIdentity, tenant: profile.tenant, earnedSchema: profile.earnedSchema, chain: profile.chain,
     payments: profile.payments, publicReads: profile.publicReads, fundedTasks: profile.fundedTasks, humanAssets: profile.humanAssets,
     tls: profile.tls, origin: profile.origin || null, token: profile.settlementToken, feeRecipient: profile.feeRecipient});
-  function binding(registrySha256) {
+  function binding(registryDigest) {
     if (!registryRoot) fail('discharge_consumer_unbound');
     if (configured.chain !== RAIL_NETWORK || configured.payments !== 'off' || configured.settlementToken !== RAIL_TOKEN) fail('binding_stale');
     return {source_sha256: installedSourceSha256(), host_source_sha256: hostSourceSha256(sdsRoot),
       import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
       tenant: configured.tenant, earned_schema: configured.earnedSchema, network: RAIL_NETWORK, token: RAIL_TOKEN,
       rpc_origin_sha256: rpcOriginSha256(configured.rpcUrl), rpc_endpoint_sha256: endpointHash(configured.rpcUrl),
-      registry_sha256: registrySha256, profile_sha256: profileSha256, profile_chain: configured.chain};
+      registry_sha256: registryDigest(), profile_sha256: profileSha256, profile_chain: configured.chain};
   }
-  const expected=()=>binding(registryIdentity(registryRoot));
+  const expected=()=>binding(()=>registryIdentity(registryRoot));
   // Descriptor only: no enrollment/read/import can use this as authority.
-  const describeRemoteBinding=()=>binding(configuredRegistryIdentity(registryRoot));
+  const describeRemoteBinding=()=>binding(()=>configuredRegistryIdentity(registryRoot));
   const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
   async function observationSeal(tx, through = null, complete = false) {
