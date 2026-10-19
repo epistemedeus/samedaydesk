@@ -1126,6 +1126,14 @@ export async function openHostedMarket(options) {
     send(res, 200, {ok: true, value});
   }
 
+  async function readInstallationSuccession(req, res) {
+    ownerPrincipal(req);
+    if(typeof options.readSourceInstallation!=='function')throw httpError(409,'installation_receiving_unavailable');
+    const graph=await withClient(client=>debtConsumer.readSourceSuccession(client));
+    const installation=await options.readSourceInstallation();
+    send(res,200,{ok:true,value:{schema:'pilot.funded-installed-source.v1',installation,graph}});
+  }
+
   async function readNativeDebtView(req, res, url) {
     ownerPrincipal(req);
     const names = [...url.searchParams.keys()];
@@ -1586,6 +1594,7 @@ export async function openHostedMarket(options) {
       if (path === '/v1/operations' && req.method === 'GET') return await readback(req, res, url);
       if (path === '/v1/native-debt/import' && req.method === 'POST') return await importNativeDebt(req, res, body);
       if (path === '/v1/native-debt/enroll' && req.method === 'POST') return await enrollNativeDebt(req, res, body);
+      if (path === '/v1/native-debt/installation' && req.method === 'GET') return await readInstallationSuccession(req, res);
       if (path === '/v1/native-debt/enrollment' && req.method === 'GET') return await readEnrollmentView(req, res);
       if (path === '/v1/native-debt' && req.method === 'GET') return await readNativeDebtView(req, res, url);
       return miss(res, next);

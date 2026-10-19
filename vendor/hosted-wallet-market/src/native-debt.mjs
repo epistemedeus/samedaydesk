@@ -298,6 +298,13 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     }
     return {schema: 'pilot.root71.native-debt.enrollment.v1', state: 'absent', qualified: false, boundConsumer: null};
   }
+  async function readSourceSuccession(tx) {
+    const row = await assertBinding(tx), chain = await successionChain(tx, row);
+    return {schema:'pilot.native-debt.source-succession.v1', original:sourcePair(row), current:sourcePair(expected()),
+      bindings:chain.nodes, ownerPrincipalSha256:authorityPrincipalId, invariantBinding:Object.fromEntries(
+        Object.entries(expected()).filter(([name])=>!['source_sha256','host_source_sha256'].includes(name))),
+      graphSha256:digest(chain.edges.map(({created_at,...edge})=>edge))};
+  }
   async function readNativeDebt(tx, obligationId) {
     if (!plainId(obligationId)) fail('obligation_refused', 400);
     const row = (await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [obligationId])).rows[0];
@@ -312,5 +319,5 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       importState: pending?'unbound_fail_closed':'unbound', holdReason:pending,
       kernelPaid: false, kernelTransfer: null, nativePaidObservation: false, transferInitiated: false, consumerContractSha256: consumerContractSha256()};
   }
-  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate, expectedBinding: expected});
+  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate, readSourceSuccession, expectedBinding: expected});
 }

@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "386a716564a105461cd93bf64af930f67ea0d86d05c98564627a390485ae30c1",
+  "installedSourceSha256": "165c71c0592c1d8f2d0b5db8a32fc11cf897a913345373d0085bda37c685d730",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
@@ -16,14 +16,15 @@
   },
   "successionSource": {
     "repository": "epistemedeus/pilot",
-    "commit": "f0d8db3f20c09e8522a9d3e68e5bd0f3f2b62c0b",
-    "maintainedConsumer": "7a7916eed64d37f13f2c2cdec1e90275be99620b",
+    "commit": "19502e7f5cc6538369ad202c61378db7eb6d2888",
+    "maintainedConsumer": "0445fcb9c965e383d6b9b10155103eb958482b3a",
     "exportCommand": "node tools/root71-hosted-wallet-market/scripts/package-sds.mjs ABSOLUTE_SDS_ROOT",
     "files": {
-      "src/native-debt.mjs": "d128003ef34703cf0f23f330f745b3041180786e6b931d50468a0345ced1d2a9",
+      "src/native-debt.mjs": "ddc9cd68356d80cf89e7bd3b7a7b647a4554af92a1f7b97beecf3394be0549c4",
       "src/migrate.mjs": "a83e6ed4cf926501b76f2ddeac9ce77256db5346db4da2dd9c2ecb38e2e4d727",
       "src/source-succession.mjs": "9fc5af00c4b39a02b42b02b2afd4d1c462c8615479c15f52c0a63ad3b8d5f0dc",
-      "schema/008_source_binding_succession.sql": "9328ce9c3e64d39eae22a73742d8c5b950007b325ec4f57047ee656ce4ddfa51"
+      "schema/008_source_binding_succession.sql": "9328ce9c3e64d39eae22a73742d8c5b950007b325ec4f57047ee656ce4ddfa51",
+      "src/server.mjs": "3c01d0806062fa577509d63b911ab54095f754c7af27e6e8df96d8af9bb19e2b"
     }
   }
 }
