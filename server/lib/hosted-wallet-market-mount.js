@@ -181,7 +181,7 @@ export async function describeRootNativeDebtReceiving(env) {
   const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer}]=await Promise.all([
     import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs'))]);
   const profile=loadDeploymentProfile(input),authority=await loadOwnerAuthority(root,{ownerToken:input.ownerToken});
-  const binding=createInstalledDebtConsumer({profile,sdsRoot:root,registryRoot:input.dischargeRegistry,authorityPrincipalId:authority.principalId}).expectedBinding();
+  const binding=createInstalledDebtConsumer({profile,sdsRoot:root,registryRoot:input.dischargeRegistry,authorityPrincipalId:authority.principalId}).describeRemoteBinding();
   return {binding,ownerPrincipalSha256:authority.principalId,
     ...Object.fromEntries([['runtimeManifestSha256','vendor/neomorphic-contributor-journey/SOURCE.json'],['deskManifestSha256','vendor/neomorphic-contributor-desk/SOURCE.json']].map(([key,file])=>[key,createHash('sha256').update(readFileSync(resolve(root,file))).digest('hex')]))};
 }

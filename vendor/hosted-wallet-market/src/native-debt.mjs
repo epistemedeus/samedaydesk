@@ -5,7 +5,7 @@ import {join, resolve, parse, dirname} from 'node:path';
 import {digest} from './canonical.mjs';
 import {readSourceSuccession as readSourceSuccessionChain, sourcePair, sourcePairKey} from './source-succession.mjs';
 import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
-import {readAuthoritativeDischarge, registryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
+import {readAuthoritativeDischarge, registryIdentity, configuredRegistryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
 import {matchDebt, storedDebt} from './debt-source.mjs';
 
 export const IMPORT_CONTRACT_SHA256 = '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063';
@@ -126,15 +126,18 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   const profileSha256 = digest({databaseIdentity, tenant: profile.tenant, earnedSchema: profile.earnedSchema, chain: profile.chain,
     payments: profile.payments, publicReads: profile.publicReads, fundedTasks: profile.fundedTasks, humanAssets: profile.humanAssets,
     tls: profile.tls, origin: profile.origin || null, token: profile.settlementToken, feeRecipient: profile.feeRecipient});
-  function expected() {
+  function binding(registrySha256) {
     if (!registryRoot) fail('discharge_consumer_unbound');
     if (configured.chain !== RAIL_NETWORK || configured.payments !== 'off' || configured.settlementToken !== RAIL_TOKEN) fail('binding_stale');
     return {source_sha256: installedSourceSha256(), host_source_sha256: hostSourceSha256(sdsRoot),
       import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
       tenant: configured.tenant, earned_schema: configured.earnedSchema, network: RAIL_NETWORK, token: RAIL_TOKEN,
       rpc_origin_sha256: rpcOriginSha256(configured.rpcUrl), rpc_endpoint_sha256: endpointHash(configured.rpcUrl),
-      registry_sha256: registryIdentity(registryRoot), profile_sha256: profileSha256, profile_chain: configured.chain};
+      registry_sha256: registrySha256, profile_sha256: profileSha256, profile_chain: configured.chain};
   }
+  const expected=()=>binding(registryIdentity(registryRoot));
+  // Descriptor only: no enrollment/read/import can use this as authority.
+  const describeRemoteBinding=()=>binding(configuredRegistryIdentity(registryRoot));
   const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
   async function observationSeal(tx, through = null, complete = false) {
@@ -319,5 +322,5 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       importState: pending?'unbound_fail_closed':'unbound', holdReason:pending,
       kernelPaid: false, kernelTransfer: null, nativePaidObservation: false, transferInitiated: false, consumerContractSha256: consumerContractSha256()};
   }
-  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate, readSourceSuccession, expectedBinding: expected});
+  return Object.freeze({enroll, importNativeDischarge, readEnrollment, readNativeDebt, assertBinding, assertEnrollmentCandidate, readSourceSuccession, expectedBinding: expected, describeRemoteBinding});
 }
