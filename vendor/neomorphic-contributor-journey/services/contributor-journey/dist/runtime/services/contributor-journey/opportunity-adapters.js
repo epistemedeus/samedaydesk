@@ -30,22 +30,23 @@ export function createOpportunityJourneyAdapters(options) {
             row.obligation && row.obligation.terms_version !== row.claim.terms_version)
             throw new Error('opportunity source terms invalid');
         const owner = await options.accountForPrincipal(row.claim.contributor_token_id);
-        if (!owner)
+        const external = owner ? null : await options.external?.loadClaim(row.claim);
+        if (!owner && !external)
             return null;
-        const principal = await options.principal(owner, row.round.round_key, row.round.provenance);
+        const principal = owner ? await options.principal(owner, row.round.round_key, row.round.provenance) : external.assignment.principal;
         if (!principal || principal.id !== row.claim.contributor_token_id)
             return null;
-        const record = await options.persistence.load(owner, reservationId);
+        const record = owner ? await options.persistence.load(owner, reservationId) : external?.frozen ? { frozen: external.frozen } : null;
         if (row.submission) {
             const frozen = record?.frozen;
-            if (!frozen || frozen.taskFamily !== 'opportunity' || frozen.accountId !== owner || frozen.reservationId !== reservationId ||
-                frozen.taskId !== id || frozen.termsVersion !== row.claim.terms_version ||
+            if (!frozen || owner && (!('taskFamily' in frozen) || frozen.taskFamily !== 'opportunity' || frozen.accountId !== owner || frozen.reservationId !== reservationId ||
+                frozen.taskId !== id || frozen.termsVersion !== row.claim.terms_version) ||
                 frozen.artifact.ref !== row.submission.artifact_ref || frozen.artifact.digestSha256 !== row.submission.artifact_digest_sha256 ||
                 frozen.artifact.bytes !== row.submission.artifact_bytes || frozen.artifact.mediaType !== row.submission.artifact_media_type ||
                 hashRequest(JSON.parse(frozen.content)) !== hashRequest(row.submission.evidence))
                 throw new Error('opportunity artifact readback invalid');
         }
-        return { ...row, id, document, owner, principal, record };
+        return { ...row, id, document, owner, principal, record, external };
     };
     const reservation = (row) => ({
         id: row.claim.id, taskId: row.id, termsVersion: row.claim.terms_version, contributorPublicId: row.principal.publicId,
@@ -119,8 +120,11 @@ export function createOpportunityJourneyAdapters(options) {
                 },
             };
         },
-        async verdict(bound, outcome, key) {
+        async verdict(bound, outcome, key, reviewEvidenceRef) {
             const project = await options.decisionProject(bound);
+            const row = await load(bound.reservationId, bound.taskId);
+            if (row?.external && (typeof reviewEvidenceRef !== 'string' || reviewEvidenceRef.trim().length < 6))
+                fail(400, 'review_evidence_required', 'Record the explicit report quality review reference.');
             return options.lock.run(`opportunity-review:${project}`, async () => {
                 const current = await review.read(bound);
                 if (!current || !same(sourceOf(current, bound), bound))
@@ -129,11 +133,11 @@ export function createOpportunityJourneyAdapters(options) {
                     fail(409, 'conflict', 'This review is closed.');
                 const events = await history(bound), prior = events.find(item => item.entry.key === key);
                 if (prior) {
-                    if (prior.entry.kind !== 'verdict' || prior.entry.outcome !== outcome)
+                    if (prior.entry.kind !== 'verdict' || prior.entry.outcome !== outcome || prior.entry.reviewEvidenceRef !== reviewEvidenceRef)
                         fail(409, 'idempotency_conflict', 'This operation changed.');
                     return { verdictId: prior.event.id };
                 }
-                const entry = { source: bound, kind: 'verdict', outcome, key, at: options.store.now().toISOString() };
+                const entry = { source: bound, kind: 'verdict', outcome, key, at: options.store.now().toISOString(), ...(reviewEvidenceRef ? { reviewEvidenceRef } : {}) };
                 const result = await options.correspondence.createEvent({ projectId: project, kind: 'reply', text: JSON.stringify({ entry, signature: signed(entry) }),
                     idempotencyKey: `opportunity-verdict:${key}`, requestHash: hashRequest(entry) });
                 return { verdictId: result.event.id };
@@ -190,6 +194,6 @@ export function createOpportunityJourneyAdapters(options) {
                 throw new SubmissionError('kernel_refused', 'The opportunity authority refused delivery.');
         },
     };
-    return { claims, submission: submissionPort, review, load };
+    return { claims, submission: submissionPort, review, load, verdictReceipt: async (bound, key) => (await history(bound)).find(item => item.entry.kind === 'verdict' && item.entry.key === key) ?? null };
 }
 //# sourceMappingURL=opportunity-adapters.js.map

@@ -35,3 +35,10 @@ export declare function prepareJourneyDeployment(options?: {
     publicEnabled: boolean;
     settlement: string;
 }>;
+/** Root's configured CLI: open an already prepared private installation without
+ * migrations, enrollment, HTTP listener, signup, or public writing authority. */
+export declare function openRootExternalControl(env: NodeJS.ProcessEnv): Promise<{
+    installed: import("./installed.js").InstalledComposition;
+    services: ExistingServices;
+    close: () => Promise<void>;
+}>;

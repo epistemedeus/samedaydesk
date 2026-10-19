@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+  "sourceCommit": "157bf96113141527d9c295f417093041d88774a5",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -926,6 +926,21 @@
       "sha256": "a4f0b6f6acc22d2955a776f56d47d05cb392739adb08513fd482d876280520d0"
     },
     {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.d.ts",
+      "bytes": 24372,
+      "sha256": "6acf541145337b66deac718b3ce7206e81e6bfe4797de028fd742e0ae07477d4"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.js",
+      "bytes": 21504,
+      "sha256": "19927d62b645ec53524e3dcffc45737859ec3307173ffa6f65b8716de7b52375"
+    },
+    {
+      "path": "services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.js.map",
+      "bytes": 21573,
+      "sha256": "758f6dbcdf9403c5c8bf9d5fc8db3e7e1a5f0243c8ba72a0df6c1cfd328b8a17"
+    },
+    {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/harness.d.ts",
       "bytes": 1196,
       "sha256": "91364c612b1cb76524a753f6a00c0a92743213e7b3ea0ff68e3624d70b34b82b"
@@ -942,33 +957,33 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.d.ts",
-      "bytes": 887,
-      "sha256": "71edbd2598c7b7dbd04a71148e78e4d16765f8819f1451946d6f2f4c7ecdb58a"
+      "bytes": 1109,
+      "sha256": "a910593714c76c5fdfe1f398036de138cf94b4f15b4f9a28c1843f9f6751db5b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.js",
-      "bytes": 756,
-      "sha256": "4cce25792e40b80ba0cc71e160aca01f6e4524d418bc4e656e3ce6648fc9a8a5"
+      "bytes": 978,
+      "sha256": "56173b743ce2f9785c33258aa9fc44bae6942754bb8a2eb7d628cfeb71273a2c"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/index.js.map",
-      "bytes": 603,
-      "sha256": "6883800dbe3e9abef20df19e52ea8159890d989900f52b335c61352854c5f221"
+      "bytes": 739,
+      "sha256": "9b0e68e1a6987d513051c456451ebd16f37a9efbeb3320dc21eb2909587db3c8"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.d.ts",
-      "bytes": 3571,
-      "sha256": "d62f694eec4d13f31fd0f47320d9cbcb3f3d6e69b4d6a5171e41b8bebc16641a"
+      "bytes": 3701,
+      "sha256": "cb44ee4143404c63d97de53122cacbc3e973092743f58d3f67eeda13fc9722bf"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js",
-      "bytes": 37468,
-      "sha256": "f17d286e6f6fa529d854a2a43f2d5d0c816e1eb03774790928bc908317942109"
+      "bytes": 38421,
+      "sha256": "b4fcb7e1f1a619dc9d4cfaf807827da2ce0f1245dea58690da829f07a14df996"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/installed.js.map",
-      "bytes": 37289,
-      "sha256": "044c013ab6b920fc480932c438a2e9d4569941b1da9afa720eefdf344c87effa"
+      "bytes": 38210,
+      "sha256": "c35a2da5c2b05639f77d719d8482440ed13cf17cc2586ec3d4cc655062a10340"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.d.ts",
@@ -977,13 +992,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js",
-      "bytes": 16845,
-      "sha256": "cfaa6860052223a165cd8685e9a7e519f617fe57db75180f370a5d3b0a3f6651"
+      "bytes": 16852,
+      "sha256": "57505ba92d3ff976e1acde9305a3fd8d34ee01eb6d54489495dab1201c4141ce"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/measurement.js.map",
-      "bytes": 18063,
-      "sha256": "a5096131ce15c6228c5642e895a795c697791d4738337a89ef3ca1e1478e051a"
+      "bytes": 18073,
+      "sha256": "1b1bb36f26c9935ca0b8b5adb18a6b68acf8999ac0bde2edd1d2e45bb7d4071a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/migrations/001_composition.sql",
@@ -997,18 +1012,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.d.ts",
-      "bytes": 3590,
-      "sha256": "16d14bccf4e55ded5956cc9a96d1d86dc489ea7695467d1f862e7d9c684d5640"
+      "bytes": 8170,
+      "sha256": "acbdeb53d11e3ce4efec0db711fd04d290aeadeee33c49b482ea9fa7def7155d"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js",
-      "bytes": 15652,
-      "sha256": "c0a8eb42aac726eee4031bc214c9f9aaafdabc6241dd9ebbad8e606846c69e30"
+      "bytes": 16467,
+      "sha256": "43a00cf731d2f8374d2814fc8f9c373cd923e9203684ad88037663b850959dc6"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js.map",
-      "bytes": 15678,
-      "sha256": "d1b6c65000274ad056383bb35d50a04de7cd661358c83ec502d9d529642c4bc2"
+      "bytes": 16656,
+      "sha256": "9cb756d848660da134a03d5ef69254e955cbd863953e0f1799e136ee76503e0b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/original-continuation/client.d.ts",
@@ -1222,18 +1237,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/review/service.js",
-      "bytes": 16225,
-      "sha256": "b583bd17acd557db795bf1998071005c46bcb33a3dcbc152f4c77fbf8ddda6cf"
+      "bytes": 16686,
+      "sha256": "c848054fa375a47b04f7c55aa60582133f12c138247f05f484bce80046f10044"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/review/service.js.map",
-      "bytes": 16411,
-      "sha256": "9afb60e57521faef99ab06b29b10ff58720527515a0e1c1b5b58032595db7784"
+      "bytes": 16813,
+      "sha256": "cfd4b90e601bb5e6d5faee26c41ccd2f8e5318f51d4be88c9a5da1138f1ccc05"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/review/types.d.ts",
-      "bytes": 4392,
-      "sha256": "e7e1bd24eccf5ef387cdd7bbee56da251db926ef5b5d28d865bdfe97cb3b171a"
+      "bytes": 4479,
+      "sha256": "3771fadf4cf31c5dda863083a4883384c5d5300a3fa48459dbff559d0bf96b4b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/review/types.js",
@@ -1262,18 +1277,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.d.ts",
-      "bytes": 1428,
-      "sha256": "d2742b9a2edfabac181a14a307f0d595d0fde94507ea8908b68e81b450c3bb9e"
+      "bytes": 1804,
+      "sha256": "9b355a2c0527d26a5e53a579298ac17f6bd75bb3cbcf6e6b6e0d980672525d6b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.js",
-      "bytes": 10953,
-      "sha256": "729727004200cac4782ec06a3e061b38ce5adf417aa0e028e7c2c8a51f05416a"
+      "bytes": 11992,
+      "sha256": "1cc8fa2a50443bef157efc1bc35bce8d74c9d40c210d6f51e852ef68bb3dd47a"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/runtime.js.map",
-      "bytes": 9047,
-      "sha256": "ba0a251350b3b293fd1643d393058a1ce0930c4128a003b304d0813e53cb4628"
+      "bytes": 10011,
+      "sha256": "f4edf0f8e300544d25bd6b3dbd5af50afe2c61e4d6bdf6372c105a89c85861c0"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/showcase/http.d.ts",
@@ -1937,43 +1952,43 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js",
-      "bytes": 93319,
-      "sha256": "2071ede2586b362cf5f8ae8a6d240b5157c9d317c956c6688aab052aece4fa79"
+      "bytes": 93403,
+      "sha256": "3e8401d40c5393e8cfafb4680dab978bed8998ac8e2c0e08258df8e6ff586dbf"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js.map",
-      "bytes": 75021,
-      "sha256": "1b51beae53b92c270a58c5653869ae8046f45df6cc33836f0b43b1a411596499"
+      "bytes": 75127,
+      "sha256": "fa3835df057dfb1e807334416eec0cb94dfee0d7b603d77e9603394542166992"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.d.ts",
-      "bytes": 2769,
-      "sha256": "81c16ea309cf5323d48bd9fe262a6690f153a14a09aa7141350a227865d27f1e"
+      "bytes": 2897,
+      "sha256": "398428d73607a7776f34c7a3f102789561abd3887e968eb89c519ec8efc513a5"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.js",
-      "bytes": 3909,
-      "sha256": "249aac84eb2081ede3017573776f5a1e0706f29bdd1563434856c74261ca1822"
+      "bytes": 3995,
+      "sha256": "ad177a8784f2612df7dec211c6b17ff908b20d3f77b9aed89f26a41f62803b67"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.js.map",
-      "bytes": 3764,
-      "sha256": "26a35a07d40c3ae31d24d04ff072519a8c8f981159b1409ddf38fb988aa649bd"
+      "bytes": 3870,
+      "sha256": "e63fcd37274dbfb86e4460b662ba51532321b9adcc61e3fddb1e679ca5848914"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/validate.d.ts",
-      "bytes": 24735,
-      "sha256": "dcc118f42c5e0dd93be7d37ff1b951b710ed52bacfba70a595205cf8e26c8862"
+      "bytes": 24961,
+      "sha256": "0c444cbd6c53379b9554dc2ae98b010002c1255b59a908b848d038078ebaecdc"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/validate.js",
-      "bytes": 7494,
-      "sha256": "50b319f3dba57f4d54b49588264ac5c8c0ac5ba2669c8fbb551412b519283826"
+      "bytes": 7573,
+      "sha256": "0a974eafd128fc5b3093f7d6a8dc299ba667774a6da2e7bb0498d83d8ecc3786"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/validate.js.map",
-      "bytes": 10394,
-      "sha256": "ff40e8c9df374ab494fafc9757c0c817902d02a3f4a26e3b3c6b789fb0a40e2c"
+      "bytes": 10457,
+      "sha256": "d16490ec3dddb4b59f3e81e3a4203f413d9cc26c231d93ceea4a775bc16b0f79"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/payout.d.ts",
@@ -2128,7 +2143,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "f3b1a4bb9dbbb65c2281e57014465f365013bc5c8d3091e69b47f9bd8bd73d67"
+      "sha256": "ad5eaca0a1f45390a963b218c84760448f6649ec161bc97482536ed8c6585b2d"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

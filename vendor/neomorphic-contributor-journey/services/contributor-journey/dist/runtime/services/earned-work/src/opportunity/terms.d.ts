@@ -22,6 +22,7 @@ export type AlternativeTerms = {
     paidSlot: false;
 };
 export type RoundTermsInput = {
+    receivingPolicy?: "root_mediated_external_report_v1";
     roundKey: string;
     principalCapAtomic: number;
     atomicScale: number;
@@ -42,9 +43,6 @@ export type RoundTermsInput = {
     alternatives: AlternativeTerms[];
 };
 export declare function canonicalRoundTerms(input: RoundTermsInput): {
-    schema: string;
-    schemaVersion: number;
-    roundKey: string;
     principalCapAtomic: number;
     atomicScale: number;
     asset: string;
@@ -90,6 +88,10 @@ export declare function canonicalRoundTerms(input: RoundTermsInput): {
         rewardDoesNotDependOnEndorsement: boolean;
         noArtifactFetch: boolean;
     };
+    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    schema: string;
+    schemaVersion: number;
+    roundKey: string;
 };
 export declare function hashRoundTerms(input: RoundTermsInput): string;
 /** Validate immutable stored terms before granting future-round authority. */

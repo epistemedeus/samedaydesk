@@ -1,3 +1,7 @@
+import { RootExternalReceiving } from './external-receiving.js';
+import { CompositionStore as PreparedCompositionStore } from './composition-store.js';
+import { JourneyAdmission } from './profile.js';
+import { PostgresSubmissionPersistence } from './submission/postgres.js';
 import express from 'express';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
@@ -44,8 +48,11 @@ export async function createInstalledComposition(options) {
     if (config.mode === 'live' && options.canonicalReceiving?.observer.source === 'synthetic_fixture')
         throw new Error('live canonical receiving cannot use a synthetic proof producer');
     const kernel = services.earnedWork.store;
-    const { db, admission, persistence } = await migrateJourneyStores(config, kernel, services.correspondence.store, pool);
-    if (config.mode === 'staging')
+    const { db, admission, persistence } = options.preparedOnly ? (() => {
+        const admission = new JourneyAdmission(config, kernel);
+        return { admission, db: new PreparedCompositionStore(kernel, services.correspondence.store, settings.integrityKey, admission), persistence: new PostgresSubmissionPersistence(pool, config.storage.earnedWorkSchema) };
+    })() : await migrateJourneyStores(config, kernel, services.correspondence.store, pool);
+    if (config.mode === 'staging' && !options.preparedOnly)
         await admission.enroll();
     await admission.checkReady();
     const accounts = new ContributorAccountService({ database: kernel, kernel, replayKey: Buffer.from(settings.replayKey, 'hex'), enabled: true,
@@ -104,7 +111,8 @@ export async function createInstalledComposition(options) {
         return kernel.withOpportunityClient(async (client) => (await client.query('SELECT principal_id FROM journey_account_kernel_bindings WHERE account_id=$1 AND kernel_scope=$2', [accountId, `opportunity:${round.id}`])).rows[0]?.principal_id ?? null, 'read');
     });
     const resolvePrincipal = async (accountId, roundKey, provenance) => principal(accountId, roundKey, provenance);
-    const adapters = createOpportunityJourneyAdapters({ store: kernel, opportunity, futureRounds: settings.futureRounds,
+    const external = new RootExternalReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, accounts, admission, lock, opportunity });
+    const adapters = createOpportunityJourneyAdapters({ external, store: kernel, opportunity, futureRounds: settings.futureRounds,
         principal: resolvePrincipal, accountForPrincipal: id => db.accountForPrincipal(id), persistence,
         correspondence: services.correspondence.store, decisionProject: source => db.project(source, 'decision'), integrityKey: settings.integrityKey, lock,
         admitTask: config.mode === 'live' ? async (id) => { await admission.task(id); } : undefined });
@@ -120,13 +128,13 @@ export async function createInstalledComposition(options) {
         const row = await adapters.load(target.reservationId, target.taskId), task = await db.task(target.taskId);
         if (!row || !task || ![row.owner, task.requester_account_id].includes(account.accountId))
             return null;
-        return { requesterAccountId: task.requester_account_id, contributorAccountId: row.owner, contributorPrincipalId: row.claim.contributor_token_id };
+        return { requesterAccountId: task.requester_account_id, contributorAccountId: row.owner, contributorPrincipalId: row.claim.contributor_token_id, ...(row.external ? { receiving: 'root_mediated_external_report_v1' } : {}) };
     };
     const review = new ReviewService({ authenticate, binding, kernel: adapters.review,
         clarification: createCorrespondenceReviewPort({ store: services.correspondence.store, projectId: source => db.project(source, 'clarification'), integrityKey: settings.integrityKey }),
         fulfillment: async (handoff) => {
             const row = await adapters.load(handoff.reservationId, handoff.taskId);
-            if (!row)
+            if (!row || !row.owner)
                 return { ...handoff, state: 'unknown', verifierVersion: 'canonical-receiving/v1' };
             const work = await works.read(await db.workId(handoff.taskId, handoff.reservationId, row.owner));
             const proof = work ? await canonical.qualify(work) : null;
@@ -139,7 +147,7 @@ export async function createInstalledComposition(options) {
                 return null;
             const source = await adapters.review.read({ taskId: link.task_id, reservationId: link.reservation_id });
             const row = await adapters.load(link.reservation_id, link.task_id);
-            if (!source?.aggregate.obligation || !source.aggregate.verdict || !source.aggregate.submission || !row || row.owner !== link.account_id)
+            if (!source?.aggregate.obligation || !source.aggregate.verdict || !source.aggregate.submission || !row?.owner || row.owner !== link.account_id)
                 return null;
             const profile = await db.profileForAccount(row.owner);
             if (!profile)
@@ -171,7 +179,7 @@ export async function createInstalledComposition(options) {
             if (!task)
                 return null;
             const row = await adapters.load(work.binding.reservationId, work.binding.taskId);
-            return row ? { ...canonical.identity(work), roundId: row.round.id, accountId: row.owner,
+            return row?.owner ? { ...canonical.identity(work), roundId: row.round.id, accountId: row.owner,
                 requesterAccountId: task.requester_account_id, contributorPrincipalId: row.principal.id } : null;
         } });
     const relationships = createRelationshipService({ kernel, works, requester: async (id) => (await db.task(id))?.requester_account_id ?? null });
@@ -444,7 +452,7 @@ export async function createInstalledComposition(options) {
                 return;
             }
             const source = await adapters.review.read(target), row = await adapters.load(target.reservationId, target.taskId);
-            if (!source?.aggregate.obligation || !row) {
+            if (!source?.aggregate.obligation || !row?.owner) {
                 res.sendStatus(404);
                 return;
             }
@@ -545,7 +553,7 @@ export async function createInstalledComposition(options) {
     });
     const ports = { resolveAccount: async (req) => { const actor = await authenticate(req); return actor ? { ok: true, value: actor } : { ok: false, code: 'unauthenticated' }; } };
     return { modules, middleware, extra, ports, accounts, claims, submissions, review, showcase, discussions, referral, referralStore, db, adapters, opportunity, works, consents,
-        profile: config.mode === 'live' ? 'live' : 'staging', admission, canonical, relationships, summaries, publishedSource };
+        profile: config.mode === 'live' ? 'live' : 'staging', admission, canonical, relationships, summaries, publishedSource, external };
 }
 import { sourceOf as sourceOfSafe } from './review/validation.js';
 //# sourceMappingURL=installed.js.map

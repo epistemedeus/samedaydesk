@@ -88,6 +88,7 @@ const alternativeSchema = z
 export const createRoundBodySchema = z
     .object({
     roundKey: keySchema,
+    receivingPolicy: z.literal("root_mediated_external_report_v1").optional(),
     provenance: z.enum(PROVENANCES),
     productionAdmission: z.boolean(),
     principalCapAtomic: atomicSchema,

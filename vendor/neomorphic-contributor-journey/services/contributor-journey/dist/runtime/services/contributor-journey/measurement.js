@@ -79,7 +79,7 @@ export async function readInstalledMeasurement(input) {
         if (!accountRows.has(claim.account_id))
             continue;
         const row = await installed.adapters.load(claim.id);
-        if (!row)
+        if (!row?.owner)
             continue;
         const link = await input.kernel.withOpportunityClient(async (client) => (await client.query('SELECT work_id FROM journey_work_links WHERE reservation_id=$1', [claim.id])).rows[0] ?? null, 'read');
         const work = link && await installed.works.read(link.work_id);
