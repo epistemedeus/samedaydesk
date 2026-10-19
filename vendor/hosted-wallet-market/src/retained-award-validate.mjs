@@ -483,6 +483,11 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   assert(other >= 0n, 'reserve_mismatch');
   same(integer(intent.otherReservedPrincipalAtomic), other, 'reserve_mismatch');
   nativeId(intent.roundId, 'round_required');
+  if(source.receivingPolicy!==undefined){
+    same(source.receivingPolicy,'root_mediated_external_report_v1','source_profile_refused');
+    nativeId(source.roundId,'round_required');
+  }
+  if(source.roundId!==undefined)same(nativeId(source.roundId,'round_required'),intent.roundId,'cross_round_allocation');
   same(reservation.roundId, intent.roundId, 'cross_round_allocation');
   if (Object.hasOwn(reservation, 'fundingRoundId')) same(reservation.fundingRoundId, intent.roundId, 'cross_round_allocation');
   const cap = positiveAtomic(reservation.gasCapWei, 'gas_cap_mismatch');

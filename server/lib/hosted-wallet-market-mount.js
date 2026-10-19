@@ -169,7 +169,7 @@ export async function openRootNativeDebtReceiving(env,readAcceptedSource) {
   };
   const consumer=createInstalledDebtConsumer({profile,sdsRoot,registryRoot:input.dischargeRegistry,
     authorityPrincipalId:authority.principalId,readAcceptedSource});
-  return {canonicalReceiving:createCanonicalReceiving({consumer,withReadClient,registryRoot:input.dischargeRegistry,rpcUrl:profile.rpcUrl}),
+  return {canonicalReceiving:createCanonicalReceiving({consumer,withReadClient,registryRoot:input.dischargeRegistry,rpcUrl:profile.rpcUrl,readAcceptedSource}),
     readNativeDebt:obligationId=>withReadClient(tx=>consumer.readNativeDebt(tx,obligationId)),close:()=>pool.end()};
 }
 

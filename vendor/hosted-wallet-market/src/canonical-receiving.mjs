@@ -6,9 +6,10 @@ import {digest} from './canonical.mjs';
 import {readAuthoritativeDischarge} from './discharge-authority.mjs';
 import {consumerContractSha256, installedSourceSha256} from './native-debt.mjs';
 import {readRailTransfer} from './chain.mjs';
+import {storedDebt,matchDebt} from './debt-source.mjs';
 const sha = value => createHash('sha256').update(value).digest('hex');
 const decimal = amount => `${BigInt(amount)/1000000n}.${(BigInt(amount)%1000000n).toString().padStart(6,'0')}`;
-export function createCanonicalReceiving({consumer, withReadClient, registryRoot, rpcUrl}) {
+export function createCanonicalReceiving({consumer, withReadClient, registryRoot, rpcUrl,readAcceptedSource}) {
   const pin = Object.freeze({family: 'opportunity', sourceId: 'root191-native-debt',
     sourceRevision: consumerContractSha256(), sourceSha256: installedSourceSha256()});
   async function records(where, params) {
@@ -66,6 +67,8 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
           transactionHash:d.transaction_hash,logIndex:d.log_index,blockNumber:d.block_number,amountAtomic:d.amount_atomic,
           receiptId:d.receipt_id,receivedAt:new Date(d.received_at).toISOString()};
         const {receipt}=readAuthoritativeDischarge(registryRoot,body);
+        const native=await storedDebt(tx,query.obligationId,{readAcceptedSource});
+        matchDebt(native,receipt);
         if(digest(receipt)!==d.authority_receipt_sha256)throw Error('disposition_hold');
         for(const [key,value]of Object.entries({obligationId:query.obligationId,taskId:query.taskId,
           claimId:query.reservationId,submissionId:query.submissionId,verdictId:query.verdictId,

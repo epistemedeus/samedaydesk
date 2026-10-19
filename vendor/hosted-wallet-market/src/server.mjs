@@ -1614,7 +1614,7 @@ export async function openHostedMarket(options) {
     debtConsumer,
     withReadClient: withClient,
     canonicalReceiving: createCanonicalReceiving({consumer: debtConsumer, withReadClient: withClient,
-      registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl}),
+      registryRoot: dischargeRegistry, rpcUrl: profile.rpcUrl,readAcceptedSource:options.readAcceptedSource}),
     handle: handler,
     setOrigin(value) {
       if (machine && value !== originBox.origin) throw httpError(409, 'machine_origin_changed');
