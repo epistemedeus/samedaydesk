@@ -211,7 +211,7 @@ export async function openHostedMarket(options) {
     finally{signal?.removeEventListener('abort',abort);if(!released)client.release();}
   }
   const fulfillmentReceiving=boundedReview(),reviewReadReceiving=boundedReview({timeoutMs:10000}),authorityReceiving=boundedReview({timeoutMs:5000});
-  const readAuthority=fn=>authorityReceiving.read(signal=>withReadClient(fn,{signal}),()=>{throw httpError(503,'installed_authority_unavailable');});
+  const readAuthority=fn=>authorityReceiving.read(signal=>withReadClient(fn,{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'installed_authority_unavailable');});
   async function withTx(fn) {
     return withClient(async client => {
       await client.query('BEGIN');
@@ -984,7 +984,7 @@ export async function openHostedMarket(options) {
         registryRoot: dischargeRegistry,
         rpcUrl: options.rpcUrl,
         assertBound: bound => debtConsumer.assertBinding(bound),
-      }),{signal}),()=>{throw httpError(503,'review_receiving_unavailable');});
+      }),{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'review_receiving_unavailable');});
       return send(res, 200, {ok: true, value});
     }
     const account = await withClient(client => accountFrom(client, req));
