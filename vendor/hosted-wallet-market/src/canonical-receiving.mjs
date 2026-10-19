@@ -6,9 +6,10 @@ import {digest} from './canonical.mjs';
 import {readAuthoritativeDischarge} from './discharge-authority.mjs';
 import {consumerContractSha256, installedSourceSha256} from './native-debt.mjs';
 import {readRailTransfer} from './chain.mjs';
+import {storedDebt,matchDebt} from './debt-source.mjs';
 const sha = value => createHash('sha256').update(value).digest('hex');
 const decimal = amount => `${BigInt(amount)/1000000n}.${(BigInt(amount)%1000000n).toString().padStart(6,'0')}`;
-export function createCanonicalReceiving({consumer, withReadClient, registryRoot, rpcUrl}) {
+export function createCanonicalReceiving({consumer, withReadClient, registryRoot, rpcUrl,readAcceptedSource}) {
   const pin = Object.freeze({family: 'opportunity', sourceId: 'root191-native-debt',
     sourceRevision: consumerContractSha256(), sourceSha256: installedSourceSha256()});
   async function records(where, params) {
@@ -40,6 +41,53 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
     });
   }
   return Object.freeze({pin,
+    // External correspondence has no journey account or work-link row. Join
+    // the original native IOU to its installed discharge instead of requiring
+    // signup retroactively. Registry and current finalized chain proof remain
+    // mandatory; the projection's paid Boolean alone is never authority.
+    async readExternalDischarge(query) {
+      const read=()=>withReadClient(async tx=>{
+        await consumer.assertBinding(tx);
+        const view=await consumer.readNativeDebt(tx,query.obligationId);
+        if(view.state!=='bound')return {source:pin,query,state:view.state==='hold'?'pending':'not_observed'};
+        const found=(await tx.query(`SELECT d.*,o.round_id,c.contributor_token_id,j.requester_account_id
+          FROM hosted_wallet_market.native_debt_dispositions d
+          JOIN opportunity_obligations o ON o.id=d.obligation_id AND o.claim_id=d.claim_id
+          JOIN opportunity_claims c ON c.id=o.claim_id AND c.round_id=o.round_id
+          JOIN journey_task_links j ON j.task_id=d.task_id AND j.opportunity_round_id=o.round_id
+          WHERE d.obligation_id=$1 AND d.obligation_family='opportunity'`,[query.obligationId])).rows;
+        if(found.length!==1)throw Error('disposition_hold');
+        const d=found[0],expected={taskId:d.task_id,reservationId:d.claim_id,submissionId:d.submission_id,
+          obligationId:d.obligation_id,verdictId:d.verdict_id,termsVersion:d.terms_version,
+          artifactDigestSha256:d.artifact_digest_sha256,roundId:d.round_id,
+          requesterAccountId:d.requester_account_id,contributorPrincipalId:d.contributor_token_id};
+        if(digest(query)!==digest(expected))throw Error('disposition_hold');
+        const body={importContractSha256:d.import_contract_sha256,tenant:d.tenant,obligationId:d.obligation_id,
+          reservationId:d.reservation_id,taskId:d.task_id,termsVersion:d.terms_version,network:d.network,token:d.token,
+          transactionHash:d.transaction_hash,logIndex:d.log_index,blockNumber:d.block_number,amountAtomic:d.amount_atomic,
+          receiptId:d.receipt_id,receivedAt:new Date(d.received_at).toISOString()};
+        const {receipt}=readAuthoritativeDischarge(registryRoot,body);
+        const native=await storedDebt(tx,query.obligationId,{readAcceptedSource});
+        matchDebt(native,receipt);
+        if(digest(receipt)!==d.authority_receipt_sha256)throw Error('disposition_hold');
+        for(const [key,value]of Object.entries({obligationId:query.obligationId,taskId:query.taskId,
+          claimId:query.reservationId,submissionId:query.submissionId,verdictId:query.verdictId,
+          termsVersion:query.termsVersion,artifactDigestSha256:query.artifactDigestSha256,roundId:query.roundId})){
+          if(receipt[key]!==value)throw Error('disposition_hold');
+        }
+        return {body,receipt};
+      });
+      const result=await read();
+      if(!result.receipt)return result;
+      const observed=await readRailTransfer(rpcUrl,result.body);
+      for(const key of ['source','recipient','amountAtomic','blockNumber','blockHash','blockTimestamp','logIndex']){
+        if(observed[key]!==result.receipt[key])throw Error('disposition_hold');
+      }
+      // Recheck the original installed authority after the asynchronous RPC.
+      if(digest(await read())!==digest(result))throw Error('disposition_hold');
+      return {source:pin,query,state:'verified_paid',transactionHash:result.body.transactionHash,
+        logIndex:result.body.logIndex,receiptId:result.body.receiptId};
+    },
     observer: {source: 'configured_base_rpc', async observe(transactionHash) {
       const row = (await withReadClient(tx => tx.query('SELECT * FROM hosted_wallet_market.native_debt_dispositions WHERE transaction_hash=$1', [transactionHash]))).rows;
       if (row.length !== 1) return {ok: false};

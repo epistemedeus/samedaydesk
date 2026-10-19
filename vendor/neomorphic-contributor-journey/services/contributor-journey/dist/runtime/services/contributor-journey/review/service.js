@@ -85,7 +85,10 @@ export class ReviewService {
                 const joined = { taskId: observed.taskId, reservationId: observed.reservationId, workId: observed.workId, obligationId: observed.obligationId, termsVersion: observed.termsVersion, verdictId: observed.verdictId };
                 if (!same(joined, l.handoff) || !["not_observed", "pending", "verified_paid", "failed", "unknown"].includes(observed.state) || typeof observed.verifierVersion !== "string" || !observed.verifierVersion.trim())
                     fail(503, "fulfillment_invalid", "Fulfillment evidence does not match this obligation.");
-                fulfillment = { state: observed.state, paid: observed.state === "verified_paid" };
+                const transfer = observed.transactionHash === undefined ? {} : { transactionHash: observed.transactionHash, logIndex: observed.logIndex, receiptId: observed.receiptId };
+                if (observed.transactionHash !== undefined && (observed.state !== "verified_paid" || !/^0x[a-f0-9]{64}$/.test(observed.transactionHash) || !Number.isSafeInteger(observed.logIndex) || observed.logIndex < 0 || !/^[a-f0-9]{64}$/.test(observed.receiptId ?? '')))
+                    fail(503, "fulfillment_invalid", "Fulfillment evidence does not match this obligation.");
+                fulfillment = { state: observed.state, paid: observed.state === "verified_paid", ...transfer };
             }
             catch (error) {
                 if (error instanceof ReviewError)

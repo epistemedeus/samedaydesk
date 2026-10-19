@@ -12,10 +12,12 @@ const runtimeRoot=fileURLToPath(new URL('../../vendor/neomorphic-contributor-jou
 const deskRoot=fileURLToPath(new URL('../../vendor/neomorphic-contributor-desk/',import.meta.url));
 
 /** Verified immutable resource bytes shared by the managed ingress and TLS receiver. */
-export async function loadContributorDeskAssets(expectedCommit,{legacyAliases=false}={}){
+export async function loadContributorDeskAssets(expectedCommit,{legacyAliases=false,expectedDeskCommit}={}){
   if(!/^[a-f0-9]{40}$/.test(expectedCommit??''))throw new Error('exact source required');
   await verifyContributorRuntime(runtimeRoot,expectedCommit);
-  const manifest=await verifyContributorArtifact(deskRoot,'neomorphic.contributor-desk.assets.v1',expectedCommit);
+  const declared=JSON.parse(await readFile(path.join(deskRoot,'SOURCE.json'),'utf8')).sourceCommit;
+  if(!/^[a-f0-9]{40}$/.test(declared??'')||expectedDeskCommit&&expectedDeskCommit!==declared)throw new Error('exact desk source required');
+  const manifest=await verifyContributorArtifact(deskRoot,'neomorphic.contributor-desk.assets.v1',declared);
   if(manifest.apiPath!==JOURNEY_PREFIX||manifest.previewOnly!==true||manifest.publicEnabled!==false||
       manifest.placement?.schema!=='neomorphic.contributor-desk.placement.v1'||
       manifest.placement.deskPath!==DESK_PATH||manifest.placement.assetPrefix!==DESK_ASSET_PREFIX)
@@ -50,5 +52,5 @@ export async function loadContributorDeskAssets(expectedCommit,{legacyAliases=fa
       'Referrer-Policy':'same-origin'});
     res.type(member.type).send(member.bytes);
   });
-  return {manifest,router};
+  return {manifest,router,journeySourceCommit:expectedCommit,deskSourceCommit:declared};
 }

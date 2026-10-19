@@ -9,14 +9,15 @@ import {agreedSourceCommit, artifactSourceContract, selectContributorSource} fro
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const wrong='0'.repeat(40);
 
-test('a missing source env derives the agreed runtime and desk contract',()=>{
+test('a missing source env derives the runtime contract while retaining the separate desk identity',()=>{
   const contract=artifactSourceContract(root);
   assert.equal(selectContributorSource(undefined,contract),contract);
   assert.equal(selectContributorSource('',contract),contract);
   const journey=JSON.parse(readFileSync(path.join(root,'vendor/neomorphic-contributor-journey/SOURCE.json'),'utf8'));
   const desk=JSON.parse(readFileSync(path.join(root,'vendor/neomorphic-contributor-desk/SOURCE.json'),'utf8'));
   assert.equal(contract,journey.sourceCommit);
-  assert.equal(contract,desk.sourceCommit);
+  assert.equal(agreedSourceCommit(contract,desk.sourceCommit,contract,false),contract);
+  assert.match(desk.sourceCommit,/^[a-f0-9]{40}$/);
 });
 
 test('a set source env is passed through, including a mismatch',()=>{
@@ -25,9 +26,10 @@ test('a set source env is passed through, including a mismatch',()=>{
   assert.equal(selectContributorSource(contract,contract),contract);
 });
 
-test('runtime and desk disagreement is a named refusal',()=>{
+test('runtime/build disagreement and malformed desk identity are named refusals',()=>{
   const contract=artifactSourceContract(root);
-  assert.throws(()=>agreedSourceCommit(contract,wrong,contract,false),/contributor_source_contract_refused/);
+  assert.equal(agreedSourceCommit(contract,wrong,contract,false),contract);
+  assert.throws(()=>agreedSourceCommit(contract,'not-a-source',contract,false),/contributor_source_contract_refused/);
   assert.throws(()=>agreedSourceCommit(contract,contract,wrong,false),/contributor_source_contract_refused/);
   assert.throws(()=>agreedSourceCommit(contract,contract,contract,true),/contributor_source_contract_refused/);
 });

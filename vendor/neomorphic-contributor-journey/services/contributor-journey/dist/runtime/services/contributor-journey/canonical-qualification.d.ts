@@ -36,7 +36,29 @@ export type CanonicalReceiving = {
         settlement: SettlementBinding;
     }>>;
     observer: BaseReceiptObserver;
+    /** Existing installed debt consumer, without an account-owned showcase link. */
+    readExternalDischarge?(query: ExternalDischargeQuery): Promise<ExternalDischargeRecord>;
     allowSynthetic?: boolean;
+};
+export type ExternalDischargeQuery = {
+    taskId: string;
+    reservationId: string;
+    submissionId: string;
+    obligationId: string;
+    verdictId: string;
+    termsVersion: string;
+    artifactDigestSha256: string;
+    roundId: string;
+    requesterAccountId: string;
+    contributorPrincipalId: string;
+};
+export type ExternalDischargeRecord = {
+    source: CanonicalSourcePin;
+    query: ExternalDischargeQuery;
+    state: 'not_observed' | 'pending' | 'verified_paid';
+    transactionHash?: string;
+    logIndex?: number;
+    receiptId?: string;
 };
 /** Exact canonical222310/223500 receiving invariants: accepted artifact/terms,
  * authorized counterparties, successful exact token/amount transfer and one

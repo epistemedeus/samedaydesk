@@ -37,7 +37,9 @@ export declare function prepareJourneyDeployment(options?: {
 }>;
 /** Root's configured CLI: open an already prepared private installation without
  * migrations, enrollment, HTTP listener, signup, or public writing authority. */
-export declare function openRootExternalControl(env: NodeJS.ProcessEnv): Promise<{
+export declare function openRootExternalControl(env: NodeJS.ProcessEnv, options?: {
+    canonicalReceiving?: import('./canonical-qualification.js').CanonicalReceiving;
+}): Promise<{
     installed: import("./installed.js").InstalledComposition;
     services: ExistingServices;
     close: () => Promise<void>;

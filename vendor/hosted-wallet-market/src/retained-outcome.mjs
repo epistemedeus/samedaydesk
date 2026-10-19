@@ -269,6 +269,9 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
     artifactDigestSha256: artifactDigest,
     reservationId,
     taskId,
+    transactionHash: row.transaction_hash,
+    logIndex: Number(row.log_index),
+    receiptId: row.receipt_id,
     holdReason: null,
   };
 }
