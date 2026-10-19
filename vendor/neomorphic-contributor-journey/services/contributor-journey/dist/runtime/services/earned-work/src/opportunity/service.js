@@ -418,10 +418,30 @@ export class OpportunityService {
                 throw new ApiError(403, "forbidden", "claim belongs to a different credential");
             }
             const now = this.kernel.now();
-            if (claim.status === "expired" || claim.status === "released") {
+            const prior = options?.preExpiryCorrespondence;
+            let preExpiry = false;
+            if (prior) {
+                const receivedAt = Date.parse(prior.receivedAt);
+                if (!Number.isFinite(receivedAt))
+                    throw new ApiError(400, "invalid_input", "correspondence time is invalid");
+                if (claim.kind !== "owner_assigned")
+                    throw new ApiError(409, "late_submission", "pre-expiry correspondence is limited to the original owner-assigned claim");
+                if (claim.status === "released")
+                    throw new ApiError(409, "late_submission", "unearned reservation has expired");
+                if (receivedAt > now.getTime())
+                    throw new ApiError(409, "late_submission", "correspondence time is in the future");
+                if (round.status !== "open" || now.getTime() >= round.submission_deadline.getTime())
+                    throw new ApiError(409, "round_closed", "round is closed");
+                if (receivedAt >= round.submission_deadline.getTime())
+                    throw new ApiError(409, "late_submission", "correspondence arrived after the submission deadline");
+                if (receivedAt >= claim.expires_at.getTime())
+                    throw new ApiError(409, "late_submission", "correspondence arrived after claim expiry");
+                preExpiry = true;
+            }
+            if (!preExpiry && (claim.status === "expired" || claim.status === "released")) {
                 throw new ApiError(409, "late_submission", "unearned reservation has expired");
             }
-            if (claim.defer_start) {
+            if (!preExpiry && claim.defer_start) {
                 const response = {
                     outcome: "deferred_start",
                     error: { code: "deferred_start", message: "do not start work until a receiving route is agreed" },
@@ -442,7 +462,7 @@ export class OpportunityService {
                 await saveIdempotency(client, "opportunity_submit", round.id, idempotencyKey, requestHash, 409, response, now, contributor.id);
                 return { replayed: false, statusCode: 409, body: response };
             }
-            if (claim.status === "expired" || claim.status === "released" || claim.expires_at.getTime() <= now.getTime() && claim.status === "reserved") {
+            if (!preExpiry && (claim.status === "expired" || claim.status === "released" || claim.expires_at.getTime() <= now.getTime() && claim.status === "reserved")) {
                 throw new ApiError(409, "late_submission", "unearned reservation has expired");
             }
             if (claim.terms_version !== round.terms_version) {
@@ -472,8 +492,17 @@ export class OpportunityService {
                 await saveIdempotency(client, "opportunity_submit", round.id, idempotencyKey, requestHash, 200, response, now, contributor.id);
                 return { replayed: false, statusCode: 200, body: response };
             }
-            if (claim.status !== "reserved")
+            if (claim.status !== "reserved" && !(preExpiry && claim.status === "expired"))
                 throw new ApiError(409, "duplicate_submission", "claim is not open for submission");
+            if (preExpiry && claim.status === "expired") {
+                const slots = await this.occupyingCount(client, offer.id);
+                if (slots >= offer.slot_count)
+                    throw new ApiError(409, "offer_full", "offer slots are full");
+                const committed = await this.committed(client, round.id);
+                if (committed + big(claim.reward_atomic) > big(round.principal_cap_atomic)) {
+                    throw new ApiError(409, "oversubscribed", "remaining principal cap does not cover this reward");
+                }
+            }
             const submissionId = newId("osub");
             await client.query(`INSERT INTO opportunity_submissions (
            id, claim_id, round_id, terms_version, evidence, evidence_bytes,

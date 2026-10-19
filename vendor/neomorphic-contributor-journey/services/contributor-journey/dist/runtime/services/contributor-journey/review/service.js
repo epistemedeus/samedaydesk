@@ -1,7 +1,7 @@
 import { hashRequest } from "../../earned-work/src/crypto.js";
 import { projectAccept } from "../../../packs/requester-decision-desk/src/projection.js";
 import { fail, id, key, object, ReviewError, same, source, sourceOf, handoffOf, target, text, validateEntries } from "./validation.js";
-const safeCodes = new Set(["already_accepted", "artifact_changed", "terms_changed", "verdict_required", "superseded_verdict", "idempotency_conflict", "version_conflict", "conflict", "not_found"]);
+const safeCodes = new Set(["already_accepted", "artifact_changed", "terms_changed", "verdict_required", "review_evidence_required", "superseded_verdict", "idempotency_conflict", "version_conflict", "conflict", "not_found"]);
 export class ReviewService {
     ports;
     clock;

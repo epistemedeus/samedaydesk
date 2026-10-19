@@ -29,24 +29,62 @@ export function createOpportunityJourneyAdapters(options) {
         if (row.claim.terms_version !== row.round.terms_version || row.submission && row.submission.terms_version !== row.claim.terms_version ||
             row.obligation && row.obligation.terms_version !== row.claim.terms_version)
             throw new Error('opportunity source terms invalid');
-        const owner = await options.accountForPrincipal(row.claim.contributor_token_id);
-        const external = owner ? null : await options.external?.loadClaim(row.claim);
-        if (!owner && !external)
+        const boundAccount = await options.accountForPrincipal(row.claim.contributor_token_id);
+        const correspondence = await options.originalClaim?.loadClaim(row.claim) ?? null;
+        if (boundAccount && correspondence && boundAccount !== correspondence.accountId)
+            throw new Error('original_claim_account_integrity');
+        let owner = boundAccount;
+        if (correspondence && !owner)
+            owner = correspondence.accountId;
+        let principal = null;
+        let external = null;
+        if (owner && boundAccount) {
+            principal = await options.principal(owner, row.round.round_key, row.round.provenance);
+            if (!principal || principal.id !== row.claim.contributor_token_id) {
+                if (correspondence)
+                    throw new Error('original_claim_principal_integrity');
+                return null;
+            }
+            if (correspondence && principal.id !== correspondence.principal.id)
+                throw new Error('original_claim_principal_integrity');
+        }
+        else if (correspondence) {
+            principal = correspondence.principal;
+            if (principal.id !== row.claim.contributor_token_id)
+                throw new Error('original_claim_principal_integrity');
+        }
+        else {
+            external = await options.external?.loadClaim(row.claim) ?? null;
+            if (!external)
+                return null;
+            principal = external.assignment.principal;
+            if (!principal || principal.id !== row.claim.contributor_token_id)
+                return null;
+        }
+        if (!principal)
             return null;
-        const principal = owner ? await options.principal(owner, row.round.round_key, row.round.provenance) : external.assignment.principal;
-        if (!principal || principal.id !== row.claim.contributor_token_id)
-            return null;
-        const record = owner ? await options.persistence.load(owner, reservationId) : external?.frozen ? { frozen: external.frozen } : null;
+        const persisted = owner ? await options.persistence.load(owner, reservationId) : null;
+        let correspondenceAuthoritative = false;
+        let record = persisted;
+        if (persisted?.frozen && correspondence?.frozen && persisted.frozen.content !== correspondence.frozen.content)
+            throw new Error('original_claim_artifact_conflict');
+        if (!persisted?.frozen && correspondence?.frozen) {
+            record = { frozen: correspondence.frozen };
+            correspondenceAuthoritative = true;
+        }
+        else if (!owner && external?.frozen)
+            record = { frozen: external.frozen };
         if (row.submission) {
             const frozen = record?.frozen;
-            if (!frozen || owner && (!('taskFamily' in frozen) || frozen.taskFamily !== 'opportunity' || frozen.accountId !== owner || frozen.reservationId !== reservationId ||
-                frozen.taskId !== id || frozen.termsVersion !== row.claim.terms_version) ||
-                frozen.artifact.ref !== row.submission.artifact_ref || frozen.artifact.digestSha256 !== row.submission.artifact_digest_sha256 ||
+            const artifactMismatch = !frozen || frozen.artifact.ref !== row.submission.artifact_ref || frozen.artifact.digestSha256 !== row.submission.artifact_digest_sha256 ||
                 frozen.artifact.bytes !== row.submission.artifact_bytes || frozen.artifact.mediaType !== row.submission.artifact_media_type ||
-                hashRequest(JSON.parse(frozen.content)) !== hashRequest(row.submission.evidence))
+                hashRequest(JSON.parse(frozen.content)) !== hashRequest(row.submission.evidence);
+            const cliMismatch = !!owner && !correspondenceAuthoritative && (!frozen || !('taskFamily' in frozen) || frozen.taskFamily !== 'opportunity' || frozen.accountId !== owner || frozen.reservationId !== reservationId || frozen.taskId !== id || frozen.termsVersion !== row.claim.terms_version);
+            const correspondenceMismatch = correspondenceAuthoritative && (!frozen || frozen.provenance !== 'root_received_private_correspondence' || frozen.contributorAuthenticated !== false || frozen.cliSubmitted !== false || frozen.accountId !== owner || frozen.claimId !== reservationId || frozen.taskId !== id || frozen.termsVersion !== row.claim.terms_version);
+            if (artifactMismatch || cliMismatch || correspondenceMismatch)
                 throw new Error('opportunity artifact readback invalid');
         }
-        return { ...row, id, document, owner, principal, record, external };
+        return { ...row, id, document, owner, principal, record, external: owner ? null : external, correspondence: correspondenceAuthoritative ? correspondence : null };
     };
     const reservation = (row) => ({
         id: row.claim.id, taskId: row.id, termsVersion: row.claim.terms_version, contributorPublicId: row.principal.publicId,
@@ -123,7 +161,7 @@ export function createOpportunityJourneyAdapters(options) {
         async verdict(bound, outcome, key, reviewEvidenceRef) {
             const project = await options.decisionProject(bound);
             const row = await load(bound.reservationId, bound.taskId);
-            if (row?.external && (typeof reviewEvidenceRef !== 'string' || reviewEvidenceRef.trim().length < 6))
+            if ((row?.external || row?.correspondence) && (typeof reviewEvidenceRef !== 'string' || reviewEvidenceRef.trim().length < 6))
                 fail(400, 'review_evidence_required', 'Record the explicit report quality review reference.');
             return options.lock.run(`opportunity-review:${project}`, async () => {
                 const current = await review.read(bound);

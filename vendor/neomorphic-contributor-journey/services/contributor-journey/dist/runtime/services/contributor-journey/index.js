@@ -10,4 +10,5 @@ export * from './canonical-qualification.js';
 export * from './relationship.js';
 export { openRootExternalControl } from './runtime.js';
 export { externalCredentialRef, externalSelectionSchema, externalDeliverySchema, retainedExternalSelection, inspectExternalDelivery } from './external-receiving.js';
+export { originalDeliverySchema, inspectOriginalDelivery, retainedOriginalDelivery } from './original-claim-receiving.js';
 //# sourceMappingURL=index.js.map
