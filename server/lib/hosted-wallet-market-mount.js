@@ -47,7 +47,12 @@ function send(res, status, body) {
 // port after package/host/consent validation. Request bodies never supply it.
 export function sourceInstallationReader(env) {
   const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
-  return ()=>{
+  return async()=>{
+    if(env.CONTRIBUTOR_DESK_INGRESS_MODE==='litespeed-https-only'){
+      const {loadContributorHttpsQualification}=await import('./contributor-https-qualification.js');
+      const qualification=await loadContributorHttpsQualification(env);
+      if(!qualification.current())refuse('installation_receiving_unavailable');
+    }
     const names={origin:'CONTRIBUTOR_JOURNEY_ORIGIN',sdsCommit:'CONTRIBUTOR_DESK_SDS_SOURCE_COMMIT',
       neoCommit:'CONTRIBUTOR_JOURNEY_SOURCE_COMMIT',buildId:'CONTRIBUTOR_DESK_INSTALLATION_ID',
       storeId:'CONTRIBUTOR_JOURNEY_STORE_ID',earnedWorkSchema:'CONTRIBUTOR_JOURNEY_EARNED_WORK_SCHEMA',
