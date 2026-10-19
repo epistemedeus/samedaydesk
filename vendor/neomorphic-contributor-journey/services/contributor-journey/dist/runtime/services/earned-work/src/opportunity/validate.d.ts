@@ -209,6 +209,7 @@ export declare const sourceBodySchema: z.ZodObject<{
 }>;
 export declare const createRoundBodySchema: z.ZodObject<{
     roundKey: z.ZodString;
+    receivingPolicy: z.ZodOptional<z.ZodLiteral<"root_mediated_external_report_v1">>;
     provenance: z.ZodEnum<["test", "fixture", "production"]>;
     productionAdmission: z.ZodBoolean;
     principalCapAtomic: z.ZodNumber;
@@ -325,6 +326,7 @@ export declare const createRoundBodySchema: z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }, {
@@ -364,6 +366,7 @@ export declare const createRoundBodySchema: z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }>;

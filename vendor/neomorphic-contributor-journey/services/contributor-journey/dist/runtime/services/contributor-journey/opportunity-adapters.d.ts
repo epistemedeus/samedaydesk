@@ -1,6 +1,7 @@
+import type { RootExternalReceiving } from './external-receiving.js';
 import type { PostgresStore } from '../earned-work/src/store/postgres.js';
 import { OpportunityService } from '../earned-work/src/opportunity/service.js';
-import type { ContributorPrincipal, Provenance } from '../earned-work/src/types.js';
+import type { ContributorPrincipal, Provenance, Verdict } from '../earned-work/src/types.js';
 import type { CorrespondenceStore } from '../correspondence/src/store/types.js';
 import type { ClaimLookupPort, KernelSubmissionPort, SubmissionPersistence } from './submission/types.js';
 import type { KernelReviewPort, SourceBinding } from './review/types.js';
@@ -9,6 +10,7 @@ type Row = Record<string, any>;
 /** Actual opportunity authority with common read DTOs for the received UI/services.
  * No earned_work_tasks/reservations/submissions/obligations are written here. */
 export declare function createOpportunityJourneyAdapters(options: {
+    external?: RootExternalReceiving;
     store: PostgresStore;
     opportunity: OpportunityService;
     futureRounds: Array<{
@@ -30,9 +32,6 @@ export declare function createOpportunityJourneyAdapters(options: {
     load: (reservationId: string, taskId?: string) => Promise<{
         id: string;
         document: {
-            schema: string;
-            schemaVersion: number;
-            roundKey: string;
             principalCapAtomic: number;
             atomicScale: number;
             asset: string;
@@ -78,15 +77,136 @@ export declare function createOpportunityJourneyAdapters(options: {
                 rewardDoesNotDependOnEndorsement: boolean;
                 noArtifactFetch: boolean;
             };
+            receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+            schema: string;
+            schemaVersion: number;
+            roundKey: string;
         };
-        owner: string;
+        owner: string | null;
         principal: ContributorPrincipal;
-        record: import("./submission/types.js").DraftRecord | null;
+        record: import("./submission/types.js").DraftRecord | {
+            frozen: {
+                content: string;
+                kind: "delivery";
+                delivery: import("./external-receiving.js").ExternalDelivery;
+                artifactId: string;
+                artifact: {
+                    ref: string;
+                    digestSha256: string;
+                    mediaType: string;
+                    bytes: number;
+                };
+                key: string;
+            };
+        } | null;
+        external: {
+            assignment: {
+                credentialRef: string;
+                claimId: any;
+                principal: ContributorPrincipal;
+                selection: {
+                    termsVersion: string;
+                    taskId: string;
+                    publicLabel: string;
+                    channel: {
+                        kind: "email";
+                        threadRef: string;
+                    };
+                    schema: "neomorphic.root-external-selection.v1";
+                    requesterAccountId: string;
+                    roundId: string;
+                    termsPacketSha256: string;
+                    allocationReceiptSha256: string;
+                    identity: string;
+                    agreement: {
+                        termsVersion: string;
+                        threadRef: string;
+                        termsPacketSha256: string;
+                        sender: string;
+                        messageRef: string;
+                        termsRef: string;
+                        originalOperationRef: string;
+                        agreedAt: string;
+                    };
+                    rootReceipt: {
+                        provenance: "root_received_private_correspondence";
+                        recordRef: string;
+                        receivedAt: string;
+                        actualExternalIdentity: true;
+                    };
+                };
+                assignmentKey: string;
+            };
+            frozen: null;
+        } | {
+            assignment: {
+                credentialRef: string;
+                claimId: any;
+                principal: ContributorPrincipal;
+                selection: {
+                    termsVersion: string;
+                    taskId: string;
+                    publicLabel: string;
+                    channel: {
+                        kind: "email";
+                        threadRef: string;
+                    };
+                    schema: "neomorphic.root-external-selection.v1";
+                    requesterAccountId: string;
+                    roundId: string;
+                    termsPacketSha256: string;
+                    allocationReceiptSha256: string;
+                    identity: string;
+                    agreement: {
+                        termsVersion: string;
+                        threadRef: string;
+                        termsPacketSha256: string;
+                        sender: string;
+                        messageRef: string;
+                        termsRef: string;
+                        originalOperationRef: string;
+                        agreedAt: string;
+                    };
+                    rootReceipt: {
+                        provenance: "root_received_private_correspondence";
+                        recordRef: string;
+                        receivedAt: string;
+                        actualExternalIdentity: true;
+                    };
+                };
+                assignmentKey: string;
+            };
+            frozen: {
+                content: string;
+                kind: "delivery";
+                delivery: import("./external-receiving.js").ExternalDelivery;
+                artifactId: string;
+                artifact: {
+                    ref: string;
+                    digestSha256: string;
+                    mediaType: string;
+                    bytes: number;
+                };
+                key: string;
+            };
+        } | null | undefined;
         claim: Row;
         round: Row;
         offer: Row;
         submission: Row | null;
         obligation: Row | null;
+    } | null>;
+    verdictReceipt: (bound: SourceBinding, key: string) => Promise<{
+        event: import("../correspondence/src/types.js").EventRecord;
+        entry: {
+            source: SourceBinding;
+            kind: "verdict" | "reject";
+            outcome?: Verdict["outcome"];
+            reason?: string;
+            key: string;
+            at: string;
+            reviewEvidenceRef?: string;
+        };
     } | null>;
 };
 export {};

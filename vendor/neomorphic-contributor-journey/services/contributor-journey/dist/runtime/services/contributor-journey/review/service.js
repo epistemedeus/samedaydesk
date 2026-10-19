@@ -32,7 +32,7 @@ export class ReviewService {
         if (!account || typeof account.accountId !== "string" || !account.accountId || typeof account.sessionId !== "string" || !account.sessionId || !Number.isFinite(Date.parse(account.authTime)) || Date.parse(account.authTime) > now || !Number.isFinite(Date.parse(account.expiresAt)) || Date.parse(account.expiresAt) <= now)
             fail(401, "unauthorized", "Sign in again to read this work.");
         const access = await this.ports.binding(account, expected);
-        if (!access || typeof access.requesterAccountId !== "string" || !access.requesterAccountId || typeof access.contributorAccountId !== "string" || !access.contributorAccountId || typeof access.contributorPrincipalId !== "string" || !access.contributorPrincipalId || ![access.requesterAccountId, access.contributorAccountId].includes(account.accountId))
+        if (!access || typeof access.requesterAccountId !== "string" || !access.requesterAccountId || (access.contributorAccountId === null ? access.receiving !== "root_mediated_external_report_v1" : typeof access.contributorAccountId !== "string" || !access.contributorAccountId) || typeof access.contributorPrincipalId !== "string" || !access.contributorPrincipalId || ![access.requesterAccountId, access.contributorAccountId].includes(account.accountId))
             fail(403, "forbidden", "This work is private to its contributor and requester.");
         const viewer = account.accountId === access.requesterAccountId && account.accountId !== access.contributorAccountId ? "requester" : "contributor";
         const record = await this.ports.kernel.read(expected);
@@ -99,7 +99,7 @@ export class ReviewService {
             state: l.handoff ? "accepted" : rejected ? "rejected" : expired ? "clarification_expired" : response?.kind === "refuse" ? "clarification_refused" : response ? "clarification_answered" : question ? "clarification_requested" : "awaiting_review",
             verdict: l.record.aggregate.verdict ? { id: l.record.aggregate.verdict.id, outcome: l.record.aggregate.verdict.outcome } : null,
             decision: l.handoff ? { outcome: "accept", reason: null, decidedAt: l.record.aggregate.obligation.createdAt } : rejected ? { outcome: "reject", reason: l.record.rejection.reason, decidedAt: l.record.rejection.decidedAt } : null,
-            clarification: { roundsUsed, maxRounds: this.policy.maxRounds, question: question ? { id: question.questionId, text: question.text, deadline: question.deadline } : null, response: response ? { kind: response.kind, text: response.text } : null, canRequest: !closed && l.viewer === "requester" && roundsUsed < this.policy.maxRounds && (!question || !!response) && response?.kind !== "refuse", canRespond: !closed && l.viewer === "contributor" && !!question && !response && !expired },
+            clarification: { roundsUsed, maxRounds: this.policy.maxRounds, question: question ? { id: question.questionId, text: question.text, deadline: question.deadline } : null, response: response ? { kind: response.kind, text: response.text } : null, canRequest: !!l.access.contributorAccountId && !closed && l.viewer === "requester" && roundsUsed < this.policy.maxRounds && (!question || !!response) && response?.kind !== "refuse", canRespond: !closed && l.viewer === "contributor" && !!question && !response && !expired },
             fulfillment, handoff: l.handoff,
             nextAction: l.handoff ? "view_fulfillment" : rejected ? "choose_task" : !closed && l.viewer === "contributor" && question && !response && !expired ? "answer_clarification" : l.viewer === "requester" ? "requester_review" : "await_requester",
         };
@@ -109,16 +109,19 @@ export class ReviewService {
     }
     verdict(context, input) {
         return this.result(async () => {
-            const v = object(input, ["source", "outcome", "idempotencyKey"]), bound = source(v.source), clientKey = key(v.idempotencyKey);
+            const v = object(input, ["source", "outcome", "idempotencyKey", "reviewEvidenceRef"]), bound = source(v.source), clientKey = key(v.idempotencyKey);
             if (typeof v.outcome !== "string" || !["pass", "fail", "needs_review"].includes(v.outcome))
                 fail(400, "invalid_input", "Choose a supported verdict.");
             const l = await this.load(context, bound, bound);
             this.requester(l);
             this.open(l);
+            const reviewEvidenceRef = v.reviewEvidenceRef === undefined ? undefined : text(v.reviewEvidenceRef, 300);
+            if (l.access.receiving && !reviewEvidenceRef)
+                fail(400, "review_evidence_required", "Record the explicit report quality review reference.");
             const k = hashRequest({ accountId: l.account.accountId, action: "verdict", clientKey });
             let written;
             try {
-                written = await this.ports.kernel.verdict(bound, v.outcome, k);
+                written = await this.ports.kernel.verdict(bound, v.outcome, k, reviewEvidenceRef);
             }
             catch (e) {
                 if (safeCodes.has(e?.code ?? ""))

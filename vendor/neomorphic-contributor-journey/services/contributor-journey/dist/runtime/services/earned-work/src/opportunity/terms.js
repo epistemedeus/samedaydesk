@@ -33,6 +33,7 @@ export function canonicalRoundTerms(input) {
         schema: OPPORTUNITY_TERMS_SCHEMA,
         schemaVersion: OPPORTUNITY_SCHEMA_VERSION,
         roundKey: input.roundKey,
+        ...(input.receivingPolicy ? { receivingPolicy: input.receivingPolicy } : {}),
         principalCapAtomic: input.principalCapAtomic,
         atomicScale: input.atomicScale,
         asset: input.asset,

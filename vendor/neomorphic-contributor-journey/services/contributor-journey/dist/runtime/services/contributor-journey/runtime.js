@@ -1,10 +1,10 @@
 import pg from "pg";
 import { z } from "zod";
 import { createApp as createEarnedWorkApp } from "../earned-work/src/app.js";
-import { createPostgresStore as createEarnedWorkStore } from "../earned-work/src/store/postgres.js";
+import { PostgresStore as EarnedWorkStore, createPostgresStore as createEarnedWorkStore } from "../earned-work/src/store/postgres.js";
 import { loadConfig as loadEarnedWorkConfig } from "../earned-work/src/config.js";
 import { createApp as createCorrespondenceApp } from "../correspondence/src/app.js";
-import { createPostgresStore as createCorrespondenceStore } from "../correspondence/src/store/postgres.js";
+import { PostgresStore as CorrespondenceStore, createPostgresStore as createCorrespondenceStore } from "../correspondence/src/store/postgres.js";
 import { loadConfig as loadCorrespondenceConfig } from "../correspondence/src/config.js";
 import { createJourneyApp } from "./app.js";
 import { loadJourneyConfig, validateJourneyConfig } from "./config.js";
@@ -64,7 +64,7 @@ function canonicalPrivateReadback(pool, schema) {
         return checked.data;
     };
 }
-async function openJourneyResources(config) {
+async function openJourneyResources(config, preparedOnly = false) {
     const storage = config.storage;
     const earnedConfig = loadEarnedWorkConfig({
         EARNED_WORK_DATABASE_URL: storage.databaseUrl, EARNED_WORK_OWNER_TOKEN: storage.ownerToken,
@@ -85,9 +85,9 @@ async function openJourneyResources(config) {
             throw new Error("journey shutdown incomplete");
     };
     try {
-        const earnedStore = await createEarnedWorkStore(storage.databaseUrl, { schema: storage.earnedWorkSchema, poolMax: storage.poolMax });
+        const earnedStore = await (preparedOnly ? async (...a) => new EarnedWorkStore(...a) : createEarnedWorkStore)(storage.databaseUrl, { schema: storage.earnedWorkSchema, poolMax: storage.poolMax });
         owned.push(earnedStore);
-        const correspondenceStore = await createCorrespondenceStore(storage.databaseUrl, { schema: storage.correspondenceSchema, poolMax: storage.poolMax });
+        const correspondenceStore = await (preparedOnly ? async (...a) => new CorrespondenceStore(...a) : createCorrespondenceStore)(storage.databaseUrl, { schema: storage.correspondenceSchema, poolMax: storage.poolMax });
         owned.push(correspondenceStore);
         const readPool = new pg.Pool({
             connectionString: storage.databaseUrl, max: 1, connectionTimeoutMillis: 5000,
@@ -170,6 +170,22 @@ export async function prepareJourneyDeployment(options = {}) {
     }
     finally {
         await resources.close();
+    }
+}
+/** Root's configured CLI: open an already prepared private installation without
+ * migrations, enrollment, HTTP listener, signup, or public writing authority. */
+export async function openRootExternalControl(env) {
+    const config = validateJourneyConfig(loadJourneyConfig(env));
+    if (config.mode !== 'live' || !config.installed)
+        throw new Error('prepared live installation required');
+    const resources = await openJourneyResources(config, true);
+    try {
+        const installed = await createInstalledComposition({ config, services: resources.services, pool: resources.pool, lockPool: resources.lockPool, preparedOnly: true });
+        return { installed, services: resources.services, close: resources.close };
+    }
+    catch (error) {
+        await resources.close();
+        throw error;
     }
 }
 //# sourceMappingURL=runtime.js.map

@@ -1425,6 +1425,7 @@ export class OpportunityService {
 function toTermsInput(body) {
     return {
         roundKey: body.roundKey,
+        ...(body.receivingPolicy ? { receivingPolicy: body.receivingPolicy } : {}),
         principalCapAtomic: body.principalCapAtomic,
         atomicScale: body.atomicScale,
         asset: body.asset,

@@ -13,8 +13,9 @@ export type Target = {
 /** Resolved from private account/credential/claim records, never from an alias. */
 export type AccessBinding = {
     requesterAccountId: string;
-    contributorAccountId: string;
+    contributorAccountId: string | null;
     contributorPrincipalId: string;
+    receiving?: "root_mediated_external_report_v1";
 };
 export type SourceBinding = Target & {
     termsVersion: string;
@@ -73,7 +74,7 @@ export interface ClarificationPort {
 }
 export interface KernelReviewPort {
     read(target: Target): Promise<ReviewSource | null>;
-    verdict(source: SourceBinding, outcome: VerdictOutcome, key: string): Promise<{
+    verdict(source: SourceBinding, outcome: VerdictOutcome, key: string, reviewEvidenceRef?: string): Promise<{
         verdictId: string;
     }>;
     accept(source: SourceBinding, verdictId: string, key: string): Promise<void>;
