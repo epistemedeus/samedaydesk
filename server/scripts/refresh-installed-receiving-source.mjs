@@ -8,7 +8,7 @@ import {digest} from '../foundry/private-pass-core.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {installedSourceSha256} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
+import {installedSourceSha256,installedSourceFiles} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
 import {verifyContributorRuntime} from '../lib/contributor-artifact.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const read=name=>readFile(path.join(root,name));
@@ -55,6 +55,8 @@ for(const name of Object.keys(next)){
   if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name))next[name]=got;
   else if(next[name]!==got)throw Error('unrelated source pin drift: '+name);
 }
+// New additive migrations and modules join the complete host closure.
+for(const name of installedSourceFiles())next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
 // The read-only Root CLI entry and this source exporter are part of the host.
 for(const name of hostOwned)next[name]=sha(await read(name));
 await writeFile(path.join(root,manifestName),manifestBytes);

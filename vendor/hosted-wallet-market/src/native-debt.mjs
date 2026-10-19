@@ -3,6 +3,7 @@ import {constants,openSync,closeSync,fstatSync,readFileSync, readdirSync, lstatS
 import {fileURLToPath} from 'node:url';
 import {join, resolve, parse, dirname} from 'node:path';
 import {digest} from './canonical.mjs';
+import {readSourceSuccession, sourcePair, sourcePairKey} from './source-succession.mjs';
 import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
 import {readAuthoritativeDischarge, registryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
 import {matchDebt, storedDebt} from './debt-source.mjs';
@@ -136,7 +137,16 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   }
   const equal = (a, b) => Object.keys(b).every(key => a[key] === b[key]);
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
-  async function observationSeal(tx, through = null) {
+  async function observationSeal(tx, through = null, complete = false) {
+    if (complete) {
+      const rows = (await tx.query(`SELECT to_jsonb(d) || jsonb_build_object(
+        'created_at', to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
+        'received_at', to_char(received_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
+        'block_timestamp', to_char(block_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) AS observation
+        FROM hosted_wallet_market.native_debt_dispositions d
+        WHERE ($1::timestamptz IS NULL OR created_at <= $1) ORDER BY obligation_id`, [through])).rows;
+      return digest(rows.map(row => row.observation));
+    }
     const rows = (await tx.query(`SELECT ${PRESERVE.join(', ')} FROM hosted_wallet_market.native_debt_dispositions
       WHERE ($1::timestamptz IS NULL OR created_at <= $1) ORDER BY obligation_id`, [through])).rows;
     return digest(rows.map(row => {
@@ -145,27 +155,13 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       return item;
     }));
   }
-  function packageDriftOnly(row, next) {
-    // The packaged wallet bytes changed. The SDS host pin may change with
-    // those same bytes. Tenant, contract, rail, registry, and profile may not.
-    if (row.source_sha256 === next.source_sha256) return false;
+  function sourceDriftOnly(row, next) {
     return equal(row, {...next, source_sha256: row.source_sha256, host_source_sha256: row.host_source_sha256});
   }
-  async function successionChain(tx, row) {
-    const seen = new Set([row.source_sha256]), edges = [];
-    let source = row.source_sha256;
-    for (;;) {
-      const edge = (await tx.query('SELECT * FROM hosted_wallet_market.source_succession WHERE predecessor_source_sha256 = $1', [source])).rows[0];
-      if (!edge) return {edges, tail: source};
-      if (edges.length >= 64 || seen.has(edge.successor_source_sha256) || edge.consumer_contract_sha256 !== row.consumer_contract_sha256 ||
-          edge.preservation_sha256 !== await observationSeal(tx, edge.created_at)) fail('binding_stale');
-      seen.add(edge.successor_source_sha256); edges.push(edge); source = edge.successor_source_sha256;
-    }
-  }
+  const successionChain = (tx, row) => readSourceSuccession(tx, row, observationSeal, authorityPrincipalId);
   async function successionMatches(tx, row, next) {
-    if (!packageDriftOnly(row, next)) return false;
-    return (await successionChain(tx, row)).edges.some(edge => edge.successor_source_sha256 === next.source_sha256 &&
-      edge.successor_host_source_sha256 === next.host_source_sha256);
+    if (!sourceDriftOnly(row, next)) return false;
+    return (await successionChain(tx, row)).nodes.some(pair => sourcePairKey(pair) === sourcePairKey(sourcePair(next)));
   }
   function enrollmentView(row) {
     let qualified = false;
@@ -199,14 +195,14 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     const row = (await tx.query(ENROLL_SQL)).rows[0];
     if (!row) fail('discharge_consumer_unbound');
     const next = expected();
-    if (!equal(row, next) && !await successionMatches(tx, row, next)) fail('binding_stale');
+    if (!await successionMatches(tx, row, next)) fail('binding_stale');
     await assertEnrollmentAuthority(tx, row);
     await assertInstallation(tx);
     return row;
   }
   async function assertEnrollmentCandidate(tx) {
     const next = expected(), row = (await tx.query(ENROLL_SQL)).rows[0];
-    if (row && !equal(row, next) && !packageDriftOnly(row, next)) fail('enrollment_conflict');
+    if (row && !equal(row, next) && !sourceDriftOnly(row, next)) fail('enrollment_conflict');
     if (row) await assertEnrollmentAuthority(tx, row);
   }
   async function enroll(tx, createdAt) {
@@ -214,6 +210,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     const observed = await readPublicChain(configured.rpcUrl, RAIL_NETWORK);
     if (observed.chain !== configured.chain) fail('binding_stale');
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-enrollment', 0))");
+    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-projection', 0))");
     let row = (await tx.query(ENROLL_SQL)).rows[0];
     const fresh = !row;
     if (!row) {
@@ -221,22 +218,27 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       await tx.query(`INSERT INTO hosted_wallet_market.consumer_enrollment (id, ${fields.join(',')}, created_at)
         VALUES (TRUE, ${fields.map((_,i) => '$' + (i+1)).join(',')}, $${fields.length+1})`, [...Object.values(next), createdAt]);
       row = (await tx.query(ENROLL_SQL)).rows[0];
-    } else if (!equal(row, next)) {
-      // The enrolled package hash changed because installed bytes changed.
-      // The enrollment row is not updated or deleted. A caller body cannot
-      // supply the successor hash or a baseline. Preservation is the live
-      // disposition seal, not a supplied snapshot.
-      if (!packageDriftOnly(row, next)) fail('enrollment_conflict');
+    } else {
+      if (!sourceDriftOnly(row, next)) fail('enrollment_conflict');
       await assertEnrollmentAuthority(tx, row);
-      const seal = await observationSeal(tx);
       const chain = await successionChain(tx, row);
-      const existing = chain.edges.find(edge => edge.successor_source_sha256 === next.source_sha256);
-      if (existing) {
-        if (existing.successor_host_source_sha256 !== next.host_source_sha256) fail('enrollment_conflict');
-      } else {
-        await tx.query(`INSERT INTO hosted_wallet_market.source_succession
-          (predecessor_source_sha256, successor_source_sha256, successor_host_source_sha256, consumer_contract_sha256, preservation_sha256, created_at)
-          VALUES ($1, $2, $3, $4, $5, $6)`, [chain.tail, next.source_sha256, next.host_source_sha256, next.consumer_contract_sha256, seal, createdAt]);
+      const pair = sourcePair(next);
+      const known = chain.nodes.some(node => sourcePairKey(node) === sourcePairKey(pair));
+      // This lock is shared with imports. Use database time after both locks,
+      // never request-start time, for an exact paid-observation boundary.
+      if (!known) {
+        if (chain.edges.length >= 64) fail('binding_stale');
+        const stamp = (await tx.query('SELECT clock_timestamp()::text AS stamp')).rows[0].stamp;
+        const seal = await observationSeal(tx, stamp, true);
+        if (!chain.anchor) await tx.query(`INSERT INTO hosted_wallet_market.source_binding_anchor
+          (id, legacy_chain_sha256, legacy_edge_count, preservation_sha256, principal_id, created_at)
+          VALUES (TRUE, $1, $2, $3, $4, $5)`, [chain.legacyDigest, chain.legacyCount, seal, authorityPrincipalId, stamp]);
+        await tx.query(`INSERT INTO hosted_wallet_market.source_binding_succession
+          (predecessor_source_sha256, predecessor_host_source_sha256, successor_source_sha256,
+           successor_host_source_sha256, consumer_contract_sha256, preservation_sha256, principal_id, created_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [chain.tail.sourceSha256, chain.tail.hostSourceSha256, pair.sourceSha256, pair.hostSourceSha256,
+            next.consumer_contract_sha256, seal, authorityPrincipalId, stamp]);
       }
     }
     // mutate stores initial consent in this transaction after this returns.
@@ -246,6 +248,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     else await assertBinding(tx);
     const view = enrollmentView(row);
     view.qualified = true;
+    view.sourceBinding = sourcePair(next);
     return view;
   }
   async function importNativeDischarge(tx, body, createdAt) {
@@ -279,7 +282,8 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       received_at: body.receivedAt, import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
       authority_receipt_sha256: receiptSha, request_sha256: requestSha, import_state: 'bound', disposition: 'external_discharge_allocated',
       kernel_paid: true, kernel_transfer: body.transactionHash, native_paid_observation: true, transfer_initiated: false,
-      payout_state: 'owed', observed_source: observed.source, created_at: createdAt};
+      payout_state: 'owed', observed_source: observed.source,
+      created_at: (await tx.query('SELECT clock_timestamp()::text AS stamp')).rows[0].stamp};
     const fields = Object.keys(row);
     await tx.query(`INSERT INTO hosted_wallet_market.native_debt_dispositions (${fields.join(',')}) VALUES (${fields.map((_,i) => '$'+(i+1)).join(',')})`, Object.values(row));
     return dispositionView((await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0]);
@@ -288,7 +292,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     const row = (await tx.query(ENROLL_SQL)).rows[0];
     if (row) {
       const view = enrollmentView(row);
-      try { await assertBinding(tx); view.qualified = true; }
+      try { await assertBinding(tx); view.qualified = true; view.sourceBinding = sourcePair(expected()); }
       catch { view.qualified = false; }
       return view;
     }

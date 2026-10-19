@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "161681c4f511f94881fe915713a4f7fdd60a03320f707f5a32ed2b46516e28f0",
+  "installedSourceSha256": "386a716564a105461cd93bf64af930f67ea0d86d05c98564627a390485ae30c1",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
@@ -13,5 +13,17 @@
     "predecessorConsumerSha256": "36dc4d34b003349ed5a6fd5ba5a50229ab4779291712ff84412e8e76125b451b",
     "exportCommand": "node server/scripts/refresh-installed-receiving-source.mjs",
     "scope": "interpreted native discharge reader; existing runtime dependencies preserved"
+  },
+  "successionSource": {
+    "repository": "epistemedeus/pilot",
+    "commit": "fa6aa38e074fd039070f21572ff49ca68ee12345",
+    "maintainedConsumer": "7a7916eed64d37f13f2c2cdec1e90275be99620b",
+    "exportCommand": "node tools/root71-hosted-wallet-market/scripts/package-sds.mjs ABSOLUTE_SDS_ROOT",
+    "files": {
+      "src/native-debt.mjs": "d128003ef34703cf0f23f330f745b3041180786e6b931d50468a0345ced1d2a9",
+      "src/migrate.mjs": "a83e6ed4cf926501b76f2ddeac9ce77256db5346db4da2dd9c2ecb38e2e4d727",
+      "src/source-succession.mjs": "9fc5af00c4b39a02b42b02b2afd4d1c462c8615479c15f52c0a63ad3b8d5f0dc",
+      "schema/008_source_binding_succession.sql": "9328ce9c3e64d39eae22a73742d8c5b950007b325ec4f57047ee656ce4ddfa51"
+    }
   }
 }
