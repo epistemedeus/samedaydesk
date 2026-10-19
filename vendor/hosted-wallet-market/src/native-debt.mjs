@@ -3,7 +3,7 @@ import {constants,openSync,closeSync,fstatSync,readFileSync, readdirSync, lstatS
 import {fileURLToPath} from 'node:url';
 import {join, resolve, parse, dirname} from 'node:path';
 import {digest} from './canonical.mjs';
-import {readSourceSuccession, sourcePair, sourcePairKey} from './source-succession.mjs';
+import {readSourceSuccession as readSourceSuccessionChain, sourcePair, sourcePairKey} from './source-succession.mjs';
 import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
 import {readAuthoritativeDischarge, registryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
 import {matchDebt, storedDebt} from './debt-source.mjs';
@@ -158,7 +158,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   function sourceDriftOnly(row, next) {
     return equal(row, {...next, source_sha256: row.source_sha256, host_source_sha256: row.host_source_sha256});
   }
-  const successionChain = (tx, row) => readSourceSuccession(tx, row, observationSeal, authorityPrincipalId);
+  const successionChain = (tx, row) => readSourceSuccessionChain(tx, row, observationSeal, authorityPrincipalId);
   async function successionMatches(tx, row, next) {
     if (!sourceDriftOnly(row, next)) return false;
     return (await successionChain(tx, row)).nodes.some(pair => sourcePairKey(pair) === sourcePairKey(sourcePair(next)));
