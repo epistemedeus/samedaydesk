@@ -53,6 +53,9 @@ export type Handoff = Target & {
 export type Fulfillment = Handoff & {
     state: "not_observed" | "pending" | "verified_paid" | "failed" | "unknown";
     verifierVersion: string;
+    transactionHash?: string;
+    logIndex?: number;
+    receiptId?: string;
 };
 export type ClarificationEntry = {
     schema: "neomorphic.review-clarification.v1";
@@ -123,6 +126,9 @@ export type ReviewView = {
     fulfillment: {
         state: Fulfillment["state"] | "none";
         paid: boolean;
+        transactionHash?: string;
+        logIndex?: number;
+        receiptId?: string;
     };
     handoff: Handoff | null;
     nextAction: "requester_review" | "answer_clarification" | "await_requester" | "view_fulfillment" | "choose_task";

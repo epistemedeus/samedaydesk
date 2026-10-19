@@ -134,6 +134,23 @@ export async function createInstalledComposition(options) {
         clarification: createCorrespondenceReviewPort({ store: services.correspondence.store, projectId: source => db.project(source, 'clarification'), integrityKey: settings.integrityKey }),
         fulfillment: async (handoff) => {
             const row = await adapters.load(handoff.reservationId, handoff.taskId);
+            if (row?.external) {
+                const receiving = options.canonicalReceiving;
+                if (!receiving?.readExternalDischarge)
+                    return { ...handoff, state: 'unknown', verifierVersion: 'canonical-receiving/v1' };
+                const query = { taskId: handoff.taskId, reservationId: row.claim.id, submissionId: row.submission.id,
+                    obligationId: handoff.obligationId, verdictId: handoff.verdictId, termsVersion: handoff.termsVersion,
+                    artifactDigestSha256: row.submission.artifact_digest_sha256, roundId: row.round.id,
+                    requesterAccountId: row.external.assignment.selection.requesterAccountId, contributorPrincipalId: row.principal.id };
+                const proof = await receiving.readExternalDischarge(query);
+                if (hashRequest(proof.query) !== hashRequest(query) || hashRequest(proof.source) !== hashRequest(receiving.pin) ||
+                    !['not_observed', 'pending', 'verified_paid'].includes(proof.state) || proof.state === 'verified_paid' &&
+                    (!/^0x[a-f0-9]{64}$/.test(proof.transactionHash ?? '') || !Number.isSafeInteger(proof.logIndex) || proof.logIndex < 0 || !/^[a-f0-9]{64}$/.test(proof.receiptId ?? '')))
+                    throw Error('external discharge integrity');
+                return { ...handoff, state: proof.state, verifierVersion: 'canonical-receiving/v1', ...(proof.state === 'verified_paid' ? {
+                        transactionHash: proof.transactionHash, logIndex: proof.logIndex, receiptId: proof.receiptId
+                    } : {}) };
+            }
             if (!row || !row.owner)
                 return { ...handoff, state: 'unknown', verifierVersion: 'canonical-receiving/v1' };
             const work = await works.read(await db.workId(handoff.taskId, handoff.reservationId, row.owner));

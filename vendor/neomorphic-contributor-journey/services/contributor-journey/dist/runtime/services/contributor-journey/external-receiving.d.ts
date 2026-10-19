@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { PostgresStore } from '../earned-work/src/store/postgres.js';
+import type { ContributorPrincipal } from '../earned-work/src/types.js';
 import type { CorrespondenceStore } from '../correspondence/src/store/types.js';
 import { OpportunityService } from '../earned-work/src/opportunity/service.js';
 import type { ContributorAccountService } from './account/service.js';
@@ -534,6 +535,39 @@ export declare function inspectExternalDelivery(raw: unknown, bound: {
     deliveryMessageRef: string;
     reportSha256: string;
 };
+type SignedEntry = {
+    kind: 'selection';
+    selection: RetainedExternalSelection;
+    actor: {
+        accountId: string;
+        sessionId: string;
+        authTime: string;
+    };
+    key: string;
+} | {
+    kind: 'delivery';
+    delivery: ExternalDelivery;
+    artifactId: string;
+    artifact: {
+        ref: string;
+        digestSha256: string;
+        mediaType: string;
+        bytes: number;
+    };
+    key: string;
+};
+export type ExternalAssignment = {
+    credentialRef: string;
+    claimId: string;
+    principal: ContributorPrincipal;
+    selection: RetainedExternalSelection;
+    assignmentKey: string;
+};
+type ExternalFrozen = Extract<SignedEntry, {
+    kind: 'delivery';
+}> & {
+    content: string;
+};
 export declare class RootExternalReceiving {
     private readonly o;
     constructor(o: {
@@ -553,174 +587,15 @@ export declare class RootExternalReceiving {
     private authenticate;
     private loadTerms;
     private validateFull;
-    assignment(sessionToken: string, raw: unknown, key: string): Promise<{
-        credentialRef: string;
-        claimId: any;
-        principal: import("../earned-work/src/types.js").ContributorPrincipal;
-        selection: {
-            termsVersion: string;
-            taskId: string;
-            publicLabel: string;
-            channel: {
-                kind: "email";
-                threadRef: string;
-            };
-            schema: "neomorphic.root-external-selection.v1";
-            requesterAccountId: string;
-            roundId: string;
-            termsPacketSha256: string;
-            allocationReceiptSha256: string;
-            identity: string;
-            agreement: {
-                termsVersion: string;
-                threadRef: string;
-                termsPacketSha256: string;
-                sender: string;
-                messageRef: string;
-                termsRef: string;
-                originalOperationRef: string;
-                agreedAt: string;
-            };
-            rootReceipt: {
-                provenance: "root_received_private_correspondence";
-                recordRef: string;
-                receivedAt: string;
-                actualExternalIdentity: true;
-            };
-        };
-        assignmentKey: string;
-    }>;
-    readAssignment(credentialRef: string, key: string): Promise<{
-        credentialRef: string;
-        claimId: any;
-        principal: import("../earned-work/src/types.js").ContributorPrincipal;
-        selection: {
-            termsVersion: string;
-            taskId: string;
-            publicLabel: string;
-            channel: {
-                kind: "email";
-                threadRef: string;
-            };
-            schema: "neomorphic.root-external-selection.v1";
-            requesterAccountId: string;
-            roundId: string;
-            termsPacketSha256: string;
-            allocationReceiptSha256: string;
-            identity: string;
-            agreement: {
-                termsVersion: string;
-                threadRef: string;
-                termsPacketSha256: string;
-                sender: string;
-                messageRef: string;
-                termsRef: string;
-                originalOperationRef: string;
-                agreedAt: string;
-            };
-            rootReceipt: {
-                provenance: "root_received_private_correspondence";
-                recordRef: string;
-                receivedAt: string;
-                actualExternalIdentity: true;
-            };
-        };
-        assignmentKey: string;
-    } | null>;
+    assignment(sessionToken: string, raw: unknown, key: string): Promise<ExternalAssignment>;
+    readAssignment(credentialRef: string, key: string): Promise<ExternalAssignment | null>;
     loadClaim(claim: Record<string, any>): Promise<{
-        assignment: {
-            credentialRef: string;
-            claimId: any;
-            principal: import("../earned-work/src/types.js").ContributorPrincipal;
-            selection: {
-                termsVersion: string;
-                taskId: string;
-                publicLabel: string;
-                channel: {
-                    kind: "email";
-                    threadRef: string;
-                };
-                schema: "neomorphic.root-external-selection.v1";
-                requesterAccountId: string;
-                roundId: string;
-                termsPacketSha256: string;
-                allocationReceiptSha256: string;
-                identity: string;
-                agreement: {
-                    termsVersion: string;
-                    threadRef: string;
-                    termsPacketSha256: string;
-                    sender: string;
-                    messageRef: string;
-                    termsRef: string;
-                    originalOperationRef: string;
-                    agreedAt: string;
-                };
-                rootReceipt: {
-                    provenance: "root_received_private_correspondence";
-                    recordRef: string;
-                    receivedAt: string;
-                    actualExternalIdentity: true;
-                };
-            };
-            assignmentKey: string;
-        };
-        frozen: null;
-    } | {
-        assignment: {
-            credentialRef: string;
-            claimId: any;
-            principal: import("../earned-work/src/types.js").ContributorPrincipal;
-            selection: {
-                termsVersion: string;
-                taskId: string;
-                publicLabel: string;
-                channel: {
-                    kind: "email";
-                    threadRef: string;
-                };
-                schema: "neomorphic.root-external-selection.v1";
-                requesterAccountId: string;
-                roundId: string;
-                termsPacketSha256: string;
-                allocationReceiptSha256: string;
-                identity: string;
-                agreement: {
-                    termsVersion: string;
-                    threadRef: string;
-                    termsPacketSha256: string;
-                    sender: string;
-                    messageRef: string;
-                    termsRef: string;
-                    originalOperationRef: string;
-                    agreedAt: string;
-                };
-                rootReceipt: {
-                    provenance: "root_received_private_correspondence";
-                    recordRef: string;
-                    receivedAt: string;
-                    actualExternalIdentity: true;
-                };
-            };
-            assignmentKey: string;
-        };
-        frozen: {
-            content: string;
-            kind: "delivery";
-            delivery: ExternalDelivery;
-            artifactId: string;
-            artifact: {
-                ref: string;
-                digestSha256: string;
-                mediaType: string;
-                bytes: number;
-            };
-            key: string;
-        };
+        assignment: ExternalAssignment;
+        frozen: ExternalFrozen | null;
     } | null>;
     private checkDelivery;
     receive(sessionToken: string, credentialRef: string, assignmentKey: string, raw: unknown, key: string): Promise<{
-        claimId: any;
+        claimId: string;
         artifactId: string;
         artifact: {
             ref: string;

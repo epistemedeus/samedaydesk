@@ -174,13 +174,13 @@ export async function prepareJourneyDeployment(options = {}) {
 }
 /** Root's configured CLI: open an already prepared private installation without
  * migrations, enrollment, HTTP listener, signup, or public writing authority. */
-export async function openRootExternalControl(env) {
+export async function openRootExternalControl(env, options = {}) {
     const config = validateJourneyConfig(loadJourneyConfig(env));
     if (config.mode !== 'live' || !config.installed)
         throw new Error('prepared live installation required');
     const resources = await openJourneyResources(config, true);
     try {
-        const installed = await createInstalledComposition({ config, services: resources.services, pool: resources.pool, lockPool: resources.lockPool, preparedOnly: true });
+        const installed = await createInstalledComposition({ config, services: resources.services, pool: resources.pool, lockPool: resources.lockPool, preparedOnly: true, canonicalReceiving: options.canonicalReceiving });
         return { installed, services: resources.services, close: resources.close };
     }
     catch (error) {
