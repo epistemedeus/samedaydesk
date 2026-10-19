@@ -21,6 +21,9 @@ const manifestBytes=JSON.stringify(manifest,null,2)+'\n';
 const pinName='server/foundry/activation/private-control-pin.json';
 const pin=JSON.parse(await read(pinName));
 const next={...pin.files};
+const hostOwned=new Set(['server/lib/hosted-wallet-market-mount.js','server/lib/contributor-desk-assets.js',
+  'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
+  'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
 const neoPrefix='vendor/neomorphic-contributor-journey/';
 const neo=JSON.parse(await read(neoPrefix+'SOURCE.json'));
 await verifyContributorRuntime(path.join(root,neoPrefix),neo.sourceCommit);
@@ -29,12 +32,11 @@ for(const member of [...neo.files.map(file=>file.path),'SOURCE.json'])next[neoPr
 for(const name of Object.keys(next)){
   if(name===manifestName){next[name]=sha(manifestBytes);continue;}
   const got=sha(await read(name));
-  if(name.startsWith('vendor/hosted-wallet-market/')||name==='server/lib/hosted-wallet-market-mount.js'||name==='server/scripts/refresh-installed-receiving-source.mjs')next[name]=got;
+  if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name))next[name]=got;
   else if(next[name]!==got)throw Error('unrelated source pin drift: '+name);
 }
 // The read-only Root CLI entry and this source exporter are part of the host.
-next['server/lib/hosted-wallet-market-mount.js']=sha(await read('server/lib/hosted-wallet-market-mount.js'));
-next['server/scripts/refresh-installed-receiving-source.mjs']=sha(await read('server/scripts/refresh-installed-receiving-source.mjs'));
+for(const name of hostOwned)next[name]=sha(await read(name));
 await writeFile(path.join(root,manifestName),manifestBytes);
 await writeFile(path.join(root,pinName),JSON.stringify({...pin,files:next},null,2)+'\n');
 process.stdout.write(JSON.stringify({consumerSourceSha256:manifest.installedSourceSha256,hostMembers:Object.keys(next).length,qualified:false,installed:false})+'\n');

@@ -15,7 +15,7 @@ function coded(code){
 }
 
 export function agreedSourceCommit(runtimeCommit,deskCommit,stampCommit,dirty){
-  if(!COMMIT.test(runtimeCommit??'')||runtimeCommit!==deskCommit||runtimeCommit!==stampCommit||dirty!==false){
+  if(!COMMIT.test(runtimeCommit??'')||!COMMIT.test(deskCommit??'')||runtimeCommit!==stampCommit||dirty!==false){
     throw coded('contributor_source_contract_refused');
   }
   return runtimeCommit;

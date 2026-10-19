@@ -22,7 +22,7 @@ const MEMBERS=Object.freeze(['package.json','package-lock.json','server/index.js
   'server/lib/contributor-https-qualification.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-artifact.js','server/lib/neomorphic-contributor-journey-mount.js',
   'server/lib/neomorphic-original-continuation-mount.js',
-  'server/scripts/verify-contributor-install.mjs','server/scripts/qualify-contributor-https-edge.mjs']);
+  'server/scripts/verify-contributor-install.mjs','server/scripts/resolve-contributor-source.mjs','server/scripts/qualify-contributor-https-edge.mjs']);
 const CHECKS=Object.freeze(['providerHttpsPolicy','certificateVerifiedHttps','plaintextRefusal','backendIsolation']);
 function exact(value,names){
   if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==names.length||names.some(name=>!Object.hasOwn(value,name)))
@@ -61,10 +61,10 @@ async function boundedBytes(file){
   }finally{await handle.close();}
 }
 export async function readContributorEdgeIdentity(expectedCommit){
-  const {manifest}=await loadContributorDeskAssets(expectedCommit);
+  const {journeySourceCommit}=await loadContributorDeskAssets(expectedCommit);
   const members=[];
   for(const member of MEMBERS){const bytes=await boundedBytes(new URL(member,root));members.push({path:member,bytes:bytes.length,sha256:digest(bytes)});}
-  return {productCommit:manifest.sourceCommit,edgeSha256:digest(JSON.stringify(members)),
+  return {productCommit:journeySourceCommit,edgeSha256:digest(JSON.stringify(members)),
     runtimeManifestSha256:digest(await boundedBytes(new URL('vendor/neomorphic-contributor-journey/SOURCE.json',root))),
     deskManifestSha256:digest(await boundedBytes(new URL('vendor/neomorphic-contributor-desk/SOURCE.json',root)))};
 }

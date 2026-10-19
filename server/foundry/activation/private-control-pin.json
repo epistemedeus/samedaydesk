@@ -28,10 +28,10 @@
     "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
-    "server/lib/contributor-desk-assets.js": "def4c9d85fc6c44a25b7380c20816040ee807627aa8166ab49863e6d17e8d87c",
+    "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
     "server/lib/contributor-host-observation.js": "42df6596dc4b1554f4d0ad78fea39deee5fafdcb0cc698187c787adea91fefcd",
-    "server/lib/contributor-https-qualification.js": "584795f12781709407cd77d312f3c468f57e8dcdfc1a3d4408998fdceda52fe2",
+    "server/lib/contributor-https-qualification.js": "09e503051d9bf832ddc3b925438477ca56ae819963ccad4f97d16ac251794814",
     "server/lib/contributor-managed-mount.js": "e39d30d28533c36f1741e703a0988d87ec535c781eb3be072d745df072227eab",
     "server/lib/contributor-mount-recovery.js": "b36d3160a351eb055149edbff0bc4bcaa0279454ded016acc7d2e97bdd53cdf1",
     "server/lib/contributor-native-ingress.js": "4092ff40f5a58f28ec6d617b3fe855d1c1a8166b64c32caf7cf8294398306df3",
@@ -78,7 +78,7 @@
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
     "server/scripts/test-neomorphic-opportunity-isolation.mjs": "b5e127fdc90906391d491f82681ff40a7d52ae0e027f96c9017163ea4e2fb546",
-    "server/scripts/verify-contributor-install.mjs": "8ed8a8e801693016a9f9988dcc4e6134042ccf4c7769a4cd0126e682fe973c35",
+    "server/scripts/verify-contributor-install.mjs": "ef7926f8a1b00ad71ae374b2726c51a4f711a420bab12086674f9db9e84bd139",
     "server/vendor/continuous-monitoring/machine-manifest.json": "036585d6c8147ce3b92cd7d51618360747d7f20d40ca1021470f825b5c4d5fcc",
     "server/vendor/continuous-monitoring/migrations/001.sql": "faf3bc53293f493144e0ef1fa72e68ba4e2fd80033b96941c41b0717a42a1f17",
     "server/vendor/continuous-monitoring/openapi.json": "a9859445d846e52d339dcbf4025971362a2eaef8aca8bc3e5a8b05709af9ddde",
@@ -847,7 +847,7 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/fixtures/versioned/consumer-contract.json": "b33b66935d752f7f44cbcb72b5418074f02b1d05828d76d819199e3be8489bab",
     "vendor/hosted-wallet-market/src/machine-network-source.mjs": "ba8464defda49cdb3c6a58314416494e6973e358dabb35e88bef09888721d3e2",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/cold-receipt.mjs": "86735d5b5be8f810774bd456991faa273c7125491aee94cbc25e2d247a7bbc7a",
-    "server/scripts/refresh-installed-receiving-source.mjs": "7b37d3456d5f13695ecb079520ef2adfeb744110da14c3f005243e07281b105e",
+    "server/scripts/refresh-installed-receiving-source.mjs": "ff75d88ab28eb141b9fc104e704b7e0459327c96af12e30ed64c63733d0427ea",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1288,7 +1288,8 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "724557d1716b64149dc825f7b9f0591598b028ef242f04e9c5e30f664a1a014f"
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "724557d1716b64149dc825f7b9f0591598b028ef242f04e9c5e30f664a1a014f",
+    "server/scripts/resolve-contributor-source.mjs": "303ccf41a660340836a8667ec0764797169ee06713fd51124f0e2be12ff0bd72"
   },
   "receivedCallerClosures": [
     {
