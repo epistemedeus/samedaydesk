@@ -44,9 +44,14 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
         return;
       }
       stage = "store_create";
+      const canonicalReceiving=options.canonicalReceiving ?? await options.nativeDebtReceiving?.();
       starting = await service.createJourneyRuntime({
-        config, ports: options.ports, modules: options.modules, canonicalReceiving: options.canonicalReceiving ?? await options.nativeDebtReceiving?.(),
+        config, ports: options.ports, modules: options.modules, canonicalReceiving,
       });
+      // Configure only the fulfillment port; native authentication, source,
+      // terms, decision and clarification remain their owning compiled ports.
+      if(canonicalReceiving?.reviewFulfillment&&starting.installed?.review?.ports)
+        starting.installed.review.ports.fulfillment=canonicalReceiving.reviewFulfillment;
       if (state.closed) { await starting.close(); starting = null; return; }
       state.runtime = starting;
       starting = null;

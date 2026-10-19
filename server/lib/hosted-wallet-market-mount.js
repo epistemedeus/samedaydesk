@@ -172,6 +172,20 @@ async function openAdapter(adapter, entry, input, sdsRoot) {
   return {layer, canonicalReceiving: market.canonicalReceiving, close: market.close.bind(market)};
 }
 
+/** Describe the expected closed source/profile without opening DB or registry.
+ * Remote controllers use this only to validate the installed authenticated port. */
+export async function describeRootNativeDebtReceiving(env) {
+  const input=assertHostedWalletMarketConfig(configured({},env));
+  const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+  const member=name=>pathToFileURL(resolve(root,'vendor/hosted-wallet-market/src',name)).href;
+  const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer}]=await Promise.all([
+    import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs'))]);
+  const profile=loadDeploymentProfile(input),authority=await loadOwnerAuthority(root,{ownerToken:input.ownerToken});
+  const binding=createInstalledDebtConsumer({profile,sdsRoot:root,registryRoot:input.dischargeRegistry,authorityPrincipalId:authority.principalId}).expectedBinding();
+  return {binding,ownerPrincipalSha256:authority.principalId,
+    ...Object.fromEntries([['runtimeManifestSha256','vendor/neomorphic-contributor-journey/SOURCE.json'],['deskManifestSha256','vendor/neomorphic-contributor-desk/SOURCE.json']].map(([key,file])=>[key,createHash('sha256').update(readFileSync(resolve(root,file))).digest('hex')]))};
+}
+
 /** Root CLI read-only counterpart of the installed mount. It cannot migrate,
  * enroll, import, sign, or select another package. The configured consumer must
  * already be bound; failure is retained as an unavailable proof, never paid. */
