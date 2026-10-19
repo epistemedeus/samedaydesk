@@ -60,7 +60,10 @@ export declare class OpportunityService {
         modelUsage?: string | null;
         contributorActiveMinutes?: number | null;
     }, contributor: ContributorPrincipal, idempotencyKey: string, options?: {
-        requireContinuationScope: boolean;
+        requireContinuationScope?: boolean;
+        preExpiryCorrespondence?: {
+            receivedAt: string;
+        };
     }): Promise<{
         replayed: boolean;
         statusCode: number;

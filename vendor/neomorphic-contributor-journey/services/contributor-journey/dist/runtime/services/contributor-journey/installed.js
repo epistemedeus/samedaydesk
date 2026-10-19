@@ -1,4 +1,5 @@
 import { RootExternalReceiving } from './external-receiving.js';
+import { RootOriginalClaimReceiving } from './original-claim-receiving.js';
 import { CompositionStore as PreparedCompositionStore } from './composition-store.js';
 import { JourneyAdmission } from './profile.js';
 import { PostgresSubmissionPersistence } from './submission/postgres.js';
@@ -112,7 +113,8 @@ export async function createInstalledComposition(options) {
     });
     const resolvePrincipal = async (accountId, roundKey, provenance) => principal(accountId, roundKey, provenance);
     const external = new RootExternalReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, accounts, admission, lock, opportunity });
-    const adapters = createOpportunityJourneyAdapters({ external, store: kernel, opportunity, futureRounds: settings.futureRounds,
+    const originalClaim = new RootOriginalClaimReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, accounts, admission, lock, opportunity });
+    const adapters = createOpportunityJourneyAdapters({ external, originalClaim, store: kernel, opportunity, futureRounds: settings.futureRounds,
         principal: resolvePrincipal, accountForPrincipal: id => db.accountForPrincipal(id), persistence,
         correspondence: services.correspondence.store, decisionProject: source => db.project(source, 'decision'), integrityKey: settings.integrityKey, lock,
         admitTask: config.mode === 'live' ? async (id) => { await admission.task(id); } : undefined });
@@ -570,7 +572,7 @@ export async function createInstalledComposition(options) {
     });
     const ports = { resolveAccount: async (req) => { const actor = await authenticate(req); return actor ? { ok: true, value: actor } : { ok: false, code: 'unauthenticated' }; } };
     return { modules, middleware, extra, ports, accounts, claims, submissions, review, showcase, discussions, referral, referralStore, db, adapters, opportunity, works, consents,
-        profile: config.mode === 'live' ? 'live' : 'staging', admission, canonical, relationships, summaries, publishedSource, external };
+        profile: config.mode === 'live' ? 'live' : 'staging', admission, canonical, relationships, summaries, publishedSource, external, originalClaim };
 }
 import { sourceOf as sourceOfSafe } from './review/validation.js';
 //# sourceMappingURL=installed.js.map

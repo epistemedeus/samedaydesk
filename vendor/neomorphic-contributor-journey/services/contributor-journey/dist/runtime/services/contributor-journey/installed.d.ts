@@ -1,4 +1,5 @@
 import { RootExternalReceiving } from './external-receiving.js';
+import { RootOriginalClaimReceiving } from './original-claim-receiving.js';
 import { type Request, type RequestHandler } from 'express';
 import type pg from 'pg';
 import { OpportunityService } from '../earned-work/src/opportunity/service.js';
@@ -38,6 +39,7 @@ export declare function createInstalledComposition(options: {
 }): Promise<InstalledComposition>;
 export type InstalledComposition = {
     external: RootExternalReceiving;
+    originalClaim: RootOriginalClaimReceiving;
     canonical: ReturnType<typeof createInstalledCanonicalQualification>;
     relationships: ReturnType<typeof createRelationshipService>;
     summaries: {

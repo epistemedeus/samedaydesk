@@ -1,4 +1,5 @@
 import type { RootExternalReceiving } from './external-receiving.js';
+import type { RootOriginalClaimReceiving } from './original-claim-receiving.js';
 import type { PostgresStore } from '../earned-work/src/store/postgres.js';
 import { OpportunityService } from '../earned-work/src/opportunity/service.js';
 import type { ContributorPrincipal, Provenance, Verdict } from '../earned-work/src/types.js';
@@ -12,6 +13,7 @@ type Row = Record<string, any>;
  * No earned_work_tasks/reservations/submissions/obligations are written here. */
 export declare function createOpportunityJourneyAdapters(options: {
     external?: RootExternalReceiving;
+    originalClaim?: RootOriginalClaimReceiving;
     store: PostgresStore;
     opportunity: OpportunityService;
     futureRounds: Array<{
@@ -85,21 +87,8 @@ export declare function createOpportunityJourneyAdapters(options: {
         };
         owner: string | null;
         principal: ContributorPrincipal;
-        record: import("./submission/types.js").DraftRecord | {
-            frozen: {
-                kind: "delivery";
-                delivery: import("./external-receiving.js").ExternalDelivery;
-                artifactId: string;
-                artifact: {
-                    ref: string;
-                    digestSha256: string;
-                    mediaType: string;
-                    bytes: number;
-                };
-                key: string;
-            } & {
-                content: string;
-            };
+        record: {
+            frozen?: any;
         } | null;
         external: {
             assignment: import("./external-receiving.js").ExternalAssignment;
@@ -117,7 +106,8 @@ export declare function createOpportunityJourneyAdapters(options: {
             } & {
                 content: string;
             }) | null;
-        } | null | undefined;
+        } | null;
+        correspondence: import("./original-claim-receiving.js").OriginalClaimBinding | null;
         claim: Row;
         round: Row;
         offer: Row;
