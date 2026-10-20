@@ -126,7 +126,7 @@ export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_
   await client.query(sql);
   await client.query(readFileSync(join(here, '../schema/007_machine_market.sql'), 'utf8'));
   await client.query(readFileSync(join(here, '../schema/008_source_binding_succession.sql'), 'utf8'));
-  await client.query(readFileSync(join(here, '../schema/009_native_coin_discharge.sql'), 'utf8'));
+  await client.query(readFileSync(join(here, '../schema/009_native_coin_discharge.sql'), 'utf8').replaceAll('cj227_earned_work',earnedSchema));
 }
 
 async function legacyTriggerPresent(client, earnedSchema) {

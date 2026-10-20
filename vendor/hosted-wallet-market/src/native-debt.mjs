@@ -149,7 +149,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
   async function observationSeal(tx, through = null, complete = false) {
     if (complete) {
-      const rows = (await tx.query(`SELECT to_jsonb(d) || jsonb_build_object(
+      const rows = (await tx.query(`SELECT (CASE WHEN d.proof_kind='erc20_transfer' THEN to_jsonb(d)-'proof_kind'-'reward_asset' ELSE to_jsonb(d) END) || jsonb_build_object(
         'created_at', to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'received_at', to_char(received_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'block_timestamp', to_char(block_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) AS observation
