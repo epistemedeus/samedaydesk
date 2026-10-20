@@ -204,6 +204,9 @@ test('requester cancellation returns honest 503 and keeps the read slot until dr
       holdConnect = null;
       gate.connects += 1;
       return pending.then(client => {
+        gate.queries = 0;
+        const query = client.query.bind(client);
+        client.query = (...args) => { gate.queries += 1; return query(...args); };
         const release = client.release.bind(client);
         client.release = destroy => {
           gate.releases.push(destroy === true);
@@ -253,10 +256,21 @@ test('requester cancellation returns honest 503 and keeps the read slot until dr
     assert.equal(duringRes.body?.code, 'review_receiving_unavailable');
     assert.notEqual(duringRes.body?.code, 'storage_failed');
     assert.deepEqual(during.releases, []);
+    assert.equal(slot().active, 1, 'pending acquisition retains the one slot');
+    assert.equal(slot().drained, false);
+    assert.equal(duringReq.listenerCount('aborted'), 0);
+    assert.equal(duringSocket.listenerCount('close'), 0);
+    const connectsBeforeBusy = connectCount;
+    const busy = mockRes();
+    await market.handle(mockReq(), busy);
+    assert.equal(busy.statusCode, 503);
+    assert.equal(connectCount, connectsBeforeBusy, 'busy read cannot add another acquisition');
+    assert.equal(slot().active, 1);
     releaseGate();
     await waitFor(() => during.releases.length === 1);
     assert.deepEqual(during.releases, [true]);
     await waitFor(() => slot().active === 0);
+    assert.equal(during.queries, 0, 'cancelled late client executes no BEGIN or user SQL');
     const recovered = mockRes();
     await market.handle(mockReq(), recovered);
     assert.equal(recovered.statusCode, 401);

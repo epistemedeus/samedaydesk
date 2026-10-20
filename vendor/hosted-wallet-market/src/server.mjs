@@ -213,33 +213,13 @@ export async function openHostedMarket(options) {
     };
     if (signal) signal.addEventListener('abort', destroyAcquired, {once: true});
     try {
-      client = await new Promise((resolve, reject) => {
-        let settled = false;
-        const fail = error => {
-          if (settled) return;
-          settled = true;
-          reject(error);
-        };
-        const succeed = connected => {
-          if (settled) {
-            connected.release(true);
-            return;
-          }
-          settled = true;
-          resolve(connected);
-        };
-        const cancelWait = () => fail(readCancelled());
-        if (signal?.aborted) return cancelWait();
-        if (signal) signal.addEventListener('abort', cancelWait, {once: true});
-        pool.connect().then(connected => {
-          signal?.removeEventListener('abort', cancelWait);
-          succeed(connected);
-        }, error => {
-          signal?.removeEventListener('abort', cancelWait);
-          fail(error);
-        });
-      });
-      if (signal?.aborted) throw readCancelled();
+      // The caller's boundedReview may finish on abort, but this task must
+      // retain its slot until the uncancellable pool acquisition really drains.
+      client = await pool.connect();
+      if (signal?.aborted) {
+        destroyAcquired();
+        throw readCancelled();
+      }
       await client.query('BEGIN READ ONLY');
       await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
       await client.query("SET LOCAL statement_timeout='2500ms'");
