@@ -159,6 +159,7 @@ function sameTerms(values) {
 
 function bodyFrom(row) {
   return {
+    ...proofFields(row),
     importContractSha256: row.import_contract_sha256,
     tenant: row.tenant,
     obligationId: row.obligation_id,
@@ -168,12 +169,24 @@ function bodyFrom(row) {
     network: row.network,
     token: row.token,
     transactionHash: row.transaction_hash,
-    logIndex: Number(row.log_index),
+    logIndex: proofLogIndex(row),
     blockNumber: String(row.block_number),
     amountAtomic: String(row.amount_atomic),
     receiptId: row.receipt_id,
     receivedAt: new Date(row.received_at).toISOString(),
   };
+}
+
+// A native transfer has no log. Preserve that identity throughout the
+// entitled read instead of coercing null into ERC20 log zero.
+function proofFields(row) {
+  return row.proof_kind === 'native_value_transfer'
+    ? {proofKind: row.proof_kind, rewardAsset: row.reward_asset}
+    : {};
+}
+
+function proofLogIndex(row) {
+  return row.proof_kind === 'native_value_transfer' ? row.log_index : Number(row.log_index);
 }
 
 function cancelledRead(error) {
@@ -226,7 +239,7 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
   if (receipt.termsVersion !== row.terms_version || receipt.artifactDigestSha256 !== artifactDigest || receipt.source !== row.observed_source) {
     fail(409, 'stale_evidence');
   }
-  if (receipt.amountAtomic !== String(row.amount_atomic) || receipt.transactionHash !== row.transaction_hash || Number(receipt.logIndex) !== Number(row.log_index)) {
+  if (receipt.amountAtomic !== String(row.amount_atomic) || receipt.transactionHash !== row.transaction_hash || receipt.logIndex !== proofLogIndex(row)) {
     fail(409, 'stale_evidence');
   }
   let observed;
@@ -313,7 +326,8 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
     reservationId,
     taskId,
     transactionHash: row.transaction_hash,
-    logIndex: Number(row.log_index),
+    ...proofFields(row),
+    logIndex: proofLogIndex(row),
     receiptId: row.receipt_id,
     holdReason: null,
   };
@@ -327,7 +341,11 @@ function fulfillmentOf(disposition) {
     && disposition.payoutState === 'owed'
     && disposition.payable === false
     && disposition.newPayable === false;
-  return {state: disposition.projection==='unknown'?'unknown':disposition.holdReason?'pending':paid ? 'verified_paid' : 'not_observed', paid};
+  return {state: disposition.projection==='unknown'?'unknown':disposition.holdReason?'pending':paid ? 'verified_paid' : 'not_observed', paid,
+    ...(paid && disposition.proofKind === 'native_value_transfer' ? {
+      proofKind: disposition.proofKind, rewardAsset: disposition.rewardAsset,
+      transactionHash: disposition.transactionHash, logIndex: disposition.logIndex, receiptId: disposition.receiptId,
+    } : {})};
 }
 
 function entitledValue({role, taskId, reservationId, termsVersion, artifact, verdict, disposition, businessStatus, evidenceHash, usefulOutcome}) {
