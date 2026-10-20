@@ -143,9 +143,10 @@ export async function inspectRuntimeSchema(client, {earnedSchema = 'cj227_earned
         AND t.tgname='native_debt_dispositions_match' AND t.tgfoid=p.oid AND t.tgenabled IN ('O','A') AND NOT t.tgisinternal) AS attached,
       EXISTS (SELECT 1 FROM pg_index i WHERE i.indexrelid=to_regclass('hosted_wallet_market.native_debt_native_effect')
         AND i.indrelid=to_regclass('hosted_wallet_market.native_debt_dispositions') AND i.indisunique AND i.indisvalid) AS native_unique
-    FROM pg_proc p JOIN pg_language l ON l.oid=p.prolang
-    WHERE p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_obligation()')`)).rows[0];
-  if (!fn || fn.prosrc.trim()!==expected || fn.lanname!=='plpgsql' || !fn.returns_trigger ||
+    FROM (VALUES (1)) singleton(id)
+    LEFT JOIN pg_proc p ON p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_obligation()')
+    LEFT JOIN pg_language l ON l.oid=p.prolang`)).rows[0];
+  if (typeof fn?.prosrc!=='string' || fn.prosrc.trim()!==expected || fn.lanname!=='plpgsql' || !fn.returns_trigger ||
       JSON.stringify(fn.proconfig)!==JSON.stringify(['search_path=hosted_wallet_market, pg_temp'])) missing.push('native_debt_matches_obligation@010');
   if (!fn?.attached) missing.push('native_debt_dispositions_match');
   if (!fn?.native_unique) missing.push('native_debt_native_effect');
