@@ -83,11 +83,15 @@ export function createResponseCompletion(limit, emit = console.log, {expiresAt, 
         for (const [target, event, fn] of listeners) target.removeListener(event, fn);
         active.delete(trace);
       };
+      const track = (target, event, fn) => {
+        if (done) return undefined;
+        listeners.push([target, event, fn]); return fn;
+      };
       const on = (target, event, fn) => {
         if (!target?.once) return;
-        target.once(event, fn); listeners.push([target, event, fn]);
+        target.once(event, fn); track(target, event, fn);
       };
-      const trace = {token, stage, cleanup, on,
+      const trace = {token, stage, cleanup, on, track,
         intended(code, bytes) {
           // A single fallback write can follow a synchronous send error.
           // Further attempts cannot make the finite record count unbounded.
@@ -199,7 +203,8 @@ export function deliverJsonResponse(res, status, body, extra = {}, completion = 
       res.writeHead(status, headers);
       if (observed) trace.stage('headers_written');
       if (observed) trace.stage('end_call');
-      res.end(payload, observed ? () => trace.stage('end_callback') : undefined);
+      const endCallback = observed ? trace.track(res, 'finish', () => trace.stage('end_callback')) : undefined;
+      res.end(payload, endCallback);
       if (observed) trace.stage('end_return');
     } catch (error) {
       if (observed) trace.stage('send_error');

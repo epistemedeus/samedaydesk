@@ -213,6 +213,39 @@ test('a failing diagnostic sink does not change the response', async () => {
   finally { completion.close(); await live.close(); }
 });
 
+test('expiry removes summary and stage observers from an ended response under backpressure', async () => {
+  const logs = [], completion = arm(logs, 150);
+  const value = {ok: true, value: 'x'.repeat(4 * 1024 * 1024)};
+  let response, initialFinish, initialClose, reply, client;
+  const live = await serve((req, res) => {
+    response = res;
+    initialFinish = res.listenerCount('finish'); initialClose = res.listenerCount('close');
+    completion.begin(req, res); deliverJsonResponse(res, 200, value, {}, completion);
+  });
+  const pending = new Promise((resolve, reject) => {
+    client = request({socketPath: live.socketPath, path: '/', agent: false}, res => {
+      reply = res; res.pause();
+      let bytes = 0;
+      res.on('data', chunk => { bytes += chunk.length; });
+      res.on('error', reject); res.on('end', () => resolve(bytes));
+    });
+    client.setTimeout(3000, () => client.destroy());
+    client.on('error', reject); client.end();
+  });
+  pending.catch(() => {});
+  try {
+    await until(() => logsOf(logs).some(item => item.stage === 'window_end'));
+    assert.equal(response.writableEnded, true);
+    assert.equal(response.writableFinished, false);
+    assert.equal(response.listenerCount('finish'), initialFinish);
+    assert.equal(response.listenerCount('close'), initialClose);
+    const before = logs.length;
+    reply.resume();
+    assert.equal(await pending, Buffer.byteLength(JSON.stringify(value)));
+    assert.equal(logs.length, before);
+  } finally { reply?.resume(); client.destroy(); completion.close(); await live.close(); }
+});
+
 test('Node HEAD suppression is visible and is distinct from GET/POST delivery', async () => {
   const logs = [], completion = arm(logs);
   const live = await serve((req, res) => {
