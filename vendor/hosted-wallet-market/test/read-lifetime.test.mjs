@@ -233,7 +233,7 @@ test('abort before the entitled read issues no sql', async () => {
   }
 });
 
-test('configured adapter keeps a nested binding query inside the open transaction', {timeout: 180000}, async () => {
+test('configured adapter keeps binding SQL in the outer read transaction and fences cancellation', {timeout: 180000}, async () => {
   const savedMachine = process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
   delete process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
   const events = [];
@@ -601,15 +601,15 @@ test('configured adapter keeps a nested binding query inside the open transactio
     await waitFor(() => events.some(event => event.kind === 'enroll-sent'), 8000);
     const sent = events.find(event => event.kind === 'enroll-sent');
     assert.equal(delayed.status, 200, JSON.stringify(delayed.body));
-    assert.equal(delayed.body.value.entitled.disposition.projection, 'unknown');
-    assert.equal(delayed.body.value.fulfillment.paid, false);
-    assert.equal(delayed.body.value.entitled.disposition.holdReason, 'fulfillment_unavailable');
+    assert.equal(delayed.body.value.entitled.disposition.projection, 'native_paid');
+    assert.equal(delayed.body.value.fulfillment.paid, true);
+    assert.equal(delayed.body.value.entitled.disposition.holdReason, null);
     assert.equal(sent.released, false, `binding query used a released client mid=${JSON.stringify(mid)} sent=${JSON.stringify(sent)} responseAt=${delayed.at}`);
     assert.equal(sent.committed, false, `binding query used a committed client mid=${JSON.stringify(mid)} sent=${JSON.stringify(sent)} responseAt=${delayed.at}`);
     assert.ok(delayed.at >= sent.at, `outer read returned before the binding query was sent responseAt=${delayed.at} sentAt=${sent.at}`);
-    assert.equal(mid.fulfillment.active, 1, JSON.stringify(mid));
-    assert.equal(mid.fulfillment.cancelRequested, true, JSON.stringify(mid));
-    assert.equal(mid.fulfillment.drained, false, JSON.stringify(mid));
+    assert.equal(mid.fulfillment.active, 0, JSON.stringify(mid));
+    assert.equal(mid.fulfillment.cancelRequested, false, JSON.stringify(mid));
+    assert.equal(mid.fulfillment.drained, true, JSON.stringify(mid));
     assert.equal(mid.review.active, 1, JSON.stringify(mid));
     assert.equal(mid.review.cancelRequested, false, JSON.stringify(mid));
     const afterDelay = await drain();
@@ -659,7 +659,10 @@ test('configured adapter keeps a nested binding query inside the open transactio
         socket: {destroyed: false, on() {}, off() {}},
         on() {}, off() {},
       };
-      const direct = await readEntitledOutcome(admin, directReq, {
+      const cancellation = new AbortController();
+      const timer = setTimeout(()=>cancellation.abort(),40);
+      await assert.rejects(readEntitledOutcome(admin, directReq, {
+        signal:cancellation.signal,
         taskId: paid.taskId,
         reservationId: paid.reservationId,
         nowMs: () => Date.now(),
@@ -671,9 +674,8 @@ test('configured adapter keeps a nested binding query inside the open transactio
           await sleep(120);
           await tx.query('SELECT 1 AS late_binding');
         },
-      });
-      assert.equal(direct.entitled.disposition.projection, 'unknown');
-      assert.equal(direct.fulfillment.paid, false);
+      }),error=>error.codeName==='read_cancelled');
+      clearTimeout(timer);
       await sleep(200);
       assert.equal(late, 0);
       assert.equal(gate.status().active, 0);
