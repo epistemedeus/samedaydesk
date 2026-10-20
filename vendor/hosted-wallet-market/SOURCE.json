@@ -34,7 +34,7 @@
   },
   "rewardSource": {
     "repository": "epistemedeus/pilot",
-    "commit": "03f533d98dc97b79ad570bb94948ee2860935b21",
+    "commit": "38afffa0914b1d4fd41558a458c26dabd717749e",
     "exportCommand": "node tools/ops/funded-continuation/export-sender-source.mjs ABSOLUTE_SDS_ROOT",
     "files": {
       "src/reward-asset.mjs": "aea54e1d46eab695f95693dca4b141f39e829c0463c98dab7df81463c9d4faa6",

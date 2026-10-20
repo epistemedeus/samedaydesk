@@ -6,7 +6,7 @@ import { atomicToDecimal } from "./atomic.js";
 import { assertNoPrivate } from "./redact.js";
 import { canonicalRoundTerms, hashRoundTerms, readCanonicalRoundTerms } from "./terms.js";
 import { absentHostedDelivery, projectionForRound } from "./hosted.js";
-import { observedSchema, discoveryEvidenceSchema, workflowEvidenceSchema, selfReportSchema, } from "./validate.js";
+import { observedSchema, discoveryEvidenceSchema, workflowEvidenceSchema, selfReportSchema, createRoundBodySchema, parseBody, } from "./validate.js";
 const OCCUPYING = "('reserved','submitted','accepted','owed')";
 const OWNER = "owner";
 function stableJson(value) {
@@ -67,7 +67,14 @@ export class OpportunityService {
         return projectionForRound(this.hosted, roundKey);
     }
     async createRound(body, idempotencyKey) {
-        assertNoPrivate(body, "round");
+        if (body.receivingPolicy === 'account_native_reward_v1') {
+            // Only this strictly versioned private profile can bind a destination.
+            parseBody(createRoundBodySchema, body);
+            const { accountNative, ...publicFields } = body;
+            assertNoPrivate(publicFields, "round");
+        }
+        else
+            assertNoPrivate(body, "round");
         const termsInput = toTermsInput(body);
         if (body.offers.some((offer) => (offer.ownerReservedSlots ?? 0) > offer.slotCount)) {
             throw new ApiError(400, "invalid_input", "personal reserved capacity cannot exceed offer slots");

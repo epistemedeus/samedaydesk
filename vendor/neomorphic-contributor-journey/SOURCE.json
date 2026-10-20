@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "6966a73ee418c21f52485488bc5f23cec4f165d5",
+  "sourceCommit": "50b8f971f57fb96af68f5662e2eaae51ca9ec30e",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -737,13 +737,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/claims/service.js",
-      "bytes": 15723,
-      "sha256": "4cc4ca1ffad889e5b21ade69613aa7eefc32817d8e72de0b02ffa5427b8e4c29"
+      "bytes": 16342,
+      "sha256": "2d2a9911557d106bf5aabced8deb995e3f07eb5e54fa15657b143d2d2459a58e"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/claims/service.js.map",
-      "bytes": 16645,
-      "sha256": "4f0605c0cf5a098f8e60224a845adb83bccac954f217445e93fd6c829e7949ba"
+      "bytes": 17296,
+      "sha256": "e8c72dd08c7f2ab9b6a932e38cffa296f5f290f61bddadc2416d332baae261ab"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/claims/types.d.ts",
@@ -1937,13 +1937,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/redact.js",
-      "bytes": 2852,
-      "sha256": "882562af0f0f7d59fb9a0751eeee2fc68bf5bb6a38a415bfe60263b72c4a6777"
+      "bytes": 2873,
+      "sha256": "c433e759b15348c9ee8c3b6a7a1a97f676401594bf297e031e30df723df8e69e"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/redact.js.map",
-      "bytes": 2993,
-      "sha256": "25c77734315f9f57bb82bdb5f4194b520f492eb00c72d9621059475eca0f7a5c"
+      "bytes": 3003,
+      "sha256": "fab0a757e549bbd613e3e5b4ec1582b9d1cdf2782782b337af483b7def26d3ca"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/routes.d.ts",
@@ -1962,18 +1962,18 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.d.ts",
-      "bytes": 19055,
-      "sha256": "fa37f2ab1533a7e291149958c92b5c17db482f9ae575ad916906bfad6bed7cc9"
+      "bytes": 19050,
+      "sha256": "6810e14b7844777fb8a4f85baa462f8d6804ded8e882844eb3794798ee0fc45f"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js",
-      "bytes": 96053,
-      "sha256": "f9be08f5e628037f0fa7847e5042bda7e74cf986f86aa4708c205b72bef668f4"
+      "bytes": 96430,
+      "sha256": "602039a0eb58bdc7dfd78dfd4368e5dc2788eb54ceb0402594e107ba0e27e939"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js.map",
-      "bytes": 77294,
-      "sha256": "a11fe3383392289de5976e549f8a30cb9dc29910be99936b6738ff01d5ad0e0c"
+      "bytes": 77528,
+      "sha256": "564904850bbd7c245bba7b966b2c857b3df76dfd35571ab6927e01b2a6800781"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.d.ts",
@@ -1993,7 +1993,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/validate.d.ts",
       "bytes": 31082,
-      "sha256": "fd712f4291cb070c420354b41686fb10f63bb74d1c0fdd3ad885aeb649d0713f"
+      "sha256": "ae14629ebd9af98015beef3f90bf432f2015574503948d4d47e409fb3e797244"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/validate.js",
@@ -2158,7 +2158,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "9b85d4a8ea11580e8655b879a66c0d375ee7d0ea5cb264daf030f36b7d439abd"
+      "sha256": "2d0d9edd8a16fe7f2d7cbf843ccdffa71fb36df4af6ce7bb24e2bfb69afe9b5b"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",
