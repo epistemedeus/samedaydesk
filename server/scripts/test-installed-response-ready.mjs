@@ -339,7 +339,15 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     const aborted = await early.promise;
     assert.equal(aborted.status === 200 && aborted.body.length === 0, false);
     if (aborted.status !== 0) assertHandlerFrame(aborted, aborted.status, JSON.parse(aborted.body.toString()).code);
-    const recovered = await get(socketPath, installation, {headers: auth});
+    // Cancellation retains the authority slot until its original query drains.
+    // A just-disconnected socket does not prove that asynchronous quiescence.
+    const recoveryDeadline=Date.now()+2000;
+    let recovered=await get(socketPath,installation,{headers:auth});
+    while(recovered.status===503&&Date.now()<recoveryDeadline){
+      assertHandlerFrame(recovered,503,'installed_authority_unavailable');
+      await sleep(20);
+      recovered=await get(socketPath,installation,{headers:auth});
+    }
     assertHandlerFrame(recovered, 409, 'discharge_consumer_unbound');
     assert.equal(recovered.body.toString(), unbound.body.toString());
 
