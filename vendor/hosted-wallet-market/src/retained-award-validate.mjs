@@ -1,3 +1,4 @@
+import {isNativeCoinIntent,isNativeRewardAsset} from './reward-asset.mjs';
 // Pure checks for one retained award. No signer, broadcast, or chain client.
 import assert from 'node:assert/strict';
 
@@ -354,7 +355,7 @@ export function nativeEnvelope(intent, authorityClass) {
     artifactRef: intent.artifactRef,
     roundId: intent.roundId,
     network: intent.network,
-    token: normalizeAddress(intent.token),
+    ...(isNativeCoinIntent(intent)?{rewardAsset:intent.rewardAsset,proofKind:"native_value_transfer",token:null}:{token: normalizeAddress(intent.token)}),
     source: normalizeAddress(intent.source),
     recipient: normalizeAddress(intent.recipient),
     amountAtomic: intent.amountAtomic,
@@ -368,7 +369,7 @@ export function nativeEnvelope(intent, authorityClass) {
 export function assertNativeEnvelope(record, intent, authorityClass) {
   const expected = nativeEnvelope(intent, authorityClass);
   for (const [key, value] of Object.entries(expected)) {
-    assert(record && String(record[key]) === String(value), 'envelope_mismatch');
+    assert(record && JSON.stringify(record[key]) === JSON.stringify(value), 'envelope_mismatch');
   }
 }
 
@@ -401,10 +402,11 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   objectOf(source, 'native_source_required');
   objectOf(destination, 'destination_evidence_required');
   objectOf(reservation, 'reservation_required');
-  same(intent.schema, NATIVE_INTENT_SCHEMA, 'schema_mismatch');
-  same(source.schema, NATIVE_SOURCE_SCHEMA, 'schema_mismatch');
-  same(destination.schema, NATIVE_DESTINATION_SCHEMA, 'schema_mismatch');
-  same(reservation.schema, NATIVE_RESERVATION_SCHEMA, 'schema_mismatch');
+  const coin=isNativeCoinIntent(intent);
+  same(intent.schema, coin?'pilot.native-obligation.intent.v2':NATIVE_INTENT_SCHEMA, 'schema_mismatch');
+  same(source.schema, coin?'pilot.native-obligation.source.v2':NATIVE_SOURCE_SCHEMA, 'schema_mismatch');
+  same(destination.schema, coin?'pilot.native-obligation.destination.v2':NATIVE_DESTINATION_SCHEMA, 'schema_mismatch');
+  same(reservation.schema, coin?'pilot.native-obligation.reservation.v2':NATIVE_RESERVATION_SCHEMA, 'schema_mismatch');
   same(intent.customerRevenue, false, 'customer_revenue_forbidden');
   same(intent.noAutomaticReplay, true, 'replay_forbidden');
   assert(intent.testSeam == null && intent.nonproduction == null && intent.allowSynthetic == null, 'synthetic_production_forbidden');
@@ -507,11 +509,23 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   same(destination.network, intent.network, 'network_mismatch');
   same(reservation.network, intent.network, 'network_mismatch');
   same(source.terms.network, intent.network, 'network_mismatch');
-  same(normalizeAddress(intent.token), BASE_USDC, 'token_mismatch');
-  same(normalizeAddress(destination.token), BASE_USDC, 'token_mismatch');
-  same(normalizeAddress(reservation.token), BASE_USDC, 'token_mismatch');
-  same(source.terms.asset, 'USDC', 'token_mismatch');
-  same(reservation.asset, 'USDC', 'token_mismatch');
+  if(coin){
+    same(reservation.requesterId,intent.requesterId,'requester_mismatch');
+    same(normalizeAddress(reservation.source),normalizeAddress(intent.source),'source_mismatch');
+    same(normalizeAddress(reservation.recipient),normalizeAddress(intent.recipient),'recipient_mismatch');
+    for(const record of [intent,destination,reservation]){
+      assert(isNativeRewardAsset(record.rewardAsset)&&record.token===null,'unsupported_reward_asset');
+    }
+    assert(isNativeRewardAsset(source.terms.rewardAsset)&&source.terms.asset==='ETH'&&source.terms.atomicScale===18&&reservation.asset==='ETH','unsupported_reward_asset');
+    same(source.terms.gasCapWei,reservation.gasCapWei,'gas_cap_mismatch');
+  }else{
+    assert(intent.rewardAsset===undefined&&source.terms.rewardAsset===undefined&&destination.rewardAsset===undefined&&reservation.rewardAsset===undefined,'token_mismatch');
+    same(normalizeAddress(intent.token), BASE_USDC, 'token_mismatch');
+    same(normalizeAddress(destination.token), BASE_USDC, 'token_mismatch');
+    same(normalizeAddress(reservation.token), BASE_USDC, 'token_mismatch');
+    same(source.terms.asset, 'USDC', 'token_mismatch');
+    same(reservation.asset, 'USDC', 'token_mismatch');
+  }
   const recipient = normalizeAddress(intent.recipient);
   const sourceAddress = normalizeAddress(intent.source);
   assert(recipient !== sourceAddress, 'source_equals_recipient');
@@ -591,6 +605,6 @@ export function prepareNativeObligation({
 }
 
 export function prepareAward(input) {
-  if (input?.intent?.schema === NATIVE_INTENT_SCHEMA) return prepareNativeObligation(input);
+  if (input?.intent?.schema === NATIVE_INTENT_SCHEMA || isNativeCoinIntent(input?.intent)) return prepareNativeObligation(input);
   return prepareOriginalAward(input);
 }

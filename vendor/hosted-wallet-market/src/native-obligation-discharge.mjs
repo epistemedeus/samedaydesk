@@ -1,3 +1,4 @@
+import {isNativeCoinIntent,isNativeRewardAsset} from './reward-asset.mjs';
 // Exclusive native-obligation registry and the unbound debt-disposition contract.
 // Filesystem keys are hashes. Domain identifiers are never used as path segments.
 // This module does not set kernel paid or transfer, and it does not import P2.
@@ -5,7 +6,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomBytes } from 'node:crypto';
 import {
   existsSync, readFileSync, writeFileSync, linkSync, unlinkSync, renameSync,
-  chmodSync, statSync, lstatSync, realpathSync, mkdirSync,
+  chmodSync, statSync, lstatSync, realpathSync, mkdirSync, openSync, closeSync, fsyncSync,
 } from 'node:fs';
 import { dirname, join, basename, resolve, sep, isAbsolute } from 'node:path';
 import { NONPRODUCTION_TEST_SEAM, normalizeAddress } from './retained-award-validate.mjs';
@@ -57,7 +58,9 @@ const EFFECT_KEYS = [
 const OPAQUE_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/;
 const KINDS = new Set(['obligations', 'reservations', 'transfers', 'discharges']);
 
-export function importContractSha256() {
+export const NATIVE_COIN_IMPORT_CONTRACT=Object.freeze({schema:'pilot.native-obligation.import-contract.v2',version:1,proofKind:'native_value_transfer',exclusiveKey:['network','proofKind','transactionHash'],denomination:'wei',legacyContractUnchanged:true});
+export function importContractSha256(coin=false) {
+  if(coin)return createHash('sha256').update(JSON.stringify(NATIVE_COIN_IMPORT_CONTRACT)).digest('hex');
   return createHash('sha256').update(JSON.stringify(IMPORT_CONTRACT)).digest('hex');
 }
 
@@ -166,20 +169,25 @@ export function reservationClaimPath(registryRoot, reservationId) {
 
 export function transferAllocationPath(registryRoot, allocation) {
   const network = allocation?.network;
-  const token = normalizeAddress(allocation?.token);
+  const coin=allocation?.proofKind==='native_value_transfer';
+  if(coin)assert(isNativeRewardAsset(allocation.rewardAsset)&&allocation.token===null&&allocation.logIndex===null,'unsupported_reward_asset');
+  const token = coin?null:normalizeAddress(allocation?.token);
   const transactionHash = String(allocation?.transactionHash ?? '').toLowerCase();
   const logIndex = allocation?.logIndex;
   assert(network === 'eip155:8453', 'network_mismatch');
   assert(/^0x[0-9a-f]{64}$/.test(transactionHash), 'known hash required');
+  if(coin)return registryFile(registryRoot,'transfers',`${network}\nnative_value_transfer\n${transactionHash}`);
   assert(Number.isInteger(logIndex) && logIndex >= 0, 'transfer_log_index_required');
   return registryFile(registryRoot, 'transfers', `${network}\n${token}\n${transactionHash}\n${logIndex}`);
 }
 
+function syncPath(file){const fd=openSync(file,'r');try{fsyncSync(fd);}finally{closeSync(fd);}}
 function publishExclusive(file, record) {
   const dir = dirname(file);
   const tmp = join(dir, `.${basename(file)}.${process.pid}.${randomBytes(4).toString('hex')}.tmp`);
   writeFileSync(tmp, JSON.stringify(record, null, 2), { mode: 0o600 });
   chmodSync(tmp, 0o600);
+  syncPath(tmp);
   try {
     linkSync(tmp, file);
   } catch (error) {
@@ -189,6 +197,7 @@ function publishExclusive(file, record) {
   }
   unlinkSync(tmp);
   chmodSync(file, 0o600);
+  syncPath(dir);
   return record;
 }
 
@@ -207,16 +216,18 @@ function readPrivateJson(file) {
 
 export function claimObligationExclusive(claimPath, record) {
   assert(record?.schema === CLAIM_SCHEMA, 'claim_schema_required');
-  assert(record.state === 'broadcast_attempted_unknown', 'claim_must_journal_unknown_before_broadcast');
-  assert(typeof record.transactionHash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(record.transactionHash), 'known hash required');
+  const signing=record.proofKind==='native_value_transfer'&&record.state==='signing_attempted_unknown'&&record.transactionHash===null;
+  assert(signing||record.state === 'broadcast_attempted_unknown', 'claim_must_journal_unknown_before_broadcast');
+  assert(signing||typeof record.transactionHash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(record.transactionHash), 'known hash required');
   assert(record.noAutomaticReplay === true, 'replay_forbidden');
   return publishExclusive(claimPath, record);
 }
 
 export function claimReservationExclusive(claimPath, record) {
   assert(record?.schema === RESERVATION_CLAIM_SCHEMA, 'reservation_claim_schema_required');
-  assert(record.state === 'broadcast_attempted_unknown', 'claim_must_journal_unknown_before_broadcast');
-  assert(typeof record.transactionHash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(record.transactionHash), 'known hash required');
+  const signing=record.proofKind==='native_value_transfer'&&record.state==='signing_attempted_unknown'&&record.transactionHash===null;
+  assert(signing||record.state === 'broadcast_attempted_unknown', 'claim_must_journal_unknown_before_broadcast');
+  assert(signing||typeof record.transactionHash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(record.transactionHash), 'known hash required');
   assert(record.noAutomaticReplay === true, 'replay_forbidden');
   assert(typeof record.obligationId === 'string' && typeof record.reservationId === 'string', 'reservation_id_required');
   return publishExclusive(claimPath, record);
@@ -227,8 +238,10 @@ export function updateObligationClaim(claimPath, record) {
   const tmp = join(dir, `.${basename(claimPath)}.${process.pid}.${randomBytes(4).toString('hex')}.tmp`);
   writeFileSync(tmp, JSON.stringify(record, null, 2), { mode: 0o600 });
   chmodSync(tmp, 0o600);
+  syncPath(tmp);
   renameSync(tmp, claimPath);
   chmodSync(claimPath, 0o600);
+  syncPath(dir);
   return record;
 }
 
@@ -250,7 +263,8 @@ function sameAllocation(existing, record) {
   if (existing.obligationId !== record.obligationId || existing.reservationId !== record.reservationId) return false;
   if (existing.transactionHash?.toLowerCase() !== record.transactionHash.toLowerCase()) return false;
   if (Number(existing.logIndex) !== Number(record.logIndex)) return false;
-  if (normalizeAddress(existing.token) !== normalizeAddress(record.token)) return false;
+  if(record.proofKind==='native_value_transfer'){if(existing.proofKind!==record.proofKind||JSON.stringify(existing.rewardAsset)!==JSON.stringify(record.rewardAsset)||existing.token!==null||existing.logIndex!==null)return false;}
+  else if (normalizeAddress(existing.token) !== normalizeAddress(record.token)) return false;
   if (existing.network !== record.network || existing.amountAtomic !== record.amountAtomic) return false;
   if (normalizeAddress(existing.source) !== normalizeAddress(record.source)) return false;
   if (normalizeAddress(existing.recipient) !== normalizeAddress(record.recipient)) return false;
@@ -291,6 +305,7 @@ export function readTransferAllocation(registryRoot, allocation) {
 export function dischargeReceiptId(receipt) {
   const body = {
     schema: receipt.schema,
+    ...(receipt.proofKind==='native_value_transfer'?{proofKind:receipt.proofKind,rewardAsset:receipt.rewardAsset}:{}),
     obligationId: receipt.obligationId,
     reservationId: receipt.reservationId,
     transactionHash: receipt.transactionHash,
@@ -310,9 +325,11 @@ export function buildDischargeReceipt({ intent, canonical, authorityClass }) {
   assert(authorityClass === 'root_received' || authorityClass === 'synthetic_fixture', 'authority_class_required');
   assert(canonical?.status === 'success', 'discharge_requires_canonical_success');
   assert(canonical.exactTransferVerified === true, 'discharge_requires_exact_transfer');
-  assert(Number.isInteger(canonical.logIndex) && canonical.logIndex >= 0, 'transfer_log_index_required');
+  const coin=isNativeCoinIntent(intent);
+  if(coin)assert(canonical.logIndex===null&&canonical.proofKind==='native_value_transfer','native_proof_required');
+  else assert(Number.isInteger(canonical.logIndex) && canonical.logIndex >= 0, 'transfer_log_index_required');
   const receipt = {
-    schema: DISCHARGE_SCHEMA,
+    schema: coin?"pilot.native-obligation.discharge.v2":DISCHARGE_SCHEMA,
     disposition: 'external_chain_discharge',
     chainPayment: 'separate_canonical_receipt',
     debtDisposition: 'exclusive_external_discharge',
@@ -327,8 +344,8 @@ export function buildDischargeReceipt({ intent, canonical, authorityClass }) {
     suppliedAuthorityClass: authorityClass,
     consumerBinding: null,
     importState: 'unbound_fail_closed',
-    importContract: IMPORT_CONTRACT.schema,
-    importContractSha256: importContractSha256(),
+    importContract: coin?NATIVE_COIN_IMPORT_CONTRACT.schema:IMPORT_CONTRACT.schema,
+    importContractSha256: importContractSha256(coin),
     obligationId: intent.obligationId,
     reservationId: intent.reservationId,
     taskId: intent.taskId,
@@ -339,7 +356,7 @@ export function buildDischargeReceipt({ intent, canonical, authorityClass }) {
     artifactDigestSha256: intent.artifactDigestSha256,
     roundId: intent.roundId,
     network: intent.network,
-    token: normalizeAddress(intent.token),
+    ...(coin?{token:null,proofKind:"native_value_transfer",rewardAsset:intent.rewardAsset}:{token:normalizeAddress(intent.token)}),
     amountAtomic: intent.amountAtomic,
     transactionHash: canonical.transactionHash,
     logIndex: canonical.logIndex,
@@ -347,6 +364,7 @@ export function buildDischargeReceipt({ intent, canonical, authorityClass }) {
     blockNumber: canonical.blockNumber,
     blockTimestamp: canonical.blockTimestamp,
     knownFeeWei: canonical.knownFeeWei,
+    ...(coin?{l2FeeWei:canonical.l2FeeWei,l1FeeWei:canonical.l1FeeWei,operatorFeeWei:canonical.operatorFeeWei,feeCompleteness:canonical.feeCompleteness}:{}),
     source: normalizeAddress(intent.source),
     recipient: normalizeAddress(intent.recipient),
     exclusiveAllocation: true,

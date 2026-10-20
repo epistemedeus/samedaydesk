@@ -153,7 +153,7 @@ export function createOpportunityJourneyAdapters(options) {
                     reservation: reservation(row), submission: s, submissionEvidenceBytes: Buffer.from(row.record.frozen.content, 'utf8'), verdict,
                     obligation: row.obligation ? { id: row.obligation.id, kind: 'owed_record', adapter: 'null_nonpaying_v0',
                         taskId: row.id, reservationId: row.claim.id, submissionId: s.id, contributorPublicId: row.principal.publicId,
-                        payoutDestination: null, reward, payoutState: 'owed', termsVersion: row.obligation.terms_version,
+                        payoutDestination: row.external?.assignment.selection.schema === 'neomorphic.root-external-selection.v2' ? row.external.assignment.selection.agreement.payoutDestination.address : null, reward, payoutState: 'owed', termsVersion: row.obligation.terms_version,
                         idempotencyKey: '', verdictId: verdict.id, transfer: null, note: 'Original opportunity IOU; kernelObligationMinted:false', createdAt: date(row.obligation.created_at) } : null,
                 },
             };

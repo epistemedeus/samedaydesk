@@ -85,9 +85,11 @@ const alternativeSchema = z
     summary: z.string().trim().min(1).max(2000),
 })
     .strict();
+export const nativeRewardAssetSchema = z.object({ schema: z.literal("pilot.reward-asset.v1"), kind: z.literal("native"), chainId: z.literal(8453), symbol: z.literal("ETH"), decimals: z.literal(18), denomination: z.literal("wei") }).strict();
 export const createRoundBodySchema = z
     .object({
     roundKey: keySchema,
+    rewardAsset: nativeRewardAssetSchema.optional(),
     receivingPolicy: z.literal("root_mediated_external_report_v1").optional(),
     provenance: z.enum(PROVENANCES),
     productionAdmission: z.boolean(),
@@ -112,7 +114,12 @@ export const createRoundBodySchema = z
     alternatives: z.array(alternativeSchema).max(16),
     expectedTermsVersion: z.string().regex(/^sha256:[0-9a-f]{64}$/).optional(),
 })
-    .strict();
+    .strict().superRefine((r, ctx) => {
+    if (r.rewardAsset && (r.asset !== "ETH" || r.atomicScale !== 18 || r.chainId !== 8453 || r.network !== "base" || r.receivingPolicy !== "root_mediated_external_report_v1" || r.transferFeeCap.asset !== "ETH"))
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "unsupported_reward_asset" });
+    if (!r.rewardAsset && r.asset === "ETH")
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "explicit_native_reward_asset_required" });
+});
 export const importBodySchema = z
     .object({
     provenance: z.enum(PROVENANCES),

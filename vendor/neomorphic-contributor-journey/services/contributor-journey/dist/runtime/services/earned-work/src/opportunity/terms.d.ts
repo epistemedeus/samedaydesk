@@ -22,6 +22,14 @@ export type AlternativeTerms = {
     paidSlot: false;
 };
 export type RoundTermsInput = {
+    rewardAsset?: {
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        symbol: "ETH";
+        decimals: 18;
+        denomination: "wei";
+    };
     receivingPolicy?: "root_mediated_external_report_v1";
     roundKey: string;
     principalCapAtomic: number;
@@ -89,9 +97,17 @@ export declare function canonicalRoundTerms(input: RoundTermsInput): {
         noArtifactFetch: boolean;
     };
     receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    roundKey: string;
+    rewardAsset?: {
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        symbol: "ETH";
+        decimals: 18;
+        denomination: "wei";
+    } | undefined;
     schema: string;
     schemaVersion: number;
-    roundKey: string;
 };
 export declare function hashRoundTerms(input: RoundTermsInput): string;
 /** Validate immutable stored terms before granting future-round authority. */

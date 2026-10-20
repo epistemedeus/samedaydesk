@@ -6,7 +6,7 @@ import { OpportunityService } from '../earned-work/src/opportunity/service.js';
 import type { ContributorAccountService } from './account/service.js';
 import type { JourneyAdmission } from './profile.js';
 import type { ProjectLock } from './discussion/correspondence.js';
-declare const packetPin: z.ZodObject<{
+declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     schema: z.ZodLiteral<"neomorphic.root-external-selection.v1">;
     roundId: z.ZodString;
     taskId: z.ZodString;
@@ -73,12 +73,12 @@ declare const packetPin: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -103,12 +103,12 @@ declare const packetPin: z.ZodObject<{
 }, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -130,8 +130,223 @@ declare const packetPin: z.ZodObject<{
         receivedAt: string;
         actualExternalIdentity: true;
     };
-}>;
-export declare const externalSelectionSchema: z.ZodObject<{
+}>, z.ZodObject<{
+    roundId: z.ZodString;
+    taskId: z.ZodString;
+    requesterAccountId: z.ZodString;
+    termsVersion: z.ZodString;
+    termsPacketSha256: z.ZodString;
+    allocationReceiptSha256: z.ZodString;
+    identity: z.ZodEffects<z.ZodString, string, string>;
+    channel: z.ZodObject<{
+        kind: z.ZodLiteral<"email">;
+        threadRef: z.ZodString;
+    }, "strict", z.ZodTypeAny, {
+        kind: "email";
+        threadRef: string;
+    }, {
+        kind: "email";
+        threadRef: string;
+    }>;
+    publicLabel: z.ZodString;
+    rootReceipt: z.ZodObject<{
+        provenance: z.ZodLiteral<"root_received_private_correspondence">;
+        recordRef: z.ZodString;
+        receivedAt: z.ZodString;
+        actualExternalIdentity: z.ZodLiteral<true>;
+    }, "strict", z.ZodTypeAny, {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    }, {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    }>;
+} & {
+    schema: z.ZodLiteral<"neomorphic.root-external-selection.v2">;
+    agreement: z.ZodObject<{
+        sender: z.ZodEffects<z.ZodString, string, string>;
+        threadRef: z.ZodString;
+        messageRef: z.ZodString;
+        termsRef: z.ZodString;
+        originalOperationRef: z.ZodString;
+        termsVersion: z.ZodString;
+        termsPacketSha256: z.ZodString;
+        agreedAt: z.ZodString;
+    } & {
+        payoutDestination: z.ZodObject<{
+            rewardAsset: z.ZodObject<{
+                schema: z.ZodLiteral<"pilot.reward-asset.v1">;
+                kind: z.ZodLiteral<"native">;
+                chainId: z.ZodLiteral<8453>;
+                symbol: z.ZodLiteral<"ETH">;
+                decimals: z.ZodLiteral<18>;
+                denomination: z.ZodLiteral<"wei">;
+            }, "strict", z.ZodTypeAny, {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            }, {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            }>;
+            address: z.ZodString;
+        }, "strict", z.ZodTypeAny, {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        }, {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        }>;
+    }, "strict", z.ZodTypeAny, {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    }, {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    }>;
+}, "strict", z.ZodTypeAny, {
+    termsVersion: string;
+    taskId: string;
+    schema: "neomorphic.root-external-selection.v2";
+    publicLabel: string;
+    channel: {
+        kind: "email";
+        threadRef: string;
+    };
+    requesterAccountId: string;
+    roundId: string;
+    termsPacketSha256: string;
+    allocationReceiptSha256: string;
+    identity: string;
+    agreement: {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    };
+    rootReceipt: {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    };
+}, {
+    termsVersion: string;
+    taskId: string;
+    schema: "neomorphic.root-external-selection.v2";
+    publicLabel: string;
+    channel: {
+        kind: "email";
+        threadRef: string;
+    };
+    requesterAccountId: string;
+    roundId: string;
+    termsPacketSha256: string;
+    allocationReceiptSha256: string;
+    identity: string;
+    agreement: {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    };
+    rootReceipt: {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    };
+}>]>;
+export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     schema: z.ZodLiteral<"neomorphic.root-external-selection.v1">;
     roundId: z.ZodString;
     taskId: z.ZodString;
@@ -201,12 +416,12 @@ export declare const externalSelectionSchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -233,12 +448,12 @@ export declare const externalSelectionSchema: z.ZodObject<{
 }, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -262,7 +477,229 @@ export declare const externalSelectionSchema: z.ZodObject<{
     };
     termsPacket: Record<string, unknown>;
     allocationReceipt: Record<string, unknown>;
-}>;
+}>, z.ZodObject<{
+    roundId: z.ZodString;
+    taskId: z.ZodString;
+    requesterAccountId: z.ZodString;
+    termsVersion: z.ZodString;
+    termsPacketSha256: z.ZodString;
+    allocationReceiptSha256: z.ZodString;
+    identity: z.ZodEffects<z.ZodString, string, string>;
+    channel: z.ZodObject<{
+        kind: z.ZodLiteral<"email">;
+        threadRef: z.ZodString;
+    }, "strict", z.ZodTypeAny, {
+        kind: "email";
+        threadRef: string;
+    }, {
+        kind: "email";
+        threadRef: string;
+    }>;
+    publicLabel: z.ZodString;
+    rootReceipt: z.ZodObject<{
+        provenance: z.ZodLiteral<"root_received_private_correspondence">;
+        recordRef: z.ZodString;
+        receivedAt: z.ZodString;
+        actualExternalIdentity: z.ZodLiteral<true>;
+    }, "strict", z.ZodTypeAny, {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    }, {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    }>;
+} & {
+    schema: z.ZodLiteral<"neomorphic.root-external-selection.v2">;
+    agreement: z.ZodObject<{
+        sender: z.ZodEffects<z.ZodString, string, string>;
+        threadRef: z.ZodString;
+        messageRef: z.ZodString;
+        termsRef: z.ZodString;
+        originalOperationRef: z.ZodString;
+        termsVersion: z.ZodString;
+        termsPacketSha256: z.ZodString;
+        agreedAt: z.ZodString;
+    } & {
+        payoutDestination: z.ZodObject<{
+            rewardAsset: z.ZodObject<{
+                schema: z.ZodLiteral<"pilot.reward-asset.v1">;
+                kind: z.ZodLiteral<"native">;
+                chainId: z.ZodLiteral<8453>;
+                symbol: z.ZodLiteral<"ETH">;
+                decimals: z.ZodLiteral<18>;
+                denomination: z.ZodLiteral<"wei">;
+            }, "strict", z.ZodTypeAny, {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            }, {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            }>;
+            address: z.ZodString;
+        }, "strict", z.ZodTypeAny, {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        }, {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        }>;
+    }, "strict", z.ZodTypeAny, {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    }, {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    }>;
+} & {
+    termsPacket: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+    allocationReceipt: z.ZodRecord<z.ZodString, z.ZodUnknown>;
+}, "strict", z.ZodTypeAny, {
+    termsVersion: string;
+    taskId: string;
+    schema: "neomorphic.root-external-selection.v2";
+    publicLabel: string;
+    channel: {
+        kind: "email";
+        threadRef: string;
+    };
+    requesterAccountId: string;
+    roundId: string;
+    termsPacketSha256: string;
+    allocationReceiptSha256: string;
+    identity: string;
+    agreement: {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    };
+    rootReceipt: {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    };
+    termsPacket: Record<string, unknown>;
+    allocationReceipt: Record<string, unknown>;
+}, {
+    termsVersion: string;
+    taskId: string;
+    schema: "neomorphic.root-external-selection.v2";
+    publicLabel: string;
+    channel: {
+        kind: "email";
+        threadRef: string;
+    };
+    requesterAccountId: string;
+    roundId: string;
+    termsPacketSha256: string;
+    allocationReceiptSha256: string;
+    identity: string;
+    agreement: {
+        payoutDestination: {
+            rewardAsset: {
+                symbol: "ETH";
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                decimals: 18;
+                denomination: "wei";
+            };
+            address: string;
+        };
+        termsVersion: string;
+        threadRef: string;
+        termsPacketSha256: string;
+        sender: string;
+        messageRef: string;
+        termsRef: string;
+        originalOperationRef: string;
+        agreedAt: string;
+    };
+    rootReceipt: {
+        provenance: "root_received_private_correspondence";
+        recordRef: string;
+        receivedAt: string;
+        actualExternalIdentity: true;
+    };
+    termsPacket: Record<string, unknown>;
+    allocationReceipt: Record<string, unknown>;
+}>]>;
 export type ExternalSelection = z.infer<typeof externalSelectionSchema>;
 export type RetainedExternalSelection = z.infer<typeof packetPin>;
 export declare const externalReportSchema: z.ZodObject<{
@@ -408,11 +845,11 @@ export declare const externalDeliverySchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -444,11 +881,11 @@ export declare const externalDeliverySchema: z.ZodObject<{
 }, {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -501,11 +938,11 @@ export declare function inspectExternalDelivery(raw: unknown, bound: {
 }): {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";

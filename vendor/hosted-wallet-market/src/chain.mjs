@@ -1,3 +1,4 @@
+import {verifyNativeCoinProof} from './native-coin-proof.mjs';
 import http from 'node:http';
 import https from 'node:https';
 
@@ -253,6 +254,10 @@ export async function readRailTransfer(raw, body, {signal,timeoutMs=60000}={}) {
   if (hexQuantity(header?.number) !== block || hashOf(header?.hash) !== blockHash || timestamp === null || timestamp > BigInt(Math.floor(Date.now() / 1000) + 5)) refuse('transfer_unverified');
   if (finalBlock === null || finalBlock < block || finalBlock > BigInt(chain.blockNumber) || !hashOf(finalized?.hash) || (finalBlock === block && hashOf(finalized.hash) !== blockHash)) refuse('transfer_unverified');
   if (hashOf(transaction?.hash) !== body.transactionHash || hashOf(transaction?.blockHash) !== blockHash || hexQuantity(transaction?.blockNumber) !== block) refuse('transfer_unverified');
+  if(body.proofKind==='native_value_transfer'){
+    try{return verifyNativeCoinProof({body,chainId:chain.chainId,head:chain.blockNumber,receipt,transaction,header,finalized});}
+    catch{refuse('transfer_unverified');}
+  }
   const logs = Array.isArray(receipt.logs) ? receipt.logs : [];
   const matches = logs.filter(log => hexQuantity(log?.logIndex) === BigInt(body.logIndex));
   if (matches.length !== 1) refuse('transfer_unverified');

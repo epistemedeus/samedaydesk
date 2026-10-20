@@ -7,7 +7,7 @@ import {walletEnvironmentPacket,machineEntryEnvironmentPacket} from '../src/rele
 import {unfundedFunnelSnapshot} from '../src/machine-funnel.mjs';
 import pg from 'pg';
 import {applyAdditiveSchema,assertObligationGuard,inspectInstallation,rollbackAdapter} from '../src/migrate.mjs';
-import {IMPORT_BODY_KEYS,assertImportShape} from '../src/native-debt.mjs';
+import {IMPORT_BODY_KEYS,importBodyKeys,assertImportShape} from '../src/native-debt.mjs';
 import {dischargeReceiptId} from '../src/native-obligation-discharge.mjs';
 import {assertIdent} from '../src/profile.mjs';
 const [command,...args]=process.argv.slice(2);
@@ -87,7 +87,7 @@ async function main(){
  if(command==='prepare'){
   const receipt=privateJson(flag('input'));
   if(receipt.receiptId!==dischargeReceiptId(receipt)||receipt.kernelPaid!==false||receipt.kernelTransfer!==null)stop('receipt_refused');
-  const input=Object.fromEntries(IMPORT_BODY_KEYS.map(k=>[k,receipt[k]]));
+  const input=Object.fromEntries(importBodyKeys(receipt).map(k=>[k,receipt[k]]));
   input.tenant=process.env.HOSTED_WALLET_MARKET_TENANT;input.receivedAt=flag('received-at');assertImportShape(input);
   writeFileSync(flag('output'),JSON.stringify(input,null,2)+'\n',{mode:0o600,flag:'wx'});return {prepared:true};
  }

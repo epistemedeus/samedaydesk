@@ -1,5 +1,6 @@
 // Read-only consumption of the sender's existing exclusive registry. Never
 // creates directories, claims, allocations, receipts, or payment authority.
+import {digest} from './canonical.mjs';
 import {createHash} from 'node:crypto';
 import {constants, closeSync, fstatSync, lstatSync, openSync, readFileSync, realpathSync} from 'node:fs';
 import {join, resolve} from 'node:path';
@@ -36,15 +37,17 @@ function read(root, kind, key) {
 export function readAuthoritativeDischarge(root, body) {
   try {
     const receipt = read(root, 'discharges', body.obligationId);
-    const key = `${body.network}\n${body.token}\n${body.transactionHash}\n${body.logIndex}`;
+    const coin=body.proofKind==='native_value_transfer';
+    const key = coin?`${body.network}\nnative_value_transfer\n${body.transactionHash}`:`${body.network}\n${body.token}\n${body.transactionHash}\n${body.logIndex}`;
     const allocation = read(root, 'transfers', key);
-    if (receipt.schema !== DISCHARGE_SCHEMA || receipt.receiptId !== dischargeReceiptId(receipt) ||
-        receipt.importContractSha256 !== importContractSha256() || receipt.importState !== 'unbound_fail_closed' ||
+    if (receipt.schema !== (coin?'pilot.native-obligation.discharge.v2':DISCHARGE_SCHEMA) || receipt.receiptId !== dischargeReceiptId(receipt) ||
+        receipt.importContractSha256 !== importContractSha256(coin) || receipt.importState !== 'unbound_fail_closed' ||
         receipt.consumerBinding !== null || receipt.kernelPaid !== false || receipt.kernelTransfer !== null || receipt.nativePaidObservation !== false ||
         receipt.suppliedAuthorityClass !== 'root_received' || receipt.exclusiveAllocation !== true || receipt.refusesAdditionalPayment !== true || receipt.refusesAdditionalTransferAllocation !== true ||
         receipt.legacySlotCreated !== false || receipt.emailObservationRelabeled !== false ||
         allocation.schema !== TRANSFER_SCHEMA || allocation.kind !== 'external_discharge_only' || allocation.authorityClass !== 'root_received' ||
-        allocation.importContractSha256 !== importContractSha256() || allocation.kernelPaid !== false || allocation.kernelTransfer !== null || allocation.noAutomaticReplay !== true) fail();
+        allocation.importContractSha256 !== importContractSha256(coin) || allocation.kernelPaid !== false || allocation.kernelTransfer !== null || allocation.noAutomaticReplay !== true) fail();
+    if(coin&&(receipt.proofKind!==body.proofKind||allocation.proofKind!==body.proofKind||digest(receipt.rewardAsset)!==digest(body.rewardAsset)||digest(allocation.rewardAsset)!==digest(body.rewardAsset)))fail();
     for (const key of ['obligationId', 'reservationId', 'taskId', 'termsVersion', 'network', 'token', 'amountAtomic', 'transactionHash', 'logIndex', 'receiptId']) {
       if (receipt[key] !== body[key] || allocation[key] !== receipt[key]) fail();
     }
