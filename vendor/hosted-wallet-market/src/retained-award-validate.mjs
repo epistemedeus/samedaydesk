@@ -369,7 +369,7 @@ export function nativeEnvelope(intent, authorityClass) {
 export function assertNativeEnvelope(record, intent, authorityClass) {
   const expected = nativeEnvelope(intent, authorityClass);
   for (const [key, value] of Object.entries(expected)) {
-    assert(record && JSON.stringify(record[key]) === JSON.stringify(value), 'envelope_mismatch');
+    assert(record && (key==='rewardAsset'?isNativeRewardAsset(record[key]):String(record[key])===String(value)), 'envelope_mismatch');
   }
 }
 
@@ -377,6 +377,19 @@ function assertNativeReplay(intent, journal, obligationClaim, reservationClaim, 
   const records = [journal, obligationClaim, reservationClaim].filter((item) => item !== null && item !== undefined);
   if (mode === 'receive') {
     assert(journal != null || obligationClaim != null, 'known hash required');
+    if(isNativeCoinIntent(intent)){
+      const hashes=[];
+      for(const record of records){
+        assert(record.obligationId===intent.obligationId,'claim_journal_mismatch');
+        assertNativeEnvelope(record,intent,authority);
+        assert(Number.isSafeInteger(record.nonce)&&record.nonce>=0&&record.nonce===records[0].nonce,'claim_journal_mismatch');
+        if(record.state==='signing_attempted_unknown'&&record.transactionHash===null)continue;
+        hashes.push(boundHash(record));
+      }
+      assert(hashes.length>0,'known hash required');
+      assert(hashes.every(hash=>hash===hashes[0]),'claim_journal_mismatch');
+      return hashes[0];
+    }
     const hashes = records.map((record) => boundHash(record));
     assert(hashes.every((item) => item === hashes[0]), 'claim_journal_mismatch');
     for (const record of records) {

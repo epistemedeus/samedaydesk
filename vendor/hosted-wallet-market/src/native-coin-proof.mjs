@@ -14,6 +14,7 @@ export function verifyNativeCoinProof({body,chainId,head,receipt,transaction,hea
   assert(final>=block&&final<=q(head)&&hash(finalized.hash)&&(final!==block||hash(finalized.hash)===blockHash),'native_not_finalized');
   const source=address(transaction.from),recipient=address(transaction.to),timestamp=q(header.timestamp);
   assert(source&&recipient&&source!==recipient&&address(receipt.from)===source&&address(receipt.to)===recipient,'native_destination_unverified');
+  if(body.nonce!==undefined)assert(q(transaction.nonce)===q(body.nonce),'native_nonce_unverified');
   assert(transaction.input==='0x'&&q(transaction.value)>0n&&q(transaction.value).toString()===body.amountAtomic,'native_value_unverified');
   assert(timestamp<=BigInt(Math.floor(Date.now()/1000)+5),'native_timestamp_refused');
   const l2=q(receipt.gasUsed)*q(receipt.effectiveGasPrice),l1=receipt.l1Fee==null?null:q(receipt.l1Fee),operator=receipt.operatorFee==null?null:q(receipt.operatorFee);
