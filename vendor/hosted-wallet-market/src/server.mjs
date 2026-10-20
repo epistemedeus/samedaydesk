@@ -1062,7 +1062,7 @@ export async function openHostedMarket(options) {
         // close cannot be observed as a client disconnect.
         cancellation.stop();
         if (cancellation.signal.aborted || !responseWritable(res)) return;
-        return send(res, value.ready ? 200 : 503, {ok: value.ready, value});
+        return send(res, 200, {ok: true, value});
       } finally {
         cancellation.stop();
       }
@@ -1630,7 +1630,7 @@ export async function openHostedMarket(options) {
       }
       if (path === '/healthz' && req.method === 'GET') {
         const value = await withClient(healthValue);
-        return send(res, 200, {ok: true, value});
+        return send(res, value.ready ? 200 : 503, {ok: value.ready, value});
       }
       const body = req.method === 'GET' || req.method === 'HEAD' ? {} : await readJson(req);
       if (machine && req.method === 'POST' && ['/v1/account/login','/v1/account/recover'].includes(path)) {
