@@ -147,10 +147,10 @@ export async function createInstalledComposition(options) {
                 const proof = await receiving.readExternalDischarge(query);
                 if (hashRequest(proof.query) !== hashRequest(query) || hashRequest(proof.source) !== hashRequest(receiving.pin) ||
                     !['not_observed', 'pending', 'verified_paid'].includes(proof.state) || proof.state === 'verified_paid' &&
-                    (!/^0x[a-f0-9]{64}$/.test(proof.transactionHash ?? '') || !Number.isSafeInteger(proof.logIndex) || proof.logIndex < 0 || !/^[a-f0-9]{64}$/.test(proof.receiptId ?? '')))
+                    (!/^0x[a-f0-9]{64}$/.test(proof.transactionHash ?? '') || (row.document.rewardAsset ? proof.proofKind !== 'native_value_transfer' || hashRequest(proof.rewardAsset) !== hashRequest(row.document.rewardAsset) || proof.logIndex !== null : proof.proofKind !== undefined || !Number.isSafeInteger(proof.logIndex) || proof.logIndex < 0) || !/^[a-f0-9]{64}$/.test(proof.receiptId ?? '')))
                     throw Error('external discharge integrity');
                 return { ...handoff, state: proof.state, verifierVersion: 'canonical-receiving/v1', ...(proof.state === 'verified_paid' ? {
-                        transactionHash: proof.transactionHash, logIndex: proof.logIndex, receiptId: proof.receiptId
+                        transactionHash: proof.transactionHash, ...(proof.proofKind ? { proofKind: proof.proofKind, rewardAsset: proof.rewardAsset } : {}), logIndex: proof.logIndex, receiptId: proof.receiptId
                     } : {}) };
             }
             if (!row || !row.owner)

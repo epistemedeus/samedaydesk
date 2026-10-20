@@ -1,3 +1,5 @@
+import {isNativeRewardAsset} from './reward-asset.mjs';
+import {importContractSha256} from './native-obligation-discharge.mjs';
 import {createHash} from 'node:crypto';
 import {constants,openSync,closeSync,fstatSync,readFileSync, readdirSync, lstatSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
@@ -42,6 +44,8 @@ export const NATIVE_DEBT_CONSUMER = Object.freeze({
 });
 export const IMPORT_BODY_KEYS = Object.freeze(['importContractSha256','tenant','obligationId','reservationId','taskId','termsVersion',
   'network','token','transactionHash','logIndex','blockNumber','amountAtomic','receiptId','receivedAt']);
+export const NATIVE_IMPORT_BODY_KEYS=Object.freeze([...IMPORT_BODY_KEYS,'proofKind','rewardAsset']);
+export const importBodyKeys=body=>body?.proofKind==='native_value_transfer'?NATIVE_IMPORT_BODY_KEYS:IMPORT_BODY_KEYS;
 const sha = value => createHash('sha256').update(value).digest('hex');
 const root = fileURLToPath(new URL('../', import.meta.url));
 const fail = (code = 'disposition_hold', http = 409) => { throw Object.assign(new Error(code), {http, codeName: code}); };
@@ -93,11 +97,13 @@ export function hostSourceSha256(sdsRoot) {
 }
 const plainId = value => typeof value === 'string' && value.length > 0 && value.length <= 200 && !/[\u0000-\u001f\u007f/\\]/.test(value) && !value.includes('..');
 export function assertImportShape(body) {
-  if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k => !IMPORT_BODY_KEYS.includes(k)) || IMPORT_BODY_KEYS.some(k => body[k] === undefined)) fail('body_refused', 400);
+  const coin=body?.proofKind==='native_value_transfer',keys=importBodyKeys(body);
+  if(coin&&(!isNativeRewardAsset(body.rewardAsset)||body.token!==null||body.logIndex!==null))fail('body_refused',400);
+  if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(k => !keys.includes(k)) || keys.some(k => body[k] === undefined)) fail('body_refused', 400);
   if (!/^[0-9a-f]{64}$/.test(body.importContractSha256) || !/^[a-z][a-z0-9_-]{2,63}$/.test(body.tenant) ||
       !plainId(body.obligationId) || !plainId(body.reservationId) || !plainId(body.taskId) || !/^sha256:[0-9a-f]{64}$/.test(body.termsVersion) ||
-      typeof body.network !== 'string' || !/^eip155:[0-9]+$/.test(body.network) || !/^0x[0-9a-f]{40}$/.test(body.token) ||
-      !/^0x[0-9a-f]{64}$/.test(body.transactionHash) || !Number.isSafeInteger(body.logIndex) || body.logIndex < 0 || body.logIndex > 2147483647 ||
+      typeof body.network !== 'string' || !/^eip155:[0-9]+$/.test(body.network) || (!coin&&!/^0x[0-9a-f]{40}$/.test(body.token)) ||
+      !/^0x[0-9a-f]{64}$/.test(body.transactionHash) || (!coin&&(!Number.isSafeInteger(body.logIndex) || body.logIndex < 0 || body.logIndex > 2147483647)) ||
       typeof body.blockNumber !== 'string' || !/^(0|[1-9][0-9]{0,19})$/.test(body.blockNumber) ||
       typeof body.amountAtomic !== 'string' || !/^[1-9][0-9]{0,18}$/.test(body.amountAtomic) || !/^[0-9a-f]{64}$/.test(body.receiptId) ||
       typeof body.receivedAt !== 'string' || !Number.isFinite(Date.parse(body.receivedAt)) || new Date(body.receivedAt).toISOString() !== body.receivedAt) fail('body_refused', 400);
@@ -108,6 +114,7 @@ export function dispositionView(row) {
   if (row.import_state !== 'bound' || !row.kernel_paid || row.kernel_transfer !== row.transaction_hash ||
       !row.native_paid_observation || row.transfer_initiated || row.payout_state !== 'owed') fail();
   return {schema: 'pilot.root71.native-debt.disposition.v1', state: 'bound', disposition: row.disposition, importState: 'bound',
+    ...(row.proof_kind==='native_value_transfer'?{proofKind:row.proof_kind,rewardAsset:row.reward_asset}:{}),
     projection: 'native_paid', payable: false, newPayable: false, kernelPaid: true, kernelTransfer: row.kernel_transfer,
     nativePaidObservation: true, transferInitiated: false, payoutState: 'owed', obligationId: row.obligation_id,
     obligationFamily: row.obligation_family, tenant: row.tenant, reservationId: row.reservation_id, claimId: row.claim_id,
@@ -130,7 +137,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     if (!registryRoot) fail('discharge_consumer_unbound');
     if (configured.chain !== RAIL_NETWORK || configured.payments !== 'off' || configured.settlementToken !== RAIL_TOKEN) fail('binding_stale');
     return {source_sha256: installedSourceSha256(), host_source_sha256: hostSourceSha256(sdsRoot),
-      import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
+      import_contract_sha256: importContractSha256(coin), consumer_contract_sha256: consumerContractSha256(),
       tenant: configured.tenant, earned_schema: configured.earnedSchema, network: RAIL_NETWORK, token: RAIL_TOKEN,
       rpc_origin_sha256: rpcOriginSha256(configured.rpcUrl), rpc_endpoint_sha256: endpointHash(configured.rpcUrl),
       registry_sha256: registryDigest(), profile_sha256: profileSha256, profile_chain: configured.chain};
@@ -257,14 +264,15 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   async function importNativeDischarge(tx, body, createdAt) {
     assertImportShape(body);
     await assertBinding(tx);
-    if (body.importContractSha256 !== IMPORT_CONTRACT_SHA256 || body.tenant !== configured.tenant || body.network !== RAIL_NETWORK || body.token !== RAIL_TOKEN) fail();
+    const coin=body.proofKind==='native_value_transfer';
+    if (body.importContractSha256 !== importContractSha256(coin) || body.tenant !== configured.tenant || body.network !== RAIL_NETWORK || (!coin&&body.token !== RAIL_TOKEN)) fail();
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-projection', 0))");
     const {receipt, allocation} = readAuthoritativeDischarge(registryRoot, body);
     const stored = await storedDebt(tx, body.obligationId, {readAcceptedSource});
     matchDebt(stored, receipt);
     // The financial reservation is separate from the kernel claim id.
-    const taken = (await tx.query(`${ROW_SQL} WHERE (network=$1 AND token=$2 AND transaction_hash=$3 AND log_index=$4) OR reservation_id=$5`,
-      [body.network, body.token, body.transactionHash, body.logIndex, body.reservationId])).rows;
+    const taken = (await tx.query(`${ROW_SQL} WHERE (network=$1 AND transaction_hash=$3 AND ((token=$2 AND log_index=$4) OR ($6 AND proof_kind='native_value_transfer'))) OR reservation_id=$5`,
+      [body.network, body.token, body.transactionHash, body.logIndex, body.reservationId,coin])).rows;
     if (taken.some(row => row.obligation_id !== body.obligationId)) fail(taken.some(row => row.transaction_hash === body.transactionHash && row.log_index === body.logIndex) ? 'transfer_already_allocated' : 'reservation_already_allocated');
     const existing = (await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0];
     const receiptSha = digest(receipt), requestSha = digest(body);
@@ -282,11 +290,12 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       verdict_id: stored.verdictId, artifact_digest_sha256: stored.artifactDigestSha256, network: body.network, token: body.token,
       recipient: observed.recipient, transaction_hash: body.transactionHash, log_index: body.logIndex, block_number: body.blockNumber,
       block_hash: observed.blockHash, block_timestamp: observed.blockTimestamp, amount_atomic: body.amountAtomic, receipt_id: body.receiptId,
-      received_at: body.receivedAt, import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
+      received_at: body.receivedAt, import_contract_sha256: importContractSha256(coin), consumer_contract_sha256: consumerContractSha256(),
       authority_receipt_sha256: receiptSha, request_sha256: requestSha, import_state: 'bound', disposition: 'external_discharge_allocated',
       kernel_paid: true, kernel_transfer: body.transactionHash, native_paid_observation: true, transfer_initiated: false,
       payout_state: 'owed', observed_source: observed.source,
       created_at: (await tx.query('SELECT clock_timestamp()::text AS stamp')).rows[0].stamp};
+    if(coin)Object.assign(row,{proof_kind:'native_value_transfer',reward_asset:body.rewardAsset});
     const fields = Object.keys(row);
     await tx.query(`INSERT INTO hosted_wallet_market.native_debt_dispositions (${fields.join(',')}) VALUES (${fields.map((_,i) => '$'+(i+1)).join(',')})`, Object.values(row));
     return dispositionView((await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0]);

@@ -57,7 +57,9 @@ export type ExternalDischargeRecord = {
     query: ExternalDischargeQuery;
     state: 'not_observed' | 'pending' | 'verified_paid';
     transactionHash?: string;
-    logIndex?: number;
+    logIndex?: number | null;
+    proofKind?: "native_value_transfer";
+    rewardAsset?: unknown;
     receiptId?: string;
 };
 /** Exact canonical222310/223500 receiving invariants: accepted artifact/terms,

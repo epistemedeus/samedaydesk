@@ -54,7 +54,9 @@ export type Fulfillment = Handoff & {
     state: "not_observed" | "pending" | "verified_paid" | "failed" | "unknown";
     verifierVersion: string;
     transactionHash?: string;
-    logIndex?: number;
+    logIndex?: number | null;
+    proofKind?: "native_value_transfer";
+    rewardAsset?: unknown;
     receiptId?: string;
 };
 export type ClarificationEntry = {
@@ -127,7 +129,9 @@ export type ReviewView = {
         state: Fulfillment["state"] | "none";
         paid: boolean;
         transactionHash?: string;
-        logIndex?: number;
+        logIndex?: number | null;
+        proofKind?: "native_value_transfer";
+        rewardAsset?: unknown;
         receiptId?: string;
     };
     handoff: Handoff | null;

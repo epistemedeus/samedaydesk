@@ -126,6 +126,7 @@ export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_
   await client.query(sql);
   await client.query(readFileSync(join(here, '../schema/007_machine_market.sql'), 'utf8'));
   await client.query(readFileSync(join(here, '../schema/008_source_binding_succession.sql'), 'utf8'));
+  await client.query(readFileSync(join(here, '../schema/009_native_coin_discharge.sql'), 'utf8'));
 }
 
 async function legacyTriggerPresent(client, earnedSchema) {
@@ -192,6 +193,8 @@ async function keptRowCounts(client, earnedSchema) {
  */
 export async function rollbackAdapter(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
+  const native=await client.query(`SELECT count(*)::int AS count FROM ${earnedSchema}.opportunity_obligations o JOIN ${earnedSchema}.opportunity_rounds r ON r.id=o.round_id WHERE r.terms_document->'rewardAsset' IS NOT NULL`);
+  if(native.rows[0].count>0)throw Object.assign(new Error('native_reward_downgrade_refused'),{codeName:'native_reward_downgrade_refused'});
   const before = await keptRowCounts(client, earnedSchema);
   const durable = await client.query(
     `SELECT to_regclass('hosted_wallet_market.proofs') AS proofs,

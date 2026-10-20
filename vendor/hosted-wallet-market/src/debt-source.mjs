@@ -1,3 +1,4 @@
+import {isNativeRewardAsset} from './reward-asset.mjs';
 // Read the owning ledgers in place. Opportunity obligations are never cloned
 // into earned_work_obligations. Cancellation/retirement of a task cannot erase
 // an already accepted obligation.
@@ -49,13 +50,16 @@ export async function storedDebt(tx, obligationId, {readAcceptedSource} = {}) {
       c.status !== 'owed' || o.payout_state !== 'owed' || o.paid !== false || o.transfer !== null || o.settled !== false || o.revenue !== false ||
       o.settlement_key !== c.settlement_key || o.terms_version !== c.terms_version || c.terms_version !== r.terms_version || s.terms_version !== r.terms_version ||
       opportunity.rows[0].obligation_amount !== opportunity.rows[0].claim_amount || opportunity.rows[0].claim_amount !== opportunity.rows[0].offer_amount ||
-      o.asset !== 'USDC' || o.asset !== r.asset || o.network !== r.network || o.chain_id !== 8453 || r.chain_id !== 8453 || r.atomic_scale !== 6 ||
+      !(isNativeRewardAsset(r.terms_document?.rewardAsset)?o.asset==='ETH'&&r.atomic_scale===18:r.terms_document?.rewardAsset===undefined&&o.asset==='USDC'&&r.atomic_scale===6) || o.asset !== r.asset || o.network !== r.network || o.chain_id !== 8453 || r.chain_id !== 8453 ||
       !['base', 'eip155:8453'].includes(o.network)) fail();
   return {family: 'opportunity', obligationId, taskId, claimId: c.id, submissionId: s.id, verdictId: v.id,
+    ...(r.terms_document?.rewardAsset?{rewardAsset:r.terms_document.rewardAsset,proofKind:'native_value_transfer'}:{}),
     roundId: r.id, termsVersion: o.terms_version, amountAtomic: opportunity.rows[0].obligation_amount, network: 'eip155:8453',
     recipient: p.payout_destination, artifactDigestSha256: s.artifact_digest_sha256, createdAt: o.created_at, payoutState: o.payout_state};
 }
 export function matchDebt(source, receipt) {
+  if(source.proofKind==='native_value_transfer'){if(receipt.proofKind!==source.proofKind||!isNativeRewardAsset(receipt.rewardAsset))fail();}
+  else if(receipt.proofKind!==undefined||receipt.token!=='0x833589fcd6edb6e08f4c7c32d4f71b54bda02913')fail();
   for (const key of ['obligationId', 'taskId', 'claimId', 'submissionId', 'verdictId', 'termsVersion', 'amountAtomic', 'network', 'artifactDigestSha256']) {
     if (source[key] !== receipt[key]) fail();
   }

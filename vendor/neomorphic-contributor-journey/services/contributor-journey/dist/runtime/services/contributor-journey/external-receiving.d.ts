@@ -73,12 +73,12 @@ declare const packetPin: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -103,12 +103,12 @@ declare const packetPin: z.ZodObject<{
 }, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -201,12 +201,12 @@ export declare const externalSelectionSchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -233,12 +233,12 @@ export declare const externalSelectionSchema: z.ZodObject<{
 }, {
     termsVersion: string;
     taskId: string;
+    schema: "neomorphic.root-external-selection.v1";
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-selection.v1";
     requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
@@ -408,11 +408,11 @@ export declare const externalDeliverySchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -444,11 +444,11 @@ export declare const externalDeliverySchema: z.ZodObject<{
 }, {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -501,11 +501,11 @@ export declare function inspectExternalDelivery(raw: unknown, bound: {
 }): {
     termsVersion: string;
     credentialRef: string;
+    schema: "neomorphic.root-external-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-external-delivery.v1";
     claimId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";

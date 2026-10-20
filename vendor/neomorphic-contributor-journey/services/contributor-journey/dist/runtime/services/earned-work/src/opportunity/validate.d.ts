@@ -207,8 +207,30 @@ export declare const sourceBodySchema: z.ZodObject<{
         reconstructed: false;
     };
 }>;
-export declare const createRoundBodySchema: z.ZodObject<{
+export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     roundKey: z.ZodString;
+    rewardAsset: z.ZodOptional<z.ZodObject<{
+        schema: z.ZodLiteral<"pilot.reward-asset.v1">;
+        kind: z.ZodLiteral<"native">;
+        chainId: z.ZodLiteral<8453>;
+        symbol: z.ZodLiteral<"ETH">;
+        decimals: z.ZodLiteral<18>;
+        denomination: z.ZodLiteral<"wei">;
+    }, "strict", z.ZodTypeAny, {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    }, {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    }>>;
     receivingPolicy: z.ZodOptional<z.ZodLiteral<"root_mediated_external_report_v1">>;
     provenance: z.ZodEnum<["test", "fixture", "production"]>;
     productionAdmission: z.ZodBoolean;
@@ -295,10 +317,10 @@ export declare const createRoundBodySchema: z.ZodObject<{
     network: string;
     claimTtlSeconds: number;
     roundKey: string;
+    chainId: number;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;
-    chainId: number;
     submissionDeadline: string;
     reviewWithinDays: number;
     maxClarifications: number;
@@ -326,6 +348,14 @@ export declare const createRoundBodySchema: z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    rewardAsset?: {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    } | undefined;
     receivingPolicy?: "root_mediated_external_report_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
@@ -335,10 +365,10 @@ export declare const createRoundBodySchema: z.ZodObject<{
     network: string;
     claimTtlSeconds: number;
     roundKey: string;
+    chainId: number;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;
-    chainId: number;
     submissionDeadline: string;
     reviewWithinDays: number;
     maxClarifications: number;
@@ -366,6 +396,110 @@ export declare const createRoundBodySchema: z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    rewardAsset?: {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    } | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    maxEvidenceBytes?: number | undefined;
+    expectedTermsVersion?: string | undefined;
+}>, {
+    provenance: "test" | "fixture" | "production";
+    asset: string;
+    network: string;
+    claimTtlSeconds: number;
+    roundKey: string;
+    chainId: number;
+    productionAdmission: boolean;
+    principalCapAtomic: number;
+    atomicScale: number;
+    submissionDeadline: string;
+    reviewWithinDays: number;
+    maxClarifications: number;
+    transferFeeCap: {
+        note: string;
+        asset: string;
+        amountAtomic: string;
+    };
+    offers: {
+        title: string;
+        summary: string;
+        offerKey: string;
+        slotCount: number;
+        rewardAtomic: number;
+        maxEffortSeconds: number;
+        acceptance: string;
+        evidenceKind: "discovery_trace" | "workflow_witness";
+        publicClaimable: boolean;
+        rank: number;
+        ownerReservedSlots?: number | undefined;
+    }[];
+    alternatives: {
+        title: string;
+        summary: string;
+        rank: number;
+        alternativeKey: string;
+    }[];
+    rewardAsset?: {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    } | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    maxEvidenceBytes?: number | undefined;
+    expectedTermsVersion?: string | undefined;
+}, {
+    provenance: "test" | "fixture" | "production";
+    asset: string;
+    network: string;
+    claimTtlSeconds: number;
+    roundKey: string;
+    chainId: number;
+    productionAdmission: boolean;
+    principalCapAtomic: number;
+    atomicScale: number;
+    submissionDeadline: string;
+    reviewWithinDays: number;
+    maxClarifications: number;
+    transferFeeCap: {
+        note: string;
+        asset: string;
+        amountAtomic: string;
+    };
+    offers: {
+        title: string;
+        summary: string;
+        offerKey: string;
+        slotCount: number;
+        rewardAtomic: number;
+        maxEffortSeconds: number;
+        acceptance: string;
+        evidenceKind: "discovery_trace" | "workflow_witness";
+        publicClaimable: boolean;
+        rank: number;
+        ownerReservedSlots?: number | undefined;
+    }[];
+    alternatives: {
+        title: string;
+        summary: string;
+        rank: number;
+        alternativeKey: string;
+    }[];
+    rewardAsset?: {
+        symbol: "ETH";
+        schema: "pilot.reward-asset.v1";
+        kind: "native";
+        chainId: 8453;
+        decimals: 18;
+        denomination: "wei";
+    } | undefined;
     receivingPolicy?: "root_mediated_external_report_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;

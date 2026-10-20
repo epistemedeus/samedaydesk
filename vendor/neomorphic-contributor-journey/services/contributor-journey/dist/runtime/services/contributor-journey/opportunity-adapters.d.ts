@@ -81,9 +81,17 @@ export declare function createOpportunityJourneyAdapters(options: {
                 noArtifactFetch: boolean;
             };
             receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+            roundKey: string;
+            rewardAsset?: {
+                schema: "pilot.reward-asset.v1";
+                kind: "native";
+                chainId: 8453;
+                symbol: "ETH";
+                decimals: 18;
+                denomination: "wei";
+            } | undefined;
             schema: string;
             schemaVersion: number;
-            roundKey: string;
         };
         owner: string | null;
         principal: ContributorPrincipal;

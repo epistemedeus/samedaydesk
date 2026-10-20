@@ -1455,6 +1455,7 @@ function toTermsInput(body) {
     return {
         roundKey: body.roundKey,
         ...(body.receivingPolicy ? { receivingPolicy: body.receivingPolicy } : {}),
+        ...(body.rewardAsset ? { rewardAsset: body.rewardAsset } : {}),
         principalCapAtomic: body.principalCapAtomic,
         atomicScale: body.atomicScale,
         asset: body.asset,
