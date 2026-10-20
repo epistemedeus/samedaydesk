@@ -137,7 +137,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     if (!registryRoot) fail('discharge_consumer_unbound');
     if (configured.chain !== RAIL_NETWORK || configured.payments !== 'off' || configured.settlementToken !== RAIL_TOKEN) fail('binding_stale');
     return {source_sha256: installedSourceSha256(), host_source_sha256: hostSourceSha256(sdsRoot),
-      import_contract_sha256: importContractSha256(coin), consumer_contract_sha256: consumerContractSha256(),
+      import_contract_sha256: IMPORT_CONTRACT_SHA256, consumer_contract_sha256: consumerContractSha256(),
       tenant: configured.tenant, earned_schema: configured.earnedSchema, network: RAIL_NETWORK, token: RAIL_TOKEN,
       rpc_origin_sha256: rpcOriginSha256(configured.rpcUrl), rpc_endpoint_sha256: endpointHash(configured.rpcUrl),
       registry_sha256: registryDigest(), profile_sha256: profileSha256, profile_chain: configured.chain};

@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "a84bcc625a0e79e0d594449284392c1ded064d4a5170b33fa8c867dc14026148",
+  "installedSourceSha256": "35d4dd2330afadc342167d8f11bbe7298c80b0fa1e5c9b5c7374fe74296afb64",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
