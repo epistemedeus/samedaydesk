@@ -171,6 +171,7 @@ export function createEnvelope(fields) {
   if (fields.rawExcerpt != null) envelope.rawExcerpt = fields.rawExcerpt;
   if (fields.paidActivity != null) envelope.paidActivity = cloneRaw(fields.paidActivity);
   if (fields.workload != null) envelope.workload = cloneRaw(fields.workload);
+  if (fields.sourceLifecycle != null) envelope.sourceLifecycle = cloneRaw(fields.sourceLifecycle);
   return freezeDeep(envelope);
 }
 
@@ -218,6 +219,95 @@ export function classifyProviderTimestamp(raw, fetchedAt, nowMs) {
   if (parsed - referenceMs > FUTURE_SKEW_MS) return { timestamp, state: "invalid" };
   if (referenceMs - parsed > STALE_PROVIDER_MS) return { timestamp, state: "stale" };
   return { timestamp, state: "ok" };
+}
+
+const DATE_ONLY_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+const CAPTURE_INSTANT_RE = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+
+/**
+ * A provider date with no hour and no time zone. This does not invent an instant.
+ */
+export function declareDateOnly(date) {
+  if (typeof date !== "string" || !DATE_ONLY_RE.test(date)) {
+    throw new TypeError("date_only_invalid");
+  }
+  const match = DATE_ONLY_RE.exec(date);
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  if (probe.getUTCFullYear() !== year || probe.getUTCMonth() !== month - 1 || probe.getUTCDate() !== day) {
+    throw new TypeError("date_only_invalid");
+  }
+  return Object.freeze({
+    precision: "date",
+    date,
+    time: null,
+    timeZone: null,
+    officialInstant: null,
+  });
+}
+
+/**
+ * SDS admission clock for a date-only announcement.
+ * admitBefore is the UTC start of that calendar date. It is our collection
+ * policy clock, and the announcement still has no official shutdown instant.
+ */
+export function collectionPolicyForDateOnly(announcement) {
+  if (!announcement || announcement.precision !== "date" || announcement.time !== null || announcement.timeZone !== null || announcement.officialInstant !== null) {
+    throw new TypeError("collection_policy_requires_date_only");
+  }
+  declareDateOnly(announcement.date);
+  return Object.freeze({
+    role: "sds_collection_policy",
+    timeBasis: "utc_start_of_announced_calendar_date",
+    admitBefore: `${announcement.date}T00:00:00.000Z`,
+    officialShutdown: null,
+    measuredShutdown: null,
+    note: "SDS collection clock: UTC start of the announced calendar date. Official shutdown time is unknown. Measured shutdown time is unknown.",
+  });
+}
+
+export function parseCaptureInstant(value) {
+  if (typeof value !== "string" || !CAPTURE_INSTANT_RE.test(value)) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function evaluateDeclaredRetirement({ declaration, fetchedAt, nowMs, observedFailure } = {}) {
+  if (!declaration || declaration.kind !== "provider_declared_retirement" || !declaration.collectionPolicy) {
+    throw new TypeError("declared_retirement_required");
+  }
+  const policyMs = parseCaptureInstant(declaration.collectionPolicy.admitBefore);
+  if (policyMs == null) throw new TypeError("collection_policy_instant_invalid");
+  const captureMs = parseCaptureInstant(fetchedAt);
+  const capturePlacement = captureMs == null
+    ? "unplaced"
+    : (captureMs < policyMs ? "before_collection_policy" : "at_or_after_collection_policy");
+  const nowPlaced = typeof nowMs === "number" && Number.isFinite(nowMs);
+  const currentAdmission = nowPlaced ? (nowMs < policyMs ? "open" : "closed") : "not_evaluated";
+  const policyAdmitsCapture = capturePlacement === "before_collection_policy"
+    || (capturePlacement === "unplaced" && currentAdmission !== "closed");
+  return freezeDeep({
+    sourceId: declaration.sourceId,
+    kind: "provider_declared_retirement",
+    announcement: declaration.announcement,
+    collectionPolicy: declaration.collectionPolicy,
+    capturePlacement,
+    currentAdmission,
+    policyAdmitsCapture,
+    observedFailure: normalizeObservedFailure(observedFailure),
+    announcementIsOutage: false,
+    measuredShutdown: null,
+    doesNotEstablish: Array.isArray(declaration.doesNotEstablish) ? declaration.doesNotEstablish.slice() : [],
+  });
+}
+
+function normalizeObservedFailure(value) {
+  if (!isPlainObject(value)) return null;
+  const availability = value.availability === "unavailable" ? "unavailable" : "error";
+  const code = typeof value.code === "string" && value.code ? value.code : "provider_failure";
+  return { code, availability };
 }
 
 export function boundRawExcerpt(value, maxBytes = MAX_RAW_EXCERPT_BYTES) {

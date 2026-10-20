@@ -1,4 +1,5 @@
 import {boundedReview} from './bounded-review.mjs';
+import {createResponseCompletion, deliverJsonResponse, WIRE_HEADER, WIRE_VERSION} from './response-completion.mjs';
 import {readFileSync} from 'node:fs';
 import {scryptSync, randomBytes} from 'node:crypto';
 import https from 'node:https';
@@ -23,9 +24,7 @@ import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
 
 export const PREFIX = '/api/neomorphic-contributor-journey';
-export const WIRE_VERSION = 'c0-1';
-export const WIRE_HEADER = 'x-ae-wire-version';
-const SERVER_CLASS_HEADER = 'x-ae-server-class';
+export {WIRE_HEADER, WIRE_VERSION};
 const TASK_ID = /^task_[A-Za-z0-9_-]{16}$/;
 const RESERVATION_ID = /^rsv_[A-Za-z0-9_-]{16}$/;
 const IDEMPOTENCY = /^[A-Za-z0-9][A-Za-z0-9_.:#-]{7,160}$/;
@@ -196,19 +195,73 @@ export async function openHostedMarket(options) {
       client.release();
     }
   }
-  // Cancellation destroys only this acquired read connection; no SQL cancel
-  // signal or operation on another owner's process is used.
-  async function withReadClient(fn,{signal}={}) {
-    signal?.throwIfAborted();const client=await pool.connect();let released=false;
-    const abort=()=>{if(!released){released=true;client.release(true);}};
+  function readCancelled() {
+    return Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
+  }
+  // Cancellation destroys only this acquired read connection. It does not send
+  // a SQL cancel or signal another process. An abort before the pool returns
+  // refuses the read and releases a client that arrives later. The one review
+  // slot stays occupied until this promise settles.
+  async function withReadClient(fn, {signal} = {}) {
+    if (signal?.aborted) throw readCancelled();
+    let client = null;
+    let released = false;
+    const destroyAcquired = () => {
+      if (!client || released) return;
+      released = true;
+      client.release(true);
+    };
+    if (signal) signal.addEventListener('abort', destroyAcquired, {once: true});
     try {
-      signal?.addEventListener('abort',abort,{once:true});signal?.throwIfAborted();
-      await client.query('BEGIN READ ONLY');await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
+      client = await new Promise((resolve, reject) => {
+        let settled = false;
+        const fail = error => {
+          if (settled) return;
+          settled = true;
+          reject(error);
+        };
+        const succeed = connected => {
+          if (settled) {
+            connected.release(true);
+            return;
+          }
+          settled = true;
+          resolve(connected);
+        };
+        const cancelWait = () => fail(readCancelled());
+        if (signal?.aborted) return cancelWait();
+        if (signal) signal.addEventListener('abort', cancelWait, {once: true});
+        pool.connect().then(connected => {
+          signal?.removeEventListener('abort', cancelWait);
+          succeed(connected);
+        }, error => {
+          signal?.removeEventListener('abort', cancelWait);
+          fail(error);
+        });
+      });
+      if (signal?.aborted) throw readCancelled();
+      await client.query('BEGIN READ ONLY');
+      await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
       await client.query("SET LOCAL statement_timeout='2500ms'");
-      const q=qualify(client),value=await fn({query:(...args)=>{signal?.throwIfAborted();return q.query(...args);}});
-      signal?.throwIfAborted();await client.query('COMMIT');return value;
-    } catch(error){if(!released)await client.query('ROLLBACK').catch(()=>{});throw error;}
-    finally{signal?.removeEventListener('abort',abort);if(!released)client.release();}
+      const qualified = qualify(client);
+      const value = await fn({
+        query(...args) {
+          if (signal?.aborted) throw readCancelled();
+          return qualified.query(...args);
+        },
+      });
+      if (signal?.aborted) throw readCancelled();
+      await client.query('COMMIT');
+      if (signal?.aborted) throw readCancelled();
+      return value;
+    } catch (error) {
+      if (client && !released) await client.query('ROLLBACK').catch(() => {});
+      if (signal?.aborted || error?.codeName === 'read_cancelled') throw readCancelled();
+      throw error;
+    } finally {
+      signal?.removeEventListener('abort', destroyAcquired);
+      if (client && !released) client.release();
+    }
   }
   const fulfillmentReceiving=boundedReview(),reviewReadReceiving=boundedReview({timeoutMs:10000}),authorityReceiving=boundedReview({timeoutMs:5000});
   const readAuthority=fn=>authorityReceiving.read(signal=>withReadClient(fn,{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'installed_authority_unavailable');});
@@ -257,20 +310,10 @@ export async function openHostedMarket(options) {
     throw error;
   }
 
-  const send = (res, status, body, extra = {}) => {
-    if (res.destroyed || res.writableEnded) return;
-    const payload = Buffer.from(JSON.stringify(body));
-    res.writeHead(status, {
-      'content-type': 'application/json; charset=utf-8',
-      'content-length': String(payload.length),
-      connection: 'close',
-      'cache-control': 'no-store',
-      [WIRE_HEADER]: WIRE_VERSION,
-      [SERVER_CLASS_HEADER]: 'live',
-      ...extra,
-    });
-    res.end(payload);
-  };
+  // Armed only for an explicit 1..32 budget. Unset stays byte-identical to the
+  // historical envelope and does not observe the request.
+  const completion = createResponseCompletion(options.responseCompletionLimit ?? process.env.HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT);
+  const send = (res, status, body, extra = {}) => deliverJsonResponse(res, status, body, extra, completion);
 
   const readJson = req => new Promise((resolve, reject) => {
     const chunks = [];
@@ -972,20 +1015,70 @@ export async function openHostedMarket(options) {
     finish(res, produced);
   }
 
+  // Request 'close' and 'end' also fire when a GET body has been read. That
+  // completion is not a client disconnect. Only aborted and the socket close are.
+  function requestReadCancellation(req) {
+    const controller = new AbortController();
+    const abort = () => {
+      if (!controller.signal.aborted) controller.abort(readCancelled());
+    };
+    const socket = req?.socket ?? null;
+    const armed = [];
+    const arm = (emitter, event) => {
+      if (!emitter || typeof emitter.on !== 'function') return;
+      emitter.on(event, abort);
+      armed.push([emitter, event]);
+    };
+    if (req?.aborted === true || socket?.destroyed === true) abort();
+    else {
+      arm(req, 'aborted');
+      arm(socket, 'close');
+    }
+    return {
+      signal: controller.signal,
+      stop() {
+        for (const [emitter, event] of armed) emitter.off?.(event, abort);
+      },
+    };
+  }
+
+  function responseWritable(res) {
+    if (!res || res.destroyed === true || res.writableEnded === true || res.closed === true || res.headersSent === true) return false;
+    if (res.writable === false) return false;
+    return true;
+  }
+
   async function reviewRead(req, res, url) {
     const taskId = url.searchParams.get('taskId') || '';
     const reservationId = url.searchParams.get('reservationId') || '';
     if (taskId && reservationId) {
-      const value = await reviewReadReceiving.read(signal=>withReadClient(client => readEntitledOutcome(client, req, {
-        taskId,
-        reservationId,
-        readAcceptedSource: options.readAcceptedSource,
-        fulfillmentReceiving,nowMs,
-        registryRoot: dischargeRegistry,
-        rpcUrl: options.rpcUrl,
-        assertBound: bound => debtConsumer.assertBinding(bound),
-      }),{signal}),(reason,error)=>{if(error)throw error;throw httpError(503,'review_receiving_unavailable');});
-      return send(res, 200, {ok: true, value});
+      const cancellation = requestReadCancellation(req);
+      try {
+        const value = await reviewReadReceiving.read(signal => withReadClient(client => readEntitledOutcome(client, req, {
+          taskId,
+          reservationId,
+          readAcceptedSource: options.readAcceptedSource,
+          fulfillmentReceiving, nowMs,
+          registryRoot: dischargeRegistry,
+          rpcUrl: options.rpcUrl,
+          assertBound: bound => debtConsumer.assertBinding(bound),
+        }), {signal}), (reason, error) => {
+          const cancelled = cancellation.signal.aborted || reason === 'cancelled' || error?.codeName === 'read_cancelled';
+          if (cancelled) {
+            if (!responseWritable(res)) return undefined;
+            throw httpError(503, 'review_receiving_unavailable');
+          }
+          if (error) throw error;
+          throw httpError(503, 'review_receiving_unavailable');
+        }, cancellation.signal);
+        // Stop before the writable check so the response's own connection
+        // close cannot be observed as a client disconnect.
+        cancellation.stop();
+        if (cancellation.signal.aborted || !responseWritable(res)) return;
+        return send(res, 200, {ok: true, value});
+      } finally {
+        cancellation.stop();
+      }
     }
     const account = await withClient(client => accountFrom(client, req));
     const row = await withClient(client => reservationView(client, reservationId));

@@ -699,7 +699,7 @@ function currentCut(fetched, requestTime, ownedResources) {
 }
 
 function slimObservation(observation) {
-  return {
+  const slim = {
     sourceId: observation.sourceId,
     sourceKind: observation.sourceKind,
     upstreamUrl: observation.upstreamUrl,
@@ -722,6 +722,8 @@ function slimObservation(observation) {
     }) : [],
     measuredZero: false,
   };
+  if (observation.sourceLifecycle) slim.sourceLifecycle = observation.sourceLifecycle;
+  return slim;
 }
 
 export async function buildConvergence({
