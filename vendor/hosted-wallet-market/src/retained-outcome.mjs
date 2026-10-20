@@ -90,6 +90,27 @@ async function workLink(client, reservationId) {
   return rows.rows[0] || null;
 }
 
+// A freshly delivered v3 account claim need not have the later work/showcase
+// projection yet. Its original immutable claim and actual kernel binding own
+// contributor access; do not require another status/showcase call to create it.
+async function accountNativeLink(client, reservationId) {
+  const bindings = await linkSchema(client,'journey_account_kernel_bindings');
+  const links = bindings && await linkSchema(client,'journey_task_links');
+  if (!bindings || !links) return null;
+  const rows = await client.query(`SELECT j.task_id,b.account_id
+    FROM opportunity_claims c JOIN opportunity_rounds r ON r.id=c.round_id
+    JOIN opportunity_offers f ON f.id=c.offer_id AND f.round_id=r.id
+    JOIN ${bindings}.journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
+      AND b.kernel_scope='opportunity:' || r.id AND b.account_id=c.credential_ref
+    JOIN ${links}.journey_task_links j ON j.opportunity_round_id=r.id AND j.task_id=r.round_key || ':' || f.offer_key
+    WHERE c.id=$1 AND c.kind='owner_assigned'
+      AND r.terms_document->>'schema'='neomorphic.opportunity-round.terms.v3'
+      AND r.terms_document->>'receivingPolicy'='account_native_reward_v1'
+      AND j.requester_account_id=r.terms_document->'accountNative'->>'requesterAccountId'
+      AND j.requester_account_id<>b.account_id`,[reservationId]);
+  return rows.rows.length===1 ? rows.rows[0] : null;
+}
+
 async function authenticate(client, req, nowMs) {
   const cookie = presentedCookie(req);
   if (!cookie) fail(401, 'unauthenticated');
@@ -528,7 +549,7 @@ async function readEntitledOutcomeBody(client, req, {taskId, reservationId, read
     value.entitled.role = role;
     return value;
   }
-  const linked = await workLink(client, reservationId);
+  const linked = await workLink(client, reservationId) || await accountNativeLink(client,reservationId);
   const requestedRequesters = await taskRequesters(client, taskId);
   const storedRequesters = linked && linked.task_id !== taskId ? await taskRequesters(client, linked.task_id) : requestedRequesters;
   if (linked && linked.task_id !== taskId) {

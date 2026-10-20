@@ -41,7 +41,7 @@ for(const ref of predecessorRefs){
     if(!received.some(saved=>isDeepStrictEqual(saved,candidate)))received.push(candidate);
 }
 const next={...pin.files};
-const hostOwned=new Set(['server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
+const hostOwned=new Set(['server/app.js','server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
   'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
 const neoPrefix='vendor/neomorphic-contributor-journey/';
