@@ -86,11 +86,13 @@ const alternativeSchema = z
 })
     .strict();
 export const nativeRewardAssetSchema = z.object({ schema: z.literal("pilot.reward-asset.v1"), kind: z.literal("native"), chainId: z.literal(8453), symbol: z.literal("ETH"), decimals: z.literal(18), denomination: z.literal("wei") }).strict();
+export const accountNativeSchema = z.object({ schema: z.literal("neomorphic.account-native-profile.v1"), requesterAccountId: z.string().regex(/^acc_[A-Za-z0-9_-]{16}$/), payoutDestination: z.string().regex(/^0x[a-f0-9]{40}$/) }).strict();
 export const createRoundBodySchema = z
     .object({
     roundKey: keySchema,
     rewardAsset: nativeRewardAssetSchema.optional(),
-    receivingPolicy: z.literal("root_mediated_external_report_v1").optional(),
+    receivingPolicy: z.enum(["root_mediated_external_report_v1", "account_native_reward_v1"]).optional(),
+    accountNative: accountNativeSchema.optional(),
     provenance: z.enum(PROVENANCES),
     productionAdmission: z.boolean(),
     principalCapAtomic: atomicSchema,
@@ -115,8 +117,15 @@ export const createRoundBodySchema = z
     expectedTermsVersion: z.string().regex(/^sha256:[0-9a-f]{64}$/).optional(),
 })
     .strict().superRefine((r, ctx) => {
-    if (r.rewardAsset && (r.asset !== "ETH" || r.atomicScale !== 18 || r.chainId !== 8453 || r.network !== "base" || r.receivingPolicy !== "root_mediated_external_report_v1" || r.transferFeeCap.asset !== "ETH"))
+    if (r.rewardAsset && (r.asset !== "ETH" || r.atomicScale !== 18 || r.chainId !== 8453 || r.network !== "base" || !["root_mediated_external_report_v1", "account_native_reward_v1"].includes(r.receivingPolicy ?? "") || r.transferFeeCap.asset !== "ETH"))
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: "unsupported_reward_asset" });
+    if (r.receivingPolicy === "account_native_reward_v1") {
+        const a = r.accountNative, o = r.offers[0];
+        if (!r.rewardAsset || !a || a.payoutDestination === '0x' + '0'.repeat(40) || r.offers.length !== 1 || r.alternatives.length !== 0 || o.slotCount !== 1 || o.ownerReservedSlots !== 1 || o.publicClaimable || o.rewardAtomic <= 0 || o.rewardAtomic !== r.principalCapAtomic || o.evidenceKind !== "workflow_witness")
+            ctx.addIssue({ code: z.ZodIssueCode.custom, message: "account_native_profile_required" });
+    }
+    else if (r.accountNative)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "account_native_profile_required" });
     if (!r.rewardAsset && r.asset === "ETH")
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: "explicit_native_reward_asset_required" });
 });

@@ -1,3 +1,4 @@
+import type { Handoff, Fulfillment } from './review/types.js';
 import type { BaseReceiptObserver, PaidQualification, SettlementBinding, WorkBinding, WorkEvidence, WorkIdentity } from './showcase/types.js';
 /** Selected by the receiving owner, never by a browser, a paid counter or a receipt upload.
  * The reader must read the existing task family's exclusive acceptance/allocation
@@ -38,6 +39,8 @@ export type CanonicalReceiving = {
     observer: BaseReceiptObserver;
     /** Existing installed debt consumer, without an account-owned showcase link. */
     readExternalDischarge?(query: ExternalDischargeQuery): Promise<ExternalDischargeRecord>;
+    /** Existing bounded exclusive-discharge reader for an account-native IOU. */
+    reviewFulfillment?(handoff: Handoff): Promise<Fulfillment>;
     allowSynthetic?: boolean;
 };
 export type ExternalDischargeQuery = {

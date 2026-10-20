@@ -102,4 +102,15 @@ A lost successor enrollment response uses the same successor operation ID. Repla
 
 The entitled review is selected by the retained **claim** ID. The separate financial reservation remains in the discharge and its exclusive allocation. The read checks the complete stored-debt/receipt identity before claiming current fulfillment. Historical SQL `native_paid` survives a canonical disagreement, while the entitled read returns `stale_evidence`. It does not turn disagreement into a payable obligation. The payment notice remains Sent-verified. Sent-verified is not proof the recipient received it, and this upgrade sends no notice.
 
+For a v2 native reward, receive this actual requester GET as well as the import
+and administrative disposition. The retained reader must carry
+`proofKind:native_value_transfer`, the exact reward asset, and `logIndex:null`
+through registry verification, chain verification, disposition and fulfillment.
+Coercing null to ERC20 log zero or omitting the proof kind incorrectly returns
+`stale_evidence` for a valid native discharge. Pilot's
+`tools/ops/funded-continuation/native-reward.test.mjs` exercises the actual CLI
+and requester route, changed value/calldata/destination/finality refusal, and
+recovery without another transfer. Keep legacy ERC20 output unchanged and run
+the existing read-lifetime/cancellation/response tests after a reader change.
+
 Disposable fixture teardown is separate and is never a production rollback command.

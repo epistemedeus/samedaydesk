@@ -417,7 +417,17 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   objectOf(reservation, 'reservation_required');
   const coin=isNativeCoinIntent(intent);
   same(intent.schema, coin?'pilot.native-obligation.intent.v2':NATIVE_INTENT_SCHEMA, 'schema_mismatch');
-  same(source.schema, coin?'pilot.native-obligation.source.v2':NATIVE_SOURCE_SCHEMA, 'schema_mismatch');
+  const accountNative=source.schema==='pilot.native-obligation.source.v3';
+  same(source.schema, coin?(accountNative?'pilot.native-obligation.source.v3':'pilot.native-obligation.source.v2'):NATIVE_SOURCE_SCHEMA, 'schema_mismatch');
+  if(accountNative){
+    same(source.receivingPolicy,'account_native_reward_v1','source_profile_refused');
+    const a=source.account;objectOf(a,'account_native_holder_required');
+    same(a.schema,'neomorphic.account-native-profile.v1','source_profile_refused');
+    assert(/^acc_[A-Za-z0-9_-]{16}$/.test(a.holderAccountId??'')&&a.holderAccountId!==a.requesterAccountId,'account_native_holder_required');
+    same(a.requesterAccountId,intent.requesterId,'requester_mismatch');
+    same(normalizeAddress(a.payoutDestination),normalizeAddress(intent.recipient),'recipient_mismatch');
+    same(source.obligation?.payoutDestination,a.payoutDestination,'recipient_mismatch');
+  } else assert(source.account===undefined,'source_profile_refused');
   same(destination.schema, coin?'pilot.native-obligation.destination.v2':NATIVE_DESTINATION_SCHEMA, 'schema_mismatch');
   same(reservation.schema, coin?'pilot.native-obligation.reservation.v2':NATIVE_RESERVATION_SCHEMA, 'schema_mismatch');
   same(intent.customerRevenue, false, 'customer_revenue_forbidden');
@@ -499,7 +509,7 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   same(integer(intent.otherReservedPrincipalAtomic), other, 'reserve_mismatch');
   nativeId(intent.roundId, 'round_required');
   if(source.receivingPolicy!==undefined){
-    same(source.receivingPolicy,'root_mediated_external_report_v1','source_profile_refused');
+    same(source.receivingPolicy,accountNative?'account_native_reward_v1':'root_mediated_external_report_v1','source_profile_refused');
     nativeId(source.roundId,'round_required');
   }
   if(source.roundId!==undefined)same(nativeId(source.roundId,'round_required'),intent.roundId,'cross_round_allocation');

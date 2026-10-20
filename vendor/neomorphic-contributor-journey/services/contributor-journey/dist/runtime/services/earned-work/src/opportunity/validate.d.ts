@@ -229,6 +229,19 @@ export declare const nativeRewardAssetSchema: z.ZodObject<{
     decimals: 18;
     denomination: "wei";
 }>;
+export declare const accountNativeSchema: z.ZodObject<{
+    schema: z.ZodLiteral<"neomorphic.account-native-profile.v1">;
+    requesterAccountId: z.ZodString;
+    payoutDestination: z.ZodString;
+}, "strict", z.ZodTypeAny, {
+    payoutDestination: string;
+    schema: "neomorphic.account-native-profile.v1";
+    requesterAccountId: string;
+}, {
+    payoutDestination: string;
+    schema: "neomorphic.account-native-profile.v1";
+    requesterAccountId: string;
+}>;
 export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     roundKey: z.ZodString;
     rewardAsset: z.ZodOptional<z.ZodObject<{
@@ -253,7 +266,20 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         decimals: 18;
         denomination: "wei";
     }>>;
-    receivingPolicy: z.ZodOptional<z.ZodLiteral<"root_mediated_external_report_v1">>;
+    receivingPolicy: z.ZodOptional<z.ZodEnum<["root_mediated_external_report_v1", "account_native_reward_v1"]>>;
+    accountNative: z.ZodOptional<z.ZodObject<{
+        schema: z.ZodLiteral<"neomorphic.account-native-profile.v1">;
+        requesterAccountId: z.ZodString;
+        payoutDestination: z.ZodString;
+    }, "strict", z.ZodTypeAny, {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    }, {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    }>>;
     provenance: z.ZodEnum<["test", "fixture", "production"]>;
     productionAdmission: z.ZodBoolean;
     principalCapAtomic: z.ZodNumber;
@@ -370,6 +396,11 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    accountNative?: {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    } | undefined;
     rewardAsset?: {
         symbol: "ETH";
         schema: "pilot.reward-asset.v1";
@@ -378,7 +409,7 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         decimals: 18;
         denomination: "wei";
     } | undefined;
-    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | "account_native_reward_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }, {
@@ -418,6 +449,11 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    accountNative?: {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    } | undefined;
     rewardAsset?: {
         symbol: "ETH";
         schema: "pilot.reward-asset.v1";
@@ -426,7 +462,7 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         decimals: 18;
         denomination: "wei";
     } | undefined;
-    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | "account_native_reward_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }>, {
@@ -466,6 +502,11 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    accountNative?: {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    } | undefined;
     rewardAsset?: {
         symbol: "ETH";
         schema: "pilot.reward-asset.v1";
@@ -474,7 +515,7 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         decimals: 18;
         denomination: "wei";
     } | undefined;
-    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | "account_native_reward_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }, {
@@ -514,6 +555,11 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         rank: number;
         alternativeKey: string;
     }[];
+    accountNative?: {
+        payoutDestination: string;
+        schema: "neomorphic.account-native-profile.v1";
+        requesterAccountId: string;
+    } | undefined;
     rewardAsset?: {
         symbol: "ETH";
         schema: "pilot.reward-asset.v1";
@@ -522,7 +568,7 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
         decimals: 18;
         denomination: "wei";
     } | undefined;
-    receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+    receivingPolicy?: "root_mediated_external_report_v1" | "account_native_reward_v1" | undefined;
     maxEvidenceBytes?: number | undefined;
     expectedTermsVersion?: string | undefined;
 }>;

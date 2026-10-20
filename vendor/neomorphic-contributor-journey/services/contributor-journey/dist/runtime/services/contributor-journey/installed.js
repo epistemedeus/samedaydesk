@@ -136,6 +136,11 @@ export async function createInstalledComposition(options) {
         clarification: createCorrespondenceReviewPort({ store: services.correspondence.store, projectId: source => db.project(source, 'clarification'), integrityKey: settings.integrityKey }),
         fulfillment: async (handoff) => {
             const row = await adapters.load(handoff.reservationId, handoff.taskId);
+            if (row?.document.accountNative) {
+                if (!options.canonicalReceiving?.reviewFulfillment)
+                    return { ...handoff, state: 'unknown', verifierVersion: 'canonical-receiving/v2' };
+                return options.canonicalReceiving.reviewFulfillment(handoff);
+            }
             if (row?.external) {
                 const receiving = options.canonicalReceiving;
                 if (!receiving?.readExternalDischarge)

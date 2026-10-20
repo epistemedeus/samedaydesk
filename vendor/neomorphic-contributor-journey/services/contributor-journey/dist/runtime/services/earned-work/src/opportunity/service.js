@@ -6,7 +6,7 @@ import { atomicToDecimal } from "./atomic.js";
 import { assertNoPrivate } from "./redact.js";
 import { canonicalRoundTerms, hashRoundTerms, readCanonicalRoundTerms } from "./terms.js";
 import { absentHostedDelivery, projectionForRound } from "./hosted.js";
-import { observedSchema, discoveryEvidenceSchema, workflowEvidenceSchema, selfReportSchema, } from "./validate.js";
+import { observedSchema, discoveryEvidenceSchema, workflowEvidenceSchema, selfReportSchema, createRoundBodySchema, parseBody, } from "./validate.js";
 const OCCUPYING = "('reserved','submitted','accepted','owed')";
 const OWNER = "owner";
 function stableJson(value) {
@@ -67,7 +67,14 @@ export class OpportunityService {
         return projectionForRound(this.hosted, roundKey);
     }
     async createRound(body, idempotencyKey) {
-        assertNoPrivate(body, "round");
+        if (body.receivingPolicy === 'account_native_reward_v1') {
+            // Only this strictly versioned private profile can bind a destination.
+            parseBody(createRoundBodySchema, body);
+            const { accountNative, ...publicFields } = body;
+            assertNoPrivate(publicFields, "round");
+        }
+        else
+            assertNoPrivate(body, "round");
         const termsInput = toTermsInput(body);
         if (body.offers.some((offer) => (offer.ownerReservedSlots ?? 0) > offer.slotCount)) {
             throw new ApiError(400, "invalid_input", "personal reserved capacity cannot exceed offer slots");
@@ -190,6 +197,9 @@ export class OpportunityService {
                 if (replay.hit)
                     return { replayed: true, statusCode: replay.statusCode, body: replay.body };
                 assertAdmission(round, body.credentialRef, body.provenance);
+                const document = readCanonicalRoundTerms(round.terms_document, round.terms_version);
+                if (document.accountNative && (kind !== "owner_assigned" || !/^acc_[A-Za-z0-9_-]{16}$/.test(body.credentialRef) || body.credentialRef === document.accountNative.requesterAccountId))
+                    throw new ApiError(403, "forbidden", "Assignment requires the immutable account holder.");
                 await this.expireUnlearned(client, round.id);
                 const offer = await this.requireOffer(client, round.id, body.offerKey);
                 if (kind === "imported_personal" && offer.offer_key !== body.offerKey) {
@@ -1456,6 +1466,7 @@ function toTermsInput(body) {
         roundKey: body.roundKey,
         ...(body.receivingPolicy ? { receivingPolicy: body.receivingPolicy } : {}),
         ...(body.rewardAsset ? { rewardAsset: body.rewardAsset } : {}),
+        ...(body.accountNative ? { accountNative: body.accountNative } : {}),
         principalCapAtomic: body.principalCapAtomic,
         atomicScale: body.atomicScale,
         asset: body.asset,

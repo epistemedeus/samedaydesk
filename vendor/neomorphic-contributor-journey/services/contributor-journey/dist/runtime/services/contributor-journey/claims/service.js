@@ -32,13 +32,19 @@ export class ContributorClaimsService {
     }
     terms(context, input) {
         return this.run(async () => {
-            await this.account(context);
+            const account = await this.account(context);
             const data = exactObject(input, ['taskId']);
             const [roundKey, offerKey] = taskParts(data.taskId);
             const config = this.config(roundKey);
             this.admitTask(data.taskId);
             const round = await this.options.opportunity.readRound(roundKey, config.provenance);
             const document = verifiedTerms(round);
+            if (document.accountNative && account.accountId !== document.accountNative.requesterAccountId) {
+                const principal = await this.options.resolvePrincipal(account.accountId, config.roundKey, config.provenance);
+                const own = principal ? await this.options.opportunity.readOwnClaims(config.roundKey, config.provenance, principal) : [];
+                if (!own.some(row => record(row) && row.offerKey === offerKey && record(row.claim) && row.claim.kind === 'owner_assigned'))
+                    throw new ApiError(404, 'not_found', 'task not found');
+            }
             const task = this.tasks(round).find(task => task.offerKey === offerKey);
             if (!task)
                 throw new ApiError(404, 'not_found', 'task not found');

@@ -1,7 +1,7 @@
 import type pg from "pg";
 import type { ContributorPrincipal, Provenance } from "../types.js";
 import { type HostedDeliveryProjection } from "./hosted.js";
-import { type createRoundBodySchema, type importBodySchema } from "./validate.js";
+import { createRoundBodySchema, type importBodySchema } from "./validate.js";
 import type { z } from "zod";
 type RoundBody = z.infer<typeof createRoundBodySchema>;
 type ImportBody = z.infer<typeof importBodySchema>;

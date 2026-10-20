@@ -40,6 +40,7 @@ export function assertNoPrivate(value, field = "body") {
     });
 }
 const PUBLIC_DROP = new Set([
+    "accountNative",
     "credentialRef",
     "contributorTokenId",
     "token",

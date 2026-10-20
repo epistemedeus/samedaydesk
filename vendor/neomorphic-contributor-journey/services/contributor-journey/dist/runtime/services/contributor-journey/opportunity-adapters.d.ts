@@ -80,8 +80,13 @@ export declare function createOpportunityJourneyAdapters(options: {
                 rewardDoesNotDependOnEndorsement: boolean;
                 noArtifactFetch: boolean;
             };
-            receivingPolicy?: "root_mediated_external_report_v1" | undefined;
+            receivingPolicy?: "root_mediated_external_report_v1" | "account_native_reward_v1" | undefined;
             roundKey: string;
+            accountNative?: {
+                schema: "neomorphic.account-native-profile.v1";
+                requesterAccountId: string;
+                payoutDestination: string;
+            } | undefined;
             rewardAsset?: {
                 schema: "pilot.reward-asset.v1";
                 kind: "native";

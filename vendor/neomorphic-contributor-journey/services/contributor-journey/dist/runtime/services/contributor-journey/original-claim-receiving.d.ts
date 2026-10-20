@@ -146,6 +146,7 @@ declare const deliveryPin: z.ZodObject<{
     taskId: string;
     offerKey: string;
     schema: "neomorphic.root-original-claim-delivery.v1";
+    requesterAccountId: string;
     channel: {
         kind: "email";
         threadRef: string;
@@ -168,7 +169,6 @@ declare const deliveryPin: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    requesterAccountId: string;
     roundId: string;
     receivedAt: string;
     termsPacketSha256: string;
@@ -186,6 +186,7 @@ declare const deliveryPin: z.ZodObject<{
     taskId: string;
     offerKey: string;
     schema: "neomorphic.root-original-claim-delivery.v1";
+    requesterAccountId: string;
     channel: {
         kind: "email";
         threadRef: string;
@@ -208,7 +209,6 @@ declare const deliveryPin: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    requesterAccountId: string;
     roundId: string;
     receivedAt: string;
     termsPacketSha256: string;
@@ -312,6 +312,7 @@ export declare const originalDeliverySchema: z.ZodObject<{
     taskId: string;
     offerKey: string;
     schema: "neomorphic.root-original-claim-delivery.v1";
+    requesterAccountId: string;
     channel: {
         kind: "email";
         threadRef: string;
@@ -334,7 +335,6 @@ export declare const originalDeliverySchema: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    requesterAccountId: string;
     roundId: string;
     receivedAt: string;
     termsPacketSha256: string;
@@ -354,6 +354,7 @@ export declare const originalDeliverySchema: z.ZodObject<{
     taskId: string;
     offerKey: string;
     schema: "neomorphic.root-original-claim-delivery.v1";
+    requesterAccountId: string;
     channel: {
         kind: "email";
         threadRef: string;
@@ -376,7 +377,6 @@ export declare const originalDeliverySchema: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    requesterAccountId: string;
     roundId: string;
     receivedAt: string;
     termsPacketSha256: string;
@@ -419,6 +419,7 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
     taskId: string;
     offerKey: string;
     schema: "neomorphic.root-original-claim-delivery.v1";
+    requesterAccountId: string;
     channel: {
         kind: "email";
         threadRef: string;
@@ -441,7 +442,6 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
             currency: string;
         } | null | undefined;
     };
-    requesterAccountId: string;
     roundId: string;
     receivedAt: string;
     termsPacketSha256: string;
