@@ -114,7 +114,7 @@ export function dispositionView(row) {
   if (row.import_state !== 'bound' || !row.kernel_paid || row.kernel_transfer !== row.transaction_hash ||
       !row.native_paid_observation || row.transfer_initiated || row.payout_state !== 'owed') fail();
   return {schema: 'pilot.root71.native-debt.disposition.v1', state: 'bound', disposition: row.disposition, importState: 'bound',
-    ...(row.proof_kind==='native_value_transfer'?{proofKind:row.proof_kind,rewardAsset:row.reward_asset}:{}),
+    ...(row.proof_kind==='native_value_transfer'?{proofKind:row.proof_kind,rewardAsset:row.reward_asset,feeEvidence:row.fee_evidence}:{}),
     projection: 'native_paid', payable: false, newPayable: false, kernelPaid: true, kernelTransfer: row.kernel_transfer,
     nativePaidObservation: true, transferInitiated: false, payoutState: 'owed', obligationId: row.obligation_id,
     obligationFamily: row.obligation_family, tenant: row.tenant, reservationId: row.reservation_id, claimId: row.claim_id,
@@ -149,7 +149,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
   async function observationSeal(tx, through = null, complete = false) {
     if (complete) {
-      const rows = (await tx.query(`SELECT (CASE WHEN d.proof_kind='erc20_transfer' THEN to_jsonb(d)-'proof_kind'-'reward_asset' ELSE to_jsonb(d) END) || jsonb_build_object(
+      const rows = (await tx.query(`SELECT (CASE WHEN d.proof_kind='erc20_transfer' THEN to_jsonb(d)-'proof_kind'-'reward_asset'-'fee_evidence' ELSE to_jsonb(d) END) || jsonb_build_object(
         'created_at', to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'received_at', to_char(received_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'block_timestamp', to_char(block_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) AS observation
@@ -295,7 +295,7 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       kernel_paid: true, kernel_transfer: body.transactionHash, native_paid_observation: true, transfer_initiated: false,
       payout_state: 'owed', observed_source: observed.source,
       created_at: (await tx.query('SELECT clock_timestamp()::text AS stamp')).rows[0].stamp};
-    if(coin)Object.assign(row,{proof_kind:'native_value_transfer',reward_asset:body.rewardAsset});
+    if(coin){const names=['l2FeeWei','l1FeeWei','operatorFeeWei','knownFeeWei','feeCompleteness'];for(const name of names)if(observed[name]!==receipt[name])fail();Object.assign(row,{proof_kind:'native_value_transfer',reward_asset:body.rewardAsset,fee_evidence:Object.fromEntries(names.map(name=>[name,observed[name]]))});}
     const fields = Object.keys(row);
     await tx.query(`INSERT INTO hosted_wallet_market.native_debt_dispositions (${fields.join(',')}) VALUES (${fields.map((_,i) => '$'+(i+1)).join(',')})`, Object.values(row));
     return dispositionView((await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0]);

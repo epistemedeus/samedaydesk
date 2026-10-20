@@ -207,6 +207,28 @@ export declare const sourceBodySchema: z.ZodObject<{
         reconstructed: false;
     };
 }>;
+export declare const nativeRewardAssetSchema: z.ZodObject<{
+    schema: z.ZodLiteral<"pilot.reward-asset.v1">;
+    kind: z.ZodLiteral<"native">;
+    chainId: z.ZodLiteral<8453>;
+    symbol: z.ZodLiteral<"ETH">;
+    decimals: z.ZodLiteral<18>;
+    denomination: z.ZodLiteral<"wei">;
+}, "strict", z.ZodTypeAny, {
+    symbol: "ETH";
+    schema: "pilot.reward-asset.v1";
+    kind: "native";
+    chainId: 8453;
+    decimals: 18;
+    denomination: "wei";
+}, {
+    symbol: "ETH";
+    schema: "pilot.reward-asset.v1";
+    kind: "native";
+    chainId: 8453;
+    decimals: 18;
+    denomination: "wei";
+}>;
 export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     roundKey: z.ZodString;
     rewardAsset: z.ZodOptional<z.ZodObject<{
@@ -316,8 +338,8 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     asset: string;
     network: string;
     claimTtlSeconds: number;
-    roundKey: string;
     chainId: number;
+    roundKey: string;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;
@@ -364,8 +386,8 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     asset: string;
     network: string;
     claimTtlSeconds: number;
-    roundKey: string;
     chainId: number;
+    roundKey: string;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;
@@ -412,8 +434,8 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     asset: string;
     network: string;
     claimTtlSeconds: number;
-    roundKey: string;
     chainId: number;
+    roundKey: string;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;
@@ -460,8 +482,8 @@ export declare const createRoundBodySchema: z.ZodEffects<z.ZodObject<{
     asset: string;
     network: string;
     claimTtlSeconds: number;
-    roundKey: string;
     chainId: number;
+    roundKey: string;
     productionAdmission: boolean;
     principalCapAtomic: number;
     atomicScale: number;

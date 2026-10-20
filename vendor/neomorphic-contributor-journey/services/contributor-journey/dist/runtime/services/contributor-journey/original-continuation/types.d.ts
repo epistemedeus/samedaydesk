@@ -139,8 +139,8 @@ export declare const canonicalSchema: z.ZodObject<{
         settlementKey: string;
     } | null;
     provenance: "test" | "fixture" | "production";
-    roundKey: string;
     schema: "neomorphic.original-continuation.canonical.v1";
+    roundKey: string;
     claimId: string;
     operation: {
         statusCode: number;
@@ -178,8 +178,8 @@ export declare const canonicalSchema: z.ZodObject<{
         settlementKey: string;
     } | null;
     provenance: "test" | "fixture" | "production";
-    roundKey: string;
     schema: "neomorphic.original-continuation.canonical.v1";
+    roundKey: string;
     claimId: string;
     operation: {
         statusCode: number;

@@ -2,6 +2,7 @@
 -- Legacy obligations, dispositions, terms, and enrollment are retained in place.
 ALTER TABLE hosted_wallet_market.native_debt_dispositions ADD COLUMN IF NOT EXISTS proof_kind TEXT NOT NULL DEFAULT 'erc20_transfer';
 ALTER TABLE hosted_wallet_market.native_debt_dispositions ADD COLUMN IF NOT EXISTS reward_asset JSONB;
+ALTER TABLE hosted_wallet_market.native_debt_dispositions ADD COLUMN IF NOT EXISTS fee_evidence JSONB;
 ALTER TABLE hosted_wallet_market.native_debt_dispositions ALTER COLUMN token DROP NOT NULL;
 ALTER TABLE hosted_wallet_market.native_debt_dispositions ALTER COLUMN log_index DROP NOT NULL;
 ALTER TABLE hosted_wallet_market.native_debt_dispositions DROP CONSTRAINT IF EXISTS native_debt_dispositions_import_contract_sha256_check;

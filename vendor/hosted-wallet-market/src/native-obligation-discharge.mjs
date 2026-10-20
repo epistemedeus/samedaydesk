@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomBytes } from 'node:crypto';
 import {
   existsSync, readFileSync, writeFileSync, linkSync, unlinkSync, renameSync,
-  chmodSync, statSync, lstatSync, realpathSync, mkdirSync,
+  chmodSync, statSync, lstatSync, realpathSync, mkdirSync, openSync, closeSync, fsyncSync,
 } from 'node:fs';
 import { dirname, join, basename, resolve, sep, isAbsolute } from 'node:path';
 import { NONPRODUCTION_TEST_SEAM, normalizeAddress } from './retained-award-validate.mjs';
@@ -181,11 +181,13 @@ export function transferAllocationPath(registryRoot, allocation) {
   return registryFile(registryRoot, 'transfers', `${network}\n${token}\n${transactionHash}\n${logIndex}`);
 }
 
+function syncPath(file){const fd=openSync(file,'r');try{fsyncSync(fd);}finally{closeSync(fd);}}
 function publishExclusive(file, record) {
   const dir = dirname(file);
   const tmp = join(dir, `.${basename(file)}.${process.pid}.${randomBytes(4).toString('hex')}.tmp`);
   writeFileSync(tmp, JSON.stringify(record, null, 2), { mode: 0o600 });
   chmodSync(tmp, 0o600);
+  syncPath(tmp);
   try {
     linkSync(tmp, file);
   } catch (error) {
@@ -195,6 +197,7 @@ function publishExclusive(file, record) {
   }
   unlinkSync(tmp);
   chmodSync(file, 0o600);
+  syncPath(dir);
   return record;
 }
 
@@ -235,8 +238,10 @@ export function updateObligationClaim(claimPath, record) {
   const tmp = join(dir, `.${basename(claimPath)}.${process.pid}.${randomBytes(4).toString('hex')}.tmp`);
   writeFileSync(tmp, JSON.stringify(record, null, 2), { mode: 0o600 });
   chmodSync(tmp, 0o600);
+  syncPath(tmp);
   renameSync(tmp, claimPath);
   chmodSync(claimPath, 0o600);
+  syncPath(dir);
   return record;
 }
 

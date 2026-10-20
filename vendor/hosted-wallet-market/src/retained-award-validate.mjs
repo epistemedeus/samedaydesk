@@ -510,6 +510,9 @@ function assertNativeIdentity(intent, source, destination, reservation) {
   same(reservation.network, intent.network, 'network_mismatch');
   same(source.terms.network, intent.network, 'network_mismatch');
   if(coin){
+    same(reservation.requesterId,intent.requesterId,'requester_mismatch');
+    same(normalizeAddress(reservation.source),normalizeAddress(intent.source),'source_mismatch');
+    same(normalizeAddress(reservation.recipient),normalizeAddress(intent.recipient),'recipient_mismatch');
     for(const record of [intent,destination,reservation]){
       assert(isNativeRewardAsset(record.rewardAsset)&&record.token===null,'unsupported_reward_asset');
     }

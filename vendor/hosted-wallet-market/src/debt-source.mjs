@@ -55,7 +55,7 @@ export async function storedDebt(tx, obligationId, {readAcceptedSource} = {}) {
   return {family: 'opportunity', obligationId, taskId, claimId: c.id, submissionId: s.id, verdictId: v.id,
     ...(r.terms_document?.rewardAsset?{rewardAsset:r.terms_document.rewardAsset,proofKind:'native_value_transfer'}:{}),
     roundId: r.id, termsVersion: o.terms_version, amountAtomic: opportunity.rows[0].obligation_amount, network: 'eip155:8453',
-    recipient: p.payout_destination, artifactDigestSha256: s.artifact_digest_sha256, createdAt: o.created_at, payoutState: o.payout_state};
+    recipient: r.terms_document?.rewardAsset?a.payoutDestination:p.payout_destination, artifactDigestSha256: s.artifact_digest_sha256, createdAt: o.created_at, payoutState: o.payout_state};
 }
 export function matchDebt(source, receipt) {
   if(source.proofKind==='native_value_transfer'){if(receipt.proofKind!==source.proofKind||!isNativeRewardAsset(receipt.rewardAsset))fail();}

@@ -85,10 +85,11 @@ const alternativeSchema = z
     summary: z.string().trim().min(1).max(2000),
 })
     .strict();
+export const nativeRewardAssetSchema = z.object({ schema: z.literal("pilot.reward-asset.v1"), kind: z.literal("native"), chainId: z.literal(8453), symbol: z.literal("ETH"), decimals: z.literal(18), denomination: z.literal("wei") }).strict();
 export const createRoundBodySchema = z
     .object({
     roundKey: keySchema,
-    rewardAsset: z.object({ schema: z.literal("pilot.reward-asset.v1"), kind: z.literal("native"), chainId: z.literal(8453), symbol: z.literal("ETH"), decimals: z.literal(18), denomination: z.literal("wei") }).strict().optional(),
+    rewardAsset: nativeRewardAssetSchema.optional(),
     receivingPolicy: z.literal("root_mediated_external_report_v1").optional(),
     provenance: z.enum(PROVENANCES),
     productionAdmission: z.boolean(),
