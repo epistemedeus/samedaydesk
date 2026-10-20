@@ -247,6 +247,54 @@ export function projectPositioning(input = {}) {
   };
 }
 
+const LIFECYCLE_PLACEMENTS = new Set(["before_collection_policy", "at_or_after_collection_policy", "unplaced"]);
+const LIFECYCLE_ADMISSIONS = new Set(["open", "closed", "not_evaluated"]);
+
+function readLifecycle(value) {
+  if (!isPlainObject(value) || value.kind !== "provider_declared_retirement") return null;
+  const announcement = value.announcement;
+  const policy = value.collectionPolicy;
+  if (!isPlainObject(announcement) || announcement.precision !== "date" || typeof announcement.date !== "string") return null;
+  if (!isPlainObject(policy) || policy.role !== "sds_collection_policy") return null;
+  if (policy.timeBasis !== "utc_start_of_announced_calendar_date" || typeof policy.admitBefore !== "string") return null;
+  if (!LIFECYCLE_PLACEMENTS.has(value.capturePlacement) || !LIFECYCLE_ADMISSIONS.has(value.currentAdmission)) return null;
+  const failure = isPlainObject(value.observedFailure)
+    ? {
+      code: typeof value.observedFailure.code === "string" && value.observedFailure.code ? value.observedFailure.code : "provider_failure",
+      availability: value.observedFailure.availability === "unavailable" ? "unavailable" : "error",
+    }
+    : null;
+  return {
+    sourceId: typeof value.sourceId === "string" ? value.sourceId : null,
+    kind: "provider_declared_retirement",
+    announcement: {
+      precision: "date",
+      date: announcement.date,
+      time: null,
+      timeZone: null,
+      officialInstant: null,
+      sourceUrl: typeof announcement.sourceUrl === "string" ? announcement.sourceUrl : null,
+    },
+    collectionPolicy: {
+      role: "sds_collection_policy",
+      timeBasis: policy.timeBasis,
+      admitBefore: policy.admitBefore,
+      officialShutdown: null,
+      measuredShutdown: null,
+      note: typeof policy.note === "string" ? policy.note : null,
+    },
+    capturePlacement: value.capturePlacement,
+    currentAdmission: value.currentAdmission,
+    policyAdmitsCapture: value.policyAdmitsCapture === true,
+    observedFailure: failure,
+    announcementIsOutage: false,
+    measuredShutdown: null,
+    doesNotEstablish: Array.isArray(value.doesNotEstablish)
+      ? value.doesNotEstablish.filter((item) => typeof item === "string")
+      : [],
+  };
+}
+
 function readObservation(row) {
   if (!isPlainObject(row)) return null;
   const sourceId = typeof row.sourceId === "string" && /^[a-z0-9_]+$/.test(row.sourceId)
@@ -257,6 +305,7 @@ function readObservation(row) {
     availability: typeof row.availability === "string" ? row.availability : "error",
     providerTimestampState: typeof row.providerTimestampState === "string" ? row.providerTimestampState : "missing",
     evidenceClass: typeof row.evidenceClass === "string" ? row.evidenceClass : null,
+    sourceLifecycle: readLifecycle(row.sourceLifecycle),
     ...readMetrics(row.metrics),
     workload: readWorkload(row.workload),
   };
@@ -442,15 +491,36 @@ function nodeFrom(def, observation) {
   node.evidenceClass = metric.evidenceClass || observation.evidenceClass;
   const stale = observation.providerTimestampState === "stale" || observation.availability === "stale";
   const failed = observation.availability === "unavailable" || observation.availability === "error";
+  const lifecycle = observation.sourceLifecycle || null;
+  const policyOnly = Boolean(
+    lifecycle
+    && lifecycle.policyAdmitsCapture === false
+    && !lifecycle.observedFailure
+    && observation.availability === "unavailable",
+  );
+  const blocksCurrent = Boolean(lifecycle && (
+    lifecycle.currentAdmission === "closed"
+    || lifecycle.policyAdmitsCapture === false
+    || lifecycle.capturePlacement === "unplaced"
+  ));
   const located = typeof metric.population === "string" && typeof metric.window === "string";
-  node.usableForCurrentCut = !stale && !failed && located && metric.state === "ok"
+  node.usableForCurrentCut = !stale && !failed && !blocksCurrent && located && metric.state === "ok"
     && (observation.availability === "ok" || observation.availability === "partial");
   if (!metric.population) node.uncertainty.push("population_unspecified");
   if (!metric.window) node.uncertainty.push("window_unspecified");
   if (observation.providerTimestampState === "missing") node.uncertainty.push("provider_clock_missing");
   if (stale) node.uncertainty.push("stale");
   if (observation.availability === "partial") node.uncertainty.push("partial_source");
-  if (failed) node.uncertainty.push(observation.availability);
+  if (failed) node.uncertainty.push(policyOnly ? "collection_policy_closed" : observation.availability);
+  if (lifecycle && lifecycle.policyAdmitsCapture === false && !policyOnly) {
+    node.uncertainty.push("collection_policy_closed");
+  }
+  if (lifecycle && lifecycle.observedFailure) node.uncertainty.push("observed_provider_failure");
+  if (lifecycle && lifecycle.capturePlacement === "unplaced") node.uncertainty.push("capture_time_unplaced");
+  if (lifecycle && lifecycle.currentAdmission === "closed" && lifecycle.policyAdmitsCapture === true && metric.state === "ok") {
+    node.uncertainty.push("historical_capture_not_current");
+  }
+  if (lifecycle) node.sourceLifecycle = lifecycle;
   node.uncertainty = [...new Set(node.uncertainty)];
   if (def.id === "open_nonexpired_page") node.attributes = openAttributes(observation);
   return node;
@@ -767,6 +837,9 @@ function heldAside(bySource) {
       sourceId: "smithery_mcp",
       sourcePresent: bySource.has("smithery_mcp"),
       reason: "Catalog registration count is not active traffic.",
+      ...(bySource.get("smithery_mcp") && bySource.get("smithery_mcp").sourceLifecycle
+        ? { sourceLifecycle: bySource.get("smithery_mcp").sourceLifecycle }
+        : {}),
     },
   ];
 }
