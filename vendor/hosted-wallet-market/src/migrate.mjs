@@ -1,4 +1,5 @@
 import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -114,6 +115,48 @@ export async function assertNativeSchemaShape(client) {
     const present=fields.rows.filter(row=>row.table_name===table).map(row=>row.column_name);
     if(present.length && names.some(name=>!present.includes(name))) throw Object.assign(new Error('native_schema_incompatible'),{codeName:'native_schema_incompatible'});
   }
+}
+
+// Compatibility before additive migration is deliberately weaker than runtime
+// readiness. A 006-008 store is a valid migration input, but cannot serve this
+// package's native/account-native reads or preservation seals yet.
+export async function inspectRuntimeSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
+  assertIdent(earnedSchema);
+  const fields = await client.query(`SELECT table_name,column_name,udt_name FROM information_schema.columns
+    WHERE table_schema='hosted_wallet_market' AND table_name IN
+      ('consumer_enrollment','native_debt_dispositions','source_binding_anchor','source_binding_succession')`);
+  const required = {
+    consumer_enrollment: {host_source_sha256:'text',earned_schema:'text',rpc_endpoint_sha256:'text',registry_sha256:'text',profile_sha256:'text'},
+    native_debt_dispositions: {proof_kind:'text',reward_asset:'jsonb',fee_evidence:'jsonb',obligation_family:'text',claim_id:'text',submission_id:'text',verdict_id:'text',block_hash:'text',authority_receipt_sha256:'text',request_sha256:'text'},
+    source_binding_anchor: {preservation_sha256:'text',principal_id:'text'},
+    source_binding_succession: {preservation_sha256:'text',principal_id:'text'},
+  };
+  const missing = [];
+  for (const [table, columns] of Object.entries(required)) for (const [name,type] of Object.entries(columns)) {
+    if (!fields.rows.some(row=>row.table_name===table&&row.column_name===name&&row.udt_name===type)) missing.push(`${table}.${name}`);
+  }
+  const expected = readFileSync(join(here,'../schema/010_account_native_discharge.sql'),'utf8')
+    .replaceAll('cj227_earned_work',earnedSchema).split('AS $$')[1].split('$$;')[0].trim();
+  const fn = (await client.query(`SELECT p.prosrc, p.proconfig, l.lanname,
+      p.prorettype='trigger'::regtype AS returns_trigger,
+      EXISTS (SELECT 1 FROM pg_trigger t WHERE t.tgrelid=to_regclass('hosted_wallet_market.native_debt_dispositions')
+        AND t.tgname='native_debt_dispositions_match' AND t.tgfoid=p.oid AND t.tgenabled IN ('O','A') AND NOT t.tgisinternal) AS attached,
+      EXISTS (SELECT 1 FROM pg_index i WHERE i.indexrelid=to_regclass('hosted_wallet_market.native_debt_native_effect')
+        AND i.indrelid=to_regclass('hosted_wallet_market.native_debt_dispositions') AND i.indisunique AND i.indisvalid) AS native_unique
+    FROM pg_proc p JOIN pg_language l ON l.oid=p.prolang
+    WHERE p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_obligation()')`)).rows[0];
+  if (!fn || fn.prosrc.trim()!==expected || fn.lanname!=='plpgsql' || !fn.returns_trigger ||
+      JSON.stringify(fn.proconfig)!==JSON.stringify(['search_path=hosted_wallet_market, pg_temp'])) missing.push('native_debt_matches_obligation@010');
+  if (!fn?.attached) missing.push('native_debt_dispositions_match');
+  if (!fn?.native_unique) missing.push('native_debt_native_effect');
+  return {ready:missing.length===0, requiredAdditiveThrough:'010', missing,
+    matchingFunctionSha256:createHash('sha256').update(expected).digest('hex')};
+}
+
+export async function assertRuntimeSchema(client, options) {
+  const shape = await inspectRuntimeSchema(client,options);
+  if (!shape.ready) throw Object.assign(new Error('runtime_schema_unready'), {http:503,codeName:'runtime_schema_unready'});
+  return shape;
 }
 export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
@@ -270,6 +313,7 @@ export async function inspectInstallation(client, {earnedSchema = 'cj227_earned_
   }
   return {
     ...base,
+    runtimeSchema: await inspectRuntimeSchema(client,{earnedSchema}),
     payoutChecks: checks.rows,
     legacyTrigger: await legacyTriggerPresent(client, earnedSchema),
     configValuesCopied: copied.rows[0]?.preserved !== null || copied.rows[0]?.additive !== null,

@@ -194,8 +194,8 @@ export async function openRootNativeDebtReceiving(env,readAcceptedSource) {
   const input=assertHostedWalletMarketConfig(configured({},env));
   const sdsRoot=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
   const member=name=>pathToFileURL(resolve(sdsRoot,'vendor/hosted-wallet-market/src',name)).href;
-  const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer},{createCanonicalReceiving}]=await Promise.all([
-    import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs')),import(member('canonical-receiving.mjs'))]);
+  const [{loadDeploymentProfile},{loadOwnerAuthority},{createInstalledDebtConsumer},{createCanonicalReceiving},{assertRuntimeSchema}]=await Promise.all([
+    import(member('profile.mjs')),import(member('owner-authority.mjs')),import(member('native-debt.mjs')),import(member('canonical-receiving.mjs')),import(member('migrate.mjs'))]);
   const profile=loadDeploymentProfile(input),authority=await loadOwnerAuthority(sdsRoot,{ownerToken:input.ownerToken});
   const pool=new pg.Pool({connectionString:input.databaseUrl,max:1,connectionTimeoutMillis:5000,statement_timeout:5000,idleTimeoutMillis:1000,allowExitOnIdle:true});
   pool.on('error',()=>{});
@@ -207,6 +207,8 @@ export async function openRootNativeDebtReceiving(env,readAcceptedSource) {
   };
   const consumer=createInstalledDebtConsumer({profile,sdsRoot,registryRoot:input.dischargeRegistry,
     authorityPrincipalId:authority.principalId,readAcceptedSource});
+  try { await withReadClient(tx=>assertRuntimeSchema(tx,{earnedSchema:profile.earnedSchema})); }
+  catch(error) { await pool.end(); throw error; }
   return {canonicalReceiving:createCanonicalReceiving({consumer,withReadClient,registryRoot:input.dischargeRegistry,rpcUrl:profile.rpcUrl,readAcceptedSource}),
     readSourceSuccession:()=>withReadClient(tx=>consumer.readSourceSuccession(tx)),
     readNativeDebt:obligationId=>withReadClient(tx=>consumer.readNativeDebt(tx,obligationId)),close:()=>pool.end()};
