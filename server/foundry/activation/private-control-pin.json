@@ -829,7 +829,7 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
     "vendor/hosted-wallet-market/bin/machine-profile.mjs": "8dd43c0c9b4f4ec79a4b1449644f3e13cc15d972494f4b4d2160679901aa32d1",
-    "vendor/hosted-wallet-market/SOURCE.json": "09e230c14c5e83ff8094bcf2ad4aa7abb3091c945149fad5effb750249d49d3f",
+    "vendor/hosted-wallet-market/SOURCE.json": "094a5f9e1f08012321b0569b1998e256f94b71493fdf0643c83a9d5cef4a8a79",
     "vendor/hosted-wallet-market/client/agent-economy-client-0.2.0.tgz": "c9074d9b598d0e1b5afa12ba0ca602ad9c9c55480a9583c444907af8e12cfe57",
     "vendor/hosted-wallet-market/contracts/machine-client.json": "b388d9d8017cd571010849e49f1610a33dda9befad89fc3c05c4da33e8291422",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/candidate.js": "bfea228cd0982d1f906b29e38423c76ea4784b80aacf3423d329712108737202",
@@ -856,6 +856,7 @@
     "vendor/hosted-wallet-market/schema/009_native_coin_discharge.sql": "d4351e75bb4895c7712e3236004a1a2f943a8453b386d01c5777ed1b788d6492",
     "vendor/hosted-wallet-market/src/native-coin-proof.mjs": "88dea106d72dba81bd8b9361dfe4c187d36cc2269cc5a08bc1ee40f5b4f47463",
     "vendor/hosted-wallet-market/src/reward-asset.mjs": "aea54e1d46eab695f95693dca4b141f39e829c0463c98dab7df81463c9d4faa6",
+    "vendor/hosted-wallet-market/schema/010_account_native_discharge.sql": "08da134ebee66734c3c5278d6a6c190d4318b73a2b4504be511b6fa900b42608",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1056,8 +1057,8 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/migrations/001_composition.sql": "ad75fc318812f1e8fbcf709e599588ed67f57619037a776ebb2a65f36d5f18b7",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/migrations/002_profile.sql": "135e31427de469630fca9ce5c9931e6dd5d5d13ac94a42a016ae079067ec7674",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.d.ts": "a395f839dbe140fde80c0514c05f10de3ec74dfbf7a6bdcc58a1c82b81d1c0d2",
-    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js": "758a4bc7dbd6e34d9def71702463b842620dc180dedae4958cbfd7438f0203b1",
-    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js.map": "86b1f37bfac0a8dddb01fc8a1f0c593c7c7f78fcd8cf46edbdc14a9d4616c848",
+    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js": "07597df993959ce746c8c88fd285a4fe7e13b9b84cbc20452c1f36be057e2e0c",
+    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/opportunity-adapters.js.map": "ff50d546b8484084bb68d675d4ed3c3a4ec4d26ac0be60dd6bb5eed68053c6a3",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/original-claim-receiving.d.ts": "9c7d88f9d8690256aa902b614a5ed53378758216e7aad1fc8ea44ea22fea8f28",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/original-claim-receiving.js": "5e05ae2bd3cb0ec9979d8debecb16616670ffe53d58747153a06bd77b5164f83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/original-claim-receiving.js.map": "ed356f1228cbc7e6b22dd3080b54608a2b2aaadafa84a46bb2295361fe6d6751",
@@ -1284,7 +1285,7 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/work-gate.d.ts": "070db1e55fdf72936f28e3df9f59b456f82279fc1b17d52ab5cadbe5fd0c7897",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/work-gate.js": "612d729a85bcf781f751d5d3115768987e1aef17030b0a0f4ac3393ae1b9fc60",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/work-gate.js.map": "05773e334d17cb24468bace1890f8128399cc845b9a4485b7e0552cef3d0171a",
-    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/SOURCE-BUILD.json": "2d0d9edd8a16fe7f2d7cbf843ccdffa71fb36df4af6ce7bb24e2bfb69afe9b5b",
+    "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/SOURCE-BUILD.json": "c48f9ce7f76c37b359f861ab5cc423d982822fff92bbc368a0b014a71ffa5111",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts": "c0c0304d559b9a08716894ffaad0eb5b37075bb4f3f2902b51209e545de3ab9a",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/contribute/account/client.js": "912f9bd79a47bcc80115d90f0e55721b08ceb3f81321087c31ffdcbcf6cee70a",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/contribute/account/client.js.map": "c60f9436af2501bd7fa66d6467ee2ae1578ff6853d8ad1f2d41d5a456d67f7dc",
@@ -1299,8 +1300,7 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "ade5513e79affeee1e9bcbb316cd0d39da3f452100849d57afdbbb220fc66c5a",
-    "vendor/hosted-wallet-market/schema/010_account_native_discharge.sql": "08da134ebee66734c3c5278d6a6c190d4318b73a2b4504be511b6fa900b42608"
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "0a9e981ed7a755ccd3cd7e7358cb7a8232bae1f3b25a1f96b032ae8ced4d4aa4"
   },
   "receivedCallerClosures": [
     {

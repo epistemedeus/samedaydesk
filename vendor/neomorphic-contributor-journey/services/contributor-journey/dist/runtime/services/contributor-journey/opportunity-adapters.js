@@ -163,7 +163,7 @@ export function createOpportunityJourneyAdapters(options) {
         async verdict(bound, outcome, key, reviewEvidenceRef) {
             const project = await options.decisionProject(bound);
             const row = await load(bound.reservationId, bound.taskId);
-            if ((row?.external || row?.correspondence) && (typeof reviewEvidenceRef !== 'string' || reviewEvidenceRef.trim().length < 6))
+            if ((row?.external || row?.correspondence || row?.document.accountNative) && (typeof reviewEvidenceRef !== 'string' || reviewEvidenceRef.trim().length < 6))
                 fail(400, 'review_evidence_required', 'Record the explicit report quality review reference.');
             return options.lock.run(`opportunity-review:${project}`, async () => {
                 const current = await review.read(bound);
