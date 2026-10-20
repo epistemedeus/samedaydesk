@@ -1,0 +1,23 @@
+[Unit]
+Description=Neomorphic bounded continuous-monitoring tick
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+WorkingDirectory=/opt/neomorphic/current
+Environment=NODE_ENV=production
+Environment=MONITOR_CONFIG=/etc/neomorphic-monitor/runtime.json
+# One worker tick is bounded to 10 sequential observations, each at most 10 seconds.
+ExecStart=/usr/bin/node services/continuous-monitoring/src/cli.mjs tick
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/neomorphic-monitor
+MemoryMax=192M
+TasksMax=32
+LimitNOFILE=256
+TimeoutStartSec=130

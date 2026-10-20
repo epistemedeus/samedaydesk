@@ -25,10 +25,15 @@ import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { discoveryLogMiddleware, fileSink } from "./lib/discovery-log/log.js";
+import { mountDiscoveryLogExport } from "./lib/discovery-log/http.mjs";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
+import { mountContributorManagedDesk } from "./lib/contributor-managed-mount.js";
+import { mountHostedWalletMarketAdapter } from "./lib/hosted-wallet-market-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
+import { mountMachineServices } from "./lib/machine-services/mount.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 import {
@@ -47,6 +52,29 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 export function createSdsApp(options = {}) {
 const app = express();
 app.disable("x-powered-by");
+
+// Exact contributor assets/API own their edge checks and failures before host
+// redirects, parsers and SPA fallback. No global proxy or CORS policy changes.
+// The packaged wallet market owns the packed-client routes on this prefix and
+// falls through for every path it does not serve. Unset mode registers nothing.
+// The entry is vendor/hosted-wallet-market inside this tree when unset.
+let contributor;
+const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarket,
+  env: options.hostedWalletMarket?.env ?? {...process.env,...options.neomorphicContributorJourney?.env},
+  ownerToken: options.neomorphicContributorJourney?.env?.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? options.hostedWalletMarket?.ownerToken,
+  readAcceptedSource: async target => {
+    await contributor?.ensure();
+    const installed = contributor?.state.runtime?.installed;
+    if (!installed) throw Object.assign(new Error('discharge_consumer_unbound'), {http:409, codeName:'discharge_consumer_unbound'});
+    return installed.adapters.review.read(target);
+  },
+  ingress: (req,res,next) => contributor.guardRequest(req,res,next),
+});
+app.set("hostedWalletMarket", market);
+contributor = mountContributorManagedDesk(app, {...options.neomorphicContributorJourney,
+  nativeDebtReceiving: async () => market.opened ? (await market.opened.catch(()=>null))?.canonicalReceiving : undefined,
+});
+app.set("neoContributorJourney", contributor);
 
 // Include bearer-return redirects in the same cache/referrer protection as the
 // endpoint. This does not change the canonical host or redirect destination.
@@ -99,6 +127,10 @@ app.set("s51Correspondence", correspondence);
 // routes and the foundry CJS/runtime materialization path stay as they are.
 app.set("l12ManagedWatch", mountManagedWatch(app, options.managedWatch || {}));
 
+// Machine APIs consume bounded raw bodies before the ordinary JSON parser.
+// Persistence and scheduler opt-ins are isolated from existing app settings.
+app.set("machineServices", mountMachineServices(app, options.machineServices || {}));
+
 // Bounded raw intake before the global parser. Admission needs enrolled PG;
 // anonymous snapshot evaluation and current publication facts remain separate.
 app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedUsefulJourney || {}));
@@ -118,6 +150,8 @@ app.use(express.json({ limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
+// 2a) AE21 J9-LOG: append-only, privacy-limited stage-1 discovery log for apex MCP/llms routes. Off unless DISCOVERY_LOG_DIR is set.
+if (process.env.DISCOVERY_LOG_DIR) app.use(discoveryLogMiddleware({ sink: fileSink(process.env.DISCOVERY_LOG_DIR) }));
 app.use(pulseMiddleware);
 
 // 3) API routes.
@@ -136,6 +170,10 @@ app.use("/api/observatory", observatoryRouter);
 // Optional public-readiness adapter. Vendored MIT checker, no private Git.
 // A disabled checker answers healthz and leaves every other route up.
 mountPublicReadiness(app, options.publicReadiness || {});
+
+// Private discovery-log read. The writer above is unchanged. This route does not
+// list days, take a directory, or start another process.
+mountDiscoveryLogExport(app, options.discoveryLog || {});
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));

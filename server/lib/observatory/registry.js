@@ -60,8 +60,9 @@ export function createObservatoryRuntime(options = {}) {
       return adapter.observe(capture, { nowMs: nowMs() });
     } catch (error) {
       if (error instanceof UnknownSourceError) throw error;
-      const fetchedAt = new Date(nowMs()).toISOString();
-      return createEnvelope({
+      const atMs = nowMs();
+      const fetchedAt = new Date(atMs).toISOString();
+      const fields = {
         sourceId: adapter.sourceId,
         sourceKind: adapter.sourceKind,
         upstreamUrl: adapter.upstreamUrl,
@@ -86,7 +87,16 @@ export function createObservatoryRuntime(options = {}) {
         evidenceClass: adapter.evidenceClass,
         rawSourceLink: adapter.upstreamUrl,
         withheldConclusions: adapter.descriptor.withheldConclusions,
-      });
+      };
+      if (typeof adapter.failureCoverage === "function") fields.coverage = adapter.failureCoverage();
+      if (typeof adapter.sourceLifecycle === "function") {
+        fields.sourceLifecycle = adapter.sourceLifecycle({
+          fetchedAt,
+          nowMs: atMs,
+          observedFailure: { code: "bridge_error", availability: "error" },
+        });
+      }
+      return createEnvelope(fields);
     }
   }
 
@@ -113,7 +123,7 @@ export function createObservatoryRuntime(options = {}) {
 
 function publicDescriptor(adapter) {
   const descriptor = adapter.descriptor;
-  return {
+  const result = {
     sourceId: descriptor.sourceId,
     sourceKind: descriptor.sourceKind,
     upstreamUrl: descriptor.upstreamUrl,
@@ -124,4 +134,6 @@ function publicDescriptor(adapter) {
     notes: descriptor.notes,
     metricKeys: descriptor.metricKeys,
   };
+  if (descriptor.sourceLifecycle) result.sourceLifecycle = descriptor.sourceLifecycle;
+  return result;
 }

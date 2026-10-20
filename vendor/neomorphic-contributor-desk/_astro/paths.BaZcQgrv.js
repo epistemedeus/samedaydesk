@@ -1,0 +1,1 @@
+var e=`/correspondence/`,t=`contact@neomorphic.io`,n=`/labs/task-square/`,r=Object.freeze({workBoard:`/lab/work-board/`,townSquare:`/lab/town-square/`,capabilities:`/lab/capabilities/`,hub:`/lab/`}),i=Object.freeze({capabilities:`/api/lab/capabilities.json`});export{n as a,r as i,e as n,i as r,t};

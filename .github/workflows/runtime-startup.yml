@@ -4,14 +4,16 @@ on:
   pull_request:
     paths:
       - 'server/**'
+      - 'client/public/llms.txt'
       - 'vendor/**'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/runtime-startup.yml'
   push:
-    branches: [main]
+    branches: [main, codex/ae25-243001-hosted-export]
     paths:
       - 'server/**'
+      - 'client/public/llms.txt'
       - 'vendor/**'
       - 'package.json'
       - 'package-lock.json'
@@ -40,6 +42,7 @@ jobs:
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
+      - run: node --test server/scripts/test-machine-guide-links.js
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task
       - run: npm run test:agent-readiness

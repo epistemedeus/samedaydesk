@@ -1,0 +1,1 @@
+{"schema":"sds.vendor.url-extract.v1","repository":"epistemedeus/x402-url-extractor","commit":"6dd7a040f80f3e3ce1d914383172721751de59a2","merchantRoot":".","files":10,"notVendored":["terms.mjs","http.mjs"],"dependencies":{"@exodus/bytes":"1.16.0","pg":"root","zod":"root"},"license":"see upstream repository"}
