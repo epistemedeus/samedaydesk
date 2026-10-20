@@ -213,7 +213,7 @@
     "vendor/hosted-wallet-market/src/evidence.mjs": "2ace695ec911b27160de0175e7ff04d2a2b6bc0f840d8392db326a8f8e8d20db",
     "vendor/hosted-wallet-market/src/fee.mjs": "557cddcdb7c40fa20e1d609c670b742f2052c2bd0ab4320f8d83ab21df985b40",
     "vendor/hosted-wallet-market/src/ids.mjs": "ef59818b0267aac2e7c87e77d56622c30e085a75c6a205b96a7268f154ddd7eb",
-    "vendor/hosted-wallet-market/src/migrate.mjs": "550accc8e20bad35df2686cec0992383fb91cee26ce1bb91b211436f412df017",
+    "vendor/hosted-wallet-market/src/migrate.mjs": "5f8cfe8b6c28c870319f9a21e8e79fd7ae8990ba5c175c2d2a05a1236ac498bd",
     "vendor/hosted-wallet-market/src/native-debt.mjs": "9178820022b9e2835c83ff6cee5b693f7c304138cbbe25e96fc7fc2db50bbc68",
     "vendor/hosted-wallet-market/src/native-obligation-discharge.mjs": "2eb1d83fe5b7ecb2331a1eb3b3ad0674c37ae310b45f03c4a4c9ab009c70877f",
     "vendor/hosted-wallet-market/src/owner-authority.mjs": "cb61dd8c0bfc77f6ccfb4dfaf8db80f8f3b0cb8cd6159223226f26dbb6f1bf44",
@@ -829,7 +829,7 @@
     "vendor/hosted-wallet-market/runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
     "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
     "vendor/hosted-wallet-market/bin/machine-profile.mjs": "8dd43c0c9b4f4ec79a4b1449644f3e13cc15d972494f4b4d2160679901aa32d1",
-    "vendor/hosted-wallet-market/SOURCE.json": "cc28861af6f75c042c6c9ffb2c84c6cc5f6b57e9db1e548935a82269583cddba",
+    "vendor/hosted-wallet-market/SOURCE.json": "09e230c14c5e83ff8094bcf2ad4aa7abb3091c945149fad5effb750249d49d3f",
     "vendor/hosted-wallet-market/client/agent-economy-client-0.2.0.tgz": "c9074d9b598d0e1b5afa12ba0ca602ad9c9c55480a9583c444907af8e12cfe57",
     "vendor/hosted-wallet-market/contracts/machine-client.json": "b388d9d8017cd571010849e49f1610a33dda9befad89fc3c05c4da33e8291422",
     "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/candidate.js": "bfea228cd0982d1f906b29e38423c76ea4784b80aacf3423d329712108737202",
@@ -1299,7 +1299,8 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "ade5513e79affeee1e9bcbb316cd0d39da3f452100849d57afdbbb220fc66c5a"
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "ade5513e79affeee1e9bcbb316cd0d39da3f452100849d57afdbbb220fc66c5a",
+    "vendor/hosted-wallet-market/schema/010_account_native_discharge.sql": "08da134ebee66734c3c5278d6a6c190d4318b73a2b4504be511b6fa900b42608"
   },
   "receivedCallerClosures": [
     {
