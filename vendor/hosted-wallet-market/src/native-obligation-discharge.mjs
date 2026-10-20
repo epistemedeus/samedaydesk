@@ -1,4 +1,4 @@
-import {isNativeCoinIntent,isNativeRewardAsset} from './reward-asset.mjs';
+import {isNativeCoinIntent,isNativeRewardAsset,BASE_NATIVE_ETH} from './reward-asset.mjs';
 // Exclusive native-obligation registry and the unbound debt-disposition contract.
 // Filesystem keys are hashes. Domain identifiers are never used as path segments.
 // This module does not set kernel paid or transfer, and it does not import P2.
@@ -263,7 +263,7 @@ function sameAllocation(existing, record) {
   if (existing.obligationId !== record.obligationId || existing.reservationId !== record.reservationId) return false;
   if (existing.transactionHash?.toLowerCase() !== record.transactionHash.toLowerCase()) return false;
   if (Number(existing.logIndex) !== Number(record.logIndex)) return false;
-  if(record.proofKind==='native_value_transfer'){if(existing.proofKind!==record.proofKind||JSON.stringify(existing.rewardAsset)!==JSON.stringify(record.rewardAsset)||existing.token!==null||existing.logIndex!==null)return false;}
+  if(record.proofKind==='native_value_transfer'){if(existing.proofKind!==record.proofKind||!isNativeRewardAsset(existing.rewardAsset)||!isNativeRewardAsset(record.rewardAsset)||existing.token!==null||existing.logIndex!==null)return false;}
   else if (normalizeAddress(existing.token) !== normalizeAddress(record.token)) return false;
   if (existing.network !== record.network || existing.amountAtomic !== record.amountAtomic) return false;
   if (normalizeAddress(existing.source) !== normalizeAddress(record.source)) return false;
@@ -305,7 +305,7 @@ export function readTransferAllocation(registryRoot, allocation) {
 export function dischargeReceiptId(receipt) {
   const body = {
     schema: receipt.schema,
-    ...(receipt.proofKind==='native_value_transfer'?{proofKind:receipt.proofKind,rewardAsset:receipt.rewardAsset}:{}),
+    ...(receipt.proofKind==='native_value_transfer'?{proofKind:receipt.proofKind,rewardAsset:BASE_NATIVE_ETH}:{}),
     obligationId: receipt.obligationId,
     reservationId: receipt.reservationId,
     transactionHash: receipt.transactionHash,

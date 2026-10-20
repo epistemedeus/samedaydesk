@@ -23,7 +23,7 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
         JOIN opportunity_claims c ON c.id=o.claim_id
         JOIN journey_work_links w ON w.reservation_id=c.id
         JOIN journey_task_links j ON j.task_id=w.task_id
-        WHERE d.obligation_family='opportunity' AND ${where}`, params)).rows;
+        WHERE d.obligation_family='opportunity' AND d.proof_kind='erc20_transfer' AND ${where}`, params)).rows;
       return rows.map(d => {
         const body = {...proofFields(d),importContractSha256: d.import_contract_sha256, tenant: d.tenant, obligationId: d.obligation_id,
           reservationId: d.reservation_id, taskId: d.task_id, termsVersion: d.terms_version, network: d.network, token: d.token,
@@ -115,6 +115,7 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
       const row = (await withReadClient(tx => tx.query('SELECT * FROM hosted_wallet_market.native_debt_dispositions WHERE transaction_hash=$1', [transactionHash]))).rows;
       if (row.length !== 1) return {ok: false};
       const d = row[0];
+      if(d.proof_kind!=='erc20_transfer')return {ok:false};
       const seen = await readRailTransfer(rpcUrl, {transactionHash, blockNumber: d.block_number, logIndex: d.log_index});
       return {ok: true, observation: {chainId: '8453', source: seen.source, destination: seen.recipient, transactionFrom: seen.source,
         amountAtomic: seen.amountAtomic, canonicalReceipt: {addressesIncluded: false, transferCount: 1, status: 'success', network: 'base',

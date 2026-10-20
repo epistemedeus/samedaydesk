@@ -369,7 +369,7 @@ export function nativeEnvelope(intent, authorityClass) {
 export function assertNativeEnvelope(record, intent, authorityClass) {
   const expected = nativeEnvelope(intent, authorityClass);
   for (const [key, value] of Object.entries(expected)) {
-    assert(record && JSON.stringify(record[key]) === JSON.stringify(value), 'envelope_mismatch');
+    assert(record && (key==='rewardAsset'?isNativeRewardAsset(record[key]):String(record[key])===String(value)), 'envelope_mismatch');
   }
 }
 
