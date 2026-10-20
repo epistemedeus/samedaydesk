@@ -57,7 +57,9 @@ export class JourneyAdmission {
         const source = await this.kernel.withOpportunityClient(async (client) => (await client.query('SELECT * FROM opportunity_rounds WHERE round_key=$1 AND provenance=$2', [roundKey, pin.provenance])).rows[0], 'read');
         if (!source)
             throw new Error('selected canonical round is absent');
-        readCanonicalRoundTerms(source.terms_document, source.terms_version);
+        const document = readCanonicalRoundTerms(source.terms_document, source.terms_version);
+        if (document.accountNative && (pin.provenance !== 'production' || pin.tasks.some(task => task.requesterAccountId !== document.accountNative.requesterAccountId)))
+            throw new Error('account native requester mismatch');
         if (this.config.mode === 'live') {
             const live = pin;
             if (pin.provenance !== 'production' || source.provenance !== 'production' || source.production_admission !== true ||
@@ -114,7 +116,9 @@ export class JourneyAdmission {
             const source = rows.find(row => row.round_id === pin.roundId);
             if (!source)
                 throw new Error('selected canonical round is absent');
-            readCanonicalRoundTerms(source.terms_document, source.terms_version);
+            const document = readCanonicalRoundTerms(source.terms_document, source.terms_version);
+            if (document.accountNative && pin.tasks.some(task => task.requesterAccountId !== document.accountNative.requesterAccountId))
+                throw new Error('account native requester mismatch');
             if (source.round_key !== pin.roundKey || source.terms_version !== pin.termsVersion || source.production_admission !== true)
                 throw new Error('selected source is not the exact admitted production round');
             for (const task of pin.tasks) {

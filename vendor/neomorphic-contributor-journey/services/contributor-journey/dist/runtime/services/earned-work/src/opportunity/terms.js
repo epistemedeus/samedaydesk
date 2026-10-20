@@ -30,9 +30,10 @@ export function canonicalRoundTerms(input) {
     }))
         .sort((a, b) => a.rank - b.rank || (a.alternativeKey < b.alternativeKey ? -1 : 1));
     return {
-        schema: input.rewardAsset ? "neomorphic.opportunity-round.terms.v2" : OPPORTUNITY_TERMS_SCHEMA,
-        schemaVersion: input.rewardAsset ? 2 : OPPORTUNITY_SCHEMA_VERSION,
+        schema: input.accountNative ? "neomorphic.opportunity-round.terms.v3" : input.rewardAsset ? "neomorphic.opportunity-round.terms.v2" : OPPORTUNITY_TERMS_SCHEMA,
+        schemaVersion: input.accountNative ? 3 : input.rewardAsset ? 2 : OPPORTUNITY_SCHEMA_VERSION,
         ...(input.rewardAsset ? { rewardAsset: input.rewardAsset } : {}),
+        ...(input.accountNative ? { accountNative: input.accountNative } : {}),
         roundKey: input.roundKey,
         ...(input.receivingPolicy ? { receivingPolicy: input.receivingPolicy } : {}),
         principalCapAtomic: input.principalCapAtomic,

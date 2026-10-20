@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "3b14f4325785d88e3c7edf32d73453f4978d6014fdd81762e7f2d330a34e0737",
+  "installedSourceSha256": "6a85152b9f2651fbabd0b6d915abb7e096359b53167fb8bf1b6023e53f0793df",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
@@ -34,12 +34,12 @@
   },
   "rewardSource": {
     "repository": "epistemedeus/pilot",
-    "commit": "f6ffc716218e28f5da2c9847ef8d68219806b11e",
+    "commit": "03f533d98dc97b79ad570bb94948ee2860935b21",
     "exportCommand": "node tools/ops/funded-continuation/export-sender-source.mjs ABSOLUTE_SDS_ROOT",
     "files": {
       "src/reward-asset.mjs": "aea54e1d46eab695f95693dca4b141f39e829c0463c98dab7df81463c9d4faa6",
       "src/native-coin-proof.mjs": "88dea106d72dba81bd8b9361dfe4c187d36cc2269cc5a08bc1ee40f5b4f47463",
-      "src/retained-award-validate.mjs": "7633c3665e2328973bfa7117b549bb1cf546842f837de60d6ec7a8c406cb5ce7",
+      "src/retained-award-validate.mjs": "4905ddeeeb0424438c2391890eaca9bf47bcc6f560f881242b27593b18492594",
       "src/native-obligation-discharge.mjs": "2eb1d83fe5b7ecb2331a1eb3b3ad0674c37ae310b45f03c4a4c9ab009c70877f"
     }
   }

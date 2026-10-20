@@ -1,3 +1,4 @@
+import { readCanonicalRoundTerms } from "../../earned-work/src/opportunity/terms.js";
 import { readFileSync } from "node:fs";
 import { hashToken, issueToken, newId, tokensEqual } from "../../earned-work/src/crypto.js";
 import { ApiError } from "../../earned-work/src/errors.js";
@@ -358,6 +359,15 @@ export class ContributorAccountService {
                 this.requireFresh(current);
                 await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [`adopt:${tokenHash}`]);
                 await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [`binding:${current.accountId}:${body.kernelScope}`]);
+                if (scope.roundId) {
+                    const row = (await client.query("SELECT terms_document,terms_version FROM opportunity_rounds WHERE id=$1", [scope.roundId])).rows[0];
+                    const profile = row && readCanonicalRoundTerms(row.terms_document, row.terms_version).accountNative;
+                    if (profile) {
+                        const claim = (await client.query("SELECT credential_ref FROM opportunity_claims WHERE round_id=$1 AND contributor_token_id=$2 AND kind='owner_assigned'", [scope.roundId, principal.id])).rows[0];
+                        if (!claim || claim.credential_ref !== current.accountId || profile.requesterAccountId === current.accountId)
+                            invalidBinding();
+                    }
+                }
                 const other = await client.query("SELECT * FROM journey_account_kernel_bindings WHERE token_hash=$1 OR principal_id=$2", [tokenHash, principal.id]);
                 if (other.rows.some(row => row.account_id !== current.accountId || row.kernel_scope !== body.kernelScope))
                     throw new ApiError(409, "conflict", "Contributor proof is already bound to another account.");

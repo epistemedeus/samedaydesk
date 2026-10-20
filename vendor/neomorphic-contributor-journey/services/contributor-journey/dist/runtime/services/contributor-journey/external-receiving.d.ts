@@ -74,12 +74,12 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v1";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -104,12 +104,12 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v1";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -267,12 +267,12 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v2";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -308,12 +308,12 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v2";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -417,12 +417,12 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v1";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -449,12 +449,12 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v1";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -617,12 +617,12 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v2";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
@@ -660,12 +660,12 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     termsVersion: string;
     taskId: string;
     schema: "neomorphic.root-external-selection.v2";
+    requesterAccountId: string;
     publicLabel: string;
     channel: {
         kind: "email";
         threadRef: string;
     };
-    requesterAccountId: string;
     roundId: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;

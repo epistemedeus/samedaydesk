@@ -190,6 +190,9 @@ export class OpportunityService {
                 if (replay.hit)
                     return { replayed: true, statusCode: replay.statusCode, body: replay.body };
                 assertAdmission(round, body.credentialRef, body.provenance);
+                const document = readCanonicalRoundTerms(round.terms_document, round.terms_version);
+                if (document.accountNative && (kind !== "owner_assigned" || !/^acc_[A-Za-z0-9_-]{16}$/.test(body.credentialRef) || body.credentialRef === document.accountNative.requesterAccountId))
+                    throw new ApiError(403, "forbidden", "Assignment requires the immutable account holder.");
                 await this.expireUnlearned(client, round.id);
                 const offer = await this.requireOffer(client, round.id, body.offerKey);
                 if (kind === "imported_personal" && offer.offer_key !== body.offerKey) {
@@ -1456,6 +1459,7 @@ function toTermsInput(body) {
         roundKey: body.roundKey,
         ...(body.receivingPolicy ? { receivingPolicy: body.receivingPolicy } : {}),
         ...(body.rewardAsset ? { rewardAsset: body.rewardAsset } : {}),
+        ...(body.accountNative ? { accountNative: body.accountNative } : {}),
         principalCapAtomic: body.principalCapAtomic,
         atomicScale: body.atomicScale,
         asset: body.asset,
