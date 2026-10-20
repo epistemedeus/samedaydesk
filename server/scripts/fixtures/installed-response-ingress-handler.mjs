@@ -1,5 +1,6 @@
 // Child entry for one lsnode-shaped plaintext pipe. The parent supplies the socket.
 // No qualification is loaded and no account, token, or body is logged.
+// /admitted calls the writer directly. It is not the installation GET handler.
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {createServer} from 'node:http';
@@ -32,7 +33,7 @@ export async function start() {
   if (!socketPath || !socketPath.startsWith('/tmp/')) throw new Error('unix socket required');
   const loaderSha256 = createHash('sha256').update(readFileSync(process.argv[1])).digest('hex');
   const logs = [];
-  const completion = createResponseCompletion(8, line => logs.push(line));
+  const completion = createResponseCompletion(16, line => logs.push(line));
   const ingress = createContributorIngress({CONTRIBUTOR_JOURNEY_MODE: 'disabled'});
   const readyDesk = mountContributorManagedDesk(express(), {env: managedEnv('1')});
   const directDesk = mountContributorManagedDesk(express(), {env: {

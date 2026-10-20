@@ -37,17 +37,21 @@ function byteDelta(before, socket) {
   return Number.isSafeInteger(delta) ? delta : null;
 }
 
+function scalarCount(value) {
+  return Number.isSafeInteger(value) ? value : null;
+}
+
 function publish(token, fields) {
   const record = {
     id: token.id,
-    status: fields.status,
-    declaredBytes: fields.declaredBytes,
+    status: Number.isInteger(fields.status) ? fields.status : null,
+    declaredBytes: scalarCount(fields.declaredBytes),
     ended: fields.ended === true,
     finish: fields.finish === true,
-    close: true,
+    close: fields.close === true,
     writableFinished: fields.writableFinished === true,
-    bytesWrittenDelta: fields.bytesWrittenDelta,
-    suppressed: false,
+    bytesWrittenDelta: scalarCount(fields.bytesWrittenDelta),
+    suppressed: fields.suppressed === true,
   };
   token.emit(JSON.stringify({
     timestamp: new Date().toISOString(),
@@ -56,10 +60,25 @@ function publish(token, fields) {
   }));
 }
 
-/** Single writer of the installed JSON envelope. A second call after end, or a
- * call on a destroyed response, returns sent:false and does not log. */
+/** Single writer of the installed JSON envelope. A call after end or destroy
+ * writes nothing. An armed budget records that refusal once; a zero budget stays silent. */
 export function deliverJsonResponse(res, status, body, extra = {}, completion = null) {
-  if (res.destroyed || res.writableEnded) return {sent: false, id: null, bytes: 0};
+  if (res.destroyed || res.writableEnded) {
+    const token = completion?.take?.() ?? null;
+    if (token) {
+      publish(token, {
+        status,
+        declaredBytes: null,
+        ended: res.writableEnded === true,
+        finish: false,
+        close: res.closed === true,
+        writableFinished: res.writableFinished === true,
+        bytesWrittenDelta: null,
+        suppressed: true,
+      });
+    }
+    return {sent: false, id: token ? token.id : null, bytes: 0};
+  }
   const payload = Buffer.from(JSON.stringify(body));
   const declaredBytes = payload.length;
   const token = completion?.take?.() ?? null;
@@ -76,8 +95,10 @@ export function deliverJsonResponse(res, status, body, extra = {}, completion = 
         declaredBytes,
         ended: res.writableEnded === true,
         finish,
+        close: true,
         writableFinished: res.writableFinished === true,
         bytesWrittenDelta: byteDelta(before, socket),
+        suppressed: false,
       });
     };
     res.once('finish', () => { finish = true; });

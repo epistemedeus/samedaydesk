@@ -81,7 +81,7 @@ function assertFramed(response, status) {
   assert.equal(JSON.parse(response.body.toString()).ok, status === 200);
 }
 
-test('composed plaintext guard refuses before vendor send, and an admitted pipe completes', async () => {
+test('composed plaintext guard refuses before vendor send; admitted route is a direct writer', async () => {
   const app = await readFile(path.join(root, 'server/app.js'), 'utf8');
   const mount = await readFile(path.join(root, 'server/lib/hosted-wallet-market-mount.js'), 'utf8');
   assert.match(app, /ingress: \(req,res,next\) => contributor\.guardRequest\(req,res,next\)/);
@@ -166,9 +166,13 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     seen = await report(socketPath);
     assert.equal(seen.entered, 0);
     assert.equal(seen.admitted, true);
-    assert.deepEqual(seen.second, {sent: false, id: null, bytes: 0});
+    assert.equal(seen.second.sent, false);
+    assert.equal(seen.second.bytes, 0);
+    assert.match(seen.second.id, /^[a-f0-9]{8}$/);
     assert.equal(seen.fallthrough, 'ERR_STREAM_WRITE_AFTER_END');
     assert.equal(seen.destroyed.sent, false);
+    assert.equal(seen.destroyed.bytes, 0);
+    assert.match(seen.destroyed.id, /^[a-f0-9]{8}$/);
     const completionLogs = seen.logs.map(line => JSON.parse(JSON.parse(line).message.slice('installed_response_completion '.length)));
     for (const id of [success, delayedSuccess, busy, error, twice, recovered].map(item => item.headers['x-ae-completion'])) {
       const record = completionLogs.find(item => item.id === id);
@@ -178,7 +182,15 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
       assert.equal(record.close, true);
       assert.equal(record.writableFinished, true);
       assert.equal(record.suppressed, false);
-      assert.equal(record.bytesWrittenDelta >= record.declaredBytes, true);
+      assert.equal(Number.isSafeInteger(record.bytesWrittenDelta) && record.bytesWrittenDelta > record.declaredBytes, true);
+    }
+    for (const id of [seen.second.id, seen.destroyed.id]) {
+      const record = completionLogs.find(item => item.id === id);
+      assert.ok(record, id);
+      assert.equal(record.suppressed, true);
+      assert.equal(record.declaredBytes, null);
+      assert.equal(record.bytesWrittenDelta, null);
+      assert.equal(record.finish, false);
     }
     assert.equal(seen.logs.some(line => line.includes(marker) || line.includes('DO_NOT_LOG') || line.includes(socketPath) || line.includes('authorization')), false);
     assert.equal(seen.logs.some(line => line.includes(off.headers['x-ae-wire-version']) && line.includes('"id":null')), false);

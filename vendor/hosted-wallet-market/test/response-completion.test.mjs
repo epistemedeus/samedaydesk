@@ -145,7 +145,7 @@ test('plaintext pipe send keeps a positive framed body for success, busy, error,
       assert.equal(record.close, true);
       assert.equal(record.writableFinished, true);
       assert.equal(record.suppressed, false);
-      assert.equal(record.bytesWrittenDelta >= record.declaredBytes, true);
+      assertLocalSocketDelta(record);
       assert.equal(logs.at(-1).includes(marker), false);
       assert.equal(logs.at(-1).includes('DO_NOT_LOG'), false);
       assert.equal(logs.at(-1).includes(live.socketPath), false);
@@ -178,13 +178,24 @@ test('a second end and a destroyed response do not replace or empty the first bo
     assertEnvelope(response, 200, successBody());
     assert.equal(response.body.includes('FALLTHROUGH_MARKER'), false);
     assert.equal(response.body.includes('second_end'), false);
-    assert.deepEqual(second, {sent: false, id: null, bytes: 0});
+    assert.equal(second.sent, false);
+    assert.equal(second.bytes, 0);
+    assert.match(second.id, /^[a-f0-9]{8}$/);
     assert.equal(secondEnd, 'ERR_STREAM_WRITE_AFTER_END');
-    assert.equal(logs.length, 1);
     const failed = await get(live.socketPath, '/destroy').catch(error => error);
     assert.equal(destroyed.sent, false);
-    assert.equal(logs.length, 1);
-    assert.equal(completion.budget(), 3);
+    assert.equal(destroyed.bytes, 0);
+    assert.match(destroyed.id, /^[a-f0-9]{8}$/);
+    const written = await waitRecord(logs, response.headers[COMPLETION_HEADER]);
+    assert.equal(written.suppressed, false);
+    assertLocalSocketDelta(written);
+    const ended = await waitRecord(logs, second.id);
+    assertSuppressed(ended, 500, true);
+    const preended = await waitRecord(logs, destroyed.id);
+    assertSuppressed(preended, 200, false);
+    assert.equal(logs.length, 3);
+    assert.equal(completion.budget(), 1);
+    assert.equal(logs.some(line => line.includes(marker) || line.includes('DESTROYED_BODY') || line.includes('FALLTHROUGH_MARKER') || line.includes('second_end') || line.includes('DO_NOT_LOG') || line.includes(live.socketPath)), false);
     assert.ok(failed);
   } finally {
     await live.close();
@@ -213,7 +224,12 @@ test('an early close is followed by one complete recovery and an inert budget ad
     assertEnvelope(recovered, 200, successBody());
     assert.match(recovered.headers[COMPLETION_HEADER], /^[a-f0-9]{8}$/);
     const record = await waitRecord(logs, recovered.headers[COMPLETION_HEADER]);
-    assert.equal(record.bytesWrittenDelta >= record.declaredBytes, true);
+    assert.equal(record.suppressed, false);
+    assertLocalSocketDelta(record);
+    const inertDestroyed = createResponseCompletion(0, line => logs.push(line));
+    const silent = deliverJsonResponse({destroyed: true, writableEnded: false, closed: false, writableFinished: false}, 200, successBody(), {}, inertDestroyed);
+    assert.deepEqual(silent, {sent: false, id: null, bytes: 0});
+    assert.equal(inertDestroyed.budget(), 0);
     const logged = logs.length;
     const off = await get(live.socketPath, '/off');
     const bare = await get(live.socketPath, '/null');
@@ -241,6 +257,25 @@ test('the vendor send delegates once and the historical succession hash stays pu
   }
   assert.match(hostSourceSha256(root), /^[a-f0-9]{64}$/);
 });
+
+function assertLocalSocketDelta(record) {
+  assert.equal(Number.isSafeInteger(record.bytesWrittenDelta), true);
+  assert.equal(Number.isSafeInteger(record.declaredBytes), true);
+  // bytesWritten includes the status line and headers, so the delta is not body delivery.
+  assert.equal(record.bytesWrittenDelta > record.declaredBytes, true);
+}
+
+function assertSuppressed(record, status, ended) {
+  assert.equal(record.suppressed, true);
+  assert.equal(record.status, status);
+  assert.equal(record.declaredBytes, null);
+  assert.equal(record.bytesWrittenDelta, null);
+  assert.equal(record.finish, false);
+  assert.equal(record.ended, ended);
+  for (const value of Object.values(record)) {
+    assert.equal(value === null || typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number', true);
+  }
+}
 
 async function waitRecord(logs, id) {
   const start = Date.now();
