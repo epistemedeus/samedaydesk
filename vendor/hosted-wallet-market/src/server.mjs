@@ -1,4 +1,5 @@
 import {boundedReview} from './bounded-review.mjs';
+import {createResponseCompletion, deliverJsonResponse, WIRE_HEADER, WIRE_VERSION} from './response-completion.mjs';
 import {readFileSync} from 'node:fs';
 import {scryptSync, randomBytes} from 'node:crypto';
 import https from 'node:https';
@@ -23,9 +24,7 @@ import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
 
 export const PREFIX = '/api/neomorphic-contributor-journey';
-export const WIRE_VERSION = 'c0-1';
-export const WIRE_HEADER = 'x-ae-wire-version';
-const SERVER_CLASS_HEADER = 'x-ae-server-class';
+export {WIRE_HEADER, WIRE_VERSION};
 const TASK_ID = /^task_[A-Za-z0-9_-]{16}$/;
 const RESERVATION_ID = /^rsv_[A-Za-z0-9_-]{16}$/;
 const IDEMPOTENCY = /^[A-Za-z0-9][A-Za-z0-9_.:#-]{7,160}$/;
@@ -257,20 +256,10 @@ export async function openHostedMarket(options) {
     throw error;
   }
 
-  const send = (res, status, body, extra = {}) => {
-    if (res.destroyed || res.writableEnded) return;
-    const payload = Buffer.from(JSON.stringify(body));
-    res.writeHead(status, {
-      'content-type': 'application/json; charset=utf-8',
-      'content-length': String(payload.length),
-      connection: 'close',
-      'cache-control': 'no-store',
-      [WIRE_HEADER]: WIRE_VERSION,
-      [SERVER_CLASS_HEADER]: 'live',
-      ...extra,
-    });
-    res.end(payload);
-  };
+  // Armed only for an explicit 1..32 budget. Unset stays byte-identical to the
+  // historical envelope and does not observe the request.
+  const completion = createResponseCompletion(options.responseCompletionLimit ?? process.env.HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT);
+  const send = (res, status, body, extra = {}) => deliverJsonResponse(res, status, body, extra, completion);
 
   const readJson = req => new Promise((resolve, reject) => {
     const chunks = [];
