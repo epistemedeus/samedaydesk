@@ -12,6 +12,7 @@
 // row is the historical projection. verified_paid is a separate current check:
 // the enrollment binding canonical-receiving already uses, then stored debt,
 // the Root registry receipt, and the canonical transfer.
+import {bindReadLifetime} from './bounded-review.mjs';
 import {digest} from './canonical.mjs';
 import {readRailTransfer} from './chain.mjs';
 import {matchDebt, storedDebt} from './debt-source.mjs';
@@ -175,8 +176,38 @@ function bodyFrom(row) {
   };
 }
 
+function cancelledRead(error) {
+  return error?.codeName === 'read_cancelled' || error?.codeName === 'fulfillment_unavailable' || error?.name === 'AbortError';
+}
+
+function observeRequestClose(req, lifetime) {
+  const controller = new AbortController();
+  let disconnected = false;
+  const mark = () => {
+    if (disconnected) return;
+    disconnected = true;
+    lifetime.close();
+    controller.abort();
+  };
+  const socket = req?.socket;
+  if (socket?.destroyed || req?.aborted === true) mark();
+  else {
+    socket?.on?.('close', mark);
+    req?.on?.('aborted', mark);
+  }
+  return {
+    signal: controller.signal,
+    get disconnected() { return disconnected; },
+    stop() {
+      socket?.off?.('close', mark);
+      req?.off?.('aborted', mark);
+    },
+  };
+}
+
 async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound,signal}) {
   if (typeof assertBound !== 'function') fail(409, 'stale_evidence');
+  if (signal?.aborted) throw Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
   let stored;
   let receipt;
   try {
@@ -184,7 +215,8 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
     stored = await storedDebt(client, row.obligation_id, {readAcceptedSource});
     ({receipt} = readAuthoritativeDischarge(registryRoot, bodyFrom(row)));
     matchDebt(stored, receipt);
-  } catch {
+  } catch (error) {
+    if (cancelledRead(error)) throw error;
     fail(409, 'stale_evidence');
   }
   if (!stored || stored.amountAtomic !== String(row.amount_atomic) || stored.termsVersion !== row.terms_version || stored.artifactDigestSha256 !== artifactDigest) {
@@ -200,6 +232,7 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
   let observed;
   try { observed = await readRailTransfer(rpcUrl, bodyFrom(row),{signal}); }
   catch(error) {
+    if (cancelledRead(error)) throw error;
     if(['chain_unreachable','chain_cancelled','chain_rpc_refused'].includes(error?.codeName))fail(503,'fulfillment_unavailable');
     fail(409,'stale_evidence');
   }
@@ -208,7 +241,7 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
   }
 }
 
-async function dispositionFor(client, {obligationId, reservationId, taskId, termsVersion, digest: artifactDigest, registryRoot, fallbackPayoutState = null, readAcceptedSource, rpcUrl, assertBound,fulfillmentReceiving}) {
+async function dispositionFor(client, {obligationId, reservationId, taskId, termsVersion, digest: artifactDigest, registryRoot, fallbackPayoutState = null, readAcceptedSource, rpcUrl, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent}) {
   if (!obligationId) fail(409, 'incomplete_evidence');
   const owed = await client.query(
     `SELECT payout_state FROM earned_work_obligations WHERE id = $1
@@ -258,8 +291,11 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
   if (!joined || payoutState !== 'owed') fail(409, 'stale_evidence');
   const received=fulfillmentReceiving?await fulfillmentReceiving.read(async(signal,phase)=>{
     phase('registry_and_chain');
-    await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound,signal});return true;
-  },(reason,error)=>{if(error&&error.codeName!=='fulfillment_unavailable')throw error;return false;}):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
+    const stop=()=>readLifetime?.close();
+    if(signal.aborted)stop();else signal.addEventListener('abort',stop,{once:true});
+    try{await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound,signal});return true;}
+    finally{signal.removeEventListener('abort',stop);}
+  },(reason,error)=>{if(error&&!cancelledRead(error))throw error;return false;},fulfillmentParent):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
   if(!received)return {schema:'pilot.root71.native-debt.disposition.v1',projection:'unknown',payable:false,newPayable:false,kernelPaid:false,nativePaidObservation:false,transferInitiated:false,payoutState:'owed',obligationId,obligationFamily:row.obligation_family,termsVersion,artifactDigestSha256:artifactDigest,reservationId,taskId,holdReason:'fulfillment_unavailable'};
   return {
     schema: 'pilot.root71.native-debt.disposition.v1',
@@ -319,7 +355,7 @@ function entitledValue({role, taskId, reservationId, termsVersion, artifact, ver
   };
 }
 
-async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving}) {
+async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent}) {
   const submission = (await client.query(
     'SELECT * FROM earned_work_submissions WHERE reservation_id = $1',
     [reservation.id],
@@ -358,7 +394,7 @@ async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAccept
     fallbackPayoutState: obligation.payout_state,
     readAcceptedSource,
     rpcUrl,
-    assertBound,fulfillmentReceiving,
+    assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent,
   });
   const businessStatus = SAFE_STATUS.test(delivery?.business_status || '') ? delivery.business_status : null;
   return entitledValue({
@@ -375,7 +411,7 @@ async function fromEarned(client, reservation, {registryRoot, rpcUrl, readAccept
   });
 }
 
-async function fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving}) {
+async function fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent}) {
   const aggregate = accepted?.aggregate;
   const submission = aggregate?.submission;
   const verdict = aggregate?.verdict;
@@ -405,7 +441,7 @@ async function fromAccepted(client, accepted, {taskId, reservationId, registryRo
     fallbackPayoutState: obligation.payoutState || obligation.payout_state || null,
     readAcceptedSource,
     rpcUrl,
-    assertBound,fulfillmentReceiving,
+    assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent,
   });
   const supplied = typeof aggregate.usefulOutcome === 'string' && SAFE_OUTCOME.test(aggregate.usefulOutcome) ? aggregate.usefulOutcome : null;
   return entitledValue({
@@ -422,7 +458,20 @@ async function fromAccepted(client, accepted, {taskId, reservationId, registryRo
   });
 }
 
-export async function readEntitledOutcome(client, req, {taskId, reservationId, readAcceptedSource, nowMs, registryRoot, rpcUrl, assertBound,fulfillmentReceiving}) {
+export async function readEntitledOutcome(client, req, options) {
+  const lifetime = bindReadLifetime(client);
+  const disconnect = observeRequestClose(req, lifetime);
+  const bound = {...options, readLifetime: lifetime, fulfillmentParent: disconnect.signal};
+  try {
+    return await readEntitledOutcomeBody(lifetime.client, req, bound);
+  } finally {
+    await lifetime.quiesce();
+    disconnect.stop();
+    if (disconnect.disconnected) throw Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
+  }
+}
+
+async function readEntitledOutcomeBody(client, req, {taskId, reservationId, readAcceptedSource, nowMs, registryRoot, rpcUrl, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent}) {
   plain(taskId, 'task_refused');
   plain(reservationId, 'reservation_refused');
   const account = await authenticate(client, req, nowMs);
@@ -432,7 +481,7 @@ export async function readEntitledOutcome(client, req, {taskId, reservationId, r
     const role = roleOf(account.accountId, parties);
     if (!role) fail(404, 'not_found');
     if (reservation.task_id !== taskId) fail(409, 'mismatch');
-    const value = await fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving});
+    const value = await fromEarned(client, reservation, {registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent});
     value.viewer = role;
     value.entitled.role = role;
     return value;
@@ -461,7 +510,7 @@ export async function readEntitledOutcome(client, req, {taskId, reservationId, r
     fail(409, 'stale_evidence');
   }
   if (!accepted) fail(404, 'not_found');
-  const value = await fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving});
+  const value = await fromAccepted(client, accepted, {taskId, reservationId, registryRoot, rpcUrl, readAcceptedSource, assertBound,fulfillmentReceiving,readLifetime,fulfillmentParent});
   value.viewer = role;
   value.entitled.role = role;
   return value;
