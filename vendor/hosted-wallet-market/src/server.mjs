@@ -12,7 +12,7 @@ import {pendingRegistryDisposition} from './discharge-authority.mjs';
 import {quoteEconomics, ROUNDING_PROFILE} from './fee.mjs';
 import {addressOf, id, sha256} from './ids.mjs';
 import {assertObligationGuard, inspectInstallation} from './migrate.mjs';
-import {assertImportShape, createInstalledDebtConsumer, IMPORT_BODY_KEYS} from './native-debt.mjs';
+import {assertImportShape, createInstalledDebtConsumer, IMPORT_BODY_KEYS, importBodyKeys} from './native-debt.mjs';
 import {loadOwnerAuthority} from './owner-authority.mjs';
 import {frozenMarker} from './preserve.mjs';
 import {ADDITIVE_ENV_KEYS, loadDeploymentProfile} from './profile.mjs';
@@ -1111,7 +1111,7 @@ export async function openHostedMarket(options) {
   }
 
   async function importNativeDebt(req, res, body) {
-    keysOf(body, IMPORT_BODY_KEYS);
+    keysOf(body, importBodyKeys(body));
     assertImportShape(body);
     const principal = ownerPrincipal(req);
     const produced = await withTx(async client => {

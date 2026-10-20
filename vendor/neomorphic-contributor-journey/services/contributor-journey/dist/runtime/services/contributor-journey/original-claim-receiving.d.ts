@@ -145,11 +145,11 @@ declare const deliveryPin: z.ZodObject<{
     termsVersion: string;
     taskId: string;
     offerKey: string;
+    schema: "neomorphic.root-original-claim-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-original-claim-delivery.v1";
     claimId: string;
     accountId: string;
     report: {
@@ -185,11 +185,11 @@ declare const deliveryPin: z.ZodObject<{
     termsVersion: string;
     taskId: string;
     offerKey: string;
+    schema: "neomorphic.root-original-claim-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-original-claim-delivery.v1";
     claimId: string;
     accountId: string;
     report: {
@@ -311,11 +311,11 @@ export declare const originalDeliverySchema: z.ZodObject<{
     termsVersion: string;
     taskId: string;
     offerKey: string;
+    schema: "neomorphic.root-original-claim-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-original-claim-delivery.v1";
     claimId: string;
     accountId: string;
     report: {
@@ -353,11 +353,11 @@ export declare const originalDeliverySchema: z.ZodObject<{
     termsVersion: string;
     taskId: string;
     offerKey: string;
+    schema: "neomorphic.root-original-claim-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-original-claim-delivery.v1";
     claimId: string;
     accountId: string;
     report: {
@@ -418,11 +418,11 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
     termsVersion: string;
     taskId: string;
     offerKey: string;
+    schema: "neomorphic.root-original-claim-delivery.v1";
     channel: {
         kind: "email";
         threadRef: string;
     };
-    schema: "neomorphic.root-original-claim-delivery.v1";
     claimId: string;
     accountId: string;
     report: {

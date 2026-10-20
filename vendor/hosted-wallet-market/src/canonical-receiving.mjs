@@ -9,6 +9,7 @@ import {consumerContractSha256, installedSourceSha256} from './native-debt.mjs';
 import {readRailTransfer} from './chain.mjs';
 import {storedDebt,matchDebt} from './debt-source.mjs';
 const sha = value => createHash('sha256').update(value).digest('hex');
+const proofFields=d=>d.proof_kind==='native_value_transfer'?{proofKind:d.proof_kind,rewardAsset:d.reward_asset}:{};
 const decimal = amount => `${BigInt(amount)/1000000n}.${(BigInt(amount)%1000000n).toString().padStart(6,'0')}`;
 export function createCanonicalReceiving({consumer, withReadClient, registryRoot, rpcUrl,readAcceptedSource}) {
   const pin = Object.freeze({family: 'opportunity', sourceId: 'root191-native-debt',
@@ -22,9 +23,9 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
         JOIN opportunity_claims c ON c.id=o.claim_id
         JOIN journey_work_links w ON w.reservation_id=c.id
         JOIN journey_task_links j ON j.task_id=w.task_id
-        WHERE d.obligation_family='opportunity' AND ${where}`, params)).rows;
+        WHERE d.obligation_family='opportunity' AND d.proof_kind='erc20_transfer' AND ${where}`, params)).rows;
       return rows.map(d => {
-        const body = {importContractSha256: d.import_contract_sha256, tenant: d.tenant, obligationId: d.obligation_id,
+        const body = {...proofFields(d),importContractSha256: d.import_contract_sha256, tenant: d.tenant, obligationId: d.obligation_id,
           reservationId: d.reservation_id, taskId: d.task_id, termsVersion: d.terms_version, network: d.network, token: d.token,
           transactionHash: d.transaction_hash, logIndex: d.log_index, blockNumber: d.block_number, amountAtomic: d.amount_atomic,
           receiptId: d.receipt_id, receivedAt: new Date(d.received_at).toISOString()};
@@ -64,7 +65,7 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
           artifactDigestSha256:d.artifact_digest_sha256,roundId:d.round_id,
           requesterAccountId:d.requester_account_id,contributorPrincipalId:d.contributor_token_id};
         if(digest(query)!==digest(expected))throw Error('disposition_hold');
-        const body={importContractSha256:d.import_contract_sha256,tenant:d.tenant,obligationId:d.obligation_id,
+        const body={...proofFields(d),importContractSha256:d.import_contract_sha256,tenant:d.tenant,obligationId:d.obligation_id,
           reservationId:d.reservation_id,taskId:d.task_id,termsVersion:d.terms_version,network:d.network,token:d.token,
           transactionHash:d.transaction_hash,logIndex:d.log_index,blockNumber:d.block_number,amountAtomic:d.amount_atomic,
           receiptId:d.receipt_id,receivedAt:new Date(d.received_at).toISOString()};
@@ -88,7 +89,7 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
       // Recheck the original installed authority after the asynchronous RPC.
       if(digest(await read())!==digest(result))throw Error('disposition_hold');
       return {source:pin,query,state:'verified_paid',transactionHash:result.body.transactionHash,
-        logIndex:result.body.logIndex,receiptId:result.body.receiptId};
+        ...proofFields({proof_kind:result.body.proofKind,reward_asset:result.body.rewardAsset}),logIndex:result.body.logIndex,receiptId:result.body.receiptId};
     },
     reviewReceivingStatus:review.status,
     async reviewFulfillment(handoff) {
@@ -107,13 +108,14 @@ export function createCanonicalReceiving({consumer, withReadClient, registryRoot
         phase('discharge_registry_and_chain');
         const proof=await port.readExternalDischarge(query,{signal});
         signal.throwIfAborted();
-        return {...handoff,state:proof.state,verifierVersion:'canonical-receiving/v2',...(proof.state==='verified_paid'?{transactionHash:proof.transactionHash,logIndex:proof.logIndex,receiptId:proof.receiptId}:{})};
+        return {...handoff,state:proof.state,verifierVersion:'canonical-receiving/v2',...(proof.state==='verified_paid'?{transactionHash:proof.transactionHash,...(proof.proofKind?{proofKind:proof.proofKind,rewardAsset:proof.rewardAsset}:{}),logIndex:proof.logIndex,receiptId:proof.receiptId}:{})};
       },unknown);
     },
     observer: {source: 'configured_base_rpc', async observe(transactionHash) {
       const row = (await withReadClient(tx => tx.query('SELECT * FROM hosted_wallet_market.native_debt_dispositions WHERE transaction_hash=$1', [transactionHash]))).rows;
       if (row.length !== 1) return {ok: false};
       const d = row[0];
+      if(d.proof_kind!=='erc20_transfer')return {ok:false};
       const seen = await readRailTransfer(rpcUrl, {transactionHash, blockNumber: d.block_number, logIndex: d.log_index});
       return {ok: true, observation: {chainId: '8453', source: seen.source, destination: seen.recipient, transactionFrom: seen.source,
         amountAtomic: seen.amountAtomic, canonicalReceipt: {addressesIncluded: false, transferCount: 1, status: 'success', network: 'base',

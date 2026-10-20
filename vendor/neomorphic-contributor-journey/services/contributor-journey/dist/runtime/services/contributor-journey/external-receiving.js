@@ -1,3 +1,4 @@
+import { nativeRewardAssetSchema } from '../earned-work/src/opportunity/validate.js';
 /** Private Root correspondence receiving. No HTTP route, account, or second IOU.
  * Signatures attest what the configured Root receiver retained. They do not
  * authenticate an email provider or imply successful signup/use or payment.
@@ -15,16 +16,18 @@ const ref = z.string().min(6).max(300).regex(/^[^\u0000-\u001f\u007f]+$/);
 const email = z.string().email().max(254).refine(v => v === v.toLowerCase());
 const channel = z.object({ kind: z.literal('email'), threadRef: ref }).strict();
 const rootReceipt = z.object({ provenance: z.literal('root_received_private_correspondence'), recordRef: ref, receivedAt: z.string().datetime(), actualExternalIdentity: z.literal(true) }).strict();
-const packetPin = z.object({
+const packetPinV1 = z.object({
     schema: z.literal('neomorphic.root-external-selection.v1'), roundId: z.string(), taskId: z.string(), requesterAccountId: z.string(), termsVersion: terms,
     termsPacketSha256: sha, allocationReceiptSha256: sha,
     identity: email, channel, publicLabel: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9 ._-]{0,78}$/),
     agreement: z.object({ sender: email, threadRef: ref, messageRef: ref, termsRef: ref, originalOperationRef: ref, termsVersion: terms, termsPacketSha256: sha, agreedAt: z.string().datetime() }).strict(),
     rootReceipt,
 }).strict();
-export const externalSelectionSchema = packetPin.extend({
-    termsPacket: z.record(z.unknown()), allocationReceipt: z.record(z.unknown()),
-}).strict();
+const packetPinV2 = packetPinV1.extend({ schema: z.literal('neomorphic.root-external-selection.v2'),
+    agreement: packetPinV1.shape.agreement.extend({ payoutDestination: z.object({ rewardAsset: nativeRewardAssetSchema, address: z.string().regex(/^0x[a-f0-9]{40}$/) }).strict() }).strict() }).strict();
+const packetPin = z.discriminatedUnion('schema', [packetPinV1, packetPinV2]);
+const packetBodies = { termsPacket: z.record(z.unknown()), allocationReceipt: z.record(z.unknown()) };
+export const externalSelectionSchema = z.discriminatedUnion('schema', [packetPinV1.extend(packetBodies).strict(), packetPinV2.extend(packetBodies).strict()]);
 const cost = z.union([z.literal('unknown'), z.null(), z.object({ amount: z.string().regex(/^(0|[1-9][0-9]{0,11})(\.[0-9]{1,9})?$/), currency: z.string().regex(/^[A-Z]{3,12}$/) }).strict()]);
 export const externalReportSchema = z.object({
     schema: z.literal('pilot.cold-first-use-report.v1'), observedStatus: z.enum(['completed', 'refused', 'failed', 'unresolved']),
@@ -48,9 +51,9 @@ export function externalCredentialRef(selection) {
 /** Explicit key order. This is the signed selection; packet bodies stay outside correspondence. */
 export function retainedExternalSelection(selection) {
     const s = parse(externalSelectionSchema, selection, 'external_recipient_refused');
-    return { schema: s.schema, roundId: s.roundId, taskId: s.taskId, requesterAccountId: s.requesterAccountId, termsVersion: s.termsVersion,
+    return parse(packetPin, { schema: s.schema, roundId: s.roundId, taskId: s.taskId, requesterAccountId: s.requesterAccountId, termsVersion: s.termsVersion,
         termsPacketSha256: s.termsPacketSha256, allocationReceiptSha256: s.allocationReceiptSha256, identity: s.identity, channel: s.channel,
-        publicLabel: s.publicLabel, agreement: s.agreement, rootReceipt: s.rootReceipt };
+        publicLabel: s.publicLabel, agreement: s.agreement, rootReceipt: s.rootReceipt }, 'external_selection_mismatch');
 }
 export function externalEvidence(report, maxEffort) {
     const e = parse(externalReportSchema, report, 'external_report_refused'), url = new URL(e.acquisitionUrl);
@@ -128,7 +131,8 @@ export class RootExternalReceiving {
         need(document.receivingPolicy === 'root_mediated_external_report_v1' && document.offers.length === 1 && document.alternatives.length === 0 &&
             offer.evidenceKind === 'workflow_witness' && !offer.publicClaimable && offer.ownerReservedSlots === offer.slotCount && offer.slotCount > 0 && offer.rewardAtomic > 0 &&
             BigInt(document.principalCapAtomic) === BigInt(offer.rewardAtomic) * BigInt(offer.slotCount) && document.maxEvidenceBytes === 12000 && document.maxClarifications === 1 && document.reviewWithinDays > 0 &&
-            document.asset === 'USDC' && document.chainId === 8453 && document.network === 'base' && document.atomicScale === 6, 'external_explicit_terms_required');
+            ((!document.rewardAsset && document.asset === 'USDC' && document.atomicScale === 6) || (document.rewardAsset && document.asset === 'ETH' && document.atomicScale === 18)) && document.chainId === 8453 && document.network === 'base', 'external_explicit_terms_required');
+        need(document.rewardAsset ? s.schema === 'neomorphic.root-external-selection.v2' && hashRequest(s.agreement.payoutDestination.rewardAsset) === hashRequest(document.rewardAsset) : s.schema === 'neomorphic.root-external-selection.v1', 'external_destination_asset_mismatch');
         need(round.provenance === 'production' && round.production_admission === true && round.id === s.roundId && task.requester_account_id === s.requesterAccountId && s.taskId === document.roundKey + ':' + offer.offerKey && s.termsVersion === round.terms_version, 'external_source_mismatch');
         need(s.identity === s.agreement.sender && s.channel.threadRef === s.agreement.threadRef && s.agreement.termsVersion === s.termsVersion && s.agreement.termsPacketSha256 === s.termsPacketSha256 && Date.parse(s.agreement.agreedAt) <= Date.parse(s.rootReceipt.receivedAt) && Date.parse(s.rootReceipt.receivedAt) <= Date.now(), 'external_agreement_mismatch');
         return { selection: s, round, document, offer, task };
@@ -137,11 +141,11 @@ export class RootExternalReceiving {
         const s = parse(externalSelectionSchema, selection, 'external_recipient_refused');
         const loaded = await this.loadTerms(retainedExternalSelection(s));
         const packet = s.termsPacket, allocation = s.allocationReceipt, offer = loaded.offer, document = loaded.document;
-        need(packet.schema === 'pilot.funded-terms.v1' && packet.participantAccess === 'root_mediated_external_no_account' && packet.evidencePolicy === 'cold-first-use-report-v1' && packet.round?.receivingPolicy === document.receivingPolicy && packet.round?.provenance === 'production' && packet.round?.productionAdmission === true &&
+        need(packet.schema === (document.rewardAsset ? 'pilot.funded-terms.v2' : 'pilot.funded-terms.v1') && packet.participantAccess === 'root_mediated_external_no_account' && packet.evidencePolicy === 'cold-first-use-report-v1' && packet.round?.receivingPolicy === document.receivingPolicy && packet.round?.provenance === 'production' && packet.round?.productionAdmission === true &&
             hashRoundTerms(packet.round) === s.termsVersion && digest(JSON.stringify(packet)) === s.termsPacketSha256 && packet.payment?.netAtomic === String(offer.rewardAtomic) && packet.payment?.feesPaidBy === 'requester' && packet.payment?.rewardFor === 'bounded_report_including_evidenced_failure_or_no_fit', 'external_terms_packet_mismatch');
-        need(allocation.schema === 'pilot.root-allocation-receipt.v1' && allocation.status === 'reserved' && allocation.recordRef?.length > 5 && allocation.operationId?.length > 5 &&
-            allocation.roundId === document.roundKey && allocation.deadline === document.submissionDeadline && allocation.principalReserveAtomicUsdc === String(document.principalCapAtomic) && allocation.gasCapWei === document.transferFeeCap.amountAtomic &&
-            allocation.termsVersion === s.termsVersion && allocation.termsPacketSha256 === s.termsPacketSha256 && allocation.asset === 'USDC' && allocation.chainId === 8453 && Date.parse(allocation.reservedAt) <= Date.now() && digest(JSON.stringify(allocation)) === s.allocationReceiptSha256, 'external_allocation_mismatch');
+        need(allocation.schema === (document.rewardAsset ? 'pilot.root-allocation-receipt.v2' : 'pilot.root-allocation-receipt.v1') && allocation.status === 'reserved' && allocation.recordRef?.length > 5 && allocation.operationId?.length > 5 &&
+            allocation.roundId === document.roundKey && allocation.deadline === document.submissionDeadline && (document.rewardAsset ? allocation.requesterId === s.requesterAccountId && allocation.principalReserveAtomic === String(document.principalCapAtomic) && hashRequest(allocation.rewardAsset) === hashRequest(document.rewardAsset) && packet.payment?.gasPaidBy === 'requester' && hashRequest(packet.payment?.rewardAsset) === hashRequest(document.rewardAsset) : allocation.principalReserveAtomicUsdc === String(document.principalCapAtomic)) && allocation.gasCapWei === document.transferFeeCap.amountAtomic &&
+            allocation.termsVersion === s.termsVersion && allocation.termsPacketSha256 === s.termsPacketSha256 && allocation.asset === document.asset && allocation.chainId === 8453 && Date.parse(allocation.reservedAt) <= Date.now() && digest(JSON.stringify(allocation)) === s.allocationReceiptSha256, 'external_allocation_mismatch');
         return loaded;
     }
     async assignment(sessionToken, raw, key) {
