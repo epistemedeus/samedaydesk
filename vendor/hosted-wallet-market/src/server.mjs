@@ -12,7 +12,7 @@ import {continuityEvidence} from './evidence.mjs';
 import {pendingRegistryDisposition} from './discharge-authority.mjs';
 import {quoteEconomics, ROUNDING_PROFILE} from './fee.mjs';
 import {addressOf, id, sha256} from './ids.mjs';
-import {assertObligationGuard, inspectInstallation} from './migrate.mjs';
+import {assertObligationGuard, inspectInstallation, inspectRuntimeSchema} from './migrate.mjs';
 import {assertImportShape, createInstalledDebtConsumer, IMPORT_BODY_KEYS, importBodyKeys} from './native-debt.mjs';
 import {loadOwnerAuthority} from './owner-authority.mjs';
 import {frozenMarker} from './preserve.mjs';
@@ -262,6 +262,7 @@ export async function openHostedMarket(options) {
 
   try {
     const shape = await withClient(client => inspectInstallation(client, {earnedSchema: profile.earnedSchema}));
+    if (!shape.runtimeSchema.ready) throw httpError(503,'runtime_schema_unready');
     if (!shape.obligationColumnsMatch || !shape.legacyTrigger || shape.configValuesCopied) {
       throw Object.assign(new Error('installation_refused'), {codeName: 'installation_refused'});
     }
@@ -495,13 +496,15 @@ export async function openHostedMarket(options) {
   }
 
   async function healthValue(client) {
+    const runtimeSchema = await inspectRuntimeSchema(client,{earnedSchema:profile.earnedSchema});
     const column = await client.query(
       `SELECT 1 FROM information_schema.columns
        WHERE table_schema = $1 AND table_name = 'earned_work_obligations' AND column_name = 'capture_evidence'`,
       [profile.earnedSchema],
     );
     return {
-      ready: true,
+      ready: runtimeSchema.ready,
+      runtimeSchema,
       serverClass: 'live',
       mode: profile.label === 'STAGING' ? 'staging' : 'private',
       deploymentLabel: profile.label,
@@ -1037,6 +1040,7 @@ export async function openHostedMarket(options) {
         const value = await reviewReadReceiving.read(signal => withReadClient(client => readEntitledOutcome(client, req, {
           taskId,
           reservationId,
+          signal,
           readAcceptedSource: options.readAcceptedSource,
           fulfillmentReceiving, nowMs,
           registryRoot: dischargeRegistry,
@@ -1047,6 +1051,9 @@ export async function openHostedMarket(options) {
           if (cancelled) {
             if (!responseWritable(res)) return undefined;
             throw httpError(503, 'review_receiving_unavailable');
+          }
+          if (['57014','57P01','57P02','57P03','ECONNRESET','ECONNREFUSED','ETIMEDOUT'].includes(error?.code) || /^08/.test(error?.code || '')) {
+            throw httpError(503,'review_receiving_unavailable');
           }
           if (error) throw error;
           throw httpError(503, 'review_receiving_unavailable');
@@ -1623,7 +1630,7 @@ export async function openHostedMarket(options) {
       }
       if (path === '/healthz' && req.method === 'GET') {
         const value = await withClient(healthValue);
-        return send(res, 200, {ok: true, value});
+        return send(res, value.ready ? 200 : 503, {ok: value.ready, value});
       }
       const body = req.method === 'GET' || req.method === 'HEAD' ? {} : await readJson(req);
       if (machine && req.method === 'POST' && ['/v1/account/login','/v1/account/recover'].includes(path)) {

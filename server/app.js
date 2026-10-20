@@ -72,7 +72,9 @@ const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarke
 });
 app.set("hostedWalletMarket", market);
 contributor = mountContributorManagedDesk(app, {...options.neomorphicContributorJourney,
-  nativeDebtReceiving: async () => market.opened ? (await market.opened.catch(()=>null))?.canonicalReceiving : undefined,
+  // A configured consumer is a required runtime dependency. Its failed schema
+  // admission must reach the existing journey qualification/health producer.
+  nativeDebtReceiving: async () => market.opened ? (await market.opened).canonicalReceiving : undefined,
 });
 app.set("neoContributorJourney", contributor);
 

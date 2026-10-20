@@ -60,17 +60,14 @@ function artifactField(bytes, mediaType) {
 }
 
 async function linkSchema(client, table) {
-  const current = await client.query('SELECT current_schema() AS schema');
-  const schemas = [current.rows[0]?.schema, 'public'].filter(schema => typeof schema === 'string' && /^[a-z_][a-z0-9_]*$/.test(schema));
   const found = await client.query(
     `SELECT table_schema FROM information_schema.tables
-     WHERE table_name = $1 AND table_schema = ANY($2::text[])`,
-    [table, schemas],
+     WHERE table_name = $1 AND table_schema IN (current_schema(), 'public')
+     ORDER BY (table_schema = current_schema()) DESC LIMIT 1`,
+    [table],
   );
-  const names = new Set(found.rows.map(row => row.table_schema));
-  if (names.has(current.rows[0]?.schema)) return current.rows[0].schema;
-  if (names.has('public')) return 'public';
-  return null;
+  const schema = found.rows[0]?.table_schema;
+  return typeof schema === 'string' && /^[a-z_][a-z0-9_]*$/.test(schema) ? schema : null;
 }
 
 async function taskRequesters(client, taskId) {
@@ -91,6 +88,27 @@ async function workLink(client, reservationId) {
     [reservationId],
   );
   return rows.rows[0] || null;
+}
+
+// A freshly delivered v3 account claim need not have the later work/showcase
+// projection yet. Its original immutable claim and actual kernel binding own
+// contributor access; do not require another status/showcase call to create it.
+async function accountNativeLink(client, reservationId) {
+  const bindings = await linkSchema(client,'journey_account_kernel_bindings');
+  const links = bindings && await linkSchema(client,'journey_task_links');
+  if (!bindings || !links) return null;
+  const rows = await client.query(`SELECT j.task_id,b.account_id
+    FROM opportunity_claims c JOIN opportunity_rounds r ON r.id=c.round_id
+    JOIN opportunity_offers f ON f.id=c.offer_id AND f.round_id=r.id
+    JOIN ${bindings}.journey_account_kernel_bindings b ON b.principal_id=c.contributor_token_id
+      AND b.kernel_scope='opportunity:' || r.id AND b.account_id=c.credential_ref
+    JOIN ${links}.journey_task_links j ON j.opportunity_round_id=r.id AND j.task_id=r.round_key || ':' || f.offer_key
+    WHERE c.id=$1 AND c.kind='owner_assigned'
+      AND r.terms_document->>'schema'='neomorphic.opportunity-round.terms.v3'
+      AND r.terms_document->>'receivingPolicy'='account_native_reward_v1'
+      AND j.requester_account_id=r.terms_document->'accountNative'->>'requesterAccountId'
+      AND j.requester_account_id<>b.account_id`,[reservationId]);
+  return rows.rows.length===1 ? rows.rows[0] : null;
 }
 
 async function authenticate(client, req, nowMs) {
@@ -193,6 +211,10 @@ function cancelledRead(error) {
   return error?.codeName === 'read_cancelled' || error?.codeName === 'fulfillment_unavailable' || error?.name === 'AbortError';
 }
 
+function unavailableStore(error) {
+  return ['57014','57P01','57P02','57P03','ECONNRESET','ECONNREFUSED','ETIMEDOUT'].includes(error?.code) || /^08/.test(error?.code || '');
+}
+
 function observeRequestClose(req, lifetime) {
   const controller = new AbortController();
   let disconnected = false;
@@ -218,7 +240,7 @@ function observeRequestClose(req, lifetime) {
   };
 }
 
-async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl, registryRoot, artifactDigest, assertBound,signal}) {
+async function prepareCurrentFulfillment(client, row, {readAcceptedSource, registryRoot, artifactDigest, assertBound,signal}) {
   if (typeof assertBound !== 'function') fail(409, 'stale_evidence');
   if (signal?.aborted) throw Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
   let stored;
@@ -229,7 +251,7 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
     ({receipt} = readAuthoritativeDischarge(registryRoot, bodyFrom(row)));
     matchDebt(stored, receipt);
   } catch (error) {
-    if (cancelledRead(error)) throw error;
+    if (cancelledRead(error) || unavailableStore(error)) throw error;
     fail(409, 'stale_evidence');
   }
   if (!stored || stored.amountAtomic !== String(row.amount_atomic) || stored.termsVersion !== row.terms_version || stored.artifactDigestSha256 !== artifactDigest) {
@@ -242,8 +264,12 @@ async function verifyCurrentFulfillment(client, row, {readAcceptedSource, rpcUrl
   if (receipt.amountAtomic !== String(row.amount_atomic) || receipt.transactionHash !== row.transaction_hash || receipt.logIndex !== proofLogIndex(row)) {
     fail(409, 'stale_evidence');
   }
+  return {receipt, body: bodyFrom(row)};
+}
+
+async function verifyCurrentChain({receipt, body}, {rpcUrl, signal}) {
   let observed;
-  try { observed = await readRailTransfer(rpcUrl, bodyFrom(row),{signal}); }
+  try { observed = await readRailTransfer(rpcUrl, body,{signal}); }
   catch(error) {
     if (cancelledRead(error)) throw error;
     if(['chain_unreachable','chain_cancelled','chain_rpc_refused'].includes(error?.codeName))fail(503,'fulfillment_unavailable');
@@ -302,13 +328,17 @@ async function dispositionFor(client, {obligationId, reservationId, taskId, term
     && row.terms_version === termsVersion
     && row.artifact_digest_sha256 === artifactDigest;
   if (!joined || payoutState !== 'owed') fail(409, 'stale_evidence');
+  // SQL/source/registry validation belongs to the outer cancellable read. The
+  // three-second fulfillment budget bounds the remote chain observation only;
+  // charging all SQL round trips to it made healthy configured stores unknown.
+  const prepared = await prepareCurrentFulfillment(client,row,{readAcceptedSource,registryRoot,artifactDigest,assertBound,signal:fulfillmentParent});
   const received=fulfillmentReceiving?await fulfillmentReceiving.read(async(signal,phase)=>{
-    phase('registry_and_chain');
+    phase('chain');
     const stop=()=>readLifetime?.close();
     if(signal.aborted)stop();else signal.addEventListener('abort',stop,{once:true});
-    try{await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound,signal});return true;}
+    try{await verifyCurrentChain(prepared,{rpcUrl,signal});return true;}
     finally{signal.removeEventListener('abort',stop);}
-  },(reason,error)=>{if(error&&!cancelledRead(error))throw error;return false;},fulfillmentParent):await verifyCurrentFulfillment(client,row,{readAcceptedSource,rpcUrl,registryRoot,artifactDigest,assertBound}).then(()=>true);
+  },(reason,error)=>{if(error&&!cancelledRead(error))throw error;return false;},fulfillmentParent):await verifyCurrentChain(prepared,{rpcUrl,signal:fulfillmentParent}).then(()=>true);
   if(!received)return {schema:'pilot.root71.native-debt.disposition.v1',projection:'unknown',payable:false,newPayable:false,kernelPaid:false,nativePaidObservation:false,transferInitiated:false,payoutState:'owed',obligationId,obligationFamily:row.obligation_family,termsVersion,artifactDigestSha256:artifactDigest,reservationId,taskId,holdReason:'fulfillment_unavailable'};
   return {
     schema: 'pilot.root71.native-debt.disposition.v1',
@@ -479,13 +509,28 @@ async function fromAccepted(client, accepted, {taskId, reservationId, registryRo
 export async function readEntitledOutcome(client, req, options) {
   const lifetime = bindReadLifetime(client);
   const disconnect = observeRequestClose(req, lifetime);
-  const bound = {...options, readLifetime: lifetime, fulfillmentParent: disconnect.signal};
+  const signal = options.signal ? AbortSignal.any([options.signal, disconnect.signal]) : disconnect.signal;
+  const close = () => lifetime.close();
+  if (signal.aborted) close(); else signal.addEventListener('abort',close,{once:true});
+  // Reuse only this request's independently validated accepted source, selected
+  // by the same exact task/claim. No authority/chain result is cached, and the
+  // next GET always re-reads the installed adapter. This also keeps the artifact
+  // and stored-debt match on the same accepted-source observation.
+  const accepted = new Map();
+  const readAcceptedSource = typeof options.readAcceptedSource === 'function' ? target => {
+    signal.throwIfAborted();
+    const key = JSON.stringify([target.taskId,target.reservationId]);
+    if (!accepted.has(key)) accepted.set(key,Promise.resolve().then(()=>options.readAcceptedSource(target)));
+    return accepted.get(key);
+  } : options.readAcceptedSource;
+  const bound = {...options, readAcceptedSource, readLifetime: lifetime, fulfillmentParent: signal};
   try {
     return await readEntitledOutcomeBody(lifetime.client, req, bound);
   } finally {
     await lifetime.quiesce();
+    signal.removeEventListener('abort',close);
     disconnect.stop();
-    if (disconnect.disconnected) throw Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
+    if (signal.aborted) throw Object.assign(new Error('read_cancelled'), {codeName: 'read_cancelled'});
   }
 }
 
@@ -504,9 +549,9 @@ async function readEntitledOutcomeBody(client, req, {taskId, reservationId, read
     value.entitled.role = role;
     return value;
   }
-  const linked = await workLink(client, reservationId);
+  const linked = await workLink(client, reservationId) || await accountNativeLink(client,reservationId);
   const requestedRequesters = await taskRequesters(client, taskId);
-  const storedRequesters = linked ? await taskRequesters(client, linked.task_id) : [];
+  const storedRequesters = linked && linked.task_id !== taskId ? await taskRequesters(client, linked.task_id) : requestedRequesters;
   if (linked && linked.task_id !== taskId) {
     const role = roleOf(account.accountId, {
       requesters: storedRequesters,
