@@ -285,7 +285,7 @@ test("provider failure and a withheld post-policy count stay unavailable, not ze
   const malformed = observeSmithery(capture({ body: "not-json" }), { nowMs: BEFORE_MS });
   assert.equal(malformed.availability, "error");
   assert.equal(malformed.errors[0].code, "schema_error");
-  assert.equal(malformed.sourceLifecycle.observedFailure, null);
+  assert.deepEqual(malformed.sourceLifecycle.observedFailure, { code: "schema_error", availability: "error" });
   assertNotZero(malformed);
 
   const malformedTransport = observeSmithery(capture({
@@ -336,7 +336,7 @@ test("provider failure and a withheld post-policy count stay unavailable, not ze
   }), { nowMs: AFTER_MS });
   assert.equal(malformedAfter.availability, "error");
   assert.equal(malformedAfter.errors[0].code, "schema_error");
-  assert.equal(malformedAfter.sourceLifecycle.observedFailure, null);
+  assert.deepEqual(malformedAfter.sourceLifecycle.observedFailure, { code: "schema_error", availability: "error" });
   assert.ok(malformedAfter.warnings.some((warning) => warning.code === "collection_policy"));
   assertNotZero(malformedAfter);
 });
@@ -505,4 +505,57 @@ test("mounted routes keep a pre-policy count and withhold a post-policy count", 
   assert.equal(metric(moltjobs, "jobCount").value, 12);
   assert.equal(moltjobs.sourceLifecycle, undefined);
   assert.equal(calls.filter((url) => url === SMITHERY_URL).length, 2);
+});
+
+// ROOT2036 regressions, separate from the original ROOT1174 receiving above.
+test("ROOT2036: schema failures survive policy, historical replay, and recovery", () => {
+  const cases = [
+    [null, "schema_error"], [[], "schema_error"], ["bad", "schema_error"],
+    [{}, "missing_pagination"], [{ pagination: [] }, "missing_pagination"],
+    [{ pagination: {} }, "missing_total_count"],
+    [{ pagination: { totalCount: null } }, "missing_total_count"],
+    ...["bad", -1, 1.5, {}, true, Number.MAX_SAFE_INTEGER + 1].map(totalCount => [
+      { pagination: { totalCount } }, "invalid_total_count",
+    ]),
+  ];
+  for (const fetchedAt of [BEFORE, POLICY_INSTANT, AFTER]) {
+    for (const [body, code] of cases) {
+      const result = observeSmithery(capture({ fetchedAt, body }), { nowMs: AFTER_MS });
+      assert.deepEqual(result.sourceLifecycle.observedFailure, { code, availability: "error" });
+      assert.equal(result.sourceLifecycle.measuredShutdown, null);
+      assert.equal(result.sourceLifecycle.announcementIsOutage, false);
+      assertNotZero(result);
+      assert.equal(validate(result), true, JSON.stringify(validate.errors));
+      assert.equal(result.sourceLifecycle.policyAdmitsCapture, fetchedAt === BEFORE);
+      if (fetchedAt !== BEFORE) {
+        assert.equal(result.availability, "error");
+        assert.ok(result.warnings.some(row => row.code === "collection_policy"));
+        assert.equal(result.rawExcerpt, undefined);
+      }
+    }
+    for (const totalCount of [0, 7, "7"]) {
+      const recovered = observeSmithery(capture({ fetchedAt, body: { pagination: { totalCount } } }), { nowMs: AFTER_MS });
+      assert.equal(recovered.sourceLifecycle.observedFailure, null);
+      assert.equal(recovered.availability, fetchedAt === BEFORE ? "ok" : "unavailable");
+      if (fetchedAt === BEFORE) assert.equal(metric(recovered, "registered_servers").value, Number(totalCount));
+      else assertNotZero(recovered);
+      assert.equal(validate(recovered), true, JSON.stringify(validate.errors));
+    }
+  }
+});
+
+test("ROOT2036: transport failures retain precedence over absent response schema", () => {
+  for (const fetchedAt of [BEFORE, AFTER]) {
+    for (const [httpStatus, error, code, availability] of [
+      [503, null, "http_503", "unavailable"],
+      [null, { code: "timeout", message: "fixture timeout" }, "timeout", "unavailable"],
+      [200, { code: "malformed_json", message: "fixture invalid JSON" }, "malformed_json", "error"],
+    ]) {
+      const result = observeSmithery({ ...capture({ fetchedAt, body: null, error }), httpStatus }, { nowMs: AFTER_MS });
+      assert.deepEqual(result.sourceLifecycle.observedFailure, { code, availability });
+      assert.equal(result.availability, availability);
+      assertNotZero(result);
+      assert.equal(validate(result), true, JSON.stringify(validate.errors));
+    }
+  }
 });
