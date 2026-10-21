@@ -559,3 +559,16 @@ test("ROOT2036: transport failures retain precedence over absent response schema
     }
   }
 });
+
+test("ROOT2036: shared positioning distinguishes schema failure from policy-only withholding", () => {
+  for (const [body, hasFailure] of [[{}, true], [{ pagination: { totalCount: -1 } }, true], [{ pagination: { totalCount: 7 } }, false]]) {
+    const observation = observeSmithery(capture({ fetchedAt: AFTER, body }), { nowMs: AFTER_MS });
+    const projection = projectPositioning({ fetchedAt: AFTER, observations: [observation] });
+    const node = projection.planes.catalog_presence.nodes[0];
+    assert.equal(node.value, null);
+    assert.equal(node.usableForCurrentCut, false);
+    assert.ok(node.uncertainty.includes("collection_policy_closed"));
+    assert.equal(node.uncertainty.includes("observed_provider_failure"), hasFailure);
+    assert.equal(node.sourceLifecycle.observedFailure?.availability ?? null, hasFailure ? "error" : null);
+  }
+});
