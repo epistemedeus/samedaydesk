@@ -150,10 +150,23 @@ export function observe(capture, ctx = {}) {
     : null;
   const lastModifiedIso = lastModified ? toIsoOrNull(lastModified) : null;
   const picked = classifyProviderTimestamp(lastModifiedIso, fetchedAt, ctx.nowMs);
+  // Inspect the response independently of collection admission. Withholding a
+  // valid count is policy; a malformed response is still an observed failure.
+  const body = capture.body;
+  const pagination = isPlainObject(body) && isPlainObject(body.pagination) ? body.pagination : null;
+  const rawCount = pagination ? pagination.totalCount : undefined;
+  const inspected = inspectNumeric(rawCount, "integer");
+  const schemaFailure = !fetchAvailability
+    ? (!isPlainObject(body) ? "schema_error"
+      : !pagination ? "missing_pagination"
+      : inspected.state === "missing" ? "missing_total_count"
+      : inspected.state !== "ok" ? "invalid_total_count" : null)
+    : null;
   const lifecycle = sourceLifecycle({
     fetchedAt,
     nowMs: ctx.nowMs,
-    observedFailure: observedFailureFrom(capture, fetchAvailability),
+    observedFailure: observedFailureFrom(capture, fetchAvailability)
+      ?? (schemaFailure ? { code: schemaFailure, availability: "error" } : null),
   });
   if (!lifecycle.policyAdmitsCapture) warnings.push(collectionPolicyWarning(lifecycle));
   else if (lifecycle.capturePlacement === "unplaced") warnings.push(unplacedCaptureWarning());
@@ -181,7 +194,6 @@ export function observe(capture, ctx = {}) {
     });
   }
 
-  const body = capture.body;
   if (!isPlainObject(body)) {
     errors.push({ code: "schema_error", message: "smithery body is not a JSON object" });
     return finish({
@@ -196,28 +208,22 @@ export function observe(capture, ctx = {}) {
     });
   }
 
+  if (!pagination) {
+    errors.push({ code: "missing_pagination", message: "smithery payload has no pagination object" });
+  }
+
   if (!lifecycle.policyAdmitsCapture) {
     return finish({
       fetchedAt,
       picked: lastModifiedIso ? picked : { timestamp: null, state: "missing" },
       capture,
-      metrics: specsToUnavailableMetrics(metricSpecs, "unavailable"),
-      availability: "unavailable",
+      metrics: specsToUnavailableMetrics(metricSpecs, schemaFailure ? "error" : "unavailable"),
+      availability: schemaFailure ? "error" : "unavailable",
       errors,
       warnings,
       lifecycle,
     });
   }
-
-  const pagination = isPlainObject(body.pagination) ? body.pagination : null;
-  if (!pagination) {
-    errors.push({ code: "missing_pagination", message: "smithery payload has no pagination object" });
-  }
-
-  const rawCount = pagination ? pagination.totalCount : undefined;
-  const inspected = rawCount === undefined
-    ? { state: "missing", value: null }
-    : inspectNumeric(rawCount, "integer");
 
   const metrics = [
     createMetric({
