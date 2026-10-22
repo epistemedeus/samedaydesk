@@ -1,0 +1,22 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "invalid-delivery-retry-spend",
+  "purchaseAuthorized": false,
+  "retrySpend": true,
+  "reason": "invalid-delivery",
+  "priorDelivery": {
+    "status": "invalid",
+    "spendToRetry": true
+  },
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "5000",
+      "httpStatus": 402,
+      "paid": false
+    }
+  ]
+}

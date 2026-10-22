@@ -1,0 +1,27 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "extract-plus-integrity-audit",
+  "purchaseAuthorized": false,
+  "network": "eip155:8453",
+  "currency": "USDC",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amountAtomic": "5000",
+      "decimals": 6,
+      "paid": false,
+      "httpStatus": 402,
+      "note": "unpaid amount; 402 is not success"
+    },
+    {
+      "tool": "seller-integrity-audit",
+      "route": "/commerce/seller-integrity-audit",
+      "amountAtomic": "10000",
+      "decimals": 6,
+      "paid": false,
+      "httpStatus": 402,
+      "note": "unpaid amount; 402 is not success"
+    }
+  ]
+}

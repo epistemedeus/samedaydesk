@@ -1,0 +1,17 @@
+{
+  "schema": "samedaydesk.pre-spend-cost-assurance.plan.v1",
+  "id": "wrong-units-5000-dollars",
+  "purchaseAuthorized": false,
+  "network": "eip155:8453",
+  "currency": "USD",
+  "lines": [
+    {
+      "tool": "extract",
+      "route": "/extract",
+      "amount": "5000",
+      "currency": "USD",
+      "unit": "dollars",
+      "note": "atomic 5000 misread as 5000 dollars"
+    }
+  ]
+}
