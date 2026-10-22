@@ -1,0 +1,20 @@
+{
+  "id": "fabricated-fresh-stamp",
+  "surface": "verify",
+  "feature": "verify",
+  "class": "fabricated",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "fabricated_sha", "fabricated_fresh_stamp"],
+  "defect": "Verify output claims ok with a fabricated freshStamp while sha is not the current pin.",
+  "output": {
+    "ok": true,
+    "status": "ok",
+    "surface": "verify",
+    "version": "1.4.7",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "freshStamp": "2026-09-17T12:00:00.000Z",
+    "stampSource": "fabricated",
+    "fabricatedFresh": true,
+    "message": "fresh verification stamp applied"
+  }
+}

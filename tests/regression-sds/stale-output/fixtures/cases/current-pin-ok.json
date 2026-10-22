@@ -1,0 +1,18 @@
+{
+  "id": "current-pin-ok",
+  "surface": "useful-jobs",
+  "feature": "useful-jobs",
+  "class": "current",
+  "expectReject": false,
+  "expectedReasons": [],
+  "defect": "Negative control: current 1.4.7 pin claiming ok must not be treated as stale/greenwash.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "feature": "useful-jobs",
+    "surface": "useful-jobs",
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824
+  }
+}
