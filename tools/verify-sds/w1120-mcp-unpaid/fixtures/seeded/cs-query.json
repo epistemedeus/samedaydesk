@@ -1,0 +1,9 @@
+{
+  "id": "cs-query",
+  "seededId": "cs-query",
+  "window": "w1120",
+  "feature": "w1120-mcp-unpaid",
+  "opts": { "path": "/mcp?cs=cs_test_fake" },
+  "expectExit": 1,
+  "errorCode": "STRIPE_PATH_REFUSE"
+}

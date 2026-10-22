@@ -1,0 +1,9 @@
+{
+  "id": "payment-signature",
+  "seededId": "payment-signature",
+  "window": "w1120",
+  "feature": "w1120-mcp-unpaid",
+  "opts": { "header": "PAYMENT-SIGNATURE", "value": "seeded-fake-sig" },
+  "expectExit": 1,
+  "errorCode": "PAYMENT_HEADER_REFUSE"
+}
