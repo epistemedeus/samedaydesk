@@ -1,0 +1,17 @@
+{
+  "payment-as-readonly.json": {
+    "code": "payment_as_readonly"
+  },
+  "live-origin.json": {
+    "code": "live_origin"
+  },
+  "neo-host.json": {
+    "code": "neo_host"
+  },
+  "mutating-as-readonly.json": {
+    "code": "mutating_as_readonly"
+  },
+  "probed-claim.json": {
+    "code": "probed_as_cold"
+  }
+}

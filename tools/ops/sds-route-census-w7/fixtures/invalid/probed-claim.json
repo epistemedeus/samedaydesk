@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.ops.sds-route-census.w7.v1",
+  "claimId": "probed-claim",
+  "mode": "probe",
+  "origin": "local-source",
+  "probed": true,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "class": "read_only",
+      "readOnly": true,
+      "probed": true
+    }
+  ]
+}
