@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.cw06.stdin-request.v1",
+  "job": "lockfile-pin-delta",
+  "inputs": {
+    "before": {
+      "filename": "before lock $(literal) 雪.json",
+      "text": "{\n  \"name\": \"cw06-café\",\n  \"version\": \"1.0.0\",\n  \"lockfileVersion\": 3,\n  \"packages\": {\n    \"\": {\"name\": \"cw06-café\", \"version\": \"1.0.0\"},\n    \"node_modules/alpha\": {\"version\": \"1.0.0\", \"resolved\": \"https://registry.invalid/alpha-1.0.0.tgz\", \"integrity\": \"sha512-before\"}\n  }\n}\n"
+    },
+    "after": {
+      "filename": "after lock ; Unicode 雪.json",
+      "text": "{\n  \"name\": \"cw06-café\",\n  \"version\": \"1.0.0\",\n  \"lockfileVersion\": 3,\n  \"packages\": {\n    \"\": {\"name\": \"cw06-café\", \"version\": \"1.0.0\"},\n    \"node_modules/alpha\": {\"version\": \"1.1.0\", \"resolved\": \"https://registry.invalid/alpha-1.1.0.tgz\", \"integrity\": \"sha512-after\"},\n    \"node_modules/beta\": {\"version\": \"2.0.0\", \"resolved\": \"https://registry.invalid/beta-2.0.0.tgz\", \"integrity\": \"sha512-beta\"}\n  }\n}\n"
+    }
+  }
+}
+
