@@ -1,0 +1,12 @@
+{
+  "id": "stale-as-fresh-zero",
+  "defect": "Rewrite a stale provider clock as a fresh zeroed observation.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2020-01-01T00:00:00.000Z",
+  "claim": {
+    "observatoryState": "ok",
+    "availability": "ok",
+    "jobCount": 0,
+    "sellers_30d": 0
+  }
+}

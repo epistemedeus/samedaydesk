@@ -1,0 +1,12 @@
+{
+  "id": "stale-boundary-ok",
+  "kind": "classify",
+  "note": "Exactly STALE_PROVIDER_MS old. Comparison is strict greater-than, so this stays ok.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T10:00:00.000Z",
+  "expect": {
+    "observatoryState": "ok",
+    "marketObsState": "stale",
+    "clocksDistinct": true
+  }
+}

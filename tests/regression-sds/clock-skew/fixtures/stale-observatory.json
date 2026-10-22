@@ -1,0 +1,12 @@
+{
+  "id": "stale-observatory",
+  "kind": "classify",
+  "note": "STALE_PROVIDER_MS + 1s. Observatory stale; market-obs also stale.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T09:59:59.000Z",
+  "expect": {
+    "observatoryState": "stale",
+    "marketObsState": "stale",
+    "clocksDistinct": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "stale-market-obs-just-stale",
+  "kind": "classify",
+  "note": "SOURCE_TIME_STALE_MS + 1s. Market-obs stale; observatory 2h window is still ok.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T10:59:59.000Z",
+  "expect": {
+    "observatoryState": "ok",
+    "marketObsState": "stale",
+    "clocksDistinct": true
+  }
+}

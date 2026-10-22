@@ -1,0 +1,22 @@
+{
+  "id": "adapter-stale-keeps-metrics",
+  "kind": "adapter",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2020-01-01T00:00:00.000Z",
+  "expect": {
+    "observatoryState": "stale",
+    "marketObsState": "stale",
+    "clocksDistinct": true,
+    "staleNotZeroed": true,
+    "moltjobs": {
+      "providerTimestampState": "stale",
+      "availability": "stale",
+      "jobCount": 12
+    },
+    "x402stats": {
+      "providerTimestampState": "stale",
+      "availability": "stale",
+      "sellers_30d": 47303
+    }
+  }
+}

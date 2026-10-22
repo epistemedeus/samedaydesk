@@ -1,0 +1,12 @@
+{
+  "id": "future-skew-boundary",
+  "kind": "classify",
+  "note": "Exactly FUTURE_SKEW_MS ahead. Comparison is strict greater-than, so this stays ok.",
+  "fetchedAt": "2026-09-17T12:00:00.000Z",
+  "providerTimestamp": "2026-09-17T12:02:00.000Z",
+  "expect": {
+    "observatoryState": "ok",
+    "marketObsState": "ok",
+    "clocksDistinct": true
+  }
+}
