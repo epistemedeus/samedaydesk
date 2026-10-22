@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "schema": "samedaydesk.regression-sds.unpaid-402.catalog.v1",
+  "feature": "unpaid-402",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/unpaid-402/**",
+  "seededFalseAccept": "empty-accepts",
+  "seededFalseReject": "extract-current",
+  "product": {
+    "parse": "client/scripts/verifiedFeedObservation.mjs#parseUnpaid402Payload",
+    "committedCurrent": "fixtures/verified-feed/observations/extract-current.json"
+  },
+  "cases": [
+    {
+      "id": "extract-current",
+      "file": "fixtures/cases/extract-current.json",
+      "expect": "accept",
+      "expectCode": "current_unpaid_402",
+      "class": "control",
+      "seededFalseReject": true
+    },
+    {
+      "id": "extract-current-committed",
+      "file": "fixtures/cases/extract-current-committed.json",
+      "expect": "accept",
+      "expectCode": "current_unpaid_402",
+      "class": "control"
+    },
+    {
+      "id": "empty-accepts",
+      "file": "fixtures/cases/empty-accepts.json",
+      "expect": "reject",
+      "expectCode": "missing_accepts",
+      "class": "defect",
+      "seededFalseAccept": true
+    },
+    {
+      "id": "http-200-not-402",
+      "file": "fixtures/cases/http-200-not-402.json",
+      "expect": "reject",
+      "expectCode": "status_200",
+      "class": "defect"
+    },
+    {
+      "id": "invalid-json",
+      "file": "fixtures/cases/invalid-json.json",
+      "expect": "reject",
+      "expectCode": "body_not_json",
+      "class": "defect"
+    },
+    {
+      "id": "redirect",
+      "file": "fixtures/cases/redirect.json",
+      "expect": "reject",
+      "expectCode": "redirect",
+      "class": "defect"
+    },
+    {
+      "id": "timeout",
+      "file": "fixtures/cases/timeout.json",
+      "expect": "reject",
+      "expectCode": "timeout",
+      "class": "defect"
+    },
+    {
+      "id": "malformed-network",
+      "file": "fixtures/cases/malformed-network.json",
+      "expect": "reject",
+      "expectCode": "malformed_accept",
+      "class": "defect"
+    },
+    {
+      "id": "malformed-amount",
+      "file": "fixtures/cases/malformed-amount.json",
+      "expect": "reject",
+      "expectCode": "malformed_accept",
+      "class": "defect"
+    },
+    {
+      "id": "amount-mismatch",
+      "file": "fixtures/cases/amount-mismatch.json",
+      "expect": "reject",
+      "expectCode": "terms_mismatch",
+      "class": "defect"
+    },
+    {
+      "id": "validation-400-not-402",
+      "file": "fixtures/cases/validation-400-not-402.json",
+      "expect": "reject",
+      "expectCode": "status_400",
+      "class": "defect"
+    },
+    {
+      "id": "failed-500",
+      "file": "fixtures/cases/failed-500.json",
+      "expect": "reject",
+      "expectCode": "status_500",
+      "class": "defect"
+    },
+    {
+      "id": "cdn-challenge-not-402",
+      "file": "fixtures/cases/cdn-challenge-not-402.json",
+      "expect": "reject",
+      "expectCode": "status_403",
+      "class": "defect"
+    },
+    {
+      "id": "stale-prior-not-current",
+      "file": "fixtures/cases/stale-prior-not-current.json",
+      "expect": "reject",
+      "expectCode": "stale",
+      "class": "defect"
+    },
+    {
+      "id": "unknown-no-prior",
+      "file": "fixtures/cases/unknown-no-prior.json",
+      "expect": "reject",
+      "expectCode": "unknown",
+      "class": "defect"
+    },
+    {
+      "id": "stale-candidate-crawl",
+      "file": "fixtures/cases/stale-candidate-crawl.json",
+      "expect": "reject",
+      "expectCode": "stale_current_claim",
+      "class": "defect"
+    },
+    {
+      "id": "allowlisted-extract-url",
+      "file": "fixtures/cases/allowlisted-extract-url.json",
+      "expect": "accept",
+      "expectCode": "allowlisted",
+      "class": "control"
+    },
+    {
+      "id": "ssrf-blocked",
+      "file": "fixtures/cases/ssrf-blocked.json",
+      "expect": "reject",
+      "expectCode": "ssrf_blocked",
+      "class": "defect"
+    },
+    {
+      "id": "payment-signature-refuse",
+      "file": "fixtures/cases/payment-signature-refuse.json",
+      "expect": "reject",
+      "expectCode": "secret_material",
+      "class": "defect"
+    }
+  ],
+  "counts": {
+    "total": 19,
+    "accept": 3,
+    "reject": 16
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "toolsCalled": false,
+    "liveProbe": false
+  }
+}

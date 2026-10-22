@@ -1,0 +1,16 @@
+{
+  "id": "unknown-no-prior",
+  "class": "defect",
+  "evaluate": "prior-evidence",
+  "expected": "reject",
+  "expectCode": "unknown",
+  "defect": "No prior live unpaid-402 evidence means unknown: no current claim.",
+  "asOf": "2026-09-03T12:00:00.000Z",
+  "crawlOverride": {
+    "lastVerified": null,
+    "contractHash": null,
+    "unpaid402": {
+      "source": "x402_manifest"
+    }
+  }
+}

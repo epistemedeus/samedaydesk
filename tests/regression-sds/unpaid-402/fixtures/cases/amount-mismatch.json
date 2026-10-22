@@ -1,0 +1,26 @@
+{
+  "id": "amount-mismatch",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "terms_mismatch",
+  "defect": "A well-formed 402 whose atomic amount is not the committed GET /extract crawl pin (5000) is not the SameDayDesk unpaid-402 contract. Price is not changed here.",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "application/json",
+      "payment-required": "fixture"
+    },
+    "body": {
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "50000"
+        }
+      ]
+    }
+  }
+}

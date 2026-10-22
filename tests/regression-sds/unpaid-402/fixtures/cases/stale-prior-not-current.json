@@ -1,0 +1,9 @@
+{
+  "id": "stale-prior-not-current",
+  "class": "defect",
+  "evaluate": "prior-evidence",
+  "expected": "reject",
+  "expectCode": "stale",
+  "defect": "Prior crawl unpaid-402 evidence at a later asOf is stale. It cannot keep a current verified claim.",
+  "asOf": "2026-09-17T12:00:00.000Z"
+}

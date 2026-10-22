@@ -1,0 +1,22 @@
+{
+  "id": "http-200-not-402",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "status_200",
+  "defect": "Unpaid GET /extract used to be classified as product success when the body looked like extract JSON. Unpaid stays HTTP 402; this pack does not pay.",
+  "http": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "ok": true,
+      "title": "example",
+      "url": "https://example.com",
+      "description": "",
+      "jsonLd": [],
+      "aiReadiness": {}
+    }
+  }
+}

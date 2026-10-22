@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-unpaid-402",
+  "private": true,
+  "type": "module",
+  "description": "SDS unpaid-402 regression fixtures. Write boundary tests/regression-sds/unpaid-402/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 corpus.test.mjs cli-proof.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}

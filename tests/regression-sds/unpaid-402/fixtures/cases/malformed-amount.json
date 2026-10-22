@@ -1,0 +1,25 @@
+{
+  "id": "malformed-amount",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "malformed_accept",
+  "defect": "Display dollars (\"0.005\") are not an atomic unpaid-402 amount. Amount must be a digit string.",
+  "http": {
+    "status": 402,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "amount": "0.005"
+        }
+      ]
+    }
+  }
+}

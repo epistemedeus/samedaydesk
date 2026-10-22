@@ -1,0 +1,9 @@
+{
+  "id": "ssrf-blocked",
+  "class": "defect",
+  "evaluate": "allowlist",
+  "expected": "reject",
+  "expectCode": "ssrf_blocked",
+  "defect": "Non-allowlisted origins are refused. Unpaid-402 probes never leave the exact example set.",
+  "exampleUrl": "https://evil.example/extract"
+}

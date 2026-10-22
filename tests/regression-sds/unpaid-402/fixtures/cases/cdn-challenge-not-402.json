@@ -1,0 +1,16 @@
+{
+  "id": "cdn-challenge-not-402",
+  "class": "defect",
+  "evaluate": "parse-payload",
+  "expected": "reject",
+  "expectCode": "status_403",
+  "defect": "hcdn/JS-challenge HTML is not an unpaid-402 contract and is not a product 200.",
+  "http": {
+    "status": 403,
+    "headers": {
+      "server": "hcdn",
+      "content-type": "text/html; charset=utf-8"
+    },
+    "body": "<!DOCTYPE html><html><head><title>Attention Required</title></head><body>Checking your browser before accessing samedaydesk.com. hcdn</body></html>"
+  }
+}
