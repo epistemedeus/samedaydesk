@@ -1,0 +1,17 @@
+{
+  "name": "job-artifact-export",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Provenance zip+JSONL export for completed useful-jobs out-dirs. Nonsettling prototype. Not result-reuse.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "job-artifact-export": "./bin/export.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "license": "MIT"
+}
