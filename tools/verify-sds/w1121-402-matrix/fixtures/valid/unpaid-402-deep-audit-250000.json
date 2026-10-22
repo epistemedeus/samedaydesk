@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "samedaydesk.w1121-402-matrix.unpaid.v1",
+  "fixtureId": "w1121_unpaid_deep_audit_250000",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/deep-audit?city=San+Francisco&domain=stripe.com&vertical=fintech",
+  "route": "/deep-audit",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "amountAtomic": "250000",
+  "amountDisplayUsd": "0.25",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "maxTimeoutSeconds": 300,
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/deep-audit?city=San+Francisco&domain=stripe.com&vertical=fintech",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "source": {
+    "kind": "in_tree_x402_catalog",
+    "path": "fixtures/presence/catalog/x402.json",
+    "capturedAt": "2026-09-17T12:00:00.000Z",
+    "note": "Unpaid 402 amount pinned from in-tree x402 catalog. No payment header. Not settlement."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "facilitator_settlement",
+    "payment_header"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery"
+  ]
+}
