@@ -1,0 +1,56 @@
+{
+  "surface": "sds-agent-quickstart",
+  "quadrant": "tutorial",
+  "paid": false,
+  "liveMerchantExtract": false,
+  "expectedOutcome": "offline_fixture",
+  "fixturePins": [
+    {
+      "id": "agents_llms",
+      "bodyFile": "agents-llms.txt",
+      "sha256": "95f951f0b309357f01286fa4a032fdb0830e9633b323a065a1575e8204cc0b2d"
+    },
+    {
+      "id": "agents_skills_index",
+      "bodyFile": "skills-index.json",
+      "sha256": "a8723e38d43dac865a90392452978125c91a0e1bb58a5ff33268ba2cd4375564"
+    }
+  ],
+  "failures": [
+    {
+      "id": "complete-issue-discussion",
+      "kind": "cli",
+      "doc": "tutorial.md",
+      "expect": {
+        "exitNonZero": true,
+        "exitCode": 2,
+        "outputMatches": "complete_issue_acquisition_unavailable",
+        "json": {
+          "ok": false,
+          "selected": null,
+          "paid": false
+        }
+      }
+    },
+    {
+      "id": "unknown-fixture",
+      "kind": "cli",
+      "doc": "tutorial.md",
+      "expect": {
+        "exitNonZero": true,
+        "outputMatches": "unknown_fixture",
+        "extracted": false
+      }
+    },
+    {
+      "id": "export-without-opt-in",
+      "kind": "cli",
+      "doc": "tutorial.md",
+      "expect": {
+        "exitNonZero": true,
+        "outputMatches": "refusing to write without --opt-in",
+        "outFileMustNotExist": "/tmp/sds-quickstart-must-not-write.json"
+      }
+    }
+  ]
+}
