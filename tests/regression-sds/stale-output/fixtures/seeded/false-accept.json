@@ -1,0 +1,30 @@
+{
+  "schema": "samedaydesk.regression-sds.stale-output.fixture.v1",
+  "id": "greenwash-stale-pin",
+  "surface": "useful-jobs",
+  "feature": "useful-jobs",
+  "class": "greenwash",
+  "seededGreenwash": true,
+  "claimedVerdict": "accept",
+  "expectReject": true,
+  "expectedReasons": ["greenwash", "stale_version", "stale_sha", "stale_bytes"],
+  "defect": "Pointer: feed this as accept. Product must reject (SEED_REJECT).",
+  "origin": "fixtures/cases/greenwash-stale-pin.json",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "pass",
+    "pass": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "pin": {
+      "version": "1.4.0",
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "bytes": 2575215
+    },
+    "message": "useful-jobs verify passed (greenwashed stale pin)"
+  }
+}
