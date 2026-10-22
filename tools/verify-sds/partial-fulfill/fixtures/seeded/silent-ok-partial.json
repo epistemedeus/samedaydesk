@@ -1,0 +1,9 @@
+{
+  "seededId": "silent-ok-partial",
+  "claim": {
+    "ok": true,
+    "settled": true,
+    "treatPartialAsComplete": true
+  },
+  "note": "Lie: {ok:true, partial:true} is settleable."
+}
