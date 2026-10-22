@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+import { randomBytes } from "node:crypto";
+import { argumentsFor, privateText, savePrivate, showHelp } from "./client-io.mjs";
+import { sha256, boundedJson } from "../src/util.mjs";
+import { validate } from "../src/schemas.mjs";
+showHelp('node bin/enroll.mjs --tenant ID --config ABS_PRIVATE_FILE --token-file ABS_NEW_PRIVATE_FILE [--max-calls 1000]\n'
+  + 'Run one enrollment at a time. Writes a new private credential file and a free-route tenant grant; prints no credential.');
+try {
+  const args = argumentsFor(process.argv.slice(2), ["tenant", "config", "token-file", "max-calls"]);
+  let config = { tenants: [] };
+  try { config = boundedJson(privateText(args.config, 524288), 524288); }
+  catch (error) { if (error.code !== "ENOENT") throw error; }
+  if (config.tenants.some(t => t.id === args.tenant)) throw new Error("tenant_exists");
+  const token = randomBytes(32).toString("base64url");
+  config.tenants.push({ id: args.tenant, tokenSha256: sha256(token), routes: ["lockfile.delta", "http.capture"],
+    maxUnits: 0, maxCalls: Number(args["max-calls"] || 1000), maxConcurrent: 2 });
+  validate("tenantConfig", config);
+  savePrivate(args["token-file"], `${token}\n`, { exclusive: true });
+  // A single operator enrollment at a time. Existing config is atomically replaced.
+  savePrivate(args.config, `${JSON.stringify(config, null, 2)}\n`);
+  console.log(JSON.stringify({ enrolled: args.tenant, paidBudget: 0, credentialWritten: true }));
+} catch { console.error("enrollment_failed"); process.exitCode = 1; }

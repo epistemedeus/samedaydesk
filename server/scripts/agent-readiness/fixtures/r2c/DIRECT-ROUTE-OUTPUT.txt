@@ -1,0 +1,38 @@
+== neomorphic.io
+/ 200 text/html; charset=UTF-8 13161
+<string>:3: SyntaxWarning: invalid escape sequence '\+'
+  noJS words 280 | jsonld 1 | links: []
+/llms.txt 200 text/plain; charset=UTF-8 10263
+  ptr https://neomorphic.io/api/bounties.json
+  ptr https://neomorphic.io/api/bounty-discovery.json.
+  ptr https://neomorphic.io/api/experiments.json
+  ptr https://neomorphic.io/api/labs/effort-workflow.json.
+  ptr https://neomorphic.io/api/receipts/lab-release-2026-09-01.json
+  ptr https://neomorphic.io/api/signals/latest.json
+/robots.txt 200 text/plain; charset=UTF-8 227
+/sitemap.xml 200 application/xml 6507
+/openapi.json 200 application/json; charset=UTF-8 37794
+/mcp 301 text/html 795
+/.well-known/agent-card.json 404 text/html; charset=UTF-8 7682
+/.well-known/api-catalog 404 text/html; charset=UTF-8 7682
+/.well-known/x402 200 application/json; charset=utf-8 217
+elapsed_ms 3807
+== samedaydesk.com
+/ 200 text/html; charset=utf-8 12633
+<string>:3: SyntaxWarning: invalid escape sequence '\+'
+  noJS words 553 | jsonld 1 | links: ['/llms.txt']
+/llms.txt 200 text/plain; charset=utf-8 8276
+  ptr https://agents.samedaydesk.com/api/actions
+  ptr https://agents.samedaydesk.com/mcp
+  ptr https://samedaydesk.com/.well-known/agent-card.json
+  ptr https://samedaydesk.com/.well-known/api-catalog
+  ptr https://samedaydesk.com/mcp
+  ptr https://samedaydesk.com/openapi.json
+/robots.txt 200 text/plain; charset=utf-8 592
+/sitemap.xml 200 application/xml 9714
+/openapi.json 200 application/openapi+json; charset=utf-8 38186
+/mcp 200 text/plain; charset=utf-8 418
+/.well-known/agent-card.json 200 application/json; charset=utf-8 2017
+/.well-known/api-catalog 200 application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727" 1760
+/.well-known/x402 404 text/plain; charset=utf-8 10
+elapsed_ms 4434

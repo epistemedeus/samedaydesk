@@ -13,6 +13,7 @@
     "dev:server": "node --watch --env-file=.env server/index.js",
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client install --include=dev && npm --prefix client run build",
+    "build:managed-contributor": "npm run build:managed-foundry && node server/scripts/verify-contributor-install.mjs",
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
     "test:proxy-addr": "node --test --test-concurrency=1 server/scripts/test-proxy-addr-patch.js",
     "start": "node server/index.js",
@@ -109,7 +110,17 @@
     "test:foundry-entry-reservation": "node --test --test-concurrency=1 server/scripts/test-foundry-entry-reservation.js",
     "test:foundry-runtime-progress": "node --test --test-concurrency=1 server/scripts/test-foundry-runtime-progress.js",
     "test:foundry-runtime-layout": "node --test --test-concurrency=1 server/scripts/test-foundry-runtime-layout.js",
-    "test:foundry-contribution-transport": "node server/scripts/fixtures/managed-layout-tests.mjs server/scripts/test-foundry-contribution-transport.js"
+    "test:foundry-contribution-transport": "node server/scripts/fixtures/managed-layout-tests.mjs server/scripts/test-foundry-contribution-transport.js",
+    "test:llms-txt": "node --test --test-concurrency=1 server/scripts/llms-txt/*.test.js",
+    "machine-services:prepare": "node server/lib/machine-services/install.mjs prepare",
+    "machine-services:migrate": "node server/lib/machine-services/install.mjs migrate",
+    "machine-services:inspect": "node server/lib/machine-services/install.mjs inspect",
+    "machine-services:provision": "node server/lib/machine-services/install.mjs provision",
+    "machine-services:maintenance": "node server/lib/machine-services/install.mjs maintenance",
+    "test:machine-services": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node server/lib/machine-services/test/run.mjs",
+    "test:machine-services:sqlite": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/vendor/machine-gateway/tests/*.test.mjs server/vendor/continuous-monitoring/test/*.test.mjs",
+    "test:machine-services:regression": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/scripts/test-hosted-startup.js server/scripts/test-spa-fallback.js server/scripts/test-correspondence-mount-disabled.js server/scripts/test-seller-repair-webhook.js server/scripts/test-foundry-listener-drain.js",
+    "test:machine-services:url-extract-vendor": "bash server/vendor/url-extract/vendor-url-extract.sh --verify"
   },
   "dependencies": {
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
@@ -122,7 +133,9 @@
     "proxy-addr": "2.0.8",
     "resend": "^6.14.0",
     "stripe": "^22.2.2",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@neomorphic/machine-gateway": "file:./server/vendor/machine-gateway",
+    "@exodus/bytes": "1.16.0"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

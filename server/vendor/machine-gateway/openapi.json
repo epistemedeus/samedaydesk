@@ -1,0 +1,2359 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Neomorphic Machine gateway",
+    "version": "0.1.1",
+    "description": "Mounted service contract. Prepared for deployment; this document is not evidence of a live endpoint."
+  },
+  "x-release-state": "prepared-not-deployed",
+  "servers": [
+    {
+      "url": "/api/machine-gateway"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "gatewayHealth",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/health"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Bounded JSON error; no provider text or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/discover": {
+      "get": {
+        "operationId": "discoverRoutes",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/discovery"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Bounded JSON error; no provider text or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/quote": {
+      "post": {
+        "operationId": "quoteRoute",
+        "security": [
+          {},
+          {
+            "tenantBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quote"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Bounded JSON error; no provider text or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Free. Anonymous quotes are previews; authenticated quotes bind one tenant, route, price and exact input for 60 seconds."
+      }
+    },
+    "/v1/test": {
+      "post": {
+        "operationId": "testRouteFixture",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/testRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/test"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Bounded JSON error; no provider text or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Free deterministic test fixture. Does not execute caller input or enter payment adapters."
+      }
+    },
+    "/v1/execute": {
+      "post": {
+        "operationId": "executeBoundQuote",
+        "security": [
+          {
+            "tenantBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/executeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Persisted completed, failed or uncertain receipt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/receipt"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Same admitted attempt is still running",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/receipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]{16,128}$"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Payment-Signature",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 16384
+            },
+            "description": "Only for a deployment-enabled paid route using its existing facilitator adapter. Free routes reject this header."
+          }
+        ],
+        "description": "One execution per quote and one possible settlement per authorization. Retry identical bytes/fields and the same idempotency key; unresolved attempts never restart."
+      }
+    },
+    "/v1/receipts/{id}": {
+      "get": {
+        "operationId": "readPersistedReceipt",
+        "security": [
+          {
+            "tenantBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/receipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Bounded JSON error; no provider text or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9-]{36}$"
+            }
+          }
+        ],
+        "description": "Tenant-bound persisted readback. Another tenant receives 404. Expired in-flight work becomes uncertain without resending."
+      }
+    },
+    "/v1/routes/lockfile.delta/input.schema.json": {
+      "get": {
+        "operationId": "lockfile_delta_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for lockfile.delta input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/lockfile.delta/output.schema.json": {
+      "get": {
+        "operationId": "lockfile_delta_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for lockfile.delta output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/http.capture/input.schema.json": {
+      "get": {
+        "operationId": "http_capture_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for http.capture input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/http.capture/output.schema.json": {
+      "get": {
+        "operationId": "http_capture_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for http.capture output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.submit/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_submit_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.submit input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.submit/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_submit_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.submit output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.poll/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_poll_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.poll input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.poll/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_poll_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.poll output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.result/input.schema.json": {
+      "get": {
+        "operationId": "url_extract_result_input_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.result input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/routes/url.extract.result/output.schema.json": {
+      "get": {
+        "operationId": "url_extract_result_output_schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON Schema for url.extract.result output",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "tenantBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "quoteRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "lockfile.delta"
+              },
+              "input": {
+                "$ref": "#/components/schemas/lockfile_delta_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "http.capture"
+              },
+              "input": {
+                "$ref": "#/components/schemas/http_capture_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.submit"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_submit_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.poll"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_poll_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "routeId": {
+                "const": "url.extract.result"
+              },
+              "input": {
+                "$ref": "#/components/schemas/url_extract_result_input"
+              }
+            },
+            "required": [
+              "routeId",
+              "input"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "executeRequest": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36,
+            "pattern": "^[a-f0-9-]{36}$"
+          },
+          "input": {
+            "type": "object"
+          },
+          "maxUnits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          }
+        },
+        "required": [
+          "quoteId",
+          "input",
+          "maxUnits"
+        ],
+        "additionalProperties": false
+      },
+      "testRequest": {
+        "type": "object",
+        "properties": {
+          "routeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          }
+        },
+        "required": [
+          "routeId"
+        ],
+        "additionalProperties": false
+      },
+      "quote": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.quote.v1"
+          },
+          "quoteId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 36
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "routeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          },
+          "routeDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expiresAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "tenantBound": {
+            "type": "boolean"
+          },
+          "executable": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000000
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+              }
+            },
+            "required": [
+              "amount",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "requirements": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "scheme": {
+                    "const": "exact"
+                  },
+                  "network": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "asset": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "amount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32,
+                    "pattern": "^[1-9][0-9]*$"
+                  },
+                  "payTo": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "maxTimeoutSeconds": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3600
+                  },
+                  "extra": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "scheme",
+                  "network",
+                  "asset",
+                  "amount",
+                  "payTo",
+                  "maxTimeoutSeconds"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "schema",
+          "quoteId",
+          "routeId",
+          "routeDigest",
+          "inputDigest",
+          "expiresAt",
+          "tenantBound",
+          "executable",
+          "price",
+          "requirements"
+        ],
+        "additionalProperties": false
+      },
+      "receipt": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.receipt.v1"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+          },
+          "quoteId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+          },
+          "routeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          },
+          "routeVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "requestDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "createdAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "deadlineAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "running",
+              "completed",
+              "failed",
+              "uncertain"
+            ]
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000000
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+              }
+            },
+            "required": [
+              "amount",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "enum": [
+                  "not_required",
+                  "not_attempted",
+                  "possible",
+                  "settled",
+                  "declined"
+                ]
+              },
+              "adapter": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "evidence": {
+                "enum": [
+                  "none",
+                  "unsigned_fixture",
+                  "facilitator_response"
+                ]
+              },
+              "reference": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "network": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "state",
+              "adapter",
+              "evidence",
+              "reference",
+              "network"
+            ],
+            "additionalProperties": false
+          },
+          "output": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "readbackPath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "schema",
+          "id",
+          "quoteId",
+          "routeId",
+          "routeVersion",
+          "requestDigest",
+          "inputDigest",
+          "createdAt",
+          "deadlineAt",
+          "completedAt",
+          "status",
+          "price",
+          "payment",
+          "output",
+          "error",
+          "readbackPath"
+        ],
+        "additionalProperties": false
+      },
+      "test": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.test.v1"
+          },
+          "routeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          },
+          "fixture": {
+            "const": true
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "output": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "schema",
+          "routeId",
+          "fixture",
+          "paymentAttempts",
+          "output"
+        ],
+        "additionalProperties": false
+      },
+      "discovery": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.discovery.v1"
+          },
+          "version": {
+            "const": "0.1.1"
+          },
+          "basePath": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "budgetUnit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+          },
+          "paymentsEnabled": {
+            "type": "boolean"
+          },
+          "paths": {
+            "type": "object",
+            "properties": {
+              "quote": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "test": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "execute": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "receipt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "quote",
+              "test",
+              "execute",
+              "receipt"
+            ],
+            "additionalProperties": false
+          },
+          "routes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                },
+                "provider": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "price": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000000
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "unit"
+                  ],
+                  "additionalProperties": false
+                },
+                "timeoutMs": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 30000
+                },
+                "maxOutputBytes": {
+                  "type": "integer",
+                  "minimum": 128,
+                  "maximum": 262144
+                },
+                "routeDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "inputSchemaPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "outputSchemaPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "executable": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "provider",
+                "description",
+                "price",
+                "timeoutMs",
+                "maxOutputBytes",
+                "routeDigest",
+                "inputSchemaPath",
+                "outputSchemaPath",
+                "executable"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "schema",
+          "version",
+          "basePath",
+          "budgetUnit",
+          "paymentsEnabled",
+          "paths",
+          "routes"
+        ],
+        "additionalProperties": false
+      },
+      "health": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.health.v1"
+          },
+          "ready": {
+            "type": "boolean"
+          },
+          "runtime": {
+            "const": "mounted-node"
+          },
+          "persistence": {
+            "enum": [
+              "sqlite-wal",
+              "postgres"
+            ]
+          },
+          "paymentsEnabled": {
+            "type": "boolean"
+          },
+          "routeCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "schema",
+          "ready",
+          "runtime",
+          "persistence",
+          "paymentsEnabled",
+          "routeCount"
+        ],
+        "additionalProperties": false
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            },
+            "required": [
+              "code"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "tenantConfig": {
+        "type": "object",
+        "properties": {
+          "tenants": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+                },
+                "tokenSha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "routes": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+                  }
+                },
+                "maxUnits": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000000
+                },
+                "maxCalls": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                },
+                "maxConcurrent": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4
+                }
+              },
+              "required": [
+                "id",
+                "tokenSha256",
+                "routes",
+                "maxUnits",
+                "maxCalls",
+                "maxConcurrent"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "tenants"
+        ],
+        "additionalProperties": false
+      },
+      "lockfile_delta_input": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 49152
+          },
+          "after": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 49152
+          }
+        },
+        "required": [
+          "before",
+          "after"
+        ],
+        "additionalProperties": false
+      },
+      "lockfile_delta_output": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.lockfile-delta.v1"
+          },
+          "status": {
+            "enum": [
+              "partial",
+              "actionable",
+              "informational"
+            ]
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "beforePins": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "afterPins": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "added": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "removed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "changed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "unchanged": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              },
+              "missingIntegrity": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+              }
+            },
+            "required": [
+              "beforePins",
+              "afterPins",
+              "added",
+              "removed",
+              "changed",
+              "unchanged",
+              "missingIntegrity"
+            ],
+            "additionalProperties": false
+          },
+          "added": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "version": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "integrity": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolved": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "gitCommit": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "termsHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "missingIntegrity": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "version",
+                "integrity",
+                "resolved",
+                "gitCommit",
+                "termsHash",
+                "missingIntegrity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "removed": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "version": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "integrity": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "resolved": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "gitCommit": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "termsHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "missingIntegrity": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "version",
+                "integrity",
+                "resolved",
+                "gitCommit",
+                "termsHash",
+                "missingIntegrity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "changed": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "before": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "name": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "version": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "integrity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 4096
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "resolved": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 4096
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "gitCommit": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "termsHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "missingIntegrity": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "integrity",
+                    "resolved",
+                    "gitCommit",
+                    "termsHash",
+                    "missingIntegrity"
+                  ],
+                  "additionalProperties": false
+                },
+                "after": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "name": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "version": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "integrity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 4096
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "resolved": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 4096
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "gitCommit": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "termsHash": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "missingIntegrity": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "integrity",
+                    "resolved",
+                    "gitCommit",
+                    "termsHash",
+                    "missingIntegrity"
+                  ],
+                  "additionalProperties": false
+                },
+                "changeKinds": {
+                  "type": "array",
+                  "maxItems": 4,
+                  "uniqueItems": true,
+                  "items": {
+                    "enum": [
+                      "name",
+                      "version",
+                      "integrity",
+                      "resolved"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "before",
+                "after",
+                "changeKinds"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "schema",
+          "status",
+          "counts",
+          "added",
+          "removed",
+          "changed"
+        ],
+        "additionalProperties": false
+      },
+      "http_capture_input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "http_capture_output": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": "neomorphic.machine-gateway.http-capture.v1"
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 200,
+            "maximum": 599
+          },
+          "contentType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65536
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bodyBase64": {
+            "type": "string",
+            "maxLength": 87384,
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+          }
+        },
+        "required": [
+          "schema",
+          "status",
+          "contentType",
+          "bytes",
+          "sha256",
+          "bodyBase64"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_submit_input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_.-]{8,128}$"
+          }
+        },
+        "required": [
+          "url",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_submit_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "ready"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "status",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "fetch_mode",
+          "completion"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_poll_input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_poll_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requestedUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "const": "unknown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "title",
+          "status",
+          "requestedUrl",
+          "fetch_mode",
+          "completion",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "verdict",
+          "code"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_result_input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "url_extract_result_output": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "pattern": "^j[a-f0-9]{32}$"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requestedUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fetch_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion": {
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          },
+          "digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "no_fit",
+              "fit",
+              "failed",
+              "aborted",
+              "timed_out",
+              "unknown"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "paymentAttempts": {
+            "const": 0
+          },
+          "newPayment": {
+            "const": false
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "const": "unknown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "jobId",
+          "title",
+          "status",
+          "requestedUrl",
+          "fetch_mode",
+          "completion",
+          "digest",
+          "state",
+          "reason",
+          "attempts",
+          "paymentAttempts",
+          "newPayment",
+          "verdict",
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

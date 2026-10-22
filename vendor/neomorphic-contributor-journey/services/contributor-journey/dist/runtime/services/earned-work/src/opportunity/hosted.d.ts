@@ -1,0 +1,38 @@
+export type HostedConfiguration = "absent" | "malformed" | "wrong_origin" | "out_of_scope" | "hosted";
+export type HostedDeliveryProjection = {
+    schema: "neomorphic.opportunity-hosted-delivery.v1";
+    configuration: HostedConfiguration;
+    deliveryState: "unconfigured" | "hosted";
+    deploymentRequired: boolean;
+    origin: string | null;
+    prefix: string | null;
+    roundKey: string | null;
+    roundReadPath: string | null;
+    submissionPathTemplate: string | null;
+    readbackPathTemplate: string | null;
+    machineClaimPath: string | null;
+    waitlistPath: string | null;
+    hostedClaimAutomation: false;
+    publicClaimable: false;
+    publicRemainingSlots: 0;
+    publicPaidCapacity: 0;
+    anonymousSelfRegistration: false;
+    settlementAutomatic: false;
+    grantsDelivered: false;
+    openInventory: false;
+    holderRequired: true;
+    claimsRequireScopedHolder: true;
+    emailFallback: string;
+    note: string;
+};
+type HostedInput = {
+    origin?: string;
+    prefix?: string;
+    roundKey?: string;
+    outOfScope?: boolean;
+} | null | undefined;
+export declare function projectHostedDelivery(input?: HostedInput, admission?: HostedInput): HostedDeliveryProjection;
+export declare function projectionForRound(current: HostedDeliveryProjection, roundKey: string): HostedDeliveryProjection;
+export declare function parseHostedEnv(env: NodeJS.ProcessEnv): HostedDeliveryProjection;
+export declare function absentHostedDelivery(): HostedDeliveryProjection;
+export {};

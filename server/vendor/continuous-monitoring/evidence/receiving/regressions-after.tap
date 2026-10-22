@@ -1,0 +1,57 @@
+TAP version 13
+# (node:2192302) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cancel committed between dispatch claim and HTTP entry prevents the source request
+ok 1 - cancel committed between dispatch claim and HTTP entry prevents the source request
+  ---
+  duration_ms: 149.599064
+  ...
+# Subtest: revocation fences an old claim even when the tenant is regranted before the next tick
+ok 2 - revocation fences an old claim even when the tenant is regranted before the next tick
+  ---
+  duration_ms: 104.678156
+  ...
+# Subtest: upstream failure strings never enter notification or run output
+ok 3 - upstream failure strings never enter notification or run output
+  ---
+  duration_ms: 169.846941
+  ...
+# Subtest: malformed Observatory structures produce unavailable evidence instead of crashing the worker
+ok 4 - malformed Observatory structures produce unavailable evidence instead of crashing the worker
+  ---
+  duration_ms: 167.594819
+  ...
+# Subtest: monitor initialization refuses foreign databases without modifying their contents
+ok 5 - monitor initialization refuses foreign databases without modifying their contents
+  ---
+  duration_ms: 9.142348
+  ...
+# Subtest: monitor state refuses hard links, shared directories and symlinked parent paths
+ok 6 - monitor state refuses hard links, shared directories and symlinked parent paths
+  ---
+  duration_ms: 12.077029
+  ...
+# Subtest: missing and duplicate Observatory metrics cannot establish a comparable baseline
+ok 7 - missing and duplicate Observatory metrics cannot establish a comparable baseline
+  ---
+  duration_ms: 5.960491
+  ...
+# Subtest: runtime arithmetic refuses coercible strings and non-finite cadence or lease values
+ok 8 - runtime arithmetic refuses coercible strings and non-finite cadence or lease values
+  ---
+  duration_ms: 0.262919
+  ...
+# Subtest: an unchanged legacy monitor database is adopted with its WAL history intact
+ok 9 - an unchanged legacy monitor database is adopted with its WAL history intact
+  ---
+  duration_ms: 47.016577
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 729.9589

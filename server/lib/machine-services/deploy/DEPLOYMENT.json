@@ -1,0 +1,140 @@
+{
+  "schema": "sds.machine-services.deployment-package.v1",
+  "sourceHead": "bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+  "branch": "codex/ae18-host-integration-243001",
+  "previousExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+  "hostBase": "b069bad3abd40b53e826003d924c7f0ac786f856",
+  "serviceRepairPin": "667fba353e9082d8a0842437442dabc42843abf8",
+  "adapter": "postgres",
+  "schemas": [
+    "pilot_gateway",
+    "pilot_monitor"
+  ],
+  "schemaVersions": {
+    "gateway": 1,
+    "monitor": 1
+  },
+  "startCommand": "node server/index.js",
+  "overlayPackage": {
+    "path": "/tmp/sds-ae19-qualified-bcb8d189-source.tgz",
+    "sha256": "17a9764424e237bc7a0de5d91b588a8e1befb0b9217d20ec1fb26e513467d979",
+    "bytes": 550568,
+    "requiresExistingSdsCheckout": true,
+    "reportingFilesExcluded": [
+      "server/lib/machine-services/RESULT.md",
+      "server/lib/machine-services/deploy/DEPLOYMENT.json",
+      "server/lib/machine-services/deploy/SHA256SUMS",
+      "server/lib/machine-services/test/evidence"
+    ],
+    "report": "final feature branch server/lib/machine-services/RESULT.md"
+  },
+  "amendmentSourcePatch": {
+    "base": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "path": "/tmp/sds-ae19-qualified-bcb8d189-amendment.patch",
+    "sha256": "b9b52462564a0a5a10241d54c4f4e314d6af2bf85f58b11ab274c1cf3e2debfe"
+  },
+  "sourceScope": [
+    "package.json",
+    "package-lock.json",
+    "server/app.js",
+    "server/index.js",
+    "server/lib/machine-services",
+    "server/vendor/machine-gateway",
+    "server/vendor/continuous-monitoring",
+    "server/foundry/activation/private-control-pin.json",
+    "server/scripts/test-proxy-addr-patch.js",
+    "server/scripts/test-foundry-private-pass.js",
+    "vendor/neomorphic-contributor-journey/SOURCE.json"
+  ],
+  "files": {
+    "deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
+    "deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",
+    "deploy/env.keys": "2bad423432285d899a4d1f621bd68a16a2bf1f56c63610b5d4c7583da4895628",
+    "deploy/rollback.json": "70209fc508279819560d7e067ff903310f07227c537b943c1efde056592f91fb"
+  },
+  "gatewayArchives": [
+    {
+      "version": "0.1.0",
+      "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+      "unchanged": true
+    },
+    {
+      "version": "0.1.1",
+      "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+      "bytes": 49637,
+      "unchanged": true
+    },
+    {
+      "version": "0.1.2",
+      "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+      "bytes": 53193,
+      "selectedReceivedArtifact": true,
+      "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3"
+    }
+  ],
+  "previousOverlaySha256": "be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32",
+  "configurationContractChangedByAmendment": false,
+  "migrationSchemaChangedByAmendment": false,
+  "installationAuthority": "Root independently verified retained TLS Postgres role additive CREATE; migration rechecks actual capability without username assumptions",
+  "deployed": false,
+  "previousTestedImplementation": "ab0a7752780995421da5752d9d6811d56e6d3891",
+  "sourceOnlyLifecycleAmendment": false,
+  "codeRollback": {
+    "source": "Root exact completed deployed predecessor journal",
+    "environment": "controller rollbackPacket exact original full set",
+    "retainSchemasAndReceipts": true,
+    "preserveCompleteEnvironment": true,
+    "neverReplayUnknownBuild": true
+  },
+  "lifecycle": {
+    "backoffMs": [
+      1000,
+      2000,
+      4000,
+      8000,
+      16000,
+      30000
+    ],
+    "oneRecoveryTimer": true,
+    "singleFlightInitialization": true,
+    "sameExistingScheduler": true,
+    "shutdownDrainsPlansAndTicks": true,
+    "newEnvironmentKeys": []
+  },
+  "sourceOnlyQualificationAmendment": true,
+  "sourceAmendmentRollback": {
+    "head": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "warning": "historical feature source, not evidence this source was deployed"
+  },
+  "sourceQualification": {
+    "predecessorExport": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+    "failedActionsRun": 38707454771,
+    "failingControlsCommit": "c57c92cf05ab022e1f22cdfba3a6b0506a8a4836",
+    "artifactProducer": "872c4f3006db6c70b45d124480cd019e0af50e69",
+    "artifactReceivingCommit": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerReceivingCommit": "52534ea5ad93c8449447d109fb0905f664bba494",
+    "callerBase": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "callerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
+    "callerMembers": 1171,
+    "priorCallerDescriptorsAccepted": 25,
+    "compiledContributorMembersUnchanged": 437,
+    "opportunitySourceMembersReproduced": 187,
+    "opportunityCompiledMembersReproduced": 106,
+    "productionAdapter": "postgres",
+    "schemaEnvironmentKeysOrServiceKernelsChanged": false,
+    "actualTransportQualificationIssued": false,
+    "companionControllerExport": "931b7166842cbb0aa6db2041150041f9798dc49a",
+    "companionTestedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149",
+    "deploymentQualification": "Root actual transport receiving; old incompatible signed source must refuse before writes"
+  },
+  "releaseController": {
+    "repository": "epistemedeus/pilot",
+    "branch": "codex/ae19-preserving-host-release-243001",
+    "exportHead": "931b7166842cbb0aa6db2041150041f9798dc49a",
+    "testedImplementation": "abf7239f0e414677cd1795ba08158f44957bb149",
+    "pr": 412,
+    "profile": "preserve-private-machine-services",
+    "sourceUnchanged": true,
+    "manifestCandidate": "final source export in outer installation bundle; runtime/source bytes equal sourceHead"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "schema": "sds.machine-services.deploy-inputs.v2",
+  "active": true,
+  "forJob": "243001 SDS runtime integration",
+  "historicalSnapshot": "inputs.historical.json",
+  "host": {
+    "name": "existing SameDayDesk Hostinger Node 22 app",
+    "repo": "epistemedeus/samedaydesk",
+    "base": "b069bad3abd40b53e826003d924c7f0ac786f856",
+    "historicalPatchBase": "d8cea059213e06d2f263be67f82e498f8052a50f",
+    "start": "node server/index.js",
+    "portEnv": "PORT injected by Hostinger (do not set)",
+    "deployed": false
+  },
+  "environment": {
+    "authoritativePacket": "env.keys",
+    "retainedBaselineCount": 59,
+    "preservesExistingValues": true,
+    "productionStores": "postgres",
+    "paymentsEnabled": "0",
+    "sqliteProduction": false
+  },
+  "closure": {
+    "preserved": true,
+    "record": "server/foundry/activation/private-control-pin.json",
+    "replacesPriors": false
+  },
+  "names": {
+    "gateway": [
+      "CORRESPONDENCE_DATABASE_URL",
+      "CORRESPONDENCE_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_DATABASE_URL",
+      "MACHINE_SERVICES_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_PGSSL_CA_PEM",
+      "MACHINE_SERVICES_PRIVATE_DIR",
+      "MACHINE_GATEWAY_ENABLED",
+      "MACHINE_GATEWAY_PAYMENTS_ENABLED",
+      "MACHINE_GATEWAY_STORE",
+      "MACHINE_GATEWAY_TENANTS_FILE",
+      "MACHINE_GATEWAY_TENANTS_JSON",
+      "MACHINE_GATEWAY_URL_EXTRACT_FILE",
+      "MACHINE_GATEWAY_URL_EXTRACT_JSON",
+      "NODE_ENV"
+    ],
+    "monitor": [
+      "CORRESPONDENCE_DATABASE_URL",
+      "CORRESPONDENCE_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_DATABASE_URL",
+      "MACHINE_SERVICES_PGSSL_CA_FILE",
+      "MACHINE_SERVICES_PGSSL_CA_PEM",
+      "MACHINE_SERVICES_PRIVATE_DIR",
+      "MONITOR_ENABLED",
+      "MONITOR_SCHEDULER",
+      "MONITOR_STORE",
+      "MONITOR_RUNTIME_FILE",
+      "MONITOR_RUNTIME_JSON",
+      "NODE_ENV"
+    ],
+    "installerOnly": [
+      "MONITOR_GRANT_FILE",
+      "MONITOR_GRANT_JSON"
+    ],
+    "discovery": [
+      "DISCOVERY_LOG_DIR",
+      "DISCOVERY_LOG_QA_SECRET",
+      "DISCOVERY_LOG_JOURNEY_SECRET"
+    ]
+  },
+  "gateway": {
+    "source": "neo@667fba353e9082d8a0842437442dabc42843abf8",
+    "originalSource": "neo@7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+    "mountPrefix": "/api/machine-gateway",
+    "vendorDir": "server/vendor/machine-gateway",
+    "paymentsEnabled": "0",
+    "archives": [
+      {
+        "version": "0.1.0",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.0.tgz",
+        "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+        "bytes": 48464,
+        "selected": false,
+        "unchanged": true
+      },
+      {
+        "version": "0.1.1",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
+        "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+        "bytes": 49637,
+        "selected": false,
+        "unchanged": true
+      },
+      {
+        "version": "0.1.2",
+        "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.2.tgz",
+        "sha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
+        "bytes": 53193,
+        "selected": true,
+        "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
+        "contains": "package/src/url-extract-routes.mjs"
+      }
+    ],
+    "storage": {
+      "kind": "postgres",
+      "schema": "pilot_gateway",
+      "sslmode": "verify-full",
+      "sqliteProduction": false
+    },
+    "health": [
+      "/api/machine-gateway/healthz"
+    ],
+    "enroll": "node server/vendor/machine-gateway/bin/enroll.mjs --tenant <id> --config <tenants.json> --token-file <private path>"
+  },
+  "monitor": {
+    "source": "neo@667fba353e9082d8a0842437442dabc42843abf8",
+    "foundation": "neo@0ad6691f79225cfba782971a910c0e79d371c8f3",
+    "mountPrefix": "/api/monitor",
+    "proposed": false,
+    "vendorDir": "server/vendor/continuous-monitoring",
+    "storage": {
+      "kind": "postgres",
+      "schema": "pilot_monitor",
+      "sslmode": "verify-full",
+      "sqliteProduction": false
+    },
+    "runtime": {
+      "ignoredStandaloneKeys": ["database", "host", "port"],
+      "applied": "options"
+    },
+    "health": [
+      "/api/monitor/healthz",
+      "/api/monitor/v1/manifest"
+    ]
+  },
+  "extraction": {
+    "schema": "ae19_paid_continuation",
+    "bindingKeys": ["schema", "tenantId", "actorId"],
+    "vendorDir": "server/vendor/url-extract",
+    "provision": "machine-services:migrate",
+    "servingMigrates": false
+  },
+  "install": {
+    "commands": [
+      "npm run machine-services:prepare",
+      "npm run machine-services:migrate",
+      "npm run machine-services:inspect",
+      "npm run machine-services:provision"
+    ],
+    "schemas": ["pilot_gateway", "pilot_monitor", "ae19_paid_continuation"]
+  },
+  "secrets": "names only; values live in the Hostinger panel and enrolled stores; never commit or print"
+}

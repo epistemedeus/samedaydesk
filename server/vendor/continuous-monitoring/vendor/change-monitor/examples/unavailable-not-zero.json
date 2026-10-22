@@ -1,0 +1,22 @@
+{
+  "capture": "fixture",
+  "schemaVersion": "pilot.external-observatory.v1",
+  "fetchedAt": "2026-09-30T12:10:00.000Z",
+  "observations": [
+    {
+      "schemaVersion": "pilot.external-observatory.v1",
+      "sourceId": "moltjobs",
+      "sourceKind": "work_market",
+      "availability": "unavailable",
+      "coverage": null,
+      "metrics": [
+        {
+          "key": "jobCount",
+          "value": 0,
+          "state": "missing",
+          "unit": "count"
+        }
+      ]
+    }
+  ]
+}

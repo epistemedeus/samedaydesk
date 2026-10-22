@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neomorphic.io/schema/change-monitor.usage-receipt.v1.json",
+  "title": "Change monitor usage receipt",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "subscriptionId", "usefulEvents", "unchanged", "cost"],
+  "properties": {
+    "schema": { "const": "change-monitor.usage-receipt.v1" },
+    "subscriptionId": { "type": "string" },
+    "usefulEvents": { "type": "integer" },
+    "unchanged": { "type": "integer" },
+    "cost": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["billable", "paidSubscriptionActivated", "quantity", "price", "sku"],
+      "properties": {
+        "billable": { "const": false },
+        "paidSubscriptionActivated": { "const": false },
+        "unit": { "const": "useful-event" },
+        "quantity": { "type": "integer" },
+        "unchangedExcluded": { "const": true },
+        "price": { "type": "null" },
+        "sku": { "type": "null" },
+        "currency": { "type": "null" }
+      }
+    }
+  }
+}

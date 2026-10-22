@@ -1,0 +1,24 @@
+{
+  "schema": "sds.contributor-host-lock-receiving.v1",
+  "producerHead": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "command": "node services/contributor-journey/export-runtime.mjs /absolute/isolated/recipient",
+  "qualifiedBuildReused": true,
+  "compiledAndStaticMembersCompared": 437,
+  "compiledAndStaticChanges": 0,
+  "changedManifestFields": [
+    "hostLockSha256"
+  ],
+  "priorHostLockSha256": "9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129",
+  "hostLockSha256": "4f2660d59ec4bb6697a01c591b5d20b918927ff8de0b8dc6316d04fc319389e7",
+  "sourceCommitUnchanged": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "requiredDependenciesUnchanged": {
+    "express": "5.2.1",
+    "pg": "8.23.0",
+    "zod": "3.25.76"
+  },
+  "previousReceipt": "producer-receiving.json",
+  "callerClosureDigest": "sha256:f1332ceed4e3d99aa342014aafb69648d4d56bf62cae2880838212ca8b914161",
+  "priorCallerClosureDigest": "sha256:a530cb38c2293965cbade4e94aee4f169ff92dc5debb74eaad2d5192feeda4f3",
+  "priorCallerDescriptorsAccepted": 25,
+  "deploymentQualificationIssued": false
+}

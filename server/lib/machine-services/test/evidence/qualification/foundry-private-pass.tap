@@ -1,0 +1,179 @@
+
+> samedaydesk@1.0.0 test:foundry-private-pass
+> node server/scripts/fixtures/managed-layout-tests.mjs
+
+TAP version 13
+# Subtest: strict typed request and absent explicit selection refuse without SQL
+ok 1 - strict typed request and absent explicit selection refuse without SQL
+  ---
+  duration_ms: 627.288106
+  ...
+# Subtest: explicit canonical dispatch publishes; exact replay charges once; read-only observation binds task termination
+ok 2 - explicit canonical dispatch publishes; exact replay charges once; read-only observation binds task termination
+  ---
+  duration_ms: 6336.712758
+  ...
+# Subtest: wrong project, allocation, entry terms and generation refuse before dispatch
+ok 3 - wrong project, allocation, entry terms and generation refuse before dispatch
+  ---
+  duration_ms: 3152.891288
+  ...
+# Subtest: changed durable intent and concurrent exact retry cannot launch twice
+ok 4 - changed durable intent and concurrent exact retry cannot launch twice
+  ---
+  duration_ms: 4883.416237
+  ...
+# Subtest: unknown/lost response never redispatches; unlaunched reservation remains held for explicit reconciliation
+ok 5 - unknown/lost response never redispatches; unlaunched reservation remains held for explicit reconciliation
+  ---
+  duration_ms: 3925.611435
+  ...
+# Subtest: completed physical work with lost receipt is explicitly reconciled without another execution
+ok 6 - completed physical work with lost receipt is explicitly reconciled without another execution
+  ---
+  duration_ms: 5363.727504
+  ...
+# Subtest: stale installed execution policy refuses; no journal/charge is changed
+ok 7 - stale installed execution policy refuses; no journal/charge is changed
+  ---
+  duration_ms: 2919.978139
+  ...
+# Subtest: outstanding physical ownership in another admitted project blocks this pass
+ok 8 - outstanding physical ownership in another admitted project blocks this pass
+  ---
+  duration_ms: 3788.795365
+  ...
+# Subtest: private inputs/receipt modes and path/symlink/changed replay refuse without dispatch
+ok 9 - private inputs/receipt modes and path/symlink/changed replay refuse without dispatch
+  ---
+  duration_ms: 2763.6754
+  ...
+# Subtest: SIGTERM cancellation stays supervised and drained; visitor execution is not replayed
+ok 10 - SIGTERM cancellation stays supervised and drained; visitor execution is not replayed
+  ---
+  duration_ms: 3803.034935
+  ...
+# Subtest: visitor A / actual HTTP stop-restart / B canonical acquisition: useful, negative, changed and private correspondence
+ok 11 - visitor A / actual HTTP stop-restart / B canonical acquisition: useful, negative, changed and private correspondence
+  ---
+  duration_ms: 9905.480565
+  ...
+# Subtest: source-pinned remote caller rehearses A / restart / B; named managed pass works with a minimal PATH
+ok 12 - source-pinned remote caller rehearses A / restart / B; named managed pass works with a minimal PATH
+  ---
+  duration_ms: 21510.22401
+  ...
+# Subtest: caller source closure refuses an unrelated or changed control source before network/enrollment
+ok 13 - caller source closure refuses an unrelated or changed control source before network/enrollment
+  ---
+  duration_ms: 1073.727305
+  ...
+# Subtest: private started/completed receipt with missing durable journal refuses new work
+ok 14 - private started/completed receipt with missing durable journal refuses new work
+  ---
+  duration_ms: 5188.398512
+  ...
+# Subtest: real HTTP no-launch evidence, explicit lossless receiving, saved intent continuation and charged ceiling
+ok 15 - real HTTP no-launch evidence, explicit lossless receiving, saved intent continuation and charged ceiling
+  ---
+  duration_ms: 8705.002428
+  ...
+# Subtest: concurrent exact owner receiving consumes one slot; changed intent, identity and readback refuse
+ok 16 - concurrent exact owner receiving consumes one slot; changed intent, identity and readback refuse
+  ---
+  duration_ms: 6941.740317
+  ...
+# Subtest: lost completed receipt replays durable receiving without another allowance or child
+ok 17 - lost completed receipt replays durable receiving without another allowance or child
+  ---
+  duration_ms: 6947.535112
+  ...
+# Subtest: lost HTTP invocation reply keeps the exact saved intent; restart returns its committed result without another child
+ok 18 - lost HTTP invocation reply keeps the exact saved intent; restart returns its committed result without another child
+  ---
+  duration_ms: 6993.826714
+  ...
+# Subtest: wrong allocation, terms, project, registration, candidate, generation, observation and original request refuse atomically
+ok 19 - wrong allocation, terms, project, registration, candidate, generation, observation and original request refuse atomically
+  ---
+  duration_ms: 6547.694055
+  ...
+# Subtest: no-launch receiving rejects forged observations, contradictory process identity and uncertain physical outcomes
+ok 20 - no-launch receiving rejects forged observations, contradictory process identity and uncertain physical outcomes
+  ---
+  duration_ms: 8465.052623
+  ...
+# Subtest: stale manifest, evidence, terms, grant and runtime generation never receive a no-launch continuation
+ok 21 - stale manifest, evidence, terms, grant and runtime generation never receive a no-launch continuation
+  ---
+  duration_ms: 6406.441194
+  ...
+# Subtest: outstanding physical ownership and exhausted original cap prohibit receiving without resetting charges
+ok 22 - outstanding physical ownership and exhausted original cap prohibit receiving without resetting charges
+  ---
+  duration_ms: 6612.034578
+  ...
+# Subtest: failed SQL rollback and cancellation preserve the original no-launch history and do not reserve a child
+ok 23 - failed SQL rollback and cancellation preserve the original no-launch history and do not reserve a child
+  ---
+  duration_ms: 5803.593794
+  ...
+# Subtest: exited but undrained evidence stays unknown and held; no-launch receiving cannot reassign it
+ok 24 - exited but undrained evidence stays unknown and held; no-launch receiving cannot reassign it
+  ---
+  duration_ms: 6181.777056
+  ...
+# Subtest: HTTP invocation refuses missing/changed installed interpreter or native bytes before any charge; original manifest then executes
+ok 25 - HTTP invocation refuses missing/changed installed interpreter or native bytes before any charge; original manifest then executes
+  ---
+  duration_ms: 6211.136323
+  ...
+# Subtest: closed launch/status/CLI diagnostics discard arbitrary error prose and native aliases remain truthful
+ok 26 - closed launch/status/CLI diagnostics discard arbitrary error prose and native aliases remain truthful
+  ---
+  duration_ms: 70.09094
+  ...
+# Subtest: documented launch observer is scoped under concurrency and cleans up after an exception
+ok 27 - documented launch observer is scoped under concurrency and cleans up after an exception
+  ---
+  duration_ms: 18.676979
+  ...
+# Subtest: expired original receives freshly measured successor; old intent/charge/history survive and loss/restart replays one execution
+ok 28 - expired original receives freshly measured successor; old intent/charge/history survive and loss/restart replays one execution
+  ---
+  duration_ms: 28780.80349
+  ...
+# Subtest: successor refuses changed binding, unknown/no-proof/fence, grant/caps, SQL rollback and concurrent receive consumes once
+ok 29 - successor refuses changed binding, unknown/no-proof/fence, grant/caps, SQL rollback and concurrent receive consumes once
+  ---
+  duration_ms: 17161.600399
+  ...
+# Subtest: delayed successor receiving refuses expired new evidence; no owner renewal occurs on cold startup or ordinary discovery
+ok 30 - delayed successor receiving refuses expired new evidence; no owner renewal occurs on cold startup or ordinary discovery
+  ---
+  duration_ms: 11657.064568
+  ...
+# Subtest: two proved no-launch predecessors continue once in the same current generation; immutable execution lineage survives lost reply, concurrency and restart
+ok 31 - two proved no-launch predecessors continue once in the same current generation; immutable execution lineage survives lost reply, concurrency and restart
+  ---
+  duration_ms: 30634.925473
+  ...
+# Subtest: observable prelaunch mode refusal preserves a new task intent and zero charge; repaired access permits the same saved request
+ok 32 - observable prelaunch mode refusal preserves a new task intent and zero charge; repaired access permits the same saved request
+  ---
+  duration_ms: 5642.99041
+  ...
+# Subtest: current-generation receiving rejects unknown proof, stale fence/input/authority/expired evidence and caps; a lost receiving response replays one charged successor
+ok 33 - current-generation receiving rejects unknown proof, stale fence/input/authority/expired evidence and caps; a lost receiving response replays one charged successor
+  ---
+  duration_ms: 18461.225828
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 264403.773381

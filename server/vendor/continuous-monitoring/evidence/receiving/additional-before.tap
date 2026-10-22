@@ -1,0 +1,73 @@
+TAP version 13
+# (node:2190228) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: missing and duplicate Observatory metrics cannot establish a comparable baseline
+not ok 1 - missing and duplicate Observatory metrics cannot establish a comparable baseline
+  ---
+  duration_ms: 2.232026
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:92:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'comparable'
+    - 'source_failure'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'source_failure'
+  actual: 'comparable'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:100:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.start (node:internal/test_runner/test:877:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: runtime arithmetic refuses coercible strings and non-finite cadence or lease values
+not ok 2 - runtime arithmetic refuses coercible strings and non-finite cadence or lease values
+  ---
+  duration_ms: 0.273104
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:106:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:108:71)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: an unchanged legacy monitor database is adopted with its WAL history intact
+not ok 3 - an unchanged legacy monitor database is adopted with its WAL history intact
+  ---
+  duration_ms: 54.83232
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:111:1'
+  failureType: 'testCodeFailure'
+  error: 'Expected "actual" to be strictly unequal to: 0'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 0
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:120:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123.465042
