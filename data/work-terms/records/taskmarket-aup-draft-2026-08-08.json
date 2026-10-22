@@ -1,0 +1,58 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "taskmarket-aup-draft-2026-08-08",
+  "platformId": "taskmarket",
+  "documentKind": "acceptable_use",
+  "version": {
+    "id": "taskmarket-aup-draft-obs-2026-08-08",
+    "label": "draft-observed-2026-08-08",
+    "observedAt": "2026-08-08T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": "Draft for counsel review",
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "TaskMarket / Daydreams",
+    "canonicalUrl": "https://market.daydreams.systems/legal/acceptable-use",
+    "retrievedFrom": "https://market.daydreams.systems/legal/acceptable-use",
+    "licenseNote": "Draft AUP. Not approved or active on observation date."
+  },
+  "access": {
+    "class": "public_url",
+    "authRequired": false,
+    "httpStatus": 200,
+    "robots": {
+      "userAgentStar": "allow",
+      "sourceUrl": "https://taskmarket.dev/robots.txt",
+      "notes": "Allow /. Disallow /dashboard."
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": false,
+    "mayCommerciallyResell": false,
+    "excerptMaxChars": 280,
+    "mustAttribute": true,
+    "mustLinkCanonical": true,
+    "statement": "Cite and link the Daydreams acceptable-use URL. Draft AUP is not a scrape or republication license."
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [
+    {
+      "id": "no-degrading-scrape",
+      "summary": "Draft AUP forbids scraping that degrades the services or bypassing rate limits.",
+      "quote": "scrape in a way that degrades the Services",
+      "quoteSourceUrl": "https://market.daydreams.systems/legal/acceptable-use"
+    }
+  ],
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "operator_supplied_public_metadata",
+    "notLiveScraped": true,
+    "sourceNote": "Transcribed from SameDayDesk source-rights research dated 2026-08-08. Not a live scrape."
+  }
+}
