@@ -1,0 +1,32 @@
+{
+  "source": "F08 pin bae3e7cd5034b21019fb272a99d88db964b831ee server/paid-useful-jobs/lib/receipt.mjs",
+  "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+  "required": [
+    "schema",
+    "jobId",
+    "engine",
+    "inputsDigest",
+    "outputsDigest",
+    "inputs",
+    "outputs",
+    "fundingState",
+    "sold",
+    "sample",
+    "purchaseAuthority",
+    "liveSettlement"
+  ],
+  "fundingStates": ["unfunded", "reserved-fixture", "rejected"],
+  "honesty": {
+    "sold": false,
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope"
+  },
+  "laterCompatibleFields": [
+    "engine.archiveSha256",
+    "engine.archiveBytes",
+    "engineArchiveIdentity = archiveSha256:archiveBytes",
+    "inputRoot",
+    "engineResult.identityVerified"
+  ],
+  "notImported": "F08 wrapper/envelope/settle kernel is not copied into this module"
+}
