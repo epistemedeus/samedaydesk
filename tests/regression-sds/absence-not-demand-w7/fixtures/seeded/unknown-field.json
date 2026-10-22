@@ -1,0 +1,11 @@
+{
+  "id": "unknown-field",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "unexpected": true,
+  "output": {
+    "ok": true,
+    "paidDemand": true,
+    "paidActivity": { "available": false }
+  }
+}

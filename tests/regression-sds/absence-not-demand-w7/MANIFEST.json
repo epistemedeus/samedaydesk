@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "feature": "absence-not-demand-w7",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/absence-not-demand-w7/**",
+  "principle": {
+    "id": "absence-not-demand",
+    "statement": "Absence of paid activity, routes, pricing rows, or demand signals is not market or paid demand."
+  },
+  "seededAbsenceAsDemand": "route-absent-as-demand",
+  "cases": [
+    {
+      "id": "paid-activity-unavailable-as-demand",
+      "file": "fixtures/cases/paid-activity-unavailable-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand"
+    },
+    {
+      "id": "organic-heuristic-as-paid-demand",
+      "file": "fixtures/cases/organic-heuristic-as-paid-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand"
+    },
+    {
+      "id": "catalog-count-as-demand",
+      "file": "fixtures/cases/catalog-count-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand"
+    },
+    {
+      "id": "pricing-row-absence-as-demand",
+      "file": "fixtures/cases/pricing-row-absence-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand"
+    },
+    {
+      "id": "empty-commerce-demand-invented",
+      "file": "fixtures/cases/empty-commerce-demand-invented.json",
+      "expect": "reject",
+      "class": "absence-as-demand"
+    },
+    {
+      "id": "route-absent-as-demand",
+      "file": "fixtures/cases/route-absent-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "seededAbsenceAsDemand": true
+    }
+  ],
+  "counts": {
+    "total": 6,
+    "reject": 6,
+    "seededAbsenceAsDemand": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}
