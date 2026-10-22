@@ -1,0 +1,24 @@
+E3 changed-data job second run
+==============================
+
+Owning repo: epistemedeus/samedaydesk
+Write boundary: packs/e3-changed-data-second-run/**
+
+This pack is an actual caller of the already-published changed-data job:
+
+- job id: page-change-offline-job
+- catalog: client/public/for-agents/useful-jobs/catalog.json
+- archive: client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz
+- CLI inside that archive: bin/useful-jobs.mjs run page-change-offline-job --job <held.json> --out-dir <dir>
+
+It does not reimplement the compare engine. It does not own
+packs/useful-job-desk (J6) or packs/e4-maintained-runtime-discovery (E4).
+
+Evidence classes stay distinct:
+
+- owner_qa: operator / pack-authored held extracts
+- independent: declared distinct caller identity, not organic demand
+- repeat_demand: never inferred from the same fixture twice
+
+The seeded failure (and kill condition) is the same held fixture run twice
+and labelled as repeat demand. That claim is refused.

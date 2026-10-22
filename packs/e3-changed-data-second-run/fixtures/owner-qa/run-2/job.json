@@ -1,0 +1,9 @@
+{
+  "id": "e3-owner-qa-run-2",
+  "title": "Owner QA widget selected-field change (v2 to v3)",
+  "clock": "2026-09-17T13:30:00.000Z",
+  "fields": ["title", "description", "headings"],
+  "limits": { "maxStaleMs": null },
+  "before": "./before.json",
+  "after": "./after.json"
+}
