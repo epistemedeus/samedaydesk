@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.lab-verify.receipt.v1",
+  "schemaVersion": 1,
+  "jobId": "useful-jobs",
+  "ok": true,
+  "clock": "2026-09-17T12:00:00.000Z",
+  "horizonHours": 24,
+  "pin": {
+    "usefulJobs": {
+      "version": "1.1.0",
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+      "bytes": 2577606
+    }
+  },
+  "inputDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "resultDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "note": "Seeded stale pin (1.1.0 presented as current). Lab-verify must reject."
+}

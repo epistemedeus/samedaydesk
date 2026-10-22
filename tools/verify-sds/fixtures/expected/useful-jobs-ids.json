@@ -1,0 +1,15 @@
+{
+  "version": "1.4.7",
+  "jobIds": [
+    "lockfile-pin-delta",
+    "json-schema-webhook-drift",
+    "route-table-diff",
+    "page-change-offline-job",
+    "api-upgrade-brief",
+    "vendor-budget-impact",
+    "feed-agenda",
+    "evidence-ci-annotation",
+    "listing-repair-packet",
+    "repeat-job-record"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://samedaydesk.com/verify-sds/envelope.schema.json",
+  "title": "samedaydesk lab-verify JSON envelope",
+  "description": "Single stdout object for tools/verify-sds/cli.mjs. Human text belongs on stderr.",
+  "type": "object",
+  "required": [
+    "ok",
+    "schema",
+    "schemaVersion",
+    "command",
+    "repo",
+    "checkedAt",
+    "node",
+    "dryRun",
+    "status",
+    "evidence",
+    "error",
+    "boundary"
+  ],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "schema": { "const": "samedaydesk.lab-verify.envelope.v1" },
+    "schemaVersion": { "const": 1 },
+    "command": { "type": "string", "minLength": 1 },
+    "repo": { "const": "samedaydesk" },
+    "checkedAt": { "type": "string", "format": "date-time" },
+    "node": {
+      "type": "object",
+      "required": ["wanted", "actual"],
+      "properties": {
+        "wanted": { "type": "string" },
+        "actual": { "type": "string" },
+        "major": { "type": "integer" }
+      }
+    },
+    "dryRun": { "type": "boolean" },
+    "status": { "enum": ["pass", "fail", "usage", "error"] },
+    "job": { "type": ["string", "null"] },
+    "jobs": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array" },
+    "error": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "type": "object",
+      "required": ["paymentSent", "toolsCalled"],
+      "properties": {
+        "paymentSent": { "const": false },
+        "toolsCalled": { "const": false }
+      }
+    },
+    "result": true,
+    "receipt": true
+  }
+}
