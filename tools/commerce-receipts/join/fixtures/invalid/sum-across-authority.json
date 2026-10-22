@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.join.v1",
+  "mode": "read_only",
+  "totalUsdc": "0.010",
+  "receipts": [
+    {
+      "party": "buyer",
+      "sourceKind": "buyer_attested_receipt",
+      "authorityClass": "provider_returned",
+      "receiptId": "rcpt_buyer_sum_seed",
+      "joinKeys": {
+        "transaction_hash": "0xfeed0000000000000000000000000000000000000000000000000000c0ffee01"
+      },
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "amountUsdc": "0.005",
+      "status": "attested"
+    },
+    {
+      "party": "seller",
+      "sourceKind": "seller_ledger_line",
+      "authorityClass": "seller_observed",
+      "receiptId": "rcpt_seller_sum_seed",
+      "joinKeys": {
+        "transaction_hash": "0xfeed0000000000000000000000000000000000000000000000000000c0ffee01"
+      },
+      "observedAt": "2026-09-17T00:00:01.000Z",
+      "amountUsdc": "0.005",
+      "status": "ledger_line"
+    }
+  ]
+}

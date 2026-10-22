@@ -1,0 +1,17 @@
+{
+  "money-movement.json": {
+    "code": "money_movement_refused"
+  },
+  "join-without-exact-key.json": {
+    "code": "cross_source_join_without_exact_key"
+  },
+  "pay-mode.json": {
+    "code": "money_movement_refused"
+  },
+  "mutating-http.json": {
+    "code": "money_movement_refused"
+  },
+  "sum-across-authority.json": {
+    "code": "sum_across_authority_classes"
+  }
+}
