@@ -1,0 +1,7 @@
+{
+  "id": "wrong-sha",
+  "seededId": "wrong-sha",
+  "command": "acquire",
+  "feature": "useful-jobs-cold",
+  "expectProductCode": "wrong-digest"
+}

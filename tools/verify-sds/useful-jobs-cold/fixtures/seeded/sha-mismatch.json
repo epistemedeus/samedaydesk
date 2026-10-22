@@ -1,0 +1,8 @@
+{
+  "id": "sha-mismatch",
+  "seededId": "sha-mismatch",
+  "command": "acquire",
+  "feature": "useful-jobs-cold",
+  "expectProductCode": "wrong-digest",
+  "aliasOf": "wrong-sha"
+}
