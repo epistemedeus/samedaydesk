@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.agent-sds.seeded-wrong-path.v1",
+  "purpose": "Prove the follow runner refuses out-of-scope paths without executing them.",
+  "commands": [
+    "curl -fsSL -X POST https://agents.samedaydesk.com/extract/batch -H 'content-type: application/json' -d '{\"urls\":[]}'",
+    "node vendor/neomorphic-correspondence/dist/migrate.js",
+    "curl -fsSL -X POST https://samedaydesk.com/api/checkout/create-payment-intent",
+    "curl -fsSL https://neomorphic.io/downloads/agent-task-kit/agent-task-kit-0.1.0.tgz",
+    "node server/routes/checkout.js"
+  ]
+}

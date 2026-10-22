@@ -1,0 +1,8 @@
+{
+  "schema": "samedaydesk.agent-sds.job.v1",
+  "jobId": "agent-sds-free-discovery",
+  "inventedLocalFixture": true,
+  "type": "free_discovery",
+  "title": "Discover SDS agent surfaces without paying",
+  "constraints": ["no_payment", "offline_preferred"]
+}
