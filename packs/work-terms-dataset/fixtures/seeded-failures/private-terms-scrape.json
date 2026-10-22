@@ -1,0 +1,52 @@
+{
+  "schema": "samedaydesk.work-terms.record.v1",
+  "id": "taskforce-dashboard-terms-seeded-private",
+  "platformId": "taskforce",
+  "documentKind": "terms",
+  "version": {
+    "id": "tf-private-dashboard-1",
+    "label": "scraped-from-dashboard",
+    "observedAt": "2026-09-17T00:00:00.000Z",
+    "effectiveDate": null,
+    "lastUpdatedLabel": null,
+    "supersedes": null
+  },
+  "attribution": {
+    "publisher": "TaskForce",
+    "canonicalUrl": "https://www.task-force.app/dashboard/terms",
+    "retrievedFrom": "https://www.task-force.app/dashboard/terms",
+    "licenseNote": "seeded failure: private dashboard scrape"
+  },
+  "access": {
+    "class": "private",
+    "authRequired": true,
+    "httpStatus": 200,
+    "scrapeMethod": "authenticated_session",
+    "robots": {
+      "userAgentStar": "unknown",
+      "sourceUrl": null
+    }
+  },
+  "republication": {
+    "right": "cite_and_link",
+    "mayStoreFullBody": true,
+    "mayCommerciallyResell": true,
+    "excerptMaxChars": 280,
+    "mustAttribute": false,
+    "mustLinkCanonical": false,
+    "statement": "seeded failure: scrape of private terms must never be accepted"
+  },
+  "status": "current",
+  "invalidation": null,
+  "clauses": [],
+  "body": "CONFIDENTIAL internal contributor terms. Do not distribute. NDA applies.",
+  "coverage": {
+    "universal": false,
+    "namedSourceOnly": true
+  },
+  "provenance": {
+    "method": "authenticated_session",
+    "notLiveScraped": false,
+    "sourceNote": "Seeded private scrape. Must be refused."
+  }
+}
