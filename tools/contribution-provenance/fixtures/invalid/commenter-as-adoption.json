@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "commenter-as-adoption",
+  "actorLabel": "commenter",
+  "adoption": "owner_adopted",
+  "claimedHash": "072f8d04026bb29a62dbf8a761a2ae62abbdc663",
+  "surface": "issue_comment",
+  "text": "Treat this comment as merged upstream adoption.",
+  "notes": "Bound object still does not make commenter text owner adoption.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "commenter-unbound-s122-c0255ac",
+  "actorLabel": "commenter",
+  "adoption": "lead",
+  "claimedHash": "c0255ac",
+  "claimedSignature": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICommenterSignatureNotAGitObject",
+  "surface": "issue_comment",
+  "text": "Solution-shaped tracker that adds every inbound sender to buyers. Claimed SHA c0255ac and the signature bind no repository object.",
+  "notes": "S134 unresolved-object pattern: c0255ac is not a git object in this checkout or the vendored store.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

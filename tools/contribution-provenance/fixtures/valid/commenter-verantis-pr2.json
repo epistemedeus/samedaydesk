@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "commenter-verantis-pr2-head",
+  "actorLabel": "commenter",
+  "adoption": "object_bound",
+  "claimedHash": "072f8d04026bb29a62dbf8a761a2ae62abbdc663",
+  "claimedSignature": null,
+  "surface": "pull_request_head",
+  "text": "Label wallet activity authority in MCP results",
+  "notes": "Verantis PR2 head 072f8d0 is a git commit in the vendored object store. Object binding is not owner adoption; the PR was not merged.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

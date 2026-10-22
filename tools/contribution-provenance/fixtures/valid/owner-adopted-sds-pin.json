@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "owner-adopted-sds-pin-77505160",
+  "actorLabel": "owner",
+  "adoption": "owner_adopted",
+  "claimedHash": "775051602d91f42ca1aa920054cfd7a451982940",
+  "claimedSignature": null,
+  "surface": "commit",
+  "text": "Merge pull request #147 from epistemedeus/codex/h25-offline147-promotion-20260913",
+  "notes": "Same SDS pin as owner-sds-pin.json. owner_adopted is a distinct declared state from object_bound: actorLabel owner plus a hash that git cat-file -t resolves. Not inferred from GitHub.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

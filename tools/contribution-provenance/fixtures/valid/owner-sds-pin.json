@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "owner-sds-pin-77505160",
+  "actorLabel": "owner",
+  "adoption": "object_bound",
+  "claimedHash": "775051602d91f42ca1aa920054cfd7a451982940",
+  "claimedSignature": null,
+  "surface": "commit",
+  "text": "Merge pull request #147 from epistemedeus/codex/h25-offline147-promotion-20260913",
+  "notes": "SameDayDesk pin 775051602d91. Label is declared on this fixture; not a GitHub API lookup.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}

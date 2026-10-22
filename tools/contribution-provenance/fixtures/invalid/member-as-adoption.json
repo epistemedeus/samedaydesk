@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "samedaydesk.contribution-provenance.v1",
+  "claimId": "member-as-adoption",
+  "actorLabel": "member",
+  "adoption": "owner_adopted",
+  "claimedHash": "7e56569feb576d409dca1e1c8f3465155220bbf7",
+  "claimedSignature": null,
+  "surface": "commit",
+  "text": "Drop internal H21 labels from public useful-jobs 1.4.7 copy",
+  "notes": "Bound SDS commit still does not make member actorLabel owner_adopted. owner_adopted requires owner.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "comment_text_is_not_adoption",
+    "solution_shaped_text_is_lead"
+  ]
+}
