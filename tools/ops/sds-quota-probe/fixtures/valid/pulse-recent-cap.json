@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "pulse.recent_cap",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/pulse.js",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 80,
+      "unit": "recent_events",
+      "consumesQuota": false
+    }
+  ]
+}

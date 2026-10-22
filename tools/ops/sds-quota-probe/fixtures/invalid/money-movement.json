@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "checkout": {
+    "intent": "create-payment-intent"
+  },
+  "windows": [
+    {
+      "id": "github.core",
+      "providerId": "github",
+      "surface": "GET https://api.github.com/rate_limit",
+      "authorityClass": "provider_returned",
+      "windowKind": "rate_limit",
+      "limit": 5000,
+      "remaining": 4992,
+      "used": 8,
+      "httpStatus": 200,
+      "httpMethod": "GET",
+      "consumesQuota": false
+    }
+  ]
+}

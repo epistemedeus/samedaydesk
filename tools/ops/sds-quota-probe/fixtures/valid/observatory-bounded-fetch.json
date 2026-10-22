@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "observatory.fetch_timeout_ms",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 8000,
+      "unit": "ms",
+      "consumesQuota": false
+    },
+    {
+      "id": "observatory.max_response_bytes",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 262144,
+      "unit": "bytes",
+      "consumesQuota": false
+    },
+    {
+      "id": "observatory.max_redirects",
+      "providerId": "samedaydesk",
+      "sourcePath": "server/lib/observatory/bounded-fetch.js",
+      "authorityClass": "seller_observed",
+      "windowKind": "declared_cap",
+      "limit": 3,
+      "unit": "hops",
+      "consumesQuota": false
+    }
+  ]
+}

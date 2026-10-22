@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "samedaydesk.ops.quota-probe.v1",
+  "mode": "read_only",
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "windows": [
+    {
+      "id": "github.core",
+      "providerId": "github",
+      "surface": "GET https://api.github.com/rate_limit",
+      "authorityClass": "provider_returned",
+      "windowKind": "rate_limit",
+      "limit": 5000,
+      "remaining": 5000,
+      "used": 0,
+      "unit": "requests",
+      "httpStatus": 429,
+      "httpMethod": "GET",
+      "consumesQuota": false,
+      "headers": {
+        "retry-after": "60"
+      }
+    }
+  ]
+}
