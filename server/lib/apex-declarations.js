@@ -1,6 +1,7 @@
 // Apex machine declarations. Generated from the mounted MCP inventory and the
 // HTTP routes this process actually serves. Paid gateway documents stay on
-// agents.samedaydesk.com; this module only links the live canonical URLs.
+// agents.samedaydesk.com; canonical links do not establish availability.
+import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import {
@@ -14,10 +15,11 @@ import { MCP_BATCH_MIN, MCP_BATCH_MAX, MCP_BATCH_PROTOCOL_VERSIONS, MCP_BODY_LIM
 
 export const PAID_ORIGIN = "https://agents.samedaydesk.com";
 
-// Live canonical paid documents observed with anonymous GET on 2026-10-04.
+// Historical canonical paid documents observed with anonymous GET on 2026-10-04.
 // /.well-known/api-catalog on that host was HTTP 404 and is not linked.
 // Do not copy route counts, prices, or payment addresses from those bodies.
 export const PAID_GATEWAY_LINKS = Object.freeze([
+  { rel: "status", href: `${APEX_ORIGIN}/discovery/paid-gateway.json`, type: "application/json", title: "Paid gateway availability" },
   { rel: "service-desc", href: `${PAID_ORIGIN}/openapi.json`, type: "application/json", title: "Paid gateway OpenAPI" },
   { rel: "service-desc", href: `${PAID_ORIGIN}/.well-known/x402`, type: "application/json", title: "Paid gateway x402 manifest" },
   { rel: "service-doc", href: `${PAID_ORIGIN}/llms.txt`, type: "text/plain", title: "Paid gateway llms.txt" },
@@ -601,7 +603,7 @@ export function apexApiCatalog() {
   return {
     linkset: [
       linksetEntry(`${APEX_ORIGIN}/.well-known/api-catalog`, apexLinks),
-      linksetEntry(`${PAID_ORIGIN}/`, PAID_GATEWAY_LINKS),
+      linksetEntry(`${PAID_ORIGIN}/`, PAID_GATEWAY_LINKS.map((link) => ({ ...link, title: `${link.title} (${gatewayAvailability().state})` }))),
     ],
   };
 }
@@ -777,6 +779,11 @@ export function apexSkillMarkdown() {
     "",
     "## Paid gateway links",
     "",
+    gatewayAvailability().summary,
+    gatewayAvailability().preservation,
+    `Next action: ${gatewayAvailability().nextAction}`,
+    "Canonical links below identify the dependency; they do not promise it is callable.",
+    "",
   );
   for (const link of PAID_GATEWAY_LINKS) lines.push(`- ${link.title}: ${link.href}`);
   lines.push("", "No paid `/.well-known/api-catalog` is linked. That path is not a live canonical document on the paid host.", "");
@@ -793,7 +800,7 @@ export function apexOpenApiDocument() {
       version: SERVER_INFO.version,
       description: [
         "Free apex HTTP and MCP tools on samedaydesk.com.",
-        `Paid machine commerce stays on ${PAID_ORIGIN}. This document links that host and does not copy its route count, prices, or payment authority.`,
+        `${gatewayAvailability().summary} Paid machine commerce stays on ${PAID_ORIGIN}. This document links that host and does not copy its route count, prices, or payment authority.`,
         "Account, checkout, upload, and webhook routes exist for signed-in people or provider signatures. They are not free tools and have no copyable example here.",
         "GET /scan is an HTML proof page for people.",
         "GET /api/observatory and GET /api/market-observations read fixed upstreams and can report those upstreams unavailable. They are not the free apex tools in /skill.md.",
@@ -847,9 +854,9 @@ export function apexOpenApiDocument() {
     "x-copyable-no-key-examples": copyableNoKeyExamples(),
     "x-useful-negatives": usefulNegativeExamples(),
     "x-paid-gateway": {
-      origin: PAID_ORIGIN,
+      ...gatewayAvailability(),
       links: PAID_GATEWAY_LINKS.map((link) => ({ rel: link.rel, href: link.href, type: link.type })),
-      note: "Live documents are authoritative. No route count, price, or payment address is copied.",
+      note: "When available, gateway documents own current terms. Canonical links and historical launches do not establish availability.",
     },
   };
 }

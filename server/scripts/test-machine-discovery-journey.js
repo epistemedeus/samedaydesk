@@ -116,6 +116,15 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
 
   const openapi = openapiResponse.json;
   const catalog = catalogResponse.json;
+  const gateway = await request(port, { path: "/discovery/paid-gateway.json" });
+  assert.equal(gateway.status, 200);
+  assert.equal(gateway.json.state, "paused");
+  assert.equal(gateway.headers["cache-control"], "no-cache");
+  assert.equal(gateway.json.alternatives.freeApexMcp, "https://samedaydesk.com/mcp");
+  assert.equal(openapi["x-paid-gateway"].state, "paused");
+  assert.equal(openapi["x-paid-gateway"].callable, false);
+  assert.match(skillResponse.body, /Paid gateway temporarily paused/);
+  assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes("Paid gateway MCP (paused)")));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -185,6 +194,9 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.match(openapi.info.description, /not a hosted consumer|do not become a hosted consumer/i);
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
+  assert.equal(card.status, 200);
+  assert.equal(card.json["x-paid-gateway"].state, "paused");
+  assert.ok(card.json.skills.some((skill) => skill.id === "check_ai_readiness"));
   assert.equal(card.status, 200);
   assert.equal(card.json.skills.some((skill) => skill.id === "check_ai_readiness"), true);
   assert.match(card.json.description, /agents\.samedaydesk\.com/);

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node ./scripts/writeVerifiedFeed.mjs && tsc -b && vite build && node ../server/scripts/generate-route-shells.js",
+    "build": "node ../server/scripts/project-gateway-availability.js && node ./scripts/writeVerifiedFeed.mjs && tsc -b && vite build && node ../server/scripts/generate-route-shells.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
