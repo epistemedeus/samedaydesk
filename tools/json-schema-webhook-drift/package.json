@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/json-schema-webhook-drift",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline used JSON Pointer drift for JSON Schema and webhook payload examples. Not OpenAPI. Not api-upgrade-brief. Nonsettling prototype.",
+  "bin": {
+    "webhook-drift": "./bin/webhook-drift.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "drift": "node bin/webhook-drift.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

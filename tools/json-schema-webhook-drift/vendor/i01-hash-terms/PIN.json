@@ -1,0 +1,21 @@
+{
+  "role": "Isolated pinned hashTermsVersion contract from I01 (Neo PR54). Hasher only. Not the earned-work kernel. Not original F01.",
+  "source": {
+    "repo": "epistemedeus/neomorphic-io",
+    "pr": 54,
+    "title": "I01: earned-work integration (content-hash termsVersion, A3 gate, live F07)",
+    "ref": "fable/integration-earned-work",
+    "sha": "819fa637ecf5e5177c84efc16fcaa18d57017631",
+    "paths": [
+      "packs/funded-task-terms/src/canonical.mjs",
+      "packs/funded-task-terms/src/hash.mjs",
+      "packs/funded-task-terms/LICENSE"
+    ]
+  },
+  "contract": {
+    "termsVersion": "sha256: + 64 lowercase hex",
+    "schemaVersion": "integer shape version, not a public claim key",
+    "integerTermsVersion": "rejected (no silent dual-key)"
+  },
+  "laterBinding": "Root may replace this pin with a live import of @neomorphic/funded-task-terms.hashTermsVersion. This job injects the hasher through lib/hash-adapter.mjs."
+}
