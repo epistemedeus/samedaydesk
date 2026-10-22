@@ -1,0 +1,10 @@
+This directory is an MIT Python 3 client. It does not relicense the useful-jobs
+archive it extracts.
+
+The committed archive
+`client/public/for-agents/useful-jobs/useful-jobs-1.4.1.tar.gz` keeps its own
+LICENSE, NOTICE, and `licenses/vendor/` notices. Prefer the copy inside that
+exact pinned archive for nested kits.
+
+No purchase, network, or scheduler authority is granted by this client.
+`--example` is a labeled SAMPLE fixture, not a sale.

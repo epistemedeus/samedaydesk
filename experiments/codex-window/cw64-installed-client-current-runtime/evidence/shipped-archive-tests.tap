@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: archive and kit pins match released bytes/sha256
+ok 1 - archive and kit pins match released bytes/sha256
+  ---
+  duration_ms: 7.798112
+  type: 'test'
+  ...
+# Subtest: no-args refuses for all six apps
+ok 2 - no-args refuses for all six apps
+  ---
+  duration_ms: 350.497453
+  type: 'test'
+  ...
+# Subtest: explicit --example mode labels samples for all six apps
+ok 3 - explicit --example mode labels samples for all six apps
+  ---
+  duration_ms: 1450.670083
+  type: 'test'
+  ...
+# Subtest: api-upgrade-brief two distinct callers + collision-safe default outs
+ok 4 - api-upgrade-brief two distinct callers + collision-safe default outs
+  ---
+  duration_ms: 715.409385
+  type: 'test'
+  ...
+# Subtest: vendor-budget-impact conflicting/unknown-only stay partial
+ok 5 - vendor-budget-impact conflicting/unknown-only stay partial
+  ---
+  duration_ms: 511.68453
+  type: 'test'
+  ...
+# Subtest: feed-agenda two callers differ
+ok 6 - feed-agenda two callers differ
+  ---
+  duration_ms: 773.500229
+  type: 'test'
+  ...
+# Subtest: evidence refuses forged thin JSON; schema-valid pass stays unattested/informational
+ok 7 - evidence refuses forged thin JSON; schema-valid pass stays unattested/informational
+  ---
+  duration_ms: 584.510977
+  type: 'test'
+  ...
+# Subtest: listing-repair-packet partial stays non-global
+ok 8 - listing-repair-packet partial stays non-global
+  ---
+  duration_ms: 221.154416
+  type: 'test'
+  ...
+# Subtest: repeat-job-record verifies local bytes; byte change at same path is detected
+ok 9 - repeat-job-record verifies local bytes; byte change at same path is detected
+  ---
+  duration_ms: 1113.222841
+  type: 'test'
+  ...
+# Subtest: output refuses collision with source input path
+ok 10 - output refuses collision with source input path
+  ---
+  duration_ms: 58.882011
+  type: 'test'
+  ...
+# Subtest: capacity results name parallel_node_acceptance_jobs and reject invented 12
+ok 11 - capacity results name parallel_node_acceptance_jobs and reject invented 12
+  ---
+  duration_ms: 52.30565
+  type: 'test'
+  ...
+# Subtest: nested vendor pins verify before any extract/pack
+ok 12 - nested vendor pins verify before any extract/pack
+  ---
+  duration_ms: 4.930555
+  type: 'test'
+  ...
+# Subtest: release archive builds with allowlist only and matching sha/bytes
+ok 13 - release archive builds with allowlist only and matching sha/bytes
+  ---
+  duration_ms: 258.957345
+  type: 'test'
+  ...
+# Subtest: fresh HTTP acquire + unpack + list (documented next command)
+ok 14 - fresh HTTP acquire + unpack + list (documented next command)
+  ---
+  duration_ms: 414.856457
+  type: 'test'
+  ...
+# Subtest: sh/bash acquire script fail-closed on missing args
+ok 15 - sh/bash acquire script fail-closed on missing args
+  ---
+  duration_ms: 6.7459
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6729.6598

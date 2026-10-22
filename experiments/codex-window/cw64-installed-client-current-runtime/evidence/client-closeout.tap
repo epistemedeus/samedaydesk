@@ -1,0 +1,145 @@
+TAP version 13
+# Subtest: fresh pip install console script runs the real useful-jobs CLI
+ok 1 - fresh pip install console script runs the real useful-jobs CLI
+  ---
+  duration_ms: 711.769626
+  type: 'test'
+  ...
+# Subtest: catalog without archive or kit refuses instead of a constant job list
+ok 2 - catalog without archive or kit refuses instead of a constant job list
+  ---
+  duration_ms: 92.693076
+  type: 'test'
+  ...
+# Subtest: installed catalog reads the extracted catalog, not pins-only constants
+ok 3 - installed catalog reads the extracted catalog, not pins-only constants
+  ---
+  duration_ms: 202.054401
+  type: 'test'
+  ...
+# Subtest: tar filter TypeError refuses instead of unfiltered extractall
+ok 4 - tar filter TypeError refuses instead of unfiltered extractall
+  ---
+  duration_ms: 78.334641
+  type: 'test'
+  ...
+# Subtest: unsafe archive members fail extract without writing outside dest
+ok 5 - unsafe archive members fail extract without writing outside dest
+  ---
+  duration_ms: 96.233524
+  type: 'test'
+  ...
+# Subtest: real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+ok 6 - real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+  ---
+  duration_ms: 698.175112
+  type: 'test'
+  ...
+# Subtest: hanging node times out, is killed, and does not remain as an orphan
+ok 7 - hanging node times out, is killed, and does not remain as an orphan
+  ---
+  duration_ms: 1216.158665
+  type: 'test'
+  ...
+# Subtest: journey: example SAMPLE then caller files copied from samples/pricing/a
+ok 8 - journey: example SAMPLE then caller files copied from samples/pricing/a
+  ---
+  duration_ms: 1246.721898
+  type: 'test'
+  ...
+# Subtest: identical caller files still deliver outputs (valid no-change is not missing-output)
+ok 9 - identical caller files still deliver outputs (valid no-change is not missing-output)
+  ---
+  duration_ms: 742.994232
+  type: 'test'
+  ...
+# Subtest: local HTTP origin with matching committed bytes acquires (not live public GET)
+ok 10 - local HTTP origin with matching committed bytes acquires (not live public GET)
+  ---
+  duration_ms: 207.163703
+  type: 'test'
+  ...
+# Subtest: importable JOB_IDS and hash terms bind the current kit and archive
+ok 11 - importable JOB_IDS and hash terms bind the current kit and archive
+  ---
+  duration_ms: 84.577313
+  type: 'test'
+  ...
+# Subtest: catalog and version commands expose the published job ids
+ok 12 - catalog and version commands expose the published job ids
+  ---
+  duration_ms: 245.632968
+  type: 'test'
+  ...
+# Subtest: list and help run via subprocess Node after verifying the committed tarball
+ok 13 - list and help run via subprocess Node after verifying the committed tarball
+  ---
+  duration_ms: 527.841377
+  type: 'test'
+  ...
+# Subtest: unknown job is refused before claiming a sale
+ok 14 - unknown job is refused before claiming a sale
+  ---
+  duration_ms: 76.494202
+  type: 'test'
+  ...
+# test_all_sample_capable_jobs_and_page_contract (test_review.Review.test_all_sample_capable_jobs_and_page_contract) ... ok
+# test_archive_path_type_duplicate_and_expansion_controls (test_review.Review.test_archive_path_type_duplicate_and_expansion_controls) ... ok
+# test_corrupted_real_success_never_publishes (test_review.Review.test_corrupted_real_success_never_publishes) ... ok
+# test_destination_occupancy_and_atomic_races (test_review.Review.test_destination_occupancy_and_atomic_races) ... ok
+# test_explicit_archive_does_not_depend_on_surrounding_checkout (test_review.Review.test_explicit_archive_does_not_depend_on_surrounding_checkout) ... ok
+# test_malformed_transport_and_foreign_output (test_review.Review.test_malformed_transport_and_foreign_output) ... ok
+# test_nonzero_cannot_publish_success_including_124 (test_review.Review.test_nonzero_cannot_publish_success_including_124) ... ok
+# test_output_symlink_hardlink_and_extra_file (test_review.Review.test_output_symlink_hardlink_and_extra_file) ... ok
+# test_parent_swap_cannot_redirect_output (test_review.Review.test_parent_swap_cannot_redirect_output) ... ok
+# test_process_timeout_normal_exit_and_literal_argv (test_review.Review.test_process_timeout_normal_exit_and_literal_argv) ... ok
+# test_real_partial_and_refused_budget_are_distinct (test_review.Review.test_real_partial_and_refused_budget_are_distinct) ... ok
+# test_relative_paths_and_equals_with_literal_shell_characters (test_review.Review.test_relative_paths_and_equals_with_literal_shell_characters) ... ok
+# ----------------------------------------------------------------------
+# Ran 12 tests in 11.727s
+# OK
+# Subtest: current archive consumer ownership and delivery regression suite
+ok 15 - current archive consumer ownership and delivery regression suite
+  ---
+  duration_ms: 11844.774692
+  type: 'test'
+  ...
+# Subtest: wrong sha256 refuses before extract or Node
+ok 16 - wrong sha256 refuses before extract or Node
+  ---
+  duration_ms: 98.332962
+  type: 'test'
+  ...
+# Subtest: treating --example as sold is refused as sample-as-sale
+ok 17 - treating --example as sold is refused as sample-as-sale
+  ---
+  duration_ms: 79.032816
+  type: 'test'
+  ...
+# Subtest: missing node binary is labelled missing-node, not a payment error
+ok 18 - missing node binary is labelled missing-node, not a payment error
+  ---
+  duration_ms: 188.599326
+  type: 'test'
+  ...
+# Subtest: empty engine job list is catalog-mismatch, not a constant catalog
+ok 19 - empty engine job list is catalog-mismatch, not a constant catalog
+  ---
+  duration_ms: 262.53448
+  type: 'test'
+  ...
+# Subtest: optional --origin with mismatched bytes refuses before extract
+ok 20 - optional --origin with mismatched bytes refuses before extract
+  ---
+  duration_ms: 107.214729
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23131.266397

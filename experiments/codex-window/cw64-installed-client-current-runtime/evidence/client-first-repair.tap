@@ -1,0 +1,141 @@
+TAP version 13
+# Subtest: fresh pip install console script runs the real useful-jobs CLI
+ok 1 - fresh pip install console script runs the real useful-jobs CLI
+  ---
+  duration_ms: 546.977376
+  type: 'test'
+  ...
+# Subtest: catalog without archive or kit refuses instead of a constant job list
+ok 2 - catalog without archive or kit refuses instead of a constant job list
+  ---
+  duration_ms: 80.983817
+  type: 'test'
+  ...
+# Subtest: installed catalog reads the extracted catalog, not pins-only constants
+not ok 3 - installed catalog reads the extracted catalog, not pins-only constants
+  ---
+  duration_ms: 167.530273
+  type: 'test'
+  location: '/workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:73:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/pilot/tmp/cw64-astra-installed-client-current-runtime-20260912/src/tools/python-useful-jobs-client/test/installed-cli.test.mjs:86:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: tar filter TypeError refuses instead of unfiltered extractall
+ok 4 - tar filter TypeError refuses instead of unfiltered extractall
+  ---
+  duration_ms: 106.419032
+  type: 'test'
+  ...
+# Subtest: unsafe archive members fail extract without writing outside dest
+ok 5 - unsafe archive members fail extract without writing outside dest
+  ---
+  duration_ms: 78.326237
+  type: 'test'
+  ...
+# Subtest: real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+ok 6 - real CLI success with deleted outputs is missing-output, not complete, and leaves no orphan
+  ---
+  duration_ms: 618.37925
+  type: 'test'
+  ...
+# Subtest: hanging node times out, is killed, and does not remain as an orphan
+ok 7 - hanging node times out, is killed, and does not remain as an orphan
+  ---
+  duration_ms: 1219.955883
+  type: 'test'
+  ...
+# Subtest: journey: example SAMPLE then caller files copied from samples/pricing/a
+ok 8 - journey: example SAMPLE then caller files copied from samples/pricing/a
+  ---
+  duration_ms: 1320.790195
+  type: 'test'
+  ...
+# Subtest: identical caller files still deliver outputs (valid no-change is not missing-output)
+ok 9 - identical caller files still deliver outputs (valid no-change is not missing-output)
+  ---
+  duration_ms: 715.87046
+  type: 'test'
+  ...
+# Subtest: local HTTP origin with matching committed bytes acquires (not live public GET)
+ok 10 - local HTTP origin with matching committed bytes acquires (not live public GET)
+  ---
+  duration_ms: 194.058653
+  type: 'test'
+  ...
+# Subtest: importable JOB_IDS and hash terms bind the current kit and archive
+ok 11 - importable JOB_IDS and hash terms bind the current kit and archive
+  ---
+  duration_ms: 84.566645
+  type: 'test'
+  ...
+# Subtest: catalog and version commands expose the published job ids
+ok 12 - catalog and version commands expose the published job ids
+  ---
+  duration_ms: 242.028749
+  type: 'test'
+  ...
+# Subtest: list and help run via subprocess Node after verifying the committed tarball
+ok 13 - list and help run via subprocess Node after verifying the committed tarball
+  ---
+  duration_ms: 494.069934
+  type: 'test'
+  ...
+# Subtest: unknown job is refused before claiming a sale
+ok 14 - unknown job is refused before claiming a sale
+  ---
+  duration_ms: 76.25591
+  type: 'test'
+  ...
+# Subtest: wrong sha256 refuses before extract or Node
+ok 15 - wrong sha256 refuses before extract or Node
+  ---
+  duration_ms: 87.007816
+  type: 'test'
+  ...
+# Subtest: treating --example as sold is refused as sample-as-sale
+ok 16 - treating --example as sold is refused as sample-as-sale
+  ---
+  duration_ms: 78.82053
+  type: 'test'
+  ...
+# Subtest: missing node binary is labelled missing-node, not a payment error
+ok 17 - missing node binary is labelled missing-node, not a payment error
+  ---
+  duration_ms: 175.998128
+  type: 'test'
+  ...
+# Subtest: empty engine job list is catalog-mismatch, not a constant catalog
+ok 18 - empty engine job list is catalog-mismatch, not a constant catalog
+  ---
+  duration_ms: 252.291765
+  type: 'test'
+  ...
+# Subtest: optional --origin with mismatched bytes refuses before extract
+ok 19 - optional --origin with mismatched bytes refuses before extract
+  ---
+  duration_ms: 107.480977
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 18
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10858.754996
