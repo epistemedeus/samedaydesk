@@ -1,0 +1,21 @@
+{
+  "id": "scoped-no-change-as-demand",
+  "surface": "record-recipes",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "experiments/s163-record-recipes/docs/consumers/next-run-manifest.md",
+  "expectedReasons": ["absence_as_demand", "scoped_no_change_as_demand"],
+  "defect": "Scoped no-change with paidValueClaim false sold as market demand / ROI.",
+  "output": {
+    "ok": true,
+    "status": "success",
+    "surface": "record-recipes",
+    "scopedNoChange": true,
+    "scopedNoChangeAsDemand": true,
+    "paidValueClaim": false,
+    "demand": true,
+    "marketDemand": true,
+    "demandSignal": "positive",
+    "message": "scoped no-change invented as demand"
+  }
+}

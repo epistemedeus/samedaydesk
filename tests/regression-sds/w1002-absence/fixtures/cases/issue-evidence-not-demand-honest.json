@@ -1,0 +1,28 @@
+{
+  "id": "issue-evidence-not-demand-honest",
+  "surface": "issue-evidence",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "tools/recurring-job-recipes/lib/issue-evidence-model.mjs",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "issue-evidence",
+    "kind": "issue_evidence_work_brief",
+    "issueEvidence": true,
+    "notDemandSignal": true,
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "claims": {
+      "ownerQaOnly": true,
+      "notDemand": true,
+      "notWillingnessToPay": true
+    },
+    "withheldConclusions": [
+      "demand"
+    ],
+    "message": "issue-evidence observation withholds demand and willingness-to-pay"
+  }
+}
