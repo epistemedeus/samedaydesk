@@ -1,0 +1,4 @@
+SAMPLE
+
+This directory is a labeled fixture. It is not the published SameDayDesk route table
+and is not a customer catalog. Use --example. Passing --published is refused.

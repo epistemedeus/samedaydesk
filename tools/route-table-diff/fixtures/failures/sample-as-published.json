@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "sample",
+  "label": "SAMPLE",
+  "sampleLabel": "SAMPLE",
+  "claim": "published route table",
+  "publishedRouteTable": true,
+  "routes": [
+    {
+      "path": "/for-agents/useful-jobs",
+      "title": "Offline useful jobs for agent callers | SameDayDesk",
+      "canonical": "https://samedaydesk.com/for-agents/useful-jobs"
+    }
+  ]
+}

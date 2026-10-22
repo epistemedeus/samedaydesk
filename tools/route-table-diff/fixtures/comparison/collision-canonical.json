@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.route-table.v1",
+  "authority": "caller",
+  "publishedRouteTable": false,
+  "note": "Two distinct paths share one canonical after SDS identity. Collision is breaking.",
+  "routes": [
+    {
+      "path": "/terms",
+      "title": "Terms of Service | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms"
+    },
+    {
+      "path": "/legal/terms",
+      "title": "Legal terms | SameDayDesk",
+      "canonical": "https://samedaydesk.com/terms/"
+    }
+  ]
+}
