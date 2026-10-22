@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.action.v1",
+  "kind": "resolve-partial-capture",
+  "ci": "fail",
+  "updateBaseline": false,
+  "purchaseAuthority": false,
+  "invoiceClaim": false,
+  "forecast": false,
+  "wrapperStatus": "partial",
+  "kitStatus": "actionable",
+  "baselineMatched": true,
+  "baselineUpdated": false
+}

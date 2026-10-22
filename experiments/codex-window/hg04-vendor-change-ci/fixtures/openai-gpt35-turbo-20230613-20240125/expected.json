@@ -1,0 +1,46 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.baseline.v1",
+  "id": "openai-gpt35-turbo-20230613-20240125",
+  "wrapperStatus": "actionable",
+  "kitStatus": "actionable",
+  "truth": {
+    "schemaOk": true,
+    "unitComparable": true,
+    "coverageComplete": true,
+    "membership": {
+      "added": [],
+      "removed": [],
+      "shared": ["gpt-3.5-turbo-input", "gpt-3.5-turbo-output"]
+    }
+  },
+  "kitCounts": {
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 2,
+    "unitChanges": 0,
+    "conflicting": 0,
+    "unknown": 0
+  },
+  "independentArithmetic": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "before": 0.0015,
+      "after": 0.0005,
+      "delta": -0.001,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "before": 0.002,
+      "after": 0.0015,
+      "delta": -0.0005,
+      "unit": "USD/1K-tokens"
+    }
+  ],
+  "invoiceClaim": false,
+  "forecast": false,
+  "purchaseAuthority": false,
+  "machineActionKind": "review-list-price-fields",
+  "ci": "pass",
+  "updateBaseline": false
+}
