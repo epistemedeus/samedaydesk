@@ -1,0 +1,14 @@
+{
+  "name": "hg04-vendor-change-ci",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=120000 test/*.test.mjs",
+    "run:openai": "node bin/vendor-change-ci.mjs run --fixture openai-gpt35-turbo-20230613-20240125 --out-dir artifact/openai",
+    "run:hostile": "node bin/vendor-change-ci.mjs run --fixture hostile-partial-capture --out-dir artifact/hostile",
+    "export-artifact": "node scripts/export-artifact.mjs"
+  }
+}

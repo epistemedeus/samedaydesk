@@ -1,0 +1,9 @@
+{
+  "bin/vendor-change-ci.mjs": "1f8cfa895a33bae4a261646fab3443a35327331f0959b9410a73a14d6857bc94",
+  "bin/vendor-change-ci.py": "7ab9787b65c98b85039005719bfcb5848395a246cb485ad70dddca0a72f63171",
+  "bin/obtain-kit.mjs": "0fd5dbeab4f39bf5e65cb1afdfcfb4d58262002f9ba03b6fb7d50f0732b608fd",
+  "lib/truth.mjs": "bf737b4b2fc7e75bd5c6e3c84fdc9966b0bbc1052c341c7a4235c177eb837e6b",
+  "pins.json": "99de33a4ad19bdb6cb049039705ad44222ee6386626d6d3cec73f77825b95e38",
+  "fixtures/openai-gpt35-turbo-20230613-20240125/expected.json": "cd0fff15eac669fe1561d6b05fa1db2880e1b4699667405c08cb944fca4992be",
+  "fixtures/hostile-partial-capture/expected.json": "834db123622f1e00f86a5ed111bd4a3f810d686e3b7b5fa2fe7471302de7ba9a"
+}

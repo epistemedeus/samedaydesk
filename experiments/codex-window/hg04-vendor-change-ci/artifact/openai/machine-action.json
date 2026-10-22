@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.action.v1",
+  "kind": "review-list-price-fields",
+  "ci": "pass",
+  "updateBaseline": false,
+  "purchaseAuthority": false,
+  "invoiceClaim": false,
+  "forecast": false,
+  "wrapperStatus": "actionable",
+  "kitStatus": "actionable",
+  "baselineMatched": true,
+  "baselineUpdated": false
+}

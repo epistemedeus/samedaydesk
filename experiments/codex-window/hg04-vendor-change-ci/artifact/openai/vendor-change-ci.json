@@ -1,0 +1,133 @@
+{
+  "schema": "samedaydesk.hg04.vendor-change-ci.result.v1",
+  "ok": true,
+  "wrapperStatus": "actionable",
+  "kitStatus": "actionable",
+  "summary": "List-price row scan with kit status actionable. Review field deltas; this is not a bill.",
+  "kit": {
+    "version": "1.4.0",
+    "status": "released",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215
+  },
+  "inputs": {
+    "before": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/openai-gpt35-turbo-20230613-20240125/before.json",
+    "after": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/openai-gpt35-turbo-20230613-20240125/after.json",
+    "source": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/openai-gpt35-turbo-20230613-20240125/SOURCE.json",
+    "usage": null
+  },
+  "truth": {
+    "schema": {
+      "ok": true,
+      "errors": []
+    },
+    "unit": {
+      "comparable": [
+        {
+          "field": "gpt-3.5-turbo-input",
+          "unit": "USD/1K-tokens"
+        },
+        {
+          "field": "gpt-3.5-turbo-output",
+          "unit": "USD/1K-tokens"
+        }
+      ],
+      "mismatches": [],
+      "unitComparable": true
+    },
+    "coverage": {
+      "complete": true,
+      "captureComplete": true,
+      "declaredFields": [
+        "gpt-3.5-turbo-input",
+        "gpt-3.5-turbo-output"
+      ],
+      "missingDeclared": [],
+      "note": "Declared fields are present in the after snapshot."
+    },
+    "membership": {
+      "added": [],
+      "removed": [],
+      "shared": [
+        "gpt-3.5-turbo-input",
+        "gpt-3.5-turbo-output"
+      ]
+    },
+    "conflicts": []
+  },
+  "independentArithmetic": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "before": 0.0015,
+      "after": 0.0005,
+      "delta": -0.001,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "before": 0.002,
+      "after": 0.0015,
+      "delta": -0.0005,
+      "unit": "USD/1K-tokens"
+    }
+  ],
+  "kitReceipt": {
+    "ok": true,
+    "appId": "vendor-budget-impact",
+    "status": "actionable",
+    "digest": "2c34fa419173c857",
+    "outDir": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/artifact/openai/kit",
+    "purchaseAuthority": false
+  },
+  "kitActions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "gpt-3.5-turbo-input",
+      "note": "Price/field delta in curated fixture rows - not a live quote."
+    },
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "gpt-3.5-turbo-output",
+      "note": "Price/field delta in curated fixture rows - not a live quote."
+    }
+  ],
+  "kitCounts": {
+    "beforeRows": 2,
+    "afterRows": 2,
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 2,
+    "unitChanges": 0,
+    "conflicting": 0,
+    "unchanged": 0,
+    "unknown": 0
+  },
+  "kitDigest": "2c34fa419173c857",
+  "invoiceClaim": false,
+  "forecast": false,
+  "purchaseAuthority": false,
+  "billingNote": "No measured usage. List-price field deltas are not a bill, invoice, or forecast.",
+  "baseline": {
+    "compared": true,
+    "matched": true,
+    "path": "/workspace/pilot/tmp/codex-window-hg04-20260912/src/experiments/codex-window/hg04-vendor-change-ci/fixtures/openai-gpt35-turbo-20230613-20240125/expected.json",
+    "updated": false,
+    "reason": null
+  },
+  "baselineUpdate": {
+    "updated": false,
+    "allowed": false,
+    "note": "Baselines are reviewable files. This runner never writes expected.json, including on mismatch."
+  },
+  "machineAction": {
+    "kind": "review-list-price-fields",
+    "ci": "pass",
+    "updateBaseline": false,
+    "purchaseAuthority": false,
+    "invoiceClaim": false,
+    "forecast": false
+  },
+  "generatedAt": "2026-09-12T06:31:13.629Z"
+}
