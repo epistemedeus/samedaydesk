@@ -1,0 +1,12 @@
+{
+  "schema": "sds.continuation-producer-receiving.v1",
+  "producerHead": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
+  "command": "node services/contributor-journey/export-original-continuation.mjs /absolute/isolated/recipient",
+  "sourceFiles": 187,
+  "compiledFiles": 106,
+  "sourceAndCompiledMismatches": 0,
+  "metadataMismatches": 0,
+  "producerGitClean": true,
+  "releaseAccepted": false
+}

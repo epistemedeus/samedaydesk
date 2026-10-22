@@ -12,6 +12,7 @@ import pg from 'pg';
 import {PostgresStore} from '@neomorphic/correspondence';
 import {startDisposablePg} from './fixtures/disposable-pg.mjs';
 import {runBounded} from '../foundry/bounded-child.mjs';
+import {npmCli} from '../foundry/activation/receiving-100502/namespace.mjs';
 import {bootFoundryServer} from '../foundry/activation/local-journey.mjs';
 import {openEntryFacade,closeEntryThenBase} from '../foundry/compose.js';
 import {receivePassRequest} from '../foundry/private-pass.mjs';
@@ -165,7 +166,7 @@ test('source-pinned remote caller rehearses A / restart / B; named managed pass 
  const contributed=await harness('a-contribute');assert.equal(contributed.purpose,'owner_qa');
  const observed=await f.cli({...f.request,intentId:'harness-observe',action:'observe',projectId:contributed.projectId,candidateId:null,expectedGeneration:null,expectedVerificationId:null});
  const intent={...f.request,intentId:'harness-dispatch',projectId:contributed.projectId,candidateId:contributed.candidateId,expectedVerificationId:observed.readback.verificationId};
- const utilities=path.join(f.privateDir,'node-only');await mkdir(utilities);await symlink(process.execPath,path.join(utilities,'node'));await symlink('/bin/sh',path.join(utilities,'sh'));await symlink(path.join(path.dirname(process.execPath),'npm'),path.join(utilities,'npm'));
+ const utilities=path.join(f.privateDir,'node-only');await mkdir(utilities);await symlink(process.execPath,path.join(utilities,'node'));await symlink('/bin/sh',path.join(utilities,'sh'));await symlink(await npmCli(),path.join(utilities,'npm'));
  const managed=await runBounded(path.join(utilities,'npm'),['run','build:managed-foundry-private-pass'],{cwd:root,env:{...f.env,PATH:utilities,LANG:'C',LC_ALL:'C',FOUNDRY_PRIVATE_PASS_JSON:JSON.stringify(intent)},capture:true,timeoutMs:90000,stdoutLimit:1000000,outputLimit:2000000});
  assert.equal(managed.code,0);assert.equal(managed.reason,null);
  const lines=managed.stdout.trim().split('\n').filter(x=>x.startsWith('{')).map(x=>JSON.parse(x));const probe=lines.find(x=>x.probe==='managed-node');assert.equal(probe.python3,false);assert.equal(typeof probe.prlimit,'boolean');assert.equal(probe.referenceRuntime,true);assert.equal(lines.at(-1).state,'completed');

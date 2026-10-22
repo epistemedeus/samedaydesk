@@ -1,0 +1,19 @@
+{
+  "schema": "neomorphic.original-continuation.overlay.v1",
+  "sourceCommit": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "sdsInputCommit": "e25b1ed48cf8cf0196aa3d25e59cbeaff8a91c8a",
+  "originalProducer": "7d97fed8f7009b61e7b7d9ebd99f78782c554a2b",
+  "patchPath": "services/contributor-journey/original-continuation/canonical-overlay.patch",
+  "patchSha256": "baa7d3bdb3fd1c451bd8ae9cd15eb8f2ec08c8f95beabc9b9b52597ebebbcd0c",
+  "helperPath": "services/earned-work/src/opportunity/continuation.ts",
+  "helperSha256": "95e953f4a193e9cf096ec21d442695ce408aac0247ae3f1372de964cb16d469c",
+  "changedOriginalSources": [
+    "services/earned-work/src/opportunity/routes.ts",
+    "services/earned-work/src/opportunity/service.ts"
+  ],
+  "canonicalRoute": "/api/neomorphic-opportunity",
+  "canonicalSchema": "neo_opportunity_221400",
+  "buildCommand": "node services/contributor-journey/export-original-continuation.mjs /absolute/isolated/samedaydesk",
+  "sourceModel": "Exact original producer plus two narrow additive patches and one exact producer helper. No wholesale future-round vendor replacement.",
+  "releaseAccepted": false
+}

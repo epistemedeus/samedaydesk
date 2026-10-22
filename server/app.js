@@ -28,7 +28,9 @@ import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
+import { mountContributorManagedDesk } from "./lib/contributor-managed-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
+import { mountMachineServices } from "./lib/machine-services/mount.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 import {
@@ -47,6 +49,10 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 export function createSdsApp(options = {}) {
 const app = express();
 app.disable("x-powered-by");
+
+// Exact contributor assets/API own their edge checks and failures before host
+// redirects, parsers and SPA fallback. No global proxy or CORS policy changes.
+app.set("neoContributorJourney", mountContributorManagedDesk(app, options.neomorphicContributorJourney || {}));
 
 // Include bearer-return redirects in the same cache/referrer protection as the
 // endpoint. This does not change the canonical host or redirect destination.
@@ -98,6 +104,10 @@ app.set("s51Correspondence", correspondence);
 // Opt-in retained watch. Unset MANAGED_WATCH_OPT_IN mounts nothing, so existing
 // routes and the foundry CJS/runtime materialization path stay as they are.
 app.set("l12ManagedWatch", mountManagedWatch(app, options.managedWatch || {}));
+
+// Machine APIs consume bounded raw bodies before the ordinary JSON parser.
+// Persistence and scheduler opt-ins are isolated from existing app settings.
+app.set("machineServices", mountMachineServices(app, options.machineServices || {}));
 
 // Bounded raw intake before the global parser. Admission needs enrolled PG;
 // anonymous snapshot evaluation and current publication facts remain separate.

@@ -1,0 +1,491 @@
+/* =========================================================================
+   neomorphic.io — The Instrument of Record
+   Warm engraved parchment · one seal red · one gold hairline · serif-led.
+   Authored final-state-first: with no JS and under reduced-motion the page
+   renders complete. Motion only ever hides-then-reveals.
+   ========================================================================= */
+
+/* ───────────────────────── fonts (self-hosted, subset) ───────────────────── */
+@font-face{
+  font-family:"Fraunces"; font-style:normal; font-weight:300 700;
+  font-display:swap; src:url("../fonts/fraunces-roman.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Newsreader"; font-style:normal; font-weight:200 800;
+  font-display:swap; src:url("../fonts/newsreader-roman.woff2") format("woff2");
+}
+@font-face{
+  font-family:"IBM Plex Mono"; font-style:normal; font-weight:400;
+  font-display:swap; src:url("../fonts/plexmono-400.woff2") format("woff2");
+}
+@font-face{
+  font-family:"IBM Plex Mono"; font-style:normal; font-weight:500;
+  font-display:swap; src:url("../fonts/plexmono-500.woff2") format("woff2");
+}
+
+/* ───────────────────────────── design tokens ─────────────────────────────── */
+:root{
+  color-scheme:light;
+  /* colour — warm engraved parchment, ONE red, ONE metallic hairline */
+  --paper:#F4F0E6;
+  --paper-deep:#ECE6D7;
+  --ink:#1A1714;
+  --ink-soft:#473F38;
+  --seal:#5E1A1A;
+  --gold:#9A7B4F;
+  --grid:#D9D0BC;
+  --rule:#C9C0AC;
+  --rule-strong:#1A1714;
+
+  /* theme-dependent material (overridden wholesale in dark) */
+  --grain-blend:multiply;
+  --grain-opacity:.045;
+  --emboss-strong:0 1px 0 rgba(255,255,255,.55), 0 -1px 1px rgba(26,23,20,.18); /* pressed into paper */
+  --emboss-soft:0 1px 0 rgba(255,255,255,.45);
+  --seal-emboss:drop-shadow(0 1px 0 rgba(255,255,255,.5));
+  --select:color-mix(in srgb, var(--seal) 24%, transparent);
+
+  /* type — three roles */
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Newsreader","EB Garamond",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+
+  --fs-nameplate:clamp(2.6rem,8vw,6.5rem);
+  --fs-tagline:clamp(1.25rem,2.4vw,1.7rem);
+  --fs-lead:clamp(1.5rem,2.6vw,2.3rem);
+  --fs-h:clamp(1.5rem,2.8vw,2.15rem);
+  --fs-body:clamp(1.04rem,1.2vw,1.18rem);
+  --fs-meta:0.78rem;
+  --fs-label:0.8rem;
+  --lh-body:1.62;
+  --measure:62ch;
+
+  /* grid + space */
+  --cols:12;
+  --gutter:clamp(12px,1.6vw,24px);
+  --margin:clamp(22px,5vw,80px);
+  --baseline:8px;
+  --frame:clamp(16px,3.5vw,56px);
+  --s2:1rem; --s3:1.5rem; --s4:2.5rem; --s5:4rem; --s6:7rem; --s7:11rem;
+  --sheet:min(1080px, 100% - (var(--margin) * 2));
+
+  /* motion */
+  --ease-settle:cubic-bezier(.22,.61,.36,1);
+  --dur-ink:900ms; --dur-rule:700ms;
+}
+
+/* ───────────────────────────── reset ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;}
+*{margin:0;}
+html{-webkit-text-size-adjust:100%;}
+img,svg,video{display:block;max-width:100%;}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+:focus-visible{outline:2px solid var(--seal);outline-offset:3px;border-radius:2px;}
+::selection{background:var(--select);color:var(--ink);}
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:var(--fs-body);
+  line-height:var(--lh-body);
+  font-weight:420;
+  font-optical-sizing:auto;
+  font-feature-settings:"onum" 1,"liga" 1,"calt" 1,"kern" 1;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* ───────────────────────── material / decorative layers ──────────────────── */
+.grain,.vignette,.gridlines{position:fixed;inset:0;pointer-events:none;z-index:1;}
+
+/* engraved grain — fractal noise, multiply, a whisper */
+.grain{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:var(--grain-opacity); mix-blend-mode:var(--grain-blend);
+}
+/* a barely-there vignette so the sheet sits in light */
+.vignette{
+  background:radial-gradient(120% 100% at 50% 36%, transparent 58%, rgba(60,46,28,.10) 100%);
+  mix-blend-mode:multiply;
+}
+/* faint 12-column grid — present but a whisper */
+.gridlines{
+  left:50%;transform:translateX(-50%);
+  width:var(--sheet);
+  background-image:linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 100%);
+  background-size:calc(100% / var(--cols)) 100%;
+  opacity:.5; z-index:0;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+}
+/* the certificate edge — one gold hairline bounding the whole sheet.
+   absolute (not fixed) so it scrolls with the instrument and stays in the
+   margins, never crossing text. */
+.frame{
+  position:absolute;inset:var(--frame);pointer-events:none;z-index:2;
+  border:1px solid color-mix(in srgb, var(--gold) 58%, transparent);
+}
+
+/* refined desktop cursor — a fine seal lozenge (set up by JS) */
+.cursor{
+  position:fixed;top:0;left:0;width:7px;height:7px;z-index:9999;
+  border:1px solid var(--seal);transform:translate(-50%,-50%) rotate(45deg);
+  opacity:0;pointer-events:none;transition:opacity .3s,width .18s,height .18s;
+  mix-blend-mode:multiply;
+}
+.cursor.is-on{opacity:.85;}
+.cursor.is-active{width:13px;height:13px;}
+
+/* ───────────────────────────── layout shell ──────────────────────────────── */
+.skip-link{
+  position:fixed;top:0;left:50%;transform:translate(-50%,calc(-100% - 1.2rem));
+  z-index:10000;background:var(--ink);color:var(--paper);
+  padding:.5rem 1rem;border-radius:0 0 3px 3px;font:500 var(--fs-meta)/1 var(--mono);
+  letter-spacing:.04em;transition:transform .2s;
+}
+.skip-link:focus{transform:translate(-50%,0);}
+
+.hero,main,.colophon{
+  position:relative;z-index:3;
+  width:var(--sheet);margin-inline:auto;
+}
+
+/* ════════════════════════════════ HERO ═══════════════════════════════════ */
+.hero{
+  min-height:min(100svh, 860px);
+  padding-block:clamp(3.2rem,9vh,7rem) var(--s6);
+  display:flex;flex-direction:column;
+  text-align:center;
+}
+
+.register{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  font:400 var(--fs-meta)/1 var(--mono);
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.register__tag{position:relative;padding-bottom:.55rem;}
+.register__tag::after{
+  content:"";position:absolute;left:0;bottom:0;width:1.6rem;height:1px;background:var(--gold);
+}
+.register__tag--right{text-align:right;}
+.register__tag--right::after{left:auto;right:0;}
+/* right corner groups the day/night control just left of SUB ROSA */
+.register__right{display:inline-flex;align-items:center;gap:.85rem;}
+
+/* theme toggle — a quiet icon that sits in the masthead corner */
+.theme-toggle{
+  display:inline-grid;place-items:center;
+  width:1.45rem;height:1.45rem;color:var(--ink-soft);
+  border:0;background:none;line-height:0;
+  transition:color .25s var(--ease-settle),transform .25s var(--ease-settle);
+}
+.theme-toggle:hover,.theme-toggle:focus-visible{color:var(--seal);transform:translateY(-1px);}
+.theme-toggle svg{width:15px;height:15px;display:block;}
+.theme-toggle .ti--sun{display:none;}
+[data-theme="dark"] .theme-toggle .ti--sun{display:block;}
+[data-theme="dark"] .theme-toggle .ti--moon{display:none;}
+
+/* masthead — guilloché + double rules + nameplate + dateline */
+.masthead{
+  position:relative;
+  margin:auto;
+  width:100%;max-width:none;
+  padding-block:clamp(2.2rem,7vh,4.4rem);
+  display:flex;flex-direction:column;align-items:center;gap:clamp(.9rem,1.8vh,1.5rem);
+}
+.guilloche{
+  position:absolute;top:50%;left:50%;translate:-50% -50%;
+  width:min(640px,108%);aspect-ratio:1;
+  z-index:0;pointer-events:none;
+  opacity:.32;
+}
+.guilloche svg{width:100%;height:100%;overflow:visible;}
+.guilloche path{fill:none;stroke:var(--seal);stroke-width:.8;vector-effect:non-scaling-stroke;}
+.guilloche path.is-gold{stroke:var(--gold);}
+
+.rule{display:block;width:100%;height:7px;position:relative;z-index:1;overflow:visible;}
+.rule__heavy{stroke:var(--rule-strong);stroke-width:1.7;vector-effect:non-scaling-stroke;}
+.rule__fine{stroke:var(--rule-strong);stroke-width:.7;vector-effect:non-scaling-stroke;}
+
+.nameplate{
+  position:relative;z-index:1;
+  font-family:var(--display);font-weight:430;font-optical-sizing:auto;
+  font-size:var(--fs-nameplate);line-height:.92;
+  text-transform:uppercase;letter-spacing:.1em;
+  margin-inline-start:.1em; /* optical centring against the tracking */
+  color:var(--ink);
+  /* letterpress deboss */
+  text-shadow:var(--emboss-strong);
+}
+.nameplate__ink{display:inline-block;}
+
+.hero__tagline{margin-top:clamp(1.8rem,5vh,3.4rem);}
+.lede{
+  font-family:var(--body);font-weight:430;
+  font-size:var(--fs-tagline);line-height:1.5;
+  color:var(--ink);max-width:46ch;margin-inline:auto;
+  text-wrap:balance;
+}
+.lede__sub{
+  margin-top:var(--s2);
+  font-size:calc(var(--fs-tagline) * .8);color:var(--ink-soft);
+}
+.lede__sub em{font-style:italic;}
+
+/* ═══════════════════════════════ CLAUSES ═════════════════════════════════ */
+main{padding-block:var(--s5) var(--s6);}
+.clause{padding-block:var(--s6);text-align:center;}
+.clause + .clause{padding-top:0;}
+
+.clause__label{
+  display:inline-flex;align-items:center;gap:.85rem;
+  font:500 var(--fs-label)/1 var(--mono);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);
+  margin-bottom:var(--s4);
+}
+.clause__label .mark{color:var(--seal);font-weight:500;letter-spacing:.12em;}
+.clause__rule{width:2.4rem;height:1px;background:var(--gold);display:inline-block;}
+
+.clause__head{
+  font-family:var(--display);font-weight:400;font-optical-sizing:auto;
+  font-size:var(--fs-h);line-height:1.12;letter-spacing:.005em;
+  color:var(--ink);max-width:24ch;margin-inline:auto;
+  text-wrap:balance;
+  text-shadow:var(--emboss-soft);
+}
+
+/* prose — justified, hyphenated, centred block, drop initial */
+.prose{
+  max-width:var(--measure);margin:var(--s4) auto 0;
+  text-align:justify;text-align-last:center;
+  hyphens:auto;-webkit-hyphens:auto;hyphenate-limit-chars:7 3 3;
+  text-wrap:pretty;
+  color:var(--ink-soft);
+  position:relative;
+}
+.prose__p + .prose__p{margin-top:var(--s3);}
+.prose__p{text-align:justify;}
+.dropcap{
+  float:left;font-family:var(--display);font-weight:440;font-optical-sizing:auto;
+  font-size:3.45em;line-height:.78;padding:.06em .12em 0 0;
+  color:var(--seal);
+  text-shadow:var(--emboss-soft);
+}
+
+.signoff{
+  margin-top:var(--s5);
+  font-family:var(--body);font-variant-caps:small-caps;
+  letter-spacing:.14em;font-size:1.05rem;color:var(--ink);
+  font-feature-settings:"smcp" 1,"onum" 1;
+}
+
+/* ───────────────── marginalia / buried-term glosses ──────────────────────── */
+.gloss{position:static;} /* offsetParent for notes is .prose → right margin */
+.gloss__mark{padding:0;vertical-align:baseline;line-height:0;}
+.gloss__mark sup{
+  font:500 .6em/1 var(--mono);color:var(--seal);
+  padding:0 .04em 0 .06em;
+  border-bottom:1px dotted color-mix(in srgb,var(--seal) 55%,transparent);
+}
+.gloss__mark:hover sup,.gloss__mark:focus-visible sup{color:var(--ink);}
+.gloss__note{
+  position:absolute;left:0;top:calc(100% + .5rem);width:min(28ch,72vw);
+  white-space:normal;text-align:left;text-align-last:left;
+  font:400 var(--fs-meta)/1.5 var(--mono);color:var(--ink-soft);
+  background:color-mix(in srgb,var(--paper) 86%,#fff);
+  border:1px solid var(--rule);border-left:2px solid var(--seal);
+  padding:.6rem .8rem;border-radius:2px;z-index:5;
+  opacity:0;visibility:hidden;transform:translateY(-3px);
+  transition:opacity .25s var(--ease-settle),transform .25s var(--ease-settle),visibility 0s .25s;
+  box-shadow:0 8px 22px -16px rgba(26,23,20,.5);
+  hyphens:none;
+}
+.gloss:hover .gloss__note,
+.gloss:focus-within .gloss__note,
+.gloss__mark[aria-expanded="true"] + .gloss__note{
+  opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s;
+}
+
+/* ───────────────────────────── schedule (§02) ────────────────────────────── */
+.schedule{
+  max-width:var(--measure);margin:var(--s4) auto 0;text-align:left;
+  border-top:1px solid var(--rule);
+}
+.schedule__row{
+  display:grid;
+  grid-template-columns:minmax(12rem,15rem) 1fr;
+  align-items:baseline;gap:clamp(.8rem,2.5vw,2rem);
+  padding:clamp(.95rem,2.1vh,1.4rem) .3rem;
+  border-bottom:1px solid var(--rule);
+  position:relative;
+}
+.schedule__row::after{
+  content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;
+  background:var(--seal);transition:width .5s var(--ease-settle);
+}
+.schedule__row:hover::after,.schedule__row:focus-within::after{width:100%;}
+.schedule__term{display:flex;align-items:baseline;gap:.9rem;}
+.schedule__num{
+  font:400 var(--fs-meta)/1 var(--mono);color:var(--seal);
+  letter-spacing:.06em;min-width:2.2ch;
+  font-feature-settings:"tnum" 1;
+}
+.schedule__name{
+  font-family:var(--display);font-weight:430;font-optical-sizing:auto;
+  font-size:clamp(1.15rem,1.7vw,1.4rem);color:var(--ink);letter-spacing:.01em;
+  transition:color .3s;
+}
+.schedule__row:hover .schedule__name{color:var(--seal);}
+.schedule__gloss{color:var(--ink-soft);font-size:1.02rem;line-height:1.45;}
+
+/* ═══════════════════════════════ COLOPHON ════════════════════════════════ */
+.colophon{
+  text-align:center;
+  padding-block:var(--s6) clamp(3rem,8vh,6rem);
+  border-top:1px solid var(--rule);
+  position:relative;overflow:hidden;
+}
+.colophon__wordmark{
+  font-family:var(--display);font-weight:440;font-optical-sizing:auto;
+  font-size:clamp(1.4rem,2.6vw,1.9rem);letter-spacing:.04em;color:var(--ink);
+}
+.colophon__statement{
+  margin-top:var(--s3);font-size:var(--fs-tagline);line-height:1.5;color:var(--ink-soft);
+  text-wrap:balance;
+}
+
+.imprint{
+  position:relative;z-index:2;
+  margin-top:var(--s5);
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+  gap:.7rem 1rem;
+  font:400 var(--fs-meta)/1.5 var(--mono);letter-spacing:.06em;color:var(--ink-soft);
+  font-feature-settings:"tnum" 1;
+  text-transform:uppercase;
+}
+.imprint__sep{color:var(--rule);}
+.badge{letter-spacing:.14em;color:var(--ink-soft);}
+
+.seal{
+  width:clamp(58px,7vw,84px);height:auto;aspect-ratio:1;margin:var(--s4) auto 0;
+  filter:var(--seal-emboss);
+}
+.seal__ring{fill:none;stroke:var(--gold);stroke-width:1.2;}
+.seal__ring--inner{stroke-width:.7;}
+.seal__letter{
+  font:430 46px/1 var(--display);font-optical-sizing:auto;
+  text-anchor:middle;dominant-baseline:middle;fill:var(--ink);
+}
+
+.ref{
+  margin:var(--s3) auto 0;width:min(34rem,100%);
+  display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;
+  font:400 var(--fs-meta)/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);font-feature-settings:"tnum" 1;
+}
+.ref__contact{
+  color:var(--ink-soft);text-decoration:none;text-transform:none;letter-spacing:.04em;
+  border-bottom:1px solid transparent;transition:color .25s,border-color .25s;
+}
+.ref__contact:hover,.ref__contact:focus-visible{
+  color:var(--seal);border-bottom-color:color-mix(in srgb,var(--seal) 60%,transparent);
+}
+
+/* oversized quiet echo in negative space */
+.echo{
+  margin-top:clamp(1.5rem,5vh,3.5rem);
+  font-family:var(--display);font-weight:400;font-optical-sizing:auto;
+  font-size:clamp(3rem,16vw,12rem);line-height:.8;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--rule);
+  opacity:.5;user-select:none;text-align:center;
+  white-space:nowrap;
+}
+
+/* ═══════════════════════ motion: hide-then-reveal (JS-gated) ═════════════════
+   Initial hidden states apply ONLY when <html class="anim"> is set by JS after
+   confirming motion is allowed. No-JS / reduced-motion → full page, no FOUC. */
+.anim .reveal{opacity:0;transform:translateY(10px);}
+.anim .reveal.is-in{opacity:1;transform:none;transition:opacity .8s var(--ease-settle),transform .8s var(--ease-settle);}
+.anim [data-load="corner"],
+.anim [data-load="tagline"]{opacity:0;}
+.anim .guilloche{opacity:0;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+  .cursor{display:none;}
+}
+
+/* ───────────────────────────── responsive ────────────────────────────────── */
+@media (max-width:640px){
+  .gridlines{display:none;}
+  .guilloche{opacity:.22;width:min(420px,120%);}
+  .nameplate{letter-spacing:.06em;}
+  .schedule__row{grid-template-columns:auto 1fr;gap:.5rem .9rem;}
+  .schedule__gloss{grid-column:1 / -1;padding-left:calc(2.2ch + .9rem);}
+  .imprint{flex-direction:column;gap:.5rem;}
+  .imprint__sep{display:none;}
+  .ref{flex-direction:column;align-items:center;gap:.4rem;width:auto;text-align:center;}
+}
+/* when JS finds no room for a true margin note, it reveals inline beneath the line */
+.gloss__note.is-inline{
+  position:static;display:none;opacity:1;visibility:visible;transform:none;
+  left:auto;top:auto;width:auto;max-width:38ch;margin:.55rem auto .3rem;
+  box-shadow:none;
+}
+.gloss:hover .gloss__note.is-inline,
+.gloss:focus-within .gloss__note.is-inline{display:none;}
+.gloss__mark[aria-expanded="true"] + .gloss__note.is-inline{display:block;}
+
+/* keep the corner a single clean row on phones (Bona Fide · toggle + Sub Rosa),
+   just tighten tracking/gaps so it fits instead of collapsing together */
+@media (max-width:440px){
+  .register{letter-spacing:.1em;gap:.6rem;}
+  .register__right{gap:.5rem;}
+  .theme-toggle{width:1.3rem;height:1.3rem;}
+}
+@media (max-width:340px){
+  .register{font-size:.7rem;letter-spacing:.06em;}
+}
+
+/* ═══════════════════════ THEME · dark (obsidian + champagne) ═════════════════
+   Built in OKLCH: hue 280 for the cold, expensive obsidian neutrals; hue 60-75
+   warm gold for text + the single accent. The whole instrument flips by
+   overriding token values; components stay theme-agnostic. data-theme is set
+   before paint by the inline head script. */
+[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:oklch(0.08 0.005 280);          /* deep obsidian, warm-violet undertone */
+  --paper-deep:oklch(0.115 0.006 280);    /* elevated surface */
+  --ink:oklch(0.95 0.01 60);              /* warm off-white */
+  --ink-soft:oklch(0.74 0.013 65);        /* readable secondary */
+  --seal:oklch(0.85 0.06 75);            /* champagne gold — THE accent */
+  --gold:oklch(0.62 0.05 74);            /* antiqued-gold hairlines (dim) */
+  --grid:oklch(0.175 0.004 280);
+  --rule:oklch(0.235 0.006 280);
+  --rule-strong:oklch(0.86 0.012 70);    /* masthead rules read light on obsidian */
+  --grain-blend:soft-light;
+  --grain-opacity:.10;
+  --emboss-strong:0 1px 1px rgba(0,0,0,.6), 0 -1px 0 rgba(255,255,255,.06); /* engraved into obsidian */
+  --emboss-soft:0 1px 1px rgba(0,0,0,.5);
+  --seal-emboss:drop-shadow(0 0 9px color-mix(in srgb, var(--gold) 30%, transparent));
+  --select:color-mix(in srgb, var(--seal) 28%, transparent);
+}
+[data-theme="dark"] .vignette{background:radial-gradient(120% 100% at 50% 34%, transparent 56%, rgba(0,0,0,.45) 100%);}
+
+/* ───────────────────────────── print: a believable instrument ────────────── */
+@media print{
+  :root{--paper:#fff;--ink:#000;--ink-soft:#333;}
+  .grain,.vignette,.gridlines,.cursor,.skip-link,.echo,.theme-toggle{display:none !important;}
+  body{background:#fff;}
+  .frame{position:absolute;border-color:var(--gold);}
+  .hero,main,.colophon{width:auto;margin:0 6%;}
+  .hero{min-height:auto;}
+  .guilloche{opacity:.18 !important;}
+  .reveal{opacity:1 !important;transform:none !important;}
+  *{text-shadow:none !important;box-shadow:none !important;}
+}

@@ -1,0 +1,133 @@
+{
+  "schema": "sds.composed-caller.cold-source.v1",
+  "sourceHead": "bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+  "sourceExport": "git archive bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+  "dependencyInstall": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --offline",
+  "lock": "single parent flock; child Node commands do not reacquire it; selected npm scripts do not own it",
+  "environment": "sanitized; all DBs disposable; production machine adapter verify-full TLS Postgres",
+  "checks": [
+    {
+      "name": "proxy-addr",
+      "command": [
+        "npm",
+        "run",
+        "test:proxy-addr"
+      ],
+      "log": "cold-proxy-addr.tap",
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "machine-services",
+      "command": [
+        "node",
+        "server/lib/machine-services/test/run.mjs"
+      ],
+      "log": "cold-machine-services.tap",
+      "counts": {
+        "tests": 63,
+        "pass": 63,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "sqlite",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/vendor/machine-gateway/tests/cold.test.mjs",
+        "server/vendor/machine-gateway/tests/contracts.test.mjs",
+        "server/vendor/machine-gateway/tests/http-bounds.test.mjs",
+        "server/vendor/machine-gateway/tests/lifecycle.test.mjs",
+        "server/vendor/machine-gateway/tests/mount-config.test.mjs",
+        "server/vendor/machine-gateway/tests/mounted-services.test.mjs",
+        "server/vendor/machine-gateway/tests/network.test.mjs",
+        "server/vendor/machine-gateway/tests/payments.test.mjs",
+        "server/vendor/machine-gateway/tests/process.test.mjs",
+        "server/vendor/machine-gateway/tests/receiving.test.mjs",
+        "server/vendor/machine-gateway/tests/release.test.mjs",
+        "server/vendor/continuous-monitoring/test/00-mounted-journey.test.mjs",
+        "server/vendor/continuous-monitoring/test/01-safety.test.mjs",
+        "server/vendor/continuous-monitoring/test/02-service.test.mjs",
+        "server/vendor/continuous-monitoring/test/03-durability.test.mjs",
+        "server/vendor/continuous-monitoring/test/04-entitlement-contract.test.mjs",
+        "server/vendor/continuous-monitoring/test/05-receiving.test.mjs",
+        "server/vendor/continuous-monitoring/test/06-mounted-boundaries.test.mjs",
+        "server/vendor/continuous-monitoring/test/07-cold-source.test.mjs"
+      ],
+      "log": "cold-sqlite.tap",
+      "counts": {
+        "tests": 95,
+        "pass": 95,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "retained-runtime",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-hosted-startup.js",
+        "server/scripts/test-spa-fallback.js",
+        "server/scripts/test-correspondence-mount-disabled.js",
+        "server/scripts/test-seller-repair-webhook.js",
+        "server/scripts/test-foundry-listener-drain.js"
+      ],
+      "log": "cold-retained-runtime.tap",
+      "counts": {
+        "tests": 49,
+        "pass": 49,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "contributor-artifacts",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-neomorphic-contributor-journey-artifact.mjs",
+        "server/scripts/test-neomorphic-original-continuation-artifact.mjs"
+      ],
+      "log": "cold-contributor-artifacts.tap",
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "original-task",
+      "command": [
+        "npm",
+        "run",
+        "test:original-task"
+      ],
+      "log": "cold-original-task.tap",
+      "counts": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "testTreeRemoved": true,
+  "deployed": false
+}

@@ -1,3 +1,4 @@
+import { mountOriginalContinuationRoutes } from "./continuation.js";
 import { requireContributor, readBearer } from "../auth.js";
 import { assertOwner } from "../config.js";
 import { hashToken, issueToken } from "../crypto.js";
@@ -20,6 +21,7 @@ function provenanceOf(value) {
 }
 export function mountOpportunityRoutes(app, store, config) {
     const opportunity = new OpportunityService(store, config.hostedDelivery);
+    mountOriginalContinuationRoutes(app, store, opportunity);
     app.post("/v1/opportunity-rounds", async (req, res, next) => {
         try {
             assertOwner(readBearer(req), config);
