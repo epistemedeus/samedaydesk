@@ -1,0 +1,27 @@
+{
+  "schema": "samedaydesk.proposed-offer.v1",
+  "id": "sdd.output_contract_evaluation",
+  "title": "Output-contract evaluation",
+  "priceUsdc": "5.000",
+  "live": false,
+  "skuPublished": false,
+  "payment": "none",
+  "charged": false,
+  "onInvalid": "preserve_settlement",
+  "artifact": "tools/output-contract-evaluation/cli.mjs",
+  "pack": "packs/output-contract-evaluation",
+  "advertisedEntry": "node tools/output-contract-evaluation/cli.mjs evaluate --pretty --case packs/output-contract-evaluation/fixtures/invalid-output-settlement-preserved.json",
+  "not": [
+    "seller_integrity_audit",
+    "settlement_proof",
+    "seller_contract_repair",
+    "void_or_refund_on_invalid",
+    "live_x402_sku"
+  ],
+  "limits": [
+    "Caller supplies promised paths, delivered body, and settlement",
+    "Does not fetch, pay, or mutate checkout",
+    "Invalid output does not void or rewrite settlement",
+    "Price 5.000 USDC is proposed only"
+  ]
+}

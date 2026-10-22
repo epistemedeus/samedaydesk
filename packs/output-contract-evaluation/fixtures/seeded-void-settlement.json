@@ -1,0 +1,32 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "seeded-void-settlement-on-invalid",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "requiredPaths": ["ok", "title", "url"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "settlement": {
+    "operationId": "seeded-void-settlement-on-invalid",
+    "amountUsdc": "0.010",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
+    "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7"
+  },
+  "policy": {
+    "onInvalid": "void_settlement"
+  }
+}

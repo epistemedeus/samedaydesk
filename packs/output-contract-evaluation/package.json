@@ -1,0 +1,17 @@
+{
+  "name": "@samedaydesk/output-contract-evaluation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Proposed $5 offline output-contract evaluation. Settlement is preserved when output is invalid.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "output-contract-evaluation": "./bin/evaluate.mjs"
+  },
+  "scripts": {
+    "test": "node --test ../../tools/output-contract-evaluation/test.mjs",
+    "evaluate": "node ../../tools/output-contract-evaluation/cli.mjs"
+  }
+}

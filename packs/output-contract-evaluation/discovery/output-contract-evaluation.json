@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "output-contract-evaluation",
+  "title": "Proposed $5 output-contract evaluation",
+  "summary": "Offline evaluation of promised JSON output paths against a delivered body. Invalid output preserves the banked settlement. Proposed 5.000 USDC. Not a live SKU and not a published archive.",
+  "page": null,
+  "archive": null,
+  "proposed": true,
+  "priceUsdc": "5.000",
+  "live": false,
+  "skuPublished": false,
+  "runsOffline": true,
+  "invokesPricedExecution": false,
+  "onInvalid": "preserve_settlement",
+  "coldStart": [
+    "node tools/output-contract-evaluation/cli.mjs evaluate --pretty --case packs/output-contract-evaluation/fixtures/invalid-output-settlement-preserved.json"
+  ],
+  "seededFailure": [
+    "node tools/output-contract-evaluation/cli.mjs evaluate --pretty --seed void-settlement"
+  ]
+}

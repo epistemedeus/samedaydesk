@@ -1,0 +1,34 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "http-200-missing-required-paths",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "mimeType": "application/json",
+    "requiredPaths": ["ok", "title", "url"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "settlement": {
+    "operationId": "http-200-missing-required-paths",
+    "amountUsdc": "0.005",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown",
+    "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "facilitatorOrPayoutRef": "fixture_not_live"
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}

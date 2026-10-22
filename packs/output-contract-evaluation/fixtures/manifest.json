@@ -1,0 +1,34 @@
+{
+  "valid-match.json": {
+    "expect": "evaluate",
+    "decision": "valid"
+  },
+  "invalid-output-settlement-preserved.json": {
+    "expect": "evaluate",
+    "decision": "invalid"
+  },
+  "http-200-missing-paths.json": {
+    "expect": "evaluate",
+    "decision": "invalid"
+  },
+  "seeded-void-settlement.json": {
+    "expect": "reject",
+    "code": "void_settlement_on_invalid_refused"
+  },
+  "seeded-live-sku.json": {
+    "expect": "reject",
+    "code": "live_sku_refused"
+  },
+  "seeded-missing-settlement.json": {
+    "expect": "reject",
+    "code": "missing_settlement"
+  },
+  "seeded-price-rewrite.json": {
+    "expect": "reject",
+    "code": "price_not_proposed_five_usdc"
+  },
+  "seeded-refund-on-invalid.json": {
+    "expect": "reject",
+    "code": "refund_on_invalid_refused"
+  }
+}

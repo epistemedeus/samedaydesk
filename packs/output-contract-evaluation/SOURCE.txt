@@ -1,0 +1,17 @@
+SameDayDesk output-contract-evaluation
+======================================
+
+Owning repo: epistemedeus/samedaydesk
+Engine: tools/output-contract-evaluation
+Pack: packs/output-contract-evaluation
+
+Replay fixture invalid-output-settlement-preserved.json uses the already
+banked Agent402 2026-08-29 settlement observation (operationId
+agent402-external-validation-purchase-2026-08-29). It does not re-pay that
+route.
+
+Not included:
+- Live SKU or checkout wiring
+- Registry or price mutation
+- Secrets, wallets, PAYMENT-SIGNATURE material
+- Published kit archive

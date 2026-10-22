@@ -1,0 +1,31 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "seeded-price-not-five-usdc",
+  "proposal": {
+    "priceUsdc": "0.010",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "requiredPaths": ["ok"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "settlement": {
+    "operationId": "seeded-price-not-five-usdc",
+    "amountUsdc": "0.010",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown"
+  },
+  "policy": {
+    "onInvalid": "preserve_settlement"
+  }
+}

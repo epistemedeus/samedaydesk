@@ -1,0 +1,32 @@
+{
+  "schema": "samedaydesk.output-contract-evaluation.case.v1",
+  "caseId": "seeded-refund-on-invalid",
+  "proposal": {
+    "priceUsdc": "5.000",
+    "live": false,
+    "skuPublished": false,
+    "payment": "none",
+    "charged": false
+  },
+  "promisedContract": {
+    "method": "GET",
+    "route": "/extract",
+    "requiredPaths": ["ok", "title"]
+  },
+  "output": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true
+    }
+  },
+  "settlement": {
+    "operationId": "seeded-refund-on-invalid",
+    "amountUsdc": "0.010",
+    "buyerClass": "unknown",
+    "validDeliveryStatus": "unknown",
+    "transaction": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "policy": {
+    "onInvalid": "refund"
+  }
+}
