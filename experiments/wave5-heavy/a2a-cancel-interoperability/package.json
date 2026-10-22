@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/w5-a2a-cancel-interoperability",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local real-client experiment: official @a2a-js/sdk cancelTask against an actual SDK JSON-RPC server that owns a disposable child process. Not a production card.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "a2a-cancel-interoperability": "./bin/a2a-cancel-interoperability.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=120000 tests/*.test.mjs",
+    "journey": "node ./bin/a2a-cancel-interoperability.mjs"
+  },
+  "dependencies": {
+    "@a2a-js/sdk": "1.1.0",
+    "express": "^5.1.0"
+  }
+}
