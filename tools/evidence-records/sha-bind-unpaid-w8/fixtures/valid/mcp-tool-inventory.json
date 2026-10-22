@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_mcp_tool_inventory",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_mcp_inventory",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "server/lib/mcp-tool-inventory.js",
+    "sha256": "4e64a986a37d6ed736bb9c4afe3e6d00dfc7443214d5a28c36af3ca5de4c6e57",
+    "bytes": 288
+  },
+  "claims": {
+    "toolNames": [
+      "check_ai_readiness",
+      "generate_complete_fix_pack",
+      "plan_taskmarket_delegation",
+      "browse_taskmarket_tasks",
+      "track_taskmarket_task"
+    ],
+    "toolsBlockSha256": "068cbfdb8ddab4dac7eef335d51fbe347728d6ccca65bef0365a3eb831db6caf",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_any_caller_invoked_the_paid_fix_pack_tool"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery",
+    "tools_list_is_paid_call"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "sha-mismatch.json": {
+    "code": "sha_mismatch",
+    "note": "Unpaid extract 402 labeled correctly, but declared SHA-256 is not the committed bytes."
+  },
+  "paid-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "Unpaid extract 402 bind with an attached settlement transaction."
+  },
+  "stripe-event-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "Stripe event fixture bound as unpaid w8 evidence."
+  },
+  "settlement-tx-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "Banked GoFrantic settlement transaction bound as unpaid."
+  },
+  "facilitator-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "x402 facilitator settlement record bound as unpaid."
+  },
+  "missing-sha.json": {
+    "code": "unbound_bytes",
+    "note": "Unpaid extract bind with sha256 omitted."
+  },
+  "unbound-empty-sha.json": {
+    "code": "unbound_bytes",
+    "note": "Unpaid extract bind with empty sha256."
+  },
+  "path-escape.json": {
+    "code": "path_escape",
+    "note": "Parent-segment path cannot bind."
+  },
+  "payment-header-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "PAYMENT-SIGNATURE header labeled unpaid."
+  },
+  "charged-true-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "charged true labeled unpaid."
+  },
+  "http-200-as-unpaid.json": {
+    "code": "paid_as_unpaid",
+    "note": "HTTP 200 labeled as unpaid 402 evidence."
+  },
+  "unknown-artifact-path.json": {
+    "code": "unknown_artifact",
+    "note": "Repo file that is not a w8 unpaid pin."
+  },
+  "claim-mismatch.json": {
+    "code": "claim_mismatch",
+    "note": "SHA matches extract 402 but claimed amount is not the hashed accept."
+  }
+}

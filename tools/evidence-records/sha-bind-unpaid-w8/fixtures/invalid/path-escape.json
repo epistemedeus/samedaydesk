@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_extract_402",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_payment_required",
+  "paymentSent": false,
+  "charged": false,
+  "httpStatus": 402,
+  "artifact": {
+    "path": "../package.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "bytes": 1
+  },
+  "claims": {
+    "httpStatus": 402,
+    "route": "/extract",
+    "amount": "5000",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "network": "eip155:8453",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "complete",
+  "authorityClass": "seller_observed",
+  "unknownWhenAbsent": [
+    "whether_a_later_paid_retry_occurred"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}

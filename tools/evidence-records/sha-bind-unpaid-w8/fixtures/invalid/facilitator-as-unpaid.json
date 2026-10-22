@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_facilitator_settlement",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "tools/evidence-records/fixtures/valid/x402-facilitator-settlement.json",
+    "sha256": "7a87241f38ab6c308753e1d5536c680a7dad2c241c669ce0c5e2aa236ee755df",
+    "bytes": 1185
+  },
+  "claims": {
+    "recordId": "evr_x402_facilitator_settlement_20260901",
+    "sourceKind": "x402_facilitator_settlement",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "truncated",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "chain_finality_and_exact_transfer_match"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery"
+  ]
+}

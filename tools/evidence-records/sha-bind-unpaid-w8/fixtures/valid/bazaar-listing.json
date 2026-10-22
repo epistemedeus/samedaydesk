@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "samedaydesk.evidence-record.sha-bind-unpaid.w8.v1",
+  "bindId": "sbu_w8_bazaar_listing",
+  "wave": "w8",
+  "statusClass": "unpaid",
+  "kind": "unpaid_traffic_record",
+  "paymentSent": false,
+  "charged": false,
+  "artifact": {
+    "path": "tools/evidence-records/fixtures/valid/bazaar-listing.json",
+    "sha256": "85d93545b40f3706bc1ef6e883c81267628485d03a2bac26542509c29118af49",
+    "bytes": 1026
+  },
+  "claims": {
+    "recordId": "evr_bazaar_listing_20260901",
+    "sourceKind": "bazaar_listing",
+    "paymentSent": false,
+    "charged": false
+  },
+  "observationWindow": {
+    "start": "2026-09-10T00:00:00.000Z",
+    "end": "2026-09-17T00:00:00.000Z",
+    "reportingDelaySeconds": 0
+  },
+  "completeness": "sampled",
+  "authorityClass": "provider_returned",
+  "unknownWhenAbsent": [
+    "buyer_demand_for_listed_resources"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "sha_mismatch_is_bound",
+    "unbound_bytes_are_evidence",
+    "settlement_is_unpaid",
+    "http_402_is_delivery",
+    "catalog_presence_is_demand"
+  ]
+}
