@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "shape": "tests/regression-sds/{schema.json,catalog.json,run.mjs,lib/,cases/<id>/case.json}",
+  "surfaces": ["merchant", "buyer", "verifier", "pack"],
+  "seededFalseGreen": "archive-wrong-digest",
+  "seededFalseReject": "offer-routing-complete-issue",
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false,
+    "write": "tests/regression-sds/**"
+  },
+  "cases": [
+    {
+      "id": "archive-wrong-digest",
+      "surface": "buyer",
+      "feature": "archive-acquisition",
+      "class": "seeded-false-green"
+    },
+    {
+      "id": "offer-routing-complete-issue",
+      "surface": "merchant",
+      "feature": "offer-routing",
+      "class": "seeded-false-reject"
+    },
+    {
+      "id": "spa-unknown-path-not-200",
+      "surface": "merchant",
+      "feature": "hosted-readback",
+      "class": "regression"
+    },
+    {
+      "id": "issue1-captured-soft-404",
+      "surface": "merchant",
+      "feature": "hosted-readback",
+      "class": "regression"
+    },
+    {
+      "id": "ai-readiness-canonical-homepage",
+      "surface": "merchant",
+      "feature": "hosted-readback",
+      "class": "regression"
+    },
+    {
+      "id": "pr18-listings-unread",
+      "surface": "merchant",
+      "feature": "listings-aliases",
+      "class": "regression"
+    },
+    {
+      "id": "s125-pulse-pg-echo",
+      "surface": "merchant",
+      "feature": "pulse-durable",
+      "class": "regression"
+    },
+    {
+      "id": "pulse-rpc-no-unique-humans",
+      "surface": "merchant",
+      "feature": "pulse-durable",
+      "class": "regression"
+    },
+    {
+      "id": "payment-replay-blocked",
+      "surface": "verifier",
+      "feature": "recurring-recipes",
+      "class": "regression"
+    },
+    {
+      "id": "evidence-organic-label",
+      "surface": "verifier",
+      "feature": "evidence-records",
+      "class": "regression"
+    },
+    {
+      "id": "mcp-missing-required-tool",
+      "surface": "merchant",
+      "feature": "apex-mcp",
+      "class": "regression"
+    },
+    {
+      "id": "correspondence-unconfigured",
+      "surface": "merchant",
+      "feature": "shared-host",
+      "class": "regression"
+    },
+    {
+      "id": "s185-missing-input-exit0",
+      "surface": "pack",
+      "feature": "offline-packs",
+      "class": "regression"
+    },
+    {
+      "id": "result-reuse-missing-out",
+      "surface": "buyer",
+      "feature": "result-reuse",
+      "class": "regression"
+    },
+    {
+      "id": "cdn-challenge-not-product-200",
+      "surface": "merchant",
+      "feature": "hosted-readback",
+      "class": "regression"
+    },
+    {
+      "id": "x402-unpaid-extract-402",
+      "surface": "merchant",
+      "feature": "x402-unpaid-discovery",
+      "class": "regression"
+    }
+  ]
+}

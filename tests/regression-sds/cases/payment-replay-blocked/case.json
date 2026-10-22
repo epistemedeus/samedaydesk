@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "payment-replay-blocked",
+  "repo": "samedaydesk",
+  "surface": "verifier",
+  "feature": "recurring-recipes",
+  "class": "regression",
+  "defect": "A prior payment receipt must never auto-replay. inspectPaymentAuthority with replayPayment + receipt is payment_replay_blocked. This case does not send payment.",
+  "source": {
+    "kind": "product-test",
+    "ref": "tools/recurring-job-recipes/lib/payment-guard.mjs"
+  },
+  "execute": {
+    "kind": "payment-replay"
+  },
+  "expectProduct": {
+    "exitCode": 1,
+    "stdoutJson": {
+      "ok": false,
+      "code": "payment_replay_blocked",
+      "replayBlocked": true,
+      "attempted": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "s185-missing-input-exit0",
+  "repo": "samedaydesk",
+  "surface": "pack",
+  "feature": "offline-packs",
+  "class": "regression",
+  "defect": "distribution-repair diagnose on a missing input file prints ok:false missing-input then process.exit(0). Wrapper-exit0 must not count as a completed diagnosis.",
+  "source": {
+    "kind": "observed",
+    "job": "W0-X22-sds-regression-corpus",
+    "ref": "experiments/s185-distribution-repair-package/bin/distribution-repair.mjs"
+  },
+  "execute": {
+    "kind": "spawn",
+    "timeoutMs": 15000,
+    "argv": [
+      "{{node}}",
+      "experiments/s185-distribution-repair-package/bin/distribution-repair.mjs",
+      "diagnose",
+      "{{tmp}}/does-not-exist-s185.json"
+    ]
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "stdoutJson": {
+      "ok": false,
+      "refused": true,
+      "status": "malformed",
+      "error": {
+        "code": "missing-input"
+      },
+      "productionAcquisition": false
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "reject",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}

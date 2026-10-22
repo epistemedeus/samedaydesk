@@ -1,0 +1,9 @@
+{
+  "status": 403,
+  "headers": {
+    "server": "hcdn",
+    "content-type": "text/html; charset=utf-8"
+  },
+  "body": "<!DOCTYPE html><html><head><title>Attention Required</title></head><body>Checking your browser before accessing samedaydesk.com. hcdn</body></html>",
+  "url": "https://samedaydesk.com/mcp"
+}

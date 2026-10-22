@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "s125-pulse-pg-echo",
+  "repo": "samedaydesk",
+  "surface": "merchant",
+  "feature": "pulse-durable",
+  "class": "regression",
+  "defect": "S125: PostgreSQL jsonb echoes mcpToolCallsObservedFrom as 2026-09-02T12:00:00+00:00. Re-submitting that shape is SQLSTATE 22023. Canonicalize must round-trip to .mmmZ without dropping WAL.",
+  "source": {
+    "kind": "product-test",
+    "ref": "RESULT-S125.md"
+  },
+  "execute": {
+    "kind": "s125-canonicalize"
+  },
+  "expectProduct": {
+    "exitCode": 0,
+    "stdoutJson": {
+      "ok": true,
+      "pgEcho": "2026-09-02T12:00:00+00:00",
+      "wire": "2026-09-02T12:00:00.000Z",
+      "rawWouldFail": true,
+      "repaired": true
+    }
+  },
+  "expectCorpus": {
+    "productVerdict": "accept",
+    "naiveRule": "exit0"
+  },
+  "boundary": {
+    "paymentSent": false,
+    "toolsCalled": false
+  }
+}
