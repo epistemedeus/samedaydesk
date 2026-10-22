@@ -6,7 +6,7 @@ export function mcpHeaders(req, res, next) {
   res.set({
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version",
+    "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version, X-SameDayDesk-Agent-Source",
   });
   if (req.method === "POST" || Object.hasOwn(req.query || {}, "cs")) {
     res.set({ "Cache-Control": "no-store, private", "Referrer-Policy": "no-referrer" });

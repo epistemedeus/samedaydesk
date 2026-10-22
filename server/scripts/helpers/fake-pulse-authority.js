@@ -1,3 +1,4 @@
+import { mergeMcpOutcomes } from "../../lib/pulse-store/mcp-outcomes.js";
 import crypto from "node:crypto";
 import {
   LEGACY_IMPORT_KEY,
@@ -16,6 +17,7 @@ function deltaHash(delta) {
 function emptyAggregate(observedFrom) {
   const delta = emptyDelta(observedFrom);
   return {
+    mcpOutcomes: null,
     total: 0,
     humans: 0,
     bots: 0,
@@ -36,6 +38,7 @@ function emptyAggregate(observedFrom) {
 
 function mergeAggregate(existing, delta) {
   return {
+    mcpOutcomes: mergeMcpOutcomes(existing.mcpOutcomes, delta.mcpOutcomes),
     total: existing.total + delta.total,
     humans: existing.humans + delta.humans,
     bots: existing.bots + delta.bots,
