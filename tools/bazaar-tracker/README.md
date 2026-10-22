@@ -52,6 +52,8 @@ node tools/bazaar-tracker/cli.mjs --live
 node tools/bazaar-tracker/cli.mjs --from <snapshot-or-observations.json>
 node tools/bazaar-tracker/cli.mjs --fixture <cdp-search-fixture.json>
 node tools/bazaar-tracker/cli.mjs --readback
+node tools/bazaar-tracker/cli.mjs --eight-vs-26
+node tools/bazaar-tracker/cli.mjs --eight-vs-26 --claim tools/bazaar-tracker/fixtures/seeded-absence-as-demand.json
 ```
 
 `--from` is the synthetic / replay path: treat an edited snapshot or compact
@@ -63,13 +65,21 @@ so they never rewrite the committed baseline.
 `--readback` prints the committed compact record. It does not call CDP, start a
 daemon, or schedule a job.
 
+`--eight-vs-26` is a read-only adapter: committed SDS observation routes
+versus pinned well-known evidence operations (`fixtures/evidence-ops-1.23.49.json`,
+service 1.23.49, 26 ops). It does not call CDP, write snapshots, or treat catalog
+absence as buyer demand. Live-untracked includes `GET /commerce/settlement-proof`
+and `POST /extract/batch`. `--claim` fixtures that set `buyerDemand` on a missing
+route, or that name invented receipt fields (`loyaltyPoints`), exit 1.
+
 ```
 npm run bazaar-tracker -- --live
 npm run bazaar-tracker -- --readback
+npm run bazaar-tracker -- --eight-vs-26
 npm run test:bazaar-tracker
 ```
 
-`--live` is not part of `npm run build` or the ordinary test scripts.
+`--live` is not part of `npm run build`, `--eight-vs-26`, or the ordinary test scripts.
 
 ## How Pilot runs it (`pilot-vm-job`)
 
@@ -110,3 +120,9 @@ When only the digest-only observation is present, content edits surface as
 3. `git ls-files data/bazaar-tracker` does not contain a full snapshot JSON.
 4. Committed `observations.json` does not contain `payTo`, amount, asset,
    network, or description text.
+5. `--eight-vs-26` against committed SDS `rowCount` 8 and the pinned 26 evidence
+   ops reports live-untracked `GET /commerce/settlement-proof` and
+   `POST /extract/batch` with `catalogAbsenceIsDemand: false`. A seeded claim that
+   missing `/extract/batch` is buyer demand exits 1. SDS path drift, a declared
+   `rowCount` that does not match actual routes, or tracked routes missing from
+   evidence also fail closed. Do not run `--live`.

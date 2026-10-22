@@ -1,0 +1,14 @@
+{
+  "id": "R11-SEED-extract-batch-is-demand",
+  "treatAbsenceAsDemand": true,
+  "catalogAbsenceIsDemand": true,
+  "claims": [
+    {
+      "method": "POST",
+      "path": "/extract/batch",
+      "buyerDemand": true,
+      "reason": "missing from committed SDS bazaar-tracker routes, so this is buyer demand to list it"
+    }
+  ],
+  "note": "SEEDED FAILURE: catalog absence is not demand. Adapter must reject POST /extract/batch as buyerDemand and exit 1. Do not treat as a real observation."
+}

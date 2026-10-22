@@ -1,0 +1,13 @@
+{
+  "id": "R11-SEED-invented-loyaltyPoints",
+  "receiptFields": ["loyaltyPoints", "throughBlock"],
+  "claims": [
+    {
+      "method": "GET",
+      "path": "/extract",
+      "loyaltyPoints": 42,
+      "throughBlock": 12345678
+    }
+  ],
+  "note": "SEEDED FAILURE: invented receipt fields with no live schema citation. Adapter must exit 1."
+}
