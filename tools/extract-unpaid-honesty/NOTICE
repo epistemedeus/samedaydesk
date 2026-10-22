@@ -1,0 +1,17 @@
+extract-unpaid-honesty license notes
+
+This module is SameDayDesk-owned and UNLICENSED as a repository tool. It does
+not copy the useful-jobs engines. It extracts and spawns the published
+useful-jobs 1.0.0 archive (MIT License, Copyright 2026 Pilot / Neomorphic LLC
+sample and wrapper authors) from client/public/for-agents/useful-jobs/.
+
+buyer-runtimes helpers are imported from tools/buyer-runtimes/lib.mjs on SDS
+main. Offer limits come from tools/offer-routing/capability-limits-matrix.json.
+
+fixtures/contrast/f18-merchant-extract-402.json is a labelled fixture copied from
+epistemedeus/pilot@5e9fd3fc (fable/f18-live-journeys) for contrast only. It is
+not a live GET and not external acceptance.
+
+I01 earned-work / hashTermsVersion lives on Neo PR54. This module uses the
+documented sha256: content-hash shape and rejects F01 integer termsVersion.
+The earned-work kernel is not copied.
