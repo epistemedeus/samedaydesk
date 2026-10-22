@@ -1,0 +1,31 @@
+{
+  "note": "Byte copy of PR51 useful-jobs 1.0.0 samples/pricing/a/before.json. Engine rows use JSON numbers; this feed requires decimal strings and refuses those floats on ingest.",
+  "engine": "vendor-budget-impact",
+  "archive": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+  "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51",
+  "bytes": 2522418,
+  "pathInArchive": "samples/pricing/a/before.json",
+  "not": "F14 Pilot brief",
+  "rows": [
+    {
+      "field": "gpt-4.1-input",
+      "value": 2.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "gpt-4.1-output",
+      "value": 8.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "grok-4.6-input",
+      "value": 3.0,
+      "unit": "USD/1M-tokens"
+    },
+    {
+      "field": "grok-4.6-output",
+      "value": 15.0,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "samedaydesk-vendor-price-feed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W3-13 H02 vendor price/API feed. PR51 vendor-budget price facts as fixtures. SAMPLE cannot be upstream. Live SDS prices are not writable.",
+  "bin": {
+    "vendor-price-feed": "./bin/vendor-price-feed.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "journey": "node bin/vendor-price-feed.mjs journey --fixture fixtures/ok.json"
+  }
+}
