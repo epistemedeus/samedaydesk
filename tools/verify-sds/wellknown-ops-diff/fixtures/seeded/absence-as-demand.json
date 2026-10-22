@@ -1,0 +1,14 @@
+{
+  "id": "absence-as-demand",
+  "seededId": "absence-as-demand",
+  "treatAbsenceAsDemand": true,
+  "catalogAbsenceIsDemand": true,
+  "claims": [
+    {
+      "method": "GET",
+      "path": "/commerce/settlement-proof",
+      "buyerDemand": true
+    }
+  ],
+  "note": "Seeded lie: a well-known-only route missing from bazaar-tracker is buyer demand."
+}
