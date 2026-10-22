@@ -1,0 +1,21 @@
+{
+  "id": "sds-hmac-rotate-unpaid-402",
+  "schemaVersion": "samedaydesk.commerce-receipts.hmac-rotate.v1",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https://example.com",
+  "overlapMs": 3600000,
+  "kids": [
+    "sds-hmac-2026-09-a",
+    "sds-hmac-2026-09-b"
+  ],
+  "labels": [
+    "fixture.a",
+    "fixture.b"
+  ],
+  "fingerprints": {
+    "a": "sha256:62ca2b8bf593b84d635535562b044089f516c407c4326b53aba09b8d68e3353f",
+    "b": "sha256:9947deb0672be690f2cd656c3b9e1c94a6cdae96ea2b3867b5cf6610fbd0fc2b"
+  },
+  "unpaid": true,
+  "paid": false
+}
