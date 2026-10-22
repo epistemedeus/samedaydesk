@@ -1,0 +1,10 @@
+{
+  "ok": false,
+  "refused": true,
+  "code": "missing-required-inputs",
+  "error": "Caller mode requires --before and --after; use --example for the labeled journey fixture",
+  "detail": { "missing": ["before", "after"] },
+  "jobId": "lockfile-pin-delta",
+  "delivered": false,
+  "purchaseAuthority": false
+}

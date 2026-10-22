@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "status": "delivered",
+  "delivered": true,
+  "jobId": "lockfile-pin-delta",
+  "outDir": "./missing-output-reported-delivered/out",
+  "outputs": []
+}
