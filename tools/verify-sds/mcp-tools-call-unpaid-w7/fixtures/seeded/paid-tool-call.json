@@ -1,0 +1,8 @@
+{
+  "id": "paid-tool-call",
+  "seededId": "paid-tool-call",
+  "feature": "mcp-tools-call-unpaid-w7",
+  "opts": { "tool": "generate_complete_fix_pack" },
+  "expectExit": 1,
+  "errorCode": "PAID_REFUSE"
+}
