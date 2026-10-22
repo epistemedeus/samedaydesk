@@ -1,0 +1,63 @@
+{
+  "schema": "samedaydesk.verify-sds.feature-map.v1",
+  "feature": "402-matrix",
+  "slice": "w1021-402-matrix-only",
+  "wave": "w1021",
+  "goal": "pin every SDS origin x402 catalog amount as an unpaid 402 matrix; reject stale listed amounts, unit confusion, and paid evidence labeled unpaid",
+  "entrypoint": "committed fixtures/presence/catalog/x402.json",
+  "command": "node tools/verify-sds/w1021-402-matrix/bin/prove.mjs --json",
+  "state": "offline catalog pin; purchaseAuthority:false; HTTP 402 is not settlement",
+  "tests": "node --test tools/verify-sds/w1021-402-matrix/test/*.test.mjs",
+  "prerequisite": "Node 22, committed fixtures/presence/catalog/x402.json on default branch",
+  "outOfScope": [
+    "publish",
+    "registry",
+    "payment",
+    "checkout",
+    "neomorphic-io",
+    "live-fetch",
+    "x402-pay",
+    "tools/call",
+    "price-edit"
+  ],
+  "pin": {
+    "catalogPath": "fixtures/presence/catalog/x402.json",
+    "lastUpdated": 1788454976,
+    "itemCount": 23,
+    "uniqueAmountCount": 8,
+    "purchaseAuthority": false,
+    "paidHostedClaim": false,
+    "live": false
+  },
+  "surfaces": {
+    "catalog": "fixtures/presence/catalog/x402.json",
+    "verifiedFeed": "client/public/x402/verified.json",
+    "origin": "https://agents.samedaydesk.com"
+  },
+  "subFeatures": [
+    "cold prove binds 23 catalog routes and 8 unique atomic USDC amounts",
+    "display USD is atomic / 1e6",
+    "stale Bazaar /read 50000 vs catalog 5000 is stale_listed_amount",
+    "HTTP 402 is not delivery or settlement"
+  ],
+  "seededFailures": {
+    "stale-listed-amount": {
+      "code": "stale_listed_amount",
+      "fixture": "fixtures/seeded/stale-listed-amount.json",
+      "naiveRule": "statusClass-unpaid"
+    },
+    "wrong-units": {
+      "code": "wrong_units",
+      "fixture": "fixtures/seeded/wrong-units-5000-as-dollars.json"
+    },
+    "paid-as-unpaid": {
+      "code": "paid_as_unpaid",
+      "fixture": "fixtures/seeded/paid-as-unpaid.json"
+    },
+    "silent-empty-success": {
+      "code": "silent-empty-success",
+      "fixture": "fixtures/seeded/silent-empty-success.json"
+    }
+  },
+  "designatedSeed": "stale-listed-amount"
+}

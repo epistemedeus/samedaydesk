@@ -1,0 +1,13 @@
+SDS verify slice: unpaid SameDayDesk x402 amount matrix (w1021).
+
+Authoritative input: committed fixtures/presence/catalog/x402.json
+  lastUpdated 1788454976
+  x402Version 2
+  23 origin routes, 8 unique atomic USDC amounts
+
+This directory pins and proves that catalog. HTTP 402 is not settlement.
+It does not pay, checkout, publish, refresh a registry, attach neo, or
+edit live prices.
+
+Known stale listing (not a catalog pin): Bazaar /read amount 50000 vs
+catalog 5000. Designated seed: stale-listed-amount.

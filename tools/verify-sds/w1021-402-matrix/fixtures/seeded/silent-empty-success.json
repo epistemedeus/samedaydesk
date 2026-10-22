@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "schemaVersion": 1,
+  "status": "pass",
+  "feature": "402-matrix",
+  "routes": [],
+  "uniqueAmounts": [],
+  "note": "Naive success envelope with zero catalog routes. Honest prove requires 23 origin amounts."
+}
