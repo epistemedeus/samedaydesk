@@ -1,0 +1,24 @@
+{
+  "id": "pulse-empty-tool-map-as-zero",
+  "surface": "pulse",
+  "class": "absence-as-zero",
+  "expectReject": true,
+  "cite": "server/lib/pulse.js",
+  "expectedReasons": ["absence_as_demand", "absence_as_zero_demand"],
+  "defect": "Empty counts map treated as proven zero demand (unavailable is not zeros).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "pulse",
+    "emptyToolMap": true,
+    "emptyMapMeansZero": true,
+    "absenceProvesZeroDemand": true,
+    "provenNoDemand": true,
+    "demandCount": 0,
+    "toolCallsByName": {
+      "counts": {},
+      "coverage": "known_from_observed_from"
+    },
+    "message": "empty counts map treated as proven zero demand"
+  }
+}

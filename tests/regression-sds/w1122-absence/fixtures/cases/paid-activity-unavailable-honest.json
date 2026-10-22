@@ -1,0 +1,24 @@
+{
+  "id": "paid-activity-unavailable-honest",
+  "surface": "observatory",
+  "class": "honest-withheld",
+  "expectReject": false,
+  "cite": "server/lib/observatory/contract.js",
+  "defect": null,
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "demand": false,
+    "paidDemand": false,
+    "notDemand": true,
+    "demandSignal": "withheld",
+    "withheldConclusions": ["demand", "paid_demand_population", "organic_demand"],
+    "paidActivity": {
+      "available": false,
+      "reason": "x402stats snapshot has no registered-vs-paid split; organic is heuristic, not paid demand.",
+      "reconcile": { "state": "missing", "composed": null }
+    },
+    "message": "absence of paid activity is explicit; demand withheld"
+  }
+}

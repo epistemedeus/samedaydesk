@@ -1,0 +1,24 @@
+{
+  "id": "owner-qa-issue-as-demand",
+  "surface": "work-brief",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "tools/recurring-job-recipes/specs/issue-to-work-brief.recipe.json",
+  "expectedReasons": ["absence_as_demand", "owner_qa_as_demand"],
+  "defect": "Owner QA GitHub issue promoted as demand / willingness to pay.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "work-brief",
+    "ownerQa": true,
+    "ownerQaOnly": true,
+    "ownerQaAsDemand": true,
+    "demand": true,
+    "marketDemand": true,
+    "claims": {
+      "ownerQaOnly": true,
+      "notDemand": true
+    },
+    "message": "owner QA issue treated as demand"
+  }
+}

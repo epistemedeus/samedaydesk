@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "feature": "absence-not-demand-w1122",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/w1122-absence/**",
+  "principle": {
+    "id": "absence-not-demand",
+    "statement": "Absence of paid activity, routes, pricing rows, tool-name counts, owner-QA issues, discovery, or pulse estimates is not market or paid demand. Unavailable, partial, empty, and stale are not zeros and are not demand."
+  },
+  "seededAbsenceAsDemand": "mcp-surface-get-as-demand",
+  "cases": [
+    {
+      "id": "paid-activity-unavailable-honest",
+      "file": "fixtures/cases/paid-activity-unavailable-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "empty-tool-map-honest",
+      "file": "fixtures/cases/empty-tool-map-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "owner-qa-not-demand-honest",
+      "file": "fixtures/cases/owner-qa-not-demand-honest.json",
+      "expect": "accept",
+      "class": "honest-withheld"
+    },
+    {
+      "id": "paid-activity-unavailable-as-demand",
+      "file": "fixtures/cases/paid-activity-unavailable-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unavailable_paid_activity_as_demand"]
+    },
+    {
+      "id": "catalog-count-as-demand",
+      "file": "fixtures/cases/catalog-count-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "catalog_count_as_demand"]
+    },
+    {
+      "id": "organic-heuristic-as-paid-demand",
+      "file": "fixtures/cases/organic-heuristic-as-paid-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "organic_heuristic_as_paid_demand"]
+    },
+    {
+      "id": "pulse-empty-tool-map-as-demand",
+      "file": "fixtures/cases/pulse-empty-tool-map-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "empty_tool_map_as_demand"]
+    },
+    {
+      "id": "pulse-empty-tool-map-as-zero",
+      "file": "fixtures/cases/pulse-empty-tool-map-as-zero.json",
+      "expect": "reject",
+      "class": "absence-as-zero",
+      "expectedReasons": ["absence_as_demand", "absence_as_zero_demand"]
+    },
+    {
+      "id": "unique-humans-estimate-as-demand",
+      "file": "fixtures/cases/unique-humans-estimate-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "unique_humans_as_demand"]
+    },
+    {
+      "id": "pricing-row-absence-as-demand",
+      "file": "fixtures/cases/pricing-row-absence-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "pricing_absence_as_demand"]
+    },
+    {
+      "id": "discovery-as-demand",
+      "file": "fixtures/cases/discovery-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "discovery_as_demand"]
+    },
+    {
+      "id": "owner-qa-issue-as-demand",
+      "file": "fixtures/cases/owner-qa-issue-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "expectedReasons": ["absence_as_demand", "owner_qa_as_demand"]
+    },
+    {
+      "id": "mcp-surface-get-as-demand",
+      "file": "fixtures/cases/mcp-surface-get-as-demand.json",
+      "expect": "reject",
+      "class": "absence-as-demand",
+      "seededAbsenceAsDemand": true,
+      "expectedReasons": ["absence_as_demand", "mcp_surface_get_as_demand"]
+    }
+  ],
+  "counts": {
+    "total": 13,
+    "accept": 3,
+    "reject": 10,
+    "seededAbsenceAsDemand": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}
