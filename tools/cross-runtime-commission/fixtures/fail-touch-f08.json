@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.cross-runtime-commission.fixture.v1",
+  "id": "fail-touch-f08",
+  "jobId": "listing-repair-packet",
+  "input": "fixtures/listing/caller-ok.json",
+  "useF08Wrappers": true,
+  "runtimes": [
+    { "label": "node22-local", "kind": "local" },
+    { "label": "node22-container-fixture", "kind": "container-fixture" }
+  ],
+  "notes": "Seeded failure: touching F08 wrappers."
+}
