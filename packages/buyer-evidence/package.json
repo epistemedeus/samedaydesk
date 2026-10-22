@@ -1,0 +1,37 @@
+{
+  "name": "@samedaydesk/buyer-evidence",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "license": "UNLICENSED",
+  "description": "Fixture loader and contract verifier for the SameDayDesk unpaid GET /extract pin.",
+  "main": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "lib.mjs",
+    "verify.mjs",
+    "fixtures",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test.mjs",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epistemedeus/samedaydesk.git",
+    "directory": "packages/buyer-evidence"
+  }
+}
