@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.paid-batch-reconciler.request.v1",
+  "items": [
+    {
+      "id": "escape-path",
+      "engineId": "vendor-budget-impact",
+      "files": {
+        "before": "/etc/passwd",
+        "after": "../caller/vendor-budget-impact/after.json"
+      },
+      "funding": "reserved-fixture",
+      "payment": "../payment/reserved-fixture.json"
+    }
+  ]
+}

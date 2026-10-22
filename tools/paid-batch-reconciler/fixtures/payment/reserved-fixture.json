@@ -1,0 +1,26 @@
+{
+  "fixture": true,
+  "purchaseAuthority": false,
+  "label": "fixture",
+  "live": false,
+  "x402Version": 2,
+  "accepted": {
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "amount": "20000",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "payTo": "0x0000000000000000000000000000000000000F08",
+    "maxTimeoutSeconds": 300
+  },
+  "payload": {
+    "authorization": {
+      "from": "0x00000000000000000000000000000000000000F1",
+      "to": "0x0000000000000000000000000000000000000F08",
+      "value": "20000",
+      "validAfter": "0",
+      "validBefore": "9999999999",
+      "nonce": "0xc08fixture000000000000000000000000000000000000000000000000000001"
+    },
+    "signature": "0xababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+  }
+}

@@ -1,0 +1,751 @@
+{
+  "base": "76f0fab6250cb8d9aaddaaaa3e4e3373ca2cc5be",
+  "branch": "codex/cw62-batch-value-integration-20260912",
+  "remoteMainObserved": "ad9bc7b448cf1f635ff1488affbe206aaf981ac0",
+  "remoteMainRuntimeInspected": false,
+  "provider": "Grok VM/node_grok_bot_vm",
+  "hostname": "cursor",
+  "imports": [
+    {
+      "label": "D11",
+      "commit": "a03c7e41dfbd791e0adc872e65c33597e42c4193",
+      "scope": "tools/job-request-desk",
+      "files": [
+        {
+          "path": "tools/job-request-desk/FEATURE-MAP.md",
+          "originalBlob": "3ff5a8b376942a60f42c3319fb527133d28cb227",
+          "exportBlob": "3ff5a8b376942a60f42c3319fb527133d28cb227",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/LICENSE",
+          "originalBlob": "f9a85d0302c6d5afd3defe1da34bf7b58a7435c8",
+          "exportBlob": "f9a85d0302c6d5afd3defe1da34bf7b58a7435c8",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/NOTICE",
+          "originalBlob": "b832fd8a5b871211fc83d4aaaeee837be9b2156e",
+          "exportBlob": "b832fd8a5b871211fc83d4aaaeee837be9b2156e",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/RECEIPT.md",
+          "originalBlob": "f214fe0c0960af03b9f41a8f5ba117160473ccf6",
+          "exportBlob": "f214fe0c0960af03b9f41a8f5ba117160473ccf6",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/bin/desk.mjs",
+          "originalBlob": "b0e8f4735a9fbab55ea8e802c3c1524486d38229",
+          "exportBlob": "66ed9f9a085cae77b219c203912769d921f16dc6",
+          "modified": true
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/caller/vendor-budget-impact/SOURCE.txt",
+          "originalBlob": "8ba8ce49272a1fc6f4156fff9c3cad1ba59723c8",
+          "exportBlob": "8ba8ce49272a1fc6f4156fff9c3cad1ba59723c8",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/caller/vendor-budget-impact/after.json",
+          "originalBlob": "660682a34a187b9931855476bff452fc2640d316",
+          "exportBlob": "660682a34a187b9931855476bff452fc2640d316",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/caller/vendor-budget-impact/before.json",
+          "originalBlob": "e6a2f697b2879661c3d926074526f4ef298d45c8",
+          "exportBlob": "e6a2f697b2879661c3d926074526f4ef298d45c8",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/consumer-contract/SOURCE.txt",
+          "originalBlob": "2fd961b5dfe18820d0cb6b7587b68d8a44d01a36",
+          "exportBlob": "2fd961b5dfe18820d0cb6b7587b68d8a44d01a36",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/consumer-contract/samedaydesk.useful-jobs-consumer.v1.json",
+          "originalBlob": "4d843d7413167d43126191f67368c37d250e660a",
+          "exportBlob": "4d843d7413167d43126191f67368c37d250e660a",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/i01/SOURCE.txt",
+          "originalBlob": "92754a378660a2d2327902882bc0b557920ab458",
+          "exportBlob": "92754a378660a2d2327902882bc0b557920ab458",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/fixtures/i01/complete.terms.json",
+          "originalBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+          "exportBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/catalog.mjs",
+          "originalBlob": "e89830d5e45bd887ef883181dfafb76716e19516",
+          "exportBlob": "e89830d5e45bd887ef883181dfafb76716e19516",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/contract.mjs",
+          "originalBlob": "7628359e100fbe664752c7f0b009f09044f706df",
+          "exportBlob": "7628359e100fbe664752c7f0b009f09044f706df",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/desk.mjs",
+          "originalBlob": "827b79e46a6e774c95b5991217f97ed6699afdb4",
+          "exportBlob": "da13f6ab44d5c5a585762af25898b25bd81b31ae",
+          "modified": true
+        },
+        {
+          "path": "tools/job-request-desk/lib/digest.mjs",
+          "originalBlob": "dac9427642fb1d0f118238b520fbee16952a69aa",
+          "exportBlob": "dac9427642fb1d0f118238b520fbee16952a69aa",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/engine.mjs",
+          "originalBlob": "715a1222c4125c926cf0b90bffbfde9985564d73",
+          "exportBlob": "928fdcb5f74f2031a2ab98d501a123acfe94cdc0",
+          "modified": true
+        },
+        {
+          "path": "tools/job-request-desk/lib/http-adapter.mjs",
+          "originalBlob": "c48cad34e83a92898d93b7cf9d9c88012ea9725f",
+          "exportBlob": "c48cad34e83a92898d93b7cf9d9c88012ea9725f",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/index.mjs",
+          "originalBlob": "664b4283201a12fef1fe5761d438c912ce09a232",
+          "exportBlob": "664b4283201a12fef1fe5761d438c912ce09a232",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/outcomes.mjs",
+          "originalBlob": "25c51a06f8c6b254244a8992b473b73adbe8f498",
+          "exportBlob": "25c51a06f8c6b254244a8992b473b73adbe8f498",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/pins.mjs",
+          "originalBlob": "a549119c641f65d4917e6e33859fb28a8faca96f",
+          "exportBlob": "a549119c641f65d4917e6e33859fb28a8faca96f",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/refuse.mjs",
+          "originalBlob": "be107f22f3fdfcef630dea9b7dbb70714909a74e",
+          "exportBlob": "be107f22f3fdfcef630dea9b7dbb70714909a74e",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/sample-guard.mjs",
+          "originalBlob": "8de07a6c6eeb632785e7b24db4e4d7fcdb49db2c",
+          "exportBlob": "8de07a6c6eeb632785e7b24db4e4d7fcdb49db2c",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/sds52.mjs",
+          "originalBlob": "2edea3e014b1c5142022a127cd432509bf9a7d73",
+          "exportBlob": "7bc81cef94817bcc7a9fb547ea1fd17f83260ccd",
+          "modified": true
+        },
+        {
+          "path": "tools/job-request-desk/lib/store.mjs",
+          "originalBlob": "bf30c4a2764d44a01be2afbaef5f33b3cb2c7384",
+          "exportBlob": "2e955bcab1eccada2633145f9ef5d527b2dd7513",
+          "modified": true
+        },
+        {
+          "path": "tools/job-request-desk/lib/terms.mjs",
+          "originalBlob": "bfa36cb88b6ae2262023f00e056844078aaf0787",
+          "exportBlob": "bfa36cb88b6ae2262023f00e056844078aaf0787",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/vendor/funded-task-terms/LICENSE",
+          "originalBlob": "069b59afc55d1354ee6e0342d1a9b22aa7e98ee5",
+          "exportBlob": "069b59afc55d1354ee6e0342d1a9b22aa7e98ee5",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/vendor/funded-task-terms/PIN.txt",
+          "originalBlob": "1ccbe4f3070d68751b0dc0d3db4acfeecb89c4db",
+          "exportBlob": "1ccbe4f3070d68751b0dc0d3db4acfeecb89c4db",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/vendor/funded-task-terms/canonical.mjs",
+          "originalBlob": "830b4692867a24c4eaf819cc691cc92ac34d0f35",
+          "exportBlob": "830b4692867a24c4eaf819cc691cc92ac34d0f35",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/lib/vendor/funded-task-terms/hash.mjs",
+          "originalBlob": "faced550ca714f720ae82f18d0907955ef354281",
+          "exportBlob": "faced550ca714f720ae82f18d0907955ef354281",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/helpers.mjs",
+          "originalBlob": "2d9594229cd523f59796d637ea5976af6b7e303c",
+          "exportBlob": "2d9594229cd523f59796d637ea5976af6b7e303c",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/http-local.test.mjs",
+          "originalBlob": "2d7cfab265bad2401766c9c58451d379a31252eb",
+          "exportBlob": "2d7cfab265bad2401766c9c58451d379a31252eb",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/journey.test.mjs",
+          "originalBlob": "34e6b5c9c13e74e2717b933a742e445f98229aae",
+          "exportBlob": "34e6b5c9c13e74e2717b933a742e445f98229aae",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/replay-honesty.test.mjs",
+          "originalBlob": "84d76cf6aef964be6c8e3bead7b87185e0afb980",
+          "exportBlob": "84d76cf6aef964be6c8e3bead7b87185e0afb980",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/seeded-failures.test.mjs",
+          "originalBlob": "77d9d163059ca98e636c87caaf9d9403f0d25a7b",
+          "exportBlob": "77d9d163059ca98e636c87caaf9d9403f0d25a7b",
+          "modified": false
+        },
+        {
+          "path": "tools/job-request-desk/test/terms-hash.test.mjs",
+          "originalBlob": "d1f5084fba6190ddf8c5a0ad9d1b4674dce00595",
+          "exportBlob": "d1f5084fba6190ddf8c5a0ad9d1b4674dce00595",
+          "modified": false
+        }
+      ]
+    },
+    {
+      "label": "D12",
+      "commit": "5f7b0f85dbacc6a1cfb2cc78308485340c9683f6",
+      "scope": "tools/paid-batch-reconciler",
+      "files": [
+        {
+          "path": "tools/paid-batch-reconciler/FEATURE-MAP.md",
+          "originalBlob": "eb0c2b638e7de1674ec0a364e0f3f73f2b5f2f3a",
+          "exportBlob": "eb0c2b638e7de1674ec0a364e0f3f73f2b5f2f3a",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/README.md",
+          "originalBlob": "739b1d650f630df7b9375751753e6de5685f2ee8",
+          "exportBlob": "739b1d650f630df7b9375751753e6de5685f2ee8",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/RECEIPT.md",
+          "originalBlob": "d32bfc92b1ba40833105b6d95e65f70ee7c9e7ff",
+          "exportBlob": "d32bfc92b1ba40833105b6d95e65f70ee7c9e7ff",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/bin/batch.mjs",
+          "originalBlob": "84a186da91ea5ea8659b5498396650a85db8da79",
+          "exportBlob": "f9196ef3f22a5e7b0c5f79b3357e39c5efe89a1f",
+          "modified": true
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/duplicate-ids.json",
+          "originalBlob": "996c6d32469eba692dec6f07de0331917e1afd36",
+          "exportBlob": "996c6d32469eba692dec6f07de0331917e1afd36",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/fallback-runner.json",
+          "originalBlob": "6202ff2ea5ef0559d33d1caaebf9645734c30296",
+          "exportBlob": "6202ff2ea5ef0559d33d1caaebf9645734c30296",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/mixed-two-ok.json",
+          "originalBlob": "cf45996516423804418ddf9682b4f0b69544beb0",
+          "exportBlob": "cf45996516423804418ddf9682b4f0b69544beb0",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/partial-vendor-budget.json",
+          "originalBlob": "16ad0bd687c7e4b1e9ff323221d02bebc4f86f93",
+          "exportBlob": "16ad0bd687c7e4b1e9ff323221d02bebc4f86f93",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/reserved-fixture-without-payment.json",
+          "originalBlob": "e1b8f5c8efdf0d91ceead8c7bc1cb89d876d423e",
+          "exportBlob": "e1b8f5c8efdf0d91ceead8c7bc1cb89d876d423e",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/traversing-id.json",
+          "originalBlob": "ae06aed068598d1216d893fca51b4d460d54a96b",
+          "exportBlob": "ae06aed068598d1216d893fca51b4d460d54a96b",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/batches/traversing-path.json",
+          "originalBlob": "55679903b9ecb48627e5914408cbf1f59342aeb7",
+          "exportBlob": "55679903b9ecb48627e5914408cbf1f59342aeb7",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/caller/vendor-budget-impact/after.json",
+          "originalBlob": "303dc1e4dc2894a348dfb38b12e536090ec34c52",
+          "exportBlob": "303dc1e4dc2894a348dfb38b12e536090ec34c52",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/caller/vendor-budget-impact/before.json",
+          "originalBlob": "eef3bbf3c976ad47e0be596868329a60ba60beed",
+          "exportBlob": "eef3bbf3c976ad47e0be596868329a60ba60beed",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/payment/reserved-fixture.json",
+          "originalBlob": "f2573e2a8c960475661de74a33daac4f6a3d8d50",
+          "exportBlob": "f2573e2a8c960475661de74a33daac4f6a3d8d50",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/seeded/sample-after.json",
+          "originalBlob": "8a7304c850ba6671bb8538afbe62431ef185504f",
+          "exportBlob": "8a7304c850ba6671bb8538afbe62431ef185504f",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/seeded/sample-before.json",
+          "originalBlob": "7a8a13b15eba4db53199891a6c7b1efbe34c68bb",
+          "exportBlob": "7a8a13b15eba4db53199891a6c7b1efbe34c68bb",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/fixtures/sql/ledger.sql",
+          "originalBlob": "12abb4a41253b4d29ea073987c910db38262b4e3",
+          "exportBlob": "12abb4a41253b4d29ea073987c910db38262b4e3",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/index.mjs",
+          "originalBlob": "aac2c46ab9cbe031c55b325fd0a93715ef4ff93d",
+          "exportBlob": "416acd562f548f0f52737119f811a5f7bb160f12",
+          "modified": true
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/adapters.mjs",
+          "originalBlob": "519752dcccfded51aa4d6ca47485121b5cbfe50e",
+          "exportBlob": "a99eb01cf5af1b2bac5b24ef44fd7b10db06821e",
+          "modified": true
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/catalog.mjs",
+          "originalBlob": "9946f5bb54785d9e411445761240e23f1b4fd51c",
+          "exportBlob": "9946f5bb54785d9e411445761240e23f1b4fd51c",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/confine.mjs",
+          "originalBlob": "e6271ded18c6c4831be6109ea06f5c9a89528d5e",
+          "exportBlob": "e6271ded18c6c4831be6109ea06f5c9a89528d5e",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/funding.mjs",
+          "originalBlob": "935abfcd346b60c7fa9b6c0aa896e7d67e686816",
+          "exportBlob": "935abfcd346b60c7fa9b6c0aa896e7d67e686816",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/http.mjs",
+          "originalBlob": "3811e03a27223acfd14ca16a9a909527fbeef917",
+          "exportBlob": "df1821b8dbe3cc225db4a15dd7e3a58ec262aacb",
+          "modified": true
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/ledger.mjs",
+          "originalBlob": "958eba37e7a088a958403ee9496ebba3d25b9f57",
+          "exportBlob": "e91eaa4572580414bc8ad7efced8fa3ae4bd269d",
+          "modified": true
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/pins.mjs",
+          "originalBlob": "cc832734cec0510a833c080c8ea1213b880abcbe",
+          "exportBlob": "cc832734cec0510a833c080c8ea1213b880abcbe",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/postgres.mjs",
+          "originalBlob": "ed59e6d1c0049efe2f089e8d6dd394b596c4cdfd",
+          "exportBlob": "ed59e6d1c0049efe2f089e8d6dd394b596c4cdfd",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/prices.mjs",
+          "originalBlob": "dd007798cc402633cf59a9a56fa7b9fa6ea6bd52",
+          "exportBlob": "dd007798cc402633cf59a9a56fa7b9fa6ea6bd52",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/request.mjs",
+          "originalBlob": "28eeabc44c0f5ece987fadcddfdebb1b965095ac",
+          "exportBlob": "28eeabc44c0f5ece987fadcddfdebb1b965095ac",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/sample.mjs",
+          "originalBlob": "b417c0f2aa8bf762a39463a8d2e5f635f35cb0ab",
+          "exportBlob": "b417c0f2aa8bf762a39463a8d2e5f635f35cb0ab",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/lib/terms.mjs",
+          "originalBlob": "9f87c599d692090f203fa2fdb102f49574643bdd",
+          "exportBlob": "9f87c599d692090f203fa2fdb102f49574643bdd",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/f08-adapter.test.mjs",
+          "originalBlob": "883938f21c92e4c69b12c809993dad425b1cf8da",
+          "exportBlob": "883938f21c92e4c69b12c809993dad425b1cf8da",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/helpers.mjs",
+          "originalBlob": "f44197dc9655a735e22508363b4266a8d8e30938",
+          "exportBlob": "f44197dc9655a735e22508363b4266a8d8e30938",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/http.test.mjs",
+          "originalBlob": "6401c77447fc8a4ed99dd025f5b6afd3dbeaba07",
+          "exportBlob": "6401c77447fc8a4ed99dd025f5b6afd3dbeaba07",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/identity.test.mjs",
+          "originalBlob": "8e7e2156aba71e79707d7c1a695f484ce6fa521f",
+          "exportBlob": "8e7e2156aba71e79707d7c1a695f484ce6fa521f",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/journey.test.mjs",
+          "originalBlob": "4911fd87f538722b46b4b1bf28b815e9a75c93d0",
+          "exportBlob": "4911fd87f538722b46b4b1bf28b815e9a75c93d0",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/live-catalog.test.mjs",
+          "originalBlob": "3002700beebc3156400c04bdc817a88b6ac15f0e",
+          "exportBlob": "3002700beebc3156400c04bdc817a88b6ac15f0e",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/postgres.test.mjs",
+          "originalBlob": "dc3c433ab3102527a4a0b4b5aedc1b482488dca0",
+          "exportBlob": "dc3c433ab3102527a4a0b4b5aedc1b482488dca0",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/seeded-failures.test.mjs",
+          "originalBlob": "9d36ff60318e99a07dfcaf92dcb2849ac6fb2e11",
+          "exportBlob": "9d36ff60318e99a07dfcaf92dcb2849ac6fb2e11",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/test/terms.test.mjs",
+          "originalBlob": "eacced2c1193afa9d099209534b933de8e709d3a",
+          "exportBlob": "eacced2c1193afa9d099209534b933de8e709d3a",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/vendor/funded-task-terms/LICENSE",
+          "originalBlob": "8c8b8739c5c9f025cf64072873c15aa26c76d22d",
+          "exportBlob": "8c8b8739c5c9f025cf64072873c15aa26c76d22d",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/vendor/funded-task-terms/PIN.json",
+          "originalBlob": "f3b1fb78312a4f6f87e7886010fa02ba84fe5659",
+          "exportBlob": "f3b1fb78312a4f6f87e7886010fa02ba84fe5659",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/vendor/funded-task-terms/fixtures/golden/complete.terms.json",
+          "originalBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+          "exportBlob": "896bb4b2401af9cc59980774316bb78b1918c538",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/vendor/funded-task-terms/src/canonical.mjs",
+          "originalBlob": "cebc20cbcce0ac53837f2afe52d12b03bcf49a65",
+          "exportBlob": "cebc20cbcce0ac53837f2afe52d12b03bcf49a65",
+          "modified": false
+        },
+        {
+          "path": "tools/paid-batch-reconciler/vendor/funded-task-terms/src/hash.mjs",
+          "originalBlob": "3d64ab103e9225fdf9d9fc1428f4a9a668b70fb2",
+          "exportBlob": "3d64ab103e9225fdf9d9fc1428f4a9a668b70fb2",
+          "modified": false
+        }
+      ]
+    },
+    {
+      "label": "D13",
+      "commit": "b29ddce9b4cbe56fbdf5d7a756dc6e52b9b568df",
+      "scope": "tools/buyer-value-ledger",
+      "files": [
+        {
+          "path": "tools/buyer-value-ledger/CONTRACT.md",
+          "originalBlob": "0abffc595bcf8359e88b60e8b91b798054f1387c",
+          "exportBlob": "0abffc595bcf8359e88b60e8b91b798054f1387c",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/FEATURE-MAP.md",
+          "originalBlob": "ac23e000636dfaef62232646bc48d5f4def7cc88",
+          "exportBlob": "ac23e000636dfaef62232646bc48d5f4def7cc88",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/LICENSE",
+          "originalBlob": "2ecb178a389fd68fbcb7ab886daf77b22b96edd9",
+          "exportBlob": "2ecb178a389fd68fbcb7ab886daf77b22b96edd9",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/NOTICE",
+          "originalBlob": "a4fa2b26bc25aca4aff12896454f777192d92b81",
+          "exportBlob": "a4fa2b26bc25aca4aff12896454f777192d92b81",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/RECEIPT.md",
+          "originalBlob": "9675a1c2a4fe471429a3897a32acdc1b61bd4d56",
+          "exportBlob": "9675a1c2a4fe471429a3897a32acdc1b61bd4d56",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/bin/value.mjs",
+          "originalBlob": "81eeef7ceb34c81743cec96924cac33a53b033ba",
+          "exportBlob": "81eeef7ceb34c81743cec96924cac33a53b033ba",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/caller/invalid/after.json",
+          "originalBlob": "61d46b91c7d9b5bcbcba7ed6afc8798e8c136050",
+          "exportBlob": "61d46b91c7d9b5bcbcba7ed6afc8798e8c136050",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/caller/invalid/before.json",
+          "originalBlob": "6b7a9f4e0c2451d86e695ebd335960855f2b2b8c",
+          "exportBlob": "6b7a9f4e0c2451d86e695ebd335960855f2b2b8c",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/caller/vendor-budget-impact/after.json",
+          "originalBlob": "2f1c67117dcbaae1c750c86ad709c6c74e14e5be",
+          "exportBlob": "2f1c67117dcbaae1c750c86ad709c6c74e14e5be",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/caller/vendor-budget-impact/before.json",
+          "originalBlob": "743942e402149636043c0fac02f523bf3b03d968",
+          "exportBlob": "743942e402149636043c0fac02f523bf3b03d968",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/reject/cited-banked-as-job-revenue.json",
+          "originalBlob": "c28aaf181bf07cbc8a53fb93ec1e3900a2b72f69",
+          "exportBlob": "c28aaf181bf07cbc8a53fb93ec1e3900a2b72f69",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/reject/fixture-buyer-as-independent.json",
+          "originalBlob": "c490c54092adeb8f06a758ce9c588435882920c4",
+          "exportBlob": "c490c54092adeb8f06a758ce9c588435882920c4",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/reject/missing-buyer-class.json",
+          "originalBlob": "b8727a112cbe2057536663bf60d200b35793bde7",
+          "exportBlob": "b8727a112cbe2057536663bf60d200b35793bde7",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/reject/sum-early-x402-as-job-revenue.json",
+          "originalBlob": "ba9c269c62e18126511c44f139f6ac6edc0fe6d3",
+          "exportBlob": "ba9c269c62e18126511c44f139f6ac6edc0fe6d3",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/settlement-bind/vendor-budget-impact.json",
+          "originalBlob": "779a546d3562721e4195cd502b2409ebdb457105",
+          "exportBlob": "779a546d3562721e4195cd502b2409ebdb457105",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/fixtures/settlements-pin.json",
+          "originalBlob": "745eed77510eb8503593a7da0dc203459f3ab3b7",
+          "exportBlob": "745eed77510eb8503593a7da0dc203459f3ab3b7",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/cli.mjs",
+          "originalBlob": "30a44b6d7d2d8441c0767004ada586d8c11cd6c8",
+          "exportBlob": "c2b473c5d863b307b72fd892bf5c8e4e41128783",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/d01.mjs",
+          "originalBlob": "77cb7c61107bc5958f13aee67f11e145102ca222",
+          "exportBlob": "27ac39614d4ef218b163747411a3a03bcdaad24c",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/engine.mjs",
+          "originalBlob": "07897eda6ed19e6ffdd1ecc48ab5883c2317b665",
+          "exportBlob": "3e8ed5e626d254f2c1e857999b4c800514238c49",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/hash-terms.mjs",
+          "originalBlob": "20daa43ffa248597b0b196673325dfacd6bee23f",
+          "exportBlob": "20daa43ffa248597b0b196673325dfacd6bee23f",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/index.mjs",
+          "originalBlob": "0f0262667c6dffb3acc2514806121f184cef4507",
+          "exportBlob": "2332508e9b12c38b0f0beaf67c9cb8fd23702933",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/kit.mjs",
+          "originalBlob": "7d9f42d207caa989d1a048ebde8b202762aa0d8e",
+          "exportBlob": "7d9f42d207caa989d1a048ebde8b202762aa0d8e",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/labels.mjs",
+          "originalBlob": "84e5d3c4827a48f9d69a9f45a5225ae528c1e042",
+          "exportBlob": "84e5d3c4827a48f9d69a9f45a5225ae528c1e042",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/ledger.mjs",
+          "originalBlob": "be108ee6c0f735120d52e03a9774d8b73250066a",
+          "exportBlob": "ecb263a1fafdbce86d199b6432191c9d403ea7f2",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/outcome.mjs",
+          "originalBlob": "bdc26b8032a4d7f1852e910ebce4e14b3f6000cf",
+          "exportBlob": "bdc26b8032a4d7f1852e910ebce4e14b3f6000cf",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/pins.mjs",
+          "originalBlob": "fe7b2bcf3af1e1454089c5f298b35ae169dae360",
+          "exportBlob": "fe7b2bcf3af1e1454089c5f298b35ae169dae360",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/postgres.mjs",
+          "originalBlob": "3bc1c17468870373f5b221905dcf8937e1e9cc4f",
+          "exportBlob": "3bc1c17468870373f5b221905dcf8937e1e9cc4f",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/revenue.mjs",
+          "originalBlob": "1f9b28e41e810fd6d35ddaf565865809bdd2c26d",
+          "exportBlob": "1f9b28e41e810fd6d35ddaf565865809bdd2c26d",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/run.mjs",
+          "originalBlob": "e4bdc19bb9ece5e3b01f648eb284de4207a20fe5",
+          "exportBlob": "77871f4c6cf040553c6ce7349b19672e3ec5f6ee",
+          "modified": true
+        },
+        {
+          "path": "tools/buyer-value-ledger/lib/settlements.mjs",
+          "originalBlob": "0619e7f732c39a475076f7bf7fb37408f28fc4b0",
+          "exportBlob": "0619e7f732c39a475076f7bf7fb37408f28fc4b0",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/package.json",
+          "originalBlob": "84f979f4f8af9eabbb1d780a03dc425cf9a7079a",
+          "exportBlob": "84f979f4f8af9eabbb1d780a03dc425cf9a7079a",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/binding.test.mjs",
+          "originalBlob": "7536f08391fbc61f6ff59b8b9c343443786bbf34",
+          "exportBlob": "7536f08391fbc61f6ff59b8b9c343443786bbf34",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/d01-consumer.test.mjs",
+          "originalBlob": "a1701bc0b4f0eb9be2af7dcb6acdb584ac1a93fb",
+          "exportBlob": "a1701bc0b4f0eb9be2af7dcb6acdb584ac1a93fb",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/journey.test.mjs",
+          "originalBlob": "5b0cad0d624fb40c02d084cc528749d3867cd973",
+          "exportBlob": "5b0cad0d624fb40c02d084cc528749d3867cd973",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/local-http.test.mjs",
+          "originalBlob": "83ecf06dcf9679f56b469d0469bcd80139e6b1ea",
+          "exportBlob": "83ecf06dcf9679f56b469d0469bcd80139e6b1ea",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/pins-join.test.mjs",
+          "originalBlob": "51275941f35f4b4cd858a0373ccae4685cafb0ed",
+          "exportBlob": "51275941f35f4b4cd858a0373ccae4685cafb0ed",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/postgres.test.mjs",
+          "originalBlob": "8537c0a4cabc9cb1f2c53fcc7af60c359614fcbd",
+          "exportBlob": "8537c0a4cabc9cb1f2c53fcc7af60c359614fcbd",
+          "modified": false
+        },
+        {
+          "path": "tools/buyer-value-ledger/test/seeded-failures.test.mjs",
+          "originalBlob": "4b00d237f01dc2c470652ffcf4e4f6a1e210ee5c",
+          "exportBlob": "4b00d237f01dc2c470652ffcf4e4f6a1e210ee5c",
+          "modified": false
+        }
+      ]
+    }
+  ],
+  "sharedDependencyTrees": {
+    "server/paid-useful-jobs": "42f7ca74d1dabb7f1b709183849578fd984c2555",
+    "experiments/wave5/m01": "826fc6a6fbb602ae8a0ad96ca6d58d099272baf8",
+    "tools/managed-useful-jobs-order": "9d3b4db1f26646f0c7eca2db9b21305c3fee82d3",
+    "client/public/for-agents/useful-jobs": "d5f0cfd9b7ffc53fded6a5f10e592c290f1c3911",
+    "client/src/data/usefulJobsKit.json": "fba59eda6d309c34cac109f1773edac2a699c8b6"
+  },
+  "sharedTrackedChanges": [],
+  "remoteIntegrationBranch": "codex/useful-jobs-core-integration-20260912",
+  "remoteIntegrationObserved": "30345f69f16aca93bb95511ee4da62975c98cc04",
+  "localRemoteTrackingIntegration": "a9aaa0f8a3bb996948e6033f743b62c4e5417882",
+  "remoteIntegrationRuntimeInspected": false
+}
