@@ -1,0 +1,16 @@
+w1020 SDS unpaid MCP list/call fixtures.
+
+Shipped inventory (read-only cite):
+  server/lib/mcp-tool-inventory.js
+  server/routes/mcp.js  (PROTOCOL_VERSION 2024-11-05, SERVER_INFO samedaydesk-agent-tools@1.2.0)
+
+Prior unpaid harnesses (read-only; this pack does not write those paths):
+  tools/verify-sds/mcp-unpaid/**           W0-X70 PR162 + PR182 review amendments
+  tools/verify-sds/mcp-tools-call-unpaid-w7/**  W0-X135 tools/call isError (disjoint)
+  tools/verify/lib/mcp.mjs                 W0-B2 PR148 patterns
+
+This wave owns only:
+  tools/verify-sds/w1020-mcp-unpaid/**
+
+Cold proof is loopback node:http /mcp (no npm ci, no live pay, no publish).
+Live apex https://samedaydesk.com/mcp is cite-only.

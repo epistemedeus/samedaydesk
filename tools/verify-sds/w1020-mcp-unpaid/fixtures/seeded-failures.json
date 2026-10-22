@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "repo": "samedaydesk",
+  "feature": "w1020-mcp-unpaid",
+  "seeds": [
+    {
+      "id": "paid-tool-call",
+      "why": "tools/call of generate_complete_fix_pack is the Stripe Fix Pack path; harness must refuse without POSTing call or payment.",
+      "command": ["node", "tools/verify-sds/w1020-mcp-unpaid/cli.mjs", "--seeded-failure", "paid-tool-call", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAID_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "payment-signature",
+      "why": "Never send PAYMENT-SIGNATURE / X-PAYMENT. Seed proves the refuse before any wire I/O.",
+      "command": ["node", "tools/verify-sds/w1020-mcp-unpaid/cli.mjs", "--seeded-failure", "payment-signature", "--json"],
+      "expectExit": 1,
+      "errorCode": "PAYMENT_HEADER_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    },
+    {
+      "id": "stripe-path",
+      "why": "Stripe checkout / webhook / cs_ license redemption paths are out of unpaid scope.",
+      "command": ["node", "tools/verify-sds/w1020-mcp-unpaid/cli.mjs", "--seeded-failure", "stripe-path", "--json"],
+      "expectExit": 1,
+      "errorCode": "STRIPE_PATH_REFUSE",
+      "boundary": { "paymentSent": false, "toolsCalled": false }
+    }
+  ]
+}

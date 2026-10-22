@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "feature": "w1020-mcp-unpaid",
+  "protocol": "2024-11-05",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "tools": [
+    "check_ai_readiness",
+    "generate_complete_fix_pack",
+    "plan_taskmarket_delegation",
+    "browse_taskmarket_tasks",
+    "track_taskmarket_task"
+  ],
+  "paidTool": "generate_complete_fix_pack",
+  "note": "Paid Fix Pack is listed free on tools/list; unpaid harness never tools/call it and never sends PAYMENT-SIGNATURE.",
+  "apexUrl": "https://samedaydesk.com/mcp",
+  "cite": {
+    "inventory": "server/lib/mcp-tool-inventory.js",
+    "route": "server/routes/mcp.js",
+    "wave": "w1020",
+    "prior": "PR182 heavy/w0-x70-mcp-unpaid-rev (read-only patterns; owned path is tools/verify-sds/w1020-mcp-unpaid/**)"
+  }
+}
