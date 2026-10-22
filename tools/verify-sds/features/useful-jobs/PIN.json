@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.verify-sds.useful-jobs-pin.v1",
+  "package": "useful-jobs",
+  "version": "1.4.7",
+  "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+  "bytes": 5255824,
+  "rootName": "useful-jobs-1.4.7",
+  "cli": "bin/useful-jobs.mjs",
+  "publicArchive": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+  "kitArchive": "client/public/kit/useful-jobs-1.4.7.tar.gz",
+  "purchaseAuthority": false,
+  "sourceCommit": "27f0730604adf236e0f3ad818a30b5f43be6e656"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "missing-required-inputs",
+  "feature": "useful-jobs",
+  "jobId": "lockfile-pin-delta",
+  "argv": ["run", "lockfile-pin-delta"],
+  "productCode": "missing-required-inputs",
+  "expectChildExitNonzero": true
+}

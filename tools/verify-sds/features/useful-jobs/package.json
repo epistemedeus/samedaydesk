@@ -1,0 +1,12 @@
+{
+  "name": "@samedaydesk/verify-sds-useful-jobs-map",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "description": "SDS verify feature-map slice for public useful-jobs 1.4.7 only. No payment, publish, or registry.",
+  "bin": {
+    "prove-useful-jobs": "./bin/prove.mjs"
+  }
+}
