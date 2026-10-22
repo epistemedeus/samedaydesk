@@ -1,0 +1,126 @@
+{
+  "schema": "samedaydesk.wellknown-ops.v1",
+  "source": "fixtures/presence/catalog/x402.json",
+  "wellKnownPath": "/.well-known/x402.json",
+  "origin": "https://agents.samedaydesk.com",
+  "x402Version": 2,
+  "itemCount": 23,
+  "note": "Compact method+path projection. No payTo, amount, asset, network, or description.",
+  "ops": [
+    {
+      "method": "GET",
+      "path": "/chain/solana-transaction-receipt",
+      "resource": "https://agents.samedaydesk.com/chain/solana-transaction-receipt"
+    },
+    {
+      "method": "GET",
+      "path": "/chain/transaction-receipt",
+      "resource": "https://agents.samedaydesk.com/chain/transaction-receipt"
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/contract-qualified-search",
+      "resource": "https://agents.samedaydesk.com/commerce/contract-qualified-search"
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/payment-offer-preflight",
+      "resource": "https://agents.samedaydesk.com/commerce/payment-offer-preflight"
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/seller-integrity-audit",
+      "resource": "https://agents.samedaydesk.com/commerce/seller-integrity-audit"
+    },
+    {
+      "method": "GET",
+      "path": "/commerce/settlement-proof",
+      "resource": "https://agents.samedaydesk.com/commerce/settlement-proof"
+    },
+    {
+      "method": "GET",
+      "path": "/deep-audit",
+      "resource": "https://agents.samedaydesk.com/deep-audit"
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-market-underwrite",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-market-underwrite"
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-position",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-position"
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-preliquidation-replay",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-preliquidation-replay"
+    },
+    {
+      "method": "GET",
+      "path": "/defi/morpho-protection",
+      "resource": "https://agents.samedaydesk.com/defi/morpho-protection"
+    },
+    {
+      "method": "GET",
+      "path": "/distribution/agent-discoverability-audit",
+      "resource": "https://agents.samedaydesk.com/distribution/agent-discoverability-audit"
+    },
+    {
+      "method": "GET",
+      "path": "/distribution/agent-surface-budget-audit",
+      "resource": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit"
+    },
+    {
+      "method": "GET",
+      "path": "/enrich",
+      "resource": "https://agents.samedaydesk.com/enrich"
+    },
+    {
+      "method": "GET",
+      "path": "/extract",
+      "resource": "https://agents.samedaydesk.com/extract"
+    },
+    {
+      "method": "GET",
+      "path": "/gateway/commerce/payment-offer-preflight",
+      "resource": "https://agents.samedaydesk.com/gateway/commerce/payment-offer-preflight"
+    },
+    {
+      "method": "GET",
+      "path": "/read",
+      "resource": "https://agents.samedaydesk.com/read"
+    },
+    {
+      "method": "GET",
+      "path": "/scan",
+      "resource": "https://agents.samedaydesk.com/scan"
+    },
+    {
+      "method": "GET",
+      "path": "/schemaforge",
+      "resource": "https://agents.samedaydesk.com/schemaforge"
+    },
+    {
+      "method": "GET",
+      "path": "/wallet-enrich",
+      "resource": "https://agents.samedaydesk.com/wallet-enrich"
+    },
+    {
+      "method": "GET",
+      "path": "/work/opportunity-preflight",
+      "resource": "https://agents.samedaydesk.com/work/opportunity-preflight"
+    },
+    {
+      "method": "POST",
+      "path": "/security/stateful-wallet-policy-conformance",
+      "resource": "https://agents.samedaydesk.com/security/stateful-wallet-policy-conformance"
+    },
+    {
+      "method": "POST",
+      "path": "/security/wallet-policy-conformance",
+      "resource": "https://agents.samedaydesk.com/security/wallet-policy-conformance"
+    }
+  ]
+}
