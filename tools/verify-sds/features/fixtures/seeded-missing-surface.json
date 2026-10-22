@@ -1,0 +1,8 @@
+{
+  "id": "missing-surface",
+  "productCode": "missing_surface",
+  "primarySurface": "mcp.tools.list",
+  "omitFamilies": ["mcp"],
+  "mapDir": "fixtures/seeded-missing-surface",
+  "description": "Feature map documents useful-jobs and packs but omits the entire MCP family, including mcp.tools.list."
+}

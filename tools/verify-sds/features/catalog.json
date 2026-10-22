@@ -1,0 +1,397 @@
+{
+  "schema": "samedaydesk.verify-sds.feature-map.v1",
+  "scope": ["useful-jobs", "packs", "mcp"],
+  "families": ["useful-jobs", "packs", "mcp"],
+  "notes": "Required SDS surfaces for lab-verify. Map markdown must document every id. Repo paths are probed on disk. Paid Fix Pack and Stripe/x402 checkout are listed, never driven.",
+  "surfaces": [
+    {
+      "id": "useful-jobs.page",
+      "family": "useful-jobs",
+      "kind": "page",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs",
+      "repoPaths": ["client/src/pages/UsefulJobs.tsx", "server/lib/spa-fallback.js"]
+    },
+    {
+      "id": "useful-jobs.spa-history",
+      "family": "useful-jobs",
+      "kind": "route",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs",
+      "repoPaths": ["server/lib/spa-fallback.js", "client/src/App.tsx"]
+    },
+    {
+      "id": "useful-jobs.shell",
+      "family": "useful-jobs",
+      "kind": "shell",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs",
+      "repoPaths": ["client/src/data/machineEntry.mjs", "server/lib/spa-route-shells.js"]
+    },
+    {
+      "id": "useful-jobs.discovery",
+      "family": "useful-jobs",
+      "kind": "machine",
+      "document": "useful-jobs.md",
+      "publicPath": "/discovery/useful-jobs.json",
+      "repoPaths": ["client/public/discovery/useful-jobs.json"]
+    },
+    {
+      "id": "useful-jobs.catalog",
+      "family": "useful-jobs",
+      "kind": "machine",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs/catalog.json",
+      "repoPaths": ["client/public/for-agents/useful-jobs/catalog.json"]
+    },
+    {
+      "id": "useful-jobs.outcomes",
+      "family": "useful-jobs",
+      "kind": "machine",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs/jobs-outcomes.json",
+      "repoPaths": ["client/public/for-agents/useful-jobs/jobs-outcomes.json"]
+    },
+    {
+      "id": "useful-jobs.kit.json",
+      "family": "useful-jobs",
+      "kind": "pin",
+      "document": "useful-jobs.md",
+      "repoPaths": ["client/src/data/usefulJobsKit.json"]
+    },
+    {
+      "id": "useful-jobs.archive.1.4.7",
+      "family": "useful-jobs",
+      "kind": "archive",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+      "repoPaths": ["client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz"],
+      "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+      "bytes": 5255824
+    },
+    {
+      "id": "useful-jobs.kit-archive.1.4.7",
+      "family": "useful-jobs",
+      "kind": "archive",
+      "document": "useful-jobs.md",
+      "publicPath": "/kit/useful-jobs-1.4.7.tar.gz",
+      "repoPaths": ["client/public/kit/useful-jobs-1.4.7.tar.gz"]
+    },
+    {
+      "id": "useful-jobs.obtain",
+      "family": "useful-jobs",
+      "kind": "cli",
+      "document": "useful-jobs.md",
+      "repoPaths": ["experiments/s260-useful-jobs-public-integration/bin/obtain-archive.mjs"]
+    },
+    {
+      "id": "useful-jobs.cli",
+      "family": "useful-jobs",
+      "kind": "cli",
+      "document": "useful-jobs.md",
+      "entrypoint": "bin/useful-jobs.mjs"
+    },
+    {
+      "id": "useful-jobs.jobs.lockfile-pin-delta",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.json-schema-webhook-drift",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.route-table-diff",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.page-change-offline-job",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.api-upgrade-brief",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.vendor-budget-impact",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.feed-agenda",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.evidence-ci-annotation",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.listing-repair-packet",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.jobs.repeat-job-record",
+      "family": "useful-jobs",
+      "kind": "job",
+      "document": "useful-jobs.md"
+    },
+    {
+      "id": "useful-jobs.archive.1.1.0",
+      "family": "useful-jobs",
+      "kind": "negative-control",
+      "document": "useful-jobs.md",
+      "publicPath": "/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+      "repoPaths": [
+        "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+        "client/public/kit/useful-jobs-1.1.0.tar.gz"
+      ]
+    },
+    {
+      "id": "packs.record-repeat.page",
+      "family": "packs",
+      "kind": "page",
+      "document": "packs.md",
+      "publicPath": "/for-agents/record-repeat",
+      "repoPaths": ["client/src/pages/RecordRepeat.tsx", "server/lib/spa-fallback.js"]
+    },
+    {
+      "id": "packs.record-repeat.discovery",
+      "family": "packs",
+      "kind": "machine",
+      "document": "packs.md",
+      "publicPath": "/discovery/record-repeat.json",
+      "repoPaths": ["client/public/discovery/record-repeat.json"]
+    },
+    {
+      "id": "packs.record-repeat.kit",
+      "family": "packs",
+      "kind": "archive",
+      "document": "packs.md",
+      "publicPath": "/kit/record-repeat-job-ab84d79b0272.tar.gz",
+      "repoPaths": ["client/public/kit/record-repeat-job-ab84d79b0272.tar.gz"],
+      "sha256": "9814feabcda58c1f4a494a8919d9c6c2ac7d35b094ce5218261f976196c045ea",
+      "bytes": 1253570
+    },
+    {
+      "id": "packs.record-repeat.cli",
+      "family": "packs",
+      "kind": "cli",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s176-record-repeat-package/bin/record-repeat.mjs"]
+    },
+    {
+      "id": "packs.record-repeat.family.openapi-used-ops",
+      "family": "packs",
+      "kind": "family",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s176-record-repeat-package/docs/FAMILIES.md"]
+    },
+    {
+      "id": "packs.record-repeat.family.pricing-row-unit",
+      "family": "packs",
+      "kind": "family",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s176-record-repeat-package/docs/FAMILIES.md"]
+    },
+    {
+      "id": "packs.record-repeat.family.csv-keyed-drift",
+      "family": "packs",
+      "kind": "family",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s176-record-repeat-package/docs/FAMILIES.md"]
+    },
+    {
+      "id": "packs.record-repeat.family.rss-atom-brief",
+      "family": "packs",
+      "kind": "family",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s176-record-repeat-package/docs/FAMILIES.md"]
+    },
+    {
+      "id": "packs.distribution-repair.page",
+      "family": "packs",
+      "kind": "page",
+      "document": "packs.md",
+      "publicPath": "/for-agents/distribution-repair",
+      "repoPaths": ["client/src/pages/DistributionRepair.tsx"]
+    },
+    {
+      "id": "packs.distribution-repair.discovery",
+      "family": "packs",
+      "kind": "machine",
+      "document": "packs.md",
+      "publicPath": "/discovery/distribution-repair.json",
+      "repoPaths": ["client/public/discovery/distribution-repair.json"]
+    },
+    {
+      "id": "packs.distribution-repair.kit",
+      "family": "packs",
+      "kind": "archive",
+      "document": "packs.md",
+      "publicPath": "/kit/distribution-repair-ab84d79b0272.tar.gz",
+      "repoPaths": ["client/public/kit/distribution-repair-ab84d79b0272.tar.gz"],
+      "sha256": "64a97dab335aa82d80d9e4384ef8ec89d0bc0920aa844a19b4c2534ad5be5c13",
+      "bytes": 76599
+    },
+    {
+      "id": "packs.distribution-repair.cli",
+      "family": "packs",
+      "kind": "cli",
+      "document": "packs.md",
+      "repoPaths": ["experiments/s185-distribution-repair-package/bin/distribution-repair.mjs"]
+    },
+    {
+      "id": "packs.consumer-repeat.page",
+      "family": "packs",
+      "kind": "page",
+      "document": "packs.md",
+      "publicPath": "/for-agents/consumer-repeat",
+      "repoPaths": ["client/src/pages/ConsumerRepeat.tsx"]
+    },
+    {
+      "id": "packs.consumer-repeat.discovery",
+      "family": "packs",
+      "kind": "machine",
+      "document": "packs.md",
+      "publicPath": "/discovery/consumer-repeat.json",
+      "repoPaths": ["client/public/discovery/consumer-repeat.json"]
+    },
+    {
+      "id": "packs.consumer-repeat.kit",
+      "family": "packs",
+      "kind": "archive",
+      "document": "packs.md",
+      "publicPath": "/kit/s178-consumer-repeat-kit.tgz",
+      "repoPaths": ["client/public/kit/s178-consumer-repeat-kit.tgz"],
+      "sha256": "04e9b6f382eedd91ae27b0d0faa68abbee7c26a1f06f52e415cb5a5884dfe05d",
+      "bytes": 718948
+    },
+    {
+      "id": "packs.fix-pack.listed",
+      "family": "packs",
+      "kind": "paid-listed",
+      "document": "packs.md",
+      "repoPaths": ["server/lib/fixpack-artifact.js", "server/lib/fixpack-license.js"],
+      "notes": "Listed on MCP tools/list. Do not buy, redeem a cs_ license, or call generate_complete_fix_pack."
+    },
+    {
+      "id": "mcp.mount",
+      "family": "mcp",
+      "kind": "mount",
+      "document": "mcp.md",
+      "publicPath": "/mcp",
+      "repoPaths": ["server/app.js"]
+    },
+    {
+      "id": "mcp.route",
+      "family": "mcp",
+      "kind": "route",
+      "document": "mcp.md",
+      "publicPath": "/mcp",
+      "repoPaths": ["server/routes/mcp.js"]
+    },
+    {
+      "id": "mcp.inventory",
+      "family": "mcp",
+      "kind": "inventory",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js"]
+    },
+    {
+      "id": "mcp.protocol",
+      "family": "mcp",
+      "kind": "protocol",
+      "document": "mcp.md",
+      "repoPaths": ["server/routes/mcp.js"]
+    },
+    {
+      "id": "mcp.initialize",
+      "family": "mcp",
+      "kind": "method",
+      "document": "mcp.md",
+      "repoPaths": ["server/routes/mcp.js"]
+    },
+    {
+      "id": "mcp.tools.list",
+      "family": "mcp",
+      "kind": "method",
+      "document": "mcp.md",
+      "repoPaths": ["server/routes/mcp.js", "server/lib/mcp-tool-inventory.js"]
+    },
+    {
+      "id": "mcp.tools.check_ai_readiness",
+      "family": "mcp",
+      "kind": "tool",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js", "server/routes/tools.js"]
+    },
+    {
+      "id": "mcp.tools.generate_complete_fix_pack",
+      "family": "mcp",
+      "kind": "tool",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js", "server/lib/fixpack-artifact.js"],
+      "notes": "Paid tool. List only. Never tools/call and never pass a Stripe cs_ license."
+    },
+    {
+      "id": "mcp.tools.plan_taskmarket_delegation",
+      "family": "mcp",
+      "kind": "tool",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js", "server/lib/taskmarket.js"]
+    },
+    {
+      "id": "mcp.tools.browse_taskmarket_tasks",
+      "family": "mcp",
+      "kind": "tool",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js", "server/lib/taskmarket.js"]
+    },
+    {
+      "id": "mcp.tools.track_taskmarket_task",
+      "family": "mcp",
+      "kind": "tool",
+      "document": "mcp.md",
+      "repoPaths": ["server/lib/mcp-tool-inventory.js", "server/lib/taskmarket.js"]
+    },
+    {
+      "id": "mcp.registry-auth",
+      "family": "mcp",
+      "kind": "well-known",
+      "document": "mcp.md",
+      "publicPath": "/.well-known/mcp-registry-auth",
+      "repoPaths": ["server/app.js"]
+    },
+    {
+      "id": "mcp.get.help",
+      "family": "mcp",
+      "kind": "http-get",
+      "document": "mcp.md",
+      "publicPath": "/mcp",
+      "repoPaths": ["server/routes/mcp.js"]
+    },
+    {
+      "id": "mcp.no-tools-call-for-verify",
+      "family": "mcp",
+      "kind": "boundary",
+      "document": "mcp.md",
+      "notes": "Lab-verify lists tools after initialize. It does not POST tools/call."
+    }
+  ]
+}
