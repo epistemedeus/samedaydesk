@@ -22,7 +22,6 @@ import { mcpHeaders, mcpJsonParser, mcpBodyError } from "./lib/mcp-http.js";
 import agentReadinessRouter from "./routes/agent-readiness.js";
 import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
-import { gatewayAvailability } from "./lib/paid-gateway-availability.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
@@ -206,12 +205,6 @@ app.get("/.well-known/agent-card.json", (_req, res) => {
 // Machine declarations derived from the mounted tools. Mounted before the SPA
 // so a missing static file cannot turn them into an HTML document.
 mountApexDeclarations(app);
-
-app.get("/discovery/paid-gateway.json", (_req, res) => {
-  res.set("Cache-Control", "no-cache");
-  res.set("Access-Control-Allow-Origin", "*");
-  res.json(gatewayAvailability());
-});
 
 // Existing discovery directory. This descriptor does not call a network endpoint.
 app.get(ORIGINAL_TASK_DESCRIPTOR_PATH, (_req, res) => {

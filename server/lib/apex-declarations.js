@@ -1004,6 +1004,11 @@ function sendDeclaration(req, res, body, contentType) {
 }
 
 export function mountApexDeclarations(app) {
+  app.get("/discovery/paid-gateway.json", (_req, res) => {
+    res.set("Cache-Control", "no-cache");
+    res.set("Access-Control-Allow-Origin", "*");
+    res.json(gatewayAvailability());
+  });
   const builders = {
     "/openapi.json": () => JSON.stringify(apexOpenApiDocument()),
     "/skill.md": () => apexSkillMarkdown(),
