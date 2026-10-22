@@ -1,0 +1,9 @@
+{
+  "id": "stripe-path",
+  "seededId": "stripe-path",
+  "window": "w920",
+  "feature": "w920-mcp-unpaid",
+  "opts": { "path": "/api/checkout" },
+  "expectExit": 1,
+  "errorCode": "STRIPE_PATH_REFUSE"
+}

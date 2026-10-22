@@ -1,0 +1,9 @@
+{
+  "id": "paid-tool-call",
+  "seededId": "paid-tool-call",
+  "window": "w920",
+  "feature": "w920-mcp-unpaid",
+  "opts": { "tool": "generate_complete_fix_pack" },
+  "expectExit": 1,
+  "errorCode": "PAID_REFUSE"
+}
