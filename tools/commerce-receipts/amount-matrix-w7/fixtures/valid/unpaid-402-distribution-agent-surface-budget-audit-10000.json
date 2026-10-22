@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "samedaydesk.amount-matrix-w7.unpaid.v1",
+  "fixtureId": "amw7_unpaid_distribution-agent-surface-budget-audit_10000",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit?mcpBudgetBytes=65536&mcpPath=%2Fmcp&openApiBudgetBytes=524288&openApiPath=%2Fopenapi.json&origin=https%3A%2F%2Fagents.samedaydesk.com&surfaceMode=both",
+  "route": "/distribution/agent-surface-budget-audit",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "amountAtomic": "10000",
+  "amountDisplayUsd": "0.01",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "maxTimeoutSeconds": 300,
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/distribution/agent-surface-budget-audit?mcpBudgetBytes=65536&mcpPath=%2Fmcp&openApiBudgetBytes=524288&openApiPath=%2Fopenapi.json&origin=https%3A%2F%2Fagents.samedaydesk.com&surfaceMode=both",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "source": {
+    "kind": "in_tree_x402_catalog",
+    "path": "fixtures/presence/catalog/x402.json",
+    "capturedAt": "2026-09-17T12:00:00.000Z",
+    "note": "Unpaid 402 amount pinned from in-tree x402 catalog. No payment header. Not settlement."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "facilitator_settlement",
+    "payment_header"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery"
+  ]
+}

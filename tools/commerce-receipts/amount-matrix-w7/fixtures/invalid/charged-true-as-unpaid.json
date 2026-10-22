@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "samedaydesk.amount-matrix-w7.unpaid.v1",
+  "fixtureId": "amw7_charged_true_as_unpaid",
+  "kind": "unpaid_payment_required",
+  "statusClass": "unpaid",
+  "origin": "https://agents.samedaydesk.com",
+  "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+  "route": "/extract",
+  "method": "GET",
+  "httpStatus": 402,
+  "charged": true,
+  "paymentSent": false,
+  "observedAt": "2026-09-17T12:00:00.000Z",
+  "amountAtomic": "5000",
+  "amountDisplayUsd": "0.005",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "maxTimeoutSeconds": 300,
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "source": {
+    "kind": "paid_evidence",
+    "capturedAt": "2026-09-17T12:00:00.000Z",
+    "note": "charged true labeled unpaid."
+  },
+  "unknownWhenAbsent": [
+    "paid_body",
+    "facilitator_settlement",
+    "payment_header"
+  ],
+  "prohibitedInferences": [
+    "paid_as_unpaid",
+    "stale_listed_amount_is_catalog",
+    "atomic_is_display_usd",
+    "http_402_is_delivery"
+  ]
+}
