@@ -1,0 +1,29 @@
+{
+  "schema": "samedaydesk.buyer-value-ledger.v1",
+  "independentDemand": false,
+  "organicDemand": false,
+  "jobRevenueUsdc": null,
+  "citedBankedUsdcIsNotJobRevenue": true,
+  "rows": [
+    {
+      "schema": "samedaydesk.buyer-value-ledger.row.v1",
+      "jobId": "vendor-budget-impact",
+      "buyerClass": "owner-qa",
+      "usableOutput": false,
+      "engine": {
+        "ok": false,
+        "status": null,
+        "exitCode": 1
+      },
+      "settlementJoin": {
+        "matched": true,
+        "operationId": "agent402-external-validation-purchase-2026-08-29",
+        "amountUsdc": "0.010",
+        "settlementBuyerClass": "unknown",
+        "validDeliveryStatus": "seller_http_200_repair_required_no_buyer_owned_output_enforcement",
+        "jobRevenueUsdc": null
+      },
+      "jobRevenueUsdc": null
+    }
+  ]
+}

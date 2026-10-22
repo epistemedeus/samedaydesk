@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.refund-policy.v1",
+  "policyId": "sdd-attested-delivery-none",
+  "termsVersion": "sha256:c82f232dd9d63261b91d32234abf3e0f655d99182cde7c66b7de5c8c787ea31f",
+  "defaultClaim": "unknown",
+  "rules": [
+    {
+      "claim": "none",
+      "match": {
+        "operationId": "what-agents-buy-independent-benchmark-2026-08-30",
+        "delivery": "buyer_attested_delivered_six_fields_raw_ref_null"
+      }
+    }
+  ]
+}

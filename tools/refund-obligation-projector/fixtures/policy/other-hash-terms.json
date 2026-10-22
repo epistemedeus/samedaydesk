@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.refund-policy.v1",
+  "policyId": "sdd-other-hash-policy",
+  "termsVersion": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "defaultClaim": "unknown",
+  "rules": [
+    {
+      "claim": "none",
+      "match": {
+        "operationId": "what-agents-buy-independent-benchmark-2026-08-30"
+      }
+    }
+  ]
+}

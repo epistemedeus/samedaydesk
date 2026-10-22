@@ -1,0 +1,17 @@
+{
+  "name": "samedaydesk-refund-obligation-projector",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W5-D22 / Co07 refund-policy projector from explicit policy and actual job facts. Operational error does not invent policy. Banked 8.105 USDC is not a job dossier field. Never calls Stripe refunds. Never posts obligations as paid.",
+  "bin": {
+    "refund-obligation-project": "./bin/project.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "project": "node bin/project.mjs"
+  }
+}
