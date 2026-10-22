@@ -1,0 +1,40 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "feed-agenda",
+  "status": "actionable",
+  "summary": "Agenda delta: +1/~0/-0",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "agenda-added",
+      "key": "sample-item",
+      "note": "SAMPLE fixture feed added entry (not a live deadline)"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "samples/feed/caller-alpha/before.xml",
+    "after": "samples/feed/caller-alpha/after.xml",
+    "exampleMode": true,
+    "sampleLabel": "explicit-example",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "rss-atom-brief",
+    "ok": true
+  },
+  "events": [
+    {
+      "kind": "added",
+      "key": "sample-item",
+      "title": "Sample item",
+      "link": null,
+      "updated": null
+    }
+  ],
+  "digest": "samplefixture0001"
+}
