@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "samedaydesk.receipt-forge.catalog.v1",
+  "recordSchemaVersion": "samedaydesk.receipt-forge.claim.v1",
+  "product": "samedaydesk-receipt-forge-w903",
+  "pack": "w903-receipt-forge",
+  "statusClasses": [
+    "unpaid"
+  ],
+  "kinds": [
+    "unpaid_payment_required",
+    "unpaid_offer",
+    "unpaid_probe",
+    "unpaid_buyer_stop"
+  ],
+  "designatedSeed": {
+    "id": "forged-digest",
+    "file": "reject/forged-digest.json",
+    "code": "receipt_forged",
+    "naiveRule": "well-formed-digest-string"
+  },
+  "committed": {
+    "x402Catalog": "fixtures/presence/catalog/x402.json",
+    "extractObservation": "fixtures/verified-feed/observations/extract-current.json",
+    "settlement": "tools/evidence-records/fixtures/settlements/agent402-external-validation-purchase-2026-08-29.json",
+    "buyerStop": "fixtures/buyer-runtimes/coinbase-x402/states/stop.json"
+  },
+  "pin": {
+    "origin": "https://agents.samedaydesk.com",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "extractAmount": "5000",
+    "settlements": [
+      {
+        "transaction": "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+        "operationId": "agent402-external-validation-purchase-2026-08-29",
+        "amountUsdc": "0.010",
+        "boundReceiptId": "agent402-external-validation-purchase-2026-08-29",
+        "boundResource": "https://agents.samedaydesk.com/commerce/seller-integrity-audit",
+        "boundRoute": "/commerce/seller-integrity-audit",
+        "facilitatorOrPayoutRef": "x402_v2_coinbase_cdp"
+      }
+    ],
+    "spentReceiptIds": [
+      "cr_spent_replay_w903"
+    ]
+  },
+  "boundary": {
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "live": false,
+    "neo": false,
+    "statement": "Offline SDS w903 receipt-forge reject pack. Cold-pins committed extract 402 and agent402 settlement. Canonical SHA-256 must match. A copied or fabricated settlement, replayed receiptId, payment header, or pin swap is rejected. HTTP 402 is not delivery."
+  }
+}
