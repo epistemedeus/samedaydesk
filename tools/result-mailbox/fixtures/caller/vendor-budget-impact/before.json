@@ -1,0 +1,8 @@
+{
+  "label": "caller",
+  "note": "Result-mailbox caller pricing rows. Not a SAMPLE kit fixture and not a live quote.",
+  "rows": [
+    { "field": "mailbox-scan-input", "value": 2, "unit": "USD/1M-tokens" },
+    { "field": "mailbox-scan-output", "value": 8, "unit": "USD/1M-tokens" }
+  ]
+}
