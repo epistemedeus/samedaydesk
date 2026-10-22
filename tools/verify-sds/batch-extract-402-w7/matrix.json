@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "samedaydesk.batch-extract-402-w7.matrix.v1",
+  "recordSchemaVersion": "samedaydesk.batch-extract-402-w7.unpaid.v1",
+  "product": "samedaydesk-verify-sds",
+  "pack": "batch-extract-402-w7",
+  "wave": "w7",
+  "statusClasses": ["unpaid"],
+  "kinds": ["unpaid_payment_required"],
+  "pin": {
+    "origin": "https://agents.samedaydesk.com",
+    "scheme": "exact",
+    "network": "eip155:8453",
+    "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "decimals": 6,
+    "assetSymbol": "USDC"
+  },
+  "primary": {
+    "method": "POST",
+    "route": "/extract/batch",
+    "resource": "https://agents.samedaydesk.com/extract/batch",
+    "amountAtomic": "10000",
+    "amountDisplayUsd": "0.01",
+    "urlCountMin": 1,
+    "urlCountMax": 5,
+    "quoteKind": "flat_attempt",
+    "note": "One flat 0.01 USDC (10000 atomic) quote buys a bounded 1-5 URL attempt. Charge is for the attempt, not per-URL success, and is not GET /extract."
+  },
+  "contrast": {
+    "method": "GET",
+    "route": "/extract",
+    "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+    "amountAtomic": "5000",
+    "amountDisplayUsd": "0.005",
+    "note": "Catalog GET /extract amount. Using 5000 on POST /extract/batch is a GET-extract rewrite."
+  },
+  "inTreePins": {
+    "agentsLlmsTxt": "tools/presence/fixtures/for-agents-cold-read/agents-llms.txt",
+    "apexLlmsTxt": "client/public/llms.txt",
+    "extractBatchQuote": "tools/recurring-job-recipes/fixtures/merchant/record/product-jsonld/delivery/extract-batch.json",
+    "acceptedExtractBatch": "tools/result-reuse/fixtures/accepted-extract-batch.json",
+    "x402Catalog": "fixtures/presence/catalog/x402.json",
+    "costNotes": "tools/recurring-job-recipes/lib/cost.mjs"
+  },
+  "uniqueAmounts": [
+    {
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "role": "extract_batch_flat_quote",
+      "route": "/extract/batch",
+      "method": "POST"
+    },
+    {
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005",
+      "role": "get_extract_contrast",
+      "route": "/extract",
+      "method": "GET"
+    }
+  ],
+  "routes": [
+    {
+      "role": "primary",
+      "method": "POST",
+      "route": "/extract/batch",
+      "resource": "https://agents.samedaydesk.com/extract/batch",
+      "amountAtomic": "10000",
+      "amountDisplayUsd": "0.01",
+      "urlCountMin": 1,
+      "urlCountMax": 5,
+      "quoteKind": "flat_attempt"
+    },
+    {
+      "role": "contrast",
+      "method": "GET",
+      "route": "/extract",
+      "resource": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "amountAtomic": "5000",
+      "amountDisplayUsd": "0.005"
+    }
+  ],
+  "designatedSeeds": [
+    {
+      "id": "wrong-amount",
+      "file": "invalid/wrong-amount.json",
+      "code": "wrong_amount",
+      "naiveRule": "statusClass-unpaid"
+    },
+    {
+      "id": "missing-amount",
+      "file": "invalid/missing-amount.json",
+      "code": "missing_amount",
+      "naiveRule": "statusClass-unpaid"
+    },
+    {
+      "id": "forged-settlement",
+      "file": "invalid/forged-settlement.json",
+      "code": "forged_settlement",
+      "naiveRule": "statusClass-unpaid"
+    }
+  ],
+  "requiredProhibitedInferences": [
+    "paid_as_unpaid",
+    "get_extract_rewrite_is_batch",
+    "atomic_is_display_usd",
+    "http_402_is_delivery",
+    "copied_settlement_is_batch_payment"
+  ],
+  "boundary": {
+    "paymentSent": false,
+    "checkoutMutated": false,
+    "registryMutated": false,
+    "published": false,
+    "neoAttached": false,
+    "live": false,
+    "statement": "W7 unpaid SDS POST /extract/batch 402 amount gate. Native amount is 10000 atomic (0.01 USDC) as a flat 1-5 URL attempt quote. GET /extract 5000 is not a batch rewrite. Missing amount and forged/copied settlement are rejected. HTTP 402 is not settlement."
+  }
+}
