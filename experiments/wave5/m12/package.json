@@ -1,0 +1,19 @@
+{
+  "name": "@samedaydesk/wave5-m12-offer-description",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Machine-readable capability and pricing description for the selected SameDayDesk supplied-input offer. Thin consumer of SDS52. Not a second wrapper.",
+  "bin": {
+    "m12-describe": "./bin/describe.mjs",
+    "m12-verify": "./bin/verify.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "describe": "node bin/describe.mjs",
+    "verify": "node bin/verify.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/w5-m13-machine-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fresh consumer: discover SameDayDesk services from existing registries by stable identity, then invoke the current PR52 wrapper CLI. No live settle.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "sds-discover-invoke": "./bin/discover-invoke.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "discover": "node bin/discover-invoke.mjs discover",
+    "journey": "node bin/discover-invoke.mjs journey --job-id vendor-budget-impact"
+  }
+}

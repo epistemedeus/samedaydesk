@@ -1,0 +1,11 @@
+W5-M12 machine-readable capability and pricing description.
+
+This package owns the selected-offer description, CLI, loopback offer HTTP,
+and actual-interface regressions only. It does not copy
+server/paid-useful-jobs (SDS52 / W5-D01) or invent a second job engine.
+
+It reads the PR52 catalog, pins, and wrapper CLI as the current runtime.
+W5-M01 selected-catalog and W5-D26 cost-floor files are consumed when present
+and recorded as unbound when absent.
+
+License: MIT, same grant as other SameDayDesk experiment packages.

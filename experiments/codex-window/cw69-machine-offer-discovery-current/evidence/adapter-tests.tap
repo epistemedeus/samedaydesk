@@ -1,0 +1,136 @@
+(node:940064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:940070) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: all 42 imported consumer files retain their original source bytes
+ok 1 - all 42 imported consumer files retain their original source bytes
+  ---
+  duration_ms: 2.096364
+  type: 'test'
+  ...
+# Subtest: inspected dependency bytes still match the recorded integrated base
+ok 2 - inspected dependency bytes still match the recorded integrated base
+  ---
+  duration_ms: 1.704421
+  type: 'test'
+  ...
+# Subtest: the current CLI lists ten jobs; stable identity survives an unrelated first item
+ok 3 - the current CLI lists ten jobs; stable identity survives an unrelated first item
+  ---
+  duration_ms: 52.945188
+  type: 'test'
+  ...
+# Subtest: recorded merchant 1.23.49 and unpaid challenge remain separate from local execution
+ok 4 - recorded merchant 1.23.49 and unpaid challenge remain separate from local execution
+  ---
+  duration_ms: 2.96728
+  type: 'test'
+  ...
+# (node:940086) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: unrelated first catalog item does not steal requested identity
+ok 5 - unrelated first catalog item does not steal requested identity
+  ---
+  duration_ms: 0.558264
+  type: 'test'
+  ...
+# Subtest: duplicate matching identities refuse instead of choosing the first hit
+ok 6 - duplicate matching identities refuse instead of choosing the first hit
+  ---
+  duration_ms: 0.307913
+  type: 'test'
+  ...
+# Subtest: numeric index is not identity
+ok 7 - numeric index is not identity
+  ---
+  duration_ms: 0.104395
+  type: 'test'
+  ...
+# (node:940093) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: discover names a linked chain and keeps source captures distinct from hosted evidence
+ok 8 - discover names a linked chain and keeps source captures distinct from hosted evidence
+  ---
+  duration_ms: 109.419799
+  type: 'test'
+  ...
+# Subtest: describe+invoke with caller-authored lockfiles emit pin-delta for one named changed dependency
+ok 9 - describe+invoke with caller-authored lockfiles emit pin-delta for one named changed dependency
+  ---
+  duration_ms: 429.340336
+  type: 'test'
+  ...
+# Subtest: identical caller input is informational useful output, not transport failure
+ok 10 - identical caller input is informational useful output, not transport failure
+  ---
+  duration_ms: 424.081878
+  type: 'test'
+  ...
+# (node:940235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: stale 1.23.45, wrong remote, and false latest refuse
+ok 11 - stale 1.23.45, wrong remote, and false latest refuse
+  ---
+  duration_ms: 308.536941
+  type: 'test'
+  ...
+# Subtest: GET on POST-only route and paid HTTP to the offline adapter refuse before invocation
+ok 12 - GET on POST-only route and paid HTTP to the offline adapter refuse before invocation
+  ---
+  duration_ms: 198.589041
+  type: 'test'
+  ...
+# Subtest: changed catalog identity or caller body between processes refuses
+ok 13 - changed catalog identity or caller body between processes refuses
+  ---
+  duration_ms: 420.317893
+  type: 'test'
+  ...
+# Subtest: renamed or reformatted known samples and SAMPLE metadata cannot become caller evidence
+ok 14 - renamed or reformatted known samples and SAMPLE metadata cannot become caller evidence
+  ---
+  duration_ms: 469.900141
+  type: 'test'
+  ...
+# Subtest: unsupported job id is refused by the lockfile-only adapter
+ok 15 - unsupported job id is refused by the lockfile-only adapter
+  ---
+  duration_ms: 46.969498
+  type: 'test'
+  ...
+# Subtest: unknown acquisition, engine-root override, and missing CLI refuse without fallback
+ok 16 - unknown acquisition, engine-root override, and missing CLI refuse without fallback
+  ---
+  duration_ms: 195.715811
+  type: 'test'
+  ...
+# Subtest: missing input, unsupported lockfile version, and HTML refuse with structured codes
+ok 17 - missing input, unsupported lockfile version, and HTML refuse with structured codes
+  ---
+  duration_ms: 1177.419441
+  type: 'test'
+  ...
+# Subtest: tampered artifact or receipt is rejected by bound verify
+ok 18 - tampered artifact or receipt is rejected by bound verify
+  ---
+  duration_ms: 425.065475
+  type: 'test'
+  ...
+# (node:940697) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: loopback HTTP discovery serves exact body identity
+ok 19 - loopback HTTP discovery serves exact body identity
+  ---
+  duration_ms: 134.338855
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4744.08401

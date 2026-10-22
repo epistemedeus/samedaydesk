@@ -1,0 +1,87 @@
+{
+  "schema": "samedaydesk.lockfile-pin-delta.v1",
+  "appId": "lockfile-pin-delta",
+  "ok": true,
+  "status": "actionable",
+  "purchaseAuthority": false,
+  "paidValueClaim": false,
+  "settlement": "nonsettling-prototype",
+  "equality": "pin-fields",
+  "lockfileVersion": {
+    "before": 3,
+    "after": 3
+  },
+  "mapSource": {
+    "before": "packages",
+    "after": "packages"
+  },
+  "counts": {
+    "beforePins": 1,
+    "afterPins": 1,
+    "added": 0,
+    "removed": 0,
+    "changed": 1,
+    "unchanged": 0,
+    "missingIntegrity": 0
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "node_modules/cw69-dependency",
+      "name": "cw69-dependency",
+      "before": {
+        "id": "node_modules/cw69-dependency",
+        "name": "cw69-dependency",
+        "version": "2.1.0",
+        "integrity": "sha512-YmVmb3Jl",
+        "resolved": "https://registry.npmjs.org/cw69-dependency/-/cw69-dependency-2.1.0.tgz",
+        "gitCommit": null,
+        "link": false,
+        "dev": false,
+        "peer": false,
+        "optional": false,
+        "devOptional": false,
+        "os": null,
+        "cpu": null,
+        "libc": null,
+        "termsHash": "befb55ef49d752e2d63a777feba7fcfa31b075dc1d0f7e0bba5599473e87a5aa",
+        "missingIntegrity": false
+      },
+      "after": {
+        "id": "node_modules/cw69-dependency",
+        "name": "cw69-dependency",
+        "version": "2.2.0",
+        "integrity": "sha512-YWZ0ZXI=",
+        "resolved": "https://registry.npmjs.org/cw69-dependency/-/cw69-dependency-2.2.0.tgz",
+        "gitCommit": null,
+        "link": false,
+        "dev": false,
+        "peer": false,
+        "optional": false,
+        "devOptional": false,
+        "os": null,
+        "cpu": null,
+        "libc": null,
+        "termsHash": "cebb98b9bb76915c0a1e4b677b2397bd9efaeda65d5968164d84644de56d314b",
+        "missingIntegrity": false
+      },
+      "changeKinds": [
+        "version",
+        "integrity",
+        "resolved"
+      ]
+    }
+  ],
+  "gaps": [],
+  "caller": {
+    "before": "/tmp/h7-cw69-tmp/puj-lockfile-pin-delta-HiumBY/inputs/before.json",
+    "after": "/tmp/h7-cw69-tmp/puj-lockfile-pin-delta-HiumBY/inputs/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notCustomerDemand": true,
+    "notMarketFact": true
+  },
+  "provenance": "caller-supplied",
+  "generatedAt": "2026-09-12T09:55:18.220Z"
+}

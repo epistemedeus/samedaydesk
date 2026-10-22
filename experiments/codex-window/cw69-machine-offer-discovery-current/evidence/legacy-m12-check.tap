@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: m12 CLI describe and verify
+    # Subtest: describe CLI emits the selected offer from SDS52 catalog and pins
+    not ok 1 - describe CLI emits the selected offer from SDS52 catalog and pins
+      ---
+      duration_ms: 138.695655
+      type: 'test'
+      location: '/workspace/pilot/tmp/cw69-astra-machine-offer-discovery-current-20260912/src/experiments/wave5/m12/test/cli-describe-verify.test.mjs:26:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          [
+        +   'lockfile-pin-delta',
+        +   'json-schema-webhook-drift',
+        +   'route-table-diff',
+        +   'page-change-offline-job',
+            'api-upgrade-brief',
+            'vendor-budget-impact',
+            'feed-agenda',
+            'evidence-ci-annotation',
+            'listing-repair-packet',
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0: 'api-upgrade-brief'
+        1: 'vendor-budget-impact'
+        2: 'feed-agenda'
+        3: 'evidence-ci-annotation'
+        4: 'listing-repair-packet'
+        5: 'repeat-job-record'
+      actual:
+        0: 'lockfile-pin-delta'
+        1: 'json-schema-webhook-drift'
+        2: 'route-table-diff'
+        3: 'page-change-offline-job'
+        4: 'api-upgrade-brief'
+        5: 'vendor-budget-impact'
+        6: 'feed-agenda'
+        7: 'evidence-ci-annotation'
+        8: 'listing-repair-packet'
+        9: 'repeat-job-record'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///workspace/pilot/tmp/cw69-astra-machine-offer-discovery-current-20260912/src/experiments/wave5/m12/test/cli-describe-verify.test.mjs:34:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        node:internal/test_runner/test:1440:71
+        node:internal/per_context/primordials:466:82
+        new Promise (<anonymous>)
+        new SafePromise (node:internal/per_context/primordials:435:3)
+        node:internal/per_context/primordials:466:9
+        Array.map (<anonymous>)
+      ...
+    1..1
+not ok 1 - m12 CLI describe and verify
+  ---
+  duration_ms: 139.659774
+  type: 'suite'
+  location: '/workspace/pilot/tmp/cw69-astra-machine-offer-discovery-current-20260912/src/experiments/wave5/m12/test/cli-describe-verify.test.mjs:25:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 1
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 267.552729
