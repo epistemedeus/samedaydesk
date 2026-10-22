@@ -1,0 +1,13 @@
+{
+  "name": "buyer-value-ledger",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Labelled useful-job run ledger: time-to-usable-output and output presence. Not demand. Not settlement revenue.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  }
+}
