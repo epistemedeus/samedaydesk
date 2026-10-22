@@ -1,0 +1,18 @@
+{
+  "id": "paid-as-unpaid",
+  "seededId": "paid-as-unpaid",
+  "wave": "w820",
+  "feature": "w820-mcp-unpaid",
+  "opts": {
+    "claim": {
+      "tool": "generate_complete_fix_pack",
+      "isError": false,
+      "paid": false,
+      "licensePresented": false,
+      "text": "Complete AI-Readiness Fix Pack"
+    }
+  },
+  "expectExit": 1,
+  "errorCode": "PAID_AS_UNPAID",
+  "note": "Naive verdict is accept (unpaid success). Honest verdict is reject: paid tool delivered without license."
+}
