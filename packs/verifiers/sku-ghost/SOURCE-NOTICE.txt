@@ -1,0 +1,20 @@
+SKU-ghost verifier
+==================
+
+Owning repo: epistemedeus/samedaydesk
+Write boundary: packs/verifiers/sku-ghost/**
+
+This pack is a read-only oracle over already-committed SameDayDesk SKU
+surfaces:
+
+- server/pricing.js          (authoritative offer slug → cents)
+- client/src/lib/services.ts (homepage catalog + Stripe Payment Link keys)
+- client/public/llms.txt     (named dollar lines in Start here)
+
+It does not edit prices or SKUs. It does not touch checkout, Stripe,
+x402 payment, or neomorphic-io. It does not publish a catalog.
+
+A ghost SKU is an advertised slug (or named dollar line) that is missing
+from server/pricing.js, or advertised at a cents value that does not
+match that map. Empty advertised catalogs are silent_empty_success, not
+"no ghosts".

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "advertised": [
+    {
+      "slug": "sku_ghost_premium",
+      "name": "SKU Ghost Premium",
+      "priceUsd": 0.05,
+      "surface": "seeded"
+    }
+  ]
+}

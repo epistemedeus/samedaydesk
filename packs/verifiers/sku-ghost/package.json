@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/sku-ghost-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline SKU-ghost verifier. Advertised SameDayDesk offer slugs must exist in server/pricing.js. Records live prices; never rewrites SKUs. No checkout, payment, or publish.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "sku-ghost": "./bin/sku-ghost.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "verify": "node ./bin/sku-ghost.mjs --committed"
+  },
+  "license": "MIT"
+}

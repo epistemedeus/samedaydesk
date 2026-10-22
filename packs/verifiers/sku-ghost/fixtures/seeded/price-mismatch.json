@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "advertised": [
+    {
+      "slug": "agent_workflow",
+      "name": "Agent Workflow Integration",
+      "priceUsd": 0.05,
+      "surface": "seeded"
+    }
+  ]
+}
