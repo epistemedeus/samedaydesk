@@ -1,0 +1,24 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "actionable",
+  "summary": "legacy 1.0.0 corrections[] shape — not a 1.4.7 engine packet",
+  "actions": [],
+  "corrections": [
+    {
+      "field": "listingStatus",
+      "from": "PendingReview",
+      "to": "PUBLIC_ACTIVE"
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input"
+  },
+  "sourceLinked": true,
+  "digest": "deadbeefdeadbeef"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "sds.listing_repair.bind.v1",
+  "kit": {
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824
+  },
+  "job": "listing-repair-packet",
+  "packetSchema": "s233.useful-application.artifact.v1",
+  "packetDigest": "5caa9c19bada9dbf",
+  "sourceDigest": "sha256:9b0e199ec5888df10321fa12e3a87c6e6df0e72b0fd84c6719634b298a8bbadb",
+  "observedAt": "2026-09-10T20:15:00.000Z"
+}

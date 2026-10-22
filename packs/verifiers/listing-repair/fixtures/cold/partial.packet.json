@@ -1,0 +1,49 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "listing-repair-packet",
+  "status": "partial",
+  "summary": "Listing repair packet status=partial",
+  "actions": [
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/old-blog: cannot_prove_global_removal delta=removed - Current capture is incomplete/partial; absence cannot prove globally removed.; recheck_with_complete_capture; coveragePreserved: when current capture is incomplete/partial, removed deltas become cannot_prove_global_removal / recheck_with_complete_capture — never a global-removal claim.",
+      "sourceRefs": [
+        "route:/old-blog"
+      ]
+    },
+    {
+      "priority": "high",
+      "kind": "owner-repair",
+      "note": "/pricing: cannot_prove_global_removal delta=removed - Current capture is incomplete/partial; absence cannot prove globally removed.; recheck_with_complete_capture; coveragePreserved: when current capture is incomplete/partial, removed deltas become cannot_prove_global_removal / recheck_with_complete_capture — never a global-removal claim.",
+      "sourceRefs": [
+        "route:/pricing"
+      ]
+    }
+  ],
+  "gaps": [
+    "incomplete evidence; packet is non-final",
+    "Current route capture is incomplete — absence cannot prove global removal",
+    "Feed status partial_input; partialReasons=[\"current_capture_incomplete\"]",
+    "Route repair is owner guidance — not invented revenue or lost-customer proof",
+    "Acquisition events are identity-bound join wiring from the caller identity + repair feed, not observed live clicks"
+  ],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "input": "/tmp/tmp.yp7SOyxsqX/useful-jobs-1.4.7/samples/listing/partial.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "tool": "distribution-repair",
+    "status": "partial",
+    "ok": true
+  },
+  "generatedAt": "2026-09-18T17:28:56.098Z",
+  "sourceLinked": true,
+  "digest": "0f249777cb9ae367"
+}

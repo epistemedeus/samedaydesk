@@ -1,0 +1,24 @@
+{
+  "name": "@samedaydesk/listing-repair-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "R14-07 SDS listing-repair oracle bound to useful-jobs 1.4.7 repair-packet.json (owner-repair actions + source digest). Never publishes a catalog.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "listing-repair-verifier": "./bin/listing-repair-verifier.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "verify": "node ./bin/listing-repair-verifier.mjs verify",
+    "cold-bind": "node ./scripts/cold-bind.mjs",
+    "stamp-fixtures": "node ./scripts/stamp-bind-fixtures.mjs"
+  },
+  "license": "MIT"
+}
