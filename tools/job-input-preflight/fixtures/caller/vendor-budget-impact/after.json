@@ -1,0 +1,9 @@
+{
+  "label": "caller",
+  "note": "W5-D02 custom caller pricing rows. Not a SAMPLE kit fixture and not a live quote.",
+  "rows": [
+    { "field": "wave5-d02-alpha-input", "value": 1.8, "unit": "USD/1M-tokens" },
+    { "field": "wave5-d02-alpha-output", "value": 7.5, "unit": "USD/1M-tokens" },
+    { "field": "wave5-d02-alpha-cached", "value": 0.2, "unit": "USD/1M-tokens" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "useful-jobs.catalog.v1",
+  "package": "useful-jobs",
+  "version": "1.0.0-custom-pin",
+  "runtime": {
+    "node": ">=22",
+    "network": "offline-first",
+    "purchaseAuthority": false,
+    "schedulerDaemon": false
+  },
+  "jobs": [
+    {
+      "id": "vendor-budget-impact",
+      "title": "Vendor Budget Impact",
+      "requiredInputs": ["--before", "--after"],
+      "optionalInputs": [],
+      "outputs": ["budget-impact.json", "budget-impact.md"]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+SAMPLE / fixture copies of useful-jobs 1.0.0 samples/pricing/a/{before,after}.json
+from the PR51 archive (useful-jobs-1.0.0.tar.gz). Labeled fixtures, not live quotes,
+not customer demand, not a sale.
