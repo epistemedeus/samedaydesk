@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "feature": "mcp-skills-list",
+  "protocol": "2024-11-05",
+  "extension": "io.modelcontextprotocol/skills",
+  "sep": "SEP-2640",
+  "serverInfo": {
+    "name": "samedaydesk-agent-tools",
+    "version": "1.2.0"
+  },
+  "skills": [
+    "web-extract",
+    "page-change",
+    "explicit-record"
+  ],
+  "note": "Names and descriptions pin tools/presence/fixtures/for-agents-cold-read/skills-index.json. Cold proof lists them over loopback MCP skills/list with resource digests. Never tools/call, never PAYMENT-SIGNATURE.",
+  "apexUrl": "https://samedaydesk.com/mcp",
+  "cite": {
+    "presenceIndex": "tools/presence/fixtures/for-agents-cold-read/skills-index.json",
+    "inventory": "server/lib/mcp-tool-inventory.js",
+    "route": "server/routes/mcp.js",
+    "w0x70": "PR162 tools/verify-sds/mcp-unpaid/** (tools/list sibling; this pack is skills/list)"
+  }
+}

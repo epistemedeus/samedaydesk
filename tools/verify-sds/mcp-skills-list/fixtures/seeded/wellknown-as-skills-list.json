@@ -1,0 +1,9 @@
+{
+  "id": "wellknown-as-skills-list",
+  "seededId": "wellknown-as-skills-list",
+  "feature": "mcp-skills-list",
+  "httpIndex": "tools/presence/fixtures/for-agents-cold-read/skills-index.json",
+  "note": "Well-known HTTP index has name/description/files and no sha256 digest. That is not SEP-2640 skills/list.",
+  "expectExit": 1,
+  "errorCode": "WELLKNOWN_IS_NOT_SKILLS_LIST"
+}

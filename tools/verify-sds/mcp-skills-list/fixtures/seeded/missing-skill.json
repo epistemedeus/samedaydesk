@@ -1,0 +1,8 @@
+{
+  "id": "missing-skill",
+  "seededId": "missing-skill",
+  "feature": "mcp-skills-list",
+  "omitted": "web-extract",
+  "expectExit": 1,
+  "errorCode": "MISSING_SKILL"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "method-not-found-as-success",
+  "seededId": "method-not-found-as-success",
+  "feature": "mcp-skills-list",
+  "error": { "code": -32601, "message": "Method not found: skills/list" },
+  "claimedOk": true,
+  "note": "Live SDS /mcp today returns JSON-RPC -32601 for skills/list. Treating that as a catalog is refused.",
+  "expectExit": 1,
+  "errorCode": "METHOD_NOT_FOUND"
+}

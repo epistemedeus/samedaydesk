@@ -1,0 +1,8 @@
+{
+  "id": "payment-signature",
+  "seededId": "payment-signature",
+  "feature": "mcp-skills-list",
+  "opts": { "header": "PAYMENT-SIGNATURE" },
+  "expectExit": 1,
+  "errorCode": "PAYMENT_HEADER_REFUSE"
+}
