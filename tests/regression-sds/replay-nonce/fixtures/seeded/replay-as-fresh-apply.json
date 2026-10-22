@@ -1,0 +1,11 @@
+{
+  "id": "replay-as-fresh-apply",
+  "defect": "Treat an identical flush-id nonce replay as a second apply and double-count totals.",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "observedFrom": "2026-09-18T12:00:00.000Z",
+  "delta": { "total": 2, "humans": 2 },
+  "claim": {
+    "secondStatus": "applied",
+    "snapshotTotal": 4
+  }
+}

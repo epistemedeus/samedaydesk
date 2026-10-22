@@ -1,0 +1,13 @@
+{
+  "id": "first-apply",
+  "kind": "store",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "steps": [
+    { "delta": { "total": 2, "humans": 2 }, "expectStatus": "applied" }
+  ],
+  "expect": {
+    "acks": ["applied"],
+    "snapshotTotal": 2,
+    "error": null
+  }
+}

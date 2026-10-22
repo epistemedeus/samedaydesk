@@ -1,0 +1,13 @@
+{
+  "id": "wal-enqueue-conflict",
+  "kind": "fallback",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "steps": [
+    { "action": "enqueue", "delta": { "total": 2, "humans": 2 } },
+    { "action": "enqueue", "delta": { "total": 3, "humans": 3 } }
+  ],
+  "expect": {
+    "outcomes": ["queued", "corrupt"],
+    "corrupt": true
+  }
+}

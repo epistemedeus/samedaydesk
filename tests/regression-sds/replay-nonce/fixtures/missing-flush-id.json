@@ -1,0 +1,10 @@
+{
+  "id": "missing-flush-id",
+  "kind": "wal-entry",
+  "omitFlushId": true,
+  "delta": { "total": 1, "humans": 1 },
+  "expect": {
+    "ok": false,
+    "error": "pulse_wal_invalid:flush_entry"
+  }
+}

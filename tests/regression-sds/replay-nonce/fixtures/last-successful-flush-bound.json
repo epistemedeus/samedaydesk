@@ -1,0 +1,15 @@
+{
+  "id": "last-successful-flush-bound",
+  "kind": "fallback",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "steps": [
+    { "action": "enqueue", "delta": { "total": 2, "humans": 2 } },
+    { "action": "record", "status": "applied" }
+  ],
+  "expect": {
+    "outcomes": ["queued", "queued"],
+    "pendingCount": 1,
+    "lastSuccessfulFlushId": "a0000000-0000-4000-8000-000000000099",
+    "corrupt": false
+  }
+}

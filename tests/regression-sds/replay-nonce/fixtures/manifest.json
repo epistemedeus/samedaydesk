@@ -1,0 +1,27 @@
+{
+  "schema": "sds.regression.replay-nonce.manifest.v1",
+  "engine": {
+    "store": "server/lib/pulse-store/supabase-adapter.js#createPulseStoreFromTransport",
+    "authority": "server/scripts/helpers/fake-pulse-authority.js#createFakePulseAuthority",
+    "wal": "server/lib/pulse-store/wal-schema.js#validateWalFlushEntry",
+    "fallback": "server/lib/pulse-store/file-fallback.js#createFileFallbackStore",
+    "sql": "supabase/migrations/0002_pulse_durable.sql#pulse_apply_delta"
+  },
+  "pinnedNonce": "a0000000-0000-4000-8000-000000000099",
+  "pinnedObservedFrom": "2026-09-18T12:00:00.000Z",
+  "cases": [
+    { "id": "first-apply", "file": "first-apply.json", "kind": "store" },
+    { "id": "identical-replay", "file": "identical-replay.json", "kind": "store" },
+    { "id": "conflicting-replay", "file": "conflicting-replay.json", "kind": "store" },
+    { "id": "fresh-nonce-applies", "file": "fresh-nonce-applies.json", "kind": "store" },
+    { "id": "invalid-flush-id", "file": "invalid-flush-id.json", "kind": "wal-entry" },
+    { "id": "missing-flush-id", "file": "missing-flush-id.json", "kind": "wal-entry" },
+    { "id": "empty-nonce", "file": "empty-nonce.json", "kind": "wal-entry" },
+    { "id": "wal-duplicate-same", "file": "wal-duplicate-same.json", "kind": "wal-state" },
+    { "id": "wal-duplicate-conflict", "file": "wal-duplicate-conflict.json", "kind": "wal-state" },
+    { "id": "wal-enqueue-duplicate-same", "file": "wal-enqueue-duplicate-same.json", "kind": "fallback" },
+    { "id": "wal-enqueue-conflict", "file": "wal-enqueue-conflict.json", "kind": "fallback" },
+    { "id": "last-successful-flush-bound", "file": "last-successful-flush-bound.json", "kind": "fallback" },
+    { "id": "sql-nonce-is-uuid", "file": "sql-nonce-is-uuid.json", "kind": "sql-source" }
+  ]
+}

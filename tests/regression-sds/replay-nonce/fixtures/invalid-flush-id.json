@@ -1,0 +1,10 @@
+{
+  "id": "invalid-flush-id",
+  "kind": "wal-entry",
+  "flushId": "not-a-uuid",
+  "delta": { "total": 1, "humans": 1 },
+  "expect": {
+    "ok": false,
+    "error": "pulse_wal_invalid:flush_id"
+  }
+}

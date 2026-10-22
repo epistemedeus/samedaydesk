@@ -1,0 +1,14 @@
+{
+  "id": "conflicting-replay",
+  "kind": "store",
+  "flushId": "a0000000-0000-4000-8000-000000000099",
+  "steps": [
+    { "delta": { "total": 2, "humans": 2 }, "expectStatus": "applied" },
+    { "delta": { "total": 3, "humans": 3 }, "expectError": "pulse_flush_id_conflict" }
+  ],
+  "expect": {
+    "acks": ["applied", null],
+    "errors": [null, "pulse_flush_id_conflict"],
+    "snapshotTotal": 2
+  }
+}

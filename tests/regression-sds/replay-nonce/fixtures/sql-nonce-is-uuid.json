@@ -1,0 +1,12 @@
+{
+  "id": "sql-nonce-is-uuid",
+  "kind": "sql-source",
+  "expect": {
+    "uuidArg": true,
+    "nullNonce": true,
+    "conflict": true,
+    "alreadyApplied": true,
+    "receipts": true,
+    "grantUuid": true
+  }
+}
