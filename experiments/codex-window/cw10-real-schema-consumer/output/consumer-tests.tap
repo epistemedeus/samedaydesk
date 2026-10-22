@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: all upstream bytes, examples and adjacent source commits are pinned
+ok 1 - all upstream bytes, examples and adjacent source commits are pinned
+  ---
+  duration_ms: 2.67649
+  type: 'test'
+  ...
+# Subtest: mutated transitive resource is rejected, even with untouched roots
+ok 2 - mutated transitive resource is rejected, even with untouched roots
+  ---
+  duration_ms: 3.567785
+  type: 'test'
+  ...
+# Subtest: each Draft7 reference resource compiles offline and all used formats exist
+ok 3 - each Draft7 reference resource compiles offline and all used formats exist
+  ---
+  duration_ms: 71.288034
+  type: 'test'
+  ...
+# Subtest: complete independently validated request bodies isolate the two schema changes
+ok 4 - complete independently validated request bodies isolate the two schema changes
+  ---
+  duration_ms: 44.833614
+  type: 'test'
+  ...
+# Subtest: neither partial migration works; invalid format/value/optional reference controls fail
+ok 5 - neither partial migration works; invalid format/value/optional reference controls fail
+  ---
+  duration_ms: 35.033426
+  type: 'test'
+  ...
+# Subtest: small regression is derived from the real root and preserves both witness directions
+ok 6 - small regression is derived from the real root and preserves both witness directions
+  ---
+  duration_ms: 13.708766
+  type: 'test'
+  ...
+# Subtest: removed required membership alone weakens; forbidding its property causes rejection
+ok 7 - removed required membership alone weakens; forbidding its property causes rejection
+  ---
+  duration_ms: 9.353591
+  type: 'test'
+  ...
+# Subtest: archive acquisition rejects altered bytes before extraction
+ok 8 - archive acquisition rejects altered bytes before extraction
+  ---
+  duration_ms: 13.05949
+  type: 'test'
+  ...
+# Subtest: CLI handles equals and separated options, rejects ambiguity and missing values
+ok 9 - CLI handles equals and separated options, rejects ambiguity and missing values
+  ---
+  duration_ms: 465.755081
+  type: 'test'
+  ...
+# Subtest: offline audit proves released CLI receives schemas and reproduces the false negative
+ok 10 - offline audit proves released CLI receives schemas and reproduces the false negative
+  ---
+  duration_ms: 813.029719
+  type: 'test'
+  ...
+# Subtest: default compatibility gate exits 1 for a valid-before rejected-after body
+ok 11 - default compatibility gate exits 1 for a valid-before rejected-after body
+  ---
+  duration_ms: 836.122724
+  type: 'test'
+  ...
+# Subtest: existing output and an unpinned candidate are refused without changing inputs
+ok 12 - existing output and an unpinned candidate are refused without changing inputs
+  ---
+  duration_ms: 247.230996
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2704.28759

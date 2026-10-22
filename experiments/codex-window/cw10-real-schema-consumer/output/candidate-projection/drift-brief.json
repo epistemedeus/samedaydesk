@@ -1,0 +1,187 @@
+{
+  "schema": "samedaydesk.json-schema-webhook-drift.v1",
+  "schemaVersion": 2,
+  "kind": "json-schema",
+  "usedOnly": true,
+  "notOpenApi": true,
+  "notApiUpgradeBrief": true,
+  "purchaseAuthority": false,
+  "sold": false,
+  "customerBrief": false,
+  "sample": false,
+  "exampleMode": false,
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "payment": {
+    "settling": false,
+    "prototype": true,
+    "paid": false
+  },
+  "provenance": "caller-input",
+  "inputs": {
+    "before": "sha256:789041f827f11161214f52ac53e69d5fe8f660481856a5496876b1ed2288a19e",
+    "after": "sha256:ac559ed79366744573d2dcb35184ce53e0fd360a9ee22190931cab0a82b02895",
+    "used": "sha256:7cd1608326f8128db842fbc1b867a97a8e64241f181d4019deec9573d67c9d9e",
+    "beforeBytes": 325,
+    "afterBytes": 319,
+    "usedBytes": 31
+  },
+  "impact": {
+    "breaking": [
+      {
+        "pointer": "",
+        "class": "breaking",
+        "reason": "required-changed",
+        "before": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "action",
+            "membership",
+            "organization",
+            "sender"
+          ],
+          "additionalProperties": {
+            "kind": "boolean-schema",
+            "allows": false
+          },
+          "properties": {
+            "action": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "installation": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "membership": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "organization": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "sender": {
+              "kind": "boolean-schema",
+              "allows": true
+            }
+          },
+          "propertiesKeys": [
+            "action",
+            "installation",
+            "membership",
+            "organization",
+            "sender"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "pattern": null,
+          "nullable": false,
+          "unsupportedKeywords": null
+        },
+        "after": {
+          "kind": "schema-object",
+          "type": "object",
+          "format": null,
+          "enum": null,
+          "constJson": null,
+          "required": [
+            "action",
+            "changes",
+            "organization",
+            "sender"
+          ],
+          "additionalProperties": {
+            "kind": "boolean-schema",
+            "allows": false
+          },
+          "properties": {
+            "action": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "changes": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "installation": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "organization": {
+              "kind": "boolean-schema",
+              "allows": true
+            },
+            "sender": {
+              "kind": "boolean-schema",
+              "allows": true
+            }
+          },
+          "propertiesKeys": [
+            "action",
+            "changes",
+            "installation",
+            "organization",
+            "sender"
+          ],
+          "items": null,
+          "itemsType": null,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "exclusiveMinimum": null,
+          "exclusiveMaximum": null,
+          "minItems": null,
+          "maxItems": null,
+          "pattern": null,
+          "nullable": false,
+          "unsupportedKeywords": null
+        }
+      }
+    ],
+    "compatible": [],
+    "added": [],
+    "deleted": [],
+    "unknown": [],
+    "unchangedCount": 0,
+    "informationalCount": 0,
+    "ignoredUnused": true
+  },
+  "status": "actionable",
+  "ok": true,
+  "appId": "json-schema-webhook-drift",
+  "summary": "Used-path drift: 1 breaking, 0 compatible, 0 deleted, 0 unknown. Unused paths ignored.",
+  "uncertainties": [],
+  "laterIntegrationBindings": [
+    {
+      "id": "useful-jobs-catalog",
+      "status": "not-bound",
+      "note": "PR51 catalog is contrast only. Root owns catalog admission."
+    },
+    {
+      "id": "i01-hash-terms",
+      "status": "pinned-hasher",
+      "note": "Neo PR54 hashTermsVersion contract. Earned-work kernel not imported."
+    }
+  ],
+  "caller": {
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "termsVersion": "sha256:15726d80eba52c1df8cd8735e88046c82fd92a01ee32e8f45a817715be57cf2f"
+}
