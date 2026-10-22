@@ -1,0 +1,17 @@
+{
+  "name": "samedaydesk-refund-obligation-projector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W4-commerce-07 read-only refund and obligation projector from evidence-records. Nonsettling prototype. Never calls Stripe refunds. Never posts obligations as paid. 8.105 USDC is historical, not spendable.",
+  "bin": {
+    "refund-obligation-project": "./bin/project.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "project": "node bin/project.mjs"
+  }
+}
