@@ -1,0 +1,24 @@
+{
+  "name": "@samedaydesk/w923-receipt-forge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SameDayDesk w923 receipt-forge reject pack. Cold-pins committed unpaid SDS extract/settlement artifacts and rejects forged, copied, fabricated, replayed, and payment-header receipts. No live, pay, publish, or neo.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "w923-receipt-forge": "./bin/receipt-forge.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "verify": "node ./bin/receipt-forge.mjs --cold",
+    "seeded-failure": "node ./bin/receipt-forge.mjs --seeded-failure forged-digest",
+    "stamp": "node ./scripts/build-fixtures.mjs"
+  },
+  "license": "MIT"
+}
