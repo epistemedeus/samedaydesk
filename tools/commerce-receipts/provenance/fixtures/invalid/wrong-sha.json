@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "wrong-sha-s122-c0255ac",
+  "kind": "contribution",
+  "claimedHash": "c0255ac",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_commit",
+  "expectedObjectType": "commit",
+  "notes": "S134 unresolved-object pin. c0255ac is not a git object in this checkout. Seeded claimed_hash_unbound_object.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}

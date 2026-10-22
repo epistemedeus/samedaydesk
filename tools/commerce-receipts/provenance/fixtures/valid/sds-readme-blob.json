@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "sds-readme-blob",
+  "kind": "contribution",
+  "claimedHash": "c94d15beff60efa6b8b083de68e37972c84e1c8d",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_blob",
+  "expectedObjectType": "blob",
+  "notes": "README.md blob at SDS checkout pin. SHA binds a blob object.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}

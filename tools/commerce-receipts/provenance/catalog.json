@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "kinds": ["contribution"],
+  "sourceRepositories": ["epistemedeus/samedaydesk"],
+  "surfaces": ["git_commit", "git_tree", "git_blob", "git_tag"],
+  "objectTypes": ["commit", "tree", "blob", "tag"],
+  "requiredProhibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ],
+  "pins": {
+    "sdsCheckout": "775051602d91f42ca1aa920054cfd7a451982940",
+    "s122Unresolved": "c0255ac",
+    "wrongFullSha": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+  }
+}

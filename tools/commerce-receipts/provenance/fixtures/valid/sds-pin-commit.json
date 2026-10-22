@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "samedaydesk.commerce-receipts.provenance.v1",
+  "claimId": "sds-pin-commit",
+  "kind": "contribution",
+  "claimedHash": "775051602d91f42ca1aa920054cfd7a451982940",
+  "sourceRepository": "epistemedeus/samedaydesk",
+  "surface": "git_commit",
+  "expectedObjectType": "commit",
+  "notes": "SDS checkout pin. git cat-file -t must return commit. JSON expectedObjectType does not bind.",
+  "prohibitedInferences": [
+    "claimed_hash_unbound_object",
+    "json_substitutes_for_cat_file",
+    "money_movement"
+  ]
+}
