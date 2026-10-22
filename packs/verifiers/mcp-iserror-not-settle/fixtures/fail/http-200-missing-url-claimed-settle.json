@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "http-200-missing-url-claimed-settle",
+  "expect": "reject",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "Provide a url, e.g. example.com" }],
+      "isError": true
+    }
+  },
+  "claim": { "settled": true, "basis": "http_status" }
+}

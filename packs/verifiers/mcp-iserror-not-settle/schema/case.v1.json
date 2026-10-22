@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "title": "MCP isError≠settle case",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "samedaydesk.mcp-iserror-not-settle.case.v1" },
+    "id": { "type": "string", "minLength": 1 },
+    "expect": { "enum": ["pass", "reject", "not_proven"] },
+    "http": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "integer" }
+      }
+    },
+    "rpc": {},
+    "jsonrpc": {},
+    "claim": {
+      "type": "object",
+      "properties": {
+        "settled": { "type": ["boolean", "string", "integer"] },
+        "basis": { "type": "string" },
+        "reason": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}

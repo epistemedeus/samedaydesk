@@ -1,0 +1,20 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "sds-generation-failed-payment-text",
+  "expect": "pass",
+  "notes": "SDS may say a Stripe license is verified while still returning isError for generation failure. The MCP result is not settlement.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Your payment is verified, but auto-generation hit an error (timeout). Email help@samedaydesk.com with your url (example.com) and license and we'll deliver your Fix Pack right away."
+        }
+      ],
+      "isError": true
+    }
+  }
+}

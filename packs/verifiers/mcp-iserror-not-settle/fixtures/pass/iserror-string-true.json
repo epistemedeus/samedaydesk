@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "iserror-string-true",
+  "expect": "pass",
+  "notes": "Fail closed on string isError values that some SDK shims emit.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "tool failed" }],
+      "isError": "true"
+    }
+  }
+}

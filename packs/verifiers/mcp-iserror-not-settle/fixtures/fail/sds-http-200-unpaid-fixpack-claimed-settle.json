@@ -1,0 +1,24 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "sds-http-200-unpaid-fixpack-claimed-settle",
+  "expect": "reject",
+  "notes": "Seeded failure. Naive ledger treated HTTP 200 plus a JSON-RPC result as settlement. isError true forbids that.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "No license provided.\n\nTo get the complete Fix Pack: buy at https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h ($39)."
+        }
+      ],
+      "isError": true
+    }
+  },
+  "claim": {
+    "settled": true,
+    "basis": "http_200"
+  }
+}

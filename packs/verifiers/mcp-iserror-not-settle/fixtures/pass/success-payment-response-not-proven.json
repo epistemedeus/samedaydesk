@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "success-payment-response-not-proven",
+  "expect": "pass",
+  "notes": "isError is absent. A payment-response does not make this pack prove settlement.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "Fix Pack delivered" }],
+      "_meta": {
+        "x402/payment-response": {
+          "success": true,
+          "transaction": "0xabc",
+          "network": "eip155:84532"
+        }
+      }
+    }
+  }
+}

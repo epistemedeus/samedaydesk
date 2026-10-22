@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.mcp-iserror-not-settle.case.v1",
+  "id": "success-without-iserror",
+  "expect": "pass",
+  "notes": "isError is absent. This pack does not prove settlement; it only confirms the isError invariant does not fire.",
+  "http": { "status": 200 },
+  "rpc": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [{ "type": "text", "text": "AI Readiness for example.com\nScore: 80/100" }]
+    }
+  }
+}
