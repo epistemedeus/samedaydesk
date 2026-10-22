@@ -1,0 +1,18 @@
+{
+  "name": "@samedaydesk/useful-jobs-skill",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "useful-jobs SKILL.md that advertises list and help only, for the next archive.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "useful-jobs-skill-prove": "./bin/prove.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "prove": "node bin/prove.mjs",
+    "prove:seeded-failure": "node bin/prove.mjs --seeded-failure advertised-run"
+  }
+}

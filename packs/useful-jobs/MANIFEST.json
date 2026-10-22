@@ -1,0 +1,12 @@
+{
+  "schema": "samedaydesk.useful-jobs.skill-list-help.manifest.v1",
+  "pack": "useful-jobs",
+  "includeInNextArchive": [
+    {
+      "source": "packs/useful-jobs/SKILL.md",
+      "archivePath": "SKILL.md"
+    }
+  ],
+  "advertisedCommands": ["list", "help"],
+  "note": "Next public useful-jobs archive copies SKILL.md to the archive root. This pack does not build or publish an archive."
+}
