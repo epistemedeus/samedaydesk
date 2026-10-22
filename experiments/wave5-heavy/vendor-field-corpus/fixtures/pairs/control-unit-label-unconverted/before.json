@@ -1,0 +1,10 @@
+{
+  "note": "CONTROL. Official $0.0005 / 1K input, unit as published.",
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0005,
+      "unit": "USD/1K-tokens"
+    }
+  ]
+}

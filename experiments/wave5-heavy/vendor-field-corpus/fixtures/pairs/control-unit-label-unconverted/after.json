@@ -1,0 +1,10 @@
+{
+  "note": "CONTROL. Same 0.0005 value with an unconverted USD/1M-tokens label. Not a vendor event.",
+  "rows": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "value": 0.0005,
+      "unit": "USD/1M-tokens"
+    }
+  ]
+}

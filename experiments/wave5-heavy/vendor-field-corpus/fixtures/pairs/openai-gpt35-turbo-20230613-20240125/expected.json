@@ -1,0 +1,27 @@
+{
+  "status": "actionable",
+  "counts": {
+    "added": 0,
+    "removed": 0,
+    "fieldChanges": 2,
+    "unitChanges": 0
+  },
+  "actionKinds": ["review-price-field"],
+  "independentArithmetic": [
+    {
+      "field": "gpt-3.5-turbo-input",
+      "before": 0.0015,
+      "after": 0.0005,
+      "delta": -0.001,
+      "unit": "USD/1K-tokens"
+    },
+    {
+      "field": "gpt-3.5-turbo-output",
+      "before": 0.002,
+      "after": 0.0015,
+      "delta": -0.0005,
+      "unit": "USD/1K-tokens"
+    }
+  ],
+  "engineOmitsMagnitudes": true
+}

@@ -1,0 +1,15 @@
+{
+  "note": "Official Anthropic Claude 3 Haiku base list still $0.25 / $1.25 MTok on 2024-12-17.",
+  "rows": [
+    {
+      "field": "claude-3-haiku-input",
+      "value": 0.25,
+      "unit": "USD/MTok"
+    },
+    {
+      "field": "claude-3-haiku-output",
+      "value": 1.25,
+      "unit": "USD/MTok"
+    }
+  ]
+}

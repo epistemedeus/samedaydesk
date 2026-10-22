@@ -1,0 +1,25 @@
+{
+  "id": "anthropic-sonnet35-prompt-cache-20241217",
+  "kind": "added-sku",
+  "structure": "usd-per-mtok",
+  "decisionQuestion": "Did prompt-cache write/read list prices appear beside an unchanged Sonnet 3.5 base input/output?",
+  "before": {
+    "url": "https://www.anthropic.com/news/claude-3-5-sonnet",
+    "date": "2024-06-21",
+    "publisher": "Anthropic",
+    "quote": "The model costs $3 per million input tokens and $15 per million output tokens, with a 200K token context window",
+    "extraction": "Official Claude 3.5 Sonnet announcement. Before-rows are those two explicit base list prices. Unit recorded as USD/MTok, the unit Anthropic uses on the later cache post."
+  },
+  "after": {
+    "url": "https://www.anthropic.com/news/prompt-caching",
+    "date": "2024-12-17",
+    "publisher": "Anthropic",
+    "quote": "Claude 3.5 Sonnet ... Input $3 / MTok Prompt caching $3.75 / MTok - Cache write $0.30 / MTok - Cache read Output $15 / MTok ... Writing to the cache costs 25% more than our base input token price ... using cached content is significantly cheaper",
+    "extraction": "Official prompt-caching announcement dated December 17, 2024. Base input/output stay $3 / $15 MTok. After-rows add cache write $3.75 / MTok and cache read $0.30 / MTok from the same table. 25% more than $3 is $3.75; that checks the write row only."
+  },
+  "limits": [
+    "Cache write/read are extra SKUs, not a change to base input.",
+    "TTL, minimum cacheable tokens, and actual cache-hit rate are not in these rows.",
+    "Released wrapper currently treats added rows as no-budget-delta."
+  ]
+}

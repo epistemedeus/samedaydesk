@@ -1,0 +1,15 @@
+{
+  "note": "Official Cloudflare Workers Paid overage rates from docs git e1336efcfee9 (2024-09-19).",
+  "rows": [
+    {
+      "field": "workers-paid-request-overage",
+      "value": 0.3,
+      "unit": "USD/million-requests"
+    },
+    {
+      "field": "workers-paid-cpu-overage",
+      "value": 0.02,
+      "unit": "USD/million-CPU-ms"
+    }
+  ]
+}

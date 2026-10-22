@@ -1,0 +1,25 @@
+{
+  "id": "openai-embedding-3-small-added-20240125",
+  "kind": "added-sku",
+  "structure": "usd-per-1k-tokens",
+  "decisionQuestion": "Did a cheaper official embedding SKU appear while ada-002 stayed listed?",
+  "before": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "from a price per 1k tokens of $0.0001 to $0.00002. We are not deprecating text-embedding-ada-002",
+    "extraction": "Same official post. Before-row is the still-sold ada-002 list price $0.0001 / 1k tokens, which the post states as the previous-generation price and says is not deprecated."
+  },
+  "after": {
+    "url": "https://openai.com/index/new-embedding-models-and-api-updates/",
+    "date": "2024-01-25",
+    "publisher": "OpenAI",
+    "quote": "Pricing for text-embedding-3-small has therefore been reduced by 5X compared to text-embedding-ada-002, from a price per 1k tokens of $0.0001 to $0.00002.",
+    "extraction": "After-rows keep ada-002 at $0.0001 and add text-embedding-3-small at the explicit $0.00002 / 1k tokens. These are two SKUs, not a rename of one field. text-embedding-3-large at $0.00013 / 1k tokens is omitted here to keep the pair to one added SKU."
+  },
+  "limits": [
+    "Do not treat ada-002 and 3-small as the same field.",
+    "5X is the post's comparison across SKUs, not an ada-002 price cut.",
+    "Released vendor-budget-impact currently reports added=1 but action no-budget-delta."
+  ]
+}
