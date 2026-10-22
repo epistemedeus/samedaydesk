@@ -1,0 +1,14 @@
+{
+  "schema": "sds.vf17.host-qualification.report.v1",
+  "status": "complete",
+  "purpose": "seeded incomplete comparison fixture",
+  "traffic": "synthetic",
+  "silentReduction": false,
+  "hostingerMeasured": false,
+  "workloadPlan": {
+    "offeredClients": [1, 8, 32],
+    "axes": ["concurrency", "corpus", "backlog"],
+    "traffic": "synthetic"
+  },
+  "cells": []
+}
