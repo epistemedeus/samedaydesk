@@ -1,0 +1,13 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/api/chain/erc20-balance",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "data": { "type": "object", "properties": { "balance": { "type": "string" } } },
+      "meta": { "type": "object", "properties": { "at": { "type": "string" } } }
+    }
+  }
+}

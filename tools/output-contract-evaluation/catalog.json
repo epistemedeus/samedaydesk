@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "samedaydesk.output-contract-evaluation.catalog.v1",
+  "reportSchemaVersion": "samedaydesk.output-contract-evaluation.v1",
+  "mode": "catalog-only",
+  "completeness": [
+    "complete",
+    "required_paths",
+    "named_outputs",
+    "example_only",
+    "unconstrained",
+    "input_only",
+    "empty_success",
+    "absent",
+    "observation_only",
+    "out_of_scope"
+  ],
+  "rejectCodes": [
+    "output_schema_absent",
+    "empty_openapi_success",
+    "unconstrained_object",
+    "example_is_not_schema",
+    "required_paths_missing",
+    "media_type_missing",
+    "unresolved_ref",
+    "catalog_only_violation",
+    "observation_is_not_catalog_declaration",
+    "unknown_document_kind",
+    "invalid_shape",
+    "consumer_evidence_missing"
+  ],
+  "catalogEligibleCompleteness": ["complete"],
+  "mediaTypes": ["application/json"],
+  "documentKinds": [
+    "single_route",
+    "openapi",
+    "x402_manifest",
+    "bazaar_listing",
+    "useful_jobs_catalog",
+    "conformance_crawl",
+    "buyer_runtime_catalog",
+    "verified_feed",
+    "unpaid_402_observation"
+  ],
+  "catalogOnlyForbiddenKeys": [
+    "checkout",
+    "checkoutSession",
+    "paymentIntent",
+    "PAYMENT-SIGNATURE",
+    "X-PAYMENT",
+    "privateKey",
+    "registryPublish",
+    "liveFetch",
+    "walletMnemonic",
+    "client_secret",
+    "paidResponseBody"
+  ],
+  "prohibitedInferences": [
+    "example_is_schema",
+    "empty_success_is_contract",
+    "observation_is_catalog_declaration",
+    "named_outputs_are_json_schema",
+    "input_schema_is_output_contract",
+    "required_path_pin_is_typed_schema",
+    "paid_delivery_is_catalog",
+    "catalog_presence_is_demand"
+  ],
+  "consumerEvidence": {
+    "openapi": "fixtures/presence/catalog/openapi.json",
+    "x402": "fixtures/presence/catalog/x402.json",
+    "bazaar": "fixtures/presence/listings/bazaar-merchant.json",
+    "conformanceCrawl": "client/src/data/sellerConformanceCrawl.json",
+    "buyerRuntimeCatalog": "fixtures/buyer-runtimes/catalog.json",
+    "usefulJobsCatalog": "client/public/for-agents/useful-jobs/catalog.json",
+    "verifiedFeedObservations": "fixtures/verified-feed/observations"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/order",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["ok", "checkout"],
+    "properties": {
+      "ok": { "type": "boolean" },
+      "checkout": { "type": "string" }
+    }
+  },
+  "example": {
+    "ok": true,
+    "checkout": "not-a-session"
+  }
+}

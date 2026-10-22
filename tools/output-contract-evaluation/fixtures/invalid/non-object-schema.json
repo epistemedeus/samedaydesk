@@ -1,0 +1,9 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/extract",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "string"
+  }
+}

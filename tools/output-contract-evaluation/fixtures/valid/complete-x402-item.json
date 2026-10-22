@@ -1,0 +1,41 @@
+{
+  "x402Version": 2,
+  "items": [
+    {
+      "resource": {
+        "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+        "routeTemplate": "/extract",
+        "mimeType": "application/json",
+        "serviceName": "SameDayDesk"
+      },
+      "type": "http",
+      "request": {
+        "method": "GET",
+        "url": "https://agents.samedaydesk.com/extract",
+        "schema": {
+          "type": "object",
+          "required": ["url"],
+          "properties": {
+            "url": { "type": "string" }
+          }
+        }
+      },
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "outputSchema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ok", "title", "url"],
+            "properties": {
+              "ok": { "type": "boolean" },
+              "title": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

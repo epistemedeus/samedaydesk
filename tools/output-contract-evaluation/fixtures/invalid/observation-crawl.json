@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "samedaydesk.seller-conformance-crawl.v1",
+  "checkedAt": "2026-09-07T18:50:05.000Z",
+  "greenRouteCount": 1,
+  "routes": [
+    {
+      "id": "samedaydesk:GET:/extract",
+      "unpaid402OutputSchemaPresent": true,
+      "outputExampleKeys": ["ok", "title", "url"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "single_route",
+  "method": "GET",
+  "path": "/api/x402/morpho-health",
+  "mediaType": "application/json",
+  "schema": {
+    "type": "object"
+  }
+}

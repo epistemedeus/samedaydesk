@@ -1,0 +1,17 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Empty success fixture", "version": "0.0.1" },
+  "paths": {
+    "/extract": {
+      "get": {
+        "operationId": "extractUrl",
+        "x-payment-info": {
+          "price": { "amount": "0.005", "currency": "USD", "mode": "fixed" }
+        },
+        "responses": {
+          "200": {}
+        }
+      }
+    }
+  }
+}
