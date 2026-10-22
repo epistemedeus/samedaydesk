@@ -1,0 +1,16 @@
+{
+  "source": "client/public/for-agents/useful-jobs/catalog.json",
+  "startingRef": "5b97d1b02e786acd1895cfa1508087ae3f7a1545",
+  "schema": "useful-jobs.catalog.v1",
+  "vendorBudgetImpact": {
+    "id": "vendor-budget-impact",
+    "requiredInputs": ["--before", "--after"],
+    "outputs": ["budget-impact.json", "budget-impact.md"]
+  },
+  "archive": {
+    "path": "client/public/for-agents/useful-jobs/useful-jobs-1.0.0.tar.gz",
+    "bytes": 2522418,
+    "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51"
+  },
+  "note": "Drift pin only. Tests load the real catalog and archive, not this object as a fake kernel."
+}
