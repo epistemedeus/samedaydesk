@@ -1,0 +1,8 @@
+{
+  "id": "live-stripe",
+  "seededId": "live-stripe",
+  "feature": "double-charge-guard",
+  "opts": { "host": "https://api.stripe.com" },
+  "expectExit": 1,
+  "errorCode": "LIVE_STRIPE_REFUSE"
+}

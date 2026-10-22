@@ -1,0 +1,11 @@
+{
+  "id": "second-charge",
+  "seededId": "second-charge",
+  "feature": "double-charge-guard",
+  "claim": {
+    "retryCreatesSecondPaymentIntent": true,
+    "createCount": 2
+  },
+  "expectExit": 1,
+  "errorCode": "DOUBLE_CHARGE_CLAIM_REFUSE"
+}
