@@ -30,6 +30,7 @@ import {
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
 import { classifyPulseFlushError, flushBackoffMs } from "./pulse-store/flush-error.js";
 import { mcpAdmissionForRequest } from "./mcp-admission.js";
+import { MCP_OUTCOME_KEYS, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
 export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
@@ -121,6 +122,7 @@ function addWalCounters(into) {
 }
 
 function addSnapshotCounters(into, from) {
+  into.mcpOutcomes = mergeMcpOutcomes(into.mcpOutcomes, from.mcpOutcomes);
   into.total += from.total || 0;
   into.humans += from.humans || 0;
   into.bots += from.bots || 0;
@@ -313,6 +315,7 @@ async function readDurableSnapshot() {
   ) {
     throw new Error("pulse_incomplete_schema:mcpToolCallsByNameObservation");
   }
+  if (snapshot.mcpOutcomes != null) snapshot.mcpOutcomes = validateMcpOutcomes(snapshot.mcpOutcomes);
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
   // Snapshot RPC returns timestamptz JSON (+00:00); pending deltas must use .mmmZ wire form.
@@ -796,8 +799,52 @@ function recordMcpSurfaceGet() {
   });
 }
 
-function recordMcpProtocolPost(req) {
+const observedMcpRequests = new WeakMap();
+const mcpOutcomeKeys = new Set(MCP_OUTCOME_KEYS);
+
+function recordMcpEvent(source, tool, event) {
+  const key = `${source}|${tool}|${event}`;
+  if (!mcpOutcomeKeys.has(key)) return;
+  const observation = { observedFrom: new Date().toISOString(), counts: { [key]: 1 } };
+  pendingDelta.mcpOutcomes = mergeMcpOutcomes(pendingDelta.mcpOutcomes, observation);
+}
+
+// The route calls this at the handler boundary, before serialization. It retains
+// no result/body/id; the per-entry guard also makes duplicate callbacks harmless.
+export function recordMcpProduced(req, message, result) {
+  try {
+    const observer = observedMcpRequests.get(req);
+    if (!observer || observer.completed.has(message)) return;
+    observer.completed.add(message);
+    const tool = message.observation?.toolName || (message.observation?.methodClass === "tools/call" ? "_unknown" : "_none");
+    if (result?.error) recordMcpEvent(observer.source, tool, "protocol_error");
+    else if (message.observation?.methodClass === "tools/call" && result?.result) {
+      recordMcpEvent(observer.source, tool, result.result.isError === true ? "tool_refusal" : "normal_result");
+    }
+    if (message.kind === "notification") recordMcpEvent(observer.source, tool, "notification_completed");
+  } catch { /* observation must not change execution */ }
+}
+
+function recordMcpProtocolPost(req, res) {
+  if (observedMcpRequests.has(req)) return;
+  const source = declaredMcpSource(req.headers);
+  observedMcpRequests.set(req, { source, completed: new WeakSet() });
+  recordMcpEvent(source, "_none", "http_request");
+  let terminal = false;
+  const finished = () => {
+    if (terminal) return;
+    terminal = true;
+    recordMcpEvent(source, "_none", res.writableFinished ? "response_finished" : "disconnected");
+  };
+  res?.once?.("finish", finished);
+  res?.once?.("close", finished);
   const parsed = mcpAdmissionForRequest(req);
+  if (parsed.error) recordMcpEvent(source, "_none", "protocol_error");
+  for (const entry of parsed.entries || []) {
+    if (!entry.error && entry.observation?.methodClass === "tools/call") {
+      recordMcpEvent(source, entry.observation.toolName || "_unknown", "tool_attempt");
+    }
+  }
 
   pendingDelta.total += 1;
   pendingDelta.mcpProtocolRequests += 1;
@@ -849,14 +896,14 @@ function recordOrdinaryGet(req, p) {
   });
 }
 
-export function pulseMiddleware(req, _res, next) {
+export function pulseMiddleware(req, res, next) {
   try {
     // A parser error is received inside the /mcp mount, where req.path is '/'.
     // Express's original URL retains the owning path; strip its entire query.
     const p = (req.originalUrl || req.path || "/").split("?")[0];
 
     if (req.method === "POST" && isMcpMountPath(p)) {
-      recordMcpProtocolPost(req);
+      recordMcpProtocolPost(req, res);
       return next();
     }
 
@@ -968,6 +1015,23 @@ export function pulseSnapshot() {
       httpRequests: counters.mcpProtocol.requests,
       messages: counters.mcpProtocol.messages,
       byMethod: { ...counters.mcpProtocol.byMethod },
+      outcomes: {
+        observedFrom: counters.mcpOutcomes?.observedFrom || null,
+        counts: { ...counters.mcpOutcomes?.counts },
+        complete: false,
+        coverage: counters.mcpOutcomes ? "lower_bound_from_first_observation" : "unknown",
+        durableSchemaSupported: hydrationState === "hydrated" ? Object.hasOwn(durableSnapshot || {}, "mcpOutcomes") : null,
+        historicalSourceAndOutcomes: "unknown_no_backfill",
+        callerAcceptance: "unobserved",
+        revenue: "unobserved",
+        keyFormat: "callerDeclaredSource|boundedTool|serverEvent",
+        meaning: "Source is static, optional, caller-declared and spoofable, never identity or verified acquisition. " +
+          "http_request counts each POST; tool_attempt counts admitted tools/call entries with structurally valid params, including notifications and unknown names. " +
+          "normal_result and tool_refusal count handler-produced results (including suppressed notification results); protocol_error counts generated JSON-RPC errors. " +
+          "notification_completed marks suppressed replies; _unknown includes unknown tools or invalid tool params, _none is non-tool/HTTP scope. " +
+          "response_finished means the local HTTP response finished, not peer receipt; disconnected means close before finish and may overlap a produced result. " +
+          "No event proves useful acceptance, unique callers, payment or revenue. Historical and uninstrumented generations remain unknown; counts are lower bounds, never complete historical zeros.",
+      },
       toolCallsByName: {
         counts: { ...counters.mcpToolCallsByName },
         observedFrom: mcpToolCallsObservedFrom,

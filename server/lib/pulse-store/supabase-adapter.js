@@ -4,6 +4,7 @@ import {
   validateDelta,
   validateLegacyObservation,
 } from "./schema.js";
+import { validateMcpOutcomes } from "./mcp-outcomes.js";
 
 export function createSupabasePulseTransport(rpcFn) {
   return {
@@ -47,11 +48,14 @@ export function createPulseStoreFromTransport(transport, { configured = true } =
         throw err;
       }
       if (!data || typeof data !== "object") return data;
-      if (data.mcpToolCallsObservedFrom == null) return data;
+      const snapshot = data.mcpOutcomes != null
+        ? { ...data, mcpOutcomes: validateMcpOutcomes(data.mcpOutcomes) }
+        : data;
+      if (snapshot.mcpToolCallsObservedFrom == null) return snapshot;
       return {
-        ...data,
+        ...snapshot,
         mcpToolCallsObservedFrom: canonicalizeMcpToolCallsObservedFrom(
-          data.mcpToolCallsObservedFrom,
+          snapshot.mcpToolCallsObservedFrom,
         ),
       };
     },
