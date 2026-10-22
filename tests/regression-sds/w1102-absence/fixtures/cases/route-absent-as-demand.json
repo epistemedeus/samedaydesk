@@ -1,0 +1,28 @@
+{
+  "id": "route-absent-as-demand",
+  "surface": "bazaar-tracker",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "expectedReasons": [
+    "absence_as_demand",
+    "route_absent_as_demand",
+    "treat_absence_as_demand"
+  ],
+  "defect": "Missing SDS/bazaar route treated as demand to add or buy (absence≠demand).",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "accept",
+    "pass": true,
+    "surface": "bazaar-tracker",
+    "routeAbsent": true,
+    "missingRoute": true,
+    "missingRouteId": "sds:/distribution/agent-surface-budget-audit",
+    "treatAbsenceAsDemand": true,
+    "absenceAsDemand": true,
+    "demand": true,
+    "action": "create_demand",
+    "recommendation": "add_route_as_demand",
+    "message": "route absent → treat as demand"
+  }
+}

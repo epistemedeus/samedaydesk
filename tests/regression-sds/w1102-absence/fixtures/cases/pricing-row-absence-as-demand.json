@@ -1,0 +1,24 @@
+{
+  "id": "pricing-row-absence-as-demand",
+  "surface": "pricing",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "experiments/s163-record-recipes/docs/families/pricing-row-unit.md",
+  "expectedReasons": [
+    "absence_as_demand",
+    "pricing_absence_as_demand"
+  ],
+  "defect": "Empty/absent pricing rows claimed as market demand (record-jobs non-claim).",
+  "output": {
+    "ok": true,
+    "status": "success",
+    "surface": "pricing",
+    "pricingRowAbsent": true,
+    "pricingRowsEmpty": true,
+    "pricingRows": [],
+    "demand": true,
+    "marketDemand": true,
+    "demandSignal": "positive",
+    "message": "absence of pricing row treated as market demand"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "paid-activity-unavailable-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/adapters/x402stats.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "unavailable_paid_activity_as_demand"
+  ],
+  "defect": "paidActivity.available=false but claim invents paid demand / paidCustomers.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "paidDemand": true,
+    "paidCustomers": 42,
+    "demandSignal": "paid",
+    "paidActivity": {
+      "available": false,
+      "reason": "x402stats snapshot has no registered-vs-paid split; organic is heuristic, not paid demand.",
+      "reconcile": {
+        "state": "missing",
+        "composed": null
+      }
+    },
+    "message": "invented paid demand from unavailable paidActivity"
+  }
+}
