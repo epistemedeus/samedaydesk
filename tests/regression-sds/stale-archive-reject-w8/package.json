@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-stale-archive-reject-w8",
+  "private": true,
+  "type": "module",
+  "description": "SDS stale-archive reject regression (w8): cold-hash committed useful-jobs archives; refuse 1.0.0–1.4.0 as current 1.4.7; remap obtain-archive child-exit-0 refuses. Write boundary tests/regression-sds/stale-archive-reject-w8/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}

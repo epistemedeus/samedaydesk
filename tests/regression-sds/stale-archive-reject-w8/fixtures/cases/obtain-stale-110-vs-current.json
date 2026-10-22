@@ -1,0 +1,33 @@
+{
+  "id": "obtain-stale-110-vs-current",
+  "surface": "obtain-archive",
+  "class": "stale-archive",
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "stale_version",
+    "stale_sha",
+    "stale_bytes",
+    "negative_control_110",
+    "product_refuse"
+  ],
+  "defect": "Real obtain-archive of 1.1.0 against the 1.4.7 pin refuses (wrong-size); claim still calls it current.",
+  "probe": {
+    "kind": "obtain-archive",
+    "fromRel": "client/public/for-agents/useful-jobs/useful-jobs-1.1.0.tar.gz",
+    "expected": "current",
+    "expectCode": "wrong-size"
+  },
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "claimedCurrent": true,
+    "feature": "useful-jobs",
+    "surface": "obtain-archive",
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "message": "obtained current useful-jobs from 1.1.0 archive"
+  }
+}

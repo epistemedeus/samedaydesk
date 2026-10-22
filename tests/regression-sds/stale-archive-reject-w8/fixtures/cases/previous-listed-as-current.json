@@ -1,0 +1,28 @@
+{
+  "id": "previous-listed-as-current",
+  "surface": "useful-jobs-archive",
+  "class": "stale-archive",
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "previous_listed_as_current",
+    "stale_version",
+    "stale_sha",
+    "stale_bytes"
+  ],
+  "defect": "Kit previous 1.4.0 listed as the live catalog current.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "claimedCurrent": true,
+    "previousAsCurrent": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs-archive",
+    "version": "1.4.0",
+    "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+    "bytes": 2575215,
+    "rootName": "useful-jobs-1.4.0",
+    "message": "previous archive is the current listing"
+  }
+}

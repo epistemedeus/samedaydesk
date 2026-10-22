@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "feature": "stale-archive-reject-w8",
+  "repo": "samedaydesk",
+  "writeBoundary": "tests/regression-sds/stale-archive-reject-w8/**",
+  "principle": {
+    "id": "stale-archive-reject",
+    "statement": "A stale useful-jobs archive is not the current catalog. 1.0.0–1.4.0 (1.1.0 is the W0-B2 negative control) must not be accepted as 1.4.7."
+  },
+  "currentPin": {
+    "version": "1.4.7",
+    "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "bytes": 5255824
+  },
+  "negativeControl": {
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606
+  },
+  "seededStaleAsCurrent": "stale-110-as-current",
+  "cases": [
+    {
+      "id": "current-147-honest",
+      "file": "fixtures/cases/current-147-honest.json",
+      "expect": "accept",
+      "class": "honest-current"
+    },
+    {
+      "id": "obtain-current-147-honest",
+      "file": "fixtures/cases/obtain-current-147-honest.json",
+      "expect": "accept",
+      "class": "honest-current"
+    },
+    {
+      "id": "honest-stale-110-refused",
+      "file": "fixtures/cases/honest-stale-110-refused.json",
+      "expect": "accept",
+      "class": "honest-refuse"
+    },
+    {
+      "id": "stale-100-as-current",
+      "file": "fixtures/cases/stale-100-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "stale-110-as-current",
+      "file": "fixtures/cases/stale-110-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "seededStaleAsCurrent": true,
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes", "negative_control_110", "treat_stale_as_current"]
+    },
+    {
+      "id": "stale-120-as-current",
+      "file": "fixtures/cases/stale-120-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "stale-130-as-current",
+      "file": "fixtures/cases/stale-130-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "stale-140-as-current",
+      "file": "fixtures/cases/stale-140-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "spoofed-147-label-110-bytes",
+      "file": "fixtures/cases/spoofed-147-label-110-bytes.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "fabricated-current-digest",
+      "file": "fixtures/cases/fabricated-current-digest.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "sha_mismatch", "fabricated_digest"]
+    },
+    {
+      "id": "previous-listed-as-current",
+      "file": "fixtures/cases/previous-listed-as-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "previous_listed_as_current", "stale_version", "stale_sha", "stale_bytes"]
+    },
+    {
+      "id": "obtain-stale-110-vs-current",
+      "file": "fixtures/cases/obtain-stale-110-vs-current.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes", "negative_control_110", "product_refuse"]
+    },
+    {
+      "id": "obtain-stale-110-wrong-digest",
+      "file": "fixtures/cases/obtain-stale-110-wrong-digest.json",
+      "expect": "reject",
+      "class": "stale-archive",
+      "expectedReasons": ["stale_archive", "stale_as_current", "stale_version", "stale_sha", "stale_bytes", "negative_control_110", "product_refuse"]
+    }
+  ],
+  "counts": {
+    "total": 13,
+    "accept": 3,
+    "reject": 10,
+    "seededStaleAsCurrent": 1
+  },
+  "boundary": {
+    "paymentSent": false,
+    "stripeOrX402": false,
+    "neoPublish": false,
+    "liveFetch": false
+  }
+}

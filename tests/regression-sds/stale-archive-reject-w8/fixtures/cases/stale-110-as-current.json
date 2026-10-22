@@ -1,0 +1,37 @@
+{
+  "id": "stale-110-as-current",
+  "surface": "useful-jobs-archive",
+  "class": "stale-archive",
+  "seededStaleAsCurrent": true,
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "stale_version",
+    "stale_sha",
+    "stale_bytes",
+    "negative_control_110",
+    "treat_stale_as_current"
+  ],
+  "defect": "Seeded: W0-B2 negative-control archive 1.1.0 claimed as current 1.4.7.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "verdict": "pass",
+    "pass": true,
+    "claimedCurrent": true,
+    "treatStaleAsCurrent": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs-archive",
+    "version": "1.1.0",
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+    "bytes": 2577606,
+    "rootName": "useful-jobs-1.1.0",
+    "pin": {
+      "version": "1.1.0",
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534",
+      "bytes": 2577606
+    },
+    "message": "acquired current useful-jobs (greenwashed 1.1.0)"
+  }
+}

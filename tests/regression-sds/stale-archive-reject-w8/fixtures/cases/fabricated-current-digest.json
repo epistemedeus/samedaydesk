@@ -1,0 +1,25 @@
+{
+  "id": "fabricated-current-digest",
+  "surface": "useful-jobs-archive",
+  "class": "stale-archive",
+  "expectReject": true,
+  "expectedReasons": [
+    "stale_archive",
+    "stale_as_current",
+    "sha_mismatch",
+    "fabricated_digest"
+  ],
+  "defect": "Fabricated digest claimed as the current 1.4.7 archive.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "claimedCurrent": true,
+    "fabricatedDigest": true,
+    "feature": "useful-jobs",
+    "surface": "useful-jobs-archive",
+    "version": "1.4.7",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "bytes": 5255824,
+    "message": "fresh current archive"
+  }
+}
