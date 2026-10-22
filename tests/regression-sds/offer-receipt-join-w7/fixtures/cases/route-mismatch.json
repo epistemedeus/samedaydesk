@@ -1,0 +1,41 @@
+{
+  "id": "route-mismatch",
+  "kind": "mismatch",
+  "class": "mismatch",
+  "expect": "reject",
+  "httpStatus": 402,
+  "charged": false,
+  "paymentSent": false,
+  "offerFromCatalog": "/extract",
+  "receipt": {
+    "kind": "unpaid_offer",
+    "statusClass": "unpaid",
+    "origin": "https://agents.samedaydesk.com",
+    "resource": "https://agents.samedaydesk.com/read?url=https://example.com",
+    "route": "/read",
+    "httpStatus": 402,
+    "charged": false,
+    "paymentSent": false,
+    "offerReceipt": {
+      "offers": [
+        {
+          "format": "eip712",
+          "acceptIndex": 0,
+          "payload": {
+            "version": 1,
+            "resourceUrl": "https://agents.samedaydesk.com/read?url=https://example.com",
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+            "amount": "5000"
+          }
+        }
+      ]
+    }
+  },
+  "claims": {
+    "independentlySettled": false
+  },
+  "note": "/extract catalog offer must not join a /read offer-receipt even when the atomic amount is also 5000."
+}

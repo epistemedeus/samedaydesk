@@ -1,0 +1,17 @@
+{
+  "note": "Frozen pin of committed fixtures/presence/catalog/x402.json /extract accept. Cold join loads the live committed file, not this copy.",
+  "routeTemplate": "/extract",
+  "resourceUrl": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+  "method": "GET",
+  "x402Version": 2,
+  "scheme": "exact",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "amount": "5000",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "extra": {
+    "name": "USD Coin",
+    "version": "2"
+  },
+  "bazaarExtractDigest": "04c1554d7a4471803f05781245df70cb0ae3dc73b9df78c555c7324c3b1ca60e"
+}
