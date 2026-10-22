@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.cw06.stdin-request.v1",
+  "job": "vendor-budget-impact",
+  "inputs": {
+    "before": {
+      "filename": "budget before.json",
+      "text": "{\"rows\":[{\"field\":\"inference-input\",\"value\":1.2,\"unit\":\"USD/1M-tokens\"},{\"field\":\"regional-egress\",\"value\":0.09}]}\n"
+    },
+    "after": {
+      "filename": "budget after.json",
+      "text": "{\"rows\":[{\"field\":\"inference-input\",\"value\":1.35,\"unit\":\"USD/1M-tokens\"},{\"field\":\"regional-egress\",\"value\":0.09}]}\n"
+    }
+  }
+}
+
