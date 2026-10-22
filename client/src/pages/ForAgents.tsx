@@ -19,6 +19,8 @@ import {
   REUSE_QUICKSTART,
   RECURRING_QUICKSTART,
   BUYER_SETUP_QUICKSTART,
+  USEFUL_JOBS_ENTRY_HEADING,
+  USEFUL_JOBS_PATH,
 } from "../data/machineEntry.mjs";
 import {
   GENTECH_DEFI_RESOLVED_CASE,
@@ -220,7 +222,7 @@ export default function ForAgents() {
         <section className={styles.section} aria-labelledby="useful-jobs-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Offline package · useful jobs</p>
-            <h2 id="useful-jobs-title">Run local useful jobs on files you already hold</h2>
+            <h2 id="useful-jobs-title">{USEFUL_JOBS_ENTRY_HEADING}</h2>
           </div>
           <p className={styles.jobCopy}>
             Archive 1.4.7 contains all ten useful offline jobs: lockfile changes, JSON Schema drift,
@@ -229,8 +231,8 @@ export default function ForAgents() {
             extract. Labeled samples need <code>--example</code> except page-change. Ordinary
             callers supply their own files. No purchase or scheduler authority. Details and
             cold-start commands:{" "}
-            <Link className={styles.inlineLink} to="/for-agents/useful-jobs">
-              /for-agents/useful-jobs
+            <Link className={styles.inlineLink} to={USEFUL_JOBS_PATH}>
+              {USEFUL_JOBS_PATH}
             </Link>
             .
           </p>
