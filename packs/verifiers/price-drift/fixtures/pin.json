@@ -1,0 +1,47 @@
+{
+  "schema": "samedaydesk.price-drift.pin.v1",
+  "id": "sds-live-x402-recorded",
+  "recordedFrom": "committed fixtures/presence/catalog/x402.json and client/public/x402/verified.json",
+  "rewriteAuthorized": false,
+  "purchaseAuthority": false,
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "currency": "USDC",
+  "decimals": 6,
+  "requiredRouteIds": ["extract", "seller-integrity-audit"],
+  "routes": [
+    {
+      "id": "extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "required": true
+    },
+    {
+      "id": "seller-integrity-audit",
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "amount": "0.01",
+      "amountAtomic": "10000",
+      "required": true
+    },
+    {
+      "id": "read",
+      "route": "/read",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "required": false
+    },
+    {
+      "id": "payment-offer-preflight",
+      "route": "/commerce/payment-offer-preflight",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "required": false
+    }
+  ]
+}

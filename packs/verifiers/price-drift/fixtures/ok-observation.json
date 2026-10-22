@@ -1,0 +1,55 @@
+{
+  "schema": "samedaydesk.price-drift.observation.v1",
+  "id": "ok-match",
+  "sourceKind": "committed_catalog",
+  "charged": false,
+  "httpStatus": 402,
+  "purchaseAuthority": false,
+  "rewriteAuthorized": false,
+  "editLivePrices": false,
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "routes": [
+    {
+      "id": "extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    },
+    {
+      "id": "seller-integrity-audit",
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "amount": "0.01",
+      "amountAtomic": "10000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    },
+    {
+      "id": "read",
+      "route": "/read",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    },
+    {
+      "id": "payment-offer-preflight",
+      "route": "/commerce/payment-offer-preflight",
+      "method": "GET",
+      "amount": "0.005",
+      "amountAtomic": "5000",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee"
+    }
+  ]
+}

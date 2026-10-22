@@ -1,0 +1,24 @@
+{
+  "schema": "samedaydesk.price-drift.observation.v1",
+  "id": "float-money",
+  "sourceKind": "committed_catalog",
+  "charged": false,
+  "httpStatus": 402,
+  "purchaseAuthority": false,
+  "routes": [
+    {
+      "id": "extract",
+      "route": "/extract",
+      "method": "GET",
+      "amount": 0.005,
+      "amountAtomic": 5000
+    },
+    {
+      "id": "seller-integrity-audit",
+      "route": "/commerce/seller-integrity-audit",
+      "method": "GET",
+      "amount": "0.01",
+      "amountAtomic": "10000"
+    }
+  ]
+}
