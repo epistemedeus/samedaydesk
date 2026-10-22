@@ -1,4 +1,5 @@
 // Apex A2A card. Skill ids are the apex MCP tool inventory, not a second list.
+import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { MCP_TOOL_NAMES } from "./mcp-tool-inventory.js";
 
 export const APEX_ORIGIN = "https://samedaydesk.com";
@@ -17,7 +18,7 @@ export function apexAgentCard() {
   return {
     protocolVersion: "0.3.0",
     name: "SameDayDesk",
-    description: "Free apex agent tools for AI readiness and agent readiness. Paid machine-commerce tools stay on https://agents.samedaydesk.com/.well-known/agent-card.json. The original-task correspondence interface is a no-spend next action, not an MCP skill and not a payment tool.",
+    description: `Free apex agent tools for AI readiness and agent readiness. ${gatewayAvailability().summary} Paid gateway identity: https://agents.samedaydesk.com/.well-known/agent-card.json. The original-task correspondence interface is a no-spend next action, not an MCP skill and not a payment tool.`,
     url: `${APEX_ORIGIN}/mcp`,
     version: "1.2.0",
     interfaces: [
@@ -31,6 +32,7 @@ export function apexAgentCard() {
         description: "No-spend original-task correspondence descriptor. Not an MCP skill and not a payment tool.",
       },
     ],
+    "x-paid-gateway": gatewayAvailability(),
     skills: MCP_TOOL_NAMES.map((name) => ({
       id: name,
       name,

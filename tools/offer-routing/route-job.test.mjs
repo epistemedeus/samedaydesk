@@ -65,16 +65,17 @@ test("moltjobs rehearsal selects unhosted sample, not live service label", () =>
   assert.match(JSON.stringify(r.selected.limits), /Not a live Neomorphic-operated MoltJobs service/);
 });
 
-test("bounded_html_observation may select paid extract when payment allowed", () => {
+test("bounded_html_observation refuses the paused paid dependency even when payment is allowed", () => {
   const r = routeJob({
     type: "bounded_html_observation",
     jobId: "allow-pay",
     constraints: [],
   });
-  assert.equal(r.ok, true);
-  assert.equal(r.selected.offerId, "sdd.paid_html_extract");
+  assert.equal(r.ok, false);
+  assert.equal(r.selected, null);
+  assert.ok(r.rejected.some((row) => row.reason === "paid_gateway_unavailable"));
   assert.equal(r.paid, false);
-  assert.equal(r.paymentRequired, true);
+  assert.equal(r.paymentRequired, false);
   assert.equal(r.executionAuthorized, false);
 });
 

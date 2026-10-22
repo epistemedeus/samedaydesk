@@ -23,6 +23,7 @@
     },
     {
       "id": "sdd.paid_html_extract",
+      "dependencyAvailability": "https://samedaydesk.com/discovery/paid-gateway.json",
       "product": "samedaydesk",
       "title": "Paid bounded HTML/JSON page extract",
       "artifact": "GET /extract | POST /extract/batch",
