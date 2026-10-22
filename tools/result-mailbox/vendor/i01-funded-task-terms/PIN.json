@@ -1,0 +1,15 @@
+{
+  "schema": "samedaydesk.result-mailbox.upstream-pin.v1",
+  "purpose": "Isolated I01/F17 content-hash hasher. Not a competing earned-work kernel.",
+  "repo": "epistemedeus/neomorphic-io",
+  "ref": "fable/integration-earned-work",
+  "sha": "819fa637ecf5e5177c84efc16fcaa18d57017631",
+  "pr": 54,
+  "files": [
+    "packs/funded-task-terms/src/hash.mjs",
+    "packs/funded-task-terms/src/canonical.mjs",
+    "packs/funded-task-terms/LICENSE"
+  ],
+  "license": "MIT",
+  "note": "Integer termsVersion is rejected by this mailbox. Hasher imported as-is from the I01 integration pin."
+}
