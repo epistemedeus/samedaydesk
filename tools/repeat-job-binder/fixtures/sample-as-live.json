@@ -1,0 +1,32 @@
+{
+  "schema": "s176.next-run-manifest.v1",
+  "family": "pricing-row-unit",
+  "parser": "s134-pricing-table-change",
+  "schedulerDaemon": false,
+  "liveRecurrence": true,
+  "sourceMeta": {
+    "sampleLabel": "SAMPLE",
+    "note": "Labeled SAMPLE fixture forged as live recurrence; must refuse."
+  },
+  "inputs": {
+    "before": "./before.json",
+    "after": "./after.json"
+  },
+  "currentInputs": {
+    "before": {
+      "path": "./before.json",
+      "bytes": 0,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "attribution": "SAMPLE fixture"
+    },
+    "after": {
+      "path": "./after.json",
+      "bytes": 0,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "attribution": "SAMPLE fixture"
+    },
+    "used": null
+  },
+  "paidValueClaim": false,
+  "freeOffline": true
+}

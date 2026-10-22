@@ -1,0 +1,17 @@
+{
+  "name": "samedaydesk-repeat-job-binder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "W4-commerce-03 catalog-facing binder: verified next-run plus changed local inputs, second-run record. Not a scheduler daemon. Payments nonsettling.",
+  "bin": {
+    "repeat-job-binder": "./bin/bind.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "bind": "node bin/bind.mjs"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "s176.next-run-manifest.v1",
+  "family": "pricing-row-unit",
+  "parser": "s134-pricing-table-change",
+  "schedulerDaemon": false,
+  "termsVersion": 1,
+  "sourceMeta": {
+    "note": "Forged integer termsVersion (original F01 key). I01 refuses this as a public claim."
+  },
+  "inputs": {},
+  "currentInputs": {},
+  "paidValueClaim": false,
+  "freeOffline": true
+}
