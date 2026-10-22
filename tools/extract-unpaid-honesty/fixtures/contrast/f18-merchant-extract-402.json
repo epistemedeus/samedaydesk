@@ -1,0 +1,28 @@
+{
+  "schema": "samedaydesk.extract-unpaid-honesty.contrast.v1",
+  "class": "fixture",
+  "notLiveGet": true,
+  "notExternalAcceptance": true,
+  "source": {
+    "repo": "epistemedeus/pilot",
+    "ref": "fable/f18-live-journeys",
+    "sha": "5e9fd3fc5e13989ef2cd45cf08f01cfe60c296cb",
+    "path": "overview/research/cursor-wave-20260911/live-journeys/fixtures/merchant-extract-402.json"
+  },
+  "body": {
+    "x402Version": 2,
+    "error": "Payment required",
+    "resource": {
+      "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com"
+    },
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000"
+      }
+    ],
+    "hasBazaar": true,
+    "hasResource": true
+  }
+}
