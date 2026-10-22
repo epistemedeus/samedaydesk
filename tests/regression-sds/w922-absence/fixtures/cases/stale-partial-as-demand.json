@@ -1,0 +1,29 @@
+{
+  "id": "stale-partial-as-demand",
+  "surface": "observatory",
+  "class": "absence-as-demand",
+  "expectReject": true,
+  "cite": "server/lib/observatory/contract.js",
+  "expectedReasons": [
+    "absence_as_demand",
+    "stale_partial_as_demand"
+  ],
+  "defect": "Stale/partial availability invented as present paid demand.",
+  "output": {
+    "ok": true,
+    "status": "pass",
+    "surface": "observatory",
+    "availability": "stale",
+    "stale": true,
+    "stalePartialAsDemand": true,
+    "demand": true,
+    "paidDemand": true,
+    "demandSignal": "present",
+    "demandCount": 3,
+    "paidActivity": {
+      "available": false,
+      "reason": "stale provider timestamp is not a paid-demand population"
+    },
+    "message": "stale/partial snapshot invented as demand"
+  }
+}
