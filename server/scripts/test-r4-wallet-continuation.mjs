@@ -103,8 +103,9 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       // Select the complete exact authority graph, including retained-outcome,
       // rather than combining old server.mjs with the repaired current reader.
       rmSync(candidate,{recursive:true});mkdirSync(candidate);
-      const archive=execFileSync('git',['archive','79fbd37d31aabdc790248443c576a2f0017e55f0'],{cwd:root,maxBuffer:64*1024*1024});
-      execFileSync('tar',['-x','-C',candidate],{input:archive});
+      const archive=join(scratch,'exact-sds79.tar');
+      execFileSync('git',['archive','79fbd37d31aabdc790248443c576a2f0017e55f0','--output',archive],{cwd:root});
+      execFileSync('tar',['-xf',archive,'-C',candidate]);rmSync(archive);
       for(const name of ['vendor/hosted-wallet-market/src/server.mjs','vendor/hosted-wallet-market/src/retained-outcome.mjs',
         'vendor/hosted-wallet-market/src/machine-market.mjs','vendor/hosted-wallet-market/SOURCE.json','server/foundry/activation/private-control-pin.json']) {
         const expected=execFileSync('git',['show','79fbd37d31aabdc790248443c576a2f0017e55f0:'+name],{cwd:root});
