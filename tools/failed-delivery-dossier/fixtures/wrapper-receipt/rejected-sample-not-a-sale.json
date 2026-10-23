@@ -1,0 +1,34 @@
+{
+  "ok": false,
+  "refused": true,
+  "jobId": "vendor-budget-impact",
+  "code": "sample-not-a-sale",
+  "error": "SAMPLE/--example inputs produce labeled sample output and cannot be treated as a paid sale",
+  "detail": {
+    "wouldSettleIfGuardOmitted": false
+  },
+  "fundingState": "rejected",
+  "sold": false,
+  "sample": true,
+  "sampleReasons": [
+    "example-flag"
+  ],
+  "purchaseAuthority": false,
+  "liveSettleAttempted": false,
+  "liveSettleAllowed": false,
+  "outputs": [],
+  "receipt": {
+    "schema": "samedaydesk.paid-useful-jobs.receipt.v1",
+    "jobId": "vendor-budget-impact",
+    "fundingState": "rejected",
+    "sold": false,
+    "sample": true,
+    "sampleReasons": [
+      "example-flag"
+    ],
+    "purchaseAuthority": false,
+    "liveSettlement": "out-of-scope",
+    "code": "sample-not-a-sale",
+    "error": "SAMPLE/--example inputs produce labeled sample output and cannot be treated as a paid sale"
+  }
+}

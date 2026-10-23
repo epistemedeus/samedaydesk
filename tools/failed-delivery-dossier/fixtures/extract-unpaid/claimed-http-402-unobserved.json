@@ -1,0 +1,7 @@
+{
+  "httpStatus": 402,
+  "paid": false,
+  "sold": false,
+  "success": false,
+  "note": "Claimed httpStatus without a local-runtime or external capture. Must pack as expected, never observed."
+}
