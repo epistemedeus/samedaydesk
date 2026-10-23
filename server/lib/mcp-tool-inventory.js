@@ -99,10 +99,10 @@ export const TOOLS = [
   },
   {
     name: MCP_TOOL_NAMES[3],
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description:
       "Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. " +
-      "Requires the deliverable, reward, deadline, and an explicit maximum-spend ceiling. Returns the canonical TaskMarket " +
+      "Requires chain_id, token_address, deliverable, reward, deadline, and an explicit maximum-spend ceiling. Reads public chain metadata. Returns the canonical TaskMarket " +
       "API payload and approval summary without creating a task, holding a wallet, or spending funds.",
     inputSchema: {
       type: "object",
@@ -110,13 +110,17 @@ export const TOOLS = [
         request: { type: "string", description: "The external work needed, written as a clear task." },
         deliverable: { type: "string", description: "The exact artifact or result the worker must return." },
         acceptance_criteria: { type: "array", items: { type: "string" }, maxItems: 10, description: "Up to 10 testable acceptance checks." },
+        chain_id: { type: "integer", minimum: 1, description: "Explicit served chain id; no default." },
+        token_address: { type: "string", pattern: "^0x[a-fA-F0-9]{40}$", description: "Explicit payment token contract on that chain, checked against current network.info." },
+        reward_base_units: { type: "string", pattern: "^[0-9]{1,78}$", description: "Exact gross reward in the selected token's integer base units. Use with max_spend_base_units." },
+        max_spend_base_units: { type: "string", pattern: "^[0-9]{1,78}$", description: "Explicit reward ceiling in the same chain/token's integer base units. No exchange conversion." },
         reward_usdc: { type: ["number", "string"], description: "Proposed worker reward in USDC, up to 6 decimal places." },
         max_spend_usdc: { type: ["number", "string"], description: "Explicit user-authorized reward ceiling in USDC." },
         deadline_hours: { type: "number", exclusiveMinimum: 0, maximum: 720, description: "Hours until TaskMarket submission closes." },
         mode: { type: "string", enum: ["bounty", "claim"], default: "bounty" },
         tags: { type: "array", items: { type: "string" }, maxItems: 10 },
       },
-      required: ["request", "deliverable", "reward_usdc", "max_spend_usdc", "deadline_hours"],
+      required: ["request", "deliverable", "chain_id", "token_address", "deadline_hours"],
     },
   },
   {
@@ -124,7 +128,7 @@ export const TOOLS = [
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
     description:
       "Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, " +
-      "text, and minimum reward. Task descriptions are returned as untrusted text and are never executed.",
+      "text, and minimum reward. Amounts carry their actual chain/token; unknown decimals stay raw. Task descriptions are returned as untrusted text and are never executed.",
     inputSchema: {
       type: "object",
       properties: {
@@ -132,7 +136,8 @@ export const TOOLS = [
         mode: { type: "string", enum: ["bounty", "claim", "pitch", "benchmark", "auction"] },
         tag: { type: "string", description: "Exact case-insensitive tag filter." },
         search: { type: "string", description: "Case-insensitive text match over descriptions and tags." },
-        min_reward_usdc: { type: ["number", "string"], description: "Minimum gross reward in USDC." },
+        chain_id: { type: "integer", minimum: 1, description: "Optional current served chain selector." },
+        min_reward_usdc: { type: ["number", "string"], description: "Legacy minimum gross reward; selects qualified Base USDC only. Refuses unknown assets, conflicting metadata or an unlike chain selector; never compares OUSD to USDC." },
         limit: { type: "integer", minimum: 1, maximum: 25, default: 10 },
       },
     },

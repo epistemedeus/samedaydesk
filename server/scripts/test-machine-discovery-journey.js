@@ -10,7 +10,7 @@ import test from "node:test";
 import { classifyRetrieval } from "../lib/agent-readiness/retrieval.js";
 import { runChecks } from "../lib/agent-readiness/checks.js";
 import { publicDeploymentBody } from "../lib/public-readiness-mount.js";
-import { buildTaskMarketDelegationPlan } from "../lib/taskmarket.js";
+import { withNetworkInfo } from "./helpers/taskmarket-fixtures.js";
 import { NOT_FOUND_SHELL, ROUTE_SHELL_DIR, shellFileName } from "../lib/spa-route-shells.js";
 import { pulseSnapshot } from "../lib/pulse.js";
 import { createSdsApp } from "../app.js";
@@ -18,6 +18,7 @@ import {
   assertMachineDeclarationContract,
   machineDeclarationProblems,
   planToolArguments,
+  planToolResult,
 } from "../lib/apex-declarations.js";
 import { TOOLS } from "../routes/mcp.js";
 
@@ -82,6 +83,9 @@ function problemsFor(expect, response, openapi) {
 }
 
 test("discovery documents are acquired over HTTP and a free tool returns a useful plan", async (t) => {
+  const savedFetch = globalThis.fetch;
+  globalThis.fetch = withNetworkInfo(savedFetch);
+  t.after(() => { globalThis.fetch = savedFetch; });
   const app = createSdsApp();
   const { server, port } = await listen(app);
   t.after(() => new Promise((resolve) => server.close(resolve)));
@@ -160,13 +164,13 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   const changed = await request(port, { method: "POST", path: "/mcp", headers: { "content-type": "application/json" }, body: changedBody });
   assert.equal(changed.status, 200);
   const structured = changed.json?.result?.structuredContent;
-  const expectedPlan = buildTaskMarketDelegationPlan(changedArguments);
+  const expectedPlan = planToolResult(changedArguments);
   assert.equal(structured.plan_id, expectedPlan.plan_id);
   assert.equal(structured.request.executed, false);
   assert.equal(structured.official_cli.executed, false);
   assert.equal(structured.authorization.state, "approval_required");
   assert.match(structured.request.body.description, /CHANGED-INPUT-discovery-replay-1004/);
-  assert.notEqual(structured.plan_id, buildTaskMarketDelegationPlan(planToolArguments()).plan_id);
+  assert.notEqual(structured.plan_id, planToolResult(planToolArguments()).plan_id);
   acquisition.changedPlan = { plan_id: structured.plan_id, executed: structured.request.executed };
 
   const servedNegatives = new Map();

@@ -30,7 +30,7 @@ import {
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
 import { classifyPulseFlushError, flushBackoffMs } from "./pulse-store/flush-error.js";
 import { mcpAdmissionForRequest } from "./mcp-admission.js";
-import { MCP_OUTCOME_KEYS, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
+import { MCP_OUTCOME_KEYS, MCP_BROWSE_EVENTS, browseCoverage, classifyBrowseResult, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
 export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
@@ -806,6 +806,7 @@ function recordMcpEvent(source, tool, event) {
   const key = `${source}|${tool}|${event}`;
   if (!mcpOutcomeKeys.has(key)) return;
   const observation = { observedFrom: new Date().toISOString(), counts: { [key]: 1 } };
+  if (MCP_BROWSE_EVENTS.includes(event)) observation.browseObservedFrom = observation.observedFrom;
   pendingDelta.mcpOutcomes = mergeMcpOutcomes(pendingDelta.mcpOutcomes, observation);
 }
 
@@ -820,6 +821,7 @@ export function recordMcpProduced(req, message, result) {
     if (result?.error) recordMcpEvent(observer.source, tool, "protocol_error");
     else if (message.observation?.methodClass === "tools/call" && result?.result) {
       recordMcpEvent(observer.source, tool, result.result.isError === true ? "tool_refusal" : "normal_result");
+      if (tool === "browse_taskmarket_tasks" && result.result.isError !== true) recordMcpEvent(observer.source, tool, classifyBrowseResult(result.result));
     }
     if (message.kind === "notification") recordMcpEvent(observer.source, tool, "notification_completed");
   } catch { /* observation must not change execution */ }
@@ -1025,6 +1027,7 @@ export function pulseSnapshot() {
         callerAcceptance: "unobserved",
         revenue: "unobserved",
         keyFormat: "callerDeclaredSource|boundedTool|serverEvent",
+        browseResults: browseCoverage(counters.mcpOutcomes),
         meaning: "Source is static, optional, caller-declared and spoofable, never identity or verified acquisition. " +
           "http_request counts each POST; tool_attempt counts admitted tools/call entries with structurally valid params, including notifications and unknown names. " +
           "normal_result and tool_refusal count handler-produced results (including suppressed notification results); protocol_error counts generated JSON-RPC errors. " +

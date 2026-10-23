@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { gatewayGuideBlock, readGatewayState } from "../lib/paid-gateway-availability.js";
 import { spawn } from "node:child_process";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
@@ -207,8 +208,12 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
 test("apex machine documentation separates free and paid MCP and keeps homepage SKUs", () => {
   assert.match(LLMS_TXT, /Free apex MCP readiness surface/);
   assert.match(LLMS_TXT, /https:\/\/agents\.samedaydesk\.com\/mcp/);
-  assert.match(LLMS_TXT, /GET https:\/\/agents\.samedaydesk\.com\/extract\?url=https:\/\/example\.com/);
-  assert.match(LLMS_TXT, /POST https:\/\/agents\.samedaydesk\.com\/extract\/batch/);
+  const gateway = readGatewayState();
+  assert.ok(LLMS_TXT.includes(gatewayGuideBlock(gateway)), "guide must use the received dependency state");
+  if (gateway.state !== "available") {
+    assert.doesNotMatch(LLMS_TXT, /Practical paid job:/);
+    assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/discovery\/useful-jobs\.json/);
+  }
   assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/for-agents/);
   assert.match(LLMS_TXT, /offline comparison/);
   assert.match(LLMS_TXT, /user-selected unverified evidence/);

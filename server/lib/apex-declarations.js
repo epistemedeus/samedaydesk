@@ -10,6 +10,7 @@ import {
 } from "./agent-readiness/rate-limit.js";
 import { publicDeploymentBody } from "./public-readiness-mount.js";
 import { buildTaskMarketDelegationPlan } from "./taskmarket.js";
+import { parseNetworkInfo } from "./taskmarket-networks.js";
 import { SERVER_INFO, SUPPORTED_PROTOCOL_VERSIONS, TOOLS } from "../routes/mcp.js";
 import { MCP_BATCH_MIN, MCP_BATCH_MAX, MCP_BATCH_PROTOCOL_VERSIONS, MCP_BODY_LIMIT, rpcMessageSchema, rpcIdSchema, rpcBatchSchema } from "./mcp-admission.js";
 
@@ -54,7 +55,7 @@ const TOOL_AUTHORITY = Object.freeze({
   plan_taskmarket_delegation: {
     tier: "free",
     executesPayment: false,
-    network: "none",
+    network: "taskmarket-read",
     note: "Returns an approval plan. request.executed and official_cli.executed stay false.",
   },
   browse_taskmarket_tasks: {
@@ -77,6 +78,8 @@ const TOOL_AUTHORITY = Object.freeze({
 });
 
 const PLAN_ARGUMENTS = Object.freeze({
+  chain_id: 8453,
+  token_address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   request: "Compare the public status pages and list sections that changed",
   deliverable: "A markdown list of changed sections with URLs",
   acceptance_criteria: ["Each item names the section and the URL"],
@@ -94,7 +97,9 @@ export function planToolArguments() {
 }
 
 export function planToolResult(args = PLAN_ARGUMENTS, now = PLAN_EXAMPLE_NOW) {
-  return buildTaskMarketDelegationPlan(args, now);
+  // Illustrative declaration only, never runtime metadata or a creation default.
+  const metadata = parseNetworkInfo({ result: { data: { chains: [{ chainId: 8453, networkName: "Base", tokenAddress: PLAN_ARGUMENTS.token_address, tokenSymbol: "USDC", paymentProtocol: "x402", paymentMethod: "eip3009" }] } } }, PLAN_EXAMPLE_NOW.toISOString());
+  return buildTaskMarketDelegationPlan(args, now, metadata);
 }
 
 function jsonRpc(id, method, params) {

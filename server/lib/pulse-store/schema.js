@@ -316,6 +316,7 @@ export function migrationDigest(raw) {
 }
 
 const V2_SNAPSHOT_ALLOWED_KEYS = Object.freeze([
+  "mcpOutcomes",
   "startedAt",
   "classificationSchemaVersion",
   "legacyUncertainty",
@@ -361,6 +362,7 @@ export function deltaFromV2Snapshot(snapshot) {
   }
   validateLegacyFingerprintArray(snapshot.uniqueHumans);
   const delta = emptyDelta();
+  if (snapshot.mcpOutcomes != null) delta.mcpOutcomes = validateMcpOutcomes(snapshot.mcpOutcomes);
   for (const field of [
     "total",
     "humans",
