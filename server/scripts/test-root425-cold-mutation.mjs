@@ -79,6 +79,8 @@ test('ROOT425 committed cold mutations, real createSdsApp, PostgreSQL and verifi
     // Choose the nondefault canonical schema before first wallet installation, without changing any installed binding.
     await db.query('ALTER SCHEMA cj227_earned_work RENAME TO root425_selected_work');
     await db.query('SET search_path TO root425_selected_work');env.CONTRIBUTOR_JOURNEY_MODE='disabled';
+    // Refresh the schema-bound @010 function after the disposable schema rename.
+    await (await import('../../vendor/hosted-wallet-market/src/migrate.mjs')).applyAdditiveSchema(db,{earnedSchema});
     const {createSdsApp}=await import('../app.js');
     const doc={schema:'pilot.machine-market.capability.v1',profile:'machine-market',origin,tenant,sourceSha256:installedSourceSha256(),
       hostSha256:hostSourceSha256(sds),discovery:'qualified-source',money:'unfunded',networkSource:versionedSource('eip155:8453')};

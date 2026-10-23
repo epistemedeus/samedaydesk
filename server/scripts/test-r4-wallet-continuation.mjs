@@ -72,7 +72,7 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
   const scratch=mkdtempSync(join(tmpdir(),'root4433-wallet-')),candidate=join(scratch,'candidate');
   let cluster,db,rpc,child,memorySampler,peakOwnedRssKiB=0;
   const rpcMethods=[],contractAddresses=new Set(),receipts=new Map(),blocks=new Map();
-  let rpcChain='0x2105',rpcDelayMs=0;
+  let rpcChain='0x2105',rpcDelayMs=0,contractCode='0x6000';
   let messageWaiters=[];
   let childError='';
   const key=()=>randomBytes(16).toString('hex');
@@ -98,13 +98,29 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
     for(const name of Object.keys(pin.files)) {
       const target=join(candidate,name);mkdirSync(resolve(target,'..'),{recursive:true});cpSync(join(root,name),target);
     }
-    if(process.env.R4_WALLET_BASELINE==='1' || process.env.R4_WALLET_HISTORY_BASELINE==='1') {
-      writeFileSync(join(candidate,'vendor/hosted-wallet-market/src/server.mjs'),execFileSync('git',['show','79fbd37d31aabdc790248443c576a2f0017e55f0:vendor/hosted-wallet-market/src/server.mjs'],{cwd:root}));
-      rmSync(join(candidate,'vendor/hosted-wallet-market/src/wallet-continuation.mjs'),{force:true});
+    const historical=process.env.R4_WALLET_BASELINE==='1'||process.env.R4_WALLET_HISTORY_BASELINE==='1';
+    if(historical) {
+      // Select the complete exact authority graph, including retained-outcome,
+      // rather than combining old server.mjs with the repaired current reader.
+      rmSync(candidate,{recursive:true});mkdirSync(candidate);
+      const archive=execFileSync('git',['archive','79fbd37d31aabdc790248443c576a2f0017e55f0'],{cwd:root,maxBuffer:64*1024*1024});
+      execFileSync('tar',['-x','-C',candidate],{input:archive});
+      for(const name of ['vendor/hosted-wallet-market/src/server.mjs','vendor/hosted-wallet-market/src/retained-outcome.mjs',
+        'vendor/hosted-wallet-market/src/machine-market.mjs','vendor/hosted-wallet-market/SOURCE.json','server/foundry/activation/private-control-pin.json']) {
+        const expected=execFileSync('git',['show','79fbd37d31aabdc790248443c576a2f0017e55f0:'+name],{cwd:root});
+        assert.deepEqual(readFileSync(join(candidate,name)),expected);
+        t.diagnostic(JSON.stringify({historicalAuthority:name,sha256:hash(expected)}));
+      }
     }
     symlinkSync(join(root,'node_modules'),join(candidate,'node_modules'),'dir');
-    const refreshed=JSON.parse(execFileSync(process.execPath,['server/scripts/refresh-installed-receiving-source.mjs'],{cwd:candidate,encoding:'utf8'}));
-    assert.equal(refreshed.qualified,false);
+    if(!historical && process.env.R4_WALLET_DIRECT_SOURCE!=='1') {
+      const refreshed=JSON.parse(execFileSync(process.execPath,['server/scripts/refresh-installed-receiving-source.mjs'],{cwd:candidate,encoding:'utf8'}));
+      assert.equal(refreshed.qualified,false);
+    }
+    // Direct receiving copies the composed canonical files verbatim and does
+    // not manufacture a scratch pin before the actual HTTP/PG mount.
+    if(process.env.R4_WALLET_DIRECT_SOURCE==='1')for(const name of ['vendor/hosted-wallet-market/SOURCE.json','server/foundry/activation/private-control-pin.json'])
+      assert.deepEqual(readFileSync(join(candidate,name)),readFileSync(join(root,name)));
     if(process.env.R4_WALLET_REGRESSION==='1') {
       const args=['--test','--test-concurrency=1','vendor/hosted-wallet-market/test/account-delivery.test.mjs',
         'vendor/hosted-wallet-market/test/machine-profile-receiving.test.mjs'];
@@ -156,7 +172,7 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       assert.ok(['eth_chainId','eth_blockNumber','eth_call','eth_getCode','eth_getTransactionReceipt','eth_getBlockByNumber','eth_getTransactionByHash'].includes(input.method),'read-only RPC');
       if(input.method==='eth_getCode' && rpcDelayMs)await new Promise(r=>setTimeout(r,rpcDelayMs));
       const result=input.method==='eth_chainId'?rpcChain:input.method==='eth_call'?'0x'+(6n).toString(16).padStart(64,'0'):
-        input.method==='eth_getCode'?(contractAddresses.has(input.params[0])?'0x6000':'0x'):
+        input.method==='eth_getCode'?(contractAddresses.has(input.params[0])?contractCode:'0x'):
         input.method==='eth_getTransactionReceipt'?receipts.get(input.params[0])??null:
         input.method==='eth_getBlockByNumber'?blocks.get(input.params[0])??null:
         input.method==='eth_getTransactionByHash'?((r)=>r?{hash:r.transactionHash,blockHash:r.blockHash,blockNumber:r.blockNumber,from:r.from}:null)(receipts.get(input.params[0])):'0x100';
@@ -173,7 +189,7 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
     const {versionedSource}=await importAt(candidate,'vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/index.js');
     const doc={schema:'pilot.machine-market.capability.v1',profile:'machine-market',origin,tenant,sourceSha256:installedSourceSha256(),
       hostSha256:hostSourceSha256(candidate),discovery:'qualified-source',money:'unfunded',networkSource:versionedSource('eip155:8453')};
-    t.diagnostic(JSON.stringify({sourceKind:process.env.R4_WALLET_BASELINE==='1'||process.env.R4_WALLET_HISTORY_BASELINE==='1'?'pinned-original':'job-local-candidate',
+    t.diagnostic(JSON.stringify({sourceKind:process.env.R4_WALLET_BASELINE==='1'||process.env.R4_WALLET_HISTORY_BASELINE==='1'?'pinned-original':(process.env.R4_WALLET_DIRECT_SOURCE==='1'?'composed-canonical-direct':'job-local-candidate'),
       candidateSourceSha256:doc.sourceSha256,candidateHostSha256:doc.hostSha256,qualified:false,installed:false}));
     async function boot(profile='source-bound:'+canonicalMachineProfile(doc)) {
       childError='';child=fork(new URL(import.meta.url),[],{execArgv:['--max-old-space-size=384'],
@@ -198,11 +214,12 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
     });
     const auth=(a,id=key())=>({origin,cookie:a.cookie,'x-cj-csrf':a.csrf,'idempotency-key':id});
     async function signup(role='contributor') {
-      const response=await ask('/v1/account/signup',{body:{password:randomBytes(24).toString('hex'),displayName:'Disposable Receiver',role},
+      const password=randomBytes(24).toString('hex');
+      const response=await ask('/v1/account/signup',{body:{password,displayName:'Disposable Receiver',role},
         headers:{origin,'idempotency-key':key(),'x-account-operation-proof':randomBytes(32).toString('base64url')}});
       assert.equal(response.status,200,JSON.stringify(response.body));
       return {id:response.body.value.account.accountId,cookie:response.headers['set-cookie'][0].split(';')[0],
-        csrf:response.headers['x-cj-csrf'],recoveryCode:response.body.value.recoveryCode};
+        csrf:response.headers['x-cj-csrf'],recoveryCode:response.body.value.recoveryCode,password};
     }
     const old=privateKeyToAccount('0x'+randomBytes(32).toString('hex'));
     const replacement=privateKeyToAccount('0x'+randomBytes(32).toString('hex'));
@@ -211,7 +228,12 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
     // Receive the existing legacy-issued account contract as well as native
     // machine sessions below. They intentionally retain their original hashes.
     await boot('');
-    const owner=await signup(),foreign=await signup();
+    const foreign=await signup();
+    // Keep a real legacy-issued requester session, while the history-owning
+    // native account is created by its actual issuer before any work exists.
+    let owner=historical?await signup():null;
+    await stop();await boot();
+    if(!owner)owner=await signup();
     assert.equal((await ask('/v1/wallet/bind',{body:{address:address(old)},headers:auth(owner)})).status,200);
     await stop();await boot();
     await t.test('baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration',async()=>{
@@ -251,10 +273,11 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
     const oldProof=await control(owner,old);
     let preserved,paidReview,owedReview,owedPayouts,history,machineQuote,requester;
     async function snapshot() {
-      const tables=['earned_work_obligations','earned_work_terms','earned_work_submissions','earned_work_contributor_tokens','journey_account_kernel_bindings',
+      const tables=['earned_work_tasks','earned_work_reservations','earned_work_verdicts','earned_work_obligations','earned_work_terms','earned_work_submissions','earned_work_contributor_tokens','journey_account_kernel_bindings',
         'hosted_wallet_market.quotes','hosted_wallet_market.funding_intents','hosted_wallet_market.grants','hosted_wallet_market.captures',
         'hosted_wallet_market.native_debt_dispositions','hosted_wallet_market.consumer_enrollment','ae14_market_quotes','ae14_market_funding'];
       const rows={};for(const table of tables)rows[table]=(await db.query(`SELECT to_jsonb(t) value FROM ${table} t ORDER BY to_jsonb(t)::text`)).rows;
+      rows.originalUncertainOperation=(await db.query("SELECT to_jsonb(t) value FROM earned_work_idempotency t WHERE key='r4433-uncertain-old' ORDER BY to_jsonb(t)::text")).rows;
       return rows;
     }
     await t.test('existing machine quote binds its original wallet, control epoch and 5% gross terms',async()=>{
@@ -348,19 +371,76 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       preserved=await snapshot();
     });
     assert.ok(preserved,'old-entitlement fixture must be ready');
-    await t.test('receive pre-existing native session retained-reader hash mismatch without changing its contract',async()=>{
-      // The machine session uses SHA256(token), while delivery uses SHA256(pair).
-      // The current retained reader compares those unlike hashes. Record its
-      // actual refusal; ROOT4433 does not own retained-outcome.mjs.
-      const native=await signup();
+    const retainedRead=(account,item=history.owed)=>ask('/v1/review?taskId='+item.taskId+'&reservationId='+item.reservationId,{headers:auth(account)});
+    const assertRetained=async()=>{
+      assert.deepEqual((await retainedRead(owner,history.paid)).body,paidReview.body);
+      assert.deepEqual((await retainedRead(owner,history.owed)).body,owedReview.body);
+      assert.deepEqual(await snapshot(),preserved);
+    };
+    await t.test(historical?'exact SDS79 native hash mismatch remains a historical negative':'native current session reads the SAME existing account membership, accepted bytes and paid/owed dispositions',async()=>{
+      const previousCookie=owner.cookie;
+      let native=owner;
+      if(historical)native=await signup();
+      else {
+        const login=await ask('/v1/account/login',{body:{accountId:owner.id,password:owner.password},
+          headers:{origin,'idempotency-key':key(),'x-account-operation-proof':randomBytes(32).toString('base64url')}});
+        assert.equal(login.status,200,JSON.stringify(login.body));assert.equal(login.body.value.account.accountId,owner.id);
+        owner.cookie=login.headers['set-cookie'][0].split(';')[0];owner.csrf=login.headers['x-cj-csrf'];
+      }
       const nativeSession=await db.query(`SELECT s.token_hash=d.cookie_hash AS hashes_equal,d.cookie_hash=$2 AS delivery_matches_pair
         FROM journey_account_sessions s JOIN hosted_wallet_market.session_delivery d ON d.account_id=s.account_id
-        WHERE s.account_id=$1 AND s.revoked_at IS NULL`,[native.id,hash(native.cookie)]);
-      assert.equal(nativeSession.rows[0].hashes_equal,false);assert.equal(nativeSession.rows[0].delivery_matches_pair,true);
-      const refused=await ask('/v1/review?taskId='+history.owed.taskId+'&reservationId='+history.owed.reservationId,{headers:auth(native)});
-      assert.equal(refused.status,401);assert.equal(refused.body.code,'unauthenticated');
-      // Authentication runs before membership. No native grant was necessary.
+        WHERE s.account_id=$1 AND s.token_hash=$3`,[native.id,hash(native.cookie),hash(native.cookie.split('=')[1])]);
+      assert.equal(nativeSession.rows.length,1);assert.equal(nativeSession.rows[0].hashes_equal,false);
+      assert.equal(nativeSession.rows[0].delivery_matches_pair,true);
+      if(historical) {
+        const refused=await retainedRead(native);assert.equal(refused.status,401);assert.equal(refused.body.code,'unauthenticated');
+      } else {
+        await assertRetained();
+        assert.equal((await retainedRead({...owner,cookie:previousCookie})).status,401);
+        // This independently legacy-issued account is the original requester
+        // in these same terms. Its existing membership is never reassigned.
+        for(const item of [history.paid,history.owed]) {
+          const read=await retainedRead(foreign,item);assert.equal(read.status,200);
+          assert.equal(read.body.value.entitled.artifact.body,item.bytes.toString());
+          assert.equal(read.body.value.entitled.disposition.payable,item===history.owed);
+        }
+      }
       assert.deepEqual(await snapshot(),preserved);
+    });
+    if(!historical)await t.test('native retained reads refuse foreign or absent membership, wrong/double/expired/revoked cookie and stale source without details',async()=>{
+      const outsider=await signup();
+      const secretless=response=>{
+        assert.notEqual(response.status,200);
+        const body=JSON.stringify(response.body);
+        for(const item of [history.paid,history.owed]) {
+          assert.ok(!body.includes(item.bytes.toString()));assert.ok(!body.includes(item.obligationId));
+        }
+        assert.ok(!body.includes('amountAtomic'));assert.ok(!body.includes('payoutDestination'));
+      };
+      const absent=await retainedRead(outsider);assert.equal(absent.status,404);secretless(absent);
+      const grant=await db.query('DELETE FROM hosted_wallet_market.grants WHERE account_id=$1 AND task_id=$2 RETURNING *',[owner.id,history.owed.taskId]);
+      try {const refused=await retainedRead(owner);assert.equal(refused.status,404);secretless(refused);}
+      finally {const row=grant.rows[0];await db.query('INSERT INTO hosted_wallet_market.grants(account_id,task_id,token_id,public_id,created_at) VALUES($1,$2,$3,$4,$5)',[row.account_id,row.task_id,row.token_id,row.public_id,row.created_at]);}
+      for(const cookie of ['',owner.cookie+'wrong',owner.cookie+'; '+owner.cookie]) {
+        const refused=await retainedRead({...owner,cookie});assert.equal(refused.status,401);secretless(refused);
+      }
+      const session=(await db.query('SELECT * FROM journey_account_sessions WHERE token_hash=$1',[hash(owner.cookie.split('=')[1])])).rows[0];
+      let clock=waitMessage(m=>m.clockSet);child.send({clockOffset:session.expires_at.getTime()-Date.now()+1000});await clock;
+      try {const refused=await retainedRead(owner);assert.equal(refused.status,401);secretless(refused);}
+      finally {clock=waitMessage(m=>m.clockSet);child.send({clockOffset:0});await clock;}
+      await db.query('UPDATE journey_account_sessions SET revoked_at=$2 WHERE id=$1',[session.id,new Date()]);
+      try {const refused=await retainedRead(owner);assert.equal(refused.status,401);secretless(refused);}
+      finally {await db.query('UPDATE journey_account_sessions SET revoked_at=$2 WHERE id=$1',[session.id,session.revoked_at]);}
+      const member=join(candidate,'vendor/hosted-wallet-market/src/retained-outcome.mjs'),bytes=readFileSync(member);
+      writeFileSync(member,Buffer.concat([bytes,Buffer.from('\n// disposable stale reader\n')]));
+      try {secretless(await retainedRead(owner,history.paid));}
+      finally {writeFileSync(member,bytes);}
+      await stop();options.tenant='root4550-foreign';
+      try {
+        await boot('source-bound:'+canonicalMachineProfile({...doc,tenant:options.tenant}));
+        secretless(await retainedRead(owner,history.paid));
+      } finally {await stop();options.tenant=tenant;await boot();}
+      await assertRetained();
     });
     if(process.env.R4_WALLET_HISTORY_BASELINE==='1')return;
 
@@ -398,6 +478,14 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
         assert.equal((await ask('/v1/wallet/continuation/challenge',{body:{address:address(replacement)},headers:auth(owner)})).body.code,'contract_wallet_unsupported');
         contractAddresses.delete(target);
       }
+      contractCode='0xef0100'+'33'.repeat(20);
+      try {
+        for(const target of [address(old),address(replacement)]) {
+          contractAddresses.add(target);
+          try {assert.equal((await ask('/v1/wallet/continuation/challenge',{body:{address:address(replacement)},headers:auth(owner)})).body.code,'contract_wallet_unsupported');}
+          finally {contractAddresses.delete(target);}
+        }
+      } finally {contractCode='0x6000';}
       const issued=await challenge(owner,replacement),body=await proof(issued,old,replacement);
       for(const target of [address(old),address(replacement)]) {
         contractAddresses.add(target);
@@ -448,7 +536,7 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       assert.deepEqual(await snapshot(),preserved);
       assert.equal((await market(owner,'walletProve',oldProof)).body.code,'wallet_challenge_stale');
       assert.equal((await market(owner,'walletChallenge',{address:address(old)})).body.code,'wallet_migration_requires_existing_authority');
-      await control(owner,replacement);
+      await control(owner,replacement);await assertRetained();
       const read=await readback(owner,firstKey);assert.deepEqual(read.body.value.response,firstCommit.body.value);
       assert.deepEqual((await commit(owner,firstBody,firstKey)).body.value,firstCommit.body.value);
       assert.equal((await commit(owner,{...firstBody,newSignature:firstBody.oldSignature},firstKey)).body.code,'immutable_operation_input_changed');
@@ -535,6 +623,17 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       assert.deepEqual((await commit(owner,lostOperation.body,lostOperation.operationKey)).body.value,lostOperation.result);
       assert.deepEqual(await snapshot(),preserved);
     });
+    await t.test('native recovery on the original account preserves membership, old artifact bytes and original operation readback',async()=>{
+      const previous={...owner},before=await wallet(owner);
+      const recovered=await ask('/v1/account/recover',{body:{accountId:owner.id,recoveryCode:owner.recoveryCode,newPassword:randomBytes(24).toString('hex')},
+        headers:{origin,'idempotency-key':key(),'x-account-operation-proof':randomBytes(32).toString('base64url')}});
+      assert.equal(recovered.status,200,JSON.stringify(recovered.body));assert.equal(recovered.body.value.account.accountId,owner.id);
+      owner.cookie=recovered.headers['set-cookie'][0].split(';')[0];owner.csrf=recovered.headers['x-cj-csrf'];
+      assert.equal((await retainedRead(previous)).status,401);await assertRetained();
+      assert.deepEqual(await wallet(owner),before);
+      assert.deepEqual((await readback(owner,firstKey)).body.value.response,firstCommit.body.value);
+      await stop();await boot();await assertRetained();
+    });
     await t.test('old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts',async()=>{
       assert.deepEqual(await snapshot(),preserved);
       const review=async item=>ask('/v1/review?taskId='+item.taskId+'&reservationId='+item.reservationId,{headers:auth(owner)});
@@ -550,6 +649,7 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       assert.ok(rpcMethods.every(m=>!['eth_sendTransaction','eth_sendRawTransaction','personal_sign','eth_sign'].includes(m)));
       t.diagnostic(JSON.stringify({candidateSourceSha256:doc.sourceSha256,candidateHostSha256:doc.hostSha256,
         migrationAdded:false,rpcMutations:0,financialRowsPreserved:true,peakOwnedRssKiB,nativeOwnerIncluded:Boolean(process.env.R4_WALLET_OWNER_PIDS)}));
+      if(process.env.R4_FINANCIAL_EVIDENCE)writeFileSync(process.env.R4_FINANCIAL_EVIDENCE,JSON.stringify({synthetic:true,before:preserved,after:await snapshot(),artifacts:Object.fromEntries(Object.entries(history).map(([k,v])=>[k,{sha256:hash(v.bytes),base64:v.bytes.toString('base64')}]))},null,2)+'\n');
       assert.ok(peakOwnedRssKiB<2097152,'entire owned fixture process tree stays within the declared 2 GiB reserve');
     });
   } finally {

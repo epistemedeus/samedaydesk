@@ -72,7 +72,11 @@ max_wal_size='64MB'
     const { monitorSourceMembers } = await import('../monitor-manifest.mjs');
     const pin = JSON.parse(await readFile(path.join(root, 'server/foundry/activation/private-control-pin.json')));
     // Job-local candidate only. The canonical shared pin remains untouched.
-    for (const name of monitorSourceMembers()) pin.files[name] = hash(await readFile(path.join(root, name)));
+    for (const name of monitorSourceMembers()) {
+      const actual = hash(await readFile(path.join(root, name)));
+      if (process.env.R4_MONITOR_DIRECT_SOURCE === '1') assert.equal(pin.files[name], actual, 'composed canonical monitor member: ' + name);
+      else pin.files[name] = actual;
+    }
     sourcePinFile = path.join(directory, 'candidate-source.json');
     candidatePin = JSON.stringify(pin);
     await writeFile(sourcePinFile, candidatePin);

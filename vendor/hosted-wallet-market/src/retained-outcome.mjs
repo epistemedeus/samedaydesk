@@ -141,7 +141,7 @@ async function authenticate(client, req, nowMs) {
      WHERE r.account_id = $1`,
     [session.account_id],
   );
-  if (delivery.rows[0] && delivery.rows[0].cookie_hash !== session.token_hash) fail(401, 'unauthenticated');
+  if (delivery.rows[0] && delivery.rows[0].cookie_hash !== pairHash) fail(401, 'unauthenticated');
   return {accountId: session.account_id};
 }
 
