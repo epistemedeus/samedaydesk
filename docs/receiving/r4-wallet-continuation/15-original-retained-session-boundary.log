@@ -1,0 +1,44 @@
+TAP version 13
+# (node:569957) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+    # Subtest: baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+    ok 1 - baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+      ---
+      duration_ms: 84.379119
+      type: 'test'
+      ...
+    # Subtest: existing machine quote binds its original wallet, control epoch and 5% gross terms
+    ok 2 - existing machine quote binds its original wallet, control epoch and 5% gross terms
+      ---
+      duration_ms: 441.976071
+      type: 'test'
+      ...
+    # Subtest: synthetic historical accepted debt and already-paid disposition are usable before continuation
+    ok 3 - synthetic historical accepted debt and already-paid disposition are usable before continuation
+      ---
+      duration_ms: 723.121761
+      type: 'test'
+      ...
+    # Subtest: receive pre-existing native session retained-reader hash mismatch without changing its contract
+    ok 4 - receive pre-existing native session retained-reader hash mismatch without changing its contract
+      ---
+      duration_ms: 84.636901
+      type: 'test'
+      ...
+    1..4
+ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 5438.79618
+  type: 'test'
+  ...
+# {"sourceKind":"pinned-original","candidateSourceSha256":"5b7d3d5e2179d55af1d5b69d0f5ce3c5217ca3ebfa77b80e43792acaf00b42e5","candidateHostSha256":"717718ddb9f9bca03afa4f5a05b6add5a8670e83b803a32b249b5f4fb2917215","qualified":false,"installed":false}
+1..1
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5582.589706

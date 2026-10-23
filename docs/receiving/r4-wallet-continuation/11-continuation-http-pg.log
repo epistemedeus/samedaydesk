@@ -1,0 +1,2382 @@
+TAP version 13
+# (node:567761) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+    # Subtest: baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+    ok 1 - baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+      ---
+      duration_ms: 78.606292
+      type: 'test'
+      ...
+    # Subtest: synthetic historical accepted debt and already-paid disposition are usable before continuation
+    not ok 2 - synthetic historical accepted debt and already-paid disposition are usable before continuation
+      ---
+      duration_ms: 588.18678
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:242:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        {"ok":false,"code":"disposition_hold"}
+        
+        409 !== 200
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 200
+      actual: 409
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:310:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:242:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+    not ok 3 - intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+      ---
+      duration_ms: 5529.603495
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:321:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433owed0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433paid0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.consumer_enrollment': [
+        +     {
+        +       value: {
+        +         consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5',
+        +         created_at: '2026-10-23T10:16:58.549+00:00',
+        +         earned_schema: 'cj227_earned_work',
+        +         host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c',
+        +         id: true,
+        +         import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063',
+        +         network: 'eip155:8453',
+        +         profile_chain: 'eip155:8453',
+        +         profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b',
+        +         registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7',
+        +         rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81',
+        +         rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750',
+        +         source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa',
+        +         tenant: 'root4433-wallet',
+        +         token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.funding_intents': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         authorized: true,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         message: 'original uncertain funding intent',
+        +         not_before_block: 42,
+        +         payer: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         task_id: 'task_r4433paid0000000',
+        +         tenant: 'root4433-wallet'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.grants': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         token_id: 'tok_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         token_id: 'tok_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433owed0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433owed0000000',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433owed0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433owed0000000',
+        +         idempotency_key: 'obl_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9',
+        +         verdict_id: 'ver_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e',
+        +         id: 'sub_r4433owed0000000',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433owed0000000',
+        +         kernel_scope: 'task_r4433owed0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433owed0000000',
+        +         public_id: 'pub_r4433owed0000000',
+        +         source: 'created',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433paid0000000',
+        +         kernel_scope: 'task_r4433paid0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433paid0000000',
+        +         public_id: 'pub_r4433paid0000000',
+        +         source: 'created',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ]
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433owed0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433owed0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433owed0000000'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              reservation_id: 'rsv_r4433owed0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433owed0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433owed0000000'
+          2:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433owed0000000'
+              version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          2:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433owed0000000'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e'
+              reservation_id: 'rsv_r4433owed0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268'
+          2:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433owed0000000'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+          2:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+        journey_account_kernel_bindings:
+          0:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              kernel_scope: 'task_r4433owed0000000'
+              principal_id: 'tok_r4433owed0000000'
+              earned_task_id: 'task_r4433owed0000000'
+              opportunity_round_id: ~
+          1:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              kernel_scope: 'task_r4433paid0000000'
+              principal_id: 'tok_r4433paid0000000'
+              earned_task_id: 'task_r4433paid0000000'
+              opportunity_round_id: ~
+        hosted_wallet_market.quotes:
+          0:
+            value:
+              funded: false
+              task_id: 'task_r4433owed0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+          1:
+            value:
+              funded: false
+              task_id: 'task_r4433paid0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+        hosted_wallet_market.funding_intents:
+          0:
+            value:
+              payer: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              tenant: 'root4433-wallet'
+              message: 'original uncertain funding intent'
+              task_id: 'task_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              authorized: true
+              created_at: '2026-10-20T10:00:00+00:00'
+              not_before_block: 42
+        hosted_wallet_market.grants:
+          0:
+            value:
+              task_id: 'task_r4433owed0000000'
+              token_id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+          1:
+            value:
+              task_id: 'task_r4433paid0000000'
+              token_id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+        hosted_wallet_market.captures:
+          0:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433owed0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433owed0000000'
+              reservation_id: 'rsv_r4433owed0000000'
+          1:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433paid0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433paid0000000'
+              reservation_id: 'rsv_r4433paid0000000'
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+          0:
+            value:
+              id: true
+              token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+              tenant: 'root4433-wallet'
+              network: 'eip155:8453'
+              created_at: '2026-10-23T10:16:58.549+00:00'
+              earned_schema: 'cj227_earned_work'
+              profile_chain: 'eip155:8453'
+              source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa'
+              profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b'
+              registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7'
+              rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750'
+              host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c'
+              rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81'
+              import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063'
+              consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:345:59)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:321:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+    ok 4 - unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+      ---
+      duration_ms: 668.876765
+      type: 'test'
+      ...
+    # Subtest: expired and exited predecessor intents remain stale
+    ok 5 - expired and exited predecessor intents remain stale
+      ---
+      duration_ms: 611.275439
+      type: 'test'
+      ...
+    # Subtest: native password recovery revokes the old session and cannot replace old wallet control
+    ok 6 - native password recovery revokes the old session and cannot replace old wallet control
+      ---
+      duration_ms: 520.544575
+      type: 'test'
+      ...
+    # Subtest: dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+    not ok 7 - dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+      ---
+      duration_ms: 821.689864
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:377:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433owed0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433paid0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.consumer_enrollment': [
+        +     {
+        +       value: {
+        +         consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5',
+        +         created_at: '2026-10-23T10:16:58.549+00:00',
+        +         earned_schema: 'cj227_earned_work',
+        +         host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c',
+        +         id: true,
+        +         import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063',
+        +         network: 'eip155:8453',
+        +         profile_chain: 'eip155:8453',
+        +         profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b',
+        +         registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7',
+        +         rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81',
+        +         rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750',
+        +         source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa',
+        +         tenant: 'root4433-wallet',
+        +         token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.funding_intents': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         authorized: true,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         message: 'original uncertain funding intent',
+        +         not_before_block: 42,
+        +         payer: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         task_id: 'task_r4433paid0000000',
+        +         tenant: 'root4433-wallet'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.grants': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         token_id: 'tok_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         token_id: 'tok_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433owed0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433owed0000000',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433owed0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433owed0000000',
+        +         idempotency_key: 'obl_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9',
+        +         verdict_id: 'ver_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e',
+        +         id: 'sub_r4433owed0000000',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433owed0000000',
+        +         kernel_scope: 'task_r4433owed0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433owed0000000',
+        +         public_id: 'pub_r4433owed0000000',
+        +         source: 'created',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433paid0000000',
+        +         kernel_scope: 'task_r4433paid0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433paid0000000',
+        +         public_id: 'pub_r4433paid0000000',
+        +         source: 'created',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ]
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433owed0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433owed0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433owed0000000'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              reservation_id: 'rsv_r4433owed0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433owed0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433owed0000000'
+          2:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433owed0000000'
+              version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          2:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433owed0000000'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e'
+              reservation_id: 'rsv_r4433owed0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268'
+          2:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433owed0000000'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+          2:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+        journey_account_kernel_bindings:
+          0:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              kernel_scope: 'task_r4433owed0000000'
+              principal_id: 'tok_r4433owed0000000'
+              earned_task_id: 'task_r4433owed0000000'
+              opportunity_round_id: ~
+          1:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              kernel_scope: 'task_r4433paid0000000'
+              principal_id: 'tok_r4433paid0000000'
+              earned_task_id: 'task_r4433paid0000000'
+              opportunity_round_id: ~
+        hosted_wallet_market.quotes:
+          0:
+            value:
+              funded: false
+              task_id: 'task_r4433owed0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+          1:
+            value:
+              funded: false
+              task_id: 'task_r4433paid0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+        hosted_wallet_market.funding_intents:
+          0:
+            value:
+              payer: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              tenant: 'root4433-wallet'
+              message: 'original uncertain funding intent'
+              task_id: 'task_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              authorized: true
+              created_at: '2026-10-20T10:00:00+00:00'
+              not_before_block: 42
+        hosted_wallet_market.grants:
+          0:
+            value:
+              task_id: 'task_r4433owed0000000'
+              token_id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+          1:
+            value:
+              task_id: 'task_r4433paid0000000'
+              token_id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+        hosted_wallet_market.captures:
+          0:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433owed0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433owed0000000'
+              reservation_id: 'rsv_r4433owed0000000'
+          1:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433paid0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433paid0000000'
+              reservation_id: 'rsv_r4433paid0000000'
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+          0:
+            value:
+              id: true
+              token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+              tenant: 'root4433-wallet'
+              network: 'eip155:8453'
+              created_at: '2026-10-23T10:16:58.549+00:00'
+              earned_schema: 'cj227_earned_work'
+              profile_chain: 'eip155:8453'
+              source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa'
+              profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b'
+              registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7'
+              rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750'
+              host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c'
+              rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81'
+              import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063'
+              consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:383:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:377:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: missing capability and stale current source refuse the legacy continuation route, including cached mutations
+    ok 8 - missing capability and stale current source refuse the legacy continuation route, including cached mutations
+      ---
+      duration_ms: 1316.538353
+      type: 'test'
+      ...
+    # Subtest: concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+    ok 9 - concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+      ---
+      duration_ms: 1328.426626
+      type: 'test'
+      ...
+    # Subtest: real process crash before-update reconciles the same journal key after restart
+    ok 10 - real process crash before-update reconciles the same journal key after restart
+      ---
+      duration_ms: 3008.60529
+      type: 'test'
+      ...
+    # Subtest: real process crash before-commit reconciles the same journal key after restart
+    ok 11 - real process crash before-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 3087.644863
+      type: 'test'
+      ...
+    # Subtest: real process crash after-commit reconciles the same journal key after restart
+    ok 12 - real process crash after-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 2584.560114
+      type: 'test'
+      ...
+    # Subtest: lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+    ok 13 - lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+      ---
+      duration_ms: 1920.778692
+      type: 'test'
+      ...
+    # Subtest: old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+    not ok 14 - old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+      ---
+      duration_ms: 7.543493
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:437:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433owed0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         block_number: '42',
+        +         chain: 'eip155:31337',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         fee_atomic: 5000,
+        +         fee_bps: 500,
+        +         gross_atomic: 100000,
+        +         net_atomic: 95000,
+        +         obligation_id: 'obl_r4433paid0000000',
+        +         rail_atomic: 0,
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         transfer: false,
+        +         winner: 'authorized_capture'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.consumer_enrollment': [
+        +     {
+        +       value: {
+        +         consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5',
+        +         created_at: '2026-10-23T10:16:58.549+00:00',
+        +         earned_schema: 'cj227_earned_work',
+        +         host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c',
+        +         id: true,
+        +         import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063',
+        +         network: 'eip155:8453',
+        +         profile_chain: 'eip155:8453',
+        +         profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b',
+        +         registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7',
+        +         rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81',
+        +         rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750',
+        +         source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa',
+        +         tenant: 'root4433-wallet',
+        +         token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.funding_intents': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         authorized: true,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         message: 'original uncertain funding intent',
+        +         not_before_block: 42,
+        +         payer: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         task_id: 'task_r4433paid0000000',
+        +         tenant: 'root4433-wallet'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.grants': [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         token_id: 'tok_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         public_id: 'pub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         token_id: 'tok_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         authorization_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         block_number: null,
+        +         chain_id: null,
+        +         contributor_account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         economics: {
+        +           captures: [
+        +             {
+        +               amountAtomic: '100000',
+        +               feeAtomic: '5000'
+        +             }
+        +           ],
+        +           contributorNetAtomic: '95000',
+        +           exactFivePercentAtEveryAtomicAmount: false,
+        +           feeBasis: 'new_job_gross',
+        +           feeBps: 500,
+        +           grossAtomic: '100000',
+        +           platformFeeAtomic: '5000',
+        +           railCostAtomic: '0',
+        +           roundingProfile: 'commerce-payments-v1.1.0-single-capture',
+        +           thisQuoteFeeIsExactFivePercent: true
+        +         },
+        +         fee_recipient: '0x1111111111111111111111111111111111111111',
+        +         funded: false,
+        +         funding_wire: 'unfunded',
+        +         observations: [],
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         proof_id: null,
+        +         refund_expiry: '2026-10-23T11:16:58.463+00:00',
+        +         requester_account_id: 'acc_tIHwMYnlXaflrd_Y',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433owed0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433owed0000000',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433owed0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433owed0000000',
+        +         idempotency_key: 'obl_r4433owed0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9',
+        +         verdict_id: 'ver_r4433owed0000000'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e',
+        +         id: 'sub_r4433owed0000000',
+        +         reservation_id: 'rsv_r4433owed0000000',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433owed0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: [
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433owed0000000',
+        +         kernel_scope: 'task_r4433owed0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433owed0000000',
+        +         public_id: 'pub_r4433owed0000000',
+        +         source: 'created',
+        +         token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         account_id: 'acc_QuPYfq41WVT0MeRu',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         earned_task_id: 'task_r4433paid0000000',
+        +         kernel_scope: 'task_r4433paid0000000',
+        +         opportunity_round_id: null,
+        +         principal_id: 'tok_r4433paid0000000',
+        +         public_id: 'pub_r4433paid0000000',
+        +         source: 'created',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ]
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433owed0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433owed0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433owed0000000'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              reservation_id: 'rsv_r4433owed0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433owed0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433owed0000000'
+          2:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433owed0000000'
+              version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          2:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433owed0000000'
+              task_id: 'task_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x507265736572766564206163636570746564206f7765642062797465732e'
+              reservation_id: 'rsv_r4433owed0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: '04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268'
+          2:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433owed0000000'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+          2:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+        journey_account_kernel_bindings:
+          0:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a'
+              kernel_scope: 'task_r4433owed0000000'
+              principal_id: 'tok_r4433owed0000000'
+              earned_task_id: 'task_r4433owed0000000'
+              opportunity_round_id: ~
+          1:
+            value:
+              source: 'created'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              kernel_scope: 'task_r4433paid0000000'
+              principal_id: 'tok_r4433paid0000000'
+              earned_task_id: 'task_r4433paid0000000'
+              opportunity_round_id: ~
+        hosted_wallet_market.quotes:
+          0:
+            value:
+              funded: false
+              task_id: 'task_r4433owed0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+          1:
+            value:
+              funded: false
+              task_id: 'task_r4433paid0000000'
+              chain_id: ~
+              proof_id: ~
+              economics:
+                feeBps: 500
+                captures:
+                  0:
+                    feeAtomic: '5000'
+                    amountAtomic: '100000'
+                feeBasis: 'new_job_gross'
+                grossAtomic: '100000'
+                railCostAtomic: '0'
+                roundingProfile: 'commerce-payments-v1.1.0-single-capture'
+                platformFeeAtomic: '5000'
+                contributorNetAtomic: '95000'
+                thisQuoteFeeIsExactFivePercent: true
+                exactFivePercentAtEveryAtomicAmount: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              block_number: ~
+              funding_wire: 'unfunded'
+              observations:
+              fee_recipient: '0x1111111111111111111111111111111111111111'
+              refund_expiry: '2026-10-23T11:16:58.463+00:00'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              payout_destination: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              authorization_expiry: '2026-10-23T11:16:58.463+00:00'
+              requester_account_id: 'acc_tIHwMYnlXaflrd_Y'
+              contributor_account_id: 'acc_QuPYfq41WVT0MeRu'
+        hosted_wallet_market.funding_intents:
+          0:
+            value:
+              payer: '0x3159551c2c73fb4825fae130bfbae3c234654838'
+              tenant: 'root4433-wallet'
+              message: 'original uncertain funding intent'
+              task_id: 'task_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              authorized: true
+              created_at: '2026-10-20T10:00:00+00:00'
+              not_before_block: 42
+        hosted_wallet_market.grants:
+          0:
+            value:
+              task_id: 'task_r4433owed0000000'
+              token_id: 'tok_r4433owed0000000'
+              public_id: 'pub_r4433owed0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+          1:
+            value:
+              task_id: 'task_r4433paid0000000'
+              token_id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              account_id: 'acc_QuPYfq41WVT0MeRu'
+              created_at: '2026-10-20T10:00:00+00:00'
+        hosted_wallet_market.captures:
+          0:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433owed0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433owed0000000'
+              reservation_id: 'rsv_r4433owed0000000'
+          1:
+            value:
+              chain: 'eip155:31337'
+              winner: 'authorized_capture'
+              fee_bps: 500
+              task_id: 'task_r4433paid0000000'
+              transfer: false
+              created_at: '2026-10-20T10:00:00+00:00'
+              fee_atomic: 5000
+              net_atomic: 95000
+              rail_atomic: 0
+              block_number: '42'
+              gross_atomic: 100000
+              obligation_id: 'obl_r4433paid0000000'
+              reservation_id: 'rsv_r4433paid0000000'
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+          0:
+            value:
+              id: true
+              token: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+              tenant: 'root4433-wallet'
+              network: 'eip155:8453'
+              created_at: '2026-10-23T10:16:58.549+00:00'
+              earned_schema: 'cj227_earned_work'
+              profile_chain: 'eip155:8453'
+              source_sha256: '4cae563dd5e33247e21b8d63f5665b3aa2532619ca8d746db97870512d5e86fa'
+              profile_sha256: '56c7199ca7dd0c0b9d8e8333e7166961689a320a147b639888a134913c1f818b'
+              registry_sha256: 'b63a9eca7cbeb90f590086fd16f33e4c655fca4d76a171ff0593bb85bcdd15a7'
+              rpc_origin_sha256: '3dd243b559445fa98ac527c63d24950c2c77554f1a2316efe616ae2711dc7750'
+              host_source_sha256: 'a303d99054540e448e3e91c04d967d976240b9af0a2006164f94432e13c2f57c'
+              rpc_endpoint_sha256: 'ac5f95bc4c86f7d2ba03c2d73b0a2d790ff6adf45c7092aab43800381645cf81'
+              import_contract_sha256: '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063'
+              consumer_contract_sha256: 'fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:438:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:437:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..14
+not ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 25826.396191
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:71:8'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 15
+# suites 0
+# pass 10
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25971.118271
