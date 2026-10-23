@@ -21,6 +21,10 @@ import { runPublicAdapter } from "../lib/public-adapter.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const cold = join(here, "../cold-client.mjs");
 const pinsSource = readFileSync(join(here, "../lib/pins.mjs"), "utf8");
+const fixtureNodeOptions = [
+  process.env.NODE_OPTIONS,
+  `--import=${new URL("../../../server/scripts/helpers/taskmarket-fixture-preload.js", import.meta.url).href}`,
+].filter(Boolean).join(" ");
 
 before(() => {
   const pins = acquirePins();
@@ -214,6 +218,7 @@ test("cold task-readiness reaches the public adapter without private git and the
   chmodSync(join(bin, "git"), 0o755);
   const env = {
     ...process.env,
+    NODE_OPTIONS: fixtureNodeOptions,
     PATH: `${bin}:${process.env.PATH}`,
     GIT_STUB_LOG: log,
     GIT_TERMINAL_PROMPT: "0",

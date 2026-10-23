@@ -312,6 +312,8 @@ export async function retestEra(origin) {
       arguments: {
         request: "Describe the public readiness boundary",
         deliverable: "One paragraph",
+        chain_id: 8453,
+        token_address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
         reward_usdc: "0.10",
         max_spend_usdc: "0.10",
         deadline_hours: 24,
