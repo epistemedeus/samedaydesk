@@ -12,7 +12,8 @@ not change access or the tool response.
 
 Optional `mcpOutcomes` deltas contain `observedFrom` and a sparse `counts` map.
 Keys are `source|tool|event`: two sources, the declared seven-tool inventory plus
-`_unknown`/`_none`, and eight events, at most 144 keys. JS and SQL strictly validate
+`_unknown`/`_none`, and eight general events, plus three browse-only categories,
+at most 150 keys. JS and SQL strictly validate
 this product, timestamp and nonnegative safe integers. Neither raw headers,
 arguments, URLs, IDs, bodies, wallets, IPs nor secrets enter the dimension.
 
@@ -41,6 +42,53 @@ dimensions remain unknown. Existing top-level `complete` describes admitted
 storage/backlog accounting, not a complete historical outcome window. Late
 results can flush independently of their attempts; these aggregate counts are
 not a joined conversion funnel.
+
+## Prospective browse result coverage
+
+The same `mcpOutcomes.counts` map admits `browse_empty`, `browse_non_empty` and
+`browse_unclassified` only for `browse_taskmarket_tasks`, with one optional
+`browseObservedFrom` timestamp. It marks the first observed category, not release
+time or guaranteed continuous coverage. Normal results are classified at the
+existing handler boundary before serialization, once per admitted entry,
+including suppressed notifications. Refusals and JSON-RPC errors keep their
+separate events and never become empty results.
+
+Empty/non-empty require the actual bounded `structuredContent` inventory, a
+matching integer count (0..25), valid task-summary structure and the producer's
+matching text mirror. Missing/malformed/contradictory/unbounded normal results
+are unclassified. The observer does not fetch or retain their contents.
+Arbitrary strings never become dimension keys. A non-empty inventory does not
+establish actionable funding, peer receipt, usefulness, acceptance or revenue.
+
+`mcpProtocol.outcomes.browseResults` reports the separate prospective boundary,
+lower-bound categories by the existing declared source, `complete:false`, and
+`historicalCardinality:unknown_no_backfill`. `normal_without_cardinality` counts
+normal results without a recorded category; it is not an inferred empty result.
+Before any category is observed, category counts and the boundary are null and
+coverage is unknown. Prior deltas/snapshots retain exact old fields/hashes.
+New file snapshots, WAL, transport and SQL readers retain the optional timestamp.
+An observation/storage failure cannot change tool output or authority.
+
+Apply forward, rerunnable `0008_pulse_browse_result_coverage.sql` before the new
+producer, through Root's authorized release. It replaces only two existing
+validators/merge functions, with no tables, row updates, backfill or new grants.
+An old DB rejects new categories atomically; the current WAL retains exact ids
+and payloads with permanent-error backoff and drains after upgrade.
+
+Binary rollback needs a reader that understands these events **in both durable
+JSON aggregates and any pending WAL**, even after draining. The old reader
+rejects new stored events/timestamps; draining alone does not make it safe.
+Rollback the discovery/producer changes while retaining the new Pulse readers
+and SQL functions. Do not down-migrate or strip fields to force old-reader
+acceptance. Preserve the retained evidence before any operational rollback.
+
+The focused ROOT4000 tests in `TASKMARKET-INTEGRATION.md` exercise real mounted
+HTTP, existing WAL/fallback, fresh process startup, real disposable PostgreSQL,
+old-schema rejection, duplicate/ambiguous flush and migration/restart recovery.
+Malformed normal producer fixtures use the same mounted admission/producer
+observer; malformed upstream inventory separately refuses in the actual handler.
+These tests establish source behavior only. No production migration, tool QA,
+frontend build or emitted-asset equality is claimed.
 
 ## Receiving and rollout
 

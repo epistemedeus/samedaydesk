@@ -48,6 +48,7 @@ const V1_SNAPSHOT_KEYS = Object.freeze([
 ]);
 
 const V2_SNAPSHOT_KEYS = Object.freeze([
+  "mcpOutcomes",
   "startedAt",
   "classificationSchemaVersion",
   "legacyUncertainty",

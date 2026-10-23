@@ -20,7 +20,7 @@ import { mcpHeaders } from "../lib/mcp-http.js";
 import { runCheck } from "./tools.js";
 import {
   browseTaskMarketTasks,
-  buildTaskMarketDelegationPlan,
+  planTaskMarketDelegation,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
 import { MCP_TOOL_NAMES, TOOLS } from "../lib/mcp-tool-inventory.js";
@@ -113,7 +113,7 @@ async function handle(msg, ctx = {}) {
       if (["plan_taskmarket_delegation", "browse_taskmarket_tasks", "track_taskmarket_task"].includes(name)) {
         try {
           let result;
-          if (name === "plan_taskmarket_delegation") result = buildTaskMarketDelegationPlan(args);
+          if (name === "plan_taskmarket_delegation") result = await planTaskMarketDelegation(args);
           else if (name === "browse_taskmarket_tasks") result = await browseTaskMarketTasks(args);
           else result = await trackTaskMarketTask(args);
           return okMsg(id, {

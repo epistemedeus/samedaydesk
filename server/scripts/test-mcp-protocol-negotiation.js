@@ -20,14 +20,14 @@ const EXPECTED_ANNOTATIONS = {
   check_ai_readiness: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
   check_agent_readiness: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   generate_complete_fix_pack: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-  plan_taskmarket_delegation: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  plan_taskmarket_delegation: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   browse_taskmarket_tasks: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
   track_taskmarket_task: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
   project_funnel_evidence: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
 };
 const EXPECTED_TOOL_NAMES = [...MCP_TOOL_NAMES];
 // Byte-semantic pin of the apex tool surface definitions. Recomputed when TOOLS changes.
-const FROZEN_TOOLS_BLOCK_SHA256 = "caa88147c598606c5a12806ff764bc736cf122f8993111391e60375a628e7de7";
+const FROZEN_TOOLS_BLOCK_SHA256 = "0f433cb9ee83e08fee57d72f2a4d82cdb88627467135b669d8b94bffdaac7aa4";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
@@ -123,7 +123,7 @@ test("negotiation echoes only the four supported versions and otherwise returns 
 });
 
 test("apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket", () => {
-  // Definitions moved to the shared inventory; preserve the original semantic pin.
+  // Qualified cross-chain plan selectors and amount fields update the machine inventory pin.
   const toolsBlock = TOOLS_SOURCE.slice(TOOLS_SOURCE.indexOf("const TOOLS = [")).trimEnd() + "\n\n";
   assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
 
@@ -226,7 +226,7 @@ test("tools/list exposes annotations on every apex tool", async () => {
       assert.equal(tool.annotations.readOnlyHint, true);
     }
   }
-  assert.equal(listed.find((tool) => tool.name === "plan_taskmarket_delegation").annotations.openWorldHint, false);
+  assert.equal(listed.find((tool) => tool.name === "plan_taskmarket_delegation").annotations.openWorldHint, true);
   assert.equal(listed.find((tool) => tool.name === "generate_complete_fix_pack").annotations.idempotentHint, true);
 });
 
@@ -256,7 +256,7 @@ test("unknown tool is JSON-RPC -32602 and execution errors are isError results",
   assert.equal(broken.status, 200);
   assert.equal(brokenJson.error, undefined);
   assert.equal(brokenJson.result.isError, true);
-  assert.match(brokenJson.result.content[0].text, /request is required/);
+  assert.match(brokenJson.result.content[0].text, /chain_id is required/);
 });
 
 test("server.json names the apex remote and keeps CORS star", () => {

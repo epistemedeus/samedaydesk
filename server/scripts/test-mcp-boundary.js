@@ -1,3 +1,4 @@
+import { networkInfo } from "./helpers/taskmarket-fixtures.js";
 import assert from "node:assert/strict";
 import dns from "node:dns/promises";
 import http from "node:http";
@@ -67,7 +68,8 @@ async function rejected(body, code, status = 400, headers = {}) {
 
 before(async () => {
   dns.lookup = async () => [{ address: "8.8.8.8", family: 4 }];
-  globalThis.fetch = async () => {
+  globalThis.fetch = async (url) => {
+    if (url === "https://api.taskmarket.dev/trpc/network.info") return Response.json(networkInfo());
     siteFetches++;
     return new Response('<title>Fixture</title><meta name="description" content="A controlled local fixture for paid delivery and free checks."><h1>Fixture</h1>', { status: 200 });
   };
