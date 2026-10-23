@@ -22,6 +22,7 @@ import {protectNativeMarket} from './native-market-privacy.mjs';
 import {assertReplayKey, openSecrets, sealSecrets} from './seal.mjs';
 import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
+import {createWalletContinuation} from './wallet-continuation.mjs';
 
 export const PREFIX = '/api/neomorphic-contributor-journey';
 export {WIRE_HEADER, WIRE_VERSION};
@@ -313,7 +314,7 @@ export async function openHostedMarket(options) {
     req.on('error', () => reject(httpError(400, 'body_interrupted')));
   });
 
-  async function accountFrom(client, req, {write = false} = {}) {
+  async function accountFrom(client, req, {write = false, lock = false} = {}) {
     const cookie = req.headers.cookie?.split(';')[0]?.trim();
     if (!cookie) throw httpError(401, 'unauthenticated');
     const rows = await client.query(
@@ -322,7 +323,7 @@ export async function openHostedMarket(options) {
        JOIN journey_accounts a ON a.id = s.account_id
        JOIN hosted_wallet_market.roles r ON r.account_id = a.id
        JOIN hosted_wallet_market.session_delivery d ON d.account_id = a.id
-       WHERE s.token_hash = $1 OR s.token_hash = $2`,
+       WHERE s.token_hash = $1 OR s.token_hash = $2 ${lock ? 'FOR UPDATE OF a,s,d' : ''}`,
       [sha256(cookie),sha256(cookie.slice(cookie.indexOf('=')+1))],
     );
     const row = rows.rows[0];
@@ -1572,6 +1573,30 @@ export async function openHostedMarket(options) {
     finish(res, produced);
   }
 
+  const walletContinuation=createWalletContinuation({profile,now:nowMs,currentCapability:()=>{
+    if(!machine)throw httpError(409,'machine_capability_required');
+    return machine.publicProfile().capability;
+  }});
+  async function continueWallet(req,res,body,action) {
+    walletContinuation.current();
+    const produced=await withTx(async client=>{
+      let account=await accountFrom(client,req,{write:true});
+      // Serialize with native account recovery/sign-in, then recheck session
+      // authority and hold its revocation/delivery rows through the commit.
+      await client.query('SELECT id FROM journey_accounts WHERE id=$1 FOR UPDATE',[account.accountId]);
+      account=await accountFrom(client,req,{write:true,lock:true});
+      walletContinuation.current();
+      return mutate(client,req,body,account,async tx=>{
+        const result=await walletContinuation[action](tx,account.accountId,body,req.headers['idempotency-key']);
+        // RPC reads may outlast this session's expiry. Recheck before the
+        // journal/COMMIT; failure rolls the wallet update back with the receipt.
+        await accountFrom(tx,req,{write:true,lock:true});
+        return result;
+      });
+    });
+    finish(res,produced);
+  }
+
   async function exportWallet(req, res) {
     const account = await withClient(client => accountFrom(client, req));
     await withClient(client => client.query('UPDATE hosted_wallet_market.wallets SET exported = true WHERE account_id = $1', [account.accountId]));
@@ -1667,6 +1692,8 @@ export async function openHostedMarket(options) {
       if (path === '/v1/account/session' && req.method === 'GET') return await session(req, res);
       if (path === '/v1/account/exit' && req.method === 'POST') return await exitAccount(req, res, body);
       if (path === '/v1/wallet/bind' && req.method === 'POST') return await bindWallet(req, res, body);
+      if (path === '/v1/wallet/continuation/challenge' && req.method === 'POST') return await continueWallet(req,res,body,'challenge');
+      if (path === '/v1/wallet/continuation/commit' && req.method === 'POST') return await continueWallet(req,res,body,'commit');
       if (path === '/v1/wallet/export' && req.method === 'GET') return await exportWallet(req, res);
       if (path === '/v1/wallet/exit' && req.method === 'POST') return await exitWallet(req, res, body);
       if (path === '/v1/tasks' && req.method === 'POST') return await postTask(req, res, body);

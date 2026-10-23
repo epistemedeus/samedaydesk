@@ -1,0 +1,66 @@
+TAP version 13
+# node:internal/fs/promises:1028
+#   const result = await PromisePrototypeThen(
+#                  ^
+# Error: ENOENT: no such file or directory, lstat '/tmp/root4433-wallet-vq50j0/candidate/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/node_modules/@neomorphic/arena-workability-dimensions/dist/card.js'
+#     at async lstat (node:internal/fs/promises:1028:18)
+#     at async verifyContributorArtifact (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:16:48)
+#     at async verifyContributorRuntime (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:34:18)
+#     at async file:///tmp/root4433-wallet-vq50j0/candidate/server/scripts/refresh-installed-receiving-source.mjs:49:1 {
+#   errno: -2,
+#   code: 'ENOENT',
+#   syscall: 'lstat',
+#   path: '/tmp/root4433-wallet-vq50j0/candidate/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/node_modules/@neomorphic/arena-workability-dimensions/dist/card.js'
+# }
+# Node.js v22.23.3
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+not ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 327.257082
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:69:8'
+  failureType: 'testCodeFailure'
+  error: |-
+    Command failed: /exec-daemon/node server/scripts/refresh-installed-receiving-source.mjs
+    node:internal/fs/promises:1028
+      const result = await PromisePrototypeThen(
+                     ^
+    
+    Error: ENOENT: no such file or directory, lstat '/tmp/root4433-wallet-vq50j0/candidate/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/node_modules/@neomorphic/arena-workability-dimensions/dist/card.js'
+        at async lstat (node:internal/fs/promises:1028:18)
+        at async verifyContributorArtifact (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:16:48)
+        at async verifyContributorRuntime (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:34:18)
+        at async file:///tmp/root4433-wallet-vq50j0/candidate/server/scripts/refresh-installed-receiving-source.mjs:49:1 {
+      errno: -2,
+      code: 'ENOENT',
+      syscall: 'lstat',
+      path: '/tmp/root4433-wallet-vq50j0/candidate/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/node_modules/@neomorphic/arena-workability-dimensions/dist/card.js'
+    }
+    
+    Node.js v22.23.3
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    async lstat (node:internal/fs/promises:1028:18)
+    async verifyContributorArtifact (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:16:48)
+    async verifyContributorRuntime (file:///tmp/root4433-wallet-vq50j0/candidate/server/lib/contributor-artifact.js:34:18)
+    async file:///tmp/root4433-wallet-vq50j0/candidate/server/scripts/refresh-installed-receiving-source.mjs:49:1 {
+    genericNodeError (node:internal/errors:983:15)
+    wrappedFn (node:internal/errors:537:14)
+    checkExecSyncError (node:child_process:916:11)
+    execFileSync (node:child_process:952:15)
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:96:32)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 478.702706
