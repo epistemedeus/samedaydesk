@@ -42,7 +42,7 @@
   "reserveKiB": 2097152,
   "modelChildren": 0,
   "tests": {
-    "baseline": "baseline.tap",
+    "baseline": "baseline.tap.gz",
     "candidate": "final.tap",
     "standalone": "standalone-contract.tap"
   },

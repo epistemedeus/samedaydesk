@@ -3,7 +3,7 @@
 All commands ran on the admitted Cursor VM, from the preserved product working
 tree unless noted. Tests ran serially; no model child or browser was started.
 Only fixture TLS keys/tokens were generated, kept under owned disposable /tmp
-paths and removed with their fixture. Credentials were never exported.
+paths and removed with their fixture. No enrolled or production credential was exported.
 
 1. Identity: `git status --short --branch`, `git rev-parse HEAD HEAD^{tree}`,
    receipt `sha256sum`, and programmatic exact-origin comparison. Initial head
@@ -24,7 +24,7 @@ paths and removed with their fixture. Credentials were never exported.
 4. Before implementation: `R4_MONITOR_BASELINE=1
    NODE_OPTIONS=--max-old-space-size=512 node --test --test-concurrency=1
    server/lib/machine-services/test/monitor-manifest-journey.test.mjs`.
-   Exit 1, two real acceptance failures retained in [baseline.tap](baseline.tap).
+   Exit 1, two real acceptance failures retained in [baseline.tap.gz](baseline.tap.gz).
 5. Candidate: `NODE_OPTIONS=--max-old-space-size=512 node --test
    --test-concurrency=1
    server/lib/machine-services/test/monitor-manifest-journey.test.mjs`.
@@ -50,7 +50,7 @@ paths and removed with their fixture. Credentials were never exported.
    scheduled observation: [standalone-contract.tap](standalone-contract.tap).
 8. `bash docs/receiving/r4-monitor-contract/replay-baseline.sh` reproduces 0/2
    against the exact predecessor, expected exit 1:
-   [baseline-replay.tap](baseline-replay.tap). The admitted branch is preserved.
+   [baseline-replay.tap.gz](baseline-replay.tap.gz). The admitted branch is preserved.
 9. `node --check` for changed modules/test, JSON parsing, `git diff --check`,
    complete allowed-path verification and unchanged protected-file comparison
    pass. No frontend build, production suite, hosted receiving, CI, customer
