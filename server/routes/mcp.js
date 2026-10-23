@@ -10,6 +10,7 @@
 // License authority is a bearer checkout-session id bound to the merchant Fix Pack
 // Payment Link / product — not an amount-only threshold and not a customer login.
 import { Router } from "express";
+import { recordMcpProduced } from "../lib/pulse.js";
 import { clientKey } from "../lib/agent-readiness/rate-limit.js";
 import {
   SUPPORTED_PROTOCOL_VERSIONS, mcpAdmissionForRequest,
@@ -242,12 +243,18 @@ router.post("/", async (req, res) => {
   // Per-entry failures must not discard valid work from a legacy mixed batch.
   const out = (await Promise.all(admission.entries.map(async (message) => {
     if (message.kind === "response") return null;
-    if (message.error) return message.kind === "notification" ? null : message.error;
+    if (message.error) {
+      recordMcpProduced(req, message, message.error);
+      return message.kind === "notification" ? null : message.error;
+    }
     try {
       const result = await handle(message.entry, ctx);
+      recordMcpProduced(req, message, result);
       return message.kind === "notification" ? null : result;
     } catch {
-      return message.kind === "notification" ? null : errMsg(message.entry.id, -32603, "Internal error");
+      const error = errMsg(message.entry.id, -32603, "Internal error");
+      recordMcpProduced(req, message, error);
+      return message.kind === "notification" ? null : error;
     }
   }))).filter(Boolean);
   if (!out.length) return res.status(202).end();
