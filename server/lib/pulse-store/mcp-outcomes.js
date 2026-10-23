@@ -1,5 +1,5 @@
 import { MCP_TOOL_NAMES } from "../mcp-tool-inventory.js";
-import { amount } from "../taskmarket-networks.js";
+import { amount, TASKMARKET_NETWORK_INFO, TASKMARKET_METADATA_TTL_MS } from "../taskmarket-networks.js";
 
 export const MCP_SOURCE_HEADER = "x-samedaydesk-agent-source";
 export const MCP_SOURCES = Object.freeze(["unattributed", "agentverse-a2a-v1"]);
@@ -52,6 +52,11 @@ export function mergeMcpOutcomes(base, add) {
     ...(starts.length ? { browseObservedFrom: starts[0] } : {}) };
 }
 
+function canonicalTimestamp(value) {
+  return typeof value === "string" && Number.isFinite(Date.parse(value)) &&
+    new Date(value).toISOString() === value;
+}
+
 // Match the actual structured producer AND its mirrored MCP text. No second
 // fetch, string regex, result retention, or content-derived dimension.
 export function classifyBrowseResult(result) {
@@ -60,7 +65,13 @@ export function classifyBrowseResult(result) {
     if (!value || typeof value !== "object" || Array.isArray(value) ||
         Object.keys(value).sort().join(",") !== "count,fetched_at,filters,metadata,safety,source,tasks" ||
         value.source !== "https://api.taskmarket.dev/api/tasks" ||
-        typeof value.fetched_at !== "string" || !Number.isFinite(Date.parse(value.fetched_at)) ||
+        !canonicalTimestamp(value.fetched_at) ||
+        !value.metadata || typeof value.metadata !== "object" || Array.isArray(value.metadata) ||
+        Object.keys(value.metadata).sort().join(",") !== "fetched_at,max_age_ms,source" ||
+        value.metadata.source !== TASKMARKET_NETWORK_INFO ||
+        value.metadata.max_age_ms !== TASKMARKET_METADATA_TTL_MS ||
+        !canonicalTimestamp(value.metadata.fetched_at) ||
+        typeof value.safety !== "string" || !value.safety || value.safety.length > 1000 ||
         !value.filters || typeof value.filters !== "object" || Array.isArray(value.filters) ||
         !Number.isInteger(value.count) || value.count < 0 || value.count > 25 ||
         !Array.isArray(value.tasks) || value.tasks.length !== value.count ||

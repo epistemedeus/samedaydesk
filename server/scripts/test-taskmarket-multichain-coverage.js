@@ -242,6 +242,16 @@ test("malformed/contradictory normal results cross the mounted producer/store/su
   await reset();
   const valid = (await request(browse())).json.result;
   const malformed = [ {}, { ...valid, structuredContent: { ...valid.structuredContent, count: 0 } }, { ...valid, structuredContent: { ...valid.structuredContent, tasks: [] } }, { ...valid, content: [{ type: "text", text: "contradictory-body-secret" }] }, { ...valid, structuredContent: { ...valid.structuredContent, count: 26, tasks: Array(26).fill(valid.structuredContent.tasks[0]) } } ];
+  // A self-consistent mirror does not make missing/wrong metadata an empty inventory.
+  for (const change of [
+    { metadata: null },
+    { metadata: { ...valid.structuredContent.metadata, source: "https://invalid.example/metadata" } },
+    { metadata: { ...valid.structuredContent.metadata, max_age_ms: 0 } },
+    { fetched_at: "January 1, 2001" },
+  ]) {
+    const value = { ...valid.structuredContent, count: 0, tasks: [], ...change };
+    malformed.push({ ...valid, structuredContent: value, content: [{ type: "text", text: `TaskMarket browse taskmarket tasks result:\n\n${JSON.stringify(value, null, 2)}` }] });
+  }
   const app = express(); app.use(express.json()); app.use(pulse.pulseMiddleware);
   // Controlled malformed normal producer, using the SAME admission/event boundary.
   // The real TaskMarket handler separately refuses malformed upstream data above.
@@ -250,8 +260,8 @@ test("malformed/contradictory normal results cross the mounted producer/store/su
   try { while (malformed.length) assert.equal((await request(browse(), "/mcp", "POST", extra.address().port)).status, 200); }
   finally { await new Promise(resolve => extra.close(resolve)); }
   await drain();
-  assert.equal((await summary()).mcpProtocol.outcomes.counts[key("browse_unclassified")], 5);
-  assert.equal((await summary()).mcpProtocol.outcomes.counts[key("normal_result")], 6);
+  assert.equal((await summary()).mcpProtocol.outcomes.counts[key("browse_unclassified")], 9);
+  assert.equal((await summary()).mcpProtocol.outcomes.counts[key("normal_result")], 10);
   assert.equal(JSON.stringify(await summary()).includes("contradictory-body-secret"), false);
 });
 
