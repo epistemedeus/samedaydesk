@@ -1,0 +1,115 @@
+TAP version 13
+# (node:563423) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ROOT410 independent real createSdsApp receiving over verified TLS and disposable PostgreSQL
+    # Subtest: closed default remains mounted; wrong wire and malformed capability refuse
+    ok 1 - closed default remains mounted; wrong wire and malformed capability refuse
+      ---
+      duration_ms: 341.765304
+      type: 'test'
+      ...
+    # Subtest: verified HTTPS exposes unfunded discovery without money authority
+    ok 2 - verified HTTPS exposes unfunded discovery without money authority
+      ---
+      duration_ms: 84.017831
+      type: 'test'
+      ...
+    # Subtest: lost signup response retains the proof; stored readback performs no second signup POST
+    ok 3 - lost signup response retains the proof; stored readback performs no second signup POST
+      ---
+      duration_ms: 194.8614
+      type: 'test'
+      ...
+    # Subtest: ordinary post and anonymous discovery expose usable listing IDs and next actions
+    ok 4 - ordinary post and anonymous discovery expose usable listing IDs and next actions
+      ---
+      duration_ms: 128.584921
+      type: 'test'
+      ...
+    # Subtest: identical and conflicting signup/post replays preserve a single effect
+    ok 5 - identical and conflicting signup/post replays preserve a single effect
+      ---
+      duration_ms: 446.242456
+      type: 'test'
+      ...
+    # Subtest: a contributor can express interest using only an anonymously discovered task ID
+    ok 6 - a contributor can express interest using only an anonymously discovered task ID
+      ---
+      duration_ms: 203.45395
+      type: 'test'
+      ...
+    # Subtest: CSRF, origin, role and forbidden fund attempts create no financial records
+    ok 7 - CSRF, origin, role and forbidden fund attempts create no financial records
+      ---
+      duration_ms: 397.242646
+      type: 'test'
+      ...
+    # Subtest: lost login result reads the stored operation and preserves credentials
+    ok 8 - lost login result reads the stored operation and preserves credentials
+      ---
+      duration_ms: 336.082686
+      type: 'test'
+      ...
+    # Subtest: lost recover result reads the stored operation and preserves credentials
+    ok 9 - lost recover result reads the stored operation and preserves credentials
+      ---
+      duration_ms: 335.864277
+      type: 'test'
+      ...
+    # Subtest: ordinary recovery works and public output contains no session or recovery material
+    ok 10 - ordinary recovery works and public output contains no session or recovery material
+      ---
+      duration_ms: 269.311103
+      type: 'test'
+      ...
+    # Subtest: a stored secret is bound to its original HTTPS origin
+    ok 11 - a stored secret is bound to its original HTTPS origin
+      ---
+      duration_ms: 41.583578
+      type: 'test'
+      ...
+    # Subtest: existing-store funnel counts abandonment and transitions without claiming independent acquisition
+    ok 12 - existing-store funnel counts abandonment and transitions without claiming independent acquisition
+      ---
+      duration_ms: 3.219451
+      type: 'test'
+      ...
+    # Subtest: private account and signup-operation exclusions propagate to that account listing and its observations
+    ok 13 - private account and signup-operation exclusions propagate to that account listing and its observations
+      ---
+      duration_ms: 4.147518
+      type: 'test'
+      ...
+    # Subtest: private post-operation exclusions remove the listing observations
+    ok 14 - private post-operation exclusions remove the listing observations
+      ---
+      duration_ms: 1.77508
+      type: 'test'
+      ...
+    # Subtest: a funding metadata row does not establish settled paid work
+    ok 15 - a funding metadata row does not establish settled paid work
+      ---
+      duration_ms: 2.807877
+      type: 'test'
+      ...
+    # Subtest: legacy obligations and terms survive the unfunded journey and capability rollback
+    ok 16 - legacy obligations and terms survive the unfunded journey and capability rollback
+      ---
+      duration_ms: 360.117863
+      type: 'test'
+      ...
+    1..16
+ok 1 - ROOT410 independent real createSdsApp receiving over verified TLS and disposable PostgreSQL
+  ---
+  duration_ms: 6278.442267
+  type: 'test'
+  ...
+1..1
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6611.79086

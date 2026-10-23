@@ -13,6 +13,7 @@ import {requesterMoneyFromRail} from '../runtime/agent-economy-market/src/a-mone
 import {installedSourceSha256,hostSourceSha256} from './native-debt.mjs';
 import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
 import {admitMachineCapability} from './machine-profile-document.mjs';
+import {readMarketInterests,INTEREST_PAGE_LIMIT,INTEREST_PAGE_DEFAULT,INTEREST_NOTE_BYTES} from './market-interest-read.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
@@ -196,15 +197,15 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    await rail.authorize(input.proofId,input.signature,'authorize-'+digest({taskId:input.taskId,operationId}));
    return market.fund(req,{taskId:input.taskId,quoteDigest:input.quoteDigest,proofId:input.proofId});
   }
-  const readActions=new Set(['list','read','retained','measurement','payoutDisposition','reconcile']);
-  const methods=new Set(['post','list','interest','readback','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
+  const readActions=new Set(['interests','list','read','retained','measurement','payoutDisposition','reconcile']);
+  const methods=new Set(['interests','post','list','interest','readback','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
   async function dispatch(req,action,input,operationId){
    assertCurrent();
    if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
    const account=await authenticate(req,{write:true});
    if(action==='readback' && !['post','interest'].includes(input.action))refuse('body_refused',400);
    const roleAction=action==='readback'?input.action:action;
-   if(['post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(roleAction)&&account.role!=='requester')refuse('requester_required',403);
+   if(['interests','post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(roleAction)&&account.role!=='requester')refuse('requester_required',403);
    if(['interest','assent','claim','deliver'].includes(roleAction)&&account.role!=='contributor')refuse('contributor_required',403);
    if(action==='walletChallenge')return walletChallenge(account,input);
    if(action==='walletProve')return walletProve(account,input);
@@ -219,6 +220,8 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
     return market.reconcile(req,{taskId:input.taskId});
    }
    if(!methods.has(action))refuse('not_found',404);
+   // Return before the generic transition writer: retrying this read has no effects.
+   if(action==='interests')return readMarketInterests(market,req,input);
    if(!readActions.has(action)&&!/^[-a-zA-Z0-9_.:/]{8,160}$/.test(operationId||''))refuse('idempotency_required',400);
    const result=action==='select'?await market.select(req,input,operationId):await market[action](req,input,operationId);
    if(action==='measurement'){
@@ -262,6 +265,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   function publicProfile(){
    assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution'];
    return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
+    proposalReview:{path:'/v1/market/interests',method:'POST',defaultLimit:INTEREST_PAGE_DEFAULT,maxLimit:INTEREST_PAGE_LIMIT,maxNoteBytes:INTEREST_NOTE_BYTES},
     mutationReceipts:{schema:'pilot.machine-market.cold-mutation-receipt.v1',actions:['post','interest'],readback:'/v1/market/readback'}};
   }
   return {invoke,discover,publicProfile,issueSession,market,rail,readActions,

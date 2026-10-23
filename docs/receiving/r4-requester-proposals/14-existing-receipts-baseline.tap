@@ -1,0 +1,28 @@
+TAP version 13
+# (node:566294) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ROOT425 committed cold mutations, real createSdsApp, PostgreSQL and verified TLS
+not ok 1 - ROOT425 committed cold mutations, real createSdsApp, PostgreSQL and verified TLS
+  ---
+  duration_ms: 1686.956891
+  type: 'test'
+  location: '/tmp/root4432-source-xG3cdy/server/scripts/test-root425-cold-mutation.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'runtime_schema_unready'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    httpError (file:///tmp/root4432-source-xG3cdy/vendor/hosted-wallet-market/src/server.mjs:33:24)
+    openHostedMarket (file:///tmp/root4432-source-xG3cdy/vendor/hosted-wallet-market/src/server.mjs:265:43)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Module.mountHostedWalletMarket (file:///tmp/root4432-source-xG3cdy/vendor/hosted-wallet-market/src/server.mjs:1744:18)
+    async openAdapter (file:///tmp/root4432-source-xG3cdy/server/lib/hosted-wallet-market-mount.js:170:18)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2007.885147
