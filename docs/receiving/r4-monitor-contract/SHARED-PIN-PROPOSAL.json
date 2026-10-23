@@ -1,0 +1,14 @@
+{
+  "schema": "root4431.shared-pin-proposal.v1",
+  "baseCommit": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+  "canonicalPin": "server/foundry/activation/private-control-pin.json",
+  "priorPinSha256": "e6d25ff238660379a4360050c328b88256a7cff60aa793e777dcd2d6d1fbf25a",
+  "filesToRefreshOrAdd": {
+    "server/lib/machine-services/mount.mjs": "270e28085a442c03427f02c3b53d78ab1b1adf77aca0cc508ad63877119bdb7c",
+    "server/lib/machine-services/monitor-manifest.mjs": "b11ccabb6f6efe67e0d0cb3a76a79c1d6d0407dab746abd9510d398604c64b4f",
+    "server/vendor/continuous-monitoring/src/api.mjs": "03ae09cb6d6f1f6fb8f9223d530d60c284a6a22deb301f13072a02e1daa2c02c",
+    "server/vendor/continuous-monitoring/openapi.json": "18a25d6aec57b87de64d4145fd75bdf17d2e7c209ffbcbb8ea598912a5d5d272"
+  },
+  "qualification": "local candidate only; Root owns combined canonical closure and installation",
+  "sharedFileEdited": false
+}

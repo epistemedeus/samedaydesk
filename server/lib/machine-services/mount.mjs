@@ -14,6 +14,7 @@ import { runtimeOptions } from '../../vendor/continuous-monitoring/src/config.mj
 import { armScheduler } from '../managed-watch/scheduler.mjs';
 import { PgPort, installedDatabaseUrl } from './postgres.mjs';
 import { prepareMachineConfig } from './private-config.mjs';
+import { createMonitorProjection, isMonitorContractRequest } from './monitor-manifest.mjs';
 
 const flag = (env, key) => {
   if (env[key] !== undefined && !['0', '1'].includes(env[key])) throw new Error('invalid_machine_flag');
@@ -216,7 +217,7 @@ export function mountMachineServices(app, options = {}) {
           state.handler = createHttpHandler(gateway, { stripPrefix: '' });
         } else {
           state.service = monitorScheduleService(store, { signal: abort.signal });
-          state.handler = createApiHandler(store, { basePath: prefix.monitor,
+          state.handler = createApiHandler(store, { basePath: prefix.monitor, publicProjection: projectMonitor,
             healthDetails: () => ({ scheduler: schedulerState() }),
             onMutation: async () => {
               // The mutation already committed. Recovery owns planning errors;
@@ -290,9 +291,31 @@ export function mountMachineServices(app, options = {}) {
   function schedulerState() {
     return { enabled: !!scheduler, armed: !!scheduler?.armed, nextDueAt: scheduler?.nextDueAt ?? null };
   }
+  const projectMonitor = createMonitorProjection({
+    ...options.monitorProjection,
+    inspect: async () => {
+      let configured = false, storeReady = false, persistence = null;
+      try {
+        configured = flag(env, 'MONITOR_ENABLED');
+        if (configured && !closing) {
+          const state = await ready('monitor');
+          // Fresh schema/identity readiness, not a cached successful open. No
+          // expiry sweep, tenant authentication, scheduler arm or migration.
+          if (state.store.kind === 'postgres') await track(state.store.port.checkReady());
+          else await track(state.store.one('SELECT 1'));
+          persistence = state.store.kind; storeReady = true;
+        }
+      } catch { /* public projection retains only bounded readiness facts */ }
+      return { mounted: !closing, configured, storeReady, persistence, scheduler: schedulerState() };
+    },
+  });
+  const monitorContract = createApiHandler(null, { publicProjection: projectMonitor });
   for (const service of ['gateway', 'monitor']) {
     app.use(prefix[service], async (req, res) => {
-      try { const state = await ready(service); await state.handler(req, res); }
+      try {
+        if (service === 'monitor' && isMonitorContractRequest(req.url)) return await monitorContract(req, res);
+        const state = await ready(service); await state.handler(req, res);
+      }
       catch { unavailable(res, service); }
     });
   }

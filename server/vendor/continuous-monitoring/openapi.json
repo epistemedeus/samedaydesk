@@ -3,12 +3,12 @@
   "info": {
     "title": "Neomorphic Continuous Monitoring",
     "version": "0.1.1",
-    "description": "Undeployed feature-branch service. Finite read-only upstream GETs and durable authenticated inbox delivery. No automatic charges or billing automation."
+    "description": "Finite public HTTPS GET observations and durable authenticated inbox delivery. The mounted manifest reports current availability separately from artifact history. Tenant credentials and an existing finite entitlement are required for private operations. No automatic charges or billing automation."
   },
   "servers": [
     {
-      "url": "https://monitoring.example.invalid",
-      "description": "Replace only after Root verifies the actual deployment; not a live endpoint"
+      "url": "/api/monitor",
+      "description": "Same-origin mounted API base. Read /v1/manifest for effective availability and access limits."
     }
   ],
   "security": [
@@ -17,29 +17,49 @@
     }
   ],
   "paths": {
+    "/openapi.json": {
+      "get": {
+        "operationId": "getMonitorContract",
+        "security": [],
+        "description": "Credential-free exact bytes of this mounted contract. No tenant, grant, scheduler or monitor is created.",
+        "responses": {
+          "200": {
+            "description": "Exact machine contract",
+            "content": {
+              "application/openapi+json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/healthz": {
       "get": {
         "operationId": "health",
         "security": [],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Configured PostgreSQL API and local source are ready. Observation readiness is reported separately.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "ok",
-                    "service"
-                  ],
-                  "properties": {
-                    "ok": {
-                      "const": true
-                    },
-                    "service": {
-                      "const": "continuous-monitoring"
-                    }
-                  }
+                  "$ref": "#/components/schemas/MountedHealth"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "API readiness cannot be established. No tenant entitlement is granted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MountedHealth"
                 }
               }
             }
@@ -53,11 +73,21 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Dedicated deployment and capability contract",
+            "description": "Mounted runtime, artifact provenance, exact contract and access limits.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/MountedManifest"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Disabled, unavailable or unverified source; contract acquisition is withheld.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MountedManifest"
                 }
               }
             }
@@ -1617,6 +1647,302 @@
               "basis": {
                 "type": "string"
               }
+            }
+          }
+        }
+      },
+      "MonitorRuntime": {
+        "type": "object",
+        "required": [
+          "mounted",
+          "configured",
+          "storeReady",
+          "persistence",
+          "scheduler",
+          "available",
+          "observationsAvailable",
+          "state"
+        ],
+        "properties": {
+          "mounted": {
+            "type": "boolean"
+          },
+          "configured": {
+            "type": "boolean"
+          },
+          "storeReady": {
+            "type": "boolean"
+          },
+          "persistence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scheduler": {
+            "type": "object",
+            "required": [
+              "enabled",
+              "armed",
+              "nextDueAt"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "armed": {
+                "type": "boolean"
+              },
+              "nextDueAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            }
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Configured API, fresh store/schema readiness and matched local source. This does not grant tenant access or promise capacity."
+          },
+          "observationsAvailable": {
+            "type": "boolean",
+            "description": "The API is available and its existing scheduler is enabled. Tenant authority and finite budgets still apply."
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "disabled",
+              "source_unverified",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "MonitorLocalSource": {
+        "type": "object",
+        "required": [
+          "status",
+          "scope",
+          "sha256",
+          "providerBuildQualified"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "matched",
+              "unverified"
+            ]
+          },
+          "scope": {
+            "const": "local-monitor-runtime"
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "providerBuildQualified": {
+            "const": false,
+            "description": "Local source consistency is separate from canonical provider/build qualification."
+          }
+        }
+      },
+      "MountedHealth": {
+        "type": "object",
+        "required": [
+          "ok",
+          "service",
+          "persistence",
+          "scheduler",
+          "runtime",
+          "source"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "const": "continuous-monitoring"
+          },
+          "persistence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scheduler": {
+            "type": "object"
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/MonitorRuntime"
+          },
+          "source": {
+            "$ref": "#/components/schemas/MonitorLocalSource"
+          }
+        }
+      },
+      "MountedManifest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "service",
+          "version",
+          "artifact",
+          "runtime",
+          "source",
+          "basePath",
+          "access",
+          "subscription",
+          "openapi",
+          "contract",
+          "documentation"
+        ],
+        "properties": {
+          "schema": {
+            "const": "sds.continuous-monitoring.mounted-manifest.v1"
+          },
+          "service": {
+            "const": "continuous-monitoring"
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "basePath": {
+            "const": "/api/monitor/v1"
+          },
+          "artifact": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Immutable packaging provenance, not current deployment/readiness.",
+            "required": [
+              "schema",
+              "version",
+              "deploymentState",
+              "sha256"
+            ],
+            "properties": {
+              "schema": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "deploymentState": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/MonitorRuntime"
+          },
+          "source": {
+            "$ref": "#/components/schemas/MonitorLocalSource"
+          },
+          "access": {
+            "type": "object",
+            "required": [
+              "provisioning",
+              "tenantCredentialRequired",
+              "readerWrites",
+              "entitlement",
+              "capacity",
+              "freeLifetimeMonitors",
+              "freeCapacityRenews"
+            ],
+            "properties": {
+              "provisioning": {
+                "const": "operator"
+              },
+              "tenantCredentialRequired": {
+                "const": true
+              },
+              "readerWrites": {
+                "const": false
+              },
+              "entitlement": {
+                "const": "not-evaluated"
+              },
+              "capacity": {
+                "const": "not-guaranteed"
+              },
+              "freeLifetimeMonitors": {
+                "const": 3
+              },
+              "freeCapacityRenews": {
+                "const": false
+              }
+            }
+          },
+          "subscription": {
+            "type": "object",
+            "required": [
+              "automaticCharge",
+              "checkout",
+              "price"
+            ],
+            "properties": {
+              "automaticCharge": {
+                "const": false
+              },
+              "checkout": {
+                "type": "null"
+              },
+              "price": {
+                "type": "null"
+              }
+            }
+          },
+          "openapi": {
+            "enum": [
+              "/api/monitor/openapi.json",
+              null
+            ]
+          },
+          "contract": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "url",
+              "sha256",
+              "bytes",
+              "contentType"
+            ],
+            "properties": {
+              "url": {
+                "const": "/api/monitor/openapi.json"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "contentType": {
+                "const": "application/openapi+json"
+              }
+            }
+          },
+          "documentation": {
+            "type": "array",
+            "maxItems": 1,
+            "items": {
+              "const": "/api/monitor/openapi.json"
             }
           }
         }

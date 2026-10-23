@@ -2,7 +2,7 @@ import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { ServiceError, requireThat, object } from './errors.mjs';
 
-const manifest = JSON.parse(readFileSync(new URL('../machine-manifest.json', import.meta.url), 'utf8'));
+const artifactManifest = () => JSON.parse(readFileSync(new URL('../machine-manifest.json', import.meta.url), 'utf8'));
 const uuid = /^[a-f0-9-]{36}$/;
 const eventKey = /^[a-f0-9]{64}$/;
 async function readBody(req) {
@@ -33,7 +33,7 @@ function write(res, status, value) {
     'x-content-type-options': 'nosniff' });
   res.end(JSON.stringify(value));
 }
-export function createApiHandler(store, { now = Date.now, onMutation = async () => {}, basePath = "", healthDetails = () => ({}) } = {}) {
+export function createApiHandler(store, { now = Date.now, onMutation = async () => {}, basePath = "", healthDetails = () => ({}), publicProjection } = {}) {
   let inflight = 0;
   return async (req, res) => {
     req.setTimeout(10000, () => req.destroy());
@@ -43,10 +43,19 @@ export function createApiHandler(store, { now = Date.now, onMutation = async () 
       requireThat(!req.headers.origin, 'cross_origin_refused', 403);
       const url = new URL(req.url, 'http://service.local');
       const path = url.pathname;
+      if (publicProjection) {
+        requireThat(req.url.startsWith('/') && path === req.url.split('?')[0], 'invalid_route');
+        const response = await publicProjection(req, url);
+        if (response) {
+          res.writeHead(response.status, { 'content-type': response.contentType || 'application/json; charset=utf-8',
+            'cache-control': 'no-store', 'x-content-type-options': 'nosniff', ...response.headers });
+          return res.end(Buffer.isBuffer(response.body) ? response.body : JSON.stringify(response.body));
+        }
+      }
       if (req.method === 'GET' && path === '/healthz' && !url.search) {
         (await store.one('SELECT 1')); return write(res, 200, { ok: true, service: 'continuous-monitoring', persistence: store.kind || 'sqlite-wal', ...healthDetails() });
       }
-      if (req.method === 'GET' && path === '/v1/manifest' && !url.search) return write(res, 200, { ...manifest, basePath: basePath + '/v1', worker: 'bounded tick in existing SDS scheduler' });
+      if (req.method === 'GET' && path === '/v1/manifest' && !url.search) return write(res, 200, { ...artifactManifest(), basePath: basePath + '/v1', worker: 'bounded tick in existing SDS scheduler' });
       requireThat([...url.searchParams.keys()].every(key => ['after', 'limit'].includes(key))
         && [...url.searchParams.keys()].every(key => url.searchParams.getAll(key).length === 1), 'invalid_query');
       const token = /^Bearer ([A-Za-z0-9_-]+)$/.exec(req.headers.authorization ?? '')?.[1];

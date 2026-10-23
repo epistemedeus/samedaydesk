@@ -1,0 +1,50 @@
+{
+  "schema": "root4431.receiving-inputs.v1",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "branch": "codex/root4431-monitor-contract-20261023",
+  "worktree": "/home/ubuntu/ae14-work/root4431-monitor-contract-20261023",
+  "baseCommit": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+  "baseTree": "9e7c8c1bb1f513841117d9d7d3bd5ef49839f501",
+  "receiptSha256": "f67834dedce9db6f438a9ad369f8b6da52c373108b459366ec9589eb187ba8aa",
+  "specSha256": "19ac415e8bcb05cb75fbec4169187f116317c535cb66bfe00a1022e2df34c9b2",
+  "operating": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "8aded3ca3bb5f22b32454f962091ef3750715a76",
+    "account": "epistemedeus"
+  },
+  "assignment": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "8aded3ca3bb5f22b32454f962091ef3750715a76",
+    "path": "overview/remote-worker/assignments/ROOT4430-CONSUMER-COMPLETION-COHORT.md",
+    "blob": "a9e42044825b3e112f37dfbfcf7e99b58c576eba"
+  },
+  "research": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "75654b3ae7d959ceeddcb240fb2cddc7844b8653",
+    "directory": "overview/research/phase-20261023/product-journey-reserve/",
+    "package": "R4-J03"
+  },
+  "declaredModel": "gpt-6.1-sol",
+  "declaredEffort": "xhigh",
+  "executionLifetime": {
+    "host": {
+      "provider": "cursor",
+      "agentId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+      "bootId": "46920f98-723f-459d-ab1e-985512ebe221"
+    },
+    "enrollment": {
+      "path": "/home/ubuntu/root-sol-window100337/root4460-d-research-control-20261023/LIFETIME-ENROLLMENT.json",
+      "sha256": "d47f2070841a07773379b642f3fdca743cb5f9e6382655142aa2b5a11e67b547"
+    },
+    "checkpointBy": "2026-10-23T13:31:23.085Z",
+    "requiredUntil": "2026-10-23T13:46:23.085Z"
+  },
+  "reserveKiB": 2097152,
+  "modelChildren": 0,
+  "tests": {
+    "baseline": "baseline.tap",
+    "candidate": "final.tap",
+    "standalone": "standalone-contract.tap"
+  },
+  "resources": "RESOURCES.json"
+}

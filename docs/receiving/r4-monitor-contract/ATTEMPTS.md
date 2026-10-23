@@ -1,0 +1,16 @@
+# ROOT4431 retained attempts
+
+2026-10-23 UTC, admitted branch `codex/root4431-monitor-contract-20261023`,
+base `79fbd37d31aabdc790248443c576a2f0017e55f0`.
+
+- Operating helper `tools/ops/agent-status --json`: exit 127, absent in this product checkout. No replacement component checks or model were started.
+- Execution prerequisite inspection `ls /usr/lib/postgresql`: exit 2, directory absent. Root Node is v22.23.3; npm is 10.9.9. Root node_modules is also absent. This is the first test prerequisite failure; no test had run at this point. Install the ordinary disposable test prerequisites serially within the admitted reserve.
+
+- Baseline command `R4_MONITOR_BASELINE=1 NODE_OPTIONS=--max-old-space-size=512 node --test --test-concurrency=1 server/lib/machine-services/test/monitor-manifest-journey.test.mjs`: exit 1, 0/2 passed, before any implementation amendment. Ready health had PG and scheduler enabled, manifest retained `feature-branch-not-deployed`, resolved OpenAPI and README were 401. Exact assertions and bodies remain in baseline.tap.
+- First candidate acquisition: 1/1 passed. Expanded mounted receiving: 8/8; cold source extension: 9/9. All changes, including self-review corrections, remain in this branch. Final configured-path evidence is final.tap.
+- First resource sampling omitted descendants of the admitted native launcher. RESOURCES-initial.json retains that incomplete 521288 KiB observation. It is not the total profile result. The corrected sampler includes the exact admitted supervisor/native trees, actual Codex runtime, tool transport, tests and owned disposable PG, all inside the same total reserve. See RESOURCES.json for the corrected run. No other job or model child was created, stopped or adopted.
+- Self-review corrected normalized-path fallback to historical metadata, pinned the loaded source rather than allowing a running process to adopt repinned bytes, retained exact verified contract bytes rather than re-reading them after validation, made absent artifact data a bounded unready response, and rejected mismatched contract version/base/security. These corrections passed actual HTTP/PG and cold-process negatives.
+
+- The portable pinned cloud-start guide resolves in the supplied operating bare Git source at `8aded3ca3bb5f22b32454f962091ef3750715a76`; it was read there. Its absence in the product checkout did not require a new checkout or Mac route. Root cgroup memory files are not the ownership boundary; the resource audit uses only the admitted process tree and its own test fixtures.
+- Final self-review added actual PG table-lock cases: close while readiness is awaiting SQL, and source evidence disappearing during that await. Availability respects both fences and recovers after evidence restoration. These are received in final.tap.
+- `bash docs/receiving/r4-monitor-contract/replay-baseline.sh` executes the exact predecessor in disposable scratch with the final receiver: expected exit 1, 0/2 passed; both original failures reproduce in baseline-replay.tap. No writer branch switch or origin change occurs.
