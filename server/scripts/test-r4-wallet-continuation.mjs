@@ -437,8 +437,9 @@ if(process.env.R4_WALLET_FIXTURE==='1') {
       finally {writeFileSync(member,bytes);}
       await stop();options.tenant='root4550-foreign';
       try {
-        await boot('source-bound:'+canonicalMachineProfile({...doc,tenant:options.tenant}));
-        secretless(await retainedRead(owner,history.paid));
+        // The existing populated store refuses a different configured tenant
+        // before opening HTTP; no foreign namespace can read these rows.
+        await assert.rejects(boot('source-bound:'+canonicalMachineProfile({...doc,tenant:options.tenant})),/fixture startup: tenant_refused/);
       } finally {await stop();options.tenant=tenant;await boot();}
       await assertRetained();
     });
