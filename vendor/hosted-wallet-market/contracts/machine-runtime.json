@@ -52,10 +52,10 @@
     "runtime/agent-economy-rail/package.json": "9ddc1ec1abb80cd9178fbe1d22c47437bd143a5defa3d9a0428af9dd839aecab",
     "runtime/agent-economy-market/src/a-money-adapter.mjs": "3bce51cff1437d5967a2cc5d685e8b0f314e576b0e51ab3dabc4dbc48c23e77c",
     "runtime/agent-economy-market/src/canonical-accounts.mjs": "7eb54d59f6409091f87c3d1351e6e9229cf3b89846076392a8954b117e156539",
-    "runtime/agent-economy-market/src/http.mjs": "bb308e02c5f5f3ebf2cb7465bf441b8f921ea3accfe8bdfa9f726f59814b68ba",
-    "runtime/agent-economy-market/src/market.mjs": "b68914b672ef6f3b87d007e30b049cd104e2f98d648ae82efe9dfa3a3b20ca23",
+    "runtime/agent-economy-market/src/http.mjs": "7997948a494b85c645dab7eb615a00ead9d85aebb979b823d82870dc45f2d702",
+    "runtime/agent-economy-market/src/market.mjs": "ab401b98b67eb8d4a3c8189c7b8f892c4cf654beeb4d75efee9ada4cd3dfc9bd",
     "runtime/agent-economy-market/src/money-port.ts": "036463f9c0a7f26ed848c8183791566e93ad47b11c80c41cc468406dc5ae2826",
-    "runtime/agent-economy-market/src/store.mjs": "2b3ba45d4a73a59f1ffc04aeb6c9cc42bdc2a8855c0c3e09f48db65af5171a9e",
+    "runtime/agent-economy-market/src/store.mjs": "7ad1fa54b213857d82a1c3f104971cba738f87ada841644a59a6c17db5ec970e",
     "runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487"
   }
 }
