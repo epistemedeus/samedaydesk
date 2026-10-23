@@ -23,8 +23,9 @@ test('original canonical service retains its producer and explicitly identifies 
   const overlay=JSON.parse(await readFile(new URL('CONTINUATION-SOURCE.json',original),'utf8'));
   const pin=JSON.parse(await readFile(new URL('SOURCE-PIN.json',original),'utf8'));
   const manifest=JSON.parse(await readFile(new URL('SOURCE-MANIFEST.json',original),'utf8'));
-  const runtime=JSON.parse(await readFile(new URL('SOURCE.json',root),'utf8'));
-  assert.equal(overlay.schema,'neomorphic.original-continuation.overlay.v1');assert.equal(overlay.sourceCommit,runtime.sourceCommit);
+  // Overlay and journey are independently versioned; bind the overlay to its own producer pin.
+  assert.equal(overlay.schema,'neomorphic.original-continuation.overlay.v1');assert.match(overlay.sourceCommit,/^[a-f0-9]{40}$/);
+  assert.deepEqual(overlay,pin.continuationOverlay);
   assert.equal(pin.receivedHead,overlay.originalProducer);assert.notEqual(pin.receivedHead,overlay.sourceCommit);
   assert.equal(overlay.canonicalSchema,'neo_opportunity_221400');assert.equal(overlay.releaseAccepted,false);
   assert.equal(manifest.sourceMismatches,3);assert.equal(manifest.sourceCount,manifest.sourceFiles.length);assert.equal(manifest.distCount,manifest.distFiles.length);
