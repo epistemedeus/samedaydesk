@@ -291,9 +291,10 @@ export async function openHostedMarket(options) {
     throw error;
   }
 
-  // Armed only for an explicit 1..32 budget. Unset stays byte-identical to the
-  // historical envelope and does not observe the request.
-  const completion = createResponseCompletion(options.responseCompletionLimit ?? process.env.HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT);
+  // Both an explicit 1..32 budget and a short absolute window are required.
+  // Unset retains the historical envelope without observing the request.
+  const completion = createResponseCompletion(options.responseCompletionLimit ?? process.env.HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT,
+    console.log, {expiresAt: options.responseCompletionExpires ?? process.env.HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_EXPIRES});
   const send = (res, status, body, extra = {}) => deliverJsonResponse(res, status, body, extra, completion);
 
   const readJson = req => new Promise((resolve, reject) => {
@@ -1618,6 +1619,7 @@ export async function openHostedMarket(options) {
   }
 
   async function handler(req, res, next) {
+    completion.begin(req, res);
     req.on('error', () => {});
     res.on('error', () => {});
     const url = new URL(req.originalUrl || req.url, 'https://127.0.0.1');
@@ -1728,6 +1730,7 @@ export async function openHostedMarket(options) {
       originBox.origin = value;
     },
     async close() {
+      completion.close();
       await machine?.close();
       await pool.end();
     },

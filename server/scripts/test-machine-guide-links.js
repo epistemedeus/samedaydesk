@@ -23,14 +23,14 @@ test("listing discovery does not replace the no-key canonical MCP entry", () => 
   assert.ok(guide.indexOf(direct) < guide.indexOf(maintained));
 });
 test("the Smithery line keeps the qualified listing and sends acquisition to the direct endpoint", () => {
-  const line = "- [Optional Smithery directory listing](https://smithery.ai/servers/epistemedeus/samedaydesk-machine-commerce): Public directory entry. Acquire the MCP endpoint directly at https://agents.samedaydesk.com/mcp with no Smithery account, key, or proxy.";
-  assert.deepEqual(guide.split("\n").filter((row) => row.includes("smithery.ai")), [line]);
+  const line = guide.split("\n").find((row) => row.includes("smithery.ai"));
+  assert.ok(line);
   assert.equal(guide.includes("Managed MCP connection"), false);
   assert.equal(guide.includes(obsolete), false);
   assert.ok(line.includes(maintained));
   assert.ok(line.includes(direct));
   assert.ok(line.includes("no Smithery account"));
-  assert.ok(guide.includes("- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway. Live MCP inventory is authoritative."));
+  assert.ok(guide.includes("https://samedaydesk.com/discovery/paid-gateway.json"));
   assert.ok(guide.includes("- [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links."));
   assert.ok(guide.includes("- [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation."));
 });

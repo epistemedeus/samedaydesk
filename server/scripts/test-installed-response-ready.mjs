@@ -43,7 +43,7 @@ function rpcStub() {
   return new Promise(resolveListen => server.listen(0, '127.0.0.1', () => resolveListen(server)));
 }
 
-function get(socketPath, requestPath, {headers = {}} = {}) {
+function get(socketPath, requestPath, {headers = {}, method = 'GET', body} = {}) {
   return new Promise((resolveRequest, reject) => {
     let settled = false;
     const finish = value => {
@@ -54,7 +54,7 @@ function get(socketPath, requestPath, {headers = {}} = {}) {
     };
     const timer = setTimeout(() => finish({status: 0, headers: {}, body: Buffer.alloc(0), error: 'timeout'}), 8000);
     const req = request({
-      socketPath, path: requestPath, method: 'GET', agent: false,
+      socketPath, path: requestPath, method, agent: false,
       headers: {host: 'desk.invalid', connection: 'close', 'x-ae-wire-version': 'c0-1', ...headers},
     }, res => {
       const chunks = [];
@@ -74,7 +74,7 @@ function get(socketPath, requestPath, {headers = {}} = {}) {
         reject(error);
       }
     });
-    req.end();
+    req.end(body);
   });
 }
 
@@ -131,7 +131,7 @@ function assertHandlerFrame(response, status, code) {
   assert.deepEqual(body, {ok: false, code});
 }
 
-test('ready plaintext installation GET covers authority failure, unbound read, delay, and recovery', {timeout: 120_000}, async () => {
+test('ready inherited Unix native controls cover authority failure, unbound read, delay, and recovery', {timeout: 120_000}, async () => {
   const cluster = await startCluster();
   const rpc = await rpcStub();
   const directory = await mkdtemp(path.join(tmpdir(), 'root1156-ready-'));
@@ -193,8 +193,9 @@ module.isApplicationLoader = true;
 global.LsNode = new EventEmitter();
 const original = http.Server.prototype.listen;
 http.Server.prototype.realListen = net.Server.prototype.listen;
+http.Server.prototype.address = function() { return process.env.ROOT1156_SOCK; };
 http.Server.prototype.listen = function litespeedListen(target, callback) {
-  return original.call(this, target, callback);
+  return original.call(this, {fd: 3}, callback);
 };
 import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(error => {
   console.error(error && error.stack || String(error));
@@ -241,7 +242,10 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     };
     await writeFile(envFile, JSON.stringify(serving), {mode: 0o600});
     await chmod(envFile, 0o600);
-    child = spawn(process.execPath, [loader], {
+    // Bind without accepting, then exec Node in the same owned PID. This
+    // models the received inherited-Pipe shape, not the proprietary edge.
+    const launcher = 'import os,socket,sys\ns=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)\ns.bind(sys.argv[3])\ns.listen(128)\nos.dup2(s.fileno(),3)\nos.set_inheritable(3,True)\nos.execv(sys.argv[1],sys.argv[1:3])\n';
+    child = spawn('python3', ['-c', launcher, process.execPath, loader, socketPath], {
       cwd: root,
       env: {
         PATH: process.env.PATH || '',
@@ -250,7 +254,8 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
         ROOT1156_SOCK: socketPath,
         ROOT1156_ENV_FILE: envFile,
         ROOT1156_READY_FILE: readyFile,
-        HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT: '8',
+        HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_LIMIT: '16',
+        HOSTED_WALLET_MARKET_RESPONSE_COMPLETION_EXPIRES: new Date(Date.now() + 60000).toISOString(),
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
@@ -270,6 +275,16 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     assert.equal(stdout.includes(`READY ${socketPath}`), true, (stderr || 'ready line missing').slice(-1500));
 
     const auth = {authorization: `Bearer ${ownerToken}`};
+    const enrollment = installation.replace('/installation', '/enrollment');
+    const nativeRead = await get(socketPath, enrollment, {headers: auth});
+    assert.equal(nativeRead.status, 200);
+    assert.equal(nativeRead.body.length > 0, true);
+    assert.equal(nativeRead.headers['content-length'], String(nativeRead.body.length));
+    assert.equal(JSON.parse(nativeRead.body).value.state, 'absent');
+    const nativePost = await get(socketPath, installation.replace('/installation', '/enroll'), {
+      method: 'POST', body: '{}', headers: {'content-type': 'application/json'},
+    });
+    assertHandlerFrame(nativePost, 403, 'authority_required');
     const [first, second] = await Promise.all([
       get(socketPath, installation),
       get(socketPath, installation),
@@ -357,7 +372,7 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
       await sleep(20);
       seen = recordsFrom(stdout);
     }
-    const framed = [first, second, unbound, delayed, recovered].concat(aborted.status ? [aborted] : []);
+    const framed = [nativeRead, nativePost, first, second, unbound, delayed, recovered].concat(aborted.status ? [aborted] : []);
     for (const response of framed) {
       const record = seen.find(item => item.id === response.headers['x-ae-completion']);
       assert.ok(record, response.headers['x-ae-completion']);
@@ -378,8 +393,16 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
         assert.equal(value === null || typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number', true);
       }
     }
-    assert.equal(seen.length <= 8, true);
-    const rendered = stdout.split('\n').filter(line => line.includes('installed_response_completion ')).join('\n');
+    assert.equal(seen.length <= 16, true);
+    const stages = stdout.split('\n').filter(line => line.includes('installed_response_lifecycle '))
+      .map(line => JSON.parse(JSON.parse(line).message.slice('installed_response_lifecycle '.length)));
+    for (const response of framed) {
+      const matching = stages.filter(item => item.id === response.headers['x-ae-completion']);
+      for (const stage of ['entered', 'intended', 'headers_written', 'end_call', 'end_return', 'finish', 'close']) {
+        assert.equal(matching.some(item => item.stage === stage), true, stage);
+      }
+    }
+    const rendered = stdout.split('\n').filter(line => line.includes('installed_response_')).join('\n');
     assert.equal(rendered.includes(ownerToken), false);
     assert.equal(rendered.includes(adminToken), false);
     assert.equal(rendered.includes(databaseUrl), false);

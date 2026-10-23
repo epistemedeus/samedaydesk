@@ -8,8 +8,10 @@ import {join, resolve} from 'node:path';
 import {hostSourceSha256} from '../src/native-debt.mjs';
 import {
   COMPLETION_HEADER, COMPLETION_LIMIT, WIRE_HEADER, WIRE_VERSION,
-  createResponseCompletion, deliverJsonResponse, responseCompletionLimit,
+  createResponseCompletion as createWindowCompletion, deliverJsonResponse, responseCompletionLimit,
 } from '../src/response-completion.mjs';
+
+const createResponseCompletion = (limit, emit) => createWindowCompletion(limit, emit, {expiresAt: new Date(Date.now() + 60000).toISOString()});
 
 const root = resolve(import.meta.dirname, '../../..');
 const HISTORICAL_SERVER = '313b6093da34e4e81d82ce0a1ff7db057947a85ee87c836d55e4f27368a59b92';
@@ -104,6 +106,7 @@ function assertEnvelope(response, status, body) {
 
 test('only an integer budget from 0 through 32 arms, and every other value stays off', () => {
   assert.equal(COMPLETION_LIMIT, 32);
+  assert.equal(createWindowCompletion(32).budget(), 0, 'count alone stays off');
   for (const value of [undefined, null, '', 0, '0', '00']) assert.equal(responseCompletionLimit(value), 0, String(value));
   for (const value of [1, '1', 32, '32']) assert.equal(responseCompletionLimit(value), Number(value));
   for (const value of [-1, '33', 33, 1.5, '1.5', '32abc', ' 32', true, false, {}, [], 'true']) {

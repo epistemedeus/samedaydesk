@@ -18,7 +18,7 @@ import { issueContributorHttpsQualification, readContributorEdgeIdentity } from 
 import { hashRequest, hashToken } from "../../vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/crypto.js";
 
 const exec = promisify(execFile);
-const pgBin = "/usr/lib/postgresql/16/bin";
+const pgBin = process.env.AE14_PG_BIN ?? "/usr/lib/postgresql/16/bin";
 const manifest = JSON.parse(await readFile(new URL("../../vendor/neomorphic-contributor-journey/SOURCE.json", import.meta.url), "utf8"));
 const sourceCommit = manifest.sourceCommit;
 const OWNER = "cj227-fixture-owner-not-a-production-token";

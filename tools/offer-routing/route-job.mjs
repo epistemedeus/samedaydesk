@@ -6,6 +6,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { gatewayAvailability, readGatewayState } from "../../server/lib/paid-gateway-availability.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const MATRIX_PATH = join(here, "capability-limits-matrix.json");
@@ -62,8 +63,9 @@ function hostingRank(offer, offlinePreferred) {
 }
 
 /** Select the correct existing offer for a supplied job brief. */
-export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
+export function routeJob(jobInput, { matrix = loadMatrix(), gatewayState = readGatewayState() } = {}) {
   const job = normalizeJob(jobInput);
+  const gateway = gatewayAvailability(gatewayState);
   const offlinePreferred = prefersOffline(job.constraints);
   const candidates = matrix.offers.filter(
     (o) => Array.isArray(o.supportsJobTypes) && o.supportsJobTypes.includes(job.type),
@@ -119,6 +121,10 @@ export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
       });
       continue;
     }
+    if (offer.id === "sdd.paid_html_extract" && !gateway.callable) {
+      rejected.push({ offerId: offer.id, reason: "paid_gateway_unavailable" });
+      continue;
+    }
     eligible.push(offer);
   }
 
@@ -139,7 +145,9 @@ export function routeJob(jobInput, { matrix = loadMatrix() } = {}) {
       warnings: [job.type === "complete_issue_discussion" ? "complete_issue_acquisition_unavailable" : "no_matching_offer"],
       nextAction: job.type === "complete_issue_discussion"
         ? "Obtain issue body and paginated comments from the official GitHub API, preserving coverage limits. No published complete-discussion acquisition pack is asserted here. Use supplied_issue_brief only to process already-held evidence or fixtures."
-        : "Review missing capabilities or constraints; do not purchase an incompatible route.",
+        : rejected.some((row) => row.reason === "paid_gateway_unavailable")
+          ? `${gateway.summary} Use already-held inputs with offline tools: ${gateway.alternatives.offlinePackages}`
+          : "Review missing capabilities or constraints; do not purchase an incompatible route.",
       avoidedMistakes: [...new Set(rejected.map((r) => r.commonMistake).filter(Boolean))],
       criteriaAssessment: "not_evaluated",
       executionAuthorized: false,

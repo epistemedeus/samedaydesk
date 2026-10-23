@@ -33,7 +33,7 @@ export async function start() {
   if (!socketPath || !socketPath.startsWith('/tmp/')) throw new Error('unix socket required');
   const loaderSha256 = createHash('sha256').update(readFileSync(process.argv[1])).digest('hex');
   const logs = [];
-  const completion = createResponseCompletion(16, line => logs.push(line));
+  const completion = createResponseCompletion(16, line => logs.push(line), {expiresAt: new Date(Date.now() + 60000).toISOString()});
   const ingress = createContributorIngress({CONTRIBUTOR_JOURNEY_MODE: 'disabled'});
   const readyDesk = mountContributorManagedDesk(express(), {env: managedEnv('1')});
   const directDesk = mountContributorManagedDesk(express(), {env: {

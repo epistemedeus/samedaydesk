@@ -1,3 +1,4 @@
+import { mergeMcpOutcomes, validateMcpOutcomes } from "./mcp-outcomes.js";
 import crypto from "node:crypto";
 import { MCP_TOOL_NAMES, MCP_TOOL_NAME_MAX_LEN } from "../mcp-tool-inventory.js";
 
@@ -32,6 +33,7 @@ export const MAX_FINDING_ID_LEN = 96;
 export const MAX_PENDING_FLUSHES = 48;
 
 export const DELTA_ALLOWED_KEYS = Object.freeze([
+  "mcpOutcomes",
   "schemaVersion",
   "total",
   "humans",
@@ -236,6 +238,7 @@ export function validateDelta(delta) {
     throw new Error("pulse_invalid_schema_version");
   }
   const out = emptyDelta();
+  if (Object.hasOwn(delta, "mcpOutcomes")) out.mcpOutcomes = validateMcpOutcomes(delta.mcpOutcomes);
   for (const field of [
     "total",
     "humans",
@@ -477,6 +480,7 @@ export function validateLegacyObservation(observation) {
 }
 
 export function deltaIsEmpty(delta) {
+  if (delta.mcpOutcomes && Object.values(delta.mcpOutcomes.counts).some(Boolean)) return false;
   if (delta.total !== 0) return false;
   if (delta.humans !== 0 || delta.bots !== 0 || delta.aiCrawlers !== 0) return false;
   if (delta.mcpSurfaceGets !== 0 || delta.mcpProtocolRequests !== 0) return false;
@@ -535,6 +539,7 @@ export function mergeSellerRepair(base, add) {
 }
 
 export function mergeDeltas(into, from) {
+  if (from.mcpOutcomes) into.mcpOutcomes = mergeMcpOutcomes(into.mcpOutcomes, from.mcpOutcomes);
   into.total += from.total;
   into.humans += from.humans;
   into.bots += from.bots;
@@ -558,6 +563,7 @@ export function mergeDeltas(into, from) {
 
 export function snapshotCountersFromDelta(delta) {
   return {
+    mcpOutcomes: mergeMcpOutcomes(null, delta.mcpOutcomes),
     total: delta.total,
     humans: delta.humans,
     bots: delta.bots,
@@ -579,6 +585,7 @@ export function snapshotCountersFromDelta(delta) {
 
 export function emptySnapshotCounters() {
   return {
+    mcpOutcomes: null,
     total: 0,
     humans: 0,
     bots: 0,
@@ -601,6 +608,7 @@ export function emptySnapshotCounters() {
 export function durableSnapshotToCounters(snapshot) {
   const out = emptySnapshotCounters();
   if (!snapshot) return out;
+  out.mcpOutcomes = snapshot.mcpOutcomes ? validateMcpOutcomes(snapshot.mcpOutcomes) : null;
   out.total = snapshot.total || 0;
   out.humans = snapshot.humans || 0;
   out.bots = snapshot.bots || 0;
@@ -623,6 +631,7 @@ export function durableSnapshotToCounters(snapshot) {
 
 export function deltaToRpcPayload(delta) {
   return {
+    ...(delta.mcpOutcomes ? { mcpOutcomes: validateMcpOutcomes(delta.mcpOutcomes) } : {}),
     schemaVersion: delta.schemaVersion,
     total: delta.total,
     humans: delta.humans,
