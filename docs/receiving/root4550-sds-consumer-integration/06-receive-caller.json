@@ -1,0 +1,38 @@
+{
+  "command": [
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=512",
+    "node",
+    "server/scripts/refresh-installed-receiving-source.mjs",
+    "--receive-caller-from",
+    "79fbd37d31aabdc790248443c576a2f0017e55f0"
+  ],
+  "cwd": "/home/ubuntu/ae14-work/root4550-sds-consumer-integration-20261023",
+  "exitCode": 0,
+  "startedUtc": "2026-10-23T11:25:46Z",
+  "elapsedSeconds": 0.411,
+  "peakOwnedRssKiB": 420028,
+  "reserveKiB": 4194304,
+  "nativeObserved": [
+    576692,
+    576693
+  ],
+  "peakPids": [
+    576692,
+    576693,
+    576700,
+    577317,
+    578295,
+    578719,
+    578885,
+    579317,
+    579481,
+    579916,
+    579977,
+    579981
+  ],
+  "sampleIntervalMs": 100,
+  "samples": 5,
+  "modelChildren": 0,
+  "scope": "Exact admitted native/supervisor PID+start time, their descendants and newly created detached fixture PostgreSQL. Shared pages repeat in summed RSS; between-sample peaks unmeasured."
+}

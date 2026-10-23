@@ -1,0 +1,33 @@
+{
+  "schema": "root4550.self-review.v1",
+  "sourceHead": "d3fa21acfdf4d5af47ab0962e4123d784c65b6c4",
+  "syntaxFiles": [
+    "server/lib/machine-services/monitor-manifest.mjs",
+    "server/lib/machine-services/mount.mjs",
+    "server/lib/machine-services/test/monitor-manifest-journey.test.mjs",
+    "server/vendor/continuous-monitoring/src/api.mjs",
+    "vendor/hosted-wallet-market/src/machine-market.mjs",
+    "vendor/hosted-wallet-market/src/market-interest-read.mjs",
+    "vendor/hosted-wallet-market/src/server.mjs",
+    "vendor/hosted-wallet-market/src/wallet-continuation.mjs",
+    "vendor/hosted-wallet-market/src/retained-outcome.mjs",
+    "server/scripts/test-r4-requester-proposal-review.mjs",
+    "server/scripts/test-r4-wallet-continuation.mjs",
+    "server/scripts/test-root425-cold-mutation.mjs"
+  ],
+  "originalSixCommitsPreserved": true,
+  "originalReceivingBytesEqual": true,
+  "protectedClientJourneyDeskTreesEqual": true,
+  "scopedDiffCheckPassed": true,
+  "canonicalOriginAndAdmittedBranchPreserved": true,
+  "review": [
+    "cookie producer and delivery hash domains; unchanged lookup/delivery enforcement",
+    "requester current membership, bounded SQL pagination and read-only early return",
+    "dual proof role/source/account/epoch binding, row locks and final session recheck",
+    "old complete financial rows and artifact bytes, original journal readback",
+    "monitor post-await source/close fences and exact anonymous document bytes",
+    "existing producer drift refusal and explicit predecessor caller compatibility",
+    "runtime-file-map provenance and exact three inherited corrections"
+  ],
+  "exportHeadVerifierSyntaxPassed": true
+}

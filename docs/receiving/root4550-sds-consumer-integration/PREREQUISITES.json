@@ -1,0 +1,58 @@
+{
+  "schema": "root4550.prerequisites.v1",
+  "versions": [
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "output": "v22.23.3"
+    },
+    {
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "output": "10.9.9"
+    },
+    {
+      "command": [
+        "/usr/lib/postgresql/16/bin/postgres",
+        "--version"
+      ],
+      "output": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+    },
+    {
+      "command": [
+        "/usr/lib/postgresql/16/bin/pg_ctl",
+        "--version"
+      ],
+      "output": "pg_ctl (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+    },
+    {
+      "command": [
+        "openssl",
+        "version"
+      ],
+      "output": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)"
+    },
+    {
+      "command": [
+        "python3",
+        "--version"
+      ],
+      "output": "Python 3.12.3"
+    }
+  ],
+  "host": {
+    "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+    "machine": "x86_64"
+  },
+  "installedLockedRootDependencies": true,
+  "sharedDatabaseServiceStarted": false,
+  "totalReserveKiB": 4194304,
+  "modelChildren": 0,
+  "profile": "gpt-6.1-sol/xhigh",
+  "nativeInputReceiptSha256": "dc416bd685e0630e3689486c89afbf2e382118e1441ae4437a7fe3bc01bbddc2",
+  "pgBinarySha256": "201d8daff9a5bd9df70b820471b965c39f5a776d677f395232c477d051270722"
+}

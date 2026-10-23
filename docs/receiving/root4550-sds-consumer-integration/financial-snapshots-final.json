@@ -1,0 +1,1517 @@
+{
+  "synthetic": true,
+  "before": {
+    "earned_work_tasks": [
+      {
+        "value": {
+          "id": "continuity-234100-v1",
+          "title": "Continuity stand-in",
+          "summary": "Staging stand-in row. Not a copy of live debt.",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "provenance": "production",
+          "updated_at": "2026-10-14T08:19:30.261+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "100000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "task_r4433owed0000000",
+          "title": "task_r4433owed0000000",
+          "summary": "Disposable preservation fixture",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-20T10:00:00+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "0.095000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "task_r4433paid0000000",
+          "title": "task_r4433paid0000000",
+          "summary": "Disposable preservation fixture",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-20T10:00:00+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "0.095000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "tsk_StjWk32c3mZlkhu5",
+          "title": "Disposable future binding task",
+          "summary": "Source receiving only",
+          "lifecycle": "open",
+          "created_at": "2026-10-23T11:39:47.9+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-23T11:39:47.9+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "none",
+          "budget_amount": "0.095000",
+          "funding_state": "unfunded",
+          "budget_network": "base",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+          "correction_max_revisions": 0
+        }
+      }
+    ],
+    "earned_work_reservations": [
+      {
+        "value": {
+          "id": "rsv_legacy23410001",
+          "status": "completed",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "expires_at": "2026-10-14T08:19:30.261+00:00",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "contributor_token_id": "tok_legacy23410001",
+          "contributor_public_id": "legacy-public-234100"
+        }
+      },
+      {
+        "value": {
+          "id": "rsv_r4433owed0000000",
+          "status": "completed",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": "2026-10-20T10:00:00+00:00",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "contributor_token_id": "tok_r4433owed0000000",
+          "contributor_public_id": "pub_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "id": "rsv_r4433paid0000000",
+          "status": "completed",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": "2026-10-20T10:00:00+00:00",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "contributor_token_id": "tok_r4433paid0000000",
+          "contributor_public_id": "pub_r4433paid0000000"
+        }
+      }
+    ],
+    "earned_work_verdicts": [
+      {
+        "value": {
+          "id": "ver_legacy23410001",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "submission_id": "sub_legacy23410001",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "reservation_id": "rsv_legacy23410001",
+          "verifier_version": "staging-stand-in",
+          "artifact_digest_sha256": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc"
+        }
+      },
+      {
+        "value": {
+          "id": "ver_r4433owed0000000",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "submission_id": "sub_r4433owed0000000",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "reservation_id": "rsv_r4433owed0000000",
+          "verifier_version": "root4433",
+          "artifact_digest_sha256": "04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268"
+        }
+      },
+      {
+        "value": {
+          "id": "ver_r4433paid0000000",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "reservation_id": "rsv_r4433paid0000000",
+          "verifier_version": "root4433",
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba"
+        }
+      }
+    ],
+    "earned_work_obligations": [
+      {
+        "value": {
+          "id": "obl_legacy23410001",
+          "adapter": "staging-representation",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "verdict_id": "ver_legacy23410001",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "100000",
+          "submission_id": "sub_legacy23410001",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "reservation_id": "rsv_legacy23410001",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "legacy-234100-obligation",
+          "payout_destination": "0x1111111111111111111111111111111111111111",
+          "contributor_public_id": "legacy-public-234100"
+        }
+      },
+      {
+        "value": {
+          "id": "obl_r4433owed0000000",
+          "adapter": "synthetic",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "verdict_id": "ver_r4433owed0000000",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "submission_id": "sub_r4433owed0000000",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "reservation_id": "rsv_r4433owed0000000",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "obl_r4433owed0000000",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "contributor_public_id": "pub_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "id": "obl_r4433paid0000000",
+          "adapter": "synthetic",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "verdict_id": "ver_r4433paid0000000",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "reservation_id": "rsv_r4433paid0000000",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "obl_r4433paid0000000",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "contributor_public_id": "pub_r4433paid0000000"
+        }
+      }
+    ],
+    "earned_work_terms": [
+      {
+        "value": {
+          "summary": "Fixed old net",
+          "task_id": "task_r4433owed0000000",
+          "version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "Fixed old net",
+          "task_id": "task_r4433paid0000000",
+          "version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "Staging stand-in terms. Not a copy of live terms.",
+          "task_id": "continuity-234100-v1",
+          "version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "100000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "{\"parties\":{\"origin\":\"https://127.0.0.1:39903\",\"sourceSha256\":\"6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647\",\"hostSha256\":\"352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3\",\"profile\":\"machine-market\",\"money\":\"unfunded\",\"networkIdentityDigest\":\"9f492fe4d57585fbba2b2580a52de4e02c528dcd8c57a850fa662d47aeea04aa\",\"payer\":\"0x3d8a5a17cc6fbb7dd5a821e25fd5253dd5b712a2\",\"payerEpoch\":0,\"payerControl\":\"503a1c1717b22df4ddc899e918445a1eb3fc4ca2226364fc5ee33a7c5a93504b\",\"receiver\":\"0xb29d705e09a2e13374a45f0a6082e403251e3d9e\",\"receiverEpoch\":1,\"receiverControl\":\"0adabf5d7019b300871ecc5f4cbcbdca015a5f287ca52a774e7f8c43b921d1f0\"},\"spec\":{\"title\":\"Disposable future binding task\",\"cohort\":\"unknown\",\"summary\":\"Source receiving only\",\"criteria\":[\"bounded\"],\"slotLimit\":1,\"payableKinds\":[\"usable\"],\"milestoneLimit\":1},\"contributorId\":\"acc_lDw6hP6IpKNpFQIN\",\"payoutDestination\":\"0xb29d705e09a2e13374a45f0a6082e403251e3d9e\",\"asset\":{\"chain\":\"eip155:8453\",\"token\":\"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\",\"decimals\":6,\"symbol\":\"USDC\"},\"gross\":\"100000\",\"fee\":\"5000\",\"feeRecipient\":\"0x1111111111111111111111111111111111111111\",\"profile\":{\"id\":\"commerce-payments-v1.1.0-single-capture\",\"rounding\":\"per_capture_floor\",\"mode\":\"single_capture\",\"escrow\":{\"kind\":\"commerce_payments\",\"repository\":\"https://github.com/base/commerce-payments\",\"tag\":\"v1.1.0\",\"commit\":\"6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9\",\"abiSha256\":\"4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5\"}},\"railCostCap\":\"0\",\"expiresAt\":\"2026-10-23T12:39:47.825Z\"}",
+          "task_id": "tsk_StjWk32c3mZlkhu5",
+          "version": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+          "created_at": "2026-10-23T11:39:47.9+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "base",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 3600,
+          "max_artifact_bytes": 65536,
+          "allowed_media_types": [
+            "application/json"
+          ]
+        }
+      }
+    ],
+    "earned_work_submissions": [
+      {
+        "value": {
+          "id": "sub_legacy23410001",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "artifact_ref": "staging-stand-in:legacy",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "artifact_bytes": 27,
+          "evidence_bytes": "\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479",
+          "reservation_id": "rsv_legacy23410001",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc"
+        }
+      },
+      {
+        "value": {
+          "id": "sub_r4433owed0000000",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "artifact_ref": "synthetic:preserved",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "artifact_bytes": 30,
+          "evidence_bytes": "\\x507265736572766564206163636570746564206f7765642062797465732e",
+          "reservation_id": "rsv_r4433owed0000000",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268"
+        }
+      },
+      {
+        "value": {
+          "id": "sub_r4433paid0000000",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "artifact_ref": "synthetic:preserved",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "artifact_bytes": 30,
+          "evidence_bytes": "\\x50726573657276656420616363657074656420706169642062797465732e",
+          "reservation_id": "rsv_r4433paid0000000",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba"
+        }
+      }
+    ],
+    "earned_work_contributor_tokens": [
+      {
+        "value": {
+          "id": "tok_legacy23410001",
+          "public_id": "legacy-public-234100",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "expires_at": null,
+          "provenance": "production",
+          "revoked_at": null,
+          "task_scope": "continuity-234100-v1",
+          "token_hash": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc",
+          "payout_destination": "0x1111111111111111111111111111111111111111"
+        }
+      },
+      {
+        "value": {
+          "id": "tok_r4433owed0000000",
+          "public_id": "pub_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": null,
+          "provenance": "test",
+          "revoked_at": null,
+          "task_scope": "task_r4433owed0000000",
+          "token_hash": "a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e"
+        }
+      },
+      {
+        "value": {
+          "id": "tok_r4433paid0000000",
+          "public_id": "pub_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": null,
+          "provenance": "test",
+          "revoked_at": null,
+          "task_scope": "task_r4433paid0000000",
+          "token_hash": "e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e"
+        }
+      }
+    ],
+    "journey_account_kernel_bindings": [
+      {
+        "value": {
+          "source": "created",
+          "public_id": "pub_r4433owed0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "token_hash": "a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a",
+          "kernel_scope": "task_r4433owed0000000",
+          "principal_id": "tok_r4433owed0000000",
+          "earned_task_id": "task_r4433owed0000000",
+          "opportunity_round_id": null
+        }
+      },
+      {
+        "value": {
+          "source": "created",
+          "public_id": "pub_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "token_hash": "e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4",
+          "kernel_scope": "task_r4433paid0000000",
+          "principal_id": "tok_r4433paid0000000",
+          "earned_task_id": "task_r4433paid0000000",
+          "opportunity_round_id": null
+        }
+      }
+    ],
+    "hosted_wallet_market.quotes": [
+      {
+        "value": {
+          "funded": false,
+          "task_id": "task_r4433owed0000000",
+          "chain_id": null,
+          "proof_id": null,
+          "economics": {
+            "feeBps": 500,
+            "captures": [
+              {
+                "feeAtomic": "5000",
+                "amountAtomic": "100000"
+              }
+            ],
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "0",
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95000",
+            "thisQuoteFeeIsExactFivePercent": true,
+            "exactFivePercentAtEveryAtomicAmount": false
+          },
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "block_number": null,
+          "funding_wire": "unfunded",
+          "observations": [],
+          "fee_recipient": "0x1111111111111111111111111111111111111111",
+          "refund_expiry": "2026-10-23T12:39:47.91+00:00",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "authorization_expiry": "2026-10-23T12:39:47.91+00:00",
+          "requester_account_id": "acc_WYLOjFN0zjurnzre",
+          "contributor_account_id": "acc_lDw6hP6IpKNpFQIN"
+        }
+      },
+      {
+        "value": {
+          "funded": false,
+          "task_id": "task_r4433paid0000000",
+          "chain_id": null,
+          "proof_id": null,
+          "economics": {
+            "feeBps": 500,
+            "captures": [
+              {
+                "feeAtomic": "5000",
+                "amountAtomic": "100000"
+              }
+            ],
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "0",
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95000",
+            "thisQuoteFeeIsExactFivePercent": true,
+            "exactFivePercentAtEveryAtomicAmount": false
+          },
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "block_number": null,
+          "funding_wire": "unfunded",
+          "observations": [],
+          "fee_recipient": "0x1111111111111111111111111111111111111111",
+          "refund_expiry": "2026-10-23T12:39:47.91+00:00",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "authorization_expiry": "2026-10-23T12:39:47.91+00:00",
+          "requester_account_id": "acc_WYLOjFN0zjurnzre",
+          "contributor_account_id": "acc_lDw6hP6IpKNpFQIN"
+        }
+      }
+    ],
+    "hosted_wallet_market.funding_intents": [
+      {
+        "value": {
+          "payer": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "tenant": "root4433-wallet",
+          "message": "original uncertain funding intent",
+          "task_id": "task_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "authorized": true,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "not_before_block": 42
+        }
+      }
+    ],
+    "hosted_wallet_market.grants": [
+      {
+        "value": {
+          "task_id": "task_r4433owed0000000",
+          "token_id": "tok_r4433owed0000000",
+          "public_id": "pub_r4433owed0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00"
+        }
+      },
+      {
+        "value": {
+          "task_id": "task_r4433paid0000000",
+          "token_id": "tok_r4433paid0000000",
+          "public_id": "pub_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00"
+        }
+      }
+    ],
+    "hosted_wallet_market.captures": [
+      {
+        "value": {
+          "chain": "eip155:31337",
+          "winner": "authorized_capture",
+          "fee_bps": 500,
+          "task_id": "task_r4433owed0000000",
+          "transfer": false,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "fee_atomic": 5000,
+          "net_atomic": 95000,
+          "rail_atomic": 0,
+          "block_number": "42",
+          "gross_atomic": 100000,
+          "obligation_id": "obl_r4433owed0000000",
+          "reservation_id": "rsv_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "chain": "eip155:31337",
+          "winner": "authorized_capture",
+          "fee_bps": 500,
+          "task_id": "task_r4433paid0000000",
+          "transfer": false,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "fee_atomic": 5000,
+          "net_atomic": 95000,
+          "rail_atomic": 0,
+          "block_number": "42",
+          "gross_atomic": 100000,
+          "obligation_id": "obl_r4433paid0000000",
+          "reservation_id": "rsv_r4433paid0000000"
+        }
+      }
+    ],
+    "hosted_wallet_market.native_debt_dispositions": [
+      {
+        "value": {
+          "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "tenant": "root4433-wallet",
+          "network": "eip155:8453",
+          "task_id": "task_r4433paid0000000",
+          "claim_id": "rsv_r4433paid0000000",
+          "log_index": 7,
+          "recipient": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "block_hash": "0x4242424242424242424242424242424242424242424242424242424242424242",
+          "created_at": "2026-10-23T11:39:48.491777+00:00",
+          "proof_kind": "erc20_transfer",
+          "receipt_id": "991760efa17753aef5ed8ee05b78ca2372a03791219b977970517de20995189e",
+          "verdict_id": "ver_r4433paid0000000",
+          "disposition": "external_discharge_allocated",
+          "kernel_paid": true,
+          "received_at": "2026-10-20T11:00:01+00:00",
+          "block_number": "42",
+          "fee_evidence": null,
+          "import_state": "bound",
+          "payout_state": "owed",
+          "reward_asset": null,
+          "amount_atomic": "95000",
+          "obligation_id": "obl_r4433paid0000000",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "request_sha256": "510d2131108b24daa50377466a974fc641837b9a1ed6582cb38a8ca294026b6e",
+          "reservation_id": "rsv_r4433paid0000000",
+          "block_timestamp": "2026-10-20T11:00:00+00:00",
+          "kernel_transfer": "0x3131313131313131313131313131313131313131313131313131313131313131",
+          "observed_source": "0x2222222222222222222222222222222222222222",
+          "transaction_hash": "0x3131313131313131313131313131313131313131313131313131313131313131",
+          "obligation_family": "earned",
+          "transfer_initiated": false,
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba",
+          "import_contract_sha256": "414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063",
+          "native_paid_observation": true,
+          "authority_receipt_sha256": "15bd8fb4d1b71e61ee34037480ed433db740d8b8a57e765e39a609ad28f74037",
+          "consumer_contract_sha256": "fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5"
+        }
+      }
+    ],
+    "hosted_wallet_market.consumer_enrollment": [
+      {
+        "value": {
+          "id": true,
+          "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "tenant": "root4433-wallet",
+          "network": "eip155:8453",
+          "created_at": "2026-10-23T11:39:47.991+00:00",
+          "earned_schema": "cj227_earned_work",
+          "profile_chain": "eip155:8453",
+          "source_sha256": "6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647",
+          "profile_sha256": "644556b177d57d7ec23a5c83e187dc47778ce0e397911b61bc410fda2372f5c9",
+          "registry_sha256": "ce1a3898bb22161f3c821bb264d02f482db1537b574f6622810b5ec206089d5a",
+          "rpc_origin_sha256": "cf9d7242870403ca042151d86860671b8c02de0839cb305a926e6a4407c30073",
+          "host_source_sha256": "352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3",
+          "rpc_endpoint_sha256": "dd77bae06f0499923a670fc74f826fc5cf12fd0e5f8142e2fcceb363db8838c0",
+          "import_contract_sha256": "414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063",
+          "consumer_contract_sha256": "fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5"
+        }
+      }
+    ],
+    "ae14_market_quotes": [
+      {
+        "value": {
+          "id": "quote-19cd49a85eb715a43f1920a36d5fb533bc904f400d69df2241df32ceb13bd485",
+          "binding": {
+            "task": {
+              "taskId": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+              "tenantId": "root4433-wallet",
+              "slotLimit": 1,
+              "publicText": "Source receiving only",
+              "evaluatorId": "acc_sAseUzb085uIJ2a4",
+              "requesterId": "acc_sAseUzb085uIJ2a4",
+              "taskVersion": 1,
+              "termsVersion": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+              "schemaVersion": "pilot.agent-economy.v1",
+              "canonicalTaskId": "tsk_StjWk32c3mZlkhu5"
+            },
+            "quote": {
+              "fee": {
+                "bps": 500,
+                "basis": "new_job_gross",
+                "profile": {
+                  "id": "commerce-payments-v1.1.0-single-capture",
+                  "mode": "single_capture",
+                  "escrow": {
+                    "tag": "v1.1.0",
+                    "kind": "commerce_payments",
+                    "commit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+                    "abiSha256": "4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5",
+                    "repository": "https://github.com/base/commerce-payments"
+                  },
+                  "rounding": "per_capture_floor"
+                },
+                "schemaVersion": "pilot.agent-economy.v2"
+              },
+              "rail": {
+                "mode": "platform_subsidy",
+                "costCap": "0"
+              },
+              "asset": {
+                "chain": "eip155:8453",
+                "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                "symbol": "USDC",
+                "decimals": 6
+              },
+              "gross": "100000",
+              "rules": {
+                "refund": "unaccepted_gross_only",
+                "dispute": "hold_until_authoritative_resolution",
+                "partial": "accepted_gross_only",
+                "reversal": "reconcile_without_repricing_earned_obligation",
+                "rightsTermsRef": "terms:sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa"
+              },
+              "taskId": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+              "quoteId": "quote-19cd49a85eb715a43f1920a36d5fb533bc904f400d69df2241df32ceb13bd485",
+              "subsidy": "0",
+              "tenantId": "root4433-wallet",
+              "expiresAt": "2026-10-23T12:39:47.825Z",
+              "evaluatorId": "acc_sAseUzb085uIJ2a4",
+              "platformFee": "5000",
+              "requesterId": "acc_sAseUzb085uIJ2a4",
+              "taskVersion": 1,
+              "feeRecipient": "0x1111111111111111111111111111111111111111",
+              "termsVersion": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+              "contributorId": "acc_lDw6hP6IpKNpFQIN",
+              "fundingTarget": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+              "schemaVersion": "pilot.agent-economy.v2",
+              "contributorNet": "95000",
+              "canonicalTaskId": "tsk_StjWk32c3mZlkhu5",
+              "payoutDestination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "fundingAuthorityId": "unqualified",
+              "settlementAuthorityId": "machine-requester-review-v1"
+            },
+            "parties": {
+              "money": "unfunded",
+              "payer": "0x3d8a5a17cc6fbb7dd5a821e25fd5253dd5b712a2",
+              "origin": "https://127.0.0.1:39903",
+              "profile": "machine-market",
+              "receiver": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "hostSha256": "352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3",
+              "payerEpoch": 0,
+              "payerControl": "503a1c1717b22df4ddc899e918445a1eb3fc4ca2226364fc5ee33a7c5a93504b",
+              "sourceSha256": "6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647",
+              "receiverEpoch": 1,
+              "receiverControl": "0adabf5d7019b300871ecc5f4cbcbdca015a5f287ca52a774e7f8c43b921d1f0",
+              "networkIdentityDigest": "9f492fe4d57585fbba2b2580a52de4e02c528dcd8c57a850fa662d47aeea04aa"
+            }
+          },
+          "task_id": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+          "tenant_id": "root4433-wallet",
+          "allocation_id": "tsk_StjWk32c3mZlkhu5",
+          "command_digest": "dbb823340a740314f113c460ea46b93d40c4afe3f46ffdbd975fea65a135a8c4"
+        }
+      }
+    ],
+    "ae14_market_funding": [],
+    "originalUncertainOperation": [
+      {
+        "value": {
+          "key": "r4433-uncertain-old",
+          "scope": "hosted-wallet-market",
+          "task_id": "",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "status_code": 200,
+          "principal_id": "acc_lDw6hP6IpKNpFQIN",
+          "request_hash": "90929390aad4249e8529d8ec63c53ff69f7023b3489383d33a3ce92b985c1423",
+          "response_json": {
+            "value": {
+              "state": "unknown",
+              "destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "operationId": "original-funding-identity",
+              "sharedNonce": "17",
+              "budgetRemaining": "0",
+              "noAutomaticReplay": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "after": {
+    "earned_work_tasks": [
+      {
+        "value": {
+          "id": "continuity-234100-v1",
+          "title": "Continuity stand-in",
+          "summary": "Staging stand-in row. Not a copy of live debt.",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "provenance": "production",
+          "updated_at": "2026-10-14T08:19:30.261+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "100000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "task_r4433owed0000000",
+          "title": "task_r4433owed0000000",
+          "summary": "Disposable preservation fixture",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-20T10:00:00+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "0.095000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "task_r4433paid0000000",
+          "title": "task_r4433paid0000000",
+          "summary": "Disposable preservation fixture",
+          "lifecycle": "accepted",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-20T10:00:00+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "owed",
+          "budget_amount": "0.095000",
+          "funding_state": "reserved",
+          "budget_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "correction_max_revisions": 1
+        }
+      },
+      {
+        "value": {
+          "id": "tsk_StjWk32c3mZlkhu5",
+          "title": "Disposable future binding task",
+          "summary": "Source receiving only",
+          "lifecycle": "open",
+          "created_at": "2026-10-23T11:39:47.9+00:00",
+          "provenance": "test",
+          "updated_at": "2026-10-23T11:39:47.9+00:00",
+          "budget_asset": "USDC",
+          "payout_state": "none",
+          "budget_amount": "0.095000",
+          "funding_state": "unfunded",
+          "budget_network": "base",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "current_terms_version": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+          "correction_max_revisions": 0
+        }
+      }
+    ],
+    "earned_work_reservations": [
+      {
+        "value": {
+          "id": "rsv_legacy23410001",
+          "status": "completed",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "expires_at": "2026-10-14T08:19:30.261+00:00",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "contributor_token_id": "tok_legacy23410001",
+          "contributor_public_id": "legacy-public-234100"
+        }
+      },
+      {
+        "value": {
+          "id": "rsv_r4433owed0000000",
+          "status": "completed",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": "2026-10-20T10:00:00+00:00",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "contributor_token_id": "tok_r4433owed0000000",
+          "contributor_public_id": "pub_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "id": "rsv_r4433paid0000000",
+          "status": "completed",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": "2026-10-20T10:00:00+00:00",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "contributor_token_id": "tok_r4433paid0000000",
+          "contributor_public_id": "pub_r4433paid0000000"
+        }
+      }
+    ],
+    "earned_work_verdicts": [
+      {
+        "value": {
+          "id": "ver_legacy23410001",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "submission_id": "sub_legacy23410001",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "reservation_id": "rsv_legacy23410001",
+          "verifier_version": "staging-stand-in",
+          "artifact_digest_sha256": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc"
+        }
+      },
+      {
+        "value": {
+          "id": "ver_r4433owed0000000",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "submission_id": "sub_r4433owed0000000",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "reservation_id": "rsv_r4433owed0000000",
+          "verifier_version": "root4433",
+          "artifact_digest_sha256": "04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268"
+        }
+      },
+      {
+        "value": {
+          "id": "ver_r4433paid0000000",
+          "ordinal": 1,
+          "outcome": "pass",
+          "reasons": {
+            "outcome": "pass"
+          },
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "reservation_id": "rsv_r4433paid0000000",
+          "verifier_version": "root4433",
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba"
+        }
+      }
+    ],
+    "earned_work_obligations": [
+      {
+        "value": {
+          "id": "obl_legacy23410001",
+          "adapter": "staging-representation",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "verdict_id": "ver_legacy23410001",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "100000",
+          "submission_id": "sub_legacy23410001",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "reservation_id": "rsv_legacy23410001",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "legacy-234100-obligation",
+          "payout_destination": "0x1111111111111111111111111111111111111111",
+          "contributor_public_id": "legacy-public-234100"
+        }
+      },
+      {
+        "value": {
+          "id": "obl_r4433owed0000000",
+          "adapter": "synthetic",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "verdict_id": "ver_r4433owed0000000",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "submission_id": "sub_r4433owed0000000",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "reservation_id": "rsv_r4433owed0000000",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "obl_r4433owed0000000",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "contributor_public_id": "pub_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "id": "obl_r4433paid0000000",
+          "adapter": "synthetic",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "verdict_id": "ver_r4433paid0000000",
+          "payout_state": "owed",
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "reservation_id": "rsv_r4433paid0000000",
+          "reward_network": "eip155:8453",
+          "idempotency_key": "obl_r4433paid0000000",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "contributor_public_id": "pub_r4433paid0000000"
+        }
+      }
+    ],
+    "earned_work_terms": [
+      {
+        "value": {
+          "summary": "Fixed old net",
+          "task_id": "task_r4433owed0000000",
+          "version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "Fixed old net",
+          "task_id": "task_r4433paid0000000",
+          "version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "Staging stand-in terms. Not a copy of live terms.",
+          "task_id": "continuity-234100-v1",
+          "version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "100000",
+          "reward_network": "eip155:8453",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 7200,
+          "max_artifact_bytes": 16384,
+          "allowed_media_types": [
+            "text/plain"
+          ]
+        }
+      },
+      {
+        "value": {
+          "summary": "{\"parties\":{\"origin\":\"https://127.0.0.1:39903\",\"sourceSha256\":\"6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647\",\"hostSha256\":\"352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3\",\"profile\":\"machine-market\",\"money\":\"unfunded\",\"networkIdentityDigest\":\"9f492fe4d57585fbba2b2580a52de4e02c528dcd8c57a850fa662d47aeea04aa\",\"payer\":\"0x3d8a5a17cc6fbb7dd5a821e25fd5253dd5b712a2\",\"payerEpoch\":0,\"payerControl\":\"503a1c1717b22df4ddc899e918445a1eb3fc4ca2226364fc5ee33a7c5a93504b\",\"receiver\":\"0xb29d705e09a2e13374a45f0a6082e403251e3d9e\",\"receiverEpoch\":1,\"receiverControl\":\"0adabf5d7019b300871ecc5f4cbcbdca015a5f287ca52a774e7f8c43b921d1f0\"},\"spec\":{\"title\":\"Disposable future binding task\",\"cohort\":\"unknown\",\"summary\":\"Source receiving only\",\"criteria\":[\"bounded\"],\"slotLimit\":1,\"payableKinds\":[\"usable\"],\"milestoneLimit\":1},\"contributorId\":\"acc_lDw6hP6IpKNpFQIN\",\"payoutDestination\":\"0xb29d705e09a2e13374a45f0a6082e403251e3d9e\",\"asset\":{\"chain\":\"eip155:8453\",\"token\":\"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\",\"decimals\":6,\"symbol\":\"USDC\"},\"gross\":\"100000\",\"fee\":\"5000\",\"feeRecipient\":\"0x1111111111111111111111111111111111111111\",\"profile\":{\"id\":\"commerce-payments-v1.1.0-single-capture\",\"rounding\":\"per_capture_floor\",\"mode\":\"single_capture\",\"escrow\":{\"kind\":\"commerce_payments\",\"repository\":\"https://github.com/base/commerce-payments\",\"tag\":\"v1.1.0\",\"commit\":\"6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9\",\"abiSha256\":\"4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5\"}},\"railCostCap\":\"0\",\"expiresAt\":\"2026-10-23T12:39:47.825Z\"}",
+          "task_id": "tsk_StjWk32c3mZlkhu5",
+          "version": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+          "created_at": "2026-10-23T11:39:47.9+00:00",
+          "slot_limit": 1,
+          "reward_asset": "USDC",
+          "reward_amount": "0.095000",
+          "reward_network": "base",
+          "schema_version": 1,
+          "terms_revision": 1,
+          "claim_ttl_seconds": 3600,
+          "max_artifact_bytes": 65536,
+          "allowed_media_types": [
+            "application/json"
+          ]
+        }
+      }
+    ],
+    "earned_work_submissions": [
+      {
+        "value": {
+          "id": "sub_legacy23410001",
+          "task_id": "continuity-234100-v1",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "artifact_ref": "staging-stand-in:legacy",
+          "terms_version": "sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c",
+          "artifact_bytes": 27,
+          "evidence_bytes": "\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479",
+          "reservation_id": "rsv_legacy23410001",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc"
+        }
+      },
+      {
+        "value": {
+          "id": "sub_r4433owed0000000",
+          "task_id": "task_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "artifact_ref": "synthetic:preserved",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "artifact_bytes": 30,
+          "evidence_bytes": "\\x507265736572766564206163636570746564206f7765642062797465732e",
+          "reservation_id": "rsv_r4433owed0000000",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268"
+        }
+      },
+      {
+        "value": {
+          "id": "sub_r4433paid0000000",
+          "task_id": "task_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "artifact_ref": "synthetic:preserved",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "artifact_bytes": 30,
+          "evidence_bytes": "\\x50726573657276656420616363657074656420706169642062797465732e",
+          "reservation_id": "rsv_r4433paid0000000",
+          "artifact_media_type": "text/plain",
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba"
+        }
+      }
+    ],
+    "earned_work_contributor_tokens": [
+      {
+        "value": {
+          "id": "tok_legacy23410001",
+          "public_id": "legacy-public-234100",
+          "created_at": "2026-10-14T08:19:30.261+00:00",
+          "expires_at": null,
+          "provenance": "production",
+          "revoked_at": null,
+          "task_scope": "continuity-234100-v1",
+          "token_hash": "b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc",
+          "payout_destination": "0x1111111111111111111111111111111111111111"
+        }
+      },
+      {
+        "value": {
+          "id": "tok_r4433owed0000000",
+          "public_id": "pub_r4433owed0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": null,
+          "provenance": "test",
+          "revoked_at": null,
+          "task_scope": "task_r4433owed0000000",
+          "token_hash": "a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e"
+        }
+      },
+      {
+        "value": {
+          "id": "tok_r4433paid0000000",
+          "public_id": "pub_r4433paid0000000",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "expires_at": null,
+          "provenance": "test",
+          "revoked_at": null,
+          "task_scope": "task_r4433paid0000000",
+          "token_hash": "e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e"
+        }
+      }
+    ],
+    "journey_account_kernel_bindings": [
+      {
+        "value": {
+          "source": "created",
+          "public_id": "pub_r4433owed0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "token_hash": "a0fe4a27a0ce515c7ea1a7f60a571314bd92155a4f3e2cb6cbc81e5c6202c57a",
+          "kernel_scope": "task_r4433owed0000000",
+          "principal_id": "tok_r4433owed0000000",
+          "earned_task_id": "task_r4433owed0000000",
+          "opportunity_round_id": null
+        }
+      },
+      {
+        "value": {
+          "source": "created",
+          "public_id": "pub_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "token_hash": "e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4",
+          "kernel_scope": "task_r4433paid0000000",
+          "principal_id": "tok_r4433paid0000000",
+          "earned_task_id": "task_r4433paid0000000",
+          "opportunity_round_id": null
+        }
+      }
+    ],
+    "hosted_wallet_market.quotes": [
+      {
+        "value": {
+          "funded": false,
+          "task_id": "task_r4433owed0000000",
+          "chain_id": null,
+          "proof_id": null,
+          "economics": {
+            "feeBps": 500,
+            "captures": [
+              {
+                "feeAtomic": "5000",
+                "amountAtomic": "100000"
+              }
+            ],
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "0",
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95000",
+            "thisQuoteFeeIsExactFivePercent": true,
+            "exactFivePercentAtEveryAtomicAmount": false
+          },
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "block_number": null,
+          "funding_wire": "unfunded",
+          "observations": [],
+          "fee_recipient": "0x1111111111111111111111111111111111111111",
+          "refund_expiry": "2026-10-23T12:39:47.91+00:00",
+          "terms_version": "sha256:4fef65587333a1a1a52cb573581360116cd0a0cbab6c14b19afb1f0776d0efb9",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "authorization_expiry": "2026-10-23T12:39:47.91+00:00",
+          "requester_account_id": "acc_WYLOjFN0zjurnzre",
+          "contributor_account_id": "acc_lDw6hP6IpKNpFQIN"
+        }
+      },
+      {
+        "value": {
+          "funded": false,
+          "task_id": "task_r4433paid0000000",
+          "chain_id": null,
+          "proof_id": null,
+          "economics": {
+            "feeBps": 500,
+            "captures": [
+              {
+                "feeAtomic": "5000",
+                "amountAtomic": "100000"
+              }
+            ],
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "0",
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95000",
+            "thisQuoteFeeIsExactFivePercent": true,
+            "exactFivePercentAtEveryAtomicAmount": false
+          },
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "block_number": null,
+          "funding_wire": "unfunded",
+          "observations": [],
+          "fee_recipient": "0x1111111111111111111111111111111111111111",
+          "refund_expiry": "2026-10-23T12:39:47.91+00:00",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "payout_destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "authorization_expiry": "2026-10-23T12:39:47.91+00:00",
+          "requester_account_id": "acc_WYLOjFN0zjurnzre",
+          "contributor_account_id": "acc_lDw6hP6IpKNpFQIN"
+        }
+      }
+    ],
+    "hosted_wallet_market.funding_intents": [
+      {
+        "value": {
+          "payer": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "tenant": "root4433-wallet",
+          "message": "original uncertain funding intent",
+          "task_id": "task_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "authorized": true,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "not_before_block": 42
+        }
+      }
+    ],
+    "hosted_wallet_market.grants": [
+      {
+        "value": {
+          "task_id": "task_r4433owed0000000",
+          "token_id": "tok_r4433owed0000000",
+          "public_id": "pub_r4433owed0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00"
+        }
+      },
+      {
+        "value": {
+          "task_id": "task_r4433paid0000000",
+          "token_id": "tok_r4433paid0000000",
+          "public_id": "pub_r4433paid0000000",
+          "account_id": "acc_lDw6hP6IpKNpFQIN",
+          "created_at": "2026-10-20T10:00:00+00:00"
+        }
+      }
+    ],
+    "hosted_wallet_market.captures": [
+      {
+        "value": {
+          "chain": "eip155:31337",
+          "winner": "authorized_capture",
+          "fee_bps": 500,
+          "task_id": "task_r4433owed0000000",
+          "transfer": false,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "fee_atomic": 5000,
+          "net_atomic": 95000,
+          "rail_atomic": 0,
+          "block_number": "42",
+          "gross_atomic": 100000,
+          "obligation_id": "obl_r4433owed0000000",
+          "reservation_id": "rsv_r4433owed0000000"
+        }
+      },
+      {
+        "value": {
+          "chain": "eip155:31337",
+          "winner": "authorized_capture",
+          "fee_bps": 500,
+          "task_id": "task_r4433paid0000000",
+          "transfer": false,
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "fee_atomic": 5000,
+          "net_atomic": 95000,
+          "rail_atomic": 0,
+          "block_number": "42",
+          "gross_atomic": 100000,
+          "obligation_id": "obl_r4433paid0000000",
+          "reservation_id": "rsv_r4433paid0000000"
+        }
+      }
+    ],
+    "hosted_wallet_market.native_debt_dispositions": [
+      {
+        "value": {
+          "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "tenant": "root4433-wallet",
+          "network": "eip155:8453",
+          "task_id": "task_r4433paid0000000",
+          "claim_id": "rsv_r4433paid0000000",
+          "log_index": 7,
+          "recipient": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+          "block_hash": "0x4242424242424242424242424242424242424242424242424242424242424242",
+          "created_at": "2026-10-23T11:39:48.491777+00:00",
+          "proof_kind": "erc20_transfer",
+          "receipt_id": "991760efa17753aef5ed8ee05b78ca2372a03791219b977970517de20995189e",
+          "verdict_id": "ver_r4433paid0000000",
+          "disposition": "external_discharge_allocated",
+          "kernel_paid": true,
+          "received_at": "2026-10-20T11:00:01+00:00",
+          "block_number": "42",
+          "fee_evidence": null,
+          "import_state": "bound",
+          "payout_state": "owed",
+          "reward_asset": null,
+          "amount_atomic": "95000",
+          "obligation_id": "obl_r4433paid0000000",
+          "submission_id": "sub_r4433paid0000000",
+          "terms_version": "sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9",
+          "request_sha256": "510d2131108b24daa50377466a974fc641837b9a1ed6582cb38a8ca294026b6e",
+          "reservation_id": "rsv_r4433paid0000000",
+          "block_timestamp": "2026-10-20T11:00:00+00:00",
+          "kernel_transfer": "0x3131313131313131313131313131313131313131313131313131313131313131",
+          "observed_source": "0x2222222222222222222222222222222222222222",
+          "transaction_hash": "0x3131313131313131313131313131313131313131313131313131313131313131",
+          "obligation_family": "earned",
+          "transfer_initiated": false,
+          "artifact_digest_sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba",
+          "import_contract_sha256": "414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063",
+          "native_paid_observation": true,
+          "authority_receipt_sha256": "15bd8fb4d1b71e61ee34037480ed433db740d8b8a57e765e39a609ad28f74037",
+          "consumer_contract_sha256": "fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5"
+        }
+      }
+    ],
+    "hosted_wallet_market.consumer_enrollment": [
+      {
+        "value": {
+          "id": true,
+          "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "tenant": "root4433-wallet",
+          "network": "eip155:8453",
+          "created_at": "2026-10-23T11:39:47.991+00:00",
+          "earned_schema": "cj227_earned_work",
+          "profile_chain": "eip155:8453",
+          "source_sha256": "6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647",
+          "profile_sha256": "644556b177d57d7ec23a5c83e187dc47778ce0e397911b61bc410fda2372f5c9",
+          "registry_sha256": "ce1a3898bb22161f3c821bb264d02f482db1537b574f6622810b5ec206089d5a",
+          "rpc_origin_sha256": "cf9d7242870403ca042151d86860671b8c02de0839cb305a926e6a4407c30073",
+          "host_source_sha256": "352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3",
+          "rpc_endpoint_sha256": "dd77bae06f0499923a670fc74f826fc5cf12fd0e5f8142e2fcceb363db8838c0",
+          "import_contract_sha256": "414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063",
+          "consumer_contract_sha256": "fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5"
+        }
+      }
+    ],
+    "ae14_market_quotes": [
+      {
+        "value": {
+          "id": "quote-19cd49a85eb715a43f1920a36d5fb533bc904f400d69df2241df32ceb13bd485",
+          "binding": {
+            "task": {
+              "taskId": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+              "tenantId": "root4433-wallet",
+              "slotLimit": 1,
+              "publicText": "Source receiving only",
+              "evaluatorId": "acc_sAseUzb085uIJ2a4",
+              "requesterId": "acc_sAseUzb085uIJ2a4",
+              "taskVersion": 1,
+              "termsVersion": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+              "schemaVersion": "pilot.agent-economy.v1",
+              "canonicalTaskId": "tsk_StjWk32c3mZlkhu5"
+            },
+            "quote": {
+              "fee": {
+                "bps": 500,
+                "basis": "new_job_gross",
+                "profile": {
+                  "id": "commerce-payments-v1.1.0-single-capture",
+                  "mode": "single_capture",
+                  "escrow": {
+                    "tag": "v1.1.0",
+                    "kind": "commerce_payments",
+                    "commit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+                    "abiSha256": "4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5",
+                    "repository": "https://github.com/base/commerce-payments"
+                  },
+                  "rounding": "per_capture_floor"
+                },
+                "schemaVersion": "pilot.agent-economy.v2"
+              },
+              "rail": {
+                "mode": "platform_subsidy",
+                "costCap": "0"
+              },
+              "asset": {
+                "chain": "eip155:8453",
+                "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                "symbol": "USDC",
+                "decimals": 6
+              },
+              "gross": "100000",
+              "rules": {
+                "refund": "unaccepted_gross_only",
+                "dispute": "hold_until_authoritative_resolution",
+                "partial": "accepted_gross_only",
+                "reversal": "reconcile_without_repricing_earned_obligation",
+                "rightsTermsRef": "terms:sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa"
+              },
+              "taskId": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+              "quoteId": "quote-19cd49a85eb715a43f1920a36d5fb533bc904f400d69df2241df32ceb13bd485",
+              "subsidy": "0",
+              "tenantId": "root4433-wallet",
+              "expiresAt": "2026-10-23T12:39:47.825Z",
+              "evaluatorId": "acc_sAseUzb085uIJ2a4",
+              "platformFee": "5000",
+              "requesterId": "acc_sAseUzb085uIJ2a4",
+              "taskVersion": 1,
+              "feeRecipient": "0x1111111111111111111111111111111111111111",
+              "termsVersion": "sha256:744021f91714f1cca4ab67bc02ac7d209bfa16f3a2ae6421b96daa14e52467fa",
+              "contributorId": "acc_lDw6hP6IpKNpFQIN",
+              "fundingTarget": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+              "schemaVersion": "pilot.agent-economy.v2",
+              "contributorNet": "95000",
+              "canonicalTaskId": "tsk_StjWk32c3mZlkhu5",
+              "payoutDestination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "fundingAuthorityId": "unqualified",
+              "settlementAuthorityId": "machine-requester-review-v1"
+            },
+            "parties": {
+              "money": "unfunded",
+              "payer": "0x3d8a5a17cc6fbb7dd5a821e25fd5253dd5b712a2",
+              "origin": "https://127.0.0.1:39903",
+              "profile": "machine-market",
+              "receiver": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "hostSha256": "352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3",
+              "payerEpoch": 0,
+              "payerControl": "503a1c1717b22df4ddc899e918445a1eb3fc4ca2226364fc5ee33a7c5a93504b",
+              "sourceSha256": "6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647",
+              "receiverEpoch": 1,
+              "receiverControl": "0adabf5d7019b300871ecc5f4cbcbdca015a5f287ca52a774e7f8c43b921d1f0",
+              "networkIdentityDigest": "9f492fe4d57585fbba2b2580a52de4e02c528dcd8c57a850fa662d47aeea04aa"
+            }
+          },
+          "task_id": "market-5ac3e4caa5fb2b635aab6d7134d30cbec8fe420724b91ddfe673b17e197aa43c",
+          "tenant_id": "root4433-wallet",
+          "allocation_id": "tsk_StjWk32c3mZlkhu5",
+          "command_digest": "dbb823340a740314f113c460ea46b93d40c4afe3f46ffdbd975fea65a135a8c4"
+        }
+      }
+    ],
+    "ae14_market_funding": [],
+    "originalUncertainOperation": [
+      {
+        "value": {
+          "key": "r4433-uncertain-old",
+          "scope": "hosted-wallet-market",
+          "task_id": "",
+          "created_at": "2026-10-20T10:00:00+00:00",
+          "status_code": 200,
+          "principal_id": "acc_lDw6hP6IpKNpFQIN",
+          "request_hash": "90929390aad4249e8529d8ec63c53ff69f7023b3489383d33a3ce92b985c1423",
+          "response_json": {
+            "value": {
+              "state": "unknown",
+              "destination": "0xb29d705e09a2e13374a45f0a6082e403251e3d9e",
+              "operationId": "original-funding-identity",
+              "sharedNonce": "17",
+              "budgetRemaining": "0",
+              "noAutomaticReplay": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "artifacts": {
+    "paid": {
+      "sha256": "d84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba",
+      "base64": "UHJlc2VydmVkIGFjY2VwdGVkIHBhaWQgYnl0ZXMu"
+    },
+    "owed": {
+      "sha256": "04194d032696912344fb32ff4aecdde8b6d471ce780817ce16c5c150b960d268",
+      "base64": "UHJlc2VydmVkIGFjY2VwdGVkIG93ZWQgYnl0ZXMu"
+    }
+  }
+}
