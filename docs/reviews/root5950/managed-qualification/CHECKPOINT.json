@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-24T12:00:00.893209+00:00",
+  "operation": "root6000-mcp-managed-qualification-20261024",
+  "session": "01a16d92-464c-7181-8053-3494b16a17bc",
+  "source": "1d31cb0f539a356aabcbe45cba5ab3b407eb9c20",
+  "baseline": "f629597d9e865bd6709d4b10d96a9905cc9ea3c3",
+  "executionContextSha256": "03c2b9012582d47a50adfc00e58e278b424eb570667c299c45f569f89729988f",
+  "selectedOwnAdmission": "b883657c-2eb1-46c3-a4f2-7148ee13ef66",
+  "checkpointBy": "2026-10-24T12:02:07.485Z",
+  "requiredUntil": "2026-10-24T12:53:04.032Z",
+  "state": "Both exact managed builds passed; complete raw frontend352/desk46 equality received. Canonical source staging/admission/package closure remains.",
+  "sampledPeakRssKiB": 901404,
+  "reserveKiB": 2621440,
+  "nodeHeapMiB": 384,
+  "modelChildren": 0,
+  "productionEffects": false,
+  "scratch": "/tmp/r6q-oec4g5lv"
+}
