@@ -30,7 +30,7 @@ import {
 import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./pulse-store/wal-schema.js";
 import { classifyPulseFlushError, flushBackoffMs } from "./pulse-store/flush-error.js";
 import { mcpAdmissionForRequest } from "./mcp-admission.js";
-import { MCP_OUTCOME_KEYS, MCP_BROWSE_EVENTS, browseCoverage, classifyBrowseResult, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
+import { MCP_OUTCOME_KEYS, MCP_BROWSE_EVENTS, MCP_REFUSAL_EVENTS, refusalEvent, refusalCoverage, browseCoverage, classifyBrowseResult, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
 export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
@@ -807,20 +807,25 @@ function recordMcpEvent(source, tool, event) {
   if (!mcpOutcomeKeys.has(key)) return;
   const observation = { observedFrom: new Date().toISOString(), counts: { [key]: 1 } };
   if (MCP_BROWSE_EVENTS.includes(event)) observation.browseObservedFrom = observation.observedFrom;
+  if (MCP_REFUSAL_EVENTS.includes(event)) observation.refusalObservedFrom = observation.observedFrom;
   pendingDelta.mcpOutcomes = mergeMcpOutcomes(pendingDelta.mcpOutcomes, observation);
 }
 
 // The route calls this at the handler boundary, before serialization. It retains
 // no result/body/id; the per-entry guard also makes duplicate callbacks harmless.
-export function recordMcpProduced(req, message, result) {
+export function recordMcpProduced(req, message, result, refusalReason) {
   try {
     const observer = observedMcpRequests.get(req);
     if (!observer || observer.completed.has(message)) return;
     observer.completed.add(message);
     const tool = message.observation?.toolName || (message.observation?.methodClass === "tools/call" ? "_unknown" : "_none");
-    if (result?.error) recordMcpEvent(observer.source, tool, "protocol_error");
+    if (result?.error) {
+      recordMcpEvent(observer.source, tool, "protocol_error");
+      recordMcpEvent(observer.source, tool, refusalEvent(refusalReason));
+    }
     else if (message.observation?.methodClass === "tools/call" && result?.result) {
       recordMcpEvent(observer.source, tool, result.result.isError === true ? "tool_refusal" : "normal_result");
+      if (result.result.isError === true) recordMcpEvent(observer.source, tool, refusalEvent(refusalReason));
       if (tool === "browse_taskmarket_tasks" && result.result.isError !== true) recordMcpEvent(observer.source, tool, classifyBrowseResult(result.result));
     }
     if (message.kind === "notification") recordMcpEvent(observer.source, tool, "notification_completed");
@@ -841,7 +846,10 @@ function recordMcpProtocolPost(req, res) {
   res?.once?.("finish", finished);
   res?.once?.("close", finished);
   const parsed = mcpAdmissionForRequest(req);
-  if (parsed.error) recordMcpEvent(source, "_none", "protocol_error");
+  if (parsed.error) {
+    recordMcpEvent(source, "_none", "protocol_error");
+    recordMcpEvent(source, "_none", refusalEvent(parsed.refusalReason));
+  }
   for (const entry of parsed.entries || []) {
     if (!entry.error && entry.observation?.methodClass === "tools/call") {
       recordMcpEvent(source, entry.observation.toolName || "_unknown", "tool_attempt");
@@ -1028,6 +1036,7 @@ export function pulseSnapshot() {
         revenue: "unobserved",
         keyFormat: "callerDeclaredSource|boundedTool|serverEvent",
         browseResults: browseCoverage(counters.mcpOutcomes),
+        refusals: refusalCoverage(counters.mcpOutcomes),
         meaning: "Source is static, optional, caller-declared and spoofable, never identity or verified acquisition. " +
           "http_request counts each POST; tool_attempt counts admitted tools/call entries with structurally valid params, including notifications and unknown names. " +
           "normal_result and tool_refusal count handler-produced results (including suppressed notification results); protocol_error counts generated JSON-RPC errors. " +

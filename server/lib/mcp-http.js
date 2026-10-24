@@ -30,7 +30,8 @@ export function mcpBodyError(error, req, res, next) {
     : status === 413
       ? `Request body exceeds ${MCP_BODY_LIMIT}. Next: send one JSON-RPC body at or below ${MCP_BODY_LIMIT}. Do not retry with a payment header.`
       : "Invalid request body. Next: send Content-Type application/json with one JSON-RPC 2.0 object. Do not send a payment header.";
-  req.mcpAdmission = rejectedMcpAdmission(status, parseError ? -32700 : -32000, message);
+  req.mcpAdmission = rejectedMcpAdmission(status, parseError ? -32700 : -32000, message,
+    parseError ? "malformed_json" : status === 413 ? "body_limit" : "body_rejected");
   // This error occurs before the normal observer. Receive its safe decision
   // explicitly; never emit body-parser's raw body/message to console or HTML.
   pulseMiddleware(req, res, () => {});

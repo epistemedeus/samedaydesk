@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import {
-  MCP_BROWSE_EVENTS, MCP_OUTCOME_EVENTS, MCP_OUTCOME_KEYS, MCP_OUTCOME_TOOLS, MCP_SOURCES,
+  MCP_BROWSE_EVENTS, MCP_REFUSAL_EVENTS, MCP_OUTCOME_EVENTS, MCP_OUTCOME_KEYS, MCP_OUTCOME_TOOLS, MCP_SOURCES,
   declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes,
 } from "../lib/pulse-store/mcp-outcomes.js";
 import { deltaCanonicalDigest, deltaIsEmpty, deltaToRpcPayload, emptyDelta, mergeDeltas, validateDelta } from "../lib/pulse-store/schema.js";
@@ -43,9 +43,9 @@ test("only the exact fixed source enters the bounded aggregate; arbitrary header
 });
 
 test("strict outcome schema admits exactly the static Cartesian product and rejects raw or unsafe values", () => {
-  assert.equal(MCP_OUTCOME_KEYS.length, MCP_SOURCES.length * ((MCP_TOOL_NAMES.length + 2) * MCP_OUTCOME_EVENTS.length + MCP_BROWSE_EVENTS.length));
+  assert.equal(MCP_OUTCOME_KEYS.length, MCP_SOURCES.length * ((MCP_TOOL_NAMES.length + 2) * (MCP_OUTCOME_EVENTS.length + MCP_REFUSAL_EVENTS.length) + MCP_BROWSE_EVENTS.length));
   const counts = Object.fromEntries(MCP_OUTCOME_KEYS.map(key => [key, 1]));
-  assert.deepEqual({ ...validateMcpOutcomes({ observedFrom: at, browseObservedFrom: at, counts }).counts }, counts);
+  assert.deepEqual({ ...validateMcpOutcomes({ observedFrom: at, browseObservedFrom: at, refusalObservedFrom: at, counts }).counts }, counts);
   for (const value of malformed) assert.throws(() => validateMcpOutcomes(value), /pulse_invalid_field:mcpOutcomes/);
   const onlyOutcomes = { ...emptyDelta(), mcpOutcomes: observation() };
   assert.equal(deltaIsEmpty(onlyOutcomes), false, "a late result or disconnect flushes even without another HTTP attempt");
@@ -90,7 +90,8 @@ test("duplicate middleware, producer callback, finish and close listeners each p
     const counts = snapshot.mcpProtocol.outcomes.counts;
     for (const event of ["http_request", "response_finished"]) assert.equal(counts[`unattributed|_none|${event}`], 1);
     for (const event of ["tool_attempt", "tool_refusal"]) assert.equal(counts[`unattributed|check_ai_readiness|${event}`], 1);
-    assert.equal(Object.keys(counts).length, 4);
+    assert.equal(counts["unattributed|check_ai_readiness|refusal_unknown"], 1);
+    assert.equal(Object.keys(counts).length, 5);
     assert.equal(pulse.flushPulseSnapshot(), true);
     assert.equal(readFileSync(join(dir, "wal.json"), "utf8").includes("secret"), false);
   } finally { rmSync(dir, { recursive: true, force: true }); }
@@ -133,17 +134,18 @@ test("real PostgreSQL validates the same bounded keys, rejects malformed values 
   pg.requirePostgresBinaries();
   const cluster = pg.startDisposableCluster(); t.after(() => cluster.stop());
   const migration = name => readFileSync(new URL(`../../supabase/migrations/${name}`, import.meta.url), "utf8");
-  const sql = migration("0008_pulse_browse_result_coverage.sql");
+  const sql = migration("0009_pulse_mcp_refusal_reasons.sql");
   const listed = name => [...sql.match(new RegExp(`v_${name} text\\[\\] := array\\[([^\\]]+)\\]`))[1].matchAll(/'([^']+)'/g)].map(match => match[1]);
   assert.deepEqual(listed("sources"), [...MCP_SOURCES]);
   assert.deepEqual(new Set(listed("tools")), new Set(MCP_OUTCOME_TOOLS));
   assert.deepEqual(listed("events"), [...MCP_OUTCOME_EVENTS]);
+  assert.deepEqual(listed("refusal_events"), [...MCP_REFUSAL_EVENTS]);
   assert.match(sql, new RegExp(`null,${MCP_OUTCOME_KEYS.length},96`));
   pg.psql(cluster, null, { input: `CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN; GRANT USAGE ON SCHEMA public TO service_role;\n${[
-    "0002_pulse_durable.sql", "0003_pulse_mcp_tool_demand.sql", "0006_pulse_admit_declared_mcp_tools.sql", "0007_pulse_mcp_source_outcomes.sql", "0008_pulse_browse_result_coverage.sql",
+    "0002_pulse_durable.sql", "0003_pulse_mcp_tool_demand.sql", "0006_pulse_admit_declared_mcp_tools.sql", "0007_pulse_mcp_source_outcomes.sql", "0008_pulse_browse_result_coverage.sql", "0009_pulse_mcp_refusal_reasons.sql",
   ].map(migration).join("\n")}` });
   const store = createPulseStoreFromTransport(pg.createPsqlPulseTransport(cluster));
-  const delta = { ...emptyDelta(at), mcpOutcomes: { observedFrom: at, browseObservedFrom: at, counts: Object.fromEntries(MCP_OUTCOME_KEYS.map(key => [key, 1])) } };
+  const delta = { ...emptyDelta(at), mcpOutcomes: { observedFrom: at, browseObservedFrom: at, refusalObservedFrom: at, counts: Object.fromEntries(MCP_OUTCOME_KEYS.map(key => [key, 1])) } };
   const validId = "d3302000-0000-4000-8000-000000000001";
   assert.equal((await store.flush(validId, delta)).status, "applied");
   assert.deepEqual({ ...((await store.readSnapshot(at)).mcpOutcomes.counts) }, delta.mcpOutcomes.counts);

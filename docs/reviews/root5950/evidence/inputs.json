@@ -1,0 +1,57 @@
+{
+  "receiptSha256": "0cf828b76a9b6dd3e84319e1f76bd36f8dd8cc44e4e2be593b762fada6fcf4b5",
+  "product": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "commit": "f629597d9e865bd6709d4b10d96a9905cc9ea3c3"
+  },
+  "operating": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+    "account": "epistemedeus"
+  },
+  "assignment": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+    "account": "epistemedeus"
+  },
+  "membersVerified": [
+    {
+      "role": "instructions",
+      "path": "AGENTS.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+      "blob": "1948fb788970e41ca2524cb7f743e58241ba04c5",
+      "bytes": 33312,
+      "sha256": "c2dc6304ed19e7ec9d3370353408667ebb61355b0c54b8f750fa4390f59c68a3"
+    },
+    {
+      "role": "state",
+      "path": "overview/STATE.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+      "blob": "9228649cc4aca78eda1666cd5cba4bda251feaa9",
+      "bytes": 37188,
+      "sha256": "0d721c1aace08aab94e2aaeb8a0fa4786a526f4c53bfd56d7981a45f11cbd4ec"
+    },
+    {
+      "role": "execution-plan",
+      "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+      "blob": "2d54bd01d641da47b61339254da26c7c08c91c5e",
+      "bytes": 62639,
+      "sha256": "da1bb938dd040320bc38779ff959e8dccb567b60165672e5727c3c7220ba3f12"
+    },
+    {
+      "role": "assignment",
+      "path": "overview/remote-worker/assignments/ROOT5950-MCP-REFUSAL-REASONS.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "4f5124633d2448acc7fbdf0bee07842f1e26012d",
+      "blob": "9f49a097026f247265660d8bbe2f8d57c76dd5dc",
+      "bytes": 7256,
+      "sha256": "fabb3435e3bc139ca7fbb30d7493bb45f0590c0ac770620d5c7ea7cbbf4e2972"
+    }
+  ],
+  "admission": "bcad40af-ff38-4f66-a9b4-d195276131e6",
+  "specSha256": "b5bf017d6267c97fc34b1cf3096d4ed44637b96bad0b74a1efd45bf685d9c316"
+}

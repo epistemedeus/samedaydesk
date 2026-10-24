@@ -1,0 +1,76 @@
+{
+  "environment": {
+    "node": "22.23.4",
+    "npm": "10.9.9",
+    "postgres": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "NODE_OPTIONS": "--max-old-space-size=384",
+    "SUPABASE_URL": "",
+    "SUPABASE_SERVICE_ROLE_KEY": "",
+    "PULSE_PG_BIN": "/tmp/root5950-pg/usr/lib/postgresql/16/bin",
+    "PULSE_PSQL": "/tmp/root5950-pg/usr/lib/postgresql/16/bin/psql",
+    "LD_LIBRARY_PATH": "/tmp/root5950-pg/usr/lib/x86_64-linux-gnu"
+  },
+  "runs": [
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-mcp-refusal-reasons.js (before source changes at f629)",
+      "exit": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "log": "baseline.tap",
+      "sha256": "e1de6217b200712fe85526c3c33450362cf22f5ce1e6ea6a71de04c65fc101ed"
+    },
+    {
+      "command": "npm run test:mcp -- --test-concurrency=1",
+      "exit": 0,
+      "tests": 46,
+      "pass": 46,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "log": "mcp.tap",
+      "sha256": "321250921330971a934b49a185d5a6c45c14a1019c4c3af518789025f0dc20a9"
+    },
+    {
+      "command": "npm run test:pulse -- --test-concurrency=1",
+      "exit": 0,
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "log": "pulse.tap",
+      "sha256": "13bd317d1998f8ef6b2c941678bb6acd44a725d81704cb9d789b3314007367f1"
+    },
+    {
+      "command": "npm run test:mcp-refusals",
+      "exit": 0,
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "log": "refusals.tap",
+      "sha256": "6d7a9db75183060fa16d5be7e0a379fbd69592be535784352199aa37a1d08937"
+    },
+    {
+      "command": "node --test --test-concurrency=1 --test-name-pattern='missing, arbitrary|real requests|mixed batch|thrown handler|real disconnect|ambiguous flush|failed file' server/scripts/test-mcp-source-outcomes.js",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "log": "source-outcomes.tap",
+      "sha256": "9e8af324c14b4bcc83ba842a5ccf6eb22ac41339ebdff05965a415fa40e03d1a"
+    }
+  ],
+  "excludedExternalAdapterCases": [
+    "actual Python adapter -> mounted apex -> persisted Pulse -> protected summary",
+    "adapter free refusal and upstream failure recover on the same mounted path",
+    "real disposable PostgreSQL old schema refusal -> migration -> exact WAL recovery and restart"
+  ],
+  "exclusionReason": "Companion ROOT3302 adapter checkout/isolated Python are absent. No companion dependency added. All 7 applicable local source-outcomes controls run; the new real PG/mounted test independently covers this change. The 3 companion-only cases are not claimed."
+}

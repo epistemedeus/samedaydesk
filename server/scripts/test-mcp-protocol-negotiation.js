@@ -130,7 +130,7 @@ test("apex tools remain listed; tools/call still serves readiness, Fix Pack, and
   const callBlock = extractBlock(
     MCP_SOURCE,
     'case "tools/call":',
-    "    default:\n      return id !== undefined ? errMsg",
+    "    default:\n",
   );
   assert.match(callBlock, /validateFixPackLicense/);
   assert.match(callBlock, /generateStarterFixPack/);

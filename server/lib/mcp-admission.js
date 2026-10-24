@@ -67,7 +67,7 @@ export function mcpMethodClass(method) {
 }
 
 function validateEntry(entry) {
-  const invalid = () => ({ error: rpcError(null, -32600, "Invalid Request. Next: send jsonrpc \"2.0\" and a method string. Notifications omit id.") });
+  const invalid = () => ({ refusalReason: "invalid_request", error: rpcError(null, -32600, "Invalid Request. Next: send jsonrpc \"2.0\" and a method string. Notifications omit id.") });
   if (!record(entry) || field(entry, "jsonrpc") !== "2.0") return invalid();
   const hasId = Object.hasOwn(entry, "id");
   const id = field(entry, "id");
@@ -89,7 +89,7 @@ function validateEntry(entry) {
   const kind = hasId ? "request" : "notification";
   const out = { kind, entry, observation: { methodClass: mcpMethodClass(method) } };
   const params = field(entry, "params");
-  const invalidParams = () => ({ ...out, error: rpcError(id ?? null, -32602, "Invalid params. Next: for tools/call send a string name and an object arguments, or call tools/list. Do not send a payment header.") });
+  const invalidParams = () => ({ ...out, refusalReason: "invalid_params", error: rpcError(id ?? null, -32602, "Invalid params. Next: for tools/call send a string name and an object arguments, or call tools/list. Do not send a payment header.") });
   if (!dataField(entry, "params") || (Object.hasOwn(entry, "params") && !record(params))) return invalidParams();
   if (method === "tools/call") {
     const name = field(params, "name");
@@ -115,19 +115,19 @@ export function unsupportedProtocolMessage(version) {
   return `Bad Request: Unsupported protocol version: ${version} (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`;
 }
 
-export function rejectedMcpAdmission(status, code, message) {
-  return { batch: false, status, error: rpcError(null, code, message), entries: [], messages: [] };
+export function rejectedMcpAdmission(status, code, message, refusalReason = "unknown") {
+  return { batch: false, status, refusalReason, error: rpcError(null, code, message), entries: [], messages: [] };
 }
 
 export function admitMcpBody(body, headerVersion = null) {
   const batch = Array.isArray(body);
   // No batch (or invalid initialize) may borrow the singleton negotiation exemption.
   if (headerVersion !== null && !SUPPORTED_PROTOCOL_VERSIONS.includes(headerVersion) && !isInitializationRequest(body)) {
-    return rejectedMcpAdmission(400, -32000, unsupportedProtocolMessage(headerVersion));
+    return rejectedMcpAdmission(400, -32000, unsupportedProtocolMessage(headerVersion), "unsupported_protocol");
   }
   if (batch) {
-    if (body.length < MCP_BATCH_MIN || body.length > MCP_BATCH_MAX) return rejectedMcpAdmission(400, -32600, `Invalid Request: compatibility batch must contain ${MCP_BATCH_MIN}..${MCP_BATCH_MAX} messages`);
-    if (headerVersion !== null && !MCP_BATCH_PROTOCOL_VERSIONS.includes(headerVersion)) return rejectedMcpAdmission(400, -32600, "Invalid Request: this protocol version requires one message per POST");
+    if (body.length < MCP_BATCH_MIN || body.length > MCP_BATCH_MAX) return rejectedMcpAdmission(400, -32600, `Invalid Request: compatibility batch must contain ${MCP_BATCH_MIN}..${MCP_BATCH_MAX} messages`, "batch_size");
+    if (headerVersion !== null && !MCP_BATCH_PROTOCOL_VERSIONS.includes(headerVersion)) return rejectedMcpAdmission(400, -32600, "Invalid Request: this protocol version requires one message per POST", "batch_protocol");
   }
   const entries = (batch ? body : [body]).map(validateEntry);
   return {

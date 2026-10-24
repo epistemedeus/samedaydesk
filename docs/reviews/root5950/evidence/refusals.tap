@@ -1,0 +1,128 @@
+
+> samedaydesk@1.0.0 test:mcp-refusals
+> node --test --test-concurrency=1 server/scripts/test-mcp-refusal-reasons.js server/scripts/test-mcp-refusal-branches.js server/scripts/test-pulse-refusal-contract.js server/scripts/test-mcp-refusal-postgres.js server/scripts/test-pulse-mcp-outcomes-contract.js server/scripts/test-pulse-browse-coverage-contract.js
+
+TAP version 13
+# Subtest: distinct parser/admission/handler branches, batch boundaries and suppressed replies retain their semantics
+ok 1 - distinct parser/admission/handler branches, batch boundaries and suppressed replies retain their semantics
+  ---
+  duration_ms: 326.20661
+  type: 'test'
+  ...
+# Subtest: license and generation machine contacts, healthy negative result, caught/uncaught failure and recovery
+ok 2 - license and generation machine contacts, healthy negative result, caught/uncaught failure and recovery
+  ---
+  duration_ms: 30.877875
+  type: 'test'
+  ...
+# Subtest: disconnect, duplicate callbacks and observation write failure cannot repeat tool work
+ok 3 - disconnect, duplicate callbacks and observation write failure cannot repeat tool work
+  ---
+  duration_ms: 58.28711
+  type: 'test'
+  ...
+# Subtest: exact f629 admission/parser/route keep response/status/header parity except the two authorized machine contacts
+ok 4 - exact f629 admission/parser/route keep response/status/header parity except the two authorized machine contacts
+  ---
+  duration_ms: 55.970072
+  type: 'test'
+  ...
+# Subtest: mounted MCP -> old PG rejection -> exact queued-WAL migration/retry -> durable protected summary and fresh-process recovery
+ok 5 - mounted MCP -> old PG rejection -> exact queued-WAL migration/retry -> durable protected summary and fresh-process recovery
+  ---
+  duration_ms: 1340.075938
+  type: 'test'
+  ...
+# Subtest: mounted refusal decisions survive the existing observer/store/protected summary
+ok 6 - mounted refusal decisions survive the existing observer/store/protected summary
+  ---
+  duration_ms: 326.274145
+  type: 'test'
+  ...
+# Subtest: old result counts stay unknown; strict optional timestamp/categories preserve old hashes and snapshots
+ok 7 - old result counts stay unknown; strict optional timestamp/categories preserve old hashes and snapshots
+  ---
+  duration_ms: 3.143776
+  type: 'test'
+  ...
+# Subtest: old/new file snapshots survive real process startup without backfill or dropping unrelated counters
+ok 8 - old/new file snapshots survive real process startup without backfill or dropping unrelated counters
+  ---
+  duration_ms: 234.019067
+  type: 'test'
+  ...
+# Subtest: mounted browse -> old PostgreSQL rejection/WAL -> additive migration -> recovery/restart and protected summary
+ok 9 - mounted browse -> old PostgreSQL rejection/WAL -> additive migration -> recovery/restart and protected summary
+  ---
+  duration_ms: 988.337657
+  type: 'test'
+  ...
+# Subtest: only the exact fixed source enters the bounded aggregate; arbitrary header shapes are discarded
+ok 10 - only the exact fixed source enters the bounded aggregate; arbitrary header shapes are discarded
+  ---
+  duration_ms: 0.563682
+  type: 'test'
+  ...
+# Subtest: strict outcome schema admits exactly the static Cartesian product and rejects raw or unsafe values
+ok 11 - strict outcome schema admits exactly the static Cartesian product and rejects raw or unsafe values
+  ---
+  duration_ms: 3.866526
+  type: 'test'
+  ...
+# Subtest: old deltas keep their exact wire bytes and digest; old WAL history never gains outcome zeros
+ok 12 - old deltas keep their exact wire bytes and digest; old WAL history never gains outcome zeros
+  ---
+  duration_ms: 0.951766
+  type: 'test'
+  ...
+# Subtest: duplicate middleware, producer callback, finish and close listeners each preserve one event
+ok 13 - duplicate middleware, producer callback, finish and close listeners each preserve one event
+  ---
+  duration_ms: 18.647842
+  type: 'test'
+  ...
+# Subtest: transport reader validates new dimensions while old snapshots remain compatible
+ok 14 - transport reader validates new dimensions while old snapshots remain compatible
+  ---
+  duration_ms: 0.402684
+  type: 'test'
+  ...
+# Subtest: strict durable reader rejects corrupt outcome fields and recovers without promoting a complete zero
+ok 15 - strict durable reader rejects corrupt outcome fields and recovers without promoting a complete zero
+  ---
+  duration_ms: 4.908951
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL validates the same bounded keys, rejects malformed values atomically and keeps grants
+ok 16 - real PostgreSQL validates the same bounded keys, rejects malformed values atomically and keeps grants
+  ---
+  duration_ms: 814.761197
+  type: 'test'
+  ...
+# Subtest: unknown causes stay bounded; missing old dimensions stay unknown with exact old digests
+ok 17 - unknown causes stay bounded; missing old dimensions stay unknown with exact old digests
+  ---
+  duration_ms: 3.664959
+  type: 'test'
+  ...
+# Subtest: strict snapshot/WAL/transport reject unknown fields and unsafe refusal data
+ok 18 - strict snapshot/WAL/transport reject unknown fields and unsafe refusal data
+  ---
+  duration_ms: 1.244341
+  type: 'test'
+  ...
+# Subtest: actual f629 readers accept old snapshots and queued WAL exactly, and refuse new fields even after drain
+ok 19 - actual f629 readers accept old snapshots and queued WAL exactly, and refuse new fields even after drain
+  ---
+  duration_ms: 249.322199
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5138.036177

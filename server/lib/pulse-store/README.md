@@ -12,8 +12,8 @@ not change access or the tool response.
 
 Optional `mcpOutcomes` deltas contain `observedFrom` and a sparse `counts` map.
 Keys are `source|tool|event`: two sources, the declared seven-tool inventory plus
-`_unknown`/`_none`, and eight general events, plus three browse-only categories,
-at most 150 keys. JS and SQL strictly validate
+`_unknown`/`_none`, eight general events and fifteen refusal reason events, plus
+three browse-only categories, at most 420 keys. JS and SQL strictly validate
 this product, timestamp and nonnegative safe integers. Neither raw headers,
 arguments, URLs, IDs, bodies, wallets, IPs nor secrets enter the dimension.
 
@@ -89,6 +89,83 @@ Malformed normal producer fixtures use the same mounted admission/producer
 observer; malformed upstream inventory separately refuses in the actual handler.
 These tests establish source behavior only. No production migration, tool QA,
 frontend build or emitted-asset equality is claimed.
+
+## Prospective refusal reasons
+
+The executing admission/parser or handler branch supplies one finite reason for
+each produced `protocol_error` or `tool_refusal`. The existing aggregate records
+`source|tool|refusal_<reason>` beside that event, guarded by the same per-entry
+completion check. No method class or source label is added. No input is reparsed
+for telemetry, and neither error text nor a JSON-RPC error code chooses a cause.
+For example, invalid params and an unknown tool both emit -32602 but retain
+distinct producing decisions. Concurrent batch entries have separate internal
+reason contexts; reply bodies never contain this metadata.
+
+| Reason | Authoritative boundary / next operator decision |
+| --- | --- |
+| `unsupported_protocol` | Unsupported header outside valid singleton initialize negotiation; repair the caller's protocol choice. |
+| `batch_size` | Compatibility array outside 1..25; repair caller batching. |
+| `batch_protocol` | Array supplied to a protocol that requires one message; send singletons. |
+| `malformed_json` | MCP parser reports its parse-failed type; correct serialization. |
+| `body_limit` | Existing parser rejects with 413; reduce payload size. |
+| `body_rejected` | Other parser/read/encoding rejection; investigate that boundary without asserting a more specific predicate. |
+| `invalid_request` | Existing envelope validator refuses; correct JSON-RPC shape. |
+| `invalid_params` | Existing structural parameter validator refuses; correct supplied parameter types. |
+| `unknown_method` / `unknown_tool` | Existing handler cannot dispatch the requested name; refresh the caller's discovery/dispatch journey. |
+| `tool_input` | Existing missing host/URL branch; supply required input. |
+| `license_unverified` | Existing boolean license authority returns false. Missing, unpaid, unconfigured or unavailable verification remain indistinguishable; use the existing license/support path. This is not proof of invalid credentials or payment state. |
+| `tool_error` | Existing caught tool branch; investigate that tool boundary. It may reflect a domain/input refusal or an execution/dependency failure; no exact inner cause is claimed. |
+| `handler_error` | Existing uncaught handler branch produces Internal error; investigate that handler boundary. |
+| `unknown` | A produced refusal/error lacks a supported producer reason. Unsupported values collapse here, never becoming keys. |
+
+`mcpProtocol.outcomes.refusals` declares its first recorded reason timestamp,
+lower-bound/unknown coverage, `complete:false`, and historical causes as
+`unknown_no_backfill`. Sparse reason events remain in the existing counts map.
+`withoutReason` counts existing error/refusal events without this dimension by
+the existing declared source, not inferred causes. Old six-error observations
+remain six unknown causes; old receipts, canonical deltas and snapshots are not
+rewritten. No reason timestamp is invented for old data or healthy-only traffic.
+The timestamp is an observation boundary, not guaranteed continuous coverage.
+Useful negative tool results remain normal results. Ignored unknown-method
+notifications produce no error and no refusal reason. Suppressed produced
+results/errors retain their reason. Local finish/disconnect still proves no peer
+receipt; these counts establish no sessions, conversion denominator, identity,
+usefulness, acceptance, revenue or diagnosis of the historical six errors.
+
+Apply additive, rerunnable `0009_pulse_mcp_refusal_reasons.sql` **after 0008 and
+before the new producer** during a separately authorized release. It replaces
+only the existing outcome validator and merge function, with no new tables,
+grants, row updates or backfill. Run the companion schema-owner read-only
+`supabase/verify/0009_pulse_mcp_refusal_reasons.sql`. Old producers/readers still
+handle old payloads against the upgraded schema until new data is written.
+Then roll out compatible readers and the producer together and receive the
+installed epoch, protected summary and retained backlog. An old schema rejects
+new reason deltas atomically; keep the exact WAL IDs/payloads, allow the existing
+permanent-error backoff, migrate, then retry/drain. Never drop reasons to force
+acceptance or replay an MCP tool to repair an observation failure.
+
+Rollback/drain must retain the new DB/WAL readers and SQL functions. The actual
+f629 strict reader rejects new timestamps/events both in queued WAL and in
+durable/file snapshots **even after the queue drains**. Roll back the producer
+or other behavior while retaining compatible Pulse readers; do not strip stored
+fields, down-migrate or install the whole old binary. Disposable PostgreSQL and
+fresh-process tests receive old/new compatibility, failed/ambiguous flush,
+original receipt hashes, exact duplicate recovery and strict unknown-field
+rejection. No production database call is part of qualification.
+
+Run `NODE_OPTIONS=--max-old-space-size=384 npm run test:mcp-refusals` with the
+existing PostgreSQL binary overrides below. It includes mounted loopback refusal
+branches, negative/healthy results, notification/disconnect/duplicate controls,
+real PG migration/retry/restart, old readers/snapshots and route parity against
+exact f629. License/site responses are local fixtures with counted calls; no
+account, provider, payment or mail is contacted. The two qualified machine
+failure responses now use `contact@neomorphic.io`; the human GET return contact
+and other human assets/sender defaults remain outside this change.
+
+After a separately received installed epoch, use actual future refusal branches
+to choose a concrete caller compatibility or tool journey to repair. If the
+dimension stays ambiguous or never changes a useful decision, retain bounded
+evidence and reconsider/remove it; do not grow telemetry indefinitely.
 
 ## Receiving and rollout
 

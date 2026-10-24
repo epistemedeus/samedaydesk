@@ -9,8 +9,22 @@ export const MCP_OUTCOME_EVENTS = Object.freeze([
   "protocol_error", "notification_completed", "response_finished", "disconnected",
 ]);
 export const MCP_BROWSE_EVENTS = Object.freeze(["browse_empty", "browse_non_empty", "browse_unclassified"]);
+// Classified only by the producing admission/handler branch, never by RPC code
+// or arbitrary error text. license_unverified deliberately does not assert why
+// the existing boolean license authority refused. Caught tool_error is similarly
+// a boundary, not a diagnosis of an upstream/input predicate.
+export const MCP_REFUSAL_REASONS = Object.freeze([
+  "unsupported_protocol", "batch_size", "batch_protocol", "malformed_json",
+  "body_limit", "body_rejected", "invalid_request", "invalid_params",
+  "unknown_method", "unknown_tool", "tool_input", "license_unverified",
+  "tool_error", "handler_error", "unknown",
+]);
+export const MCP_REFUSAL_EVENTS = Object.freeze(MCP_REFUSAL_REASONS.map(reason => `refusal_${reason}`));
+export function refusalEvent(reason) {
+  return `refusal_${MCP_REFUSAL_REASONS.includes(reason) ? reason : "unknown"}`;
+}
 export const MCP_OUTCOME_KEYS = Object.freeze(MCP_SOURCES.flatMap(source =>
-  [...MCP_OUTCOME_TOOLS.flatMap(tool => MCP_OUTCOME_EVENTS.map(event => `${source}|${tool}|${event}`)),
+  [...MCP_OUTCOME_TOOLS.flatMap(tool => [...MCP_OUTCOME_EVENTS, ...MCP_REFUSAL_EVENTS].map(event => `${source}|${tool}|${event}`)),
     ...MCP_BROWSE_EVENTS.map(event => `${source}|browse_taskmarket_tasks|${event}`)]));
 const keys = new Set(MCP_OUTCOME_KEYS);
 
@@ -23,11 +37,13 @@ export function declaredMcpSource(headers) {
 export function validateMcpOutcomes(value) {
   const invalid = () => { throw new Error("pulse_invalid_field:mcpOutcomes"); };
   if (!value || typeof value !== "object" || Array.isArray(value) ||
-      !["counts,observedFrom", "browseObservedFrom,counts,observedFrom"].includes(Object.keys(value).sort().join(","))) invalid();
+      !Object.hasOwn(value, "counts") || !Object.hasOwn(value, "observedFrom") ||
+      Object.keys(value).some(key => !["counts", "observedFrom", "browseObservedFrom", "refusalObservedFrom"].includes(key))) invalid();
   const date = typeof value.observedFrom === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value.observedFrom) ? new Date(value.observedFrom) : null;
   if (!date || !Number.isFinite(date.getTime()) || date.toISOString() !== value.observedFrom) invalid();
-  if (Object.hasOwn(value, "browseObservedFrom")) {
-    const stamp = value.browseObservedFrom;
+  for (const field of ["browseObservedFrom", "refusalObservedFrom"]) {
+    if (!Object.hasOwn(value, field)) continue;
+    const stamp = value[field];
     if (typeof stamp !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(stamp) ||
         !Number.isFinite(Date.parse(stamp)) || new Date(stamp).toISOString() !== stamp || stamp < value.observedFrom) invalid();
   }
@@ -37,9 +53,12 @@ export function validateMcpOutcomes(value) {
   for (const [key, count] of Object.entries(counts)) {
     if (!keys.has(key) || !Number.isSafeInteger(count) || count < 0) invalid();
     if (MCP_BROWSE_EVENTS.includes(key.split("|")[2]) && !value.browseObservedFrom) invalid();
+    if (MCP_REFUSAL_EVENTS.includes(key.split("|")[2]) && !value.refusalObservedFrom) invalid();
     out[key] = count;
   }
-  return { observedFrom: date.toISOString(), counts: out, ...(value.browseObservedFrom ? { browseObservedFrom: value.browseObservedFrom } : {}) };
+  return { observedFrom: date.toISOString(), counts: out,
+    ...(value.browseObservedFrom ? { browseObservedFrom: value.browseObservedFrom } : {}),
+    ...(value.refusalObservedFrom ? { refusalObservedFrom: value.refusalObservedFrom } : {}) };
 }
 
 export function mergeMcpOutcomes(base, add) {
@@ -48,8 +67,32 @@ export function mergeMcpOutcomes(base, add) {
   const counts = { ...base.counts };
   for (const [key, count] of Object.entries(add.counts)) counts[key] = (counts[key] || 0) + count;
   const starts = [base.browseObservedFrom, add.browseObservedFrom].filter(Boolean).sort();
+  const refusalStarts = [base.refusalObservedFrom, add.refusalObservedFrom].filter(Boolean).sort();
   return { observedFrom: Date.parse(base.observedFrom) <= Date.parse(add.observedFrom) ? base.observedFrom : add.observedFrom, counts,
-    ...(starts.length ? { browseObservedFrom: starts[0] } : {}) };
+    ...(starts.length ? { browseObservedFrom: starts[0] } : {}),
+    ...(refusalStarts.length ? { refusalObservedFrom: refusalStarts[0] } : {}) };
+}
+
+export function refusalCoverage(outcomes) {
+  return {
+    observedFrom: outcomes?.refusalObservedFrom || null,
+    complete: false,
+    coverage: outcomes?.refusalObservedFrom ? "lower_bound_from_first_observation" : "unknown",
+    historicalCauses: "unknown_no_backfill",
+    reasons: [...MCP_REFUSAL_REASONS],
+    withoutReason: Object.fromEntries(MCP_SOURCES.map(source => [source,
+      MCP_OUTCOME_TOOLS.reduce((total, tool) => {
+        const count = event => outcomes?.counts[`${source}|${tool}|${event}`] || 0;
+        return total + Math.max(0, count("protocol_error") + count("tool_refusal") - MCP_REFUSAL_EVENTS.reduce((sum, event) => sum + count(event), 0));
+      }, 0),
+    ])),
+    meaning: "refusal_<reason> accompanies one produced protocol_error or tool_refusal in the same source/tool bucket, including suppressed notification results. " +
+      "Reasons come from the executing branch, not error text or RPC codes. Unknown means the producer supplied no supported cause. " +
+      "withoutReason counts errors/refusals without this dimension; their causes remain unknown. Coverage starts at the first recorded refusal reason, not release time. " +
+      "Unsupported protocol/batch and invalid request/params suggest a caller compatibility repair; unknown method/tool suggests refreshing discovery; " +
+      "tool_input suggests supplying required input; license_unverified requires the existing license/support path and does not establish an invalid license or payment state; " +
+      "tool_error/handler_error identify the failing boundary only. No session, peer receipt, caller identity, usefulness, acceptance or revenue is observed.",
+  };
 }
 
 function canonicalTimestamp(value) {

@@ -1,0 +1,27 @@
+{
+  "baseline": "baseline.tap is the retained missing-decision failure, before all implementation changes.",
+  "developmentFailures": [
+    {
+      "command": "npm run test:mcp -- --test-concurrency=1",
+      "exit": 1,
+      "summary": "45/46 passed; source extraction pinned the old default return spelling. Changed the end marker to the default branch; unchanged inventory checks then pass46/46.",
+      "originalLog": "/tmp/root5950-test-mcp-first.tap",
+      "originalLogSha256": "8d66fc3a1001db503b715bfb68526b5c96a2f37be8de248632939d33c72b9602"
+    },
+    {
+      "command": "NODE_OPTIONS=\"--max-old-space-size=384 --test-concurrency=1\" npm run test:pulse",
+      "exit": 9,
+      "summary": "Node rejects --test-concurrency in NODE_OPTIONS; no tests ran. Moved the flag onto the node CLI through the npm script arguments;80/80 pass.",
+      "originalLog": "/tmp/root5950-test-pulse-first.tap",
+      "originalLogSha256": "678c3a0d0f2ceac23576660bb4ff61c8b4cb325a1fb2e11924746239ec11c13f"
+    },
+    {
+      "command": "node --test --test-concurrency=1 server/scripts/test-mcp-refusal-reasons.js server/scripts/test-mcp-refusal-branches.js",
+      "exit": 1,
+      "summary": "4/5 passed; data-URL baseline fixture could not resolve bare express import (ERR_UNSUPPORTED_RESOLVE_REQUEST). Resolved all import specifiers; final exact admission/parser/route parity passes.",
+      "originalLog": "/tmp/root5950-branches-first.tap",
+      "originalLogSha256": "9101c4d79531a56db09a028784d5f7a9c5e333d3beec5d53e30259338782c248"
+    }
+  ],
+  "logRetention": "Development failures are compact summaries plus hashes/VM paths; final and baseline TAP logs are included in this source packet."
+}
