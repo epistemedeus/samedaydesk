@@ -26,7 +26,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/baseline-financial-pair-stdout.txt",
+      "logSha256": "77c6c44c9bd7de4292b9185d306a3be5d7f659f22d5e836c11cd29ebcbe0019b"
     },
     {
       "name": "baseline-managed",
@@ -54,7 +56,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/baseline-managed-stdout.txt",
+      "logSha256": "f402e5c9f5acc73c96a3653a1f59bbd30f7c09419db2631ce81b496bdfd628b3"
     },
     {
       "name": "baseline-root-ci",
@@ -85,7 +89,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/baseline-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
     },
     {
       "name": "bounded-source-stage-and-admit",
@@ -112,7 +118,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/bounded-source-stage-and-admit-stdout.txt",
+      "logSha256": "46f892f41a842c542f6f9234975a5713718d341c1febee1d57baf4d8fac7f339"
     },
     {
       "name": "candidate-financial-pair-refused",
@@ -140,7 +148,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/candidate-financial-pair-refused-stdout.txt",
+      "logSha256": "dd15f1cd98ecbe1a41606fc00cc765a17b7efc13680ca4b898863c8cb1e026c9"
     },
     {
       "name": "candidate-managed",
@@ -168,7 +178,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/candidate-managed-stdout.txt",
+      "logSha256": "d0a4c7ecb7838149ecee574321cd0d9f4980efb0a482820ad24d936d17a3b1ba"
     },
     {
       "name": "candidate-root-ci",
@@ -199,7 +211,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/candidate-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
     },
     {
       "name": "repaired-managed",
@@ -227,7 +241,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/repaired-managed-stdout.txt",
+      "logSha256": "ba3eadf80fe51daad52f6f51d9d49468eab58dbb4b8dcf577b3bcf12b190710e"
     },
     {
       "name": "repaired-package",
@@ -255,7 +271,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/repaired-package-stdout.txt",
+      "logSha256": "59fecc6e64df6252fb6792240867db2e8af8cf06ab44e5b1c81835908c98e831"
     },
     {
       "name": "repaired-root-ci",
@@ -286,7 +304,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/repaired-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
     },
     {
       "name": "source-stage-and-admit",
@@ -313,7 +333,9 @@
         "VITE_POSTHOG_HOST": "",
         "RAYON_NUM_THREADS": "1",
         "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
-      }
+      },
+      "retainedLog": "evidence/source-stage-and-admit-stdout.txt",
+      "logSha256": "05e5d4ffa31e004a9459e44d72563084c483f8a9c82f92bd50b3307c8830df36"
     }
   ],
   "toolchain": {
