@@ -1,0 +1,112 @@
+{
+  "qualifiedSourceHead": "47a68a49384f97aaad4700feb11f5d0a650e8bf0",
+  "qualifiedSourceTree": "818ae4ba83116713bfa5df4aabf465d57c4c6a14",
+  "base": "f629597d9e865bd6709d4b10d96a9905cc9ea3c3",
+  "files": [
+    {
+      "path": "docs/reviews/root5950/CHECKPOINT.json",
+      "sha256": "771a3d1613e4596c5553902c447b613ff2c63aaafda4064e3e0a8c1b4d5b37e3"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/baseline.tap",
+      "sha256": "e1de6217b200712fe85526c3c33450362cf22f5ce1e6ea6a71de04c65fc101ed"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/failures.json",
+      "sha256": "4ac9d53e7ea513aadba51e92c0920c1e330350692c30f7376e18ba2585d42b6c"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/inputs.json",
+      "sha256": "2308325a7590bd146717edafd99312604e905176d992189904bba299c9b51894"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/mcp.tap",
+      "sha256": "321250921330971a934b49a185d5a6c45c14a1019c4c3af518789025f0dc20a9"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/pulse.tap",
+      "sha256": "13bd317d1998f8ef6b2c941678bb6acd44a725d81704cb9d789b3314007367f1"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/refusals.tap",
+      "sha256": "010086ce9ca3b73c0fc1bf008e6487e97bffdd9be6c8ee390702493aed71ede8"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/resources.json",
+      "sha256": "4b64c2e621ff12f7e3e7e94c47f518b5335d923a677645dc6600a9bad97ff904"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/source-outcomes.tap",
+      "sha256": "9e8af324c14b4bcc83ba842a5ccf6eb22ac41339ebdff05965a415fa40e03d1a"
+    },
+    {
+      "path": "docs/reviews/root5950/evidence/validation.json",
+      "sha256": "f66383086e40e85e12f3a0ddfd505450ff1e21ba51276a2b286e5ceca8e2e4a7"
+    },
+    {
+      "path": "package.json",
+      "sha256": "313dc007df2a62af5178211eb5d178e2732993f1a5552a2e7548ec5f615fd4c4"
+    },
+    {
+      "path": "server/lib/mcp-admission.js",
+      "sha256": "b8e6d52564baf55db8d6d84ae189dfaa779c2ce8946ae14222f42d8e85762d74"
+    },
+    {
+      "path": "server/lib/mcp-http.js",
+      "sha256": "e84958459ac9d2da77e33e917ea20550e2498911474e5634d929c9a0dd3875ca"
+    },
+    {
+      "path": "server/lib/pulse-store/README.md",
+      "sha256": "55806660ff700bcabd313292c2e935077dea5827bc8273957f2059c36fe0bdfc"
+    },
+    {
+      "path": "server/lib/pulse-store/mcp-outcomes.js",
+      "sha256": "ce9107dabeac32a02b1fcb80c4565421c7d7437e144b63d88acb61a0acf759d8"
+    },
+    {
+      "path": "server/lib/pulse.js",
+      "sha256": "efce3d333256385a5f906394e99eb4b6898ca33d018f74f064c4c83a229c60a7"
+    },
+    {
+      "path": "server/routes/mcp.js",
+      "sha256": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28"
+    },
+    {
+      "path": "server/scripts/helpers/mcp-refusal-fixture.js",
+      "sha256": "7a2751dfbc57c1a318bc01a49385251dfbaa5e9f01cb66b2f09198a52fe15d37"
+    },
+    {
+      "path": "server/scripts/test-mcp-protocol-negotiation.js",
+      "sha256": "bc22155bd9191e0bbacf030589aa1b7d876e1bbd82994ec5f61af9fa260a2488"
+    },
+    {
+      "path": "server/scripts/test-mcp-refusal-branches.js",
+      "sha256": "53a43a3ee79dabfc5e6325ead9de07ce390fe30dfc5c2a0e4e5468d6082d3732"
+    },
+    {
+      "path": "server/scripts/test-mcp-refusal-postgres.js",
+      "sha256": "5885dfeae12af03daf6ab798cd997989117b690234ff2f15a10e0084dace5b09"
+    },
+    {
+      "path": "server/scripts/test-mcp-refusal-reasons.js",
+      "sha256": "21a7859029e2cdaea2281742699b95f1eba43747f9f7f73e91a071508016b3c2"
+    },
+    {
+      "path": "server/scripts/test-pulse-mcp-outcomes-contract.js",
+      "sha256": "347a36c720f78c083de1c228b59ae47e25737698a58e61b84e6743b2e3c39806"
+    },
+    {
+      "path": "server/scripts/test-pulse-refusal-contract.js",
+      "sha256": "936abc089e0d9a7fecf86d5978959d587da302c5a55d4f90593deabbd51e9b8b"
+    },
+    {
+      "path": "supabase/migrations/0009_pulse_mcp_refusal_reasons.sql",
+      "sha256": "acca11341d0332f0b4fe99752441200e845bb7fb5711dee1b3a8a581045989f9"
+    },
+    {
+      "path": "supabase/verify/0009_pulse_mcp_refusal_reasons.sql",
+      "sha256": "8c6e32ea8ba4ed4c7ba0ab341c6ae04e90683be8464a90305a60c15b3f981541"
+    }
+  ],
+  "unchangedLockSha256": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc"
+}
