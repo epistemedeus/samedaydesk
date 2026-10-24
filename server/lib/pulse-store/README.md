@@ -69,8 +69,9 @@ coverage is unknown. Prior deltas/snapshots retain exact old fields/hashes.
 New file snapshots, WAL, transport and SQL readers retain the optional timestamp.
 An observation/storage failure cannot change tool output or authority.
 
-Apply forward, rerunnable `0008_pulse_browse_result_coverage.sql` before the new
-producer, through Root's authorized release. It replaces only two existing
+Apply forward, rerunnable `0008_pulse_browse_result_coverage.sql` before the
+browse-category producer, through Root's authorized release. The current refusal
+producer additionally requires 0009 below. 0008 replaces only two existing
 validators/merge functions, with no tables, row updates, backfill or new grants.
 An old DB rejects new categories atomically; the current WAL retains exact ids
 and payloads with permanent-error backoff and drains after upgrade.
@@ -190,8 +191,9 @@ protected summary and disposable PostgreSQL. Network-dependent readiness inputs
 and license failures are local fixtures. Existing MCP/entitlement/Pulse suites
 remain relevant. No frontend build or release is needed for this backend change.
 
-Root independently receives both exact source branches and owns both PRs and the
-managed release. Receive the installed schema and current source before the
+For the original source-label/adapter release, Root independently receives both
+exact source branches and owns both PRs and the managed release. Receive the
+installed schema and current source before the
 apex producer, then release the adapter header. The migration owner must have
 applied additive `0007_pulse_mcp_source_outcomes.sql` before that apex release;
 do not repeat an already received production migration. This file preserves old counters/receipt hashes, is rerunnable,

@@ -1,10 +1,10 @@
 {
   "command": "NODE_OPTIONS=--max-old-space-size=384 npm run test:mcp-refusals",
   "exit": 0,
-  "elapsedSeconds": 5.28,
-  "sampledSupervisorAndDescendantRssPeakKiB": 736192,
+  "elapsedSeconds": 5.269,
+  "sampledSupervisorAndDescendantRssPeakKiB": 711208,
   "sampleIntervalMs": 20,
-  "maximumLiveProcesses": 18,
+  "maximumLiveProcesses": 17,
   "aggregateReserveKiB": 2621440,
   "modelChildren": 0,
   "scope": "own admitted supervisor only; RSS sums shared mappings conservatively; sampled peak is not a hard-limit proof"

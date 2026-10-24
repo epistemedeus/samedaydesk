@@ -51,6 +51,7 @@ test("mounted MCP -> old PG rejection -> exact queued-WAL migration/retry -> dur
   assert.deepEqual({ ...migrated, observationEnd: null }, { ...oldSnapshot, observationEnd: null }, "migration does not rewrite history");
   assert.equal(receipts(), originalReceipts);
   assert.equal((await db.flush(oldId, oldDelta)).status, "already_applied");
+  assert.equal((await db.flush("d5950000-0000-4000-8000-000000000002", { ...emptyDelta(at), total: 1, mcpProtocolRequests: 1 })).status, "applied", "a fresh old-producer payload still applies after upgrade");
   assert.equal(JSON.stringify(f.fallback.loadPendingFlushes()[0]), queuedBytes);
   f.pulse.__pulseTestInternals().setPulseNow(() => Date.now() + 4_000_000);
   await f.drain();
@@ -58,7 +59,7 @@ test("mounted MCP -> old PG rejection -> exact queued-WAL migration/retry -> dur
   assert.equal(deltaCanonicalDigest(retained.delta), digest);
   assert.equal((await db.flush(retained.flushId, retained.delta)).status, "already_applied");
   let summary = await f.summary();
-  assert.equal(summary.total, 126); assert.equal(summary.humans, 27); assert.equal(summary.complete, true);
+  assert.equal(summary.total, 127); assert.equal(summary.humans, 27); assert.equal(summary.complete, true);
   for (const [tool, reason] of [["_none", "unsupported_protocol"], ["_none", "invalid_request"], ["check_ai_readiness", "tool_input"]]) assert.equal(summary.mcpProtocol.outcomes.counts[key(tool, reason)], 1);
   assert.equal(summary.mcpProtocol.outcomes.refusals.withoutReason.unattributed, 6);
 

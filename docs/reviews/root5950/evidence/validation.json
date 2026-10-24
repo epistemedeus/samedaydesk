@@ -53,7 +53,7 @@
       "cancelled": 0,
       "skipped": 0,
       "log": "refusals.tap",
-      "sha256": "6d7a9db75183060fa16d5be7e0a379fbd69592be535784352199aa37a1d08937"
+      "sha256": "010086ce9ca3b73c0fc1bf008e6487e97bffdd9be6c8ee390702493aed71ede8"
     },
     {
       "command": "node --test --test-concurrency=1 --test-name-pattern='missing, arbitrary|real requests|mixed batch|thrown handler|real disconnect|ambiguous flush|failed file' server/scripts/test-mcp-source-outcomes.js",
