@@ -192,16 +192,18 @@ export class RootExternalReceiving {
             return null;
         const { selection: s, offer } = await this.loadTerms(selected.selection);
         const row = await this.o.store.withOpportunityClient(async (client) => {
-            const row = (await client.query(`SELECT c.*,p.public_id,p.provenance,p.task_scope,p.revoked_at,i.response_json,i.request_hash,i.status_code,i.principal_id
+            const row = (await client.query(`SELECT c.*,p.public_id,p.provenance,p.task_scope,p.revoked_at,co.offer_key,co.round_id AS offer_round_id,i.response_json,i.request_hash,i.status_code,i.principal_id
         FROM opportunity_claims c JOIN earned_work_contributor_tokens p ON p.id=c.contributor_token_id
+        JOIN opportunity_offers co ON co.id=c.offer_id
         JOIN earned_work_idempotency i ON i.task_id=c.round_id AND i.scope='opportunity_assign' AND i.key=c.import_key
         WHERE c.round_id=$1 AND c.credential_ref=$2 AND c.import_key=$3`, [s.roundId, credentialRef, key])).rows[0];
             if (!row)
                 return null;
             const response = typeof row.response_json === 'string' ? JSON.parse(row.response_json) : row.response_json;
             const nativeBody = { provenance: 'production', offerKey: offer.offerKey, publicLabel: s.publicLabel, credentialRef, importKey: key, deferStart: false, scope: { title: 'Private externally received first-use report', instructions: 'Return the agreed sanitized report through the scoped Root correspondence channel. No journey account is required.' } };
+            need(row.public_label === s.publicLabel && row.offer_key === offer.offerKey && row.offer_round_id === s.roundId && String(row.reward_atomic) === String(offer.rewardAtomic) && row.defer_start === false && hashRequest(row.assigned_scope) === hashRequest(nativeBody.scope), 'external_assignment_integrity');
             need(row.request_hash === hashRequest(nativeBody) && row.principal_id === 'owner' && row.status_code >= 200 && row.status_code < 300, 'external_assignment_integrity');
-            need(row.kind === 'owner_assigned' && row.terms_version === s.termsVersion && row.provenance === 'production' && row.task_scope === 'opportunity:' + s.roundId && !row.revoked_at && response.claim?.id === row.id && response.credentialGrant === 'production' && /^ew_ctr_[A-Za-z0-9_-]{43}$/.test(response.token), 'external_assignment_integrity');
+            need(row.kind === 'owner_assigned' && row.terms_version === s.termsVersion && row.provenance === 'production' && row.task_scope === 'opportunity:' + s.roundId && !row.revoked_at && response.claim?.id === row.id && response.claim.termsVersion === s.termsVersion && String(response.claim.rewardAtomic) === String(offer.rewardAtomic) && response.credentialGrant === 'production' && /^ew_ctr_[A-Za-z0-9_-]{43}$/.test(response.token), 'external_assignment_integrity');
             return { ...row, response };
         }, 'read');
         if (!row)
@@ -265,6 +267,8 @@ export class RootExternalReceiving {
             return null;
         const { signature, ...receipt } = parsed.data, expected = this.receiptSignature(receipt);
         if (hashRequest(receipt.binding) !== hashRequest(binding) || !timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(expected, 'hex')))
+            return null;
+        if (Date.parse(receipt.attestedAt) < Date.parse(receipt.receivedAt) || Date.parse(receipt.attestedAt) > this.o.store.now().getTime())
             return null;
         return { receivedAt: receipt.receivedAt, attestedAt: receipt.attestedAt };
     }

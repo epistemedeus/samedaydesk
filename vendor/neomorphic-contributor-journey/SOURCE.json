@@ -1,7 +1,7 @@
 {
   "schema": "neomorphic.contributor-journey.artifact.v1",
   "productRepository": "https://github.com/epistemedeus/neomorphic-io.git",
-  "sourceCommit": "3141576e473b84b73de59ef7f17ce202e0902796",
+  "sourceCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
   "baseCommit": "ff6c03653f6c268d89502986a5062d36044f6cd0",
   "sdsBaseCommit": "d8cea059213e06d2f263be67f82e498f8052a50f",
   "receivingProductBase": "2a0cbd71b0c14c124d592ed6b6b66f7f35cbacd4",
@@ -932,13 +932,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.js",
-      "bytes": 29177,
-      "sha256": "daddecce7f7baa97edb9e754823f509c36e34d8cd15a7caf415118cc58a2077d"
+      "bytes": 29879,
+      "sha256": "b73dad5bef05a5a70cc4e616a2989f00e4a5aea8dfbdecb7377744c161c95d51"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.js.map",
-      "bytes": 28973,
-      "sha256": "fb8c2737fd1ac776473a73c3bf882af9a998ef0205275b724a38628294d49050"
+      "bytes": 29648,
+      "sha256": "b73f06555ab1d8c83ea546fa57bbe0587d27976af0c8c379e3e6fa64aedef47f"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/contributor-journey/harness.d.ts",
@@ -1967,13 +1967,13 @@
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js",
-      "bytes": 98411,
-      "sha256": "26aacbe2b40a806a8fff3f276e8090f22ebec443e6bdcd87aa30f61c5d0e2524"
+      "bytes": 98606,
+      "sha256": "dca956631fccc13bb73d93253d74244e7b9b92be85e853ec506bcd097940dd96"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/service.js.map",
-      "bytes": 79008,
-      "sha256": "4975fe202fab22139b9bedac2113104dbe4469e9bdae5ff7b04d010f4afea771"
+      "bytes": 79147,
+      "sha256": "69ab4710a945d9b1724f70c72d2d45691bc602191ec5b79e9b78416baf1914ef"
     },
     {
       "path": "services/contributor-journey/dist/runtime/services/earned-work/src/opportunity/terms.d.ts",
@@ -2158,7 +2158,7 @@
     {
       "path": "services/contributor-journey/dist/runtime/SOURCE-BUILD.json",
       "bytes": 74,
-      "sha256": "ca8e6097924b7ad349bb807a9e9f6078f2d786012b76bd1b0d1bf23c41b4cea0"
+      "sha256": "587d6e906c0e2c1c64a37453da8a5ccdb0f457464f93be0134895be520b642a5"
     },
     {
       "path": "services/contributor-journey/dist/runtime/src/lib/contribute/account/client.d.ts",

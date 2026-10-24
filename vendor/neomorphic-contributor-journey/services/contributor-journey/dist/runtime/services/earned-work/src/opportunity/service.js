@@ -510,6 +510,8 @@ export class OpportunityService {
                 throw new ApiError(400, "invalid_input", "artifact.digestSha256 does not match the evidence bytes");
             }
             const offer = await this.offerById(client, claim.offer_id);
+            if (prior?.mediatedReceipt !== undefined && claim.reward_atomic !== offer.reward_atomic)
+                throw new ApiError(409, "terms_changed", "original mediated reward differs");
             assertEvidenceShape(offer.evidence_kind, body.evidence);
             const existingSubmission = await client.query(`SELECT id, artifact_digest_sha256, artifact_ref, evidence FROM opportunity_submissions WHERE claim_id = $1`, [claim.id]);
             if (existingSubmission.rows[0]) {
