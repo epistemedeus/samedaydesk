@@ -1,0 +1,53 @@
+{
+  "acceptedSource": "1d31cb0f539a356aabcbe45cba5ab3b407eb9c20",
+  "files": [
+    {
+      "path": "server/lib/mcp-admission.js",
+      "sha256": "b8e6d52564baf55db8d6d84ae189dfaa779c2ce8946ae14222f42d8e85762d74"
+    },
+    {
+      "path": "server/lib/mcp-http.js",
+      "sha256": "e84958459ac9d2da77e33e917ea20550e2498911474e5634d929c9a0dd3875ca"
+    },
+    {
+      "path": "server/routes/mcp.js",
+      "sha256": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28"
+    },
+    {
+      "path": "server/routes/pulse.js",
+      "sha256": "d6831f7c9b5c1e52d6f4d72be7633f414e15a4f97513b01a72c6dfddd734b3a6"
+    },
+    {
+      "path": "server/lib/pulse.js",
+      "sha256": "efce3d333256385a5f906394e99eb4b6898ca33d018f74f064c4c83a229c60a7"
+    },
+    {
+      "path": "server/lib/pulse-store/mcp-outcomes.js",
+      "sha256": "ce9107dabeac32a02b1fcb80c4565421c7d7437e144b63d88acb61a0acf759d8"
+    },
+    {
+      "path": "server/lib/pulse-store/schema.js",
+      "sha256": "7ac5db818e22d2df5cf8a682697f56fdeaa476b83883ba7826b4e7dfdeb62585"
+    },
+    {
+      "path": "server/lib/pulse-store/wal-schema.js",
+      "sha256": "5b3ccada9f183c91fab80772ae70a8d838a8c900397c405a75bc63a782483080"
+    },
+    {
+      "path": "server/lib/pulse-store/file-fallback.js",
+      "sha256": "c3cd7b56be9edc5e508ae9912306cdc44d7f6f36a941bb8b540046c07b00b108"
+    },
+    {
+      "path": "server/lib/pulse-store/supabase-adapter.js",
+      "sha256": "ee379592060620d309b3644b6af8a76d9acedf4fb47136a4e8ca2702f579028d"
+    },
+    {
+      "path": "supabase/migrations/0009_pulse_mcp_refusal_reasons.sql",
+      "sha256": "acca11341d0332f0b4fe99752441200e845bb7fb5711dee1b3a8a581045989f9"
+    },
+    {
+      "path": "supabase/verify/0009_pulse_mcp_refusal_reasons.sql",
+      "sha256": "8c6e32ea8ba4ed4c7ba0ab341c6ae04e90683be8464a90305a60c15b3f981541"
+    }
+  ]
+}

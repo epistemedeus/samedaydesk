@@ -154,8 +154,18 @@ fresh-process tests receive old/new compatibility, failed/ambiguous flush,
 original receipt hashes, exact duplicate recovery and strict unknown-field
 rejection. No production database call is part of qualification.
 
-Run `NODE_OPTIONS=--max-old-space-size=384 npm run test:mcp-refusals` with the
-existing PostgreSQL binary overrides below. It includes mounted loopback refusal
+Run the direct command below with the existing PostgreSQL binary overrides.
+The root package manifest belongs to the installed protected host pin; keep test
+convenience commands outside that manifest to preserve its accepted source pair.
+
+```bash
+NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 \
+  server/scripts/test-mcp-refusal-reasons.js server/scripts/test-mcp-refusal-branches.js \
+  server/scripts/test-pulse-refusal-contract.js server/scripts/test-mcp-refusal-postgres.js \
+  server/scripts/test-pulse-mcp-outcomes-contract.js server/scripts/test-pulse-browse-coverage-contract.js
+```
+
+It includes mounted loopback refusal
 branches, negative/healthy results, notification/disconnect/duplicate controls,
 real PG migration/retry/restart, old readers/snapshots and route parity against
 exact f629. License/site responses are local fixtures with counted calls; no
