@@ -32,6 +32,16 @@ Root's accepted16/19plus three corrected PG cases were not rerun or relabelled.
 | Amended package check | Actual app imports,12accepted MCP/SQL members,DB/WAL readers,dependency versions,sealed runtime and financial host-source function pass |
 | Canonical source stage/admit | Both baseline and amended candidate:1305files/9,616,184bytes,dependency-compatible;equal member digest and edge identity |
 
+Portable receiving first refused`runtime_publication_modes`/exit1after all8722
+file bytes matched. The files-only tar omitted directory metadata and the default
+extractor applied umask077. The original archive and failed extraction remain.
+A fresh archive of the single complete package root retains directory metadata
+and dereferences hardlinks;fresh`tar --same-permissions`extraction then receives
+all file bytes and file/directory modes. Actual extracted application/DB-WAL/
+sealed-runtime checks pass;the verifier and failed extraction were not weakened.
+Use permissions-preserving extraction for this portable artifact. No production
+filesystem was changed. Final portable verification is in the controller result.
+
 No JS/HTML normalization or unexpected-member exclusion is used. Complete member
 hashes,including every Python cache difference,are compressed in
 [INVENTORIES.json](INVENTORIES.json). File modes also match between the three

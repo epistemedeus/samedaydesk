@@ -336,6 +336,154 @@
       },
       "retainedLog": "evidence/source-stage-and-admit-stdout.txt",
       "logSha256": "05e5d4ffa31e004a9459e44d72563084c483f8a9c82f92bd50b3307c8830df36"
+    },
+    {
+      "name": "extracted-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/archive-check"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check",
+      "exit": 1,
+      "elapsedSeconds": 0.747,
+      "sampledOwnSupervisorTreeRssPeakKiB": 479832,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/extracted-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/extracted-package-stdout.txt",
+      "logSha256": "55150c5af8c3c02ced9e8437d811c25e308d8b337c389caeeb36107dc22a6df5"
+    },
+    {
+      "name": "portable-package-preserved",
+      "command": [
+        "python3",
+        "/tmp/r6q-oec4g5lv/package-preserved.py"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 13.861,
+      "sampledOwnSupervisorTreeRssPeakKiB": 526532,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/portable-package-preserved.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/portable-package-preserved-stdout.txt",
+      "logSha256": "706b7d83ac76da0941e28c0eb1e9286f5e07aebaf21d634acd2c5e1daa8c2a6b"
+    },
+    {
+      "name": "portable-package",
+      "command": [
+        "python3",
+        "/tmp/r6q-oec4g5lv/package.py"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 15.185,
+      "sampledOwnSupervisorTreeRssPeakKiB": 567012,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/portable-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/portable-package-stdout.txt",
+      "logSha256": "c9787ad0b68d7629b71d8aa055620a6f2209d21e9c65b193d49c5d41e63308d4"
+    },
+    {
+      "name": "preserved-extracted-managed-probe",
+      "command": [
+        "npm",
+        "run",
+        "foundry:managed-probe"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check-preserved",
+      "exit": 0,
+      "elapsedSeconds": 0.589,
+      "sampledOwnSupervisorTreeRssPeakKiB": 535544,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/preserved-extracted-managed-probe.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/preserved-extracted-managed-probe-stdout.txt",
+      "logSha256": "714ff2bf60455b7f818b4fd8405e9e419d51f540aea801d43d37bf76913137a4"
+    },
+    {
+      "name": "preserved-extracted-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/archive-check-preserved"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check-preserved",
+      "exit": 0,
+      "elapsedSeconds": 0.861,
+      "sampledOwnSupervisorTreeRssPeakKiB": 491948,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/preserved-extracted-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/preserved-extracted-package-stdout.txt",
+      "logSha256": "2899dad5851e3735d0a02ad33ebe5c625aec05f807f6e7ac6b300d99e0abba3d"
     }
   ],
   "toolchain": {

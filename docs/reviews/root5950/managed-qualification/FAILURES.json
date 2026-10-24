@@ -37,5 +37,17 @@
   "otherLimits": {
     "initialSourcePhase": "Source stage/admit completed, but the pinned controller child env omits NODE_OPTIONS. Final source phase was received again using a wrapper that puts the384MiB heap bound explicitly on child argv. Original receipts remain."
   },
-  "newRegressionSuitesRerun": 0
+  "newRegressionSuitesRerun": 0,
+  "portableArchiveReceivingFailure": {
+    "source": "3d5e47d4306ec3a6bfd64d8a83bc61c5545faa6e",
+    "constructionExit": 0,
+    "consumerExit": 1,
+    "consumerCode": "runtime_publication_modes",
+    "rawFilesMatched": 8722,
+    "cause": "The files-only tar did not carry directory mode entries, and default extraction applied task umask077 to file modes. Byte-only comparison was insufficient for the actual sealed runtime consumer.",
+    "retainedFailedArchive": "ROOT6000-ARTIFACTS/ROOT6000-INITIAL-FILES-ONLY.tar.gz",
+    "retainedFailedExtraction": "/tmp/r6q-oec4g5lv/archive-check",
+    "repair": "Archive the single complete package root recursively, retaining directory metadata and dereferencing hardlinks; extract into a fresh root with tar --same-permissions. No chmod/normalization of the failed extraction or verifier change.",
+    "recovery": "New archive receives every file byte and file/directory mode, then actual packaged application/DB-WAL/sealed runtime checks pass."
+  }
 }

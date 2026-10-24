@@ -1,0 +1,27 @@
+{
+  "name": "portable-package",
+  "command": [
+    "python3",
+    "/tmp/r6q-oec4g5lv/package.py"
+  ],
+  "cwd": "/tmp/r6q-oec4g5lv",
+  "exit": 0,
+  "elapsedSeconds": 15.185,
+  "sampledOwnSupervisorTreeRssPeakKiB": 567012,
+  "maxLiveProcesses": 9,
+  "reserveKiB": 2621440,
+  "sampleMs": 50,
+  "nodeHeapMiB": 384,
+  "modelChildren": 0,
+  "log": "/tmp/r6q-oec4g5lv/logs/portable-package.log",
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=384",
+    "VITE_SUPABASE_URL": "",
+    "VITE_SUPABASE_ANON_KEY": "",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "",
+    "VITE_POSTHOG_KEY": "",
+    "VITE_POSTHOG_HOST": "",
+    "RAYON_NUM_THREADS": "1",
+    "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+  }
+}
