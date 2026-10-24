@@ -1,0 +1,308 @@
+TAP version 13
+# Subtest: app.js registers the hosted market before the contributor journey
+ok 1 - app.js registers the hosted market before the contributor journey
+  ---
+  duration_ms: 1.646171
+  type: 'test'
+  ...
+# Subtest: unset mode registers nothing
+ok 2 - unset mode registers nothing
+  ---
+  duration_ms: 0.218774
+  type: 'test'
+  ...
+# Subtest: invalid config refuses before the adapter is called
+ok 3 - invalid config refuses before the adapter is called
+  ---
+  duration_ms: 1.288681
+  type: 'test'
+  ...
+# Subtest: an absolute or escaping entry is refused before import
+ok 4 - an absolute or escaping entry is refused before import
+  ---
+  duration_ms: 0.500991
+  type: 'test'
+  ...
+# Subtest: omitted entry resolves inside this artifact and a missing relative file stays on the prefix
+ok 5 - omitted entry resolves inside this artifact and a missing relative file stays on the prefix
+  ---
+  duration_ms: 0.973463
+  type: 'test'
+  ...
+# Subtest: cold import loads the vendored adapter without a checkout path
+ok 6 - cold import loads the vendored adapter without a checkout path
+  ---
+  duration_ms: 35.975056
+  type: 'test'
+  ...
+# Subtest: a supplied adapter receives the prefix and other paths fall through
+ok 7 - a supplied adapter receives the prefix and other paths fall through
+  ---
+  duration_ms: 0.519888
+  type: 'test'
+  ...
+# Subtest: opened surfaces adapter startup refusal
+ok 8 - opened surfaces adapter startup refusal
+  ---
+  duration_ms: 0.415596
+  type: 'test'
+  ...
+# Subtest: existing contributor requests do not acquire the packed-client consumer
+ok 9 - existing contributor requests do not acquire the packed-client consumer
+  ---
+  duration_ms: 0.586621
+  type: 'test'
+  ...
+# Subtest: a relative symlink cannot import an external checkout
+ok 10 - a relative symlink cannot import an external checkout
+  ---
+  duration_ms: 0.440469
+  type: 'test'
+  ...
+# Subtest: cookie-only login delivery, recovery delivery, tamper and expiry use the same authenticated seal
+ok 11 - cookie-only login delivery, recovery delivery, tamper and expiry use the same authenticated seal
+  ---
+  duration_ms: 2.6598
+  type: 'test'
+  ...
+# Subtest: ordinary debt administration refuses with its JSON error alone, without loading a journal
+ok 12 - ordinary debt administration refuses with its JSON error alone, without loading a journal
+  ---
+  duration_ms: 243.739213
+  type: 'test'
+  ...
+# file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/vendor/hosted-wallet-market/bin/machine-profile.mjs:14
+#   catch {throw Error('machine_profile_arguments_refused');}
+#                ^
+# Error: machine_profile_arguments_refused
+#     at outputPath (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/vendor/hosted-wallet-market/bin/machine-profile.mjs:14:16)
+#     at file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/vendor/hosted-wallet-market/bin/machine-profile.mjs:16:21
+#     at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+#     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+#     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+# Node.js v22.23.3
+# (node:1157759) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: five percent fee policy still refuses any other rate
+ok 13 - five percent fee policy still refuses any other rate
+  ---
+  duration_ms: 0.791716
+  type: 'test'
+  ...
+# Subtest: a switch, raw JSON, and an escaping path are machine_profile_refused
+ok 14 - a switch, raw JSON, and an escaping path are machine_profile_refused
+  ---
+  duration_ms: 0.422429
+  type: 'test'
+  ...
+# Subtest: absolute mode 0600 still loads and a loose or linked file is refused
+ok 15 - absolute mode 0600 still loads and a loose or linked file is refused
+  ---
+  duration_ms: 596.691312
+  type: 'test'
+  ...
+# Subtest: a relative file stays inside the installation
+ok 16 - a relative file stays inside the installation
+  ---
+  duration_ms: 768.950528
+  type: 'test'
+  ...
+# Subtest: release admission keeps an unread absolute path and refuses a switch or unbound document
+ok 17 - release admission keeps an unread absolute path and refuses a switch or unbound document
+  ---
+  duration_ms: 905.282096
+  type: 'test'
+  ...
+# (node:1157815) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: runtime and release bind origin, tenant, both actual source hashes and required roots
+ok 18 - runtime and release bind origin, tenant, both actual source hashes and required roots
+  ---
+  duration_ms: 365.170215
+  type: 'test'
+  ...
+# Subtest: release and runtime refuse the same incomplete qualified capability
+ok 19 - release and runtime refuse the same incomplete qualified capability
+  ---
+  duration_ms: 452.323999
+  type: 'test'
+  ...
+# Subtest: an unfunded release cannot carry a money authority module
+ok 20 - an unfunded release cannot carry a money authority module
+  ---
+  duration_ms: 129.670419
+  type: 'test'
+  ...
+# Subtest: profile files reject parent symlinks
+ok 21 - profile files reject parent symlinks
+  ---
+  duration_ms: 65.166221
+  type: 'test'
+  ...
+# Subtest: generation refuses before an escaping write
+ok 22 - generation refuses before an escaping write
+  ---
+  duration_ms: 269.210363
+  type: 'test'
+  ...
+# Subtest: host hashing refuses symlinked parent directories in the pinned source closure
+ok 23 - host hashing refuses symlinked parent directories in the pinned source closure
+  ---
+  duration_ms: 0.81639
+  type: 'test'
+  ...
+# Subtest: post-qualification entry preparation changes only the capability and captures the exact current rollback
+ok 24 - post-qualification entry preparation changes only the capability and captures the exact current rollback
+  ---
+  duration_ms: 396.97827
+  type: 'test'
+  ...
+# Subtest: review deadlines outside 1..10000 are refused
+ok 25 - review deadlines outside 1..10000 are refused
+  ---
+  duration_ms: 0.81652
+  type: 'test'
+  ...
+# Subtest: one slot stays busy until the uncooperative read drains
+ok 26 - one slot stays busy until the uncooperative read drains
+  ---
+  duration_ms: 50.891906
+  type: 'test'
+  ...
+# Subtest: parent cancellation refuses the read without taking the slot early
+ok 27 - parent cancellation refuses the read without taking the slot early
+  ---
+  duration_ms: 250.696397
+  type: 'test'
+  ...
+# Subtest: a closed read lifetime refuses queries that have not entered
+ok 28 - a closed read lifetime refuses queries that have not entered
+  ---
+  duration_ms: 31.072716
+  type: 'test'
+  ...
+# Subtest: abort before the entitled read issues no sql
+ok 29 - abort before the entitled read issues no sql
+  ---
+  duration_ms: 1.131108
+  type: 'test'
+  ...
+# Subtest: configured adapter keeps binding SQL in the outer read transaction and fences cancellation
+    # Subtest: entitled paid read refuses missing original enrollment key, then recovers
+    ok 1 - entitled paid read refuses missing original enrollment key, then recovers
+      ---
+      duration_ms: 298.432215
+      type: 'test'
+      ...
+    # Subtest: entitled paid read refuses missing original enrollment outcome, then recovers
+    ok 2 - entitled paid read refuses missing original enrollment outcome, then recovers
+      ---
+      duration_ms: 279.079112
+      type: 'test'
+      ...
+    1..2
+ok 30 - configured adapter keeps binding SQL in the outer read transaction and fences cancellation
+  ---
+  duration_ms: 8336.660343
+  type: 'test'
+  ...
+# Subtest: requester cancellation returns honest 503 and keeps the read slot until drain
+ok 31 - requester cancellation returns honest 503 and keeps the read slot until drain
+  ---
+  duration_ms: 1576.647883
+  type: 'test'
+  ...
+# Subtest: only an integer budget from 0 through 32 arms, and every other value stays off
+ok 32 - only an integer budget from 0 through 32 arms, and every other value stays off
+  ---
+  duration_ms: 0.884673
+  type: 'test'
+  ...
+# Subtest: plaintext pipe send keeps a positive framed body for success, busy, error, and delay
+ok 33 - plaintext pipe send keeps a positive framed body for success, busy, error, and delay
+  ---
+  duration_ms: 47.703125
+  type: 'test'
+  ...
+# Subtest: a second end and a destroyed response do not replace or empty the first body
+ok 34 - a second end and a destroyed response do not replace or empty the first body
+  ---
+  duration_ms: 4.502657
+  type: 'test'
+  ...
+# Subtest: an early close is followed by one complete recovery and an inert budget adds nothing
+ok 35 - an early close is followed by one complete recovery and an inert budget adds nothing
+  ---
+  duration_ms: 4.876953
+  type: 'test'
+  ...
+# Subtest: the vendor send delegates once and the historical succession hash stays put
+ok 36 - the vendor send delegates once and the historical succession hash stays put
+  ---
+  duration_ms: 82.440581
+  type: 'test'
+  ...
+# Subtest: diagnostic requires count and an explicit future window of at most ten minutes
+ok 37 - diagnostic requires count and an explicit future window of at most ten minutes
+  ---
+  duration_ms: 1.23978
+  type: 'test'
+  ...
+# Subtest: delayed GET and consumed POST complete after normal request close on a Unix socket
+ok 38 - delayed GET and consumed POST complete after normal request close on a Unix socket
+  ---
+  duration_ms: 108.9096
+  type: 'test'
+  ...
+# Subtest: a controlled downstream body drop can coexist with a complete Node handoff, then recover
+ok 39 - a controlled downstream body drop can coexist with a complete Node handoff, then recover
+  ---
+  duration_ms: 7.349055
+  type: 'test'
+  ...
+# Subtest: disconnect before intent is retained as a suppressed send; the next response recovers
+ok 40 - disconnect before intent is retained as a suppressed send; the next response recovers
+  ---
+  duration_ms: 8.067637
+  type: 'test'
+  ...
+# Subtest: window expiry removes observers without ending a pending response or extending the window
+ok 41 - window expiry removes observers without ending a pending response or extending the window
+  ---
+  duration_ms: 153.924683
+  type: 'test'
+  ...
+# Subtest: a failing diagnostic sink does not change the response
+ok 42 - a failing diagnostic sink does not change the response
+  ---
+  duration_ms: 2.53402
+  type: 'test'
+  ...
+# Subtest: expiry removes summary and stage observers from an ended response under backpressure
+ok 43 - expiry removes summary and stage observers from an ended response under backpressure
+  ---
+  duration_ms: 179.771931
+  type: 'test'
+  ...
+# Subtest: Node HEAD suppression is visible and is distinct from GET/POST delivery
+ok 44 - Node HEAD suppression is visible and is distinct from GET/POST delivery
+  ---
+  duration_ms: 2.87174
+  type: 'test'
+  ...
+# Subtest: a synchronous header error is observed and the ordinary fallback still sends its body
+ok 45 - a synchronous header error is observed and the ordinary fallback still sends its body
+  ---
+  duration_ms: 2.826753
+  type: 'test'
+  ...
+1..45
+# tests 47
+# suites 0
+# pass 47
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16231.509045
+{"runner": "root6712-owned-subreaper", "exit": 0, "elapsedMs": 16303.642, "peakDescendantRssKiB": 674548, "totalReserveKiB": 2097152, "nativeIncluded": true, "reaped": 2, "remainingOwnedPids": [], "remainingScratch": []}

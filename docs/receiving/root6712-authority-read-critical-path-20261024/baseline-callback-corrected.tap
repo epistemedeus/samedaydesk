@@ -1,0 +1,111 @@
+TAP version 13
+# Subtest: ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+    # Subtest: actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+    ok 1 - actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+      ---
+      duration_ms: 12051.884412
+      type: 'test'
+      ...
+    # Subtest: fresh action sees revoked session and restored authority
+    ok 2 - fresh action sees revoked session and restored authority
+      ---
+      duration_ms: 25.98908
+      type: 'test'
+      ...
+    # Subtest: foreign actor cannot read accepted report
+    ok 3 - foreign actor cannot read accepted report
+      ---
+      duration_ms: 9.890611
+      type: 'test'
+      ...
+    # Subtest: pool acquisition and query failure refuse; next fresh invocation recovers
+    ok 4 - pool acquisition and query failure refuse; next fresh invocation recovers
+      ---
+      duration_ms: 59.812591
+      type: 'test'
+      ...
+    # Subtest: changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+    not ok 5 - changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+      ---
+      duration_ms: 28.305716
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:215:13'
+      failureType: 'testCodeFailure'
+      error: 'journey submission delivery is immutable'
+      code: 'P0001'
+      name: 'error'
+      stack: |-
+        /home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/node_modules/pg/lib/client.js:694:17
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:223:9)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:215:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: concurrent revocation before authentication cannot produce a stale successful response
+    ok 6 - concurrent revocation before authentication cannot produce a stale successful response
+      ---
+      duration_ms: 21.747976
+      type: 'test'
+      ...
+    # Subtest: disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+    not ok 7 - disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+      ---
+      duration_ms: 8.514683
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:243:13'
+      failureType: 'testCodeFailure'
+      error: 'market.reviewReceivingStatus is not a function'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TypeError'
+      stack: |-
+        drain (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:187:40)
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:251:63)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:243:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: all accepted and refused reads preserve authoritative rows, response closure and released resources
+    not ok 8 - all accepted and refused reads preserve authoritative rows, response closure and released resources
+      ---
+      duration_ms: 0.372395
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:254:13'
+      failureType: 'testCodeFailure'
+      error: 'market.reviewReceivingStatus is not a function'
+      code: 'ERR_TEST_FAILURE'
+      name: 'TypeError'
+      stack: |-
+        drain (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:187:40)
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:255:13)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        TestContext.test (node:internal/test_runner/test:373:20)
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:254:13)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..8
+not ok 1 - ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+  ---
+  duration_ms: 14859.481282
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:24:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# {"coldStartupMs":148.67129099999988,"startup":{"queryCalls":87,"logicalStatements":191,"setupCalls":0,"acquisitions":14,"releases":14,"physicalConnections":4,"acquireMs":21.141002000000526,"acceptedSourceCalls":0,"delayMs":0},"measured":[{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":4,"acquireMs":21.131987999999183,"acceptedSourceCalls":1,"delayMs":0,"finishMs":47.265800999999556,"closeMs":47.31131000000096,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.37753900000461726,"acceptedSourceCalls":1,"delayMs":0,"finishMs":15.589358999999604,"closeMs":15.608357000000979,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.321194000003743,"acceptedSourceCalls":1,"delayMs":0,"finishMs":14.071426999998948,"closeMs":14.088276999998925,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.44523600000138686,"acceptedSourceCalls":1,"delayMs":5,"finishMs":316.9406360000012,"closeMs":316.96241700000064,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.5139759999965463,"acceptedSourceCalls":1,"delayMs":5,"finishMs":327.7424350000001,"closeMs":327.7635850000006,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.4174480000001495,"acceptedSourceCalls":1,"delayMs":5,"finishMs":308.0374490000013,"closeMs":308.05898700000034,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"}]}
+1..1
+# tests 9
+# suites 0
+# pass 5
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14976.769059
+{"runner": "root6712-owned-subreeper", "exit": 1, "elapsedMs": 15062.57, "peakDescendantRssKiB": 442496, "totalReserveKiB": 2097152, "reaped": 1, "remainingOwnedPids": [], "remainingScratch": []}

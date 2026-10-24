@@ -1,0 +1,435 @@
+[
+  {
+    "log": "baseline-accounted.tap",
+    "sha256": "290bd5790873e96cfaa437d5c89a2c09885f181b567488f4d4d5564ff789c17d",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 14974.918,
+      "peakDescendantRssKiB": 778348,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "baseline-callback-corrected.tap",
+    "sha256": "5be0d2a8844a8f5dcf37bab0017d4db4b5be745f9f9efd1e17fd4a0c4f034ca8",
+    "node": {
+      "tests": 9,
+      "pass": 5,
+      "fail": 4,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 1,
+      "elapsedMs": 15062.57,
+      "peakDescendantRssKiB": 442496,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "baseline-export.tap",
+    "sha256": "2d520bbb59ad6158441fd86504876cc6b808695274429ee02a6bf48f11b9a77a",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15358.255,
+      "peakDescendantRssKiB": 782860,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "baseline-final.tap",
+    "sha256": "f342ddccba0cb2981692e57e917cf691b0dc6debbbb25cdff55d5e0ca62a5388",
+    "node": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15489.836,
+      "peakDescendantRssKiB": 706956,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "baseline-full.tap",
+    "sha256": "7a0fd2f9d222dab5e07d3efb233b4afff4f4ea46aceb6d80d8d9b3c44aab2078",
+    "node": {
+      "tests": 9,
+      "pass": 0,
+      "fail": 9,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 1,
+      "elapsedMs": 15647.756,
+      "peakDescendantRssKiB": 442024,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "baseline-received.tap",
+    "sha256": "8a06f824d1f708707792558d08ef17c97ced08e55ab7b52fc696618e5113156e",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15343.845,
+      "peakDescendantRssKiB": 787132,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "bootstrap-corrected.tap",
+    "sha256": "27383bf09aacfb22a20921c6c4dab0e75b42062124130ccdd77b61d9257428d7",
+    "node": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 1,
+      "elapsedMs": 2931.406,
+      "peakDescendantRssKiB": 427180,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": [
+        "sdd-pulse-v1.json.fallback.json"
+      ]
+    }
+  },
+  {
+    "log": "corrected-accounted.tap",
+    "sha256": "e2a1e0926c1daf20f61e2c15943172e7a132c5021ba8087ddb3c6c2706ecd3c3",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15435.608,
+      "peakDescendantRssKiB": 780560,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "corrected-export.tap",
+    "sha256": "9b5199c9994447ee55a54563326105444d810d70e92910fbce8ff09700c4448a",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15536.583,
+      "peakDescendantRssKiB": 778504,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "corrected-final.tap",
+    "sha256": "2fbdfa572d9ea4311edce72fbacf4596fbed095b230438dc1cb591dabe69c6bf",
+    "node": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15230.664,
+      "peakDescendantRssKiB": 781704,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "corrected.tap",
+    "sha256": "b6339989e7df7a30d1e9c8560cad78f4dfff2a66787a3af49839cc9f40cb7703",
+    "node": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 15607.142,
+      "peakDescendantRssKiB": 710928,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "first-run.tap",
+    "sha256": "908ccc6df568949bc887ad6615b8fdba77122c35b00104b90d6dcfae8b542bf4",
+    "node": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 1,
+      "elapsedMs": 2375.528,
+      "peakDescendantRssKiB": 286688,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "mounted-regressions.tap",
+    "sha256": "468863de7a10129d96fbe4b5c62449f6575480d89464d0feab740ab665df35c9",
+    "node": {
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 68599.553,
+      "peakDescendantRssKiB": 990912,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 5,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "native-bootstrap.tap",
+    "sha256": "d19c14e953f41d92e7ade1d5ce0b5507425c5aeadc1f6bc047f11984ca07266a",
+    "node": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 1,
+      "elapsedMs": 2631.796,
+      "peakDescendantRssKiB": 435744,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "terms-bootstrap.tap",
+    "sha256": "26a0075f8e27bd7c402dcec014112b38435ff2c0a90147c7525a9a9a6954ab61",
+    "node": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreeper",
+      "exit": 0,
+      "elapsedMs": 3943.765,
+      "peakDescendantRssKiB": 435004,
+      "totalReserveKiB": 2097152,
+      "reaped": 1,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "wallet-authority-final.tap",
+    "sha256": "b4fc4d4658549abd0c5c2f6727a5b67ec370f6aedcf072a9a1dc44611e29de3a",
+    "node": {
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 19236.452,
+      "peakDescendantRssKiB": 672196,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 2,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "wallet-export.tap",
+    "sha256": "85b362562bd3bdb134c9865d78167fbe7c8aba74fb75d8d2417e22066e008fcb",
+    "node": {
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 18851.706,
+      "peakDescendantRssKiB": 687764,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 2,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "wallet-final.tap",
+    "sha256": "ec76db7f42c4effe5a83efa072450079b7bdd89bc3a847b05dfeac3b60b8a747",
+    "node": {
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 16303.642,
+      "peakDescendantRssKiB": 674548,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 2,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  },
+  {
+    "log": "wallet-regressions.tap",
+    "sha256": "085756fac852be416fbbf9b3faa376ce59c6ef227602b207c8f5808b4ffb265b",
+    "node": {
+      "tests": 45,
+      "pass": 45,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "runner": {
+      "runner": "root6712-owned-subreaper",
+      "exit": 0,
+      "elapsedMs": 17750.357,
+      "peakDescendantRssKiB": 598432,
+      "totalReserveKiB": 2097152,
+      "nativeIncluded": true,
+      "reaped": 2,
+      "remainingOwnedPids": [],
+      "remainingScratch": []
+    }
+  }
+]

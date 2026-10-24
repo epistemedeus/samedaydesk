@@ -1,0 +1,332 @@
+TAP version 13
+# (node:1155756) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+    # Subtest: requester reads the actual current note and stored identity without contributor credentials
+    ok 1 - requester reads the actual current note and stored identity without contributor credentials
+      ---
+      duration_ms: 329.36875
+      type: 'test'
+      ...
+    # Subtest: later interest updates current content without rewriting the original receipt
+    ok 2 - later interest updates current content without rewriting the original receipt
+      ---
+      duration_ms: 599.600349
+      type: 'test'
+      ...
+    # Subtest: two contributors paginate deterministically; hostile proposal bytes stay exact JSON data
+    ok 3 - two contributors paginate deterministically; hostile proposal bytes stay exact JSON data
+      ---
+      duration_ms: 1426.877509
+      type: 'test'
+      ...
+    # Subtest: foreign requester, contributor, anonymous, forged identity and missing CSRF/origin refuse
+    ok 4 - foreign requester, contributor, anonymous, forged identity and missing CSRF/origin refuse
+      ---
+      duration_ms: 789.266914
+      type: 'test'
+      ...
+    # Subtest: foreign tenant tasks and same-task IDs never cross the configured tenant
+    ok 5 - foreign tenant tasks and same-task IDs never cross the configured tenant
+      ---
+      duration_ms: 362.68052
+      type: 'test'
+      ...
+    # Subtest: malformed or cross-task cursor and invalid page sizes refuse without effects
+    ok 6 - malformed or cross-task cursor and invalid page sizes refuse without effects
+      ---
+      duration_ms: 1644.951641
+      type: 'test'
+      ...
+    # Subtest: maximum stored note and page are bounded; oversized historical rows refuse rather than truncate
+    ok 7 - maximum stored note and page are bounded; oversized historical rows refuse rather than truncate
+      ---
+      duration_ms: 823.002532
+      type: 'test'
+      ...
+    # Subtest: current account/task membership, role, expiry and explicit session revocation are enforced
+    ok 8 - current account/task membership, role, expiry and explicit session revocation are enforced
+      ---
+      duration_ms: 930.488165
+      type: 'test'
+      ...
+    # Subtest: lost read response retries with identical data and no new receipt or transition
+    ok 9 - lost read response retries with identical data and no new receipt or transition
+      ---
+      duration_ms: 322.134556
+      type: 'test'
+      ...
+    # Subtest: restart, login and account recovery retain current notes and task without resubmitting interest
+    ok 10 - restart, login and account recovery retain current notes and task without resubmitting interest
+      ---
+      duration_ms: 1059.993854
+      type: 'test'
+      ...
+    1..10
+ok 1 - R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+  ---
+  duration_ms: 11808.091337
+  type: 'test'
+  ...
+# Every proposal HTTP read preserved all row hashes across the authoritative schemas.
+# Owned fixture sampled peak summed RSS: 566936 KiB (Node runner/CLI plus disposable PG; excludes native controller).
+# (node:1156027) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+    # Subtest: baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+    ok 1 - baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+      ---
+      duration_ms: 101.88127
+      type: 'test'
+      ...
+    # Subtest: existing machine quote binds its original wallet, control epoch and 5% gross terms
+    ok 2 - existing machine quote binds its original wallet, control epoch and 5% gross terms
+      ---
+      duration_ms: 519.474989
+      type: 'test'
+      ...
+    # Subtest: synthetic historical accepted debt and already-paid disposition are usable before continuation
+    ok 3 - synthetic historical accepted debt and already-paid disposition are usable before continuation
+      ---
+      duration_ms: 847.405846
+      type: 'test'
+      ...
+    # Subtest: native current session reads the SAME existing account membership, accepted bytes and paid/owed dispositions
+    ok 4 - native current session reads the SAME existing account membership, accepted bytes and paid/owed dispositions
+      ---
+      duration_ms: 480.830415
+      type: 'test'
+      ...
+    # Subtest: native retained reads refuse foreign or absent membership, wrong/double/expired/revoked cookie and stale source without details
+    ok 5 - native retained reads refuse foreign or absent membership, wrong/double/expired/revoked cookie and stale source without details
+      ---
+      duration_ms: 1953.059772
+      type: 'test'
+      ...
+    # Subtest: intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+    ok 6 - intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+      ---
+      duration_ms: 6402.369573
+      type: 'test'
+      ...
+    # Subtest: unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+    ok 7 - unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+      ---
+      duration_ms: 2574.338744
+      type: 'test'
+      ...
+    # Subtest: expired and exited predecessor intents remain stale
+    ok 8 - expired and exited predecessor intents remain stale
+      ---
+      duration_ms: 675.055346
+      type: 'test'
+      ...
+    # Subtest: native password recovery revokes the old session and cannot replace old wallet control
+    ok 9 - native password recovery revokes the old session and cannot replace old wallet control
+      ---
+      duration_ms: 1268.967106
+      type: 'test'
+      ...
+    # Subtest: session expiry during configured RPC reads rolls back both binding and receipt
+    ok 10 - session expiry during configured RPC reads rolls back both binding and receipt
+      ---
+      duration_ms: 2734.660286
+      type: 'test'
+      ...
+    # Subtest: dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+    ok 11 - dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+      ---
+      duration_ms: 1700.451711
+      type: 'test'
+      ...
+    # Subtest: missing capability and stale current source refuse the legacy continuation route, including cached mutations
+    ok 12 - missing capability and stale current source refuse the legacy continuation route, including cached mutations
+      ---
+      duration_ms: 1434.455758
+      type: 'test'
+      ...
+    # Subtest: a freshly admitted successor source cannot consume the predecessor challenge or renew old operations
+    ok 13 - a freshly admitted successor source cannot consume the predecessor challenge or renew old operations
+      ---
+      duration_ms: 2509.421402
+      type: 'test'
+      ...
+    # Subtest: concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+    ok 14 - concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+      ---
+      duration_ms: 1467.939705
+      type: 'test'
+      ...
+    # Subtest: real process crash before-update reconciles the same journal key after restart
+    ok 15 - real process crash before-update reconciles the same journal key after restart
+      ---
+      duration_ms: 3242.613924
+      type: 'test'
+      ...
+    # Subtest: real process crash before-commit reconciles the same journal key after restart
+    ok 16 - real process crash before-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 3190.700673
+      type: 'test'
+      ...
+    # Subtest: real process crash after-commit reconciles the same journal key after restart
+    ok 17 - real process crash after-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 2740.342096
+      type: 'test'
+      ...
+    # Subtest: lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+    ok 18 - lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+      ---
+      duration_ms: 1988.080161
+      type: 'test'
+      ...
+    # Subtest: owned PostgreSQL immediate-stop crash recovers committed binding, epoch and journal through WAL
+    ok 19 - owned PostgreSQL immediate-stop crash recovers committed binding, epoch and journal through WAL
+      ---
+      duration_ms: 1249.212773
+      type: 'test'
+      ...
+    # Subtest: native recovery on the original account preserves membership, old artifact bytes and original operation readback
+    ok 20 - native recovery on the original account preserves membership, old artifact bytes and original operation readback
+      ---
+      duration_ms: 1226.144208
+      type: 'test'
+      ...
+    # Subtest: old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+    ok 21 - old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+      ---
+      duration_ms: 322.608722
+      type: 'test'
+      ...
+    1..21
+ok 2 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 43723.698332
+  type: 'test'
+  ...
+# {"sourceKind":"composed-canonical-direct","candidateSourceSha256":"31bc9c5d15764b266bd331df0682374fbbcf8e89fbe6335705b947c3b0e18a8d","candidateHostSha256":"db76819c7ccd710a30657423aa8844c532660361c2734aab2d65642578351dc5","qualified":false,"installed":false}
+# {"candidateSourceSha256":"31bc9c5d15764b266bd331df0682374fbbcf8e89fbe6335705b947c3b0e18a8d","candidateHostSha256":"db76819c7ccd710a30657423aa8844c532660361c2734aab2d65642578351dc5","migrationAdded":false,"rpcMutations":0,"financialRowsPreserved":true,"peakOwnedRssKiB":564216,"nativeOwnerIncluded":false}
+# (node:1156710) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cold requester signup, unfunded post, discovery, and funnel on the real mount
+ok 3 - cold requester signup, unfunded post, discovery, and funnel on the real mount
+  ---
+  duration_ms: 5962.796146
+  type: 'test'
+  ...
+# (node:1156969) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ROOT410 independent real createSdsApp receiving over verified TLS and disposable PostgreSQL
+    # Subtest: closed default remains mounted; wrong wire and malformed capability refuse
+    ok 1 - closed default remains mounted; wrong wire and malformed capability refuse
+      ---
+      duration_ms: 347.538335
+      type: 'test'
+      ...
+    # Subtest: verified HTTPS exposes unfunded discovery without money authority
+    ok 2 - verified HTTPS exposes unfunded discovery without money authority
+      ---
+      duration_ms: 84.040767
+      type: 'test'
+      ...
+    # Subtest: lost signup response retains the proof; stored readback performs no second signup POST
+    ok 3 - lost signup response retains the proof; stored readback performs no second signup POST
+      ---
+      duration_ms: 203.530963
+      type: 'test'
+      ...
+    # Subtest: ordinary post and anonymous discovery expose usable listing IDs and next actions
+    ok 4 - ordinary post and anonymous discovery expose usable listing IDs and next actions
+      ---
+      duration_ms: 124.92844
+      type: 'test'
+      ...
+    # Subtest: identical and conflicting signup/post replays preserve a single effect
+    ok 5 - identical and conflicting signup/post replays preserve a single effect
+      ---
+      duration_ms: 458.538155
+      type: 'test'
+      ...
+    # Subtest: a contributor can express interest using only an anonymously discovered task ID
+    ok 6 - a contributor can express interest using only an anonymously discovered task ID
+      ---
+      duration_ms: 199.533286
+      type: 'test'
+      ...
+    # Subtest: CSRF, origin, role and forbidden fund attempts create no financial records
+    ok 7 - CSRF, origin, role and forbidden fund attempts create no financial records
+      ---
+      duration_ms: 402.342808
+      type: 'test'
+      ...
+    # Subtest: lost login result reads the stored operation and preserves credentials
+    ok 8 - lost login result reads the stored operation and preserves credentials
+      ---
+      duration_ms: 319.152819
+      type: 'test'
+      ...
+    # Subtest: lost recover result reads the stored operation and preserves credentials
+    ok 9 - lost recover result reads the stored operation and preserves credentials
+      ---
+      duration_ms: 316.791016
+      type: 'test'
+      ...
+    # Subtest: ordinary recovery works and public output contains no session or recovery material
+    ok 10 - ordinary recovery works and public output contains no session or recovery material
+      ---
+      duration_ms: 255.713306
+      type: 'test'
+      ...
+    # Subtest: a stored secret is bound to its original HTTPS origin
+    ok 11 - a stored secret is bound to its original HTTPS origin
+      ---
+      duration_ms: 42.069445
+      type: 'test'
+      ...
+    # Subtest: existing-store funnel counts abandonment and transitions without claiming independent acquisition
+    ok 12 - existing-store funnel counts abandonment and transitions without claiming independent acquisition
+      ---
+      duration_ms: 3.577812
+      type: 'test'
+      ...
+    # Subtest: private account and signup-operation exclusions propagate to that account listing and its observations
+    ok 13 - private account and signup-operation exclusions propagate to that account listing and its observations
+      ---
+      duration_ms: 3.689506
+      type: 'test'
+      ...
+    # Subtest: private post-operation exclusions remove the listing observations
+    ok 14 - private post-operation exclusions remove the listing observations
+      ---
+      duration_ms: 1.626419
+      type: 'test'
+      ...
+    # Subtest: a funding metadata row does not establish settled paid work
+    ok 15 - a funding metadata row does not establish settled paid work
+      ---
+      duration_ms: 2.631164
+      type: 'test'
+      ...
+    # Subtest: legacy obligations and terms survive the unfunded journey and capability rollback
+    ok 16 - legacy obligations and terms survive the unfunded journey and capability rollback
+      ---
+      duration_ms: 356.629336
+      type: 'test'
+      ...
+    1..16
+ok 4 - ROOT410 independent real createSdsApp receiving over verified TLS and disposable PostgreSQL
+  ---
+  duration_ms: 6111.431486
+  type: 'test'
+  ...
+1..4
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 68552.311914
+{"runner": "root6712-owned-subreaper", "exit": 0, "elapsedMs": 68599.553, "peakDescendantRssKiB": 990912, "totalReserveKiB": 2097152, "nativeIncluded": true, "reaped": 5, "remainingOwnedPids": [], "remainingScratch": []}

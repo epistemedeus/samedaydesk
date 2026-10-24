@@ -1,0 +1,120 @@
+TAP version 13
+# Subtest: ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+not ok 1 - ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+  ---
+  duration_ms: 2695.314041
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:24:1'
+  failureType: 'unhandledRejection'
+  error: "Cannot read properties of undefined (reading 'release')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:55:28
+  ...
+# Subtest: actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+not ok 2 - actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+  ---
+  duration_ms: 12027.907082
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:178:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:178:13)
+  ...
+# Subtest: fresh action sees revoked session and restored authority
+not ok 3 - fresh action sees revoked session and restored authority
+  ---
+  duration_ms: 21.668331
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:192:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:192:13)
+  ...
+# Subtest: foreign actor cannot read accepted report
+not ok 4 - foreign actor cannot read accepted report
+  ---
+  duration_ms: 8.585412
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:199:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:199:13)
+  ...
+# Subtest: pool acquisition and query failure refuse; next fresh invocation recovers
+not ok 5 - pool acquisition and query failure refuse; next fresh invocation recovers
+  ---
+  duration_ms: 56.659314
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:200:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:200:13)
+  ...
+# Subtest: changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+not ok 6 - changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+  ---
+  duration_ms: 24.896011
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:203:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:203:13)
+  ...
+# Subtest: concurrent revocation before authentication cannot produce a stale successful response
+not ok 7 - concurrent revocation before authentication cannot produce a stale successful response
+  ---
+  duration_ms: 32.036584
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:221:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:221:13)
+  ...
+# Subtest: disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+not ok 8 - disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+  ---
+  duration_ms: 7.889351
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:231:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:231:13)
+  ...
+# Subtest: all accepted and refused reads preserve authoritative rows, response closure and released resources
+not ok 9 - all accepted and refused reads preserve authoritative rows, response closure and released resources
+  ---
+  duration_ms: 0.304273
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:242:13'
+  failureType: 'parentAlreadyFinished'
+  error: 'test could not be started because its parent finished'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:242:13)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 0
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15584.429783
+{"runner": "root6712-owned-subreeper", "exit": 1, "elapsedMs": 15647.756, "peakDescendantRssKiB": 442024, "totalReserveKiB": 2097152, "reaped": 1, "remainingOwnedPids": [], "remainingScratch": []}

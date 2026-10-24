@@ -15,7 +15,7 @@ test('cookie-only login delivery, recovery delivery, tamper and expiry use the s
 });
 
 test('ordinary debt administration refuses with its JSON error alone, without loading a journal',()=>{
-  const result=spawnSync(process.execPath,[new URL('../bin/installed-debt.mjs',import.meta.url).pathname,'inspect'],{env:{PATH:process.env.PATH},encoding:'utf8'});
+  const result=spawnSync(process.execPath,['--max-old-space-size=512',new URL('../bin/installed-debt.mjs',import.meta.url).pathname,'inspect'],{env:{PATH:process.env.PATH,UV_THREADPOOL_SIZE:'1',OMP_NUM_THREADS:'1'},encoding:'utf8'});
   assert.equal(result.status,1);assert.equal(result.stdout,'');
   assert.deepEqual(JSON.parse(result.stderr),{ok:false,code:'database_refused',secretPrinted:false});
 });

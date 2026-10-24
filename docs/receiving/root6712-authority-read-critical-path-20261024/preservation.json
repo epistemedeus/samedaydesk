@@ -1,0 +1,25 @@
+{
+  "base": "d310f4cf37fb190d850ac0cea71ec34787972162",
+  "sourceOnly": true,
+  "emittedAssetsRebuilt": false,
+  "protected": {
+    "client": {
+      "trackedMembers": 414,
+      "tree": "37aad82178bf0651787143b0caaf468bbe9dc0e8",
+      "diffExit": 0,
+      "untrackedMembers": 0
+    },
+    "vendor/neomorphic-contributor-journey": {
+      "trackedMembers": 444,
+      "tree": "18cd51149a78c392f3ad497e086fb6d14c7bdcc3",
+      "diffExit": 0,
+      "untrackedMembers": 0
+    },
+    "vendor/neomorphic-contributor-desk": {
+      "trackedMembers": 46,
+      "tree": "d2613cf8dd3a7498ce8a1f17f5566daf5cf27140",
+      "diffExit": 0,
+      "untrackedMembers": 0
+    }
+  }
+}

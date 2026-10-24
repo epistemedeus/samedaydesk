@@ -221,9 +221,9 @@ export async function openHostedMarket(options) {
         destroyAcquired();
         throw readCancelled();
       }
-      await client.query('BEGIN READ ONLY');
-      await client.query(`SET LOCAL search_path TO ${profile.earnedSchema}`);
-      await client.query("SET LOCAL statement_timeout='2500ms'");
+      // These parameter-free setup statements share one protocol round trip.
+      // Keep their order and transaction-local scope before any authority read.
+      await client.query(`BEGIN READ ONLY; SET LOCAL search_path TO ${profile.earnedSchema}; SET LOCAL statement_timeout='2500ms'`);
       const qualified = qualify(client);
       const value = await fn({
         query(...args) {

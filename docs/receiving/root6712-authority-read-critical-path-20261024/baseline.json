@@ -1,0 +1,2041 @@
+{
+  "schema": "root6712.synthetic-read.v1",
+  "expectedSetup": 3,
+  "coldStartupMs": 128.11178400000017,
+  "measured": [
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 1.93787999999995,
+          "durationMs": 0.8729290000001129
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 2.8735810000002857,
+          "durationMs": 0.16454299999986688
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 3.0667410000000928,
+          "durationMs": 0.12051299999984622
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 3.904496999999992,
+          "durationMs": 0.6888739999999416
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 4.747143000000051,
+          "durationMs": 1.2873490000001766
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 6.101247999999941,
+          "durationMs": 0.6418000000003303
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 6.838467000000037,
+          "durationMs": 0.8699990000000071
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 7.756507000000056,
+          "durationMs": 0.3142740000002959
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 8.195557000000008,
+          "durationMs": 0.47042300000020987
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 8.719736000000012,
+          "durationMs": 4.01240800000005
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 12.780930000000353,
+          "durationMs": 1.657818999999563
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 14.524638000000323,
+          "durationMs": 0.509295999999722
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 15.120327000000088,
+          "durationMs": 0.22790500000019165
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 15.618476999999984,
+          "durationMs": 0.180562000000009
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 15.803865000000314,
+          "durationMs": 0.09071799999992436
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 15.900047000000086,
+          "durationMs": 0.5786899999998241
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 16.481680000000324,
+          "durationMs": 0.12913799999978437
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 16.94872000000032,
+          "durationMs": 0.11182499999995343
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 17.064064000000144,
+          "durationMs": 0.07120200000008481
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 17.14218800000026,
+          "durationMs": 0.16803799999979674
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 17.313204999999925,
+          "durationMs": 0.07847800000035932
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 17.46829200000002,
+          "durationMs": 0.8371870000000854
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 18.309154000000035,
+          "durationMs": 0.07425300000022617
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 18.389396999999917,
+          "durationMs": 0.1886450000001787
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 18.582550999999967,
+          "durationMs": 0.06849700000020675
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 18.713904000000184,
+          "durationMs": 0.07065000000011423
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 18.787279000000126,
+          "durationMs": 0.051613000000088505
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 18.84430300000031,
+          "durationMs": 0.146614999999656
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 18.993851000000177,
+          "durationMs": 0.06582699999989927
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 19.114599,
+          "durationMs": 0.06585799999993469
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 19.18418100000008,
+          "durationMs": 0.06518499999992855
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 19.255319000000327,
+          "durationMs": 0.2049179999999069
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 19.463672000000315,
+          "durationMs": 0.08771399999977803
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 19.60175500000014,
+          "durationMs": 0.08101200000010067
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 19.686285000000225,
+          "durationMs": 0.06196399999998903
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 19.75394600000027,
+          "durationMs": 0.15480699999989156
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 20.07539100000031,
+          "durationMs": 0.11401299999988623
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 20.349982000000182,
+          "durationMs": 0.09855699999980061
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 20.45183700000007,
+          "durationMs": 0.07683399999996254
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 20.53436099999999,
+          "durationMs": 0.1378130000002784
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 20.6748520000001,
+          "durationMs": 0.06400799999983064
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 20.794910999999956,
+          "durationMs": 0.13599500000009357
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 20.93477699999994,
+          "durationMs": 1.0111700000002202
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 22.038890000000265,
+          "durationMs": 0.18636500000002343
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 22.231388000000152,
+          "durationMs": 0.27699500000016997
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 22.572693999999956,
+          "durationMs": 0.13143600000012157
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 22.709259000000202,
+          "durationMs": 0.265386000000035
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 23.062874000000193,
+          "durationMs": 0.12690500000007887
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 23.19520300000022,
+          "durationMs": 0.2385220000001027
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 23.4913260000003,
+          "durationMs": 0.1106379999996534
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 23.606628,
+          "durationMs": 0.2607820000002903
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 24.464625999999953,
+          "durationMs": 0.45641999999998006
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 24.940593000000263,
+          "durationMs": 0.6872880000000805
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 25.979205999999976,
+          "durationMs": 0.24060800000006566
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.47547400000030393,
+      "acceptedSourceCalls": 1,
+      "delayMs": 0,
+      "finishMs": 27.11182800000006,
+      "closeMs": 27.14955000000009
+    },
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 0.4234659999997348,
+          "durationMs": 0.3466690000000199
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 0.776086999999734,
+          "durationMs": 0.29266099999995276
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 1.0732229999998708,
+          "durationMs": 0.42192500000010114
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 1.742938999999751,
+          "durationMs": 0.39164800000025934
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 2.158990999999787,
+          "durationMs": 0.20385299999998097
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 2.3783909999997377,
+          "durationMs": 0.1463450000001103
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 2.537724999999682,
+          "durationMs": 0.3963160000002972
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 2.949420999999802,
+          "durationMs": 0.14409100000011676
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 3.1062819999997373,
+          "durationMs": 0.36703299999999217
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 3.4857750000001033,
+          "durationMs": 0.32905899999968824
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 3.830312999999933,
+          "durationMs": 0.9027869999999893
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 4.765086999999767,
+          "durationMs": 0.5039609999998902
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 5.292738000000099,
+          "durationMs": 0.21613799999977346
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 5.629825999999866,
+          "durationMs": 0.21526399999993373
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 5.849815999999919,
+          "durationMs": 0.11054199999989578
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 5.965475999999853,
+          "durationMs": 0.6990059999998266
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 6.669415999999728,
+          "durationMs": 0.24947500000007494
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 7.2429299999998875,
+          "durationMs": 0.1665170000001126
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 7.413380999999845,
+          "durationMs": 0.3413140000002386
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 7.761109999999917,
+          "durationMs": 0.4128849999997328
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 8.177028999999948,
+          "durationMs": 0.09979399999974703
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 8.350411999999778,
+          "durationMs": 0.0812989999999445
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 8.434663,
+          "durationMs": 0.06921199999987948
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 8.509001999999782,
+          "durationMs": 0.15691000000015265
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 8.668685000000096,
+          "durationMs": 0.08222599999999147
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 8.804000000000087,
+          "durationMs": 0.06404599999996208
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 8.87087100000008,
+          "durationMs": 0.04999199999974735
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 8.925760999999966,
+          "durationMs": 0.1152790000001005
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 9.043549999999868,
+          "durationMs": 0.0610740000001897
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 9.149580999999671,
+          "durationMs": 0.05581900000015594
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 9.207828000000063,
+          "durationMs": 0.04907999999977619
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 9.261813000000075,
+          "durationMs": 0.1954579999996895
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 9.46059299999979,
+          "durationMs": 0.06673700000010285
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 9.567054999999982,
+          "durationMs": 0.07756799999970099
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 9.6477289999998,
+          "durationMs": 0.060993000000053144
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 9.714230999999927,
+          "durationMs": 0.15247899999985748
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 10.034484999999677,
+          "durationMs": 0.11179200000015044
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 10.298137999999653,
+          "durationMs": 0.09514500000022963
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 10.396761999999853,
+          "durationMs": 0.07252299999981915
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 10.475242999999864,
+          "durationMs": 0.13021600000001854
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 10.608075999999983,
+          "durationMs": 0.06349499999987529
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 10.718967999999677,
+          "durationMs": 0.08557900000005247
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 10.808356000000003,
+          "durationMs": 0.14939099999992322
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 11.005912999999964,
+          "durationMs": 0.06671800000003714
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 11.076397999999699,
+          "durationMs": 0.13932599999998274
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 11.252537999999731,
+          "durationMs": 0.06640600000037011
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 11.322993999999653,
+          "durationMs": 0.15188400000033653
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 11.552838000000065,
+          "durationMs": 0.4670069999997395
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 12.024591999999757,
+          "durationMs": 0.22552100000029895
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 12.295873999999912,
+          "durationMs": 0.08181100000001607
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 12.38153199999988,
+          "durationMs": 0.18767699999989418
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 12.791257999999743,
+          "durationMs": 0.45194900000024063
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 13.257442999999967,
+          "durationMs": 0.5383209999999963
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 13.884102999999868,
+          "durationMs": 0.12355600000000777
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.3866939999998067,
+      "acceptedSourceCalls": 1,
+      "delayMs": 0,
+      "finishMs": 14.379383999999845,
+      "closeMs": 14.400194999999712
+    },
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 0.36950500000011743,
+          "durationMs": 0.32933200000024954
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 0.7063040000002729,
+          "durationMs": 0.11168799999995827
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 0.8206170000003112,
+          "durationMs": 0.13289799999984098
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 1.0874730000000454,
+          "durationMs": 0.32815000000027794
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 1.4379240000002937,
+          "durationMs": 0.20211999999992258
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 1.6555050000001756,
+          "durationMs": 0.15615000000025248
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 1.8258390000000873,
+          "durationMs": 0.4302059999999983
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 2.272958000000017,
+          "durationMs": 0.1480490000003556
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 2.434374000000389,
+          "durationMs": 0.3481929999998101
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 2.803266000000349,
+          "durationMs": 0.3248920000000908
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 3.1476800000000367,
+          "durationMs": 0.8022290000003522
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 3.963386000000355,
+          "durationMs": 0.41660000000001673
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 4.3940230000002884,
+          "durationMs": 0.1501459999999497
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 4.634076000000277,
+          "durationMs": 0.14194099999986065
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 4.779578000000129,
+          "durationMs": 0.07360400000015943
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 4.857824000000164,
+          "durationMs": 0.7891840000002048
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 5.652283000000352,
+          "durationMs": 0.37023999999973967
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 6.339083000000301,
+          "durationMs": 0.4833619999999428
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 6.826923000000079,
+          "durationMs": 0.10188800000014453
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 6.934702000000016,
+          "durationMs": 0.22236200000043027
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 7.160207000000355,
+          "durationMs": 0.07371699999976045
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 7.300877000000128,
+          "durationMs": 0.07791500000030283
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 7.381752000000233,
+          "durationMs": 0.048748000000159664
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 7.435387000000446,
+          "durationMs": 0.14470199999959732
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 7.583266000000094,
+          "durationMs": 0.19342200000028242
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 7.832835000000159,
+          "durationMs": 0.8356870000002345
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 8.679383000000144,
+          "durationMs": 0.14108699999997043
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 8.829611999999997,
+          "durationMs": 0.20931200000040917
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 9.04249800000025,
+          "durationMs": 0.5939429999998538
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 9.698058000000401,
+          "durationMs": 0.08081300000003466
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 9.782007000000249,
+          "durationMs": 0.0551580000001195
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 9.842882000000372,
+          "durationMs": 0.30135799999970914
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 10.150233000000298,
+          "durationMs": 4.313491999999769
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 14.534433000000263,
+          "durationMs": 0.3081750000001193
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 14.848625000000084,
+          "durationMs": 0.10146900000017922
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 14.956398000000263,
+          "durationMs": 0.24398299999984374
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 15.369745000000421,
+          "durationMs": 0.11233899999979258
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 15.632160999999996,
+          "durationMs": 0.16627500000004147
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 15.801951000000372,
+          "durationMs": 0.06747799999993731
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 15.87553300000036,
+          "durationMs": 0.2120679999998174
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 16.091783000000305,
+          "durationMs": 0.07647799999995186
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 16.22025100000019,
+          "durationMs": 0.2400630000001911
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 16.47167300000001,
+          "durationMs": 0.32658000000037646
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 16.8629090000004,
+          "durationMs": 0.10479899999972986
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 16.97234000000026,
+          "durationMs": 0.18968200000017532
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 17.20037900000034,
+          "durationMs": 0.07685599999967963
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 17.281425000000127,
+          "durationMs": 0.1637829999999667
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 17.499599000000217,
+          "durationMs": 0.0751470000000154
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 17.578692000000046,
+          "durationMs": 0.12688800000023548
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 17.74197600000025,
+          "durationMs": 0.05674799999997049
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 17.802182000000357,
+          "durationMs": 0.21387000000004264
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 18.246722000000318,
+          "durationMs": 0.3204359999999724
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 18.58189100000027,
+          "durationMs": 0.20422899999994115
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 18.86849700000039,
+          "durationMs": 0.09527600000001257
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.3693619999994553,
+      "acceptedSourceCalls": 1,
+      "delayMs": 0,
+      "finishMs": 19.35499800000025,
+      "closeMs": 19.373425000000225
+    },
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 0.28356799999983195,
+          "durationMs": 5.526283000000149
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 5.833148999999594,
+          "durationMs": 5.277152000000115
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 11.116139999999632,
+          "durationMs": 5.208593000000292
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 16.51735699999972,
+          "durationMs": 5.693147999999837
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 22.24546199999986,
+          "durationMs": 5.6138740000001235
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 27.88618299999962,
+          "durationMs": 5.652397000000292
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 33.56099399999994,
+          "durationMs": 5.85768999999982
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 39.451354999999694,
+          "durationMs": 5.465518999999858
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 44.94081099999994,
+          "durationMs": 5.93019299999969
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 50.898559999999634,
+          "durationMs": 6.1339670000002116
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 57.06477099999984,
+          "durationMs": 6.312794999999824
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 63.397125999999844,
+          "durationMs": 6.140393000000131
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 69.56915199999958,
+          "durationMs": 5.849537000000055
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 75.53097199999957,
+          "durationMs": 5.754910999999993
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 81.2940209999997,
+          "durationMs": 5.952029000000039
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 87.25716199999988,
+          "durationMs": 6.272885999999744
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 93.536697,
+          "durationMs": 5.595313999999689
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 99.4724269999997,
+          "durationMs": 5.716435000000274
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 105.19746399999985,
+          "durationMs": 5.363303999999971
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 110.570291,
+          "durationMs": 5.816208999999617
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 116.3943849999996,
+          "durationMs": 5.669754000000012
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 122.17691599999989,
+          "durationMs": 5.552404999999908
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 127.73762499999975,
+          "durationMs": 5.462402999999995
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 133.21029699999963,
+          "durationMs": 5.634758000000147
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 138.85162299999956,
+          "durationMs": 5.7122880000001715
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 144.64306599999964,
+          "durationMs": 5.754378000000088
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 150.40598499999987,
+          "durationMs": 5.647803999999724
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 156.06488799999988,
+          "durationMs": 5.83316399999967
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 161.90509499999962,
+          "durationMs": 4.745036000000255
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 166.73083099999985,
+          "durationMs": 5.671475999999984
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 172.41108499999973,
+          "durationMs": 5.3831709999999475
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 177.80584,
+          "durationMs": 5.612848999999642
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 183.42708699999957,
+          "durationMs": 5.359381000000212
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 188.85045999999966,
+          "durationMs": 5.778238000000329
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 194.63775899999973,
+          "durationMs": 5.444543000000067
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 200.09537799999998,
+          "durationMs": 5.651343999999881
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 205.9799469999998,
+          "durationMs": 5.411336000000119
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 211.5789579999996,
+          "durationMs": 5.717137000000093
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 217.30444499999976,
+          "durationMs": 6.6201639999999315
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 223.93534,
+          "durationMs": 5.883679999999913
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 229.82596299999977,
+          "durationMs": 5.675057999999808
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 235.57079499999963,
+          "durationMs": 5.584537000000182
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 241.16526999999996,
+          "durationMs": 6.045181999999841
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 247.28305799999998,
+          "durationMs": 5.701904999999897
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 252.99605099999962,
+          "durationMs": 5.939318000000185
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 259.0045339999997,
+          "durationMs": 5.648735000000215
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 264.66346499999963,
+          "durationMs": 5.9751249999999345
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 270.7328699999998,
+          "durationMs": 5.677499999999782
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 276.41993699999966,
+          "durationMs": 5.722717999999986
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 282.207762,
+          "durationMs": 5.5802709999998115
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 287.79735299999993,
+          "durationMs": 5.849299999999857
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 293.870367,
+          "durationMs": 6.020858999999746
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 299.9179879999997,
+          "durationMs": 4.901397999999972
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 304.9426139999996,
+          "durationMs": 5.713990000000194
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.4424139999991894,
+      "acceptedSourceCalls": 1,
+      "delayMs": 5,
+      "finishMs": 311.0357049999998,
+      "closeMs": 311.0559939999998
+    },
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 0.2832080000002861,
+          "durationMs": 5.740100999999868
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 6.035045000000082,
+          "durationMs": 5.498713999999836
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 11.542316999999912,
+          "durationMs": 5.54487700000027
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 17.256996000000072,
+          "durationMs": 5.988534999999956
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 23.283449999999903,
+          "durationMs": 5.88363500000014
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 29.197709999999915,
+          "durationMs": 5.795373000000382
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 35.021079999999984,
+          "durationMs": 5.917791000000307
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 40.966615000000274,
+          "durationMs": 6.021267999999964
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 47.015370000000075,
+          "durationMs": 6.068724000000202
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 53.1091550000001,
+          "durationMs": 6.025066000000152
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 59.16523200000029,
+          "durationMs": 6.5389430000000175
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 65.73225500000035,
+          "durationMs": 5.914155999999821
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 71.6732350000002,
+          "durationMs": 5.573452999999972
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 77.36829500000022,
+          "durationMs": 5.805370000000039
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 83.18207699999994,
+          "durationMs": 5.702184000000216
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 88.89403399999992,
+          "durationMs": 6.429188000000067
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 95.32967899999994,
+          "durationMs": 5.522902000000158
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 101.19836600000008,
+          "durationMs": 5.6948959999999715
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 106.90145500000017,
+          "durationMs": 5.8378130000000965
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 112.75418500000023,
+          "durationMs": 6.092759999999998
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 118.8543950000003,
+          "durationMs": 5.73599699999977
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 124.69244900000012,
+          "durationMs": 5.773361000000023
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 130.47422300000017,
+          "durationMs": 5.363010000000031
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 135.84732699999995,
+          "durationMs": 5.616034000000127
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 141.47061500000018,
+          "durationMs": 5.831392000000051
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 147.38735700000007,
+          "durationMs": 5.745064000000184
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 153.14062700000022,
+          "durationMs": 5.866567000000032
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 159.021929,
+          "durationMs": 5.795718000000306
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 164.82454000000007,
+          "durationMs": 5.493594999999914
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 170.39394500000026,
+          "durationMs": 5.7030580000000555
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 176.10519999999997,
+          "durationMs": 5.579567000000225
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 181.69543900000008,
+          "durationMs": 5.974678999999924
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 187.67842700000028,
+          "durationMs": 5.657787999999982
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 193.4075210000001,
+          "durationMs": 5.774655000000166
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 199.1911,
+          "durationMs": 5.6629290000000765
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 204.8659520000001,
+          "durationMs": 6.041760999999951
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 211.15828899999997,
+          "durationMs": 5.995008000000325
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 217.3478,
+          "durationMs": 5.651630000000296
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 223.0079700000001,
+          "durationMs": 5.684623999999985
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 228.7056980000002,
+          "durationMs": 5.829984999999851
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 234.54338600000028,
+          "durationMs": 5.812477999999828
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 240.43259000000035,
+          "durationMs": 5.631358999999975
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 246.0737180000001,
+          "durationMs": 5.773385999999846
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 251.9670540000002,
+          "durationMs": 5.286532999999963
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 257.2634969999999,
+          "durationMs": 5.780652000000373
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 263.1008850000003,
+          "durationMs": 5.773941999999806
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 268.88484199999994,
+          "durationMs": 5.902531000000181
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 274.876346,
+          "durationMs": 5.743483000000197
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 280.6296150000003,
+          "durationMs": 5.884569999999712
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 286.58631700000024,
+          "durationMs": 5.814114999999674
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 292.41176300000006,
+          "durationMs": 5.567704999999933
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 298.2693870000003,
+          "durationMs": 5.994926999999734
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 304.2886960000001,
+          "durationMs": 5.785480999999891
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 310.18090699999993,
+          "durationMs": 5.762720000000172
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.4581309999998666,
+      "acceptedSourceCalls": 1,
+      "delayMs": 5,
+      "finishMs": 316.39524100000017,
+      "closeMs": 316.4151360000001
+    },
+    {
+      "events": [
+        {
+          "stage": "wallet",
+          "label": "read_setup",
+          "startMs": 0.30643200000031356,
+          "durationMs": 5.8486009999996895
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 6.167222000000038,
+          "durationMs": 5.772198000000117
+        },
+        {
+          "stage": "wallet",
+          "label": "settings",
+          "startMs": 11.947885000000042,
+          "durationMs": 5.73795999999993
+        },
+        {
+          "stage": "wallet",
+          "label": "session",
+          "startMs": 17.828303000000233,
+          "durationMs": 6.122261999999864
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 23.987665000000106,
+          "durationMs": 5.885779000000184
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 29.89993800000002,
+          "durationMs": 5.77077300000019
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 35.69636300000002,
+          "durationMs": 6.273842000000059
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 42.00020500000028,
+          "durationMs": 5.821798999999828
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 47.8474040000001,
+          "durationMs": 5.939385000000129
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 53.80870200000027,
+          "durationMs": 6.161224999999831
+        },
+        {
+          "stage": "wallet",
+          "label": "claim",
+          "startMs": 60.001482000000124,
+          "durationMs": 6.216833999999835
+        },
+        {
+          "stage": "wallet",
+          "label": "schema_lookup",
+          "startMs": 66.24310700000024,
+          "durationMs": 6.025761999999759
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 72.29832699999997,
+          "durationMs": 5.662172000000282
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 78.08658000000014,
+          "durationMs": 5.821238999999878
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 83.91617700000006,
+          "durationMs": 5.606213000000025
+        },
+        {
+          "stage": "accepted_source",
+          "label": "claim",
+          "startMs": 89.53216300000031,
+          "durationMs": 6.2210769999996955
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 95.7595839999999,
+          "durationMs": 5.7047560000000885
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 101.82725100000016,
+          "durationMs": 5.752418999999918
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 107.5878700000003,
+          "durationMs": 5.704060999999911
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 113.303406,
+          "durationMs": 5.817007000000103
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 119.12728900000002,
+          "durationMs": 5.7562880000000405
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 124.97716200000013,
+          "durationMs": 5.583822000000055
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 130.56968700000016,
+          "durationMs": 5.724373999999898
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 136.30578300000025,
+          "durationMs": 5.80629799999997
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 142.11910500000022,
+          "durationMs": 5.710232999999789
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 147.91272900000013,
+          "durationMs": 5.495151999999962
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 153.41825300000028,
+          "durationMs": 5.384288999999626
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 158.81613599999991,
+          "durationMs": 5.825079000000187
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 164.649046,
+          "durationMs": 4.800344000000223
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 169.52846,
+          "durationMs": 5.68353500000012
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 175.22131800000034,
+          "durationMs": 5.756106999999702
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 180.98963099999992,
+          "durationMs": 5.734590000000026
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 186.73151800000005,
+          "durationMs": 5.541627000000062
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 192.33909200000016,
+          "durationMs": 5.5731879999998455
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 197.92115400000012,
+          "durationMs": 5.645680999999968
+        },
+        {
+          "stage": "accepted_source",
+          "label": "frozen_artifact",
+          "startMs": 203.58117500000026,
+          "durationMs": 5.82784300000003
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 209.6627550000003,
+          "durationMs": 5.739004999999906
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 215.62845800000014,
+          "durationMs": 5.870178000000124
+        },
+        {
+          "stage": "accepted_source",
+          "label": "begin",
+          "startMs": 221.5071710000002,
+          "durationMs": 5.775558999999703
+        },
+        {
+          "stage": "accepted_source",
+          "label": "authority_join",
+          "startMs": 227.29434700000002,
+          "durationMs": 5.8778950000000805
+        },
+        {
+          "stage": "accepted_source",
+          "label": "commit",
+          "startMs": 233.17945400000008,
+          "durationMs": 5.61084400000027
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 238.8648830000002,
+          "durationMs": 5.9387910000000375
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 244.81374499999993,
+          "durationMs": 5.8329990000002
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 250.7297370000001,
+          "durationMs": 5.498149999999896
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 256.237607,
+          "durationMs": 5.69702099999995
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 261.996568,
+          "durationMs": 5.487276000000293
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 267.494365,
+          "durationMs": 5.881934000000001
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 273.47017300000016,
+          "durationMs": 5.417817999999897
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 278.8970650000001,
+          "durationMs": 5.782105000000229
+        },
+        {
+          "stage": "accepted_source",
+          "label": "settings",
+          "startMs": 284.75186600000006,
+          "durationMs": 5.524502000000211
+        },
+        {
+          "stage": "accepted_source",
+          "label": "decision_history",
+          "startMs": 290.2866590000003,
+          "durationMs": 5.679302999999891
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 296.2065170000001,
+          "durationMs": 5.516051999999945
+        },
+        {
+          "stage": "wallet",
+          "label": "authority_join",
+          "startMs": 301.7464100000002,
+          "durationMs": 5.747332999999799
+        },
+        {
+          "stage": "wallet",
+          "label": "commit",
+          "startMs": 307.6125030000003,
+          "durationMs": 5.3711779999998726
+        }
+      ],
+      "queryCalls": 54,
+      "logicalStatements": 54,
+      "setupCalls": 3,
+      "acquisitions": 13,
+      "releases": 13,
+      "physicalConnections": 0,
+      "acquireMs": 0.4500279999997474,
+      "acceptedSourceCalls": 1,
+      "delayMs": 5,
+      "finishMs": 313.44974600000023,
+      "closeMs": 313.469243
+    }
+  ]
+}

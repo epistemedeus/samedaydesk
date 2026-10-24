@@ -1,0 +1,43 @@
+TAP version 13
+# Subtest: ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+    # Subtest: actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+    ok 1 - actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+      ---
+      duration_ms: 1021.136795
+      type: 'test'
+      ...
+    # Subtest: fresh action sees revoked session and restored authority
+    ok 2 - fresh action sees revoked session and restored authority
+      ---
+      duration_ms: 22.96831
+      type: 'test'
+      ...
+    # Subtest: foreign actor cannot read accepted report
+    ok 3 - foreign actor cannot read accepted report
+      ---
+      duration_ms: 9.645871
+      type: 'test'
+      ...
+    # Subtest: pool acquisition and query failure refuse; next fresh invocation recovers
+    ok 4 - pool acquisition and query failure refuse; next fresh invocation recovers
+      ---
+      duration_ms: 51.850981
+      type: 'test'
+      ...
+    1..4
+ok 1 - ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+  ---
+  duration_ms: 3752.61939
+  type: 'test'
+  ...
+# {"coldStartupMs":128.11178400000017,"measured":[{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.47547400000030393,"acceptedSourceCalls":1,"delayMs":0,"finishMs":27.11182800000006,"closeMs":27.14955000000009},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.3866939999998067,"acceptedSourceCalls":1,"delayMs":0,"finishMs":14.379383999999845,"closeMs":14.400194999999712},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.3693619999994553,"acceptedSourceCalls":1,"delayMs":0,"finishMs":19.35499800000025,"closeMs":19.373425000000225},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.4424139999991894,"acceptedSourceCalls":1,"delayMs":5,"finishMs":311.0357049999998,"closeMs":311.0559939999998},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.4581309999998666,"acceptedSourceCalls":1,"delayMs":5,"finishMs":316.39524100000017,"closeMs":316.4151360000001},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"releases":13,"physicalConnections":0,"acquireMs":0.4500279999997474,"acceptedSourceCalls":1,"delayMs":5,"finishMs":313.44974600000023,"closeMs":313.469243}]}
+1..1
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3867.013026
+{"runner": "root6712-owned-subreeper", "exit": 0, "elapsedMs": 3943.765, "peakDescendantRssKiB": 435004, "totalReserveKiB": 2097152, "reaped": 1, "remainingOwnedPids": [], "remainingScratch": []}

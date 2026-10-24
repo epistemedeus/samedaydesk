@@ -233,7 +233,7 @@ test('abort before the entitled read issues no sql', async () => {
   }
 });
 
-test('configured adapter keeps binding SQL in the outer read transaction and fences cancellation', {timeout: 180000}, async () => {
+test('configured adapter keeps binding SQL in the outer read transaction and fences cancellation', {timeout: 180000}, async t => {
   const savedMachine = process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
   delete process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
   const events = [];
@@ -571,18 +571,54 @@ test('configured adapter keeps binding SQL in the outer read transaction and fen
     const dischargePath = discharge.obligationDischargePath(registryRoot, paid.obligationId);
     const dischargeBytes = readFileSync(dischargePath);
     try {
-      const shifted = JSON.parse(dischargeBytes.toString());
-      shifted.amountAtomic = '1';
-      writeFileSync(dischargePath, JSON.stringify(shifted));
-      const tampered = await ask('GET', paidReview, {cookie});
-      assert.equal(tampered.status, 409, JSON.stringify(tampered.body));
-      assert.equal(tampered.body.code, 'stale_evidence');
+      for (const [field, value] of [
+        ['amountAtomic', '1'], ['artifactDigestSha256', sha256('wrong artifact')],
+        ['termsVersion', `sha256:${sha256('wrong terms')}`], ['taskId', owed.taskId],
+        ['claimId', owed.reservationId], ['source', `0x${'ef'.repeat(20)}`],
+      ]) {
+        const shifted = {...JSON.parse(dischargeBytes.toString()), [field]: value};
+        writeFileSync(dischargePath, JSON.stringify(shifted));
+        const tampered = await ask('GET', paidReview, {cookie});
+        assert.equal(tampered.status, 409, field);
+        assert.equal(tampered.body.code, 'stale_evidence', field);
+        assert.equal(tampered.body.value, undefined, field);
+        writeFileSync(dischargePath, dischargeBytes);
+        const recovered = await ask('GET', paidReview, {cookie});
+        assert.equal(recovered.status, 200, field);
+        assert.deepEqual(recovered.body, entitled.body, field);
+      }
     } finally {
       writeFileSync(dischargePath, dischargeBytes);
     }
     const restored = await ask('GET', paidReview, {cookie});
     assert.equal(restored.status, 200, JSON.stringify(restored.body));
     assert.equal(restored.body.value.entitled.fulfillment.paid, true);
+
+    // Both setup protocols must preserve the original successful owner consent.
+    // Copy only disposable fixture rows, restore exact bytes in every failure path.
+    const enrollHash = canonicalDigest({method:'POST',route:`${PREFIX}/v1/native-debt/enroll`,body:{}});
+    await admin.query(`CREATE TEMP TABLE root6712_enroll_history AS SELECT * FROM cj227_earned_work.earned_work_idempotency
+      WHERE scope='hosted-wallet-market' AND task_id='' AND request_hash=$1`, [enrollHash]);
+    for (const missing of ['key', 'outcome']) await t.test(`entitled paid read refuses missing original enrollment ${missing}, then recovers`, async () => {
+      try {
+        if (missing === 'key') await admin.query(`DELETE FROM cj227_earned_work.earned_work_idempotency
+          WHERE scope='hosted-wallet-market' AND task_id='' AND request_hash=$1`, [enrollHash]);
+        else await admin.query(`UPDATE cj227_earned_work.earned_work_idempotency SET response_json='{}'::jsonb
+          WHERE scope='hosted-wallet-market' AND task_id='' AND request_hash=$1`, [enrollHash]);
+        const refused = await ask('GET', paidReview, {cookie});
+        assert.equal(refused.status, 409);
+        assert.equal(refused.body.code, 'stale_evidence');
+        assert.equal(refused.body.value, undefined);
+      } finally {
+        if (missing === 'key') await admin.query('INSERT INTO cj227_earned_work.earned_work_idempotency SELECT * FROM root6712_enroll_history');
+        else await admin.query(`UPDATE cj227_earned_work.earned_work_idempotency t SET response_json=s.response_json
+          FROM root6712_enroll_history s WHERE t.scope=s.scope AND t.task_id=s.task_id AND t.key=s.key`);
+      }
+      const recovered = await ask('GET', paidReview, {cookie});
+      assert.equal(recovered.status, 200);
+      assert.deepEqual(recovered.body, entitled.body);
+    });
+    await admin.query('DROP TABLE root6712_enroll_history');
 
     events.length = 0;
     probe.mode = 'delay-enroll';

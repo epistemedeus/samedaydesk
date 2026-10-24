@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+not ok 1 - ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+  ---
+  duration_ms: 2176.074395
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:24:1'
+  failureType: 'testCodeFailure'
+  error: 'selected canonical round is absent'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    JourneyAdmission.round (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/profile.js:59:19)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Module.prepareJourneyDeployment (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/runtime.js:156:13)
+    async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root6712-authority-read-critical-path-20261024/server/scripts/test-root6712-authority-read.mjs:86:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2329.300422
+{"runner": "root6712-owned-subreeper", "exit": 1, "elapsedMs": 2375.528, "peakDescendantRssKiB": 286688, "totalReserveKiB": 2097152, "reaped": 1, "remainingOwnedPids": [], "remainingScratch": []}

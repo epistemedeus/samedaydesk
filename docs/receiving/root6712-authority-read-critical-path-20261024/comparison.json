@@ -1,0 +1,112 @@
+{
+  "before": {
+    "provenance": {
+      "walletServerSha256": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219",
+      "runtimeManifestSha256": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256",
+      "deskManifestSha256": "bde9b8b51d65202f2a56cdcae7883d9c6e277a23161ef64bfb7ec199d24bba30",
+      "receiverSha256": "3bee4163bccc030abc13d82f0fd9869494037950f46df1544fb77d24970486a3"
+    },
+    "calls": 54,
+    "statements": 54,
+    "setup": 3,
+    "acquisitions": 13,
+    "startupMs": 191.7351679999997,
+    "startupCalls": 87,
+    "startupAcquisitions": 14,
+    "startupConnections": 4,
+    "coldReadMs": 53.49455400000079,
+    "coldReadConnections": 4,
+    "steadyNoDelayMs": [
+      17.790908999999374,
+      16.210267000000385
+    ],
+    "delay5msSamples": [
+      324.54865400000017,
+      319.26466000000073,
+      311.12475799999993
+    ],
+    "delay5msMedian": 319.26466000000073,
+    "steadyStages": {
+      "wallet": {
+        "calls": 16,
+        "summedMs": 5.980685000002268
+      },
+      "accepted_source": {
+        "calls": 38,
+        "summedMs": 8.088209999998071
+      }
+    },
+    "readActions": 28,
+    "actionCounts": {
+      "positive": 9,
+      "failure": 10,
+      "recovery": 9
+    },
+    "statusCounts": {
+      "200": 18,
+      "401": 2,
+      "404": 2,
+      "503": 3,
+      "500": 1,
+      "409": 1,
+      "None": 1
+    },
+    "preservedTables": 64
+  },
+  "after": {
+    "provenance": {
+      "walletServerSha256": "7665a41fc37f73a47dc030563f401d2ba18380e39d9e4ea1201d77961dc34ae3",
+      "runtimeManifestSha256": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256",
+      "deskManifestSha256": "bde9b8b51d65202f2a56cdcae7883d9c6e277a23161ef64bfb7ec199d24bba30",
+      "receiverSha256": "3bee4163bccc030abc13d82f0fd9869494037950f46df1544fb77d24970486a3"
+    },
+    "calls": 52,
+    "statements": 54,
+    "setup": 1,
+    "acquisitions": 13,
+    "startupMs": 228.2050559999998,
+    "startupCalls": 87,
+    "startupAcquisitions": 14,
+    "startupConnections": 4,
+    "coldReadMs": 56.274507000000085,
+    "coldReadConnections": 4,
+    "steadyNoDelayMs": [
+      22.25684900000124,
+      15.09539500000028
+    ],
+    "delay5msSamples": [
+      304.354926,
+      306.97721099999944,
+      305.99385299999994
+    ],
+    "delay5msMedian": 305.99385299999994,
+    "steadyStages": {
+      "wallet": {
+        "calls": 14,
+        "summedMs": 8.358950000001641
+      },
+      "accepted_source": {
+        "calls": 38,
+        "summedMs": 9.99834699999883
+      }
+    },
+    "readActions": 28,
+    "actionCounts": {
+      "positive": 9,
+      "failure": 10,
+      "recovery": 9
+    },
+    "statusCounts": {
+      "200": 18,
+      "401": 2,
+      "404": 2,
+      "503": 3,
+      "500": 1,
+      "409": 1,
+      "None": 1
+    },
+    "preservedTables": 64
+  },
+  "outputSha256": "b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080",
+  "limits": "loopback staging composition, not installed latency; reservation, obligation and verdict identities replaced only for cross-run output hash"
+}

@@ -1,0 +1,73 @@
+TAP version 13
+# Subtest: ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+    # Subtest: actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+    ok 1 - actual installed accepted source: cold connection, fresh reads and delayed round trips agree
+      ---
+      duration_ms: 12068.674029
+      type: 'test'
+      ...
+    # Subtest: fresh action sees revoked session and restored authority
+    ok 2 - fresh action sees revoked session and restored authority
+      ---
+      duration_ms: 25.72554
+      type: 'test'
+      ...
+    # Subtest: foreign actor cannot read accepted report
+    ok 3 - foreign actor cannot read accepted report
+      ---
+      duration_ms: 8.296428
+      type: 'test'
+      ...
+    # Subtest: pool acquisition and query failure refuse; next fresh invocation recovers
+    ok 4 - pool acquisition and query failure refuse; next fresh invocation recovers
+      ---
+      duration_ms: 69.439107
+      type: 'test'
+      ...
+    # Subtest: setup keeps read-only, local schema, timeout and isolation; partial SQL failure rolls back
+    ok 5 - setup keeps read-only, local schema, timeout and isolation; partial SQL failure rolls back
+      ---
+      duration_ms: 34.150843
+      type: 'test'
+      ...
+    # Subtest: changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+    ok 6 - changed terms, report bytes, obligation and principal refuse across fresh actions then recover
+      ---
+      duration_ms: 81.328155
+      type: 'test'
+      ...
+    # Subtest: concurrent revocation before authentication cannot produce a stale successful response
+    ok 7 - concurrent revocation before authentication cannot produce a stale successful response
+      ---
+      duration_ms: 19.061066
+      type: 'test'
+      ...
+    # Subtest: disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+    ok 8 - disconnect during setup destroys only the owned read; next request re-acquires and succeeds
+      ---
+      duration_ms: 43.2001
+      type: 'test'
+      ...
+    # Subtest: all accepted and refused reads preserve authoritative rows, response closure and released resources
+    ok 9 - all accepted and refused reads preserve authoritative rows, response closure and released resources
+      ---
+      duration_ms: 19.85063
+      type: 'test'
+      ...
+    1..9
+ok 1 - ROOT6712 same-phase read setup preserves actual composed authority, refusal and recovery
+  ---
+  duration_ms: 15159.696455
+  type: 'test'
+  ...
+# {"actionCounts":{"positive":9,"failure":10,"recovery":9},"preservedTableCount":64,"coldStartupMs":191.7351679999997,"startup":{"queryCalls":87,"logicalStatements":null,"setupCalls":0,"acquisitions":14,"acquisitionFailures":0,"releases":14,"physicalConnections":4,"acquireMs":26.610336999999163,"acceptedSourceCalls":0,"delayMs":0},"measured":[{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":4,"acquireMs":22.670897999998488,"acceptedSourceCalls":1,"delayMs":0,"status":200,"finishMs":53.49455400000079,"closeMs":53.53981300000123,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":0,"acquireMs":0.4484299999985524,"acceptedSourceCalls":1,"delayMs":0,"status":200,"finishMs":17.790908999999374,"closeMs":17.818319999998494,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":0,"acquireMs":0.3563960000010411,"acceptedSourceCalls":1,"delayMs":0,"status":200,"finishMs":16.210267000000385,"closeMs":16.228626000000077,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":0,"acquireMs":0.45543199999883655,"acceptedSourceCalls":1,"delayMs":5,"status":200,"finishMs":324.54865400000017,"closeMs":324.56905899999947,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":0,"acquireMs":0.5649720000037632,"acceptedSourceCalls":1,"delayMs":5,"status":200,"finishMs":319.26466000000073,"closeMs":319.2865440000005,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"},{"queryCalls":54,"logicalStatements":54,"setupCalls":3,"acquisitions":13,"acquisitionFailures":0,"releases":13,"physicalConnections":0,"acquireMs":0.4717090000031021,"acceptedSourceCalls":1,"delayMs":5,"status":200,"finishMs":311.12475799999993,"closeMs":311.143607,"outputSha256":"b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080"}]}
+1..1
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15274.693194
+{"runner": "root6712-owned-subreaper", "exit": 0, "elapsedMs": 15358.255, "peakDescendantRssKiB": 782860, "totalReserveKiB": 2097152, "nativeIncluded": true, "reaped": 1, "remainingOwnedPids": [], "remainingScratch": []}

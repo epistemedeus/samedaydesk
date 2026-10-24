@@ -1,0 +1,74 @@
+{
+  "reviewer": "same admitted parent; zero model children",
+  "sourceChange": "one parameter-free pg simple-query batch preserving BEGIN READ ONLY, SET LOCAL schema, SET LOCAL 2500ms timeout order",
+  "checked": [
+    "qualified identifier from loadDeploymentProfile; no SQL parameters in batch",
+    "unchanged read isolation, outer lifetime, cancellation/release and rollback code",
+    "mid-batch real SQL error rolls back; fresh request succeeds",
+    "post-write rereads, accepted-source per-request memoization, native debt/source/terms/receipt/chain checks unchanged",
+    "raw source exporter changes exactly server/SOURCE digests; 1302 host members unchanged in membership",
+    "414 client, 444 compiled Neo and 46 desk members unchanged",
+    "no client6520/6692 fixture or transport changes; no model child; no PR/merge/release"
+  ],
+  "receivingFix": "The inherited account-delivery refusal test intentionally stripped its child environment to PATH. Self-review added an explicit 512 MiB heap argument and UV/OMP=1 to that small synthetic child; earlier runs did not prove that child limit. Final wallet-export runs the amended fixture.",
+  "dependencies": {
+    "reusedFrom": "/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/node_modules",
+    "rootLockComparisonExit": 0,
+    "installPerformed": false,
+    "node": "v22.23.3",
+    "postgres": "16.15",
+    "python": "3.12.3"
+  },
+  "scope": "source-only synthetic evidence, no installed latency or business acceptance",
+  "firstFailures": [
+    {
+      "log": "first-run.tap",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cause": "fixture selected round absent before preparation"
+    },
+    {
+      "log": "bootstrap-corrected.tap",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cause": "fixture used wallet signup cookie for native account binding; native auth refused; isolated Pulse fallback remained and was later removed by exact owned path"
+    },
+    {
+      "log": "native-bootstrap.tap",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cause": "fixture claim omitted acceptTerms:true"
+    },
+    {
+      "log": "baseline-full.tap",
+      "tests": 9,
+      "pass": 0,
+      "fail": 9,
+      "cause": "probe failed to preserve callback form of Pool.connect; one unhandled rejection and eight parent-finished results"
+    },
+    {
+      "log": "baseline-callback-corrected.tap",
+      "tests": 9,
+      "pass": 5,
+      "fail": 4,
+      "cause": "immutable frozen report update rejected and two calls to a non-exported component status method failed; three child failures plus parent"
+    }
+  ],
+  "nonExecution": "A shell draft of baseline cleanup was rejected before execution for rm -f style syntax. The executed Python TemporaryDirectory helper completed safely without an approval request.",
+  "upstreamGap": {
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "source": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+    "requiredOwner": "Neo TypeScript source owner; separate source scope required",
+    "functions": [
+      "services/contributor-journey/opportunity-adapters.ts:createOpportunityJourneyAdapters load/review.read/history",
+      "services/contributor-journey/composition-store.ts:CompositionStore.accountForPrincipal,round,project,requireBoundProject",
+      "services/earned-work/src/store/postgres.ts:EarnedWorkStore.connectScoped,withTx,withOpportunityClient",
+      "services/correspondence/src/store/postgres.ts:CorrespondenceStore.query/connectScoped",
+      "services/contributor-journey/submission/postgres.ts:PostgresSubmissionPersistence.load/tx"
+    ],
+    "evidence": "unchanged accepted-source phase: 38 query calls, 12 acquisitions, including 12 setting calls and 7 BEGIN/COMMIT pairs on this staging accepted fixture; live and external-report branches can add work; no cause assigned to historic timings"
+  }
+}
