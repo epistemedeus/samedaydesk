@@ -1,0 +1,28 @@
+{
+  "name": "repaired-managed",
+  "command": [
+    "npm",
+    "run",
+    "build:managed-contributor"
+  ],
+  "cwd": "/tmp/r6q-oec4g5lv/repaired",
+  "exit": 0,
+  "elapsedSeconds": 10.776,
+  "sampledOwnSupervisorTreeRssPeakKiB": 911884,
+  "maxLiveProcesses": 14,
+  "reserveKiB": 2621440,
+  "sampleMs": 50,
+  "nodeHeapMiB": 384,
+  "modelChildren": 0,
+  "log": "/tmp/r6q-oec4g5lv/logs/repaired-managed.log",
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=384",
+    "VITE_SUPABASE_URL": "",
+    "VITE_SUPABASE_ANON_KEY": "",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "",
+    "VITE_POSTHOG_KEY": "",
+    "VITE_POSTHOG_HOST": "",
+    "RAYON_NUM_THREADS": "1",
+    "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+  }
+}

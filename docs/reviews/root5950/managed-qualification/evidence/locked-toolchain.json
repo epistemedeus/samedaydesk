@@ -1,0 +1,126 @@
+{
+  "actual": {
+    "baseline": {
+      "root": {
+        "packageSha256": "3b0226227c64c9510d72f25546cf1f578d4342b5c29d52edcc078afbe61ea74d",
+        "lockSha256": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
+        "installedVersions": {
+          "@exodus/bytes": "1.16.0",
+          "@neomorphic/correspondence": "0.1.0",
+          "@neomorphic/earned-work": "0.1.0",
+          "@neomorphic/machine-gateway": "0.1.2",
+          "@supabase/supabase-js": "2.108.2",
+          "ajv": "8.20.0",
+          "ajv-formats": "3.0.1",
+          "express": "5.2.1",
+          "ipaddr.js": "1.9.1",
+          "jose": "6.2.3",
+          "pg": "8.23.0",
+          "proxy-addr": "2.0.8",
+          "resend": "6.14.0",
+          "stripe": "22.2.2",
+          "viem": "2.55.11",
+          "zod": "3.25.76",
+          "concurrently": "10.0.5"
+        }
+      },
+      "client": {
+        "packageSha256": "2dc3f796d334e4c6097bc86c4d4287f195b37e57ce48cd46be547ad51e5d63c5",
+        "lockSha256": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
+        "installedVersions": {
+          "@fontsource-variable/inter": "5.2.8",
+          "@fontsource-variable/jetbrains-mono": "5.2.8",
+          "@fontsource-variable/space-grotesk": "5.2.10",
+          "@stripe/react-stripe-js": "6.6.0",
+          "@stripe/stripe-js": "9.8.0",
+          "@supabase/supabase-js": "2.108.2",
+          "clsx": "2.1.1",
+          "gsap": "3.15.0",
+          "lenis": "1.3.23",
+          "ogl": "1.0.11",
+          "posthog-js": "1.414.0",
+          "react": "19.2.7",
+          "react-dom": "19.2.7",
+          "react-router-dom": "7.18.2",
+          "@eslint/js": "10.0.1",
+          "@types/node": "24.13.2",
+          "@types/react": "19.2.17",
+          "@types/react-dom": "19.2.3",
+          "@vitejs/plugin-react": "6.0.2",
+          "eslint": "10.5.0",
+          "eslint-plugin-react-hooks": "7.1.1",
+          "eslint-plugin-react-refresh": "0.5.3",
+          "globals": "17.6.0",
+          "typescript": "6.0.3",
+          "typescript-eslint": "8.61.1",
+          "vite": "8.0.16"
+        }
+      }
+    },
+    "repaired": {
+      "root": {
+        "packageSha256": "3b0226227c64c9510d72f25546cf1f578d4342b5c29d52edcc078afbe61ea74d",
+        "lockSha256": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
+        "installedVersions": {
+          "@exodus/bytes": "1.16.0",
+          "@neomorphic/correspondence": "0.1.0",
+          "@neomorphic/earned-work": "0.1.0",
+          "@neomorphic/machine-gateway": "0.1.2",
+          "@supabase/supabase-js": "2.108.2",
+          "ajv": "8.20.0",
+          "ajv-formats": "3.0.1",
+          "express": "5.2.1",
+          "ipaddr.js": "1.9.1",
+          "jose": "6.2.3",
+          "pg": "8.23.0",
+          "proxy-addr": "2.0.8",
+          "resend": "6.14.0",
+          "stripe": "22.2.2",
+          "viem": "2.55.11",
+          "zod": "3.25.76",
+          "concurrently": "10.0.5"
+        }
+      },
+      "client": {
+        "packageSha256": "2dc3f796d334e4c6097bc86c4d4287f195b37e57ce48cd46be547ad51e5d63c5",
+        "lockSha256": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
+        "installedVersions": {
+          "@fontsource-variable/inter": "5.2.8",
+          "@fontsource-variable/jetbrains-mono": "5.2.8",
+          "@fontsource-variable/space-grotesk": "5.2.10",
+          "@stripe/react-stripe-js": "6.6.0",
+          "@stripe/stripe-js": "9.8.0",
+          "@supabase/supabase-js": "2.108.2",
+          "clsx": "2.1.1",
+          "gsap": "3.15.0",
+          "lenis": "1.3.23",
+          "ogl": "1.0.11",
+          "posthog-js": "1.414.0",
+          "react": "19.2.7",
+          "react-dom": "19.2.7",
+          "react-router-dom": "7.18.2",
+          "@eslint/js": "10.0.1",
+          "@types/node": "24.13.2",
+          "@types/react": "19.2.17",
+          "@types/react-dom": "19.2.3",
+          "@vitejs/plugin-react": "6.0.2",
+          "eslint": "10.5.0",
+          "eslint-plugin-react-hooks": "7.1.1",
+          "eslint-plugin-react-refresh": "0.5.3",
+          "globals": "17.6.0",
+          "typescript": "6.0.3",
+          "typescript-eslint": "8.61.1",
+          "vite": "8.0.16"
+        }
+      }
+    }
+  },
+  "nodeExecutable": "/exec-daemon/node",
+  "nodeVersion": "v22.23.4",
+  "npmVersion": "10.9.9",
+  "pinnedPythonArchiveSha256": "731af898886c5f821890dc901eca3c651cca8e51fa7308c159d12a1194aeac91",
+  "pinnedWasmtimeWheelSha256": "94f0288f9e1c33924995a72bb769f4c4e2885002391589dd6992cdaa35d1990a",
+  "nodeExecutableSha256": "94efd062ed066c1a0b332e18249859c905e920eeada5df55d24c99b919629a90",
+  "rootPackageEqualsBaseline": true,
+  "rootAndClientLocksUnchanged": true
+}

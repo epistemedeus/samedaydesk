@@ -1,0 +1,28 @@
+{
+  "name": "candidate-financial-pair-refused",
+  "command": [
+    "node",
+    "/tmp/r6q-oec4g5lv/check-financial-pair.mjs",
+    "/tmp/r6q-oec4g5lv/candidate"
+  ],
+  "cwd": "/tmp/r6q-oec4g5lv",
+  "exit": 2,
+  "elapsedSeconds": 0.109,
+  "sampledOwnSupervisorTreeRssPeakKiB": 384188,
+  "maxLiveProcesses": 6,
+  "reserveKiB": 2621440,
+  "sampleMs": 50,
+  "nodeHeapMiB": 384,
+  "modelChildren": 0,
+  "log": "/tmp/r6q-oec4g5lv/logs/candidate-financial-pair-refused.log",
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=384",
+    "VITE_SUPABASE_URL": "",
+    "VITE_SUPABASE_ANON_KEY": "",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "",
+    "VITE_POSTHOG_KEY": "",
+    "VITE_POSTHOG_HOST": "",
+    "RAYON_NUM_THREADS": "1",
+    "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+  }
+}

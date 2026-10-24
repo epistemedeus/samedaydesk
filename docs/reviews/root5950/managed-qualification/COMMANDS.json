@@ -1,0 +1,330 @@
+{
+  "commands": [
+    {
+      "name": "baseline-financial-pair",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/check-financial-pair.mjs",
+        "/tmp/r6q-oec4g5lv/baseline"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 0.162,
+      "sampledOwnSupervisorTreeRssPeakKiB": 402968,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-financial-pair.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "baseline-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/baseline",
+      "exit": 0,
+      "elapsedSeconds": 10.045,
+      "sampledOwnSupervisorTreeRssPeakKiB": 901404,
+      "maxLiveProcesses": 17,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "baseline-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/baseline",
+      "exit": 0,
+      "elapsedSeconds": 2.867,
+      "sampledOwnSupervisorTreeRssPeakKiB": 648888,
+      "maxLiveProcesses": 7,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "bounded-source-stage-and-admit",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/source-phase-bounded.mjs"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 3.517,
+      "sampledOwnSupervisorTreeRssPeakKiB": 565552,
+      "maxLiveProcesses": 8,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/bounded-source-stage-and-admit.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "candidate-financial-pair-refused",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/check-financial-pair.mjs",
+        "/tmp/r6q-oec4g5lv/candidate"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 2,
+      "elapsedSeconds": 0.109,
+      "sampledOwnSupervisorTreeRssPeakKiB": 384188,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-financial-pair-refused.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "candidate-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/candidate",
+      "exit": 0,
+      "elapsedSeconds": 9.579,
+      "sampledOwnSupervisorTreeRssPeakKiB": 899896,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "candidate-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/candidate",
+      "exit": 0,
+      "elapsedSeconds": 2.578,
+      "sampledOwnSupervisorTreeRssPeakKiB": 716116,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "repaired-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 10.776,
+      "sampledOwnSupervisorTreeRssPeakKiB": 911884,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "repaired-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/repaired"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 0.96,
+      "sampledOwnSupervisorTreeRssPeakKiB": 486596,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "repaired-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 2.654,
+      "sampledOwnSupervisorTreeRssPeakKiB": 658740,
+      "maxLiveProcesses": 7,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    },
+    {
+      "name": "source-stage-and-admit",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/source-phase.mjs"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 3.25,
+      "sampledOwnSupervisorTreeRssPeakKiB": 569508,
+      "maxLiveProcesses": 8,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/source-stage-and-admit.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      }
+    }
+  ],
+  "toolchain": {
+    "node": "v22.23.4",
+    "npm": "10.9.9",
+    "vite": "8.0.12",
+    "typescript": "6.0.2",
+    "cpython": "3.12.15",
+    "wasmtime": "49.0.0"
+  },
+  "samplingScope": "own admitted supervisor tree, shared RSS summed conservatively; 50ms sampled peak, not a hard-limit proof",
+  "maximumObservedRssKiB": 911884,
+  "nodeChildCaveat": "First source-phase (source-stage-and-admit) preceded explicit child-heap qualification. Canonical controller removes NODE_OPTIONS from child env. Final bounded-source phase uses the same pinned Node through bounded-node wrapper, with 384MiB explicitly on every child argv; old receipts retained."
+}

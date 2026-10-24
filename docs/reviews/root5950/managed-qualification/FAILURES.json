@@ -1,0 +1,41 @@
+{
+  "inheritedEvidencePreserved": [
+    {
+      "path": "../evidence/baseline.tap",
+      "scope": "Original missing-refusal decision failure; unchanged."
+    },
+    {
+      "path": "../evidence/failures.json",
+      "scope": "Original source-author failures; unchanged."
+    },
+    {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/CAPACITY-REFUSAL-RECEIVING.json",
+      "sha256": "518ff78ebcb79bfb9e0a6f7c2bca08617a12dd295964bd0407acdcb4c2abcfaa",
+      "scope": "Prior3GiB capacity refusal before dispatch; no native launch."
+    },
+    {
+      "path": "/home/ubuntu/root-sol-window100337/root5990-mcp-independent-receiving-20261024",
+      "scope": "Root16/19; three overlong Unix-socket fixture startup failures, retained."
+    },
+    {
+      "path": "/home/ubuntu/root-sol-window100337/root5992-mcp-independent-receiving-20261024",
+      "scope": "Only three failed PG cases received with short owned socket scratch; accepted source unchanged."
+    }
+  ],
+  "newQualificationFailure": {
+    "source": "1d31cb0f539a356aabcbe45cba5ab3b407eb9c20",
+    "command": "node check-financial-pair.mjs /tmp/r6q-oec4g5lv/candidate",
+    "exit": 2,
+    "actual": {
+      "ok": false,
+      "code": "binding_stale"
+    },
+    "cause": "The author-added npm test alias changed protected package.json; actual hostSourceSha256 refused binding_stale. The ordinary managed build/source dependency admission alone did not establish that financial host pair.",
+    "repair": "Remove only the convenience alias, restore exact f629 package.json, document the unchanged direct test CLI outside the protected manifest. No pin refresh, financial schema, authority or refusal implementation change.",
+    "recovery": "Fresh source40c4c692 build/package check and canonical source stage/admit pass with the exact baseline financial/host pair."
+  },
+  "otherLimits": {
+    "initialSourcePhase": "Source stage/admit completed, but the pinned controller child env omits NODE_OPTIONS. Final source phase was received again using a wrapper that puts the384MiB heap bound explicitly on child argv. Original receipts remain."
+  },
+  "newRegressionSuitesRerun": 0
+}

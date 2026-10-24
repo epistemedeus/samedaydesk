@@ -1,0 +1,61 @@
+{
+  "repository": "https://github.com/epistemedeus/pilot.git",
+  "commit": "7c798f18c9f385b51139bcf4f03b1458dc928c56",
+  "scope": "source-phase static closure plus actual dynamic managed-release producer; not the complete private release controller enrollment",
+  "members": [
+    {
+      "path": "tools/ops/hostinger-contributor-qualification-cli.mjs",
+      "blob": "9b4e7e2508fb7c59c3619aa7a153036d644c807a",
+      "bytes": 15562,
+      "sha256": "c99dd0b575bbe16123db3aaf9536d7eb98e43034bffb5f8cdaf46d7a5f36bcfb"
+    },
+    {
+      "path": "tools/ops/hostinger-contributor-qualification.mjs",
+      "blob": "8072c94668d9bf77de5fc476b6503fe7bda778f8",
+      "bytes": 173672,
+      "sha256": "28124d0d2029f02ce9e2b24503a46425f650e585daddd9ac978d492177c4b11f"
+    },
+    {
+      "path": "tools/ops/hostinger-managed-release.mjs",
+      "blob": "7fe25af22264287053331679be57d1f1973f70f4",
+      "bytes": 18854,
+      "sha256": "e401d8d56b95949e2bab11b77f09ba38c16be4290baf9aeba71bd6c624a956c8"
+    },
+    {
+      "path": "tools/ops/hostinger-release-environment.mjs",
+      "blob": "a856ddd41cde1e0c29ea3f89b643ced6c258800d",
+      "bytes": 10107,
+      "sha256": "0aea6b437a53f8a7a3dcb68dc52008b3d44777859af541ed4f5b3a969d8568df"
+    },
+    {
+      "path": "tools/ops/hostinger-release-source.mjs",
+      "blob": "a8cf9fee3d2c6d660f07ef90f4593eb7e638643f",
+      "bytes": 29423,
+      "sha256": "750bad1dad3aaebdd8fba317ce900d593d561d54e6f4d028fe1fd06b6aa76824"
+    },
+    {
+      "path": "tools/ops/received-network-targets.mjs",
+      "blob": "6309eb81ccbe249285dee929a769d82cfe68c1fa",
+      "bytes": 17249,
+      "sha256": "74d35659ace156ccb4af74853e521a5cd2d2fb6dbd2fd570114efcb304a41de0"
+    },
+    {
+      "path": "tools/root71-hosted-wallet-market/src/chain.mjs",
+      "blob": "1dcd3317917cc8f2e325241d8853766346fd7ed8",
+      "bytes": 13765,
+      "sha256": "0c54ea16cbc7a035252d2f61e8ccee2506548586a93a7b767914d983379c88ef"
+    },
+    {
+      "path": "tools/root71-hosted-wallet-market/src/profile.mjs",
+      "blob": "7219fa17baf12e4ccbd07d1402bf874dc88b8b1d",
+      "bytes": 4356,
+      "sha256": "8f24f1cb7b6227e3f2f3bf21e3101aced31390890866bcd95536e0ae2c28e86b"
+    },
+    {
+      "path": "tools/root71-hosted-wallet-market/src/release-profile.mjs",
+      "blob": "1619358388a620cf2d745af4c4d1de7e387e5c1e",
+      "bytes": 6260,
+      "sha256": "7919826da91ee881faf7854a53dfa5c4e9fb38a56ddd1095c9b939c94510529a"
+    }
+  ]
+}
