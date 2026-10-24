@@ -1,0 +1,143 @@
+{
+  "schema": "samedaydesk.ROOT5240.worker-result.v1",
+  "status": "source-qualified",
+  "base": "9bb1519768a22a8ac283408cfbbf3b7b477e860c",
+  "branch": "codex/root5240-sds-machine-support-routing-20261024",
+  "origin": "https://github.com/epistemedeus/samedaydesk.git",
+  "integrationBase": "codex/root4550-sds-consumer-integration-20261023",
+  "operatingCommit": "0f914690533080bb5661234b47eaf23ed6489f66",
+  "inputReceiptSha256": "4b8e8a32ef8d4e86f2a86b983746e8caa0daa6550f001c90638f45b1b0fc98bc",
+  "change": {
+    "producer": "client/public/llms.txt",
+    "oldContact": "contact@samedaydesk.com",
+    "activeContact": "contact@neomorphic.io",
+    "sourceSha256": {
+      "client/public/llms.txt": "0414d70807f95709e0f00cc528641154644990a60b9dfb5ee4aa46eb4b161153",
+      "server/scripts/test-machine-discovery-journey.js": "b25473f98b3b2e8e5fc5d0c686e88ff140f02e488381fc9901eb9e8d3f680bab"
+    }
+  },
+  "build": {
+    "entry": "npm run build:managed-contributor",
+    "beforeExitCode": 0,
+    "afterExitCode": 0,
+    "node": "v22.23.3",
+    "npm": "10.9.9",
+    "git": "2.43.0",
+    "frozenOfflineDependencies": true,
+    "locksUnchanged": true,
+    "lockSha256": {
+      "package-lock.json": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
+      "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c"
+    },
+    "runtime": "Existing sealed self-contained-regular-v1 copied from root4000; both materializer runs report action=present; no runtime download or version change.",
+    "explicitFrontendInputs": {
+      "VITE_SUPABASE_URL": "",
+      "VITE_SUPABASE_ANON_KEY": "",
+      "VITE_POSTHOG_KEY": "",
+      "VITE_POSTHOG_HOST": "",
+      "VITE_STRIPE_PUBLISHABLE_KEY": ""
+    }
+  },
+  "preservation": {
+    "normalization": "none",
+    "rawFileComparison": true,
+    "emittedFiles": 352,
+    "unchangedFiles": 351,
+    "changedFiles": [
+      "llms.txt"
+    ],
+    "humanHtmlFiles": 139,
+    "humanHtmlRawEqual": true,
+    "assetsUnderAssets": 40,
+    "allOtherFilesRawEqual": true,
+    "httpResponses": 369,
+    "httpRawEqualExceptGuide": 368,
+    "httpChanges": [
+      "/llms.txt"
+    ],
+    "httpStatusAndContentTypeEqual": null,
+    "httpMetadataLimitation": "Runner receipts overwrote the per-response HTTP manifests. Original raw bodies and summary logs remain intact. Path ordering reconstructed from the executed receiver and frozen inventory; aggregate statuses and guide type/status match in original logs, individual other metadata unreceived.",
+    "guideBeforeSha256": "bd02e6d0a9e761e6d4fd007234b7767556ec2dbb87b1adb77f5d66b683d1f1a6",
+    "guideAfterSha256": "0414d70807f95709e0f00cc528641154644990a60b9dfb5ee4aa46eb4b161153",
+    "exactGuideContactOnlyDelta": true,
+    "gatewayBlockRawEqual": true,
+    "gatewayDescriptorRawEqual": true,
+    "beforeInventorySha256": "11d0d90151dac53ff13c5cbc0e39cfb46a0e8cf01536e5400ce7d90278de196e",
+    "afterInventorySha256": "15a493056bc7ea86d804b3c09c7d56218480999139f901076ba43333d9c3e8d1",
+    "beforeHttpSummarySha256": "d38e4afdb6699040229e3b253f755ff0b11f680b555722bda5b68adf921b9c3d",
+    "afterHttpSummarySha256": "ccb3bad9fcf920774c0b129c8de280d3ccb14438b381e773075157c1e18d5ddd"
+  },
+  "tests": {
+    "command": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "--test-name-pattern=^(?!the real update command emits)",
+      "server/scripts/test-gateway-availability.js",
+      "server/scripts/test-machine-discovery-journey.js",
+      "server/scripts/test-spa-fallback.js",
+      "server/scripts/test-spa-route-shells.js"
+    ],
+    "passed": 24,
+    "failed": 0,
+    "excluded": [
+      "the real update command emits restored, paused and unknown machine files in an isolated source fixture"
+    ],
+    "exclusionReason": "Never invoke projector --receive, including fixture invocations.",
+    "regression": {
+      "beforeExitCode": 1,
+      "beforeFailure": "Expected active-contact assertion fails on frozen stale emitted guide.",
+      "afterPassed": true,
+      "checks": [
+        "built guide equals public source",
+        "GET text/plain and text/html Accept return exact guide and active contact",
+        "stale contact absent",
+        "HEAD status/body/content-length"
+      ]
+    },
+    "productionFixtureHeap": "Existing spawned production fixture now inherits NODE_OPTIONS."
+  },
+  "resources": {
+    "reserveKiB": 2097152,
+    "modelChildren": 0,
+    "nodeHeapMiB": 512,
+    "serialCommands": true,
+    "peakSampledAggregateRssKiB": 903976,
+    "measurement": "50ms sampled sum includes native/supervisor and observed descendants plus runner; shared pages double counted, between-sample peaks unknown."
+  },
+  "selfReview": {
+    "result": "pass",
+    "allowedProductAndTestFiles": [
+      "client/public/llms.txt",
+      "server/scripts/test-machine-discovery-journey.js"
+    ],
+    "humanFooterUnchanged": true,
+    "gatewayBlockAndDescriptorUnchanged": true,
+    "noBackendPaymentCredentialOrDependencyChange": true,
+    "diffCheckPassed": true
+  },
+  "evidence": {
+    "directory": "/home/ubuntu/root-sol-window100337/root5240-sds-machine-support-routing-20261024/qualification",
+    "sha256": {
+      "before-inventory.json": "11d0d90151dac53ff13c5cbc0e39cfb46a0e8cf01536e5400ce7d90278de196e",
+      "after-inventory.json": "15a493056bc7ea86d804b3c09c7d56218480999139f901076ba43333d9c3e8d1",
+      "comparison.json": "6a460c729be8596a4266483f62a874dafdca5b0256013f08ba07ab804032d201",
+      "before-build.log": "c3bbb592ac2d1af23a91c63472acb6d1ae87148e6714c104893f359f63124804",
+      "after-build.log": "90afa056dc640918d5b22615f35dbb423a165addff830d104865565403461f2c",
+      "focused-tests.log": "3004eb3ea286b524f497f01de8ada8c432c504d9786846802e3f426fa736fcea",
+      "contact-regression-red.log": "511be791d86e15134b26126a40916eee1bc2404c1060eae4194aaea94da26fe6",
+      "run.py": "b1f422da6107d4d91df30f7e3cfe879e79f93a292f8d6ab5d4b0b73cf5ce9664",
+      "receive.mjs": "5c2edd9927d8a8eab5c52d3e3dd338339750dd214b35f7ccba5030eddce63e55",
+      "compare.py": "4d1712c2597540338c70f0e7f9890c6d8d0905ddc6043dc7a06c31de67a25f67",
+      "comparison-initial-failure.txt": "5cef26f0f0523756002c69c7736f0aebcbb25cc4466aac0981a63d9b2271ede0"
+    }
+  },
+  "limitations": [
+    "Local same-input managed emission with explicitly empty frontend service inputs; hosted build inputs and production installation are not received.",
+    "HTTP per-response metadata manifests were overwritten by command receipts; original before/after raw bodies and summary logs preserved and compared without recapture or normalization.",
+    "Gateway --receive fixture excluded as instructed.",
+    "Managed contributor desk remains frozen committed serving material; its existing artifact verifier passes in both builds, not a separate desk rebuild.",
+    "No live mail send, new mail test, provider inference, customer-use claim, PR, deployment, payment or account action."
+  ],
+  "nextOwner": "Root: receive export, PR against existing4550 lineage, install and perform hosted identity/human postflight; human Footer correction remains separate."
+}

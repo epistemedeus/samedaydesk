@@ -7,6 +7,8 @@ import { once } from "node:events";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import express from "express";
+import { mountProductionClient } from "../lib/spa-client.js";
 import { classifyRetrieval } from "../lib/agent-readiness/retrieval.js";
 import { runChecks } from "../lib/agent-readiness/checks.js";
 import { publicDeploymentBody } from "../lib/public-readiness-mount.js";
@@ -51,6 +53,47 @@ function request(port, { method = "GET", path, headers = {}, body } = {}) {
 function lookup(value, path) {
   return String(path).split(".").reduce((current, key) => (current == null ? undefined : current[key]), value);
 }
+
+async function assertGuideRoute(t, dist, emitted) {
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+
+  for (const accept of ["text/plain", "text/html"]) {
+    const response = await request(port, { path: "/llms.txt", headers: { accept } });
+    assert.equal(response.status, 200);
+    assert.match(response.headers["content-type"], /^text\/plain/);
+    assert.equal(response.body, emitted);
+    assert.match(response.body, /^- Email: contact@neomorphic\.io$/m);
+    assert.doesNotMatch(response.body, /contact@samedaydesk\.com/);
+  }
+  const head = await request(port, { method: "HEAD", path: "/llms.txt" });
+  assert.equal(head.status, 200);
+  assert.equal(head.body, "");
+  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted));
+}
+
+test("machine guide source serves the active contact over the production static path", async (t) => {
+  // Runtime-only consumers install no client toolchain and need no prebuilt dist.
+  const dist = mkdtempSync(join(tmpdir(), "machine-guide-source-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>guide fixture</body></html>");
+  writeFileSync(join(dist, "llms.txt"), source);
+  await assertGuideRoute(t, dist, source);
+});
+
+test("explicit client build emits and serves the exact active machine guide", {
+  skip: !process.env.SAMEDAYDESK_CLIENT_DIST && "no explicit client build supplied; source/static transport is tested separately",
+}, async (t) => {
+  // Supplying an absent or stale build must fail, never fall back to the source fixture.
+  const dist = process.env.SAMEDAYDESK_CLIENT_DIST;
+  const emitted = readFileSync(join(dist, "llms.txt"), "utf8");
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.equal(emitted, source, "rebuild the supplied client before checking its published guide");
+  await assertGuideRoute(t, dist, emitted);
+});
 
 function problemsFor(expect, response, openapi) {
   const problems = [];
@@ -380,6 +423,7 @@ test("production fallback keeps declarations out of the HTML shell and preserves
     env: {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
+      NODE_OPTIONS: process.env.NODE_OPTIONS,
       NODE_ENV: "production",
       SAMEDAYDESK_CLIENT_DIST: dist,
     },
