@@ -1,0 +1,36 @@
+{
+  "commands": [
+    {
+      "command": "NODE_OPTIONS=--max-old-space-size=384 npm ci --ignore-scripts --no-audit --no-fund",
+      "exit": 0,
+      "result": "170 existing locked packages installed; package-lock.json unchanged."
+    },
+    {
+      "command": "sudo -n apt-get update",
+      "exit": 0,
+      "result": "Refreshed package index only."
+    },
+    {
+      "command": "apt-get download postgresql-16 postgresql-client-16 libpq5; extract with dpkg-deb -x into /tmp/root5950-pg",
+      "exit": 0,
+      "result": "Existing Ubuntu PostgreSQL 16.15 packages extracted into task scratch, with no package installation or system service."
+    },
+    {
+      "command": "/tmp/root5950-pg/usr/lib/postgresql/16/bin/initdb --version",
+      "exit": 127,
+      "retainedFailure": "error while loading shared libraries: libpq.so.5: cannot open shared object file: No such file or directory",
+      "toolSession": 51403,
+      "resolution": "Use the extracted libpq directory through LD_LIBRARY_PATH=/tmp/root5950-pg/usr/lib/x86_64-linux-gnu; the recorded test environment carries this override."
+    },
+    {
+      "command": "LD_LIBRARY_PATH=/tmp/root5950-pg/usr/lib/x86_64-linux-gnu /tmp/root5950-pg/usr/lib/postgresql/16/bin/initdb --version",
+      "exit": 0,
+      "result": "initdb (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+    },
+    {
+      "command": "Existing disposable-cluster helper: start, SELECT version(), stop",
+      "exit": 0,
+      "result": "PostgreSQL 16.15 engine received before schema qualification."
+    }
+  ]
+}
