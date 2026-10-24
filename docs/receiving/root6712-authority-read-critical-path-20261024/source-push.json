@@ -1,0 +1,9 @@
+{
+  "command": "git (enrolled gh credential helper) push --porcelain origin HEAD:refs/heads/codex/root6712-authority-read-critical-path-20261024",
+  "exit": 0,
+  "stdout": "To https://github.com/epistemedeus/samedaydesk.git\n*\tHEAD:refs/heads/codex/root6712-authority-read-critical-path-20261024\t[new branch]\nDone\n",
+  "stderr": "remote: \nremote: Create a pull request for 'codex/root6712-authority-read-critical-path-20261024' on GitHub by visiting:        \nremote:      https://github.com/epistemedeus/samedaydesk/pull/new/codex/root6712-authority-read-critical-path-20261024        \nremote: \n",
+  "head": "95b8cc3ec303558db30c6cb9f62cf1d91b9f1061",
+  "readbackExit": 0,
+  "remoteHead": "95b8cc3ec303558db30c6cb9f62cf1d91b9f1061"
+}

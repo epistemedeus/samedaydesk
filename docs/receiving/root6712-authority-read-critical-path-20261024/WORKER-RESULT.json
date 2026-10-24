@@ -1,0 +1,378 @@
+{
+  "schema": "samedaydesk.root6712.worker-result.v1",
+  "result": "SOURCE_OPTIMIZATION",
+  "completedAt": "2026-10-24T21:55:56.602181+00:00",
+  "source": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/root6712-authority-read-critical-path-20261024",
+    "head": "95b8cc3ec303558db30c6cb9f62cf1d91b9f1061",
+    "tree": "98d5e14b6b9848c04ac444817a8cb03c467e2312",
+    "parent": "d310f4cf37fb190d850ac0cea71ec34787972162",
+    "baseTree": "8b79c1d8586c630f90a5241f52ce969fda641466",
+    "sourcePush": {
+      "command": "git (enrolled gh credential helper) push --porcelain origin HEAD:refs/heads/codex/root6712-authority-read-critical-path-20261024",
+      "exit": 0,
+      "stdout": "To https://github.com/epistemedeus/samedaydesk.git\n*\tHEAD:refs/heads/codex/root6712-authority-read-critical-path-20261024\t[new branch]\nDone\n",
+      "stderr": "remote: \nremote: Create a pull request for 'codex/root6712-authority-read-critical-path-20261024' on GitHub by visiting:        \nremote:      https://github.com/epistemedeus/samedaydesk/pull/new/codex/root6712-authority-read-critical-path-20261024        \nremote: \n",
+      "head": "95b8cc3ec303558db30c6cb9f62cf1d91b9f1061",
+      "readbackExit": 0,
+      "remoteHead": "95b8cc3ec303558db30c6cb9f62cf1d91b9f1061"
+    },
+    "handbackExport": "the commit containing this evidence-only handback; resolve with Git, avoiding a self-referential hash"
+  },
+  "operating": {
+    "pilotPin": "a75a402253771cb64f408f7163cade2111932b54",
+    "receiptSha256": "88a2b1eb6caa23caa2b67b5bd246ecd6ff7a15c7dae8de836460a413612c0baa",
+    "allInputHashesMatched": true,
+    "checkpointBy": "2026-10-25T00:26:54.995Z",
+    "requiredUntil": "2026-10-25T00:41:54.995Z"
+  },
+  "profile": {
+    "model": "gpt-6.1-sol",
+    "effort": "xhigh",
+    "parents": 1,
+    "modelChildren": 0,
+    "totalReserveKiB": 2097152,
+    "nodeHeapMaxMiB": 512,
+    "existingCrashChildHeapMiB": 384,
+    "UV_THREADPOOL_SIZE": 1,
+    "OMP_NUM_THREADS": 1,
+    "completedTurnCollection": "supervisor after return"
+  },
+  "dedup": {
+    "coveringOwnerOrAcceptedRepair": false,
+    "evidence": "frozen current owner/state/plan, local source history/ref check and actual admitted registry; 6696 is independent Pilot fixture receiving; old read lifetime repair retained"
+  },
+  "causalChange": "same-phase parameter-free READ ONLY transaction setup: three query calls batched into one; no cache or authority check removed",
+  "comparison": {
+    "before": {
+      "provenance": {
+        "walletServerSha256": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219",
+        "runtimeManifestSha256": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256",
+        "deskManifestSha256": "bde9b8b51d65202f2a56cdcae7883d9c6e277a23161ef64bfb7ec199d24bba30",
+        "receiverSha256": "3bee4163bccc030abc13d82f0fd9869494037950f46df1544fb77d24970486a3"
+      },
+      "calls": 54,
+      "statements": 54,
+      "setup": 3,
+      "acquisitions": 13,
+      "startupMs": 191.7351679999997,
+      "startupCalls": 87,
+      "startupAcquisitions": 14,
+      "startupConnections": 4,
+      "coldReadMs": 53.49455400000079,
+      "coldReadConnections": 4,
+      "steadyNoDelayMs": [
+        17.790908999999374,
+        16.210267000000385
+      ],
+      "delay5msSamples": [
+        324.54865400000017,
+        319.26466000000073,
+        311.12475799999993
+      ],
+      "delay5msMedian": 319.26466000000073,
+      "steadyStages": {
+        "wallet": {
+          "calls": 16,
+          "summedMs": 5.980685000002268
+        },
+        "accepted_source": {
+          "calls": 38,
+          "summedMs": 8.088209999998071
+        }
+      },
+      "readActions": 28,
+      "actionCounts": {
+        "positive": 9,
+        "failure": 10,
+        "recovery": 9
+      },
+      "statusCounts": {
+        "200": 18,
+        "401": 2,
+        "404": 2,
+        "503": 3,
+        "500": 1,
+        "409": 1,
+        "None": 1
+      },
+      "preservedTables": 64
+    },
+    "after": {
+      "provenance": {
+        "walletServerSha256": "7665a41fc37f73a47dc030563f401d2ba18380e39d9e4ea1201d77961dc34ae3",
+        "runtimeManifestSha256": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256",
+        "deskManifestSha256": "bde9b8b51d65202f2a56cdcae7883d9c6e277a23161ef64bfb7ec199d24bba30",
+        "receiverSha256": "3bee4163bccc030abc13d82f0fd9869494037950f46df1544fb77d24970486a3"
+      },
+      "calls": 52,
+      "statements": 54,
+      "setup": 1,
+      "acquisitions": 13,
+      "startupMs": 228.2050559999998,
+      "startupCalls": 87,
+      "startupAcquisitions": 14,
+      "startupConnections": 4,
+      "coldReadMs": 56.274507000000085,
+      "coldReadConnections": 4,
+      "steadyNoDelayMs": [
+        22.25684900000124,
+        15.09539500000028
+      ],
+      "delay5msSamples": [
+        304.354926,
+        306.97721099999944,
+        305.99385299999994
+      ],
+      "delay5msMedian": 305.99385299999994,
+      "steadyStages": {
+        "wallet": {
+          "calls": 14,
+          "summedMs": 8.358950000001641
+        },
+        "accepted_source": {
+          "calls": 38,
+          "summedMs": 9.99834699999883
+        }
+      },
+      "readActions": 28,
+      "actionCounts": {
+        "positive": 9,
+        "failure": 10,
+        "recovery": 9
+      },
+      "statusCounts": {
+        "200": 18,
+        "401": 2,
+        "404": 2,
+        "503": 3,
+        "500": 1,
+        "409": 1,
+        "None": 1
+      },
+      "preservedTables": 64
+    },
+    "outputSha256": "b1312b3d3a809be3fa1f614e0054713620be21f2c0f345eb0915e17f04bfe080",
+    "limits": "loopback staging composition, not installed latency; reservation, obligation and verdict identities replaced only for cross-run output hash"
+  },
+  "tests": {
+    "correctedTotal": 108,
+    "baselineSeparate": 10,
+    "fail": 0,
+    "skip": 0,
+    "cancel": 0,
+    "commands": "COMMANDS.md",
+    "finalRuns": [
+      {
+        "log": "baseline-export.tap",
+        "sha256": "2d520bbb59ad6158441fd86504876cc6b808695274429ee02a6bf48f11b9a77a",
+        "node": {
+          "tests": 10,
+          "pass": 10,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "runner": {
+          "runner": "root6712-owned-subreaper",
+          "exit": 0,
+          "elapsedMs": 15358.255,
+          "peakDescendantRssKiB": 782860,
+          "totalReserveKiB": 2097152,
+          "nativeIncluded": true,
+          "reaped": 1,
+          "remainingOwnedPids": [],
+          "remainingScratch": []
+        }
+      },
+      {
+        "log": "corrected-export.tap",
+        "sha256": "9b5199c9994447ee55a54563326105444d810d70e92910fbce8ff09700c4448a",
+        "node": {
+          "tests": 10,
+          "pass": 10,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "runner": {
+          "runner": "root6712-owned-subreaper",
+          "exit": 0,
+          "elapsedMs": 15536.583,
+          "peakDescendantRssKiB": 778504,
+          "totalReserveKiB": 2097152,
+          "nativeIncluded": true,
+          "reaped": 1,
+          "remainingOwnedPids": [],
+          "remainingScratch": []
+        }
+      },
+      {
+        "log": "mounted-regressions.tap",
+        "sha256": "468863de7a10129d96fbe4b5c62449f6575480d89464d0feab740ab665df35c9",
+        "node": {
+          "tests": 51,
+          "pass": 51,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "runner": {
+          "runner": "root6712-owned-subreaper",
+          "exit": 0,
+          "elapsedMs": 68599.553,
+          "peakDescendantRssKiB": 990912,
+          "totalReserveKiB": 2097152,
+          "nativeIncluded": true,
+          "reaped": 5,
+          "remainingOwnedPids": [],
+          "remainingScratch": []
+        }
+      },
+      {
+        "log": "wallet-export.tap",
+        "sha256": "85b362562bd3bdb134c9865d78167fbe7c8aba74fb75d8d2417e22066e008fcb",
+        "node": {
+          "tests": 47,
+          "pass": 47,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "runner": {
+          "runner": "root6712-owned-subreaper",
+          "exit": 0,
+          "elapsedMs": 18851.706,
+          "peakDescendantRssKiB": 687764,
+          "totalReserveKiB": 2097152,
+          "nativeIncluded": true,
+          "reaped": 2,
+          "remainingOwnedPids": [],
+          "remainingScratch": []
+        }
+      }
+    ],
+    "allRuns": "RUNS.json",
+    "firstFailures": [
+      {
+        "log": "first-run.tap",
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cause": "fixture selected round absent before preparation"
+      },
+      {
+        "log": "bootstrap-corrected.tap",
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cause": "fixture used wallet signup cookie for native account binding; native auth refused; isolated Pulse fallback remained and was later removed by exact owned path"
+      },
+      {
+        "log": "native-bootstrap.tap",
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cause": "fixture claim omitted acceptTerms:true"
+      },
+      {
+        "log": "baseline-full.tap",
+        "tests": 9,
+        "pass": 0,
+        "fail": 9,
+        "cause": "probe failed to preserve callback form of Pool.connect; one unhandled rejection and eight parent-finished results"
+      },
+      {
+        "log": "baseline-callback-corrected.tap",
+        "tests": 9,
+        "pass": 5,
+        "fail": 4,
+        "cause": "immutable frozen report update rejected and two calls to a non-exported component status method failed; three child failures plus parent"
+      }
+    ],
+    "focusedReadActionsPerVersion": {
+      "positive": 9,
+      "failureOrDisconnect": 10,
+      "recovery": 9
+    },
+    "additionalPaidAuthorityControls": {
+      "receiptJoinRefusals": 6,
+      "receiptJoinRecoveries": 6,
+      "missingOriginalKeyOrOutcomeRefusals": 2,
+      "missingOriginalKeyOrOutcomeRecoveries": 2
+    }
+  },
+  "preservation": {
+    "base": "d310f4cf37fb190d850ac0cea71ec34787972162",
+    "sourceOnly": true,
+    "emittedAssetsRebuilt": false,
+    "protected": {
+      "client": {
+        "trackedMembers": 414,
+        "tree": "37aad82178bf0651787143b0caaf468bbe9dc0e8",
+        "diffExit": 0,
+        "untrackedMembers": 0
+      },
+      "vendor/neomorphic-contributor-journey": {
+        "trackedMembers": 444,
+        "tree": "18cd51149a78c392f3ad497e086fb6d14c7bdcc3",
+        "diffExit": 0,
+        "untrackedMembers": 0
+      },
+      "vendor/neomorphic-contributor-desk": {
+        "trackedMembers": 46,
+        "tree": "d2613cf8dd3a7498ce8a1f17f5566daf5cf27140",
+        "diffExit": 0,
+        "untrackedMembers": 0
+      }
+    }
+  },
+  "closure": {
+    "installedSourceSha256": "31bc9c5d15764b266bd331df0682374fbbcf8e89fbe6335705b947c3b0e18a8d",
+    "hostSourceSha256": "db76819c7ccd710a30657423aa8844c532660361c2734aab2d65642578351dc5",
+    "packageMembers": 112,
+    "hostMembers": 1302,
+    "qualified": false,
+    "installed": false
+  },
+  "cleanup": {
+    "maxSampledOwnerAndFixtureRssKiB": 990912,
+    "finalRunOwnedPids": [],
+    "finalRunScratch": [],
+    "dependencySymlinkRemoved": true,
+    "ownedArchiveScratchRemoved": true,
+    "pgStartStopGenerations": {
+      "baseline": 1,
+      "corrected": 1,
+      "wallet": 2,
+      "mounted": 5
+    },
+    "parentClaim": "existing admission supervisor retains/reaps after terminal; no foreign claim touched"
+  },
+  "upstreamGap": {
+    "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+    "source": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+    "requiredOwner": "Neo TypeScript source owner; separate source scope required",
+    "functions": [
+      "services/contributor-journey/opportunity-adapters.ts:createOpportunityJourneyAdapters load/review.read/history",
+      "services/contributor-journey/composition-store.ts:CompositionStore.accountForPrincipal,round,project,requireBoundProject",
+      "services/earned-work/src/store/postgres.ts:EarnedWorkStore.connectScoped,withTx,withOpportunityClient",
+      "services/correspondence/src/store/postgres.ts:CorrespondenceStore.query/connectScoped",
+      "services/contributor-journey/submission/postgres.ts:PostgresSubmissionPersistence.load/tx"
+    ],
+    "evidence": "unchanged accepted-source phase: 38 query calls, 12 acquisitions, including 12 setting calls and 7 BEGIN/COMMIT pairs on this staging accepted fixture; live and external-report branches can add work; no cause assigned to historic timings"
+  },
+  "selfReview": "SELF-REVIEW.json",
+  "limits": [
+    "synthetic managed staging/verified-loopback path, not installed or external-report latency",
+    "no statistically established no-delay latency gain",
+    "6594ms/41564ms remain end-to-end symptoms without SQL attribution",
+    "no private live transport, publication, PR, merge, release or financial/business acceptance",
+    "emitted human output not rebuilt; protected source/assets byte-identical"
+  ]
+}
