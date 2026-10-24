@@ -59,9 +59,11 @@ function rewardView(atomic, round) {
 export class OpportunityService {
     kernel;
     hosted;
-    constructor(kernel, hosted = absentHostedDelivery()) {
+    verifyMediatedReceipt;
+    constructor(kernel, hosted = absentHostedDelivery(), verifyMediatedReceipt) {
         this.kernel = kernel;
         this.hosted = hosted;
+        this.verifyMediatedReceipt = verifyMediatedReceipt;
     }
     hostedFor(roundKey) {
         return projectionForRound(this.hosted, roundKey);
@@ -440,7 +442,24 @@ export class OpportunityService {
                     throw new ApiError(409, "late_submission", "unearned reservation has expired");
                 if (receivedAt > now.getTime())
                     throw new ApiError(409, "late_submission", "correspondence time is in the future");
-                if (round.status !== "open" || now.getTime() >= round.submission_deadline.getTime())
+                let mediated = false;
+                if (prior.mediatedReceipt !== undefined) {
+                    const proof = this.verifyMediatedReceipt?.(prior.mediatedReceipt, { roundId: round.id, claimId: claim.id, termsVersion: claim.terms_version, credentialRef: claim.credential_ref, principalId: contributor.id, artifactDigestSha256: body.artifact.digestSha256, artifactBytes: body.artifact.bytes });
+                    const terms = readCanonicalRoundTerms(round.terms_document, round.terms_version);
+                    if (!proof || proof.receivedAt !== prior.receivedAt || terms.receivingPolicy !== 'root_mediated_external_report_v1' || !claim.credential_ref?.startsWith('root_ext_'))
+                        throw new ApiError(403, "forbidden", "trusted original mediated receipt required");
+                    const attestedAt = Date.parse(proof.attestedAt);
+                    if (!Number.isFinite(attestedAt) || attestedAt < receivedAt || attestedAt > now.getTime() || receivedAt < claim.created_at.getTime())
+                        throw new ApiError(409, "late_submission", "receipt clock is unbound");
+                    if (round.review_within_days <= 0 || now.getTime() >= receivedAt + round.review_within_days * 86400000)
+                        throw new ApiError(409, "round_closed", "original receipt review window is closed");
+                    // Expiry never grants authority over capacity reassigned in the meantime.
+                    const reassigned = await client.query('SELECT 1 FROM opportunity_claims WHERE offer_id=$1 AND id<>$2 AND created_at >= $3 LIMIT 1', [claim.offer_id, claim.id, claim.expires_at]);
+                    if (reassigned.rows.length)
+                        throw new ApiError(409, "offer_full", "original capacity was reassigned");
+                    mediated = true;
+                }
+                if (round.status !== "open" || !mediated && now.getTime() >= round.submission_deadline.getTime())
                     throw new ApiError(409, "round_closed", "round is closed");
                 if (receivedAt >= round.submission_deadline.getTime())
                     throw new ApiError(409, "late_submission", "correspondence arrived after the submission deadline");

@@ -9,10 +9,24 @@ export type OpportunityKernel = {
     now(): Date;
     withOpportunityClient<T>(fn: (client: pg.PoolClient) => Promise<T>, recover: "idempotent" | "read" | "none"): Promise<T>;
 };
+export type MediatedReceiptBinding = {
+    roundId: string;
+    claimId: string;
+    termsVersion: string;
+    credentialRef: string;
+    principalId: string;
+    artifactDigestSha256: string;
+    artifactBytes: number;
+};
+export type MediatedReceiptVerifier = (proof: unknown, binding: MediatedReceiptBinding) => {
+    receivedAt: string;
+    attestedAt: string;
+} | null;
 export declare class OpportunityService {
     private readonly kernel;
     private readonly hosted;
-    constructor(kernel: OpportunityKernel, hosted?: HostedDeliveryProjection);
+    private readonly verifyMediatedReceipt?;
+    constructor(kernel: OpportunityKernel, hosted?: HostedDeliveryProjection, verifyMediatedReceipt?: MediatedReceiptVerifier | undefined);
     private hostedFor;
     createRound(body: RoundBody, idempotencyKey: string): Promise<{
         replayed: boolean;
@@ -63,6 +77,7 @@ export declare class OpportunityService {
         requireContinuationScope?: boolean;
         preExpiryCorrespondence?: {
             receivedAt: string;
+            mediatedReceipt?: unknown;
         };
     }): Promise<{
         replayed: boolean;

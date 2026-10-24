@@ -151,6 +151,7 @@ declare const deliveryPin: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
+    receivedAt: string;
     claimId: string;
     accountId: string;
     report: {
@@ -170,7 +171,6 @@ declare const deliveryPin: z.ZodObject<{
         } | null | undefined;
     };
     roundId: string;
-    receivedAt: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
     sender: string;
@@ -191,6 +191,7 @@ declare const deliveryPin: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
+    receivedAt: string;
     claimId: string;
     accountId: string;
     report: {
@@ -210,7 +211,6 @@ declare const deliveryPin: z.ZodObject<{
         } | null | undefined;
     };
     roundId: string;
-    receivedAt: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
     sender: string;
@@ -317,6 +317,7 @@ export declare const originalDeliverySchema: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
+    receivedAt: string;
     claimId: string;
     accountId: string;
     report: {
@@ -336,7 +337,6 @@ export declare const originalDeliverySchema: z.ZodObject<{
         } | null | undefined;
     };
     roundId: string;
-    receivedAt: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
     sender: string;
@@ -359,6 +359,7 @@ export declare const originalDeliverySchema: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
+    receivedAt: string;
     claimId: string;
     accountId: string;
     report: {
@@ -378,7 +379,6 @@ export declare const originalDeliverySchema: z.ZodObject<{
         } | null | undefined;
     };
     roundId: string;
-    receivedAt: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
     sender: string;
@@ -424,6 +424,7 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
         kind: "email";
         threadRef: string;
     };
+    receivedAt: string;
     claimId: string;
     accountId: string;
     report: {
@@ -443,7 +444,6 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
         } | null | undefined;
     };
     roundId: string;
-    receivedAt: string;
     termsPacketSha256: string;
     allocationReceiptSha256: string;
     sender: string;

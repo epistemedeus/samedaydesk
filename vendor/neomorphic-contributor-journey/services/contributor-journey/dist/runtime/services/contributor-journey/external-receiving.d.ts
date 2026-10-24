@@ -6,6 +6,7 @@ import { OpportunityService } from '../earned-work/src/opportunity/service.js';
 import type { ContributorAccountService } from './account/service.js';
 import type { JourneyAdmission } from './profile.js';
 import type { ProjectLock } from './discussion/correspondence.js';
+import type { MediatedReceiptBinding } from '../earned-work/src/opportunity/service.js';
 declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     schema: z.ZodLiteral<"neomorphic.root-external-selection.v1">;
     roundId: z.ZodString;
@@ -61,13 +62,13 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
         actualExternalIdentity: z.ZodLiteral<true>;
     }, "strict", z.ZodTypeAny, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }>;
 }, "strict", z.ZodTypeAny, {
@@ -96,8 +97,8 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
 }, {
@@ -126,8 +127,8 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
 }>, z.ZodObject<{
@@ -156,13 +157,13 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
         actualExternalIdentity: z.ZodLiteral<true>;
     }, "strict", z.ZodTypeAny, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }>;
 } & {
@@ -300,8 +301,8 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
 }, {
@@ -341,8 +342,8 @@ declare const packetPin: z.ZodDiscriminatedUnion<"schema", [z.ZodObject<{
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
 }>]>;
@@ -401,13 +402,13 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
         actualExternalIdentity: z.ZodLiteral<true>;
     }, "strict", z.ZodTypeAny, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }>;
 } & {
@@ -439,8 +440,8 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     termsPacket: Record<string, unknown>;
@@ -471,8 +472,8 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     termsPacket: Record<string, unknown>;
@@ -503,13 +504,13 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
         actualExternalIdentity: z.ZodLiteral<true>;
     }, "strict", z.ZodTypeAny, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }>;
 } & {
@@ -650,8 +651,8 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     termsPacket: Record<string, unknown>;
@@ -693,8 +694,8 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
     };
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     termsPacket: Record<string, unknown>;
@@ -702,7 +703,7 @@ export declare const externalSelectionSchema: z.ZodDiscriminatedUnion<"schema", 
 }>]>;
 export type ExternalSelection = z.infer<typeof externalSelectionSchema>;
 export type RetainedExternalSelection = z.infer<typeof packetPin>;
-export declare const externalReportSchema: z.ZodObject<{
+export declare const externalReportSchema: z.ZodUnion<[z.ZodObject<{
     schema: z.ZodLiteral<"pilot.cold-first-use-report.v1">;
     observedStatus: z.ZodEnum<["completed", "refused", "failed", "unresolved"]>;
     runtimeVersion: z.ZodString;
@@ -710,7 +711,7 @@ export declare const externalReportSchema: z.ZodObject<{
     commands: z.ZodArray<z.ZodString, "many">;
     usefulResult: z.ZodOptional<z.ZodString>;
     reproducibleFailure: z.ZodOptional<z.ZodString>;
-    effortSeconds: z.ZodNumber;
+    effortSeconds: z.ZodOptional<z.ZodNumber>;
     clarifications: z.ZodNumber;
     tokenUse: z.ZodOptional<z.ZodUnion<[z.ZodLiteral<"unknown">, z.ZodNull, z.ZodNumber]>>;
     cost: z.ZodOptional<z.ZodUnion<[z.ZodLiteral<"unknown">, z.ZodNull, z.ZodObject<{
@@ -729,10 +730,10 @@ export declare const externalReportSchema: z.ZodObject<{
     runtimeVersion: string;
     acquisitionUrl: string;
     commands: string[];
-    effortSeconds: number;
     clarifications: number;
     usefulResult?: string | undefined;
     reproducibleFailure?: string | undefined;
+    effortSeconds?: number | undefined;
     tokenUse?: number | "unknown" | null | undefined;
     cost?: "unknown" | {
         amount: string;
@@ -744,16 +745,32 @@ export declare const externalReportSchema: z.ZodObject<{
     runtimeVersion: string;
     acquisitionUrl: string;
     commands: string[];
-    effortSeconds: number;
     clarifications: number;
     usefulResult?: string | undefined;
     reproducibleFailure?: string | undefined;
+    effortSeconds?: number | undefined;
     tokenUse?: number | "unknown" | null | undefined;
     cost?: "unknown" | {
         amount: string;
         currency: string;
     } | null | undefined;
-}>;
+}>, z.ZodType<{
+    kind: "workflow_witness";
+    attempt: string;
+    limitationOrResult: string;
+    syntheticFailure: false;
+    versions?: string | undefined;
+    minimalInput?: string | undefined;
+    expectedResult?: string | undefined;
+}, z.ZodTypeDef, {
+    kind: "workflow_witness";
+    attempt: string;
+    limitationOrResult: string;
+    syntheticFailure: false;
+    versions?: string | undefined;
+    minimalInput?: string | undefined;
+    expectedResult?: string | undefined;
+}>]>;
 export declare const externalDeliverySchema: z.ZodObject<{
     schema: z.ZodLiteral<"neomorphic.root-external-delivery.v1">;
     credentialRef: z.ZodString;
@@ -774,7 +791,7 @@ export declare const externalDeliverySchema: z.ZodObject<{
     deliveryMessageRef: z.ZodString;
     originalOperationRef: z.ZodString;
     reportSha256: z.ZodString;
-    report: z.ZodObject<{
+    report: z.ZodUnion<[z.ZodObject<{
         schema: z.ZodLiteral<"pilot.cold-first-use-report.v1">;
         observedStatus: z.ZodEnum<["completed", "refused", "failed", "unresolved"]>;
         runtimeVersion: z.ZodString;
@@ -782,7 +799,7 @@ export declare const externalDeliverySchema: z.ZodObject<{
         commands: z.ZodArray<z.ZodString, "many">;
         usefulResult: z.ZodOptional<z.ZodString>;
         reproducibleFailure: z.ZodOptional<z.ZodString>;
-        effortSeconds: z.ZodNumber;
+        effortSeconds: z.ZodOptional<z.ZodNumber>;
         clarifications: z.ZodNumber;
         tokenUse: z.ZodOptional<z.ZodUnion<[z.ZodLiteral<"unknown">, z.ZodNull, z.ZodNumber]>>;
         cost: z.ZodOptional<z.ZodUnion<[z.ZodLiteral<"unknown">, z.ZodNull, z.ZodObject<{
@@ -801,10 +818,10 @@ export declare const externalDeliverySchema: z.ZodObject<{
         runtimeVersion: string;
         acquisitionUrl: string;
         commands: string[];
-        effortSeconds: number;
         clarifications: number;
         usefulResult?: string | undefined;
         reproducibleFailure?: string | undefined;
+        effortSeconds?: number | undefined;
         tokenUse?: number | "unknown" | null | undefined;
         cost?: "unknown" | {
             amount: string;
@@ -816,16 +833,32 @@ export declare const externalDeliverySchema: z.ZodObject<{
         runtimeVersion: string;
         acquisitionUrl: string;
         commands: string[];
-        effortSeconds: number;
         clarifications: number;
         usefulResult?: string | undefined;
         reproducibleFailure?: string | undefined;
+        effortSeconds?: number | undefined;
         tokenUse?: number | "unknown" | null | undefined;
         cost?: "unknown" | {
             amount: string;
             currency: string;
         } | null | undefined;
-    }>;
+    }>, z.ZodType<{
+        kind: "workflow_witness";
+        attempt: string;
+        limitationOrResult: string;
+        syntheticFailure: false;
+        versions?: string | undefined;
+        minimalInput?: string | undefined;
+        expectedResult?: string | undefined;
+    }, z.ZodTypeDef, {
+        kind: "workflow_witness";
+        attempt: string;
+        limitationOrResult: string;
+        syntheticFailure: false;
+        versions?: string | undefined;
+        minimalInput?: string | undefined;
+        expectedResult?: string | undefined;
+    }>]>;
     rootReceipt: z.ZodObject<{
         provenance: z.ZodLiteral<"root_received_private_correspondence">;
         recordRef: z.ZodString;
@@ -833,15 +866,83 @@ export declare const externalDeliverySchema: z.ZodObject<{
         actualExternalIdentity: z.ZodLiteral<true>;
     }, "strict", z.ZodTypeAny, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }, {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     }>;
+    receiptAttestation: z.ZodOptional<z.ZodObject<{
+        schema: z.ZodLiteral<"neomorphic.root-external-receipt.v1">;
+        binding: z.ZodObject<{
+            roundId: z.ZodString;
+            claimId: z.ZodString;
+            termsVersion: z.ZodString;
+            credentialRef: z.ZodString;
+            principalId: z.ZodString;
+            artifactDigestSha256: z.ZodString;
+            artifactBytes: z.ZodNumber;
+        }, "strict", z.ZodTypeAny, {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        }, {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        }>;
+        selectionSha256: z.ZodString;
+        assignmentKeySha256: z.ZodString;
+        deliverySha256: z.ZodString;
+        receivedAt: z.ZodString;
+        attestedAt: z.ZodString;
+        signature: z.ZodString;
+    }, "strict", z.ZodTypeAny, {
+        schema: "neomorphic.root-external-receipt.v1";
+        receivedAt: string;
+        binding: {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        };
+        selectionSha256: string;
+        assignmentKeySha256: string;
+        deliverySha256: string;
+        attestedAt: string;
+        signature: string;
+    }, {
+        schema: "neomorphic.root-external-receipt.v1";
+        receivedAt: string;
+        binding: {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        };
+        selectionSha256: string;
+        assignmentKeySha256: string;
+        deliverySha256: string;
+        attestedAt: string;
+        signature: string;
+    }>>;
 }, "strict", z.ZodTypeAny, {
     termsVersion: string;
     credentialRef: string;
@@ -852,15 +953,23 @@ export declare const externalDeliverySchema: z.ZodObject<{
     };
     claimId: string;
     report: {
+        kind: "workflow_witness";
+        attempt: string;
+        limitationOrResult: string;
+        syntheticFailure: false;
+        versions?: string | undefined;
+        minimalInput?: string | undefined;
+        expectedResult?: string | undefined;
+    } | {
         schema: "pilot.cold-first-use-report.v1";
         observedStatus: "failed" | "completed" | "refused" | "unresolved";
         runtimeVersion: string;
         acquisitionUrl: string;
         commands: string[];
-        effortSeconds: number;
         clarifications: number;
         usefulResult?: string | undefined;
         reproducibleFailure?: string | undefined;
+        effortSeconds?: number | undefined;
         tokenUse?: number | "unknown" | null | undefined;
         cost?: "unknown" | {
             amount: string;
@@ -871,13 +980,31 @@ export declare const externalDeliverySchema: z.ZodObject<{
     originalOperationRef: string;
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     agreementMessageRef: string;
     deliveryMessageRef: string;
     reportSha256: string;
+    receiptAttestation?: {
+        schema: "neomorphic.root-external-receipt.v1";
+        receivedAt: string;
+        binding: {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        };
+        selectionSha256: string;
+        assignmentKeySha256: string;
+        deliverySha256: string;
+        attestedAt: string;
+        signature: string;
+    } | undefined;
 }, {
     termsVersion: string;
     credentialRef: string;
@@ -888,15 +1015,23 @@ export declare const externalDeliverySchema: z.ZodObject<{
     };
     claimId: string;
     report: {
+        kind: "workflow_witness";
+        attempt: string;
+        limitationOrResult: string;
+        syntheticFailure: false;
+        versions?: string | undefined;
+        minimalInput?: string | undefined;
+        expectedResult?: string | undefined;
+    } | {
         schema: "pilot.cold-first-use-report.v1";
         observedStatus: "failed" | "completed" | "refused" | "unresolved";
         runtimeVersion: string;
         acquisitionUrl: string;
         commands: string[];
-        effortSeconds: number;
         clarifications: number;
         usefulResult?: string | undefined;
         reproducibleFailure?: string | undefined;
+        effortSeconds?: number | undefined;
         tokenUse?: number | "unknown" | null | undefined;
         cost?: "unknown" | {
             amount: string;
@@ -907,13 +1042,31 @@ export declare const externalDeliverySchema: z.ZodObject<{
     originalOperationRef: string;
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     agreementMessageRef: string;
     deliveryMessageRef: string;
     reportSha256: string;
+    receiptAttestation?: {
+        schema: "neomorphic.root-external-receipt.v1";
+        receivedAt: string;
+        binding: {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        };
+        selectionSha256: string;
+        assignmentKeySha256: string;
+        deliverySha256: string;
+        attestedAt: string;
+        signature: string;
+    } | undefined;
 }>;
 export type ExternalDelivery = z.infer<typeof externalDeliverySchema>;
 export declare function externalCredentialRef(selection: Pick<ExternalSelection, 'roundId' | 'identity'>): string;
@@ -945,15 +1098,23 @@ export declare function inspectExternalDelivery(raw: unknown, bound: {
     };
     claimId: string;
     report: {
+        kind: "workflow_witness";
+        attempt: string;
+        limitationOrResult: string;
+        syntheticFailure: false;
+        versions?: string | undefined;
+        minimalInput?: string | undefined;
+        expectedResult?: string | undefined;
+    } | {
         schema: "pilot.cold-first-use-report.v1";
         observedStatus: "failed" | "completed" | "refused" | "unresolved";
         runtimeVersion: string;
         acquisitionUrl: string;
         commands: string[];
-        effortSeconds: number;
         clarifications: number;
         usefulResult?: string | undefined;
         reproducibleFailure?: string | undefined;
+        effortSeconds?: number | undefined;
         tokenUse?: number | "unknown" | null | undefined;
         cost?: "unknown" | {
             amount: string;
@@ -964,13 +1125,31 @@ export declare function inspectExternalDelivery(raw: unknown, bound: {
     originalOperationRef: string;
     rootReceipt: {
         provenance: "root_received_private_correspondence";
-        recordRef: string;
         receivedAt: string;
+        recordRef: string;
         actualExternalIdentity: true;
     };
     agreementMessageRef: string;
     deliveryMessageRef: string;
     reportSha256: string;
+    receiptAttestation?: {
+        schema: "neomorphic.root-external-receipt.v1";
+        receivedAt: string;
+        binding: {
+            termsVersion: string;
+            artifactDigestSha256: string;
+            credentialRef: string;
+            claimId: string;
+            roundId: string;
+            principalId: string;
+            artifactBytes: number;
+        };
+        selectionSha256: string;
+        assignmentKeySha256: string;
+        deliverySha256: string;
+        attestedAt: string;
+        signature: string;
+    } | undefined;
 };
 type SignedEntry = {
     kind: 'selection';
@@ -1011,6 +1190,7 @@ export declare class RootExternalReceiving {
         store: PostgresStore;
         correspondence: CorrespondenceStore;
         integrityKey: string;
+        receiptAuthorityHash: string;
         accounts: ContributorAccountService;
         admission: JourneyAdmission;
         lock: ProjectLock;
@@ -1031,6 +1211,74 @@ export declare class RootExternalReceiving {
         frozen: ExternalFrozen | null;
     } | null>;
     private checkDelivery;
+    private unsignedDelivery;
+    private receiptSignature;
+    private receiptBinding;
+    /** A private, explicit assertion by the configured Root receiving authority.
+     * Root must independently retain actual channel arrival evidence. Neither a
+     * requester session nor a supplied header/timestamp can issue this MAC. No
+     * claim, correspondence, submission or financial state is changed here. */
+    attestReceipt(receiverToken: string, sessionToken: string, credentialRef: string, assignmentKey: string, raw: unknown): Promise<{
+        receiptAttestation: {
+            signature: string;
+            schema: "neomorphic.root-external-receipt.v1";
+            binding: MediatedReceiptBinding;
+            selectionSha256: string;
+            assignmentKeySha256: string;
+            deliverySha256: string;
+            receivedAt: string;
+            attestedAt: string;
+        };
+        termsVersion: string;
+        credentialRef: string;
+        schema: "neomorphic.root-external-delivery.v1";
+        channel: {
+            kind: "email";
+            threadRef: string;
+        };
+        claimId: string;
+        report: {
+            kind: "workflow_witness";
+            attempt: string;
+            limitationOrResult: string;
+            syntheticFailure: false;
+            versions?: string | undefined;
+            minimalInput?: string | undefined;
+            expectedResult?: string | undefined;
+        } | {
+            schema: "pilot.cold-first-use-report.v1";
+            observedStatus: "failed" | "completed" | "refused" | "unresolved";
+            runtimeVersion: string;
+            acquisitionUrl: string;
+            commands: string[];
+            clarifications: number;
+            usefulResult?: string | undefined;
+            reproducibleFailure?: string | undefined;
+            effortSeconds?: number | undefined;
+            tokenUse?: number | "unknown" | null | undefined;
+            cost?: "unknown" | {
+                amount: string;
+                currency: string;
+            } | null | undefined;
+        };
+        sender: string;
+        originalOperationRef: string;
+        rootReceipt: {
+            provenance: "root_received_private_correspondence";
+            receivedAt: string;
+            recordRef: string;
+            actualExternalIdentity: true;
+        };
+        agreementMessageRef: string;
+        deliveryMessageRef: string;
+        reportSha256: string;
+    }>;
+    /** Kernel verifier: a JSON timestamp/options object never establishes receipt. */
+    verifyReceipt(raw: unknown, binding: MediatedReceiptBinding): {
+        receivedAt: string;
+        attestedAt: string;
+    } | null;
+    private checkReceipt;
     receive(sessionToken: string, credentialRef: string, assignmentKey: string, raw: unknown, key: string): Promise<{
         claimId: string;
         artifactId: string;
