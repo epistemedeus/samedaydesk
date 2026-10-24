@@ -54,11 +54,7 @@ function lookup(value, path) {
   return String(path).split(".").reduce((current, key) => (current == null ? undefined : current[key]), value);
 }
 
-test("built machine guide serves the active support contact over the production static path", async (t) => {
-  const dist = new URL("../../client/dist/", import.meta.url).pathname;
-  const emitted = readFileSync(join(dist, "llms.txt"), "utf8");
-  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
-  assert.equal(emitted, source, "rebuild the client before checking its published guide");
+async function assertGuideRoute(t, dist, emitted) {
   const app = express();
   mountProductionClient(app, dist);
   const { server, port } = await listen(app);
@@ -76,6 +72,27 @@ test("built machine guide serves the active support contact over the production 
   assert.equal(head.status, 200);
   assert.equal(head.body, "");
   assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted));
+}
+
+test("machine guide source serves the active contact over the production static path", async (t) => {
+  // Runtime-only consumers install no client toolchain and need no prebuilt dist.
+  const dist = mkdtempSync(join(tmpdir(), "machine-guide-source-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>guide fixture</body></html>");
+  writeFileSync(join(dist, "llms.txt"), source);
+  await assertGuideRoute(t, dist, source);
+});
+
+test("explicit client build emits and serves the exact active machine guide", {
+  skip: !process.env.SAMEDAYDESK_CLIENT_DIST && "no explicit client build supplied; source/static transport is tested separately",
+}, async (t) => {
+  // Supplying an absent or stale build must fail, never fall back to the source fixture.
+  const dist = process.env.SAMEDAYDESK_CLIENT_DIST;
+  const emitted = readFileSync(join(dist, "llms.txt"), "utf8");
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.equal(emitted, source, "rebuild the supplied client before checking its published guide");
+  await assertGuideRoute(t, dist, emitted);
 });
 
 function problemsFor(expect, response, openapi) {
