@@ -1,0 +1,20 @@
+{
+  "removedOwnedPaths": [
+    "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/node_modules",
+    "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/node_modules",
+    "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/dist",
+    "/tmp/root6908-emitted-before",
+    "/tmp/root6908-emitted-after",
+    "/tmp/root6908-original6884.json",
+    "/tmp/root6908-hostinger-managed-release.mjs"
+  ],
+  "ownedBrowserTabs": 0,
+  "newModelProcesses": 0,
+  "modelChildren": 0,
+  "backgroundJobsRemaining": 0,
+  "otherOwnersTouched": false,
+  "unattributedMatchingTmpPathsNotTouched": [],
+  "rawPairedOutputsRetainedIn": "RAW-EXPORT.json",
+  "ignoredToolchainAndBuildOutputsRemoved": true,
+  "firstCleanupCommand": "Not executed: automatic review rejected rm-style cleanup; used explicit ownership-checked Python paths instead."
+}

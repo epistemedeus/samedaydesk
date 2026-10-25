@@ -1,0 +1,83 @@
+# SameDayDesk
+
+> SameDayDesk builds agent-ready workflows, MCP servers, x402 and native MPP payment routes, and machine storefronts. Each build has bounded scope, working code, tests, and a deployment handoff.
+
+## Start here
+
+- [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links.
+- Agent Workflow Integration: $149.
+- Agent-Ready MCP Server: $349.
+- x402 and native MPP Payment Route: $499.
+- Agent Commerce Storefront: $999.
+- [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): Check crawler access, metadata, structured data, sitemap, and llms.txt.
+- [Resources](https://samedaydesk.com/resources.html): Original research, practical guides, and free AI-search tools.
+
+## Agent interfaces
+
+- [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
+<!-- paid-gateway:start -->
+- Paid gateway temporarily paused. Do not submit paid remote jobs. State received: 2026-10-22T01:50:00.000Z.
+- Free apex tools, original-task correspondence and hosted offline archives are separate. Acquired packages remain usable offline; retained entitlements are unchanged.
+- [Paid gateway availability](https://samedaydesk.com/discovery/paid-gateway.json): Current dependency state and next action. A past launch or source merge does not establish availability.
+- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Identity reference only; check availability before connecting.
+- [Optional Smithery directory listing](https://smithery.ai/servers/epistemedeus/samedaydesk-machine-commerce): Directory identity only. Canonical endpoint: https://agents.samedaydesk.com/mcp, with no Smithery account, key, or proxy. Check availability before connecting.
+- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Identity reference only; check availability before connecting.
+- [x402 gateway llms.txt](https://agents.samedaydesk.com/llms.txt): Identity reference only; check availability before connecting.
+- [x402 service health](https://agents.samedaydesk.com/healthz): Identity reference only; check availability before connecting.
+- [HTTP action catalog](https://agents.samedaydesk.com/api/actions): Identity reference only; check availability before connecting.
+- Next action: https://samedaydesk.com/discovery/useful-jobs.json
+<!-- paid-gateway:end -->
+- [Practical agent jobs](https://samedaydesk.com/for-agents): Use offline comparison or record mapping of already-held JSON, optionally export a reuse reference, or run one-shot recurring recipes (`source-change-alert`, `issue-to-work-brief`, `buyer-setup-trace`) against an immutable prior. A schema-valid export is user-selected unverified evidence, not automatic public-safe certification. Purchasing never requires publishing. Copyable no-key commands are in the initial HTML.
+- [Agent payment infrastructure](https://samedaydesk.com/x402): Human storefront for other named machine services. When the gateway is available, its HTTP, x402, health, OpenAPI, and MCP inventories are authoritative; this file does not freeze a route count.
+- [Seller conformance proof](https://samedaydesk.com/x402/seller-conformance): a human-auditable seller-conformance proof page, not a product or certificate.
+- [Inspected x402 route list](https://samedaydesk.com/x402/verified): build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement.
+- [Agent402 validation receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): One recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, unsolicited demand, repeat use, or repair sale.
+- [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the gateway.
+
+## Public work
+
+- [OpenScan documentation case study](https://samedaydesk.com/docs-lab/openscan/): Durable, source-backed documentation created from a real open-source project.
+- [GopherJS API documentation case study](https://samedaydesk.com/docs-lab/gopherjs/): Searchable Sourcey reference for 17 packages and 197 exports, generated from pinned GopherJS source with an open upstream adoption PR.
+- [Solana Ecosystem Pulse](https://samedaydesk.com/data-lab/solana-pulse/): Public-data dashboard with synchronized JSON, Markdown, and interactive HTML outputs.
+- [AI Search Readiness Leaderboard](https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html): Original benchmark of 189 companies across 10 industries.
+
+## Useful guides and tools
+
+- [How to get cited by AI search](https://samedaydesk.com/guides/get-cited-by-ai-search.html)
+- [How to hire AI agents](https://samedaydesk.com/guides/how-to-hire-ai-agents-2026.html): Competition versus direct hire, testable acceptance criteria, secret boundaries, evidence review, and disclosed AgentHansa/Clustly routes.
+- [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
+- [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
+- [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): What a readiness checker can see, and one path to the AI Visibility Audit.
+- [Instagram and WhatsApp DM automation with Manychat](https://samedaydesk.com/guides/instagram-whatsapp-dm-automation-manychat-2026.html): Current plan arithmetic, a one-flow launch recipe, measurement, WhatsApp fee caveats, and a clearly disclosed referral option.
+- [llms.txt generator](https://samedaydesk.com/tools/llms-txt-generator.html)
+- [JSON-LD schema generator](https://samedaydesk.com/tools/schema-generator.html)
+
+## Official identity
+
+- [GitHub](https://github.com/epistemedeus)
+- [X](https://x.com/samedaydesk)
+- Email: contact@neomorphic.io
+
+## Related properties
+
+SameDayDesk is the operating merchant. The following site is a separate product, not a SameDayDesk service.
+
+- [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation.
+
+Last updated: 2026-09-09
+- [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
+Last updated: 2026-09-10
+- [Distribution repair diagnosis (lab)](https://samedaydesk.com/for-agents/distribution-repair): Portable offline package that maps caller listing snapshots and a baseline/current route pair into diagnosis and owner repair guidance. Incomplete captures cannot prove global removal. Not a production acquisition. Machine discovery: https://samedaydesk.com/discovery/distribution-repair.json.
+- [Consumer evidence and repeat jobs](https://samedaydesk.com/for-agents/consumer-repeat): One portable offline package for local evidence checks (release brief, table reconcile, procurement brief, and related jobs). Verify size and sha256 before extract. Machine discovery: https://samedaydesk.com/discovery/consumer-repeat.json.
+- [Useful jobs package](https://samedaydesk.com/for-agents/useful-jobs): One Node 22 offline archive (current public 1.4.7) with ten local jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Verify size and sha256 before extract. Labeled samples need `--example` except page-change. Machine discovery: https://samedaydesk.com/discovery/useful-jobs.json.
+- [Original-task correspondence](https://samedaydesk.com/discovery/original-task-correspondence.json): Machine descriptor for one original task through the existing visitor entry. That document names a small public client archive; a repository checkout command is not the acquisition. No wallet, contribution, benchmark, or identity proof. A request stays pending qualification until an operator replies. Not a delivery promise, acceptance, or payment.
+
+## Machine declarations
+
+Generated from the mounted apex tools. These are not the paid gateway.
+
+- OpenAPI: https://samedaydesk.com/openapi.json
+- Skill: https://samedaydesk.com/skill.md
+- API catalog: https://samedaydesk.com/.well-known/api-catalog
+- Agent card: https://samedaydesk.com/.well-known/agent-card.json
+- MCP: https://samedaydesk.com/mcp

@@ -1,0 +1,276 @@
+{
+  "schema": "pilot.task-led-extraction.result.v1",
+  "recorded_at": "2026-10-24T23:45:43.498617+00:00",
+  "outcome": {
+    "task": "achieved through direct HTTP",
+    "phase_a_choice": "direct_sufficient",
+    "phase_b_request_contract": "no mismatch reproduced: documented required input constructs an unsigned request accepted through input validation to HTTP 402",
+    "phase_b_reconciliation": "qualified partial: exact historical reference absent in pinned source; emitted availability conflicts with admitted installed receiving",
+    "new_product_or_merchant_fix": "none justified by request construction"
+  },
+  "phase_a": {
+    "file": "PHASE-A.json",
+    "sha256": "48b344de5ea52c90c3fc08ddcb9424ec169290dd4858f38f367dfe6e883da3c0",
+    "frozen_at": "2026-10-24T23:42:44.706467+00:00",
+    "actual_output": {
+      "title": "Example Domain",
+      "main_readable_text": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes."
+    },
+    "context_limitations": "See frozen automatically_supplied_context; this is an informed owner observation, never a blind or independent customer test."
+  },
+  "phase_b": {
+    "context_read_after_freeze": [
+      {
+        "path": "overview/STATE.md",
+        "source": "declared frozen staged input",
+        "sha256": "ea06f40140e858f118218974e6eba22f7139d3a120bc688ff5224a05c3ccddd8",
+        "scope": "current direction, installed merchant and relevant headings/occurrences"
+      },
+      {
+        "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+        "source": "declared frozen staged input",
+        "sha256": "6eac6f29d0eb94216d6e1be3593b7120e149297eda0f9f031888ac004e4d2dc9",
+        "scope": "current decision, ordered merchant outcome and task-relevant occurrences"
+      },
+      {
+        "path": "overview/research/phase-20261024/merchant-independent-recovery/ROOT-RECEIVING.md",
+        "source": "admitted checkout",
+        "scope": "full file received across bounded reads"
+      },
+      {
+        "path": "overview/research/phase-20261001/public-request-contract-121400/ROOT-REVIEW-121900.md",
+        "source": "admitted base tree",
+        "status": "absent",
+        "proof": "git cat-file -e 053400ef9ea929f77a91f2390724a7df1f6f36d7:overview/research/phase-20261001/public-request-contract-121400/ROOT-REVIEW-121900.md exited 128; exact path not in tree. No substituted later ref/history."
+      }
+    ],
+    "discovery": "Informed follow-up after direct selection; /llms.txt was a conventional model-known documentation locator, not learned from a historical complete merchant request.",
+    "public_path": [
+      {
+        "sequence": 2,
+        "url": "https://samedaydesk.com/llms.txt",
+        "status": 200,
+        "media_type": "text/plain; charset=utf-8",
+        "started_at": "2026-10-24T23:42:49.604827+00:00",
+        "elapsed_seconds": 0.164303
+      },
+      {
+        "sequence": 3,
+        "url": "https://samedaydesk.com/x402",
+        "status": 200,
+        "media_type": "text/html; charset=utf-8",
+        "started_at": "2026-10-24T23:42:53.985221+00:00",
+        "elapsed_seconds": 0.112887
+      },
+      {
+        "sequence": 4,
+        "url": "https://samedaydesk.com/x402/verified",
+        "status": 200,
+        "media_type": "text/html; charset=utf-8",
+        "started_at": "2026-10-24T23:42:57.830609+00:00",
+        "elapsed_seconds": 0.115415
+      },
+      {
+        "sequence": 5,
+        "url": "https://samedaydesk.com/x402/verified.json",
+        "status": 200,
+        "media_type": "application/json; charset=utf-8",
+        "started_at": "2026-10-24T23:43:05.760615+00:00",
+        "elapsed_seconds": 0.175719
+      },
+      {
+        "sequence": 6,
+        "url": "https://samedaydesk.com/skill.md",
+        "status": 200,
+        "media_type": "text/markdown; charset=utf-8",
+        "started_at": "2026-10-24T23:43:11.440067+00:00",
+        "elapsed_seconds": 0.130002
+      },
+      {
+        "sequence": 7,
+        "url": "https://samedaydesk.com/for-agents",
+        "status": 200,
+        "media_type": "text/html; charset=utf-8",
+        "started_at": "2026-10-24T23:43:15.361989+00:00",
+        "elapsed_seconds": 0.111487
+      },
+      {
+        "sequence": 8,
+        "url": "https://samedaydesk.com/discovery/paid-gateway.json",
+        "status": 200,
+        "media_type": "application/json; charset=utf-8",
+        "started_at": "2026-10-24T23:43:18.353870+00:00",
+        "elapsed_seconds": 0.113803
+      },
+      {
+        "sequence": 9,
+        "url": "https://agents.samedaydesk.com/openapi.json",
+        "status": 200,
+        "media_type": "application/json; charset=utf-8",
+        "started_at": "2026-10-24T23:43:24.829746+00:00",
+        "elapsed_seconds": 0.114529
+      },
+      {
+        "sequence": 10,
+        "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+        "status": 402,
+        "media_type": "application/json; charset=utf-8",
+        "started_at": "2026-10-24T23:43:43.081137+00:00",
+        "elapsed_seconds": 0.085386
+      }
+    ],
+    "input_provenance": [
+      {
+        "input": "origin",
+        "value": "https://agents.samedaydesk.com",
+        "learned_from": "llms.txt agent interfaces; confirmed by OpenAPI servers[0].url"
+      },
+      {
+        "input": "method and path",
+        "value": "GET /extract",
+        "learned_from": "verified feed /extract row; for-agents backward-compatible paragraph; OpenAPI paths./extract.get"
+      },
+      {
+        "input": "required query key",
+        "value": "url",
+        "learned_from": "OpenAPI paths./extract.get.parameters entry with required=true,in=query"
+      },
+      {
+        "input": "url value",
+        "value": "https://example.com",
+        "learned_from": "supplied task, not copied from a completed merchant request (schema also happens to use example.com)"
+      },
+      {
+        "input": "optional excerpt budget",
+        "value": "omitted",
+        "learned_from": "OpenAPI textExcerptLimitChars required=false, default 1200; this observed target paragraph is 156 characters"
+      },
+      {
+        "input": "payment credentials",
+        "value": "absent",
+        "learned_from": "task boundary; unsigned challenge stops before signing or payment"
+      }
+    ],
+    "unsigned_request": {
+      "method": "GET",
+      "url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "headers": {
+        "Accept": "*/*",
+        "User-Agent": "Python-urllib/task-led-extraction-discovery"
+      },
+      "body": null,
+      "status": 402,
+      "ordinary_result": "Payment required; no extracted provider output obtained",
+      "resource_url": "https://agents.samedaydesk.com/extract?url=https%3A%2F%2Fexample.com",
+      "challenge_required_input": {
+        "type": "string",
+        "description": "Public http(s) URL to extract.",
+        "required": true,
+        "default": "https://example.com"
+      },
+      "advertised_offer": {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "amount": "5000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "maxTimeoutSeconds": 300
+      },
+      "offer_signature_verification": "not performed; public provider-generated signature retained as response evidence, no local signing",
+      "evidence": "evidence/10-service.body"
+    },
+    "request_contract_finding": {
+      "mismatch": false,
+      "qualification": "Required URL is explicit in OpenAPI and the runtime outputSchema/Bazaar schema; correct unsigned request gets 402 rather than missing-input 400. This does not prove paid delivery, old caller identity/intent or conversion.",
+      "correction": "none",
+      "preserve": "Original missing-input event and all earlier failed/unknown paid outcomes remain untouched."
+    },
+    "separate_availability_finding": {
+      "classification": "public-entry availability projection conflicts with admitted current installed receiving",
+      "public_observation": "llms.txt and skill.md say paused; discovery/paid-gateway.json says state=paused,callable=false with observedAt 2026-10-22T01:50:00.000Z. Current advertised OpenAPI returns 200/version1.23.55 and correct unsigned extract returns 402.",
+      "comparison": "Frozen STATE and merchant ROOT-RECEIVING record actual October24 useful paid HTTP200 and finalized owner-QA transfer; those historical results were read, not rerun. HTTP402 alone would not establish paid callability.",
+      "exact_emitted_producers": [
+        "https://samedaydesk.com/discovery/paid-gateway.json",
+        "https://samedaydesk.com/llms.txt",
+        "https://samedaydesk.com/skill.md"
+      ],
+      "implementation_owner": "SameDayDesk apex machine availability projection; source file/function not independently localized in this public-contract package. No product source audit performed.",
+      "smallest_candidate_correction": "Root/current apex owner should reconcile the existing machine availability projection with exact installed receiving and re-emit its existing dependent machine instructions, preserving unchanged human output. No new request adapter, meter or merchant feature is indicated.",
+      "affected_consumers": [
+        "agents honoring apex pause/callable instructions before connecting",
+        "apex llms/skill readers"
+      ],
+      "status": "unresolved comparison delivered to Root; no installed correction claimed"
+    }
+  },
+  "effort": {
+    "native_started_at": "2026-10-24T23:41:46.467Z",
+    "elapsed_to_record_seconds": 237.032,
+    "public_http_elapsed_sum_seconds": 1.163652,
+    "network_time_definition": "sum of observed individual GET durations; excludes instructions, local parsing and documentation/verification time",
+    "counts": {
+      "documentation": 8,
+      "target": 1,
+      "service": 1
+    },
+    "setup": "existing Python standard library, bounded recorder and static-page parser; no installs/accounts/wallet setup",
+    "tokens_cost_or_conversion": "not measured or estimated"
+  },
+  "runtime": {
+    "native_model": "gpt-6.1-sol",
+    "effort": "high",
+    "evidence": "SPEC/RUN and live own native launch argv -m gpt-6.1-sol -c model_reasoning_effort=\"high\"; events thread.started; own wrapper child PID1212049 is native codex with the same model/effort arguments",
+    "session": "01a1704a-b69c-7f13-8ba1-b5fabc3bffd1",
+    "native_authentication": "native-chatgpt per RUN; no auth material accessed",
+    "model_parents": 1,
+    "model_children_started": 0,
+    "new_model_processes_started_by_task": 0,
+    "total_reserved_kib": 2097152,
+    "reservation": "own existing admission claim; not extra per-child memory",
+    "limits": {
+      "documentation_gets": 8,
+      "bytes_per_response_max": 524288,
+      "target_gets": 1,
+      "unsigned_service_gets_max": 2,
+      "node_heap_max_mib_requested": 512,
+      "uv_threads_requested": 1,
+      "omp_threads_requested": 1
+    },
+    "actual_limits_note": "Research Python tools used OMP_NUM_THREADS=1 and OPENBLAS_NUM_THREADS=1. One existing standard-library Node doc-hygiene tool ran with NODE_OPTIONS=--max-old-space-size=512, UV_THREADPOOL_SIZE=1 and OMP_NUM_THREADS=1. The already-running native Node wrapper has no such environment/CLI flags, so its requested launcher heap/thread caps are not independently evidenced as enforced. No process limits/settings were changed.",
+    "observed_own_wrapper_rss_kib": 54836,
+    "observed_own_supervisor_rss_kib": 13176,
+    "hard_aggregate_cap_or_peak": "not measured; reserved total is not represented as an enforced aggregate cap",
+    "spec_checkpoint_by": "2026-10-25T00:26:54.995Z",
+    "spec_required_until": "2026-10-25T00:41:54.995Z",
+    "limit_events": "none observed by this worker; final supervisor receiving remains controller-owned",
+    "completed_turn_model_metadata": "not available before this turn ends; controller receives final lifecycle independently"
+  },
+  "source": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "base": "053400ef9ea929f77a91f2390724a7df1f6f36d7",
+    "branch": "codex/root6884-task-led-extraction-discovery-20261024",
+    "initial_status": "clean",
+    "owned_subtree": "overview/research/phase-20261024/task-led-extraction-discovery/",
+    "base_tree": "ede5ac50f8ef689bcaec4ea220c5a4074c59129e"
+  },
+  "preserved_failures": [
+    "agent-status --json exited 2: browser-health/session-health ENOENT; no browser phase or health fanout.",
+    "Exact Phase B historical path absent: initial cat/wc failed, rg found no replacement, git cat-file exited 128.",
+    "tools/ops/doc-hygiene --json exited 127: cannot execute: required file not found. Existing cloud stub/interpreter boundary; not repaired outside ownership."
+  ],
+  "evidence_policy": "Only selected request headers and response media/date are retained. Complete target/402/small availability bodies; other documents retain relevant exact excerpts or JSON projections plus original captured digests/lengths. No arbitrary headers, secrets, unrelated page bodies or hidden reasoning retained.",
+  "self_review": {
+    "status": "pass",
+    "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python3 overview/research/phase-20261024/task-led-extraction-discovery/validate.py",
+    "evidence": "CHECKS.json",
+    "scope": "owned findings only; product code/deploy/human assets/STATE unchanged",
+    "global_doc_hygiene": "Original zsh entrypoint failure preserved. Direct existing Node module exits 0 with status review (pre-existing front-door document/link signals); no global repairs or blocker claimed."
+  },
+  "cleanup": {
+    "task_browser_tabs": 0,
+    "background_jobs_started": 0,
+    "new_model_processes": 0,
+    "unrelated_owners_touched": false,
+    "remaining_public_requests": "stopped; one allowed unsigned service GET unused"
+  },
+  "next_consumer": "Root receives direct-sufficient observation and no-mismatch request construction; separately resolves the existing apex availability conflict and missing historical input if consequential. Do not commission another paid QA/source audit or infer old caller intent."
+}

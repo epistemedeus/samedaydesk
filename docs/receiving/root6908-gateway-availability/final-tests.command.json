@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "server/scripts/test-gateway-availability.js",
+    "server/scripts/test-machine-discovery-journey.js",
+    "server/scripts/test-machine-guide-links.js",
+    "server/scripts/test-spa-route-shells.js",
+    "server/scripts/test-spa-fallback.js",
+    "tools/offer-routing/route-job.test.mjs",
+    "tools/offer-routing/review.test.mjs"
+  ],
+  "exit": 0,
+  "startedAt": "2026-10-25T00:05:33Z",
+  "elapsedSeconds": 4.001940965652466,
+  "sampledCommandTreePeakRSSKiB": 322576,
+  "samples": 76,
+  "sampleIntervalMs": 50,
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "UV_THREADPOOL_SIZE": "1",
+    "OMP_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": "1",
+    "NODE_ENV": null,
+    "SAMEDAYDESK_CLIENT_DIST": "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/dist"
+  }
+}
