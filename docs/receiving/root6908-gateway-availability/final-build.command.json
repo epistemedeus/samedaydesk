@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "npm",
+    "--prefix",
+    "client",
+    "run",
+    "build"
+  ],
+  "exit": 0,
+  "startedAt": "2026-10-25T00:05:05Z",
+  "elapsedSeconds": 3.835670232772827,
+  "sampledCommandTreePeakRSSKiB": 433428,
+  "samples": 72,
+  "sampleIntervalMs": 50,
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "UV_THREADPOOL_SIZE": "1",
+    "OMP_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": "1",
+    "NODE_ENV": null,
+    "SAMEDAYDESK_CLIENT_DIST": null
+  }
+}

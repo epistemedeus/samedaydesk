@@ -1,0 +1,57 @@
+{
+  "receiptSha256": "e42b8dfa8a59757e1e6c7997702fbeb4d60b7ac4755edeca96c2934d4207a915",
+  "operating": [
+    {
+      "role": "instructions",
+      "path": "AGENTS.md",
+      "bytes": 33312,
+      "sha256": "c2dc6304ed19e7ec9d3370353408667ebb61355b0c54b8f750fa4390f59c68a3",
+      "blob": "1948fb788970e41ca2524cb7f743e58241ba04c5"
+    },
+    {
+      "role": "state",
+      "path": "overview/STATE.md",
+      "bytes": 22845,
+      "sha256": "ea06f40140e858f118218974e6eba22f7139d3a120bc688ff5224a05c3ccddd8",
+      "blob": "d3dd4ac53e4ea168d6de7729b771bc4033c57268"
+    },
+    {
+      "role": "execution-plan",
+      "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+      "bytes": 83980,
+      "sha256": "6eac6f29d0eb94216d6e1be3593b7120e149297eda0f9f031888ac004e4d2dc9",
+      "blob": "0788f7129d309d1f8183bad32a3d99f307d4c189"
+    },
+    {
+      "role": "assignment",
+      "path": "overview/remote-worker/assignments/ROOT6908-GATEWAY-AVAILABILITY.md",
+      "bytes": 5086,
+      "sha256": "1b784153776978627ebfe682a4282adf7dee09e43f81b23f51b79ac7e7962aff",
+      "blob": "de11f71d8c653adaf9e9399e506c6fb4005ea5f7"
+    }
+  ],
+  "received": [
+    {
+      "localPath": "docs/receiving/root6908-gateway-availability/PILOT-ROOT-RECEIVING.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7",
+      "remotePath": "overview/research/phase-20261024/gateway-availability/ROOT-RECEIVING.md",
+      "bytes": 3620,
+      "sha256": "0da2a5b17a9ff30cd1509f766e79f853d126678cc0ea48594305fdf0e5e0043a",
+      "blob": "36f1156c6286bad1514610570e0f790661a6af00",
+      "transport": "GH_CONFIG_DIR=/home/ubuntu/.config/pilot-gh gh api repos/epistemedeus/pilot/contents/PATH?ref=0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7 --jq .content | base64 -d",
+      "exit": 0
+    },
+    {
+      "localPath": "docs/receiving/root6908-gateway-availability/RECEIVED-STATE.json",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7",
+      "remotePath": "overview/research/phase-20261024/gateway-availability/RECEIVED-STATE.json",
+      "bytes": 489,
+      "sha256": "87f4001f51577c96c7c620c68476c3a44c94f7807e1c60742082fa8d7d0395e8",
+      "blob": "a0c7d1d19d972369eb266e514b7c2668176ff448",
+      "transport": "GH_CONFIG_DIR=/home/ubuntu/.config/pilot-gh gh api repos/epistemedeus/pilot/contents/PATH?ref=0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7 --jq .content | base64 -d",
+      "exit": 0
+    }
+  ]
+}

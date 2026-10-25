@@ -70,7 +70,7 @@ test("bounded_html_observation refuses the paused paid dependency even when paym
     type: "bounded_html_observation",
     jobId: "allow-pay",
     constraints: [],
-  });
+  }, { gatewayState: { state: "paused", observedAt: "2026-10-22T01:50:00.000Z" } });
   assert.equal(r.ok, false);
   assert.equal(r.selected, null);
   assert.ok(r.rejected.some((row) => row.reason === "paid_gateway_unavailable"));

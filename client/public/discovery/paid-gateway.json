@@ -1,10 +1,10 @@
 {
   "origin": "https://agents.samedaydesk.com",
-  "state": "paused",
-  "callable": false,
-  "observedAt": "2026-10-22T01:50:00.000Z",
-  "summary": "Paid gateway temporarily paused. Do not submit paid remote jobs.",
-  "nextAction": "https://samedaydesk.com/discovery/useful-jobs.json",
+  "state": "available",
+  "callable": true,
+  "observedAt": "2026-10-24T23:56:22.400Z",
+  "summary": "Paid gateway available. Read its current inventory and terms before a remote job.",
+  "nextAction": "https://agents.samedaydesk.com/.well-known/x402",
   "alternatives": {
     "freeApexMcp": "https://samedaydesk.com/mcp",
     "offlinePackages": "https://samedaydesk.com/discovery/useful-jobs.json",

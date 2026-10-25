@@ -1,0 +1,43 @@
+{
+  "descriptor": [
+    "/callable",
+    "/nextAction",
+    "/observedAt",
+    "/state",
+    "/summary"
+  ],
+  "openapi": [
+    "/info/description",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/service-desc/0/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/service-desc/1/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/service-desc/2/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/service-doc/0/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/service-meta/0/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/status/0/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/status/1/title",
+    "/paths//.well-known/api-catalog/get/responses/200/content/application/linkset+json/example/linkset/1/status/2/title",
+    "/x-paid-gateway/callable",
+    "/x-paid-gateway/nextAction",
+    "/x-paid-gateway/observedAt",
+    "/x-paid-gateway/state",
+    "/x-paid-gateway/summary"
+  ],
+  "card": [
+    "/description",
+    "/x-paid-gateway/callable",
+    "/x-paid-gateway/nextAction",
+    "/x-paid-gateway/observedAt",
+    "/x-paid-gateway/state",
+    "/x-paid-gateway/summary"
+  ],
+  "catalog": [
+    "/linkset/1/service-desc/0/title",
+    "/linkset/1/service-desc/1/title",
+    "/linkset/1/service-desc/2/title",
+    "/linkset/1/service-doc/0/title",
+    "/linkset/1/service-meta/0/title",
+    "/linkset/1/status/0/title",
+    "/linkset/1/status/1/title",
+    "/linkset/1/status/2/title"
+  ]
+}

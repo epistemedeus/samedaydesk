@@ -1,0 +1,107 @@
+TAP version 13
+# Subtest: emitted guide and descriptor match the validated received dependency state
+ok 1 - emitted guide and descriptor match the validated received dependency state
+  ---
+  duration_ms: 2.464736
+  type: 'test'
+  ...
+# Subtest: paused projection retains canonical identity and useful free/offline/entitlement paths
+ok 2 - paused projection retains canonical identity and useful free/offline/entitlement paths
+  ---
+  duration_ms: 0.247859
+  type: 'test'
+  ...
+# Subtest: unknown, malformed and unreceived available state cannot become callable
+ok 3 - unknown, malformed and unreceived available state cannot become callable
+  ---
+  duration_ms: 0.293506
+  type: 'test'
+  ...
+# Subtest: normal received availability emits inventory and paid next action
+ok 4 - normal received availability emits inventory and paid next action
+  ---
+  duration_ms: 0.14238
+  type: 'test'
+  ...
+# Subtest: task selection shares received dependency state while offline jobs remain useful
+ok 5 - task selection shares received dependency state while offline jobs remain useful
+  ---
+  duration_ms: 0.979362
+  type: 'test'
+  ...
+# Subtest: restoration needs new configured runtime and authority receiving after pause
+ok 6 - restoration needs new configured runtime and authority receiving after pause
+  ---
+  duration_ms: 0.470079
+  type: 'test'
+  ...
+# Subtest: projection replaces its owned block deterministically and preserves other guide bytes
+ok 7 - projection replaces its owned block deterministically and preserves other guide bytes
+  ---
+  duration_ms: 0.315315
+  type: 'test'
+  ...
+# Subtest: the real update command emits restored, paused and unknown machine files in an isolated source fixture
+ok 8 - the real update command emits restored, paused and unknown machine files in an isolated source fixture
+  ---
+  duration_ms: 184.99285
+  type: 'test'
+  ...
+# Subtest: received transitions reach every apex machine consumer without a restart
+    # Subtest: received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router
+    ok 1 - received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router
+      ---
+      duration_ms: 63.904043
+      type: 'test'
+      ...
+    # Subtest: new pause reaches all consumers
+    ok 2 - new pause reaches all consumers
+      ---
+      duration_ms: 44.100106
+      type: 'test'
+      ...
+    # Subtest: stale restoration refuses without changing any consumer
+    ok 3 - stale restoration refuses without changing any consumer
+      ---
+      duration_ms: 40.107914
+      type: 'test'
+      ...
+    # Subtest: health 200 and challenge 402 cannot replace any of the five evidence predicates
+    ok 4 - health 200 and challenge 402 cannot replace any of the five evidence predicates
+      ---
+      duration_ms: 199.23638
+      type: 'test'
+      ...
+    # Subtest: fresh full receiving restores every consumer
+    ok 5 - fresh full receiving restores every consumer
+      ---
+      duration_ms: 38.487975
+      type: 'test'
+      ...
+    # Subtest: missing and invalid config fail closed in dynamic consumers then recover
+    ok 6 - missing and invalid config fail closed in dynamic consumers then recover
+      ---
+      duration_ms: 37.413572
+      type: 'test'
+      ...
+    # Subtest: explicit unknown reprojects both static and dynamic consumers
+    ok 7 - explicit unknown reprojects both static and dynamic consumers
+      ---
+      duration_ms: 37.723047
+      type: 'test'
+      ...
+    1..7
+ok 9 - received transitions reach every apex machine consumer without a restart
+  ---
+  duration_ms: 584.961836
+  type: 'test'
+  ...
+1..9
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 891.029141

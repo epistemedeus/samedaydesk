@@ -1,0 +1,330 @@
+[
+  {
+    "command": "cmp package-lock.json /home/ubuntu/ae14-work/root5240-sds-machine-support-routing-20261024/package-lock.json",
+    "exit": 0
+  },
+  {
+    "command": "cmp client/package-lock.json /home/ubuntu/ae14-work/root5240-sds-machine-support-routing-20261024/client/package-lock.json",
+    "exit": 0
+  },
+  {
+    "command": "cp -a --reflink=auto /home/ubuntu/ae14-work/root5240-sds-machine-support-routing-20261024/node_modules .",
+    "exit": 0
+  },
+  {
+    "command": "cp -a --reflink=auto /home/ubuntu/ae14-work/root5240-sds-machine-support-routing-20261024/client/node_modules client/",
+    "exit": 0
+  },
+  {
+    "command": "npm --prefix client run build",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0,
+    "log": "baseline-build.txt"
+  },
+  {
+    "command": "NODE_ENV=production node docs/receiving/root6908-gateway-availability/capture.mjs before /tmp/root6908-emitted-before",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0,
+    "log": "baseline-capture.txt"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "server/scripts/test-gateway-availability.js",
+      "server/scripts/test-machine-discovery-journey.js",
+      "server/scripts/test-machine-guide-links.js",
+      "server/scripts/test-spa-route-shells.js",
+      "server/scripts/test-spa-fallback.js",
+      "tools/offer-routing/route-job.test.mjs",
+      "tools/offer-routing/review.test.mjs"
+    ],
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "SAMEDAYDESK_CLIENT_DIST": "$PWD/client/dist"
+    },
+    "exit": 0,
+    "log": "baseline-tests.tap",
+    "reportedTests": 41,
+    "fail": 0,
+    "skipped": 0,
+    "exception": "Original baseline gateway fixture explicitly spawned one child with 1280MiB heap cap; corrected to 768MiB in source."
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "server/scripts/test-gateway-availability.js"
+    ],
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0,
+    "log": "first-focused.tap",
+    "reportedTests": 16,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "command": "node server/scripts/project-gateway-availability.js --receive docs/receiving/root6908-gateway-availability/RECEIVED-STATE.bound.json",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0,
+    "log": "receive.txt"
+  },
+  {
+    "command": "/usr/bin/time -v npm --prefix client run build",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1"
+    },
+    "exit": 127,
+    "log": "first-final-build-attempt.txt",
+    "meaning": "Missing optional executable; npm was not invoked."
+  },
+  {
+    "argv": [
+      "npm",
+      "--prefix",
+      "client",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:05:05Z",
+    "elapsedSeconds": 3.835670232772827,
+    "sampledCommandTreePeakRSSKiB": 433428,
+    "samples": 72,
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": null,
+      "SAMEDAYDESK_CLIENT_DIST": null
+    },
+    "receipt": "final-build.command.json",
+    "log": "final-build.txt"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "server/scripts/test-gateway-availability.js",
+      "server/scripts/test-machine-discovery-journey.js",
+      "server/scripts/test-machine-guide-links.js",
+      "server/scripts/test-spa-route-shells.js",
+      "server/scripts/test-spa-fallback.js",
+      "tools/offer-routing/route-job.test.mjs",
+      "tools/offer-routing/review.test.mjs"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:05:33Z",
+    "elapsedSeconds": 4.001940965652466,
+    "sampledCommandTreePeakRSSKiB": 322576,
+    "samples": 76,
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": null,
+      "SAMEDAYDESK_CLIENT_DIST": "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/dist"
+    },
+    "receipt": "final-tests.command.json",
+    "log": "final-tests.txt"
+  },
+  {
+    "argv": [
+      "node",
+      "docs/receiving/root6908-gateway-availability/capture.mjs",
+      "after",
+      "/tmp/root6908-emitted-after"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:05:38Z",
+    "elapsedSeconds": 0.5815649032592773,
+    "sampledCommandTreePeakRSSKiB": 166944,
+    "samples": 11,
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": "production",
+      "SAMEDAYDESK_CLIENT_DIST": null
+    },
+    "receipt": "final-capture.command.json",
+    "log": "final-capture.txt"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "server/scripts/test-gateway-availability.js",
+      "server/scripts/test-machine-discovery-journey.js",
+      "server/scripts/test-machine-guide-links.js",
+      "server/scripts/test-spa-route-shells.js",
+      "server/scripts/test-spa-fallback.js",
+      "tools/offer-routing/route-job.test.mjs",
+      "tools/offer-routing/review.test.mjs"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:07:06Z",
+    "elapsedSeconds": 4.316868305206299,
+    "sampledCommandTreePeakRSSKiB": 316456,
+    "samples": 81,
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": null,
+      "SAMEDAYDESK_CLIENT_DIST": "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/dist"
+    },
+    "receipt": "committed-source-tests.command.json",
+    "log": "committed-source-tests.txt"
+  },
+  {
+    "argv": [
+      "npm",
+      "--prefix",
+      "client",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:07:45Z",
+    "elapsedSeconds": 4.013410568237305,
+    "sampledCommandTreePeakRSSKiB": 431460,
+    "samples": 75,
+    "sampledOwnedAggregatePeakRSSKiB": 746632,
+    "nativeResourceRootPid": 1215953,
+    "nativeResourceRootStartTicks": "21786463",
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": null,
+      "SAMEDAYDESK_CLIENT_DIST": null
+    },
+    "receipt": "committed-source-build.command.json",
+    "log": "committed-source-build.txt"
+  },
+  {
+    "argv": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "server/scripts/test-gateway-availability.js",
+      "server/scripts/test-machine-discovery-journey.js",
+      "server/scripts/test-machine-guide-links.js",
+      "server/scripts/test-spa-route-shells.js",
+      "server/scripts/test-spa-fallback.js",
+      "tools/offer-routing/route-job.test.mjs",
+      "tools/offer-routing/review.test.mjs"
+    ],
+    "exit": 0,
+    "startedAt": "2026-10-25T00:08:24Z",
+    "elapsedSeconds": 4.0069403648376465,
+    "sampledCommandTreePeakRSSKiB": 320088,
+    "samples": 76,
+    "sampledOwnedAggregatePeakRSSKiB": 635340,
+    "nativeResourceRootPid": 1215953,
+    "nativeResourceRootStartTicks": "21786463",
+    "sampleIntervalMs": 50,
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "RAYON_NUM_THREADS": "1",
+      "NODE_ENV": null,
+      "SAMEDAYDESK_CLIENT_DIST": "/home/ubuntu/ae14-work/root6908-gateway-availability-20261024/client/dist"
+    },
+    "receipt": "resource-qualified-tests.command.json",
+    "log": "resource-qualified-tests.txt"
+  },
+  {
+    "command": "python3 docs/receiving/root6908-gateway-availability/compare.py /tmp/root6908-emitted-before /tmp/root6908-emitted-after",
+    "exit": 0,
+    "log": "comparison.txt"
+  },
+  {
+    "command": "python3 docs/receiving/root6908-gateway-availability/compare.py /tmp/root6908-emitted-before client/dist",
+    "exit": 0,
+    "log": "committed-source-comparison.txt"
+  },
+  {
+    "command": "node --check docs/receiving/root6908-gateway-availability/capture.mjs",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0
+  },
+  {
+    "command": "node --check docs/receiving/root6908-gateway-availability/hosted-readback.mjs",
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "exit": 0
+  },
+  {
+    "command": "git diff --check",
+    "exit": 0
+  },
+  {
+    "command": "git diff --exit-code HEAD -- client server tools",
+    "exit": 0
+  },
+  {
+    "command": "git diff --exit-code d310f4cf37fb190d850ac0cea71ec34787972162 HEAD -- package.json package-lock.json client/package.json client/package-lock.json server/lib/paid-gateway-availability.js server/scripts/project-gateway-availability.js",
+    "exit": 0
+  },
+  {
+    "command": "Python archive readback: all704 tar members compared to original raw snapshots",
+    "exit": 0,
+    "receipt": "RAW-EXPORT.json"
+  },
+  {
+    "command": "rm-style cleanup compound shell",
+    "exit": null,
+    "status": "rejected_before_execution",
+    "reason": "Automatic review rejects rm -f style commands; use safer approach."
+  },
+  {
+    "command": "Python cleanup with explicit fixed task-owned paths, directory/parent/symlink checks",
+    "exit": 0,
+    "receipt": "CLEANUP.json"
+  }
+]

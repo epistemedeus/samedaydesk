@@ -1,0 +1,15 @@
+{
+  "state":"available",
+  "observedAt":"2026-10-24T23:56:22.400Z",
+  "received":{
+    "sourceCommit":"e291d41c1f1763e638e2812568290ed176a31c49",
+    "deploymentId":"20aeb195-f95d-4e20-85f5-9edb4e181bd7",
+    "receipt":"ROOT6904;see sibling ROOT-RECEIVING.md and its exact published Git source",
+    "observedAt":"2026-10-24T23:56:22.400Z",
+    "configuredRuntime":true,
+    "freshAuthority":true,
+    "oldAuthorityRefused":true,
+    "retainedState":true,
+    "sharedConsumers":true
+  }
+}
