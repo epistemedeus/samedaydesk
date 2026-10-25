@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import express from "express";
 import test from "node:test";
 import { gatewayAvailability, gatewayGuideBlock, validateGatewayState } from "../lib/paid-gateway-availability.js";
 import { projectGatewayFiles, receiveGatewayState } from "./project-gateway-availability.js";
@@ -18,15 +20,13 @@ const restored = {
   },
 };
 
-// Run against the untouched baseline dist too: it must expose the supplied defect.
 const dist = resolve(process.env.GATEWAY_TEST_DIST || "client/dist");
-test("emitted stopped-gateway guide prevents the known-dead paid journey", () => {
+test("emitted guide and descriptor match the validated received dependency state", () => {
+  const expected = gatewayAvailability();
   const guide = readFileSync(resolve(dist, "llms.txt"), "utf8");
-  assert.match(guide, /Paid gateway temporarily paused/);
-  assert.doesNotMatch(guide, /Live paid x402 inventory|Backward-compatible.*remains available|Practical paid job:/);
+  assert.ok(guide.includes(gatewayGuideBlock()));
   const descriptor = JSON.parse(readFileSync(resolve(dist, "discovery/paid-gateway.json")));
-  assert.equal(descriptor.state, "paused");
-  assert.equal(descriptor.callable, false);
+  assert.deepEqual(descriptor, expected);
   assert.ok(guide.includes(descriptor.nextAction));
 });
 test("paused projection retains canonical identity and useful free/offline/entitlement paths", () => {
@@ -89,7 +89,7 @@ test("the real update command emits restored, paused and unknown machine files i
   const candidatePath = resolve(root, "received.json");
   const invoke = (candidate) => {
     writeFileSync(candidatePath, JSON.stringify(candidate));
-    return spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js"), "--receive", candidatePath], { encoding: "utf8", env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=1280" } });
+    return spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js"), "--receive", candidatePath], { encoding: "utf8", env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=768" } });
   };
   const before = readFileSync(resolve(root, "client/public/llms.txt"), "utf8");
   assert.notEqual(invoke({ ...paused, state: "available" }).status, 0);
@@ -102,7 +102,97 @@ test("the real update command emits restored, paused and unknown machine files i
   assert.equal(JSON.parse(readFileSync(descriptorPath)).callable, false);
   assert.notEqual(invoke(restored).status, 0, "old restoration evidence must refuse after a new pause");
   assert.equal(JSON.parse(readFileSync(descriptorPath)).state, "paused");
+  const fresh = { ...restored, observedAt: "2026-10-24T01:30:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T01:30:00.000Z" } };
+  assert.equal(invoke(fresh).status, 0, "new receiving recovers after pause");
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).callable, true);
   assert.equal(invoke({ state: "unknown", observedAt: "2026-10-24T02:00:00.000Z" }).status, 0);
   assert.equal(JSON.parse(readFileSync(descriptorPath)).state, "unknown");
   assert.doesNotMatch(readFileSync(resolve(root, "client/public/llms.txt"), "utf8"), /Practical paid job:/);
+});
+
+test("received transitions reach every apex machine consumer without a restart", async (t) => {
+  const root = mkdtempSync(resolve(tmpdir(), "gateway-consumers-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const path of ["server/lib", "server/routes", "server/config"]) cpSync(resolve(path), resolve(root, path), { recursive: true });
+  for (const path of ["vendor", "tools", "data", "node_modules", "server/vendor"]) symlinkSync(resolve(path), resolve(root, path), "dir");
+  mkdirSync(resolve(root, "server/scripts"), { recursive: true });
+  mkdirSync(resolve(root, "client/public/discovery"), { recursive: true });
+  cpSync(resolve("server/scripts/project-gateway-availability.js"), resolve(root, "server/scripts/project-gateway-availability.js"));
+  cpSync(resolve("client/public/llms.txt"), resolve(root, "client/public/llms.txt"));
+  writeFileSync(resolve(root, "package.json"), '{"type":"module"}');
+  const config = resolve(root, "server/config/paid-gateway-availability.json");
+  writeFileSync(config, JSON.stringify(paused));
+  const { mountApexDeclarations } = await import(pathToFileURL(resolve(root, "server/lib/apex-declarations.js")));
+  const { apexAgentCard } = await import(pathToFileURL(resolve(root, "server/lib/apex-agent-card.js")));
+  const app = express();
+  app.get("/.well-known/agent-card.json", (_req, res) => res.json(apexAgentCard()));
+  mountApexDeclarations(app);
+  app.use(express.static(resolve(root, "client/public")));
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise(resolve => server.once("listening", resolve));
+  t.after(async () => { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); });
+  const invoke = candidate => {
+    const input = resolve(root, "received.json");
+    writeFileSync(input, JSON.stringify(candidate));
+    return spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js"), "--receive", input], { encoding: "utf8", env: process.env });
+  };
+  const qualify = async state => {
+    const expected = gatewayAvailability(state);
+    const get = async path => {
+      const response = await fetch(`http://127.0.0.1:${server.address().port}${path}`);
+      assert.equal(response.status, 200, path);
+      return response.text();
+    };
+    assert.deepEqual(JSON.parse(await get("/discovery/paid-gateway.json")), expected);
+    const openapi = JSON.parse(await get("/openapi.json"));
+    const card = JSON.parse(await get("/.well-known/agent-card.json"));
+    assert.equal(openapi["x-paid-gateway"].state, expected.state);
+    assert.equal(openapi["x-paid-gateway"].callable, expected.callable);
+    assert.equal(openapi["x-paid-gateway"].observedAt, expected.observedAt);
+    assert.deepEqual(card["x-paid-gateway"], expected);
+    const skill = await get("/skill.md");
+    assert.ok(skill.includes(expected.summary));
+    assert.ok(skill.includes(expected.nextAction));
+    assert.ok((await get("/.well-known/api-catalog")).includes(`Paid gateway MCP (${expected.state})`));
+    assert.ok((await get("/llms.txt")).includes(gatewayGuideBlock(state)));
+    const route = routeJob({ type: "bounded_html_observation" }, { gatewayState: state });
+    assert.equal(route.ok, expected.callable);
+    assert.equal(route.executionAuthorized, false);
+  };
+  await t.test("received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router", async () => {
+    assert.equal(invoke(restored).status, 0); await qualify(restored);
+  });
+  const laterPause = { state: "paused", observedAt: "2026-10-24T01:00:00.000Z" };
+  await t.test("new pause reaches all consumers", async () => {
+    assert.equal(invoke(laterPause).status, 0); await qualify(laterPause);
+  });
+  await t.test("stale restoration refuses without changing any consumer", async () => {
+    assert.notEqual(invoke(restored).status, 0); await qualify(laterPause);
+  });
+  await t.test("health 200 and challenge 402 cannot replace any of the five evidence predicates", async () => {
+    for (const field of ["configuredRuntime", "freshAuthority", "oldAuthorityRefused", "retainedState", "sharedConsumers"]) {
+      const candidate = { ...restored, observedAt: "2026-10-24T02:00:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T02:00:00.000Z", [field]: false }, health: 200, challenge: 402 };
+      assert.notEqual(invoke(candidate).status, 0, field);
+      await qualify(laterPause);
+    }
+  });
+  const fresh = { ...restored, observedAt: "2026-10-24T03:00:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T03:00:00.000Z" } };
+  await t.test("fresh full receiving restores every consumer", async () => {
+    assert.equal(invoke(fresh).status, 0); await qualify(fresh);
+  });
+  await t.test("missing and invalid config fail closed in dynamic consumers then recover", async () => {
+    for (const bytes of [null, '{invalid', JSON.stringify({ ...fresh, received: undefined })]) {
+      if (bytes === null) rmSync(config); else writeFileSync(config, bytes);
+      const project = () => spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js")], { encoding: "utf8", env: process.env });
+      assert.equal(project().status, 0, "normal build fails closed while projecting invalid input");
+      await qualify(null);
+      writeFileSync(config, JSON.stringify(fresh));
+      assert.equal(project().status, 0);
+      await qualify(fresh);
+    }
+  });
+  const unknown = { state: "unknown", observedAt: "2026-10-24T04:00:00.000Z" };
+  await t.test("explicit unknown reprojects both static and dynamic consumers", async () => {
+    assert.equal(invoke(unknown).status, 0); await qualify(unknown);
+  });
 });

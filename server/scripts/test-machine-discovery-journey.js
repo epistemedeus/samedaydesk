@@ -15,6 +15,7 @@ import { publicDeploymentBody } from "../lib/public-readiness-mount.js";
 import { withNetworkInfo } from "./helpers/taskmarket-fixtures.js";
 import { NOT_FOUND_SHELL, ROUTE_SHELL_DIR, shellFileName } from "../lib/spa-route-shells.js";
 import { pulseSnapshot } from "../lib/pulse.js";
+import { gatewayAvailability } from "../lib/paid-gateway-availability.js";
 import { createSdsApp } from "../app.js";
 import {
   assertMachineDeclarationContract,
@@ -165,13 +166,15 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   const catalog = catalogResponse.json;
   const gateway = await request(port, { path: "/discovery/paid-gateway.json" });
   assert.equal(gateway.status, 200);
-  assert.equal(gateway.json.state, "paused");
+  const expectedGateway = gatewayAvailability();
+  assert.deepEqual(gateway.json, expectedGateway);
   assert.equal(gateway.headers["cache-control"], "no-cache");
   assert.equal(gateway.json.alternatives.freeApexMcp, "https://samedaydesk.com/mcp");
-  assert.equal(openapi["x-paid-gateway"].state, "paused");
-  assert.equal(openapi["x-paid-gateway"].callable, false);
-  assert.match(skillResponse.body, /Paid gateway temporarily paused/);
-  assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes("Paid gateway MCP (paused)")));
+  assert.equal(openapi["x-paid-gateway"].state, expectedGateway.state);
+  assert.equal(openapi["x-paid-gateway"].callable, expectedGateway.callable);
+  assert.ok(skillResponse.body.includes(expectedGateway.summary));
+  assert.ok(skillResponse.body.includes(expectedGateway.nextAction));
+  assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes(`Paid gateway MCP (${expectedGateway.state})`)));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -242,7 +245,7 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
   assert.equal(card.status, 200);
-  assert.equal(card.json["x-paid-gateway"].state, "paused");
+  assert.deepEqual(card.json["x-paid-gateway"], expectedGateway);
   assert.ok(card.json.skills.some((skill) => skill.id === "check_ai_readiness"));
   assert.equal(card.status, 200);
   assert.equal(card.json.skills.some((skill) => skill.id === "check_ai_readiness"), true);

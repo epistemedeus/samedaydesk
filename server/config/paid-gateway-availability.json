@@ -1,4 +1,15 @@
 {
-  "state": "paused",
-  "observedAt": "2026-10-22T01:50:00.000Z"
+  "state": "available",
+  "observedAt": "2026-10-24T23:56:22.400Z",
+  "received": {
+    "sourceCommit": "e291d41c1f1763e638e2812568290ed176a31c49",
+    "deploymentId": "20aeb195-f95d-4e20-85f5-9edb4e181bd7",
+    "receipt": "ROOT6904; https://github.com/epistemedeus/pilot/blob/0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7/overview/research/phase-20261024/gateway-availability/ROOT-RECEIVING.md; state: https://github.com/epistemedeus/pilot/blob/0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7/overview/research/phase-20261024/gateway-availability/RECEIVED-STATE.json",
+    "observedAt": "2026-10-24T23:56:22.400Z",
+    "configuredRuntime": true,
+    "freshAuthority": true,
+    "oldAuthorityRefused": true,
+    "retainedState": true,
+    "sharedConsumers": true
+  }
 }
