@@ -11,9 +11,9 @@
  *   ROOT10940_ACQUIRED_CLIENT
  *   ROOT10940_ACQUISITION_DESCRIPTOR
  *
- * runtime-startup.yml still invokes the test directly and cannot be updated
- * with the current OAuth token (no workflow scope). GitHub receiving stays
- * open until that workflow step calls this script with the same three paths.
+ * runtime-startup.yml decodes ROOT10940_CI_PACKET and then calls this script.
+ * An absent packet is refused by that decoder. This script still refuses an
+ * empty path instead of inventing one.
  */
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';

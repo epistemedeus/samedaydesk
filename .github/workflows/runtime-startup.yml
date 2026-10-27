@@ -42,7 +42,13 @@ jobs:
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
-      - run: AE14_PG_BIN="$(pg_config --bindir)" node --test --test-concurrency=1 server/scripts/test-root10940-machine-participation.mjs
+      # ROOT10940_CI_PACKET is the nonsecret repo variable
+      # pilot.participation.ci-packet.v1. An absent variable is an explicit
+      # missing-input refusal. This step does not synthesize the three files.
+      - name: Receive the independent acquisition packet
+        env:
+          ROOT10940_CI_PACKET: ${{ vars.ROOT10940_CI_PACKET }}
+        run: AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/decode-root10940-ci-packet.mjs
       - run: node --test server/scripts/test-machine-guide-links.js
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task
