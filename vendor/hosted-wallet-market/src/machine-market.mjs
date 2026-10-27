@@ -260,7 +260,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
      JOIN "${profile.earnedSchema}".ae14_market_quotes q ON q.allocation_id=f.allocation_id AND q.tenant_id=f.tenant_id
      WHERE q.tenant_id=t.tenant_id AND q.task_id=t.id) AS funding_started
      FROM "${profile.earnedSchema}".ae14_market_tasks t WHERE tenant_id=$1 AND id>$2
-     AND (voluntary IS NULL OR NOT (voluntary ? 'withdrawn')) ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
+     AND voluntary IS NULL ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
    const items=rows.map(r=>({taskId:r.id,title:r.spec.title,summary:r.spec.summary,criteria:r.spec.criteria,payableKinds:r.spec.payableKinds,assigned:Boolean(r.selected_quote),fundingState:r.funding_started?'funding_started':'unfunded_interest'}));
    for(const r of rows)await store.measure(profile.tenant,r.id,'discovery',randomBytes(16).toString('hex'),'anonymous',
     {verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null});

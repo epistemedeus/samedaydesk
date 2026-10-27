@@ -92,7 +92,7 @@ export class RequesterMarket {
   }
   async list(context) {
     const a = await this.actor(context);
-    const rows = (await this.store.pool.query(`SELECT id,spec,current_quote,selected_quote FROM ${this.store.table('tasks')} WHERE tenant_id=$1 AND (voluntary IS NULL OR NOT (voluntary ? 'withdrawn')) ORDER BY id`,[a.tenantId])).rows;
+    const rows = (await this.store.pool.query(`SELECT id,spec,current_quote,selected_quote FROM ${this.store.table('tasks')} WHERE tenant_id=$1 AND voluntary IS NULL ORDER BY id`,[a.tenantId])).rows;
     return rows.map(row=>({taskId:row.id,title:row.spec.title,summary:row.spec.summary,criteria:row.spec.criteria,payableKinds:row.spec.payableKinds,assigned:Boolean(row.selected_quote)}));
   }
   async interest(context,input,operationId) {
