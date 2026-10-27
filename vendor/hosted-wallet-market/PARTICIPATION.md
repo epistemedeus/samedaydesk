@@ -82,8 +82,8 @@ checks the evidence digest and exact requester decision before saving. Reuse
 the received data in its later task, then optionally record `useVoluntary`.
 That record is an authenticated self-report; independent usefulness stays unknown.
 
-Withdrawal stops subsequent server exports, clears consumer grants and removes
-the listing from discovery. It preserves history and cannot revoke already
+Withdrawal stops subsequent server exports, clears voluntary consumer grants and removes
+the listing from discovery. It does not delete retained or paid consumer grants. It preserves history and cannot revoke already
 received CC0 bytes. Private task inspection then omits evidence. No submitted
 artifact code is executed by this feature.
 
