@@ -1,21 +1,21 @@
-// One source/host closure check for the life of an admission. Public reads use the
-// cached result. A later recheck runs off the request path and can fail the cache closed.
+// One immutable source/host admission for the life of this cache. Public reads use
+// current() and do not rescan. There is no cadence, timer, or background rehash.
+// The owner invalidates explicitly; recheck() is the only re-admission.
 const refuse = (code = 'machine_profile_refused', http = 409) => {
   throw Object.assign(new Error(code), {code, codeName: code, http});
 };
 
-export function createClosureAdmission({expectedSource, expectedHost, verify, now = Date.now, cadenceMs = 0, schedule = setTimeout} = {}) {
+export function createClosureAdmission({expectedSource, expectedHost, verify, now = Date.now} = {}) {
   if (typeof verify !== 'function' || typeof expectedSource !== 'string' || typeof expectedHost !== 'string') refuse();
   let state = {status: 'pending'};
   let flight = null;
-  let timer = null;
   let scans = 0;
 
   function publish(result) {
     const sourceSha256 = result?.sourceSha256;
     const hostSha256 = result?.hostSha256;
     if (sourceSha256 !== expectedSource || hostSha256 !== expectedHost) {
-      state = {status: 'failed', at: now()};
+      state = {status: 'failed', at: now(), reason: 'source_mismatch'};
       refuse();
     }
     state = {status: 'admitted', at: now(), sourceSha256, hostSha256};
@@ -29,7 +29,7 @@ export function createClosureAdmission({expectedSource, expectedHost, verify, no
       try {
         return publish(await verify());
       } catch (error) {
-        if (state.status !== 'failed') state = {status: 'failed', at: now()};
+        if (state.status !== 'failed') state = {status: 'failed', at: now(), reason: 'verify_failed'};
         if (error?.codeName) throw error;
         refuse();
       } finally {
@@ -44,24 +44,12 @@ export function createClosureAdmission({expectedSource, expectedHost, verify, no
     return {sourceSha256: state.sourceSha256, hostSha256: state.hostSha256, at: state.at};
   }
 
-  function startCadence() {
-    if (!cadenceMs || timer) return;
-    const tick = () => {
-      timer = schedule(() => {
-        timer = null;
-        return run().then(admitted => { if (admitted && state.status === 'admitted') tick(); }, () => {});
-      }, cadenceMs);
-      if (typeof timer?.unref === 'function') timer.unref();
-    };
-    tick();
+  // Explicit fail-closed. Does not scan and does not schedule a later scan.
+  function invalidate() {
+    state = {status: 'failed', at: now(), reason: 'invalidated'};
   }
 
-  function stop() {
-    if (timer) clearTimeout(timer);
-    timer = null;
-  }
-
-  return {admit: run, recheck: run, current, startCadence, stop, scans: () => scans};
+  return {admit: run, recheck: run, current, invalidate, scans: () => scans};
 }
 
 // Authentication and CSRF close before any closure read. current() does not rescan.

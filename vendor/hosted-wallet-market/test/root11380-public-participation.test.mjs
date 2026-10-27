@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {voluntaryMarket} from '../src/voluntary-market.mjs';
 import {createClosureAdmission, authorizeMachineMutation} from '../src/machine-closure-admission.mjs';
 import {publicDiscoveryEventId, recordPublicDiscovery} from '../src/machine-public-read.mjs';
@@ -163,7 +167,7 @@ function harness() {
   async function accept(taskId) {
     let state = await offer(taskId);
     state = await voluntary.invoke(as('contributor-1'), 'assentVoluntary', {taskId, termsDigest: state.termsDigest,
-      expectedRevision: state.revision, ...binding, authorizedToShare: true}, operationId());
+      expectedRevision: state.revision, ...binding, authorizedToShare: true, spec}, operationId());
     state = await voluntary.invoke(as('contributor-1'), 'deliverVoluntary', {taskId, termsDigest: state.termsDigest,
       expectedRevision: state.revision, ...binding, evidence: usefulEvidence()}, operationId());
     state = await voluntary.invoke(as('requester-1'), 'reviewVoluntary', {taskId, termsDigest: state.termsDigest,
@@ -179,7 +183,7 @@ function harness() {
       return {ok: false, code: codeOf(error)};
     }
   }
-  return {store, market, voluntary, seed, offer, accept, exported, as, operationId, tenantId, binding};
+  return {store, market, voluntary, seed, offer, accept, exported, as, operationId, tenantId, binding, spec, capability};
 }
 
 test('legacy pre-grant before offer does not authorize a later voluntary export', async () => {
@@ -225,7 +229,7 @@ test('no ordering of a concurrent legacy grant and offer produces voluntary expo
   assert.equal(h.store.consumerInserts.every(row => row.voluntary == null), true);
   let state = offer.value;
   state = await h.voluntary.invoke(h.as('contributor-1'), 'assentVoluntary', {taskId: 'race', termsDigest: state.termsDigest,
-    expectedRevision: state.revision, sourceSha256: sourceSha, hostSha256: hostSha, authorizedToShare: true}, h.operationId());
+    expectedRevision: state.revision, sourceSha256: sourceSha, hostSha256: hostSha, authorizedToShare: true, spec: h.spec}, h.operationId());
   state = await h.voluntary.invoke(h.as('contributor-1'), 'deliverVoluntary', {taskId: 'race', termsDigest: state.termsDigest,
     expectedRevision: state.revision, sourceSha256: sourceSha, hostSha256: hostSha, evidence: usefulEvidence()}, h.operationId());
   await h.voluntary.invoke(h.as('requester-1'), 'reviewVoluntary', {taskId: 'race', termsDigest: state.termsDigest,
@@ -299,26 +303,28 @@ test('quoted retained-artifact grant behavior stays on the consumer table', asyn
   await assert.rejects(h.market.retained(h.as('later-1'), {taskId: 'paid'}), error => error.code === 'forbidden');
 });
 
-test('admission scans the closure once and fails closed after a pinned byte changes', async () => {
+test('admission scans once and fails closed only on explicit invalidation or recheck', async () => {
   let pinned = 'pinned-source';
-  const queued = [];
   const admission = createClosureAdmission({
-    expectedSource: 'pinned-source', expectedHost: 'pinned-host', cadenceMs: 5000,
+    expectedSource: 'pinned-source', expectedHost: 'pinned-host',
     verify() { return {sourceSha256: pinned, hostSha256: 'pinned-host'}; },
-    schedule(fn, ms) { const handle = {unref() {}}; queued.push({fn, ms}); return handle; },
   });
+  assert.equal(typeof admission.startCadence, 'undefined');
   await admission.admit();
   for (let i = 0; i < 6; i++) assert.equal(admission.current().sourceSha256, 'pinned-source');
   assert.equal(admission.scans(), 1);
-  admission.startCadence();
-  assert.equal(queued.length, 1);
-  assert.equal(queued[0].ms, 5000);
   pinned = 'pinned-source-changed';
-  await queued[0].fn();
+  assert.equal(admission.current().sourceSha256, 'pinned-source');
+  assert.equal(admission.scans(), 1);
+  admission.invalidate();
+  assert.throws(() => admission.current(), error => error.codeName === 'machine_profile_refused');
+  assert.equal(admission.scans(), 1);
+  await assert.rejects(admission.recheck(), error => error.codeName === 'machine_profile_refused');
   assert.equal(admission.scans(), 2);
   assert.throws(() => admission.current(), error => error.codeName === 'machine_profile_refused');
-  assert.equal(admission.scans(), 2);
-  assert.equal(queued.length, 1);
+  pinned = 'pinned-source';
+  assert.equal((await admission.recheck()).sourceSha256, 'pinned-source');
+  assert.equal(admission.scans(), 3);
 });
 
 test('concurrent first admission performs one verification', async () => {
@@ -397,6 +403,96 @@ test('mounted public reads fail at the exact prefix limit', () => {
   assert.equal(admit(PREFIX, profile, 'GET', request('10.0.0.1')).status, 200);
 });
 
+test('socket address buckets ignore forged forwarded headers and keep separate addresses apart', () => {
+  const admit = createMountedPublicLimiter({perMinute: 1, capacity: 4, now: () => 5_000});
+  const request = (address, forwarded) => ({socket: {remoteAddress: address}, headers: {'x-forwarded-for': forwarded}});
+  const profile = PREFIX + '/v1/market/profile';
+  assert.equal(admit(PREFIX, profile, 'GET', request('10.9.0.1', '203.0.113.5')).status, 200);
+  assert.equal(admit(PREFIX, profile, 'GET', request('10.9.0.1', '203.0.113.9')).status, 429);
+  assert.equal(admit(PREFIX, profile, 'GET', request('10.9.0.2', '203.0.113.9')).status, 200);
+  assert.equal(admit(PREFIX, profile, 'POST', request('10.9.0.1', '203.0.113.5')).applies, false);
+});
+
+test('selected contributor receives the canonical spec and a one-byte mismatch cannot assent', async () => {
+  const h = harness();
+  h.seed('spec');
+  const offered = await h.offer('spec');
+  const viewed = await h.voluntary.invoke(h.as('contributor-1'), 'readVoluntary', {taskId: 'spec'});
+  assert.deepEqual(viewed.spec, h.spec);
+  assert.equal(digest(viewed.spec), viewed.terms.specDigest);
+  assert.equal(viewed.terms.requesterId, 'requester-1');
+  assert.equal(viewed.terms.contributorId, 'contributor-1');
+  await assert.rejects(h.voluntary.invoke(h.as('later-1'), 'readVoluntary', {taskId: 'spec'}), error => codeOf(error) === 'forbidden');
+  const tampered = {...h.spec, title: h.spec.title + 'x'};
+  await assert.rejects(h.voluntary.invoke(h.as('contributor-1'), 'assentVoluntary', {taskId: 'spec', termsDigest: offered.termsDigest,
+    expectedRevision: offered.revision, ...h.binding, authorizedToShare: true, spec: tampered}, h.operationId()),
+    error => codeOf(error) === 'voluntary_terms_changed');
+  const bound = await h.voluntary.invoke(h.as('contributor-1'), 'assentVoluntary', {taskId: 'spec', termsDigest: offered.termsDigest,
+    expectedRevision: offered.revision, ...h.binding, authorizedToShare: true, spec: viewed.spec}, h.operationId());
+  assert.equal(bound.state, 'assigned');
+  assert.equal(h.store.tasks.get('tenant-a|spec').voluntary.inspectedSpecDigest, viewed.terms.specDigest);
+});
+
+test('delivery is one-shot and a rejected artifact is not exported or corrected', async () => {
+  const h = harness();
+  h.seed('once');
+  let state = await h.offer('once');
+  state = await h.voluntary.invoke(h.as('contributor-1'), 'assentVoluntary', {taskId: 'once', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, authorizedToShare: true, spec: h.spec}, h.operationId());
+  state = await h.voluntary.invoke(h.as('contributor-1'), 'deliverVoluntary', {taskId: 'once', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, evidence: usefulEvidence()}, h.operationId());
+  await assert.rejects(h.voluntary.invoke(h.as('contributor-1'), 'deliverVoluntary', {taskId: 'once', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, evidence: usefulEvidence()}, h.operationId()),
+    error => codeOf(error) === 'voluntary_assignment_required');
+  state = await h.voluntary.invoke(h.as('requester-1'), 'reviewVoluntary', {taskId: 'once', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, artifactDigest: evidenceDigest, accepted: false, exportAuthorized: false,
+    reason: 'Not the requested mapping'}, h.operationId());
+  assert.equal(state.state, 'rejected');
+  assert.deepEqual(await h.exported('once', 'requester-1'), {ok: false, code: 'voluntary_export_not_authorized'});
+  await assert.rejects(h.voluntary.invoke(h.as('requester-1'), 'reviewVoluntary', {taskId: 'once', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, artifactDigest: evidenceDigest, accepted: true, exportAuthorized: true,
+    reason: 'Second decision'}, h.operationId()), error => codeOf(error) === 'artifact_changed');
+  assert.equal(h.voluntary.descriptor.delivery, 'one-shot');
+  assert.equal(h.voluntary.descriptor.revision, 'optimistic-concurrency-counter');
+});
+
+test('corrupted commitments fail closed and a successor source cannot revive export', async () => {
+  const h = harness();
+  h.seed('kept');
+  const state = await h.accept('kept');
+  const row = h.store.tasks.get('tenant-a|kept');
+  const originalTerms = structuredClone(row.voluntary.terms);
+  const originalSpec = structuredClone(row.spec);
+  const originalArtifact = structuredClone(row.voluntary.artifact);
+  row.voluntary.terms = {...originalTerms, rights: {...originalTerms.rights, attribution: 'changed-preimage'}};
+  await assert.rejects(h.voluntary.invoke(h.as('requester-1'), 'readVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'voluntary_terms_changed');
+  row.voluntary.terms = originalTerms;
+  row.spec = {...originalSpec, summary: 'changed spec'};
+  await assert.rejects(h.voluntary.invoke(h.as('contributor-1'), 'exportVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'voluntary_terms_changed');
+  row.spec = originalSpec;
+  row.voluntary.artifact = {...originalArtifact, evidence: {...usefulEvidence(), nextDecision: 'tampered'}};
+  await assert.rejects(h.voluntary.invoke(h.as('requester-1'), 'grantVoluntary', {taskId: 'kept', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, ...h.binding, consumerId: 'later-1'}, h.operationId()),
+    error => codeOf(error) === 'retained_evidence_required');
+  row.voluntary.artifact = originalArtifact;
+  row.requester_id = 'stranger';
+  await assert.rejects(h.voluntary.invoke(h.as('requester-1'), 'readVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'forbidden');
+  row.requester_id = 'requester-1';
+  const successor = voluntaryMarket({market: h.market, capability: {...h.capability, sourceSha256: 'd'.repeat(64)}});
+  await assert.rejects(successor.invoke(h.as('requester-1'), 'readVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'voluntary_source_changed');
+  await assert.rejects(successor.invoke(h.as('requester-1'), 'exportVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'voluntary_source_changed');
+  const withdrawn = await successor.invoke(h.as('requester-1'), 'withdrawVoluntary', {taskId: 'kept', termsDigest: state.termsDigest,
+    expectedRevision: state.revision, reason: 'Stop under an incompatible source'}, h.operationId());
+  assert.equal(withdrawn.state, 'withdrawn');
+  const after = await successor.invoke(h.as('requester-1'), 'readVoluntary', {taskId: 'kept'});
+  assert.equal(after.evidence, null);
+  assert.equal(after.state, 'withdrawn');
+  const disabled = voluntaryMarket({market: h.market, capability: {...h.capability, participation: 'absent'}});
+  const before = structuredClone(h.store.tasks.get('tenant-a|kept'));
+  await assert.rejects(disabled.invoke(h.as('requester-1'), 'readVoluntary', {taskId: 'kept'}), error => codeOf(error) === 'voluntary_unavailable');
+  assert.deepEqual(h.store.tasks.get('tenant-a|kept'), before);
+});
+
 test('migration and mounted routes keep the two amendments', () => {
   const root = new URL('../', import.meta.url);
   const sql = readFileSync(new URL('runtime/agent-economy-market/migrations/001-market.sql', root), 'utf8');
@@ -419,7 +515,64 @@ test('migration and mounted routes keep the two amendments', () => {
   assert.equal(profile.includes('installedSourceSha256'), false);
   assert.match(profile, /admission\.current\(\)/);
   assert.match(machine, /await admission\.admit\(\)/);
+  assert.equal(machine.includes('startCadence'), false);
+  assert.equal(machine.includes('cadenceMs'), false);
   assert.match(machine, /const account=await authorizeMachineMutation/);
   assert.match(server, /admitMountedPublicRead\(PREFIX, url\.pathname, req\.method, req\)/);
   assert.match(server, /decision\.status === 429/);
+});
+
+test('mutated client, descriptor, and source pins refuse before a secret file exists', () => {
+  const client = fileURLToPath(new URL('../client/cold-requester-0.3.0.mjs', import.meta.url));
+  const dir = mkdtempSync(join(tmpdir(), 'root11440-acquire-'));
+  const run = (file, args) => {
+    try {
+      return {status: 0, body: JSON.parse(execFileSync(process.execPath, [file, ...args], {encoding: 'utf8', timeout: 10000}))};
+    } catch (error) {
+      return {status: error.status ?? 1, body: JSON.parse(error.stdout || '{}')};
+    }
+  };
+  try {
+    const secret = join(dir, 'role.json');
+    const missing = run(client, ['signup', '--origin', 'https://127.0.0.1:9', '--secret-file', secret, '--display-name', 'Nope', '--role', 'requester']);
+    assert.equal(missing.status, 1);
+    assert.equal(missing.body.code, 'acquisition_required');
+    assert.equal(existsSync(secret), false);
+    const original = readFileSync(client);
+    const source = {repository: 'epistemedeus/samedaydesk', commit: '20deaedc0e7afcc0b68f0988672dbb1f889660db', path: 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs'};
+    const base = {schema: 'neomorphic.machine-participation.acquisition.v1', version: '0.3.0', bytes: original.length,
+      sha256: createHash('sha256').update(original).digest('hex'), source,
+      requiredProfile: {money: 'unfunded', participation: 'voluntary-artifact-v1', sourceSha256: 'a'.repeat(64), hostSha256: 'b'.repeat(64)}};
+    const writeDescriptor = value => {
+      const path = join(dir, 'descriptor-' + createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 8) + '.json');
+      writeFileSync(path, JSON.stringify(value));
+      return path;
+    };
+    const pins = path => ['acquire', '--origin', 'https://127.0.0.1:9', '--descriptor', path,
+      '--descriptor-sha256', createHash('sha256').update(readFileSync(path)).digest('hex'),
+      '--source-repository', source.repository, '--source-commit', source.commit, '--source-path', source.path];
+    const flippedDescriptor = Buffer.from(JSON.stringify(base));
+    flippedDescriptor[10] ^= 1;
+    const flippedPath = join(dir, 'flipped-descriptor.json');
+    writeFileSync(flippedPath, flippedDescriptor);
+    const descriptorMismatch = run(client, ['acquire', '--origin', 'https://127.0.0.1:9', '--descriptor', flippedPath,
+      '--descriptor-sha256', 'ab'.repeat(32), '--source-repository', source.repository, '--source-commit', source.commit, '--source-path', source.path]);
+    assert.equal(descriptorMismatch.body.code, 'acquisition_descriptor_mismatch');
+    const mutantPath = join(dir, 'cold-requester-0.3.0.mjs');
+    const mutant = Buffer.from(original);
+    const comment = mutant.indexOf('HTTPS client');
+    mutant[comment] ^= 1;
+    writeFileSync(mutantPath, mutant);
+    const mutatedClient = run(mutantPath, pins(writeDescriptor(base)));
+    assert.equal(mutatedClient.body.code, 'acquisition_client_mismatch');
+    for (const [field, value] of [['repository', 'example/other'], ['commit', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], ['path', 'client/other.mjs']]) {
+      const wrong = structuredClone(base);
+      wrong.source = {...source, [field]: value};
+      const refused = run(client, pins(writeDescriptor(wrong)));
+      assert.equal(refused.body.code, 'acquisition_source_mismatch', field);
+    }
+    assert.equal(existsSync(secret), false);
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
 });

@@ -25,7 +25,14 @@ for ordinary use. These commands do not supply a commission or a reward.
 ```sh
 umask 077
 node cold-requester-0.3.0.mjs profile --origin https://samedaydesk.com
-node cold-requester-0.3.0.mjs signup --origin https://samedaydesk.com --secret-file requester.json --display-name 'Your requester' --role requester
+node cold-requester-0.3.0.mjs acquire --origin https://samedaydesk.com \
+  --descriptor /absolute/pinned/descriptor.json --descriptor-sha256 EXACT_DESCRIPTOR_SHA256 \
+  --source-repository epistemedeus/samedaydesk --source-commit EXACT_SOURCE_COMMIT \
+  --source-path vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs
+node cold-requester-0.3.0.mjs signup --origin https://samedaydesk.com --secret-file requester.json --display-name 'Your requester' --role requester \
+  --descriptor /absolute/pinned/descriptor.json --descriptor-sha256 EXACT_DESCRIPTOR_SHA256 \
+  --source-repository epistemedeus/samedaydesk --source-commit EXACT_SOURCE_COMMIT \
+  --source-path vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs
 node cold-requester-0.3.0.mjs post --origin https://samedaydesk.com --secret-file requester.json --title 'Your useful need' --summary 'Your bounded voluntary scope; no payout.' --criterion preserve-mapping
 node cold-requester-0.3.0.mjs discover --origin https://samedaydesk.com
 ```
@@ -50,7 +57,7 @@ using actual task/account IDs. The OpenAPI contract defines every required field
 | Action / authenticated role | Input besides current source binding |
 | --- | --- |
 | `offerVoluntary` / requester | `taskId`, interested `contributorId`, `authorizedToRequest:true`, `rights:{license:"CC0-1.0",scope:"synthetic-or-authorized-reusable-artifact",attribution:"…"}` |
-| `assentVoluntary` / selected contributor | `taskId`, `termsDigest`, `expectedRevision`, `authorizedToShare:true` |
+| `assentVoluntary` / selected contributor | `taskId`, `termsDigest`, `expectedRevision`, `authorizedToShare:true`, and the exact `spec` object returned by `inspect` |
 | `deliverVoluntary` / selected contributor | Same terms/revision fields plus `evidence` in the existing market evidence format |
 | `reviewVoluntary` / requester | Same terms/revision fields plus exact `artifactDigest`, `accepted`, `exportAuthorized`, `reason` |
 | `grantVoluntary` / requester | Same terms/revision fields plus the later account's `consumerId` |
@@ -59,12 +66,22 @@ using actual task/account IDs. The OpenAPI contract defines every required field
 | `useVoluntary` / granted later consumer | `taskId`, its own distinct `laterTaskId`, exact `artifactDigest`, `decision` |
 
 Use `inspect --task-id TASK_ID --out snapshot.json` with the appropriate role file
-to read exact terms/revision, delivered evidence and the requester's decision.
-Inspect the rights and source before assent. Both parties must have authority for
-the reusable artifact; private/customer inputs must not be included. This narrow
-version supports CC0 synthetic or otherwise authorized reusable material. Rights
-are explicit party declarations, not server verification of title. A changed
-source or terms refuses fresh continuation work. A new task can carry new scope.
+to read exact terms, the canonical spec, revision, delivered evidence and the
+requester's decision. After the offer closes public discovery, the selected
+contributor still receives that spec privately. Verify `digest(spec)` equals
+`terms.specDigest` before `assentVoluntary`. The client stores that inspected
+binding and refuses assent without it. An unrelated account cannot read the
+private spec. Both parties must have authority for the reusable artifact;
+private/customer inputs must not be included. This narrow version supports CC0
+synthetic or otherwise authorized reusable material. Rights are explicit party
+declarations, not server verification of title. `revision` is an optimistic
+concurrency counter. Delivery and review are one-shot: a rejected artifact is
+terminal and is not a correction round. A new task can carry new scope. A changed
+source does not silently replace the acquired binding; run `reacquire` with a new
+independently pinned descriptor before any fresh continuation. Withdrawal stops
+export and omits evidence. It keeps historical metadata inspection and digest-only
+readback. Disabling the feature stops serving; re-enabling it does not revive
+export under a different source or host hash.
 
 The evidence object has exactly `kind` (`usable`, `no_fit` or `failure`),
 `businessResult`, nonempty `attempts` (`action`, `result`, `evidence`), complete
@@ -104,7 +121,12 @@ node vendor/hosted-wallet-market/examples/participation-canary.mjs \
   --namespace root10940-owner-qa-20261027-phaseb-01 \
   --directory /absolute/new/private/canary-directory \
   --client /absolute/acquired/cold-requester-0.3.0.mjs \
-  --client-sha256 EXACT_DESCRIPTOR_SHA256
+  --client-sha256 EXACT_CLIENT_SHA256 \
+  --descriptor /absolute/pinned/descriptor.json \
+  --descriptor-sha256 EXACT_DESCRIPTOR_SHA256 \
+  --source-repository epistemedeus/samedaydesk \
+  --source-commit EXACT_SOURCE_COMMIT \
+  --source-path vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs
 ```
 
 The directory must not exist. The canary creates three fresh account authorities,

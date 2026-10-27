@@ -1,5 +1,7 @@
-// Anonymous machine reads mounted at the hosted-wallet prefix. The socket address
-// is the only key; forwarded headers cannot mint another bucket.
+// Anonymous machine reads mounted at the hosted-wallet prefix.
+// This is a socket-address limiter, not a client identity limiter. The key is
+// req.socket.remoteAddress. x-forwarded-for is ignored, so a shared proxy address
+// shares one bucket and a forged forwarded header cannot mint another.
 export const MOUNTED_PUBLIC_READS = Object.freeze([
   '/v1/market/profile',
   '/v1/market/discover',

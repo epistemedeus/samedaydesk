@@ -3,6 +3,7 @@
 // Credentials and operation proofs are written before sending, in one private file.
 import {randomBytes,createHash} from 'node:crypto';
 import {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {constants, openSync, closeSync, fstatSync, fsyncSync, readFileSync, renameSync, writeFileSync, existsSync, unlinkSync} from 'node:fs';
 import https from 'node:https';
 import net from 'node:net';
@@ -15,6 +16,33 @@ const fail=code=>{throw Object.assign(Error(code),{codeName:code});};
 const token=()=>randomBytes(32).toString('base64url');
 const operation=name=>'cold-'+name+'-'+randomBytes(8).toString('hex');
 const digest=value=>{const sort=v=>Array.isArray(v)?v.map(sort):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,sort(v[k])])):v;return createHash('sha256').update(JSON.stringify(sort(value))).digest('hex');};
+const sha256Bytes=bytes=>createHash('sha256').update(bytes).digest('hex');
+// Pins are caller-supplied. This file does not embed its own commit or the expected descriptor hash.
+function acquisitionPins(){
+  const descriptorPath=flag('descriptor'),descriptorSha256=flag('descriptor-sha256');
+  const repository=flag('source-repository'),commit=flag('source-commit'),sourcePath=flag('source-path');
+  if(!descriptorPath||!/^[a-f0-9]{64}$/.test(descriptorSha256||'')||typeof repository!=='string'||repository.length<3||!/^[a-f0-9]{40}$/.test(commit||'')||typeof sourcePath!=='string'||sourcePath.length<3)fail('acquisition_required');
+  let bytes;try{bytes=readFileSync(descriptorPath);}catch{fail('acquisition_refused');}
+  if(sha256Bytes(bytes)!==descriptorSha256)fail('acquisition_descriptor_mismatch');
+  let descriptor;try{descriptor=JSON.parse(bytes.toString('utf8'));}catch{fail('acquisition_refused');}
+  if(descriptor?.schema!=='neomorphic.machine-participation.acquisition.v1'||descriptor.version!==VERSION)fail('acquisition_refused');
+  const source=descriptor.source||{};
+  if(source.repository!==repository||source.commit!==commit||source.path!==sourcePath)fail('acquisition_source_mismatch');
+  const required=descriptor.requiredProfile||{};
+  if(required.money!=='unfunded'||required.participation!=='voluntary-artifact-v1'||!/^[a-f0-9]{64}$/.test(required.sourceSha256||'')||!/^[a-f0-9]{64}$/.test(required.hostSha256||''))fail('acquisition_refused');
+  const clientBytes=readFileSync(fileURLToPath(import.meta.url));
+  if(clientBytes.length!==descriptor.bytes||sha256Bytes(clientBytes)!==descriptor.sha256)fail('acquisition_client_mismatch');
+  return {descriptor,descriptorSha256,clientSha256:descriptor.sha256,required,repository,commit,sourcePath};
+}
+async function liveAcquisition(pins){
+  const response=await request('/v1/market/profile'),profile=response.body?.value,capability=profile?.capability||{};
+  const protocol=profile?.participation?.protocol??null;
+  if(response.status!==200||response.body?.ok!==true||capability.money!==pins.required.money||protocol!==pins.required.participation||capability.sourceSha256!==pins.required.sourceSha256||capability.hostSha256!==pins.required.hostSha256)
+    fail('acquisition_profile_mismatch');
+  return {schema:'pilot.machine-participation.acquired-binding.v1',version:pins.descriptor.version,descriptorSha256:pins.descriptorSha256,
+    clientSha256:pins.clientSha256,sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256,repository:pins.repository,
+    commit:pins.commit,path:pins.sourcePath,participation:protocol,money:capability.money};
+}
 const codeOf=response=>{const code=response.body?.code||response.body?.error?.code;return typeof code==='string'&&/^[a-zA-Z0-9_]{1,96}$/.test(code)?code:null;};
 let origin,secretFile;
 function loadSecret(file){
@@ -146,11 +174,13 @@ function receiveMarket(secret,name,stored,response){
 const voluntaryMutations=['offerVoluntary','assentVoluntary','deliverVoluntary','reviewVoluntary','grantVoluntary','withdrawVoluntary','withdrawNeed','useVoluntary'];
 async function participationBinding(secret){
   await marketBinding(secret);
+  const binding=secret.acquisition;
+  if(binding?.schema!=='pilot.machine-participation.acquired-binding.v1')fail('acquisition_required');
   const response=await request('/v1/market/profile'),p=response.body?.value;
-  if(response.status!==200||p?.participation?.protocol!=='voluntary-artifact-v1'||
-    !/^[a-f0-9]{64}$/.test(p?.capability?.sourceSha256||'')||!/^[a-f0-9]{64}$/.test(p?.capability?.hostSha256||''))
-    fail('voluntary_unavailable');
-  return {sourceSha256:p.capability.sourceSha256,hostSha256:p.capability.hostSha256};
+  if(response.status!==200||p?.participation?.protocol!==binding.participation)fail('voluntary_unavailable');
+  // A changed source is not accepted because its hash still has the right shape.
+  if(p?.capability?.sourceSha256!==binding.sourceSha256||p?.capability?.hostSha256!==binding.hostSha256)fail('acquisition_reacquire_required');
+  return {sourceSha256:binding.sourceSha256,hostSha256:binding.hostSha256};
 }
 function receiveVoluntary(secret,name,stored,response){
   observe(stored,response);
@@ -204,13 +234,25 @@ async function main(){
       publicEnabled:value?.publicEnabled??null,moneyQualified:value?.moneyQualified??null,signerAuthority:value?.signerAuthority??null,
       items,nextCursor:value?.nextCursor??null,count:items.length,matched:Boolean(matched),fundingState:matched?.fundingState??null,assigned:matched?.assigned??null});
   }
+  if(command==='acquire'||command==='reacquire'){
+    const pins=acquisitionPins();
+    const acquisition=await liveAcquisition(pins);
+    if(command==='acquire')emit({ok:true,accountCreated:false,...acquisition});
+    if(command==='reacquire'){
+      const secret=loadSecret(secretFile);
+      secret.acquisition=acquisition;saveSecret(secretFile,secret);
+      emit({ok:true,reacquired:true,accountCreated:false,sourceSha256:acquisition.sourceSha256,hostSha256:acquisition.hostSha256,clientSha256:acquisition.clientSha256,descriptorSha256:acquisition.descriptorSha256});
+    }
+  }
   if(command==='signup'){
     const displayName=flag('display-name'),role=flag('role');
     if(!secretFile||!displayName||!['requester','contributor'].includes(role))fail('signup_arguments_refused');
     if(existsSync(secretFile))fail('secret_file_exists');
+    const pins=acquisitionPins();
+    const acquisition=await liveAcquisition(pins);
     const password=randomBytes(24).toString('hex'),body={password,displayName,role};
     const stored={idempotencyKey:operation('signup'),proof:token(),body,state:'pending'};
-    const secret={schema:'ae.password-file.v1',origin,password,displayName,role,operations:{signup:stored}};
+    const secret={schema:'ae.password-file.v1',origin,password,displayName,role,acquisition,operations:{signup:stored}};
     saveSecret(secretFile,secret,{initial:true});
     receiveAccount(secret,'signup',await request('/v1/account/signup',{method:'POST',body,headers:proofHeaders(stored)}));
   }
@@ -219,6 +261,11 @@ async function main(){
     if(!voluntaryMutations.includes(name)||!flag('input'))fail('participation_arguments_refused');
     archive(secret,name);
     const source=await participationBinding(secret),input=safeInput(flag('input'));
+    if(name==='assentVoluntary'){
+      const inspected=secret.inspected?.[input.taskId];
+      if(!inspected)fail('spec_inspection_required');
+      if(!input.spec||digest(input.spec)!==inspected.specDigest||inspected.termsDigest!==input.termsDigest)fail('spec_mismatch');
+    }
     const body=['withdrawVoluntary','withdrawNeed','useVoluntary'].includes(name)?input:{...input,...source};
     const stored={idempotencyKey:operation(name),body,state:'pending',observations:[]};
     secret.operations[name]=stored;saveSecret(secretFile,secret);room(stored,secret);
@@ -233,6 +280,14 @@ async function main(){
     const result=response.body?.value?.result;
     if(response.status!==200||!response.observation.complete||response.body?.ok!==true||response.body.value.action!==name||!result)
       emit({ok:false,code:codeOf(response)||'read_unavailable'},1);
+    if(result.terms&&digest(result.terms)!==result.termsDigest)fail('voluntary_terms_changed');
+    if(command==='inspect'){
+      if(!result.terms||!result.spec||digest(result.spec)!==result.terms.specDigest)fail('spec_mismatch');
+      secret.inspected??={};
+      secret.inspected[result.taskId]={termsDigest:result.termsDigest,specDigest:result.terms.specDigest,
+        sourceSha256:result.terms.sourceSha256,hostSha256:result.terms.hostSha256};
+      saveSecret(secretFile,secret);
+    }
     if(command==='export'&&(result.schema!=='pilot.machine-market.voluntary-export.v1'||!result.evidence||
       digest(result.evidence)!==result.artifactDigest||result.review?.artifactDigest!==result.artifactDigest||
       result.review?.accepted!==true||result.review?.exportAuthorized!==true||result.paidWork!==false))fail('export_binding_refused');

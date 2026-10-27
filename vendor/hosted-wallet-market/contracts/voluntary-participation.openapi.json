@@ -3,7 +3,7 @@
   "info": {
     "title": "Voluntary machine participation",
     "version": "1.0.0",
-    "description": "Optional continuation of an unfunded need using existing walletless account sessions. Base path is the existing contributor API. Private profile and human assets retain separate admission. Both parties declare rights; requester alone decides useful acceptance; no supplied verification receipt is accepted. Contribution is optional. Read/export are authenticated POSTs and still require exact Origin/CSRF. Export requires acceptance, explicit requester export consent, contributor assent and a current grant; withdrawal stops further server reads and cannot revoke previously received CC0 bytes."
+    "description": "Optional continuation of an unfunded need using existing walletless account sessions. Base path is the existing contributor API. Private profile and human assets retain separate admission. Both parties declare rights; requester alone decides useful acceptance; no supplied verification receipt is accepted. Contribution is optional. Rights declarations are not title verification. Read/export are authenticated POSTs and still require exact Origin/CSRF. The selected contributor receives the canonical spec privately after discovery closes and must assent to that preimage. Delivery and review are one-shot; revision is only an optimistic concurrency counter, not an artifact correction round. A rejected artifact stays rejected. Export requires acceptance, explicit requester export consent, contributor assent and a current voluntary grant. Withdrawal stops further export and omits evidence from later party inspection. It preserves historical metadata inspection and digest-only operation readback, and it cannot revoke previously received CC0 bytes. Feature unavailability is HTTP 409 voluntary_unavailable. HTTP 404 is only an absent original operation."
   },
   "servers": [
     {
@@ -106,16 +106,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -215,16 +299,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -324,16 +492,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -433,16 +685,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -542,16 +878,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -651,16 +1071,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -760,16 +1264,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -857,16 +1445,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -954,16 +1626,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -1063,16 +1819,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -1172,16 +2012,100 @@
             }
           },
           "401": {
-            "description": "Missing, revoked or expired session, exact origin or CSRF"
+            "description": "Missing, revoked or expired session, exact origin or CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
-            "description": "Task/tenant/role/consumer authority refused"
+            "description": "Task/tenant/role/consumer authority refused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
-            "description": "Operation absent or feature unavailable"
+            "description": "Absent original operation only. Feature unavailability is 409 voluntary_unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "409": {
-            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+            "description": "Feature unavailable, source, terms, spec, revision, one-shot effect, consent, commitment or withdrawal conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_]+$"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -1277,6 +2201,49 @@
           },
           "authorizedToShare": {
             "const": true
+          },
+          "spec": {
+            "type": "object",
+            "description": "Exact canonical task spec inspected by the selected contributor. digest(spec) must equal terms.specDigest. One-shot assent binds this preimage to the operation.",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "payableKinds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "slotLimit": {
+                "type": "integer"
+              },
+              "milestoneLimit": {
+                "type": "integer"
+              },
+              "cohort": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "summary",
+              "criteria",
+              "payableKinds",
+              "slotLimit",
+              "milestoneLimit",
+              "cohort"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -1285,7 +2252,8 @@
           "expectedRevision",
           "sourceSha256",
           "hostSha256",
-          "authorizedToShare"
+          "authorizedToShare",
+          "spec"
         ],
         "additionalProperties": false
       },
@@ -1910,6 +2878,10 @@
               "object",
               "null"
             ]
+          },
+          "spec": {
+            "type": "object",
+            "description": "Canonical task spec preimage returned only to a task party. digest(spec) equals terms.specDigest when terms are present."
           }
         },
         "required": [
@@ -1926,7 +2898,8 @@
           "independence",
           "terms",
           "review",
-          "evidence"
+          "evidence",
+          "spec"
         ],
         "additionalProperties": false
       },
