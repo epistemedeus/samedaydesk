@@ -14,6 +14,7 @@ import {installedSourceSha256,hostSourceSha256} from './native-debt.mjs';
 import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
 import {admitMachineCapability} from './machine-profile-document.mjs';
 import {readMarketInterests,INTEREST_PAGE_LIMIT,INTEREST_PAGE_DEFAULT,INTEREST_NOTE_BYTES} from './market-interest-read.mjs';
+import {voluntaryMarket} from './voluntary-market.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
@@ -115,6 +116,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
     feeRecipient:profile.feeRecipient,fundingTarget:rail?contracts.escrow:capability.networkSource?.escrow??'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',
     settlementAuthorityId:'machine-requester-review-v1',partyTerms,kernelProvenance:networkClass==='public'?'production':'test',now:()=>new Date(now())});
   await market.prepare();
+  const voluntary=voluntaryMarket({market,capability});
   async function issueSession(operation,req,body,client){
    const input=operation==='signup'?{password:body.password,displayName:body.displayName}:body;
    // C0 effect keys contain '#step'; the native authority admits opaque keys.
@@ -203,6 +205,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    assertCurrent();
    if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
    const account=await authenticate(req,{write:true});
+   if(voluntary.actions.includes(action))return voluntary.invoke(req,action,input,operationId);
    if(action==='readback' && !['post','interest'].includes(input.action))refuse('body_refused',400);
    const roleAction=action==='readback'?input.action:action;
    if(['interests','post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(roleAction)&&account.role!=='requester')refuse('requester_required',403);
@@ -256,19 +259,21 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    const rows=(await pool.query(`SELECT t.id,t.spec,t.selected_quote,EXISTS(SELECT 1 FROM "${profile.earnedSchema}".ae14_market_funding f
      JOIN "${profile.earnedSchema}".ae14_market_quotes q ON q.allocation_id=f.allocation_id AND q.tenant_id=f.tenant_id
      WHERE q.tenant_id=t.tenant_id AND q.task_id=t.id) AS funding_started
-     FROM "${profile.earnedSchema}".ae14_market_tasks t WHERE tenant_id=$1 AND id>$2 ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
+     FROM "${profile.earnedSchema}".ae14_market_tasks t WHERE tenant_id=$1 AND id>$2
+     AND (voluntary IS NULL OR NOT (voluntary ? 'withdrawn')) ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
    const items=rows.map(r=>({taskId:r.id,title:r.spec.title,summary:r.spec.summary,criteria:r.spec.criteria,payableKinds:r.spec.payableKinds,assigned:Boolean(r.selected_quote),fundingState:r.funding_started?'funding_started':'unfunded_interest'}));
    for(const r of rows)await store.measure(profile.tenant,r.id,'discovery',randomBytes(16).toString('hex'),'anonymous',
     {verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null});
    return {items,nextCursor:rows.length===limit?rows.at(-1).id:null,publicEnabled:true,moneyQualified:Boolean(networkSource&&rail),signerAuthority:false,provenance:money.qualification};
   }
   function publicProfile(){
-   assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution'];
+   assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution','participation'];
    return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
+    ...(voluntary.enabled?{participation:voluntary.descriptor}:{}),
     proposalReview:{path:'/v1/market/interests',method:'POST',defaultLimit:INTEREST_PAGE_DEFAULT,maxLimit:INTEREST_PAGE_LIMIT,maxNoteBytes:INTEREST_NOTE_BYTES},
     mutationReceipts:{schema:'pilot.machine-market.cold-mutation-receipt.v1',actions:['post','interest'],readback:'/v1/market/readback'}};
   }
-  return {invoke,discover,publicProfile,issueSession,market,rail,readActions,
+  return {invoke,discover,publicProfile,issueSession,market,rail,readActions,participationContract:voluntary.contract,
    descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,sourceQualified:Boolean(networkSource),publicMoney:networkClass==='public'?'authority_checked_per_operation':false,signerAuthority:false},
    async close(){journal?.close();await pool.end();await kernel.close();}};
  }catch(e){journal?.close();await pool.end();await kernel.close();throw e;}

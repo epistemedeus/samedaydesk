@@ -1671,6 +1671,9 @@ export async function openHostedMarket(options) {
       if (path === '/v1/market/profile' && req.method === 'GET' && machine) {
         return send(res,200,{ok:true,value:machine.publicProfile()});
       }
+      if (path === '/v1/market/participation-contract' && req.method === 'GET' && machine?.participationContract) {
+        return send(res,200,machine.participationContract);
+      }
       if (path === '/v1/market/discover' && req.method === 'GET' && machine) {
         return send(res, 200, {ok: true, value: await machine.discover(page(url))});
       }

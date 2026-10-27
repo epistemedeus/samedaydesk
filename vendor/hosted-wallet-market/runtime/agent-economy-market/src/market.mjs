@@ -92,7 +92,7 @@ export class RequesterMarket {
   }
   async list(context) {
     const a = await this.actor(context);
-    const rows = (await this.store.pool.query(`SELECT id,spec,current_quote,selected_quote FROM ${this.store.table('tasks')} WHERE tenant_id=$1 ORDER BY id`,[a.tenantId])).rows;
+    const rows = (await this.store.pool.query(`SELECT id,spec,current_quote,selected_quote FROM ${this.store.table('tasks')} WHERE tenant_id=$1 AND (voluntary IS NULL OR NOT (voluntary ? 'withdrawn')) ORDER BY id`,[a.tenantId])).rows;
     return rows.map(row=>({taskId:row.id,title:row.spec.title,summary:row.spec.summary,criteria:row.spec.criteria,payableKinds:row.spec.payableKinds,assigned:Boolean(row.selected_quote)}));
   }
   async interest(context,input,operationId) {
@@ -100,6 +100,7 @@ export class RequesterMarket {
     key(operationId);key(input.taskId);
     return this.store.coldMutation({origin:this.coldOrigin,actor:a,action:'interest',input,operationId,moneyProvenance:this.money.qualification},async client=>{
       const row=await this.store.task(a.tenantId,input.taskId,client,true);
+      requireThat(!row.voluntary?.withdrawn, 'voluntary_withdrawn');
       requireThat(a.actorId !== row.requester_id,'actor_conflict');
       await client.query(`INSERT INTO ${this.store.table('interests')}(tenant_id,task_id,actor_id,note) VALUES($1,$2,$3,$4) ON CONFLICT(tenant_id,task_id,actor_id) DO UPDATE SET note=EXCLUDED.note`,[a.tenantId,row.id,a.actorId,input.note]);
       return {taskId:row.id,actorId:a.actorId,state:'unfunded_interest'};
@@ -122,6 +123,7 @@ export class RequesterMarket {
     requireThat(Number.isFinite(Date.parse(input.expiresAt)) && Date.parse(input.expiresAt) > this.now().getTime(),'quote_expired');
     return this.store.locked(a.tenantId,input.taskId,async (row,client)=>{
       this.owner(a,row);
+      requireThat(!row.voluntary, 'voluntary_task_cannot_be_funded');
       const qid = `quote-${operation(a,'quote',operationId)}`, commandDigest = digest(input);
       const prior = (await client.query(`SELECT command_digest,binding FROM ${this.store.table('quotes')} WHERE tenant_id=$1 AND id=$2`,[a.tenantId,qid])).rows[0];
       if (prior) { requireThat(prior.command_digest === commandDigest,'operation_conflict'); return prior.binding; }

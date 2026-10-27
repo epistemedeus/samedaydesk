@@ -16,6 +16,10 @@ function outputPath() {
 const destination = outputPath();
 const value = {schema: 'pilot.machine-market.capability.v1', profile: 'machine-market', origin, tenant,
   sourceSha256: installedSourceSha256(), hostSha256: hostSourceSha256(sds), discovery: 'qualified-source', money};
+if (get('participation') !== undefined) {
+  if (get('participation') !== 'voluntary-artifact-v1' || money !== 'unfunded') throw Error('machine_profile_arguments_refused');
+  value.participation = get('participation');
+}
 if (money !== 'sandbox') value.networkSource = versionedSource(get('network') || 'eip155:8453');
 if (money === 'qualified') {
   const mode = get('network-class') || 'public', forkId = get('fork-id');

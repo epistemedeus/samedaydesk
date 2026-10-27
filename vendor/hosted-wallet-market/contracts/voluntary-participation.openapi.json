@@ -1,0 +1,2053 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Voluntary machine participation",
+    "version": "1.0.0",
+    "description": "Optional continuation of an unfunded need using existing walletless account sessions. Base path is the existing contributor API. Private profile and human assets retain separate admission. Both parties declare rights; requester alone decides useful acceptance; no supplied verification receipt is accepted. Contribution is optional. Read/export are authenticated POSTs and still require exact Origin/CSRF. Export requires acceptance, explicit requester export consent, contributor assent and a current grant; withdrawal stops further server reads and cannot revoke previously received CC0 bytes."
+  },
+  "servers": [
+    {
+      "url": "/api/neomorphic-contributor-journey"
+    }
+  ],
+  "paths": {
+    "/v1/market/offerVoluntary": {
+      "post": {
+        "operationId": "offerVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/offerVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "offerVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/assentVoluntary": {
+      "post": {
+        "operationId": "assentVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/assentVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "assentVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/deliverVoluntary": {
+      "post": {
+        "operationId": "deliverVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deliverVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "deliverVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/reviewVoluntary": {
+      "post": {
+        "operationId": "reviewVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/reviewVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "reviewVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/grantVoluntary": {
+      "post": {
+        "operationId": "grantVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/grantVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "grantVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/withdrawVoluntary": {
+      "post": {
+        "operationId": "withdrawVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/withdrawVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "withdrawVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/withdrawNeed": {
+      "post": {
+        "operationId": "withdrawNeed",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/withdrawNeed"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "withdrawNeed"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/readVoluntary": {
+      "post": {
+        "operationId": "readVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/readVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "readVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/PrivateView"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/exportVoluntary": {
+      "post": {
+        "operationId": "exportVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/exportVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "exportVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/Export"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/useVoluntary": {
+      "post": {
+        "operationId": "useVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/useVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "useVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    },
+    "/v1/market/readbackVoluntary": {
+      "post": {
+        "operationId": "readbackVoluntary",
+        "security": [
+          {
+            "accountCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CJ-CSRF",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-AE-Wire-Version",
+            "required": true,
+            "schema": {
+              "const": "c0-1"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,159}$"
+            },
+            "description": "Persist before sending. Readback uses the original mutation key and exact original body."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/readbackVoluntary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated source-bound result; mutations include the existing immutable operation receipt. Acceptance is a requester decision, never independent verification or paid authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "const": "readbackVoluntary"
+                        },
+                        "result": {
+                          "$ref": "#/components/schemas/MutationResult"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, revoked or expired session, exact origin or CSRF"
+          },
+          "403": {
+            "description": "Task/tenant/role/consumer authority refused"
+          },
+          "404": {
+            "description": "Operation absent or feature unavailable"
+          },
+          "409": {
+            "description": "Source, terms, revision, effect, consent or withdrawal conflict"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "accountCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-neo_contributor",
+        "description": "Obtain through existing /v1/account/signup; use login/recover and operation readback for continuity. No owner-issued credential."
+      }
+    },
+    "schemas": {
+      "offerVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "contributorId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "rights": {
+            "type": "object",
+            "properties": {
+              "license": {
+                "const": "CC0-1.0"
+              },
+              "scope": {
+                "const": "synthetic-or-authorized-reusable-artifact"
+              },
+              "attribution": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "license",
+              "scope",
+              "attribution"
+            ],
+            "additionalProperties": false
+          },
+          "authorizedToRequest": {
+            "const": true
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hostSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "taskId",
+          "contributorId",
+          "rights",
+          "authorizedToRequest",
+          "sourceSha256",
+          "hostSha256"
+        ],
+        "additionalProperties": false
+      },
+      "assentVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "termsDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hostSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "authorizedToShare": {
+            "const": true
+          }
+        },
+        "required": [
+          "taskId",
+          "termsDigest",
+          "expectedRevision",
+          "sourceSha256",
+          "hostSha256",
+          "authorizedToShare"
+        ],
+        "additionalProperties": false
+      },
+      "deliverVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "termsDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hostSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "usable",
+                  "no_fit",
+                  "failure"
+                ]
+              },
+              "businessResult": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "attempts": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "result": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "result",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "criterionResults": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "criterionId": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+                    },
+                    "observation": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "criterionId",
+                    "observation",
+                    "passed"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "nextDecision": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            },
+            "required": [
+              "kind",
+              "businessResult",
+              "attempts",
+              "criterionResults",
+              "nextDecision"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "taskId",
+          "termsDigest",
+          "expectedRevision",
+          "sourceSha256",
+          "hostSha256",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "reviewVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "termsDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hostSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "artifactDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "accepted": {
+            "type": "boolean"
+          },
+          "exportAuthorized": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "taskId",
+          "termsDigest",
+          "expectedRevision",
+          "sourceSha256",
+          "hostSha256",
+          "artifactDigest",
+          "accepted",
+          "exportAuthorized",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "grantVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "termsDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hostSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "consumerId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          }
+        },
+        "required": [
+          "taskId",
+          "termsDigest",
+          "expectedRevision",
+          "sourceSha256",
+          "hostSha256",
+          "consumerId"
+        ],
+        "additionalProperties": false
+      },
+      "withdrawVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "termsDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "taskId",
+          "termsDigest",
+          "expectedRevision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "withdrawNeed": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "taskId",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "readVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          }
+        },
+        "required": [
+          "taskId"
+        ],
+        "additionalProperties": false
+      },
+      "exportVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          }
+        },
+        "required": [
+          "taskId"
+        ],
+        "additionalProperties": false
+      },
+      "useVoluntary": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "laterTaskId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+          },
+          "artifactDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "decision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "taskId",
+          "laterTaskId",
+          "artifactDigest",
+          "decision"
+        ],
+        "additionalProperties": false
+      },
+      "readbackVoluntary": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "offerVoluntary",
+              "assentVoluntary",
+              "deliverVoluntary",
+              "reviewVoluntary",
+              "grantVoluntary",
+              "withdrawVoluntary",
+              "withdrawNeed",
+              "useVoluntary"
+            ]
+          },
+          "input": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/offerVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/assentVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/deliverVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/reviewVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/grantVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/withdrawVoluntary"
+              },
+              {
+                "$ref": "#/components/schemas/withdrawNeed"
+              },
+              {
+                "$ref": "#/components/schemas/useVoluntary"
+              }
+            ]
+          }
+        },
+        "required": [
+          "action",
+          "input"
+        ],
+        "additionalProperties": false
+      },
+      "Response": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "enum": [
+                  "offerVoluntary",
+                  "assentVoluntary",
+                  "deliverVoluntary",
+                  "reviewVoluntary",
+                  "grantVoluntary",
+                  "withdrawVoluntary",
+                  "withdrawNeed",
+                  "readVoluntary",
+                  "exportVoluntary",
+                  "useVoluntary",
+                  "readbackVoluntary"
+                ]
+              },
+              "result": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "action",
+              "result"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "ok",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "MutationResult": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "termsDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "offered",
+              "assigned",
+              "delivered",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ]
+          },
+          "artifactDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "funding": {
+            "const": "voluntary"
+          },
+          "paymentAuthority": {
+            "const": "none"
+          },
+          "paidWork": {
+            "const": false
+          },
+          "debtCreated": {
+            "const": false
+          },
+          "verification": {
+            "const": "requester_decision"
+          },
+          "independence": {
+            "const": "unknown"
+          },
+          "receipt": {
+            "type": "object",
+            "properties": {
+              "schema": {
+                "const": "pilot.machine-market.cold-mutation-receipt.v1"
+              },
+              "origin": {
+                "type": "string",
+                "format": "uri"
+              },
+              "tenantId": {
+                "type": "string"
+              },
+              "actorId": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "operationId": {
+                "type": "string"
+              },
+              "bodyDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "taskId": {
+                "type": "string"
+              },
+              "resultDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "evidence": {
+                "const": "atomic_operation"
+              },
+              "originalBodyRecorded": {
+                "const": true
+              },
+              "receiptId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "schema",
+              "origin",
+              "tenantId",
+              "actorId",
+              "action",
+              "operationId",
+              "bodyDigest",
+              "taskId",
+              "resultDigest",
+              "evidence",
+              "originalBodyRecorded",
+              "receiptId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "taskId",
+          "revision",
+          "termsDigest",
+          "state",
+          "artifactDigest",
+          "funding",
+          "paymentAuthority",
+          "paidWork",
+          "debtCreated",
+          "verification",
+          "independence",
+          "receipt"
+        ],
+        "additionalProperties": false
+      },
+      "PrivateView": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "termsDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "offered",
+              "assigned",
+              "delivered",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ]
+          },
+          "artifactDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "funding": {
+            "const": "voluntary"
+          },
+          "paymentAuthority": {
+            "const": "none"
+          },
+          "paidWork": {
+            "const": false
+          },
+          "debtCreated": {
+            "const": false
+          },
+          "verification": {
+            "const": "requester_decision"
+          },
+          "independence": {
+            "const": "unknown"
+          },
+          "terms": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "review": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "evidence": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "taskId",
+          "revision",
+          "termsDigest",
+          "state",
+          "artifactDigest",
+          "funding",
+          "paymentAuthority",
+          "paidWork",
+          "debtCreated",
+          "verification",
+          "independence",
+          "terms",
+          "review",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "Export": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "termsDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "offered",
+              "assigned",
+              "delivered",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ]
+          },
+          "artifactDigest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "funding": {
+            "const": "voluntary"
+          },
+          "paymentAuthority": {
+            "const": "none"
+          },
+          "paidWork": {
+            "const": false
+          },
+          "debtCreated": {
+            "const": false
+          },
+          "verification": {
+            "const": "requester_decision"
+          },
+          "independence": {
+            "const": "unknown"
+          },
+          "schema": {
+            "const": "pilot.machine-market.voluntary-export.v1"
+          },
+          "terms": {
+            "type": "object"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/deliverVoluntary/properties/evidence"
+          },
+          "review": {
+            "type": "object",
+            "required": [
+              "requesterId",
+              "artifactDigest",
+              "accepted",
+              "exportAuthorized",
+              "reason",
+              "authority"
+            ],
+            "properties": {
+              "accepted": {
+                "const": true
+              },
+              "exportAuthorized": {
+                "const": true
+              },
+              "authority": {
+                "const": "requester_decision"
+              }
+            }
+          },
+          "relationship": {
+            "enum": [
+              "task_party",
+              "authorized_later_consumer"
+            ]
+          }
+        },
+        "required": [
+          "taskId",
+          "revision",
+          "termsDigest",
+          "state",
+          "artifactDigest",
+          "funding",
+          "paymentAuthority",
+          "paidWork",
+          "debtCreated",
+          "verification",
+          "independence",
+          "schema",
+          "terms",
+          "evidence",
+          "review",
+          "relationship"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

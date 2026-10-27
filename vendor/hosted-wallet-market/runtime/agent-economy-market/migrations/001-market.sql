@@ -37,3 +37,6 @@ CREATE TABLE IF NOT EXISTS __SCHEMA__.ae14_market_measures (
   PRIMARY KEY(tenant_id,task_id,kind,event_id),
   FOREIGN KEY(tenant_id,task_id) REFERENCES __SCHEMA__.ae14_market_tasks(tenant_id,id)
 );
+-- Optional voluntary continuation on the existing task authority. Old financial
+-- rows/terms remain untouched; no zero-value obligation or funding row is made.
+ALTER TABLE __SCHEMA__.ae14_market_tasks ADD COLUMN IF NOT EXISTS voluntary jsonb;

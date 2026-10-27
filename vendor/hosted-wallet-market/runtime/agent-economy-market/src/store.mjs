@@ -78,7 +78,7 @@ export class MarketStore {
       return result;
     });
   }
-  async coldReadback({origin,actor,action,input,operationId,postTaskId}) {
+  async coldReadback({origin,actor,action,input,operationId,postTaskId,legacy=true}) {
     const request=coldRequest(origin,actor,action,input,operationId);
     return this.transaction(async client=>{
       // One consistent read-only snapshot; this port cannot create a business effect or receipt row.
@@ -88,6 +88,7 @@ export class MarketStore {
         requireThat(prior.principal_id===actor.actorId && prior.request_hash===digest(request),'operation_conflict');
         return checkedColdResult(request,prior.response_json);
       }
+      requireThat(legacy, 'operation_absent');
       const events=await this.coldTransitions(client,actor,operationId);
       requireThat(events.length>0,'operation_absent');
       requireThat(events.length===1,'legacy_receipt_ambiguous');
