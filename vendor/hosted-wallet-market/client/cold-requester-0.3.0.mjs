@@ -192,7 +192,9 @@ async function main(){
     const response=await request('/v1/market/profile',command==='wrong-wire'?{headers:{'x-ae-wire-version':'1'}}:{});
     const value=response.body?.value;
     emit({ok:command==='profile'&&response.status===200&&response.body?.ok===true,status:response.status,code:codeOf(response),
-      money:value?.capability?.money??null,signerAuthority:value?.signerAuthority??null,discovery:value?.capability?.discovery??null,mutationReceipts:value?.mutationReceipts?.schema??null});
+      money:value?.capability?.money??null,signerAuthority:value?.signerAuthority??null,discovery:value?.capability?.discovery??null,
+      mutationReceipts:value?.mutationReceipts?.schema??null,participation:value?.participation?.protocol??null,
+      sourceSha256:value?.capability?.sourceSha256??null,hostSha256:value?.capability?.hostSha256??null});
   }
   if(command==='discover'){
     const response=await request('/v1/market/discover?limit=20'+(flag('cursor')?'&cursor='+encodeURIComponent(flag('cursor')):''));

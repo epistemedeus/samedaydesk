@@ -48,7 +48,7 @@ export function runCanary({origin,directory,namespace,client,clientSha256,caFile
     writeFileSync(input,JSON.stringify(body)+'\n',{mode:0o600});
     return run(['act','--action',action,'--input',input,...secret(role)],options);
   }
-  run(['profile']);
+  assert.equal(run(['profile']).participation,'voluntary-artifact-v1','receive explicit participation before signup');
   for(const [name,role] of [['requester','requester'],['contributor','contributor'],['later','requester']])
     run(['signup',...secret(name),'--display-name',namespace+' '+name,'--role',role]);
   assert.notEqual(account('requester'),account('contributor'));
