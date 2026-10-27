@@ -42,7 +42,7 @@ jobs:
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
-      - run: test -n "$ROOT10940_ACQUIRED_CLIENT" && test -n "$ROOT10940_ACQUISITION_DESCRIPTOR" && test -n "$ROOT10940_TRUST_ANCHOR" && AE14_PG_BIN="$(pg_config --bindir)" node --test --test-concurrency=1 server/scripts/test-root10940-machine-participation.mjs
+      - run: AE14_PG_BIN="$(pg_config --bindir)" node --test --test-concurrency=1 server/scripts/test-root10940-machine-participation.mjs
       - run: node --test server/scripts/test-machine-guide-links.js
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task
