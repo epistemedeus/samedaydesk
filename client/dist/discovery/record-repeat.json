@@ -1,0 +1,33 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "record-repeat-job",
+  "title": "Offline OpenAPI, price-row, keyed CSV, and feed comparison package",
+  "summary": "Compare local before/after OpenAPI used operations, price/unit rows, keyed CSV, and RSS/Atom feeds. Labeled samples and next-run manifests included. Does not fetch, charge, or schedule.",
+  "page": "https://samedaydesk.com/for-agents/record-repeat",
+  "archive": {
+    "path": "/kit/record-repeat-job-ab84d79b0272.tar.gz",
+    "url": "https://samedaydesk.com/kit/record-repeat-job-ab84d79b0272.tar.gz",
+    "sha256": "9814feabcda58c1f4a494a8919d9c6c2ac7d35b094ce5218261f976196c045ea",
+    "bytes": 1253570
+  },
+  "pins": {
+    "parser": "65ce1867f1b4339cc708bfb72a7d9a5942785632",
+    "recipes": "a022eb6352156dcdcdf2f8730931f5891bd01436",
+    "semanticsTip": "ab84d79b02726af87131751ac9e11c54c353d5f3"
+  },
+  "families": [
+    "openapi-used-ops",
+    "pricing-row-unit",
+    "csv-keyed-drift",
+    "rss-atom-brief"
+  ],
+  "runsOffline": true,
+  "invokesPricedExecution": false,
+  "coldStart": [
+    "curl -fsSL -o record-repeat-job.tar.gz https://samedaydesk.com/kit/record-repeat-job-ab84d79b0272.tar.gz",
+    "mkdir -p /tmp && tar -xzf record-repeat-job.tar.gz -C /tmp",
+    "cd /tmp/record-repeat-job",
+    "node bin/record-repeat.mjs sample --all"
+  ],
+  "materialLimit": "Unsupported HTML and missing identity or units are refused, not invented."
+}

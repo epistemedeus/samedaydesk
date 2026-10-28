@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI-Search Readiness Leaderboard 2026: 189 companies scored across 10 industries</title>
+<meta name="description" content="A sortable leaderboard of how 189 well-known companies score on AI-search readiness (ChatGPT, Perplexity, Google AI) across 10 industries. Healthtech, media, and consumer apps score worst; GitHub and OpenAI got a D, Klarna and Ars Technica an F. Filter, sort, free checker." />
+<link rel="canonical" href="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="AI-Search Readiness Leaderboard 2026: 189 companies, 10 industries" />
+<meta property="og:description" content="How 189 companies score on AI-search readiness across 10 industries. Media, healthtech and consumer apps score worst; OpenAI and GitHub got a D. Free checker included." />
+<meta property="og:url" content="https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","headline":"AI-Search Readiness Leaderboard 2026: 189 companies scored across 10 industries","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html"},
+ {"@type":"Dataset","name":"AI-Search Readiness Leaderboard 2026 (189 companies, 10 industries)","description":"Scores (0-100) and letter grades measuring how readable 189 well-known companies' homepages are to AI search engines (ChatGPT, Perplexity, Google AI), across 10 industries: SaaS, e-commerce, marketing agencies, AI startups, dev tools, fintech, healthtech, enterprise, media, and consumer apps. Each homepage is scored on AI-crawler access, JSON-LD structured data, title/meta, Open Graph, XML sitemap, and llms.txt. Industry averages range from healthtech (63) and media (64) to agencies (92).","url":"https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html","keywords":["AI search readiness","generative engine optimization","GEO","answer engine optimization","ChatGPT","Perplexity","structured data","robots.txt","AI crawlers"],"creator":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"datePublished":"2026-06-23","dateModified":"2026-06-23","license":"https://creativecommons.org/licenses/by/4.0/","isAccessibleForFree":true,"measurementTechnique":"Automated homepage fetch scored on AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt","variableMeasured":["AI-search readiness score (0-100)","letter grade","industry"],"distribution":[{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv"}]}
+]}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:52rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.8rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  .lead { font-size:1.2rem; color:var(--dim); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:1rem; margin:1.8rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--oxide); border-radius:10px; padding:.9rem 1rem; }
+  .stat b { display:block; font-size:1.8rem; font-family:ui-monospace,monospace; line-height:1; }
+  .stat span { color:var(--dim); font-size:.82rem; }
+  .controls { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:1.5rem 0 .6rem; }
+  .filt { padding:.35rem .8rem; border:1px solid var(--line); background:var(--card); border-radius:99px; cursor:pointer; font:inherit; font-size:.85rem; }
+  .filt[aria-pressed="true"] { border-color:var(--oxide); color:var(--oxide); font-weight:700; }
+  #q { padding:.4rem .7rem; border:1px solid var(--line); border-radius:8px; font:inherit; flex:1; min-width:10rem; }
+  table { width:100%; border-collapse:collapse; margin:.4rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--line); }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); cursor:pointer; user-select:none; }
+  th:hover { color:var(--oxide); }
+  td.g { font-weight:700; } .A{color:var(--good)} .B{color:#2f6e7a} .C{color:var(--oxide)} .D{color:var(--oxide)} .F{color:var(--oxide)}
+  .catbars { margin:1rem 0 2rem; }
+  .catbar { display:grid; grid-template-columns:7.5rem 1fr 2.5rem; align-items:center; gap:.6rem; margin:.3rem 0; font-size:.9rem; }
+  .catbar .track { background:var(--line); border-radius:99px; height:.7rem; overflow:hidden; }
+  .catbar .fill { background:var(--oxide); height:100%; }
+  .catbar .v { font-family:ui-monospace,monospace; text-align:right; }
+  .num { font-family:ui-monospace,monospace; }
+  .rank { color:var(--dim); font-family:ui-monospace,monospace; }
+  .tag { font-size:.75rem; color:var(--dim); background:var(--card); border:1px solid var(--line); border-radius:99px; padding:.05rem .5rem; }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; }
+  .cta a.btn { display:inline-block; margin:.5rem .5rem 0 0; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .cta a.btn2 { display:inline-block; margin:.5rem 0 0; color:#ccff00; border:1px solid #444; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk · Leaderboard · June 2026</p>
+  <h1>AI-Search Readiness Leaderboard 2026</h1>
+  <p class="lead">How readable are the web's best-known companies to AI search engines (ChatGPT, Perplexity, Google AI)? We scored <strong id="ct">189</strong> of them across ten industries. Sort and filter the full list below. Then <a href="https://samedaydesk.com/tools/ai-readiness">check your own site</a>.</p>
+
+  <div class="stats">
+    <div class="stat"><b id="s_total">189</b><span>companies scored</span></div>
+    <div class="stat"><b id="s_avg">81</b><span>average score /100</span></div>
+    <div class="stat"><b id="s_a">93</b><span>scored an A</span></div>
+    <div class="stat"><b id="s_cd">65</b><span>scored C, D or F</span></div>
+  </div>
+
+  <h2 style="font-size:1.3rem">Average score by industry</h2>
+  <p class="muted" style="margin:.2rem 0 .6rem">Healthtech, media, and consumer apps are the hardest for AI search to read; agencies, SaaS, and dev tools the easiest. (News publishers, whose whole business is being cited, score among the worst.)</p>
+  <div class="catbars">
+    <div class="catbar"><span>Agencies</span><div class="track"><div class="fill" style="width:92%"></div></div><span class="v">92</span></div>
+    <div class="catbar"><span>SaaS</span><div class="track"><div class="fill" style="width:87%"></div></div><span class="v">87</span></div>
+    <div class="catbar"><span>Dev tools</span><div class="track"><div class="fill" style="width:86%"></div></div><span class="v">86</span></div>
+    <div class="catbar"><span>E-commerce</span><div class="track"><div class="fill" style="width:85%"></div></div><span class="v">85</span></div>
+    <div class="catbar"><span>AI startups</span><div class="track"><div class="fill" style="width:81%"></div></div><span class="v">81</span></div>
+    <div class="catbar"><span>Enterprise</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="v">78</span></div>
+    <div class="catbar"><span>Fintech</span><div class="track"><div class="fill" style="width:76%"></div></div><span class="v">76</span></div>
+    <div class="catbar"><span>Consumer apps</span><div class="track"><div class="fill" style="width:68%"></div></div><span class="v">68</span></div>
+    <div class="catbar"><span>Media</span><div class="track"><div class="fill" style="width:64%"></div></div><span class="v">64</span></div>
+    <div class="catbar"><span>Healthtech</span><div class="track"><div class="fill" style="width:63%"></div></div><span class="v">63</span></div>
+  </div>
+
+  <div class="controls" id="filters">
+    <button class="filt" data-cat="All" aria-pressed="true">All</button>
+    <button class="filt" data-cat="SaaS" aria-pressed="false">SaaS</button>
+    <button class="filt" data-cat="E-commerce" aria-pressed="false">E-commerce</button>
+    <button class="filt" data-cat="Agencies" aria-pressed="false">Agencies</button>
+    <button class="filt" data-cat="AI startups" aria-pressed="false">AI startups</button>
+    <button class="filt" data-cat="Dev tools" aria-pressed="false">Dev tools</button>
+    <button class="filt" data-cat="Fintech" aria-pressed="false">Fintech</button>
+    <button class="filt" data-cat="Healthtech" aria-pressed="false">Healthtech</button>
+    <button class="filt" data-cat="Enterprise" aria-pressed="false">Enterprise</button>
+    <button class="filt" data-cat="Media" aria-pressed="false">Media</button>
+    <button class="filt" data-cat="Consumer apps" aria-pressed="false">Consumer apps</button>
+    <input id="q" placeholder="Search a company…" />
+  </div>
+  <table>
+    <thead><tr><th data-sort="rank">#</th><th data-sort="domain">Company</th><th data-sort="cat">Category</th><th data-sort="score">Score ▾</th><th data-sort="grade">Grade</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+  <p class="muted" id="count"></p>
+
+  <div class="cta">
+    <h2>Where does your site rank?</h2>
+    <p>Run the free <strong>AI Readiness Checker</strong> on any URL in 10 seconds. If it flags gaps, the <strong>Fix Pack ($39)</strong> ships a corrected robots.txt, sitemap, JSON-LD structured data, and clean title/meta/Open Graph tags, installed-ready, today.</p>
+    <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check</a>
+    <a class="btn2" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+  </div>
+
+  <p class="muted">Spanning ten industries: <a href="https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html">SaaS</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-ecommerce-2026.html">e-commerce</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-marketing-agencies-2026.html">marketing agencies</a>, <a href="https://samedaydesk.com/reports/ai-search-readiness-ai-startups-2026.html">AI startups</a>, plus dev tools, fintech, and healthtech. Each homepage was fetched once and scored on AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, and llms.txt. Point-in-time, homepage-level snapshot; scores change as sites update.</p>
+
+  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a>. See all our <a href="https://samedaydesk.com/tools/free-seo-ai-tools.html">free SEO &amp; AI-search tools</a>.</footer>
+</div>
+
+<script>
+  const DATA = [{"domain":"amplitude.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"auth0.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"betterment.com","score":100,"grade":"A","cat":"Fintech"},{"domain":"brex.com","score":100,"grade":"A","cat":"Fintech"},{"domain":"brooklinen.com","score":100,"grade":"A","cat":"E-commerce"},{"domain":"casper.com","score":100,"grade":"A","cat":"E-commerce"},{"domain":"circleci.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"cohere.com","score":100,"grade":"A","cat":"AI startups"},{"domain":"column.com","score":100,"grade":"A","cat":"Fintech"},{"domain":"cursor.com","score":100,"grade":"A","cat":"AI startups"},{"domain":"directiveconsulting.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"elevenlabs.io","score":100,"grade":"A","cat":"AI startups"},{"domain":"fannit.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"framer.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"headspace.com","score":100,"grade":"A","cat":"Healthtech"},{"domain":"heroku.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"ignitevisibility.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"jasper.ai","score":100,"grade":"A","cat":"AI startups"},{"domain":"lovable.dev","score":100,"grade":"A","cat":"AI startups"},{"domain":"magicspoon.com","score":100,"grade":"A","cat":"E-commerce"},{"domain":"mailchimp.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"mejuri.com","score":100,"grade":"A","cat":"E-commerce"},{"domain":"mongodb.com","score":100,"grade":"A","cat":"Enterprise"},{"domain":"okta.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"pinecone.io","score":100,"grade":"A","cat":"AI startups"},{"domain":"plaid.com","score":100,"grade":"A","cat":"Fintech"},{"domain":"postman.com","score":100,"grade":"A","cat":"Dev tools"},{"domain":"powerdigitalmarketing.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"purple.com","score":100,"grade":"A","cat":"E-commerce"},{"domain":"railway.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"rankings.io","score":100,"grade":"A","cat":"Agencies"},{"domain":"render.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"resend.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"retool.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"rippling.com","score":100,"grade":"A","cat":"Fintech"},{"domain":"stripe.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"suno.com","score":100,"grade":"A","cat":"AI startups"},{"domain":"supabase.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"sureoak.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"unit.co","score":100,"grade":"A","cat":"Fintech"},{"domain":"webflow.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"webfx.com","score":100,"grade":"A","cat":"Agencies"},{"domain":"wix.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"zapier.com","score":100,"grade":"A","cat":"SaaS"},{"domain":"brafton.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"buffer.com","score":98,"grade":"A","cat":"SaaS"},{"domain":"codeium.com","score":98,"grade":"A","cat":"AI startups"},{"domain":"confluent.io","score":98,"grade":"A","cat":"Enterprise"},{"domain":"discord.com","score":98,"grade":"A","cat":"Consumer apps"},{"domain":"docker.com","score":98,"grade":"A","cat":"Dev tools"},{"domain":"drinklmnt.com","score":98,"grade":"A","cat":"E-commerce"},{"domain":"fireworks.ai","score":98,"grade":"A","cat":"AI startups"},{"domain":"glean.com","score":98,"grade":"A","cat":"AI startups"},{"domain":"hawksem.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"nike.com","score":98,"grade":"A","cat":"E-commerce"},{"domain":"npdigital.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"ruggable.com","score":98,"grade":"A","cat":"E-commerce"},{"domain":"siegemedia.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"smartsites.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"straightnorth.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"thehoth.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"thriveagency.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"titangrowth.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"victoriousseo.com","score":98,"grade":"A","cat":"Agencies"},{"domain":"workday.com","score":98,"grade":"A","cat":"Enterprise"},{"domain":"cloudflare.com","score":93,"grade":"A","cat":"Dev tools"},{"domain":"contextual.ai","score":93,"grade":"A","cat":"AI startups"},{"domain":"datadoghq.com","score":93,"grade":"A","cat":"Dev tools"},{"domain":"everlane.com","score":93,"grade":"A","cat":"E-commerce"},{"domain":"fellowproducts.com","score":93,"grade":"A","cat":"E-commerce"},{"domain":"greatjonesgoods.com","score":93,"grade":"A","cat":"E-commerce"},{"domain":"knix.com","score":93,"grade":"A","cat":"E-commerce"},{"domain":"planetscale.com","score":93,"grade":"A","cat":"Dev tools"},{"domain":"salesforce.com","score":93,"grade":"A","cat":"Enterprise"},{"domain":"sentry.io","score":93,"grade":"A","cat":"Dev tools"},{"domain":"shopify.com","score":93,"grade":"A","cat":"SaaS"},{"domain":"singlegrain.com","score":93,"grade":"A","cat":"Agencies"},{"domain":"squarespace.com","score":93,"grade":"A","cat":"SaaS"},{"domain":"teladoc.com","score":93,"grade":"A","cat":"Healthtech"},{"domain":"twilio.com","score":93,"grade":"A","cat":"Dev tools"},{"domain":"vercel.com","score":93,"grade":"A","cat":"SaaS"},{"domain":"writesonic.com","score":93,"grade":"A","cat":"AI startups"},{"domain":"airbnb.com","score":90,"grade":"A","cat":"Consumer apps"},{"domain":"chubbiesshorts.com","score":90,"grade":"A","cat":"E-commerce"},{"domain":"coalitiontechnologies.com","score":90,"grade":"A","cat":"Agencies"},{"domain":"ghost.org","score":90,"grade":"A","cat":"SaaS"},{"domain":"gitlab.com","score":90,"grade":"A","cat":"Dev tools"},{"domain":"hubspot.com","score":90,"grade":"A","cat":"SaaS"},{"domain":"jetbrains.com","score":90,"grade":"A","cat":"Dev tools"},{"domain":"mainstreethost.com","score":90,"grade":"A","cat":"Agencies"},{"domain":"mercury.com","score":90,"grade":"A","cat":"Fintech"},{"domain":"runwayml.com","score":90,"grade":"A","cat":"AI startups"},{"domain":"wise.com","score":90,"grade":"A","cat":"Fintech"},{"domain":"atlassian.com","score":85,"grade":"B","cat":"Enterprise"},{"domain":"dropbox.com","score":85,"grade":"B","cat":"Consumer apps"},{"domain":"modal.com","score":85,"grade":"B","cat":"AI startups"},{"domain":"calendly.com","score":83,"grade":"B","cat":"SaaS"},{"domain":"together.ai","score":83,"grade":"B","cat":"AI startups"},{"domain":"lyfemarketing.com","score":80,"grade":"B","cat":"Agencies"},{"domain":"techcrunch.com","score":80,"grade":"B","cat":"Media"},{"domain":"allbirds.com","score":78,"grade":"B","cat":"E-commerce"},{"domain":"cal.com","score":78,"grade":"B","cat":"SaaS"},{"domain":"deel.com","score":78,"grade":"B","cat":"Fintech"},{"domain":"liquiddeath.com","score":78,"grade":"B","cat":"E-commerce"},{"domain":"mistral.ai","score":78,"grade":"B","cat":"AI startups"},{"domain":"neon.tech","score":78,"grade":"B","cat":"Dev tools"},{"domain":"notion.com","score":78,"grade":"B","cat":"SaaS"},{"domain":"posthog.com","score":78,"grade":"B","cat":"SaaS"},{"domain":"segment.com","score":78,"grade":"B","cat":"Dev tools"},{"domain":"squareup.com","score":78,"grade":"B","cat":"Fintech"},{"domain":"weaviate.io","score":78,"grade":"B","cat":"AI startups"},{"domain":"anthropic.com","score":76,"grade":"B","cat":"AI startups"},{"domain":"copy.ai","score":76,"grade":"B","cat":"AI startups"},{"domain":"digitalocean.com","score":76,"grade":"B","cat":"Dev tools"},{"domain":"groq.com","score":76,"grade":"B","cat":"AI startups"},{"domain":"gumroad.com","score":76,"grade":"B","cat":"SaaS"},{"domain":"harvey.ai","score":76,"grade":"B","cat":"AI startups"},{"domain":"hioscar.com","score":76,"grade":"B","cat":"Healthtech"},{"domain":"huggingface.co","score":76,"grade":"B","cat":"AI startups"},{"domain":"langchain.com","score":76,"grade":"B","cat":"AI startups"},{"domain":"mixpanel.com","score":76,"grade":"B","cat":"Dev tools"},{"domain":"snowflake.com","score":76,"grade":"B","cat":"Enterprise"},{"domain":"sourcegraph.com","score":76,"grade":"B","cat":"Dev tools"},{"domain":"uber.com","score":76,"grade":"B","cat":"Consumer apps"},{"domain":"businessinsider.com","score":73,"grade":"C","cat":"Media"},{"domain":"disruptiveadvertising.com","score":73,"grade":"C","cat":"Agencies"},{"domain":"figma.com","score":73,"grade":"C","cat":"SaaS"},{"domain":"forbes.com","score":73,"grade":"C","cat":"Media"},{"domain":"nytimes.com","score":73,"grade":"C","cat":"Media"},{"domain":"theverge.com","score":73,"grade":"C","cat":"Media"},{"domain":"wired.com","score":73,"grade":"C","cat":"Media"},{"domain":"browserbase.com","score":71,"grade":"C","cat":"AI startups"},{"domain":"databricks.com","score":71,"grade":"C","cat":"Enterprise"},{"domain":"duolingo.com","score":71,"grade":"C","cat":"Consumer apps"},{"domain":"fly.io","score":71,"grade":"C","cat":"Dev tools"},{"domain":"glossier.com","score":71,"grade":"C","cat":"E-commerce"},{"domain":"linear.app","score":71,"grade":"C","cat":"SaaS"},{"domain":"stytch.com","score":71,"grade":"C","cat":"Fintech"},{"domain":"bbc.com","score":69,"grade":"C","cat":"Media"},{"domain":"affirm.com","score":68,"grade":"C","cat":"Fintech"},{"domain":"airtable.com","score":68,"grade":"C","cat":"SaaS"},{"domain":"cerebras.ai","score":68,"grade":"C","cat":"AI startups"},{"domain":"onemedical.com","score":68,"grade":"C","cat":"Healthtech"},{"domain":"poolside.ai","score":68,"grade":"C","cat":"AI startups"},{"domain":"robinhood.com","score":68,"grade":"C","cat":"Fintech"},{"domain":"sap.com","score":68,"grade":"C","cat":"Enterprise"},{"domain":"scale.com","score":68,"grade":"C","cat":"AI startups"},{"domain":"substack.com","score":68,"grade":"C","cat":"SaaS"},{"domain":"bombas.com","score":64,"grade":"C","cat":"E-commerce"},{"domain":"coinbase.com","score":63,"grade":"C","cat":"Fintech"},{"domain":"gymshark.com","score":63,"grade":"C","cat":"E-commerce"},{"domain":"netlify.com","score":63,"grade":"C","cat":"Dev tools"},{"domain":"replicate.com","score":63,"grade":"C","cat":"AI startups"},{"domain":"ridge.com","score":63,"grade":"C","cat":"E-commerce"},{"domain":"clerk.com","score":61,"grade":"C","cat":"SaaS"},{"domain":"calm.com","score":60,"grade":"C","cat":"Healthtech"},{"domain":"cerebral.com","score":60,"grade":"C","cat":"Healthtech"},{"domain":"character.ai","score":60,"grade":"C","cat":"AI startups"},{"domain":"doordash.com","score":60,"grade":"C","cat":"Consumer apps"},{"domain":"goodrx.com","score":60,"grade":"C","cat":"Healthtech"},{"domain":"hashicorp.com","score":60,"grade":"C","cat":"Dev tools"},{"domain":"hydroflask.com","score":60,"grade":"C","cat":"E-commerce"},{"domain":"perplexity.ai","score":60,"grade":"C","cat":"AI startups"},{"domain":"sofi.com","score":60,"grade":"C","cat":"Fintech"},{"domain":"instacart.com","score":57,"grade":"D","cat":"Consumer apps"},{"domain":"github.com","score":56,"grade":"D","cat":"Dev tools"},{"domain":"netflix.com","score":56,"grade":"D","cat":"Consumer apps"},{"domain":"ramp.com","score":55,"grade":"D","cat":"Fintech"},{"domain":"llamaindex.ai","score":53,"grade":"D","cat":"AI startups"},{"domain":"openai.com","score":53,"grade":"D","cat":"AI startups"},{"domain":"boostability.com","score":45,"grade":"D","cat":"Agencies"},{"domain":"carbonhealth.com","score":45,"grade":"D","cat":"Healthtech"},{"domain":"chime.com","score":45,"grade":"D","cat":"Fintech"},{"domain":"godaddy.com","score":45,"grade":"D","cat":"SaaS"},{"domain":"gusto.com","score":45,"grade":"D","cat":"Fintech"},{"domain":"hims.com","score":45,"grade":"D","cat":"Healthtech"},{"domain":"midjourney.com","score":45,"grade":"D","cat":"AI startups"},{"domain":"oracle.com","score":45,"grade":"D","cat":"Enterprise"},{"domain":"ro.co","score":45,"grade":"D","cat":"Healthtech"},{"domain":"seoinc.com","score":45,"grade":"D","cat":"Agencies"},{"domain":"servicenow.com","score":45,"grade":"D","cat":"Enterprise"},{"domain":"warbyparker.com","score":45,"grade":"D","cat":"E-commerce"},{"domain":"zocdoc.com","score":45,"grade":"D","cat":"Healthtech"},{"domain":"bloomberg.com","score":43,"grade":"D","cat":"Media"},{"domain":"canva.com","score":43,"grade":"D","cat":"Consumer apps"},{"domain":"spotify.com","score":43,"grade":"D","cat":"Consumer apps"},{"domain":"theguardian.com","score":43,"grade":"D","cat":"Media"},{"domain":"arstechnica.com","score":38,"grade":"F","cat":"Media"},{"domain":"klarna.com","score":38,"grade":"F","cat":"Fintech"}];
+  const $ = (id)=>document.getElementById(id);
+  let cat = "All", sortKey = "score", sortDir = -1, q = "";
+  function view(){
+    let rows = DATA.filter(r => (cat==="All"||r.cat===cat) && (!q || r.domain.includes(q)));
+    rows.sort((a,b)=>{
+      let av=a[sortKey], bv=b[sortKey];
+      if(sortKey==="score"){ return (av-bv)*sortDir; }
+      return String(av).localeCompare(String(bv))*sortDir;
+    });
+    const tb = $("tb"); tb.innerHTML = "";
+    rows.forEach((r,i)=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="rank">${i+1}</td><td><strong>${r.domain}</strong></td><td><span class="tag">${r.cat}</span></td><td class="num">${r.score}</td><td class="g ${r.grade}">${r.grade}</td>`;
+      tb.appendChild(tr);
+    });
+    $("count").textContent = `${rows.length} companies shown` + (cat!=="All"?` in ${cat}`:"") + (q?` matching "${q}"`:"") + ".";
+  }
+  $("filters").addEventListener("click", e=>{
+    const b = e.target.closest(".filt"); if(!b) return;
+    cat = b.dataset.cat;
+    document.querySelectorAll(".filt").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
+    view();
+  });
+  document.querySelectorAll("th[data-sort]").forEach(th=>th.addEventListener("click", ()=>{
+    const k = th.dataset.sort==="rank" ? "score" : th.dataset.sort;
+    if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir = (k==="score")?-1:1; }
+    view();
+  }));
+  $("q").addEventListener("input", e=>{ q = e.target.value.trim().toLowerCase(); view(); });
+  // stats
+  const total = DATA.length, avg = Math.round(DATA.reduce((s,r)=>s+r.score,0)/total);
+  const a = DATA.filter(r=>r.grade==="A").length, cd = DATA.filter(r=>r.grade==="C"||r.grade==="D").length;
+  $("s_total").textContent=total; $("ct").textContent=total; $("s_avg").textContent=avg; $("s_a").textContent=a; $("s_cd").textContent=cd;
+  view();
+</script>
+</body>
+</html>

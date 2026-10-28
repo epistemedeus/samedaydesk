@@ -1,0 +1,12 @@
+# itertools
+
+> The concrete iterator types.
+
+## API Reference
+
+- [itertools::structs](/docs/rust-itertools/pkg-itertools-itertools-structs.html): The concrete iterator types.
+- [itertools](/docs/rust-itertools/pkg-itertools-itertools.html): Extra iterator adaptors, functions and macros.
+- [itertools::traits](/docs/rust-itertools/pkg-itertools-itertools-traits.html): Traits helpful for using certain `Itertools` methods in generic contexts.
+- [itertools](/docs/rust-itertools/pkg-itertools.html): Rust API for itertools (2912 items across 3 modules).
+- [Doctests](/docs/rust-itertools/doctests.html): Aggregated doctests across the workspace.
+- [API Reference](/docs/rust-itertools/): Rust API across 1 crate.

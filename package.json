@@ -50,7 +50,7 @@
     "foundry:migrate": "node server/foundry/migrate.mjs --apply",
     "foundry:probe": "node server/foundry/probe.mjs",
     "build:managed-foundry-install": "npm run build:managed-foundry && npm run foundry:install",
-    "build:managed-foundry": "npm --prefix client ci --include=dev && npm --prefix client run build && npm run foundry:runtime -- --deployable && npm run foundry:managed-probe",
+    "build:managed-foundry": "node server/scripts/publish-preserved-client.mjs && npm run foundry:runtime -- --deployable && npm run foundry:managed-probe",
     "foundry:runtime": "node server/foundry/materialize-runtime.mjs",
     "foundry:managed-probe": "node server/foundry/managed-node-probe.mjs",
     "test:managed-node": "node --test --test-concurrency=1 server/scripts/test-managed-node.js server/scripts/test-managed-node-receiving.js",

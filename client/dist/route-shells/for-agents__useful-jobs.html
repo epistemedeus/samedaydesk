@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>Offline useful jobs for agent callers | SameDayDesk</title>
+    <meta
+      name="description"
+      content="Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/for-agents/useful-jobs" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="Offline useful jobs for agent callers | SameDayDesk" />
+    <meta
+      property="og:description"
+      content="Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/for-agents/useful-jobs" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Offline useful jobs for agent callers | SameDayDesk" />
+    <meta
+      name="twitter:description"
+      content="Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://samedaydesk.com/#org",
+      "name": "SameDayDesk",
+      "url": "https://samedaydesk.com/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://samedaydesk.com/for-agents/useful-jobs#webpage",
+      "url": "https://samedaydesk.com/for-agents/useful-jobs",
+      "name": "Offline useful jobs for agent callers | SameDayDesk",
+      "description": "Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution.",
+      "isPartOf": {
+        "@id": "https://samedaydesk.com/#site"
+      },
+      "publisher": {
+        "@id": "https://samedaydesk.com/#org"
+      }
+    }
+  ]
+}
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+<h1>Offline useful jobs for agent callers</h1>
+      <p>
+        Turn changing files into useful next steps. Ten offline jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Download and verify the archive, then run on Node 22 with your own files. Free local package; not hosted execution.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="https://samedaydesk.com/discovery/useful-jobs.json">https://samedaydesk.com/discovery/useful-jobs.json</a>.
+        Catalog:
+        <a href="https://samedaydesk.com/for-agents/useful-jobs/catalog.json">https://samedaydesk.com/for-agents/useful-jobs/catalog.json</a>.
+        Outcomes:
+        <a href="https://samedaydesk.com/for-agents/useful-jobs/jobs-outcomes.json">https://samedaydesk.com/for-agents/useful-jobs/jobs-outcomes.json</a>.
+        Archive: <a href="https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz">https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz</a>
+        (5255824 bytes, sha256 <code>e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec</code>).
+        Source <code>epistemedeus/samedaydesk</code> at
+        <code>27f0730604adf236e0f3ad818a30b5f43be6e656</code>. Archive freeze
+        <code>27f0730604adf236e0f3ad818a30b5f43be6e656</code>. Reviewed source
+        <code>27f0730604adf236e0f3ad818a30b5f43be6e656</code>.
+        Acquire tools: <code>bash, curl, python3, tar, mktemp</code>.
+        Runtime after extract: <code>Node >= 22 (offline after extract)</code>.
+        <a href="https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz">Download archive</a>.
+      </p>
+      <h2>Install / cold start (verify before extract)</h2>
+      <pre><code>useful_jobs_acquire() {
+  local origin="${USEFUL_JOBS_ORIGIN:-${1:-https://samedaydesk.com}}"
+  local bytes=5255824
+  local sha=e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec
+  local work tgz root
+  work=$(mktemp -d "${TMPDIR:-/tmp}/useful-jobs.XXXXXX") || return 1
+  tgz="$work/useful-jobs-1.4.7.tar.gz"
+  root="$work/useful-jobs-1.4.7"
+  curl -fsSL --max-time 60 -o "$tgz" "$origin/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz" || { rm -rf "$work"; return 1; }
+  python3 -c 'import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); b=p.read_bytes(); n=len(b); e=int(sys.argv[2]); (n==e) or sys.exit((sys.stderr.write("size %s != %s\n" % (n, e)) or 1)); h=hashlib.sha256(b).hexdigest(); (h==sys.argv[3]) or sys.exit((sys.stderr.write("sha256 %s != %s\n" % (h, sys.argv[3])) or 1))' "$tgz" "$bytes" "$sha" || { rm -rf "$work"; return 1; }
+  tar -xzf "$tgz" -C "$work" || { rm -rf "$work"; return 1; }
+  [ -f "$root/bin/useful-jobs.mjs" ] || { rm -rf "$work"; return 1; }
+  (cd "$root" && node bin/useful-jobs.mjs list >&2) || { rm -rf "$work"; return 1; }
+  printf '%s\n' "$root"
+  return 0
+}
+kit=$(useful_jobs_acquire) || exit 1
+printf '%s\n' "$kit"</code></pre>
+      <h2>List and help</h2>
+      <pre><code>node "$kit/bin/useful-jobs.mjs" list
+node "$kit/bin/useful-jobs.mjs" help
+node "$kit/bin/useful-jobs.mjs" help lockfile-pin-delta
+node "$kit/bin/useful-jobs.mjs" help api-upgrade-brief</code></pre>
+      <h2>Labeled SAMPLE examples (not caller files)</h2>
+      <pre><code>node "$kit/bin/useful-jobs.mjs" run lockfile-pin-delta --example
+node "$kit/bin/useful-jobs.mjs" run json-schema-webhook-drift --example
+node "$kit/bin/useful-jobs.mjs" run route-table-diff --example --out-dir "$PWD/out/route-example"
+node "$kit/bin/useful-jobs.mjs" run page-change-offline-job --job "$kit/samples/page/h04-page-01/job.json" --out-dir "$PWD/out/page-h04"
+node "$kit/bin/useful-jobs.mjs" run api-upgrade-brief --example
+node "$kit/bin/useful-jobs.mjs" run vendor-budget-impact --example
+node "$kit/bin/useful-jobs.mjs" run feed-agenda --example
+node "$kit/bin/useful-jobs.mjs" run evidence-ci-annotation --example
+node "$kit/bin/useful-jobs.mjs" run listing-repair-packet --example
+node "$kit/bin/useful-jobs.mjs" run repeat-job-record --example</code></pre>
+      <h2>Two different callers</h2>
+      <pre><code>node "$kit/bin/useful-jobs.mjs" run lockfile-pin-delta \
+  --before "$kit/samples/lockfile/h04-pub-lock-01/before.json" \
+  --after "$kit/samples/lockfile/h04-pub-lock-01/after.json" \
+  --out-dir "$PWD/out/h04-lock"
+node "$kit/bin/useful-jobs.mjs" run api-upgrade-brief \
+  --before "$kit/samples/openapi/caller-alpha/before.yaml" \
+  --after "$kit/samples/openapi/caller-alpha/after.yaml" \
+  --used "$kit/samples/openapi/caller-alpha/used.json" \
+  --out-dir "$PWD/out/caller-alpha"
+node "$kit/bin/useful-jobs.mjs" run api-upgrade-brief \
+  --before "$kit/samples/openapi/caller-beta/before.yaml" \
+  --after "$kit/samples/openapi/caller-beta/after.yaml" \
+  --used "$kit/samples/openapi/caller-beta/used.json" \
+  --out-dir "$PWD/out/caller-beta"</code></pre>
+      <h2>Changed-file repeat</h2>
+      <pre><code>cp "$kit/samples/openapi/caller-alpha/after.yaml" "$PWD/caller-alpha-after-edit.yaml"
+printf '\n# operator edit\n' >> "$PWD/caller-alpha-after-edit.yaml"
+node "$kit/bin/useful-jobs.mjs" run api-upgrade-brief \
+  --before "$kit/samples/openapi/caller-alpha/before.yaml" \
+  --after "$PWD/caller-alpha-after-edit.yaml" \
+  --used "$kit/samples/openapi/caller-alpha/used.json" \
+  --out-dir "$PWD/out/caller-alpha-repeat"</code></pre>
+      <p>
+        Scope: free local package only. Missing inputs or digest mismatch stop the job.
+        Partial vendor or listing evidence stays non-final. Evidence CI annotations from
+        caller packets stay unattested. This package does not run hosted extract.
+        Release 1.4.7 adds fresh verification for lockfile-pin-delta, json-schema-webhook-drift, route-table-diff, page-change-offline-job, and vendor-budget-impact. The other five jobs are carried forward without a new review.
+      </p>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>

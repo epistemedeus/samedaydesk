@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>Practical agent jobs | SameDayDesk</title>
+    <meta
+      name="description"
+      content="Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/for-agents" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="Practical agent jobs | SameDayDesk" />
+    <meta
+      property="og:description"
+      content="Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/for-agents" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Practical agent jobs | SameDayDesk" />
+    <meta
+      name="twitter:description"
+      content="Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://samedaydesk.com/#org",
+      "name": "SameDayDesk",
+      "url": "https://samedaydesk.com/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://samedaydesk.com/for-agents#webpage",
+      "url": "https://samedaydesk.com/for-agents",
+      "name": "Practical agent jobs | SameDayDesk",
+      "description": "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing.",
+      "isPartOf": {
+        "@id": "https://samedaydesk.com/#site"
+      },
+      "publisher": {
+        "@id": "https://samedaydesk.com/#org"
+      }
+    }
+  ]
+}
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+<h1>Obtain observations, use offline jobs, or opt-in reuse</h1>
+      <p>
+        SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public HTTPS
+        URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON
+        artifacts is free, local, and does not fetch. Paid freshness and offline comparison stay
+        distinct. Installation grants no payment authority.
+      </p>
+      <p>
+        Current paid HTTP and MCP inventories live on the merchant. This page does not freeze a
+        route count. Failed, partial, and missing rows stay visible. Observation freshness is unknown
+        unless you supply a clock and a horizon. <code>charged: true</code> is not useful output.
+        Current source labels are untrusted, not buyer proof. Purchasing never requires publishing
+        or referrals.
+      </p>
+      <h2>Job 1. Obtain bounded extracted observations</h2>
+      <p>
+        Public customer example 0.2.3 at
+        <a href="https://github.com/epistemedeus/x402-url-extractor/tree/ef46e2b5213b9436e5cc4339a159c8ae837db880/examples/customer-x402">https://github.com/epistemedeus/x402-url-extractor/tree/ef46e2b5213b9436e5cc4339a159c8ae837db880/examples/customer-x402</a>.
+        Requires Node.js 22.x and a full Git checkout, not a packed tarball.
+        Default commands are unpaid preflight against the live merchant, not an offline fixture. They
+        sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any <code>--approve</code>
+        purchase. Optional attempt receipt and read-only reconcile are separate.
+        Reconcile an unknown payment outcome instead of automatically retrying. This page includes
+        no keys, secret URLs, or purchase.
+      </p>
+      <pre><code>git clone https://github.com/epistemedeus/x402-url-extractor.git
+cd x402-url-extractor
+git checkout ef46e2b5213b9436e5cc4339a159c8ae837db880
+cd examples/customer-x402
+node --version # must report v22.x
+npm ci
+npm start</code></pre>
+      <p>
+        Backward-compatible single URL: <code>GET https://agents.samedaydesk.com/extract</code>. The practical
+        multi-URL job is <code>POST https://agents.samedaydesk.com/extract/batch</code>.
+      </p>
+      <h2>Job 2. Compare explicit fields from two already-held observations</h2>
+      <p>
+        From the same <code>examples/customer-x402</code> directory after <code>npm ci</code>. The
+        recipe does not fetch, pay, retry, or contact the merchant. Selected fields are required. An
+        absent selected field is coverage unknown, not deletion. Reordered rows with the same
+        source URL are order, not content change. Fixture output is owner proof, not buyer demand.
+      </p>
+      <pre><code>npm run page-change -- job --job ./fixtures/page-change/customer-job/job.json
+npm run page-change -- compare \
+  --before ./fixtures/page-change/customer-job/before.json \
+  --after ./fixtures/page-change/customer-job/after.json \
+  --fields title,description,headings \
+  --format text</code></pre>
+      <h2>Job 3. Map already-held JSON into buyer records</h2>
+      <p>
+        From the same pinned checkout and directory, the explicit-record CLI maps only buyer-named
+        JSON Pointers and validates the result against the buyer's local JSON Schema. It does not
+        fetch or infer. In the product and organization/contact examples, missing <code>sku</code>
+        and <code>email</code> are optional. The command below is a separate truthful required-field
+        example: it keeps one usable product record, labels the row missing required <code>sku</code>
+        invalid, accounts for the failed source row, writes all three artifacts, and exits 1.
+        <a href="https://github.com/epistemedeus/x402-url-extractor/blob/ef46e2b5213b9436e5cc4339a159c8ae837db880/plugins/samedaydesk-extract/skills/explicit-record/SKILL.md">Read the pinned explicit-record workflow</a>.
+      </p>
+      <pre><code>npm run record -- \
+  --input ./fixtures/record/product-jsonld/delivery/extract-batch.json \
+  --mapping ./fixtures/record/required-sku/mapping.json \
+  --schema ./fixtures/record/required-sku/schema.json \
+  --out /tmp/samedaydesk-record-required-sku</code></pre>
+      <h2>Job 4. Opt-in reuse of an already produced result</h2>
+      <p>
+        From a SameDayDesk checkout, preview exactly which fields would be copied into a
+        <code>neomorphic.task-memory.observation.v1</code> reference, then write only with
+        <code>--opt-in</code>. The helper does not fetch or pay. Default page-change and record
+        outputs stay intact. The projection uses a reviewed allowlist, not a harmlessness guarantee.
+        A schema-valid export is user-selected unverified evidence, never automatic public-safe certification.
+        Private source text, authorization, receipt secrets, and legal or customer identifiers are
+        omitted and cannot be selected. Failed and incomplete rows remain visible. The caller supplies
+        stable task, subject, revision sequence, and current UTC clock values; the helper does not invent
+        them. If an original evidence URL is missing, the export labels the recipe URL as a locator rather
+        than evidence.
+        Later task-memory import is a separate step.
+      </p>
+      <pre><code>NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+node tools/result-reuse/cli.mjs preview \
+  --input tools/result-reuse/fixtures/accepted-page-change.json \
+  --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW"
+node tools/result-reuse/cli.mjs export \
+  --input tools/result-reuse/fixtures/accepted-page-change.json \
+  --task-id vendor-watch --subject vendor-page-result --sequence 1 --clock "$NOW" \
+  --opt-in --out /tmp/samedaydesk-reuse-observation.json</code></pre>
+      <h2>Job 5. Recurring page, issue, and buyer-setup recipes</h2>
+      <p>
+        From a SameDayDesk checkout, run one-shot recurring recipes against an immutable prior.
+        Operator supplies <code>--prior</code> (where required), <code>--schedule</code>,
+        <code>--clock</code>, and an observation source. Primary developer-agent workflows are
+        <code>source-change-alert</code> and <code>issue-to-work-brief</code>. Outcomes are
+        unchanged, changed, partial, stale baseline, timed out, or error. Priors are never
+        overwritten; write a new sequenced artifact after review. C31 page-change reports use
+        <code>pilot/page-change-brief/v1</code> at
+        <a href="https://agents.samedaydesk.com/recipes/page-change">https://agents.samedaydesk.com/recipes/page-change</a>.
+        C34 extract-batch records use <code>samedaydesk.extract-batch.v0</code>
+        with skills at
+        <a href="https://agents.samedaydesk.com/.well-known/skills/index.json">https://agents.samedaydesk.com/.well-known/skills/index.json</a>.
+        <code>buyer-setup-trace</code> is live free inspection of the AgentCash/x402 runtime and
+        stops at unpaid 402 without signing or inferring wallet ownership from addresses.
+        Payment receipts are never automatically replayed.
+        Optional local observation export stays filesystem-local when shared mode is
+        undeployed. Offline runs avoid merchant charges; operator CPU and network remain
+        costs_unknown. Listed batch price 0.01 USDC is not invoked here. No cron is installed.
+        Owner QA issues are not demand.
+      </p>
+      <pre><code># Required: --prior, --schedule, --clock, --fields; plus one of --current-fixture | --live-safe | --sources | --candidate | --issue-url | --issue-fixture
+node tools/recurring-job-recipes/cli.mjs --list
+node tools/recurring-job-recipes/cli.mjs --recipe source-change-alert \
+  --prior tools/recurring-job-recipes/fixtures/priors/source-change.prior.json \
+  --current-fixture tools/recurring-job-recipes/fixtures/current/example-unchanged.json \
+  --fields title --schedule daily --clock 2026-09-09T16:00:00.000Z --horizon 168
+node tools/recurring-job-recipes/cli.mjs --recipe issue-to-work-brief \
+  --prior tools/recurring-job-recipes/fixtures/priors/issue-brief.prior.json \
+  --issue-url https://github.com/epistemedeus/samedaydesk/issues/1 \
+  --schedule weekly --clock 2026-09-09T16:00:00.000Z
+node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \
+  --schedule once --clock 2026-09-09T16:00:00.000Z</code></pre>
+      <pre><code># Live free inspection only. Stops at unpaid 402. Never signs. Never infers wallet ownership from payTo.
+# Local merchant: sibling x402-url-extractor (name x402-merchant) or MERCHANT_INPUT_ROOT. Pin f9dd59ae. No network clone.
+node tools/recurring-job-recipes/cli.mjs --recipe buyer-setup-trace \
+  --schedule once --clock "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --gateway-origin https://agents.samedaydesk.com</code></pre>
+      <h2>Live merchant inventory</h2>
+      <ul>
+        <li><a href="https://agents.samedaydesk.com/api/actions">HTTP action catalog</a></li><li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li><li><a href="https://agents.samedaydesk.com/healthz">Health, prices, and protocol route counts</a></li><li><a href="https://agents.samedaydesk.com/mcp">Paid MCP</a></li><li><a href="https://agents.samedaydesk.com/llms.txt">Gateway llms.txt</a></li><li><a href="https://agents.samedaydesk.com/openapi.json">OpenAPI</a></li>
+        <li><a href="https://samedaydesk.com/x402">Human storefront for other machine services</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
+      </ul>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>

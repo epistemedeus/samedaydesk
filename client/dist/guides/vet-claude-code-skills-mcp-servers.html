@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to vet a Claude Code skill or MCP server before you install it (2026)</title>
+<meta name="description" content="Read the skill files and the MCP tool list before you install. Anthropic does not security-audit MCP servers. A scan pass is not a guarantee. Last checked 2026-09-23." />
+<link rel="canonical" href="https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="How to vet a Claude Code skill or MCP server before you install it" />
+<meta property="og:description" content="What Anthropic and the MCP spec say to review before you trust a skill or server. Last checked 2026-09-23." />
+<meta property="og:url" content="https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "How to vet a Claude Code skill or MCP server before you install it",
+      "datePublished": "2026-06-24",
+      "dateModified": "2026-09-23",
+      "author": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
+      "publisher": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
+      "mainEntityOfPage": "https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I vet a Claude Code skill before I install it?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Read SKILL.md and every bundled script before you enable it. Anthropic says the main risks are prompt injection and data exfiltration, and that skills should be installed only from sources you trust. A passing enterprise scan is not a guarantee the skill is safe." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Anthropic audit MCP servers?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Claude Code's security docs say Anthropic does not security-audit or manage any MCP server. The MCP spec says tools are arbitrary code execution and that tool descriptions should be treated as untrusted unless they come from a trusted server." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+  :root{--bg:#f4f1ea;--card:#f8f5ee;--ink:#1a1a1a;--dim:#55524c;--line:#c9c4b8;--oxide:#9e3b2e}
+  *{box-sizing:border-box}html{background:var(--bg)}
+  body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Inter,system-ui,-apple-system,sans-serif}
+  .wrap{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 5rem}
+  a{color:var(--oxide)}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--oxide);margin:0 0 1rem}
+  h1{font-size:clamp(1.7rem,1.2rem+2vw,2.5rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0}
+  h2{font-size:1.35rem;margin:2.3rem 0 .5rem}
+  .lead{font-size:1.18rem;color:var(--ink)}
+  code{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.1rem .4rem;font-size:.9em}
+  pre{background:#15181d;color:#e8e8e3;border-radius:10px;padding:1rem;overflow:auto;font-size:.83rem;line-height:1.5}
+  .cta{background:#15181d;color:#f4f4f0;border-radius:14px;padding:1.5rem;margin:2.2rem 0}
+  .cta h2{margin-top:0;color:#fff}
+  .cta a.btn{display:inline-block;margin:.5rem .5rem 0 0;background:#ccff00;color:#0a0b0d;font-weight:700;text-decoration:none;padding:.65rem 1.1rem;border-radius:9px}
+  .muted{color:var(--dim);font-size:.9rem}
+  footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">SameDayDesk guide</p>
+  <h1>How to vet a Claude Code skill or MCP server before you install it</h1>
+  <p class="lead">Read the files that will run, and the instructions that will be given to the model, before you install a Claude Code skill or an MCP server. Anthropic's help center says the main risks of skills are prompt injection and data exfiltration, and that you should install skills only from sources you trust. Claude Code's security page says Anthropic does not security-audit or manage any MCP server. The MCP specification says tools are arbitrary code execution and that tool descriptions are untrusted unless they come from a trusted server.</p>
+  <p class="muted">Last checked: 2026-09-23.</p>
+
+  <h2>1. Read SKILL.md before you enable the skill</h2>
+  <p><a href="https://code.claude.com/docs/en/skills">Claude Code's skills docs</a>, checked 2026-09-23, say every skill has a <code>SKILL.md</code> file. YAML frontmatter between the first <code>---</code> markers can include a description Claude uses to decide when to load the skill, and an <code>allowed-tools</code> field that lets Claude use those tools without asking during the turn that invokes the skill. The body is instructions. On a skill stored on your machine, a dynamic-context line (an exclamation mark followed by a shell command in backticks) runs that command and inlines the output before Claude sees the file. Read those lines. Do not enable a skill whose shell lines you have not read.</p>
+  <p><a href="https://support.claude.com/en/articles/12512180-use-skills-in-claude">Anthropic's "Use skills in Claude" page</a>, checked 2026-09-23, says to review a less-trusted skill before enabling it, including code, scripts, and any instruction that tells Claude to contact an external network. It names prompt injection and data exfiltration as the primary risks.</p>
+
+  <h2>2. Do not treat a scan pass as clearance</h2>
+  <p><a href="https://support.claude.com/en/articles/15927065-get-started-with-skill-and-plugin-scanning">Skill and plugin scanning</a>, checked 2026-09-23, is an Enterprise control. The page says it is off by default until 2026-10-02, when it turns on for Enterprise organizations that have not set it. Scanning does not cover MCP servers or hooks. It also does not cover skills shared through a connected MCP server. A pass means that scan did not find the kind of malicious misuse it looks for. The page says a pass is not a guarantee the skill is safe in every respect, and that it will not catch a skill that merely does something you did not intend.</p>
+
+  <h2>3. Read install scripts before npm install</h2>
+  <p><a href="https://docs.npmjs.com/cli/v10/using-npm/scripts">npm's scripts documentation</a>, last edited 2024-02-27, says <code>npm install</code> runs <code>preinstall</code>, <code>install</code>, and <code>postinstall</code> from the package, and that a <code>prepare</code> script in a git dependency runs before that package is installed. Read those fields in <code>package.json</code> before you install a third-party skill or server. npm's own best-practices note says you should almost never need a <code>preinstall</code> or <code>install</code> script except for compilation that must happen on the target machine.</p>
+
+  <h2>4. Treat an MCP server as code you chose to run</h2>
+  <p>The <a href="https://modelcontextprotocol.io/specification/2026-07-28">MCP specification dated 2026-07-28</a> says the protocol reaches arbitrary data and code execution. Tool descriptions, including annotations, should be considered untrusted unless they come from a trusted server. Hosts must get explicit user consent before invoking a tool, and the user should understand the tool first. The protocol cannot enforce that. The host has to.</p>
+  <p><a href="https://code.claude.com/docs/en/security">Claude Code's security page</a>, checked 2026-09-23, says to write your own MCP servers or use servers from providers you trust. Anthropic reviews connectors against a listing criteria before the directory, and does not security-audit or manage any MCP server. New MCP servers require trust verification. That verification is disabled for non-interactive runs with the <code>-p</code> flag. In Manual mode, review commands before you approve them, and do not pipe untrusted content straight into Claude.</p>
+
+  <h2>5. A static scanner is a first pass, not a substitute</h2>
+  <p>SameDayDesk publishes <a href="https://samedaydesk.com/skillguard">SkillGuard</a>, a free static scanner. Use it only as a way to surface files to read. It is not Anthropic's enterprise scan, and this guide does not quote a count of malicious packages. After any scanner, still do steps 1 through 4.</p>
+
+  <div class="cta">
+    <h2>If the question is citations, not install safety</h2>
+    <p>Vetting a skill does not tell you whether answer engines cite your site. That is the AI Visibility Audit, the existing offer. This page does not set its price.</p>
+    <a class="btn" href="https://samedaydesk.com/ai-visibility-audit.html">Open the AI Visibility Audit</a>
+  </div>
+
+  <footer>
+    <p>Sources, checked 2026-09-23 unless noted: <a href="https://code.claude.com/docs/en/skills">Claude Code skills</a>; <a href="https://code.claude.com/docs/en/security">Claude Code security</a>; <a href="https://support.claude.com/en/articles/12512180-use-skills-in-claude">Use skills in Claude</a>; <a href="https://support.claude.com/en/articles/15927065-get-started-with-skill-and-plugin-scanning">Skill and plugin scanning</a>; <a href="https://modelcontextprotocol.io/specification/2026-07-28">MCP specification 2026-07-28</a>; <a href="https://docs.npmjs.com/cli/v10/using-npm/scripts">npm scripts</a>, last edited 2024-02-27. Last checked: 2026-09-23.</p>
+  </footer>
+</div>
+</body>
+</html>

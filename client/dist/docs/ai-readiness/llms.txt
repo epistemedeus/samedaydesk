@@ -1,0 +1,19 @@
+# ai-readiness
+
+> What ai-readiness is and every way to run it.
+
+## MCP Reference
+
+- [ai-readiness](/docs/ai-readiness/): 2 documented operations
+- [check_ai_readiness](/docs/ai-readiness/#operation-check-ai-readiness-tool): tool - Check whether a website is visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). Fetches the site + robots.txt and scores AI-crawler access, structured data (JSON-LD), title/meta, Open Graph, sitemap, and llms.txt. Returns a 0-100 score, a letter grade, and a specific fix for each gap.
+- [generate_ai_readiness_fixes](/docs/ai-readiness/#operation-generate-ai-readiness-fixes-tool): tool - Generate starter fixes to make a website visible to AI search: Organization + FAQPage JSON-LD (pre-filled from the site's real title/description) and an AI-crawler-friendly robots.txt. Paste the JSON-LD into the homepage <head> and replace robots.txt. This is the free starter version of the same-day Fix Pack.
+
+## Guides
+
+- [Overview](/docs/ai-readiness/guides/overview.html): What ai-readiness is and every way to run it.
+- [The six checks](/docs/ai-readiness/guides/checks.html): Every check, its pass/warn/fail semantics, its weight, and the scoring model.
+- [Tracked AI crawlers](/docs/ai-readiness/guides/crawlers.html): The seven crawlers the checker tests robots.txt against, and why each matters.
+- [Generated fixes](/docs/ai-readiness/guides/fix-outputs.html): The three artifacts generate_ai_readiness_fixes produces and their guardrails.
+- [Library use](/docs/ai-readiness/guides/library.html): The three exports, their return shapes, and the built-in safety limits.
+- [CLI and GitHub Action](/docs/ai-readiness/guides/cli.html): Command-line usage, flags, exit codes, and the composite GitHub Action.
+- [HTTP MCP server](/docs/ai-readiness/guides/http-server.html): The streamable HTTP transport for remote MCP clients: endpoints, CORS, and limits.

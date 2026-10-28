@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>Agent Payment Infrastructure: x402 and MPP | SameDayDesk</title>
+    <meta
+      name="description"
+      content="Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/x402" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="Agent Payment Infrastructure: x402 and MPP | SameDayDesk" />
+    <meta
+      property="og:description"
+      content="Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/x402" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agent Payment Infrastructure: x402 and MPP | SameDayDesk" />
+    <meta
+      name="twitter:description"
+      content="Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://samedaydesk.com/#org",
+      "name": "SameDayDesk",
+      "url": "https://samedaydesk.com/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://samedaydesk.com/x402#webpage",
+      "url": "https://samedaydesk.com/x402",
+      "name": "Agent Payment Infrastructure: x402 and MPP | SameDayDesk",
+      "description": "Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents.",
+      "isPartOf": {
+        "@id": "https://samedaydesk.com/#site"
+      },
+      "publisher": {
+        "@id": "https://samedaydesk.com/#org"
+      }
+    }
+  ]
+}
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+<h1>Agents discover a service, call it, pay, and continue</h1>
+      <p>
+        SameDayDesk machine services settle exact Base USDC through x402 or native MPP. No API
+        key, subscription, or account is required. Discovery is not authorization, settlement,
+        demand, or revenue. Live catalogs are authoritative; this page does not freeze a tool count.
+      </p>
+      <p>
+        Practical jobs live on
+        <a href="https://samedaydesk.com/for-agents">/for-agents</a>:
+        paid bounded <code>POST /extract/batch</code> observations, free offline comparison and
+        explicit buyer-record mapping, opt-in reuse of an already produced result, and one-shot
+        recurring page or record recipes with immutable priors.
+        Purchasing never requires publishing. Other named calls remain on the live inventory.
+      </p>
+      <ul>
+        <li><a href="https://samedaydesk.com/for-agents">Practical agent jobs</a></li>
+        <li><a href="https://agents.samedaydesk.com/api/actions">HTTP action catalog</a></li><li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a></li><li><a href="https://agents.samedaydesk.com/healthz">Health, prices, and protocol route counts</a></li><li><a href="https://agents.samedaydesk.com/mcp">Paid MCP</a></li><li><a href="https://agents.samedaydesk.com/llms.txt">Gateway llms.txt</a></li><li><a href="https://agents.samedaydesk.com/openapi.json">OpenAPI</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
+        <li><a href="https://samedaydesk.com/docs/x402-sdk/">x402 SDK integration reference</a></li>
+      </ul>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>
