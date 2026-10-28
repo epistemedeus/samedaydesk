@@ -174,8 +174,8 @@ test('ROOT410 independent real createSdsApp receiving over verified TLS and disp
     await t.test('existing-store funnel counts abandonment and transitions without claiming independent acquisition',async()=>{
       const snapshot=await unfundedFunnelSnapshot(db,{earnedSchema,tenant});
       assert.equal(snapshot.cohort,'unknown');assert.equal(snapshot.unfundedListings,1);assert.equal(snapshot.interests,1);
-      assert.equal(snapshot.requesterSignupsWithoutListing>=1,true);assert.equal(snapshot.discoveryImpressions>=2,true);
-      assert.equal(snapshot.impressionIdentity,'listing_event');assert.equal(snapshot.paidWork,false);
+      assert.equal(snapshot.requesterSignupsWithoutListing>=1,true);assert.equal(snapshot.discoveryImpressions,1);
+      assert.equal(snapshot.impressionIdentity,'task_utc_day_source');assert.equal(snapshot.paidWork,false);
       const transitions=(await db.query("SELECT payload->>'action' action FROM ae14_market_measures WHERE kind='transition'")).rows;
       assert.equal(transitions.some(row=>row.action==='post'),true);assert.equal(transitions.some(row=>row.action==='interest'),true);
     });

@@ -6,6 +6,14 @@ import {createHash} from 'node:crypto';
 import {createSdsApp} from '../../app.js';
 import {mountNeomorphicOriginalContinuation} from '../../lib/neomorphic-original-continuation-mount.js';
 
+/** Optional disposable-harness clock. Absent asOf keeps the production store clock. */
+function disposableHarnessClock(asOf){
+  if(asOf==null)return undefined;
+  const at=new Date(asOf);
+  if(Number.isNaN(at.getTime()))throw new Error('disposable harness asOf is not a timestamp');
+  return ()=>new Date(at.getTime());
+}
+
 /** Synthetic configuration + verified loopback TLS. All account/original authority and records are actual installed PG services. */
 export async function originalContinuationHost(settings){
   const ca=await readFile(settings.certFile);
@@ -18,7 +26,8 @@ export async function originalContinuationHost(settings){
     });req.on('error',reject);req.end(options.body);
   });
   const producer=settings.entry?()=>import(pathToFileURL(settings.entry).href):undefined;
-  const sds=createSdsApp({neomorphicContributorJourney:{env:settings.env,loadService:producer},neomorphicOpportunity:{env:settings.originalEnv},
+  const sds=createSdsApp({neomorphicContributorJourney:{env:settings.env,loadService:producer},
+    neomorphicOpportunity:{env:settings.originalEnv,clock:disposableHarnessClock(settings.asOf)},
     correspondence:{env:{}},hostedUsefulJourney:{env:{}},managedWatch:{env:{}}});
   const journey=sds.get('neoContributorJourney'),original=sds.get('neoOpportunity');
   await journey.ready();await original.ready();

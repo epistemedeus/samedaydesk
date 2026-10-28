@@ -1,0 +1,28 @@
+# GopherJS
+
+> Reference documentation for the GopherJS compiler and its public Go packages.
+
+## Overview
+
+- [GopherJS documentation](/docs-lab/gopherjs/introduction.html): Reference documentation for the GopherJS compiler and its public Go packages.
+
+## API Reference
+
+- [github.com/gopherjs/gopherjs](/docs-lab/gopherjs/api/package-root.html): github.com/gopherjs/gopherjs
+- [build](/docs-lab/gopherjs/api/pkg-build.html): Package build implements GopherJS build system.
+- [build/cache](/docs-lab/gopherjs/api/pkg-build-cache.html): Package cache solves one of the hardest computer science problems in application to GopherJS compiler outputs.
+- [build/versionhack](/docs-lab/gopherjs/api/pkg-build-versionhack.html): Package versionhack makes sure go/build doesn't disable module support whenever GopherJS is compiled by a different Go version than it's targeted Go version.
+- [compiler](/docs-lab/gopherjs/api/pkg-compiler.html): Package compiler implements GopherJS compiler logic.
+- [compiler/astutil](/docs-lab/gopherjs/api/pkg-compiler-astutil.html): github.com/gopherjs/gopherjs/compiler/astutil
+- [compiler/errlist](/docs-lab/gopherjs/api/pkg-compiler-errlist.html): github.com/gopherjs/gopherjs/compiler/errlist
+- [compiler/filter](/docs-lab/gopherjs/api/pkg-compiler-filter.html): github.com/gopherjs/gopherjs/compiler/filter
+- [compiler/gopherjspkg](/docs-lab/gopherjs/api/pkg-compiler-gopherjspkg.html): Package gopherjspkg provides core GopherJS packages via a virtual filesystem.
+- [compiler/incjs](/docs-lab/gopherjs/api/pkg-compiler-incjs.html): github.com/gopherjs/gopherjs/compiler/incjs
+- [compiler/linkname](/docs-lab/gopherjs/api/pkg-compiler-linkname.html): github.com/gopherjs/gopherjs/compiler/linkname
+- [compiler/natives](/docs-lab/gopherjs/api/pkg-compiler-natives.html): Package natives provides native packages via a virtual filesystem.
+- [compiler/prelude](/docs-lab/gopherjs/api/pkg-compiler-prelude.html): github.com/gopherjs/gopherjs/compiler/prelude
+- [compiler/sources](/docs-lab/gopherjs/api/pkg-compiler-sources.html): github.com/gopherjs/gopherjs/compiler/sources
+- [compiler/typesutil](/docs-lab/gopherjs/api/pkg-compiler-typesutil.html): github.com/gopherjs/gopherjs/compiler/typesutil
+- [js](/docs-lab/gopherjs/api/pkg-js.html): Package js provides functions for interacting with native JavaScript APIs.
+- [nosync](/docs-lab/gopherjs/api/pkg-nosync.html): github.com/gopherjs/gopherjs/nosync
+- [API Reference](/docs-lab/gopherjs/api.html): github.com/gopherjs/gopherjs

@@ -271,7 +271,7 @@ test('cold requester signup, unfunded post, discovery, and funnel on the real mo
     assert.equal(openFunnel.result.unfundedListings, 1);
     assert.equal(openFunnel.result.interests, 1);
     assert.equal(openFunnel.result.discoveryImpressions >= 1, true);
-    assert.equal(openFunnel.result.impressionIdentity, 'listing_event');
+    assert.equal(openFunnel.result.impressionIdentity, 'task_utc_day_source');
     assert.equal(openFunnel.result.funding, 0);
     assert.equal(openFunnel.result.paidWork, false);
     assert.equal(openFunnel.secretPrinted, false);

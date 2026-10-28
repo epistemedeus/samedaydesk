@@ -63,7 +63,7 @@ export async function machineHost() {
     const fault={dropAction:null};
     async function stop() {
       if(listener){listener.closeAllConnections();await new Promise(done=>listener.close(done));listener=null;}
-      if(app){await app.get('hostedWalletMarket')?.close?.();await app.get('neoContributorJourney')?.close?.();app=null;}
+      if(app){await app.get('hostedWalletMarket')?.close?.().catch(()=>{});await app.get('neoContributorJourney')?.close?.().catch(()=>{});app=null;}
     }
     async function boot({participation=true,tenant='root10940-owner-qa-fixture'}={}) {
       await stop();
@@ -92,10 +92,10 @@ export async function machineHost() {
       await new Promise(done=>listener.listen(port,'127.0.0.1',done));
       return generated;
     }
-    async function request(path,{role,body,operationId,headers={},method='POST'}={}) {
+    async function request(path,{role,body,operationId,headers={},method='POST',localAddress}={}) {
       const payload=body===undefined?null:Buffer.from(JSON.stringify(body));
       return new Promise((done,reject)=>{
-        const req=https.request(origin+path,{method,ca,timeout:15000,headers:{origin,'x-ae-wire-version':'c0-1',
+        const req=https.request(origin+path,{method,ca,timeout:15000,...(localAddress?{localAddress}:{}),headers:{origin,'x-ae-wire-version':'c0-1',
           ...(role?{cookie:role.cookie,'x-cj-csrf':role.csrf}:{}),...(payload?{'content-type':'application/json','content-length':String(payload.length)}:{}),
           ...(operationId?{'idempotency-key':operationId}:{}),...headers}},res=>{
           let bytes='';res.on('data',chunk=>{bytes+=chunk;});res.on('end',()=>{
@@ -106,13 +106,40 @@ export async function machineHost() {
         req.on('error',reject);req.on('timeout',()=>req.destroy(Error('timeout')));req.end(payload);
       });
     }
-    async function financialSnapshot() {
+    // Historical money authority. Voluntary task, interest, measure, grant and
+    // idempotency rows are excluded because this journey writes them.
+    const unchangedAuthority=[
+      ['cj227_earned_work','earned_work_tasks'],['cj227_earned_work','earned_work_terms'],
+      ['cj227_earned_work','earned_work_reservations'],['cj227_earned_work','earned_work_submissions'],
+      ['cj227_earned_work','earned_work_verdicts'],['cj227_earned_work','earned_work_obligations'],
+      ['cj227_earned_work','earned_work_events'],['cj227_earned_work','opportunity_obligations'],
+      ['cj227_earned_work','opportunity_events'],['cj227_earned_work','opportunity_submissions'],
+      ['cj227_earned_work','opportunity_claims'],['cj227_earned_work','ae14_market_quotes'],
+      ['cj227_earned_work','ae14_market_assents'],['cj227_earned_work','ae14_market_funding'],
+      ['cj227_earned_work','ae14_market_consumers'],['cj227_earned_work','ae14_capture_approvals'],
+      ['cj227_earned_work','ae14_capture_receipt_bindings'],['hosted_wallet_market','quotes'],
+      ['hosted_wallet_market','funding_intents'],['hosted_wallet_market','captures'],
+      ['hosted_wallet_market','native_debt_dispositions'],['hosted_wallet_market','grants'],
+      ['hosted_wallet_market','reviews'],['hosted_wallet_market','delivery'],
+      ['hosted_wallet_market_guard','preserved_obligation_ids'],['hosted_wallet_market_guard','obligation_guard_seal'],
+    ];
+    async function query(sql,args=[]) {
       const c=new pg.Client({connectionString:databaseUrl});await c.connect();
-      try {return (await c.query(`SELECT (SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM cj227_earned_work.earned_work_tasks t) tasks,
-        (SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM cj227_earned_work.earned_work_obligations t) obligations`)).rows[0];}
-      finally {await c.end();}
+      try {return await c.query(sql,args);} finally {await c.end();}
     }
-    return {scratch,origin,databaseUrl,caFile:join(scratch,'tls.crt'),boot,stop,request,fault,financialSnapshot,rpcMethods,
+    async function financialSnapshot() {
+      const present=await query(`SELECT table_schema,table_name FROM information_schema.tables WHERE table_type='BASE TABLE'`);
+      const have=new Set(present.rows.map(row=>row.table_schema+'.'+row.table_name));
+      const missing=unchangedAuthority.filter(([schema,name])=>!have.has(schema+'.'+name));
+      if(missing.length) throw new Error('authority_table_absent:'+missing.map(item=>item.join('.')).join(','));
+      const out={};
+      for(const [schema,name] of unchangedAuthority){
+        const row=(await query(`SELECT count(*)::int AS count, md5(coalesce(string_agg(t::text, E'\\n' ORDER BY t::text), '')) AS digest FROM "${schema}"."${name}" t`)).rows[0];
+        out[schema+'.'+name]={count:row.count,digest:row.digest};
+      }
+      return out;
+    }
+    return {scratch,origin,databaseUrl,caFile:join(scratch,'tls.crt'),boot,stop,request,query,fault,financialSnapshot,rpcMethods,
       async close(){await stop();await new Promise(done=>rpc.close(done));await cluster.stop();rmSync(scratch,{recursive:true,force:true});}};
   }catch(error){
     if(listener)listener.closeAllConnections();

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "samedaydesk.public-agent402-protocol-census.v1",
+  "checkedAt": "2026-08-09T14:28:18.017Z",
+  "source": "https://agent402.tools/api/index",
+  "population": {
+    "indexedSellers": 2511,
+    "routableSellers": 1708,
+    "paidTools": 70506
+  },
+  "cohort": {
+    "definition": "External non-local sellers with a stable HTTPS origin, health at least 0.8, routable true, originResponded not false, Base mainnet in indexed networks, and at least one indexed paid tool",
+    "eligibleSellers": 41,
+    "selectedSellers": 41,
+    "selection": "Complete eligible cohort ordered by a fixed SHA-256 salt",
+    "probe": "At most one alphabetically selected indexed paid GET route per seller, concurrency capped at three, maximum accepted price 1 USDC"
+  },
+  "result": {
+    "runtimeVerifiedRoutes": 24,
+    "unverifiedSellers": 17,
+    "verifiedX402OnlyRoutes": 24,
+    "verifiedDualStackX402AndMppRoutes": 0,
+    "indexRuntimePriceDrift": 0
+  },
+  "unverifiedReasons": {
+    "noPaidGetRoute": 7,
+    "runtimePreflightFailed": 3,
+    "runtimeNotPaywalled": 1,
+    "runtimeBindingMismatch": 3,
+    "sellerProbeFailed": 1,
+    "runtimeOfferIncompatible": 2
+  },
+  "safety": {
+    "credentialsUsed": false,
+    "paymentSigned": false,
+    "paymentSent": false,
+    "opaqueChallengesRetained": false,
+    "queryValuesRetained": false
+  },
+  "limitations": [
+    "This is a dated transport census, not a seller-quality or demand ranking.",
+    "One paid GET route was tested per eligible seller; POST-only sellers were not runtime tested.",
+    "Unverified does not mean broken. It means the bounded generic probe did not establish a compatible runtime offer.",
+    "Protocol support can change after the checkedAt timestamp."
+  ]
+}

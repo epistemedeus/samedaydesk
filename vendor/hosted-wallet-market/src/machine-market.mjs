@@ -15,6 +15,8 @@ import {openQualifiedMoney,machineNetworkSource} from './machine-money.mjs';
 import {admitMachineCapability} from './machine-profile-document.mjs';
 import {readMarketInterests,INTEREST_PAGE_LIMIT,INTEREST_PAGE_DEFAULT,INTEREST_NOTE_BYTES} from './market-interest-read.mjs';
 import {voluntaryMarket} from './voluntary-market.mjs';
+import {createClosureAdmission,authorizeMachineMutation} from './machine-closure-admission.mjs';
+import {recordPublicDiscovery} from './machine-public-read.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
@@ -24,7 +26,10 @@ export function readMachineCapability(input,{sdsRoot,origin,tenant}){
 }
 export async function openMachineMarket({capability,authority,sdsRoot,profile,authenticate,withClient,now=()=>Date.now()}){
  if(!address(profile.feeRecipient))refuse('fee_recipient_refused');
- function assertCurrent(){if(capability.sourceSha256!==installedSourceSha256()||capability.hostSha256!==hostSourceSha256(sdsRoot))refuse('machine_profile_refused');}
+ const admission=createClosureAdmission({expectedSource:capability.sourceSha256,expectedHost:capability.hostSha256,
+  verify:()=>({sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(sdsRoot)})});
+ await admission.admit();
+ function assertCurrent(){admission.current();}
  const source=pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/store/postgres.js'));
  const {createPostgresStore}=await import(source.href);
  const {ContributorAccountService}=await import(pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/account/service.js')).href);
@@ -202,9 +207,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
   const readActions=new Set(['interests','list','read','retained','measurement','payoutDisposition','reconcile']);
   const methods=new Set(['interests','post','list','interest','readback','quote','select','assent','fund','claim','deliver','review','approve','reconcile','payoutDisposition','read','grantConsumer','retained','downstreamUse','serviceCost','repeatPurchase','measurement']);
   async function dispatch(req,action,input,operationId){
-   assertCurrent();
-   if(!input||typeof input!=='object'||Array.isArray(input))refuse('body_refused',400);
-   const account=await authenticate(req,{write:true});
+   const account=await authorizeMachineMutation({authenticate,admission,req,input,refuse});
    if(voluntary.actions.includes(action))return voluntary.invoke(req,action,input,operationId);
    if(action==='readback' && !['post','interest'].includes(input.action))refuse('body_refused',400);
    const roleAction=action==='readback'?input.action:action;
@@ -254,7 +257,7 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
    finally{if(waiting.length)waiting.shift()();else activeRequests--;}
   }
   async function discover({limit=50,cursor=''}={}){
-   assertCurrent();
+   admission.current();
    if(!Number.isSafeInteger(limit)||limit<1||limit>100||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
    const rows=(await pool.query(`SELECT t.id,t.spec,t.selected_quote,EXISTS(SELECT 1 FROM "${profile.earnedSchema}".ae14_market_funding f
      JOIN "${profile.earnedSchema}".ae14_market_quotes q ON q.allocation_id=f.allocation_id AND q.tenant_id=f.tenant_id
@@ -262,12 +265,12 @@ export async function openMachineMarket({capability,authority,sdsRoot,profile,au
      FROM "${profile.earnedSchema}".ae14_market_tasks t WHERE tenant_id=$1 AND id>$2
      AND voluntary IS NULL ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
    const items=rows.map(r=>({taskId:r.id,title:r.spec.title,summary:r.spec.summary,criteria:r.spec.criteria,payableKinds:r.spec.payableKinds,assigned:Boolean(r.selected_quote),fundingState:r.funding_started?'funding_started':'unfunded_interest'}));
-   for(const r of rows)await store.measure(profile.tenant,r.id,'discovery',randomBytes(16).toString('hex'),'anonymous',
-    {verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null});
+   await recordPublicDiscovery(store,{tenant:profile.tenant,rows,sourceSha256:capability.sourceSha256,nowMs:now(),
+    payload:{verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null}});
    return {items,nextCursor:rows.length===limit?rows.at(-1).id:null,publicEnabled:true,moneyQualified:Boolean(networkSource&&rail),signerAuthority:false,provenance:money.qualification};
   }
   function publicProfile(){
-   assertCurrent();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution','participation'];
+   admission.current();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution','participation'];
    return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
     ...(voluntary.enabled?{participation:voluntary.descriptor}:{}),
     proposalReview:{path:'/v1/market/interests',method:'POST',defaultLimit:INTEREST_PAGE_DEFAULT,maxLimit:INTEREST_PAGE_LIMIT,maxNoteBytes:INTEREST_NOTE_BYTES},

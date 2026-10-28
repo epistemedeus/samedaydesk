@@ -31,6 +31,14 @@ CREATE TABLE IF NOT EXISTS __SCHEMA__.ae14_market_consumers (
   PRIMARY KEY(tenant_id,task_id,actor_id),
   FOREIGN KEY(tenant_id,task_id) REFERENCES __SCHEMA__.ae14_market_tasks(tenant_id,id)
 );
+-- Voluntary export/use authority. Retained and paid grants stay on ae14_market_consumers.
+CREATE TABLE IF NOT EXISTS __SCHEMA__.ae14_market_voluntary_consumers (
+  tenant_id text NOT NULL, task_id text NOT NULL, actor_id text NOT NULL,
+  terms_digest text NOT NULL, artifact_digest text NOT NULL,
+  granted_revision integer NOT NULL, operation_id text NOT NULL,
+  PRIMARY KEY(tenant_id,task_id,actor_id),
+  FOREIGN KEY(tenant_id,task_id) REFERENCES __SCHEMA__.ae14_market_tasks(tenant_id,id)
+);
 CREATE TABLE IF NOT EXISTS __SCHEMA__.ae14_market_measures (
   tenant_id text NOT NULL, task_id text NOT NULL, kind text NOT NULL,
   event_id text NOT NULL, actor_id text NOT NULL, payload jsonb NOT NULL,

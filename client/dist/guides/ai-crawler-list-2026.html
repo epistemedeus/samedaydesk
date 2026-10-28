@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Crawler List 2026: GPTBot, ClaudeBot, PerplexityBot robots.txt</title>
+<meta name="description" content="The robots.txt tokens OpenAI, Anthropic, Perplexity, and Google document, and which one controls search answers versus training. Last checked 2026-09-23.">
+<link rel="canonical" href="https://samedaydesk.com/guides/ai-crawler-list-2026.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Crawler List 2026: GPTBot, ClaudeBot, PerplexityBot robots.txt">
+<meta property="og:description" content="Operator-documented crawler tokens, with dates. Last checked 2026-09-23.">
+<meta property="og:url" content="https://samedaydesk.com/guides/ai-crawler-list-2026.html">
+<meta property="og:image" content="https://samedaydesk.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; }
+  * { box-sizing:border-box; } html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:50rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--oxide); margin:0 0 1rem; }
+  h1 { font-size:clamp(1.8rem,1.3rem+2.2vw,2.9rem); line-height:1.08; letter-spacing:-0.02em; margin:.2em 0; }
+  h2 { font-size:1.5rem; margin:2.5rem 0 .6rem; }
+  .lead { font-size:1.2rem; color:var(--ink); }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font:600 12px/1 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+  .cta { background:#15181d; color:#f4f4f0; border-radius:14px; padding:1.6rem 1.5rem; margin:2.5rem 0; }
+  .cta h2 { margin-top:0; color:#fff; } .cta a.btn { display:inline-block; margin-top:.6rem; background:#ccff00; color:#0a0b0d; font-weight:700; text-decoration:none; padding:.7rem 1.2rem; border-radius:9px; }
+  code, pre { font-family:ui-monospace,monospace; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem; overflow:auto; font-size:13px; line-height:1.55; }
+  code { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.1rem .4rem; font-size:.9em; }
+  .muted { color:var(--dim); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "AI crawler list 2026: the robots.txt tokens OpenAI, Anthropic, Perplexity, and Google publish",
+      "datePublished": "2026-06-24",
+      "dateModified": "2026-09-23",
+      "author": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
+      "publisher": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
+      "mainEntityOfPage": "https://samedaydesk.com/guides/ai-crawler-list-2026.html"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does blocking GPTBot stop ChatGPT from citing my site?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. OpenAI says GPTBot is the training crawler. ChatGPT search answers are controlled with OAI-SearchBot. A site opted out of OAI-SearchBot will not be shown in ChatGPT search answers." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Google-Extended control AI Overviews?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Google's crawler list, updated 2026-07-14, says Google-Extended does not affect inclusion in Google Search. AI Overviews are a Search feature, and the AI features guide says the robots.txt control for Search is Googlebot." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+<p class="eyebrow">SameDayDesk guide</p>
+<h1>AI crawler list 2026: the robots.txt tokens each operator publishes</h1>
+<p class="lead">As of the vendor pages checked on 2026-09-23, search answers and model training are different robots.txt tokens. OpenAI uses OAI-SearchBot for ChatGPT search answers and GPTBot for training. Anthropic's 7 April 2026 notice uses Claude-SearchBot for search indexing, ClaudeBot for training, and Claude-User for user-triggered retrieval. Perplexity uses PerplexityBot for search results, not for foundation-model training, and Perplexity-User for user actions. Google uses Googlebot for Google Search, including its AI features. Google-Extended is not a separate crawler and does not control inclusion in Google Search.</p>
+<p class="muted">Last checked: 2026-09-23.</p>
+
+<h2>The list</h2>
+<p>Each token is its own group. Allowing one does not allow the others. <a href="https://www.rfc-editor.org/rfc/rfc9309">RFC 9309</a> (September 2022) says these rules are not access authorization. A Disallow is a request to a crawler that chooses to honor it.</p>
+<table>
+  <thead>
+    <tr><th>Token</th><th>Operator and role</th><th>Source</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>OAI-SearchBot</code></td>
+      <td>OpenAI. Surfaces sites in ChatGPT search features. Opting out means the site will not be shown in ChatGPT search answers. It can still appear as a navigational link.</td>
+      <td><a href="https://developers.openai.com/api/docs/bots">OpenAI crawlers</a>, checked 2026-09-23</td>
+    </tr>
+    <tr>
+      <td><code>GPTBot</code></td>
+      <td>OpenAI. Crawls content that may train generative AI foundation models. Disallow is the training opt-out. It is independent of OAI-SearchBot.</td>
+      <td>Same OpenAI page</td>
+    </tr>
+    <tr>
+      <td><code>ChatGPT-User</code></td>
+      <td>OpenAI. User-triggered visits from ChatGPT or a custom GPT. Not an automatic crawl. robots.txt may not apply. Not used to decide Search appearance.</td>
+      <td>Same OpenAI page</td>
+    </tr>
+    <tr>
+      <td><code>ClaudeBot</code></td>
+      <td>Anthropic. Collects content that may contribute to model training. Restricting it signals that future material should be excluded from training sets.</td>
+      <td><a href="https://privacy.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropic crawler notice</a>, 2026-04-07</td>
+    </tr>
+    <tr>
+      <td><code>Claude-SearchBot</code></td>
+      <td>Anthropic. Indexes content to improve search responses. Disabling it may reduce visibility in those search results.</td>
+      <td>Same notice, 2026-04-07</td>
+    </tr>
+    <tr>
+      <td><code>Claude-User</code></td>
+      <td>Anthropic. Retrieves pages when a person asks Claude. Disabling it may reduce visibility for user-directed web search.</td>
+      <td>Same notice, 2026-04-07</td>
+    </tr>
+    <tr>
+      <td><code>PerplexityBot</code></td>
+      <td>Perplexity. Surfaces and links sites in Perplexity search results. Not used to crawl for foundation models. A Disallow stops full or partial text indexing. A domain, headline, and short factual summary may still be indexed.</td>
+      <td><a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity crawlers</a> and <a href="https://www.perplexity.ai/help-center/en/articles/10354969-how-does-perplexity-follow-robots-txt">help center, modified 2026-09-14</a></td>
+    </tr>
+    <tr>
+      <td><code>Perplexity-User</code></td>
+      <td>Perplexity. User-triggered fetches. Generally ignores robots.txt. Not a training crawl.</td>
+      <td>Perplexity crawler docs</td>
+    </tr>
+    <tr>
+      <td><code>Googlebot</code></td>
+      <td>Google. Crawls for Google Search, including Discover and all Search features. AI Overviews and AI Mode are Search features. The robots.txt control for them is Googlebot, plus snippet and noindex controls.</td>
+      <td><a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers">Crawler list, updated 2026-07-14</a> and <a href="https://developers.google.com/search/docs/appearance/ai-features">AI features, updated 2025-12-10</a></td>
+    </tr>
+    <tr>
+      <td><code>Google-Extended</code></td>
+      <td>Google. A robots.txt product token, not a separate HTTP user agent. Controls use of crawled content for future Gemini training and for grounding in Gemini apps and Vertex AI. Does not affect Google Search inclusion and is not a Search ranking signal.</td>
+      <td>Crawler list, updated 2026-07-14</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>A robots.txt block that matches those docs</h2>
+<p>This allows the automatic search and training tokens above. It does not control ChatGPT-User or Perplexity-User, because those operators say user-triggered fetches may ignore robots.txt. It also does not remove you from Google AI Overviews: that follows Googlebot.</p>
+<pre>User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /</pre>
+<p>Put the file at <code>/robots.txt</code> on each host you care about. OpenAI says a robots.txt change can take about 24 hours to affect search. Anthropic says to repeat an opt-out on every subdomain, and that IP blocking alone may not persist because the crawler still needs to read robots.txt. Perplexity publishes current IP ranges at the JSON URLs on its crawler page. Google says the HTTP user-agent string can be spoofed, and it documents how to verify a real Google crawler.</p>
+
+<h2>Tokens this list leaves out on purpose</h2>
+<p>OpenAI also documents OAI-AdsBot for ad landing pages. It is not the Search control, so it is not in the block above. Other companies publish crawlers this page does not copy until their own page is checked the same way. Do not add a token because a roundup blog listed it.</p>
+<p><a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google's generative AI guide</a>, last updated 2026-07-10, says you do not need an llms.txt file for Google Search, including its generative AI features. Google Search ignores it. Keeping one neither helps nor hurts Google rankings. Structured data is not required for those features.</p>
+
+<div class="cta">
+  <h2>One path when the token list is not the whole question</h2>
+  <p>Allowing a crawler does not prove an answer engine cites you. The AI Visibility Audit is the existing offer for that check. This page does not set its price.</p>
+  <a class="btn" href="https://samedaydesk.com/ai-visibility-audit.html">Open the AI Visibility Audit</a>
+</div>
+
+<footer>
+  <p>Sources: <a href="https://developers.openai.com/api/docs/bots">OpenAI crawlers</a>, checked 2026-09-23; <a href="https://privacy.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropic crawler notice</a>, 2026-04-07; <a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity crawlers</a>; <a href="https://www.perplexity.ai/help-center/en/articles/10354969-how-does-perplexity-follow-robots-txt">Perplexity robots.txt help, modified 2026-09-14</a>; <a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers">Google crawlers, updated 2026-07-14</a>; <a href="https://developers.google.com/search/docs/appearance/ai-features">Google AI features, updated 2025-12-10</a>; <a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google generative AI optimization, updated 2026-07-10</a>; <a href="https://www.rfc-editor.org/rfc/rfc9309">RFC 9309, September 2022</a>. Last checked: 2026-09-23.</p>
+</footer>
+</div>
+</body>
+</html>

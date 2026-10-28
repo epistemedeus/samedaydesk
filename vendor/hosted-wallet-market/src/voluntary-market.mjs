@@ -1,5 +1,7 @@
 // Voluntary continuation of an existing unfunded market task. The market's
-// task lock, account authority, operation journal and consumer grants own it.
+// task lock, account authority and operation journal own it. Export grants are
+// stored only in ae14_market_voluntary_consumers and bind the accepted terms
+// and artifact. Retained/paid consumer rows are not read or deleted here.
 // No earned-work funding, obligation, verifier receipt or payment is created.
 import {digest, requireThat} from '../runtime/agent-economy-foundation/dist/index.js';
 import {readFileSync} from 'node:fs';
@@ -27,9 +29,35 @@ export function voluntaryMarket({market, capability}) {
     requireThat(input.sourceSha256 === capability.sourceSha256 && input.hostSha256 === capability.hostSha256,
       'voluntary_source_changed');
   }
-  function terms(row, input) {
+  // Recompute stored commitments at the read/mutation boundary. A digest field
+  // alone is not evidence that the preimage, parties, spec, source or review still match.
+  function validatedVoluntary(row) {
     const v = row.voluntary;
-    requireThat(v && input.termsDigest === v.termsDigest, 'voluntary_terms_changed');
+    requireThat(v && typeof v === 'object' && !Array.isArray(v), 'voluntary_unavailable');
+    if (!v.terms) {
+      requireThat(v.withdrawn && v.termsDigest == null, 'voluntary_terms_changed');
+      return v;
+    }
+    requireThat(v.terms.schema === 'pilot.machine-market.voluntary-terms.v1' && digest(v.terms) === v.termsDigest, 'voluntary_terms_changed');
+    requireThat(v.terms.taskId === row.id && v.terms.tenantId === row.tenant_id && v.terms.requesterId === row.requester_id, 'voluntary_terms_changed');
+    requireThat(typeof v.terms.contributorId === 'string' && v.terms.contributorId !== row.requester_id, 'voluntary_terms_changed');
+    requireThat(row.spec && digest(row.spec) === v.terms.specDigest, 'voluntary_terms_changed');
+    hash(v.terms.sourceSha256); hash(v.terms.hostSha256);
+    if (v.artifact != null) requireThat(v.artifact.evidence && digest(v.artifact.evidence) === v.artifact.digest, 'retained_evidence_required');
+    else requireThat(v.review == null, 'artifact_changed');
+    if (v.review != null) {
+      requireThat(v.artifact && v.review.artifactDigest === v.artifact.digest && v.review.requesterId === row.requester_id, 'artifact_changed');
+      requireThat(v.review.exportAuthorized !== true || v.review.accepted === true, 'invalid_input');
+    }
+    return v;
+  }
+  function sameSource(v) {
+    requireThat(v.terms && v.terms.sourceSha256 === capability.sourceSha256 && v.terms.hostSha256 === capability.hostSha256,
+      'voluntary_source_changed');
+  }
+  function terms(row, input) {
+    const v = validatedVoluntary(row);
+    requireThat(v.terms && input.termsDigest === v.termsDigest, 'voluntary_terms_changed');
     requireThat(Number.isSafeInteger(input.expectedRevision) && input.expectedRevision === v.revision, 'voluntary_revision_changed');
     return v;
   }
@@ -44,12 +72,22 @@ export function voluntaryMarket({market, capability}) {
       [row.tenant_id, row.id, JSON.stringify(v)]);
     return result(row, v);
   }
+  async function voluntaryGrant(client, tenantId, taskId, actorId) {
+    return (await client.query(`SELECT terms_digest,artifact_digest,granted_revision,operation_id
+      FROM ${store.table('voluntary_consumers')} WHERE tenant_id=$1 AND task_id=$2 AND actor_id=$3`,
+      [tenantId,taskId,actorId])).rows[0] ?? null;
+  }
+  function grantBindsAccepted(grant, v) {
+    return Boolean(grant && v.review?.accepted && v.review.exportAuthorized && v.artifact
+      && grant.terms_digest === v.termsDigest && grant.artifact_digest === v.artifact.digest
+      && Number.isSafeInteger(grant.granted_revision) && grant.granted_revision >= 1
+      && grant.granted_revision <= v.revision && typeof grant.operation_id === 'string' && grant.operation_id.length >= 8);
+  }
   async function entitled(client, actor, row, v) {
     live(v);
     const isParty = [row.requester_id,v.terms.contributorId].includes(actor.actorId);
-    const grant = (await client.query(`SELECT 1 FROM ${store.table('consumers')} WHERE tenant_id=$1 AND task_id=$2 AND actor_id=$3`,
-      [actor.tenantId,row.id,actor.actorId])).rows.length > 0;
-    requireThat(isParty || (grant && v.review?.accepted && v.review.exportAuthorized), 'forbidden');
+    const grant = await voluntaryGrant(client, actor.tenantId, row.id, actor.actorId);
+    requireThat(isParty || grantBindsAccepted(grant, v), 'forbidden');
     requireThat(v.artifact && digest(v.artifact.evidence) === v.artifact.digest, 'retained_evidence_required');
     return isParty;
   }
@@ -74,13 +112,22 @@ export function voluntaryMarket({market, capability}) {
     if (['readVoluntary','exportVoluntary'].includes(action)) {
       exact(input,['taskId']);
       return store.locked(actor.tenantId,input.taskId,async (row,client) => {
-        const v = row.voluntary;
-        requireThat(v, 'voluntary_unavailable');
+        const present = row.voluntary;
+        requireThat(present, 'voluntary_unavailable');
         if (action === 'readVoluntary') {
-          party(actor,row,v);
-          return {...result(row,v),terms:v.terms,review:v.review ?? null,
+          party(actor,row,present);
+          const v = validatedVoluntary(row);
+          // A successor source must not resume serving live work. Withdrawal is a
+          // party stop and still returns digest metadata without evidence.
+          if (!v.withdrawn) sameSource(v);
+          return {...result(row,v),terms:v.terms,spec:row.spec,review:v.review ?? null,
             evidence:v.withdrawn ? null : v.artifact?.evidence ?? null};
         }
+        // Recompute commitments before any evidence leaves. A withdrawn row still
+        // reports voluntary_withdrawn to the original export caller after its grant
+        // row is deleted; a changed source does not resume a live export.
+        const v = validatedVoluntary(row);
+        if (!v.withdrawn) sameSource(v);
         const isParty = await entitled(client,actor,row,v);
         requireThat(v.review?.accepted && v.review.exportAuthorized, 'voluntary_export_not_authorized');
         return {...result(row,v),schema:'pilot.machine-market.voluntary-export.v1',terms:v.terms,
@@ -119,7 +166,8 @@ export function voluntaryMarket({market, capability}) {
       }
       if (action === 'useVoluntary') {
         exact(input,['taskId','laterTaskId','artifactDigest','decision']);
-        const v = row.voluntary; requireThat(v, 'voluntary_unavailable');
+        const v = validatedVoluntary(row);
+        sameSource(v);
         await entitled(client,actor,row,v);
         requireThat(v.review?.accepted && v.review.exportAuthorized, 'voluntary_export_not_authorized');
         requireThat(![row.requester_id,v.terms.contributorId].includes(actor.actorId), 'later_consumer_required');
@@ -135,7 +183,7 @@ export function voluntaryMarket({market, capability}) {
       if (action === 'withdrawVoluntary') {
         exact(input,['taskId','termsDigest','expectedRevision','reason']); text(input.reason);
         live(v); v.withdrawn = {actorId:actor.actorId,reason:input.reason};
-        await client.query(`DELETE FROM ${store.table('consumers')} WHERE tenant_id=$1 AND task_id=$2`,[actor.tenantId,row.id]);
+        await client.query(`DELETE FROM ${store.table('voluntary_consumers')} WHERE tenant_id=$1 AND task_id=$2`,[actor.tenantId,row.id]);
       } else {
         live(v); current(input);
         requireThat(v.terms.sourceSha256 === capability.sourceSha256 && v.terms.hostSha256 === capability.hostSha256,
@@ -143,9 +191,12 @@ export function voluntaryMarket({market, capability}) {
         requireThat(digest(row.spec) === v.terms.specDigest, 'voluntary_terms_changed');
         const base = ['taskId','termsDigest','expectedRevision','sourceSha256','hostSha256'];
         if (action === 'assentVoluntary') {
-          exact(input,[...base,'authorizedToShare']);
+          exact(input,[...base,'authorizedToShare','spec']);
           requireThat(actor.actorId === v.terms.contributorId && input.authorizedToShare === true, 'contributor_consent_required');
-          requireThat(!v.assented, 'voluntary_already_assented'); v.assented = true;
+          requireThat(input.spec && digest(input.spec) === v.terms.specDigest && digest(row.spec) === v.terms.specDigest, 'voluntary_terms_changed');
+          requireThat(!v.assented, 'voluntary_already_assented');
+          v.assented = true;
+          v.inspectedSpecDigest = v.terms.specDigest;
         } else if (action === 'deliverVoluntary') {
           exact(input,[...base,'evidence']);
           requireThat(actor.actorId === v.terms.contributorId && v.assented && !v.artifact, 'voluntary_assignment_required');
@@ -168,8 +219,12 @@ export function voluntaryMarket({market, capability}) {
           requireThat(v.review?.accepted && v.review.exportAuthorized, 'voluntary_export_not_authorized');
           await market.member(input.consumerId,actor.tenantId);
           requireThat(![row.requester_id,v.terms.contributorId].includes(input.consumerId), 'later_consumer_required');
-          await client.query(`INSERT INTO ${store.table('consumers')}(tenant_id,task_id,actor_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`,
-            [actor.tenantId,row.id,input.consumerId]);
+          await client.query(`INSERT INTO ${store.table('voluntary_consumers')}
+            (tenant_id,task_id,actor_id,terms_digest,artifact_digest,granted_revision,operation_id)
+            VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,
+            [actor.tenantId,row.id,input.consumerId,v.termsDigest,v.artifact.digest,v.revision,operationId]);
+          const saved = await voluntaryGrant(client, actor.tenantId, row.id, input.consumerId);
+          requireThat(saved && saved.terms_digest === v.termsDigest && saved.artifact_digest === v.artifact.digest, 'voluntary_grant_conflict');
         } else requireThat(false, 'invalid_input');
       }
       v.revision++;
@@ -180,5 +235,5 @@ export function voluntaryMarket({market, capability}) {
     contract:enabled ? JSON.parse(readFileSync(new URL('../contracts/voluntary-participation.openapi.json',import.meta.url),'utf8')) : null,
     descriptor:enabled ? {protocol:PARTICIPATION,actions:ACTIONS,contract:'/v1/market/participation-contract',
     rights:'CC0-1.0',maxArtifactBytes:65536,mutationReceipts:'pilot.machine-market.cold-mutation-receipt.v1',
-    readback:'/v1/market/readbackVoluntary',...flags} : null};
+    readback:'/v1/market/readbackVoluntary',delivery:'one-shot',revision:'optimistic-concurrency-counter',...flags} : null};
 }

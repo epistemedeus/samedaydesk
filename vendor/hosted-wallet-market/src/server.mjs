@@ -23,6 +23,7 @@ import {assertReplayKey, openSecrets, sealSecrets} from './seal.mjs';
 import {readEntitledOutcome} from './retained-outcome.mjs';
 import {fundingIntentMessage, recoverPersonalSigner} from './signature.mjs';
 import {createWalletContinuation} from './wallet-continuation.mjs';
+import {createMountedPublicLimiter} from './public-route-limit.mjs';
 
 export const PREFIX = '/api/neomorphic-contributor-journey';
 export {WIRE_HEADER, WIRE_VERSION};
@@ -340,6 +341,9 @@ export async function openHostedMarket(options) {
   // machine capability admits discovery; only the closed rail authority can
   // admit disposable-chain money. A profile flag never supplies a signer.
   let machine;
+  const admitMountedPublicRead = createMountedPublicLimiter({
+    perMinute: Number(options.publicReadPerMinute ?? process.env.HOSTED_WALLET_MARKET_PUBLIC_READ_PER_MINUTE) || 120,
+  });
   const machineInput = options.machineProfile ?? process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE;
   if (machineInput) {
     try {
@@ -1667,6 +1671,10 @@ export async function openHostedMarket(options) {
         const operation=path.split('/').at(-1);
         const produced=await withTx(client=>mutate(client,req,body,null,tx=>machine.issueSession(operation,req,body,tx)));
         return finish(res,produced);
+      }
+      if (machine && req.method === 'GET') {
+        const decision = admitMountedPublicRead(PREFIX, url.pathname, req.method, req);
+        if (decision.applies && decision.status === 429) return send(res, 429, {ok: false, code: decision.code});
       }
       if (path === '/v1/market/profile' && req.method === 'GET' && machine) {
         return send(res,200,{ok:true,value:machine.publicProfile()});

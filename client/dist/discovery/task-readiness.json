@@ -1,0 +1,81 @@
+{
+  "schema": "samedaydesk.acquisition-discovery.v1",
+  "packageId": "task-readiness",
+  "title": "Free task-specific readiness check",
+  "summary": "One supplied success contract, one HTTP method, and one path. A concrete finding can authorize a repair packet the in-repo public adapter consumes. A failed probe is not demand.",
+  "page": null,
+  "invokesPricedExecution": false,
+  "runsOffline": true,
+  "offlineAfterPublicInstall": true,
+  "productionAcquisition": false,
+  "privateGitRequired": false,
+  "paid": false,
+  "humanPageAdded": false,
+  "callerComposition": {
+    "schema": "samedaydesk.relevant-activation.entry.v1",
+    "sourcePath": "tools/relevant-activation-composition-100384",
+    "license": "MIT",
+    "mode": "caller-held",
+    "command": "node tools/relevant-activation-composition-100384/bin/sds-activation.mjs plan",
+    "inputSchema": "samedaydesk.relevant-activation.task.v1",
+    "sourceCandidate": true,
+    "publicAcquisition": false,
+    "hostedArchive": {
+      "path": "/for-agents/relevant-activation/relevant-activation-caller-0.1.1.tgz",
+      "version": "0.1.1",
+      "bytes": 68369,
+      "sha256": "994ffe92d532c309a1f0b99f20ffcffc6a0c01846f44054f782c0f3ff7744c5b",
+      "sourceHead": "b529cf9266d63c4c0a0408d402ead2570022a50a",
+      "publicationVerified": false,
+      "command": "node relevant-activation-caller-0.1.1/bin/sds-activation.mjs plan"
+    },
+    "formationRequiredForReadiness": false,
+    "qualification": "exact sourced operator goal and selected-path prerequisite; model and keywords refused",
+    "returnsThrough": "existing application-scoped status grant",
+    "productionFormationMutations": false,
+    "humanPagesChanged": false
+  },
+  "coldStart": [
+    "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity",
+    "node tools/l08-agent-repair/cold-client.mjs task-readiness"
+  ],
+  "pins": {
+    "neo230": {
+      "commit": "de9c23b5d19de30874e432e7ef1193d0d02d6702",
+      "repository": "https://github.com/epistemedeus/neomorphic-io.git",
+      "acquired": false,
+      "reason": "private"
+    },
+    "s14": {
+      "commit": "00267aeb03c3ce01b9b318f5ee0172aee34d7e34",
+      "repository": "https://github.com/epistemedeus/agent-payment-integrity.git",
+      "license": "MIT",
+      "acquired": "vendored",
+      "path": "vendor/agent-payment-integrity"
+    },
+    "staleNeoRefused": "259ea74da295f12d64e2aae9cb2042c4a14c6b96",
+    "fixtures": [
+      "catalog-row-repair-add-required.json",
+      "catalog-row-contract-absent.json",
+      "catalog-row-repair-complete.json"
+    ],
+    "install": "npm ci --ignore-scripts --prefix vendor/agent-payment-integrity"
+  },
+  "canonical": {
+    "method": "POST",
+    "path": "/mcp",
+    "header": "MCP-Protocol-Version",
+    "version": "2025-11-25",
+    "unsupportedValue": "1999-01-01",
+    "requiredStatus": 400,
+    "missingHeader": "accepted",
+    "repaired": true,
+    "repairScope": "compiled-process",
+    "note": "A follow-up POST with an unsupported MCP-Protocol-Version returns HTTP 400 and no result on this process. A missing header stays HTTP 200. Initialize negotiates the body version. This is the compiled repair, not a public-host readback."
+  },
+  "publicDeployment": {
+    "activated": false,
+    "readback": null
+  },
+  "materialLimit": "Absence of demand is only a caller-supplied empty ledger. The canonical protocol version this server speaks is 2025-11-25."
+}

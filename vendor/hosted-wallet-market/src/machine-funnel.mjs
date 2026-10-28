@@ -1,5 +1,5 @@
 // Read-only counts from the existing account and market records.
-// Cohort stays unknown. Discovery rows are listing events, not unique visitors.
+// Cohort stays unknown. A discovery row is one task, UTC day and source hash, not a page view.
 import {createHash} from 'node:crypto';
 import {assertIdent} from './profile.mjs';
 
@@ -97,7 +97,7 @@ export async function unfundedFunnelSnapshot(client, {earnedSchema, tenant, excl
     unfundedListings: counts.listings,
     interests: counts.interests,
     discoveryImpressions: counts.impressions,
-    impressionIdentity: 'listing_event',
+    impressionIdentity: 'task_utc_day_source',
     transitions: {post: counts.posts, interest: counts.interest_transitions},
     funding: counts.funding,
     fundingStarted: counts.funding !== 0,

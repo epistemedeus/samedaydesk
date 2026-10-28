@@ -1,0 +1,11 @@
+{
+  "schema": "samedaydesk.lean-archive-receipt.v1",
+  "packageId": "record-repeat-job",
+  "archive": "record-repeat-job-ab84d79b0272.tar.gz",
+  "bytes": 1253570,
+  "sha256": "9814feabcda58c1f4a494a8919d9c6c2ac7d35b094ce5218261f976196c045ea",
+  "semanticsTip": "ab84d79b02726af87131751ac9e11c54c353d5f3",
+  "parserPin": "65ce1867f1b4339cc708bfb72a7d9a5942785632",
+  "recipePin": "a022eb6352156dcdcdf2f8730931f5891bd01436",
+  "builtAt": "2026-09-10T15:50:18.640Z"
+}

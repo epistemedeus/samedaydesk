@@ -293,9 +293,16 @@ export class RequesterMarket {
   }
   async grantConsumer(context,input) {
     const a = await this.actor(context); exact(input,['taskId','consumerId']);
-    const {row} = await this.bound(a,input.taskId,'requester'); await this.member(key(input.consumerId),a.tenantId);
-    await this.store.pool.query(`INSERT INTO ${this.store.table('consumers')}(tenant_id,task_id,actor_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`,[a.tenantId,row.id,input.consumerId]);
-    return {granted:true};
+    const consumerId = key(input.consumerId);
+    await this.member(consumerId,a.tenantId);
+    // The task lock is held across the voluntary check and the retained insert.
+    // A concurrent offer cannot leave this authority on a voluntary task.
+    return this.store.locked(a.tenantId,key(input.taskId),async (row,client)=>{
+      this.owner(a,row);
+      requireThat(row.voluntary == null,'voluntary_consumer_refused');
+      await client.query(`INSERT INTO ${this.store.table('consumers')}(tenant_id,task_id,actor_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`,[a.tenantId,row.id,consumerId]);
+      return {granted:true};
+    });
   }
   async retainedFor(actor,taskId) {
     const row = await this.store.task(actor.tenantId,key(taskId));
