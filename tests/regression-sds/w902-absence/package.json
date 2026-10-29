@@ -1,0 +1,11 @@
+{
+  "name": "samedaydesk-regression-sds-w902-absence",
+  "private": true,
+  "type": "module",
+  "description": "SDS absence≠demand regression (w902): cold-read observatory/pulse/owner-QA pins; reject invented demand from absence; seeded x402scan documented-unavailable refuse. Write boundary tests/regression-sds/w902-absence/**.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 *.test.mjs",
+    "corpus": "node run.mjs --json",
+    "seeded-failure": "node run.mjs --seeded-failure --json"
+  }
+}
