@@ -15,6 +15,28 @@ export function pinnedSnapshotUrl() {
   return pinnedUrls().publicSnapshotUrl;
 }
 
+function instantText(value) {
+  if (value instanceof Date) {
+    if (!Number.isFinite(value.getTime())) throw new WatchError("bad_clock", "clock instant must be an ISO-8601 timestamp");
+    return value.toISOString();
+  }
+  if (typeof value === "number" && Number.isFinite(value)) return new Date(value).toISOString();
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    if (Number.isFinite(parsed)) return new Date(parsed).toISOString();
+  }
+  throw new WatchError("bad_clock", "clock instant must be an ISO-8601 timestamp");
+}
+
+// One clock. A function is sampled when the consumer asks, including after the
+// body arrives. A string or Date is an explicit frozen injection and stays fixed.
+export function observerClock(now) {
+  if (typeof now === "function") return () => instantText(now());
+  if (now == null) return () => new Date().toISOString();
+  const frozen = instantText(now);
+  return () => frozen;
+}
+
 export async function assertResolvablePublic(urlText, lookup = dns.lookup) {
   let url;
   try {
@@ -139,6 +161,13 @@ export async function readPinnedSnapshot({
   if (url !== "https://samedaydesk.com/api/observatory/snapshot") {
     throw new WatchError("monitor_pin", "snapshot pin moved", 503);
   }
+  const clock = observerClock(now);
+  const requestStartedAt = clock();
+  const receipt = (observedAt = null) => ({
+    requestStartedAt,
+    observedAt,
+    receivedAt: clock(),
+  });
   const suppliedFetch = typeof fetchImpl === "function";
   const impl = suppliedFetch ? fetchImpl : globalThis.fetch;
   if (typeof impl !== "function") {
@@ -147,6 +176,7 @@ export async function readPinnedSnapshot({
       bytes: 0,
       calls: 0,
       runtimeMs: Math.round(performance.now() - started),
+      clocks: receipt(),
     };
   }
   const budget = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 8000;
@@ -160,6 +190,7 @@ export async function readPinnedSnapshot({
       bytes,
       calls,
       runtimeMs: Math.round(performance.now() - started),
+      clocks: receipt(),
     });
     const codeForAbort = (phase) => {
       if (signal?.aborted) return "cancelled";
@@ -243,7 +274,7 @@ export async function readPinnedSnapshot({
       result = await monitor.readMaintainedProjection({
         fetchImpl: wrapped,
         timeoutMs: budget,
-        now: () => now,
+        now: clock,
         capture: suppliedFetch ? "injected" : "live",
       });
     } catch (error) {
@@ -259,17 +290,22 @@ export async function readPinnedSnapshot({
     const fetchBytes = Number(result?.fetch?.bytes) || 0;
     const runtimeMs = Math.round(performance.now() - started);
     if (fetchBytes > maxBodyBytes) {
-      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes: fetchBytes, calls, runtimeMs };
+      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes: fetchBytes, calls, runtimeMs, clocks: receipt(result?.observedAt ?? null) };
     }
     if (!result || result.status === "source_failure" || result.projection == null) {
-      const code = result?.failureCode && result.failureCode !== "source_unreachable"
+      let code = result?.failureCode && result.failureCode !== "source_unreachable"
         ? result.failureCode
         : (result?.fetch?.failureKind === "timeout" ? "timeout" : (result?.failureCode || "source_unreachable"));
+      // The pinned consumer reports an abort as network. The caller signal is a
+      // cancel, and the budget signal is a timeout. Do not leave either as network.
+      if (signal?.aborted && (code === "network" || code === "timeout")) code = "cancelled";
+      else if (budgetController.signal.aborted && code === "network") code = "timeout";
       return {
         failure: { code, message: result?.reason || "source unavailable" },
         bytes: fetchBytes,
         calls: Math.max(calls, 1),
         runtimeMs,
+        clocks: receipt(result?.observedAt ?? null),
       };
     }
     const capture = result.capture === "live" ? "live" : "injected";
@@ -281,9 +317,9 @@ export async function readPinnedSnapshot({
     };
     const bytes = Buffer.byteLength(JSON.stringify(document));
     if (bytes > maxBodyBytes) {
-      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes, calls, runtimeMs };
+      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes, calls, runtimeMs, clocks: receipt(result?.observedAt ?? null) };
     }
-    return { document, bytes, calls, runtimeMs };
+    return { document, bytes, calls, runtimeMs, clocks: receipt(result.observedAt ?? null) };
   } finally {
     clearTimeout(budgetTimer);
   }
