@@ -1,0 +1,23 @@
+{
+  "name": "@samedaydesk/price-drift-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline SDS price-drift verifier. Records live x402 catalog amounts and rejects observation drift. Never rewrites prices, never pays, never publishes, never checkouts.",
+  "bin": {
+    "price-drift": "./bin/price-drift.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "verify": "node ./bin/price-drift.mjs verify --pin fixtures/pin.json --observation fixtures/ok-observation.json",
+    "doctor": "node ./bin/price-drift.mjs doctor"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}
