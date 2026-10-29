@@ -1,0 +1,65 @@
+{
+  "schema": "h64334.owned-test-cleanup.v1",
+  "at": "2026-10-29T21:32:00.167151+00:00",
+  "processes": [
+    {
+      "pid": 101368,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101698,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101722,
+      "state": "State:\tZ (zombie)",
+      "running": false
+    },
+    {
+      "pid": 101723,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101724,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101726,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101727,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101728,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101741,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101986,
+      "state": "absent",
+      "running": false
+    },
+    {
+      "pid": 101997,
+      "state": "absent",
+      "running": false
+    }
+  ],
+  "notes": [
+    "PostgreSQL zombies have exited and await the existing native supervisor reaper. No parent/native/helper process was signaled.",
+    "All new acceptance files were archived byte-for-byte into the H34 run directory before removing its task-owned generated scratch."
+  ]
+}

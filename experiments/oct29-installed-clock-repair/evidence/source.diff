@@ -1,0 +1,1835 @@
+diff --git a/.github/workflows/runtime-startup.yml b/.github/workflows/runtime-startup.yml
+index 16c24b93..5a307f67 100644
+--- a/.github/workflows/runtime-startup.yml
++++ b/.github/workflows/runtime-startup.yml
+@@ -38,6 +38,7 @@ jobs:
+           cache: npm
+       # Only the root production install may supply runtime dependencies.
+       - run: npm ci --omit=dev --ignore-scripts
++      - run: node --test server/scripts/test-postgres-bin.mjs
+       - run: npm run test:proxy-addr
+       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
+       - run: npm run test:hosted-startup
+diff --git a/experiments/oct29-installed-clock-repair/qualify.mjs b/experiments/oct29-installed-clock-repair/qualify.mjs
+new file mode 100644
+index 00000000..e0f2af22
+--- /dev/null
++++ b/experiments/oct29-installed-clock-repair/qualify.mjs
+@@ -0,0 +1,115 @@
++// H64334 installed-lineage receiving. No provider or production-store access.
++import assert from 'node:assert/strict';
++import {execFileSync} from 'node:child_process';
++import {createHash} from 'node:crypto';
++import {mkdirSync, readFileSync, readdirSync, writeFileSync} from 'node:fs';
++import path from 'node:path';
++import {fileURLToPath} from 'node:url';
++import {digest} from '../../server/foundry/private-pass-core.mjs';
++import {acceptedCallerPin, remoteJourney, verifyCallerClosure} from '../../server/foundry/activation/remote-private-journey.mjs';
++
++const root = fileURLToPath(new URL('../../', import.meta.url));
++process.chdir(root);
++const base = 'c4ec17a891e19177d574ed79faaac25d295d2743';
++const donor = '63e4076d1ffd98bc2f561fbb4c66d2fedb714830';
++const oldBase = 'a5b40cb015d30de8bf8f3cbbeda1360151279fb0';
++const pinPath = 'server/foundry/activation/private-control-pin.json';
++const evidence = new URL('./evidence/', import.meta.url);
++mkdirSync(evidence, {recursive: true});
++const git = (...args) => execFileSync('git', args, {maxBuffer: 16 * 1024 * 1024});
++const text = (...args) => git(...args).toString().trim();
++const original = file => git('show', `${base}:${file}`);
++const sha = bytes => createHash('sha256').update(bytes).digest('hex');
++const basePinBytes = original(pinPath);
++const basePin = JSON.parse(basePinBytes);
++const predecessor = {base: basePin.base, sourcePinSha256: basePin.files['vendor/visitor-foundry-receiver/SOURCE-PIN.json'], closureDigest: digest(basePin)};
++const repaired = ['server/lib/managed-watch/service.mjs', 'server/lib/managed-watch/source.mjs'];
++const donorFiles = {
++  [repaired[0]]: '828fc8a4af7d0aa66270e855ebdcde891850a669',
++  [repaired[1]]: 'd9f44b04a33eca8bf56ec913dfe8df9c1edddd84',
++  'server/scripts/test-managed-watch.mjs': 'e501c99ad3dcb139af79ec89bfbb159bc5f97756',
++  'server/scripts/fixtures/disposable-pg.mjs': 'ee0ee944218b6df891b462143d8bb3d4f53e8413',
++  'server/scripts/test-postgres-bin.mjs': '15452e925d60c3c6bcf5e2edc6f555dc6159a92f',
++  'experiments/oct29-receive-time-freshness/accept.mjs': '6514ac613ad487ff5f8c06336eed320258da5eef',
++  'experiments/oct29-receive-time-freshness/recipient.mjs': '4be8e170eb08d0384f0fff517c36b000ddef3435',
++  'experiments/oct29-receive-time-freshness/service-main.mjs': '76719e8f5ac2f77e58c47e73eb9f43e0b5f94b24',
++  'experiments/oct29-receive-time-freshness/source-server.mjs': '73f931673cb3e0a752a91c6de0c81edb7ead397c',
++};
++const report = {schema: 'h64334.installed-clock-qualification.v1', stage: process.argv[2], at: new Date().toISOString(), base, donor, testedHead: text('rev-parse', 'HEAD')};
++assert.equal(sha(basePinBytes), 'fb725ace03f9c8eac18382b3da3e762f63e84dd5802a8a8be039a858cabfd502');
++assert.equal(predecessor.closureDigest, 'sha256:c0211aa4e1090458fec5908a89259ee0896a990dee71a5e0e927b21e85d6cc5c');
++assert.equal(Object.keys(basePin.files).length, 1308);
++assert.equal(basePin.receivedCallerClosures.length, 34);
++
++if (report.stage === 'source') {
++  assert.equal(text('rev-parse', '--is-shallow-repository'), 'false');
++  git('merge-base', '--is-ancestor', base, 'HEAD');
++  report.ancestry = {commits: Number(text('rev-list', '--count', base)), comparison: text('rev-list', '--left-right', '--count', `${base}...${oldBase}`), mergeBase: text('merge-base', base, oldBase)};
++  assert.equal(report.ancestry.comparison, '200\t4');
++  assert.equal(report.ancestry.mergeBase, 'd8cea059213e06d2f263be67f82e498f8052a50f');
++  writeFileSync(new URL('c4-ancestry.txt', evidence), git('rev-list', '--parents', base));
++  writeFileSync(new URL('c4-private-control-pin.json', evidence), basePinBytes);
++  report.donorFiles = Object.entries(donorFiles).map(([file, blob]) => {
++    assert.equal(text('rev-parse', `${donor}:${file}`), blob);
++    assert.deepEqual(readFileSync(file), git('show', `${donor}:${file}`), file);
++    return {file, blob, bytes: readFileSync(file).length, sha256: sha(readFileSync(file))};
++  });
++  for (const file of [...repaired, 'server/scripts/test-managed-watch.mjs', 'server/scripts/fixtures/disposable-pg.mjs']) assert.deepEqual(original(file), git('show', `${oldBase}:${file}`));
++  const protectedFiles = ['package.json', 'package-lock.json', 'server/foundry/activation/remote-private-journey.mjs', 'server/scripts/test-proxy-addr-patch.js', 'server/scripts/publish-preserved-client.mjs', 'publication/PRESERVED-PUBLICATION.json', 'server/lib/managed-watch/pins/PINS.json', 'server/lib/managed-watch/pins/change-monitor-0.1.0.tgz'];
++  report.protectedFiles = protectedFiles.map(file => {
++    assert.deepEqual(readFileSync(file), original(file), file);
++    return {file, blob: text('rev-parse', `${base}:${file}`), sha256: sha(readFileSync(file))};
++  });
++  for (const dir of ['client/src', 'client/public', 'client/dist', 'publication']) assert.equal(text('diff', base, '--', dir), '');
++  const workflow = '.github/workflows/runtime-startup.yml';
++  assert.equal(readFileSync(workflow, 'utf8'), original(workflow).toString().replace('      - run: npm run test:proxy-addr\n', '      - run: node --test server/scripts/test-postgres-bin.mjs\n      - run: npm run test:proxy-addr\n'));
++  writeFileSync(new URL('source.diff', evidence), git('diff', '--binary', base, 'HEAD'));
++} else if (report.stage === 'caller') {
++  const pin = JSON.parse(readFileSync(pinPath));
++  const expected = structuredClone(basePin);
++  expected.files[repaired[0]] = '1bb01758c4405ac232425939a74d0c830bed5fca7fcfca3ade72c9cb4154a604';
++  expected.files[repaired[1]] = '5f1a31356cd8e0a239c99d3a1c3382892d965fad15e509451b42d181eb70ec05';
++  expected.receivedCallerClosures.push(predecessor);
++  assert.deepEqual(pin, expected);
++  const current = verifyCallerClosure();
++  for (const descriptor of [...basePin.receivedCallerClosures, predecessor, current]) assert.equal(acceptedCallerPin(descriptor), true);
++  assert.equal(acceptedCallerPin({...predecessor, sourcePinSha256: '0'.repeat(64)}), false);
++  report.tamper = [];
++  for (const file of repaired) {
++    const bytes = readFileSync(file);
++    try {
++      writeFileSync(file, Buffer.concat([bytes, Buffer.from('\n// H64334 tamper control\n')]));
++      // Closure refusal must precede even reading this nonexistent config.
++      await assert.rejects(remoteJourney('check', '/nonexistent-h64334-config'), {code: 'caller_source_changed'});
++      report.tamper.push({file, code: 'caller_source_changed', beforeConfigRead: true});
++    } finally { writeFileSync(file, bytes); }
++    assert.deepEqual(verifyCallerClosure(), current);
++  }
++  report.predecessor = predecessor;
++  report.current = current;
++  report.members = Object.keys(pin.files).length;
++  report.retainedDescriptors = pin.receivedCallerClosures;
++} else if (report.stage === 'public') {
++  const dist = 'client/dist';
++  const baseNames = text('ls-tree', '-r', '--name-only', base, '--', dist).split('\n').map(file => file.slice(dist.length + 1));
++  function walk(dir, prefix = '') {
++    return readdirSync(dir, {withFileTypes: true}).flatMap(e => e.isDirectory() ? walk(path.join(dir, e.name), `${prefix}${e.name}/`) : [`${prefix}${e.name}`]);
++  }
++  assert.deepEqual(walk(dist).sort(), baseNames.sort());
++  report.members = baseNames.map(file => {
++    const bytes = readFileSync(path.join(dist, file));
++    const prior = original(`${dist}/${file}`);
++    assert.deepEqual(bytes, prior, file);
++    return {file, bytes: bytes.length, sha256: sha(bytes), c4Sha256: sha(prior), rawEqual: true};
++  });
++  report.files = report.members.length;
++  report.bytes = report.members.reduce((sum, member) => sum + member.bytes, 0);
++  report.inventorySha256 = sha(JSON.stringify(report.members.map(row => [row.file, row.sha256])));
++  assert.equal(report.files, 352);
++  assert.equal(report.bytes, 59951737);
++  assert.equal(report.inventorySha256, '6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5');
++  report.missing = []; report.extra = []; report.changed = [];
++} else { throw new Error('expected source, caller or public'); }
++report.ok = true;
++writeFileSync(new URL(`${report.stage}.json`, evidence), JSON.stringify(report, null, 2) + '\n');
++console.log(JSON.stringify({...report, members: Array.isArray(report.members) ? report.members.length : report.members, retainedDescriptors: report.retainedDescriptors?.length}));
+diff --git a/experiments/oct29-installed-clock-repair/run.mjs b/experiments/oct29-installed-clock-repair/run.mjs
+new file mode 100644
+index 00000000..8f6990e6
+--- /dev/null
++++ b/experiments/oct29-installed-clock-repair/run.mjs
+@@ -0,0 +1,80 @@
++// Run serially on the admitted remote writer. Each invocation keeps earlier logs.
++import {spawn, execFileSync} from 'node:child_process';
++import {mkdirSync, readFileSync, writeFileSync, readdirSync} from 'node:fs';
++import {fileURLToPath} from 'node:url';
++import path from 'node:path';
++
++const root = fileURLToPath(new URL('../../', import.meta.url));
++process.chdir(root);
++const at = new Date().toISOString();
++const runDir = new URL(`./evidence/run-${at.replaceAll(':', '-')}/`, import.meta.url);
++mkdirSync(runDir, {recursive: true});
++const commands = [
++  ['cold-install', 'npm', ['ci', '--omit=dev', '--ignore-scripts']],
++  ['source', 'node', ['experiments/oct29-installed-clock-repair/qualify.mjs', 'source']],
++  ['caller', 'node', ['experiments/oct29-installed-clock-repair/qualify.mjs', 'caller']],
++  ['pg-resolver', 'node', ['--test', 'server/scripts/test-postgres-bin.mjs']],
++  ['managed-watch', 'npm', ['run', 'test:managed-watch']],
++  ['http-pg-recipient', 'node', ['experiments/oct29-receive-time-freshness/accept.mjs']],
++  ['cold-proxy', 'npm', ['run', 'test:proxy-addr']],
++  ['startup-diagnostic', 'node', ['--test', 'server/scripts/test-correspondence-startup-diagnostic.js']],
++  ['hosted-startup', 'npm', ['run', 'test:hosted-startup']],
++  ['machine-discovery', 'npm', ['run', 'test:machine-discovery']],
++  ['managed-build', 'npm', ['run', 'build:managed-foundry']],
++  ['public', 'node', ['experiments/oct29-installed-clock-repair/qualify.mjs', 'public']],
++];
++const selected = process.argv.slice(2);
++const report = {schema: 'h64334.serial-remote-commands.v1', startedAt: at, source: execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim(), node: process.version, platform: process.platform, arch: process.arch, commands: []};
++function sampleTree() {
++  const rows = [];
++  for (const pid of readdirSync('/proc').filter(n => /^\d+$/.test(n))) {
++    try {
++      const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
++      const fields = stat.slice(stat.lastIndexOf(') ') + 2).split(' ');
++      const rss = Number(readFileSync(`/proc/${pid}/status`, 'utf8').match(/^VmRSS:\s+(\d+)/m)?.[1] || 0);
++      rows.push({pid: Number(pid), ppid: Number(fields[1]), rssKiB: rss});
++    } catch { /* child exited */ }
++  }
++  const descendants = new Set([process.pid]);
++  for (let changed = true; changed;) {
++    changed = false;
++    for (const row of rows) if (descendants.has(row.ppid) && !descendants.has(row.pid)) { descendants.add(row.pid); changed = true; }
++  }
++  return rows.filter(row => descendants.has(row.pid)).reduce((sum, row) => sum + row.rssKiB, 0);
++}
++function save() { writeFileSync(new URL('commands.json', runDir), JSON.stringify(report, null, 2) + '\n'); }
++for (const [name, command, args] of commands) {
++  if (selected.length && !selected.includes(name)) continue;
++  const row = {name, command, args, cwd: root, startedAt: new Date().toISOString(), peakSampledTreeRssKiB: sampleTree()};
++  console.log(`START ${name} ${row.startedAt}`);
++  const child = spawn(command, args, {cwd: root, env: process.env, stdio: ['ignore', 'pipe', 'pipe']});
++  const stdout = [], stderr = [];
++  child.stdout.on('data', chunk => stdout.push(chunk));
++  child.stderr.on('data', chunk => stderr.push(chunk));
++  const timer = setInterval(() => { row.peakSampledTreeRssKiB = Math.max(row.peakSampledTreeRssKiB, sampleTree()); }, 200);
++  try {
++    [row.code, row.signal] = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', (...result) => resolve(result)); });
++  } catch (error) { row.error = error.message; row.code = null; }
++  clearInterval(timer);
++  row.finishedAt = new Date().toISOString();
++  const outFile = new URL(`${name}.stdout.log`, runDir), errFile = new URL(`${name}.stderr.log`, runDir);
++  writeFileSync(outFile, Buffer.concat(stdout)); writeFileSync(errFile, Buffer.concat(stderr));
++  row.stdout = path.basename(fileURLToPath(outFile)); row.stderr = path.basename(fileURLToPath(errFile));
++  report.commands.push(row);
++  save();
++  console.log(`END ${name} code=${row.code} peakTreeKiB=${row.peakSampledTreeRssKiB}`);
++  if (name === 'http-pg-recipient') {
++    // Unmodified H31 helper retains its schema label. These are newly executed H34 bytes.
++    const generated = new URL('../oct29-receive-time-freshness/evidence/', import.meta.url);
++    const archive = new URL('./fresh-http-pg-recipient/', runDir);
++    mkdirSync(archive, {recursive: true});
++    for (const name of ['acceptance.json', 'commands.txt', 'clocks.json', 'delayed-response.json']) {
++      try { writeFileSync(new URL(name, archive), readFileSync(new URL(name, generated))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
++    }
++  }
++  if (row.code !== 0 || row.signal) { process.exitCode = 1; break; }
++}
++report.finishedAt = new Date().toISOString();
++report.ok = report.commands.every(row => row.code === 0 && !row.signal);
++save();
++console.log(fileURLToPath(new URL('commands.json', runDir)));
+diff --git a/experiments/oct29-receive-time-freshness/accept.mjs b/experiments/oct29-receive-time-freshness/accept.mjs
+new file mode 100644
+index 00000000..6514ac61
+--- /dev/null
++++ b/experiments/oct29-receive-time-freshness/accept.mjs
+@@ -0,0 +1,640 @@
++import assert from "node:assert/strict";
++import { createHash } from "node:crypto";
++import { spawn } from "node:child_process";
++import { once } from "node:events";
++import { mkdir, readFile, writeFile } from "node:fs/promises";
++import { readdirSync, readFileSync } from "node:fs";
++import http from "node:http";
++import path from "node:path";
++import { fileURLToPath } from "node:url";
++import { hashGrantToken } from "../../server/lib/managed-watch/limits.mjs";
++import { readPinnedSnapshot } from "../../server/lib/managed-watch/source.mjs";
++import { startDisposablePg } from "../../server/scripts/fixtures/disposable-pg.mjs";
++import { deliveryIdFor, reportDigestFor } from "./recipient.mjs";
++import {
++  advanceClockFile,
++  fetchPinnedThrough,
++  publicLookup,
++  readClockInstant,
++  startSourceServer,
++  writeClockFile,
++  writeModeFile,
++} from "./source-server.mjs";
++
++const here = path.dirname(fileURLToPath(import.meta.url));
++const root = path.resolve(here, "../..");
++const evidenceDir = path.join(here, "evidence");
++const workDir = path.join(here, "evidence", "work");
++const serviceMain = path.join(here, "service-main.mjs");
++const recipientMain = path.join(here, "recipient.mjs");
++const archivePath = path.join(root, "server/lib/managed-watch/pins/change-monitor-0.1.0.tgz");
++const TOKEN = "h64331_receive_clock_token";
++const PROJECT = "projfresh1";
++const ORIGIN = "2026-10-29T18:00:00.000Z";
++const EXPIRES = "2026-11-20T00:00:00.000Z";
++const TASK = "receive-fresh";
++const ARCHIVE_SHA = "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f";
++const ARCHIVE_BYTES = 88319;
++
++const evidence = {
++  schema: "h64331.receive-time-freshness.v1",
++  ok: false,
++  startedAt: new Date().toISOString(),
++  cases: {},
++  rssKb: [],
++  commands: [],
++};
++const log = [];
++function note(line) {
++  log.push(line);
++  evidence.commands.push(line);
++}
++
++function httpJson(port, urlPath, { method = "GET", token, body } = {}) {
++  return new Promise((resolve, reject) => {
++    const payload = body == null ? null : JSON.stringify(body);
++    const req = http.request({
++      hostname: "127.0.0.1",
++      port,
++      path: urlPath,
++      method,
++      headers: {
++        ...(token ? { authorization: `Bearer ${token}` } : {}),
++        ...(payload ? { "content-type": "application/json", "content-length": Buffer.byteLength(payload) } : {}),
++      },
++    }, (res) => {
++      const chunks = [];
++      res.on("data", (chunk) => chunks.push(chunk));
++      res.on("end", () => {
++        const text = Buffer.concat(chunks).toString("utf8");
++        let json = null;
++        try { json = text ? JSON.parse(text) : null; } catch { json = null; }
++        resolve({ status: res.statusCode, json, text });
++      });
++    });
++    req.on("error", reject);
++    if (payload) req.write(payload);
++    req.end();
++  });
++}
++
++function spawnReady(script, env) {
++  const child = spawn(process.execPath, [script], {
++    cwd: root,
++    env: {
++      PATH: process.env.PATH || "",
++      HOME: process.env.HOME || "",
++      NODE_ENV: "test",
++      ...env,
++    },
++    stdio: ["ignore", "pipe", "pipe"],
++  });
++  let out = "";
++  let err = "";
++  const ready = new Promise((resolve, reject) => {
++    const timer = setTimeout(() => reject(new Error(`not ready\n${out}\n${err}`)), 20_000);
++    child.stdout.on("data", (chunk) => {
++      out += chunk;
++      const match = out.match(/READY (\d+)/);
++      if (!match) return;
++      clearTimeout(timer);
++      resolve(Number(match[1]));
++    });
++    child.stderr.on("data", (chunk) => { err += chunk; });
++    child.once("exit", (code, signal) => {
++      clearTimeout(timer);
++      reject(new Error(`exit ${code || signal}\n${out}\n${err}`));
++    });
++  });
++  return { child, ready, output: () => `${out}\n${err}` };
++}
++
++async function stopChild(child) {
++  if (!child || child.exitCode != null || child.signalCode != null) return null;
++  const exited = once(child, "exit");
++  child.kill("SIGTERM");
++  const timer = setTimeout(() => child.kill("SIGKILL"), 3000);
++  const [code, signal] = await exited;
++  clearTimeout(timer);
++  return { code, signal };
++}
++
++function run(cmd, args) {
++  return new Promise((resolve, reject) => {
++    const child = spawn(cmd, args, { env: { PATH: process.env.PATH || "" } });
++    let stderr = "";
++    child.stderr.on("data", (chunk) => { stderr += chunk; });
++    child.once("error", reject);
++    child.once("exit", (code) => resolve({ code, stderr }));
++  });
++}
++
++function sleep(ms) {
++  return new Promise((resolve) => setTimeout(resolve, ms));
++}
++
++function enrollment(taskId, extra = {}) {
++  return {
++    taskId,
++    source: { kind: "source-projection", scope: "source-projection:moltjobs" },
++    predicate: "material-change",
++    cadenceMs: 60_000,
++    expiresAt: EXPIRES,
++    budget: { maxChecks: 8, maxBodyBytes: 262_144, maxTimeMs: 8_000, maxOperations: 8, maxUsefulEvents: 4 },
++    ...extra,
++  };
++}
++
++function molt(document) {
++  const slot = document.projection.sources.find((entry) => entry.sourceId === "moltjobs");
++  return {
++    state: slot.freshness.state,
++    ageMs: slot.freshness.ageMs,
++    fetchedAt: slot.freshness.fetchedAt,
++    providerTimestamp: slot.freshness.providerTimestamp,
++    projectionObservedAt: document.projection.observedAt,
++  };
++}
++
++function sampleRss() {
++  const rows = [];
++  let names;
++  try { names = readdirSync("/proc"); } catch { return null; }
++  for (const name of names) {
++    if (!/^\d+$/.test(name)) continue;
++    try {
++      const status = readFileSync(`/proc/${name}/status`, "utf8");
++      const rss = Number(status.match(/^VmRSS:\s+(\d+)/m)?.[1] || 0);
++      const cmd = readFileSync(`/proc/${name}/cmdline`, "utf8").replaceAll("\0", " ").slice(0, 160);
++      if (/postgres|service-main|recipient\.mjs|accept\.mjs/.test(cmd)) {
++        rows.push({ pid: Number(name), rssKb: rss, cmd });
++      }
++    } catch { /* process exited while reading */ }
++  }
++  const totalKb = rows.reduce((sum, row) => sum + row.rssKb, 0);
++  evidence.rssKb.push({ at: new Date().toISOString(), totalKb, rows });
++  return totalKb;
++}
++
++async function readLab(mode, now, extra = {}) {
++  const before = evidence._requestCount;
++  void before;
++  return readPinnedSnapshot({
++    timeoutMs: extra.timeoutMs || 4_000,
++    maxBodyBytes: 262_144,
++    now,
++    signal: extra.signal,
++    lookup: publicLookup,
++    fetchImpl: (url, init) => fetchPinnedThrough(url, init, { port: extra.port, mode }),
++  });
++}
++
++const children = [];
++let pgCluster = null;
++let pool = null;
++let source = null;
++
++try {
++  await mkdir(workDir, { recursive: true });
++  await mkdir(evidenceDir, { recursive: true });
++  const archive = await readFile(archivePath);
++  const archiveSha = createHash("sha256").update(archive).digest("hex");
++  assert.equal(archive.length, ARCHIVE_BYTES);
++  assert.equal(archiveSha, ARCHIVE_SHA);
++  note(`archive sha256 ${archiveSha} bytes ${archive.length}`);
++  evidence.archive = { sha256: archiveSha, bytes: archive.length };
++
++  const clockFile = path.join(workDir, "clock.json");
++  const modeFile = path.join(workDir, "mode.json");
++  writeClockFile(clockFile, ORIGIN);
++  writeModeFile(modeFile, "fresh");
++  source = await startSourceServer({ clock: () => readClockInstant(clockFile), delayMs: 400 });
++  note(`source server 127.0.0.1:${source.port} delay 400`);
++
++  const frozenAt = readClockInstant(clockFile);
++  const frozenRead = await readLab("fresh", frozenAt, { port: source.port });
++  const frozenBody = source.requests.at(-1);
++  assert.equal(frozenRead.document?.capture, "injected");
++  const frozenFresh = molt(frozenRead.document);
++  assert.equal(frozenFresh.state, "clock_ahead");
++  assert.ok(frozenFresh.ageMs < 0, JSON.stringify(frozenFresh));
++  assert.equal(frozenRead.clocks.requestStartedAt, frozenAt);
++  assert.equal(frozenRead.clocks.observedAt, frozenAt);
++  assert.ok(Date.parse(frozenFresh.fetchedAt) > Date.parse(frozenAt));
++  assert.equal(frozenRead.clocks.observedAt, frozenFresh.projectionObservedAt);
++  note(`frozen ageMs ${frozenFresh.ageMs} state ${frozenFresh.state}`);
++
++  const liveRead = await readLab("fresh", () => readClockInstant(clockFile), { port: source.port });
++  const liveBody = source.requests.at(-1);
++  const liveFresh = molt(liveRead.document);
++  assert.equal(liveFresh.state, "fresh");
++  assert.ok(liveFresh.ageMs >= 0 && liveFresh.ageMs <= 48 * 60 * 60 * 1000);
++  assert.ok(Date.parse(liveFresh.fetchedAt) >= Date.parse(liveRead.clocks.requestStartedAt) + 40);
++  assert.ok(Date.parse(liveRead.clocks.observedAt) >= Date.parse(liveFresh.fetchedAt));
++  assert.equal(liveRead.clocks.observedAt, liveFresh.projectionObservedAt);
++  assert.ok(Date.parse(liveRead.clocks.receivedAt) >= Date.parse(liveRead.clocks.observedAt));
++  note(`receipt ageMs ${liveFresh.ageMs} state ${liveFresh.state}`);
++
++  const futureRead = await readLab("future", () => readClockInstant(clockFile), { port: source.port });
++  const futureFresh = molt(futureRead.document);
++  assert.equal(futureFresh.state, "clock_ahead");
++  assert.ok(futureFresh.ageMs < 0);
++  assert.ok(Date.parse(futureRead.clocks.observedAt) > Date.parse(futureRead.clocks.requestStartedAt));
++  note(`future ageMs ${futureFresh.ageMs} observedAfterStart true`);
++
++  const staleRead = await readLab("stale", () => readClockInstant(clockFile), { port: source.port });
++  const staleFresh = molt(staleRead.document);
++  assert.equal(staleFresh.state, "stale");
++  assert.ok(staleFresh.ageMs > 48 * 60 * 60 * 1000);
++
++  const malformedRead = await readLab("malformed", () => readClockInstant(clockFile), { port: source.port });
++  assert.equal(molt(malformedRead.document).state, "clock_unparsed");
++
++  const partialRead = await readLab("partial", () => readClockInstant(clockFile), { port: source.port });
++  assert.equal(molt(partialRead.document).state, "fresh");
++
++  const httpRead = await readLab("http", () => readClockInstant(clockFile), { port: source.port });
++  assert.equal(httpRead.failure?.code, "http");
++  assert.equal(httpRead.document, undefined);
++
++  const parseRead = await readLab("parse", () => readClockInstant(clockFile), { port: source.port });
++  assert.equal(parseRead.failure?.code, "parse");
++
++  const timeoutRead = await readLab("hold", () => readClockInstant(clockFile), { port: source.port, timeoutMs: 300 });
++  assert.equal(timeoutRead.failure?.code, "timeout");
++
++  const abort = new AbortController();
++  const aborting = readLab("fresh", () => readClockInstant(clockFile), { port: source.port, signal: abort.signal });
++  setTimeout(() => abort.abort(), 40);
++  const aborted = await aborting;
++  assert.equal(aborted.failure?.code, "cancelled");
++
++  let privateHits = 0;
++  await assert.rejects(readPinnedSnapshot({
++    now: () => readClockInstant(clockFile),
++    timeoutMs: 1000,
++    lookup: async () => [{ address: "127.0.0.1", family: 4 }],
++    fetchImpl: async (url, init) => {
++      privateHits += 1;
++      return fetchPinnedThrough(url, init, { port: source.port, mode: "fresh" });
++    },
++  }), (error) => error.code === "ssrf");
++  assert.equal(privateHits, 0);
++  note("private lookup refused before fetch");
++
++  evidence.cases.direct = {
++    frozen: {
++      clocks: frozenRead.clocks,
++      freshness: frozenFresh,
++      response: frozenBody.body,
++    },
++    receipt: {
++      clocks: liveRead.clocks,
++      freshness: liveFresh,
++      response: liveBody.body,
++    },
++    future: { clocks: futureRead.clocks, freshness: futureFresh },
++    stale: { ageMs: staleFresh.ageMs, state: staleFresh.state },
++    malformed: molt(malformedRead.document).state,
++    partialProjectionState: molt(partialRead.document).state,
++    http: httpRead.failure.code,
++    parse: parseRead.failure.code,
++    timeout: timeoutRead.failure.code,
++    cancelled: aborted.failure.code,
++    privateHits,
++  };
++
++  pgCluster = await startDisposablePg();
++  note(`disposable postgres port ${pgCluster.port}`);
++  const { createPostgresStore } = await import("../../vendor/visitor-foundry-receiver/services/correspondence/dist/store/postgres.js");
++  const correspondence = await createPostgresStore(pgCluster.url, { schema: "pilot_correspondence" });
++  await correspondence.close();
++  const { default: Pg } = await import("pg");
++  pool = new Pg.Pool({ connectionString: pgCluster.url, max: 2 });
++  pool.on("error", () => {});
++  await pool.query(
++    `INSERT INTO pilot_correspondence.correspondence_projects (id, title, summary, status, version, created_at, updated_at)
++     VALUES ($1, 'receive-time', 'receive-time', 'open', 1, now(), now())`,
++    [PROJECT],
++  );
++  await pool.query(
++    `INSERT INTO pilot_correspondence.correspondence_grants (id, project_id, role, token_hash, created_at)
++     VALUES ('gr_fresh', $1, 'owner', $2, now())`,
++    [PROJECT, hashGrantToken(TOKEN)],
++  );
++  note("grant row inserted");
++
++  const recipientDir = path.join(workDir, "recipient");
++  let recipient = spawnReady(recipientMain, { RECIPIENT_DIR: recipientDir });
++  children.push(recipient.child);
++  const recipientPort = await recipient.ready;
++  note(`recipient ready ${recipientPort}`);
++
++  function startService(extra = {}) {
++    const started = spawnReady(serviceMain, {
++      CORRESPONDENCE_DATABASE_URL: pgCluster.url,
++      CLOCK_FILE: clockFile,
++      MODE_FILE: modeFile,
++      SOURCE_PORT: String(source.port),
++      ...extra,
++    });
++    children.push(started.child);
++    return started;
++  }
++
++  async function enroll(port, taskId, extra) {
++    const response = await httpJson(port, "/api/managed-watch/enrollments", {
++      method: "POST",
++      token: TOKEN,
++      body: enrollment(taskId, extra),
++    });
++    assert.equal(response.status, 201, response.text);
++    return response.json;
++  }
++
++  async function due(port) {
++    return httpJson(port, "/api/managed-watch/due", { method: "POST", token: TOKEN, body: {} });
++  }
++
++  async function retrieve(port, taskId) {
++    const response = await httpJson(port, `/api/managed-watch/enrollments/${taskId}`, { token: TOKEN });
++    assert.equal(response.status, 200, response.text);
++    return response.json;
++  }
++
++  async function watchDocument(taskId) {
++    const result = await pool.query(
++      `SELECT document FROM pilot_correspondence.correspondence_l12_managed_watch
++       WHERE project_id = $1 AND task_id = $2`,
++      [PROJECT, taskId],
++    );
++    return result.rows[0]?.document || null;
++  }
++
++  let service = startService();
++  const servicePort = await service.ready;
++  const health = await httpJson(servicePort, "/api/managed-watch/healthz");
++  assert.equal(health.status, 200);
++  assert.equal(health.json.paidServiceLaunch, false);
++  assert.equal(health.json.scheduler.enabled, false);
++  assert.equal(health.json.scheduler.armed, false);
++  note("service mounted scheduler disarmed paidServiceLaunch false");
++
++  await enroll(servicePort, TASK);
++  writeModeFile(modeFile, "fresh");
++  const beforeBaseline = source.requests.length;
++  const baselineDue = await due(servicePort);
++  assert.equal(baselineDue.status, 200, baselineDue.text);
++  assert.equal(baselineDue.json.action, "completed");
++  assert.equal(baselineDue.json.results[0].outcome, "baseline_established");
++  assert.equal(baselineDue.json.results[0].usefulChange, false);
++  assert.equal(baselineDue.json.results[0].publicSourceChanged, false);
++  assert.equal(baselineDue.json.watch.costs.sourceCalls, 1);
++  assert.equal(source.requests.length, beforeBaseline + 1);
++  const baselineReport = baselineDue.json.results[0];
++  const baselinePost = await postReport(recipientPort, TASK, baselineReport);
++  assert.equal(baselinePost.response.status, 200);
++  assert.equal(baselinePost.response.json.duplicate, false);
++
++  advanceClockFile(clockFile, 61_000);
++  writeModeFile(modeFile, "changed");
++  const beforeChanged = source.requests.length;
++  const changedDue = await due(servicePort);
++  assert.equal(changedDue.status, 200, changedDue.text);
++  assert.equal(changedDue.json.results[0].outcome, "content_changed");
++  assert.equal(changedDue.json.results[0].usefulChange, true);
++  assert.equal(changedDue.json.results[0].publicSourceChanged, false);
++  assert.equal(changedDue.json.watch.costs.sourceCalls, 2);
++  assert.equal(source.requests.length, beforeChanged + 1);
++  const changedReport = changedDue.json.results[0];
++  const dropped = await postReport(recipientPort, TASK, changedReport, { drop: true });
++  assert.equal(dropped.response, null);
++  const readback = await httpJson(recipientPort, `/v1/deliveries/${dropped.deliveryId}`);
++  assert.equal(readback.status, 200, readback.text);
++  assert.equal(readback.json.deliveryId, dropped.deliveryId);
++  assert.equal(readback.json.reportDigest, dropped.reportDigest);
++  assert.equal(readback.json.httpAcknowledged, false);
++  assert.equal(readback.json.adoptedFrom, "readback");
++  assert.equal(readback.json.usefulAcceptance, "accepted");
++  note(`lost response readback ${dropped.deliveryId.slice(0, 12)}`);
++
++  const beforeRestart = await watchDocument(TASK);
++  const eventIds = Object.keys(beforeRestart.monitorState.events || {}).sort();
++  const deliveryIds = Object.keys(beforeRestart.monitorState.deliveries || {}).sort();
++  assert.ok(eventIds.length >= 1);
++  assert.deepEqual(deliveryIds, eventIds);
++
++  await stopChild(recipient.child);
++  recipient = spawnReady(recipientMain, { RECIPIENT_DIR: recipientDir });
++  children.push(recipient.child);
++  const recipientPort2 = await recipient.ready;
++  const afterRecipient = await httpJson(recipientPort2, `/v1/deliveries/${dropped.deliveryId}`);
++  assert.equal(afterRecipient.json.deliveryId, dropped.deliveryId);
++  assert.equal(afterRecipient.json.reportDigest, dropped.reportDigest);
++  const again = await postReport(recipientPort2, TASK, changedReport);
++  assert.equal(again.response.json.duplicate, true);
++  assert.equal(again.response.json.duplicateCount, 1);
++  note("recipient restart retained the delivery id");
++
++  const callsBeforeRestart = (await retrieve(servicePort, TASK)).costs.sourceCalls;
++  await stopChild(service.child);
++  service = startService();
++  const restartedPort = await service.ready;
++  const retained = await retrieve(restartedPort, TASK);
++  assert.equal(retained.costs.sourceCalls, callsBeforeRestart);
++  assert.equal(retained.results.length, 2);
++  assert.equal(retained.results[0].outcome, "baseline_established");
++  assert.equal(retained.results[1].outcome, "content_changed");
++  assert.equal(retained.results[1].usefulChange, true);
++  const beforeIdle = source.requests.length;
++  const idle = await due(restartedPort);
++  assert.equal(idle.json.action, "idle");
++  assert.equal(idle.json.read, false);
++  assert.equal(source.requests.length, beforeIdle);
++  const afterIdle = await retrieve(restartedPort, TASK);
++  assert.equal(afterIdle.costs.sourceCalls, 2);
++  const afterService = await watchDocument(TASK);
++  assert.deepEqual(Object.keys(afterService.monitorState.events || {}).sort(), eventIds);
++  assert.deepEqual(Object.keys(afterService.monitorState.deliveries || {}).sort(), deliveryIds);
++  note("service restart retained results and did not refetch");
++
++  await stopChild(service.child);
++  await pool.end();
++  pool = null;
++  const dataDir = path.join(pgCluster.dir, "pg");
++  const restartedPg = await run(path.join(pgCluster.bin, "pg_ctl"), ["-D", dataDir, "-m", "fast", "-w", "-t", "20", "restart"]);
++  assert.equal(restartedPg.code, 0, restartedPg.stderr);
++  note("postgres restarted");
++  pool = new Pg.Pool({ connectionString: pgCluster.url, max: 2 });
++  pool.on("error", () => {});
++  service = startService();
++  const portAfterPg = await service.ready;
++  const afterPg = await retrieve(portAfterPg, TASK);
++  assert.equal(afterPg.costs.sourceCalls, 2);
++  assert.equal(afterPg.results[1].outcome, "content_changed");
++  assert.equal(afterPg.results[1].operationId, changedReport.operationId);
++  const docAfterPg = await watchDocument(TASK);
++  assert.deepEqual(Object.keys(docAfterPg.monitorState.events || {}).sort(), eventIds);
++  note("postgres readback retained the same result");
++
++  writeModeFile(modeFile, "future");
++  await enroll(portAfterPg, "future-stamp");
++  const futureDue = await due(portAfterPg);
++  assert.equal(futureDue.status, 200, futureDue.text);
++  assert.equal(futureDue.json.watch.taskId, "future-stamp");
++  assert.equal(futureDue.json.results[0].failureCode, "freshness_clock_ahead");
++  assert.equal(futureDue.json.results[0].usefulChange, false);
++  assert.equal(futureDue.json.results[0].outcome, "evidence_unavailable");
++  writeModeFile(modeFile, "partial");
++  await enroll(portAfterPg, "partial-metrics");
++  const partialDue = await due(portAfterPg);
++  assert.equal(partialDue.status, 200, partialDue.text);
++  assert.equal(partialDue.json.watch.taskId, "partial-metrics");
++  assert.equal(partialDue.json.results[0].failureCode, "partial_metrics");
++  assert.equal(partialDue.json.results[0].usefulChange, false);
++  assert.equal(partialDue.json.results[0].outcome, "evidence_unavailable");
++  note("mounted future and partial metrics stay refused");
++
++  writeModeFile(modeFile, "fetched");
++  await enroll(portAfterPg, "crash-fetched");
++  await stopChild(service.child);
++  const crashing = startService({ CRASH_AFTER: "fetched" });
++  const crashPort = await crashing.ready;
++  const beforeFetched = source.requests.filter((row) => row.mode === "fetched").length;
++  const crashed = once(crashing.child, "exit");
++  await assert.rejects(due(crashPort));
++  const [crashCode, crashSignal] = await crashed;
++  assert.equal(crashSignal, "SIGKILL", `code ${crashCode}`);
++  await sleep(500);
++  assert.equal(source.requests.filter((row) => row.mode === "fetched").length, beforeFetched + 1);
++  const pendingFetched = await watchDocument("crash-fetched");
++  assert.equal(pendingFetched.pending.phase, "fetched");
++  assert.ok(pendingFetched.pending.document);
++  const originalFetchedAt = pendingFetched.pending.document.projection.sources
++    .find((entry) => entry.sourceId === "moltjobs").freshness.fetchedAt;
++  const originalObservedAt = pendingFetched.pending.document.projection.observedAt;
++  const fetchedCalls = pendingFetched.costs.sourceCalls;
++  advanceClockFile(clockFile, 5_000);
++  service = startService();
++  const recoverPort = await service.ready;
++  const beforeRecover = source.requests.length;
++  const recoveredDue = await due(recoverPort);
++  assert.equal(recoveredDue.json.action, "idle");
++  assert.equal(source.requests.length, beforeRecover);
++  const recovered = await retrieve(recoverPort, "crash-fetched");
++  assert.equal(recovered.costs.sourceCalls, fetchedCalls);
++  assert.equal(recovered.results.at(-1).outcome, "baseline_established");
++  assert.ok(Date.parse(recovered.results.at(-1).at) > Date.parse(originalObservedAt));
++  const recoveredDoc = await watchDocument("crash-fetched");
++  assert.equal(recoveredDoc.pending, null);
++  const kept = Object.values(recoveredDoc.monitorState.evidence).find((row) => row.nonSemantic?.fetchedAt === originalFetchedAt);
++  assert.ok(kept, "original fetchedAt was rewritten");
++  assert.equal(kept.nonSemantic.fetchedAt, originalFetchedAt);
++  note("pending fetch recovered at a new instant without rewriting fetchedAt");
++
++  writeModeFile(modeFile, "lost");
++  await enroll(recoverPort, "crash-reading");
++  await stopChild(service.child);
++  const dying = startService({ CRASH_DURING: "1" });
++  const dyingPort = await dying.ready;
++  const beforeLost = source.requests.filter((row) => row.mode === "lost").length;
++  const died = once(dying.child, "exit");
++  await assert.rejects(due(dyingPort));
++  const [, lostSignal] = await died;
++  assert.equal(lostSignal, "SIGKILL");
++  await sleep(700);
++  const lostSeen = source.requests.filter((row) => row.mode === "lost").length;
++  assert.equal(lostSeen, beforeLost + 1);
++  const pendingLost = await watchDocument("crash-reading");
++  assert.equal(pendingLost.pending.phase, "reading");
++  assert.equal(pendingLost.pending.document, null);
++  advanceClockFile(clockFile, 5_000);
++  service = startService();
++  const lostPort = await service.ready;
++  const beforeLostRecover = source.requests.filter((row) => row.mode === "lost").length;
++  const lostDue = await due(lostPort);
++  assert.equal(lostDue.json.action, "idle");
++  assert.equal(source.requests.filter((row) => row.mode === "lost").length, beforeLostRecover);
++  const lostRow = await retrieve(lostPort, "crash-reading");
++  assert.equal(lostRow.results.at(-1).outcome, "unknown");
++  assert.equal(lostRow.results.at(-1).failureCode, "lost_reply_no_body");
++  assert.equal(lostRow.results.at(-1).usefulChange, false);
++  assert.equal(lostRow.costs.sourceCalls, 1);
++  const still = await retrieve(lostPort, TASK);
++  assert.equal(still.costs.sourceCalls, 2);
++  assert.equal(still.results[1].operationId, changedReport.operationId);
++  const baselineStill = await httpJson(recipientPort2, `/v1/deliveries/${baselinePost.deliveryId}`);
++  const changedStill = await httpJson(recipientPort2, `/v1/deliveries/${dropped.deliveryId}`);
++  assert.equal(baselineStill.json.deliveryId, baselinePost.deliveryId);
++  assert.equal(changedStill.json.deliveryId, dropped.deliveryId);
++  assert.equal(changedStill.json.reportDigest, dropped.reportDigest);
++  const finalDoc = await watchDocument(TASK);
++  assert.deepEqual(Object.keys(finalDoc.monitorState.events || {}).sort(), eventIds);
++  note("lost reply did not refetch and old delivery ids remain");
++
++  const rss = sampleRss();
++  assert.ok(rss == null || rss < 1_500_000, `spawned rss ${rss}`);
++  evidence.cases.installed = {
++    baseline: { outcome: baselineReport.outcome, usefulChange: false, at: baselineReport.at, operationId: baselineReport.operationId },
++    changed: { outcome: changedReport.outcome, usefulChange: true, at: changedReport.at, operationId: changedReport.operationId },
++    eventIds,
++    recipient: {
++      baselineDeliveryId: baselinePost.deliveryId,
++      changedDeliveryId: dropped.deliveryId,
++      reportDigest: dropped.reportDigest,
++      adoptedFrom: "readback",
++      duplicateCount: 1,
++    },
++    recoveredFetchedAt: originalFetchedAt,
++    recoveredClassificationAt: recovered.results.at(-1).at,
++    lostReply: lostRow.results.at(-1),
++    sourceCalls: still.costs.sourceCalls,
++  };
++  evidence.ok = true;
++  note("acceptance ok");
++} catch (error) {
++  evidence.ok = false;
++  evidence.error = { message: error.message, stack: String(error.stack || "").slice(0, 4000) };
++  note(`FAIL ${error.message}`);
++} finally {
++  evidence.finishedAt = new Date().toISOString();
++  await mkdir(evidenceDir, { recursive: true }).catch(() => {});
++  await writeFile(path.join(evidenceDir, "acceptance.json"), `${JSON.stringify(evidence, null, 2)}\n`);
++  await writeFile(path.join(evidenceDir, "commands.txt"), `${log.join("\n")}\n`);
++  if (evidence.cases.direct) {
++    await writeFile(path.join(evidenceDir, "delayed-response.json"), `${JSON.stringify({
++      frozen: evidence.cases.direct.frozen,
++      receipt: evidence.cases.direct.receipt,
++      future: evidence.cases.direct.future,
++    }, null, 2)}\n`);
++    await writeFile(path.join(evidenceDir, "clocks.json"), `${JSON.stringify({
++      frozen: evidence.cases.direct.frozen.clocks,
++      frozenFreshness: evidence.cases.direct.frozen.freshness,
++      receipt: evidence.cases.direct.receipt.clocks,
++      receiptFreshness: evidence.cases.direct.receipt.freshness,
++      future: evidence.cases.direct.future,
++    }, null, 2)}\n`);
++  }
++  if (source) await source.close().catch(() => {});
++  for (const child of children) await stopChild(child).catch(() => {});
++  if (pool) await pool.end().catch(() => {});
++  if (pgCluster) await pgCluster.stop().catch(() => {});
++}
++
++function postReport(port, taskId, report, { drop = false } = {}) {
++  const deliveryId = deliveryIdFor(report);
++  const reportDigest = reportDigestFor(report);
++  const urlPath = `/v1/deliveries${drop ? "?drop=1" : ""}`;
++  return httpJson(port, urlPath, {
++    method: "POST",
++    body: { deliveryId, reportDigest, taskId, report },
++  }).then(
++    (response) => ({ response, deliveryId, reportDigest }),
++    (error) => {
++      if (!drop) throw error;
++      return { response: null, deliveryId, reportDigest, error: error.message };
++    },
++  );
++}
++
++if (!evidence.ok) process.exit(1);
+diff --git a/experiments/oct29-receive-time-freshness/recipient.mjs b/experiments/oct29-receive-time-freshness/recipient.mjs
+new file mode 100644
+index 00000000..4be8e170
+--- /dev/null
++++ b/experiments/oct29-receive-time-freshness/recipient.mjs
+@@ -0,0 +1,218 @@
++import { createHash, randomBytes } from "node:crypto";
++import { mkdir, open, readFile, rename } from "node:fs/promises";
++import { writeSync } from "node:fs";
++import http from "node:http";
++import path from "node:path";
++import { fileURLToPath } from "node:url";
++
++const BODY_LIMIT = 262_144;
++
++function emptyState() {
++  return { schema: "sds.receive-time-recipient.v1", rows: [] };
++}
++
++async function readState(file) {
++  try {
++    const parsed = JSON.parse(await readFile(file, "utf8"));
++    if (!parsed || !Array.isArray(parsed.rows)) return emptyState();
++    return parsed;
++  } catch (error) {
++    if (error?.code === "ENOENT") return emptyState();
++    throw error;
++  }
++}
++
++async function atomicWrite(file, state) {
++  const tmp = `${file}.${process.pid}.${randomBytes(3).toString("hex")}.tmp`;
++  const handle = await open(tmp, "w", 0o600);
++  try {
++    await handle.writeFile(`${JSON.stringify(state)}\n`);
++    await handle.sync();
++  } finally {
++    await handle.close();
++  }
++  await rename(tmp, file);
++}
++
++function readBody(req) {
++  return new Promise((resolve, reject) => {
++    const chunks = [];
++    let total = 0;
++    req.on("data", (chunk) => {
++      total += chunk.length;
++      if (total > BODY_LIMIT) {
++        const error = new Error("body_limit");
++        error.code = "body_limit";
++        reject(error);
++        req.destroy();
++        return;
++      }
++      chunks.push(chunk);
++    });
++    req.on("end", () => resolve(Buffer.concat(chunks)));
++    req.on("error", reject);
++  });
++}
++
++function send(res, status, body) {
++  if (res.destroyed || res.writableEnded) return;
++  const payload = JSON.stringify(body);
++  res.writeHead(status, {
++    "content-type": "application/json; charset=utf-8",
++    "content-length": Buffer.byteLength(payload),
++    "cache-control": "no-store",
++  });
++  res.end(payload);
++}
++
++export function deliveryIdFor(report) {
++  return createHash("sha256")
++    .update(`${report.operationId}\n${report.outcome}\n${report.failureCode || ""}\n`)
++    .digest("hex");
++}
++
++export function reportDigestFor(report) {
++  return createHash("sha256").update(JSON.stringify({
++    operationId: report.operationId,
++    at: report.at,
++    outcome: report.outcome,
++    failureCode: report.failureCode ?? null,
++    usefulChange: report.usefulChange === true,
++    sourceCalls: report.sourceCalls ?? null,
++  })).digest("hex");
++}
++
++export async function startRecipient({ directory } = {}) {
++  await mkdir(directory, { recursive: true, mode: 0o700 });
++  const file = path.join(directory, "deliveries.json");
++  let chain = Promise.resolve();
++  const enqueue = (fn) => {
++    const run = chain.then(fn, fn);
++    chain = run.then(() => {}, () => {});
++    return run;
++  };
++  const server = http.createServer(async (req, res) => {
++    req.on("error", () => {});
++    res.on("error", () => {});
++    try {
++      const url = new URL(req.url || "/", "http://127.0.0.1");
++      if (req.method === "GET" && url.pathname === "/v1/worksheet") {
++        send(res, 200, await readState(file));
++        return;
++      }
++      const one = /^\/v1\/deliveries\/([a-f0-9]{64})$/.exec(url.pathname);
++      if (req.method === "GET" && one) {
++        const state = await readState(file);
++        const row = state.rows.find((item) => item.deliveryId === one[1]);
++        if (!row) {
++          send(res, 404, { error: { code: "not_found" } });
++          return;
++        }
++        send(res, 200, {
++          ...row,
++          adoptedFrom: row.responseDropped ? "readback" : "stored",
++        });
++        return;
++      }
++      if (req.method === "POST" && url.pathname === "/v1/deliveries") {
++        const raw = await readBody(req);
++        let body;
++        try {
++          body = JSON.parse(raw.toString("utf8"));
++        } catch {
++          send(res, 422, { error: { code: "malformed" } });
++          return;
++        }
++        const report = body?.report;
++        if (!report || typeof report.operationId !== "string" || typeof report.outcome !== "string") {
++          send(res, 422, { error: { code: "malformed" } });
++          return;
++        }
++        const deliveryId = deliveryIdFor(report);
++        const reportDigest = reportDigestFor(report);
++        if (body.deliveryId !== deliveryId || body.reportDigest !== reportDigest) {
++          send(res, 422, { error: { code: "identity_mismatch" } });
++          return;
++        }
++        const drop = url.searchParams.get("drop") === "1";
++        const decision = await enqueue(async () => {
++          const state = await readState(file);
++          const existing = state.rows.find((item) => item.deliveryId === deliveryId);
++          if (existing) {
++            if (existing.reportDigest !== reportDigest) {
++              return { mismatch: true, existing };
++            }
++            existing.duplicateCount += 1;
++            await atomicWrite(file, state);
++            return { duplicate: true, existing };
++          }
++          const row = {
++            deliveryId,
++            reportDigest,
++            operationId: report.operationId,
++            taskId: body.taskId || null,
++            outcome: report.outcome,
++            failureCode: report.failureCode ?? null,
++            usefulChange: report.usefulChange === true,
++            at: report.at,
++            sourceCalls: report.sourceCalls ?? null,
++            responseDropped: drop,
++            httpAcknowledged: !drop,
++            usefulAcceptance: report.usefulChange === true ? "accepted" : "recorded",
++            duplicateCount: 0,
++            committedAt: new Date().toISOString(),
++          };
++          state.rows.push(row);
++          await atomicWrite(file, state);
++          return { duplicate: false, existing: row };
++        });
++        if (decision.mismatch) {
++          send(res, 409, { error: { code: "digest_mismatch" }, deliveryId });
++          return;
++        }
++        if (drop && !decision.duplicate) {
++          res.destroy();
++          return;
++        }
++        send(res, 200, {
++          deliveryId,
++          reportDigest,
++          duplicate: Boolean(decision.duplicate),
++          httpAcknowledged: true,
++          usefulAcceptance: decision.existing.usefulAcceptance,
++          responseDropped: decision.existing.responseDropped === true,
++          duplicateCount: decision.existing.duplicateCount,
++        });
++        return;
++      }
++      send(res, 404, { error: { code: "not_found" } });
++    } catch (error) {
++      if (error?.code === "body_limit") return;
++      if (!res.headersSent) send(res, 500, { error: { code: "recipient_failed" } });
++    }
++  });
++  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
++  return {
++    port: server.address().port,
++    file,
++    async close() {
++      if (typeof server.closeAllConnections === "function") server.closeAllConnections();
++      await new Promise((resolve) => server.close(resolve));
++    },
++  };
++}
++
++if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
++  const directory = process.env.RECIPIENT_DIR;
++  if (!directory) {
++    process.stderr.write("RECIPIENT_DIR is required\n");
++    process.exit(1);
++  }
++  const recipient = await startRecipient({ directory });
++  writeSync(1, `READY ${recipient.port}\n`);
++  const shutdown = () => {
++    recipient.close().then(() => process.exit(0), () => process.exit(0));
++  };
++  process.on("SIGTERM", shutdown);
++  process.on("SIGINT", shutdown);
++}
+diff --git a/experiments/oct29-receive-time-freshness/service-main.mjs b/experiments/oct29-receive-time-freshness/service-main.mjs
+new file mode 100644
+index 00000000..76719e8f
+--- /dev/null
++++ b/experiments/oct29-receive-time-freshness/service-main.mjs
+@@ -0,0 +1,56 @@
++import { writeSync } from "node:fs";
++import express from "express";
++import { mountManagedWatch } from "../../server/lib/managed-watch/http.mjs";
++import { readPinnedSnapshot } from "../../server/lib/managed-watch/source.mjs";
++import { fetchPinnedThrough, publicLookup, readClockInstant, readModeFile } from "./source-server.mjs";
++
++const clockFile = process.env.CLOCK_FILE;
++const modeFile = process.env.MODE_FILE;
++const sourcePort = Number(process.env.SOURCE_PORT);
++if (!clockFile || !modeFile || !Number.isInteger(sourcePort)) {
++  process.stderr.write("CLOCK_FILE, MODE_FILE, and SOURCE_PORT are required\n");
++  process.exit(1);
++}
++
++const app = express();
++const handle = mountManagedWatch(app, {
++  enabled: true,
++  env: process.env,
++  now: () => readClockInstant(clockFile),
++  readSource: async (args) => readPinnedSnapshot({
++    timeoutMs: args.timeoutMs,
++    maxBodyBytes: args.maxBodyBytes,
++    signal: args.signal,
++    now: args.now,
++    lookup: publicLookup,
++    fetchImpl: (url, init) => {
++      const pending = fetchPinnedThrough(url, init, {
++        port: sourcePort,
++        mode: readModeFile(modeFile),
++      });
++      if (process.env.CRASH_DURING === "1") {
++        setTimeout(() => process.kill(process.pid, "SIGKILL"), 80);
++      }
++      return pending;
++    },
++  }),
++  hooks: {
++    afterFetched() {
++      if (process.env.CRASH_AFTER === "fetched") process.kill(process.pid, "SIGKILL");
++    },
++  },
++});
++
++const server = app.listen(0, "127.0.0.1", () => {
++  writeSync(1, `READY ${server.address().port}\n`);
++});
++
++function shutdown() {
++  if (typeof server.closeAllConnections === "function") server.closeAllConnections();
++  server.close(() => {
++    handle.close().then(() => process.exit(0), () => process.exit(0));
++  });
++  setTimeout(() => process.exit(0), 2000).unref();
++}
++process.on("SIGTERM", shutdown);
++process.on("SIGINT", shutdown);
+diff --git a/experiments/oct29-receive-time-freshness/source-server.mjs b/experiments/oct29-receive-time-freshness/source-server.mjs
+new file mode 100644
+index 00000000..73f93167
+--- /dev/null
++++ b/experiments/oct29-receive-time-freshness/source-server.mjs
+@@ -0,0 +1,207 @@
++import http from "node:http";
++import { readFileSync, renameSync, writeFileSync } from "node:fs";
++import { randomBytes } from "node:crypto";
++
++export const PINNED_SNAPSHOT_URL = "https://samedaydesk.com/api/observatory/snapshot";
++
++const POPULATIONS = [
++  ["jobCount", 122, "moltjobs_work_market"],
++  ["marketplaceCompleted", 15, "moltjobs_marketplace_ordinary_third_party"],
++  ["marketplaceEmployers", 4, "moltjobs_marketplace_employers"],
++  ["liquidityRegisteredAgents", 434, "moltjobs_registered_agents"],
++  ["liquidityAgentsEverPaid", 3, "moltjobs_agents_ever_paid"],
++  ["liquidityAgentsBidding30d", 2, "moltjobs_agents_bidding_30d"],
++  ["platformProgramJobs", 1, "moltjobs_platform_programs"],
++];
++
++function metric(key, value, population, state = "ok") {
++  return {
++    key,
++    value: state === "ok" ? value : null,
++    state,
++    unit: "count",
++    population,
++    window: "point",
++  };
++}
++
++export function snapshotBody(mode, stamped) {
++  const at = Date.parse(stamped);
++  let fetchedAt = stamped;
++  let providerTimestamp = stamped;
++  let providerTimestampState = "ok";
++  const metrics = POPULATIONS.map(([key, value, population]) => metric(
++    key,
++    key === "marketplaceCompleted" && mode === "changed" ? 16 : value,
++    population,
++  ));
++  if (mode === "future") {
++    const ahead = new Date(at + 120_000).toISOString();
++    fetchedAt = ahead;
++    providerTimestamp = ahead;
++  } else if (mode === "stale") {
++    const old = new Date(at - (49 * 60 * 60 * 1000)).toISOString();
++    fetchedAt = old;
++    providerTimestamp = old;
++  } else if (mode === "malformed") {
++    fetchedAt = "not-a-timestamp";
++    providerTimestamp = "not-a-timestamp";
++    providerTimestampState = "ok";
++  } else if (mode === "partial") {
++    metrics.push(metric("disputeRate", null, "moltjobs_work_market", "missing"));
++  }
++  return {
++    schemaVersion: "pilot.external-observatory.v1",
++    fetchedAt: stamped,
++    observations: [{
++      sourceId: "moltjobs",
++      sourceKind: "work_market",
++      availability: "ok",
++      fetchedAt,
++      providerTimestamp,
++      providerTimestampState,
++      metrics,
++    }],
++  };
++}
++
++export function createLabClock(originIso) {
++  const originMs = Date.parse(originIso);
++  const markedMs = Date.now();
++  let extra = 0;
++  return {
++    now() {
++      return new Date(originMs + (Date.now() - markedMs) + extra).toISOString();
++    },
++    advance(ms) {
++      extra += ms;
++    },
++  };
++}
++
++function atomicWrite(file, text) {
++  const tmp = `${file}.${process.pid}.${randomBytes(3).toString("hex")}.tmp`;
++  writeFileSync(tmp, text, { mode: 0o600 });
++  renameSync(tmp, file);
++}
++
++export function writeClockFile(file, originIso) {
++  atomicWrite(file, `${JSON.stringify({ originMs: Date.parse(originIso), markedMs: Date.now() })}\n`);
++}
++
++export function readClockInstant(file) {
++  const parsed = JSON.parse(readFileSync(file, "utf8"));
++  return new Date(parsed.originMs + (Date.now() - parsed.markedMs)).toISOString();
++}
++
++export function advanceClockFile(file, ms) {
++  const current = Date.parse(readClockInstant(file));
++  atomicWrite(file, `${JSON.stringify({ originMs: current + ms, markedMs: Date.now() })}\n`);
++}
++
++export function writeModeFile(file, mode) {
++  atomicWrite(file, `${JSON.stringify({ mode })}\n`);
++}
++
++export function readModeFile(file) {
++  return JSON.parse(readFileSync(file, "utf8")).mode;
++}
++
++export async function publicLookup() {
++  return [{ address: "1.1.1.1", family: 4 }];
++}
++
++export async function fetchPinnedThrough(requested, init, { port, mode }) {
++  if (requested !== PINNED_SNAPSHOT_URL) {
++    const error = new Error("snapshot reader received an unpinned URL");
++    error.code = "ssrf";
++    throw error;
++  }
++  return fetch(`http://127.0.0.1:${port}/snapshot?mode=${encodeURIComponent(mode)}`, {
++    method: "GET",
++    redirect: "manual",
++    signal: init?.signal,
++    headers: { accept: "application/json" },
++  });
++}
++
++export async function startSourceServer({ clock, delayMs = 160 } = {}) {
++  if (typeof clock !== "function") throw new Error("source server requires a clock function");
++  const requests = [];
++  const sockets = new Set();
++  const server = http.createServer((req, res) => {
++    const url = new URL(req.url || "/", "http://127.0.0.1");
++    if (req.method !== "GET" || url.pathname !== "/snapshot") {
++      res.writeHead(404, { "content-length": "0" });
++      res.end();
++      return;
++    }
++    const mode = url.searchParams.get("mode") || "fresh";
++    const seenAt = clock();
++    const entry = { mode, seenAt, status: null, completed: false };
++    requests.push(entry);
++    if (mode === "hold") {
++      res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
++      res.write("{");
++      entry.status = 200;
++      entry.held = true;
++      return;
++    }
++    setTimeout(() => {
++      if (res.writableEnded || res.destroyed) {
++        entry.aborted = true;
++        return;
++      }
++      const stampedAt = clock();
++      entry.stampedAt = stampedAt;
++      if (mode === "http") {
++        const body = JSON.stringify({ error: "unavailable" });
++        res.writeHead(503, {
++          "content-type": "application/json; charset=utf-8",
++          "content-length": Buffer.byteLength(body),
++        });
++        res.end(body);
++        entry.status = 503;
++        entry.completed = true;
++        entry.body = body;
++        return;
++      }
++      if (mode === "parse") {
++        const body = "not-json{";
++        res.writeHead(200, {
++          "content-type": "application/json; charset=utf-8",
++          "content-length": Buffer.byteLength(body),
++        });
++        res.end(body);
++        entry.status = 200;
++        entry.completed = true;
++        entry.body = body;
++        return;
++      }
++      const document = snapshotBody(mode, stampedAt);
++      const body = JSON.stringify(document);
++      res.writeHead(200, {
++        "content-type": "application/json; charset=utf-8",
++        "content-length": Buffer.byteLength(body),
++      });
++      res.end(body);
++      entry.status = 200;
++      entry.completed = true;
++      entry.body = document;
++    }, delayMs);
++  });
++  server.on("connection", (socket) => {
++    sockets.add(socket);
++    socket.on("close", () => sockets.delete(socket));
++  });
++  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
++  return {
++    port: server.address().port,
++    requests,
++    async close() {
++      for (const socket of sockets) socket.destroy();
++      if (typeof server.closeAllConnections === "function") server.closeAllConnections();
++      await new Promise((resolve) => server.close(resolve));
++    },
++  };
++}
+diff --git a/server/foundry/activation/private-control-pin.json b/server/foundry/activation/private-control-pin.json
+index aca7156d..5aaa58af 100644
+--- a/server/foundry/activation/private-control-pin.json
++++ b/server/foundry/activation/private-control-pin.json
+@@ -59,8 +59,8 @@
+     "server/lib/managed-watch/pins/change-monitor-0.1.0.tgz": "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f",
+     "server/lib/managed-watch/runtime.mjs": "2ac824927fdf124f39e3ec40922a008a4b1bdc4c9ef13326c1f7751b7e7a8c86",
+     "server/lib/managed-watch/scheduler.mjs": "aedee9ee25481401186252ac1bf30cc1f06619516d5ec531ccd8f637b49b962a",
+-    "server/lib/managed-watch/service.mjs": "a1c3f9e35d5653ef89125d729c843d1be65c351d230b937cc1f41522d05d9ca7",
+-    "server/lib/managed-watch/source.mjs": "077d58d71a5db476dc669b2a69eb3a4dcbc13dc2b240c2ecea0b5cbaf382fc2d",
++    "server/lib/managed-watch/service.mjs": "1bb01758c4405ac232425939a74d0c830bed5fca7fcfca3ade72c9cb4154a604",
++    "server/lib/managed-watch/source.mjs": "5f1a31356cd8e0a239c99d3a1c3382892d965fad15e509451b42d181eb70ec05",
+     "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
+     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
+     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
+@@ -1481,6 +1481,11 @@
+       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+       "closureDigest": "sha256:2a76f6284ecb22db91af86376c42171ae63776eb4715321eac14b66b9d7fb1fc"
++    },
++    {
++      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
++      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
++      "closureDigest": "sha256:c0211aa4e1090458fec5908a89259ee0896a990dee71a5e0e927b21e85d6cc5c"
+     }
+   ]
+ }
+diff --git a/server/lib/managed-watch/service.mjs b/server/lib/managed-watch/service.mjs
+index 67eedc48..828fc8a4 100644
+--- a/server/lib/managed-watch/service.mjs
++++ b/server/lib/managed-watch/service.mjs
+@@ -409,7 +409,9 @@ export function createManagedWatch({ store, now = () => new Date(), readSource =
+           watch,
+           timeoutMs: watch.budget.maxTimeMs,
+           maxBodyBytes: watch.budget.maxBodyBytes,
+-          now: clock(),
++          // Same clock as claim and classify. A call here would freeze request
++          // start across the network read; the reader samples receipt itself.
++          now: clock,
+           signal: controller.signal,
+         });
+       } catch (error) {
+diff --git a/server/lib/managed-watch/source.mjs b/server/lib/managed-watch/source.mjs
+index 7186b511..d9f44b04 100644
+--- a/server/lib/managed-watch/source.mjs
++++ b/server/lib/managed-watch/source.mjs
+@@ -15,6 +15,28 @@ export function pinnedSnapshotUrl() {
+   return pinnedUrls().publicSnapshotUrl;
+ }
+ 
++function instantText(value) {
++  if (value instanceof Date) {
++    if (!Number.isFinite(value.getTime())) throw new WatchError("bad_clock", "clock instant must be an ISO-8601 timestamp");
++    return value.toISOString();
++  }
++  if (typeof value === "number" && Number.isFinite(value)) return new Date(value).toISOString();
++  if (typeof value === "string") {
++    const parsed = Date.parse(value);
++    if (Number.isFinite(parsed)) return new Date(parsed).toISOString();
++  }
++  throw new WatchError("bad_clock", "clock instant must be an ISO-8601 timestamp");
++}
++
++// One clock. A function is sampled when the consumer asks, including after the
++// body arrives. A string or Date is an explicit frozen injection and stays fixed.
++export function observerClock(now) {
++  if (typeof now === "function") return () => instantText(now());
++  if (now == null) return () => new Date().toISOString();
++  const frozen = instantText(now);
++  return () => frozen;
++}
++
+ export async function assertResolvablePublic(urlText, lookup = dns.lookup) {
+   let url;
+   try {
+@@ -139,6 +161,13 @@ export async function readPinnedSnapshot({
+   if (url !== "https://samedaydesk.com/api/observatory/snapshot") {
+     throw new WatchError("monitor_pin", "snapshot pin moved", 503);
+   }
++  const clock = observerClock(now);
++  const requestStartedAt = clock();
++  const receipt = (observedAt = null) => ({
++    requestStartedAt,
++    observedAt,
++    receivedAt: clock(),
++  });
+   const suppliedFetch = typeof fetchImpl === "function";
+   const impl = suppliedFetch ? fetchImpl : globalThis.fetch;
+   if (typeof impl !== "function") {
+@@ -147,6 +176,7 @@ export async function readPinnedSnapshot({
+       bytes: 0,
+       calls: 0,
+       runtimeMs: Math.round(performance.now() - started),
++      clocks: receipt(),
+     };
+   }
+   const budget = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 8000;
+@@ -160,6 +190,7 @@ export async function readPinnedSnapshot({
+       bytes,
+       calls,
+       runtimeMs: Math.round(performance.now() - started),
++      clocks: receipt(),
+     });
+     const codeForAbort = (phase) => {
+       if (signal?.aborted) return "cancelled";
+@@ -243,7 +274,7 @@ export async function readPinnedSnapshot({
+       result = await monitor.readMaintainedProjection({
+         fetchImpl: wrapped,
+         timeoutMs: budget,
+-        now: () => now,
++        now: clock,
+         capture: suppliedFetch ? "injected" : "live",
+       });
+     } catch (error) {
+@@ -259,17 +290,22 @@ export async function readPinnedSnapshot({
+     const fetchBytes = Number(result?.fetch?.bytes) || 0;
+     const runtimeMs = Math.round(performance.now() - started);
+     if (fetchBytes > maxBodyBytes) {
+-      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes: fetchBytes, calls, runtimeMs };
++      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes: fetchBytes, calls, runtimeMs, clocks: receipt(result?.observedAt ?? null) };
+     }
+     if (!result || result.status === "source_failure" || result.projection == null) {
+-      const code = result?.failureCode && result.failureCode !== "source_unreachable"
++      let code = result?.failureCode && result.failureCode !== "source_unreachable"
+         ? result.failureCode
+         : (result?.fetch?.failureKind === "timeout" ? "timeout" : (result?.failureCode || "source_unreachable"));
++      // The pinned consumer reports an abort as network. The caller signal is a
++      // cancel, and the budget signal is a timeout. Do not leave either as network.
++      if (signal?.aborted && (code === "network" || code === "timeout")) code = "cancelled";
++      else if (budgetController.signal.aborted && code === "network") code = "timeout";
+       return {
+         failure: { code, message: result?.reason || "source unavailable" },
+         bytes: fetchBytes,
+         calls: Math.max(calls, 1),
+         runtimeMs,
++        clocks: receipt(result?.observedAt ?? null),
+       };
+     }
+     const capture = result.capture === "live" ? "live" : "injected";
+@@ -281,9 +317,9 @@ export async function readPinnedSnapshot({
+     };
+     const bytes = Buffer.byteLength(JSON.stringify(document));
+     if (bytes > maxBodyBytes) {
+-      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes, calls, runtimeMs };
++      return { failure: { code: "body_limit", message: "source body exceeded the check budget" }, bytes, calls, runtimeMs, clocks: receipt(result?.observedAt ?? null) };
+     }
+-    return { document, bytes, calls, runtimeMs };
++    return { document, bytes, calls, runtimeMs, clocks: receipt(result.observedAt ?? null) };
+   } finally {
+     clearTimeout(budgetTimer);
+   }
+diff --git a/server/scripts/fixtures/disposable-pg.mjs b/server/scripts/fixtures/disposable-pg.mjs
+index 491838dc..ee0ee944 100644
+--- a/server/scripts/fixtures/disposable-pg.mjs
++++ b/server/scripts/fixtures/disposable-pg.mjs
+@@ -1,13 +1,40 @@
+-import { spawn } from "node:child_process";
++import { spawn, spawnSync } from "node:child_process";
+ import { once } from "node:events";
+-import { existsSync } from "node:fs";
++import { accessSync, constants, statSync } from "node:fs";
+ import net from "node:net";
+ import { mkdtemp, rm, appendFile } from "node:fs/promises";
+ import { tmpdir } from "node:os";
+ import path from "node:path";
+ 
+-const bin = ["/usr/lib/postgresql/16/bin", "/usr/lib/postgresql/17/bin"].find((dir) => existsSync(path.join(dir, "initdb")));
+-if (!bin) throw new Error("disposable postgres bin missing");
++const REQUIRED_BINARIES = ["initdb", "pg_ctl", "createdb", "postgres"];
++
++function validBin(dir) {
++  if (typeof dir !== "string" || !path.isAbsolute(dir) || /[\r\n\0]/.test(dir)) return false;
++  return REQUIRED_BINARIES.every((name) => {
++    try {
++      const file = path.join(dir, name);
++      if (!statSync(file).isFile()) return false;
++      accessSync(file, constants.X_OK);
++      return true;
++    } catch { return false; }
++  });
++}
++
++export function resolvePostgresBin(env = process.env) {
++  if (Object.hasOwn(env, "PULSE_PG_BIN")) {
++    if (validBin(env.PULSE_PG_BIN)) return path.resolve(env.PULSE_PG_BIN);
++    throw Object.assign(new Error("PULSE_PG_BIN must name an absolute directory containing executable initdb, pg_ctl, createdb and postgres"), { code: "postgres_bin_invalid" });
++  }
++  const found = spawnSync("pg_config", ["--bindir"], {
++    env: { PATH: env.PATH || "" }, encoding: "utf8", timeout: 5000, maxBuffer: 4096,
++  });
++  const configured = found.status === 0 ? found.stdout.trim() : "";
++  if (validBin(configured)) return path.resolve(configured);
++  for (const dir of String(env.PATH || "").split(path.delimiter)) {
++    if (validBin(dir)) return path.resolve(dir);
++  }
++  throw Object.assign(new Error("disposable postgres binaries unavailable; set PULSE_PG_BIN or provide pg_config / a complete PostgreSQL bin directory on PATH"), { code: "postgres_bin_unavailable" });
++}
+ 
+ function run(cmd, args) {
+   return new Promise((resolve, reject) => {
+@@ -28,6 +55,7 @@ async function freePort() {
+ }
+ 
+ export async function startDisposablePg() {
++  const bin = resolvePostgresBin();
+   const dir = await mkdtemp(path.join(tmpdir(), "sds-vf12-pg-"));
+   const dataDir = path.join(dir, "pg");
+   const port = await freePort();
+@@ -43,6 +71,7 @@ export async function startDisposablePg() {
+   if (created.code !== 0) throw new Error(created.stderr || "createdb failed");
+   const url = `postgres://sds@127.0.0.1:${port}/correspondence`;
+   return {
++    bin,
+     url,
+     port,
+     dir,
+diff --git a/server/scripts/test-managed-watch.mjs b/server/scripts/test-managed-watch.mjs
+index 50808664..e501c99a 100644
+--- a/server/scripts/test-managed-watch.mjs
++++ b/server/scripts/test-managed-watch.mjs
+@@ -1479,3 +1479,193 @@ test("a due lease covers its caller read budget before crash recovery", () => {
+   assert.equal(markClaimed(watch, { nowIso, workerId: "root-control", leaseMs: 30000 }), "claimed");
+   assert.ok(Date.parse(watch.lease.until) - Date.parse(nowIso) >= 65000);
+ });
++
++test("receive-time freshness classifies a delayed source at receipt", { timeout: 60_000 }, async (t) => {
++  const { observerClock } = await import("../lib/managed-watch/source.mjs");
++  const {
++    createLabClock,
++    fetchPinnedThrough,
++    publicLookup,
++    snapshotBody,
++    startSourceServer,
++    PINNED_SNAPSHOT_URL,
++  } = await import("../../experiments/oct29-receive-time-freshness/source-server.mjs");
++  const frozenClock = observerClock("2026-10-29T18:00:00.000Z");
++  assert.equal(frozenClock(), "2026-10-29T18:00:00.000Z");
++  assert.equal(frozenClock(), frozenClock());
++  let ticks = 0;
++  const moving = observerClock(() => new Date(Date.parse("2026-10-29T18:00:00.000Z") + (ticks += 25)).toISOString());
++  assert.ok(Date.parse(moving()) < Date.parse(moving()));
++  assert.throws(() => observerClock("not-a-clock"), (error) => error.code === "bad_clock");
++  const liveNull = observerClock(null);
++  assert.ok(Math.abs(Date.parse(liveNull()) - Date.now()) < 5_000);
++
++  const loaded = await loadPinnedMonitor();
++  const missingProjection = loaded.projection.projectSnapshot({
++    schemaVersion: "pilot.external-observatory.v1",
++    observations: [snapshotBody("fresh", "2026-10-29T18:00:00.000Z").observations[0]],
++  }, { observedAt: "2026-10-29T18:00:00.000Z" });
++  const present = missingProjection.sources.find((entry) => entry.sourceId === "moltjobs");
++  assert.equal(present.freshness.state, "fresh");
++  const absentClock = snapshotBody("fresh", "2026-10-29T18:00:00.000Z").observations[0];
++  absentClock.fetchedAt = null;
++  absentClock.providerTimestamp = null;
++  absentClock.providerTimestampState = "missing";
++  const missing = loaded.projection.projectSnapshot({
++    schemaVersion: "pilot.external-observatory.v1",
++    observations: [absentClock],
++  }, { observedAt: "2026-10-29T18:00:00.000Z" });
++  assert.equal(missing.sources.find((entry) => entry.sourceId === "moltjobs").freshness.state, "clock_missing");
++
++  const clock = createLabClock("2026-10-29T18:00:00.000Z");
++  const source = await startSourceServer({ clock: () => clock.now(), delayMs: 160 });
++  t.after(() => source.close());
++  const seenUrls = [];
++  const read = (mode, now, extra = {}) => readPinnedSnapshot({
++    timeoutMs: extra.timeoutMs || 4_000,
++    maxBodyBytes: 262_144,
++    now,
++    signal: extra.signal,
++    lookup: publicLookup,
++    fetchImpl: async (url, init) => {
++      seenUrls.push(url);
++      assert.equal(url, PINNED_SNAPSHOT_URL);
++      return fetchPinnedThrough(url, init, { port: source.port, mode });
++    },
++  });
++  const freshnessOf = (document) => {
++    const slot = document.projection.sources.find((entry) => entry.sourceId === "moltjobs");
++    return {
++      state: slot.freshness.state,
++      ageMs: slot.freshness.ageMs,
++      fetchedAt: slot.freshness.fetchedAt,
++      projectionObservedAt: document.projection.observedAt,
++    };
++  };
++
++  const frozenAt = clock.now();
++  const frozen = await read("fresh", frozenAt);
++  const frozenSlot = freshnessOf(frozen.document);
++  assert.equal(frozenSlot.state, "clock_ahead");
++  assert.ok(frozenSlot.ageMs < 0);
++  assert.equal(frozen.clocks.observedAt, frozenAt);
++  assert.equal(frozen.clocks.requestStartedAt, frozenAt);
++  assert.ok(Date.parse(frozenSlot.fetchedAt) > Date.parse(frozenAt));
++  assert.equal(frozen.clocks.observedAt, frozenSlot.projectionObservedAt);
++
++  const received = await read("fresh", () => clock.now());
++  const receivedSlot = freshnessOf(received.document);
++  assert.equal(receivedSlot.state, "fresh");
++  assert.ok(receivedSlot.ageMs >= 0 && receivedSlot.ageMs < 48 * 60 * 60 * 1000);
++  assert.ok(Date.parse(receivedSlot.fetchedAt) >= Date.parse(received.clocks.requestStartedAt) + 40);
++  assert.ok(Date.parse(received.clocks.observedAt) >= Date.parse(receivedSlot.fetchedAt));
++  assert.equal(received.clocks.observedAt, receivedSlot.projectionObservedAt);
++  assert.equal(received.document.capture, "injected");
++  assert.equal(received.document.publicSourceChanged, false);
++
++  const future = await read("future", () => clock.now());
++  const futureSlot = freshnessOf(future.document);
++  assert.equal(futureSlot.state, "clock_ahead");
++  assert.ok(futureSlot.ageMs < 0);
++  assert.ok(Date.parse(future.clocks.observedAt) > Date.parse(future.clocks.requestStartedAt));
++
++  assert.equal(freshnessOf((await read("stale", () => clock.now())).document).state, "stale");
++  assert.ok(freshnessOf((await read("stale", () => clock.now())).document).ageMs > 48 * 60 * 60 * 1000);
++  assert.equal(freshnessOf((await read("malformed", () => clock.now())).document).state, "clock_unparsed");
++  const partial = await read("partial", () => clock.now());
++  assert.equal(freshnessOf(partial.document).state, "fresh");
++  assert.equal((await read("http", () => clock.now())).failure.code, "http");
++  assert.equal((await read("parse", () => clock.now())).failure.code, "parse");
++  assert.equal((await read("hold", () => clock.now(), { timeoutMs: 250 })).failure.code, "timeout");
++  const abort = new AbortController();
++  const aborting = read("fresh", () => clock.now(), { signal: abort.signal });
++  setTimeout(() => abort.abort(), 30);
++  assert.equal((await aborting).failure.code, "cancelled");
++
++  let privateHits = 0;
++  await assert.rejects(readPinnedSnapshot({
++    now: () => clock.now(),
++    timeoutMs: 1000,
++    lookup: async () => [{ address: "10.1.1.1", family: 4 }],
++    fetchImpl: async () => { privateHits += 1; return { status: 200 }; },
++  }), (error) => error.code === "ssrf");
++  assert.equal(privateHits, 0);
++
++  const { store, cleanup } = await tempStore();
++  t.after(cleanup);
++  let mode = "fresh";
++  const live = createManagedWatch({
++    store,
++    now: () => clock.now(),
++    readSource: async (args) => {
++      assert.equal(typeof args.now, "function");
++      const started = args.now();
++      const result = await readPinnedSnapshot({
++        timeoutMs: args.timeoutMs,
++        maxBodyBytes: args.maxBodyBytes,
++        signal: args.signal,
++        now: args.now,
++        lookup: publicLookup,
++        fetchImpl: (url, init) => fetchPinnedThrough(url, init, { port: source.port, mode }),
++      });
++      assert.ok(Date.parse(args.now()) > Date.parse(started));
++      return result;
++    },
++  });
++  const spec = (taskId) => enrollment({ taskId, expiresAt: "2026-11-20T00:00:00.000Z" });
++  await live.enroll({ token: TOKEN, body: spec("rt-live") });
++  const baseline = await live.runDueForGrant({ token: TOKEN });
++  assert.equal(baseline.results[0].outcome, "baseline_established");
++  assert.equal(baseline.results[0].usefulChange, false);
++  assert.equal(baseline.watch.costs.sourceCalls, 1);
++  const callsAfterBaseline = source.requests.length;
++  clock.advance(61_000);
++  mode = "changed";
++  const changed = await live.runDueForGrant({ token: TOKEN });
++  assert.equal(changed.results[0].outcome, "content_changed");
++  assert.equal(changed.results[0].usefulChange, true);
++  assert.equal(changed.results[0].publicSourceChanged, false);
++  assert.equal(changed.watch.costs.sourceCalls, 2);
++  assert.equal(source.requests.length, callsAfterBaseline + 1);
++  const beforeIdle = source.requests.length;
++  const idle = await live.runDueForGrant({ token: TOKEN });
++  assert.equal(idle.action, "idle");
++  assert.equal(source.requests.length, beforeIdle);
++  const retained = await live.retrieve({ token: TOKEN, taskId: "rt-live" });
++  assert.equal(retained.costs.sourceCalls, 2);
++
++  async function refused(taskId, nextMode, code) {
++    mode = nextMode;
++    await live.enroll({ token: TOKEN, body: spec(taskId) });
++    const result = await live.runDueForGrant({ token: TOKEN });
++    assert.equal(result.results[0].outcome, "evidence_unavailable", taskId);
++    assert.equal(result.results[0].failureCode, code, taskId);
++    assert.equal(result.results[0].usefulChange, false, taskId);
++  }
++  await refused("rt-future", "future", "freshness_clock_ahead");
++  await refused("rt-stale", "stale", "stale");
++  await refused("rt-badtime", "malformed", "freshness_clock_unparsed");
++  await refused("rt-partial", "partial", "partial_metrics");
++  await refused("rt-http", "http", "http");
++  await refused("rt-parse", "parse", "parse");
++
++  const frozenNow = "2026-10-29T18:00:00.000Z";
++  mode = "fresh";
++  const held = createManagedWatch({
++    store,
++    now: () => frozenNow,
++    readSource: async (args) => readPinnedSnapshot({
++      timeoutMs: args.timeoutMs,
++      maxBodyBytes: args.maxBodyBytes,
++      signal: args.signal,
++      now: args.now,
++      lookup: publicLookup,
++      fetchImpl: (url, init) => fetchPinnedThrough(url, init, { port: source.port, mode }),
++    }),
++  });
++  await held.enroll({ token: TOKEN, body: spec("rt-frozen") });
++  const ahead = await held.runDueForGrant({ token: TOKEN });
++  assert.equal(ahead.results[0].failureCode, "freshness_clock_ahead");
++  assert.equal(ahead.results[0].usefulChange, false);
++  assert.notEqual(ahead.results[0].outcome, "baseline_established");
++});
+diff --git a/server/scripts/test-postgres-bin.mjs b/server/scripts/test-postgres-bin.mjs
+new file mode 100644
+index 00000000..15452e92
+--- /dev/null
++++ b/server/scripts/test-postgres-bin.mjs
+@@ -0,0 +1,51 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import { resolvePostgresBin } from "./fixtures/disposable-pg.mjs";
++
++function fixture(t) {
++  const root = mkdtempSync(path.join(tmpdir(), "sds-pg-resolver-"));
++  t.after(() => rmSync(root, { recursive: true, force: true }));
++  const bin = path.join(root, "postgresql", "999", "bin");
++  const tools = path.join(root, "tools");
++  mkdirSync(bin, { recursive: true });
++  mkdirSync(tools);
++  for (const name of ["initdb", "pg_ctl", "createdb", "postgres"]) {
++    writeFileSync(path.join(bin, name), "#!/bin/sh\nexit 0\n", { mode: 0o700 });
++  }
++  const config = () => writeFileSync(path.join(tools, "pg_config"), `#!/bin/sh\nprintf '%s\\n' '${bin}'\n`, { mode: 0o700 });
++  return { root, bin, tools, config };
++}
++
++test("explicit complete future-version path takes precedence", (t) => {
++  const f = fixture(t);
++  assert.equal(resolvePostgresBin({ PULSE_PG_BIN: f.bin, PATH: f.tools }), f.bin);
++});
++test("invalid explicit selection refuses instead of falling through", (t) => {
++  const f = fixture(t); f.config();
++  for (const value of ["", "relative/bin", path.join(f.root, "missing")]) {
++    assert.throws(() => resolvePostgresBin({ PULSE_PG_BIN: value, PATH: f.tools }), { code: "postgres_bin_invalid" });
++  }
++});
++test("pg_config selects an installed future-version directory", (t) => {
++  const f = fixture(t); f.config();
++  assert.equal(resolvePostgresBin({ PATH: f.tools }), f.bin);
++});
++test("complete PATH directory is supported without pg_config", (t) => {
++  const f = fixture(t);
++  assert.equal(resolvePostgresBin({ PATH: f.bin }), f.bin);
++});
++test("incomplete directory is refused", (t) => {
++  const f = fixture(t); rmSync(path.join(f.bin, "createdb"));
++  assert.throws(() => resolvePostgresBin({ PULSE_PG_BIN: f.bin, PATH: f.tools }), { code: "postgres_bin_invalid" });
++});
++test("non-executable member is refused", (t) => {
++  const f = fixture(t); chmodSync(path.join(f.bin, "pg_ctl"), 0o600);
++  assert.throws(() => resolvePostgresBin({ PULSE_PG_BIN: f.bin, PATH: f.tools }), { code: "postgres_bin_invalid" });
++});
++test("unavailable binaries have a distinct refusal", (t) => {
++  const f = fixture(t);
++  assert.throws(() => resolvePostgresBin({ PATH: f.tools }), { code: "postgres_bin_unavailable" });
++});

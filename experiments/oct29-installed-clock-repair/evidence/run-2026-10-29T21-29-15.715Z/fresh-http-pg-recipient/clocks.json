@@ -1,0 +1,40 @@
+{
+  "frozen": {
+    "requestStartedAt": "2026-10-29T18:00:00.005Z",
+    "observedAt": "2026-10-29T18:00:00.005Z",
+    "receivedAt": "2026-10-29T18:00:00.005Z"
+  },
+  "frozenFreshness": {
+    "state": "clock_ahead",
+    "ageMs": -497,
+    "fetchedAt": "2026-10-29T18:00:00.502Z",
+    "providerTimestamp": "2026-10-29T18:00:00.502Z",
+    "projectionObservedAt": "2026-10-29T18:00:00.005Z"
+  },
+  "receipt": {
+    "requestStartedAt": "2026-10-29T18:00:00.511Z",
+    "observedAt": "2026-10-29T18:00:00.916Z",
+    "receivedAt": "2026-10-29T18:00:00.916Z"
+  },
+  "receiptFreshness": {
+    "state": "fresh",
+    "ageMs": 2,
+    "fetchedAt": "2026-10-29T18:00:00.914Z",
+    "providerTimestamp": "2026-10-29T18:00:00.914Z",
+    "projectionObservedAt": "2026-10-29T18:00:00.916Z"
+  },
+  "future": {
+    "clocks": {
+      "requestStartedAt": "2026-10-29T18:00:00.916Z",
+      "observedAt": "2026-10-29T18:00:01.320Z",
+      "receivedAt": "2026-10-29T18:00:01.320Z"
+    },
+    "freshness": {
+      "state": "clock_ahead",
+      "ageMs": -119999,
+      "fetchedAt": "2026-10-29T18:02:01.319Z",
+      "providerTimestamp": "2026-10-29T18:02:01.319Z",
+      "projectionObservedAt": "2026-10-29T18:00:01.320Z"
+    }
+  }
+}
