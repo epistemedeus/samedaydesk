@@ -1,0 +1,32 @@
+{
+  "name": "change-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scoped change receipts for a depended-on capability. Unchanged checks are not useful deliveries.",
+  "type": "module",
+  "exports": "./src/index.mjs",
+  "bin": {
+    "change-monitor": "./src/cli.mjs"
+  },
+  "files": [
+    "src",
+    "schema",
+    "examples",
+    "vendor",
+    "test",
+    "README.md",
+    "EXTENSION.md",
+    "LICENSE",
+    "PINS.json",
+    "SOURCE-PACKET.md",
+    "SOURCE-NOTICE.txt",
+    "COLD-CONSUMER-CONTRACT.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+  },
+  "license": "MIT"
+}

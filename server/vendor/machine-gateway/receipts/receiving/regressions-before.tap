@@ -1,0 +1,56 @@
+TAP version 13
+# (node:2181937) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persisted deadline fences provider entry even before the event loop runs its timer
+not ok 1 - persisted deadline fences provider entry even before the event loop runs its timer
+  ---
+  duration_ms: 175.286182
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/machine-gateway/tests/receiving.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/machine-gateway/tests/receiving.test.mjs:24:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: enrolled SDK response headers cannot print upstream payloads into the host output
+not ok 2 - enrolled SDK response headers cannot print upstream payloads into the host output
+  ---
+  duration_ms: 118.462742
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/machine-gateway/tests/receiving.test.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/machine-gateway/tests/receiving.test.mjs:41:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 442.13248

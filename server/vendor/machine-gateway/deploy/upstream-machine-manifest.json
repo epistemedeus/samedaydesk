@@ -1,0 +1,47 @@
+{
+  "schema": "neomorphic.machine-gateway.release.v1",
+  "version": "0.1.1",
+  "state": "prepared-not-deployed",
+  "package": "@neomorphic/machine-gateway",
+  "sourcePath": "services/machine-gateway",
+  "branch": "codex/ae18-service-review-243002",
+  "runtime": "node-22.14-or-newer-with-native-sqlite",
+  "deployment": {
+    "target": "existing-samedaydesk-hostinger-node",
+    "candidateBaseUrl": "https://samedaydesk.com/api/machine-gateway",
+    "verifiedLiveBaseUrl": null,
+    "productionActivationPerformed": false,
+    "newSpendRequired": false,
+    "configuration": "services/machine-gateway/deploy/hostinger.json",
+    "operatorRunbook": "services/machine-gateway/deploy/RUNBOOK.md"
+  },
+  "contract": {
+    "discover": "GET /v1/discover",
+    "quote": "POST /v1/quote",
+    "test": "POST /v1/test",
+    "execute": "POST /v1/execute",
+    "receipt": "GET /v1/receipts/{id}",
+    "executionAuthentication": "tenant-scoped-bearer",
+    "idempotencyHeader": "Idempotency-Key",
+    "receiptSchema": "neomorphic.machine-gateway.receipt.v1"
+  },
+  "freeRoutes": [
+    "lockfile.delta",
+    "http.capture"
+  ],
+  "payments": {
+    "enabledByDefault": false,
+    "paidRoutesInDefaultRegistry": 0,
+    "adapter": "existing-x402-facilitator-client",
+    "testEvidence": "unsigned-local-fixtures-only",
+    "liveFundMovementPerformed": false,
+    "liveSettlementVerified": false
+  },
+  "humanVisibility": "separate-reviewed-integration",
+  "sourceArchive": {
+    "repositoryPath": "services/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
+    "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+    "bytes": 49637,
+    "hostedDownloadVerified": false
+  }
+}

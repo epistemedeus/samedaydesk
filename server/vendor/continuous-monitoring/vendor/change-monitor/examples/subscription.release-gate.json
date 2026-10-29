@@ -1,0 +1,18 @@
+{
+  "subscriptionId": "rg-route-lock",
+  "owner": "example-owner",
+  "source": {
+    "kind": "release-gate",
+    "scope": "release-gate:route-lock@0.1.0"
+  },
+  "comparison": {
+    "policy": "material-fields"
+  },
+  "destination": {
+    "receiverId": "local-vm"
+  },
+  "budget": {
+    "maxUsefulEvents": 20
+  },
+  "expiresAt": "2026-12-31T00:00:00.000Z"
+}

@@ -1,0 +1,1 @@
+var e=Object.freeze({maxInputBytes:1048576,maxMappingBytes:65536,maxSchemaBytes:65536,maxOutputBytes:1048576,maxJsonDepth:16,maxJsonNodes:4096,timeoutMs:8e3,maxDownloadName:199});function t(e){let t=typeof e==`string`?e:String(e);return new TextEncoder().encode(t).byteLength}export{t as n,e as t};

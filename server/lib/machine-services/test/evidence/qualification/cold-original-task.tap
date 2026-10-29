@@ -1,0 +1,86 @@
+
+> samedaydesk@1.0.0 test:original-task
+> node --test --test-concurrency=1 server/scripts/test-original-task-action.mjs server/scripts/test-original-task-correspondence.mjs server/scripts/test-original-task-acquisition.mjs server/scripts/test-intake-readiness.mjs
+
+TAP version 13
+# Subtest: stale historical portable verification stays project-scoped
+ok 1 - stale historical portable verification stays project-scoped
+  ---
+  duration_ms: 5406.304495
+  ...
+# Subtest: public archive is the owning client and a tampered byte is refused
+ok 2 - public archive is the owning client and a tampered byte is refused
+  ---
+  duration_ms: 7.008621
+  ...
+# Subtest: catalog, skill, and card expose the help path without changing paid links
+ok 3 - catalog, skill, and card expose the help path without changing paid links
+  ---
+  duration_ms: 64.439419
+  ...
+# Subtest: cold archive runs describe, submit, refusal, result, expiry, and a later read
+ok 4 - cold archive runs describe, submit, refusal, result, expiry, and a later read
+  ---
+  duration_ms: 1528.891219
+  ...
+# Subtest: discovery states the correspondence action and does not become an MCP skill
+ok 5 - discovery states the correspondence action and does not become an MCP skill
+  ---
+  duration_ms: 29.761843
+  ...
+# Subtest: a bound public task maps to existing correspondence and not to payment
+ok 6 - a bound public task maps to existing correspondence and not to payment
+  ---
+  duration_ms: 1.366527
+  ...
+# Subtest: unrelated surfaces, spend, execution, and source labels stay refusals
+ok 7 - unrelated surfaces, spend, execution, and source labels stay refusals
+  ---
+  duration_ms: 7.273601
+  ...
+# Subtest: stale discovery, byte mismatch, and dependency bytes are refused
+ok 8 - stale discovery, byte mismatch, and dependency bytes are refused
+  ---
+  duration_ms: 8.384947
+  ...
+# Subtest: private authority, handle scope, and a second process stay on the same directory
+ok 9 - private authority, handle scope, and a second process stay on the same directory
+  ---
+  duration_ms: 278.25618
+  ...
+# original-task-action-evidence {"archiveSha256":"9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887","archiveBytes":23811,"action":"submit_existing_correspondence","payment":false,"archiveBound":true,"restartedAction":"read_existing_attempt","continuation":"same_private_read","handleScope":"private_directory","laterDisposition":"scoped_result","wrongHandle":"handle_scope","feedbackConsent":true,"feedbackAccepted":false,"missingDiscovery":"stale_discovery","staleDiscovery":"stale_discovery","spoofedDiscovery":"stale_discovery","crossDirectory":"handle_scope","expiredDisposition":"expired","fixtureHost":"127.0.0.1","publishedSubmitHost":"samedaydesk.com"}
+# Subtest: cold installed client maps, submits, restarts, and reads a continuation
+ok 10 - cold installed client maps, submits, restarts, and reads a continuation
+  ---
+  duration_ms: 1424.313589
+  ...
+# Subtest: seeded task shapes and unexecuted origins are refused
+ok 11 - seeded task shapes and unexecuted origins are refused
+  ---
+  duration_ms: 25.269468
+  ...
+# Subtest: describe prints the descriptor and does not require a network
+ok 12 - describe prints the descriptor and does not require a network
+  ---
+  duration_ms: 66.144109
+  ...
+# Subtest: disabled correspondence keeps operator reading unavailable and serves the descriptor
+ok 13 - disabled correspondence keeps operator reading unavailable and serves the descriptor
+  ---
+  duration_ms: 11.149883
+  ...
+# {"rootBoundaryReceiving":true,"boundaryStatuses":[403,403,403,403],"deadlineOutcome":{"error":"workspace_expired","eventWritten":false}}
+# Subtest: entry path receives a task, refusal, withdrawal, expiry, and restart
+ok 14 - entry path receives a task, refusal, withdrawal, expiry, and restart
+  ---
+  duration_ms: 1876.388275
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11977.432179

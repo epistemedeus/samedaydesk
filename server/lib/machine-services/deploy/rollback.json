@@ -1,0 +1,14 @@
+{
+  "schema": "sds.machine-services.rollback.v1",
+  "environmentOverlay": {
+    "MACHINE_GATEWAY_ENABLED": "0",
+    "MONITOR_ENABLED": "0",
+    "MONITOR_SCHEDULER": "0"
+  },
+  "restart": "existing Hostinger Node application through its enrolled deployment workflow",
+  "startCommand": "node server/index.js",
+  "retainSchemas": ["pilot_gateway", "pilot_monitor"],
+  "retainCredentialsAndTenantIds": true,
+  "dropTables": false,
+  "otherServicesChanged": false
+}

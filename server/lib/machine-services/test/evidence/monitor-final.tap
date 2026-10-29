@@ -1,0 +1,128 @@
+TAP version 13
+# (node:536686) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: first actual test: changing mounted HTTP origin, durable worker, API consumer, acknowledgement and restart
+ok 1 - first actual test: changing mounted HTTP origin, durable worker, API consumer, acknowledgement and restart
+  ---
+  duration_ms: 583.740769
+  ...
+# Subtest: private, rebinding, mapped, translation and special-purpose IP ranges are refused
+ok 2 - private, rebinding, mapped, translation and special-purpose IP ranges are refused
+  ---
+  duration_ms: 4.488533
+  ...
+# Subtest: caller URLs cannot select network exceptions, credentials, queries, opaque tokens, redirects or non-HTTPS ports
+ok 3 - caller URLs cannot select network exceptions, credentials, queries, opaque tokens, redirects or non-HTTPS ports
+  ---
+  duration_ms: 1.000109
+  ...
+# Subtest: a mixed public/private DNS answer fails before an HTTP request; DNS deadline is bounded
+ok 4 - a mixed public/private DNS answer fails before an HTTP request; DNS deadline is bounded
+  ---
+  duration_ms: 50.953412
+  ...
+# Subtest: real HTTP observation refuses redirect, partial, encoding, oversized, truncated and stalled bodies
+ok 5 - real HTTP observation refuses redirect, partial, encoding, oversized, truncated and stalled bodies
+  ---
+  duration_ms: 115.706498
+  ...
+# (node:536763) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: creation replay/conflict, tenant and reader boundaries, hostile config and secret redaction
+ok 6 - creation replay/conflict, tenant and reader boundaries, hostile config and secret redaction
+  ---
+  duration_ms: 143.676581
+  ...
+# Subtest: unchanged conditional GET, incomplete JSON and timeout preserve baseline and emit useful recovery
+ok 7 - unchanged conditional GET, incomplete JSON and timeout preserve baseline and emit useful recovery
+  ---
+  duration_ms: 1221.906581
+  ...
+# Subtest: delivery lost response retries stable key, readback and lost acknowledgement are idempotent
+ok 8 - delivery lost response retries stable key, readback and lost acknowledgement are idempotent
+  ---
+  duration_ms: 590.425273
+  ...
+# Subtest: pause, bounded configuration revision, resume, terminal cancel and expiry survive restart
+ok 9 - pause, bounded configuration revision, resume, terminal cancel and expiry survive restart
+  ---
+  duration_ms: 1295.775516
+  ...
+# Subtest: check and byte reservations halt work before repeating expensive observations
+ok 10 - check and byte reservations halt work before repeating expensive observations
+  ---
+  duration_ms: 796.955201
+  ...
+# Subtest: HTTP status and payment-challenge drift is observable without authentication or a purchase
+ok 11 - HTTP status and payment-challenge drift is observable without authentication or a purchase
+  ---
+  duration_ms: 339.557606
+  ...
+# (node:537094) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: two separate workers race on one durable slot; one origin read and one baseline
+ok 12 - two separate workers race on one durable slot; one origin read and one baseline
+  ---
+  duration_ms: 178.00229
+  ...
+# Subtest: different monitors cannot multiply requests to the same target inside the source cooldown
+ok 13 - different monitors cannot multiply requests to the same target inside the source cooldown
+  ---
+  duration_ms: 165.41253
+  ...
+# Subtest: cancelling an actual in-flight read aborts it, fences its result and stops future requests
+ok 14 - cancelling an actual in-flight read aborts it, fences its result and stops future requests
+  ---
+  duration_ms: 352.45277
+  ...
+# Subtest: real response staged before a worker crash finishes after restart without a second source request
+ok 15 - real response staged before a worker crash finishes after restart without a second source request
+  ---
+  duration_ms: 266.313792
+  ...
+# Subtest: lost worker before response remains unknown, consumes reservation and never replays that slot
+ok 16 - lost worker before response remains unknown, consumes reservation and never replays that slot
+  ---
+  duration_ms: 435.648065
+  ...
+# Subtest: expired claim with no dispatch is recovered with zero source cost; stale token cannot commit
+ok 17 - expired claim with no dispatch is recovered with zero source cost; stale token cannot commit
+  ---
+  duration_ms: 81.704572
+  ...
+# Subtest: immutable outputs, monotonic event cursors, retention and bounded exhausted delivery attempts
+ok 18 - immutable outputs, monotonic event cursors, retention and bounded exhausted delivery attempts
+  ---
+  duration_ms: 156.961755
+  ...
+# (node:537337) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: paid entitlements need an administrative subscription reference and cannot be bought or escalated through the API
+ok 19 - paid entitlements need an administrative subscription reference and cannot be bought or escalated through the API
+  ---
+  duration_ms: 233.981921
+  ...
+# Subtest: entitlement expiry and re-enrollment cannot reset aggregate tenant budgets or resurrect an expired monitor
+ok 20 - entitlement expiry and re-enrollment cannot reset aggregate tenant budgets or resurrect an expired monitor
+  ---
+  duration_ms: 1510.818727
+  ...
+# Subtest: Observatory adapter keeps partial and unavailable readings non-numeric through the new HTTP projection
+ok 21 - Observatory adapter keeps partial and unavailable readings non-numeric through the new HTTP projection
+  ---
+  duration_ms: 1.045239
+  ...
+# Subtest: checked-in machine and API contracts expose the actual polling seam and no automatic charge
+ok 22 - checked-in machine and API contracts expose the actual polling seam and no automatic charge
+  ---
+  duration_ms: 76.955147
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8929.663289

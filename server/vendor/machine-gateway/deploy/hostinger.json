@@ -1,0 +1,19 @@
+{
+  "schema": "neomorphic.machine-gateway.deployment.v1",
+  "target": "existing-samedaydesk-hostinger-node",
+  "basis": "epistemedeus/samedaydesk@d8cea059213e06d2f263be67f82e498f8052a50f:docs/CORRESPONDENCE-SHARED-HOST.md",
+  "newServiceOrPlanRequired": false,
+  "hostStartCommand": "node server/index.js",
+  "node": ">=22.14.0 <23",
+  "mountPrefix": "/api/machine-gateway",
+  "runtimeDirectory": "server/vendor/neomorphic-machine-gateway",
+  "installCommand": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --prefix server/vendor/neomorphic-machine-gateway",
+  "healthPath": "/api/machine-gateway/healthz",
+  "store": "sqlite-full-wal-on-existing-durable-local-disk",
+  "replicas": 1,
+  "maximumConcurrentExecutions": 4,
+  "workerOldSpaceMiB": 64,
+  "paymentsEnabled": false,
+  "activated": false,
+  "productionReadback": null
+}
