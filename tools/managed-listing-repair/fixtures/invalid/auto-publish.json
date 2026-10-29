@@ -1,0 +1,91 @@
+{
+  "schema": "samedaydesk.managed-listing-repair.case.v1",
+  "clock": "2026-09-11T19:00:00.000Z",
+  "source": {
+    "kind": "listing_observation",
+    "listingId": "fixture-one-field",
+    "observedAt": "2026-09-11T19:00:00.000Z",
+    "url": "https://example.test/listing/fixture-one-field",
+    "fields": {
+      "listingStatus": "PUBLIC_ACTIVE",
+      "routes./docs.status": 404
+    }
+  },
+  "packet": {
+    "kind": "repair_packet",
+    "status": "published",
+    "publish": true,
+    "autoPublish": true,
+    "changes": [
+      {
+        "field": "routes./docs.status",
+        "from": 404,
+        "to": 200
+      }
+    ]
+  },
+  "engineInput": {
+    "schema": "pilot.s185.distribution_repair_input.v1",
+    "inputId": "f05-auto-publish",
+    "clock": "2026-09-11T19:00:00.000Z",
+    "identity": {
+      "provider": "fixture",
+      "jobRef": "fixture-one-field",
+      "sharedEvidenceId": "fixture-one-field",
+      "sourceTag": "catalog"
+    },
+    "discovery": {
+      "captureStatus": "ok",
+      "catalogComplete": true,
+      "listing": {
+        "url": "https://example.test/listing/fixture-one-field",
+        "agentId": "fixture-one-field",
+        "listingStatus": "PUBLIC_ACTIVE"
+      }
+    },
+    "record": {
+      "routeRegressionInput": {
+        "schema": "x402.r2.record.route_regression_input.v1",
+        "reportId": "f05-auto-publish",
+        "title": "Auto-publish attempt",
+        "demo": false,
+        "sourceLabel": "operator-fixture",
+        "baseline": {
+          "label": "baseline",
+          "capturedAt": "2026-09-01T00:00:00.000Z",
+          "routes": [
+            {
+              "path": "/docs",
+              "url": "https://example.test/docs",
+              "status": 200,
+              "accessibility": "ok",
+              "title": "Docs"
+            }
+          ]
+        },
+        "current": {
+          "label": "current",
+          "capturedAt": "2026-09-11T00:00:00.000Z",
+          "captureIncomplete": false,
+          "coverageComplete": true,
+          "routes": [
+            {
+              "path": "/docs",
+              "url": "https://example.test/docs",
+              "status": 404,
+              "accessibility": "ok",
+              "title": "Missing Docs"
+            }
+          ]
+        },
+        "feedId": "f05-auto-publish"
+      }
+    },
+    "callerProvenance": {
+      "suppliedBy": "operator",
+      "syntheticFixture": true,
+      "notCustomer": true,
+      "notMarketFact": true
+    }
+  }
+}
