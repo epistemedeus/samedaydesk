@@ -19,7 +19,7 @@
     {
       "path": "experiments/oct29-receive-time-freshness/accept.mjs",
       "bytes": 27813,
-      "sha256": "026795ba1e062677a35663fc3c7b1601f9e8d5114265336f4736640a2f3830ec"
+      "sha256": "bfa95a6c4e63b779635abf2b03714720298532d34fabd8d031471afedad603a8"
     },
     {
       "path": "experiments/oct29-receive-time-freshness/evidence/acceptance.json",
@@ -32,7 +32,7 @@
       "sha256": "5a0b0700180ba82290a963a722f9244f049d8432d97b0a3096f4f876d3285716"
     },
     {
-      "path": "experiments/oct29-receive-time-freshness/evidence/commands.log",
+      "path": "experiments/oct29-receive-time-freshness/evidence/commands.txt",
       "bytes": 788,
       "sha256": "c85f90793b12af6b79479eb33651e6317860071c90dd29321887e1a9e29a3e11"
     },

@@ -600,7 +600,7 @@ try {
   evidence.finishedAt = new Date().toISOString();
   await mkdir(evidenceDir, { recursive: true }).catch(() => {});
   await writeFile(path.join(evidenceDir, "acceptance.json"), `${JSON.stringify(evidence, null, 2)}\n`);
-  await writeFile(path.join(evidenceDir, "commands.log"), `${log.join("\n")}\n`);
+  await writeFile(path.join(evidenceDir, "commands.txt"), `${log.join("\n")}\n`);
   if (evidence.cases.direct) {
     await writeFile(path.join(evidenceDir, "delayed-response.json"), `${JSON.stringify({
       frozen: evidence.cases.direct.frozen,
