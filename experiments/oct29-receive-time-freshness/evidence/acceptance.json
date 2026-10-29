@@ -1,0 +1,339 @@
+{
+  "schema": "h64331.receive-time-freshness.v1",
+  "ok": true,
+  "startedAt": "2026-10-29T20:20:35.927Z",
+  "cases": {
+    "direct": {
+      "frozen": {
+        "clocks": {
+          "requestStartedAt": "2026-10-29T18:00:00.005Z",
+          "observedAt": "2026-10-29T18:00:00.005Z",
+          "receivedAt": "2026-10-29T18:00:00.005Z"
+        },
+        "freshness": {
+          "state": "clock_ahead",
+          "ageMs": -499,
+          "fetchedAt": "2026-10-29T18:00:00.504Z",
+          "providerTimestamp": "2026-10-29T18:00:00.504Z",
+          "projectionObservedAt": "2026-10-29T18:00:00.005Z"
+        },
+        "response": {
+          "schemaVersion": "pilot.external-observatory.v1",
+          "fetchedAt": "2026-10-29T18:00:00.504Z",
+          "observations": [
+            {
+              "sourceId": "moltjobs",
+              "sourceKind": "work_market",
+              "availability": "ok",
+              "fetchedAt": "2026-10-29T18:00:00.504Z",
+              "providerTimestamp": "2026-10-29T18:00:00.504Z",
+              "providerTimestampState": "ok",
+              "metrics": [
+                {
+                  "key": "jobCount",
+                  "value": 122,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_work_market",
+                  "window": "point"
+                },
+                {
+                  "key": "marketplaceCompleted",
+                  "value": 15,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_marketplace_ordinary_third_party",
+                  "window": "point"
+                },
+                {
+                  "key": "marketplaceEmployers",
+                  "value": 4,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_marketplace_employers",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityRegisteredAgents",
+                  "value": 434,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_registered_agents",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityAgentsEverPaid",
+                  "value": 3,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_agents_ever_paid",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityAgentsBidding30d",
+                  "value": 2,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_agents_bidding_30d",
+                  "window": "point"
+                },
+                {
+                  "key": "platformProgramJobs",
+                  "value": 1,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_platform_programs",
+                  "window": "point"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "receipt": {
+        "clocks": {
+          "requestStartedAt": "2026-10-29T18:00:00.512Z",
+          "observedAt": "2026-10-29T18:00:00.916Z",
+          "receivedAt": "2026-10-29T18:00:00.916Z"
+        },
+        "freshness": {
+          "state": "fresh",
+          "ageMs": 1,
+          "fetchedAt": "2026-10-29T18:00:00.915Z",
+          "providerTimestamp": "2026-10-29T18:00:00.915Z",
+          "projectionObservedAt": "2026-10-29T18:00:00.916Z"
+        },
+        "response": {
+          "schemaVersion": "pilot.external-observatory.v1",
+          "fetchedAt": "2026-10-29T18:00:00.915Z",
+          "observations": [
+            {
+              "sourceId": "moltjobs",
+              "sourceKind": "work_market",
+              "availability": "ok",
+              "fetchedAt": "2026-10-29T18:00:00.915Z",
+              "providerTimestamp": "2026-10-29T18:00:00.915Z",
+              "providerTimestampState": "ok",
+              "metrics": [
+                {
+                  "key": "jobCount",
+                  "value": 122,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_work_market",
+                  "window": "point"
+                },
+                {
+                  "key": "marketplaceCompleted",
+                  "value": 15,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_marketplace_ordinary_third_party",
+                  "window": "point"
+                },
+                {
+                  "key": "marketplaceEmployers",
+                  "value": 4,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_marketplace_employers",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityRegisteredAgents",
+                  "value": 434,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_registered_agents",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityAgentsEverPaid",
+                  "value": 3,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_agents_ever_paid",
+                  "window": "point"
+                },
+                {
+                  "key": "liquidityAgentsBidding30d",
+                  "value": 2,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_agents_bidding_30d",
+                  "window": "point"
+                },
+                {
+                  "key": "platformProgramJobs",
+                  "value": 1,
+                  "state": "ok",
+                  "unit": "count",
+                  "population": "moltjobs_platform_programs",
+                  "window": "point"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "future": {
+        "clocks": {
+          "requestStartedAt": "2026-10-29T18:00:00.917Z",
+          "observedAt": "2026-10-29T18:00:01.320Z",
+          "receivedAt": "2026-10-29T18:00:01.320Z"
+        },
+        "freshness": {
+          "state": "clock_ahead",
+          "ageMs": -119999,
+          "fetchedAt": "2026-10-29T18:02:01.319Z",
+          "providerTimestamp": "2026-10-29T18:02:01.319Z",
+          "projectionObservedAt": "2026-10-29T18:00:01.320Z"
+        }
+      },
+      "stale": {
+        "ageMs": 176400001,
+        "state": "stale"
+      },
+      "malformed": "clock_unparsed",
+      "partialProjectionState": "fresh",
+      "http": "http",
+      "parse": "parse",
+      "timeout": "timeout",
+      "cancelled": "cancelled",
+      "privateHits": 0
+    },
+    "installed": {
+      "baseline": {
+        "outcome": "baseline_established",
+        "usefulChange": false,
+        "at": "2026-10-29T18:00:04.825Z",
+        "operationId": "op_b754ea3d9fe5a0f1179449bc"
+      },
+      "changed": {
+        "outcome": "content_changed",
+        "usefulChange": true,
+        "at": "2026-10-29T18:01:06.259Z",
+        "operationId": "op_d15f025c936be1ae57a44655"
+      },
+      "eventIds": [
+        "8f89f5240045af1bb80758a6322f1f400263cbc340fc1c60d671c52f0307180f"
+      ],
+      "recipient": {
+        "baselineDeliveryId": "c1bb6b234094cc0c6ea1f6ab8e475c090099becef145bdd99e8915506452381c",
+        "changedDeliveryId": "a1ca6d79e82984cb0c9e7945fac13bb741f81433736ba173c602e73977113f92",
+        "reportDigest": "9f24891f6b4c6af4ce2a362191fe3348cbd2a776a94371fb4b7dd935458c0c16",
+        "adoptedFrom": "readback",
+        "duplicateCount": 1
+      },
+      "recoveredFetchedAt": "2026-10-29T18:01:08.349Z",
+      "recoveredClassificationAt": "2026-10-29T18:01:13.973Z",
+      "lostReply": {
+        "at": "2026-10-29T18:01:20.160Z",
+        "capture": null,
+        "outcome": "unknown",
+        "delivered": false,
+        "runtimeMs": 0,
+        "failureCode": "lost_reply_no_body",
+        "operationId": "op_5e3107f6943733e497ac90f1",
+        "sourceBytes": 0,
+        "sourceCalls": 1,
+        "usefulChange": false,
+        "deliveryState": "unknown",
+        "evidenceClass": null,
+        "usefulNegative": false,
+        "publicSourceChanged": false,
+        "naturalCustomerDemand": false
+      },
+      "sourceCalls": 2
+    }
+  },
+  "rssKb": [
+    {
+      "at": "2026-10-29T20:20:45.107Z",
+      "totalKb": 316624,
+      "rows": [
+        {
+          "pid": 19054,
+          "rssKb": 78456,
+          "cmd": "node experiments/oct29-receive-time-freshness/accept.mjs "
+        },
+        {
+          "pid": 19222,
+          "rssKb": 58688,
+          "cmd": "/exec-daemon/node /home/ubuntu/ae14-work/h64331/experiments/oct29-receive-time-freshness/recipient.mjs "
+        },
+        {
+          "pid": 19244,
+          "rssKb": 28272,
+          "cmd": "/usr/lib/postgresql/16/bin/postgres -D /tmp/sds-vf12-pg-zoRPLO/pg "
+        },
+        {
+          "pid": 19245,
+          "rssKb": 6100,
+          "cmd": "postgres: checkpointer                                            "
+        },
+        {
+          "pid": 19246,
+          "rssKb": 6292,
+          "cmd": "postgres: background writer                                       "
+        },
+        {
+          "pid": 19248,
+          "rssKb": 10296,
+          "cmd": "postgres: walwriter                                               "
+        },
+        {
+          "pid": 19249,
+          "rssKb": 8772,
+          "cmd": "postgres: autovacuum launcher                                     "
+        },
+        {
+          "pid": 19250,
+          "rssKb": 8108,
+          "cmd": "postgres: logical replication launcher                            "
+        },
+        {
+          "pid": 19260,
+          "rssKb": 15280,
+          "cmd": "postgres: sds correspondence 127.0.0.1(50426) idle                "
+        },
+        {
+          "pid": 19512,
+          "rssKb": 79736,
+          "cmd": "/exec-daemon/node /home/ubuntu/ae14-work/h64331/experiments/oct29-receive-time-freshness/service-main.mjs "
+        },
+        {
+          "pid": 19521,
+          "rssKb": 16624,
+          "cmd": "postgres: sds correspondence 127.0.0.1(50464) idle                "
+        }
+      ]
+    }
+  ],
+  "commands": [
+    "archive sha256 a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f bytes 88319",
+    "source server 127.0.0.1:38929 delay 400",
+    "frozen ageMs -499 state clock_ahead",
+    "receipt ageMs 1 state fresh",
+    "future ageMs -119999 observedAfterStart true",
+    "private lookup refused before fetch",
+    "disposable postgres port 33439",
+    "grant row inserted",
+    "recipient ready 33881",
+    "service mounted scheduler disarmed paidServiceLaunch false",
+    "lost response readback a1ca6d79e829",
+    "recipient restart retained the delivery id",
+    "service restart retained results and did not refetch",
+    "postgres restarted",
+    "postgres readback retained the same result",
+    "mounted future and partial metrics stay refused",
+    "pending fetch recovered at a new instant without rewriting fetchedAt",
+    "lost reply did not refetch and old delivery ids remain",
+    "acceptance ok"
+  ],
+  "archive": {
+    "sha256": "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f",
+    "bytes": 88319
+  },
+  "finishedAt": "2026-10-29T20:20:45.107Z"
+}

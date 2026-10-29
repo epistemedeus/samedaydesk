@@ -35,6 +35,7 @@
     "test:neomorphic-opportunity": "node --test --test-concurrency=1 server/scripts/test-neomorphic-opportunity-host.mjs",
     "test:original-task": "node --test --test-concurrency=1 server/scripts/test-original-task-action.mjs server/scripts/test-original-task-correspondence.mjs server/scripts/test-original-task-acquisition.mjs server/scripts/test-intake-readiness.mjs",
     "test:managed-watch": "node --test --test-concurrency=1 server/scripts/test-managed-watch.mjs",
+    "test:receive-time-freshness": "node experiments/oct29-receive-time-freshness/accept.mjs",
     "correspondence:migrate": "node server/foundry/install.mjs --migrate",
     "foundry:install": "node server/foundry/install.mjs --migrate --install",
     "test:foundry-host": "node --test server/scripts/test-foundry-host.js server/scripts/test-foundry-probe.js server/scripts/test-foundry-listener-drain.js",
