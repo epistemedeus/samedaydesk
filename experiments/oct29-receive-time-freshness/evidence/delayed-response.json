@@ -1,0 +1,188 @@
+{
+  "frozen": {
+    "clocks": {
+      "requestStartedAt": "2026-10-29T18:00:00.005Z",
+      "observedAt": "2026-10-29T18:00:00.005Z",
+      "receivedAt": "2026-10-29T18:00:00.005Z"
+    },
+    "freshness": {
+      "state": "clock_ahead",
+      "ageMs": -499,
+      "fetchedAt": "2026-10-29T18:00:00.504Z",
+      "providerTimestamp": "2026-10-29T18:00:00.504Z",
+      "projectionObservedAt": "2026-10-29T18:00:00.005Z"
+    },
+    "response": {
+      "schemaVersion": "pilot.external-observatory.v1",
+      "fetchedAt": "2026-10-29T18:00:00.504Z",
+      "observations": [
+        {
+          "sourceId": "moltjobs",
+          "sourceKind": "work_market",
+          "availability": "ok",
+          "fetchedAt": "2026-10-29T18:00:00.504Z",
+          "providerTimestamp": "2026-10-29T18:00:00.504Z",
+          "providerTimestampState": "ok",
+          "metrics": [
+            {
+              "key": "jobCount",
+              "value": 122,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_work_market",
+              "window": "point"
+            },
+            {
+              "key": "marketplaceCompleted",
+              "value": 15,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_marketplace_ordinary_third_party",
+              "window": "point"
+            },
+            {
+              "key": "marketplaceEmployers",
+              "value": 4,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_marketplace_employers",
+              "window": "point"
+            },
+            {
+              "key": "liquidityRegisteredAgents",
+              "value": 434,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_registered_agents",
+              "window": "point"
+            },
+            {
+              "key": "liquidityAgentsEverPaid",
+              "value": 3,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_agents_ever_paid",
+              "window": "point"
+            },
+            {
+              "key": "liquidityAgentsBidding30d",
+              "value": 2,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_agents_bidding_30d",
+              "window": "point"
+            },
+            {
+              "key": "platformProgramJobs",
+              "value": 1,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_platform_programs",
+              "window": "point"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "receipt": {
+    "clocks": {
+      "requestStartedAt": "2026-10-29T18:00:00.512Z",
+      "observedAt": "2026-10-29T18:00:00.916Z",
+      "receivedAt": "2026-10-29T18:00:00.916Z"
+    },
+    "freshness": {
+      "state": "fresh",
+      "ageMs": 1,
+      "fetchedAt": "2026-10-29T18:00:00.915Z",
+      "providerTimestamp": "2026-10-29T18:00:00.915Z",
+      "projectionObservedAt": "2026-10-29T18:00:00.916Z"
+    },
+    "response": {
+      "schemaVersion": "pilot.external-observatory.v1",
+      "fetchedAt": "2026-10-29T18:00:00.915Z",
+      "observations": [
+        {
+          "sourceId": "moltjobs",
+          "sourceKind": "work_market",
+          "availability": "ok",
+          "fetchedAt": "2026-10-29T18:00:00.915Z",
+          "providerTimestamp": "2026-10-29T18:00:00.915Z",
+          "providerTimestampState": "ok",
+          "metrics": [
+            {
+              "key": "jobCount",
+              "value": 122,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_work_market",
+              "window": "point"
+            },
+            {
+              "key": "marketplaceCompleted",
+              "value": 15,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_marketplace_ordinary_third_party",
+              "window": "point"
+            },
+            {
+              "key": "marketplaceEmployers",
+              "value": 4,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_marketplace_employers",
+              "window": "point"
+            },
+            {
+              "key": "liquidityRegisteredAgents",
+              "value": 434,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_registered_agents",
+              "window": "point"
+            },
+            {
+              "key": "liquidityAgentsEverPaid",
+              "value": 3,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_agents_ever_paid",
+              "window": "point"
+            },
+            {
+              "key": "liquidityAgentsBidding30d",
+              "value": 2,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_agents_bidding_30d",
+              "window": "point"
+            },
+            {
+              "key": "platformProgramJobs",
+              "value": 1,
+              "state": "ok",
+              "unit": "count",
+              "population": "moltjobs_platform_programs",
+              "window": "point"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "future": {
+    "clocks": {
+      "requestStartedAt": "2026-10-29T18:00:00.917Z",
+      "observedAt": "2026-10-29T18:00:01.320Z",
+      "receivedAt": "2026-10-29T18:00:01.320Z"
+    },
+    "freshness": {
+      "state": "clock_ahead",
+      "ageMs": -119999,
+      "fetchedAt": "2026-10-29T18:02:01.319Z",
+      "providerTimestamp": "2026-10-29T18:02:01.319Z",
+      "projectionObservedAt": "2026-10-29T18:00:01.320Z"
+    }
+  }
+}

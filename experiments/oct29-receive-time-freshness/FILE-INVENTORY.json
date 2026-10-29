@@ -1,0 +1,135 @@
+{
+  "schema": "h64331.file-inventory.v1",
+  "files": [
+    {
+      "path": "experiments/oct29-receive-time-freshness/INPUTS.json",
+      "bytes": 4913,
+      "sha256": "4c28baf504551613ad49d655c95b710ae2abd6a0e1bed30e01a2a7a63aa69717"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/NEXT.md",
+      "bytes": 981,
+      "sha256": "ef54f5100285dce8ee794f9b21aaf7e7509c7fe66fefaaa7041a39a9e9ce70d6"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/RESULT.md",
+      "bytes": 3686,
+      "sha256": "5adbea11690948afeed48a889c49af91f40c1a465c2c4855be1ac0202dd3166c"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/accept.mjs",
+      "bytes": 27812,
+      "sha256": "618e00142779f11ee77420a193236d804ecb7d991ee9a8fec7821990ec7101ef"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/acceptance.json",
+      "bytes": 11523,
+      "sha256": "036839c4934f6e57c30ece2125505429612ffe4b0f962764d1130719f777dac9"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/clocks.json",
+      "bytes": 1205,
+      "sha256": "5a0b0700180ba82290a963a722f9244f049d8432d97b0a3096f4f876d3285716"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/commands.txt",
+      "bytes": 788,
+      "sha256": "c85f90793b12af6b79479eb33651e6317860071c90dd29321887e1a9e29a3e11"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/delayed-response.json",
+      "bytes": 5754,
+      "sha256": "c473dcd03fdf05b946a1438c3317e8ea72e89834d549201bd977481c5d145c75"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/recipient-worksheet.json",
+      "bytes": 1333,
+      "sha256": "590a20c30dee1563c11bf813da73164af8adfc3f5a641e6e3b44269b5e8a2013"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/recipient.mjs",
+      "bytes": 7298,
+      "sha256": "d6b374e8dc8d913fb9bea114a9eb0d2ba2f9db66b1e414dad4e67a5cbda1af49"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/service-main.mjs",
+      "bytes": 1848,
+      "sha256": "4e0db9fe401798d0abd6a1e526162fda1043b26c1b70560e9736280726cd12e3"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/source-server.mjs",
+      "bytes": 6518,
+      "sha256": "a35d364a8cde8f2e328cc554807f2e5076acae001170ea090b7c812696ee6808"
+    },
+    {
+      "path": "package.json",
+      "bytes": 11735,
+      "sha256": "bf5ac27326b8b2302055d31cc4619d4c3550b245f4272ad7bd7802c092d4bbee"
+    },
+    {
+      "path": "server/lib/managed-watch/pins/PINS.json",
+      "bytes": 1850,
+      "sha256": "07ab3473f24b492d40de71ef4538a4b2cd8525a7db226f894543b299967c254a"
+    },
+    {
+      "path": "server/lib/managed-watch/pins/change-monitor-0.1.0.tgz",
+      "bytes": 88319,
+      "sha256": "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f"
+    },
+    {
+      "path": "server/lib/managed-watch/service.mjs",
+      "bytes": 19820,
+      "sha256": "1bb01758c4405ac232425939a74d0c830bed5fca7fcfca3ade72c9cb4154a604"
+    },
+    {
+      "path": "server/lib/managed-watch/source.mjs",
+      "bytes": 12260,
+      "sha256": "5f1a31356cd8e0a239c99d3a1c3382892d965fad15e509451b42d181eb70ec05"
+    },
+    {
+      "path": "server/scripts/test-managed-watch.mjs",
+      "bytes": 75485,
+      "sha256": "58c090345bbc151df480b0792afd151aa86c275d42e426504ae6f6fb448a4bd9"
+    },
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "bytes": 88473,
+      "sha256": "d87649a4f6d76cdde356ebc3d1a726002f3811cc2ed73f3e3f5fbad768e14443"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/REVIEWER-RECEIVING.md",
+      "bytes": 1457,
+      "sha256": "099d998ae72ca84526a1c525d2271e7fbe99b754855a410465770d9d6ae0076b"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/reviewer-receiving.json",
+      "bytes": 303138,
+      "sha256": "acdabc4c20d277590c498a492b5ee43c2fe3a1d27f5b17e874836ae79b9a1c6a"
+    },
+    {
+      "path": "server/scripts/fixtures/disposable-pg.mjs",
+      "bytes": 3906,
+      "sha256": "5db62e71d0739a3c895c166f8e3162d1d9456f5061c1683f561aa67e6103d676"
+    },
+    {
+      "path": "server/scripts/test-postgres-bin.mjs",
+      "bytes": 2424,
+      "sha256": "c168f38faa00f3de6c4425126a05ac3a6009180e12cf219e82aaf051aca3c554"
+    },
+    {
+      "path": ".github/workflows/runtime-startup.yml",
+      "bytes": 1528,
+      "sha256": "4cafa4737f8ee98912924fb2c7fa8a15c12c61c28cf9cbfa3d82c69a7de19659"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/POSTGRES-FIXTURE-RECEIVING.md",
+      "bytes": 1593,
+      "sha256": "8139cf087e6f1c1839c66f7e0da42ffffa19fd5953a9256a12161669371435f1"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/postgres-fixture-receiving.json",
+      "bytes": 127046,
+      "sha256": "67e2419ec0384dee3b39f9480fb306e82c1e609829825e109104c8f6d0072fd4"
+    }
+  ]
+}

@@ -1,13 +1,40 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
-import { existsSync } from "node:fs";
+import { accessSync, constants, statSync } from "node:fs";
 import net from "node:net";
 import { mkdtemp, rm, appendFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-const bin = ["/usr/lib/postgresql/16/bin", "/usr/lib/postgresql/17/bin"].find((dir) => existsSync(path.join(dir, "initdb")));
-if (!bin) throw new Error("disposable postgres bin missing");
+const REQUIRED_BINARIES = ["initdb", "pg_ctl", "createdb", "postgres"];
+
+function validBin(dir) {
+  if (typeof dir !== "string" || !path.isAbsolute(dir) || /[\r\n\0]/.test(dir)) return false;
+  return REQUIRED_BINARIES.every((name) => {
+    try {
+      const file = path.join(dir, name);
+      if (!statSync(file).isFile()) return false;
+      accessSync(file, constants.X_OK);
+      return true;
+    } catch { return false; }
+  });
+}
+
+export function resolvePostgresBin(env = process.env) {
+  if (Object.hasOwn(env, "PULSE_PG_BIN")) {
+    if (validBin(env.PULSE_PG_BIN)) return path.resolve(env.PULSE_PG_BIN);
+    throw Object.assign(new Error("PULSE_PG_BIN must name an absolute directory containing executable initdb, pg_ctl, createdb and postgres"), { code: "postgres_bin_invalid" });
+  }
+  const found = spawnSync("pg_config", ["--bindir"], {
+    env: { PATH: env.PATH || "" }, encoding: "utf8", timeout: 5000, maxBuffer: 4096,
+  });
+  const configured = found.status === 0 ? found.stdout.trim() : "";
+  if (validBin(configured)) return path.resolve(configured);
+  for (const dir of String(env.PATH || "").split(path.delimiter)) {
+    if (validBin(dir)) return path.resolve(dir);
+  }
+  throw Object.assign(new Error("disposable postgres binaries unavailable; set PULSE_PG_BIN or provide pg_config / a complete PostgreSQL bin directory on PATH"), { code: "postgres_bin_unavailable" });
+}
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -28,6 +55,7 @@ async function freePort() {
 }
 
 export async function startDisposablePg() {
+  const bin = resolvePostgresBin();
   const dir = await mkdtemp(path.join(tmpdir(), "sds-vf12-pg-"));
   const dataDir = path.join(dir, "pg");
   const port = await freePort();
@@ -43,6 +71,7 @@ export async function startDisposablePg() {
   if (created.code !== 0) throw new Error(created.stderr || "createdb failed");
   const url = `postgres://sds@127.0.0.1:${port}/correspondence`;
   return {
+    bin,
     url,
     port,
     dir,

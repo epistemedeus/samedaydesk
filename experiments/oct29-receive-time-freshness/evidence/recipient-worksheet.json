@@ -1,0 +1,38 @@
+{
+  "schema": "sds.receive-time-recipient.v1",
+  "runFinishedAt": "2026-10-29T20:20:45.107Z",
+  "rows": [
+    {
+      "deliveryId": "c1bb6b234094cc0c6ea1f6ab8e475c090099becef145bdd99e8915506452381c",
+      "reportDigest": "70a85c92beffb444bf6f623b51a1f0b462b10ccc87c668b4370cd7f140d3c9f2",
+      "operationId": "op_b754ea3d9fe5a0f1179449bc",
+      "taskId": "receive-fresh",
+      "outcome": "baseline_established",
+      "failureCode": null,
+      "usefulChange": false,
+      "at": "2026-10-29T18:00:04.825Z",
+      "sourceCalls": 1,
+      "responseDropped": false,
+      "httpAcknowledged": true,
+      "usefulAcceptance": "recorded",
+      "duplicateCount": 0,
+      "committedAt": "2026-10-29T20:20:40.768Z"
+    },
+    {
+      "deliveryId": "a1ca6d79e82984cb0c9e7945fac13bb741f81433736ba173c602e73977113f92",
+      "reportDigest": "9f24891f6b4c6af4ce2a362191fe3348cbd2a776a94371fb4b7dd935458c0c16",
+      "operationId": "op_d15f025c936be1ae57a44655",
+      "taskId": "receive-fresh",
+      "outcome": "content_changed",
+      "failureCode": null,
+      "usefulChange": true,
+      "at": "2026-10-29T18:01:06.259Z",
+      "sourceCalls": 1,
+      "responseDropped": true,
+      "httpAcknowledged": false,
+      "usefulAcceptance": "accepted",
+      "duplicateCount": 1,
+      "committedAt": "2026-10-29T20:20:41.195Z"
+    }
+  ]
+}

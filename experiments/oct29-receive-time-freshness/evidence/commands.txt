@@ -1,0 +1,19 @@
+archive sha256 a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f bytes 88319
+source server 127.0.0.1:38929 delay 400
+frozen ageMs -499 state clock_ahead
+receipt ageMs 1 state fresh
+future ageMs -119999 observedAfterStart true
+private lookup refused before fetch
+disposable postgres port 33439
+grant row inserted
+recipient ready 33881
+service mounted scheduler disarmed paidServiceLaunch false
+lost response readback a1ca6d79e829
+recipient restart retained the delivery id
+service restart retained results and did not refetch
+postgres restarted
+postgres readback retained the same result
+mounted future and partial metrics stay refused
+pending fetch recovered at a new instant without rewriting fetchedAt
+lost reply did not refetch and old delivery ids remain
+acceptance ok

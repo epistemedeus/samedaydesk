@@ -1,0 +1,110 @@
+{
+  "schema": "h64331.inputs.v1",
+  "operation": "H64331",
+  "branch": "codex/root64331-receive-time-freshness-20261029",
+  "worktree": "/home/ubuntu/ae14-work/h64331",
+  "product": {
+    "repo": "https://github.com/epistemedeus/samedaydesk.git",
+    "base": "a5b40cb015d30de8bf8f3cbbeda1360151279fb0"
+  },
+  "profile": {
+    "model": "grok-4.7",
+    "effort": "xhigh",
+    "session": "c72554e1-2fe0-41ea-9185-2db62a020b92",
+    "host": "bc-1ab8063b-20f7-4ff1-a0e2-365a86222e62",
+    "launcher": "heavy-launch.sh",
+    "checkpoint": "2026-10-29T20:45:00Z",
+    "requiredUntil": "2026-10-29T21:00:00Z"
+  },
+  "operatingContext": {
+    "repo": "https://github.com/epistemedeus/pilot.git",
+    "commit": "b7e838f6d3b36b09aa2e67a6fb225927756678ec",
+    "contextSha256": "835fab6aa4beeec7d3fe8e75fc12cdf7c34e3e5bcb3cf26e40c3732475a15efb",
+    "receiptSha256": "8c0c069ea22a19e4cf9a66121cb1dfe48e1a72e381ca88c5c41f2facfa728b26",
+    "members": [
+      {
+        "path": "AGENTS.md",
+        "blob": "8c02250380d8cfbdff2e4546527308f9dccefa77",
+        "sha256": "b362013824fd20f425e1c6d5823680707952db4dbc9c39819eb84b6912fb59bb"
+      },
+      {
+        "path": "overview/STATE.md",
+        "blob": "570d999cbdebad47ba792e8fd6f0cb3b61b9febc",
+        "sha256": "5a89197f2d8b224b444bb6da247312d777394d5563b61b982244d510e895d356"
+      },
+      {
+        "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+        "blob": "984f458ce29edb28f6c7094c9820c6240593207f",
+        "sha256": "b8bbf99989e0fbb4599b797e959b0fba338f6f349f3af774dc65b857fe622836"
+      }
+    ]
+  },
+  "assignment": {
+    "path": "overview/remote-worker/assignments/H64331-RECEIVE-TIME-FRESHNESS-20261029.md",
+    "commit": "b7e838f6d3b36b09aa2e67a6fb225927756678ec",
+    "blob": "94f2e6f980a39416583c2152a2e079950e6544fd",
+    "sha256": "76c8d92b829ce9fa48c661655f5d552298b9401378a26807dbc9668c54c116cf"
+  },
+  "solRefusal": {
+    "preserved": true,
+    "host": "bc-ebf954ca",
+    "producer": "ddbd766a",
+    "dispatch": "not-dispatched",
+    "reason": "actual host memory before inference"
+  },
+  "neo": {
+    "commit": "d9038c21964a0a736ebb115b4718a83231d7dd42",
+    "consumer": "packages/change-monitor/src/consumers/source-projection.mjs",
+    "consumerBlob": "b4c3d2c50ace1df66ff2e0060a1e4954dddd6f8f",
+    "archive": "server/lib/managed-watch/pins/change-monitor-0.1.0.tgz",
+    "archiveBytes": 88319,
+    "archiveSha256": "a5248cac86ae604b365d95e3c21da5c15cd09f1a962428eb7d60b4c3b210100f",
+    "replaced": false
+  },
+  "sourceBefore": {
+    "path": "server/lib/managed-watch/source.mjs",
+    "blob": "7186b511207eff5f30b9d9bd53b5bdc0d1c5df80"
+  },
+  "sourceAfter": {
+    "sourceBlob": "d9f44b04a33eca8bf56ec913dfe8df9c1edddd84",
+    "serviceBlob": "828fc8a4af7d0aa66270e855ebdcde891850a669"
+  },
+  "h64319": {
+    "commit": "080ab75bd73bc025d3537f26bb75bdfe8343e8e6",
+    "session": "1583411a-5f53-4bbc-9923-297e79791e71",
+    "exit": 0,
+    "finishedAt": "2026-10-29T18:26:11Z",
+    "ownedHere": false,
+    "publicClocks": {
+      "observerAt": "2026-10-29T18:24:05.072Z",
+      "fetchedAt": "2026-10-29T18:24:05.179Z",
+      "providerTimestamp": "2026-10-29T18:23:28.621Z",
+      "ageMs": -107,
+      "failureCode": "freshness_clock_ahead",
+      "usefulDelivery": false,
+      "observerFrozenForTheRead": true,
+      "capture": "live"
+    },
+    "filesSha256": {
+      "RESULT.md": "4f3851d1625bc2a59b0a7ce1348a38c7dc3b7641c344d5dc2b1e9033760d1fe6",
+      "INPUTS.json": "c1a2839961da96808b1ae58af995e8b70de38489684902932d3333dec78006a1",
+      "NEXT.md": "d27f46090f118da43fccd1b0626af0e8ce6dbc5b69d21e00137449ef52656653",
+      "FILE-INVENTORY.json": "424c5e76274f2d02627330afa11d0a0898a2b47fc5e36024edf07cbf143c55a3",
+      "sample/run-postgres-check.mjs": "4401e1ae54c7a0cde7a36e05b0a6559960038e56dec162bd8df42f967f889a26",
+      "sample/run-finite-check.mjs": "4ea3ab45ab1a3e9d92001a9edaf89baa7b063892da8af276d5efc9cd999baa3e",
+      "src/service-mount.mjs": "6f53bcb834ecc3f063ea57d3807e9e065f56a32270bad96bb6ba51a1aa9a74d5",
+      "src/recipient.mjs": "04b47e5b7bd05db8b027f522fc11d93306e3e9902dc3c001407df9db1b8bd546",
+      "test/postgres-installed.test.mjs": "7193f3cb047f1d81f5874f1299c2b5e379caf61bcbd0af57230f27e9353b873c",
+      "evidence/installed-postgres.json": "b1fc55de0a5cb509c264e55c433dfa00a81d7553ae2ee68e479374356a019abe",
+      "evidence/public-clocks.json": "513e1581fdb1f3502673b62f463e38fe783083d8f90ed7afaa6cf822807fc0c6",
+      "evidence/public-source.json": "d95db183802fef72b9050dfc3bab8b6e16eabb8cf6397a63e4d5033df9b9f446",
+      "evidence/installed-commands.log": "86241092f019d4516fc0904ca6d303557238670cbff398fb8d580d7528e5c656"
+    }
+  },
+  "receivingContext": {
+    "path": "overview/self-evaluations/2026-10-29-scalable-demand/B-INSTALLED-RECEIVING-1835.md",
+    "commit": "b7e838f6d3b36b09aa2e67a6fb225927756678ec",
+    "blob": "0de64460377cca85483dc5c22309f22c9cb09ff9",
+    "bytes": 10085
+  }
+}
