@@ -1479,3 +1479,193 @@ test("a due lease covers its caller read budget before crash recovery", () => {
   assert.equal(markClaimed(watch, { nowIso, workerId: "root-control", leaseMs: 30000 }), "claimed");
   assert.ok(Date.parse(watch.lease.until) - Date.parse(nowIso) >= 65000);
 });
+
+test("receive-time freshness classifies a delayed source at receipt", { timeout: 60_000 }, async (t) => {
+  const { observerClock } = await import("../lib/managed-watch/source.mjs");
+  const {
+    createLabClock,
+    fetchPinnedThrough,
+    publicLookup,
+    snapshotBody,
+    startSourceServer,
+    PINNED_SNAPSHOT_URL,
+  } = await import("../../experiments/oct29-receive-time-freshness/source-server.mjs");
+  const frozenClock = observerClock("2026-10-29T18:00:00.000Z");
+  assert.equal(frozenClock(), "2026-10-29T18:00:00.000Z");
+  assert.equal(frozenClock(), frozenClock());
+  let ticks = 0;
+  const moving = observerClock(() => new Date(Date.parse("2026-10-29T18:00:00.000Z") + (ticks += 25)).toISOString());
+  assert.ok(Date.parse(moving()) < Date.parse(moving()));
+  assert.throws(() => observerClock("not-a-clock"), (error) => error.code === "bad_clock");
+  const liveNull = observerClock(null);
+  assert.ok(Math.abs(Date.parse(liveNull()) - Date.now()) < 5_000);
+
+  const loaded = await loadPinnedMonitor();
+  const missingProjection = loaded.projection.projectSnapshot({
+    schemaVersion: "pilot.external-observatory.v1",
+    observations: [snapshotBody("fresh", "2026-10-29T18:00:00.000Z").observations[0]],
+  }, { observedAt: "2026-10-29T18:00:00.000Z" });
+  const present = missingProjection.sources.find((entry) => entry.sourceId === "moltjobs");
+  assert.equal(present.freshness.state, "fresh");
+  const absentClock = snapshotBody("fresh", "2026-10-29T18:00:00.000Z").observations[0];
+  absentClock.fetchedAt = null;
+  absentClock.providerTimestamp = null;
+  absentClock.providerTimestampState = "missing";
+  const missing = loaded.projection.projectSnapshot({
+    schemaVersion: "pilot.external-observatory.v1",
+    observations: [absentClock],
+  }, { observedAt: "2026-10-29T18:00:00.000Z" });
+  assert.equal(missing.sources.find((entry) => entry.sourceId === "moltjobs").freshness.state, "clock_missing");
+
+  const clock = createLabClock("2026-10-29T18:00:00.000Z");
+  const source = await startSourceServer({ clock: () => clock.now(), delayMs: 160 });
+  t.after(() => source.close());
+  const seenUrls = [];
+  const read = (mode, now, extra = {}) => readPinnedSnapshot({
+    timeoutMs: extra.timeoutMs || 4_000,
+    maxBodyBytes: 262_144,
+    now,
+    signal: extra.signal,
+    lookup: publicLookup,
+    fetchImpl: async (url, init) => {
+      seenUrls.push(url);
+      assert.equal(url, PINNED_SNAPSHOT_URL);
+      return fetchPinnedThrough(url, init, { port: source.port, mode });
+    },
+  });
+  const freshnessOf = (document) => {
+    const slot = document.projection.sources.find((entry) => entry.sourceId === "moltjobs");
+    return {
+      state: slot.freshness.state,
+      ageMs: slot.freshness.ageMs,
+      fetchedAt: slot.freshness.fetchedAt,
+      projectionObservedAt: document.projection.observedAt,
+    };
+  };
+
+  const frozenAt = clock.now();
+  const frozen = await read("fresh", frozenAt);
+  const frozenSlot = freshnessOf(frozen.document);
+  assert.equal(frozenSlot.state, "clock_ahead");
+  assert.ok(frozenSlot.ageMs < 0);
+  assert.equal(frozen.clocks.observedAt, frozenAt);
+  assert.equal(frozen.clocks.requestStartedAt, frozenAt);
+  assert.ok(Date.parse(frozenSlot.fetchedAt) > Date.parse(frozenAt));
+  assert.equal(frozen.clocks.observedAt, frozenSlot.projectionObservedAt);
+
+  const received = await read("fresh", () => clock.now());
+  const receivedSlot = freshnessOf(received.document);
+  assert.equal(receivedSlot.state, "fresh");
+  assert.ok(receivedSlot.ageMs >= 0 && receivedSlot.ageMs < 48 * 60 * 60 * 1000);
+  assert.ok(Date.parse(receivedSlot.fetchedAt) >= Date.parse(received.clocks.requestStartedAt) + 40);
+  assert.ok(Date.parse(received.clocks.observedAt) >= Date.parse(receivedSlot.fetchedAt));
+  assert.equal(received.clocks.observedAt, receivedSlot.projectionObservedAt);
+  assert.equal(received.document.capture, "injected");
+  assert.equal(received.document.publicSourceChanged, false);
+
+  const future = await read("future", () => clock.now());
+  const futureSlot = freshnessOf(future.document);
+  assert.equal(futureSlot.state, "clock_ahead");
+  assert.ok(futureSlot.ageMs < 0);
+  assert.ok(Date.parse(future.clocks.observedAt) > Date.parse(future.clocks.requestStartedAt));
+
+  assert.equal(freshnessOf((await read("stale", () => clock.now())).document).state, "stale");
+  assert.ok(freshnessOf((await read("stale", () => clock.now())).document).ageMs > 48 * 60 * 60 * 1000);
+  assert.equal(freshnessOf((await read("malformed", () => clock.now())).document).state, "clock_unparsed");
+  const partial = await read("partial", () => clock.now());
+  assert.equal(freshnessOf(partial.document).state, "fresh");
+  assert.equal((await read("http", () => clock.now())).failure.code, "http");
+  assert.equal((await read("parse", () => clock.now())).failure.code, "parse");
+  assert.equal((await read("hold", () => clock.now(), { timeoutMs: 250 })).failure.code, "timeout");
+  const abort = new AbortController();
+  const aborting = read("fresh", () => clock.now(), { signal: abort.signal });
+  setTimeout(() => abort.abort(), 30);
+  assert.equal((await aborting).failure.code, "cancelled");
+
+  let privateHits = 0;
+  await assert.rejects(readPinnedSnapshot({
+    now: () => clock.now(),
+    timeoutMs: 1000,
+    lookup: async () => [{ address: "10.1.1.1", family: 4 }],
+    fetchImpl: async () => { privateHits += 1; return { status: 200 }; },
+  }), (error) => error.code === "ssrf");
+  assert.equal(privateHits, 0);
+
+  const { store, cleanup } = await tempStore();
+  t.after(cleanup);
+  let mode = "fresh";
+  const live = createManagedWatch({
+    store,
+    now: () => clock.now(),
+    readSource: async (args) => {
+      assert.equal(typeof args.now, "function");
+      const started = args.now();
+      const result = await readPinnedSnapshot({
+        timeoutMs: args.timeoutMs,
+        maxBodyBytes: args.maxBodyBytes,
+        signal: args.signal,
+        now: args.now,
+        lookup: publicLookup,
+        fetchImpl: (url, init) => fetchPinnedThrough(url, init, { port: source.port, mode }),
+      });
+      assert.ok(Date.parse(args.now()) > Date.parse(started));
+      return result;
+    },
+  });
+  const spec = (taskId) => enrollment({ taskId, expiresAt: "2026-11-20T00:00:00.000Z" });
+  await live.enroll({ token: TOKEN, body: spec("rt-live") });
+  const baseline = await live.runDueForGrant({ token: TOKEN });
+  assert.equal(baseline.results[0].outcome, "baseline_established");
+  assert.equal(baseline.results[0].usefulChange, false);
+  assert.equal(baseline.watch.costs.sourceCalls, 1);
+  const callsAfterBaseline = source.requests.length;
+  clock.advance(61_000);
+  mode = "changed";
+  const changed = await live.runDueForGrant({ token: TOKEN });
+  assert.equal(changed.results[0].outcome, "content_changed");
+  assert.equal(changed.results[0].usefulChange, true);
+  assert.equal(changed.results[0].publicSourceChanged, false);
+  assert.equal(changed.watch.costs.sourceCalls, 2);
+  assert.equal(source.requests.length, callsAfterBaseline + 1);
+  const beforeIdle = source.requests.length;
+  const idle = await live.runDueForGrant({ token: TOKEN });
+  assert.equal(idle.action, "idle");
+  assert.equal(source.requests.length, beforeIdle);
+  const retained = await live.retrieve({ token: TOKEN, taskId: "rt-live" });
+  assert.equal(retained.costs.sourceCalls, 2);
+
+  async function refused(taskId, nextMode, code) {
+    mode = nextMode;
+    await live.enroll({ token: TOKEN, body: spec(taskId) });
+    const result = await live.runDueForGrant({ token: TOKEN });
+    assert.equal(result.results[0].outcome, "evidence_unavailable", taskId);
+    assert.equal(result.results[0].failureCode, code, taskId);
+    assert.equal(result.results[0].usefulChange, false, taskId);
+  }
+  await refused("rt-future", "future", "freshness_clock_ahead");
+  await refused("rt-stale", "stale", "stale");
+  await refused("rt-badtime", "malformed", "freshness_clock_unparsed");
+  await refused("rt-partial", "partial", "partial_metrics");
+  await refused("rt-http", "http", "http");
+  await refused("rt-parse", "parse", "parse");
+
+  const frozenNow = "2026-10-29T18:00:00.000Z";
+  mode = "fresh";
+  const held = createManagedWatch({
+    store,
+    now: () => frozenNow,
+    readSource: async (args) => readPinnedSnapshot({
+      timeoutMs: args.timeoutMs,
+      maxBodyBytes: args.maxBodyBytes,
+      signal: args.signal,
+      now: args.now,
+      lookup: publicLookup,
+      fetchImpl: (url, init) => fetchPinnedThrough(url, init, { port: source.port, mode }),
+    }),
+  });
+  await held.enroll({ token: TOKEN, body: spec("rt-frozen") });
+  const ahead = await held.runDueForGrant({ token: TOKEN });
+  assert.equal(ahead.results[0].failureCode, "freshness_clock_ahead");
+  assert.equal(ahead.results[0].usefulChange, false);
+  assert.notEqual(ahead.results[0].outcome, "baseline_established");
+});

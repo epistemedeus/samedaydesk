@@ -1,0 +1,165 @@
+{
+  "schema": "h64334.result.v1",
+  "ok": true,
+  "sourceHead": "4ede7119720e4c9c42c0271a86f5fd4734f33fa3",
+  "productBase": "c4ec17a891e19177d574ed79faaac25d295d2743",
+  "donor": "63e4076d1ffd98bc2f561fbb4c66d2fedb714830",
+  "tests": {
+    "pg-resolver": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "managed-watch": {
+      "tests": 17,
+      "pass": 17,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "cold-proxy": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "startup-diagnostic": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "hosted-startup": {
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "machine-discovery": {
+      "tests": 6,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 1
+    }
+  },
+  "testsPassed": 53,
+  "testsSkipped": 1,
+  "caller": {
+    "members": 1308,
+    "oldDescriptors": 34,
+    "retainedDescriptors": 35,
+    "current": {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:7772455923e8a9563900993d3b650bd549c255e69c31b085b271c0464f54f590"
+    },
+    "predecessor": {
+      "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:c0211aa4e1090458fec5908a89259ee0896a990dee71a5e0e927b21e85d6cc5c"
+    },
+    "tamper": [
+      {
+        "file": "server/lib/managed-watch/service.mjs",
+        "code": "caller_source_changed",
+        "beforeConfigRead": true
+      },
+      {
+        "file": "server/lib/managed-watch/source.mjs",
+        "code": "caller_source_changed",
+        "beforeConfigRead": true
+      }
+    ]
+  },
+  "public": {
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "allRawEqual": true
+  },
+  "acceptance": {
+    "freshExecutionStartedAt": "2026-10-29T21:29:32.077Z",
+    "freshExecutionFinishedAt": "2026-10-29T21:29:41.385Z",
+    "unchangedHelperSchema": "h64331.receive-time-freshness.v1",
+    "frozenAgeMs": -497,
+    "receiptClocks": {
+      "requestStartedAt": "2026-10-29T18:00:00.511Z",
+      "observedAt": "2026-10-29T18:00:00.916Z",
+      "receivedAt": "2026-10-29T18:00:00.916Z"
+    },
+    "sourceFetchedAt": "2026-10-29T18:00:00.914Z",
+    "receiptAgeMs": 2,
+    "futureAgeMs": -119999,
+    "durableRecipientRows": 2,
+    "usefulRecipientRows": 1,
+    "duplicateRetryCount": 1,
+    "sourceCalls": 2,
+    "installed": {
+      "baseline": {
+        "outcome": "baseline_established",
+        "usefulChange": false,
+        "at": "2026-10-29T18:00:04.899Z",
+        "operationId": "op_f30f59a2b262c61cbfa69c0c"
+      },
+      "changed": {
+        "outcome": "content_changed",
+        "usefulChange": true,
+        "at": "2026-10-29T18:01:06.332Z",
+        "operationId": "op_d9ed0675eeb6250d5606cebf"
+      },
+      "eventIds": [
+        "8f89f5240045af1bb80758a6322f1f400263cbc340fc1c60d671c52f0307180f"
+      ],
+      "recipient": {
+        "baselineDeliveryId": "e3bec749156ad1d5355feb213a62e1a2779d267c1c01265ff24db3a04c719571",
+        "changedDeliveryId": "46978db8f8b8a8a0af0c7d644c38bcd1e230c2adba4fb9efb167eb5cc1d9406a",
+        "reportDigest": "fadb9ac6d1d5438f0c312cb2cc008b4ea1847e86e563cf27eb02e4cabae31f2f",
+        "adoptedFrom": "readback",
+        "duplicateCount": 1
+      },
+      "recoveredFetchedAt": "2026-10-29T18:01:08.440Z",
+      "recoveredClassificationAt": "2026-10-29T18:01:14.078Z",
+      "lostReply": {
+        "at": "2026-10-29T18:01:20.290Z",
+        "capture": null,
+        "outcome": "unknown",
+        "delivered": false,
+        "runtimeMs": 0,
+        "failureCode": "lost_reply_no_body",
+        "operationId": "op_fce793bd938c1e0f30cee237",
+        "sourceBytes": 0,
+        "sourceCalls": 1,
+        "usefulChange": false,
+        "deliveryState": "unknown",
+        "evidenceClass": null,
+        "usefulNegative": false,
+        "publicSourceChanged": false,
+        "naturalCustomerDemand": false
+      },
+      "sourceCalls": 2
+    }
+  },
+  "commandsFile": "experiments/oct29-installed-clock-repair/evidence/run-2026-10-29T21-29-15.715Z/commands.json",
+  "maxSampledCommandTreeRssKiB": 620372,
+  "helperAggregatePgServiceRecipientSampleKiB": 316892,
+  "reservationKiB": 2097152,
+  "providerExecuted": false,
+  "ciAcquisitionPacketExecuted": false,
+  "notes": [
+    "Every execution receipt here is newly generated on the H34 c4-derived writer. The unchanged helper schema names H31; it does not make this an H31 historical run.",
+    "Machine discovery has one existing explicit-client-build opt-in skip because SAMEDAYDESK_CLIENT_DIST was not supplied. The configured managed preservation command and all 352 emitted bytes were separately received.",
+    "An initial summary-only assertion expected zero optional skips and refused before writing result.json. The actual command passed with 5 passes and 1 opt-in skip; raw logs are unchanged. No test was altered or rerun.",
+    "Command RSS samples include the runner and descendant tree. PostgreSQL daemon children can reparent; the unchanged helper separately samples PostgreSQL/service/recipient RSS. These are sampled values, not a whole-host memory peak.",
+    "The production installation reports six inherited npm audit findings. No dependency or lockfile was changed.",
+    "No current provider source/environment/account fact was freshly read by this worker."
+  ]
+}

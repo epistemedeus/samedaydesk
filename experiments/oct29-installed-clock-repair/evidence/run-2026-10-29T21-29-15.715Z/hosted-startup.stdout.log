@@ -1,0 +1,34 @@
+
+> samedaydesk@1.0.0 test:hosted-startup
+> node --test server/scripts/test-hosted-startup.js
+
+TAP version 13
+# Subtest: direct Node entry actually listens and serves health
+ok 1 - direct Node entry actually listens and serves health
+  ---
+  duration_ms: 380.510991
+  ...
+# Subtest: managed-host ESM loader actually listens and serves health
+ok 2 - managed-host ESM loader actually listens and serves health
+  ---
+  duration_ms: 368.198339
+  ...
+# Subtest: managed-host CommonJS loader actually listens and serves health
+ok 3 - managed-host CommonJS loader actually listens and serves health
+  ---
+  duration_ms: 301.896171
+  ...
+# Subtest: factory import remains unbound
+ok 4 - factory import remains unbound
+  ---
+  duration_ms: 341.520674
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1478.255779

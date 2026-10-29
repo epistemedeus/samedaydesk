@@ -1,0 +1,204 @@
+{
+  "schema": "h64334.serial-remote-commands.v1",
+  "startedAt": "2026-10-29T21:29:15.715Z",
+  "source": "4ede7119720e4c9c42c0271a86f5fd4734f33fa3",
+  "node": "v22.14.0",
+  "platform": "linux",
+  "arch": "x64",
+  "commands": [
+    {
+      "name": "cold-install",
+      "command": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--ignore-scripts"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:15.718Z",
+      "peakSampledTreeRssKiB": 360024,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:19.069Z",
+      "stdout": "cold-install.stdout.log",
+      "stderr": "cold-install.stderr.log"
+    },
+    {
+      "name": "source",
+      "command": "node",
+      "args": [
+        "experiments/oct29-installed-clock-repair/qualify.mjs",
+        "source"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:19.069Z",
+      "peakSampledTreeRssKiB": 125748,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:19.382Z",
+      "stdout": "source.stdout.log",
+      "stderr": "source.stderr.log"
+    },
+    {
+      "name": "caller",
+      "command": "node",
+      "args": [
+        "experiments/oct29-installed-clock-repair/qualify.mjs",
+        "caller"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:19.382Z",
+      "peakSampledTreeRssKiB": 188164,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:20.286Z",
+      "stdout": "caller.stdout.log",
+      "stderr": "caller.stderr.log"
+    },
+    {
+      "name": "pg-resolver",
+      "command": "node",
+      "args": [
+        "--test",
+        "server/scripts/test-postgres-bin.mjs"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:20.287Z",
+      "peakSampledTreeRssKiB": 57884,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:20.393Z",
+      "stdout": "pg-resolver.stdout.log",
+      "stderr": "pg-resolver.stderr.log"
+    },
+    {
+      "name": "managed-watch",
+      "command": "npm",
+      "args": [
+        "run",
+        "test:managed-watch"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:20.393Z",
+      "peakSampledTreeRssKiB": 496260,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:32.002Z",
+      "stdout": "managed-watch.stdout.log",
+      "stderr": "managed-watch.stderr.log"
+    },
+    {
+      "name": "http-pg-recipient",
+      "command": "node",
+      "args": [
+        "experiments/oct29-receive-time-freshness/accept.mjs"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:32.002Z",
+      "peakSampledTreeRssKiB": 280512,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:41.528Z",
+      "stdout": "http-pg-recipient.stdout.log",
+      "stderr": "http-pg-recipient.stderr.log"
+    },
+    {
+      "name": "cold-proxy",
+      "command": "npm",
+      "args": [
+        "run",
+        "test:proxy-addr"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:41.529Z",
+      "peakSampledTreeRssKiB": 620372,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:48.480Z",
+      "stdout": "cold-proxy.stdout.log",
+      "stderr": "cold-proxy.stderr.log"
+    },
+    {
+      "name": "startup-diagnostic",
+      "command": "node",
+      "args": [
+        "--test",
+        "server/scripts/test-correspondence-startup-diagnostic.js"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:48.481Z",
+      "peakSampledTreeRssKiB": 58676,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:48.661Z",
+      "stdout": "startup-diagnostic.stdout.log",
+      "stderr": "startup-diagnostic.stderr.log"
+    },
+    {
+      "name": "hosted-startup",
+      "command": "npm",
+      "args": [
+        "run",
+        "test:hosted-startup"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:48.661Z",
+      "peakSampledTreeRssKiB": 343352,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:50.258Z",
+      "stdout": "hosted-startup.stdout.log",
+      "stderr": "hosted-startup.stderr.log"
+    },
+    {
+      "name": "machine-discovery",
+      "command": "npm",
+      "args": [
+        "run",
+        "test:machine-discovery"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:50.259Z",
+      "peakSampledTreeRssKiB": 423760,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:52.358Z",
+      "stdout": "machine-discovery.stdout.log",
+      "stderr": "machine-discovery.stderr.log"
+    },
+    {
+      "name": "managed-build",
+      "command": "npm",
+      "args": [
+        "run",
+        "build:managed-foundry"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:52.359Z",
+      "peakSampledTreeRssKiB": 396980,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:56.029Z",
+      "stdout": "managed-build.stdout.log",
+      "stderr": "managed-build.stderr.log"
+    },
+    {
+      "name": "public",
+      "command": "node",
+      "args": [
+        "experiments/oct29-installed-clock-repair/qualify.mjs",
+        "public"
+      ],
+      "cwd": "/home/ubuntu/ae14-work/root64334-sds-installed-clock-20261029/",
+      "startedAt": "2026-10-29T21:29:56.029Z",
+      "peakSampledTreeRssKiB": 168856,
+      "code": 0,
+      "signal": null,
+      "finishedAt": "2026-10-29T21:29:57.313Z",
+      "stdout": "public.stdout.log",
+      "stderr": "public.stderr.log"
+    }
+  ],
+  "finishedAt": "2026-10-29T21:29:57.313Z",
+  "ok": true
+}

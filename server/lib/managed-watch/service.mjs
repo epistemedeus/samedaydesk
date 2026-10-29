@@ -409,7 +409,9 @@ export function createManagedWatch({ store, now = () => new Date(), readSource =
           watch,
           timeoutMs: watch.budget.maxTimeMs,
           maxBodyBytes: watch.budget.maxBodyBytes,
-          now: clock(),
+          // Same clock as claim and classify. A call here would freeze request
+          // start across the network read; the reader samples receipt itself.
+          now: clock,
           signal: controller.signal,
         });
       } catch (error) {
