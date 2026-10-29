@@ -8,8 +8,8 @@
     },
     {
       "path": "experiments/oct29-receive-time-freshness/NEXT.md",
-      "bytes": 625,
-      "sha256": "2775d85d0259bfa04db8ab5bbab1f7f915d31be8c850825412a285f98a4d49dd"
+      "bytes": 981,
+      "sha256": "ef54f5100285dce8ee794f9b21aaf7e7509c7fe66fefaaa7041a39a9e9ce70d6"
     },
     {
       "path": "experiments/oct29-receive-time-freshness/RESULT.md",
@@ -63,8 +63,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 11830,
-      "sha256": "2de5e54d268db756a13002921c5806fe4a21ac0b3e601da4dd0d354426d7ce9d"
+      "bytes": 11735,
+      "sha256": "bf5ac27326b8b2302055d31cc4619d4c3550b245f4272ad7bd7802c092d4bbee"
     },
     {
       "path": "server/lib/managed-watch/pins/PINS.json",
@@ -90,6 +90,21 @@
       "path": "server/scripts/test-managed-watch.mjs",
       "bytes": 75485,
       "sha256": "58c090345bbc151df480b0792afd151aa86c275d42e426504ae6f6fb448a4bd9"
+    },
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "bytes": 88473,
+      "sha256": "d87649a4f6d76cdde356ebc3d1a726002f3811cc2ed73f3e3f5fbad768e14443"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/REVIEWER-RECEIVING.md",
+      "bytes": 1457,
+      "sha256": "099d998ae72ca84526a1c525d2271e7fbe99b754855a410465770d9d6ae0076b"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/reviewer-receiving.json",
+      "bytes": 303138,
+      "sha256": "acdabc4c20d277590c498a492b5ee43c2fe3a1d27f5b17e874836ae79b9a1c6a"
     }
   ]
 }
