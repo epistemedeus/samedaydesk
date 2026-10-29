@@ -18,8 +18,8 @@
     },
     {
       "path": "experiments/oct29-receive-time-freshness/accept.mjs",
-      "bytes": 27813,
-      "sha256": "bfa95a6c4e63b779635abf2b03714720298532d34fabd8d031471afedad603a8"
+      "bytes": 27812,
+      "sha256": "618e00142779f11ee77420a193236d804ecb7d991ee9a8fec7821990ec7101ef"
     },
     {
       "path": "experiments/oct29-receive-time-freshness/evidence/acceptance.json",
@@ -105,6 +105,31 @@
       "path": "experiments/oct29-receive-time-freshness/evidence/reviewer-receiving.json",
       "bytes": 303138,
       "sha256": "acdabc4c20d277590c498a492b5ee43c2fe3a1d27f5b17e874836ae79b9a1c6a"
+    },
+    {
+      "path": "server/scripts/fixtures/disposable-pg.mjs",
+      "bytes": 3906,
+      "sha256": "5db62e71d0739a3c895c166f8e3162d1d9456f5061c1683f561aa67e6103d676"
+    },
+    {
+      "path": "server/scripts/test-postgres-bin.mjs",
+      "bytes": 2424,
+      "sha256": "c168f38faa00f3de6c4425126a05ac3a6009180e12cf219e82aaf051aca3c554"
+    },
+    {
+      "path": ".github/workflows/runtime-startup.yml",
+      "bytes": 1528,
+      "sha256": "4cafa4737f8ee98912924fb2c7fa8a15c12c61c28cf9cbfa3d82c69a7de19659"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/POSTGRES-FIXTURE-RECEIVING.md",
+      "bytes": 1593,
+      "sha256": "8139cf087e6f1c1839c66f7e0da42ffffa19fd5953a9256a12161669371435f1"
+    },
+    {
+      "path": "experiments/oct29-receive-time-freshness/evidence/postgres-fixture-receiving.json",
+      "bytes": 127046,
+      "sha256": "67e2419ec0384dee3b39f9480fb306e82c1e609829825e109104c8f6d0072fd4"
     }
   ]
 }

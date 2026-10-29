@@ -462,7 +462,7 @@ try {
   await pool.end();
   pool = null;
   const dataDir = path.join(pgCluster.dir, "pg");
-  const restartedPg = await run("/usr/lib/postgresql/16/bin/pg_ctl", ["-D", dataDir, "-m", "fast", "-w", "-t", "20", "restart"]);
+  const restartedPg = await run(path.join(pgCluster.bin, "pg_ctl"), ["-D", dataDir, "-m", "fast", "-w", "-t", "20", "restart"]);
   assert.equal(restartedPg.code, 0, restartedPg.stderr);
   note("postgres restarted");
   pool = new Pg.Pool({ connectionString: pgCluster.url, max: 2 });
