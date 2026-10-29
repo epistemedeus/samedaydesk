@@ -7,7 +7,7 @@ activation was performed. Production was not freshly queried by this worker.
 The tested implementation is `4ede7119720e4c9c42c0271a86f5fd4734f33fa3`, a direct
 child of installed `c4ec17a891e19177d574ed79faaac25d295d2743`, on
 `codex/root64334-sds-installed-clock-repair-20261029`. The subsequent receipt
-commit contains documentation/evidence only. All 631 c4 ancestry commits are
+commits contain documentation/evidence only. All 631 c4 ancestry commits are
 retained. The immutable comparison is 200 ahead / 4 behind H31's original base,
 merge base `d8cea059213e06d2f263be67f82e498f8052a50f`.
 

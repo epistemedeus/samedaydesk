@@ -1,0 +1,15 @@
+{
+  "schema": "h64334.self-review.v1",
+  "at": "2026-10-29T21:34:40.027875+00:00",
+  "testedSource": "4ede7119720e4c9c42c0271a86f5fd4734f33fa3",
+  "runtimeTestFixtureWorkflowPackageClientVendorChangesSinceTest": [],
+  "evidenceMembersVerifiedInGitIndex": 44,
+  "notes": [
+    "Only two production runtime members changed from c4; exact donor blobs received.",
+    "Pin object independently deep-compared to c4 plus only the two specified hashes and exact canonical predecessor descriptor.",
+    "Managed build and public byte verification succeeded before receiving documentation changes.",
+    "All evidence bytes and relative receipt links reviewed. Twenty-five .log files were initially ignored by the repository rule, then explicitly staged without changing that rule. Final export must receive every INDEX member.",
+    "Required focused checks and real recovery command pass. Additional machine-discovery retains one existing opt-in skip.",
+    "No provider operation, default merge or independent foreground-helper change performed."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema": "h64334.evidence-index.v1",
-  "at": "2026-10-29T21:33:56.409399+00:00",
+  "at": "2026-10-29T21:34:40.030846+00:00",
   "scope": "All H34 evidence files except this index; historical reference inputs are labelled in inputs.json",
   "members": [
     {
@@ -212,6 +212,11 @@
       "path": "evidence/run-2026-10-29T21-29-15.715Z/startup-diagnostic.stdout.log",
       "bytes": 1498,
       "sha256": "dda5cf6f4e6b9a5884dc9c8a55596ff2cbf73b42700ab50d9c8ca16c5bb55278"
+    },
+    {
+      "path": "evidence/self-review.json",
+      "bytes": 1047,
+      "sha256": "3ba90a7d0b1e08d40281b4589581c161d8428d1212634cfea28402304de862c0"
     },
     {
       "path": "evidence/source.diff",
