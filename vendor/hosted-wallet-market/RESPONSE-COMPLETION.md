@@ -1,9 +1,16 @@
 # Bounded response receiving
 
 The JSON writer frames one buffer with its exact Content-Length and ends it
-after the handler returns (after COMMIT for mutations). Request stream completion
-is not a socket disconnect. A Node `finish` means local handoff, not downstream
-receipt. An empty 200 is never an accepted operation result.
+after the handler returns (after COMMIT for mutations). It does not force
+`Connection: close`. HTTP/1.1 uses that length to delimit the body, and Node
+keeps the socket when the client does. A client that sends `Connection: close`
+still receives `Connection: close`. Request stream completion is not a socket
+disconnect. A Node `finish` means local handoff, not downstream receipt. An
+empty 200 is never an accepted operation result.
+
+The selected framing stage is `no-forced-connection-close`: explicit length
+stays, forced close does not. A later comparison that omits Content-Length is
+conditional on a hosted empty response after this stage. It is not this writer.
 
 For one controlled private receiving window, set BOTH process variables before
 the ordinary configured startup:
@@ -67,5 +74,5 @@ fixture demonstrates this receiving limit; it does not attribute a live cause.
 Focused verification (reuse the exact locked SDS dependency store):
 
 ```
-node --test --test-concurrency=1 vendor/hosted-wallet-market/test/response-completion.test.mjs vendor/hosted-wallet-market/test/response-lifecycle.test.mjs server/scripts/test-installed-response-ingress.mjs server/scripts/test-installed-response-ready.mjs
+node --test --test-concurrency=1 vendor/hosted-wallet-market/test/response-completion.test.mjs vendor/hosted-wallet-market/test/response-lifecycle.test.mjs vendor/hosted-wallet-market/test/response-framing.test.mjs server/scripts/test-installed-response-ingress.mjs server/scripts/test-installed-response-ready.mjs
 ```
