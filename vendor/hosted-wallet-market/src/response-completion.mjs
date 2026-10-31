@@ -9,6 +9,16 @@ export const COMPLETION_WINDOW_MS = 600000;
 export const WIRE_HEADER = 'x-ae-wire-version';
 export const WIRE_VERSION = 'c0-1';
 const SERVER_CLASS_HEADER = 'x-ae-server-class';
+
+// First hosted comparison only. HTTP/1.1 with an explicit Content-Length
+// delimits one JSON buffer, so this writer does not force Connection: close.
+// Node still sends Connection: close when the request does. Omitting
+// Content-Length is a separate conditional experiment and is not selected.
+export const RESPONSE_FRAMING = Object.freeze({
+  stage: 'no-forced-connection-close',
+  forceConnectionClose: false,
+  explicitContentLength: true,
+});
 export function responseCompletionLimit(value) {
   if (value === undefined || value === null || value === '') return 0;
   const text = typeof value === 'number' && Number.isInteger(value) ? String(value) : value;
@@ -219,13 +229,13 @@ export function deliverJsonResponse(res, status, body, extra = {}, completion = 
 }
 
 function responseHeaders(payload, extra) {
-  return {
+  const headers = {
     'content-type': 'application/json; charset=utf-8',
-    'content-length': String(payload.length),
-    connection: 'close',
     'cache-control': 'no-store',
     [WIRE_HEADER]: WIRE_VERSION,
     [SERVER_CLASS_HEADER]: 'live',
-    ...extra,
   };
+  if (RESPONSE_FRAMING.explicitContentLength) headers['content-length'] = String(payload.length);
+  if (RESPONSE_FRAMING.forceConnectionClose) headers.connection = 'close';
+  return {...headers, ...extra};
 }

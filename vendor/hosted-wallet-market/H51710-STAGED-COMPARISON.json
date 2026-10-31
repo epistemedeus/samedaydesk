@@ -1,0 +1,90 @@
+{
+  "schema": "sds.h51710.staged-hosted-comparison.v1",
+  "owner": "root",
+  "executedByThisExport": false,
+  "candidate": {
+    "repository": "epistemedeus/samedaydesk",
+    "branch": "codex/h51710-hostinger-response-framing-20261031",
+    "base": "4bc76080c45adcc1bbc490fc37e1ff47185ca491",
+    "stage": "no-forced-connection-close",
+    "forceConnectionClose": false,
+    "explicitContentLength": true,
+    "helper": "vendor/hosted-wallet-market/src/response-completion.mjs",
+    "helperSha256": "e1bc64cb332f1d8393c183fb4ec8a1715128344e24be5efc73c6548e5db52d90",
+    "installedSourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+    "hostSourceSha256": "1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c",
+    "sourceManifest": "vendor/hosted-wallet-market/SOURCE.json",
+    "hostPin": "server/foundry/activation/private-control-pin.json",
+    "consumerContractSha256": "fb0088a9aee06360c15211499e1345136deba09132112f8d7488e7b5dc2e7ae5",
+    "qualified": false,
+    "installed": false
+  },
+  "predecessor": {
+    "commit": "4bc76080c45adcc1bbc490fc37e1ff47185ca491",
+    "branch": "codex/root64334-sds-installed-clock-repair-20261029",
+    "tree": "549a9009bea65f753ef57431d915967193659a6b",
+    "hostingerBuild": "01a18a3f-dae7-7107-8f0b-1e02625b76e5",
+    "installedSourceSha256": "694d76d61a20346137ba6e280c8c36e7ce10dfa0ce686fb837c3e2fe09f3c855",
+    "hostSourceSha256": "1d6418b4b9801ceed56626800799106bc50ed3555c2a1cdb4651a3bf589657e0",
+    "helperSha256": "3b90f4419a7100d949bd2e1ad4ba6e67dfe738fa69d8237a858ae95b352c4335"
+  },
+  "preserved": {
+    "successionCommit": "f461e780df010663d31d4d9a5632147cd983a52e",
+    "successionServerSha256": "313b6093da34e4e81d82ce0a1ff7db057947a85ee87c836d55e4f27368a59b92",
+    "environmentRows": 89,
+    "environmentCanonicalSha256": "2afe45a622df4123442afc02b9e747db8bccda4cb505fe18889893ca63b59493",
+    "diagnostic": "off",
+    "diagnosticKeysAdded": [],
+    "humanAssets": "unchanged-off",
+    "accountClaimTermsDebt": "unchanged",
+    "oldClientsAndDescriptors": "unchanged",
+    "historicalEvidencePins": "unchanged"
+  },
+  "release": {
+    "controller": "7c798f18c9f385b51139bcf4f03b1458dc928c56",
+    "repository": "epistemedeus/pilot",
+    "qualificationCli": "tools/ops/hostinger-contributor-qualification-cli.mjs",
+    "qualificationCliBlob": "9b4e7e2508fb7c59c3619aa7a153036d644c807a",
+    "managedRelease": "tools/ops/hostinger-managed-release.mjs",
+    "managedReleaseBlob": "7fe25af22264287053331679be57d1f1973f70f4",
+    "receivedOperation": "root74420-installed-clock-repair",
+    "composition": {
+      "phase": "continue",
+      "scope": "private-source",
+      "journey": "new-source"
+    },
+    "invokeFromThisExport": false
+  },
+  "endpoint": {
+    "method": "GET",
+    "path": "/api/neomorphic-contributor-journey/v1/market/participation-contract",
+    "wireHeader": "x-ae-wire-version: c0-1",
+    "expectedStatus": 200,
+    "expectedBodyBytes": 39996,
+    "expectedBodySha256": "f4c6b459773121ebd1355199950c5f7971cd241b9bdd9132a40bd09f89d7b737",
+    "origin": "fresh receiving at comparison time",
+    "permanentAddressConstant": false
+  },
+  "sample": {
+    "phases": ["baseline", "candidate"],
+    "baseline": "current installed build before this candidate is released",
+    "candidate": "same path after Root's normal release of this branch head",
+    "requestsPerPhase": 32,
+    "schedule": "serial",
+    "record": ["status", "content-length", "bodyByteLength", "bodySha256", "connection", "x-ae-completion"],
+    "stop": "Stop the phase at 32 responses, or at the first connection or TLS failure. Record that failure class once. Do not open a retry grid.",
+    "empty200": "Record it. It is the compared condition, not a cue to continue into another experiment.",
+    "logging": "No credentials, cookies, customer payloads, or raw environment values.",
+    "prohibited": ["POST", "paid call", "new account", "mutation replay", "resident monitor", "diagnostic window", "content-length omission"]
+  },
+  "secondExperiment": {
+    "selected": false,
+    "condition": "Root opens it only after this candidate's hosted sample still shows empty 200 responses on the same path.",
+    "change": "A separate source change that omits explicit Content-Length. It is not in this candidate."
+  },
+  "rollback": {
+    "action": "Redeploy predecessor commit 4bc76080c45adcc1bbc490fc37e1ff47185ca491 and Hostinger build 01a18a3f-dae7-7107-8f0b-1e02625b76e5 through the same controller, with the restored 89-row environment.",
+    "diagnostic": "off",
+    "environmentPutIsNotRollback": true
+  }
+}

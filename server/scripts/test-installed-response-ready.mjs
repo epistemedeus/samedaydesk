@@ -5,6 +5,8 @@ import {createHash, randomBytes} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {mkdtemp, readFile, rm, writeFile, chmod} from 'node:fs/promises';
 import {createServer, request} from 'node:http';
+import {connect} from 'node:net';
+import {once} from 'node:events';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -103,6 +105,90 @@ function openGet(socketPath, requestPath, headers) {
     req.end();
   });
   return {promise, settled: () => settled, destroy: () => req.destroy()};
+}
+
+function contractRequest() {
+  return Buffer.from(
+    'GET /api/neomorphic-contributor-journey/v1/market/participation-contract HTTP/1.1\r\n' +
+    'Host: desk.invalid\r\nConnection: keep-alive\r\nx-ae-wire-version: c0-1\r\n\r\n',
+  );
+}
+
+function readFramed(socket) {
+  return new Promise((resolveFrame, reject) => {
+    let buf = Buffer.alloc(0);
+    const timer = setTimeout(() => fail(new Error('response_deadline')), 8000);
+    const onError = error => fail(error);
+    const onData = chunk => {
+      buf = Buffer.concat([buf, chunk]);
+      const headerEnd = buf.indexOf('\r\n\r\n');
+      if (headerEnd < 0) return;
+      const lines = buf.subarray(0, headerEnd).toString('latin1').split('\r\n');
+      const status = Number(lines[0].split(' ')[1]);
+      const headers = {};
+      for (const line of lines.slice(1)) {
+        const splitAt = line.indexOf(':');
+        if (splitAt < 0) continue;
+        const name = line.slice(0, splitAt).trim().toLowerCase();
+        const value = line.slice(splitAt + 1).trim();
+        headers[name] = Object.hasOwn(headers, name) ? `${headers[name]}, ${value}` : value;
+      }
+      const length = Number(headers['content-length']);
+      if (!Number.isInteger(length) || length < 0) return;
+      const total = headerEnd + 4 + length;
+      if (buf.length < total) return;
+      const extra = buf.subarray(total);
+      cleanup();
+      if (extra.length) socket.unshift(extra);
+      resolveFrame({status, headers, body: Buffer.from(buf.subarray(headerEnd + 4, total))});
+    };
+    const cleanup = () => {
+      clearTimeout(timer);
+      socket.off('data', onData);
+      socket.off('error', onError);
+    };
+    const fail = error => { cleanup(); reject(error); };
+    socket.on('data', onData);
+    socket.on('error', onError);
+  });
+}
+
+async function oneContract(socketPath) {
+  const socket = connect({path: socketPath, readableHighWaterMark: 1024});
+  await once(socket, 'connect');
+  socket.write(contractRequest());
+  const response = await readFramed(socket);
+  socket.end();
+  return response;
+}
+
+async function oneSocketContract(socketPath) {
+  const socket = connect({path: socketPath, readableHighWaterMark: 1024});
+  await once(socket, 'connect');
+  const requestBytes = contractRequest();
+  socket.write(requestBytes);
+  const first = await readFramed(socket);
+  socket.write(requestBytes);
+  const second = await readFramed(socket);
+  assert.equal(socket.destroyed, false);
+  socket.end();
+  return {first, second};
+}
+
+function abortContract(socketPath) {
+  return new Promise((resolveAbort, reject) => {
+    const socket = connect({path: socketPath, readableHighWaterMark: 1024});
+    let received = 0;
+    const finish = () => resolveAbort(received);
+    socket.setTimeout(3000, () => socket.destroy());
+    socket.on('error', error => received > 0 ? finish() : reject(error));
+    socket.on('close', finish);
+    socket.on('connect', () => socket.write(contractRequest()));
+    socket.on('data', chunk => {
+      received += chunk.length;
+      if (received > 200) socket.destroy();
+    });
+  });
 }
 
 function recordsFrom(text) {
@@ -240,6 +326,22 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
       HOSTED_WALLET_MARKET_FEE_RECIPIENT: `0x${'11'.repeat(20)}`,
       HOSTED_WALLET_MARKET_SETTLEMENT_TOKEN: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     };
+    const profileFile = path.join(directory, 'machine-profile.json');
+    const generated = JSON.parse(execFileSync(process.execPath, [
+      '--max-old-space-size=256',
+      path.join(root, 'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
+      '--sds-root', root,
+      '--origin', 'https://desk.invalid',
+      '--tenant', 'ready-fixture',
+      '--money', 'unfunded',
+      '--participation', 'voluntary-artifact-v1',
+      '--out', profileFile,
+    ], {encoding: 'utf8', timeout: 30000, maxBuffer: 1024 * 1024}));
+    assert.equal(generated.money, 'unfunded');
+    assert.equal(generated.participation, 'voluntary-artifact-v1');
+    assert.equal(generated.signerAuthority, false);
+    await chmod(profileFile, 0o600);
+    serving.HOSTED_WALLET_MARKET_MACHINE_PROFILE = profileFile;
     await writeFile(envFile, JSON.stringify(serving), {mode: 0o600});
     await chmod(envFile, 0o600);
     // Bind without accepting, then exec Node in the same owned PID. This
@@ -273,6 +375,30 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     }
     assert.equal(ready, true, (stderr || stdout || 'ready file missing').slice(-1500));
     assert.equal(stdout.includes(`READY ${socketPath}`), true, (stderr || 'ready line missing').slice(-1500));
+
+    const contractDoc = JSON.parse(await readFile(path.join(root, 'vendor/hosted-wallet-market/contracts/voluntary-participation.openapi.json'), 'utf8'));
+    const contractWire = Buffer.from(JSON.stringify(contractDoc));
+    assert.equal(contractWire.length, 39996);
+    const pooled = await oneSocketContract(socketPath);
+    for (const response of [pooled.first, pooled.second]) {
+      assert.equal(response.status, 200);
+      assert.equal(response.headers['content-length'], '39996');
+      assert.equal(response.body.equals(contractWire), true);
+      assert.equal(response.headers.connection, 'keep-alive');
+      assert.equal(response.headers['cache-control'], 'no-store');
+      assert.equal(response.headers['transfer-encoding'], undefined);
+      assert.equal(response.headers['x-ae-wire-version'], 'c0-1');
+      assert.equal(response.headers['x-ae-server-class'], 'live');
+      assert.match(response.headers['x-ae-completion'], /^[a-f0-9]{8}$/);
+      assert.equal(JSON.parse(response.body.toString()).openapi, '3.1.0');
+    }
+    assert.notEqual(pooled.first.headers['x-ae-completion'], pooled.second.headers['x-ae-completion']);
+    const abortedBytes = await abortContract(socketPath);
+    assert.equal(abortedBytes > 200, true);
+    const recoveredContract = await oneContract(socketPath);
+    assert.equal(recoveredContract.status, 200);
+    assert.equal(recoveredContract.body.equals(contractWire), true);
+    assert.equal(recoveredContract.headers.connection, 'keep-alive');
 
     const auth = {authorization: `Bearer ${ownerToken}`};
     const enrollment = installation.replace('/installation', '/enrollment');
@@ -372,7 +498,7 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
       await sleep(20);
       seen = recordsFrom(stdout);
     }
-    const framed = [nativeRead, nativePost, first, second, unbound, delayed, recovered].concat(aborted.status ? [aborted] : []);
+    const framed = [pooled.first, pooled.second, recoveredContract, nativeRead, nativePost, first, second, unbound, delayed, recovered].concat(aborted.status ? [aborted] : []);
     for (const response of framed) {
       const record = seen.find(item => item.id === response.headers['x-ae-completion']);
       assert.ok(record, response.headers['x-ae-completion']);
@@ -410,6 +536,8 @@ import(process.env.ROOT1156_HANDLER).then(handler => handler.start()).catch(erro
     assert.equal(rendered.includes('Bearer'), false);
     assert.equal(rendered.includes(qualification), false);
     assert.equal(rendered.includes(installation), false);
+    assert.equal(rendered.includes('Voluntary machine participation'), false);
+    assert.equal(rendered.includes(profileFile), false);
   } finally {
     if (holder) {
       await holder.query('ROLLBACK').catch(() => {});
