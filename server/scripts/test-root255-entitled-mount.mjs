@@ -18,42 +18,18 @@ const vendor = path.join(root, 'vendor/hosted-wallet-market');
 const require = createRequire(pathToFileURL(path.join(vendor, 'package.json')));
 const pg = require('pg');
 const PREFIX = '/api/neomorphic-contributor-journey';
-const BASE = 'f8c1788c8da6a7ed99ac1e4831633968c591283e';
-const RECEIVED = [
+// Admitted cafd88c9 already differs from f8c1788c by an unrelated source refresh.
+// This gate bounds only the running-round activation delta from that admitted pin.
+const ADMITTED = 'cafd88c9026688359773d9c027944bff959d7777';
+const ACTIVATION = [
   '.gitignore',
-  'client/public/llms.txt',
-  'package.json',
+  'server/foundry/activation/private-control-pin.json',
   'server/lib/funded-round-activation.js',
   'server/lib/neomorphic-contributor-journey-mount.js',
-  'server/foundry/activation/private-control-pin.json',
-  'server/lib/observatory/adapters/smithery-mcp.js',
-  'server/lib/observatory/contract.js',
-  'server/lib/observatory/convergence.js',
-  'server/lib/observatory/observation.schema.json',
-  'server/lib/observatory/positioning.js',
-  'server/lib/observatory/registry.js',
-  'server/scripts/fixtures/installed-response-ingress-handler.mjs',
-  'server/scripts/fixtures/installed-response-ready-handler.mjs',
-  'server/scripts/test-installed-response-ingress.mjs',
-  'server/scripts/test-installed-response-ready.mjs',
-  'server/scripts/test-machine-guide-links.js',
-  'server/scripts/test-observatory-smithery-lifecycle.js',
   'server/scripts/test-root255-entitled-mount.mjs',
-  'vendor/hosted-wallet-market/SOURCE.json',
-  'vendor/hosted-wallet-market/src/bounded-review.mjs',
-  'vendor/hosted-wallet-market/src/response-completion.mjs',
-  'vendor/hosted-wallet-market/src/retained-outcome.mjs',
-  'vendor/hosted-wallet-market/src/server.mjs',
-  'vendor/hosted-wallet-market/test/read-lifetime.test.mjs',
-  'vendor/hosted-wallet-market/test/requester-cancellation.test.mjs',
-  'vendor/hosted-wallet-market/test/response-completion.test.mjs',
 ];
-const CHANGED_VENDOR = [
-  'vendor/hosted-wallet-market/SOURCE.json',
-  'vendor/hosted-wallet-market/src/bounded-review.mjs',
-  'vendor/hosted-wallet-market/src/retained-outcome.mjs',
-  'vendor/hosted-wallet-market/src/server.mjs',
-];
+const MOUNT = 'server/lib/neomorphic-contributor-journey-mount.js';
+const ACTIVATION_MODULE = 'server/lib/funded-round-activation.js';
 const TENANT = 'root255-mount';
 const DEST = `0x${'ab'.repeat(20)}`;
 const SOURCE = `0x${'cd'.repeat(20)}`;
@@ -141,7 +117,7 @@ function oneHeader(headers, name) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-test('cold import stays inside the artifact and the f8 diff is this received set', async () => {
+test('cold import stays inside the artifact and activation stays on the admitted seam', async () => {
   const file = resolveHostedWalletMarketEntry(root, undefined);
   assert.equal(file, path.join(root, ARTIFACT_ENTRY));
   assert.equal(path.relative(root, file).startsWith('..'), false);
@@ -154,32 +130,28 @@ test('cold import stays inside the artifact and the f8 diff is this received set
   assert.equal(typeof loaded.mountHostedWalletMarket, 'function');
   assert.equal(file.includes(`${path.sep}vendor${path.sep}hosted-wallet-market${path.sep}`), true);
   assert.equal(file.includes(`${path.sep}root239${path.sep}`), false);
-  const tracked = git(['diff', '--name-only', BASE]).stdout.split('\n').filter(Boolean);
+  const tracked = git(['diff', '--name-only', ADMITTED]).stdout.split('\n').filter(Boolean);
   const untracked = git(['ls-files', '--others', '--exclude-standard']).stdout.split('\n').filter(Boolean);
-  assert.deepEqual([...tracked, ...untracked].sort(), [...RECEIVED].sort());
-  const basePin = JSON.parse(git(['show', `${BASE}:server/foundry/activation/private-control-pin.json`]).stdout);
+  assert.deepEqual([...tracked, ...untracked].sort(), [...ACTIVATION].sort());
+  const admittedPin = JSON.parse(git(['show', `${ADMITTED}:server/foundry/activation/private-control-pin.json`]).stdout);
   const pin = JSON.parse(readFileSync(path.join(root, 'server/foundry/activation/private-control-pin.json'), 'utf8'));
-  assert.deepEqual(pin.schema, basePin.schema);
-  assert.deepEqual(pin.base, basePin.base);
+  assert.deepEqual(pin.schema, admittedPin.schema);
+  assert.deepEqual(pin.base, admittedPin.base);
   assert.equal(pin.base, '4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134');
-  assert.deepEqual(pin.receivedCallerClosures, basePin.receivedCallerClosures);
-  for (const [name, digest] of Object.entries(basePin.files)) {
-    if (name.startsWith('vendor/hosted-wallet-market/') || name === 'package.json' || name === 'server/lib/neomorphic-contributor-journey-mount.js') continue;
+  assert.deepEqual(pin.receivedCallerClosures, admittedPin.receivedCallerClosures);
+  for (const [name, digest] of Object.entries(admittedPin.files)) {
+    if (name === MOUNT) continue;
     assert.equal(pin.files[name], digest, name);
   }
-  assert.notEqual(pin.files['package.json'], basePin.files['package.json']);
+  assert.equal(pin.files['package.json'], admittedPin.files['package.json']);
   assert.equal(pin.files['package.json'], sha256(readFileSync(path.join(root, 'package.json'))));
-  assert.notEqual(pin.files['server/lib/neomorphic-contributor-journey-mount.js'], basePin.files['server/lib/neomorphic-contributor-journey-mount.js']);
-  const added = Object.keys(pin.files).filter(name => !Object.hasOwn(basePin.files, name)).sort();
-  assert.deepEqual(added, ['server/lib/funded-round-activation.js', 'vendor/hosted-wallet-market/src/response-completion.mjs']);
-  const changedVendor = Object.keys(basePin.files).filter(name => name.startsWith('vendor/hosted-wallet-market/') && pin.files[name] !== basePin.files[name]).sort();
-  assert.deepEqual(changedVendor, [...CHANGED_VENDOR].sort());
-  for (const name of [...CHANGED_VENDOR, 'package.json', 'vendor/hosted-wallet-market/src/response-completion.mjs', 'server/lib/funded-round-activation.js', 'server/lib/neomorphic-contributor-journey-mount.js']) {
+  assert.notEqual(pin.files[MOUNT], admittedPin.files[MOUNT]);
+  const added = Object.keys(pin.files).filter(name => !Object.hasOwn(admittedPin.files, name)).sort();
+  assert.deepEqual(added, [ACTIVATION_MODULE]);
+  for (const name of [ACTIVATION_MODULE, MOUNT]) {
     assert.equal(pin.files[name], sha256(readFileSync(path.join(root, name))), name);
   }
-  assert.equal(git(['diff', '--exit-code', BASE, '--', 'vendor/hosted-wallet-market/ENTRY.md']).status, 0);
-  assert.deepEqual(git(['diff', '--name-only', BASE, '--', 'client']).stdout.split('\n').filter(Boolean), ['client/public/llms.txt']);
-  assert.equal(git(['diff', '--exit-code', BASE, '--', 'server/app.js', 'server/lib/hosted-wallet-market-mount.js', 'vendor/neomorphic-contributor-journey']).status, 0);
+  assert.equal(git(['diff', '--exit-code', ADMITTED, '--', 'vendor/hosted-wallet-market/ENTRY.md', 'client', 'server/app.js', 'server/lib/hosted-wallet-market-mount.js', 'vendor/neomorphic-contributor-journey', 'package.json']).status, 0);
 });
 
 test('mounted entitled read keeps no-header fallthrough, paid and owed, and succession rollback', async () => {

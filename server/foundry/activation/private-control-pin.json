@@ -64,7 +64,7 @@
     "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
-    "server/lib/funded-round-activation.js": "b2c8ca3ecbbc00a6788bd68e6c7b4ce7bf9e6a1455fcdb08afa9b25d032386eb",
+    "server/lib/funded-round-activation.js": "bbe6ff50b1d678a784caffe738a174d2563c4eb5af0d3b2694c5ddded262033a",
     "server/lib/neomorphic-contributor-journey-mount.js": "799fe5d4d0fbcd62a80f23bd053902b236b63d6f3eee61bd501c4b2a08731157",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",

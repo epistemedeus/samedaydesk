@@ -125,6 +125,21 @@ function arraysOf(runtime) {
   if (!admission?.kernel || !runtime.installed.db || !claims || !Array.isArray(inner) || !Array.isArray(claims.rounds)) throw coded("unavailable");
   return {admission, claims, inner, outer, db: runtime.installed.db, kernel: admission.kernel};
 }
+async function restoreLive(found, pin) {
+  const existing = found.inner.find(item => item.roundKey === pin.roundKey || item.roundId === pin.roundId);
+  if (existing) {
+    if (stablePin(existing) !== stablePin(pin)) throw coded("identity_conflict");
+    return;
+  }
+  const undo = remember(found, pin);
+  try {
+    for (const task of pin.tasks) await found.db.enrollTask(`${pin.roundKey}:${task.offerKey}`, task.requesterAccountId);
+    await found.admission.checkReady();
+  } catch (error) {
+    undo();
+    mapFailure(error);
+  }
+}
 function remember(found, pin) {
   const {inner, outer, claims} = found;
   const existing = inner.find(item => item.roundKey === pin.roundKey || item.roundId === pin.roundId);
@@ -209,6 +224,7 @@ async function activate(req, res, env, runtime) {
   const prior = await readReceipt(found.kernel, operation);
   if (prior) {
     if (prior.request_hash !== bodyHash) throw coded("replay_conflict");
+    await restoreLive(found, canonicalPin(body.pin));
     send(res, 200, storedBody(prior));
     return;
   }
