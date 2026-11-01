@@ -2,6 +2,7 @@ import express from "express";
 import {fileURLToPath} from 'node:url';
 import {verifyContributorRuntime} from './contributor-artifact.js';
 import {createRecoveryState, noteContributorFailure} from './contributor-mount-recovery.js';
+import {handleFundedRoundActivation, isFundedRoundActivation} from './funded-round-activation.js';
 
 export const CONTRIBUTOR_JOURNEY_PREFIX = "/api/neomorphic-contributor-journey";
 const ENTRY_URL = new URL("../../vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js", import.meta.url);
@@ -89,12 +90,39 @@ export function mountNeomorphicContributorJourney(app, options = {}) {
     state.status = "disabled";
     state.diagnostic = { stage: "service_config", code: "INVALID_INPUT" };
   }
-  app.use(CONTRIBUTOR_JOURNEY_PREFIX, async (req, res, next) => {
+  // checkReady walks the live futureRounds array after an await. One prefix turn
+  // keeps that walk from observing a pin whose task link is not committed yet.
+  let turn = Promise.resolve();
+  const exclusive = work => {
+    const run = turn.then(work, work);
+    turn = run.then(() => {}, () => {});
+    return run;
+  };
+  const untilDone = (handler, req, res, next) => new Promise(resolve => {
+    let settled = false;
+    const done = () => { if (!settled) { settled = true; resolve(); } };
+    res.once("finish", done);
+    res.once("close", done);
+    try {
+      Promise.resolve(handler(req, res, error => { done(); next(error); })).catch(error => { done(); next(error); });
+    } catch (error) {
+      done();
+      next(error);
+    }
+  });
+  app.use(CONTRIBUTOR_JOURNEY_PREFIX, (req, res, next) => exclusive(async () => {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     await ensure();
-    return (state.runtime?.app || disabled)(req, res, next);
-  });
+    if (isFundedRoundActivation(req)) {
+      const finished = new Promise(resolve => { res.once("finish", resolve); res.once("close", resolve); });
+      try { await handleFundedRoundActivation(req, res, {env, runtime: state.runtime}); }
+      catch { if (!res.headersSent) res.status(500).json({schema: "neomorphic.funded-round-activation.v1", error: {code: "activation_failed"}}); }
+      if (!res.writableEnded && !res.writableFinished) await finished;
+      return;
+    }
+    await untilDone(state.runtime?.app || disabled, req, res, next);
+  }));
   return {
     state,
     ready: () => state.inFlight || Promise.resolve(),
