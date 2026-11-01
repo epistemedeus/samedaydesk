@@ -168,6 +168,39 @@ function remember(found, pin) {
 function storedBody(row) {
   return typeof row.response_json === "string" ? JSON.parse(row.response_json) : row.response_json;
 }
+async function loadCanonical(found, pin) {
+  return found.kernel.withOpportunityClient(async client => (await client.query(
+    `SELECT id, round_key, status, terms_version, production_admission, principal_cap_atomic, submission_deadline, transfer_fee_cap, asset, chain_id
+     FROM opportunity_rounds WHERE round_key=$1 AND provenance='production'`, [pin.roundKey])).rows[0] ?? null, "read");
+}
+async function assertCurrentBinding(body, pin, found, env, owed) {
+  if (typeof body.requesterAccountId !== "string" || !/^acc_[A-Za-z0-9_-]{16}$/.test(body.requesterAccountId) ||
+      pin.tasks.some(task => task.requesterAccountId !== body.requesterAccountId)) throw coded("requester_mismatch");
+  if (typeof body.packetHash !== "string" || !/^[a-f0-9]{64}$/.test(body.packetHash) || typeof body.allocationHash !== "string" ||
+      !/^[a-f0-9]{64}$/.test(body.allocationHash) || body.termsVersion !== pin.termsVersion) throw coded("allocation_terms_mismatch");
+  await assertInstallation(body, env);
+  assertAllocationShape(body.allocation);
+  if (body.allocation.termsPacketSha256 !== body.packetHash || body.allocation.termsVersion !== pin.termsVersion) throw coded("allocation_terms_mismatch");
+  const row = await loadCanonical(found, pin);
+  if (!row) throw coded("canonical_round_absent");
+  if (row.id !== pin.roundId || row.round_key !== pin.roundKey || row.terms_version !== pin.termsVersion || row.production_admission !== true ||
+      row.asset !== "USDC" || Number(row.chain_id) !== 8453) throw coded("canonical_round_mismatch");
+  assertAllocationMatches(body.allocation, pin, row, body.packetHash, body.allocationHash);
+  // A stored receipt may restore owed access after close or expiry. It does not change round status.
+  if (!owed) {
+    if (row.status !== "open") throw coded("round_closed");
+    if (new Date(row.submission_deadline).getTime() <= Date.now()) throw coded("authority_expired");
+  }
+  const account = await found.kernel.withOpportunityClient(async client => (await client.query("SELECT id FROM journey_accounts WHERE id=$1", [body.requesterAccountId])).rows[0] ?? null, "read");
+  if (!account) throw coded("requester_mismatch");
+  for (const task of pin.tasks) {
+    const taskId = `${pin.roundKey}:${task.offerKey}`;
+    const link = await found.kernel.withOpportunityClient(async client => (await client.query(
+      "SELECT requester_account_id, public_discussion FROM journey_task_links WHERE task_id=$1", [taskId])).rows[0] ?? null, "read");
+    if (link && (link.requester_account_id !== body.requesterAccountId || link.public_discussion !== false)) throw coded("requester_mismatch");
+  }
+  return row;
+}
 async function readReceipt(kernel, operation) {
   return kernel.withOpportunityClient(async client => (await client.query(
     "SELECT request_hash, response_json FROM earned_work_idempotency WHERE scope=$1 AND task_id=$2 AND key=$3",
@@ -224,35 +257,14 @@ async function activate(req, res, env, runtime) {
   const prior = await readReceipt(found.kernel, operation);
   if (prior) {
     if (prior.request_hash !== bodyHash) throw coded("replay_conflict");
-    await restoreLive(found, canonicalPin(body.pin));
+    const pin = canonicalPin(body.pin);
+    await assertCurrentBinding(body, pin, found, env, true);
+    await restoreLive(found, pin);
     send(res, 200, storedBody(prior));
     return;
   }
   const pin = canonicalPin(body.pin);
-  if (typeof body.requesterAccountId !== "string" || !/^acc_[A-Za-z0-9_-]{16}$/.test(body.requesterAccountId) ||
-      pin.tasks.some(task => task.requesterAccountId !== body.requesterAccountId)) throw coded("requester_mismatch");
-  if (typeof body.packetHash !== "string" || !/^[a-f0-9]{64}$/.test(body.packetHash) || typeof body.allocationHash !== "string" ||
-      !/^[a-f0-9]{64}$/.test(body.allocationHash) || body.termsVersion !== pin.termsVersion) throw coded("allocation_terms_mismatch");
-  await assertInstallation(body, env);
-  assertAllocationShape(body.allocation);
-  if (body.allocation.termsPacketSha256 !== body.packetHash || body.allocation.termsVersion !== pin.termsVersion) throw coded("allocation_terms_mismatch");
-  const row = await found.kernel.withOpportunityClient(async client => (await client.query(
-    `SELECT id, round_key, status, terms_version, production_admission, principal_cap_atomic, submission_deadline, transfer_fee_cap, asset, chain_id
-     FROM opportunity_rounds WHERE round_key=$1 AND provenance='production'`, [pin.roundKey])).rows[0] ?? null, "read");
-  if (!row) throw coded("canonical_round_absent");
-  if (row.id !== pin.roundId || row.round_key !== pin.roundKey || row.terms_version !== pin.termsVersion || row.production_admission !== true ||
-      row.asset !== "USDC" || Number(row.chain_id) !== 8453) throw coded("canonical_round_mismatch");
-  assertAllocationMatches(body.allocation, pin, row, body.packetHash, body.allocationHash);
-  if (row.status !== "open") throw coded("round_closed");
-  if (new Date(row.submission_deadline).getTime() <= Date.now()) throw coded("authority_expired");
-  const account = await found.kernel.withOpportunityClient(async client => (await client.query("SELECT id FROM journey_accounts WHERE id=$1", [body.requesterAccountId])).rows[0] ?? null, "read");
-  if (!account) throw coded("requester_mismatch");
-  for (const task of pin.tasks) {
-    const taskId = `${pin.roundKey}:${task.offerKey}`;
-    const link = await found.kernel.withOpportunityClient(async client => (await client.query(
-      "SELECT requester_account_id, public_discussion FROM journey_task_links WHERE task_id=$1", [taskId])).rows[0] ?? null, "read");
-    if (link && (link.requester_account_id !== body.requesterAccountId || link.public_discussion !== false)) throw coded("requester_mismatch");
-  }
+  await assertCurrentBinding(body, pin, found, env, false);
   const undo = remember(found, pin);
   try {
     for (const task of pin.tasks) await found.db.enrollTask(`${pin.roundKey}:${task.offerKey}`, task.requesterAccountId);
