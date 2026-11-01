@@ -20,8 +20,11 @@ const pg = require('pg');
 const PREFIX = '/api/neomorphic-contributor-journey';
 const BASE = 'f8c1788c8da6a7ed99ac1e4831633968c591283e';
 const RECEIVED = [
+  '.gitignore',
   'client/public/llms.txt',
   'package.json',
+  'server/lib/funded-round-activation.js',
+  'server/lib/neomorphic-contributor-journey-mount.js',
   'server/foundry/activation/private-control-pin.json',
   'server/lib/observatory/adapters/smithery-mcp.js',
   'server/lib/observatory/contract.js',
@@ -161,16 +164,17 @@ test('cold import stays inside the artifact and the f8 diff is this received set
   assert.equal(pin.base, '4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134');
   assert.deepEqual(pin.receivedCallerClosures, basePin.receivedCallerClosures);
   for (const [name, digest] of Object.entries(basePin.files)) {
-    if (name.startsWith('vendor/hosted-wallet-market/') || name === 'package.json') continue;
+    if (name.startsWith('vendor/hosted-wallet-market/') || name === 'package.json' || name === 'server/lib/neomorphic-contributor-journey-mount.js') continue;
     assert.equal(pin.files[name], digest, name);
   }
   assert.notEqual(pin.files['package.json'], basePin.files['package.json']);
   assert.equal(pin.files['package.json'], sha256(readFileSync(path.join(root, 'package.json'))));
+  assert.notEqual(pin.files['server/lib/neomorphic-contributor-journey-mount.js'], basePin.files['server/lib/neomorphic-contributor-journey-mount.js']);
   const added = Object.keys(pin.files).filter(name => !Object.hasOwn(basePin.files, name)).sort();
-  assert.deepEqual(added, ['vendor/hosted-wallet-market/src/response-completion.mjs']);
+  assert.deepEqual(added, ['server/lib/funded-round-activation.js', 'vendor/hosted-wallet-market/src/response-completion.mjs']);
   const changedVendor = Object.keys(basePin.files).filter(name => name.startsWith('vendor/hosted-wallet-market/') && pin.files[name] !== basePin.files[name]).sort();
   assert.deepEqual(changedVendor, [...CHANGED_VENDOR].sort());
-  for (const name of [...CHANGED_VENDOR, 'package.json', 'vendor/hosted-wallet-market/src/response-completion.mjs']) {
+  for (const name of [...CHANGED_VENDOR, 'package.json', 'vendor/hosted-wallet-market/src/response-completion.mjs', 'server/lib/funded-round-activation.js', 'server/lib/neomorphic-contributor-journey-mount.js']) {
     assert.equal(pin.files[name], sha256(readFileSync(path.join(root, name))), name);
   }
   assert.equal(git(['diff', '--exit-code', BASE, '--', 'vendor/hosted-wallet-market/ENTRY.md']).status, 0);
