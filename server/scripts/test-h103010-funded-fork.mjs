@@ -9,7 +9,9 @@
 //   H103010_CLIENT             immutable public 0.3.1 cold client
 //   H103010_CLIENT_SHA256      sha256 of that client file
 //   H103010_DESCRIPTOR         descriptor JSON for that client
-//   H103010_NODE_MODULES       prepared node_modules directory
+//   H103010_NODE_MODULES       prepared node_modules directory.
+//                              Linked beside the companion package when that
+//                              checkout has none, and removed if this process added it.
 // Optional:
 //   H103010_FORK_URL           default http://127.0.0.1:18545, loopback only
 //   H103010_SDS_COMMIT         expected HEAD of this checkout
@@ -29,7 +31,7 @@ import assert from 'node:assert/strict';
 import {execFile, execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createHash} from 'node:crypto';
-import {chmodSync, existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync} from 'node:fs';
+import {chmodSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
 import https from 'node:https';
 import {dirname, join} from 'node:path';
@@ -61,15 +63,17 @@ const clientBytes = readFileSync(clientPath);
 assert.equal(createHash('sha256').update(clientBytes).digest('hex'), requiredEnv('H103010_CLIENT_SHA256'));
 const published = JSON.parse(readFileSync(requiredEnv('H103010_DESCRIPTOR'), 'utf8'));
 const nodeModules = requiredEnv('H103010_NODE_MODULES');
-function gitRoot(start) {
+function walkUp(start, marker, label) {
   let dir = start;
   for (;;) {
-    if (existsSync(join(dir, '.git'))) return dir;
+    if (existsSync(join(dir, marker))) return dir;
     const parent = dirname(dir);
-    if (parent === dir) throw new Error('git root not found from ' + start);
+    if (parent === dir) throw new Error(label + ' not found from ' + start);
     dir = parent;
   }
 }
+function gitRoot(start) { return walkUp(start, '.git', 'git root'); }
+function packageRoot(start) { return walkUp(start, 'package.json', 'package root'); }
 const sdsHead = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 const operatorHead = execFileSync('git', ['-C', gitRoot(dirname(OPERATOR_ENTRY)), 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 if (process.env.H103010_SDS_COMMIT) assert.equal(sdsHead, process.env.H103010_SDS_COMMIT);
@@ -142,7 +146,13 @@ function journalTxs(file) {
 }
 
 const report = {signs:0, capture:null, refund:null};
+const operatorModules = join(packageRoot(dirname(OPERATOR_ENTRY)), 'node_modules');
+let removeOperatorModules = false;
 try {
+  if (!existsSync(operatorModules)) {
+    symlinkSync(nodeModules, operatorModules);
+    removeOperatorModules = true;
+  }
   const chain = rpc('eth_chainId', []);
   assert.equal(chain, '0x2105');
   const capability = await host.boot();
@@ -402,6 +412,7 @@ export async function readOperatorAccount() {
   report.voluntaryPaidWork = false;
   console.log(JSON.stringify({ok:true, sdsHead, operatorHead, fork:RPC, ...report}));
 } finally {
+  if (removeOperatorModules) rmSync(operatorModules);
   delete process.env.PILOT_MACHINE_OPERATOR_GRANT;
   delete process.env.H103010_OPERATOR_KEY;
   await host.close();
