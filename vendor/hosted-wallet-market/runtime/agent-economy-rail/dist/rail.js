@@ -1,4 +1,4 @@
-import { decodeFunctionData, decodeEventLog, encodeFunctionData, keccak256 } from 'viem';
+import { decodeFunctionData, decodeEventLog, encodeFunctionData, keccak256, parseTransaction } from 'viem';
 import { readFileSync } from 'node:fs';
 import { checked, requireThat, digest, freezeQuote, COMMERCE_PAYMENTS_PIN } from '../../agent-economy-foundation/dist/index.js';
 import { checkChainIdentity, prepareIntent, broadcast } from './local-chain.js';
@@ -9,6 +9,7 @@ export const REVIEW_WINDOW_SECONDS = 3600;
 /** Capture submitted at the end of review still has to land before authorization expiry. */
 export const CAPTURE_MARGIN_SECONDS = 300;
 const stored = (p) => ({ ...p, operator: p.operator.toLowerCase(), payer: p.payer.toLowerCase(), receiver: p.receiver.toLowerCase(), token: p.token.toLowerCase(), feeReceiver: p.feeReceiver.toLowerCase(), maxAmount: p.maxAmount.toString(), salt: p.salt.toString() });
+const authorizeCall = 'authorize';
 const payment = (p) => ({ ...p, maxAmount: BigInt(p.maxAmount), salt: BigInt(p.salt) });
 const common = (r) => ({ schemaVersion: 'pilot.agent-economy.v2', provenance: 'local_chain', requestDigest: digest(r) });
 const unknown = (r) => ({ ...common(r), state: 'unknown' });
@@ -122,6 +123,64 @@ export class CommercePaymentsRail {
         requireThat(r.tenantId === q.tenantId && r.actorId === q.evaluatorId && r.authorityId === q.settlementAuthorityId && r.quoteId === q.quoteId && r.quoteDigest === digest(q) && r.allocationId === q.canonicalTaskId && digest(r.asset) === digest(q.asset) && r.amount === q.gross && r.feeAmount === q.platformFee && r.feeRecipient === q.feeRecipient && r.payoutDestination === q.payoutDestination && r.escrowTarget === q.fundingTarget, 'capture_request_binding');
         return b;
     }
+    allocationKey(quote) { return JSON.stringify([quote.tenantId, quote.canonicalTaskId]); }
+    sameHex(left, right) {
+        return typeof left === 'string' && typeof right === 'string' && left.toLowerCase() === right.toLowerCase();
+    }
+    /**
+     * Predecessor bytes are current authority only when the stored allocation,
+     * funding operation, and authorize calldata still name this quote and payment.
+     * The quote digest has to be the one fenced before funding, not a value
+     * recomputed from a caller-supplied commitment.
+     */
+    historicalFundProved(current, prior, operationId) {
+        if (!prior?.raw || !prior.txId || prior.txId !== keccak256(prior.raw))
+            return false;
+        let parsed;
+        try {
+            parsed = parseTransaction(prior.raw);
+        }
+        catch {
+            return false;
+        }
+        const data = parsed.data;
+        const to = parsed.to;
+        if (typeof data !== 'string' || typeof to !== 'string' || !this.sameHex(to, this.contracts.escrow))
+            return false;
+        if (prior.data !== undefined && !this.sameHex(prior.data, data))
+            return false;
+        if (prior.to !== undefined && !this.sameHex(prior.to, to))
+            return false;
+        const op = this.store.get('funding-op', current.proofId);
+        if (!op || op.operationId !== operationId)
+            return false;
+        const quoteDigest = digest(current.quote);
+        const approvalDigest = digest(current.payment);
+        const historical = digest({ proofId: current.proofId, data });
+        const extended = digest({ proofId: current.proofId, data, operationId, quoteDigest, approvalDigest });
+        if (prior.binding !== historical && prior.binding !== extended)
+            return false;
+        const allocation = this.store.get('funding-allocation', this.allocationKey(current.quote));
+        if (!allocation || allocation.proofId !== current.proofId || allocation.quoteDigest !== quoteDigest)
+            return false;
+        let decoded;
+        try {
+            decoded = decodeFunctionData({ abi: this.contracts.abi, data });
+        }
+        catch {
+            return false;
+        }
+        if (decoded.functionName !== authorizeCall || !decoded.args || decoded.args.length < 4)
+            return false;
+        let expected;
+        try {
+            expected = encodeFunctionData({ abi: this.contracts.abi, functionName: authorizeCall, args: [payment(current.payment), BigInt(current.quote.gross), this.contracts.collector, decoded.args[3]] });
+        }
+        catch {
+            return false;
+        }
+        return this.sameHex(expected, data);
+    }
     /** Signature alone keeps admission closed. Submission has its own durable state and hash. */
     async authorize(proofId, signature, operationId) {
         const b = this.binding(proofId);
@@ -130,26 +189,35 @@ export class CommercePaymentsRail {
         if (!b.authorizationTx)
             requireThat(Number((await this.client.getBlock()).timestamp) < Date.parse(b.quote.expiresAt) / 1000, 'quote_expired');
         let intent;
+        let historical = null;
         await this.store.transaction(async () => {
-            this.store.fence('funding-op', proofId, { operationId }, 'funding_operation_conflict');
             const current = this.binding(proofId);
             requireThat(!current.quarantined, 'funding_quarantined');
-            if (current.authorizationTx) {
-                // Recover the original signed operation. A second wallet signature
-                // (including a randomized hardware signature) cannot replace its data.
-                intent = this.store.get('tx', `fund:${proofId}`);
-                requireThat(intent && intent.txId === current.authorizationTx, 'funding_tx_conflict');
+            const prior = this.store.get('tx', `fund:${proofId}`);
+            if (current.authorizationTx && (!prior || prior.txId !== current.authorizationTx))
+                requireThat(false, 'funding_tx_conflict');
+            if (current.authorizationTx || (prior?.raw && prior.txId)) {
+                if (!this.historicalFundProved(current, prior, operationId)) {
+                    historical = { schema: 'pilot.historical-funding-recovery.v1', recovery: 'historical_unknown', proofId, broadcast: false, authorization: null };
+                    return;
+                }
+                this.store.fence('funding-op', proofId, { operationId }, 'funding_operation_conflict');
+                intent = prior;
+                current.authorizationTx = intent.txId;
+                current.stage = 'submitted';
+                this.store.put('funding', proofId, current);
+                return;
             }
-            else {
-                const data = encodeFunctionData({ abi: this.contracts.abi, functionName: 'authorize', args: [payment(current.payment), BigInt(current.quote.gross), this.contracts.collector, signature] });
-                const quoteDigest = digest(current.quote), approvalDigest = digest(current.payment);
-                const fundCommitment = { operationId, quoteDigest, approvalDigest };
-                intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data, operationId, quoteDigest, approvalDigest }), this.client, this.operator, this.contracts.escrow, data, { ...this.intentIdentity(), fundCommitment });
-            }
+            this.store.fence('funding-op', proofId, { operationId }, 'funding_operation_conflict');
+            const data = encodeFunctionData({ abi: this.contracts.abi, functionName: 'authorize', args: [payment(current.payment), BigInt(current.quote.gross), this.contracts.collector, signature] });
+            const quoteDigest = digest(current.quote), approvalDigest = digest(current.payment);
+            intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data, operationId, quoteDigest, approvalDigest }), this.client, this.operator, this.contracts.escrow, data, { ...this.intentIdentity(), fundCommitment: { operationId, quoteDigest, approvalDigest } });
             current.authorizationTx = intent.txId;
             current.stage = 'submitted';
             this.store.put('funding', proofId, current);
         });
+        if (historical)
+            return historical;
         await broadcast(this.client, intent, this.intentIdentity());
         return this.readProof(proofId);
     }

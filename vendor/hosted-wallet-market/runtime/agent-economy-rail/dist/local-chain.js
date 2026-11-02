@@ -76,9 +76,12 @@ export async function checkChainIdentity(client, identity, authority = true) {
 // A returned prior intent is not signed again and does not enter that scope.
 // The nonce reservation and budget hold commit before the signer. Signed bytes
 // commit in a second transition. A reservation without those bytes is unknown
-// and is not signed again. A release happens only when non-entry is proved.
-// A stored signature is returned unchanged, including one bound by the historical
-// fund digest of proof suffix and calldata. That old binding is not rewritten.
+// and is not signed again. A release happens only when this file has not called
+// the signer. A property on the thrown error is not that proof.
+// A stored signature is returned unchanged. Its old binding is not rewritten.
+// An old fund digest of proof suffix and calldata is accepted only when the
+// durable allocation, funding operation, and stored payment describe that same
+// calldata. A caller-supplied commitment is not historical evidence.
 async function scoped(identity, operationId, fn) {
     if (typeof identity?.withOperation !== 'function')
         return await fn();
@@ -116,21 +119,23 @@ function historicalFundBinding(prior) {
         return null;
     return digest({ proofId: prior.id.slice('fund:'.length), data: prior.data });
 }
-/** The old signature stays stored. It is returned only for the extended fund commitment of the same calldata. */
-function acceptedHistoricalFund(prior, id, binding, data, to, identity) {
+/** The old signature stays stored. The extended identity has to already be in the journal. */
+function acceptedHistoricalFund(store, prior, id, binding, data, to) {
     if (!prior || prior.id !== id || !sameHex(prior.data, data) || !sameHex(prior.to, to) || prior.binding !== historicalFundBinding(prior))
         return false;
-    const commitment = identity?.fundCommitment;
-    if (!commitment || typeof commitment.operationId !== 'string' || typeof commitment.quoteDigest !== 'string' || typeof commitment.approvalDigest !== 'string')
+    const proofId = id.slice('fund:'.length);
+    const funding = store.get('funding', proofId);
+    const op = store.get('funding-op', proofId);
+    if (!funding?.quote || funding.payment === undefined || typeof op?.operationId !== 'string')
         return false;
-    const extended = digest({ proofId: id.slice('fund:'.length), data: prior.data, operationId: commitment.operationId, quoteDigest: commitment.quoteDigest, approvalDigest: commitment.approvalDigest });
+    const quoteDigest = digest(funding.quote);
+    const allocation = store.get('funding-allocation', JSON.stringify([funding.quote.tenantId, funding.quote.canonicalTaskId]));
+    if (!allocation || allocation.proofId !== proofId || allocation.quoteDigest !== quoteDigest)
+        return false;
+    const extended = digest({ proofId, data: prior.data, operationId: op.operationId, quoteDigest, approvalDigest: digest(funding.payment) });
     return binding === extended;
 }
-function provedNonEntry(error, invoked) {
-    if (error && typeof error === 'object' && error.signerEntered === true)
-        return false;
-    if (error && typeof error === 'object' && error.signerEntered === false)
-        return true;
+function provedNonEntry(_error, invoked) {
     return !invoked;
 }
 async function retainUnknown(store, id, binding) {
@@ -148,7 +153,7 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
     const prior = await store.frame(() => store.get('tx', id));
     if (prior?.raw && prior.txId) {
         if (prior.binding !== binding)
-            requireThat(acceptedHistoricalFund(prior, id, binding, data, to, identity), 'operation_conflict');
+            requireThat(acceptedHistoricalFund(store, prior, id, binding, data, to), 'operation_conflict');
         return prior;
     }
     requireThat(!prior || prior.binding === binding, 'operation_conflict');

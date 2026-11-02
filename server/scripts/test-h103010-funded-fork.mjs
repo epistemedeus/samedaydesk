@@ -1,14 +1,39 @@
 // Disposable owned-fork funded journey for one account that already has voluntary work.
-// State changes stay on 127.0.0.1. No public Base broadcast and no live key.
+// State changes stay on loopback. No public Base broadcast and no live key.
+// Paths and source identity are supplied. This file does not install packages,
+// create accounts, or embed a Root operation directory.
+//
+// Required environment:
+//   H103010_CAST               prepared cast binary
+//   H103010_OPERATOR_ENTRY     companion src/open-machine-authority.mjs
+//   H103010_CLIENT             immutable public 0.3.1 cold client
+//   H103010_CLIENT_SHA256      sha256 of that client file
+//   H103010_DESCRIPTOR         descriptor JSON for that client
+//   H103010_NODE_MODULES       prepared node_modules directory
+// Optional:
+//   H103010_FORK_URL           default http://127.0.0.1:18545, loopback only
+//   H103010_SDS_COMMIT         expected HEAD of this checkout
+//   H103010_OPERATOR_COMMIT    expected HEAD of the companion checkout
+//
+// Independent replay from this checkout, after anvil is already listening on the fork URL:
+//   H103010_CAST=<cast> \
+//   H103010_OPERATOR_ENTRY=<companion>/src/open-machine-authority.mjs \
+//   H103010_OPERATOR_COMMIT=<companion HEAD> \
+//   H103010_CLIENT=<cold-requester-0.3.1.mjs> \
+//   H103010_CLIENT_SHA256=<sha256> \
+//   H103010_DESCRIPTOR=<descriptor.json> \
+//   H103010_NODE_MODULES=<prepared node_modules> \
+//   H103010_SDS_COMMIT=<this HEAD> \
+//   node --max-old-space-size=768 server/scripts/test-h103010-funded-fork.mjs
 import assert from 'node:assert/strict';
 import {execFile, execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createHash} from 'node:crypto';
-import {chmodSync, mkdirSync, readFileSync, symlinkSync, writeFileSync} from 'node:fs';
+import {chmodSync, existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
 import https from 'node:https';
-import {join} from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {dirname, join} from 'node:path';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {generatePrivateKey, privateKeyToAccount} from 'viem/accounts';
 import {machineHost} from './root10940-machine-host.mjs';
 import {usefulEvidence} from '../../vendor/hosted-wallet-market/examples/participation-canary.mjs';
@@ -16,16 +41,39 @@ import {digest} from '../../vendor/hosted-wallet-market/runtime/agent-economy-fo
 import {versionedSource} from '../../vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/candidate.js';
 
 const exec = promisify(execFile);
-const CAST = '/tmp/h103010-scratch/cast';
-const RPC = 'http://127.0.0.1:18545';
+const root = fileURLToPath(new URL('../..', import.meta.url));
+function requiredEnv(name) {
+  const value = process.env[name];
+  if (!value) throw new Error('missing ' + name);
+  return value;
+}
+const CAST = requiredEnv('H103010_CAST');
+const RPC = process.env.H103010_FORK_URL || 'http://127.0.0.1:18545';
+const forkUrl = new URL(RPC);
+assert.equal(forkUrl.protocol, 'http:');
+assert.equal(['127.0.0.1', 'localhost', '[::1]'].includes(forkUrl.hostname), true);
 const USDC = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913';
 const WHALE = '0x20FE51A9229EEf2cF8Ad9E89d91CAb9312cF3b7A';
 const FEE_RECIPIENT = '0x' + '11'.repeat(20);
-const OPERATOR_ENTRY = '/tmp/h103010-operator-companion/tools/ops/machine-market-operator/src/open-machine-authority.mjs';
-const clientPath = '/tmp/h103010-neo/cold-requester-0.3.1.mjs';
+const OPERATOR_ENTRY = requiredEnv('H103010_OPERATOR_ENTRY');
+const clientPath = requiredEnv('H103010_CLIENT');
 const clientBytes = readFileSync(clientPath);
-assert.equal(createHash('sha256').update(clientBytes).digest('hex'), 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9');
-const published = JSON.parse(readFileSync('/tmp/h103010-neo/descriptor-aa861e98.json', 'utf8'));
+assert.equal(createHash('sha256').update(clientBytes).digest('hex'), requiredEnv('H103010_CLIENT_SHA256'));
+const published = JSON.parse(readFileSync(requiredEnv('H103010_DESCRIPTOR'), 'utf8'));
+const nodeModules = requiredEnv('H103010_NODE_MODULES');
+function gitRoot(start) {
+  let dir = start;
+  for (;;) {
+    if (existsSync(join(dir, '.git'))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) throw new Error('git root not found from ' + start);
+    dir = parent;
+  }
+}
+const sdsHead = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
+const operatorHead = execFileSync('git', ['-C', gitRoot(dirname(OPERATOR_ENTRY)), 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
+if (process.env.H103010_SDS_COMMIT) assert.equal(sdsHead, process.env.H103010_SDS_COMMIT);
+if (process.env.H103010_OPERATOR_COMMIT) assert.equal(operatorHead, process.env.H103010_OPERATOR_COMMIT);
 const candidate = versionedSource('eip155:8453');
 
 function rpc(method, params) {
@@ -167,7 +215,7 @@ export async function readOperatorAccount() {
 }
 `, {mode:0o600});
   chmodSync(readerFile, 0o600);
-  symlinkSync('/tmp/sds-aa861e98/node_modules', join(scratch, 'node_modules'));
+  symlinkSync(nodeModules, join(scratch, 'node_modules'));
   writeFileSync(authorityFile, `export {openMachineAuthority} from ${JSON.stringify(pathToFileURL(OPERATOR_ENTRY).href)};\n`, {mode:0o600});
   chmodSync(authorityFile, 0o600);
   const block = JSON.parse(execFileSync(CAST, ['rpc', '--rpc-url', RPC, 'eth_getBlockByNumber', 'latest', 'false'], {encoding:'utf8', timeout:30000}));
@@ -177,7 +225,7 @@ export async function readOperatorAccount() {
   const maxFeePerGas = base * 2n + 1000000000n;
   const grant = {
     schema:'pilot.machine-operator-grant.v1', enrolled:true, origin:host.origin, tenant:'root10940-owner-qa-fixture',
-    sdsRoot:'/home/ubuntu/ae14-work/h103010', sourceSha256:capability.sourceSha256, hostSha256:capability.hostSha256,
+    sdsRoot:root, sourceSha256:capability.sourceSha256, hostSha256:capability.hostSha256,
     networkClass:'owned-fork', forkId:'h103010-disposable', chain:'eip155:8453', rpcUrl:RPC,
     operator:operator.address.toLowerCase(), feeRecipient:FEE_RECIPIENT, epoch:1, minimumEpoch:1,
     revoked:false, revokedEpochs:[], expiresAt:new Date(Date.now() + 6 * 3600_000).toISOString(),
@@ -352,7 +400,7 @@ export async function readOperatorAccount() {
   report.missingOperator = paidAfterMissing.body.code;
   report.freeAfterMissing = true;
   report.voluntaryPaidWork = false;
-  console.log(JSON.stringify({ok:true, ...report}));
+  console.log(JSON.stringify({ok:true, sdsHead, operatorHead, fork:RPC, ...report}));
 } finally {
   delete process.env.PILOT_MACHINE_OPERATOR_GRANT;
   delete process.env.H103010_OPERATOR_KEY;
