@@ -3,7 +3,7 @@ import { keccak256 } from 'viem';
 import { assertSigningAttestation, nonceAuthorityKey } from './network-profile.js';
 import { assessFees, holdNative } from './network-fees.js';
 import { attestCandidate } from './candidate.js';
-import { historicalReplayPermitted } from '../../../src/machine-money.mjs';
+import { machineBroadcastPermitted, retainedIntentFromSigning } from '../../../src/machine-money.mjs';
 export async function sandbox(client) {
     requireThat(await client.getChainId() === 31337, 'sandbox_chain_required');
     const url = new URL(client.transport.url);
@@ -270,22 +270,61 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
             store.put('source-attestation', identity.attestation.ref, identity.attestation);
         if (identity.identityDigest)
             intent.witness = { identityDigest: identity.identityDigest, attestationRef: identity.attestation?.ref ?? '', grantEpoch: identity.grantEpoch ?? 0, configuredChain: identity.configuredChain, networkClass, abiDigest: identity.abiDigest ?? '', ...(identity.authorityDigest ? { authorityDigest: identity.authorityDigest } : {}) };
+        if (identity.authorityDigest && identity.feeLimits && identity.configuredChain) {
+            const retained = retainedIntentFromSigning({ id, raw, nonce: spec.nonce, to, data, identity });
+            requireThat(retained, 'signing_unknown');
+            store.put('retained-intent', id, retained);
+        }
         store.put('tx', id, intent);
         return intent;
+    });
+}
+function promoteObserved(store, txId) {
+    const prior = store.get('broadcast-attempt', txId);
+    if (prior?.state === 'observed')
+        return;
+    store.put('broadcast-attempt', txId, { state: 'observed', txId });
+}
+async function claimSend(store, txId) {
+    if (!store?.frame)
+        return 'unjournaled';
+    return store.frame(() => {
+        const prior = store.get('broadcast-attempt', txId);
+        if (prior?.state === 'attempting' || prior?.state === 'unknown' || prior?.state === 'observed')
+            return 'blocked';
+        store.put('broadcast-attempt', txId, { state: 'attempting', txId });
+        return 'claimed';
+    });
+}
+async function markUnknown(store, txId) {
+    if (!store?.frame)
+        return;
+    await store.frame(() => {
+        const prior = store.get('broadcast-attempt', txId);
+        if (prior?.state !== 'attempting')
+            return;
+        store.put('broadcast-attempt', txId, { state: 'unknown', txId });
     });
 }
 export async function broadcast(client, intent, identity) {
     const configuredChain = intent.witness?.configuredChain ?? identity.configuredChain;
     const networkClass = intent.witness?.networkClass ?? identity.networkClass;
     await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'observe');
+    const attemptStore = identity?.broadcastStore;
+    const machine = typeof identity?.authorizeIntent === 'function';
+    let discovered = null;
     try {
-        const receipt = await client.getTransactionReceipt({ hash: intent.txId });
-        if (receipt)
-            return receipt;
+        discovered = await client.getTransactionReceipt({ hash: intent.txId });
     }
     catch (error) {
         if (error?.name !== 'TransactionReceiptNotFoundError')
             return null;
+    }
+    if (discovered) {
+        // A receipt is observation. Promote an old unknown before returning it.
+        if (attemptStore?.frame)
+            await attemptStore.frame(() => promoteObserved(attemptStore, intent.txId));
+        return discovered;
     }
     let absent = false;
     try {
@@ -297,34 +336,32 @@ export async function broadcast(client, intent, identity) {
         else
             return null;
     }
-    const attemptStore = identity?.broadcastStore;
-    const priorAttempt = attemptStore?.get?.('broadcast-attempt', intent.txId);
-    const sendBlocked = priorAttempt?.state === 'attempting' || priorAttempt?.state === 'unknown';
-    if (absent && !sendBlocked) {
-        await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'broadcast');
+    if (absent) {
         // Machine authority does not send bytes that never recorded a witness.
         // Wallet identity has no authorizeIntent and keeps its own path.
-        if (typeof identity?.authorizeIntent === 'function' && !intent.witness)
+        if (machine && !intent.witness)
             return null;
-        await scoped(identity, intent.id, async () => {
-            await identity.authorizeIntent?.('broadcast', intent.id, intent.witness);
-        });
-        const sameGeneration = !!intent.witness && intent.witness.grantEpoch === identity.grantEpoch && intent.witness.authorityDigest === identity.authorityDigest;
-        if (intent.witness && !sameGeneration && Array.isArray(identity.historicalLineage) && !await historicalReplayPermitted(identity.historicalLineage, intent.witness, intent.raw))
+        if (machine && !await machineBroadcastPermitted(identity, intent))
             return null;
-        if (attemptStore?.put)
-            attemptStore.put('broadcast-attempt', intent.txId, { state: 'attempting', txId: intent.txId });
-        try {
-            await client.sendRawTransaction({ serializedTransaction: intent.raw });
+        await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'broadcast');
+        if (machine) {
+            await scoped(identity, intent.id, async () => {
+                await identity.authorizeIntent('broadcast', intent.id, intent.witness);
+            });
         }
-        catch { /* Original signed bytes remain durable; read their hash below. */ }
-        if (attemptStore?.put)
-            attemptStore.put('broadcast-attempt', intent.txId, { state: 'unknown', txId: intent.txId });
+        const claim = await claimSend(attemptStore, intent.txId);
+        if (claim === 'claimed' || claim === 'unjournaled') {
+            try {
+                await client.sendRawTransaction({ serializedTransaction: intent.raw });
+            }
+            catch { /* Original signed bytes remain durable; read their hash below. */ }
+            await markUnknown(attemptStore, intent.txId);
+        }
     }
     try {
         const receipt = await client.waitForTransactionReceipt({ hash: intent.txId, timeout: 3000, pollingInterval: 20 });
-        if (receipt && attemptStore?.put)
-            attemptStore.put('broadcast-attempt', intent.txId, { state: 'observed', txId: intent.txId });
+        if (receipt && attemptStore?.frame)
+            await attemptStore.frame(() => promoteObserved(attemptStore, intent.txId));
         return receipt;
     }
     catch {

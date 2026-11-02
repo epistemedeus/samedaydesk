@@ -14,7 +14,7 @@ import { join } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { decodeFunctionData, encodeFunctionResult, keccak256, parseAbi, recoverTransactionAddress } from 'viem';
+import { decodeFunctionData, encodeFunctionData, encodeFunctionResult, keccak256, parseAbi, parseTransaction, recoverTransactionAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { digest } from '../runtime/agent-economy-foundation/dist/index.js';
 import { capturePlan } from '../runtime/agent-economy-rail/dist/fees.js';
@@ -24,7 +24,7 @@ import { historicalAuthorityDigest } from '../src/machine-money.mjs';
 
 const root = fileURLToPath(new URL('../../..', import.meta.url));
 const market = fileURLToPath(new URL('..', import.meta.url));
-const companionEntry = '/home/ubuntu/ae14-work/h113010-companion/tools/ops/machine-market-operator/src/open-machine-authority.mjs';
+const companionEntry = '/home/ubuntu/ae14-work/h115010-companion/tools/ops/machine-market-operator/src/open-machine-authority.mjs';
 const cachePath = '/tmp/h113010-owned/cache/code-53412211.json';
 const FORK = 'h113010-historical';
 const ORIGIN = 'https://machine.example';
@@ -178,7 +178,7 @@ function writeGrant(dir, fields) {
   return file;
 }
 
-function grantFields({ sdsRoot, sourceSha256, hostSha256, rpcUrl, operator, feeRecipient, epoch, journalPath, keyFile, fees, lineage }) {
+function grantFields({ sdsRoot, sourceSha256, hostSha256, rpcUrl, operator, feeRecipient, epoch, journalPath, keyFile, fees, lineage, retained }) {
   const body = {
     schema: 'pilot.machine-operator-grant.v1', enrolled: true, origin: ORIGIN, tenant: TENANT, sdsRoot, sourceSha256, hostSha256,
     networkClass: 'owned-fork', forkId: FORK, chain: 'eip155:8453', rpcUrl, operator, feeRecipient, epoch, minimumEpoch: epoch,
@@ -186,6 +186,7 @@ function grantFields({ sdsRoot, sourceSha256, hostSha256, rpcUrl, operator, feeR
     feeLimits: fees.feeLimits, signer: { kind: 'viem-private-key-file', path: keyFile },
   };
   if (lineage) body.historicalLineage = lineage;
+  if (retained) body.historicalRetainedIntents = retained;
   return body;
 }
 
@@ -232,6 +233,8 @@ function view(store, proofId) {
     hold: budget?.holds?.[id], authorizationTx: funding?.authorizationTx ?? null, payment: funding?.payment,
     allocation: store.get('funding-allocation', JSON.stringify([funding.quote.tenantId, funding.quote.canonicalTaskId])),
     operation: store.get('funding-op', proofId),
+    data: tx?.data ?? null, to: tx?.to ?? null, txNonce: tx?.nonce ?? null, proofId,
+    quoteDigest: funding ? digest(funding.quote) : null, gross: funding?.quote?.gross ?? null,
   };
 }
 function snap(file, proofId) {
@@ -330,18 +333,33 @@ test('configured predecessors recover only with retained authority and current r
       assert.equal(seen.witness.authorityDigest === digest({ ...entry.bound, source: currentIdentity.sourceSha256, host: currentIdentity.hostSha256 }), false);
       if (spec.crash) assert.equal(seen.authorizationTx, null);
       else assert.equal(seen.authorizationTx, seen.txId);
-      produced.push({ spec, identity, proofId, operationId: `authorize-${name}`, journal: journalPath, entry, raw: seen.raw });
+      // Predecessor journals keep the signed raw. Envelope fields come from that
+      // observation, not from columns those commits never stored.
+      const parsed = parseTransaction(seen.raw);
+      assert.equal(parsed.chainId, 8453);
+      assert.equal(parsed.value ?? 0n, 0n);
+      assert.equal(parsed.gas.toString(), fees.feeLimits.gasLimit);
+      assert.equal(parsed.maxFeePerGas.toString(), fees.feeLimits.maxFeePerGas);
+      assert.equal(parsed.maxPriorityFeePerGas.toString(), fees.feeLimits.maxPriorityFeePerGas);
+      const manifest = {
+        schema: 'pilot.retained-intent.v1', intentId: `fund:${proofId}`, txId: seen.txId, authorityDigest: seen.witness.authorityDigest,
+        to: String(parsed.to).toLowerCase(), data: String(parsed.data).toLowerCase(), nonce: parsed.nonce, configuredChain: seen.witness.configuredChain,
+        feeLimits: fees.feeLimits, value: '0', type: 'eip1559', proofId, operationId: seen.operation.operationId,
+        quoteDigest: seen.quoteDigest, approvalDigest: digest(seen.payment), payerSignature: signature.toLowerCase(),
+        collector: String(identity.candidate.collector).toLowerCase(), gross: String(seen.gross), payment: seen.payment,
+      };
+      produced.push({ spec, identity, proofId, operationId: `authorize-${name}`, journal: journalPath, entry, raw: seen.raw, manifest, signature });
     }
     assert.equal(new Set(produced.map(row => row.raw)).size, 2);
     const currentMoney = await import(pathToFileURL(join(market, 'src/machine-money.mjs')).href);
-    async function recover(row, lineage, journal, receipts) {
+    async function recover(row, lineage, journal, receipts, operationId = row.operationId) {
       loop.reset();
       loop.setReceipts(receipts);
       const beforeSends = loop.sends.n;
       const grantDir = mkdtempSync(join(scratch, 'recover-'));
       const grant = writeGrant(grantDir, grantFields({
         sdsRoot: root, sourceSha256: currentIdentity.sourceSha256, hostSha256: currentIdentity.hostSha256, rpcUrl: loop.url,
-        operator, feeRecipient, epoch: 2, journalPath: journal, keyFile, fees, lineage,
+        operator, feeRecipient, epoch: 2, journalPath: journal, keyFile, fees, lineage, retained: [row.manifest],
       }));
       process.env.PILOT_MACHINE_OPERATOR_GRANT = grant;
       const opened = await currentMoney.openQualifiedMoney({
@@ -353,7 +371,7 @@ test('configured predecessors recover only with retained authority and current r
       });
       try {
         const before = view(opened.journal, row.proofId);
-        const result = await opened.rail.authorize(row.proofId, '0x' + '00'.repeat(65), row.operationId);
+        const result = await opened.rail.authorize(row.proofId, '0x' + '00'.repeat(65), operationId);
         return { result, before, after: view(opened.journal, row.proofId), sends: loop.sends.n - beforeSends, opened };
       } catch (error) {
         opened.journal.close();
@@ -390,8 +408,8 @@ test('configured predecessors recover only with retained authority and current r
       assert.equal(unknown.opened.journal.get('tx', `fund:${row.proofId}`).raw, row.raw);
       unknown.opened.journal.close();
       const cases = [];
-      function mutated(label, fileName, edit, lineage = [row.entry]) {
-        cases.push({ label, fileName, edit, lineage });
+      function mutated(label, fileName, edit, lineage = [row.entry], operationId = row.operationId) {
+        cases.push({ label, fileName, edit, lineage, operationId });
       }
       mutated('missing-witness', 'missing-witness', store => {
         const id = `fund:${row.proofId}`;
@@ -421,17 +439,40 @@ test('configured predecessors recover only with retained authority and current r
         store.put('funding', row.proofId, { ...funding, payment: { ...funding.payment, salt: (BigInt(funding.payment.salt) + 1n).toString() } });
       });
       mutated('changed-operation', 'changed-operation', store => store.put('funding-op', row.proofId, { operationId: 'authorize-changed-op' }));
+      mutated('changed-operation-and-caller', 'changed-operation-caller', store => store.put('funding-op', row.proofId, { operationId: 'authorize-attacker' }), [row.entry], 'authorize-attacker');
+      mutated('altered-max-fee', 'altered-max-fee', async store => {
+        const id = `fund:${row.proofId}`;
+        const tx = store.get('tx', id);
+        const parsed = parseTransaction(tx.raw);
+        const raw = await operatorAccount.signTransaction({ chainId: 8453, type: 'eip1559', nonce: parsed.nonce, gas: parsed.gas, maxFeePerGas: parsed.maxFeePerGas + 1n, maxPriorityFeePerGas: parsed.maxPriorityFeePerGas, to: parsed.to, data: parsed.data, value: 0n });
+        const funding = store.get('funding', row.proofId);
+        store.put('tx', id, { ...tx, raw, txId: keccak256(raw) });
+        if (funding.authorizationTx) store.put('funding', row.proofId, { ...funding, authorizationTx: keccak256(raw) });
+        store.remove('broadcast-attempt', tx.txId);
+      });
+      mutated('payer-signature', 'payer-signature', async store => {
+        const id = `fund:${row.proofId}`;
+        const tx = store.get('tx', id);
+        const parsed = parseTransaction(tx.raw);
+        const funding = store.get('funding', row.proofId);
+        const payment = { ...funding.payment, maxAmount: BigInt(funding.payment.maxAmount), salt: BigInt(funding.payment.salt) };
+        const data = encodeFunctionData({ abi, functionName: 'authorize', args: [payment, BigInt(funding.quote.gross), candidate.collector, '0x' + 'ab'.repeat(65)] });
+        const raw = await operatorAccount.signTransaction({ chainId: 8453, type: 'eip1559', nonce: parsed.nonce, gas: parsed.gas, maxFeePerGas: parsed.maxFeePerGas, maxPriorityFeePerGas: parsed.maxPriorityFeePerGas, to: parsed.to, data, value: 0n });
+        store.put('tx', id, { ...tx, data, raw, txId: keccak256(raw) });
+        if (funding.authorizationTx) store.put('funding', row.proofId, { ...funding, authorizationTx: keccak256(raw) });
+        store.remove('broadcast-attempt', tx.txId);
+      });
       for (const item of cases) {
         const file = join(scratch, `${row.spec.commit.slice(0, 8)}-${item.fileName}.sqlite`);
         copyJournal(base, file);
         if (item.edit) {
           const store = new RailStore(file, { kind: 'fork', forkId: FORK });
-          item.edit(store);
+          await item.edit(store);
           store.close();
           checkpoint(file);
         }
         const before = snap(file, row.proofId);
-        const outcome = await recover(row, item.lineage, file, true);
+        const outcome = await recover(row, item.lineage, file, true, item.operationId);
         assert.equal(outcome.result.recovery, 'historical_unknown', item.label);
         assert.equal(outcome.result.broadcast, false, item.label);
         assert.equal(outcome.result.authorization, null, item.label);
