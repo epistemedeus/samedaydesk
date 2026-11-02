@@ -57,7 +57,7 @@ Funded command, from the SDS checkout, `node --max-old-space-size=768 server/scr
 
 Anvil 1.8.7 commit `985eeea031d79922cd654d4e94e6c3701e1c7d73`, sha256 `a2b871bf01b45d755ee37380ed11e369639a4fd9963604ed40749e299390bb9b`. Cast sha256 `2edb70a8b90ce0ed8ae3329dba1c8aeaad017f1a8d8c2e5b4131192c1d51fb96`. Public client 30187 bytes, sha256 `accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9`. Descriptor 2327 bytes, sha256 `1b6e9c1099f1420d53564674f71e15544333812dcc2c682062aae7af2f5295c4`. Fork ancestor `53412211` / `0x6f50eea711bc1a20239c6a9350e44a2f7f3ae96432ffb3a8f1946252a3429e79`. Anvil finalized on this fork was head minus local finality distance, block `0x32f0133`, not the public finalized tag. Proxy gap 50ms, 240 reads, 12 optional probes, 0 failures, 0 denied. Started `2026-11-02T13:48:27.800Z`, ended `2026-11-02T13:48:50.713Z`.
 
-Closed bytes are in `vendor/hosted-wallet-market/export/h113010/`:
+Closed bytes are in `vendor/hosted-wallet-market/export/h113010/`. The `*.log` files are force-added because the repository ignores that suffix:
 
 - `funded.stdout.log` 1102 bytes `7f67d5e84549c6d94573243a9b3fffc590256df879e2a773751dd816788ef7b9`
 - `funded.stderr.log` 1409 bytes `c684a871dad55966a94dadf5861badeb01308e40b20787f0bee4327f3cd88f13` (node warnings only)
