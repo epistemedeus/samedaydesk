@@ -4,7 +4,7 @@
 // embed a worker scratch path, an account store, or a production credential.
 import {createHash} from 'node:crypto';
 import {execFileSync, spawnSync} from 'node:child_process';
-import {chmodSync, closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync} from 'node:fs';
+import {chmodSync, closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync} from 'node:fs';
 import {dirname, join, resolve, sep} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -449,6 +449,7 @@ function writeProgress(file, value) {
   } finally { closeSync(fd); }
   renameSync(tmp, file);
   chmodSync(file, 0o600);
+  syncParent(file);
 }
 
 function readProgress(file) {
@@ -465,7 +466,27 @@ function readProgress(file) {
   return value;
 }
 
-function mutateMember(root, member, role, payload) {
+function syncParent(file) {
+  const fd = openSync(dirname(file), 'r');
+  try { fsyncSync(fd); } finally { closeSync(fd); }
+}
+
+function atomicMemberBytes(file, bytes, stageParent) {
+  mkdirSync(dirname(file), {recursive: true});
+  const stage = mkdtempSync(join(stageParent, '.h120-member-'));
+  const temporary = join(stage, 'payload');
+  const mode = existsSync(file) ? lstatSync(file).mode & 0o777 : 0o644;
+  try {
+    const fd = openSync(temporary, 'wx', mode);
+    try { writeFileSync(fd, bytes); fsyncSync(fd); } finally { closeSync(fd); }
+    renameSync(temporary, file);
+    syncParent(file);
+  } finally {
+    rmSync(stage, {recursive: true, force: true});
+  }
+}
+
+function mutateMember(root, member, role, payload, stageParent) {
   const side = expectedSide(member, role);
   const resolved = resolve(join(root, member.path));
   if (resolved !== root && !resolved.startsWith(`${root}${sep}`)) throw fail('path_refused', {path: member.path});
@@ -473,8 +494,8 @@ function mutateMember(root, member, role, payload) {
   if (kind === 'foreign') throw fail('destination_unrelated_refused', {path: member.path});
   if (kind === 'target') return false;
   if (kind !== 'predecessor') throw fail('destination_member_refused', {path: member.path});
-  if (side.bytes === 0) rmSync(resolved);
-  else writeBytes(resolved, payload);
+  if (side.bytes === 0) { rmSync(resolved); syncParent(resolved); }
+  else atomicMemberBytes(resolved, payload, stageParent);
   return true;
 }
 
@@ -499,6 +520,9 @@ export async function applyBundle({bundleDir, destination, role, contract, progr
     const resolved = resolve(join(root, member.path));
     if (resolved !== root && !resolved.startsWith(`${root}${sep}`)) throw fail('path_refused', {path: member.path});
   }
+  const stageParent = dirname(progressPath);
+  mkdirSync(stageParent, {recursive: true});
+  if (statSync(root).dev !== statSync(stageParent).dev) throw fail('progress_filesystem_refused');
   let progress = existsSync(progressPath) ? readProgress(progressPath) : null;
   if (progress && (progress.bundleSha256 !== manifest.sha256 || progress.destination !== root)) throw fail('progress_refused');
   const kinds = () => manifest.members.map(member => ({member, kind: classifyMember(root, member, role)}));
@@ -546,7 +570,7 @@ export async function applyBundle({bundleDir, destination, role, contract, progr
   if (pending.some(member => member.path === PIN) && pending.length > 1 && pending.at(-1).path !== PIN) throw fail('pin_order_refused');
   let writes = 0;
   for (const member of pending) {
-    if (mutateMember(root, member, role, payloads.get(member.path))) writes += 1;
+    if (mutateMember(root, member, role, payloads.get(member.path), stageParent)) writes += 1;
     if (Number.isInteger(interruptAfterWrites) && writes >= interruptAfterWrites) throw fail('apply_interrupted', {path: member.path});
   }
   const after = await measure(root);

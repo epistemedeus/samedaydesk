@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {syncBuiltinESMExports} from 'node:module';
 import {mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync, existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -388,5 +390,53 @@ test('candidate install creates a new closure file and baseline rollback removes
     assert.equal(existsSync(join(dest, CREATED)), false);
   } finally {
     rmSync(root, {recursive: true, force: true});
+  }
+});
+
+test('short member writes preserve exact installed bytes and ordinary recovery', async () => {
+  const release = syntheticContract();
+  for (const role of ['candidate', 'baseline']) {
+    const root = mkdtempSync(join(tmpdir(), 'h120010-short-write-'));
+    const dest = join(root, 'dest');
+    try {
+      writeBundle(join(root, 'bundle'), [
+        member(CREATED, null, 'schema-011\n'),
+        member(PROFILE, 'profile-base\n', 'profile-cand\n'),
+        member(PIN, 'pin-base\n', 'pin-cand\n'),
+      ], release);
+      seedDestination(dest);
+      if (role === 'baseline') await applyBundle(applyArgs(root, release));
+      const expectedProfile = role === 'candidate' ? 'profile-base\n' : 'profile-cand\n';
+      const expectedPin = role === 'candidate' ? 'pin-base\n' : 'pin-cand\n';
+      const originalWrite = fs.writeFileSync;
+      let faulted = false;
+      fs.writeFileSync = (file, data, ...options) => {
+        const name = typeof file === 'number' ? fs.readlinkSync('/proc/self/fd/' + file) : String(file);
+        if (!faulted && (name === join(dest, PROFILE) || (name.includes('/.h120-member-') && name.endsWith('/payload')))) {
+          faulted = true;
+          originalWrite(file, Buffer.from(data).subarray(0, 3), ...options);
+          throw Object.assign(new Error('injected short member write'), {code: 'EIO'});
+        }
+        return originalWrite(file, data, ...options);
+      };
+      syncBuiltinESMExports();
+      try {
+        await assert.rejects(() => applyBundle({...applyArgs(root, release), role}), error => error.code === 'EIO');
+      } finally {
+        fs.writeFileSync = originalWrite;
+        syncBuiltinESMExports();
+      }
+      assert.equal(faulted, true);
+      assert.equal(readFileSync(join(dest, PROFILE), 'utf8'), expectedProfile);
+      assert.equal(readFileSync(join(dest, PIN), 'utf8'), expectedPin);
+      assert.equal(JSON.parse(readFileSync(join(root, 'progress.json'))).phase, 'writing');
+      const recovered = await applyBundle({...applyArgs(root, release), role});
+      assert.equal(recovered.ok, true);
+      assert.equal(recovered.resumed, true);
+      assert.equal(readFileSync(join(dest, PROFILE), 'utf8'), role === 'candidate' ? 'profile-cand\n' : 'profile-base\n');
+      assert.equal(readFileSync(join(dest, PIN), 'utf8'), role === 'candidate' ? 'pin-cand\n' : 'pin-base\n');
+    } finally {
+      rmSync(root, {recursive: true, force: true});
+    }
   }
 });

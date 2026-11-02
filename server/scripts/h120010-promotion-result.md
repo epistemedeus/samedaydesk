@@ -136,3 +136,8 @@ These are the gaps in the original completion at bdbae58688b857eb8bf3ebf408768da
 
 ## NEXT
 Root installs the code bundle only onto a tree that still measures as the baseline identity, then applies schema/011_capability_composition.sql once. Root publishes the acquisition descriptor only after the installed tree measures as the candidate identity in the release contract. Until that publication, clients fail closed. Pin-last is not atomic: an interrupted install is finished or returned from the task progress file, and that repair does not touch credentials, obligations, terms, or the database. If code is rolled back, Root restores the baseline descriptor in the same decision and does not drop schema 011. The recorded SOURCE.json constant remains a nonauthoritative disagreement. No default merge.
+
+
+## Root short-write receiving (ROOT81940)
+
+The preserved native8599fc0d completion is followed by this small Root-only package correction. ROOT27428 received one genuine short-member-write failure (actual pro instead of the intact profile; filtered Node reported one test and zero skips). That red was received, not rerun by the finishing control. All9unit cases then passed after same-filesystem staged replacement and parent-directory syncing. The full configured zero-value contained journey also passed with unchanged published0.3.1client/descriptor provenance, retained account/key continuity, no second POST, unchanged human bytes and financial digest, and rollback. Full closed logs and fresh bundle/state/evidence/result are retained under the Root operation; this is not a production install or financial activation.
