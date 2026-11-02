@@ -1,8 +1,75 @@
 {
   "schema": "sds.h120010.receive.v1",
+  "originalHead": "bdbae58688b857eb8bf3ebf408768daa3a088af4",
+  "promotionHead": "bdbae58688b857eb8bf3ebf408768daa3a088af4",
+  "contractSha256": "2add3bff8f4b565b5523ef4eb385b49ed1065fe874150cb23e853a297b7beea2",
   "measured": {
     "sourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
     "hostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3"
+  },
+  "release": {
+    "schema": "sds.h120010.release-contract.v1",
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "source": {
+      "baselineCommit": "aa861e980df0f75a782ff30996450cf15870f2e7",
+      "candidateCommit": "6bde3ec4df57df5f0783fec38f39eacbadfb6d9e",
+      "baselineSourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "baselineHostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+      "measuredCandidateSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+      "measuredCandidateHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+      "recordedCandidateSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+      "recordedSourceConstantAuthority": false,
+      "recordedSourceConstantAgrees": false
+    },
+    "runtime": {
+      "journeyCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+      "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+      "journeySource": "vendor/neomorphic-contributor-journey/SOURCE.json",
+      "deskSource": "vendor/neomorphic-contributor-desk/SOURCE.json"
+    },
+    "client": {
+      "version": "0.3.1",
+      "sha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+      "bytes": 30187,
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "b79f985e83e829288a675407a4b4124e58a11f3a",
+      "path": "clients/cold-requester-0.3.1.mjs"
+    },
+    "human": {
+      "build": "server/scripts/publish-preserved-client.mjs",
+      "viteInvoked": false,
+      "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+      "files": 352,
+      "bytes": 59951737
+    },
+    "endpoints": {
+      "profile": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/profile",
+      "participationContract": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/participation-contract"
+    },
+    "releaseOrder": {
+      "artifacts": [
+        "code-bundle",
+        "acquisition-descriptor"
+      ],
+      "descriptorPublication": "after-measured-candidate-identity",
+      "partialCodeRepair": "progress-journal",
+      "pinLastAloneAtomic": false,
+      "schema011": "separate-sql-not-dropped-on-code-rollback",
+      "rule": "Install the code bundle only onto a tree that still measures as the baseline identity. Publish the acquisition descriptor only after that tree measures as the candidate identity named here. A baseline descriptor on candidate code, or a candidate descriptor on baseline code, fails closed with acquisition_profile_mismatch. That refusal is not continuity. An interrupted code install finishes to the exact candidate or returns to the exact predecessor from the task progress journal. Pin-last is not atomic. File repair does not touch credentials, obligations, terms, or database authority. Schema 011 is applied once as SQL and is not dropped when code rolls back. If code is rolled back, restore the baseline descriptor in the same decision."
+    },
+    "installedHostinger": "01a19731-bfd7-7095-9ec8-7c3218fb8aec"
+  },
+  "successor": {
+    "sha256": "2edea980c57909e8715cac1c899c1e4886f418614a71a79e50df113e4bd28d25",
+    "bytes": 2346,
+    "published": false
+  },
+  "progress": {
+    "schema": "sds.h120010.apply-progress.v1",
+    "owner": "h120010-apply",
+    "phase": "complete",
+    "role": "baseline",
+    "pinLastAloneAtomic": false
   },
   "sealed": {
     "sha256": "a59b8fe3f9c9a5140d600e88cbeeca517d4fcd6d313d7124a6e761f1aaa5d2d9",
@@ -290,6 +357,7 @@
   "debtEqual": true,
   "financialEqual": true,
   "financialDigest": "91d81dd367a181880318a19f3f308e65576d19b8f1b9d707da7a0666f1bf5f01",
+  "journalKeyStable": true,
   "human": {
     "schema": "sds.h120010.human-comparison.v1",
     "build": "server/scripts/publish-preserved-client.mjs",
@@ -318,6 +386,8 @@
     },
     "byteEqual": true,
     "files": 352,
+    "leftBytes": 59951737,
+    "rightBytes": 59951737,
     "mismatched": [],
     "onlyBaseline": [],
     "onlyCandidate": [],
@@ -364,6 +434,7 @@
       "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
       "wrongRepository": "acquisition_source_mismatch",
       "wrongCommit": "acquisition_source_mismatch",
+      "secondPost": false,
       "acquire": {
         "exit": 0,
         "status": null,
@@ -391,15 +462,17 @@
         "nextAction": "readback"
       },
       "readback": {
-        "ok": true,
-        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
-        "evidence": "atomic_operation",
-        "originalBodyRecorded": true
+        "performed": false
       },
-      "fund": {
-        "status": 409,
-        "code": "selection_required",
-        "paidWork": false
+      "journal": {
+        "present": true,
+        "state": "unknown",
+        "idempotencyKeySha256": "d5fd4b5c8c3904b875eae1eb7afddb53afe92f977091c6a2b20826a218e9b1d5",
+        "taskKnown": false,
+        "accountKnown": true,
+        "acquisitionSourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+        "acquisitionHostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+        "acquisitionDescriptorSha256": "1b6e9c1099f1420d53564674f71e15544333812dcc2c682062aae7af2f5295c4"
       },
       "counts": {
         "accounts": 1,
@@ -537,11 +610,14 @@
       "hostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
       "wrongRepository": "acquisition_source_mismatch",
       "wrongCommit": "acquisition_source_mismatch",
+      "secondPost": false,
+      "staleDescriptor": "acquisition_profile_mismatch",
+      "publishedDescriptorContinuity": false,
       "acquire": {
-        "exit": 1,
+        "exit": 0,
         "status": null,
-        "ok": false,
-        "code": "acquisition_profile_mismatch",
+        "ok": true,
+        "code": null,
         "nextAction": null,
         "paidWork": null,
         "taskId": null,
@@ -550,15 +626,27 @@
         "originalBodyRecorded": null,
         "money": null,
         "signerAuthority": null,
-        "sourceSha256": null,
-        "hostSha256": null,
+        "sourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+        "hostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
         "detail": null
       },
       "readback": {
+        "performed": true,
         "ok": true,
-        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
+        "taskId": "market-8a60fd87cade7e49efa43f0366d799548c5e42aaac1cd58e89e58604cc642753",
         "evidence": "atomic_operation",
         "originalBodyRecorded": true
+      },
+      "reauthenticated": false,
+      "journal": {
+        "present": true,
+        "state": "received",
+        "idempotencyKeySha256": "d5fd4b5c8c3904b875eae1eb7afddb53afe92f977091c6a2b20826a218e9b1d5",
+        "taskKnown": true,
+        "accountKnown": true,
+        "acquisitionSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+        "acquisitionHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+        "acquisitionDescriptorSha256": "2edea980c57909e8715cac1c899c1e4886f418614a71a79e50df113e4bd28d25"
       },
       "fund": {
         "status": 409,
@@ -694,6 +782,8 @@
       "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
       "wrongRepository": "acquisition_source_mismatch",
       "wrongCommit": "acquisition_source_mismatch",
+      "secondPost": false,
+      "staleSuccessor": "acquisition_profile_mismatch",
       "acquire": {
         "exit": 0,
         "status": null,
@@ -705,17 +795,29 @@
         "state": null,
         "evidence": null,
         "originalBodyRecorded": null,
-        "money": "unfunded",
+        "money": null,
         "signerAuthority": null,
         "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
         "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
         "detail": null
       },
       "readback": {
+        "performed": true,
         "ok": true,
-        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
+        "taskId": "market-8a60fd87cade7e49efa43f0366d799548c5e42aaac1cd58e89e58604cc642753",
         "evidence": "atomic_operation",
         "originalBodyRecorded": true
+      },
+      "reauthenticated": false,
+      "journal": {
+        "present": true,
+        "state": "received",
+        "idempotencyKeySha256": "d5fd4b5c8c3904b875eae1eb7afddb53afe92f977091c6a2b20826a218e9b1d5",
+        "taskKnown": true,
+        "accountKnown": true,
+        "acquisitionSourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+        "acquisitionHostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+        "acquisitionDescriptorSha256": "1b6e9c1099f1420d53564674f71e15544333812dcc2c682062aae7af2f5295c4"
       },
       "fund": {
         "status": 409,
@@ -849,7 +951,7 @@
     "aggregateBudgetKiB": 2097152,
     "paidProviderCalls": 0,
     "productionDeployment": false,
-    "memAvailableKiBStart": 4270628,
-    "memAvailableKiBEnd": 4145216
+    "memAvailableKiBStart": 4720068,
+    "memAvailableKiBEnd": 4564332
   }
 }

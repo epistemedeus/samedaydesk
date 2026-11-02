@@ -13,8 +13,8 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import pg from 'pg';
 import {startCluster, stopCluster} from './root404-pg-cluster.mjs';
 import {
-  ADMISSION, PIN, applyBundle, buildBundle, compareHuman, fail, loadManifest, measureProduct,
-  sealMeasuredIdentity, sha256, verifyFrozen, closureMember,
+  PIN, applyBundle, buildBundle, closureDrift, compareHuman, fail, loadManifest, loadReleaseContract,
+  measureProduct, sealMeasuredIdentity, sha256, successorDescriptor, verifyFrozen, closureMember,
 } from './h120010-promote.mjs';
 
 const SCRIPT = fileURLToPath(import.meta.url);
@@ -288,9 +288,67 @@ function sourceFlags(repository, commit, path) {
   return ['--source-repository', repository, '--source-commit', commit, '--source-path', path];
 }
 
-function pins(state, paths, repository = ADMISSION.clientSource.repository, commit = ADMISSION.clientSource.commit, path = ADMISSION.clientSource.path) {
-  return ['--origin', state.origin, '--ca-file', state.tlsCert, '--descriptor', paths.descriptor,
-    '--descriptor-sha256', ADMISSION.descriptorSha256, ...sourceFlags(repository, commit, path)];
+function pins(state, descriptor, repository = descriptor.repository, commit = descriptor.commit, path = descriptor.path) {
+  return ['--origin', state.origin, '--ca-file', state.tlsCert, '--descriptor', descriptor.file,
+    '--descriptor-sha256', descriptor.sha256, ...sourceFlags(repository, commit, path)];
+}
+
+function postJournal(secretFile) {
+  const body = JSON.parse(readFileSync(secretFile, 'utf8'));
+  const post = body.operations?.post;
+  const acquisition = body.acquisition || {};
+  if (!post || typeof post.idempotencyKey !== 'string' || post.idempotencyKey.length < 8) {
+    return {present: false, state: post?.state ?? null, idempotencyKeySha256: null, taskKnown: false, accountKnown: false,
+      acquisitionSourceSha256: acquisition.sourceSha256 ?? null, acquisitionHostSha256: acquisition.hostSha256 ?? null,
+      acquisitionDescriptorSha256: acquisition.descriptorSha256 ?? null};
+  }
+  return {
+    present: true, state: post.state, idempotencyKeySha256: sha256(Buffer.from(post.idempotencyKey)),
+    taskKnown: typeof body.taskId === 'string' && body.taskId.startsWith('market-'),
+    accountKnown: typeof body.accountId === 'string' && body.accountId.length > 0,
+    acquisitionSourceSha256: acquisition.sourceSha256 ?? null, acquisitionHostSha256: acquisition.hostSha256 ?? null,
+    acquisitionDescriptorSha256: acquisition.descriptorSha256 ?? null,
+  };
+}
+
+function publishedDescriptor(contract, file) {
+  const bytes = readFileSync(file);
+  if (bytes.length !== contract.descriptor.bytes || sha256(bytes) !== contract.descriptor.sha256) throw fail('descriptor_pin_refused');
+  const parsed = JSON.parse(bytes.toString('utf8'));
+  if (parsed.profile !== contract.endpoints.profile || parsed.contract !== contract.endpoints.participationContract) throw fail('endpoint_refused');
+  if (parsed.requiredProfile?.sourceSha256 !== contract.source.baselineSourceSha256 || parsed.requiredProfile?.hostSha256 !== contract.source.baselineHostSha256) {
+    throw fail('descriptor_pin_refused');
+  }
+  return {file, sha256: contract.descriptor.sha256, repository: contract.client.repository, commit: contract.client.commit, path: contract.client.path, parsed};
+}
+
+function privateSuccessor(contract, file) {
+  const bytes = readFileSync(file);
+  const parsed = JSON.parse(bytes.toString('utf8'));
+  if (parsed.publicationStatus !== 'private_unreleased' || parsed.hostedAcquisitionClaim === true) throw fail('descriptor_contract_refused');
+  if (parsed.source?.repository !== contract.client.repository || parsed.source?.commit !== contract.client.commit || parsed.source?.path !== contract.client.path) {
+    throw fail('descriptor_provenance_refused');
+  }
+  if (parsed.sha256 !== contract.client.sha256 || parsed.bytes !== contract.client.bytes) throw fail('descriptor_client_refused');
+  if (parsed.profile !== contract.endpoints.profile || parsed.contract !== contract.endpoints.participationContract) throw fail('endpoint_refused');
+  if (parsed.requiredProfile?.money !== 'unfunded' || parsed.requiredProfile?.participation !== 'voluntary-artifact-v1') throw fail('descriptor_contract_refused');
+  if (parsed.requiredProfile?.sourceSha256 !== contract.source.measuredCandidateSourceSha256 || parsed.requiredProfile?.hostSha256 !== contract.source.measuredCandidateHostSha256) {
+    throw fail('descriptor_contract_refused');
+  }
+  return {file, sha256: sha256(bytes), repository: contract.client.repository, commit: contract.client.commit, path: contract.client.path};
+}
+
+async function readRetained(client, state) {
+  const args = ['--origin', state.origin, '--ca-file', state.tlsCert, '--secret-file', state.secretFile, '--operation', 'post'];
+  let readback = publicCall(await cold(client, ['readback', ...args]));
+  let reauthenticated = false;
+  if (!readback.ok && ['unauthenticated', 'revoked', 'csrf_required'].includes(readback.code)) {
+    const login = publicCall(await cold(client, ['login', '--origin', state.origin, '--ca-file', state.tlsCert, '--secret-file', state.secretFile]));
+    if (login.exit !== 0 || !login.ok) throw fail('login_refused', {login, readback});
+    readback = publicCall(await cold(client, ['readback', ...args]));
+    reauthenticated = true;
+  }
+  return {...readback, reauthenticated};
 }
 
 function publicCall(result) {
@@ -319,6 +377,8 @@ function probeProfile(state) {
 }
 
 async function exercise(productRoot, state, paths, mode, server) {
+  const contract = paths.contract;
+  const baselineDescriptor = paths.baselineDescriptor;
   const measured = await measureProduct(productRoot);
   const probed = await probeProfile(state);
   if (probed.status !== 200) throw fail('profile_probe_refused', {probe: {...probed, hits: server.fault.hits}});
@@ -327,58 +387,82 @@ async function exercise(productRoot, state, paths, mode, server) {
     throw fail('profile_identity_refused', {profile, measured});
   }
   if (profile.money !== 'unfunded' || profile.signerAuthority !== false) throw fail('zero_value_refused', {profile});
-  const wrongRepository = publicCall(await cold(paths.client, ['acquire', ...pins(state, paths, 'example/not-the-source')]));
-  const wrongCommit = publicCall(await cold(paths.client, ['acquire', ...pins(state, paths, ADMISSION.clientSource.repository, 'a'.repeat(40))]));
+  const wrongRepository = publicCall(await cold(paths.client, ['acquire', ...pins(state, baselineDescriptor, 'example/not-the-source')]));
+  const wrongCommit = publicCall(await cold(paths.client, ['acquire', ...pins(state, baselineDescriptor, contract.client.repository, 'a'.repeat(40))]));
   if (wrongRepository.code !== 'acquisition_source_mismatch' || wrongCommit.code !== 'acquisition_source_mismatch') {
     throw fail('wrong_source_refused', {wrongRepository, wrongCommit});
   }
-  const acquired = publicCall(await cold(paths.client, ['acquire', ...pins(state, paths)]));
   const report = {
     ok: true, phase: mode, money: profile.money, signerAuthority: profile.signerAuthority,
     sourceSha256: profile.sourceSha256, hostSha256: profile.hostSha256,
-    wrongRepository: wrongRepository.code, wrongCommit: wrongCommit.code, acquire: acquired,
+    wrongRepository: wrongRepository.code, wrongCommit: wrongCommit.code, secondPost: false,
   };
   if (mode === 'before') {
+    const acquired = publicCall(await cold(paths.client, ['acquire', ...pins(state, baselineDescriptor)]));
     if (!acquired.ok) throw fail('baseline_acquire_refused', {acquired});
     const beforeAccounts = await counts(state.databaseUrl);
     if (beforeAccounts.accounts !== 0) throw fail('account_created_by_refusal', {beforeAccounts});
-    const signup = publicCall(await cold(paths.client, ['signup', ...pins(state, paths), '--secret-file', state.secretFile,
+    const signup = publicCall(await cold(paths.client, ['signup', ...pins(state, baselineDescriptor), '--secret-file', state.secretFile,
       '--display-name', 'h120010-private-requester', '--role', 'requester']));
     if (!signup.ok) throw fail('signup_refused', {signup});
     server.fault.dropAction = 'post';
-    const lost = publicCall(await cold(paths.client, ['post', ...pins(state, paths), '--secret-file', state.secretFile,
+    const lost = publicCall(await cold(paths.client, ['post', ...pins(state, baselineDescriptor), '--secret-file', state.secretFile,
       '--title', 'Disposable promotion readback', '--summary', 'Synthetic unfunded continuity. No payment.', '--criterion', 'preserve-mapping']));
     const afterLost = await counts(state.databaseUrl);
-    const readback = publicCall(await cold(paths.client, ['readback', ...pins(state, paths), '--secret-file', state.secretFile, '--operation', 'post']));
-    const afterReadback = await counts(state.databaseUrl);
-    const fund = publicCall(await cold(paths.client, ['fund', ...pins(state, paths), '--secret-file', state.secretFile]));
+    const journal = postJournal(state.secretFile);
     if (lost.exit !== 2 || lost.code !== 'unknown_outcome' || lost.nextAction !== 'readback') throw fail('lost_response_refused', {lost});
-    if (readback.exit !== 0 || !readback.ok || !readback.taskId) throw fail('readback_refused', {readback});
-    if (afterLost.tasks !== 1 || afterReadback.tasks !== 1 || afterReadback.accounts !== 1) throw fail('task_duplicated', {afterLost, afterReadback});
-    if (fund.paidWork !== false || fund.ok !== false || !(fund.status >= 400 && fund.status < 500)) throw fail('fund_refused', {fund});
-    Object.assign(report, {signup: {ok: true, status: signup.exit}, lost: {status: lost.exit, code: lost.code, nextAction: lost.nextAction},
-      readback: {ok: true, taskId: readback.taskId, evidence: readback.evidence, originalBodyRecorded: readback.originalBodyRecorded},
-      fund: {status: fund.status, code: fund.code, paidWork: fund.paidWork}, counts: afterReadback});
-  } else {
-    const expectMismatch = mode === 'after';
-    if (expectMismatch) {
-      if (acquired.ok || acquired.code !== 'acquisition_profile_mismatch') throw fail('candidate_acquire_refused', {acquired});
-    } else if (!acquired.ok) throw fail('rollback_acquire_refused', {acquired});
-    let readback = publicCall(await cold(paths.client, ['readback', ...pins(state, paths), '--secret-file', state.secretFile, '--operation', 'post']));
-    if (!readback.ok && ['unauthenticated', 'revoked', 'csrf_required'].includes(readback.code)) {
-      const login = publicCall(await cold(paths.client, ['login', ...pins(state, paths), '--secret-file', state.secretFile]));
-      if (login.exit !== 0 || !login.ok) throw fail('login_refused', {login, readback});
-      readback = publicCall(await cold(paths.client, ['readback', ...pins(state, paths), '--secret-file', state.secretFile, '--operation', 'post']));
-      report.reauthenticated = true;
+    if (journal.state !== 'unknown' || journal.taskKnown !== false || !journal.idempotencyKeySha256) throw fail('lost_post_resolved_early', {journal});
+    if (afterLost.tasks !== 1 || afterLost.accounts !== 1 || afterLost.legacyObligation !== 1) throw fail('task_duplicated', {afterLost});
+    Object.assign(report, {acquire: acquired, signup: {ok: true, status: signup.exit},
+      lost: {status: lost.exit, code: lost.code, nextAction: lost.nextAction},
+      readback: {performed: false}, journal, counts: afterLost});
+  } else if (mode === 'after') {
+    const stale = publicCall(await cold(paths.client, ['acquire', ...pins(state, baselineDescriptor)]));
+    if (stale.ok || stale.code !== 'acquisition_profile_mismatch') throw fail('stale_descriptor_control_failed', {stale});
+    const successor = paths.successorDescriptor;
+    const acquired = publicCall(await cold(paths.client, ['reacquire', ...pins(state, successor), '--secret-file', state.secretFile]));
+    if (!acquired.ok || acquired.sourceSha256 !== measured.sourceSha256 || acquired.hostSha256 !== measured.hostSha256) {
+      throw fail('candidate_acquire_refused', {acquired});
     }
-    const fund = publicCall(await cold(paths.client, ['fund', ...pins(state, paths), '--secret-file', state.secretFile]));
+    const unresolved = postJournal(state.secretFile);
+    if (unresolved.state !== 'unknown' || unresolved.acquisitionDescriptorSha256 !== successor.sha256) throw fail('candidate_journal_refused', {journal: unresolved});
+    const readback = await readRetained(paths.client, state);
+    const fund = publicCall(await cold(paths.client, ['fund', '--origin', state.origin, '--ca-file', state.tlsCert, '--secret-file', state.secretFile]));
     const seen = await counts(state.databaseUrl);
-    if (readback.exit !== 0 || !readback.ok) throw fail('readback_refused', {readback});
+    const journal = postJournal(state.secretFile);
+    if (readback.exit !== 0 || !readback.ok || !readback.taskId) throw fail('readback_refused', {readback});
+    if (journal.state !== 'received' || journal.idempotencyKeySha256 !== unresolved.idempotencyKeySha256 || journal.taskKnown !== true) {
+      throw fail('readback_refused', {readback, journal});
+    }
     if (seen.tasks !== 1 || seen.accounts !== 1 || seen.legacyObligation !== 1) throw fail('retained_state_refused', {seen});
-    if (fund.paidWork !== false || fund.ok !== false) throw fail('fund_refused', {fund});
-    Object.assign(report, {readback: {ok: true, taskId: readback.taskId, evidence: readback.evidence, originalBodyRecorded: readback.originalBodyRecorded},
+    if (fund.paidWork !== false || fund.ok !== false || fund.code !== 'qualified_selection_required') throw fail('fund_refused', {fund});
+    Object.assign(report, {staleDescriptor: stale.code, publishedDescriptorContinuity: false, acquire: acquired,
+      readback: {performed: true, ok: true, taskId: readback.taskId, evidence: readback.evidence, originalBodyRecorded: readback.originalBodyRecorded},
+      reauthenticated: readback.reauthenticated, journal,
       fund: {status: fund.status, code: fund.code, paidWork: fund.paidWork}, counts: seen});
-  }
+  } else if (mode === 'rollback') {
+    const successor = paths.successorDescriptor;
+    const stale = publicCall(await cold(paths.client, ['acquire', ...pins(state, successor)]));
+    if (stale.ok || stale.code !== 'acquisition_profile_mismatch') throw fail('restored_descriptor_control_failed', {stale});
+    const acquired = publicCall(await cold(paths.client, ['reacquire', ...pins(state, baselineDescriptor), '--secret-file', state.secretFile]));
+    if (!acquired.ok || acquired.sourceSha256 !== measured.sourceSha256 || acquired.hostSha256 !== measured.hostSha256) {
+      throw fail('rollback_acquire_refused', {acquired});
+    }
+    const beforeRead = postJournal(state.secretFile);
+    const readback = await readRetained(paths.client, state);
+    const fund = publicCall(await cold(paths.client, ['fund', '--origin', state.origin, '--ca-file', state.tlsCert, '--secret-file', state.secretFile]));
+    const seen = await counts(state.databaseUrl);
+    const journal = postJournal(state.secretFile);
+    if (readback.exit !== 0 || !readback.ok) throw fail('readback_refused', {readback});
+    if (journal.state !== 'received' || journal.idempotencyKeySha256 !== beforeRead.idempotencyKeySha256) throw fail('readback_refused', {journal});
+    if (journal.acquisitionDescriptorSha256 !== baselineDescriptor.sha256) throw fail('rollback_acquire_refused', {journal});
+    if (seen.tasks !== 1 || seen.accounts !== 1 || seen.legacyObligation !== 1) throw fail('retained_state_refused', {seen});
+    if (fund.paidWork !== false || fund.ok !== false || fund.code !== 'selection_required') throw fail('fund_refused', {fund});
+    Object.assign(report, {staleSuccessor: stale.code, acquire: acquired,
+      readback: {performed: true, ok: true, taskId: readback.taskId, evidence: readback.evidence, originalBodyRecorded: readback.originalBodyRecorded},
+      reauthenticated: readback.reauthenticated, journal,
+      fund: {status: fund.status, code: fund.code, paidWork: fund.paidWork}, counts: seen});
+  } else throw fail('phase_refused');
   const additive = await additiveTables(state.databaseUrl);
   const snapshot = await financialSnapshot(state.databaseUrl);
   report.additive = additive;
@@ -424,7 +508,7 @@ async function phaseBefore(paths) {
 async function phaseMigrate(paths) {
   const state = readState(paths.state);
   const bytes = readFileSync(join(paths.productRoot, SCHEMA_011));
-  const manifest = loadManifest(paths.bundle);
+  const manifest = loadManifest(paths.bundle, paths.contract);
   const member = manifest.members.find(item => item.path === SCHEMA_011);
   if (!member || sha256(bytes) !== member.candidateSha256) throw fail('schema_member_refused');
   const present = await additiveTables(state.databaseUrl);
@@ -463,16 +547,22 @@ function publicError(error) {
 }
 
 async function phaseMain() {
-  const paths = {
-    productRoot: resolve(arg('--product-root')),
-    state: resolve(arg('--state')),
-    client: resolve(arg('--client')),
-    descriptor: resolve(arg('--descriptor')),
-    bundle: arg('--bundle') ? resolve(arg('--bundle')) : undefined,
-  };
   const phase = arg('--phase');
   try {
+    const contract = loadReleaseContract(resolve(arg('--contract')));
+    const descriptor = resolve(arg('--descriptor'));
+    const paths = {
+      productRoot: resolve(arg('--product-root')),
+      state: resolve(arg('--state')),
+      client: resolve(arg('--client')),
+      descriptor,
+      bundle: arg('--bundle') ? resolve(arg('--bundle')) : undefined,
+      contract,
+      baselineDescriptor: publishedDescriptor(contract, descriptor),
+      successorDescriptor: arg('--successor') ? privateSuccessor(contract, resolve(arg('--successor'))) : undefined,
+    };
     let value;
+    if ((phase === 'after' || phase === 'rollback') && !paths.successorDescriptor) throw fail('descriptor_required');
     if (phase === 'before') value = await phaseBefore(paths);
     else if (phase === 'migrate') value = await phaseMigrate(paths);
     else if (phase === 'after' || phase === 'rollback') value = await phaseBoot(paths, phase);
@@ -496,8 +586,9 @@ function phaseFailure(name, phase) {
 
 function spawnPhase(phase, paths) {
   const args = ['--max-old-space-size=768', SCRIPT, 'phase', '--phase', phase, '--product-root', paths.destination,
-    '--state', paths.state, '--client', paths.client, '--descriptor', paths.descriptor];
+    '--state', paths.state, '--client', paths.client, '--descriptor', paths.descriptor, '--contract', paths.contractPath];
   if (paths.bundle) args.push('--bundle', paths.bundle);
+  if (paths.successor) args.push('--successor', paths.successor);
   const run = spawnSync(process.execPath, args, {
     encoding: 'utf8',
     timeout: phase === 'migrate' || phase === 'destroy' ? 90000 : 240000,
@@ -521,21 +612,42 @@ function assertSecretFree(text, state) {
 
 function renderResult(report) {
   const human = report.human;
+  const release = report.release;
+  const source = release.source;
   const unchanged = human.byteEqual === true && human.preservedInventoryAgrees === true && human.baseline.status === 0 && human.candidate.status === 0;
+  const before = report.phases.before;
+  const after = report.phases.after;
+  const rolled = report.phases.rollback;
   return `# H120010 promotion result
 
 ## RESULT
-Closed machine-only promotion package for ${ADMISSION.baselineCommit.slice(0, 12)} to ${ADMISSION.candidateCommit.slice(0, 12)}. The synthetic zero-value private upgrade and rollback ran in a disposable database. Production was not changed. ${unchanged ? 'Emitted human bytes are unchanged.' : 'Emitted human bytes need a separate Root decision.'} Public 0.3.1 stays bound to the installed profile until Root issues a successor descriptor.
+Amended machine-only promotion package for ${source.baselineCommit.slice(0, 12)} to ${source.candidateCommit.slice(0, 12)}. The original completion remains ${report.originalHead}. This run repeated the contained zero-value upgrade and rollback. Production was not changed. ${unchanged ? 'Emitted human bytes are unchanged.' : 'Emitted human bytes need a separate Root decision.'} The published 0.3.1 descriptor was not released. A private successor descriptor was exercised and is not a public descriptor.
+
+## Original failures
+These are the gaps in the original completion at ${report.originalHead}. They are not reclassified as success.
+- Candidate continuity was not established. Acquire with the published descriptor against candidate code returned acquisition_profile_mismatch. That run resolved the lost baseline POST before promotion and then read it back with the same published descriptor. The mismatch was a real refusal, not successful candidate continuity.
+- applyBundle validated each member while writing earlier members. A corrupt late member could leave a mixed tree that neither install nor rollback accepted. Writing the pin last was not atomic, and there was no task progress journal.
+- The reviewed pair was baked into helper source constants, so each promotion required an edit of those constants.
+
+## Corrected outcome
+- The published client stayed byte-identical (${release.client.sha256}, ${release.client.bytes} bytes). Wrong repository and wrong commit still return acquisition_source_mismatch before a request.
+- The lost baseline POST stayed unresolved in the client journal until after the code promotion. Journal state before promotion: ${before.journal.state}. No readback was performed in that phase.
+- After promotion, the published descriptor still returned ${after.staleDescriptor}. That stale-descriptor refusal is a positive control. publishedDescriptorContinuity: ${after.publishedDescriptorContinuity}.
+- Acquire and the retained readback then used the private successor descriptor ${report.successor.sha256}. The same idempotency key was read back with no second POST. Task count stayed ${after.counts.tasks}. Readback evidence: ${after.readback.evidence}; originalBodyRecorded: ${after.readback.originalBodyRecorded}.
+- After code rollback, the successor descriptor returned ${rolled.staleSuccessor}. The baseline descriptor was restored, acquire succeeded, and the same key was read back again. Task count stayed ${rolled.counts.tasks}.
+- File repair now validates the complete bundle and the destination before the first payload write. Interrupted progress can finish the exact candidate or return to the exact predecessor. pinLastAloneAtomic: ${report.progress.pinLastAloneAtomic}. Credentials, obligations, terms, and database authority stay outside that repair.
+- The checked-in release contract binds this pair. A wrong, missing, or contradictory contract fails before writes.
 
 ## Source
-- Repository: ${ADMISSION.repository}
-- Baseline commit: ${ADMISSION.baselineCommit}
-- Candidate commit: ${ADMISSION.candidateCommit}
-- Runtime pin: ${ADMISSION.runtimeCommit}
-- Desk pin: ${ADMISSION.deskCommit} (publicEnabled left false)
+- Repository: ${release.repository}
+- Baseline commit: ${source.baselineCommit}
+- Candidate commit: ${source.candidateCommit}
+- Promotion head at the run: ${report.promotionHead}
+- Runtime pin: ${release.runtime.journeyCommit}
+- Desk pin: ${release.runtime.deskCommit} (publicEnabled left false)
 - Measured candidate source: ${report.measured.sourceSha256}
 - Measured candidate host: ${report.measured.hostSha256}
-- Recorded SOURCE.json constant: ${ADMISSION.recordedCandidateSourceSha256}
+- Recorded SOURCE.json constant: ${source.recordedCandidateSourceSha256}
 - recordedSourceConstantAuthority: false
 - recordedSourceConstantAgrees: ${report.sealed.recordedSourceConstantAgrees}
 - native-debt.mjs byte-identical across the two commits: ${report.debtEqual}
@@ -549,42 +661,66 @@ Closed machine-only promotion package for ${ADMISSION.baselineCommit.slice(0, 12
 - Excluded from the machine closure: ${report.sealed.excluded.length}
 - Human paths in the payload: none
 - Schema 011 is additive and was applied once. Rollback restored code bytes and left the 011 tables in place. Schemas 006-010 were not reapplied.
+- Progress owner: ${report.progress.owner}. Final progress phase: ${report.progress.phase}. Final progress role: ${report.progress.role}.
+
+## Release contract
+- File: docs/machine-promotion/release-contract.json
+- SHA256: ${report.contractSha256}
+- Paths are caller inputs. The helper does not trust whichever files happen to be present.
+- Frozen flags stay off. Runtime and desk commits are bound by the contract.
+
+## Two-artifact order
+- Order: ${release.releaseOrder.artifacts.join(' then ')}.
+- Descriptor publication: ${release.releaseOrder.descriptorPublication}.
+- Partial code repair: ${release.releaseOrder.partialCodeRepair}.
+- Schema 011: ${release.releaseOrder.schema011}.
+- Rule: ${release.releaseOrder.rule}
 
 ## Human comparison
-- Build: server/scripts/publish-preserved-client.mjs
-- viteInvoked: false
+- Build: ${release.human.build}
+- viteInvoked: ${human.viteInvoked}
 - Baseline exit: ${human.baseline.status}
 - Candidate exit: ${human.candidate.status}
 - Inventory: ${human.baseline.body?.inventorySha256 ?? 'absent'}
 - Files: ${human.files}
+- Bytes: ${human.leftBytes}
 - byteEqual: ${human.byteEqual}
 - preservedInventoryAgrees: ${human.preservedInventoryAgrees}
 - Projection: ${unchanged ? 'unchanged' : 'coupled'}
-- Separate receiving decision: the public descriptor still requires source ${ADMISSION.baselineSourceSha256} and host ${ADMISSION.baselineHostSha256}. After the candidate boot, acquire returned acquisition_profile_mismatch. After code rollback, acquire succeeded again. That is a profile binding, not a changed human file.
+- The published descriptor still requires source ${source.baselineSourceSha256} and host ${source.baselineHostSha256}. That refusal is unchanged and is not a human-byte change.
 
 ## Contained receiving
-- Wrong repository and wrong commit: acquisition_source_mismatch before any request, on the baseline, candidate, and restored baseline.
-- Lost post response: exit ${report.phases.before.lost.status}, code ${report.phases.before.lost.code}, nextAction ${report.phases.before.lost.nextAction}.
-- One readback reused the stored idempotency key. Task count stayed ${report.phases.before.counts.tasks}. No second post was sent.
-- Readback evidence: ${report.phases.before.readback.evidence}; originalBodyRecorded: ${report.phases.before.readback.originalBodyRecorded}.
-- Fund on every phase: paidWork false.
+- Wrong repository and wrong commit: ${before.wrongRepository} before any request, on the baseline, candidate, and restored baseline.
+- Lost post response: exit ${before.lost.status}, code ${before.lost.code}, nextAction ${before.lost.nextAction}. Journal remained ${before.journal.state} until after promotion.
+- Idempotency key hash unchanged across promotion and rollback: ${report.journalKeyStable}.
+- Candidate readback reused that stored key. Task count stayed ${after.counts.tasks}. secondPost: false.
+- Fund while the lost post was unresolved: not called. Candidate code after readback: ${after.fund.code}, paidWork ${after.fund.paidWork}. Restored baseline code: ${rolled.fund.code}, paidWork ${rolled.fund.paidWork}. No funding row was written.
 - Money stayed unfunded and signerAuthority stayed false. Qualified capability was not set.
 - Account count stayed 1 after signup. Legacy obligation count stayed 1.
 - Financial digest equal across before, candidate, and rollback: ${report.financialEqual}
 - 011 tables after migration: ${report.phases.migrate.additive.join(', ')}
-- 011 tables after code rollback: ${report.phases.rollback.additive.join(', ')}
+- 011 tables after code rollback: ${rolled.additive.join(', ')}
 
 ## Rollback
-- File role baseline restored the measured installed identity ${ADMISSION.baselineSourceSha256}.
-- Public 0.3.1 acquire succeeded again on that restored tree.
-- The same account readback succeeded and the task count stayed 1.
+- File role baseline restored the measured installed identity ${source.baselineSourceSha256}.
+- The private successor descriptor was refused with ${rolled.staleSuccessor}.
+- The restored baseline descriptor acquired successfully and the same account readback succeeded.
 - No schema was dropped.
 
+## Private descriptor
+- File: docs/machine-promotion/evidence/private-successor-descriptor.json
+- SHA256: ${report.successor.sha256}
+- Published: false
+- Client source provenance: ${release.client.repository} ${release.client.commit} ${release.client.path}
+- Required profile source: ${source.measuredCandidateSourceSha256}
+- Required profile host: ${source.measuredCandidateHostSha256}
+- Public endpoints in the descriptor were not changed.
+
 ## Installed boundary
-- Live source remains ${ADMISSION.baselineCommit}.
-- Live runtime remains ${ADMISSION.runtimeCommit}.
-- Live desk remains ${ADMISSION.deskCommit}.
-- Linked installation id remains ${ADMISSION.installedHostinger}.
+- Live source remains ${source.baselineCommit}.
+- Live runtime remains ${release.runtime.journeyCommit}.
+- Live desk remains ${release.runtime.deskCommit}.
+- Linked installation id remains ${release.installedHostinger}.
 - Public, funded, payment, and human-asset flags stay off.
 - This assignment did not deploy, sign, grant, fund, pay, publish, or merge.
 
@@ -599,6 +735,7 @@ ${report.commands.map(command => `- ${command.name}: exit ${command.status}`).jo
 - docs/machine-promotion/README.md
 - docs/machine-promotion/ROOT-COMMANDS.md
 - docs/machine-promotion/BOUNDARY.md
+- docs/machine-promotion/release-contract.json
 - docs/machine-promotion/bundle/
 - docs/machine-promotion/evidence/
 
@@ -607,11 +744,12 @@ ${report.commands.map(command => `- ${command.name}: exit ${command.status}`).jo
 - Contained receiving: disposable private Postgres, destroyed before this receipt was sealed.
 - Actual deployment: not performed. Root owns production credentials and the install root.
 - Financial activation: not performed. Accepted money logic was not edited.
+- Descriptor publication: not performed. The successor file is private evidence.
 - Outside use: not performed. No external user task and no human publication.
 - Revenue: none.
 
 ## NEXT
-Root applies the bundle only to a tree whose measured identity is still the baseline, then applies schema/011_capability_composition.sql once and boots the candidate. Root does not reapply schemas 006-010 and does not drop 011 on code rollback. Root separately decides whether to publish a successor 0.3.1 descriptor for the measured candidate hashes, and whether to correct the recorded SOURCE.json constant. Neither decision is made here. No default merge.
+Root installs the code bundle only onto a tree that still measures as the baseline identity, then applies schema/011_capability_composition.sql once. Root publishes the acquisition descriptor only after the installed tree measures as the candidate identity in the release contract. Until that publication, clients fail closed. Pin-last is not atomic: an interrupted install is finished or returned from the task progress file, and that repair does not touch credentials, obligations, terms, or the database. If code is rolled back, Root restores the baseline descriptor in the same decision and does not drop schema 011. The recorded SOURCE.json constant remains a nonauthoritative disagreement. No default merge.
 `;
 }
 
@@ -620,86 +758,115 @@ export async function runReceive(paths) {
   const destination = resolve(paths.destination);
   const state = resolve(paths.state);
   const startedKiB = memAvailableKiB();
+  if (!paths.contract) throw fail('contract_required');
+  const contractBytes = readFileSync(paths.contract);
+  const release = loadReleaseContract(paths.contract);
   if (destination === repo || destination.startsWith(repo + sep) || state === repo || state.startsWith(repo + sep)) throw fail('destination_refused');
   if (existsSync(destination)) throw fail('destination_exists');
   if (existsSync(state)) throw fail('state_exists');
   requireFile(paths.client);
   requireFile(paths.descriptor);
   const clientBytes = readFileSync(paths.client);
-  const descriptorBytes = readFileSync(paths.descriptor);
-  if (clientBytes.length !== ADMISSION.clientBytes || sha256(clientBytes) !== ADMISSION.clientSha256) throw fail('client_pin_refused');
-  if (descriptorBytes.length !== ADMISSION.descriptorBytes || sha256(descriptorBytes) !== ADMISSION.descriptorSha256) throw fail('descriptor_pin_refused');
-  const descriptor = JSON.parse(descriptorBytes.toString('utf8'));
-  if (descriptor.requiredProfile?.sourceSha256 !== ADMISSION.baselineSourceSha256 || descriptor.requiredProfile?.hostSha256 !== ADMISSION.baselineHostSha256) {
-    throw fail('descriptor_pin_refused');
-  }
+  if (clientBytes.length !== release.client.bytes || sha256(clientBytes) !== release.client.sha256) throw fail('client_pin_refused');
+  const published = publishedDescriptor(release, paths.descriptor);
+  const successor = successorDescriptor(published.parsed, release);
   const head = execFileSync('git', ['-C', repo, 'rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
-  if (head !== ADMISSION.candidateCommit) throw fail('wrong_source', {head});
-  const candidatePin = JSON.parse(gitFile(repo, ADMISSION.candidateCommit, PIN).toString('utf8'));
+  const drift = closureDrift(repo, release.source.candidateCommit);
+  if (drift.length) throw fail('candidate_tree_drift', {drift: drift.slice(0, 8)});
+  const candidatePin = JSON.parse(gitFile(repo, release.source.candidateCommit, PIN).toString('utf8'));
   const dirty = closureDirty(repo, new Set(Object.keys(candidatePin.files)));
   if (dirty.length) throw fail('writer_closure_dirty', {dirty});
   const measured = await measureProduct(repo);
-  const baselineDebt = gitFile(repo, ADMISSION.baselineCommit, DEBT);
-  const candidateDebt = gitFile(repo, ADMISSION.candidateCommit, DEBT);
+  if (measured.sourceSha256 !== release.source.measuredCandidateSourceSha256 || measured.hostSha256 !== release.source.measuredCandidateHostSha256) {
+    throw fail('measured_identity_refused', {measured});
+  }
+  const baselineDebt = gitFile(repo, release.source.baselineCommit, DEBT);
+  const candidateDebt = gitFile(repo, release.source.candidateCommit, DEBT);
   const debtEqual = sha256(baselineDebt) === sha256(candidateDebt) && candidateDebt.includes(Buffer.from(ORIGINAL_OBLIGATION_ID));
   if (!debtEqual) throw fail('obligation_source_changed');
   mkdirSync(paths.bundle, {recursive: true});
-  await buildBundle({repo, out: paths.bundle});
-  const sealed = sealMeasuredIdentity(paths.bundle, measured);
+  await buildBundle({repo, out: paths.bundle, contract: release});
+  const sealed = sealMeasuredIdentity(paths.bundle, measured, release);
   if (sealed.recordedSourceConstantAgrees !== false) throw fail('recorded_constant_was_rewritten');
   if (sealed.measuredCandidateSourceSha256 !== measured.sourceSha256) throw fail('measured_identity_refused');
   const created = {worktree: false, symlink: false, state: false};
   let destroyedOnce = false;
   const commands = [];
   const record = (name, status) => commands.push({name, status});
+  const phasePaths = {destination, state, client: paths.client, descriptor: paths.descriptor, bundle: paths.bundle, contractPath: paths.contract};
   try {
-    execFileSync('git', ['-C', repo, 'worktree', 'add', '--detach', destination, ADMISSION.baselineCommit], {
+    execFileSync('git', ['-C', repo, 'worktree', 'add', '--detach', destination, release.source.baselineCommit], {
       stdio: 'ignore', timeout: 180000, env: {...process.env, GIT_TERMINAL_PROMPT: '0'},
     });
     created.worktree = true;
     const link = join(destination, 'node_modules');
     symlinkSync(join(repo, 'node_modules'), link);
     created.symlink = true;
-    verifyFrozen(destination);
-    verifyFrozen(repo);
+    verifyFrozen(destination, release);
+    verifyFrozen(repo, release);
     const predecessor = await measureProduct(destination);
-    if (predecessor.sourceSha256 !== ADMISSION.baselineSourceSha256 || predecessor.hostSha256 !== ADMISSION.baselineHostSha256) {
+    if (predecessor.sourceSha256 !== release.source.baselineSourceSha256 || predecessor.hostSha256 !== release.source.baselineHostSha256) {
       throw fail('predecessor_refused', {before: predecessor});
     }
-    const human = compareHuman(destination, repo);
-    if (human.baseline.status !== 0 || human.candidate.status !== 0) {
-      throw fail('human_comparison_failed', {baseline: human.baseline.status, candidate: human.candidate.status, stderr: human.candidate.stderr || human.baseline.stderr});
+    const human = compareHuman(destination, repo, release);
+    if (human.baseline.status !== 0 || human.candidate.status !== 0 || human.viteInvoked !== false ||
+      human.baseline.body?.viteInvoked !== false || human.candidate.body?.viteInvoked !== false) {
+      throw fail('human_comparison_failed', {baseline: human.baseline.status, candidate: human.candidate.status, viteInvoked: human.viteInvoked, stderr: human.candidate.stderr || human.baseline.stderr});
     }
-    const phasePaths = {destination, state, client: paths.client, descriptor: paths.descriptor, bundle: paths.bundle};
     const before = spawnPhase('before', phasePaths);
     record('phase-before', before.status);
-    if (before.status !== 0 || before.body?.ok !== true) phaseFailure('phase_before_failed', before);
-    if (before.body.sourceSha256 !== ADMISSION.baselineSourceSha256 || before.body.hostSha256 !== ADMISSION.baselineHostSha256) throw fail('baseline_profile_refused');
-    const installed = await applyBundle({bundleDir: paths.bundle, destination, role: 'candidate'});
+    if (before.status !== 0 || before.body?.ok !== true || before.body?.readback?.performed !== false) phaseFailure('phase_before_failed', before);
+    if (before.body.sourceSha256 !== release.source.baselineSourceSha256 || before.body.hostSha256 !== release.source.baselineHostSha256) throw fail('baseline_profile_refused');
+    const successorFile = join(state, 'successor-descriptor.json');
+    writeFileSync(successorFile, successor.bytes, {mode: 0o600});
+    chmodSync(successorFile, 0o600);
+    phasePaths.successor = successorFile;
+    const progressFile = join(state, 'apply-progress.json');
+    const installed = await applyBundle({bundleDir: paths.bundle, destination, role: 'candidate', contract: release, progressFile});
     record('install', installed.ok ? 0 : 1);
+    if (installed.pinLastAloneAtomic !== false) throw fail('progress_refused');
     const migrated = spawnPhase('migrate', phasePaths);
     record('phase-migrate', migrated.status);
     if (migrated.status !== 0 || migrated.body?.reappliedEarlierSchemas !== false) phaseFailure('phase_migrate_failed', migrated);
     const after = spawnPhase('after', phasePaths);
     record('phase-after', after.status);
-    if (after.status !== 0 || after.body?.sourceSha256 !== measured.sourceSha256 || after.body?.hostSha256 !== measured.hostSha256) {
+    if (after.status !== 0 || after.body?.publishedDescriptorContinuity !== false || after.body?.staleDescriptor !== 'acquisition_profile_mismatch') {
       phaseFailure('phase_after_failed', after);
     }
-    const restored = await applyBundle({bundleDir: paths.bundle, destination, role: 'baseline'});
+    if (after.body?.sourceSha256 !== measured.sourceSha256 || after.body?.hostSha256 !== measured.hostSha256 || after.body?.acquire?.ok !== true) {
+      phaseFailure('phase_after_failed', after);
+    }
+    const restored = await applyBundle({bundleDir: paths.bundle, destination, role: 'baseline', contract: release, progressFile});
     record('rollback', restored.ok ? 0 : 1);
     const rolled = spawnPhase('rollback', phasePaths);
     record('phase-rollback', rolled.status);
-    if (rolled.status !== 0 || rolled.body?.sourceSha256 !== ADMISSION.baselineSourceSha256) {
+    if (rolled.status !== 0 || rolled.body?.sourceSha256 !== release.source.baselineSourceSha256 || rolled.body?.staleSuccessor !== 'acquisition_profile_mismatch') {
       phaseFailure('phase_rollback_failed', rolled);
     }
     const financialEqual = before.body.financialDigest === after.body.financialDigest && after.body.financialDigest === rolled.body.financialDigest;
     if (!financialEqual) throw fail('financial_snapshot_changed');
+    const journalKey = before.body.journal.idempotencyKeySha256;
+    const journalKeyStable = Boolean(journalKey) && journalKey === after.body.journal.idempotencyKeySha256 && journalKey === rolled.body.journal.idempotencyKeySha256;
+    if (!journalKeyStable || after.body.secondPost !== false || rolled.body.secondPost !== false) throw fail('journal_key_changed');
+    const progress = JSON.parse(readFileSync(progressFile, 'utf8'));
+    if (progress.phase !== 'complete' || progress.pinLastAloneAtomic !== false || progress.owner !== 'h120010-apply') throw fail('progress_refused');
     const privateState = readState(state);
     const publicReport = {
       schema: 'sds.h120010.receive.v1',
-      measured, sealed: {sha256: sealed.sha256, members: sealed.members, excluded: sealed.excluded, recordedSourceConstantAgrees: sealed.recordedSourceConstantAgrees,
+      originalHead: 'bdbae58688b857eb8bf3ebf408768daa3a088af4',
+      promotionHead: head,
+      contractSha256: sha256(contractBytes),
+      measured,
+      release: {
+        schema: release.schema, repository: release.repository, source: release.source, runtime: release.runtime,
+        client: release.client, human: release.human, endpoints: release.endpoints, releaseOrder: release.releaseOrder,
+        installedHostinger: release.installedHostinger,
+      },
+      successor: {sha256: successor.sha256, bytes: successor.bytes.length, published: false},
+      progress: {schema: progress.schema, owner: progress.owner, phase: progress.phase, role: progress.role, pinLastAloneAtomic: false},
+      sealed: {sha256: sealed.sha256, members: sealed.members, excluded: sealed.excluded, recordedSourceConstantAgrees: sealed.recordedSourceConstantAgrees,
         measuredCandidateSourceSha256: sealed.measuredCandidateSourceSha256, measuredCandidateHostSha256: sealed.measuredCandidateHostSha256},
-      debtEqual, financialEqual, financialDigest: before.body.financialDigest, human, commands,
+      debtEqual, financialEqual, financialDigest: before.body.financialDigest, journalKeyStable, human, commands,
       phases: {before: before.body, migrate: migrated.body, after: after.body, rollback: rolled.body},
       limits: {modelChildren: 0, serial: true, aggregateBudgetKiB: 2097152, paidProviderCalls: 0, productionDeployment: false,
         memAvailableKiBStart: startedKiB, memAvailableKiBEnd: memAvailableKiB()},
@@ -714,7 +881,7 @@ export async function runReceive(paths) {
     writeFileSync(join(paths.evidence, 'human-comparison.json'), `${JSON.stringify(human, null, 2)}\n`);
     writeFileSync(join(paths.evidence, 'source-constant.json'), `${JSON.stringify({
       schema: 'sds.h120010.source-constant.v1',
-      recordedCandidateSourceSha256: ADMISSION.recordedCandidateSourceSha256,
+      recordedCandidateSourceSha256: release.source.recordedCandidateSourceSha256,
       measuredCandidateSourceSha256: measured.sourceSha256,
       measuredCandidateHostSha256: measured.hostSha256,
       recordedSourceConstantAuthority: false,
@@ -722,17 +889,19 @@ export async function runReceive(paths) {
       sourceFile: 'vendor/hosted-wallet-market/SOURCE.json',
       amended: false,
     }, null, 2)}\n`);
+    writeFileSync(join(paths.evidence, 'private-successor-descriptor.json'), successor.bytes, {mode: 0o600});
     writeFileSync(join(paths.evidence, 'receive.json'), `${JSON.stringify(publicReport, null, 2)}\n`);
     writeFileSync(join(paths.evidence, 'limits.json'), `${JSON.stringify(publicReport.limits, null, 2)}\n`);
     const markdown = renderResult(publicReport);
     assertSecretFree(markdown, privateState);
     writeFileSync(paths.result, markdown);
     return {ok: true, manifestSha256: sealed.sha256, members: sealed.members.length, financialDigest: before.body.financialDigest,
-      humanUnchanged: human.byteEqual === true && human.preservedInventoryAgrees === true, recordedSourceConstantAgrees: false, productionDeployment: false};
+      humanUnchanged: human.byteEqual === true && human.preservedInventoryAgrees === true, recordedSourceConstantAgrees: false,
+      publishedDescriptorContinuity: false, privateSuccessorReadback: true, pinLastAloneAtomic: false, productionDeployment: false};
   } finally {
     try {
       if (!destroyedOnce && existsSync(join(state, 'private.json'))) {
-        const late = spawnPhase('destroy', {destination, state, client: paths.client, descriptor: paths.descriptor, bundle: paths.bundle});
+        const late = spawnPhase('destroy', {...phasePaths, successor: undefined});
         if (late.status !== 0 && existsSync(join(state, 'private.json'))) {
           try { await stopCluster(readState(state).cluster); } catch { /* cluster already stopped */ }
         }

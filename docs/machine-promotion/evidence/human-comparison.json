@@ -26,6 +26,8 @@
   },
   "byteEqual": true,
   "files": 352,
+  "leftBytes": 59951737,
+  "rightBytes": 59951737,
   "mismatched": [],
   "onlyBaseline": [],
   "onlyCandidate": [],

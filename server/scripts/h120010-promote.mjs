@@ -1,40 +1,17 @@
 #!/usr/bin/env node
-// Closed machine-only promotion from installed aa861e98 to reviewed 6bde3ec4.
-// Roots, the public client, and the destination are arguments. This file does
-// not embed a worker scratch path, an account store, or a production credential.
+// Closed machine-only promotion helper.
+// The reviewed pair lives in an explicit release contract. This file does not
+// embed a worker scratch path, an account store, or a production credential.
 import {createHash} from 'node:crypto';
 import {execFileSync, spawnSync} from 'node:child_process';
-import {existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync} from 'node:fs';
-import {dirname, join, relative, resolve, sep} from 'node:path';
-import {fileURLToPath, pathToFileURL} from 'node:url';
-
-export const ADMISSION = Object.freeze({
-  schema: 'sds.h120010.machine-promotion.v1',
-  repository: 'https://github.com/epistemedeus/samedaydesk.git',
-  baselineCommit: 'aa861e980df0f75a782ff30996450cf15870f2e7',
-  candidateCommit: '6bde3ec4df57df5f0783fec38f39eacbadfb6d9e',
-  baselineSourceSha256: '5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2',
-  baselineHostSha256: '4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177',
-  recordedCandidateSourceSha256: '458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8',
-  humanInventorySha256: '6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5',
-  humanFiles: 352,
-  humanBytes: 59951737,
-  runtimeCommit: '427f5a08e3b294a8f15fb9d148f7de46ca7cb538',
-  deskCommit: '0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556',
-  clientSha256: 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9',
-  clientBytes: 30187,
-  descriptorSha256: '1b6e9c1099f1420d53564674f71e15544333812dcc2c682062aae7af2f5295c4',
-  descriptorBytes: 2327,
-  clientSource: Object.freeze({
-    repository: 'epistemedeus/neomorphic-io',
-    commit: 'b79f985e83e829288a675407a4b4124e58a11f3a',
-    path: 'clients/cold-requester-0.3.1.mjs',
-  }),
-  installedHostinger: '01a19731-bfd7-7095-9ec8-7c3218fb8aec',
-  flags: Object.freeze({publicReads: '0', fundedTasks: 'off', payments: 'off', humanAssets: 'off', money: 'unfunded', signerAuthority: false}),
-});
+import {chmodSync, closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync} from 'node:fs';
+import {dirname, join, resolve, sep} from 'node:path';
+import {pathToFileURL} from 'node:url';
 
 export const PIN = 'server/foundry/activation/private-control-pin.json';
+export const RELEASE_SCHEMA = 'sds.h120010.release-contract.v1';
+export const PROGRESS_SCHEMA = 'sds.h120010.apply-progress.v1';
+const PROGRESS_OWNER = 'h120010-apply';
 const SOURCE_PREFIXES = [
   'vendor/hosted-wallet-market/bin/',
   'vendor/hosted-wallet-market/client/',
@@ -51,7 +28,13 @@ const FROZEN = [
   'vendor/neomorphic-contributor-journey/SOURCE.json',
   'vendor/neomorphic-contributor-desk/SOURCE.json',
 ];
-const here = dirname(fileURLToPath(import.meta.url));
+const FLAG_KEYS = ['publicReads', 'fundedTasks', 'payments', 'humanAssets', 'money', 'signerAuthority'];
+const FROZEN_FLAGS = Object.freeze({publicReads: '0', fundedTasks: 'off', payments: 'off', humanAssets: 'off', money: 'unfunded', signerAuthority: false});
+const TOP_KEYS = ['schema', 'repository', 'source', 'runtime', 'client', 'descriptor', 'endpoints', 'flags', 'human', 'installedHostinger', 'releaseOrder'];
+const SOURCE_KEYS = ['baselineCommit', 'candidateCommit', 'baselineSourceSha256', 'baselineHostSha256', 'measuredCandidateSourceSha256', 'measuredCandidateHostSha256', 'recordedCandidateSourceSha256', 'recordedSourceConstantAuthority', 'recordedSourceConstantAgrees'];
+const HEX64 = /^[a-f0-9]{64}$/;
+const HEX40 = /^[a-f0-9]{40}$/;
+const HTTPS_PATH = /^https:\/\/[A-Za-z0-9.-]+\/[A-Za-z0-9_./~-]+$/;
 
 export function fail(code, extra = {}) {
   const error = new Error(code);
@@ -68,6 +51,84 @@ export function safeRelative(name) {
   return typeof name === 'string' && name.length > 0 && name.length <= 4096 &&
     !name.startsWith('/') && !name.includes('\\') && !name.includes('\0') &&
     name.split('/').every(part => part && part !== '.' && part !== '..');
+}
+
+function exactKeys(value, keys) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value) &&
+    Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key));
+}
+
+export function validateReleaseContract(input) {
+  if (!exactKeys(input, TOP_KEYS) || input.schema !== RELEASE_SCHEMA) throw fail('contract_refused');
+  if (!/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\.git$/.test(input.repository)) throw fail('contract_refused');
+  const source = input.source;
+  if (!exactKeys(source, SOURCE_KEYS)) throw fail('contract_refused');
+  if (!HEX40.test(source.baselineCommit) || !HEX40.test(source.candidateCommit)) throw fail('contract_refused');
+  if (source.baselineCommit === source.candidateCommit) throw fail('contract_contradiction');
+  for (const key of ['baselineSourceSha256', 'baselineHostSha256', 'measuredCandidateSourceSha256', 'measuredCandidateHostSha256', 'recordedCandidateSourceSha256']) {
+    if (!HEX64.test(source[key])) throw fail('contract_refused');
+  }
+  if (source.baselineSourceSha256 === source.measuredCandidateSourceSha256 && source.baselineHostSha256 === source.measuredCandidateHostSha256) {
+    throw fail('contract_contradiction');
+  }
+  if (source.recordedSourceConstantAuthority !== false) throw fail('contract_contradiction');
+  if (source.recordedSourceConstantAgrees !== (source.recordedCandidateSourceSha256 === source.measuredCandidateSourceSha256)) {
+    throw fail('contract_contradiction');
+  }
+  const runtime = input.runtime;
+  if (!exactKeys(runtime, ['journeyCommit', 'deskCommit', 'journeySource', 'deskSource'])) throw fail('contract_refused');
+  if (!HEX40.test(runtime.journeyCommit) || !HEX40.test(runtime.deskCommit)) throw fail('contract_refused');
+  if (runtime.journeyCommit === runtime.deskCommit) throw fail('contract_contradiction');
+  if (runtime.journeySource !== FROZEN[0] || runtime.deskSource !== FROZEN[1]) throw fail('contract_contradiction');
+  const client = input.client;
+  if (!exactKeys(client, ['version', 'sha256', 'bytes', 'repository', 'commit', 'path'])) throw fail('contract_refused');
+  if (client.version !== '0.3.1' || !HEX64.test(client.sha256) || !Number.isSafeInteger(client.bytes) || client.bytes <= 0) throw fail('contract_refused');
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(client.repository) || !HEX40.test(client.commit) || !safeRelative(client.path)) throw fail('contract_refused');
+  const descriptor = input.descriptor;
+  if (!exactKeys(descriptor, ['schema', 'sha256', 'bytes', 'requiredProfile', 'source'])) throw fail('contract_refused');
+  if (descriptor.schema !== 'neomorphic.machine-participation.acquisition.v1') throw fail('contract_contradiction');
+  if (!HEX64.test(descriptor.sha256) || !Number.isSafeInteger(descriptor.bytes) || descriptor.bytes <= 0) throw fail('contract_refused');
+  const profile = descriptor.requiredProfile;
+  if (!exactKeys(profile, ['money', 'participation', 'sourceSha256', 'hostSha256'])) throw fail('contract_refused');
+  if (profile.money !== 'unfunded' || profile.participation !== 'voluntary-artifact-v1') throw fail('contract_contradiction');
+  if (profile.sourceSha256 !== source.baselineSourceSha256 || profile.hostSha256 !== source.baselineHostSha256) throw fail('contract_contradiction');
+  if (!exactKeys(descriptor.source, ['repository', 'commit', 'path'])) throw fail('contract_refused');
+  if (descriptor.source.repository !== client.repository || descriptor.source.commit !== client.commit || descriptor.source.path !== client.path) {
+    throw fail('contract_contradiction');
+  }
+  const endpoints = input.endpoints;
+  if (!exactKeys(endpoints, ['profile', 'participationContract'])) throw fail('contract_refused');
+  if (!HTTPS_PATH.test(endpoints.profile) || !HTTPS_PATH.test(endpoints.participationContract)) throw fail('contract_refused');
+  if (endpoints.profile.includes('@') || endpoints.participationContract.includes('@')) throw fail('contract_contradiction');
+  if (endpoints.profile === endpoints.participationContract) throw fail('contract_contradiction');
+  if (!exactKeys(input.flags, FLAG_KEYS)) throw fail('contract_refused');
+  for (const key of FLAG_KEYS) if (input.flags[key] !== FROZEN_FLAGS[key]) throw fail('contract_contradiction');
+  const human = input.human;
+  if (!exactKeys(human, ['build', 'viteInvoked', 'inventorySha256', 'files', 'bytes'])) throw fail('contract_refused');
+  if (human.build !== 'server/scripts/publish-preserved-client.mjs' || human.viteInvoked !== false) throw fail('contract_contradiction');
+  if (!HEX64.test(human.inventorySha256) || !Number.isSafeInteger(human.files) || human.files <= 0 || !Number.isSafeInteger(human.bytes) || human.bytes <= 0) {
+    throw fail('contract_refused');
+  }
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(input.installedHostinger)) throw fail('contract_refused');
+  const order = input.releaseOrder;
+  if (!exactKeys(order, ['artifacts', 'descriptorPublication', 'partialCodeRepair', 'pinLastAloneAtomic', 'schema011', 'rule'])) throw fail('contract_refused');
+  if (!Array.isArray(order.artifacts) || order.artifacts.length !== 2 || order.artifacts[0] !== 'code-bundle' || order.artifacts[1] !== 'acquisition-descriptor') {
+    throw fail('contract_contradiction');
+  }
+  if (order.descriptorPublication !== 'after-measured-candidate-identity' || order.partialCodeRepair !== 'progress-journal' || order.pinLastAloneAtomic !== false) {
+    throw fail('contract_contradiction');
+  }
+  if (order.schema011 !== 'separate-sql-not-dropped-on-code-rollback') throw fail('contract_contradiction');
+  if (typeof order.rule !== 'string' || order.rule.length < 40 || order.rule.length > 2000) throw fail('contract_refused');
+  return input;
+}
+
+export function loadReleaseContract(file) {
+  if (!file || !existsSync(file) || !lstatSync(file).isFile()) throw fail('contract_required', {path: file});
+  let parsed;
+  try { parsed = JSON.parse(readFileSync(file, 'utf8')); }
+  catch { throw fail('contract_refused', {path: file}); }
+  return validateReleaseContract(parsed);
 }
 
 export function humanSurface(name) {
@@ -113,7 +174,6 @@ function gitBytes(repo, commit, path) {
   try {
     return git(repo, ['show', `${commit}:${path}`]);
   } catch (error) {
-    if (String(error.stderr || '').includes('exists on disk') || String(error.stderr || '').includes('does not exist')) return null;
     if (/exists on disk|does not exist|Path .* does not exist/.test(String(error.stderr || error.message))) return null;
     throw error;
   }
@@ -122,6 +182,11 @@ function gitBytes(repo, commit, path) {
 function existsAt(repo, commit, path) {
   const probe = spawnSync('git', ['-C', repo, 'cat-file', '-e', `${commit}:${path}`], {stdio: 'ignore'});
   return probe.status === 0;
+}
+
+export function closureDrift(repo, commit) {
+  const out = git(repo, ['diff', '--name-only', commit, '--', PIN, 'server/lib/hosted-wallet-market-mount.js', 'vendor/hosted-wallet-market'], 'utf8');
+  return out.split('\n').map(line => line.trim()).filter(Boolean);
 }
 
 export async function measureProduct(root) {
@@ -147,6 +212,7 @@ export function sourceConstant(root) {
 
 function walkFiles(dir) {
   const out = new Map();
+  let bytes = 0;
   const rec = prefix => {
     for (const name of readdirSync(prefix ? join(dir, prefix) : dir)) {
       const rel = prefix ? `${prefix}/${name}` : name;
@@ -156,11 +222,15 @@ function walkFiles(dir) {
       if (stat.isSymbolicLink()) throw fail('link_refused', {path: rel});
       if (stat.isDirectory()) rec(rel);
       else if (!stat.isFile()) throw fail('special_refused', {path: rel});
-      else out.set(rel, sha256(readFileSync(absolute)));
+      else {
+        const body = readFileSync(absolute);
+        bytes += body.length;
+        out.set(rel, sha256(body));
+      }
     }
   };
   rec('');
-  return out;
+  return {files: out, bytes};
 }
 
 export function compareDirectories(left, right) {
@@ -169,23 +239,28 @@ export function compareDirectories(left, right) {
   const mismatched = [];
   const onlyLeft = [];
   const onlyRight = [];
-  for (const [file, digest] of a) {
-    if (!b.has(file)) onlyLeft.push(file);
-    else if (b.get(file) !== digest) mismatched.push(file);
+  for (const [file, digest] of a.files) {
+    if (!b.files.has(file)) onlyLeft.push(file);
+    else if (b.files.get(file) !== digest) mismatched.push(file);
   }
-  for (const file of b.keys()) if (!a.has(file)) onlyRight.push(file);
-  const files = [...a.keys()].sort();
+  for (const file of b.files.keys()) if (!a.files.has(file)) onlyRight.push(file);
   return {
     equal: mismatched.length === 0 && onlyLeft.length === 0 && onlyRight.length === 0,
-    files: a.size,
+    files: a.files.size,
+    leftBytes: a.bytes,
+    rightBytes: b.bytes,
     mismatched, onlyLeft, onlyRight,
-    leftInventory: inventoryOf([...a].sort(([x], [y]) => x < y ? -1 : x > y ? 1 : 0)),
-    rightInventory: inventoryOf([...b].sort(([x], [y]) => x < y ? -1 : x > y ? 1 : 0)),
+    leftInventory: inventoryOf([...a.files].sort(([x], [y]) => x < y ? -1 : x > y ? 1 : 0)),
+    rightInventory: inventoryOf([...b.files].sort(([x], [y]) => x < y ? -1 : x > y ? 1 : 0)),
   };
 }
 
 function inventoryOf(pairs) {
   return sha256(Buffer.from(JSON.stringify(pairs)));
+}
+
+export function preservedViteInvoked(left, right) {
+  return left?.body?.viteInvoked === false && right?.body?.viteInvoked === false ? false : true;
 }
 
 export function preservedClient(root) {
@@ -214,10 +289,11 @@ function memberBytes(bundleDir, role, path) {
   return readFileSync(file);
 }
 
-export function loadManifest(bundleDir) {
+export function loadManifest(bundleDir, contract) {
+  validateReleaseContract(contract);
   const manifest = JSON.parse(readFileSync(join(bundleDir, 'manifest.json'), 'utf8'));
   if (manifest?.schema !== 'sds.h120010.machine-bundle.v1') throw fail('bundle_refused');
-  if (manifest.baselineCommit !== ADMISSION.baselineCommit || manifest.candidateCommit !== ADMISSION.candidateCommit) {
+  if (manifest.baselineCommit !== contract.source.baselineCommit || manifest.candidateCommit !== contract.source.candidateCommit) {
     throw fail('wrong_source');
   }
   if (!Array.isArray(manifest.members) || manifest.members.length === 0) throw fail('bundle_refused');
@@ -231,46 +307,73 @@ export function manifestDigest(manifest) {
   return sha256(Buffer.from(JSON.stringify(copy)));
 }
 
-export async function buildBundle({repo, out}) {
-  const changed = git(repo, ['diff', '--name-only', ADMISSION.baselineCommit, ADMISSION.candidateCommit], 'utf8')
+function bindSealedManifest(manifest, contract) {
+  if (manifest.sha256 !== manifestDigest(manifest)) throw fail('bundle_digest_refused');
+  if (!HEX64.test(manifest.measuredCandidateSourceSha256 || '') || !HEX64.test(manifest.measuredCandidateHostSha256 || '')) {
+    throw fail('bundle_identity_unmeasured');
+  }
+  const source = contract.source;
+  const same = manifest.baselineSourceSha256 === source.baselineSourceSha256 &&
+    manifest.baselineHostSha256 === source.baselineHostSha256 &&
+    manifest.measuredCandidateSourceSha256 === source.measuredCandidateSourceSha256 &&
+    manifest.measuredCandidateHostSha256 === source.measuredCandidateHostSha256 &&
+    manifest.recordedCandidateSourceSha256 === source.recordedCandidateSourceSha256 &&
+    manifest.recordedSourceConstantAuthority === false &&
+    manifest.recordedSourceConstantAgrees === source.recordedSourceConstantAgrees &&
+    manifest.runtimeCommit === contract.runtime.journeyCommit &&
+    manifest.deskCommit === contract.runtime.deskCommit &&
+    JSON.stringify(manifest.flags) === JSON.stringify(contract.flags);
+  if (!same) throw fail('bundle_contract_refused');
+  return manifest;
+}
+
+export async function buildBundle({repo, out, contract}) {
+  validateReleaseContract(contract);
+  const source = contract.source;
+  const recorded = JSON.parse(git(repo, ['show', `${source.candidateCommit}:vendor/hosted-wallet-market/SOURCE.json`], 'utf8'));
+  if (recorded.installedSourceSha256 !== source.recordedCandidateSourceSha256) throw fail('contract_contradiction');
+  const changed = git(repo, ['diff', '--name-only', source.baselineCommit, source.candidateCommit], 'utf8')
     .split('\n').map(line => line.trim()).filter(Boolean);
-  const baselinePin = readPin(gitBytes(repo, ADMISSION.baselineCommit, PIN));
-  const candidatePin = readPin(gitBytes(repo, ADMISSION.candidateCommit, PIN));
+  const baselinePin = readPin(gitBytes(repo, source.baselineCommit, PIN));
+  const candidatePin = readPin(gitBytes(repo, source.candidateCommit, PIN));
   const pinKeys = new Set([...Object.keys(baselinePin.files), ...Object.keys(candidatePin.files)]);
   const selected = selectMembers(changed, pinKeys);
   if (selected.coupled.length) throw fail('human_surface_coupled', {paths: selected.coupled});
-  rmSync(out, {recursive: true, force: true});
-  mkdirSync(out, {recursive: true});
-  const members = [];
+  const staged = [];
   for (const path of selected.payload) {
-    const baseline = existsAt(repo, ADMISSION.baselineCommit, path) ? gitBytes(repo, ADMISSION.baselineCommit, path) : null;
-    const candidate = gitBytes(repo, ADMISSION.candidateCommit, path);
+    const baseline = existsAt(repo, source.baselineCommit, path) ? gitBytes(repo, source.baselineCommit, path) : null;
+    const candidate = gitBytes(repo, source.candidateCommit, path);
     if (!candidate) throw fail('candidate_member_missing', {path});
     const baselineSha256 = baseline ? sha256(baseline) : null;
     const candidateSha256 = sha256(candidate);
     if (baseline && baselineSha256 === candidateSha256) continue;
-    if (baseline) writeBytes(join(out, 'baseline', path), baseline);
-    writeBytes(join(out, 'candidate', path), candidate);
+    staged.push({path, baseline, candidate, baselineSha256, candidateSha256});
+  }
+  rmSync(out, {recursive: true, force: true});
+  mkdirSync(out, {recursive: true});
+  const members = [];
+  for (const item of staged) {
+    if (item.baseline) writeBytes(join(out, 'baseline', item.path), item.baseline);
+    writeBytes(join(out, 'candidate', item.path), item.candidate);
     members.push({
-      path,
-      baselineBytes: baseline ? baseline.length : 0,
-      candidateBytes: candidate.length,
-      baselineSha256,
-      candidateSha256,
+      path: item.path,
+      baselineBytes: item.baseline ? item.baseline.length : 0,
+      candidateBytes: item.candidate.length,
+      baselineSha256: item.baselineSha256,
+      candidateSha256: item.candidateSha256,
     });
   }
-  const recorded = JSON.parse(git(repo, ['show', `${ADMISSION.candidateCommit}:vendor/hosted-wallet-market/SOURCE.json`], 'utf8'));
   const manifest = {
     schema: 'sds.h120010.machine-bundle.v1',
-    baselineCommit: ADMISSION.baselineCommit,
-    candidateCommit: ADMISSION.candidateCommit,
-    baselineSourceSha256: ADMISSION.baselineSourceSha256,
-    baselineHostSha256: ADMISSION.baselineHostSha256,
+    baselineCommit: source.baselineCommit,
+    candidateCommit: source.candidateCommit,
+    baselineSourceSha256: source.baselineSourceSha256,
+    baselineHostSha256: source.baselineHostSha256,
     recordedCandidateSourceSha256: recorded.installedSourceSha256,
     recordedSourceConstantAuthority: false,
-    runtimeCommit: ADMISSION.runtimeCommit,
-    deskCommit: ADMISSION.deskCommit,
-    flags: ADMISSION.flags,
+    runtimeCommit: contract.runtime.journeyCommit,
+    deskCommit: contract.runtime.deskCommit,
+    flags: contract.flags,
     members,
     excluded: selected.excluded,
   };
@@ -292,99 +395,260 @@ function expectedSide(member, role) {
     : {bytes: member.baselineBytes, sha256: member.baselineSha256, other: member.candidateSha256, otherBytes: member.candidateBytes};
 }
 
-export async function applyBundle({bundleDir, destination, role, measure = measureProduct}) {
-  if (role !== 'candidate' && role !== 'baseline') throw fail('role_refused');
-  const manifest = loadManifest(bundleDir);
-  if (manifest.sha256 !== manifestDigest(manifest)) throw fail('bundle_digest_refused');
-  if (!/^[a-f0-9]{64}$/.test(manifest.measuredCandidateSourceSha256 || '') || !/^[a-f0-9]{64}$/.test(manifest.measuredCandidateHostSha256 || '')) {
-    throw fail('bundle_identity_unmeasured');
+function stagedBytes(bundleDir, member, role) {
+  const side = expectedSide(member, role);
+  if (side.bytes === 0) {
+    if (side.sha256 !== null) throw fail('member_digest_refused', {path: member.path});
+    return null;
   }
-  const root = resolve(destination);
-  const before = await measure(root);
-  const expectBefore = role === 'candidate'
-    ? {sourceSha256: manifest.baselineSourceSha256, hostSha256: manifest.baselineHostSha256}
-    : {sourceSha256: manifest.measuredCandidateSourceSha256, hostSha256: manifest.measuredCandidateHostSha256};
-  if (before.sourceSha256 !== expectBefore.sourceSha256 || before.hostSha256 !== expectBefore.hostSha256) {
-    throw fail('predecessor_refused', {before, expectBefore});
-  }
-  // Non-pin payload first. The pin is last so a crash cannot publish a pin that names bytes not yet written.
-  const writing = [...manifest.members].sort((a, b) => Number(a.path === PIN) - Number(b.path === PIN) || a.path.localeCompare(b.path));
-  if (writing.some(member => member.path === PIN) && writing.at(-1).path !== PIN) throw fail('pin_order_refused');
-  for (const member of writing) {
-    if (!safeRelative(member.path) || humanSurface(member.path) || FROZEN.includes(member.path)) throw fail('human_surface_refused', {path: member.path});
-    const side = expectedSide(member, role);
-    if (side.bytes === 0) {
-      const target = join(root, member.path);
-      if (existsSync(target)) {
-        const stat = lstatSync(target);
-        if (stat.isSymbolicLink() || !stat.isFile()) throw fail('member_refused', {path: member.path});
-        if (side.other && sha256(readFileSync(target)) !== side.other) throw fail('destination_member_refused', {path: member.path});
-        rmSync(target);
-      }
-      continue;
-    }
-    const bytes = memberBytes(bundleDir, role, member.path);
-    if (!bytes || bytes.length !== side.bytes || sha256(bytes) !== side.sha256) throw fail('member_digest_refused', {path: member.path});
-    const currentPath = join(root, member.path);
-    if (side.otherBytes === 0) {
-      if (existsSync(currentPath)) throw fail('destination_member_refused', {path: member.path});
-    } else if (side.other) {
-      if (!existsSync(currentPath)) throw fail('destination_member_missing', {path: member.path});
-      const current = readFileSync(currentPath);
-      if (sha256(current) !== side.other) throw fail('destination_member_refused', {path: member.path});
-    }
-    const resolved = resolve(currentPath);
-    if (resolved !== root && !resolved.startsWith(root + sep)) throw fail('path_refused', {path: member.path});
-    writeBytes(resolved, bytes);
-  }
-  const after = await measure(root);
-  const expectAfter = role === 'candidate'
-    ? {sourceSha256: manifest.measuredCandidateSourceSha256, hostSha256: manifest.measuredCandidateHostSha256}
-    : {sourceSha256: manifest.baselineSourceSha256, hostSha256: manifest.baselineHostSha256};
-  if (after.sourceSha256 !== expectAfter.sourceSha256 || after.hostSha256 !== expectAfter.hostSha256) {
-    throw fail('installed_identity_refused', {after, expectAfter});
-  }
-  return {ok: true, role, before, after, members: manifest.members.length};
+  const bytes = memberBytes(bundleDir, role, member.path);
+  if (!bytes || bytes.length !== side.bytes || sha256(bytes) !== side.sha256) throw fail('member_digest_refused', {path: member.path});
+  return bytes;
 }
 
-export function sealMeasuredIdentity(bundleDir, measured) {
-  const manifest = loadManifest(bundleDir);
+function classifyMember(root, member, role) {
+  const side = expectedSide(member, role);
+  const target = join(root, member.path);
+  if (!existsSync(target)) {
+    if (side.bytes === 0) return 'target';
+    if (side.otherBytes === 0) return 'predecessor';
+    return 'foreign';
+  }
+  const stat = lstatSync(target);
+  if (stat.isSymbolicLink() || !stat.isFile()) return 'foreign';
+  const digest = sha256(readFileSync(target));
+  if (side.sha256 && digest === side.sha256) return 'target';
+  if (side.other && digest === side.other) return 'predecessor';
+  return 'foreign';
+}
+
+function pinLast(members) {
+  return [...members].sort((a, b) => Number(a.path === PIN) - Number(b.path === PIN) || a.path.localeCompare(b.path));
+}
+
+function roleEnds(contract, role) {
+  const baseline = {sourceSha256: contract.source.baselineSourceSha256, hostSha256: contract.source.baselineHostSha256};
+  const candidate = {sourceSha256: contract.source.measuredCandidateSourceSha256, hostSha256: contract.source.measuredCandidateHostSha256};
+  return role === 'candidate' ? {from: baseline, to: candidate} : {from: candidate, to: baseline};
+}
+
+function sameIdentity(left, right) {
+  return left?.sourceSha256 === right?.sourceSha256 && left?.hostSha256 === right?.hostSha256;
+}
+
+function writeProgress(file, value) {
+  const banned = Object.keys(value).some(key => /password|token|secret|database|credential|cookie|postgres/i.test(key));
+  if (banned || value.schema !== PROGRESS_SCHEMA || value.owner !== PROGRESS_OWNER || value.pinLastAloneAtomic !== false) throw fail('progress_refused');
+  const bytes = JSON.stringify(value);
+  mkdirSync(dirname(file), {recursive: true});
+  const tmp = `${file}.${process.pid}.tmp`;
+  const fd = openSync(tmp, 'w', 0o600);
+  try {
+    writeFileSync(fd, bytes);
+    fsyncSync(fd);
+  } finally { closeSync(fd); }
+  renameSync(tmp, file);
+  chmodSync(file, 0o600);
+}
+
+function readProgress(file) {
+  let value;
+  try { value = JSON.parse(readFileSync(file, 'utf8')); }
+  catch { throw fail('progress_refused'); }
+  if (!value || value.schema !== PROGRESS_SCHEMA || value.owner !== PROGRESS_OWNER || value.pinLastAloneAtomic !== false) throw fail('progress_refused');
+  if (Object.keys(value).some(key => /password|token|secret|database|credential|cookie|postgres/i.test(key))) throw fail('progress_refused');
+  if (!HEX64.test(value.bundleSha256 || '') || (value.phase !== 'writing' && value.phase !== 'complete')) throw fail('progress_refused');
+  if (value.role !== 'candidate' && value.role !== 'baseline') throw fail('progress_refused');
+  for (const end of [value.from, value.to]) {
+    if (!HEX64.test(end?.sourceSha256 || '') || !HEX64.test(end?.hostSha256 || '')) throw fail('progress_refused');
+  }
+  return value;
+}
+
+function mutateMember(root, member, role, payload) {
+  const side = expectedSide(member, role);
+  const resolved = resolve(join(root, member.path));
+  if (resolved !== root && !resolved.startsWith(`${root}${sep}`)) throw fail('path_refused', {path: member.path});
+  const kind = classifyMember(root, member, role);
+  if (kind === 'foreign') throw fail('destination_unrelated_refused', {path: member.path});
+  if (kind === 'target') return false;
+  if (kind !== 'predecessor') throw fail('destination_member_refused', {path: member.path});
+  if (side.bytes === 0) rmSync(resolved);
+  else writeBytes(resolved, payload);
+  return true;
+}
+
+export async function applyBundle({bundleDir, destination, role, contract, progressFile, measure = measureProduct, interruptAfterWrites = null}) {
+  validateReleaseContract(contract);
+  if (role !== 'candidate' && role !== 'baseline') throw fail('role_refused');
+  if (!progressFile || typeof progressFile !== 'string') throw fail('progress_required');
+  const root = resolve(destination);
+  const progressPath = resolve(progressFile);
+  if (progressPath === root || progressPath.startsWith(`${root}${sep}`)) throw fail('progress_refused');
+  const manifest = bindSealedManifest(loadManifest(bundleDir, contract), contract);
+  const ends = roleEnds(contract, role);
+  const payloads = new Map();
+  for (const member of manifest.members) {
+    if (!safeRelative(member.path) || humanSurface(member.path) || FROZEN.includes(member.path)) throw fail('human_surface_refused', {path: member.path});
+    if ((member.baselineBytes === 0) !== (member.baselineSha256 == null) || (member.candidateBytes === 0) !== (member.candidateSha256 == null)) {
+      throw fail('member_digest_refused', {path: member.path});
+    }
+    stagedBytes(bundleDir, member, 'candidate');
+    stagedBytes(bundleDir, member, 'baseline');
+    payloads.set(member.path, stagedBytes(bundleDir, member, role));
+    const resolved = resolve(join(root, member.path));
+    if (resolved !== root && !resolved.startsWith(`${root}${sep}`)) throw fail('path_refused', {path: member.path});
+  }
+  let progress = existsSync(progressPath) ? readProgress(progressPath) : null;
+  if (progress && (progress.bundleSha256 !== manifest.sha256 || progress.destination !== root)) throw fail('progress_refused');
+  const kinds = () => manifest.members.map(member => ({member, kind: classifyMember(root, member, role)}));
+  if (progress?.phase === 'complete') {
+    const current = kinds();
+    const measured = await measure(root);
+    if (progress.role === role) {
+      if (!sameIdentity(progress.to, ends.to) || !sameIdentity(measured, progress.to) || current.some(item => item.kind !== 'target')) {
+        throw fail('installed_identity_refused', {after: measured, expectAfter: ends.to});
+      }
+      return {ok: true, role, before: progress.from, after: measured, members: manifest.members.length, resumed: true, pinLastAloneAtomic: false};
+    }
+    if (!sameIdentity(measured, progress.to) || current.some(item => item.kind !== 'predecessor')) throw fail('predecessor_refused', {before: measured, expectBefore: ends.from});
+    progress = null;
+  }
+  const recovering = Boolean(progress);
+  if (recovering) {
+    const forward = sameIdentity(progress.from, ends.from) && sameIdentity(progress.to, ends.to);
+    const reverse = sameIdentity(progress.to, ends.from) && sameIdentity(progress.from, ends.to);
+    if (!forward && !reverse) throw fail('progress_refused');
+  }
+  const seen = kinds();
+  const foreign = seen.find(item => item.kind === 'foreign');
+  if (foreign) throw fail(recovering ? 'destination_unrelated_refused' : 'destination_member_refused', {path: foreign.member.path});
+  if (!recovering) {
+    const conflict = seen.find(item => item.kind !== 'predecessor');
+    if (conflict) throw fail('destination_member_refused', {path: conflict.member.path});
+    const before = await measure(root);
+    if (!sameIdentity(before, ends.from)) throw fail('predecessor_refused', {before, expectBefore: ends.from});
+    progress = {
+      schema: PROGRESS_SCHEMA,
+      owner: PROGRESS_OWNER,
+      bundleSha256: manifest.sha256,
+      destination: root,
+      role,
+      from: ends.from,
+      to: ends.to,
+      pinLastAloneAtomic: false,
+      phase: 'writing',
+    };
+    writeProgress(progressPath, progress);
+  }
+  if (interruptAfterWrites === 0) throw fail('apply_interrupted');
+  const pending = pinLast(seen.filter(item => item.kind !== 'target').map(item => item.member));
+  if (pending.some(member => member.path === PIN) && pending.length > 1 && pending.at(-1).path !== PIN) throw fail('pin_order_refused');
+  let writes = 0;
+  for (const member of pending) {
+    if (mutateMember(root, member, role, payloads.get(member.path))) writes += 1;
+    if (Number.isInteger(interruptAfterWrites) && writes >= interruptAfterWrites) throw fail('apply_interrupted', {path: member.path});
+  }
+  const after = await measure(root);
+  if (!sameIdentity(after, ends.to)) throw fail('installed_identity_refused', {after, expectAfter: ends.to});
+  writeProgress(progressPath, {...progress, role, from: ends.from, to: ends.to, phase: 'complete', pinLastAloneAtomic: false});
+  return {ok: true, role, before: ends.from, after, members: manifest.members.length, resumed: recovering, pinLastAloneAtomic: false};
+}
+
+export function sealMeasuredIdentity(bundleDir, measured, contract) {
+  validateReleaseContract(contract);
+  if (measured?.sourceSha256 !== contract.source.measuredCandidateSourceSha256 || measured?.hostSha256 !== contract.source.measuredCandidateHostSha256) {
+    throw fail('measured_identity_refused');
+  }
+  const manifest = loadManifest(bundleDir, contract);
   manifest.measuredCandidateSourceSha256 = measured.sourceSha256;
   manifest.measuredCandidateHostSha256 = measured.hostSha256;
-  manifest.recordedSourceConstantAgrees = manifest.recordedCandidateSourceSha256 === measured.sourceSha256;
+  manifest.recordedSourceConstantAgrees = contract.source.recordedSourceConstantAgrees;
   delete manifest.sha256;
   manifest.sha256 = manifestDigest(manifest);
   writeFileSync(join(bundleDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   return manifest;
 }
 
-export function verifyFrozen(root) {
+export function verifyFrozen(root, contract) {
+  validateReleaseContract(contract);
   const runtime = JSON.parse(readFileSync(join(root, FROZEN[0]), 'utf8'));
   const desk = JSON.parse(readFileSync(join(root, FROZEN[1]), 'utf8'));
-  if (runtime.sourceCommit !== ADMISSION.runtimeCommit) throw fail('runtime_pin_refused');
-  if (desk.sourceCommit !== ADMISSION.deskCommit) throw fail('desk_pin_refused');
+  if (runtime.sourceCommit !== contract.runtime.journeyCommit) throw fail('runtime_pin_refused');
+  if (desk.sourceCommit !== contract.runtime.deskCommit) throw fail('desk_pin_refused');
   return {runtimeCommit: runtime.sourceCommit, deskCommit: desk.sourceCommit, publicEnabled: desk.publicEnabled};
 }
 
-export function compareHuman(baselineRoot, candidateRoot) {
+export function compareHuman(baselineRoot, candidateRoot, contract) {
+  validateReleaseContract(contract);
   const left = preservedClient(baselineRoot);
   const right = preservedClient(candidateRoot);
   const bytes = compareDirectories(join(baselineRoot, 'client/dist'), join(candidateRoot, 'client/dist'));
+  const inventory = contract.human.inventorySha256;
   return {
     schema: 'sds.h120010.human-comparison.v1',
-    build: 'server/scripts/publish-preserved-client.mjs',
-    viteInvoked: false,
+    build: contract.human.build,
+    viteInvoked: preservedViteInvoked(left, right),
     baseline: left,
     candidate: right,
     byteEqual: bytes.equal,
     files: bytes.files,
+    leftBytes: bytes.leftBytes,
+    rightBytes: bytes.rightBytes,
     mismatched: bytes.mismatched,
     onlyBaseline: bytes.onlyLeft,
     onlyCandidate: bytes.onlyRight,
     inventorySha256: bytes.equal ? bytes.leftInventory : null,
-    preservedInventoryAgrees: left.body?.inventorySha256 === ADMISSION.humanInventorySha256 &&
-      right.body?.inventorySha256 === ADMISSION.humanInventorySha256,
+    preservedInventoryAgrees: preservedViteInvoked(left, right) === false && left.body?.inventorySha256 === inventory && right.body?.inventorySha256 === inventory &&
+      bytes.equal && bytes.leftInventory === inventory && bytes.files === contract.human.files &&
+      bytes.leftBytes === contract.human.bytes && bytes.rightBytes === contract.human.bytes,
   };
+}
+
+export function successorDescriptor(published, contract) {
+  validateReleaseContract(contract);
+  if (!published || published.schema !== contract.descriptor.schema || published.version !== contract.client.version) throw fail('descriptor_contract_refused');
+  const source = published.source || {};
+  if (source.repository !== contract.client.repository || source.commit !== contract.client.commit || source.path !== contract.client.path) {
+    throw fail('descriptor_provenance_refused');
+  }
+  if (published.sha256 !== contract.client.sha256 || published.bytes !== contract.client.bytes) throw fail('descriptor_client_refused');
+  if (published.profile !== contract.endpoints.profile || published.contract !== contract.endpoints.participationContract) throw fail('endpoint_refused');
+  const required = published.requiredProfile || {};
+  if (required.money !== 'unfunded' || required.participation !== 'voluntary-artifact-v1' ||
+    required.sourceSha256 !== contract.source.baselineSourceSha256 || required.hostSha256 !== contract.source.baselineHostSha256) {
+    throw fail('descriptor_contract_refused');
+  }
+  const next = structuredClone(published);
+  next.requiredProfile.sourceSha256 = contract.source.measuredCandidateSourceSha256;
+  next.requiredProfile.hostSha256 = contract.source.measuredCandidateHostSha256;
+  next.publicationStatus = 'private_unreleased';
+  next.hostedAcquisitionVerified = false;
+  next.apiActivation = false;
+  next.fundingOrPaymentActivation = false;
+  next.humanPage = false;
+  next.acquisitionClock = 'Private contained successor. No hosted acquisition claimed.';
+  next.predecessor = contract.descriptor.sha256;
+  const slug = contract.repository.slice('https://github.com/'.length, -'.git'.length);
+  next.succession = {
+    schema: 'neomorphic.acquisition-binding-succession.v1',
+    binding: contract.source.candidateCommit.slice(0, 8),
+    reviewedHostSource: {repository: slug, commit: contract.source.candidateCommit},
+    predecessorHostSha256: contract.source.baselineHostSha256,
+    predecessorProfile: {
+      money: 'unfunded',
+      participation: 'voluntary-artifact-v1',
+      sourceSha256: contract.source.baselineSourceSha256,
+      hostSha256: contract.source.baselineHostSha256,
+    },
+    independentlyReceived: false,
+    independentReleaseAuthority: false,
+    hostedAcquisitionClaim: false,
+    publication: 'private',
+  };
+  const bytes = Buffer.from(`${JSON.stringify(next, null, 2)}\n`);
+  if (sha256(bytes) === contract.descriptor.sha256) throw fail('descriptor_contract_refused');
+  return {descriptor: next, bytes, sha256: sha256(bytes), published: false};
 }
 
 function arg(name, args = process.argv.slice(2)) {
@@ -397,14 +661,25 @@ function emit(value, status = value.ok === false ? 1 : 0) {
   process.exitCode = status;
 }
 
+function requireContract() {
+  const file = arg('--contract');
+  if (!file) throw fail('contract_required');
+  return loadReleaseContract(resolve(file));
+}
+
 async function main() {
   const command = process.argv[2];
   try {
+    if (!command || command === '--help') {
+      emit({ok: false, code: 'usage'}, 2);
+      return;
+    }
+    const contract = requireContract();
     if (command === 'bundle') {
-      const manifest = await buildBundle({repo: resolve(arg('--repo') || process.cwd()), out: resolve(arg('--out'))});
-      emit({ok: true, members: manifest.members.length, sha256: manifest.sha256, recordedSourceConstantAgrees: false});
+      const manifest = await buildBundle({repo: resolve(arg('--repo') || process.cwd()), out: resolve(arg('--out')), contract});
+      emit({ok: true, members: manifest.members.length, sha256: manifest.sha256, recordedSourceConstantAgrees: contract.source.recordedSourceConstantAgrees});
     } else if (command === 'seal') {
-      const manifest = sealMeasuredIdentity(resolve(arg('--bundle')), JSON.parse(readFileSync(arg('--measured'), 'utf8')));
+      const manifest = sealMeasuredIdentity(resolve(arg('--bundle')), JSON.parse(readFileSync(arg('--measured'), 'utf8')), contract);
       emit({ok: true, sha256: manifest.sha256, measuredCandidateSourceSha256: manifest.measuredCandidateSourceSha256,
         recordedSourceConstantAgrees: manifest.recordedSourceConstantAgrees});
     } else if (command === 'install' || command === 'rollback') {
@@ -412,16 +687,26 @@ async function main() {
         bundleDir: resolve(arg('--bundle')),
         destination: resolve(arg('--destination')),
         role: command === 'install' ? 'candidate' : 'baseline',
+        contract,
+        progressFile: resolve(arg('--progress')),
       });
       emit(result);
     } else if (command === 'compare-human') {
-      const report = compareHuman(resolve(arg('--baseline')), resolve(arg('--candidate')));
+      const report = compareHuman(resolve(arg('--baseline')), resolve(arg('--candidate')), contract);
       const out = arg('--out');
       if (out) writeFileSync(out, `${JSON.stringify(report, null, 2)}\n`);
-      emit({ok: report.byteEqual && report.baseline.status === 0 && report.candidate.status === 0, ...report});
+      emit({ok: report.byteEqual && report.baseline.status === 0 && report.candidate.status === 0 && report.preservedInventoryAgrees === true, ...report});
     } else if (command === 'verify') {
       const root = resolve(arg('--root'));
-      emit({ok: true, ...(await measureProduct(root)), ...verifyFrozen(root)});
+      emit({ok: true, ...(await measureProduct(root)), ...verifyFrozen(root, contract)});
+    } else if (command === 'successor') {
+      const published = JSON.parse(readFileSync(arg('--descriptor'), 'utf8'));
+      const body = readFileSync(arg('--descriptor'));
+      if (body.length !== contract.descriptor.bytes || sha256(body) !== contract.descriptor.sha256) throw fail('descriptor_pin_refused');
+      const successor = successorDescriptor(published, contract);
+      const out = resolve(arg('--out'));
+      writeFileSync(out, successor.bytes, {mode: 0o600});
+      emit({ok: true, sha256: successor.sha256, bytes: successor.bytes.length, published: false});
     } else if (command === 'receive') {
       const {runReceive} = await import('./h120010-receive.mjs');
       emit(await runReceive({
@@ -430,6 +715,7 @@ async function main() {
         state: resolve(arg('--state')),
         client: resolve(arg('--client')),
         descriptor: resolve(arg('--descriptor')),
+        contract: resolve(arg('--contract')),
         bundle: resolve(arg('--bundle')),
         evidence: resolve(arg('--evidence')),
         result: resolve(arg('--result')),
