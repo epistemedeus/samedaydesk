@@ -1,4 +1,4 @@
-import { requireThat } from '../../agent-economy-foundation/dist/index.js';
+import { digest, requireThat } from '../../agent-economy-foundation/dist/index.js';
 import { keccak256 } from 'viem';
 import { assertSigningAttestation, nonceAuthorityKey } from './network-profile.js';
 import { assessFees, holdNative } from './network-fees.js';
@@ -76,7 +76,9 @@ export async function checkChainIdentity(client, identity, authority = true) {
 // A returned prior intent is not signed again and does not enter that scope.
 // The nonce reservation and budget hold commit before the signer. Signed bytes
 // commit in a second transition. A reservation without those bytes is unknown
-// and is not signed again. A refusal before any signature releases that reservation.
+// and is not signed again. A release happens only when non-entry is proved.
+// A stored signature is returned unchanged, including one bound by the historical
+// fund digest of proof suffix and calldata. That old binding is not rewritten.
 async function scoped(identity, operationId, fn) {
     if (typeof identity?.withOperation !== 'function')
         return await fn();
@@ -105,14 +107,51 @@ async function releaseReservation(store, spec) {
         store.remove('tx', spec.id);
     });
 }
+function sameHex(left, right) {
+    return typeof left === 'string' && typeof right === 'string' && left.toLowerCase() === right.toLowerCase();
+}
+/** Historical fund rows committed only the proof suffix and calldata. */
+function historicalFundBinding(prior) {
+    if (!prior || typeof prior.id !== 'string' || !prior.id.startsWith('fund:') || typeof prior.data !== 'string')
+        return null;
+    return digest({ proofId: prior.id.slice('fund:'.length), data: prior.data });
+}
+/** The old signature stays stored. It is returned only for the extended fund commitment of the same calldata. */
+function acceptedHistoricalFund(prior, id, binding, data, to, identity) {
+    if (!prior || prior.id !== id || !sameHex(prior.data, data) || !sameHex(prior.to, to) || prior.binding !== historicalFundBinding(prior))
+        return false;
+    const commitment = identity?.fundCommitment;
+    if (!commitment || typeof commitment.operationId !== 'string' || typeof commitment.quoteDigest !== 'string' || typeof commitment.approvalDigest !== 'string')
+        return false;
+    const extended = digest({ proofId: id.slice('fund:'.length), data: prior.data, operationId: commitment.operationId, quoteDigest: commitment.quoteDigest, approvalDigest: commitment.approvalDigest });
+    return binding === extended;
+}
+function provedNonEntry(error, invoked) {
+    if (error && typeof error === 'object' && error.signerEntered === true)
+        return false;
+    if (error && typeof error === 'object' && error.signerEntered === false)
+        return true;
+    return !invoked;
+}
+async function retainUnknown(store, id, binding) {
+    await store.frame(() => {
+        const row = store.get('tx', id);
+        requireThat(row && !row.raw && (row.phase === 'reserved' || row.phase === 'unknown') && row.binding === binding, 'signing_unknown');
+        if (row.phase !== 'unknown')
+            store.put('tx', id, { ...row, phase: 'unknown' });
+    });
+}
 /** Reserve the canonical operation before the signer; persist returned bytes second. */
 export async function prepareIntent(store, id, binding, client, signer, to, data, identity) {
     if (store.inTransaction() && !store.directFrames)
         return store.pause(() => prepareIntent(store, id, binding, client, signer, to, data, identity));
     const prior = await store.frame(() => store.get('tx', id));
-    requireThat(!prior || prior.binding === binding, 'operation_conflict');
-    if (prior?.raw && prior.txId)
+    if (prior?.raw && prior.txId) {
+        if (prior.binding !== binding)
+            requireThat(acceptedHistoricalFund(prior, id, binding, data, to, identity), 'operation_conflict');
         return prior;
+    }
+    requireThat(!prior || prior.binding === binding, 'operation_conflict');
     if (prior)
         requireThat(false, 'signing_unknown');
     const networkClass = identity.networkClass ?? 'sandbox';
@@ -164,25 +203,41 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
         return { id, binding, nonce, nonceKey, budgetKey: identity.nativeBudgetKey ?? null };
     });
     let raw;
+    let signerInvoked = false;
     try {
         raw = await scoped(identity, id, async () => {
             await checkChainIdentity(client, identity, 'sign');
             await identity.authorizeIntent?.('sign', id);
+            const sign = () => {
+                signerInvoked = true;
+                if (legacy)
+                    return signer.signTransaction({ chainId: 31337, type: 'legacy', nonce: spec.nonce, gas: estimatedGas, gasPrice, to, data });
+                return signer.signTransaction({ chainId, type: 'eip1559', nonce: spec.nonce, gas: identity.feeLimits.gasLimit, maxFeePerGas: identity.feeLimits.maxFeePerGas, maxPriorityFeePerGas: identity.feeLimits.maxPriorityFeePerGas, to, data });
+            };
             if (legacy) {
                 await checkChainIdentity(client, identity, 'sign');
                 await identity.authorizeIntent?.('sign', id);
-                return signer.signTransaction({ chainId: 31337, type: 'legacy', nonce: spec.nonce, gas: estimatedGas, gasPrice, to, data });
+                return sign();
             }
             await checkChainIdentity(client, identity, 'sign');
             await identity.authorizeIntent?.('sign', id);
-            return signer.signTransaction({ chainId, type: 'eip1559', nonce: spec.nonce, gas: identity.feeLimits.gasLimit, maxFeePerGas: identity.feeLimits.maxFeePerGas, maxPriorityFeePerGas: identity.feeLimits.maxPriorityFeePerGas, to, data });
+            return sign();
         });
     }
     catch (error) {
-        try {
-            await releaseReservation(store, spec);
+        if (provedNonEntry(error, signerInvoked)) {
+            try {
+                await releaseReservation(store, spec);
+            }
+            catch { /* A failed release keeps the reservation. It does not become a second signature. */ }
+            throw error;
         }
-        catch { /* A failed release keeps the reservation. It does not become a second signature. */ }
+        try {
+            await retainUnknown(store, id, binding);
+        }
+        catch { /* Persistence ambiguity keeps the reservation and does not sign again. */ }
+        if (error && typeof error === 'object' && !error.code)
+            error.code = 'signing_unknown';
         throw error;
     }
     if (typeof identity.faultAfterSign === 'function') {

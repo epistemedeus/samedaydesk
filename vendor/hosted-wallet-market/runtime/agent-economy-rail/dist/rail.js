@@ -142,7 +142,9 @@ export class CommercePaymentsRail {
             }
             else {
                 const data = encodeFunctionData({ abi: this.contracts.abi, functionName: 'authorize', args: [payment(current.payment), BigInt(current.quote.gross), this.contracts.collector, signature] });
-                intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data }), this.client, this.operator, this.contracts.escrow, data, this.intentIdentity());
+                const quoteDigest = digest(current.quote), approvalDigest = digest(current.payment);
+                const fundCommitment = { operationId, quoteDigest, approvalDigest };
+                intent = await prepareIntent(this.store, `fund:${proofId}`, digest({ proofId, data, operationId, quoteDigest, approvalDigest }), this.client, this.operator, this.contracts.escrow, data, { ...this.intentIdentity(), fundCommitment });
             }
             current.authorizationTx = intent.txId;
             current.stage = 'submitted';

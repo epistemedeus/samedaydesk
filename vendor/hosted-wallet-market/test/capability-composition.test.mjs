@@ -5,7 +5,7 @@ import {mkdtempSync, readFileSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {AssetRegistry} from '../runtime/agent-economy-foundation/dist/index.js';
+import {AssetRegistry, digest} from '../runtime/agent-economy-foundation/dist/index.js';
 import {BoundaryError} from '../runtime/agent-economy-foundation/dist/contracts.js';
 import {RailStore} from '../runtime/agent-economy-rail/dist/store.js';
 import {prepareIntent} from '../runtime/agent-economy-rail/dist/local-chain.js';
@@ -154,6 +154,105 @@ test('a fault after signature leaves an unknown reservation that is not signed a
     assert.deepEqual(reopened.all('nonce'), nonce);
     assert.deepEqual(reopened.get('native-budget', budgetKey), budget);
     assert.equal(reopened.get('tx', 'fund:faulted').raw, undefined);
+    reopened.close();
+  } finally { rmSync(dir, {recursive:true, force:true}); }
+});
+
+test('an account signer that rejects after entry keeps the nonce and hold', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'h103010-entered-'));
+  const file = join(dir, 'rail.sqlite');
+  const store = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+  const budgetKey = 'budget-entered';
+  store.put('native-budget', budgetKey, {remaining:'5000000', spent:'0', holds:{}, unknown:[]});
+  let attempts = 0;
+  const signer = {address:operator, async signTransaction(){ attempts += 1; throw Object.assign(new Error('lost'), {code:'signer_lost'}); }};
+  const scoped = identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:5000000n});
+  try {
+    await assert.rejects(prepareIntent(store, 'fund:lost', 'binding-lost', client(), signer, asset.token, '0x', scoped), error => error.code === 'signer_lost');
+    assert.equal(attempts, 1);
+    assert.equal(store.get('tx', 'fund:lost').phase, 'unknown');
+    assert.equal(store.get('tx', 'fund:lost').raw, undefined);
+    const hold = store.get('native-budget', budgetKey).holds['fund:lost'];
+    const nonce = store.all('nonce');
+    assert.equal(typeof hold, 'string');
+    store.close();
+    const reopened = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+    await assert.rejects(prepareIntent(reopened, 'fund:lost', 'binding-lost', client(), signer, asset.token, '0x', scoped), error => error.code === 'signing_unknown');
+    assert.equal(attempts, 1);
+    assert.equal(reopened.get('native-budget', budgetKey).holds['fund:lost'], hold);
+    assert.deepEqual(reopened.all('nonce'), nonce);
+    assert.equal(reopened.get('tx', 'fund:lost').raw, undefined);
+    reopened.close();
+  } finally { rmSync(dir, {recursive:true, force:true}); }
+});
+
+test('a proved pre-entry refusal releases the reservation', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'h103010-preentry-'));
+  const store = new RailStore(join(dir, 'rail.sqlite'), {kind:'fork', forkId:'h103010-disposable'});
+  const budgetKey = 'budget-pre';
+  store.put('native-budget', budgetKey, {remaining:'5000000', spent:'0', holds:{}, unknown:[]});
+  const signer = {address:operator, async signTransaction(){ throw Object.assign(new Error('policy_refused'), {code:'policy_refused', signerEntered:false}); }};
+  const scoped = identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:5000000n});
+  try {
+    await assert.rejects(prepareIntent(store, 'fund:policy', 'binding-policy', client(), signer, asset.token, '0x', scoped), error => error.code === 'policy_refused');
+    assert.equal(store.get('tx', 'fund:policy'), null);
+    assert.equal(store.get('native-budget', budgetKey).holds['fund:policy'], undefined);
+    assert.deepEqual(store.all('nonce'), [{next:0}]);
+  } finally { store.close(); rmSync(dir, {recursive:true, force:true}); }
+});
+
+test('a historical fund signature is returned unchanged', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'h103010-historical-'));
+  const store = new RailStore(join(dir, 'rail.sqlite'), {kind:'fork', forkId:'h103010-disposable'});
+  const proofId = `local-escrow:${'ab'.repeat(32)}`;
+  const id = `fund:${proofId}`;
+  const data = '0xabcdef';
+  const oldBinding = digest({proofId, data});
+  const commitment = {operationId:'authorize-historical', quoteDigest:'11'.repeat(32), approvalDigest:'22'.repeat(32)};
+  const extended = digest({proofId, data, ...commitment});
+  const raw = `0x${'cd'.repeat(32)}`;
+  const txId = `0x${'ef'.repeat(32)}`;
+  store.put('tx', id, {id, binding:oldBinding, phase:'signed', to:asset.token, data, nonce:3, raw, txId});
+  let attempts = 0;
+  const signer = {address:operator, async signTransaction(){ attempts += 1; return '0x11'; }};
+  const scoped = identity({fundCommitment:commitment});
+  try {
+    const recovered = await prepareIntent(store, id, extended, client(), signer, asset.token, data, scoped);
+    assert.equal(recovered.raw, raw);
+    assert.equal(recovered.txId, txId);
+    assert.equal(store.get('tx', id).binding, oldBinding);
+    assert.equal(attempts, 0);
+    await assert.rejects(prepareIntent(store, id, `${'zz'.repeat(20)}`, client(), signer, asset.token, data, scoped), error => error.code === 'operation_conflict');
+    assert.equal(store.get('tx', id).binding, oldBinding);
+    assert.equal(attempts, 0);
+    const unknownId = 'fund:historical-unknown';
+    store.put('tx', unknownId, {id:unknownId, binding:digest({proofId:'historical-unknown', data:'0x01'}), phase:'unknown', to:asset.token, data:'0x01', nonce:4});
+    await assert.rejects(prepareIntent(store, unknownId, digest({proofId:'historical-unknown', data:'0x01', operationId:'authorize-other', quoteDigest:'aa', approvalDigest:'bb'}), client(), signer, asset.token, '0x01', identity()), error => error.code === 'operation_conflict');
+    assert.equal(attempts, 0);
+    assert.equal(store.get('tx', unknownId).phase, 'unknown');
+  } finally { store.close(); rmSync(dir, {recursive:true, force:true}); }
+});
+
+test('a reserved row left before signer entry is not signed again', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'h103010-crash-'));
+  const file = join(dir, 'rail.sqlite');
+  const store = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+  const budgetKey = 'budget-crash';
+  const id = 'fund:crashed';
+  store.put('tx', id, {id, binding:'binding-crash', phase:'reserved', to:asset.token, data:'0x', nonce:5});
+  store.put('native-budget', budgetKey, {remaining:'10', spent:'0', holds:{[id]:'5'}, unknown:[]});
+  let attempts = 0;
+  const signer = {address:operator, async signTransaction(){ attempts += 1; return '0x11'; }};
+  try {
+    await assert.rejects(prepareIntent(store, id, 'binding-crash', client(), signer, asset.token, '0x', identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:10n})), error => error.code === 'signing_unknown');
+    assert.equal(attempts, 0);
+    assert.equal(store.get('native-budget', budgetKey).holds[id], '5');
+    assert.equal(store.get('tx', id).phase, 'reserved');
+    store.close();
+    const reopened = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+    await assert.rejects(prepareIntent(reopened, id, 'binding-crash', client(), signer, asset.token, '0x', identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:10n})), error => error.code === 'signing_unknown');
+    assert.equal(attempts, 0);
+    assert.equal(reopened.get('tx', id).raw, undefined);
     reopened.close();
   } finally { rmSync(dir, {recursive:true, force:true}); }
 });
