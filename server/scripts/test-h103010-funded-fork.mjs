@@ -27,6 +27,12 @@
 //   H103010_NODE_MODULES=<prepared node_modules> \
 //   H103010_SDS_COMMIT=<this HEAD> \
 //   node --max-old-space-size=768 server/scripts/test-h103010-funded-fork.mjs
+//
+// Pinned public-fork replay is server/scripts/h103010-owned-fork-replay.mjs.
+// It starts the paced read-only proxy and Anvil, then this file. The public
+// endpoint allows 25 requests a second; Anvil's fork reads burst past that.
+// The proxy spaces starts and returns the provider code, message and data.
+// It does not retry a failed read.
 import assert from 'node:assert/strict';
 import {execFile, execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
