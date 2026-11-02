@@ -1,6 +1,16 @@
 {
   "schema": "pilot.machine-market.runtime.v1",
   "base": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
+  "maintainedSource": {
+    "runtime/agent-economy-rail/dist/local-chain.js": {
+      "role": "maintained-source",
+      "package": "@pilot/agent-economy-rail",
+      "packageVersion": "0.1.0",
+      "generator": null,
+      "export": "runtime/agent-economy-rail/dist/index.js re-exports ./local-chain.js",
+      "inventory": "installedSourceFiles walks runtime/; machine-runtime.files pins these bytes"
+    }
+  },
   "commerce": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
   "files": {
     "runtime/agent-economy-foundation/dist/assets.js": "264e79ec404c9d7b9802f51216f7dfe38ede22dfda1400369c43663d449607f6",
@@ -32,7 +42,7 @@
     "runtime/agent-economy-rail/dist/candidate.js": "bfea228cd0982d1f906b29e38423c76ea4784b80aacf3423d329712108737202",
     "runtime/agent-economy-rail/dist/fees.js": "f709fd4801ae5b1dfd7b1f11878f81fcf1c92f73699ad78b96e3ba9a6c2099c8",
     "runtime/agent-economy-rail/dist/index.js": "e7016396d34cd29e5990108b84584f91f9377663b5aa607ca69cc10d3b077d1b",
-    "runtime/agent-economy-rail/dist/local-chain.js": "8758265c6fa6247347fdde516b19a8132975b7508e0f7616e7d6adcee5ae52c3",
+    "runtime/agent-economy-rail/dist/local-chain.js": "eb23871126502c82cfeec31e5a2eafae2298b759089e333a4ae1c03b57c10d36",
     "runtime/agent-economy-rail/dist/network-ext.js": "435e05a2227662d7a12c4ea82a3eaf07a08187a9e4311c4c0ddaee4e978e7dcf",
     "runtime/agent-economy-rail/dist/network-fees.js": "db2c3466f369db1c5859e6620bc1d396371d2ae2a8d9e47e13c47774780a0455",
     "runtime/agent-economy-rail/dist/network-profile.js": "7e487a2ba5764b4cd8494e8db886117bf4f6ce8e7378e9a3d3f8bea8499b8d85",

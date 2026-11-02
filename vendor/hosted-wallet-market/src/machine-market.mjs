@@ -44,8 +44,8 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
  try{
   const columns=(await withClient(c=>c.query("SELECT column_name FROM information_schema.columns WHERE table_schema='hosted_wallet_market' AND table_name='wallets'"))).rows.map(r=>r.column_name);
   if(['control_epoch','control_digest','control_challenge'].some(name=>!columns.includes(name)))refuse('machine_schema_required');
-  const composition=(await withClient(c=>c.query("SELECT to_regclass('hosted_wallet_market.capability_selection') AS selection, to_regclass('hosted_wallet_market.voluntary_predecessor_binding') AS predecessor"))).rows[0];
-  if(!composition?.selection||!composition?.predecessor)refuse('machine_schema_required');
+  const composition=(await withClient(c=>c.query("SELECT to_regclass('hosted_wallet_market.capability_selection') AS selection, to_regclass('hosted_wallet_market.capability_selection_receipt') AS receipt, to_regclass('hosted_wallet_market.voluntary_predecessor_binding') AS predecessor"))).rows[0];
+  if(!composition?.selection||!composition?.receipt||!composition?.predecessor)refuse('machine_schema_required');
   let assets=PRODUCTION_ASSETS,asset=BASE_USDC;
   if(capability.networkSource){
    networkSource=machineNetworkSource(capability.networkSource);
@@ -111,7 +111,7 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
       .update('machine-market-principal:'+digest({tenant,id,allocation})).digest('base64url'));
     let p=await kernel.findContributorByTokenHash(tokenHash);
     if(!p){try{await kernel.createContributorToken({publicId:'market-'+digest({tenant,id,allocation}).slice(0,32),payoutDestination:q.payoutDestination,
-      taskScope:allocation,provenance:networkClass==='public'?'production':'test',tokenHash,expiresAt:null});}catch(e){if(e.code!=='conflict'&&e.code!=='23505')throw e;}
+      taskScope:allocation,provenance:(qualified.networkClass||networkClass)==='public'?'production':'test',tokenHash,expiresAt:null});}catch(e){if(e.code!=='conflict'&&e.code!=='23505')throw e;}
       p=await kernel.findContributorByTokenHash(tokenHash);}
     await query(`INSERT INTO journey_account_kernel_bindings(account_id,kernel_scope,earned_task_id,public_id,token_hash,principal_id,source,created_at)
       VALUES($1,$2,$2,$3,$4,$5,'created',now()) ON CONFLICT DO NOTHING`,[id,allocation,p.publicId,tokenHash,p.id]);return p;
@@ -138,12 +138,13 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
   market=new RequesterMarket({store,kernel,accounts,members:{resolve:member},authenticate:async req=>{
     const a=await authenticate(req);return {tenantId:profile.tenant,actorId:a.accountId};},money:paidMoney??money,assets,asset,coldOrigin:profile.origin,
     feeRecipient:profile.feeRecipient,fundingTarget:rail?contracts.escrow:capability.networkSource?.escrow??'0xbdea0d1bcc5966192b070fdf62ab4ef5b4420cff',
-    settlementAuthorityId:'machine-requester-review-v1',partyTerms,kernelProvenance:networkClass==='public'?'production':'test',now:()=>new Date(now())});
+    settlementAuthorityId:'machine-requester-review-v1',partyTerms,kernelProvenance:(qualified.networkClass||networkClass)==='public'&&(paidMoney??money).qualification==='production'?'production':'test',now:()=>new Date(now())});
   await market.prepare();
   async function predecessorBinding(taskId,termsDigest){
    return (await query(`SELECT terms_digest,predecessor_source_sha256,predecessor_host_sha256,successor_source_sha256,successor_host_sha256
-     FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3`,
-     [profile.tenant,taskId,termsDigest])).rows[0]??null;
+     FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3
+       AND successor_source_sha256=$4 AND successor_host_sha256=$5`,
+     [profile.tenant,taskId,termsDigest,capability.sourceSha256,capability.hostSha256])).rows[0]??null;
   }
   const voluntary=voluntaryMarket({market,capability,predecessorBinding});
   async function issueSession(operation,req,body,client){
@@ -252,7 +253,7 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
    return withClient(async c=>{
     await c.query('BEGIN');
     try{
-     const op=(await c.query(`SELECT account_id,tenant,capability,source_sha256,host_sha256 FROM hosted_wallet_market.capability_selection WHERE operation_id=$1 FOR UPDATE`,[operationId])).rows[0];
+     const op=(await c.query(`SELECT account_id,tenant,capability,source_sha256,host_sha256 FROM hosted_wallet_market.capability_selection_receipt WHERE operation_id=$1 FOR UPDATE`,[operationId])).rows[0];
      if(op){
       if(op.account_id!==account.accountId||op.tenant!==profile.tenant||op.capability!==input.capability||op.source_sha256!==sourceSha256||op.host_sha256!==hostSha256)refuse('operation_conflict');
       await c.query('COMMIT');
@@ -260,6 +261,10 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
      }
      const current=(await c.query(`SELECT tenant FROM hosted_wallet_market.capability_selection WHERE account_id=$1 FOR UPDATE`,[account.accountId])).rows[0];
      if(current&&current.tenant!==profile.tenant)refuse('capability_tenant_refused');
+     await c.query(`INSERT INTO hosted_wallet_market.capability_selection_receipt
+       (operation_id,account_id,tenant,capability,source_sha256,host_sha256,selected_at)
+       VALUES($1,$2,$3,$4,$5,$6,clock_timestamp())`,
+       [operationId,account.accountId,profile.tenant,input.capability,sourceSha256,hostSha256]);
      await c.query(`INSERT INTO hosted_wallet_market.capability_selection
        (account_id,tenant,capability,source_sha256,host_sha256,operation_id,selected_at)
        VALUES($1,$2,$3,$4,$5,$6,clock_timestamp())
@@ -300,7 +305,8 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
    const roleAction=action==='readback'?input.action:action;
    if(['interests','post','quote','select','fund','review','approve','fundingIntent','fundingSubmitted','fundingAuthorize','reclaim'].includes(roleAction)&&account.role!=='requester')refuse('requester_required',403);
    if(['interest','assent','claim','deliver'].includes(roleAction)&&account.role!=='contributor')refuse('contributor_required',403);
-   if(PAID.has(action)||PAID.has(roleAction))requirePaid(await accountSelection(account.accountId));
+   const observeRecorded=Boolean(rail)&&(action==='reconcile'||action==='reclaim'||action==='payoutDisposition'||roleAction==='reconcile'||roleAction==='reclaim'||roleAction==='payoutDisposition');
+   if((PAID.has(action)||PAID.has(roleAction))&&capability.money==='unfunded'&&!observeRecorded)requirePaid(await accountSelection(account.accountId));
    if(action==='walletChallenge')return walletChallenge(account,input);
    if(action==='walletProve')return walletProve(account,input);
    if(action==='fundingIntent')return fundingIntent(req,input);
@@ -329,7 +335,9 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
    const taskId=input.taskId||result?.taskId;
    if(taskId&&methods.has(action)&&!['measurement','post','interest','readback'].includes(action)){
     await store.measure(profile.tenant,taskId,'transition',digest({actor:account.accountId,action,operationId:operationId??digest(input)}),account.accountId,
-     {action,verification:'server_observed',source:'hosted-machine-market',operationId:operationId??null,moneyProvenance:money.qualification,acquisition:'unknown'});
+     {action,verification:'server_observed',source:'hosted-machine-market',operationId:operationId??null,
+      moneyProvenance:(PAID.has(action)?(paidMoney??money):money).qualification,
+      executionClass:PAID.has(action)?(qualified.networkClass||networkClass):networkClass,acquisition:'unknown'});
    }
    return result;
   }

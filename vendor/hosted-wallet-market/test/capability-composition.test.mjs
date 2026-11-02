@@ -9,7 +9,7 @@ import {AssetRegistry} from '../runtime/agent-economy-foundation/dist/index.js';
 import {BoundaryError} from '../runtime/agent-economy-foundation/dist/contracts.js';
 import {RailStore} from '../runtime/agent-economy-rail/dist/store.js';
 import {prepareIntent} from '../runtime/agent-economy-rail/dist/local-chain.js';
-import {operationGrantAccepted} from '../src/machine-money.mjs';
+import {applyNativeBudgetCeiling, operationGrantAccepted} from '../src/machine-money.mjs';
 import {admitQualifiedMember} from '../src/capability-composition.mjs';
 import {createOperationAuthorityDouble} from '../src/operation-authority-double.mjs';
 
@@ -121,6 +121,19 @@ test('a legacy signer without withOperation still signs once', async () => {
     assert.equal(again.raw, intent.raw);
     assert.equal(signs, 1);
   } finally { store.close(); rmSync(dir, {recursive:true, force:true}); }
+});
+
+test('a lower native budget cannot keep or raise the stored remaining', () => {
+  assert.equal(applyNativeBudgetCeiling(null, '100').remaining, '100');
+  assert.equal(applyNativeBudgetCeiling({remaining:'1000', spent:'0', holds:{}, unknown:[]}, '100').remaining, '100');
+  assert.equal(applyNativeBudgetCeiling({remaining:'50', spent:'0', holds:{}, unknown:[]}, '100').remaining, '50');
+  const held = applyNativeBudgetCeiling({remaining:'900', spent:'0', holds:{'fund:one':'100'}, unknown:['fund:one']}, '50');
+  assert.equal(held.remaining, '0');
+  assert.equal(held.holds['fund:one'], '100');
+  assert.deepEqual(held.unknown, ['fund:one']);
+  const fitted = applyNativeBudgetCeiling({remaining:'900', spent:'0', holds:{'fund:one':'100'}, unknown:[]}, '200');
+  assert.equal(fitted.remaining, '100');
+  assert.equal(fitted.holds['fund:one'], '100');
 });
 
 test('qualified membership does not loosen the unfunded document', () => {

@@ -18,10 +18,11 @@ export async function bindVoluntaryPredecessor(client, {tenantId, taskId, terms,
     (tenant_id, task_id, terms_digest, predecessor_source_sha256, predecessor_host_sha256,
      successor_source_sha256, successor_host_sha256, succession_graph_sha256, operation_id, created_at)
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,clock_timestamp())
-    ON CONFLICT (tenant_id, task_id, terms_digest) DO NOTHING`, values);
+    ON CONFLICT (tenant_id, task_id, terms_digest, successor_source_sha256, successor_host_sha256) DO NOTHING`, values);
   const saved = (await client.query(`SELECT predecessor_source_sha256, predecessor_host_sha256, successor_source_sha256, successor_host_sha256, succession_graph_sha256
-    FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3`,
-    [tenantId, taskId, termsDigest])).rows[0];
+    FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3
+      AND successor_source_sha256=$4 AND successor_host_sha256=$5`,
+    [tenantId, taskId, termsDigest, successor.sourceSha256, successor.hostSha256])).rows[0];
   if (!saved || saved.predecessor_source_sha256 !== terms.sourceSha256 || saved.predecessor_host_sha256 !== terms.hostSha256
       || saved.successor_source_sha256 !== successor.sourceSha256 || saved.successor_host_sha256 !== successor.hostSha256
       || saved.succession_graph_sha256 !== chain.graphSha256) refuse('voluntary_predecessor_conflict');

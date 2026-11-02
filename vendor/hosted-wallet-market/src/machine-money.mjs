@@ -20,6 +20,20 @@ export function operationGrantAccepted(grant, expected){
  if(expected.witness&&(expected.witness.grantEpoch!==grant.epoch||expected.witness.authorityDigest!==expected.authorityDigest))return false;
  return true;
 }
+// The native budget is a store ceiling, not part of the signed transaction identity.
+// A lower restart grant cannot raise a stored remaining balance and cannot leave
+// remaining above spent plus outstanding holds. Holds, spent, and unknown stay.
+export function applyNativeBudgetCeiling(stored, ceilingText){
+ const ceiling=BigInt(ceilingText);
+ if(!stored)return {remaining:ceilingText,spent:'0',holds:{},unknown:[]};
+ const spent=BigInt(stored.spent||'0');
+ const held=Object.values(stored.holds||{}).reduce((sum,value)=>sum+BigInt(value),0n);
+ const committed=spent+held;
+ const under=ceiling>committed?ceiling-committed:0n;
+ const current=BigInt(stored.remaining);
+ const remaining=under<current?under:current;
+ return {...stored,remaining:remaining.toString(),spent:String(stored.spent),holds:stored.holds||{},unknown:[...(stored.unknown||[])]};
+}
 export async function openQualifiedMoney({capability,authority,profile,assertCurrent,assertFundingConsent,approve,now=()=>Date.now()}){
  if(typeof authority==='string'){
   const st=lstatSync(authority);
@@ -49,10 +63,12 @@ export async function openQualifiedMoney({capability,authority,profile,assertCur
   if(!/^[1-9][0-9]{0,39}$/.test(authority.nativeBudget||''))refuse('native_budget_required');
   const budgetKey=digest({tenant:profile.tenant,origin:profile.origin,operator,network:candidate.identityDigest,forkId:authority.forkId??null});
   journal.fence('machine-source',budgetKey,{identity:candidate.identityDigest,operator,feeRecipient:profile.feeRecipient},'machine_authority_changed');
-  if(!journal.get('native-budget',budgetKey))journal.put('native-budget',budgetKey,{remaining:authority.nativeBudget,spent:'0',holds:{},unknown:[]});
+  const cappedBudget=applyNativeBudgetCeiling(journal.get('native-budget',budgetKey),authority.nativeBudget);
+  const priorBudget=journal.get('native-budget',budgetKey);
+  if(!priorBudget||priorBudget.remaining!==cappedBudget.remaining)journal.put('native-budget',budgetKey,cappedBudget);
   const authorityDigest=digest({origin:profile.origin,tenant:profile.tenant,profile:capability.profile,source:capability.sourceSha256,host:capability.hostSha256,
    network:candidate.identityDigest,executionClass:mode,forkId:authority.forkId??null,operator,feeRecipient:profile.feeRecipient,epoch:authority.grantEpoch,
-   feeLimits:Object.fromEntries(Object.entries(feeLimits).map(([key,value])=>[key,String(value)])),nativeBudget:authority.nativeBudget});
+   feeLimits:Object.fromEntries(Object.entries(feeLimits).map(([key,value])=>[key,String(value)]))});
   async function authorizeIntent(phase,id,witness){
    await assertFundingConsent(id);
    assertCurrent();const a=await authority.readAuthorization({phase,operationId:id});

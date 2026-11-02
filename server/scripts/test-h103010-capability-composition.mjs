@@ -119,6 +119,12 @@ try {
   const back = await call(requesterRole, 'selectCapability', {capability:'unfunded'}, 'select-unfunded-01');
   assert.equal(back.status, 200, JSON.stringify(back.body));
   assert.equal(back.body.value.result.paymentAuthority, false);
+  const replayFirst = await call(requesterRole, 'selectCapability', {capability:'qualified'}, 'select-qualified-01');
+  assert.equal(replayFirst.status, 200, JSON.stringify(replayFirst.body));
+  assert.equal(replayFirst.body.value.result.capability, 'qualified');
+  const projection = (await host.query(`SELECT capability, operation_id FROM hosted_wallet_market.capability_selection WHERE account_id=$1`, [requesterFile.accountId])).rows[0];
+  assert.equal(projection.capability, 'unfunded');
+  assert.equal(projection.operation_id, 'select-unfunded-01');
   const unfundedPaid = await call(requesterRole, 'fund', {taskId, quoteDigest:'ab'.repeat(32), proofId:'proof-unfunded'}, 'fund-unfunded-01');
   assert.equal(unfundedPaid.body.code, 'qualified_selection_required');
   const conflict = await call(requesterRole, 'selectCapability', {capability:'qualified'}, 'select-unfunded-01');
@@ -216,7 +222,8 @@ try {
       store:{locked:async (_tenant, _id, fn) => fn(row, {query:async () => ({rows:[]})}), table:() => 't'}},
       capability:{money:'unfunded', participation:'voluntary-artifact-v1', origin:capability.origin, sourceSha256:capability.sourceSha256, hostSha256:capability.hostSha256},
       predecessorBinding:async (id, digestValue) => (await db.query(`SELECT terms_digest, predecessor_source_sha256, predecessor_host_sha256, successor_source_sha256, successor_host_sha256
-        FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3`, [terms.tenantId, id, digestValue])).rows[0] ?? null});
+        FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3
+          AND successor_source_sha256=$4 AND successor_host_sha256=$5`, [terms.tenantId, id, digestValue, capability.sourceSha256, capability.hostSha256])).rows[0] ?? null});
     const read = await boundMarket.invoke({}, 'readVoluntary', {taskId:row.id});
     assert.equal(read.paidWork, false);
     assert.equal(read.termsDigest, termsDigest);
@@ -224,6 +231,29 @@ try {
     const exportedPredecessor = await boundMarket.invoke({}, 'exportVoluntary', {taskId:row.id});
     assert.equal(exportedPredecessor.paidWork, false);
     assert.equal(exportedPredecessor.evidence.kind, 'usable');
+    const nextSource = 'ab'.repeat(32), nextHost = 'cd'.repeat(32);
+    const second = wrap(walked);
+    second.current = {sourceSha256:nextSource, hostSourceSha256:nextHost};
+    await db.query('BEGIN');
+    const boundNext = await bindVoluntaryPredecessor(db, {tenantId:terms.tenantId, taskId:row.id, terms, termsDigest, chain:second,
+      successor:{sourceSha256:nextSource, hostSha256:nextHost}, operationId:'bind-real-0002'});
+    await db.query('COMMIT');
+    assert.equal(boundNext.termsRewritten, false);
+    assert.equal(JSON.stringify(row.voluntary), frozen);
+    const storedBindings = (await db.query(`SELECT successor_source_sha256 FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3 ORDER BY successor_source_sha256`, [terms.tenantId, row.id, termsDigest])).rows.map(item => item.successor_source_sha256);
+    assert.deepEqual(storedBindings, [capability.sourceSha256, nextSource].sort());
+    const laterMarket = voluntaryMarket({market:successor && {actor:async () => ({tenantId:row.tenant_id, actorId:'requester'}), member:async () => ({role:'requester'}),
+      store:{locked:async (_tenant, _id, fn) => fn(row, {query:async () => ({rows:[]})}), table:() => 't'}},
+      capability:{money:'unfunded', participation:'voluntary-artifact-v1', origin:capability.origin, sourceSha256:nextSource, hostSha256:nextHost},
+      predecessorBinding:async (id, digestValue) => (await db.query(`SELECT terms_digest, predecessor_source_sha256, predecessor_host_sha256, successor_source_sha256, successor_host_sha256
+        FROM hosted_wallet_market.voluntary_predecessor_binding WHERE tenant_id=$1 AND task_id=$2 AND terms_digest=$3
+          AND successor_source_sha256=$4 AND successor_host_sha256=$5`, [terms.tenantId, id, digestValue, nextSource, nextHost])).rows[0] ?? null});
+    const laterRead = await laterMarket.invoke({}, 'readVoluntary', {taskId:row.id});
+    assert.equal(laterRead.paidWork, false);
+    assert.equal(laterRead.termsDigest, termsDigest);
+    const stillFirst = await boundMarket.invoke({}, 'readVoluntary', {taskId:row.id});
+    assert.equal(stillFirst.termsDigest, termsDigest);
+    assert.equal(JSON.stringify(row.voluntary), frozen);
   } finally { await db.end(); }
 
   assert.equal(Number((await host.query(`SELECT count(*)::int AS n FROM cj227_earned_work.journey_accounts`)).rows[0].n), accounts);
@@ -232,7 +262,9 @@ try {
   assert.equal(Number((await host.query(`SELECT count(*)::int AS n FROM hosted_wallet_market.quotes`)).rows[0].n), quotes);
   assert.equal(Number((await host.query(`SELECT count(*)::int AS n FROM cj227_earned_work.ae14_market_tasks`)).rows[0].n), posts + 0 || posts);
   const selections = Number((await host.query(`SELECT count(*)::int AS n FROM hosted_wallet_market.capability_selection`)).rows[0].n);
+  const receipts = Number((await host.query(`SELECT count(*)::int AS n FROM hosted_wallet_market.capability_selection_receipt`)).rows[0].n);
   assert.equal(selections, 2);
+  assert.ok(receipts > selections);
   assert.equal((await host.query(`SELECT voluntary::text AS voluntary FROM cj227_earned_work.ae14_market_tasks WHERE id=$1`, [taskId])).rows[0].voluntary, termsText);
   console.log(JSON.stringify({ok:true, accounts, obligations, debt, quotes, selections, posts, paidRefused:true, predecessorBound:true}));
 } finally { await host.close(); }

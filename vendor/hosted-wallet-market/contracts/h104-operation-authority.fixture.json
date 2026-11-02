@@ -8,7 +8,7 @@
   "legacyWithoutMethod": "authorizeIntent and signTransaction stay direct calls",
   "seam": "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/local-chain.js",
   "prepareIntent": "scope starts after a mismatched-or-absent prior return",
-  "broadcast": "authorizeIntent only; the stored raw transaction is not signed again",
+  "broadcast": "a journaled signing id may be opened again for authorizeIntent only; the stored raw transaction is not signed again",
   "double": "vendor/hosted-wallet-market/src/operation-authority-double.mjs",
   "phases": ["sign", "broadcast"],
   "openMachineAuthority": ["origin", "tenant", "sourceSha256", "hostSha256", "networkSource"]
