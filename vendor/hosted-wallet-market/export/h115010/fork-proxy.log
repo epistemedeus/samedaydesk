@@ -1,0 +1,25 @@
+TAP version 13
+# (node:36301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: provider error keeps the endpoint code, message and data
+ok 1 - provider error keeps the endpoint code, message and data
+  ---
+  duration_ms: 1.328538
+  type: 'test'
+  ...
+# Subtest: paced proxy preserves a limit error and does not forward probes
+ok 2 - paced proxy preserves a limit error and does not forward probes
+  ---
+  duration_ms: 788.738551
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 881.311514
+EXIT:0

@@ -1,0 +1,53 @@
+TAP version 13
+# Subtest: current generation recovers the original bytes without a new signature or a lineage entry
+ok 1 - current generation recovers the original bytes without a new signature or a lineage entry
+  ---
+  duration_ms: 88.98028
+  type: 'test'
+  ...
+# Subtest: a crash after the raw is durable recovers once and does not allocate again
+ok 2 - a crash after the raw is durable recovers once and does not allocate again
+  ---
+  duration_ms: 30.93284
+  type: 'test'
+  ...
+# Subtest: altered envelopes, swapped intent, and a changed epoch stay unknown
+ok 3 - altered envelopes, swapped intent, and a changed epoch stay unknown
+  ---
+  duration_ms: 84.883007
+  type: 'test'
+  ...
+# Subtest: historical recovery uses the retained association and refuses a synthesized journal
+ok 4 - historical recovery uses the retained association and refuses a synthesized journal
+  ---
+  duration_ms: 40.40468
+  type: 'test'
+  ...
+# Subtest: one claimant sends, and a late unknown cannot overwrite observed
+ok 5 - one claimant sends, and a late unknown cannot overwrite observed
+  ---
+  duration_ms: 40.899815
+  type: 'test'
+  ...
+# Subtest: receipt discovery promotes unknown and wallet broadcast stays unjournaled
+ok 6 - receipt discovery promotes unknown and wallet broadcast stays unjournaled
+  ---
+  duration_ms: 18.939121
+  type: 'test'
+  ...
+# Subtest: clean process import keeps the rail and money modules distinct from a second ledger
+ok 7 - clean process import keeps the rail and money modules distinct from a second ledger
+  ---
+  duration_ms: 0.522421
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 313.761245
+EXIT:0
