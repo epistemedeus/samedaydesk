@@ -14,11 +14,11 @@ import {voluntaryMarket} from '../../vendor/hosted-wallet-market/src/voluntary-m
 import {bindVoluntaryPredecessor} from '../../vendor/hosted-wallet-market/src/voluntary-predecessor.mjs';
 
 const exec = promisify(execFile);
-const clientPath = '/tmp/h103010-neo/cold-requester-0.3.1.mjs';
+const clientPath = process.env.H103010_CLIENT || '/tmp/h113010-owned/client/cold-requester-0.3.1.mjs';
 const clientBytes = readFileSync(clientPath);
 assert.equal(createHash('sha256').update(clientBytes).digest('hex'), 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9');
 assert.equal(clientBytes.length, 30187);
-const published = JSON.parse(readFileSync('/tmp/h103010-neo/descriptor-aa861e98.json', 'utf8'));
+const published = JSON.parse(readFileSync(process.env.H103010_DESCRIPTOR || '/tmp/h113010-owned/client/descriptor-aa861e98.json', 'utf8'));
 const codeOf = error => error?.code || error?.codeName || error?.message;
 
 const host = await machineHost();

@@ -12,10 +12,11 @@
 //   H103010_NODE_MODULES       prepared node_modules directory.
 //                              Linked beside the companion package when that
 //                              checkout has none, and removed if this process added it.
-// Optional:
-//   H103010_FORK_URL           default http://127.0.0.1:18545, loopback only
+// Required in independent mode:
 //   H103010_SDS_COMMIT         expected HEAD of this checkout
 //   H103010_OPERATOR_COMMIT    expected HEAD of the companion checkout
+// Optional:
+//   H103010_FORK_URL           default http://127.0.0.1:18545, loopback only
 //
 // Independent replay from this checkout, after anvil is already listening on the fork URL:
 //   H103010_CAST=<cast> \
@@ -37,7 +38,7 @@ import assert from 'node:assert/strict';
 import {execFile, execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createHash} from 'node:crypto';
-import {chmodSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
+import {chmodSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
 import https from 'node:https';
 import {dirname, join} from 'node:path';
@@ -82,8 +83,8 @@ function gitRoot(start) { return walkUp(start, '.git', 'git root'); }
 function packageRoot(start) { return walkUp(start, 'package.json', 'package root'); }
 const sdsHead = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 const operatorHead = execFileSync('git', ['-C', gitRoot(dirname(OPERATOR_ENTRY)), 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
-if (process.env.H103010_SDS_COMMIT) assert.equal(sdsHead, process.env.H103010_SDS_COMMIT);
-if (process.env.H103010_OPERATOR_COMMIT) assert.equal(operatorHead, process.env.H103010_OPERATOR_COMMIT);
+assert.equal(sdsHead, requiredEnv('H103010_SDS_COMMIT'));
+assert.equal(operatorHead, requiredEnv('H103010_OPERATOR_COMMIT'));
 const candidate = versionedSource('eip155:8453');
 
 function rpc(method, params) {
@@ -412,6 +413,7 @@ export async function readOperatorAccount() {
   assert.equal(paidAfterMissing.body.ok, false);
   assert.notEqual(paidAfterMissing.body.code, undefined);
   assert.equal(paidAfterMissing.body.value, undefined);
+  report.dependency = {supplied:nodeModules, resolved:realpathSync(operatorModules), linkedByThisProcess:removeOperatorModules};
   report.signs = globalThis.__h103010Signs || 0;
   report.missingOperator = paidAfterMissing.body.code;
   report.freeAfterMissing = true;

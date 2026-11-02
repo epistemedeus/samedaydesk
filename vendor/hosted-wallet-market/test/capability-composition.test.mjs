@@ -12,7 +12,7 @@ import {BoundaryError} from '../runtime/agent-economy-foundation/dist/contracts.
 import {RailStore} from '../runtime/agent-economy-rail/dist/store.js';
 import {prepareIntent} from '../runtime/agent-economy-rail/dist/local-chain.js';
 import {CommercePaymentsRail} from '../runtime/agent-economy-rail/dist/rail.js';
-import {applyNativeBudgetCeiling, operationGrantAccepted} from '../src/machine-money.mjs';
+import {applyNativeBudgetCeiling, historicalAuthorityDigest, historicalLineageAccepts, operationGrantAccepted} from '../src/machine-money.mjs';
 import {admitQualifiedMember} from '../src/capability-composition.mjs';
 import {createOperationAuthorityDouble} from '../src/operation-authority-double.mjs';
 
@@ -56,6 +56,29 @@ test('operation grant checks do not inherit a profile or a stale scope', () => {
   assert.equal(operationGrantAccepted(grant({forkId:'other-fork'}), expected()), false);
   assert.equal(operationGrantAccepted(null, expected()), false);
   assert.equal(operationGrantAccepted(grant(), expected({witness:{grantEpoch:2, authorityDigest:'d'.repeat(64)}})), false);
+  assert.equal(operationGrantAccepted(grant(), expected({replay:true, witness:{grantEpoch:2, authorityDigest:'e'.repeat(64)}})), false);
+  assert.equal(operationGrantAccepted(grant(), expected({replay:true, historicalAuthority:true, witness:{grantEpoch:2, authorityDigest:'e'.repeat(64)}})), true);
+});
+
+test('historical authority is recomputed from the retained closure', () => {
+  const fees = {gasLimit:'100000', maxFeePerGas:'10', maxPriorityFeePerGas:'1'};
+  const bound = {origin:'https://machine.example', tenant:'pilot', profile:'machine-market', source:'a'.repeat(64), host:'b'.repeat(64),
+    network:'c'.repeat(64), executionClass:'owned-fork', forkId:'h113010-disposable', operator, feeRecipient:'0x' + '11'.repeat(20), epoch:1, feeLimits:fees};
+  const withoutBudget = historicalAuthorityDigest(bound);
+  const withBudget = historicalAuthorityDigest({...bound, nativeBudget:'1000'});
+  assert.equal(typeof withoutBudget, 'string');
+  assert.notEqual(withBudget, withoutBudget);
+  const witness = {identityDigest:bound.network, attestationRef:'', grantEpoch:1, configuredChain:'eip155:8453', networkClass:'owned-fork', abiDigest:'d'.repeat(64), authorityDigest:withBudget};
+  const entry = {schema:'pilot.historical-authority-lineage.v1', configuredChain:'eip155:8453', abiDigest:witness.abiDigest, bound:{...bound, nativeBudget:'1000'}};
+  assert.equal(historicalLineageAccepts([entry], witness)?.bound.epoch, 1);
+  assert.equal(historicalLineageAccepts([{...entry, bound}], witness), null);
+  assert.equal(historicalLineageAccepts([entry], {...witness, authorityDigest:withoutBudget}), null);
+  assert.equal(historicalLineageAccepts([entry], {...witness, grantEpoch:2}), null);
+  assert.equal(historicalLineageAccepts([{...entry, bound:{...entry.bound, source:'e'.repeat(64)}}], witness), null);
+  assert.equal(historicalLineageAccepts([{...entry, bound:{...entry.bound, host:'f'.repeat(64)}}], witness), null);
+  assert.equal(historicalLineageAccepts([{...entry, bound:{...entry.bound, operator:'0x' + '22'.repeat(20)}}], witness), null);
+  assert.equal(historicalLineageAccepts([], witness), null);
+  assert.equal(historicalLineageAccepts([entry], {...witness, authorityDigest:undefined}), null);
 });
 
 test('withOperation isolates concurrent rail intents and does not sign a replay', async () => {
@@ -269,7 +292,8 @@ function materializePredecessor(commit) {
     mkdirSync(dir, {recursive:true});
     const archive = execFileSync('git', ['-C', root, 'archive', commit, 'vendor/hosted-wallet-market/runtime'], {maxBuffer:64 * 1024 * 1024});
     execFileSync('tar', ['-x', '-C', dir], {input:archive});
-    symlinkSync(join(root, 'node_modules'), join(dir, 'node_modules'));
+    const modules = existsSync(join(root, 'node_modules/viem')) ? join(root, 'node_modules') : join(root, 'vendor/hosted-wallet-market/node_modules');
+    symlinkSync(modules, join(dir, 'node_modules'));
   }
   return dir;
 }
@@ -392,18 +416,12 @@ test('predecessor recovery proves the stored quote identity', async () => {
       const clean = openCurrent(made.file);
       const beforeClean = retained(clean.store, made.proofId, made.budgetKey);
       const recovered = await clean.rail.authorize(made.proofId, '0x' + '00'.repeat(65), made.operationId);
-      assert.equal(recovered.recovery, undefined);
-      assert.equal(recovered.requesterId, 'requester1');
-      assert.equal(recovered.proofId, made.proofId);
+      assert.equal(recovered.recovery, 'historical_unknown');
+      assert.equal(recovered.broadcast, false);
+      assert.equal(recovered.authorization, null);
       assert.equal(clean.attempts.n, 0);
-      assert.equal(clean.sends.n, 1);
-      const afterClean = retained(clean.store, made.proofId, made.budgetKey);
-      assert.equal(afterClean.raw, beforeClean.raw);
-      assert.equal(afterClean.binding, beforeClean.binding);
-      assert.equal(afterClean.txId, beforeClean.txId);
-      assert.equal(afterClean.hold, beforeClean.hold);
-      assert.deepEqual(afterClean.nonce, beforeClean.nonce);
-      assert.equal(afterClean.authorizationTx, afterClean.txId);
+      assert.equal(clean.sends.n, 0);
+      assert.deepEqual(retained(clean.store, made.proofId, made.budgetKey), beforeClean);
       clean.store.close();
       const again = await producePredecessor(commit, crash);
       dirs.push(again.work);

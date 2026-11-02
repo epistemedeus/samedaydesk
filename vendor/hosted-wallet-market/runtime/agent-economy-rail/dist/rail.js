@@ -2,6 +2,7 @@ import { decodeFunctionData, decodeEventLog, encodeFunctionData, keccak256, pars
 import { readFileSync } from 'node:fs';
 import { checked, requireThat, digest, freezeQuote, COMMERCE_PAYMENTS_PIN } from '../../agent-economy-foundation/dist/index.js';
 import { checkChainIdentity, prepareIntent, broadcast } from './local-chain.js';
+import { historicalReplayPermitted } from '../../../src/machine-money.mjs';
 import { bindVersionedContract, eip155ChainId, selectedReleaseAbiDigest } from './network-profile.js';
 import { capturePlan } from './fees.js';
 /** Claim TTL the market writes into kernel terms. Authorization must outlast this review. */
@@ -52,7 +53,7 @@ export class CommercePaymentsRail {
     }
     get qualification() { return this.contracts.network?.networkClass === 'public' ? 'production' : 'local_chain'; }
     common(r) { return { ...common(r), provenance: this.qualification }; }
-    identity() { return { ...this.contracts.network, configuredChain: this.contracts.chain, asset: { chain: this.contracts.chain, token: this.contracts.token, decimals: 6, symbol: 'USDC' }, assets: this.assets }; }
+    identity() { return { ...this.contracts.network, configuredChain: this.contracts.chain, asset: { chain: this.contracts.chain, token: this.contracts.token, decimals: 6, symbol: 'USDC' }, assets: this.assets, broadcastStore: this.store }; }
     intentIdentity() { return { ...this.identity(), codeHashes: this.contracts.codeHashes }; }
     async configured() {
         await checkChainIdentity(this.client, this.identity(), false);
@@ -181,6 +182,10 @@ export class CommercePaymentsRail {
         }
         return this.sameHex(expected, data);
     }
+    /** Old signed bytes stay closed until the retained lineage recomputes their authority and the recovered signer is that operator. */
+    async historicalAuthorityProved(prior) {
+        return !!await historicalReplayPermitted(this.contracts.network?.historicalLineage, prior?.witness, prior?.raw);
+    }
     /** Signature alone keeps admission closed. Submission has its own durable state and hash. */
     async authorize(proofId, signature, operationId) {
         const b = this.binding(proofId);
@@ -197,7 +202,7 @@ export class CommercePaymentsRail {
             if (current.authorizationTx && (!prior || prior.txId !== current.authorizationTx))
                 requireThat(false, 'funding_tx_conflict');
             if (current.authorizationTx || (prior?.raw && prior.txId)) {
-                if (!this.historicalFundProved(current, prior, operationId)) {
+                if (!this.historicalFundProved(current, prior, operationId) || !await this.historicalAuthorityProved(prior)) {
                     historical = { schema: 'pilot.historical-funding-recovery.v1', recovery: 'historical_unknown', proofId, broadcast: false, authorization: null };
                     return;
                 }

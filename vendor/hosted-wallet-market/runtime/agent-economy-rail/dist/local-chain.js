@@ -3,6 +3,7 @@ import { keccak256 } from 'viem';
 import { assertSigningAttestation, nonceAuthorityKey } from './network-profile.js';
 import { assessFees, holdNative } from './network-fees.js';
 import { attestCandidate } from './candidate.js';
+import { historicalReplayPermitted } from '../../../src/machine-money.mjs';
 export async function sandbox(client) {
     requireThat(await client.getChainId() === 31337, 'sandbox_chain_required');
     const url = new URL(client.transport.url);
@@ -296,18 +297,35 @@ export async function broadcast(client, intent, identity) {
         else
             return null;
     }
-    if (absent) {
+    const attemptStore = identity?.broadcastStore;
+    const priorAttempt = attemptStore?.get?.('broadcast-attempt', intent.txId);
+    const sendBlocked = priorAttempt?.state === 'attempting' || priorAttempt?.state === 'unknown';
+    if (absent && !sendBlocked) {
         await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'broadcast');
+        // Machine authority does not send bytes that never recorded a witness.
+        // Wallet identity has no authorizeIntent and keeps its own path.
+        if (typeof identity?.authorizeIntent === 'function' && !intent.witness)
+            return null;
         await scoped(identity, intent.id, async () => {
             await identity.authorizeIntent?.('broadcast', intent.id, intent.witness);
         });
+        const sameGeneration = !!intent.witness && intent.witness.grantEpoch === identity.grantEpoch && intent.witness.authorityDigest === identity.authorityDigest;
+        if (intent.witness && !sameGeneration && Array.isArray(identity.historicalLineage) && !await historicalReplayPermitted(identity.historicalLineage, intent.witness, intent.raw))
+            return null;
+        if (attemptStore?.put)
+            attemptStore.put('broadcast-attempt', intent.txId, { state: 'attempting', txId: intent.txId });
         try {
             await client.sendRawTransaction({ serializedTransaction: intent.raw });
         }
         catch { /* Original signed bytes remain durable; read their hash below. */ }
+        if (attemptStore?.put)
+            attemptStore.put('broadcast-attempt', intent.txId, { state: 'unknown', txId: intent.txId });
     }
     try {
-        return await client.waitForTransactionReceipt({ hash: intent.txId, timeout: 3000, pollingInterval: 20 });
+        const receipt = await client.waitForTransactionReceipt({ hash: intent.txId, timeout: 3000, pollingInterval: 20 });
+        if (receipt && attemptStore?.put)
+            attemptStore.put('broadcast-attempt', intent.txId, { state: 'observed', txId: intent.txId });
+        return receipt;
     }
     catch {
         return null;
