@@ -34,25 +34,29 @@ export class RailStore {
         requireThat(!old || digest(old) === digest(value), code);
         this.put(space, key, value);
     }
+    inTransaction() { return Boolean(this.txContext.getStore()); }
+    async beginImmediate() {
+        let locked = false;
+        for (let i = 0; i < 300; i++) {
+            try {
+                this.db.exec('BEGIN IMMEDIATE');
+                locked = true;
+                break;
+            }
+            catch (e) {
+                if (!(e instanceof Error) || !/locked|busy/.test(e.message))
+                    throw e;
+                await new Promise(r => setTimeout(r, 10));
+            }
+        }
+        requireThat(locked, 'journal_busy');
+    }
     async transaction(fn) {
         // Nested call on this async stack joins the open transaction. A concurrent job queues.
-        if (this.txContext.getStore())
+        if (this.txContext.getStore() && !this.directFrames)
             return await fn();
         const next = this.tail.catch(() => { }).then(async () => {
-            let locked = false;
-            for (let i = 0; i < 300; i++) {
-                try {
-                    this.db.exec('BEGIN IMMEDIATE');
-                    locked = true;
-                    break;
-                }
-                catch (e) {
-                    if (!(e instanceof Error) || !/locked|busy/.test(e.message))
-                        throw e;
-                    await new Promise(r => setTimeout(r, 10));
-                }
-            }
-            requireThat(locked, 'journal_busy');
+            await this.beginImmediate();
             try {
                 const result = await this.txContext.run(true, fn);
                 this.db.exec('COMMIT');
@@ -65,6 +69,42 @@ export class RailStore {
         });
         this.tail = next;
         return next;
+    }
+    /**
+     * Commit the caller's open writes, run fn with no write lock held, then
+     * reopen a transaction for the caller. fn's own frames stay durable if
+     * the caller later rolls back.
+     */
+    async pause(fn) {
+        requireThat(this.txContext.getStore() && !this.directFrames, 'journal_not_open');
+        this.db.exec('COMMIT');
+        this.directFrames = true;
+        try {
+            return await fn();
+        }
+        finally {
+            this.directFrames = false;
+            await this.beginImmediate();
+        }
+    }
+    /** One committed unit of work. A direct frame does not queue behind itself. */
+    async frame(fn) {
+        if (this.directFrames) {
+            await this.beginImmediate();
+            try {
+                const result = await fn();
+                this.db.exec('COMMIT');
+                return result;
+            }
+            catch (error) {
+                this.db.exec('ROLLBACK');
+                throw error;
+            }
+        }
+        return this.transaction(fn);
+    }
+    remove(space, key) {
+        this.db.prepare('DELETE FROM records WHERE space=? AND key=?').run(space, key);
     }
     close() { this.db.close(); }
 }

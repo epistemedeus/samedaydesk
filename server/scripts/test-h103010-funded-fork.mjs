@@ -32,9 +32,19 @@ function rpc(method, params) {
   const body = execFileSync(CAST, ['rpc', method, ...params.map(value => String(value)), '--rpc-url', RPC], {encoding:'utf8', timeout:60000}).trim();
   try { return JSON.parse(body); } catch { return body; }
 }
-function balanceOf(address) {
-  const out = execFileSync(CAST, ['call', USDC, 'balanceOf(address)(uint256)', address, '--rpc-url', RPC], {encoding:'utf8', timeout:60000});
+function balanceOf(address, block) {
+  const args = ['call', USDC, 'balanceOf(address)(uint256)', address, '--rpc-url', RPC];
+  if (block !== undefined) args.push('--block', typeof block === 'string' ? block : '0x' + block.toString(16));
+  const out = execFileSync(CAST, args, {encoding:'utf8', timeout:60000});
   return BigInt(out.trim().split(/\s/)[0]);
+}
+function settledUsdc(receipt) {
+  const transfer = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+  return (receipt.logs || []).filter(log => (log.address || '').toLowerCase() === USDC && (log.topics || [])[0] === transfer).map(log => ({
+    from: '0x' + log.topics[1].slice(-40).toLowerCase(),
+    to: '0x' + log.topics[2].slice(-40).toLowerCase(),
+    amount: BigInt(log.data),
+  }));
 }
 function fundPayer(address) {
   rpc('anvil_impersonateAccount', [WHALE]);
@@ -78,7 +88,7 @@ function journalTxs(file) {
   try {
     return db.prepare(`SELECT key, value FROM records WHERE space='tx' ORDER BY key`).all().map(row => {
       const value = JSON.parse(row.value);
-      return {key:row.key, txId:value.txId};
+      return {key:row.key, txId:value.txId, phase:value.phase};
     });
   } finally { db.close(); }
 }
@@ -228,6 +238,13 @@ export async function readOperatorAccount() {
   const signature = await payer.signTypedData({...intent.typedData, domain:{...intent.typedData.domain, chainId:Number(intent.typedData.domain.chainId)}, message});
   assert.match(signature, /^0x[0-9a-fA-F]{130}$/);
   const authorizeBody = {taskId, quoteDigest, proofId:intent.proofId, signature};
+  const beforeMoney = {
+    payer: balanceOf(payer.address),
+    receiver: balanceOf(receiver.address),
+    fee: balanceOf(FEE_RECIPIENT),
+    escrow: balanceOf(candidate.escrow),
+    collector: balanceOf(candidate.collector),
+  };
   host.fault.dropAction = 'fundingAuthorize';
   let dropped;
   try { dropped = await call(requesterRole, 'fundingAuthorize', authorizeBody, 'authorize-funded-01'); }
@@ -245,12 +262,25 @@ export async function readOperatorAccount() {
   assert.equal(funded.state, 'confirmed_escrow', JSON.stringify(funded));
   const payerAfter = balanceOf(payer.address);
   assert.equal(payerBefore - payerAfter, 1000000n);
+  assert.equal(beforeMoney.payer - payerAfter, 1000000n);
   const stored = journalTxs(journalFile);
   assert.equal(stored.filter(row => row.key.startsWith('fund:')).length, 1);
   const receipt = JSON.parse(execFileSync(CAST, ['receipt', stored[0].txId, '--json', '--rpc-url', RPC], {encoding:'utf8', timeout:30000}));
   assert.equal(receipt.status, '0x1');
+  assert.equal(receipt.transactionHash, stored[0].txId);
+  const pulls = settledUsdc(receipt).filter(row => row.amount === 1000000n);
+  assert.equal(pulls.length >= 1, true);
+  assert.equal(pulls[0].from, payer.address.toLowerCase());
+  const custody = pulls[pulls.length - 1].to;
+  const custodyBefore = balanceOf(custody, BigInt(receipt.blockNumber) - 1n);
+  assert.equal(balanceOf(custody) - custodyBefore, 1000000n);
+  assert.equal(balanceOf(candidate.escrow) - beforeMoney.escrow, 0n);
+  assert.equal(balanceOf(candidate.collector) - beforeMoney.collector, 0n);
   report.txId = stored[0].txId;
   report.payerDelta = '1000000';
+  report.escrowDelta = '0';
+  report.collectorDelta = '0';
+  report.custodyDelta = '1000000';
   report.feeBps = 500;
 
   await host.boot({qualified:true, authorityModule:authorityFile});
@@ -279,7 +309,31 @@ export async function readOperatorAccount() {
   const afterCapture = journalTxs(journalFile);
   assert.equal(afterCapture.filter(row => row.key.startsWith('fund:')).length, 1);
   assert.equal(afterCapture.filter(row => row.key.startsWith('capture:')).length, 1);
-  report.capture = {state:approved.state, txRef:approved.outcome.txRef, feeAmount:approved.outcome.feeAmount, contributorNet:approved.settlement.contributorNet};
+  assert.equal(afterCapture.every(row => row.phase === 'signed' && typeof row.txId === 'string'), true);
+  const captureRow = afterCapture.find(row => row.key.startsWith('capture:'));
+  const captureHash = String(approved.outcome.txRef).split(':')[0];
+  assert.equal(captureRow.txId, captureHash);
+  const captureReceipt = JSON.parse(execFileSync(CAST, ['receipt', captureHash, '--json', '--rpc-url', RPC], {encoding:'utf8', timeout:30000}));
+  assert.equal(captureReceipt.transactionHash, captureHash);
+  assert.equal(captureReceipt.status, '0x1');
+  const afterMoney = {
+    payer: balanceOf(payer.address),
+    receiver: balanceOf(receiver.address),
+    fee: balanceOf(FEE_RECIPIENT),
+    escrow: balanceOf(candidate.escrow),
+    collector: balanceOf(candidate.collector),
+  };
+  assert.equal(afterMoney.receiver - beforeMoney.receiver, 950000n);
+  assert.equal(afterMoney.fee - beforeMoney.fee, 50000n);
+  assert.equal(beforeMoney.payer - afterMoney.payer, 1000000n);
+  assert.equal(afterMoney.escrow - beforeMoney.escrow, 0n);
+  assert.equal(afterMoney.collector - beforeMoney.collector, 0n);
+  assert.equal(balanceOf(custody) - custodyBefore, 0n);
+  const captureMoves = settledUsdc(captureReceipt).filter(row => row.amount === 950000n || row.amount === 50000n);
+  assert.equal(captureMoves.some(row => row.to === receiver.address.toLowerCase() && row.amount === 950000n), true);
+  assert.equal(captureMoves.some(row => row.to === FEE_RECIPIENT && row.amount === 50000n), true);
+  assert.equal((beforeMoney.payer - afterMoney.payer), (afterMoney.receiver - beforeMoney.receiver) + (afterMoney.fee - beforeMoney.fee));
+  report.capture = {state:approved.state, txRef:approved.outcome.txRef, captureTx:captureHash, feeAmount:approved.outcome.feeAmount, contributorNet:approved.settlement.contributorNet, contributorDelta:'950000', feeDelta:'50000', escrowDelta:'0', collectorDelta:'0', custodyDelta:'0'};
   report.refund = 'composed HTTP consumer has no refund action; rail refund stays unwired and was not called';
   const clientFund = await cold(['fund', ...common, '--secret-file', requesterSecret]);
   assert.equal(clientFund.body.ok, false);

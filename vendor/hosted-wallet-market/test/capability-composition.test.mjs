@@ -123,6 +123,41 @@ test('a legacy signer without withOperation still signs once', async () => {
   } finally { store.close(); rmSync(dir, {recursive:true, force:true}); }
 });
 
+test('a fault after signature leaves an unknown reservation that is not signed again', async () => {
+  const double = createOperationAuthorityDouble({operator, revoked:false});
+  const dir = mkdtempSync(join(tmpdir(), 'h103010-unknown-'));
+  const file = join(dir, 'rail.sqlite');
+  const store = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+  const budgetKey = 'budget-fault';
+  store.put('native-budget', budgetKey, {remaining:'5000000', spent:'0', holds:{}, unknown:[]});
+  const signer = double.operator;
+  const gate = {async authorizeIntent(_phase, id){ if (!await double.readAuthorization({operationId:id})) throw new BoundaryError('machine_signing_authority_refused'); }};
+  let faults = 0;
+  const scoped = identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:5000000n, withOperation:double.withOperation, authorizeIntent:gate.authorizeIntent,
+    faultAfterSign(){ faults += 1; }});
+  try {
+    await assert.rejects(prepareIntent(store, 'fund:faulted', 'binding-fault', client(), signer, asset.token, '0x', scoped), error => error.code === 'signing_unknown');
+    assert.equal(faults, 1);
+    assert.equal(double.signatures, 1);
+    const reserved = store.get('tx', 'fund:faulted');
+    assert.equal(reserved.phase, 'unknown');
+    assert.equal(reserved.raw, undefined);
+    assert.equal(typeof store.get('native-budget', budgetKey).holds['fund:faulted'], 'string');
+    const nonce = store.all('nonce');
+    const budget = store.get('native-budget', budgetKey);
+    store.close();
+    const reopened = new RailStore(file, {kind:'fork', forkId:'h103010-disposable'});
+    const again = identity({nativeBudgetKey:budgetKey, nativeBudgetRemaining:5000000n, withOperation:double.withOperation, authorizeIntent:gate.authorizeIntent});
+    await assert.rejects(prepareIntent(reopened, 'fund:faulted', 'binding-fault', client(), signer, asset.token, '0x', again), error => error.code === 'signing_unknown');
+    assert.equal(double.signatures, 1);
+    assert.equal(faults, 1);
+    assert.deepEqual(reopened.all('nonce'), nonce);
+    assert.deepEqual(reopened.get('native-budget', budgetKey), budget);
+    assert.equal(reopened.get('tx', 'fund:faulted').raw, undefined);
+    reopened.close();
+  } finally { rmSync(dir, {recursive:true, force:true}); }
+});
+
 test('a lower native budget cannot keep or raise the stored remaining', () => {
   assert.equal(applyNativeBudgetCeiling(null, '100').remaining, '100');
   assert.equal(applyNativeBudgetCeiling({remaining:'1000', spent:'0', holds:{}, unknown:[]}, '100').remaining, '100');

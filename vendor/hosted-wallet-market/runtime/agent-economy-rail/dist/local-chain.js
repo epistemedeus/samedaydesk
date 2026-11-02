@@ -74,72 +74,143 @@ export async function checkChainIdentity(client, identity, authority = true) {
 // This file is the checked-in canonical rail. There is no separate generator.
 // withOperation is optional: one awaited callback shares the rail intent id.
 // A returned prior intent is not signed again and does not enter that scope.
+// The nonce reservation and budget hold commit before the signer. Signed bytes
+// commit in a second transition. A reservation without those bytes is unknown
+// and is not signed again. A refusal before any signature releases that reservation.
 async function scoped(identity, operationId, fn) {
     if (typeof identity?.withOperation !== 'function')
         return await fn();
     return await identity.withOperation({ operationId }, fn);
 }
-/** Persist the exact signed transaction before broadcast; retries never allocate another nonce. */
+async function releaseReservation(store, spec) {
+    if (!spec)
+        return;
+    await store.frame(() => {
+        const row = store.get('tx', spec.id);
+        if (!row || row.raw || row.phase !== 'reserved' || row.binding !== spec.binding)
+            return;
+        if (spec.budgetKey) {
+            const budget = store.get('native-budget', spec.budgetKey);
+            const held = budget?.holds?.[spec.id];
+            if (held !== undefined) {
+                const holds = { ...budget.holds };
+                delete holds[spec.id];
+                store.put('native-budget', spec.budgetKey, { ...budget, remaining: (BigInt(budget.remaining) + BigInt(held)).toString(), holds });
+            }
+        }
+        const nonceRow = store.get('nonce', spec.nonceKey);
+        if (nonceRow && nonceRow.next === spec.nonce + 1)
+            store.put('nonce', spec.nonceKey, { next: spec.nonce });
+        store.remove('fee-estimate', spec.id);
+        store.remove('tx', spec.id);
+    });
+}
+/** Reserve the canonical operation before the signer; persist returned bytes second. */
 export async function prepareIntent(store, id, binding, client, signer, to, data, identity) {
-    return store.transaction(async () => {
-        const prior = store.get('tx', id);
-        requireThat(!prior || prior.binding === binding, 'operation_conflict');
-        if (prior)
-            return prior;
-        return scoped(identity, id, async () => {
-        const networkClass = identity.networkClass ?? 'sandbox';
-        if (networkClass === 'public')
-            requireThat(identity.candidate && identity.authorizeIntent, 'attestation_stale');
-        if (networkClass === 'owned-fork')
-            requireThat(store.namespace.kind === 'fork' && !!identity.forkId && store.namespace.forkId === identity.forkId, 'fork_namespace');
-        else
-            requireThat(store.namespace.kind === 'chain', 'fork_namespace');
-        await checkChainIdentity(client, identity, 'sign');
-        await identity.authorizeIntent?.('sign', id);
-        if (identity.candidate && identity.attestation)
-            store.put('source-attestation', identity.attestation.ref, identity.attestation);
-        const chainId = Number(identity.configuredChain.slice('eip155:'.length));
-        const nonceKey = nonceAuthorityKey(chainId, signer.address, networkClass === 'owned-fork' ? identity.forkId : undefined);
-        const networkNonce = await client.getTransactionCount({ address: signer.address, blockTag: 'pending' });
+    if (store.inTransaction() && !store.directFrames)
+        return store.pause(() => prepareIntent(store, id, binding, client, signer, to, data, identity));
+    const prior = await store.frame(() => store.get('tx', id));
+    requireThat(!prior || prior.binding === binding, 'operation_conflict');
+    if (prior?.raw && prior.txId)
+        return prior;
+    if (prior)
+        requireThat(false, 'signing_unknown');
+    const networkClass = identity.networkClass ?? 'sandbox';
+    if (networkClass === 'public')
+        requireThat(identity.candidate && identity.authorizeIntent, 'attestation_stale');
+    if (networkClass === 'owned-fork')
+        requireThat(store.namespace.kind === 'fork' && !!identity.forkId && store.namespace.forkId === identity.forkId, 'fork_namespace');
+    else
+        requireThat(store.namespace.kind === 'chain', 'fork_namespace');
+    await checkChainIdentity(client, identity, 'sign');
+    const chainId = Number(identity.configuredChain.slice('eip155:'.length));
+    const nonceKey = nonceAuthorityKey(chainId, signer.address, networkClass === 'owned-fork' ? identity.forkId : undefined);
+    const networkNonce = await client.getTransactionCount({ address: signer.address, blockTag: 'pending' });
+    const legacy = networkClass === 'sandbox' && !identity.feeLimits;
+    let quote = null;
+    let estimatedGas = null;
+    let gasPrice = null;
+    if (legacy) {
+        estimatedGas = await client.estimateGas({ account: signer.address, to, data });
+        gasPrice = await client.getGasPrice();
+    }
+    else {
+        quote = identity.feeQuoteProvider ? await identity.feeQuoteProvider(data) : identity.feeQuote;
+        requireThat(identity.feeLimits && quote, 'fee_estimate_unknown');
+        estimatedGas = await client.estimateGas({ account: signer.address, to, data });
+    }
+    const spec = await store.frame(() => {
+        const again = store.get('tx', id);
+        requireThat(!again, 'signing_unknown');
         const reserved = store.get('nonce', nonceKey)?.next ?? 0;
         const nonce = Math.max(networkNonce, reserved);
-        let raw;
-        if (networkClass === 'sandbox' && !identity.feeLimits) {
-            const gas = await client.estimateGas({ account: signer.address, to, data });
-            const gasPrice = await client.getGasPrice();
-            await checkChainIdentity(client, identity, 'sign');
-            await identity.authorizeIntent?.('sign', id);
-            raw = await signer.signTransaction({ chainId: 31337, type: 'legacy', nonce, gas, gasPrice, to, data });
-        }
-        else {
-            const feeQuote = identity.feeQuoteProvider ? await identity.feeQuoteProvider(data) : identity.feeQuote;
-            requireThat(identity.feeLimits && feeQuote, 'fee_estimate_unknown');
-            const estimatedGas = await client.estimateGas({ account: signer.address, to, data });
+        const row = { id, binding, phase: 'reserved', to, data, nonce };
+        if (!legacy) {
             let remaining = identity.nativeBudgetRemaining;
             if (identity.nativeBudgetKey) {
-                const row = store.get('native-budget', identity.nativeBudgetKey);
-                requireThat(row, 'native_budget_exhausted');
-                remaining = BigInt(row.remaining);
+                const budget = store.get('native-budget', identity.nativeBudgetKey);
+                requireThat(budget, 'native_budget_exhausted');
+                remaining = BigInt(budget.remaining);
             }
-            const assessment = assessFees({ limits: identity.feeLimits, estimatedGas, quote: feeQuote, nativeRemaining: remaining });
-            await checkChainIdentity(client, identity, 'sign');
-            await identity.authorizeIntent?.('sign', id);
-            raw = await signer.signTransaction({ chainId, type: 'eip1559', nonce, gas: identity.feeLimits.gasLimit, maxFeePerGas: identity.feeLimits.maxFeePerGas, maxPriorityFeePerGas: identity.feeLimits.maxPriorityFeePerGas, to, data });
+            const assessment = assessFees({ limits: identity.feeLimits, estimatedGas, quote, nativeRemaining: remaining });
             if (identity.nativeBudgetKey && assessment.allInEstimate !== null) {
-                const row = store.get('native-budget', identity.nativeBudgetKey);
-                store.put('native-budget', identity.nativeBudgetKey, holdNative(row, id, BigInt(assessment.allInEstimate)));
+                const budget = store.get('native-budget', identity.nativeBudgetKey);
+                store.put('native-budget', identity.nativeBudgetKey, holdNative(budget, id, BigInt(assessment.allInEstimate)));
             }
             store.put('fee-estimate', id, assessment);
         }
-        const intent = { id, binding, raw, txId: keccak256(raw) };
+        store.put('nonce', nonceKey, { next: nonce + 1 });
+        store.put('tx', id, row);
+        return { id, binding, nonce, nonceKey, budgetKey: identity.nativeBudgetKey ?? null };
+    });
+    let raw;
+    try {
+        raw = await scoped(identity, id, async () => {
+            await checkChainIdentity(client, identity, 'sign');
+            await identity.authorizeIntent?.('sign', id);
+            if (legacy) {
+                await checkChainIdentity(client, identity, 'sign');
+                await identity.authorizeIntent?.('sign', id);
+                return signer.signTransaction({ chainId: 31337, type: 'legacy', nonce: spec.nonce, gas: estimatedGas, gasPrice, to, data });
+            }
+            await checkChainIdentity(client, identity, 'sign');
+            await identity.authorizeIntent?.('sign', id);
+            return signer.signTransaction({ chainId, type: 'eip1559', nonce: spec.nonce, gas: identity.feeLimits.gasLimit, maxFeePerGas: identity.feeLimits.maxFeePerGas, maxPriorityFeePerGas: identity.feeLimits.maxPriorityFeePerGas, to, data });
+        });
+    }
+    catch (error) {
+        try {
+            await releaseReservation(store, spec);
+        }
+        catch { /* A failed release keeps the reservation. It does not become a second signature. */ }
+        throw error;
+    }
+    if (typeof identity.faultAfterSign === 'function') {
+        await store.frame(() => {
+            const row = store.get('tx', id);
+            requireThat(row && row.phase === 'reserved' && !row.raw && row.binding === binding, 'signing_unknown');
+            store.put('tx', id, { ...row, phase: 'unknown' });
+        });
+        try {
+            await identity.faultAfterSign();
+        }
+        catch (error) {
+            if (error && typeof error === 'object' && !error.code)
+                error.code = 'signing_unknown';
+            throw error;
+        }
+        requireThat(false, 'signing_unknown');
+    }
+    return store.frame(() => {
+        const row = store.get('tx', id);
+        requireThat(row && row.phase === 'reserved' && !row.raw && row.binding === binding && row.nonce === spec.nonce, 'signing_unknown');
+        const intent = { id, binding, phase: 'signed', to, data, nonce: spec.nonce, raw, txId: keccak256(raw) };
         if (identity.candidate && identity.attestation)
             store.put('source-attestation', identity.attestation.ref, identity.attestation);
         if (identity.identityDigest)
             intent.witness = { identityDigest: identity.identityDigest, attestationRef: identity.attestation?.ref ?? '', grantEpoch: identity.grantEpoch ?? 0, configuredChain: identity.configuredChain, networkClass, abiDigest: identity.abiDigest ?? '', ...(identity.authorityDigest ? { authorityDigest: identity.authorityDigest } : {}) };
-        store.put('nonce', nonceKey, { next: nonce + 1 });
         store.put('tx', id, intent);
         return intent;
-        });
     });
 }
 export async function broadcast(client, intent, identity) {
