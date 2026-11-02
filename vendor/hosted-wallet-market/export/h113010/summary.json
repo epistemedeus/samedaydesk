@@ -1,0 +1,66 @@
+{
+  "upstream": "https://mainnet.base.org",
+  "gapMs": 50,
+  "limitObserved": "25/second",
+  "forkBlock": "53412211",
+  "anvil": {
+    "path": "/tmp/h113010-owned/bin/anvil",
+    "sha256": "a2b871bf01b45d755ee37380ed11e369639a4fd9963604ed40749e299390bb9b",
+    "version": "anvil Version: 1.8.7\nCommit SHA: 985eeea031d79922cd654d4e94e6c3701e1c7d73\nBuild Timestamp: 2026-10-29T15:16:03.088196310Z (1793286963)\nBuild Profile: dist"
+  },
+  "startedAt": "2026-11-02T13:48:27.800Z",
+  "proxyUrl": "http://127.0.0.1:33639",
+  "forkUrl": "http://127.0.0.1:34649",
+  "anvilArgs": [
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "34649",
+    "--chain-id",
+    "8453",
+    "--fork-url",
+    "http://127.0.0.1:33639",
+    "--fork-block-number",
+    "53412211",
+    "--silent"
+  ],
+  "ready": {
+    "number": "0x32f0173",
+    "hash": "0x6f50eea711bc1a20239c6a9350e44a2f7f3ae96432ffb3a8f1946252a3429e79",
+    "timestamp": "0x6ae85fc9"
+  },
+  "finalized": {
+    "number": "0x32f0133",
+    "hash": "0x78770984e3ed67b72582859ae4e27ed5468d5858cf8716d843cad22f21ee393e",
+    "timestamp": "0x6ae85f49"
+  },
+  "finality": "anvil finalized is the owned fork head minus its local finality distance; it is not the public chain finalized tag",
+  "testExit": {
+    "code": 0,
+    "signal": null
+  },
+  "fundedStdoutSha256": "7f67d5e84549c6d94573243a9b3fffc590256df879e2a773751dd816788ef7b9",
+  "anvilExit": {
+    "code": 0,
+    "signal": null
+  },
+  "proxy": {
+    "reads": {
+      "eth_chainId": 2,
+      "eth_getBlockByNumber": 5,
+      "eth_gasPrice": 1,
+      "eth_getTransactionCount": 27,
+      "eth_getCode": 41,
+      "eth_getBalance": 27,
+      "eth_feeHistory": 1,
+      "eth_getStorageAt": 33,
+      "eth_getTransactionReceipt": 5,
+      "eth_call": 96,
+      "eth_getTransactionByHash": 2
+    },
+    "denied": [],
+    "optionalProbes": 12,
+    "failures": []
+  },
+  "endedAt": "2026-11-02T13:48:50.713Z"
+}
