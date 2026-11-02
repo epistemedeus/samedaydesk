@@ -124,12 +124,14 @@ export async function inspectRuntimeSchema(client, {earnedSchema = 'cj227_earned
   assertIdent(earnedSchema);
   const fields = await client.query(`SELECT table_name,column_name,udt_name FROM information_schema.columns
     WHERE table_schema='hosted_wallet_market' AND table_name IN
-      ('consumer_enrollment','native_debt_dispositions','source_binding_anchor','source_binding_succession')`);
+      ('consumer_enrollment','native_debt_dispositions','source_binding_anchor','source_binding_succession','capability_selection','voluntary_predecessor_binding')`);
   const required = {
     consumer_enrollment: {host_source_sha256:'text',earned_schema:'text',rpc_endpoint_sha256:'text',registry_sha256:'text',profile_sha256:'text'},
     native_debt_dispositions: {proof_kind:'text',reward_asset:'jsonb',fee_evidence:'jsonb',obligation_family:'text',claim_id:'text',submission_id:'text',verdict_id:'text',block_hash:'text',authority_receipt_sha256:'text',request_sha256:'text'},
     source_binding_anchor: {preservation_sha256:'text',principal_id:'text'},
     source_binding_succession: {preservation_sha256:'text',principal_id:'text'},
+    capability_selection: {account_id:'text',capability:'text',operation_id:'text'},
+    voluntary_predecessor_binding: {terms_digest:'text',succession_graph_sha256:'text',operation_id:'text'},
   };
   const missing = [];
   for (const [table, columns] of Object.entries(required)) for (const [name,type] of Object.entries(columns)) {
@@ -150,7 +152,7 @@ export async function inspectRuntimeSchema(client, {earnedSchema = 'cj227_earned
       JSON.stringify(fn.proconfig)!==JSON.stringify(['search_path=hosted_wallet_market, pg_temp'])) missing.push('native_debt_matches_obligation@010');
   if (!fn?.attached) missing.push('native_debt_dispositions_match');
   if (!fn?.native_unique) missing.push('native_debt_native_effect');
-  return {ready:missing.length===0, requiredAdditiveThrough:'010', missing,
+  return {ready:missing.length===0, requiredAdditiveThrough:'011', missing,
     matchingFunctionSha256:createHash('sha256').update(expected).digest('hex')};
 }
 
@@ -172,6 +174,7 @@ export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_
   await client.query(readFileSync(join(here, '../schema/008_source_binding_succession.sql'), 'utf8'));
   await client.query(readFileSync(join(here, '../schema/009_native_coin_discharge.sql'), 'utf8').replaceAll('cj227_earned_work',earnedSchema));
   await client.query(readFileSync(join(here, '../schema/010_account_native_discharge.sql'), 'utf8').replaceAll('cj227_earned_work',earnedSchema));
+  await client.query(readFileSync(join(here, '../schema/011_capability_composition.sql'), 'utf8').replaceAll('cj227_earned_work',earnedSchema));
 }
 
 async function legacyTriggerPresent(client, earnedSchema) {

@@ -65,13 +65,21 @@ export async function machineHost() {
       if(listener){listener.closeAllConnections();await new Promise(done=>listener.close(done));listener=null;}
       if(app){await app.get('hostedWalletMarket')?.close?.().catch(()=>{});await app.get('neoContributorJourney')?.close?.().catch(()=>{});app=null;}
     }
-    async function boot({participation=true,tenant='root10940-owner-qa-fixture'}={}) {
+    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null}={}) {
       await stop();
       const out=join(scratch,'capability-'+randomBytes(4).toString('hex')+'.json');
       const generated=JSON.parse(execFileSync(process.execPath,['--max-old-space-size=256',join(root,'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
         '--sds-root',root,'--origin',origin,'--tenant',tenant,'--money','unfunded','--out',out,
         ...(participation?['--participation','voluntary-artifact-v1']:[])],{encoding:'utf8',timeout:30000,maxBuffer:65536}));
-      app=createSdsApp({hostedWalletMarket:{env:{...env,HOSTED_WALLET_MARKET_MACHINE_PROFILE:generated.sourceBound},
+      let qualifiedBound;
+      if(qualified){
+        const qout=join(scratch,'qualified-'+randomBytes(4).toString('hex')+'.json');
+        qualifiedBound=JSON.parse(execFileSync(process.execPath,['--max-old-space-size=256',join(root,'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
+          '--sds-root',root,'--origin',origin,'--tenant',tenant,'--money','qualified','--network-class','owned-fork','--fork-id','h103010-disposable','--out',qout],
+          {encoding:'utf8',timeout:30000,maxBuffer:65536})).sourceBound;
+      }
+      app=createSdsApp({hostedWalletMarket:{env:{...env,HOSTED_WALLET_MARKET_MACHINE_PROFILE:generated.sourceBound,...(qualifiedBound?{HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY:qualifiedBound}:{})},
+        ...(authorityModule?{machineAuthority:authorityModule}:{}),
         mode:'private',label:'PRIVATE',chain:'eip155:8453',payments:'off',publicReads:'0',fundedTasks:'off',humanAssets:'off',
         tls:'verified-edge',origin,tenant,earnedSchema:'cj227_earned_work',schemaName:'hosted_wallet_market',databaseUrl,
         rpcUrl:`http://127.0.0.1:${rpc.address().port}`,feeRecipient:'0x'+'11'.repeat(20),
@@ -139,7 +147,7 @@ export async function machineHost() {
       }
       return out;
     }
-    return {scratch,origin,databaseUrl,caFile:join(scratch,'tls.crt'),boot,stop,request,query,fault,financialSnapshot,rpcMethods,
+    return {scratch,origin,databaseUrl,caFile:join(scratch,'tls.crt'),rpcPort:rpc.address().port,boot,stop,request,query,fault,financialSnapshot,rpcMethods,
       async close(){await stop();await new Promise(done=>rpc.close(done));await cluster.stop();rmSync(scratch,{recursive:true,force:true});}};
   }catch(error){
     if(listener)listener.closeAllConnections();

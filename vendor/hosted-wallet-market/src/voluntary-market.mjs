@@ -21,7 +21,7 @@ const roleRequired = (ok,code) => {if(!ok) throw Object.assign(Error(code),{http
 const flags = Object.freeze({funding:'voluntary', paymentAuthority:'none', paidWork:false,
   debtCreated:false, verification:'requester_decision', independence:'unknown'});
 
-export function voluntaryMarket({market, capability}) {
+export function voluntaryMarket({market, capability, predecessorBinding}) {
   const store = market.store;
   const enabled = capability.money === 'unfunded' && capability.participation === PARTICIPATION;
   const binding = () => ({sourceSha256:capability.sourceSha256, hostSha256:capability.hostSha256});
@@ -51,9 +51,13 @@ export function voluntaryMarket({market, capability}) {
     }
     return v;
   }
-  function sameSource(v) {
-    requireThat(v.terms && v.terms.sourceSha256 === capability.sourceSha256 && v.terms.hostSha256 === capability.hostSha256,
-      'voluntary_source_changed');
+  async function sameSource(v, taskId) {
+    if (v.terms && v.terms.sourceSha256 === capability.sourceSha256 && v.terms.hostSha256 === capability.hostSha256) return;
+    const bound = typeof predecessorBinding === 'function' ? await predecessorBinding(taskId, v.termsDigest) : null;
+    const accepted = Boolean(bound && v.terms && bound.terms_digest === v.termsDigest
+      && bound.predecessor_source_sha256 === v.terms.sourceSha256 && bound.predecessor_host_sha256 === v.terms.hostSha256
+      && bound.successor_source_sha256 === capability.sourceSha256 && bound.successor_host_sha256 === capability.hostSha256);
+    requireThat(accepted, 'voluntary_source_changed');
   }
   function terms(row, input) {
     const v = validatedVoluntary(row);
@@ -119,7 +123,7 @@ export function voluntaryMarket({market, capability}) {
           const v = validatedVoluntary(row);
           // A successor source must not resume serving live work. Withdrawal is a
           // party stop and still returns digest metadata without evidence.
-          if (!v.withdrawn) sameSource(v);
+          if (!v.withdrawn) await sameSource(v, row.id);
           return {...result(row,v),terms:v.terms,spec:row.spec,review:v.review ?? null,
             evidence:v.withdrawn ? null : v.artifact?.evidence ?? null};
         }
@@ -127,7 +131,7 @@ export function voluntaryMarket({market, capability}) {
         // reports voluntary_withdrawn to the original export caller after its grant
         // row is deleted; a changed source does not resume a live export.
         const v = validatedVoluntary(row);
-        if (!v.withdrawn) sameSource(v);
+        if (!v.withdrawn) await sameSource(v, row.id);
         const isParty = await entitled(client,actor,row,v);
         requireThat(v.review?.accepted && v.review.exportAuthorized, 'voluntary_export_not_authorized');
         return {...result(row,v),schema:'pilot.machine-market.voluntary-export.v1',terms:v.terms,
@@ -167,7 +171,7 @@ export function voluntaryMarket({market, capability}) {
       if (action === 'useVoluntary') {
         exact(input,['taskId','laterTaskId','artifactDigest','decision']);
         const v = validatedVoluntary(row);
-        sameSource(v);
+        await sameSource(v, row.id);
         await entitled(client,actor,row,v);
         requireThat(v.review?.accepted && v.review.exportAuthorized, 'voluntary_export_not_authorized');
         requireThat(![row.requester_id,v.terms.contributorId].includes(actor.actorId), 'later_consumer_required');
@@ -186,8 +190,7 @@ export function voluntaryMarket({market, capability}) {
         await client.query(`DELETE FROM ${store.table('voluntary_consumers')} WHERE tenant_id=$1 AND task_id=$2`,[actor.tenantId,row.id]);
       } else {
         live(v); current(input);
-        requireThat(v.terms.sourceSha256 === capability.sourceSha256 && v.terms.hostSha256 === capability.hostSha256,
-          'voluntary_source_changed');
+        await sameSource(v, row.id);
         requireThat(digest(row.spec) === v.terms.specDigest, 'voluntary_terms_changed');
         const base = ['taskId','termsDigest','expectedRevision','sourceSha256','hostSha256'];
         if (action === 'assentVoluntary') {

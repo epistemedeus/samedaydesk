@@ -7,6 +7,19 @@ import {versionedSource,attestCandidate,candidateFeeQuote,RailStore,CommercePaym
 import {machineNetworkSource} from './machine-network-source.mjs';
 export {machineNetworkSource} from './machine-network-source.mjs';
 const refuse=code=>{throw Object.assign(Error(code),{code,codeName:code,http:409});};
+export function operationGrantAccepted(grant, expected){
+ if(!grant||grant.schema!=='pilot.machine-rail-authority.v1'||grant.revoked!==false)return false;
+ if(grant.origin!==expected.origin||grant.tenant!==expected.tenant||grant.profile!=='machine-market')return false;
+ if(grant.executionClass!==expected.executionClass)return false;
+ if(expected.executionClass==='owned-fork'&&grant.forkId!==expected.forkId)return false;
+ if(grant.sourceSha256!==expected.sourceSha256||grant.hostSha256!==expected.hostSha256)return false;
+ if(grant.networkIdentityDigest!==expected.networkIdentityDigest||grant.operator!==expected.operator)return false;
+ if(grant.feeRecipient!==expected.feeRecipient||grant.epoch!==expected.grantEpoch)return false;
+ const expiry=Date.parse(grant.expiresAt);
+ if(!Number.isFinite(expiry)||expiry<=expected.now)return false;
+ if(expected.witness&&(expected.witness.grantEpoch!==grant.epoch||expected.witness.authorityDigest!==expected.authorityDigest))return false;
+ return true;
+}
 export async function openQualifiedMoney({capability,authority,profile,assertCurrent,assertFundingConsent,approve,now=()=>Date.now()}){
  if(typeof authority==='string'){
   const st=lstatSync(authority);
@@ -43,10 +56,9 @@ export async function openQualifiedMoney({capability,authority,profile,assertCur
   async function authorizeIntent(phase,id,witness){
    await assertFundingConsent(id);
    assertCurrent();const a=await authority.readAuthorization({phase,operationId:id});
-   if(!a||a.schema!=='pilot.machine-rail-authority.v1'||a.revoked!==false||a.origin!==profile.origin||a.tenant!==profile.tenant||
-    a.profile!=='machine-market'||a.executionClass!==mode||(mode==='owned-fork'&&a.forkId!==authority.forkId)||a.sourceSha256!==capability.sourceSha256||a.hostSha256!==capability.hostSha256||a.networkIdentityDigest!==candidate.identityDigest||
-    a.operator!==operator||a.feeRecipient!==profile.feeRecipient||a.epoch!==authority.grantEpoch||Date.parse(a.expiresAt)<=now()||!Number.isFinite(Date.parse(a.expiresAt))||
-    (witness&&(witness.grantEpoch!==a.epoch||witness.authorityDigest!==authorityDigest)))refuse('machine_signing_authority_refused');
+   if(!operationGrantAccepted(a,{origin:profile.origin,tenant:profile.tenant,executionClass:mode,forkId:authority.forkId,
+    sourceSha256:capability.sourceSha256,hostSha256:capability.hostSha256,networkIdentityDigest:candidate.identityDigest,
+    operator,feeRecipient:profile.feeRecipient,grantEpoch:authority.grantEpoch,authorityDigest,now:now(),witness}))refuse('machine_signing_authority_refused');
   }
   const abi=JSON.parse(readFileSync(new URL('../runtime/agent-economy-foundation/interfaces/commerce-payments-v1.1.0.abi.json',import.meta.url),'utf8'));
   const contracts={chain:candidate.chain,escrow:candidate.escrow,collector:candidate.collector,refundCollector:candidate.refundCollector,token:candidate.token,
@@ -56,7 +68,8 @@ export async function openQualifiedMoney({capability,authority,profile,assertCur
    if(!Array.isArray(providedAbi)||digest(Object.fromEntries(providedAbi.map(e=>[`${e.type}:${e.name}`,e])))!==candidate.abiDigest||digest(provided)!==digest(accepted))refuse('machine_contract_substitution');
   }
   const network={networkClass:mode,forkId:authority.forkId,candidate,identityDigest:candidate.identityDigest,abiDigest:candidate.abiDigest,
-   grantEpoch:authority.grantEpoch,authorityDigest,attestation,authorizeIntent,feeLimits,feeQuoteProvider:data=>candidateFeeQuote(client,feeLimits,data,mode),nativeBudgetKey:budgetKey};
+   grantEpoch:authority.grantEpoch,authorityDigest,attestation,authorizeIntent,feeLimits,feeQuoteProvider:data=>candidateFeeQuote(client,feeLimits,data,mode),nativeBudgetKey:budgetKey,
+   ...(typeof authority.withOperation==='function'?{withOperation:authority.withOperation}:{})};
   const rail=new CommercePaymentsRail(journal,client,authority.operator,'machine-commerce-v1',{...contracts,network},approve,1n,assets);
   return {journal,rail,asset,assets,contracts,operator:authority.operator,networkClass:mode,candidate};
  }catch(e){journal.close();throw e;}

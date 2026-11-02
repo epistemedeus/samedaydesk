@@ -352,6 +352,8 @@ export async function openHostedMarket(options) {
         origin: profile.origin || options.origin, tenant: profile.tenant});
       originBox.origin = capability.origin;
       machine = await openMachineMarket({capability, authority: options.machineAuthority,
+        qualifiedCapability: options.qualifiedCapability ?? process.env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,
+        readSourceSuccession: client => debtConsumer.readSourceSuccession(client),
         sdsRoot: options.sdsRoot, profile: {...profile,replayKey}, now: nowMs, withClient,
         authenticate: (req, policy) => withClient(c => accountFrom(c, req, policy))});
     } catch (error) { await pool.end(); throw error; }

@@ -71,6 +71,14 @@ export async function checkChainIdentity(client, identity, authority = true) {
     if (mode === 'sign' && identity.attestation)
         assertSigningAttestation(identity.attestation);
 }
+// This file is the checked-in canonical rail. There is no separate generator.
+// withOperation is optional: one awaited callback shares the rail intent id.
+// A returned prior intent is not signed again and does not enter that scope.
+async function scoped(identity, operationId, fn) {
+    if (typeof identity?.withOperation !== 'function')
+        return await fn();
+    return await identity.withOperation({ operationId }, fn);
+}
 /** Persist the exact signed transaction before broadcast; retries never allocate another nonce. */
 export async function prepareIntent(store, id, binding, client, signer, to, data, identity) {
     return store.transaction(async () => {
@@ -78,6 +86,7 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
         requireThat(!prior || prior.binding === binding, 'operation_conflict');
         if (prior)
             return prior;
+        return scoped(identity, id, async () => {
         const networkClass = identity.networkClass ?? 'sandbox';
         if (networkClass === 'public')
             requireThat(identity.candidate && identity.authorizeIntent, 'attestation_stale');
@@ -130,6 +139,7 @@ export async function prepareIntent(store, id, binding, client, signer, to, data
         store.put('nonce', nonceKey, { next: nonce + 1 });
         store.put('tx', id, intent);
         return intent;
+        });
     });
 }
 export async function broadcast(client, intent, identity) {
@@ -157,7 +167,9 @@ export async function broadcast(client, intent, identity) {
     }
     if (absent) {
         await checkChainIdentity(client, { ...identity, configuredChain, networkClass, attestation: undefined }, 'broadcast');
-        await identity.authorizeIntent?.('broadcast', intent.id, intent.witness);
+        await scoped(identity, intent.id, async () => {
+            await identity.authorizeIntent?.('broadcast', intent.id, intent.witness);
+        });
         try {
             await client.sendRawTransaction({ serializedTransaction: intent.raw });
         }

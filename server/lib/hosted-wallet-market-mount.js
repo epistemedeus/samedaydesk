@@ -95,6 +95,7 @@ function configured(options, env) {
     readAcceptedSource: options.readAcceptedSource,
     machineProfile: options.machineProfile ?? env.HOSTED_WALLET_MARKET_MACHINE_PROFILE,
     machineAuthority: options.machineAuthority ?? env.HOSTED_WALLET_MARKET_MACHINE_AUTHORITY_MODULE,
+    qualifiedCapability: options.qualifiedCapability ?? env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,
     ownerToken: options.ownerToken ?? env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? env.EARNED_WORK_OWNER_TOKEN,
   };
 }

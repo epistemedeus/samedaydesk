@@ -39,15 +39,19 @@ export function validateWalletEnvironment({manifest,original,installed,rollback,
  requireFact(assertRpcUrl(get('RPC')).protocol==='https:','wallet_rpc_tls_required');
  const registry=get('DISCHARGE_REGISTRY');requireFact(typeof registry==='string'&&registry.startsWith('/')&&!registry.includes('..')&&!/[\r\n\0]/.test(registry),'wallet_registry_binding_refused');
  const profileValue=after.get('HOSTED_WALLET_MARKET_MACHINE_PROFILE');
- const machineProfile=profileValue===undefined?null:admitMachineProfileRelease(profileValue,{origin,tenant:get('TENANT'),sdsRoot,authority:get('MACHINE_AUTHORITY_MODULE')}).form;
+ const machineProfile=profileValue===undefined?null:admitMachineProfileRelease(profileValue,{origin,tenant:get('TENANT'),sdsRoot,authority:get('MACHINE_AUTHORITY_MODULE'),qualified:after.get('HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY')}).form;
  return {original,installed,machineProfile};
 }
-function admitMachineProfileRelease(value,{origin,tenant,sdsRoot,authority}){
+function admitMachineProfileRelease(value,{origin,tenant,sdsRoot,authority,qualified}){
  let classified;try{classified=classifyMachineProfileValue(value);}catch(error){fail(error.codeName||'machine_profile_refused');}
  if(classified.form==='absolute-path'&&!sdsRoot)return {form:'path-unopened'};
  if(!sdsRoot)fail('machine_profile_unbound');
  let document;try{document=admitMachineCapability(value,{origin,tenant,sdsRoot});}catch(error){fail(error.codeName||'machine_profile_refused');}
- if(document.money==='unfunded'&&authority)fail('machine_authority_refused');
+ if(qualified){
+  let member;try{member=admitMachineCapability(qualified,{origin,tenant,sdsRoot});}catch(error){fail(error.codeName||'machine_profile_refused');}
+  if(!member||member.money!=='qualified'||member.participation)fail('capability_composition_refused');
+ }
+ if(document.money==='unfunded'&&authority&&!qualified)fail('machine_authority_refused');
  return {form:classified.form==='source-bound'?'source-bound':classified.form+'-bound'};
 }
 export function walletEnvironmentPacket({manifest,existing,wallet,sdsRoot}){
