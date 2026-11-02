@@ -1,0 +1,171 @@
+{
+  "schema": "sds.h120010.machine-partition.v1",
+  "payload": [
+    "server/foundry/activation/private-control-pin.json",
+    "server/lib/hosted-wallet-market-mount.js",
+    "vendor/hosted-wallet-market/SOURCE.json",
+    "vendor/hosted-wallet-market/contracts/h104-operation-authority.fixture.json",
+    "vendor/hosted-wallet-market/contracts/machine-runtime.json",
+    "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/local-chain.js",
+    "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/rail.js",
+    "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/store.js",
+    "vendor/hosted-wallet-market/schema/011_capability_composition.sql",
+    "vendor/hosted-wallet-market/src/capability-composition.mjs",
+    "vendor/hosted-wallet-market/src/machine-market.mjs",
+    "vendor/hosted-wallet-market/src/machine-money.mjs",
+    "vendor/hosted-wallet-market/src/migrate.mjs",
+    "vendor/hosted-wallet-market/src/operation-authority-double.mjs",
+    "vendor/hosted-wallet-market/src/profile.mjs",
+    "vendor/hosted-wallet-market/src/release-profile.mjs",
+    "vendor/hosted-wallet-market/src/server.mjs",
+    "vendor/hosted-wallet-market/src/voluntary-market.mjs",
+    "vendor/hosted-wallet-market/src/voluntary-predecessor.mjs"
+  ],
+  "excluded": [
+    {
+      "path": "AE25-EXPORT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/h103010-owned-fork-replay.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/h103010-read-only-fork-proxy.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/root10940-machine-host.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h103010-capability-composition.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h103010-fork-proxy.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h103010-funded-fork.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/H113010-RESULT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/H115010-RESULT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/anvil.stderr.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/anvil.stdout.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/funded.stderr.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/funded.stdout.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/proxy.jsonl",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h113010/summary.json",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/anvil.stderr.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/anvil.stdout.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/capability-composition.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/composition-harness.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/fork-proxy.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/funded-replay.stdout.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/funded.stderr.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/funded.stdout.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/historical-authority.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/historical-lineage.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/operator.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-countercases.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-countercases.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-setup-artifact.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/proxy.jsonl",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/retained-intent.log",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/export/h115010/summary.json",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/capability-composition.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/historical-authority.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/retained-intent.test.mjs",
+      "reason": "outside_machine_closure"
+    }
+  ],
+  "humanSurfaceCoupled": [],
+  "frozenUntouched": [
+    "vendor/neomorphic-contributor-journey/SOURCE.json",
+    "vendor/neomorphic-contributor-desk/SOURCE.json"
+  ]
+}

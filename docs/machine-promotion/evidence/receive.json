@@ -1,0 +1,855 @@
+{
+  "schema": "sds.h120010.receive.v1",
+  "measured": {
+    "sourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+    "hostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3"
+  },
+  "sealed": {
+    "sha256": "a59b8fe3f9c9a5140d600e88cbeeca517d4fcd6d313d7124a6e761f1aaa5d2d9",
+    "members": [
+      {
+        "path": "server/foundry/activation/private-control-pin.json",
+        "baselineBytes": 227803,
+        "candidateBytes": 228500,
+        "baselineSha256": "ee0a7e794c72d53c69a973e28df71c628d324dd29a91858f7e1a8f5b3940a153",
+        "candidateSha256": "9d3cc6c90c2ad80a79bda2da934097b596cadb37e426118a85e1dcc2f454877a"
+      },
+      {
+        "path": "server/lib/hosted-wallet-market-mount.js",
+        "baselineBytes": 15040,
+        "candidateBytes": 15143,
+        "baselineSha256": "85095aad5ac66ed95b7cf0adf7527131a869b26f0210a91ca753a23e0cbbede9",
+        "candidateSha256": "3330f50000596fdf62c8877cccc89555bf347bb5aa316302682ab037c0ab4280"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/SOURCE.json",
+        "baselineBytes": 2888,
+        "candidateBytes": 2888,
+        "baselineSha256": "6e5e4ff6ff61e77f5d6e711b7d4dc788e7aad37cba134afd3565fb865da3c42e",
+        "candidateSha256": "f4a7ac4d9476a5b6c7ed4373c69b43c3293b3a48c5c9f3a9f2926b8403c84530"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/contracts/h104-operation-authority.fixture.json",
+        "baselineBytes": 0,
+        "candidateBytes": 840,
+        "baselineSha256": null,
+        "candidateSha256": "54ea917de08ab17f59a3976c38e47b91ccdaf03e5f23bb22c15a6420e34da2ce"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/contracts/machine-runtime.json",
+        "baselineBytes": 7249,
+        "candidateBytes": 7664,
+        "baselineSha256": "f721aa88393ff9fb4720b0b4df09aa658107f6831223af5c49af3cd8a26ec182",
+        "candidateSha256": "6479d4902b7df099da0697cd74dcff7a1b58472353bf6aa01c6e45b21179ae87"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/local-chain.js",
+        "baselineBytes": 10203,
+        "candidateBytes": 19300,
+        "baselineSha256": "8758265c6fa6247347fdde516b19a8132975b7508e0f7616e7d6adcee5ae52c3",
+        "candidateSha256": "c124c1e5d4d22e4b8d91e628187a18180a25fa98c43ca7907f63d1ed07193d61"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/rail.js",
+        "baselineBytes": 30633,
+        "candidateBytes": 32688,
+        "baselineSha256": "bc55bf21fa8422bdc2b6d0d87594bcb86705493b60b40aeda35814dc848e085a",
+        "candidateSha256": "ebb3e191cb08ca7bba29087729d792786b7e616a50fb7f39b061062ff0f56870"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/store.js",
+        "baselineBytes": 2971,
+        "candidateBytes": 4243,
+        "baselineSha256": "5c6843b4922c507ebc911e4a2d1d112afcb79e81f6c1fe625f643306dc71bae9",
+        "candidateSha256": "8253b48b130b8d683632cec5db59ae289510ce6757600ab615a4b3cf1b8b134a"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/schema/011_capability_composition.sql",
+        "baselineBytes": 0,
+        "candidateBytes": 3268,
+        "baselineSha256": null,
+        "candidateSha256": "16b0b98e70369d2bec48be8eb1e4dfd9f7bd0bcc2cdd7b8794099385cec7a102"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/capability-composition.mjs",
+        "baselineBytes": 0,
+        "candidateBytes": 1067,
+        "baselineSha256": null,
+        "candidateSha256": "41d3a3bc7c7989674ea9f8797b985a44c8bdee7ff42ecad2e6051c1a0720cf8a"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/machine-market.mjs",
+        "baselineBytes": 25588,
+        "candidateBytes": 34226,
+        "baselineSha256": "e1b991213e2c682b73df782b8cf28d9cef09970752ebf63634f48db3b93367f9",
+        "candidateSha256": "1888a4a2f28c435433c55e58a62c245709952da3cba48de3802c522e1398cb0c"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/machine-money.mjs",
+        "baselineBytes": 6711,
+        "candidateBytes": 25296,
+        "baselineSha256": "6f9e518c74b19999f056c15d845a90d6eded19398cfffd386be1cf14e1bd4567",
+        "candidateSha256": "059ac16fc3f4a8855bfa4e9d0c5c14840586d648247f66f5c6b0b5997396e54d"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/migrate.mjs",
+        "baselineBytes": 17834,
+        "candidateBytes": 18383,
+        "baselineSha256": "711ef37c484763c20db491a985d0c382a5ccbd30cc9d7135ea7a2752994daca5",
+        "candidateSha256": "f828e41a2ee86c10b646305167675badb994039aec1dae17c3a28621e8cb7ac3"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/operation-authority-double.mjs",
+        "baselineBytes": 0,
+        "candidateBytes": 1528,
+        "baselineSha256": null,
+        "candidateSha256": "8f851084a7d87f0c2048cb5567e315f42571ddc590bae54388d23b8a56935008"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/profile.mjs",
+        "baselineBytes": 4494,
+        "candidateBytes": 4538,
+        "baselineSha256": "2f44ebee71eb85642d544099eb3512756571d545acc4b72b670d854d6a92b9af",
+        "candidateSha256": "f0d53f31c79a0636ac5530939f6a32149efbb67bca0a31f841e78175582b1d5b"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/release-profile.mjs",
+        "baselineBytes": 8695,
+        "candidateBytes": 9050,
+        "baselineSha256": "18294f0a8f3e1e03d7f6f5126c874cb6a1e39f7b167cde30b5a836dc4d65c6c6",
+        "candidateSha256": "7850ddee8fae4914261f4c5f619542dc9a00df00aa8c305fc21258f19b9834ba"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/server.mjs",
+        "baselineBytes": 94859,
+        "candidateBytes": 95057,
+        "baselineSha256": "5f60e3918175044e106e42c227a841b02ba6c67c202ace5d31e8389e50e7f344",
+        "candidateSha256": "3049cefdd755098530078d60ca2c8aac8710f25fb7377b9d18aab50478e8876f"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/voluntary-market.mjs",
+        "baselineBytes": 16942,
+        "candidateBytes": 17369,
+        "baselineSha256": "c1b318782e0d16685a4aeba3c4f8cc6bca592d64073f23fb2227a8932dde13fe",
+        "candidateSha256": "67efdb42f92094dd28db9f7d0f9095cdc1a0a57f5c37d36d518f49d655896aca"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/src/voluntary-predecessor.mjs",
+        "baselineBytes": 0,
+        "candidateBytes": 3196,
+        "baselineSha256": null,
+        "candidateSha256": "4e7d82766554d49e2cddb8d5c10d1a074d271bf419d468cde9e6f5623ea00cc3"
+      }
+    ],
+    "excluded": [
+      {
+        "path": "AE25-EXPORT.md",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/h103010-owned-fork-replay.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/h103010-read-only-fork-proxy.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/root10940-machine-host.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/test-h103010-capability-composition.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/test-h103010-fork-proxy.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "server/scripts/test-h103010-funded-fork.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/H113010-RESULT.md",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/H115010-RESULT.md",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/anvil.stderr.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/anvil.stdout.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/funded.stderr.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/funded.stdout.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/proxy.jsonl",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h113010/summary.json",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/anvil.stderr.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/anvil.stdout.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/capability-composition.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/composition-harness.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/fork-proxy.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/funded-replay.stdout.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/funded.stderr.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/funded.stdout.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/historical-authority.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/historical-lineage.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/operator.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-countercases.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-countercases.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/pre-amendment-setup-artifact.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/proxy.jsonl",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/retained-intent.log",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/export/h115010/summary.json",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/test/capability-composition.test.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/test/historical-authority.test.mjs",
+        "reason": "outside_machine_closure"
+      },
+      {
+        "path": "vendor/hosted-wallet-market/test/retained-intent.test.mjs",
+        "reason": "outside_machine_closure"
+      }
+    ],
+    "recordedSourceConstantAgrees": false,
+    "measuredCandidateSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+    "measuredCandidateHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3"
+  },
+  "debtEqual": true,
+  "financialEqual": true,
+  "financialDigest": "91d81dd367a181880318a19f3f308e65576d19b8f1b9d707da7a0666f1bf5f01",
+  "human": {
+    "schema": "sds.h120010.human-comparison.v1",
+    "build": "server/scripts/publish-preserved-client.mjs",
+    "viteInvoked": false,
+    "baseline": {
+      "status": 0,
+      "body": {
+        "ok": true,
+        "viteInvoked": false,
+        "files": 352,
+        "bytes": 59951737,
+        "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+      },
+      "stderr": ""
+    },
+    "candidate": {
+      "status": 0,
+      "body": {
+        "ok": true,
+        "viteInvoked": false,
+        "files": 352,
+        "bytes": 59951737,
+        "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+      },
+      "stderr": ""
+    },
+    "byteEqual": true,
+    "files": 352,
+    "mismatched": [],
+    "onlyBaseline": [],
+    "onlyCandidate": [],
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "preservedInventoryAgrees": true
+  },
+  "commands": [
+    {
+      "name": "phase-before",
+      "status": 0
+    },
+    {
+      "name": "install",
+      "status": 0
+    },
+    {
+      "name": "phase-migrate",
+      "status": 0
+    },
+    {
+      "name": "phase-after",
+      "status": 0
+    },
+    {
+      "name": "rollback",
+      "status": 0
+    },
+    {
+      "name": "phase-rollback",
+      "status": 0
+    },
+    {
+      "name": "phase-destroy",
+      "status": 0
+    }
+  ],
+  "phases": {
+    "before": {
+      "ok": true,
+      "phase": "before",
+      "money": "unfunded",
+      "signerAuthority": false,
+      "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+      "wrongRepository": "acquisition_source_mismatch",
+      "wrongCommit": "acquisition_source_mismatch",
+      "acquire": {
+        "exit": 0,
+        "status": null,
+        "ok": true,
+        "code": null,
+        "nextAction": null,
+        "paidWork": null,
+        "taskId": null,
+        "state": null,
+        "evidence": null,
+        "originalBodyRecorded": null,
+        "money": "unfunded",
+        "signerAuthority": null,
+        "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+        "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+        "detail": null
+      },
+      "signup": {
+        "ok": true,
+        "status": 0
+      },
+      "lost": {
+        "status": 2,
+        "code": "unknown_outcome",
+        "nextAction": "readback"
+      },
+      "readback": {
+        "ok": true,
+        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
+        "evidence": "atomic_operation",
+        "originalBodyRecorded": true
+      },
+      "fund": {
+        "status": 409,
+        "code": "selection_required",
+        "paidWork": false
+      },
+      "counts": {
+        "accounts": 1,
+        "tasks": 1,
+        "legacyObligation": 1
+      },
+      "additive": [],
+      "legacyObligation": 1,
+      "financialDigest": "91d81dd367a181880318a19f3f308e65576d19b8f1b9d707da7a0666f1bf5f01",
+      "financial": {
+        "cj227_earned_work.earned_work_tasks": {
+          "count": 1,
+          "digest": "81c1af387351c027f563ca763a8e5fb4"
+        },
+        "cj227_earned_work.earned_work_terms": {
+          "count": 1,
+          "digest": "15246b5e2a303043456dc9b20cf2e154"
+        },
+        "cj227_earned_work.earned_work_reservations": {
+          "count": 1,
+          "digest": "8d34d9a88acc7487f55e27246216dba3"
+        },
+        "cj227_earned_work.earned_work_submissions": {
+          "count": 1,
+          "digest": "cd1c65459f55d6d601204b8812fd5ff6"
+        },
+        "cj227_earned_work.earned_work_verdicts": {
+          "count": 1,
+          "digest": "c5a01416c5152d7154a633b9bc307d48"
+        },
+        "cj227_earned_work.earned_work_obligations": {
+          "count": 1,
+          "digest": "dfbe3b318a1ef122649f20c523e1fa09"
+        },
+        "cj227_earned_work.earned_work_events": {
+          "count": 1,
+          "digest": "1f2097d41abbf8cf7affc39477bf22c7"
+        },
+        "cj227_earned_work.opportunity_obligations": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_events": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_submissions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_claims": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_assents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_funding": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_consumers": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_approvals": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_receipt_bindings": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.funding_intents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.captures": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.native_debt_dispositions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.grants": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.reviews": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.delivery": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market_guard.preserved_obligation_ids": {
+          "count": 1,
+          "digest": "ff6192f90a14b30a1fa594ccf8364d0c"
+        },
+        "hosted_wallet_market_guard.obligation_guard_seal": {
+          "count": 1,
+          "digest": "27fe65aedb43b8e97780e32715dd03e6"
+        }
+      },
+      "rpcObserved": 3
+    },
+    "migrate": {
+      "ok": true,
+      "phase": "migrate",
+      "additive": [
+        "capability_selection",
+        "capability_selection_receipt",
+        "voluntary_predecessor_binding"
+      ],
+      "reappliedEarlierSchemas": false,
+      "dropped": false
+    },
+    "after": {
+      "ok": true,
+      "phase": "after",
+      "money": "unfunded",
+      "signerAuthority": false,
+      "sourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+      "hostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+      "wrongRepository": "acquisition_source_mismatch",
+      "wrongCommit": "acquisition_source_mismatch",
+      "acquire": {
+        "exit": 1,
+        "status": null,
+        "ok": false,
+        "code": "acquisition_profile_mismatch",
+        "nextAction": null,
+        "paidWork": null,
+        "taskId": null,
+        "state": null,
+        "evidence": null,
+        "originalBodyRecorded": null,
+        "money": null,
+        "signerAuthority": null,
+        "sourceSha256": null,
+        "hostSha256": null,
+        "detail": null
+      },
+      "readback": {
+        "ok": true,
+        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
+        "evidence": "atomic_operation",
+        "originalBodyRecorded": true
+      },
+      "fund": {
+        "status": 409,
+        "code": "qualified_selection_required",
+        "paidWork": false
+      },
+      "counts": {
+        "accounts": 1,
+        "tasks": 1,
+        "legacyObligation": 1
+      },
+      "additive": [
+        "capability_selection",
+        "capability_selection_receipt",
+        "voluntary_predecessor_binding"
+      ],
+      "legacyObligation": 1,
+      "financialDigest": "91d81dd367a181880318a19f3f308e65576d19b8f1b9d707da7a0666f1bf5f01",
+      "financial": {
+        "cj227_earned_work.earned_work_tasks": {
+          "count": 1,
+          "digest": "81c1af387351c027f563ca763a8e5fb4"
+        },
+        "cj227_earned_work.earned_work_terms": {
+          "count": 1,
+          "digest": "15246b5e2a303043456dc9b20cf2e154"
+        },
+        "cj227_earned_work.earned_work_reservations": {
+          "count": 1,
+          "digest": "8d34d9a88acc7487f55e27246216dba3"
+        },
+        "cj227_earned_work.earned_work_submissions": {
+          "count": 1,
+          "digest": "cd1c65459f55d6d601204b8812fd5ff6"
+        },
+        "cj227_earned_work.earned_work_verdicts": {
+          "count": 1,
+          "digest": "c5a01416c5152d7154a633b9bc307d48"
+        },
+        "cj227_earned_work.earned_work_obligations": {
+          "count": 1,
+          "digest": "dfbe3b318a1ef122649f20c523e1fa09"
+        },
+        "cj227_earned_work.earned_work_events": {
+          "count": 1,
+          "digest": "1f2097d41abbf8cf7affc39477bf22c7"
+        },
+        "cj227_earned_work.opportunity_obligations": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_events": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_submissions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_claims": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_assents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_funding": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_consumers": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_approvals": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_receipt_bindings": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.funding_intents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.captures": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.native_debt_dispositions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.grants": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.reviews": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.delivery": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market_guard.preserved_obligation_ids": {
+          "count": 1,
+          "digest": "ff6192f90a14b30a1fa594ccf8364d0c"
+        },
+        "hosted_wallet_market_guard.obligation_guard_seal": {
+          "count": 1,
+          "digest": "27fe65aedb43b8e97780e32715dd03e6"
+        }
+      },
+      "rpcObserved": 3
+    },
+    "rollback": {
+      "ok": true,
+      "phase": "rollback",
+      "money": "unfunded",
+      "signerAuthority": false,
+      "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+      "wrongRepository": "acquisition_source_mismatch",
+      "wrongCommit": "acquisition_source_mismatch",
+      "acquire": {
+        "exit": 0,
+        "status": null,
+        "ok": true,
+        "code": null,
+        "nextAction": null,
+        "paidWork": null,
+        "taskId": null,
+        "state": null,
+        "evidence": null,
+        "originalBodyRecorded": null,
+        "money": "unfunded",
+        "signerAuthority": null,
+        "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+        "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+        "detail": null
+      },
+      "readback": {
+        "ok": true,
+        "taskId": "market-161e1190b2c3217eabf84a6de284980ce832f3e0cabc07cdc6494106f90fd165",
+        "evidence": "atomic_operation",
+        "originalBodyRecorded": true
+      },
+      "fund": {
+        "status": 409,
+        "code": "selection_required",
+        "paidWork": false
+      },
+      "counts": {
+        "accounts": 1,
+        "tasks": 1,
+        "legacyObligation": 1
+      },
+      "additive": [
+        "capability_selection",
+        "capability_selection_receipt",
+        "voluntary_predecessor_binding"
+      ],
+      "legacyObligation": 1,
+      "financialDigest": "91d81dd367a181880318a19f3f308e65576d19b8f1b9d707da7a0666f1bf5f01",
+      "financial": {
+        "cj227_earned_work.earned_work_tasks": {
+          "count": 1,
+          "digest": "81c1af387351c027f563ca763a8e5fb4"
+        },
+        "cj227_earned_work.earned_work_terms": {
+          "count": 1,
+          "digest": "15246b5e2a303043456dc9b20cf2e154"
+        },
+        "cj227_earned_work.earned_work_reservations": {
+          "count": 1,
+          "digest": "8d34d9a88acc7487f55e27246216dba3"
+        },
+        "cj227_earned_work.earned_work_submissions": {
+          "count": 1,
+          "digest": "cd1c65459f55d6d601204b8812fd5ff6"
+        },
+        "cj227_earned_work.earned_work_verdicts": {
+          "count": 1,
+          "digest": "c5a01416c5152d7154a633b9bc307d48"
+        },
+        "cj227_earned_work.earned_work_obligations": {
+          "count": 1,
+          "digest": "dfbe3b318a1ef122649f20c523e1fa09"
+        },
+        "cj227_earned_work.earned_work_events": {
+          "count": 1,
+          "digest": "1f2097d41abbf8cf7affc39477bf22c7"
+        },
+        "cj227_earned_work.opportunity_obligations": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_events": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_submissions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.opportunity_claims": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_assents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_funding": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_market_consumers": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_approvals": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "cj227_earned_work.ae14_capture_receipt_bindings": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.quotes": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.funding_intents": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.captures": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.native_debt_dispositions": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.grants": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.reviews": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market.delivery": {
+          "count": 0,
+          "digest": "d41d8cd98f00b204e9800998ecf8427e"
+        },
+        "hosted_wallet_market_guard.preserved_obligation_ids": {
+          "count": 1,
+          "digest": "ff6192f90a14b30a1fa594ccf8364d0c"
+        },
+        "hosted_wallet_market_guard.obligation_guard_seal": {
+          "count": 1,
+          "digest": "27fe65aedb43b8e97780e32715dd03e6"
+        }
+      },
+      "rpcObserved": 3
+    }
+  },
+  "limits": {
+    "modelChildren": 0,
+    "serial": true,
+    "aggregateBudgetKiB": 2097152,
+    "paidProviderCalls": 0,
+    "productionDeployment": false,
+    "memAvailableKiBStart": 4270628,
+    "memAvailableKiBEnd": 4145216
+  }
+}
