@@ -6,11 +6,11 @@
 // closure that signed, not from the witness and not from the successor digest.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, copyFileSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { DatabaseSync } from 'node:sqlite';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -24,8 +24,20 @@ import { historicalAuthorityDigest } from '../src/machine-money.mjs';
 
 const root = fileURLToPath(new URL('../../..', import.meta.url));
 const market = fileURLToPath(new URL('..', import.meta.url));
-const companionEntry = '/home/ubuntu/ae14-work/h115010-companion/tools/ops/machine-market-operator/src/open-machine-authority.mjs';
-const cachePath = '/tmp/h113010-owned/cache/code-53412211.json';
+function fixturePath(name, { file = false } = {}) {
+  const value = process.env[name];
+  assert.equal(typeof value, 'string', `${name} must name an explicit fixture path`);
+  assert(isAbsolute(value) && resolve(value) === value, `${name} must be absolute and normalized`);
+  if (file) {
+    const stat = lstatSync(value);
+    assert(stat.isFile() && !stat.isSymbolicLink(), `${name} must name a fixture file`);
+  }
+  return value;
+}
+const companionEntry = fixturePath('H103010_OPERATOR_ENTRY', { file: true });
+const cachePath = fixturePath('H103010_HISTORICAL_CACHE', { file: true });
+const historicalWorktreeRoot = fixturePath('H103010_HISTORICAL_WORKTREE_ROOT');
+const createdWorktrees = [];
 const FORK = 'h113010-historical';
 const ORIGIN = 'https://machine.example';
 const TENANT = 'pilot';
@@ -40,12 +52,11 @@ function privateFile(file, text) {
 }
 
 function worktree(commit) {
-  const dir = join('/tmp/h113010-owned/src', commit.slice(0, 12));
-  const rail = join(dir, 'vendor/hosted-wallet-market/runtime/agent-economy-rail/dist/rail.js');
-  if (!existsSync(rail)) {
-    execFileSync('git', ['-C', root, 'worktree', 'add', '--detach', dir, commit], { stdio: 'pipe' });
-    symlinkSync(join(market, 'node_modules'), join(dir, 'vendor/hosted-wallet-market/node_modules'));
-  }
+  const dir = join(historicalWorktreeRoot, commit.slice(0, 12));
+  assert(!existsSync(dir), 'predecessor fixture must not reuse an existing worktree');
+  execFileSync('git', ['-C', root, 'worktree', 'add', '--detach', dir, commit], { stdio: 'pipe' });
+  createdWorktrees.push(dir);
+  symlinkSync(join(market, 'node_modules'), join(dir, 'vendor/hosted-wallet-market/node_modules'));
   return dir;
 }
 
@@ -243,12 +254,20 @@ function snap(file, proofId) {
   finally { store.close(); }
 }
 
-test('configured predecessors recover only with retained authority and current replay permission', { timeout: 180000 }, async () => {
+test('configured predecessors recover only with retained authority and current replay permission', { timeout: 180000 }, async t => {
   const cache = JSON.parse(readFileSync(cachePath, 'utf8'));
   assert.equal(cache.observedBlockHash, '0x6f50eea711bc1a20239c6a9350e44a2f7f3ae96432ffb3a8f1946252a3429e79');
   assert.equal(cache.blockHash, cache.observedBlockHash);
   const candidate = versionedSource('eip155:8453');
   for (const [address, hash] of Object.entries(candidate.codeHashes)) assert.equal(keccak256(cache.codes[address]), hash);
+  assert(!existsSync(historicalWorktreeRoot), 'historical fixture root must be fresh');
+  mkdirSync(historicalWorktreeRoot, { mode: 0o700 });
+  t.after(() => {
+    for (const dir of createdWorktrees.reverse()) {
+      execFileSync('git', ['-C', root, 'worktree', 'remove', '--force', dir], { stdio: 'pipe' });
+    }
+    rmdirSync(historicalWorktreeRoot);
+  });
   const abi = JSON.parse(readFileSync(new URL('../runtime/agent-economy-foundation/interfaces/commerce-payments-v1.1.0.abi.json', import.meta.url), 'utf8'));
   const fees = feeText(cache.block);
   const loop = await startLoopback(cache, candidate, abi);
