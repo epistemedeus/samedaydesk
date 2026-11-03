@@ -351,11 +351,20 @@ export async function openHostedMarket(options) {
       const capability = readMachineCapability(machineInput, {sdsRoot: options.sdsRoot,
         origin: profile.origin || options.origin, tenant: profile.tenant});
       originBox.origin = capability.origin;
+      // The mount still forwards only an explicit caller boolean. A reviewed
+      // source-bound profile may also carry acceptedWorkPublic true. Either
+      // path stays off unless money is unfunded, participation is voluntary,
+      // and public reads, payments, funded tasks, and human assets stay closed.
+      const acceptedWorkPublic = options.acceptedWorkPublic === true || capability.acceptedWorkPublic === true;
+      if (acceptedWorkPublic && (capability.money !== 'unfunded' || capability.participation !== 'voluntary-artifact-v1' ||
+        profile.publicReads !== '0' || profile.payments !== 'off' || profile.fundedTasks !== 'off' || profile.humanAssets !== 'off')) {
+        throw Object.assign(new Error('machine_profile_refused'), {codeName: 'machine_profile_refused'});
+      }
       machine = await openMachineMarket({capability, authority: options.machineAuthority,
         qualifiedCapability: options.qualifiedCapability ?? process.env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,
         readSourceSuccession: client => debtConsumer.readSourceSuccession(client),
         sdsRoot: options.sdsRoot, profile: {...profile,replayKey}, now: nowMs, withClient,
-        acceptedWorkPublic: options.acceptedWorkPublic === true,
+        acceptedWorkPublic,
         authenticate: (req, policy) => withClient(c => accountFrom(c, req, policy))});
     } catch (error) { await pool.end(); throw error; }
   }

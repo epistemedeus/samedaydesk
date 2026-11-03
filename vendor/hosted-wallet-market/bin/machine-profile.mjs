@@ -20,6 +20,10 @@ if (get('participation') !== undefined) {
   if (get('participation') !== 'voluntary-artifact-v1' || money !== 'unfunded') throw Error('machine_profile_arguments_refused');
   value.participation = get('participation');
 }
+if (args.includes('--accepted-work-public')) {
+  if (get('accepted-work-public') !== 'true' || money !== 'unfunded' || value.participation !== 'voluntary-artifact-v1') throw Error('machine_profile_arguments_refused');
+  value.acceptedWorkPublic = true;
+}
 if (money !== 'sandbox') value.networkSource = versionedSource(get('network') || 'eip155:8453');
 if (money === 'qualified') {
   const mode = get('network-class') || 'public', forkId = get('fork-id');

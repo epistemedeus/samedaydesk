@@ -65,12 +65,19 @@ export async function machineHost() {
       if(listener){listener.closeAllConnections();await new Promise(done=>listener.close(done));listener=null;}
       if(app){await app.get('hostedWalletMarket')?.close?.().catch(()=>{});await app.get('neoContributorJourney')?.close?.().catch(()=>{});app=null;}
     }
-    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null,acceptedWorkPublic=false}={}) {
+    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null,acceptedWorkPublic=false,acceptedWorkFromProfile=false,corruptSource=false}={}) {
       await stop();
       const out=join(scratch,'capability-'+randomBytes(4).toString('hex')+'.json');
       const generated=JSON.parse(execFileSync(process.execPath,['--max-old-space-size=256',join(root,'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
         '--sds-root',root,'--origin',origin,'--tenant',tenant,'--money','unfunded','--out',out,
-        ...(participation?['--participation','voluntary-artifact-v1']:[])],{encoding:'utf8',timeout:30000,maxBuffer:65536}));
+        ...(participation?['--participation','voluntary-artifact-v1']:[]),
+        ...(acceptedWorkFromProfile?['--accepted-work-public','true']:[])],{encoding:'utf8',timeout:30000,maxBuffer:65536}));
+      if(corruptSource){
+        const {canonicalMachineProfile}=await import('../../vendor/hosted-wallet-market/src/machine-profile-document.mjs');
+        const parsed=JSON.parse(generated.sourceBound.slice('source-bound:'.length));
+        parsed.sourceSha256='0'.repeat(64);
+        generated.sourceBound='source-bound:'+canonicalMachineProfile(parsed);
+      }
       let qualifiedBound;
       if(qualified){
         const qout=join(scratch,'qualified-'+randomBytes(4).toString('hex')+'.json');
