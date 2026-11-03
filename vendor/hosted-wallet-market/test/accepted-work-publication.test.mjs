@@ -111,7 +111,28 @@ test('malicious copy, private evidence, and missing consent are refused', () => 
   const pending = acceptedRow({accepted: false});
   assert.throws(() => proposalFrom(pending, inputFor(pending, 'Authorized mapping kept for a later chosen consumer.')), error => codeOf(error) === 'not_accepted');
   assert.equal(publicationText('https://example.com/secret', 200), false);
+  assert.throws(() => proposalFrom(row, inputFor(row, 'See https://example.com/mapping for the sample.')), error => codeOf(error) === 'publication_refused');
+  assert.throws(() => proposalFrom(row, inputFor(row, 'A public line\nstill stays plain.')), error => codeOf(error) === 'publication_refused');
+  assert.throws(() => proposalFrom(row, inputFor(row, 'Different public words.', {note: '<script>alert(1)</script>'})), error => codeOf(error) === 'publication_refused');
+  assert.throws(() => proposalFrom(row, inputFor(row, 'Different public words.', {note: 'Send 10 USDC.'})), error => codeOf(error) === 'publication_refused');
+  assert.throws(() => proposalFrom(row, inputFor(row, 'Different public words.', {note: 'token: supersecretvalue'})), error => codeOf(error) === 'publication_refused');
   assert.equal(forbiddenTokens(row).some(token => token === 'Private spec summary text.'), true);
+});
+
+test('an explicitly selected public artifact can carry useful data', () => {
+  const row = acceptedRow();
+  const mapping = {mapping: [{from: 'external_id', to: 'id'}], version: 1};
+  const code = {source: 'export const normalize = value => value.trim();\n'};
+  const link = {reproduction: 'https://example.org/public/mapping.json'};
+  for (const artifact of [mapping, code, link, {label: 'column-map', text: 'Ask for a private export.'}]) {
+    const proposed = proposalFrom(row, inputFor(row, 'Approved reusable column-map sample.', artifact));
+    assert.equal(proposed.proposal.publicArtifactDigest, digest(artifact));
+    assert.notEqual(digest(artifact), digest(row.voluntary.artifact.evidence));
+  }
+  applyPermit(row, 'requester-1', inputFor(row, 'Approved reusable column-map sample.', mapping));
+  assert.equal(applyPermit(row, 'contributor-1', inputFor(row, 'Approved reusable column-map sample.', mapping)), true);
+  assert.deepEqual(publicArtifactView(row).publicArtifact, mapping);
+  assert.equal(JSON.stringify(publicView(row)).includes('requester-1'), false);
 });
 
 test('anonymous accepted-work reads join the mounted limiter', () => {

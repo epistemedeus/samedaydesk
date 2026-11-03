@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
+import {execFile, execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createHash, randomBytes} from 'node:crypto';
-import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import https from 'node:https';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {machineHost} from './root10940-machine-host.mjs';
@@ -19,7 +20,12 @@ const CLIENT_SHA = '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff2484225
 const RIGHTS = {license: 'CC0-1.0', scope: 'synthetic-or-authorized-reusable-artifact', attribution: 'Owner QA synthetic compatibility vectors'};
 const PRIVATE_SUMMARY = 'Voluntary owner QA: retain a synthetic table compatibility vector; no commission or payout.';
 const PUBLIC_SUMMARY = 'Chosen consumers can request this accepted mapping through the private continuation.';
-const PUBLIC_ARTIFACT = {label: 'accepted-mapping-note', text: 'Ask the requester to grant a private export before using the retained mapping.'};
+const PUBLIC_ARTIFACT = {
+  mapping: [{from: 'external_id', to: 'id'}],
+  version: 1,
+  source: 'export const normalize = value => value.trim();\n',
+  reproduction: 'https://example.org/public/mapping.json',
+};
 const REVIEW_REASON = 'The exact synthetic mappings meet the requested compatibility criterion.';
 
 test('opt-in accepted work is anonymous only after both parties permit, then returns through the existing grant', {timeout: 420000}, async () => {
@@ -254,6 +260,14 @@ test('opt-in accepted work is anonymous only after both parties permit, then ret
     const artifact = await source(null, 'artifact', ['--task-id', main.taskId]);
     assert.deepEqual(artifact.body.value.publicArtifact, PUBLIC_ARTIFACT);
     assert.equal(artifact.body.value.publicArtifactDigest, digest(PUBLIC_ARTIFACT));
+    assert.notEqual(digest(PUBLIC_ARTIFACT), digest(usefulEvidence()));
+    const changedInput = {external_id: 'changed-row-17', extra: 'not-part-of-the-private-export'};
+    const solved = {};
+    for (const column of artifact.body.value.publicArtifact.mapping) solved[column.to] = changedInput[column.from];
+    assert.deepEqual(solved, {id: 'changed-row-17'});
+    assert.equal(artifact.body.value.publicArtifact.version, 1);
+    assert.equal(artifact.body.value.publicArtifact.source.endsWith('\n'), true);
+    assert.equal(artifact.body.value.publicArtifact.reproduction, PUBLIC_ARTIFACT.reproduction);
     assert.equal((await source(null, 'detail', ['--task-id', privateId])).body.code, 'not_found');
     assert.equal((await source(null, 'detail', ['--task-id', otherId])).body.code, 'not_found');
     assert.equal((await source(null, 'detail', ['--task-id', twin.taskId])).body.code, 'not_found');
@@ -353,3 +367,92 @@ function writeInput(path, value) {
   writeFileSync(path, JSON.stringify(value));
   return path;
 }
+
+test('source client deadline stops stalled headers and a trickling body without a second POST', {timeout: 20000}, async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'h133010-deadline-'));
+  const cert = join(directory, 'cert.pem');
+  const key = join(directory, 'key.pem');
+  execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-keyout', key, '-out', cert, '-days', '1', '-nodes', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1'], {stdio: 'ignore'});
+  const seen = [];
+  let trickle;
+  const server = https.createServer({cert: readFileSync(cert), key: readFileSync(key)}, (req, res) => {
+    const chunks = [];
+    req.on('data', part => chunks.push(part));
+    req.on('end', () => {
+      seen.push(req.method + ' ' + req.url);
+      if (req.method === 'GET' && req.url.endsWith('/v1/market/profile') && seen.filter(row => row.startsWith('POST')).length === 0 && mode === 'trickle') {
+        const bytes = Buffer.from(JSON.stringify({ok: true, value: profileValue}));
+        res.writeHead(200, {'content-type': 'application/json', 'content-length': String(bytes.length)});
+        res.end(bytes);
+        return;
+      }
+      if (mode === 'trickle' && req.method === 'POST') {
+        res.writeHead(200, {'content-type': 'application/json'});
+        trickle = setInterval(() => { try { res.write(' '); } catch { clearInterval(trickle); } }, 30);
+        res.on('close', () => clearInterval(trickle));
+        return;
+      }
+    });
+  });
+  let mode = 'stall';
+  let profileValue;
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const origin = 'https://127.0.0.1:' + server.address().port;
+  profileValue = {
+    capability: {origin, money: 'unfunded', sourceSha256: 'ab'.repeat(32), hostSha256: 'cd'.repeat(32)},
+    signerAuthority: false,
+    participation: {protocol: 'voluntary-artifact-v1'},
+    mutationReceipts: {actions: ['post', 'interest']},
+  };
+  const secretFile = join(directory, 'secret.json');
+  writeFileSync(secretFile, JSON.stringify({
+    schema: 'ae.password-file.v1', password: 'synthetic-password-value', origin,
+    cookie: '__Host-neo_contributor=synthetic-session', csrf: 'synthetic-csrf-value',
+  }) + '\n');
+  chmodSync(secretFile, 0o600);
+  const summary = 'Approved reusable column map.';
+  const artifact = {mapping: [{from: 'external_id', to: 'id'}], version: 1};
+  const input = writeInput(join(directory, 'permit.json'), {
+    taskId: 'market-' + 'c'.repeat(64), termsDigest: 'ab'.repeat(32), expectedRevision: 4,
+    summary, summaryDigest: digest(summary), publicArtifact: artifact, publicArtifactDigest: digest(artifact),
+    rightsDigest: 'cd'.repeat(32), artifactDigest: 'ef'.repeat(32), publicationConsent: true,
+  });
+  async function run(args) {
+    try {
+      const {stdout} = await exec(process.execPath, ['--max-old-space-size=128', SOURCE, ...args], {
+        encoding: 'utf8', timeout: 5000, maxBuffer: 1024 * 1024, env: {...process.env, UV_THREADPOOL_SIZE: '1', OMP_NUM_THREADS: '1'},
+      });
+      return {status: 0, body: JSON.parse(stdout)};
+    } catch (error) {
+      const status = Number.isInteger(error.code) ? error.code : 1;
+      return {status, body: JSON.parse(error.stdout || '{}')};
+    }
+  }
+  try {
+    const stalled = await run(['discover-accepted', '--origin', origin, '--ca-file', cert, '--deadline-ms', '250']);
+    assert.equal(stalled.status, 2, JSON.stringify(stalled.body));
+    assert.equal(stalled.body.code, 'unknown_outcome');
+    assert.equal(stalled.body.termination, 'timeout');
+    assert.deepEqual(seen, ['GET ' + PREFIX + '/v1/market/profile']);
+    const before = seen.length;
+    await new Promise(resolve => setTimeout(resolve, 200));
+    assert.equal(seen.length, before);
+    mode = 'trickle';
+    const lost = await run(['permit', '--origin', origin, '--ca-file', cert, '--deadline-ms', '250', '--secret-file', secretFile, '--input', input]);
+    assert.equal(lost.status, 2, JSON.stringify(lost.body));
+    assert.equal(lost.body.code, 'unknown_outcome');
+    assert.equal(lost.body.nextAction, 'readback');
+    assert.equal(lost.body.operation, 'permitAcceptedWork');
+    const posts = seen.filter(row => row.startsWith('POST '));
+    assert.deepEqual(posts, ['POST ' + PREFIX + '/v1/market/permitAcceptedWork']);
+    const stored = JSON.parse(readFileSync(secretFile, 'utf8'));
+    assert.equal(stored.operations.permitAcceptedWork.state, 'unknown');
+    const marked = seen.length;
+    await new Promise(resolve => setTimeout(resolve, 200));
+    assert.equal(seen.length, marked);
+  } finally {
+    if (trickle) clearInterval(trickle);
+    await new Promise(resolve => server.close(resolve));
+    rmSync(directory, {recursive: true, force: true});
+  }
+});

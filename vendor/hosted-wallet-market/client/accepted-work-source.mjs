@@ -38,17 +38,27 @@ function saveSecret(file,value){
   try{renameSync(tmp,file);syncDirectory(file);}finally{if(existsSync(tmp))unlinkSync(tmp);}
 }
 function syncDirectory(file){const fd=openSync(dirname(file),constants.O_RDONLY|constants.O_DIRECTORY);try{fsyncSync(fd);}finally{closeSync(fd);}}
+function deadlineMs(){
+  const raw=flag('deadline-ms');
+  if(raw===undefined)return 20000;
+  if(!/^[1-9]\d{1,4}$/.test(raw))fail('deadline_refused');
+  const value=Number(raw);
+  if(value<50||value>20000)fail('deadline_refused');
+  return value;
+}
 function request(route,{method='GET',body,headers={}}={}){
   const data=body===undefined?null:Buffer.from(JSON.stringify(body));
   const ca=flag('ca-file')?readFileSync(flag('ca-file')):undefined;
   const hostname=new URL(origin).hostname;
+  const limit=deadlineMs();
   return new Promise(resolve=>{
-    let settled=false,status=0,received=0,pieces=[],captured=0,responseHeaders={},termination='transport_error';
+    let settled=false,status=0,received=0,pieces=[],captured=0,responseHeaders={},termination='transport_error',timer;
     const finish=complete=>{
       if(settled)return;settled=true;
+      clearTimeout(timer);
       const bytes=Buffer.concat(pieces);
       let parsed;if(complete&&received===captured)try{parsed=JSON.parse(bytes.toString('utf8'));}catch{}
-      resolve({status,body:parsed,complete,cacheControl:responseHeaders['cache-control']||null,termination});
+      resolve({status,body:parsed,complete,cacheControl:responseHeaders['cache-control']||null,termination,received});
     };
     const req=https.request(origin+PREFIX+route,{method,ca,maxHeaderSize:8192,...(net.isIP(hostname)?{}:{servername:hostname}),
       headers:{'x-ae-wire-version':flag('wire')||'c0-1',...(data?{'content-type':'application/json','content-length':String(data.length)}:{}),...headers}},res=>{
@@ -60,7 +70,9 @@ function request(route,{method='GET',body,headers={}}={}){
       res.on('end',()=>finish(res.complete));
     });
     req.on('error',()=>finish(false));
-    req.setTimeout(20000,()=>{termination='timeout';req.destroy();finish(false);});
+    // Absolute operation deadline. Received bytes do not extend it, and a
+    // timeout does not send the request again.
+    timer=setTimeout(()=>{termination='timeout';req.destroy();finish(false);},limit);
     req.end(data);
   });
 }
@@ -78,8 +90,9 @@ function keysOf(value, keys){
 }
 async function liveProfile(secret){
   const response=await request('/v1/market/profile');
+  if(!response.complete)emit({ok:false,code:'unknown_outcome',nextAction:'readback',termination:response.termination},2);
   const profile=response.body?.value;
-  if(!response.complete||response.status!==200||response.body?.ok!==true||profile?.capability?.origin!==origin||profile?.capability?.money!=='unfunded'||profile?.signerAuthority!==false||profile?.participation?.protocol!=='voluntary-artifact-v1')
+  if(response.status!==200||response.body?.ok!==true||profile?.capability?.origin!==origin||profile?.capability?.money!=='unfunded'||profile?.signerAuthority!==false||profile?.participation?.protocol!=='voluntary-artifact-v1')
     emit({ok:false,code:'profile_unavailable',nextAction:'readback'},2);
   if(digest(profile.mutationReceipts?.actions)!==digest(['post','interest']))emit({ok:false,code:'mutation_receipts_unavailable'},2);
   const sourceSha256=profile.capability.sourceSha256,hostSha256=profile.capability.hostSha256;

@@ -1315,7 +1315,9 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256"
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "242febc11f9a50c22b38a8504e8da0ffa9c1ae38fd91417c667b2e7eb58f7256",
+    "vendor/hosted-wallet-market/client/accepted-work-source.mjs": "96e23aff465e390e801b57210dfca1bd9bbd8e02703dc618e0fbf97a8c190e4b",
+    "vendor/hosted-wallet-market/src/accepted-work-publication.mjs": "cb8f46ea093c92bd8a9311593ea853d0ab652b562b982c696c938fd7b2bb0931"
   },
   "receivedCallerClosures": [
     {

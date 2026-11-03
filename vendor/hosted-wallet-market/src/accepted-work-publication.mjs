@@ -80,22 +80,47 @@ function assertCopy(value, max, row) {
   requireThat(!privateHit(value, row), 'private_field_refused');
 }
 
+// Selected public data. Summary text stays on the plain-text fence. These
+// bytes are stored and returned; nothing here fetches a link or runs code.
+function assertArtifactString(value, row) {
+  requireThat(typeof value === 'string' && value.length >= 1 && Buffer.byteLength(value) <= 500, 'publication_refused');
+  requireThat(!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f]/u.test(value), 'publication_refused');
+  requireThat(!/</.test(value), 'publication_refused');
+  requireThat(!/%[0-9a-f]{2}|&#(?:x[0-9a-f]+|\d+);?|&[a-z][a-z0-9]{1,31};/i.test(value), 'publication_refused');
+  requireThat(!/(?:javascript:|data:|mailto:)/i.test(value), 'publication_refused');
+  requireThat(!/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(value), 'publication_refused');
+  requireThat(!/(?:[$€£¥]|\b(?:USDC|USDT|USD|EUR|GBP|BTC|ETH|SOL|wei|satoshis?)\b)/i.test(value), 'publication_refused');
+  requireThat(!/(?:\b(?:reward|payment|payout|paid|amount|atomic|units)\s*(?:is|of|:|=)?\s*\d|\d\s*(?:atomic(?:\s+units)?|dollars?|cents?|tokens?|coins?)\b)/i.test(value), 'publication_refused');
+  requireThat(!/\b(?:sk-(?:proj-)?[A-Za-z0-9_-]{12,}|Bearer\s+\S+|(?:api[_-]?key|password|secret|token)\s*[:=]\s*\S+|eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.)/i.test(value), 'publication_refused');
+  requireThat(!privateHit(value, row), 'private_field_refused');
+}
+
 function assertArtifact(value, row) {
   requireThat(value && typeof value === 'object' && !Array.isArray(value), 'publication_refused');
   const evidence = row.voluntary?.artifact?.evidence;
   if (evidence) requireThat(digest(value) !== digest(evidence), 'private_evidence_refused');
   const canonical = JSON.stringify(value);
   requireThat(Buffer.byteLength(canonical) <= 4096, 'publication_refused');
-  const strings = [];
+  let strings = 0;
   const walk = (node, depth) => {
     requireThat(depth <= 6, 'publication_refused');
     if (typeof node === 'string') {
-      requireThat(Buffer.byteLength(node) <= 500, 'publication_refused');
-      strings.push(node);
+      strings += 1;
+      requireThat(strings <= 40, 'publication_refused');
+      assertArtifactString(node, row);
       return;
     }
     if (node === null || typeof node === 'boolean') return;
-    requireThat(node && typeof node === 'object' && !Array.isArray(node), 'publication_refused');
+    if (typeof node === 'number') {
+      requireThat(Number.isFinite(node), 'publication_refused');
+      return;
+    }
+    if (Array.isArray(node)) {
+      requireThat(node.length <= 40, 'publication_refused');
+      for (const item of node) walk(item, depth + 1);
+      return;
+    }
+    requireThat(node && typeof node === 'object', 'publication_refused');
     const keys = Object.keys(node);
     requireThat(keys.length <= 40, 'publication_refused');
     for (const key of keys) {
@@ -105,8 +130,6 @@ function assertArtifact(value, row) {
     }
   };
   walk(value, 1);
-  requireThat(strings.length <= 40, 'publication_refused');
-  for (const text of strings) assertCopy(text, 500, row);
 }
 
 export function proposalFrom(row, input) {
