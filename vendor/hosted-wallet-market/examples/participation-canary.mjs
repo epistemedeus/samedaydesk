@@ -31,7 +31,14 @@ export function runCanary({origin,directory,namespace,client,clientSha256,descri
   assert.equal(createHash('sha256').update(descriptorBytes).digest('hex'),descriptorSha256,'descriptor differs from the independent pin');
   const pinned=JSON.parse(descriptorBytes);
   assert.equal(pinned.schema,'neomorphic.machine-participation.acquisition.v1');
-  assert.equal(pinned.version,'0.3.0');
+  // The retained consumer follows the explicitly bound immutable client.
+  // The historical 0.3.0 packet still requires 0.3.0. An unbound client fails closed.
+  const retainedClientVersion={
+    '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4':'0.3.0',
+    'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9':'0.3.1',
+  }[clientSha256];
+  assert.equal(typeof retainedClientVersion,'string');
+  assert.equal(pinned.version,retainedClientVersion);
   assert.equal(pinned.bytes,bytes.length);
   assert.equal(pinned.sha256,clientSha256);
   assert.equal(pinned.source.repository,sourceRepository);
@@ -41,7 +48,7 @@ export function runCanary({origin,directory,namespace,client,clientSha256,descri
   assert.equal(pinned.requiredProfile.participation,'voluntary-artifact-v1');
   // EEXIST preserves every previous attempt and blocks hidden account reuse.
   mkdirSync(directory,{mode:0o700});
-  const cold=join(directory,'cold-requester-0.3.0.mjs'); copyFileSync(client,cold);
+  const cold=join(directory,`cold-requester-${retainedClientVersion}.mjs`); copyFileSync(client,cold);
   const common=['--origin',origin,...(caFile?['--ca-file',caFile]:[])];
   const roleFile=role=>join(directory,role+'.json');
   let sequence=0;

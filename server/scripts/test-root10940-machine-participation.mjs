@@ -58,7 +58,12 @@ test('cold independent account roles complete voluntary delivery, requester deci
       '--descriptor-sha256',anchor.descriptorSha256,...sourceFlags,'--secret-file',absentSecret,
       '--display-name','root10940-owner-qa-absent','--role','requester']);
     assert.equal(absent.status,1);
-    assert.equal(absent.body.code,'acquisition_profile_mismatch');
+    const absentProfileCode={
+      '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4':'acquisition_profile_mismatch',
+      'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9':'acquisition_profile_missing',
+    }[anchor.clientSha256];
+    assert.equal(typeof absentProfileCode,'string');
+    assert.equal(absent.body.code,absentProfileCode);
     assert.equal(existsSync(absentSecret),false);
     assert.equal(await accounts(),beforeAccounts,'refused acquisition creates no account');
     let capability=await host.boot();

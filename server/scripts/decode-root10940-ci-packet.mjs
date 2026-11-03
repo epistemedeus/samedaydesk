@@ -10,8 +10,11 @@
  * the decoded trust anchor. It does not hash this SDS tree, invent a path,
  * or continue when the variable is absent.
  *
- * Exit 2: ROOT10940_CI_PACKET is missing or empty.
+ * Exit 2: ROOT10940_CI_PACKET is missing or empty and --packet was not passed.
  * Exit 1: the packet is present but does not decode and match.
+ *
+ * --packet FILE reads that file instead of the account variable. It does not
+ * write or clear ROOT10940_CI_PACKET.
  */
 import {createHash} from 'node:crypto';
 import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs';
@@ -38,10 +41,23 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
-const raw = process.env.ROOT10940_CI_PACKET;
-if (typeof raw !== 'string' || raw.trim() === '') {
+function packetRaw() {
+  const index = process.argv.indexOf('--packet');
+  if (index < 0) return {kind: 'env', raw: process.env.ROOT10940_CI_PACKET};
+  const file = process.argv[index + 1];
+  if (typeof file !== 'string' || file.length === 0 || file.startsWith('-')) fail('--packet requires a file', 1);
+  try {
+    return {kind: 'file', raw: readFileSync(file, 'utf8')};
+  } catch {
+    fail('--packet file is unreadable', 1);
+  }
+}
+const source = packetRaw();
+const raw = source.raw;
+if (source.kind === 'env' && (typeof raw !== 'string' || raw.trim() === '')) {
   fail('ROOT10940_CI_PACKET is required', 2);
 }
+if (typeof raw !== 'string' || raw.trim() === '') fail('packet is empty', 1);
 
 let packet;
 try {

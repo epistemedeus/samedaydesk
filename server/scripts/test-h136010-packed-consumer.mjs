@@ -77,9 +77,10 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
   for (const phrase of ['empty list is not paid demand', 'Public reads stay off', 'no signer', 'Acquisition creates no account, grant or payment.']) {
     assert.equal(guide.includes(phrase), false, phrase);
   }
-  for (const marker of ['prepare-accepted-work.mjs', '--summary-file', '--consent-file', 'discover-accepted', 'grantVoluntary', 'withdraw-publication', 'unknown_outcome', 'changed-row-17', 'external_id', '20 seconds']) {
+  for (const marker of ['prepare-accepted-work.mjs', '--summary-file', '--consent-file', 'discover-accepted', 'grantVoluntary', 'withdraw-publication', 'unknown_outcome', 'changed-row-17', 'external_id', '20 seconds', 'permit-requester.json', 'permit-contributor.json', 'returned revision', 'filtered projection', 'HTTP 404']) {
     assert.equal(guide.includes(marker), true, marker);
   }
+  assert.equal(guide.includes(entry.acquisition.command.join(' ')), true);
 
   const host = await machineHost();
   const directory = mkdtempSync(join(host.scratch, 'h136010-packed-'));
@@ -102,6 +103,22 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
     const path = file('descriptor-' + (++seq) + '.json');
     writeFileSync(path, bytes);
     return ['--descriptor', path, '--descriptor-sha256', sha(bytes), '--source-repository', value.source.repository, '--source-commit', value.source.commit, '--source-path', value.source.path];
+  }
+  function entryAcquireArgs(command, bytes) {
+    const args = command.slice(command.indexOf('acquire') + 1);
+    const out = [];
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === '--origin') { i += 1; continue; }
+      if (args[i] === '--descriptor') {
+        const path = file('entry-descriptor-' + (++seq) + '.json');
+        writeFileSync(path, bytes);
+        out.push('--descriptor', path);
+        i += 1;
+        continue;
+      }
+      out.push(args[i]);
+    }
+    return out;
   }
   async function act(name, action, input) {
     const path = file(action + '-' + name + '-' + (++seq) + '.json');
@@ -146,6 +163,29 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
     assert.equal(profile.body.ok, true, JSON.stringify(profile.body));
     assert.equal(profile.body.signerAuthority, false);
     assert.equal(profile.body.money, 'unfunded');
+    assert.equal(profile.body.acceptedWork, undefined);
+    const transition = JSON.parse(readFileSync(join(neo, 'publication/ACCEPTED-WORK-SOURCE-TRANSITION.json'), 'utf8'));
+    assert.equal(transition.publicRouteClaimed, false);
+    assert.equal(transition.hostedAcquisitionVerified, false);
+    assert.deepEqual(transition.order, ['install-candidate', 'measure-required-profile', 'publish-candidate-entry']);
+    assert.deepEqual(transition.rollback, ['restore-predecessor-entry', 'roll-back-installed-source']);
+    assert.equal(transition.predecessor.binding, 'b28b3c00');
+    assert.equal(transition.candidate.approvedForPublicRoute, false);
+    assert.equal(entry.succession.binding, transition.predecessor.binding);
+    const candidateEntry = JSON.parse(readFileSync(join(neo, 'public', transition.candidate.entry), 'utf8'));
+    const candidateDescriptorBytes = readFileSync(join(neo, 'public', transition.candidate.descriptor));
+    const candidateGuide = readFileSync(join(neo, 'public', transition.candidate.guide), 'utf8');
+    assert.equal(sha(candidateDescriptorBytes), candidateEntry.descriptorSha256);
+    assert.equal(sha(candidateDescriptorBytes), transition.candidate.descriptorSha256);
+    assert.equal(candidateEntry.succession.binding, transition.candidate.binding);
+    assert.equal(candidateEntry.hostedAcquisitionVerified, false);
+    assert.equal(candidateEntry.publicationStatus, 'source_qualified_diagnostics');
+    assert.equal(candidateGuide.includes(candidateEntry.acquisition.command.join(' ')), true);
+    const successorBytes = readFileSync(successorPath);
+    const successor = JSON.parse(successorBytes.toString('utf8'));
+    assert.equal(successor.publicationStatus, 'private_unreleased');
+    assert.notEqual(sha(successorBytes), candidateEntry.descriptorSha256);
+    assert.notEqual(successor.predecessor, candidateEntry.predecessor);
     const baseline = profile.body.sourceSha256 === descriptor.requiredProfile.sourceSha256 && profile.body.hostSha256 === descriptor.requiredProfile.hostSha256;
     const acquired = await cold(CLIENT, ['acquire', ...pins(), ...acquireArgs(descriptorBytes, descriptor)]);
     const listed = await cold(ACCEPTED, ['discover-accepted', ...pins()]);
@@ -157,22 +197,25 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
       assert.equal(acquired.body.version, '0.3.1');
       assert.equal(acquired.body.clientSha256, CLIENT_SHA);
       assert.equal(acquired.body.descriptorSha256, PUBLIC_DESCRIPTOR_SHA);
+      const refusedCandidate = await cold(CLIENT, ['acquire', ...pins(), ...entryAcquireArgs(candidateEntry.acquisition.command, candidateDescriptorBytes)]);
+      assert.equal(refusedCandidate.body.code, 'acquisition_profile_mismatch');
       assert.deepEqual(await host.financialSnapshot(), beforeMoney);
       return;
     }
     assert.equal(acquired.body.code, 'acquisition_profile_mismatch');
-    const successorBytes = readFileSync(successorPath);
-    const successor = JSON.parse(successorBytes.toString('utf8'));
-    assert.equal(successor.version, '0.3.1');
-    assert.equal(successor.sha256, CLIENT_SHA);
-    assert.equal(successor.bytes, 30187);
-    assert.equal(successor.source.path, 'clients/cold-requester-0.3.1.mjs');
-    assert.equal(successor.source.commit, 'b79f985e83e829288a675407a4b4124e58a11f3a');
-    assert.equal(successor.hostedAcquisitionVerified, false);
-    assert.equal(successor.publicationStatus, 'private_unreleased');
-    assert.notEqual(sha(successorBytes), PUBLIC_DESCRIPTOR_SHA);
-    assert.equal(successor.requiredProfile.sourceSha256, profile.body.sourceSha256);
-    assert.equal(successor.requiredProfile.hostSha256, profile.body.hostSha256);
+    assert.equal(candidateEntry.requiredProfile.sourceSha256, profile.body.sourceSha256);
+    assert.equal(candidateEntry.requiredProfile.hostSha256, profile.body.hostSha256);
+    const flipped = Buffer.from(candidateDescriptorBytes);
+    flipped[10] ^= 1;
+    const descriptorMismatch = await cold(CLIENT, ['acquire', ...pins(), ...entryAcquireArgs(candidateEntry.acquisition.command, flipped)]);
+    assert.equal(descriptorMismatch.body.code, 'acquisition_descriptor_mismatch');
+    const staleDescriptor = structuredClone(JSON.parse(candidateDescriptorBytes.toString('utf8')));
+    staleDescriptor.requiredProfile = {...descriptor.requiredProfile};
+    const staleBytes = Buffer.from(JSON.stringify(staleDescriptor));
+    const stalePath = file('stale-source-descriptor.json');
+    writeFileSync(stalePath, staleBytes);
+    const staleSource = await cold(CLIENT, ['acquire', ...pins(), '--descriptor', stalePath, '--descriptor-sha256', sha(staleBytes), '--source-repository', staleDescriptor.source.repository, '--source-commit', staleDescriptor.source.commit, '--source-path', staleDescriptor.source.path]);
+    assert.equal(staleSource.body.code, 'acquisition_profile_mismatch');
 
     const on = await host.boot({acceptedWorkFromProfile: true});
     assert.equal(on.acceptedWorkPublic, true);
@@ -186,12 +229,24 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
     assert.equal(opened.body.value.acceptedWork.signerAuthority, false);
     assert.equal(opened.body.value.capability.acceptedWorkPublic, undefined);
     assert.equal(opened.body.value.capability.money, 'unfunded');
-    const bound = await cold(CLIENT, ['acquire', ...pins(), ...acquireArgs(successorBytes, successor)]);
+    const filtered = await cold(CLIENT, ['profile', ...pins()]);
+    assert.equal(filtered.body.ok, true, JSON.stringify(filtered.body));
+    assert.equal(filtered.body.acceptedWork, undefined);
+    const answered = await cold(ACCEPTED, ['discover-accepted', ...pins()]);
+    assert.equal(answered.body.status, 200);
+    assert.equal(Array.isArray(answered.body.items), true);
+    host.fault.holdAction = 'profile';
+    const held = await cold(ACCEPTED, ['discover-accepted', ...pins(), '--deadline-ms', '50']);
+    host.fault.holdAction = null;
+    assert.equal(held.status, 2, JSON.stringify(held.body));
+    assert.equal(held.body.code, 'unknown_outcome');
+    const bound = await cold(CLIENT, ['acquire', ...pins(), ...entryAcquireArgs(candidateEntry.acquisition.command, candidateDescriptorBytes)]);
     assert.equal(bound.body.ok, true, JSON.stringify(bound.body));
     assert.equal(bound.body.accountCreated, false);
     assert.equal(bound.body.version, '0.3.1');
     assert.equal(bound.body.sourceSha256, on.sourceSha256);
-    const pinsForAccount = acquireArgs(successorBytes, successor);
+    assert.equal(bound.body.descriptorSha256, candidateEntry.descriptorSha256);
+    const pinsForAccount = entryAcquireArgs(candidateEntry.acquisition.command, candidateDescriptorBytes);
     for (const [name, role] of [['requester', 'requester'], ['contributor', 'contributor'], ['visitor', 'requester']]) {
       secrets[name] = file(name + '.json');
       const created = await cold(CLIENT, ['signup', ...pins(), '--secret-file', secrets[name], '--display-name', 'h136010 ' + name, '--role', role, ...pinsForAccount]);
