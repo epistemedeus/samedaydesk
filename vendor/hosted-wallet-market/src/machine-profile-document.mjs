@@ -7,7 +7,7 @@ import {machineNetworkSource} from './machine-network-source.mjs';
 
 const PREFIX = 'source-bound:';
 const SWITCH = /^(?:0|1|true|false|on|off|yes|no|unfunded|sandbox|qualified)$/i;
-const KEYS = Object.freeze(['schema', 'profile', 'origin', 'tenant', 'sourceSha256', 'hostSha256', 'discovery', 'money', 'networkSource', 'execution', 'participation']);
+const KEYS = Object.freeze(['schema', 'profile', 'origin', 'tenant', 'sourceSha256', 'hostSha256', 'discovery', 'money', 'networkSource', 'execution', 'participation', 'acceptedWorkPublic']);
 const TENANT = /^[a-z][a-z0-9_-]{2,63}$/;
 const HASH = /^[0-9a-f]{64}$/;
 const PART = /^[A-Za-z0-9._-]{1,128}$/;
@@ -39,6 +39,9 @@ function normalize(input) {
   if (!HASH.test(document.sourceSha256 || '') || !HASH.test(document.hostSha256 || '')) refuse('machine_profile_refused');
   if (document.discovery !== 'qualified-source' || !['unfunded', 'sandbox', 'qualified'].includes(document.money)) refuse('machine_profile_refused');
   if (document.participation !== undefined && (document.participation !== 'voluntary-artifact-v1' || document.money !== 'unfunded')) refuse('machine_profile_refused');
+  // Absent stays off and keeps older canonical documents unchanged. True is
+  // admitted only on an unfunded voluntary profile. networkSource may remain.
+  if (document.acceptedWorkPublic !== undefined && (document.acceptedWorkPublic !== true || document.money !== 'unfunded' || document.participation !== 'voluntary-artifact-v1')) refuse('machine_profile_refused');
   if (document.networkSource !== undefined && (!document.networkSource || typeof document.networkSource !== 'object' || Array.isArray(document.networkSource))) refuse('machine_profile_refused');
   if (document.execution !== undefined) {
     const execution = document.execution;

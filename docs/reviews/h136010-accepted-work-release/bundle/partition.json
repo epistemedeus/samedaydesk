@@ -1,0 +1,54 @@
+{
+  "schema": "sds.h120010.machine-partition.v1",
+  "payload": [
+    "server/foundry/activation/private-control-pin.json",
+    "server/lib/hosted-wallet-market-mount.js",
+    "vendor/hosted-wallet-market/bin/machine-profile.mjs",
+    "vendor/hosted-wallet-market/client/accepted-work-source.mjs",
+    "vendor/hosted-wallet-market/src/accepted-work-publication.mjs",
+    "vendor/hosted-wallet-market/src/machine-market.mjs",
+    "vendor/hosted-wallet-market/src/machine-profile-document.mjs",
+    "vendor/hosted-wallet-market/src/public-route-limit.mjs",
+    "vendor/hosted-wallet-market/src/server.mjs",
+    "vendor/hosted-wallet-market/src/voluntary-market.mjs"
+  ],
+  "excluded": [
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/ACTIVATION.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/NEXT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/RESULT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/root10940-machine-host.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h133010-accepted-work.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h136010-accepted-work-release.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-closure.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-publication.test.mjs",
+      "reason": "outside_machine_closure"
+    }
+  ],
+  "humanSurfaceCoupled": [],
+  "frozenUntouched": [
+    "vendor/neomorphic-contributor-journey/SOURCE.json",
+    "vendor/neomorphic-contributor-desk/SOURCE.json"
+  ]
+}

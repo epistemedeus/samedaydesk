@@ -60,17 +60,24 @@ export async function machineHost() {
     }finally {await admin.end();}
     const ca=readFileSync(join(scratch,'tls.crt')),key=readFileSync(join(scratch,'tls.key'));
     const {createSdsApp}=await import('../app.js');
-    const fault={dropAction:null};
+    const fault={dropAction:null,holdAction:null};
     async function stop() {
       if(listener){listener.closeAllConnections();await new Promise(done=>listener.close(done));listener=null;}
       if(app){await app.get('hostedWalletMarket')?.close?.().catch(()=>{});await app.get('neoContributorJourney')?.close?.().catch(()=>{});app=null;}
     }
-    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null,acceptedWorkPublic=false}={}) {
+    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null,acceptedWorkPublic=false,acceptedWorkFromProfile=false,corruptSource=false}={}) {
       await stop();
       const out=join(scratch,'capability-'+randomBytes(4).toString('hex')+'.json');
       const generated=JSON.parse(execFileSync(process.execPath,['--max-old-space-size=256',join(root,'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
         '--sds-root',root,'--origin',origin,'--tenant',tenant,'--money','unfunded','--out',out,
-        ...(participation?['--participation','voluntary-artifact-v1']:[])],{encoding:'utf8',timeout:30000,maxBuffer:65536}));
+        ...(participation?['--participation','voluntary-artifact-v1']:[]),
+        ...(acceptedWorkFromProfile?['--accepted-work-public','true']:[])],{encoding:'utf8',timeout:30000,maxBuffer:65536}));
+      if(corruptSource){
+        const {canonicalMachineProfile}=await import('../../vendor/hosted-wallet-market/src/machine-profile-document.mjs');
+        const parsed=JSON.parse(generated.sourceBound.slice('source-bound:'.length));
+        parsed.sourceSha256='0'.repeat(64);
+        generated.sourceBound='source-bound:'+canonicalMachineProfile(parsed);
+      }
       let qualifiedBound;
       if(qualified){
         const qout=join(scratch,'qualified-'+randomBytes(4).toString('hex')+'.json');
@@ -90,6 +97,8 @@ export async function machineHost() {
       await app.get('hostedWalletMarket').opened;
       await app.get('neoContributorJourney').ensure();
       listener=https.createServer({key,cert:ca},(req,res)=>{
+        // Test-only hang. It does not clear itself and it never calls the app.
+        if(typeof fault.holdAction==='string'&&fault.holdAction.length>0&&req.url.endsWith('/'+fault.holdAction))return;
         if(fault.dropAction&&req.url===`/api/neomorphic-contributor-journey/v1/market/${fault.dropAction}`){
           fault.dropAction=null;
           // The real router commits before send; only the response transport is

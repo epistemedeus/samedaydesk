@@ -58,7 +58,12 @@ test('cold independent account roles complete voluntary delivery, requester deci
       '--descriptor-sha256',anchor.descriptorSha256,...sourceFlags,'--secret-file',absentSecret,
       '--display-name','root10940-owner-qa-absent','--role','requester']);
     assert.equal(absent.status,1);
-    assert.equal(absent.body.code,'acquisition_profile_mismatch');
+    const absentProfileCode={
+      '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4':'acquisition_profile_mismatch',
+      'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9':'acquisition_profile_missing',
+    }[anchor.clientSha256];
+    assert.equal(typeof absentProfileCode,'string');
+    assert.equal(absent.body.code,absentProfileCode);
     assert.equal(existsSync(absentSecret),false);
     assert.equal(await accounts(),beforeAccounts,'refused acquisition creates no account');
     let capability=await host.boot();
@@ -228,7 +233,22 @@ test('cold independent account roles complete voluntary delivery, requester deci
     await host.query('UPDATE cj227_earned_work.ae14_market_tasks SET requester_id=$2 WHERE id=$1',[task,current.requester_id]);
     assert.equal((await call(contributor,'reviewVoluntary',{...common(),artifactDigest:state.artifactDigest,accepted:true,exportAuthorized:true,reason:'Self claimed receipt'},id())).status,403);
     const quote=await call(requester,'quote',{taskId:task,contributorId:contributor.accountId,gross:'1',railCostCap:'0',expiresAt:new Date(Date.now()+60000).toISOString()},id());
-    assert.equal(quote.body.code,'voluntary_task_cannot_be_funded');
+    const observed=JSON.parse(readFileSync(join(root,'server/scripts/fixtures/h136010-original-quote-observation.json'),'utf8'));
+    assert.equal(observed.schema,'sds.h136010.original-quote-observation.v1');
+    assert.equal(observed.expectedCode,'voluntary_task_cannot_be_funded');
+    assert.equal(observed.actualCode,'qualified_selection_required');
+    assert.equal(observed.exit,1);
+    assert.equal(observed.pass,false);
+    assert.equal(observed.sourceSha256,'9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d');
+    // quote is paid. Unfunded money hits requirePaid before the voluntary-task gate.
+    const quoteBoundary={
+      '5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2':'voluntary_task_cannot_be_funded',
+      '9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d':'qualified_selection_required',
+    }[anchor.requiredProfile.sourceSha256];
+    assert.equal(typeof quoteBoundary,'string');
+    assert.equal(quote.body.code,quoteBoundary);
+    assert.notEqual(quote.status,200);
+    assert.deepEqual(await host.financialSnapshot(),before);
     await assert.rejects(host.boot({tenant:'root10940-other-tenant'}), error => (error.codeName||error.message)==='tenant_refused');
     assert.equal((await host.query('SELECT tenant FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0].tenant,'root10940-owner-qa-fixture');
     await host.boot();

@@ -1,0 +1,129 @@
+{
+  "schema": "sds.h120010.machine-bundle.v1",
+  "baselineCommit": "b28b3c0024b885b7ea7ae672a978e11251ef71ca",
+  "candidateCommit": "e32c3f2ce4391ccba9e7d15a3fda0a65459406fd",
+  "baselineSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+  "baselineHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+  "recordedCandidateSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+  "recordedSourceConstantAuthority": false,
+  "runtimeCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+  "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+  "flags": {
+    "publicReads": "0",
+    "fundedTasks": "off",
+    "payments": "off",
+    "humanAssets": "off",
+    "money": "unfunded",
+    "signerAuthority": false
+  },
+  "members": [
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "baselineBytes": 228500,
+      "candidateBytes": 228772,
+      "baselineSha256": "9d3cc6c90c2ad80a79bda2da934097b596cadb37e426118a85e1dcc2f454877a",
+      "candidateSha256": "fe1b2e8642f0a8c8e6a69def03b7bb24d14595a69b389e14ca62acf62f12c318"
+    },
+    {
+      "path": "server/lib/hosted-wallet-market-mount.js",
+      "baselineBytes": 15143,
+      "candidateBytes": 15296,
+      "baselineSha256": "3330f50000596fdf62c8877cccc89555bf347bb5aa316302682ab037c0ab4280",
+      "candidateSha256": "ff68acf31c5b62c858114a1975f862b255aabe8545f8631e8b4dada4ce57edfd"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/bin/machine-profile.mjs",
+      "baselineBytes": 2663,
+      "candidateBytes": 2918,
+      "baselineSha256": "2bf8aaa70604ef6dc6364f424c86c868dab695720c197e609cc8295aecd4a6f2",
+      "candidateSha256": "b83d26da55964f700eb3fa4e7c5f9f71e900debfa20dd1dd85360436f74ce8aa"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/client/accepted-work-source.mjs",
+      "baselineBytes": 0,
+      "candidateBytes": 12349,
+      "baselineSha256": null,
+      "candidateSha256": "96e23aff465e390e801b57210dfca1bd9bbd8e02703dc618e0fbf97a8c190e4b"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/accepted-work-publication.mjs",
+      "baselineBytes": 0,
+      "candidateBytes": 13311,
+      "baselineSha256": null,
+      "candidateSha256": "cb8f46ea093c92bd8a9311593ea853d0ab652b562b982c696c938fd7b2bb0931"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/machine-market.mjs",
+      "baselineBytes": 34226,
+      "candidateBytes": 37495,
+      "baselineSha256": "1888a4a2f28c435433c55e58a62c245709952da3cba48de3802c522e1398cb0c",
+      "candidateSha256": "13708295b7c9acef7fae758e88a20388b04bbb8f7954c381e1750093f67f2974"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/machine-profile-document.mjs",
+      "baselineBytes": 7199,
+      "candidateBytes": 7590,
+      "baselineSha256": "10e9eed64111278fc522f343d4c63b52c3b917438e055eae9af2ba4c1cd16f0b",
+      "candidateSha256": "863efc886144911b453680e380306d991062d19eff94771c3ceff86f0ec806bd"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/public-route-limit.mjs",
+      "baselineBytes": 1677,
+      "candidateBytes": 1785,
+      "baselineSha256": "7d352f20e34199d2602d4c50bd313bf5d2ce85f4ff1b9d27ff3f3cbe606e29b3",
+      "candidateSha256": "317a825f920a5402b7ea9a0c946b5f617b12e9fe48cfc06d6f41a7d2c99d603b"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/server.mjs",
+      "baselineBytes": 95057,
+      "candidateBytes": 96920,
+      "baselineSha256": "3049cefdd755098530078d60ca2c8aac8710f25fb7377b9d18aab50478e8876f",
+      "candidateSha256": "91e1e78f10a91e3f6a3d4d5bec50b9829c51a623657b9fc2a0479efcf9ef91cd"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/voluntary-market.mjs",
+      "baselineBytes": 17369,
+      "candidateBytes": 19363,
+      "baselineSha256": "67efdb42f92094dd28db9f7d0f9095cdc1a0a57f5c37d36d518f49d655896aca",
+      "candidateSha256": "9de80e9f5ae04eb656151ab24e951bdf94c5c5b5910be9b2d2e434b135cce48b"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/ACTIVATION.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/NEXT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "docs/reviews/h133010-opt-in-accepted-work/RESULT.md",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/root10940-machine-host.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h133010-accepted-work.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h136010-accepted-work-release.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-closure.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-publication.test.mjs",
+      "reason": "outside_machine_closure"
+    }
+  ],
+  "measuredCandidateSourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+  "measuredCandidateHostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+  "recordedSourceConstantAgrees": false,
+  "sha256": "f3367cc281dbcc7f1bfaf2dd5840934c8500caad628222b59e17345af724f30a"
+}
