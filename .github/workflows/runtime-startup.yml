@@ -43,13 +43,13 @@ jobs:
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
-      # ROOT10940_CI_PACKET is the nonsecret repo variable
-      # pilot.participation.ci-packet.v1. An absent variable is an explicit
-      # missing-input refusal. This step does not synthesize the three files.
+      # The current consumer reads the source-bound candidate packet.
+      # It does not read or write ROOT10940_CI_PACKET. The historical packet
+      # stays a separate fixture and a separate refusal.
       - name: Receive the independent acquisition packet
-        env:
-          ROOT10940_CI_PACKET: ${{ vars.ROOT10940_CI_PACKET }}
-        run: AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/decode-root10940-ci-packet.mjs
+        run: AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/decode-root10940-ci-packet.mjs --packet server/scripts/fixtures/h136010-current-acquisition-packet.json
+      - name: Retain the historical acquisition refusal
+        run: AE14_PG_BIN="$(pg_config --bindir)" node --test --test-concurrency=1 server/scripts/test-h136010-historical-acquisition-refusal.mjs
       - run: node --test server/scripts/test-machine-guide-links.js
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task

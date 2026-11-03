@@ -171,6 +171,7 @@ test('packed 0.3.1 publication receives acquisition, then permits a changed inpu
     assert.deepEqual(transition.rollback, ['restore-predecessor-entry', 'roll-back-installed-source']);
     assert.equal(transition.predecessor.binding, 'b28b3c00');
     assert.equal(transition.candidate.approvedForPublicRoute, false);
+    assert.equal(transition.receiving, null);
     assert.equal(entry.succession.binding, transition.predecessor.binding);
     const candidateEntry = JSON.parse(readFileSync(join(neo, 'public', transition.candidate.entry), 'utf8'));
     const candidateDescriptorBytes = readFileSync(join(neo, 'public', transition.candidate.descriptor));
