@@ -14,7 +14,8 @@ export function onMountedPrefix(prefix, pathname) {
 
 export function mountedPublicRead(prefix, pathname, method) {
   if (method !== 'GET' || !onMountedPrefix(prefix, pathname)) return false;
-  return MOUNTED_PUBLIC_READS.includes(pathname.slice(prefix.length));
+  const path = pathname.slice(prefix.length);
+  return MOUNTED_PUBLIC_READS.includes(path) || path === '/v1/market/accepted-work' || path.startsWith('/v1/market/accepted-work/');
 }
 
 export function createMountedPublicLimiter({perMinute = 120, capacity = 1024, now = Date.now} = {}) {

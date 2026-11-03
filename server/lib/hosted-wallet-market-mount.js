@@ -97,6 +97,8 @@ function configured(options, env) {
     machineAuthority: options.machineAuthority ?? env.HOSTED_WALLET_MARKET_MACHINE_AUTHORITY_MODULE,
     qualifiedCapability: options.qualifiedCapability ?? env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,
     ownerToken: options.ownerToken ?? env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? env.EARNED_WORK_OWNER_TOKEN,
+    // Explicit caller boolean only. No environment key; production callers leave it unset.
+    acceptedWorkPublic: options.acceptedWorkPublic === true,
   };
 }
 

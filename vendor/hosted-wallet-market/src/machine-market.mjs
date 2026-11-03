@@ -17,6 +17,7 @@ import {admitQualifiedMember} from './capability-composition.mjs';
 import {bindVoluntaryPredecessor} from './voluntary-predecessor.mjs';
 import {readMarketInterests,INTEREST_PAGE_LIMIT,INTEREST_PAGE_DEFAULT,INTEREST_NOTE_BYTES} from './market-interest-read.mjs';
 import {voluntaryMarket} from './voluntary-market.mjs';
+import {ACCEPTED_WORK_MEASURE, acceptedWorkEventId, publicArtifactView, publicView, publicationVisible} from './accepted-work-publication.mjs';
 import {createClosureAdmission,authorizeMachineMutation} from './machine-closure-admission.mjs';
 import {recordPublicDiscovery} from './machine-public-read.mjs';
 
@@ -27,7 +28,7 @@ export function readMachineCapability(input,{sdsRoot,origin,tenant}){
  return admitMachineCapability(input,{sdsRoot,origin,tenant});
 }
 const PAID=new Set(['quote','select','fund','fundingIntent','fundingSubmitted','fundingAuthorize','claim','deliver','review','approve','reconcile','reclaim','payoutDisposition']);
-export async function openMachineMarket({capability,authority,qualifiedCapability=null,readSourceSuccession=null,sdsRoot,profile,authenticate,withClient,now=()=>Date.now()}){
+export async function openMachineMarket({capability,authority,qualifiedCapability=null,readSourceSuccession=null,sdsRoot,profile,authenticate,withClient,acceptedWorkPublic=false,now=()=>Date.now()}){
  if(!address(profile.feeRecipient))refuse('fee_recipient_refused');
  const admission=createClosureAdmission({expectedSource:capability.sourceSha256,expectedHost:capability.hostSha256,
   verify:()=>({sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(sdsRoot)})});
@@ -146,7 +147,8 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
        AND successor_source_sha256=$4 AND successor_host_sha256=$5`,
      [profile.tenant,taskId,termsDigest,capability.sourceSha256,capability.hostSha256])).rows[0]??null;
   }
-  const voluntary=voluntaryMarket({market,capability,predecessorBinding});
+  const voluntary=voluntaryMarket({market,capability,predecessorBinding,acceptedWorkPublic});
+  const acceptedWork=acceptedWorkPublic===true&&voluntary.enabled;
   async function issueSession(operation,req,body,client){
    const input=operation==='signup'?{password:body.password,displayName:body.displayName}:body;
    // C0 effect keys contain '#step'; the native authority admits opaque keys.
@@ -352,6 +354,55 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
    try{return await dispatch(...args);}
    finally{if(waiting.length)waiting.shift()();else activeRequests--;}
   }
+  async function sourceStillBound(row){
+   const terms=row.voluntary?.terms;
+   if(!terms)return false;
+   if(terms.sourceSha256===capability.sourceSha256&&terms.hostSha256===capability.hostSha256)return true;
+   const bound=await predecessorBinding(row.id,row.voluntary.termsDigest);
+   return Boolean(bound&&bound.terms_digest===row.voluntary.termsDigest&&bound.predecessor_source_sha256===terms.sourceSha256&&bound.predecessor_host_sha256===terms.hostSha256&&bound.successor_source_sha256===capability.sourceSha256&&bound.successor_host_sha256===capability.hostSha256);
+  }
+  async function loadAccepted(taskId,operation){
+   if(!acceptedWork||!/^market-[a-f0-9]{64}$/.test(taskId||''))return null;
+   try{
+    return await store.locked(profile.tenant,taskId,async(row,client)=>{
+     if(!publicationVisible(row)||!await sourceStillBound(row))return null;
+     const view=operation==='artifact'?publicArtifactView(row):publicView(row);
+     if(!view)return null;
+     await store.measure(profile.tenant,taskId,operation==='list'?'accepted_work_discovery':'accepted_work_retrieval',
+      acceptedWorkEventId(taskId,capability.sourceSha256,now(),operation),'anonymous',{...ACCEPTED_WORK_MEASURE,operation},client);
+     return view;
+    });
+   }catch(error){
+    if(error?.code==='forbidden'||error?.codeName==='forbidden')return null;
+    throw error;
+   }
+  }
+  // Scan past unpublished voluntary rows. A SQL LIMIT on the unfiltered page
+  // would let a private row hide a later opted-in task.
+  async function discoverAccepted({limit=20,cursor=''}={}){
+   admission.current();
+   if(!acceptedWork)refuse('accepted_work_public_unavailable',404);
+   if(!Number.isSafeInteger(limit)||limit<1||limit>50||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
+   if(cursor&&!/^market-[a-f0-9]{64}$/.test(cursor))refuse('cursor_refused',400);
+   const items=[];
+   let scan=cursor;
+   const page=nextCursor=>({items,nextCursor,acceptedWorkPublic:true,publicReads:'0',paidWork:false,signerAuthority:false});
+   while(items.length<limit){
+    const rows=(await pool.query(`SELECT id FROM "${profile.earnedSchema}".ae14_market_tasks
+      WHERE tenant_id=$1 AND id>$2 AND voluntary IS NOT NULL ORDER BY id LIMIT 50`,[profile.tenant,scan])).rows;
+    if(!rows.length)break;
+    for(const row of rows){
+     scan=row.id;
+     const view=await loadAccepted(row.id,'list');
+     if(!view)continue;
+     items.push(view);
+     if(items.length===limit)return page(row.id);
+    }
+   }
+   return page(null);
+  }
+  async function readAccepted(taskId){admission.current();return loadAccepted(taskId,'detail');}
+  async function readAcceptedArtifact(taskId){admission.current();return loadAccepted(taskId,'artifact');}
   async function discover({limit=50,cursor=''}={}){
    admission.current();
    if(!Number.isSafeInteger(limit)||limit<1||limit>100||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
@@ -367,12 +418,14 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
   }
   function publicProfile(){
    admission.current();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution','participation'];
-   return {capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
+   const body={capability:Object.fromEntries(fields.filter(k=>capability[k]!==undefined).map(k=>[k,capability[k]])),signerAuthority:false,
     ...(voluntary.enabled?{participation:voluntary.descriptor}:{}),
     proposalReview:{path:'/v1/market/interests',method:'POST',defaultLimit:INTEREST_PAGE_DEFAULT,maxLimit:INTEREST_PAGE_LIMIT,maxNoteBytes:INTEREST_NOTE_BYTES},
     mutationReceipts:{schema:'pilot.machine-market.cold-mutation-receipt.v1',actions:['post','interest'],readback:'/v1/market/readback'}};
+   if(acceptedWork)body.acceptedWork={schema:'pilot.machine-market.accepted-work-publication.v1',publicReads:'0',paidWork:false,signerAuthority:false,discovery:'/v1/market/accepted-work'};
+   return body;
   }
-  return {invoke,discover,publicProfile,issueSession,market,rail,readActions,participationContract:voluntary.contract,
+  return {invoke,discover,discoverAccepted,readAccepted,readAcceptedArtifact,acceptedWorkPublic:acceptedWork,publicProfile,issueSession,market,rail,readActions,participationContract:voluntary.contract,
    descriptor:{profile:capability.profile,discovery:true,moneyQualification:money.qualification,sourceQualified:Boolean(networkSource),publicMoney:networkClass==='public'?'authority_checked_per_operation':false,signerAuthority:false},
    async close(){journal?.close();await pool.end();await kernel.close();}};
  }catch(e){journal?.close();await pool.end();await kernel.close();throw e;}

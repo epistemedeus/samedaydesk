@@ -355,6 +355,7 @@ export async function openHostedMarket(options) {
         qualifiedCapability: options.qualifiedCapability ?? process.env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,
         readSourceSuccession: client => debtConsumer.readSourceSuccession(client),
         sdsRoot: options.sdsRoot, profile: {...profile,replayKey}, now: nowMs, withClient,
+        acceptedWorkPublic: options.acceptedWorkPublic === true,
         authenticate: (req, policy) => withClient(c => accountFrom(c, req, policy))});
     } catch (error) { await pool.end(); throw error; }
   }
@@ -1686,6 +1687,24 @@ export async function openHostedMarket(options) {
       }
       if (path === '/v1/market/discover' && req.method === 'GET' && machine) {
         return send(res, 200, {ok: true, value: await machine.discover(page(url))});
+      }
+      if (machine?.acceptedWorkPublic && req.method === 'GET' && (path === '/v1/market/accepted-work' || path.startsWith('/v1/market/accepted-work/'))) {
+        if (path === '/v1/market/accepted-work') {
+          return send(res, 200, {ok: true, value: await machine.discoverAccepted(page(url))});
+        }
+        const artifact = path.match(/^\/v1\/market\/accepted-work\/(market-[a-f0-9]{64})\/artifact$/);
+        if (artifact) {
+          const value = await machine.readAcceptedArtifact(artifact[1]);
+          if (!value) return send(res, 404, {ok: false, code: 'not_found'});
+          return send(res, 200, {ok: true, value});
+        }
+        const detail = path.match(/^\/v1\/market\/accepted-work\/(market-[a-f0-9]{64})$/);
+        if (detail) {
+          const value = await machine.readAccepted(detail[1]);
+          if (!value) return send(res, 404, {ok: false, code: 'not_found'});
+          return send(res, 200, {ok: true, value});
+        }
+        return send(res, 404, {ok: false, code: 'not_found'});
       }
       const machineAction = path.match(/^\/v1\/market\/([A-Za-z]+)$/);
       if (machineAction && req.method === 'POST' && machine) {

@@ -5,6 +5,7 @@
 // No earned-work funding, obligation, verifier receipt or payment is created.
 import {digest, requireThat} from '../runtime/agent-economy-foundation/dist/index.js';
 import {readFileSync} from 'node:fs';
+import {ACCEPTED_WORK_MEASURE, applyPermit, applyPublicationWithdrawal, publicationVisible} from './accepted-work-publication.mjs';
 
 export const PARTICIPATION = 'voluntary-artifact-v1';
 const ACTIONS = ['offerVoluntary','assentVoluntary','deliverVoluntary','reviewVoluntary',
@@ -21,9 +22,12 @@ const roleRequired = (ok,code) => {if(!ok) throw Object.assign(Error(code),{http
 const flags = Object.freeze({funding:'voluntary', paymentAuthority:'none', paidWork:false,
   debtCreated:false, verification:'requester_decision', independence:'unknown'});
 
-export function voluntaryMarket({market, capability, predecessorBinding}) {
+export function voluntaryMarket({market, capability, predecessorBinding, acceptedWorkPublic = false}) {
   const store = market.store;
   const enabled = capability.money === 'unfunded' && capability.participation === PARTICIPATION;
+  // Off by default. Acceptance, export authorization, and a private grant are not public consent.
+  const publication = acceptedWorkPublic === true;
+  const mutations = publication ? [...MUTATIONS, 'permitAcceptedWork', 'withdrawAcceptedWork'] : MUTATIONS;
   const binding = () => ({sourceSha256:capability.sourceSha256, hostSha256:capability.hostSha256});
   function current(input) {
     requireThat(input.sourceSha256 === capability.sourceSha256 && input.hostSha256 === capability.hostSha256,
@@ -98,6 +102,10 @@ export function voluntaryMarket({market, capability, predecessorBinding}) {
   async function invoke(req, action, input, operationId) {
     requireThat(enabled, 'voluntary_unavailable');
     exact(input, action === 'readbackVoluntary' ? ['action','input'] : Object.keys(input ?? {}));
+    if (action === 'permitAcceptedWork' || action === 'withdrawAcceptedWork' ||
+      (action === 'readbackVoluntary' && ['permitAcceptedWork','withdrawAcceptedWork'].includes(input.action))) {
+      requireThat(publication, 'accepted_work_public_unavailable');
+    }
     const actor = await market.actor(req);
     const member = await market.member(actor.actorId,actor.tenantId);
     if (['offerVoluntary','reviewVoluntary','grantVoluntary','withdrawNeed'].includes(action))
@@ -105,7 +113,7 @@ export function voluntaryMarket({market, capability, predecessorBinding}) {
     if (['assentVoluntary','deliverVoluntary'].includes(action))
       roleRequired(member.role === 'contributor', 'contributor_required');
     if (action === 'readbackVoluntary') {
-      requireThat(MUTATIONS.includes(input.action), 'invalid_input');
+      requireThat(mutations.includes(input.action), 'invalid_input');
       operationKey(operationId);
       // The original effect receipt contains only identifiers/digests. Recovery
       // cannot re-expose a withdrawn artifact or execute another mutation.
@@ -138,7 +146,7 @@ export function voluntaryMarket({market, capability, predecessorBinding}) {
           evidence:v.artifact.evidence,review:v.review,relationship:isParty ? 'task_party' : 'authorized_later_consumer'};
       });
     }
-    requireThat(MUTATIONS.includes(action), 'invalid_input');
+    requireThat(mutations.includes(action), 'invalid_input');
     operationKey(operationId);
     return store.coldMutation({origin:capability.origin,actor,action,input,operationId,moneyProvenance:'unavailable'},async client => {
       const row = await store.task(actor.tenantId,input.taskId,client,true);
@@ -184,10 +192,16 @@ export function voluntaryMarket({market, capability, predecessorBinding}) {
       }
       const v = terms(row,input);
       party(actor,row,v);
+      let acceptedWorkVisible;
       if (action === 'withdrawVoluntary') {
         exact(input,['taskId','termsDigest','expectedRevision','reason']); text(input.reason);
         live(v); v.withdrawn = {actorId:actor.actorId,reason:input.reason};
         await client.query(`DELETE FROM ${store.table('voluntary_consumers')} WHERE tenant_id=$1 AND task_id=$2`,[actor.tenantId,row.id]);
+      } else if (action === 'withdrawAcceptedWork') {
+        // Same stop shape as withdrawVoluntary: no live source hash, so a changed
+        // source cannot keep a public summary up. Grants stay on their old terms.
+        exact(input,['taskId','termsDigest','expectedRevision','reason']); text(input.reason);
+        acceptedWorkVisible = applyPublicationWithdrawal(row, actor.actorId, input.reason);
       } else {
         live(v); current(input);
         await sameSource(v, row.id);
@@ -228,13 +242,22 @@ export function voluntaryMarket({market, capability, predecessorBinding}) {
             [actor.tenantId,row.id,input.consumerId,v.termsDigest,v.artifact.digest,v.revision,operationId]);
           const saved = await voluntaryGrant(client, actor.tenantId, row.id, input.consumerId);
           requireThat(saved && saved.terms_digest === v.termsDigest && saved.artifact_digest === v.artifact.digest, 'voluntary_grant_conflict');
+          if (publication && publicationVisible(row)) {
+            await store.measure(actor.tenantId, row.id, 'accepted_work_continuation', operationId, actor.actorId, ACCEPTED_WORK_MEASURE, client);
+          }
+        } else if (action === 'permitAcceptedWork') {
+          exact(input,[...base,'summary','summaryDigest','publicArtifact','publicArtifactDigest','rightsDigest','artifactDigest','publicationConsent']);
+          const side = actor.actorId === row.requester_id ? 'requester' : 'contributor';
+          roleRequired(member.role === side, side === 'requester' ? 'requester_required' : 'contributor_required');
+          acceptedWorkVisible = applyPermit(row, actor.actorId, input);
         } else requireThat(false, 'invalid_input');
       }
       v.revision++;
-      return save(client,row,v);
+      const saved = await save(client,row,v);
+      return acceptedWorkVisible === undefined ? saved : {...saved, acceptedWorkVisible};
     });
   }
-  return {enabled,actions:ACTIONS,invoke,
+  return {enabled,actions:publication?[...ACTIONS,'permitAcceptedWork','withdrawAcceptedWork']:ACTIONS,invoke,
     contract:enabled ? JSON.parse(readFileSync(new URL('../contracts/voluntary-participation.openapi.json',import.meta.url),'utf8')) : null,
     descriptor:enabled ? {protocol:PARTICIPATION,actions:ACTIONS,contract:'/v1/market/participation-contract',
     rights:'CC0-1.0',maxArtifactBytes:65536,mutationReceipts:'pilot.machine-market.cold-mutation-receipt.v1',

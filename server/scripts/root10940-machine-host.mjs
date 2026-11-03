@@ -65,7 +65,7 @@ export async function machineHost() {
       if(listener){listener.closeAllConnections();await new Promise(done=>listener.close(done));listener=null;}
       if(app){await app.get('hostedWalletMarket')?.close?.().catch(()=>{});await app.get('neoContributorJourney')?.close?.().catch(()=>{});app=null;}
     }
-    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null}={}) {
+    async function boot({participation=true,tenant='root10940-owner-qa-fixture',qualified=false,authorityModule=null,acceptedWorkPublic=false}={}) {
       await stop();
       const out=join(scratch,'capability-'+randomBytes(4).toString('hex')+'.json');
       const generated=JSON.parse(execFileSync(process.execPath,['--max-old-space-size=256',join(root,'vendor/hosted-wallet-market/bin/machine-profile.mjs'),
@@ -80,6 +80,7 @@ export async function machineHost() {
       }
       app=createSdsApp({hostedWalletMarket:{env:{...env,HOSTED_WALLET_MARKET_MACHINE_PROFILE:generated.sourceBound,...(qualifiedBound?{HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY:qualifiedBound}:{})},
         ...(authorityModule?{machineAuthority:authorityModule}:{}),
+        acceptedWorkPublic:acceptedWorkPublic===true,
         mode:'private',label:'PRIVATE',chain:'eip155:8453',payments:'off',publicReads:'0',fundedTasks:'off',humanAssets:'off',
         tls:'verified-edge',origin,tenant,earnedSchema:'cj227_earned_work',schemaName:'hosted_wallet_market',databaseUrl,
         rpcUrl:`http://127.0.0.1:${rpc.address().port}`,feeRecipient:'0x'+'11'.repeat(20),
@@ -108,7 +109,7 @@ export async function machineHost() {
           ...(operationId?{'idempotency-key':operationId}:{}),...headers}},res=>{
           let bytes='';res.on('data',chunk=>{bytes+=chunk;});res.on('end',()=>{
             let body=null;try{body=JSON.parse(bytes);}catch{}
-            done({status:res.statusCode,body});
+            done({status:res.statusCode,body,headers:res.headers});
           });res.on('error',reject);
         });
         req.on('error',reject);req.on('timeout',()=>req.destroy(Error('timeout')));req.end(payload);
