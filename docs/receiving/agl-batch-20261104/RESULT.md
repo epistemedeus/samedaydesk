@@ -243,3 +243,79 @@ Next low-touch check: when that same-owner amendment is offered as its own pin, 
 | EMBED `87d31c33` | PASS | lookup 8 pass / 8. Observatory 98 pass / 2 skip of 100. Useful jobs 28 pass / 28 | 5 pass / 5 | none. Later branch tip `1003b9ec` was not reviewed |
 
 Log excerpts are under `logs/`. Independent case files are under `independent/`.
+
+## Follow-up batch
+
+Same rules: no production, spend, publication, pull request, or merge. EMBED stayed read-only. CONTRIB was not edited again. The RECUR help line was already present, so it was not rewritten.
+
+### EMBED changed regression: PASS
+
+Detached checkout only. The branch was not written and was not pushed.
+
+- SHA: `1003b9ec6c3d46826f54a398fce4bb6d0821596f`
+- Tree: `fd691a2a7584c41dd25d59525f8f0585b4f4d781`
+- Parent: `87d31c3356350a5cb142bb618fb6c6c588cb26eb`
+
+`node --test server/scripts/test-capability-owner-lookup.js`
+
+Exit 0. tests 10, pass 10, fail 0, skipped 0. `duration_ms 1235.62596`.
+
+`npm run test:observatory`
+
+Exit 0. tests 102, pass 100, fail 0, skipped 2. `duration_ms 2063.65681`.
+
+The two skips are the same optional cases as the earlier pin: historical capture is not configured, and `OBSERVATORY_LIVE` is not 1. Live GETs stayed off. The count is 102 because this pin's lookup file has 10 tests and `test:observatory` includes that file.
+
+`npm run test:useful-jobs-public`
+
+Exit 0. tests 28, pass 28, fail 0, skipped 0. `duration_ms 7361.49864`.
+
+Second kit run. The discovery `coldStart` string was executed with bash. `USEFUL_JOBS_ORIGIN` was a loopback server of `client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz`. That file is 5255824 bytes and sha256 `e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec`, matching the discovery pin. Acquire exited 0. The kit list named all ten current job ids, including `feed-agenda`.
+
+The owned job was `feed-agenda` (inherited, required flags `--before` and `--after`), not `vendor-budget-impact`. The feeds were a fresh Atom pair written for this run: a kept note, a retired note, and an added note. Bound argv began `node bin/useful-jobs.mjs run feed-agenda`.
+
+Stdout excerpt:
+
+```json
+{"ok":true,"appId":"feed-agenda","status":"actionable","digest":"f8b1eb8a7e05122a","events":2}
+```
+
+`agenda.json` for those same feeds names two events: added `Added desk note`, and removed `Retired desk note`. A second execution of the same feeds also exited 0 with `events` 2 and status `actionable`. Its stdout digest was `cba19710b8d745e0`. The kit digest includes the caller record, and the scratch paths differed, so the digest is not a stable content id across runs.
+
+No-fit id `not-a-maintained-job`: lookup outcome `no-fit`, reason `unknown_need`, `callRecipe` null. Running that id in the acquired kit exited 2 with `{"ok":false,"error":"unknown job not-a-maintained-job"}`.
+
+### CONTRIB amendment rerun: PASS
+
+No further edit. Commands once on `codex/agl-contrib-amend-20261104` at `633a1ced99bb72e798c4b2195261ec1646d21f82`, tree `f9df130a5c1ceda2ca7b861a58f4e6ff54f9d383`, parent `3ba5869d`.
+
+`node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/handback-row-decision.test.mjs`
+
+Exit 0. tests 1, pass 1, fail 0, skipped 0. `duration_ms 402.402455`.
+
+`AE14_PG_BIN=/usr/lib/postgresql/16/bin node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/contribution-delegation.test.mjs`
+
+Exit 0. tests 4, pass 4, fail 0, skipped 0. `duration_ms 8075.753726`.
+
+`AE14_PG_BIN=/usr/lib/postgresql/16/bin node --test --test-concurrency=1 server/scripts/test-h133010-accepted-work.mjs`
+
+Exit 0. tests 2, pass 2, fail 0, skipped 0. `duration_ms 13649.126262`.
+
+### RECUR maintained-script gap: PASS
+
+Successor `codex/agl-recur-amend-20261104` from `a83647dee019cc2c93cece6c26f414673b34f4eb`.
+
+- Head: `369dfbf5c27de5e72db7554550b219c7b1b1629c`
+- Tree: `f9ed4d493e7fc79cf6f6ac279d25e82863cc4beb`
+- Parent: `a83647dee019cc2c93cece6c26f414673b34f4eb`
+
+The only change is the `test:result-reuse` script. It now runs `tools/result-reuse/test/export.test.mjs` and `tools/result-reuse/test/decision-reuse.test.mjs`.
+
+Base help text contains `Default outputs of page-change and record stay intact.` The same sentence is already line 82 of `tools/result-reuse/cli.mjs` at `a83647de`. It was not dropped, so it was not restored and the help text was not edited.
+
+Before the script edit, `npm run test:result-reuse` ran only `export.test.mjs`. Exit 0. tests 23, pass 23, fail 0, skipped 0. `duration_ms 217.779216`. The log has no decide-or-reuse test names.
+
+After the edit, the same command ran both files. Exit 0. tests 32, pass 32, fail 0, skipped 0. `duration_ms 260.460506`. The nine decision tests are in that count, including the saved-decision hit, the digest miss, the withdrawn opt-in, the oversize input, and the byte-identical preview and export check.
+
+`git merge-tree --write-tree` of this head with `1003b9ec` exited 0. The merged `package.json` keeps both lines: `test:result-reuse` names the two result-reuse files, and `test:observatory` still ends with `server/scripts/test-capability-owner-lookup.js`.
+
+`record-fields.test.mjs` remains outside `npm run test:result-reuse`, as it was at `a83647de`. The earlier glob `tools/result-reuse/test/*.test.mjs` is still the command that covers all three files.
