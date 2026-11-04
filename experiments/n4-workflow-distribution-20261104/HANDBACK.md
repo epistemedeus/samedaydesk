@@ -138,3 +138,36 @@ The command is `result.transfer.command`. It was not sent. Whether that later ca
 - Dify and Ghost have no commit in samedaydesk history. The copies are the public exports only.
 - Byte equality with `epistemedeus/neomorphic-io` `examples/dify-table-csv` and `examples/ghost-continuity` is unknown. That repository was not readable from this run (`gh` returned 404). The public SOURCE-NOTICE files name it as upstream.
 - No pull request is open.
+
+## Amendment on the decision-transfer branch
+
+`codex/n4-workflow-distribution-20261104` (PR357) stays at `8585c15965296938d83424f9622923c1cda7f8ad`. This amendment is committed on `codex/agl-decision-transfer-20261104`. It does not move PR357.
+
+`src/journey.mjs` stores `horizonHours` on the bound identity. For `fixtures/case.json`, `result.transfer.command` carries `--horizon` `168`. The command does not contain the token `undefined`.
+
+`test/journey.test.mjs` executes that command in a separate process. It fills only `<the same before-work manifest>` and leaves `bound-observation.json` as the relative artifact name. The process exits 0 with verdict `reuse` and `producerInvoked` false.
+
+```sh
+node --test --test-concurrency=1 experiments/n4-workflow-distribution-20261104/test/journey.test.mjs
+```
+
+Exit code 0.
+
+```
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3572.020693
+```
+
+The six earlier cases are unchanged. The seventh is the prepared-command reuse. This author's run is not a later consumer. `distinctLaterAcceptedTasksTakingReuse` stays null. `recomputeCostAvoidedNetOfUpkeep` stays `costs_unknown`.
+
+Implementation commit: `849661e4e11a9e07f840389d71a540fbe76b979d`
+
+Implementation tree: `e5b04c030ee9f7f8b174bbd735f011ea98c274b6`
+
+The child commit adds this amendment. A file cannot contain the hash of the commit that adds it. `git rev-parse HEAD` on `codex/agl-decision-transfer-20261104` is the current head.

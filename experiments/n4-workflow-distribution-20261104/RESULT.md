@@ -15,3 +15,5 @@ A fitting held catalog page returns `out/result.json` and, when the decision bin
 On a reuse hit the source-change-alert process is absent. The owned page-change job and the table checker still run. `distinctLaterAcceptedTasksTakingReuse` is null. `recomputeCostAvoidedNetOfUpkeep` is `costs_unknown`. This author's trace is not a later consumer.
 
 Dify and Ghost are not started. Their direct checkers are the pinned public exports under `assets/`.
+
+On `codex/agl-decision-transfer-20261104`, the bound identity also stores `horizonHours`. For the fitting case the prepared command carries horizon `168`. A separate process running that command returns verdict `reuse`. PR357 remains `8585c15965296938d83424f9622923c1cda7f8ad`. The journey suite on this branch is 7 tests, 7 passed. `distinctLaterAcceptedTasksTakingReuse` is null. `recomputeCostAvoidedNetOfUpkeep` is `costs_unknown`. This author's run is not a later consumer.
