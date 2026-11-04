@@ -6,9 +6,13 @@ Starting ref: `0593026ad155352f263e4749dc889a1578d91675`
 
 PR base: `codex/h136010-machine-release-20261103` (that ref was the same commit as the starting ref when this branch was created)
 
-Draft PR: pending until the pull request is opened
+Draft PR: https://github.com/epistemedeus/samedaydesk/pull/355 (#355)
 
-Commit identity: this report is committed with the prototype. The branch head SHA and tree SHA are printed from `git rev-parse HEAD` and `git rev-parse HEAD^{tree}` after the final push. A later identity commit, if present, only records the pull request number and the prototype commit. It does not change the harness.
+Prototype commit SHA: `618b11e5ea23fdbd8b350ba12a4f5e5bbd466ce7`
+
+Prototype tree SHA: `32c1826c6fa0ab1abf0d80bccaf2b63be2d8498d`
+
+The branch head that adds this identity block is the final commit. It is the child of the prototype commit above. The pull request body names that head SHA and its tree SHA. The harness and tests are unchanged by the identity block.
 
 ## Files added
 
@@ -18,7 +22,7 @@ Byte counts below are for the files other than this report. This report's own by
 - `experiments/agl-contribution-delegation-20261104/inputs.mjs`: 7612
 - `experiments/agl-contribution-delegation-20261104/harness.mjs`: 22285
 - `experiments/agl-contribution-delegation-20261104/test/contribution-delegation.test.mjs`: 10838
-- `experiments/agl-contribution-delegation-20261104/RESULT.md`: 007035
+- `experiments/agl-contribution-delegation-20261104/RESULT.md`: 007098
 
 ## Commands
 
