@@ -6,7 +6,7 @@
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
     "package-lock.json": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
-    "package.json": "64672f01d08f73f8915ddb473bca92a474195bdb5acffa49511d5eb3319e474e",
+    "package.json": "e2af16586935e92dde2dbb39e6d192e9cc5e845b692e426962891be203a4b0a4",
     "server/app.js": "08e0abac1c823b4b619eb8e3dd11dc655f62c8923d52c7548cff1c3849ee7f63",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
