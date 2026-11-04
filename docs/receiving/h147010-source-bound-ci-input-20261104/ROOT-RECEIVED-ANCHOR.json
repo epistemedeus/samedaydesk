@@ -1,0 +1,33 @@
+{
+  "schema": "pilot.root10940.acquisition-trust-anchor.v1",
+  "descriptorRepository": "epistemedeus/samedaydesk",
+  "descriptorCommit": "e4d2ea1f8315e02eb96c636374f4d6151fbca158",
+  "descriptorPath": "docs/receiving/h147010-source-bound-ci-input-20261104/proposed-descriptor.json",
+  "descriptorSha256": "946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84b48bcc84e1adcca1a",
+  "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+  "clientBytes": 28081,
+  "source": {
+    "repository": "epistemedeus/samedaydesk",
+    "commit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs"
+  },
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255"
+  },
+  "receiving": {
+    "owner": "Root",
+    "candidateRepository": "epistemedeus/samedaydesk",
+    "candidateCommit": "e4d2ea1f8315e02eb96c636374f4d6151fbca158",
+    "independentReplay": "ROOT45466",
+    "observedAt": "2026-11-04T03:58:05.862Z",
+    "passed": 25,
+    "failed": 0,
+    "originalWriterUnchanged": true,
+    "scope": "Source-bound CI receiving only. Not deployment, hosted acquisition or outside use.",
+    "qualified": false,
+    "installed": false
+  }
+}

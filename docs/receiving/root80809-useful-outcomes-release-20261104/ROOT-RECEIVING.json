@@ -1,0 +1,20 @@
+{
+  "schema": "pilot.root-integrated-source.v1",
+  "at": "2026-11-04T04:06:12.430Z",
+  "state": "incomplete-closure-repair-required",
+  "base": "e4d2ea1f8315e02eb96c636374f4d6151fbca158",
+  "measurement": "24b5c8b718c59895ca7883dbcea0dda15ca383f9",
+  "beforeCorrectionExit": 1,
+  "afterCorrectionExit": 0,
+  "combinedExit": 1,
+  "combinedSummary": [
+    "# tests 48",
+    "# pass 40",
+    "# fail 8",
+    "# skipped 0"
+  ],
+  "productionMutation": false,
+  "installed": false,
+  "qualified": false,
+  "scope": "Root committed-catalog regression correction and combined source. Not a release or customer evidence."
+}

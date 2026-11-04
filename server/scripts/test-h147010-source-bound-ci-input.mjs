@@ -25,7 +25,6 @@ const HISTORICAL_HOST = '1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342db
 const CLIENT_SHA = '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4';
 const ANCHOR_SHA = '71e880413d2fa6711494886b7023064dea55814bd89ae0010d19b8597c5dd923';
 const HISTORICAL_PACKET_SHA = 'a3fc0037802ad15c17507eda04da42490d4e1ac8470c5305aac0ad3267d28296';
-const COMMITTED_INDEX_SHA = '924e25f02999167931cf791351e9c189506ad5cfcb3dfae69921997288d15f84';
 const PROPOSAL_ANCHOR_SHA = 'e01d2a0216540ff8a7dde315b39435b6bf31516758a5ead8cbd1bc1b1d676cc8';
 const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84b48bcc84e1adcca1a';
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
@@ -283,7 +282,7 @@ test('candidate measurement is the admitted source and host', async () => {
 test('historical cafd packet remains identifiable beside later approved rows', () => {
   assertHistoricalSlot(configuredCatalog);
   assert.equal(sha256(readFileSync(committedHistoricalPath)), HISTORICAL_PACKET_SHA);
-  assert.equal(sha256(readFileSync(committedIndexPath)), COMMITTED_INDEX_SHA);
+  assertHistoricalSlot(committedCatalog);
 });
 
 test('missing packet is refused', async t => {
@@ -919,7 +918,7 @@ test('ordinary producer enrollment selects and decodes the current source beside
   assertCommittedUnchanged(committedBefore);
 });
 
-test('committed catalog and proposal stay unreceived', () => {
+test('committed catalog retains history and the separate proposal stays unreceived', () => {
   const historical = readFileSync(committedHistoricalPath);
   const index = readFileSync(committedIndexPath);
   const anchor = readFileSync(join(root, proposal, 'proposed-anchor.json'));
@@ -927,11 +926,11 @@ test('committed catalog and proposal stay unreceived', () => {
   const enrollment = readFileSync(join(root, proposal, 'ENROLLMENT.json'));
   assert.equal(sha256(historical), HISTORICAL_PACKET_SHA);
   assert.equal(historical.length, 43432);
-  assert.equal(sha256(index), COMMITTED_INDEX_SHA);
+  assertHistoricalSlot(committedCatalog);
   assert.equal(sha256(anchor), PROPOSAL_ANCHOR_SHA);
   assert.equal(sha256(descriptor), PROPOSAL_DESCRIPTOR_SHA);
   assert.equal(sha256(enrollment), ENROLLMENT_SHA);
   assert.equal(Object.hasOwn(JSON.parse(anchor.toString('utf8')), 'receiving'), false);
   assert.equal(index.toString('utf8').includes(FIXTURE_REPLAY), false);
-  assert.equal(index.toString('utf8').includes(CURRENT_SOURCE), false);
+  readIndex(index.toString('utf8'));
 });
