@@ -126,7 +126,7 @@ export function applyRosterRename(evidence, changedInput) {
 }
 
 export function handbackDecision(applied) {
-  return `Applied implementation X rename to implementation Y row SYN-Y-441. workerId ${applied.workerId} windowLabel ${applied.windowLabel}.`;
+  return `Applied implementation X rename to implementation Y row ${applied.workerId}. workerId ${applied.workerId} windowLabel ${applied.windowLabel}.`;
 }
 
 // Local reading of the installed fee module. Nothing here is quoted, captured, or stored.
