@@ -26,3 +26,63 @@ levels, 1,000 entries per array/object, 20,000 total nodes, and 64 KiB per strin
 the projected payload is limited to 32 KiB. Observation identity is a stable
 SHA-256 derivation of the explicit task ID and subject; revision identity is the
 explicit sequence. N54 import is later composition work.
+
+## Decide or reuse
+
+`decide-or-reuse` binds one useful `source-change-alert` decision to the public
+manifest that exists before that producer runs. It does not add a store, a
+network call, a payment, or a schema family. The manifest carries the recipe
+id, the recipe version, the prior public capture, and the current public
+capture. The saved observation's `source.version` is the digest of that
+manifest. The useful outcome, recovery, and field diff are stored on the same
+observation and returned on a hit.
+
+Preview and export are unchanged. An observation they write is an unbound
+result record. It is not upgraded into a before-work decision.
+
+```bash
+node tools/result-reuse/cli.mjs decide-or-reuse \
+  --input before-work.json \
+  --produced source-change-alert-result.json \
+  --out /tmp/reuse-observation.json \
+  --task-id source-change-example \
+  --subject source-change-example-decision \
+  --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z \
+  --horizon 168 \
+  --opt-in
+
+node tools/result-reuse/cli.mjs decide-or-reuse \
+  --input before-work.json \
+  --decision /tmp/reuse-observation.json \
+  --task-id source-change-example \
+  --subject source-change-example-decision \
+  --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z \
+  --horizon 168 \
+  --opt-in
+```
+
+`--produced` is the decision the useful job already returned. `--decision` is
+the bound observation written by the first command. `--opt-in` affirms that
+the earlier opt-in is still in force. `--withdraw-opt-in` records that it was
+withdrawn. `--producer` may name the job, and this command never executes it.
+
+| Verdict | When |
+| --- | --- |
+| `reuse` | Before-work digest, recipe, task and subject identity, revision, opt-in, and clock all match. Returns the useful saved decision and its provenance. |
+| `recompute` | Reason is `digest_mismatch`, `recipe_changed`, `revision_changed`, `stale_clock`, `subject_mismatch`, `opt_in_withdrawn`, `unbound_legacy`, `invalid_saved_state`, or `input_not_before_work`. No fresh answer is invented. |
+| `rejected` | A private field is present. It is not hashed into the decision. The top-level N45 boolean `payment` marker remains an origin flag. |
+
+The cost baseline is the recurring-job note for `source-change-alert`: offline
+compare does not invoke a merchant charge, and operator compute stays
+`costs_unknown`. The live metric on every verdict is unset:
+`distinctLaterAcceptedTasksTakingReuse` is null and
+`recomputeCostAvoidedNetOfUpkeep` is `costs_unknown`. A hit shows that this
+caller supplied the same before-work manifest. It cannot establish that live
+page bytes beyond that manifest are unchanged, that a later accepted task took
+the reuse, that recompute cost was avoided net of upkeep, or that the result
+is public-safe or accepted by a merchant.
+
+Existing preview and export outputs stay byte-identical. Limits and the
+omission list are unchanged.
