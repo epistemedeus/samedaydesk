@@ -1,0 +1,57 @@
+{
+  "schema": "neomorphic.machine-participation.acquisition.v1",
+  "version": "0.3.1",
+  "node": ">=22",
+  "license": "none",
+  "binary": "cold-requester.mjs",
+  "script": "/downloads/machine-participation/0.3.1/cold-requester.mjs",
+  "sha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+  "bytes": 30187,
+  "source": {
+    "repository": "epistemedeus/neomorphic-io",
+    "commit": "b79f985e83e829288a675407a4b4124e58a11f3a",
+    "path": "clients/cold-requester-0.3.1.mjs"
+  },
+  "publicationStatus": "private_unreleased",
+  "hostedAcquisitionVerified": false,
+  "apiActivation": false,
+  "fundingOrPaymentActivation": false,
+  "humanPage": false,
+  "validation": "controlled_https_fixtures",
+  "profile": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/profile",
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255"
+  },
+  "contract": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/participation-contract",
+  "predecessor": "8adcad786f20aaa8fc618c61438acb94eeeccf3b48197f51b08b6c7ddf988d8a",
+  "acquisitionClock": "Private contained successor. No hosted acquisition claimed.",
+  "contributionRequired": false,
+  "diagnostics": {
+    "schema": "neomorphic.acquisition-diagnostic.v1",
+    "retry": "none",
+    "profileValues": "omitted",
+    "serverCode": "finite_allowlist"
+  },
+  "succession": {
+    "schema": "neomorphic.acquisition-binding-succession.v1",
+    "binding": "c6182a9f",
+    "reviewedHostSource": {
+      "repository": "epistemedeus/samedaydesk",
+      "commit": "c6182a9fddc21594a2487a4bb094fc05253fbeb0"
+    },
+    "predecessorHostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+    "predecessorProfile": {
+      "money": "unfunded",
+      "participation": "voluntary-artifact-v1",
+      "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+      "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0"
+    },
+    "independentlyReceived": false,
+    "independentReleaseAuthority": false,
+    "hostedAcquisitionClaim": false,
+    "publication": "private"
+  }
+}

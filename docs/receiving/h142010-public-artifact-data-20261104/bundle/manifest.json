@@ -1,0 +1,61 @@
+{
+  "schema": "sds.h120010.machine-bundle.v1",
+  "baselineCommit": "e32c3f2ce4391ccba9e7d15a3fda0a65459406fd",
+  "candidateCommit": "c6182a9fddc21594a2487a4bb094fc05253fbeb0",
+  "baselineSourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+  "baselineHostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+  "recordedCandidateSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+  "recordedSourceConstantAuthority": false,
+  "runtimeCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+  "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+  "flags": {
+    "publicReads": "0",
+    "fundedTasks": "off",
+    "payments": "off",
+    "humanAssets": "off",
+    "money": "unfunded",
+    "signerAuthority": false
+  },
+  "members": [
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "baselineBytes": 228772,
+      "candidateBytes": 228772,
+      "baselineSha256": "fe1b2e8642f0a8c8e6a69def03b7bb24d14595a69b389e14ca62acf62f12c318",
+      "candidateSha256": "9bea77e3060a914923df8b4698c9f388d0bc15bf7e749791c54879ac784f9be1"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/accepted-work-publication.mjs",
+      "baselineBytes": 13311,
+      "candidateBytes": 13395,
+      "baselineSha256": "cb8f46ea093c92bd8a9311593ea853d0ab652b562b982c696c938fd7b2bb0931",
+      "candidateSha256": "6751b3579faaddac945dc70be17ebfd221e1fab494a625eb7979e88f6295dc6f"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "server/scripts/fixtures/h142010-cold-requester-0.3.1.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h142010-empty-artifact-data.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-empty-data.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/fixtures/h142010/empty-value-gap.json",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/fixtures/h142010/query-key-collision.json",
+      "reason": "outside_machine_closure"
+    }
+  ],
+  "measuredCandidateSourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+  "measuredCandidateHostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255",
+  "recordedSourceConstantAgrees": false,
+  "sha256": "e662767e57efe17f36ad22b6c7cc2819092d7c804509acf58ad21a432dd28e5b"
+}
