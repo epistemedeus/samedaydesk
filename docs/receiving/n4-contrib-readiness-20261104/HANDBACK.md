@@ -445,3 +445,9 @@ Expected: exit 0, `oldEqual` true, `midEqual` true, `nowEqual` false, before and
 - Profile and accepted-work list were not read again this turn. The 22:58:37Z hashes stand until a later GET.
 - sha256 of `compare_query_key.py` at `d5ef2a20`.
 - Outside use and revenue were not observed. Unknown is not zero.
+
+## Served readback
+
+Anonymous GET at `Wed, 04 Nov 2026 23:51:51 GMT` of the published artifact for `market-8ed4c3f4c4dcbfc074027b1e915064f2294926e03ac4131fe3854d5165806d5a`. Status 200. `cache-control: no-store`. Raw body `served/artifact.body`, 1305 bytes, sha256 `e737cbfd5cb68175721b8c219e6a7c5b4368cfec9cdd2377f706955a49a826ea`. The client `JSON.parse` of that body yields `value.publicArtifact`. Its foundation digest is `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155e3`, equal to the served `publicArtifactDigest`. The extracted file `served/public-artifact.json` is 304 bytes, sha256 `32000ca78bd47d8cd304cfee506389037a96d8d1de5bd5d34d3a7bab4beb54ad`. That sha is not the prepublication file sha. The response has no revision field.
+
+The caller input was that extracted file, not `query-key-caller.json`. Archive download this turn is 14566 bytes, sha256 `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa`. Key execution exit 0: old true, middle true, current false. Mount exit 0: before and middle 200 then 200 with replay, current 200 then 409 without replay. `walletCalls` 0. `liveSettlement` false. Receipt and stdout are under `served/`. This is first-party controlled reuse. It is not outside reuse and it is not revenue.
