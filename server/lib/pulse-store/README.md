@@ -1,7 +1,8 @@
 # Pulse MCP source and server outcomes
 
 This extends the existing Pulse delta, atomic RPC, WAL, file fallback and protected
-`GET /api/pulse?k=...` summary. It adds no recorder or request journal.
+`GET /api/pulse?k=...` summary. The protected summary fails closed with 503 when
+PULSE_TOKEN is not configured. It adds no recorder or request journal.
 
 `X-SameDayDesk-Agent-Source` recognizes only the exact static value
 `agentverse-a2a-v1`. Missing, arbitrary, malformed and combined duplicate labels
