@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
-import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {
@@ -11,6 +11,8 @@ import {
   packetFromFiles,
   parsePacket,
   readIndex,
+  rootReceivingAccepted,
+  rowAgrees,
   sha256,
   verifyPacket,
 } from './root10940-ci-packet.mjs';
@@ -22,18 +24,38 @@ const HISTORICAL_SOURCE = '5901396f689599405791d35cd706af2e54724ab285f5890124b4f
 const HISTORICAL_HOST = '1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c';
 const CLIENT_SHA = '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4';
 const ANCHOR_SHA = '71e880413d2fa6711494886b7023064dea55814bd89ae0010d19b8597c5dd923';
+const HISTORICAL_PACKET_SHA = 'a3fc0037802ad15c17507eda04da42490d4e1ac8470c5305aac0ad3267d28296';
+const COMMITTED_INDEX_SHA = '924e25f02999167931cf791351e9c189506ad5cfcb3dfae69921997288d15f84';
+const PROPOSAL_ANCHOR_SHA = 'e01d2a0216540ff8a7dde315b39435b6bf31516758a5ead8cbd1bc1b1d676cc8';
+const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84b48bcc84e1adcca1a';
+const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
 const BASE_COMMIT = '3445fa1624e8d2a2cc06556cea45730687aa79d1';
-const catalogDir = 'server/scripts/fixtures/root10940-approved-ci-packets';
-const historicalName = catalogFileName(HISTORICAL_SOURCE, HISTORICAL_HOST);
-const historicalPath = join(root, catalogDir, historicalName);
-const indexPath = join(root, catalogDir, 'index.json');
 const proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
 const decoder = 'server/scripts/decode-root10940-ci-packet.mjs';
 const OTHER_HOST = 'ab'.repeat(32);
+const FIXTURE_REPLAY = 'h147010-fixture-not-a-receipt';
+const FIXTURE_OBSERVED_AT = '2026-11-04T00:00:00.000Z';
+const FIXTURE_COMMIT_CURRENT = 'f17a010000000000000000000000000000000001';
+const FIXTURE_COMMIT_OTHER = 'f17a010000000000000000000000000000000002';
+const HISTORICAL_CANDIDATE_COMMIT = 'cafd88c9026688359773d9c027944bff959d7777';
+
+function requireEnv(name) {
+  const value = process.env[name];
+  if (typeof value !== 'string' || value.trim() === '') throw new Error(`${name} is required`);
+  return value;
+}
+
+const historicalName = catalogFileName(HISTORICAL_SOURCE, HISTORICAL_HOST);
+const committedCatalog = join(root, 'server/scripts/fixtures/root10940-approved-ci-packets');
+const configuredCatalog = resolve(root, requireEnv('ROOT10940_CI_CATALOG'));
+const committedHistoricalPath = join(committedCatalog, historicalName);
+const committedIndexPath = join(committedCatalog, 'index.json');
+const historicalPath = join(configuredCatalog, historicalName);
+const indexPath = join(configuredCatalog, 'index.json');
 
 function scratch(t) {
   const dir = mkdtempSync(join(tmpdir(), 'h147010-'));
@@ -42,11 +64,11 @@ function scratch(t) {
 }
 
 function envClean(extra = {}) {
-  const env = {
-    ...process.env,
-    AE14_PG_BIN: process.env.AE14_PG_BIN || '/usr/lib/postgresql/16/bin',
-    ...extra,
-  };
+  const pgBin = extra.AE14_PG_BIN || process.env.AE14_PG_BIN;
+  if (typeof pgBin !== 'string' || !pgBin.startsWith('/')) {
+    throw new Error('AE14_PG_BIN must be an absolute directory from the caller');
+  }
+  const env = {...process.env, ...extra, AE14_PG_BIN: pgBin};
   delete env.NODE_TEST_CONTEXT;
   delete env.NODE_CHANNEL_FD;
   return env;
@@ -134,24 +156,51 @@ function proposeArgs(outDir) {
   ];
 }
 
-function copyCatalog(t) {
-  const catalog = join(scratch(t), 'catalog');
-  mkdirSync(catalog);
-  copyFileSync(historicalPath, join(catalog, historicalName));
-  copyFileSync(indexPath, join(catalog, 'index.json'));
-  return catalog;
+function committedSnapshot() {
+  return {
+    historical: readFileSync(committedHistoricalPath),
+    index: readFileSync(committedIndexPath),
+    anchor: readFileSync(join(root, proposal, 'proposed-anchor.json')),
+    descriptor: readFileSync(join(root, proposal, 'proposed-descriptor.json')),
+    enrollment: readFileSync(join(root, proposal, 'ENROLLMENT.json')),
+  };
 }
 
-test('candidate measurement is the admitted source and host', async () => {
-  const measured = await measureCandidate(root);
-  assert.equal(measured.repository, 'epistemedeus/samedaydesk');
-  assert.equal(measured.sourceSha256, CURRENT_SOURCE);
-  assert.equal(measured.hostSha256, CURRENT_HOST);
-});
+function assertCommittedUnchanged(before) {
+  const after = committedSnapshot();
+  assert.deepEqual(after.historical, before.historical);
+  assert.deepEqual(after.index, before.index);
+  assert.deepEqual(after.anchor, before.anchor);
+  assert.deepEqual(after.descriptor, before.descriptor);
+  assert.deepEqual(after.enrollment, before.enrollment);
+}
 
-test('approved catalog keeps only the historical cafd packet', () => {
-  const bytes = readFileSync(historicalPath);
+function historicalIndex() {
+  const index = readIndex(readFileSync(committedIndexPath, 'utf8'));
+  const row = index.packets.find(item => item.trustAnchorSha256 === ANCHOR_SHA
+    && item.sourceSha256 === HISTORICAL_SOURCE
+    && item.hostSha256 === HISTORICAL_HOST);
+  assert.ok(row, 'committed index is missing the historical cafd row');
+  return {schema: index.schema, packets: [row]};
+}
+
+function writeHistoricalOnlyCatalog(dir) {
+  mkdirSync(dir, {recursive: true});
+  copyFileSync(committedHistoricalPath, join(dir, historicalName));
+  writeFileSync(join(dir, 'index.json'), `${JSON.stringify(historicalIndex(), null, 2)}\n`);
+  return dir;
+}
+
+function copyCatalog(t) {
+  return writeHistoricalOnlyCatalog(join(scratch(t), 'catalog'));
+}
+
+function assertHistoricalSlot(catalog) {
+  const packetPath = join(catalog, historicalName);
+  const bytes = readFileSync(packetPath);
   assert.equal(bytes.length, 43432);
+  assert.equal(sha256(bytes), HISTORICAL_PACKET_SHA);
+  assert.deepEqual(bytes, readFileSync(committedHistoricalPath));
   const verified = verifyPacket(parsePacket(bytes.toString('utf8')));
   assert.equal(sha256(verified.anchorBytes), ANCHOR_SHA);
   assert.equal(verified.profile.sourceSha256, HISTORICAL_SOURCE);
@@ -161,11 +210,80 @@ test('approved catalog keeps only the historical cafd packet', () => {
   assert.equal(verified.descriptor.version, '0.3.0');
   assert.equal(verified.anchor.receiving.owner, 'Root');
   assert.equal(verified.anchor.receiving.installed, false);
+  assert.equal(verified.anchor.receiving.candidateCommit, HISTORICAL_CANDIDATE_COMMIT);
+  const index = readIndex(readFileSync(join(catalog, 'index.json'), 'utf8'));
+  const rows = index.packets.filter(row => row.trustAnchorSha256 === ANCHOR_SHA
+    || (row.sourceSha256 === HISTORICAL_SOURCE && row.hostSha256 === HISTORICAL_HOST));
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].trustAnchorSha256, ANCHOR_SHA);
+  assert.equal(JSON.stringify(rows[0].receiving), JSON.stringify(verified.anchor.receiving));
+  for (const row of index.packets) {
+    if (row === rows[0]) continue;
+    assert.notEqual(`${row.sourceSha256}-${row.hostSha256}`, `${HISTORICAL_SOURCE}-${HISTORICAL_HOST}`);
+    assert.notEqual(row.trustAnchorSha256, ANCHOR_SHA);
+  }
+  return verified;
+}
+
+function approvedCurrentSelection() {
+  const slot = join(configuredCatalog, catalogFileName(CURRENT_SOURCE, CURRENT_HOST));
+  if (!existsSync(slot)) return null;
+  let verified;
+  try {
+    verified = verifyPacket(parsePacket(readFileSync(slot, 'utf8')));
+  } catch {
+    return null;
+  }
+  if (verified.profile.sourceSha256 !== CURRENT_SOURCE || verified.profile.hostSha256 !== CURRENT_HOST) return null;
   const index = readIndex(readFileSync(indexPath, 'utf8'));
-  assert.equal(index.packets.length, 1);
-  assert.equal(index.packets[0].trustAnchorSha256, ANCHOR_SHA);
-  assert.equal(JSON.stringify(index.packets[0].receiving), JSON.stringify(verified.anchor.receiving));
-  assert.deepEqual(readdirSync(join(root, catalogDir)).sort(), [historicalName, 'index.json'].sort());
+  const row = index.packets.find(item => item.trustAnchorSha256 === sha256(verified.anchorBytes));
+  if (!row || !rowAgrees(row, verified) || !rootReceivingAccepted(verified.anchor.receiving, verified.source.repository)) {
+    return null;
+  }
+  return verified;
+}
+
+function fixtureReceiving(candidateCommit) {
+  return {
+    owner: 'Root',
+    candidateRepository: 'epistemedeus/samedaydesk',
+    candidateCommit,
+    independentReplay: FIXTURE_REPLAY,
+    observedAt: FIXTURE_OBSERVED_AT,
+    passed: 1,
+    failed: 0,
+    originalWriterUnchanged: true,
+    predecessor: 'not-a-root-receipt',
+    scope: 'Fixture test double. Not a Root receipt and not authority to modify the committed approved index.',
+    qualified: false,
+    installed: false,
+  };
+}
+
+function writeReceivedPair(dir, {sourceSha256, hostSha256, descriptorPath, candidateCommit}) {
+  const built = unreceivedPair({sourceSha256, hostSha256, descriptorPath});
+  const anchor = JSON.parse(built.anchorBytes.toString('utf8'));
+  anchor.receiving = fixtureReceiving(candidateCommit);
+  const anchorBytes = Buffer.from(`${JSON.stringify(anchor, null, 2)}\n`);
+  const tag = descriptorPath.split('/').pop().replace(/\.json$/, '');
+  const anchorPath = join(dir, `anchor-${tag}.json`);
+  const descriptorFile = join(dir, `descriptor-${tag}.json`);
+  writeFileSync(anchorPath, anchorBytes);
+  writeFileSync(descriptorFile, built.descriptorBytes);
+  return {anchorPath, descriptorFile, anchorBytes};
+}
+
+test('candidate measurement is the admitted source and host', async () => {
+  const measured = await measureCandidate(root);
+  assert.equal(measured.repository, 'epistemedeus/samedaydesk');
+  assert.equal(measured.sourceSha256, CURRENT_SOURCE);
+  assert.equal(measured.hostSha256, CURRENT_HOST);
+});
+
+test('historical cafd packet remains identifiable beside later approved rows', () => {
+  assertHistoricalSlot(configuredCatalog);
+  assert.equal(sha256(readFileSync(committedHistoricalPath)), HISTORICAL_PACKET_SHA);
+  assert.equal(sha256(readFileSync(committedIndexPath)), COMMITTED_INDEX_SHA);
 });
 
 test('missing packet is refused', async t => {
@@ -182,7 +300,7 @@ test('missing packet is refused', async t => {
 
 test('tampered packet is refused before the participation journey', async t => {
   const dir = scratch(t);
-  const raw = readFileSync(historicalPath, 'utf8');
+  const raw = readFileSync(committedHistoricalPath, 'utf8');
   const marker = '"body":"';
   const at = raw.indexOf(marker);
   assert.ok(at > 0);
@@ -230,35 +348,63 @@ test('wrong repository is refused for this fingerprint', async t => {
 });
 
 test('current tree treats the cafd packet as stale and does not rewrite it', async t => {
-  const before = readFileSync(historicalPath);
-  const indexBefore = readFileSync(indexPath);
-  const enrollment = join(scratch(t), 'enrollment.json');
-  const out = join(scratch(t), 'out.json');
+  const committedBefore = committedSnapshot();
+  const configuredHistoricalBefore = readFileSync(historicalPath);
+  const configuredIndexBefore = readFileSync(indexPath);
+  const dir = scratch(t);
+  const isolated = writeHistoricalOnlyCatalog(join(dir, 'isolated'));
+  const isolatedHistoricalBefore = readFileSync(join(isolated, historicalName));
+  const isolatedIndexBefore = readFileSync(join(isolated, 'index.json'));
+  const enrollment = join(dir, 'enrollment.json');
+  const out = join(dir, 'out.json');
   const result = await run([
-    selector, '--catalog', catalogDir, '--index', indexPath,
+    selector, '--catalog', isolated, '--index', join(isolated, 'index.json'),
     '--enrollment-out', enrollment, '--out', out,
   ]);
   assertExit(result, 3);
   assert.match(result.stderr, new RegExp(`stale actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
   assert.equal(existsSync(out), false);
-  assert.deepEqual(readFileSync(historicalPath), before);
-  assert.deepEqual(readFileSync(indexPath), indexBefore);
+  assert.deepEqual(readFileSync(join(isolated, historicalName)), isolatedHistoricalBefore);
+  assert.deepEqual(readFileSync(join(isolated, 'index.json')), isolatedIndexBefore);
   const body = JSON.parse(readFileSync(enrollment, 'utf8'));
   assert.equal(body.received, false);
   assert.equal(body.class, 'stale');
   assert.equal(body.measured.sourceSha256, CURRENT_SOURCE);
   assert.equal(body.measured.hostSha256, CURRENT_HOST);
+
+  const configuredOut = join(dir, 'configured-out.json');
+  const configured = await run([
+    selector, '--catalog', configuredCatalog, '--index', indexPath,
+    '--out', configuredOut,
+  ]);
+  const approved = approvedCurrentSelection();
+  if (approved) {
+    assertExit(configured, 0);
+    const selected = verifyPacket(parsePacket(readFileSync(configuredOut, 'utf8')));
+    assert.equal(selected.profile.sourceSha256, CURRENT_SOURCE);
+    assert.equal(selected.profile.hostSha256, CURRENT_HOST);
+    assert.equal(selected.profile.money, 'unfunded');
+    assert.equal(selected.profile.participation, 'voluntary-artifact-v1');
+    assert.notEqual(sha256(selected.anchorBytes), ANCHOR_SHA);
+  } else {
+    assertExit(configured, 3);
+    assert.match(configured.stderr, new RegExp(`stale actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
+    assert.equal(existsSync(configuredOut), false);
+  }
+  assert.deepEqual(readFileSync(historicalPath), configuredHistoricalBefore);
+  assert.deepEqual(readFileSync(indexPath), configuredIndexBefore);
+  assertCommittedUnchanged(committedBefore);
 });
 
 test('a bound historical packet reports changed-source and keeps its expected hash', async () => {
-  const before = readFileSync(historicalPath);
+  const before = readFileSync(committedHistoricalPath);
   const result = await run([
-    selector, '--bound', historicalPath,
+    selector, '--bound', committedHistoricalPath,
     '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
   ]);
   assertExit(result, 5);
   assert.match(result.stderr, new RegExp(`changed-source actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
-  assert.deepEqual(readFileSync(historicalPath), before);
+  assert.deepEqual(readFileSync(committedHistoricalPath), before);
   const profile = verifyPacket(parsePacket(before.toString('utf8'))).profile;
   assert.equal(profile.sourceSha256, HISTORICAL_SOURCE);
   assert.equal(profile.hostSha256, HISTORICAL_HOST);
@@ -360,9 +506,7 @@ test('producer refuses a different packet in an occupied slot', async t => {
 test('two candidate slots are written and selected without a shared overwrite', async t => {
   const dir = scratch(t);
   const catalog = join(dir, 'catalog');
-  mkdirSync(catalog);
-  copyFileSync(historicalPath, join(catalog, historicalName));
-  copyFileSync(indexPath, join(catalog, 'index.json'));
+  writeHistoricalOnlyCatalog(catalog);
   const current = writePair(dir, {
     sourceSha256: CURRENT_SOURCE,
     hostSha256: CURRENT_HOST,
@@ -418,11 +562,13 @@ test('two candidate slots are written and selected without a shared overwrite', 
 });
 
 test('historical fingerprint still selects the immutable 0.3.0 client', async t => {
+  const committedBefore = committedSnapshot();
+  const configuredHistoricalBefore = readFileSync(historicalPath);
+  const configuredIndexBefore = readFileSync(indexPath);
   const dir = scratch(t);
   const out = join(dir, 'selected.json');
-  const historicalBefore = readFileSync(historicalPath);
   const selected = await run([
-    selector, '--catalog', catalogDir, '--index', indexPath,
+    selector, '--catalog', configuredCatalog, '--index', indexPath,
     '--source-sha256', HISTORICAL_SOURCE, '--host-sha256', HISTORICAL_HOST,
     '--out', out,
   ]);
@@ -434,8 +580,12 @@ test('historical fingerprint still selects the immutable 0.3.0 client', async t 
   assert.equal(sha256(verified.clientBytes), CLIENT_SHA);
   assert.equal(verified.descriptor.version, '0.3.0');
   assert.equal(verified.profile.sourceSha256, HISTORICAL_SOURCE);
+  assert.equal(sha256(verified.anchorBytes), ANCHOR_SHA);
+
+  const isolated = writeHistoricalOnlyCatalog(join(dir, 'isolated'));
+  const isolatedHistoricalBefore = readFileSync(join(isolated, historicalName));
   const current = await run([
-    selector, '--catalog', catalogDir, '--index', indexPath,
+    selector, '--catalog', isolated, '--index', join(isolated, 'index.json'),
     '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
     '--out', join(dir, 'current.json'),
   ]);
@@ -443,22 +593,60 @@ test('historical fingerprint still selects the immutable 0.3.0 client', async t 
   assert.equal(existsSync(join(dir, 'current.json')), false);
   const legacyOut = join(dir, 'legacy.json');
   const legacy = await run([
-    selector, '--catalog', catalogDir, '--index', indexPath, '--legacy-env',
+    selector, '--catalog', isolated, '--index', join(isolated, 'index.json'), '--legacy-env',
     '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
     '--out', legacyOut,
-  ], {env: {ROOT10940_CI_PACKET: historicalBefore.toString('utf8')}});
+  ], {env: {ROOT10940_CI_PACKET: isolatedHistoricalBefore.toString('utf8')}});
   assertExit(legacy, 3);
   assert.equal(existsSync(legacyOut), false);
   assert.doesNotMatch(legacy.stdout, /ROOT10940_CI_PACKET=/);
-  assert.deepEqual(readFileSync(historicalPath), historicalBefore);
+  assert.deepEqual(readFileSync(join(isolated, historicalName)), isolatedHistoricalBefore);
+
+  const approved = approvedCurrentSelection();
+  const configuredCurrentOut = join(dir, 'configured-current.json');
+  const configuredCurrent = await run([
+    selector, '--catalog', configuredCatalog, '--index', indexPath,
+    '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
+    '--out', configuredCurrentOut,
+  ]);
+  const configuredLegacyOut = join(dir, 'configured-legacy.json');
+  const configuredLegacy = await run([
+    selector, '--catalog', configuredCatalog, '--index', indexPath, '--legacy-env',
+    '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
+    '--out', configuredLegacyOut,
+  ], {env: {ROOT10940_CI_PACKET: readFileSync(committedHistoricalPath, 'utf8')}});
+  if (approved) {
+    assertExit(configuredCurrent, 0);
+    assertExit(configuredLegacy, 0);
+    for (const file of [configuredCurrentOut, configuredLegacyOut]) {
+      const chosen = verifyPacket(parsePacket(readFileSync(file, 'utf8')));
+      assert.equal(chosen.profile.sourceSha256, CURRENT_SOURCE);
+      assert.equal(chosen.profile.hostSha256, CURRENT_HOST);
+      assert.equal(chosen.profile.money, 'unfunded');
+      assert.equal(chosen.profile.participation, 'voluntary-artifact-v1');
+      assert.notEqual(sha256(chosen.anchorBytes), ANCHOR_SHA);
+    }
+    assert.doesNotMatch(configuredLegacy.stdout, /ROOT10940_CI_PACKET=/);
+  } else {
+    assertExit(configuredCurrent, 3);
+    assertExit(configuredLegacy, 3);
+    assert.equal(existsSync(configuredCurrentOut), false);
+    assert.equal(existsSync(configuredLegacyOut), false);
+    assert.doesNotMatch(configuredLegacy.stdout, /ROOT10940_CI_PACKET=/);
+  }
+  assert.deepEqual(readFileSync(historicalPath), configuredHistoricalBefore);
+  assert.deepEqual(readFileSync(indexPath), configuredIndexBefore);
+  assertCommittedUnchanged(committedBefore);
 });
 
 test('approved packets for one fingerprint cannot disagree', async t => {
+  const committedBefore = committedSnapshot();
+  const configuredIndexBefore = readFileSync(indexPath);
   const dir = scratch(t);
   const catalog = join(dir, 'catalog');
   mkdirSync(catalog);
-  copyFileSync(historicalPath, join(catalog, historicalName));
-  const historical = verifyPacket(parsePacket(readFileSync(historicalPath, 'utf8')));
+  copyFileSync(committedHistoricalPath, join(catalog, historicalName));
+  const historical = verifyPacket(parsePacket(readFileSync(committedHistoricalPath, 'utf8')));
   const built = unreceivedPair({
     sourceSha256: HISTORICAL_SOURCE,
     hostSha256: HISTORICAL_HOST,
@@ -471,7 +659,7 @@ test('approved packets for one fingerprint cannot disagree', async t => {
   const packetPath = join(dir, 'second.json');
   writeFileSync(packetPath, `${JSON.stringify(packet)}\n`);
   const verified = verifyPacket(packet);
-  const index = readIndex(readFileSync(indexPath, 'utf8'));
+  const index = historicalIndex();
   index.packets.push({
     trustAnchorSha256: sha256(verified.anchorBytes),
     sourceSha256: verified.profile.sourceSha256,
@@ -494,10 +682,14 @@ test('approved packets for one fingerprint cannot disagree', async t => {
   assertExit(result, 1);
   assert.match(result.stderr, /approved_packet_disagreement/);
   assert.equal(existsSync(out), false);
-  assert.equal(readIndex(readFileSync(indexPath, 'utf8')).packets.length, 1);
+  assert.deepEqual(readFileSync(indexPath), configuredIndexBefore);
+  assertCommittedUnchanged(committedBefore);
 });
 
 test('proposal matches a fresh measurement and enrollment refuses without Root receiving', async t => {
+  const committedBefore = committedSnapshot();
+  const configuredIndexBefore = readFileSync(indexPath);
+  const configuredHistoricalBefore = readFileSync(historicalPath);
   const dir = scratch(t);
   const proposed = await run(proposeArgs(dir));
   assertExit(proposed, 0);
@@ -529,20 +721,19 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
   assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
-  const indexBefore = readFileSync(indexPath);
-  const historicalBefore = readFileSync(historicalPath);
   const refused = await run([
     producer,
     '--anchor', `${proposal}/proposed-anchor.json`,
     '--client', CLIENT,
     '--descriptor', `${proposal}/proposed-descriptor.json`,
-    '--catalog', catalogDir,
-    '--index', `${catalogDir}/index.json`,
+    '--catalog', configuredCatalog,
+    '--index', indexPath,
   ]);
   assertExit(refused, 1);
   assert.match(refused.stderr, /index_receiving_required/);
-  assert.deepEqual(readFileSync(indexPath), indexBefore);
-  assert.deepEqual(readFileSync(historicalPath), historicalBefore);
+  assert.deepEqual(readFileSync(indexPath), configuredIndexBefore);
+  assert.deepEqual(readFileSync(historicalPath), configuredHistoricalBefore);
+  assertCommittedUnchanged(committedBefore);
   const mismatch = await run([
     producer, '--propose', '--measure', '--out-dir', join(dir, 'mismatch'),
     '--client', CLIENT,
@@ -562,6 +753,11 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.match(workflow, /select-root10940-ci-packet\.mjs/);
   assert.match(workflow, /--legacy-env/);
   assert.match(workflow, /decode-root10940-ci-packet\.mjs --packet/);
+  assert.match(workflow, /ROOT10940_CI_CATALOG=/);
+  assert.match(workflow, /AE14_PG_BIN=/);
+  assert.match(workflow, /vars\.ROOT10940_CI_PACKET/);
+  assert.match(workflow, /set -euo pipefail/);
+  assert.doesNotMatch(workflow, /continue-on-error/);
 });
 
 test('explicit packet file wins over a stale ROOT10940_CI_PACKET value', async t => {
@@ -569,7 +765,7 @@ test('explicit packet file wins over a stale ROOT10940_CI_PACKET value', async t
   writeFileSync(packet, '{');
   const result = await run([decoder, '--packet', packet], {
     timeout: 15000,
-    env: {ROOT10940_CI_PACKET: readFileSync(historicalPath, 'utf8')},
+    env: {ROOT10940_CI_PACKET: readFileSync(committedHistoricalPath, 'utf8')},
   });
   assertExit(result, 1);
   assert.match(result.stderr, /not a JSON packet/);
@@ -577,7 +773,7 @@ test('explicit packet file wins over a stale ROOT10940_CI_PACKET value', async t
 });
 
 test('kept historical packet still fails closed on the profile comparison', {timeout: 240000}, async () => {
-  const result = await run([decoder, '--packet', historicalPath], {timeout: 220000});
+  const result = await run([decoder, '--packet', committedHistoricalPath], {timeout: 220000});
   assertExit(result, 1);
   const output = `${result.stderr}\n${result.stdout}`;
   assert.match(output, new RegExp(CURRENT_SOURCE));
@@ -610,4 +806,132 @@ test('positive current packet decodes into the configured participation test', {
   assert.equal(existsSync(join(dir, 'selected.json')), false);
   const decoded = await run([decoder, '--packet', packet], {timeout: 340000});
   assertExit(decoded, 0);
+});
+
+test('ordinary producer enrollment selects and decodes the current source beside the historical slot', {timeout: 360000}, async t => {
+  const committedBefore = committedSnapshot();
+  const dir = scratch(t);
+  const catalog = writeHistoricalOnlyCatalog(join(dir, 'catalog'));
+  const historicalBefore = readFileSync(join(catalog, historicalName));
+  const proposedAnchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
+  assert.equal(Object.hasOwn(proposedAnchor, 'receiving'), false);
+  proposedAnchor.receiving = fixtureReceiving(FIXTURE_COMMIT_CURRENT);
+  assert.equal(proposedAnchor.receiving.independentReplay, FIXTURE_REPLAY);
+  assert.equal(proposedAnchor.receiving.qualified, false);
+  assert.equal(proposedAnchor.receiving.installed, false);
+  assert.notEqual(proposedAnchor.receiving.candidateCommit, HISTORICAL_CANDIDATE_COMMIT);
+  const anchorPath = join(dir, 'received-current-anchor.json');
+  writeFileSync(anchorPath, `${JSON.stringify(proposedAnchor, null, 2)}\n`);
+  const enrolled = await run([
+    producer,
+    '--anchor', anchorPath,
+    '--client', CLIENT,
+    '--descriptor', `${proposal}/proposed-descriptor.json`,
+    '--catalog', catalog,
+    '--index', join(catalog, 'index.json'),
+  ]);
+  assertExit(enrolled, 0);
+  const summary = JSON.parse(enrolled.stdout);
+  assert.equal(summary.received, true);
+  assert.equal(summary.slot, catalogFileName(CURRENT_SOURCE, CURRENT_HOST));
+  assert.notEqual(summary.trustAnchorSha256, ANCHOR_SHA);
+  assert.notEqual(summary.trustAnchorSha256, PROPOSAL_ANCHOR_SHA);
+  assert.deepEqual(readFileSync(join(catalog, historicalName)), historicalBefore);
+  assertHistoricalSlot(catalog);
+
+  const selectedPath = join(dir, 'selected.json');
+  const selected = await run([
+    selector, '--catalog', catalog, '--index', join(catalog, 'index.json'),
+    '--out', selectedPath,
+  ]);
+  assertExit(selected, 0);
+  const chosen = verifyPacket(parsePacket(readFileSync(selectedPath, 'utf8')));
+  assert.equal(chosen.profile.sourceSha256, CURRENT_SOURCE);
+  assert.equal(chosen.profile.hostSha256, CURRENT_HOST);
+  assert.equal(chosen.profile.money, 'unfunded');
+  assert.equal(chosen.profile.participation, 'voluntary-artifact-v1');
+  assert.equal(sha256(chosen.anchorBytes), summary.trustAnchorSha256);
+  assert.equal(chosen.anchor.receiving.independentReplay, FIXTURE_REPLAY);
+  const decoded = await run([decoder, '--packet', selectedPath], {timeout: 340000});
+  assertExit(decoded, 0);
+  assert.deepEqual(readFileSync(join(catalog, historicalName)), historicalBefore);
+
+  const other = writeReceivedPair(dir, {
+    sourceSha256: CURRENT_SOURCE,
+    hostSha256: OTHER_HOST,
+    descriptorPath: `${proposal}/fixture-independent-host.json`,
+    candidateCommit: FIXTURE_COMMIT_OTHER,
+  });
+  const otherEnrolled = await run([
+    producer,
+    '--anchor', other.anchorPath,
+    '--client', CLIENT,
+    '--descriptor', other.descriptorFile,
+    '--catalog', catalog,
+    '--index', join(catalog, 'index.json'),
+  ]);
+  assertExit(otherEnrolled, 0);
+  const otherSummary = JSON.parse(otherEnrolled.stdout);
+  assert.equal(otherSummary.received, true);
+  assert.equal(otherSummary.slot, catalogFileName(CURRENT_SOURCE, OTHER_HOST));
+  assert.deepEqual(readFileSync(join(catalog, historicalName)), historicalBefore);
+  assertHistoricalSlot(catalog);
+
+  async function selectFingerprint(sourceSha256, hostSha256, file) {
+    const result = await run([
+      selector, '--catalog', catalog, '--index', join(catalog, 'index.json'),
+      '--source-sha256', sourceSha256, '--host-sha256', hostSha256,
+      '--out', join(dir, file),
+    ]);
+    assertExit(result, 0);
+    return verifyPacket(parsePacket(readFileSync(join(dir, file), 'utf8')));
+  }
+  const historicalSelected = await selectFingerprint(HISTORICAL_SOURCE, HISTORICAL_HOST, 'life-historical.json');
+  const currentSelected = await selectFingerprint(CURRENT_SOURCE, CURRENT_HOST, 'life-current.json');
+  const otherSelected = await selectFingerprint(CURRENT_SOURCE, OTHER_HOST, 'life-other.json');
+  assert.equal(sha256(historicalSelected.anchorBytes), ANCHOR_SHA);
+  assert.equal(historicalSelected.descriptor.version, '0.3.0');
+  assert.equal(sha256(historicalSelected.clientBytes), CLIENT_SHA);
+  assert.equal(sha256(currentSelected.anchorBytes), summary.trustAnchorSha256);
+  assert.equal(currentSelected.profile.hostSha256, CURRENT_HOST);
+  assert.equal(sha256(otherSelected.anchorBytes), otherSummary.trustAnchorSha256);
+  assert.equal(otherSelected.profile.hostSha256, OTHER_HOST);
+  assert.equal(new Set([
+    sha256(historicalSelected.anchorBytes),
+    sha256(currentSelected.anchorBytes),
+    sha256(otherSelected.anchorBytes),
+  ]).size, 3);
+
+  const unrelated = writeHistoricalOnlyCatalog(join(dir, 'unrelated-old-fixture'));
+  assertHistoricalSlot(unrelated);
+  const unrelatedIndex = readIndex(readFileSync(join(unrelated, 'index.json'), 'utf8'));
+  assert.equal(unrelatedIndex.packets.length, 1);
+  assert.equal(unrelatedIndex.packets[0].trustAnchorSha256, ANCHOR_SHA);
+  const unrelatedOut = join(dir, 'unrelated-out.json');
+  const unrelatedSelect = await run([
+    selector, '--catalog', unrelated, '--index', join(unrelated, 'index.json'),
+    '--out', unrelatedOut,
+  ]);
+  assertExit(unrelatedSelect, 3);
+  assert.equal(existsSync(unrelatedOut), false);
+  assert.deepEqual(readFileSync(join(catalog, historicalName)), historicalBefore);
+  assert.equal(readFileSync(committedIndexPath, 'utf8').includes(FIXTURE_REPLAY), false);
+  assertCommittedUnchanged(committedBefore);
+});
+
+test('committed catalog and proposal stay unreceived', () => {
+  const historical = readFileSync(committedHistoricalPath);
+  const index = readFileSync(committedIndexPath);
+  const anchor = readFileSync(join(root, proposal, 'proposed-anchor.json'));
+  const descriptor = readFileSync(join(root, proposal, 'proposed-descriptor.json'));
+  const enrollment = readFileSync(join(root, proposal, 'ENROLLMENT.json'));
+  assert.equal(sha256(historical), HISTORICAL_PACKET_SHA);
+  assert.equal(historical.length, 43432);
+  assert.equal(sha256(index), COMMITTED_INDEX_SHA);
+  assert.equal(sha256(anchor), PROPOSAL_ANCHOR_SHA);
+  assert.equal(sha256(descriptor), PROPOSAL_DESCRIPTOR_SHA);
+  assert.equal(sha256(enrollment), ENROLLMENT_SHA);
+  assert.equal(Object.hasOwn(JSON.parse(anchor.toString('utf8')), 'receiving'), false);
+  assert.equal(index.toString('utf8').includes(FIXTURE_REPLAY), false);
+  assert.equal(index.toString('utf8').includes(CURRENT_SOURCE), false);
 });
