@@ -17,11 +17,12 @@ Base: `0593026ad155352f263e4749dc889a1578d91675`
 
 Fail-closed route commit: `834ae52a696f68c5b25072c27958b40f58e27756`
 
-Implementation commit: `IMPLEMENTATION_COMMIT`
+Implementation commit: `fb777e8eeda0310b9d6601e21ff0d040d6a2fd12`
 
 Install the branch tip. The implementation commit contains the route, the
 reader, the tests, and this recipe. A later tip may change only the identity
-line in this file. `git diff IMPLEMENTATION_COMMIT..HEAD --name-only` is empty
+lines in this file so they name that implementation commit.
+`git diff fb777e8eeda0310b9d6601e21ff0d040d6a2fd12..HEAD --name-only` is empty
 or lists only `docs/pulse-token-fail-closed/RELEASE-RECIPE.md`.
 
 Files changed from the base:
