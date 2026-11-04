@@ -13,6 +13,17 @@ export const DESCRIPTOR_SCHEMA = 'neomorphic.machine-participation.acquisition.v
 export const INDEX_SCHEMA = 'pilot.root10940.approved-ci-packet-index.v1';
 export const ENROLLMENT_SCHEMA = 'pilot.root10940.ci-enrollment-request.v1';
 export const CLIENT_VERSION = '0.3.0';
+export const CURRENT_PROPOSAL_DIR = 'docs/receiving/h145010-useful-tool-measurement-20261104';
+export function enrollmentCommand() {
+  return [
+    'node server/scripts/produce-root10940-ci-packet.mjs',
+    `--anchor ${CURRENT_PROPOSAL_DIR}/proposed-anchor.json`,
+    '--client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs',
+    `--descriptor ${CURRENT_PROPOSAL_DIR}/proposed-descriptor.json`,
+    '--catalog server/scripts/fixtures/root10940-approved-ci-packets',
+    '--index server/scripts/fixtures/root10940-approved-ci-packets/index.json',
+  ].join(' \\\n  ');
+}
 export const PARTS = [
   ['trustAnchor', 'ROOT10940_TRUST_ANCHOR', 'trust-anchor.json'],
   ['acquiredClient', 'ROOT10940_ACQUIRED_CLIENT', 'cold-requester.mjs'],

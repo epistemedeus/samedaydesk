@@ -18,8 +18,11 @@ import {
 } from './root10940-ci-packet.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
-const CURRENT_SOURCE = '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82';
-const CURRENT_HOST = 'b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255';
+const measuredCandidate = await measureCandidate(root);
+const CURRENT_SOURCE = measuredCandidate.sourceSha256;
+const CURRENT_HOST = measuredCandidate.hostSha256;
+const H142_SOURCE = '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82';
+const H142_HOST = 'b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255';
 const HISTORICAL_SOURCE = '5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2';
 const HISTORICAL_HOST = '1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c';
 const CLIENT_SHA = '38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4';
@@ -30,8 +33,9 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const BASE_COMMIT = '3445fa1624e8d2a2cc06556cea45730687aa79d1';
-const proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
+const INTEGRATED_COMMIT = 'd3a9d82f0aed25b8f5dcef70096982ef93083810';
+const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
+const proposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
 const decoder = 'server/scripts/decode-root10940-ci-packet.mjs';
@@ -151,7 +155,7 @@ function proposeArgs(outDir) {
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', BASE_COMMIT,
+    '--measured-commit', INTEGRATED_COMMIT,
   ];
 }
 
@@ -159,6 +163,10 @@ function committedSnapshot() {
   return {
     historical: readFileSync(committedHistoricalPath),
     index: readFileSync(committedIndexPath),
+    h142Slot: readFileSync(join(committedCatalog, catalogFileName(H142_SOURCE, H142_HOST))),
+    h142Anchor: readFileSync(join(root, h142Proposal, 'proposed-anchor.json')),
+    h142Descriptor: readFileSync(join(root, h142Proposal, 'proposed-descriptor.json')),
+    h142Enrollment: readFileSync(join(root, h142Proposal, 'ENROLLMENT.json')),
     anchor: readFileSync(join(root, proposal, 'proposed-anchor.json')),
     descriptor: readFileSync(join(root, proposal, 'proposed-descriptor.json')),
     enrollment: readFileSync(join(root, proposal, 'ENROLLMENT.json')),
@@ -167,11 +175,7 @@ function committedSnapshot() {
 
 function assertCommittedUnchanged(before) {
   const after = committedSnapshot();
-  assert.deepEqual(after.historical, before.historical);
-  assert.deepEqual(after.index, before.index);
-  assert.deepEqual(after.anchor, before.anchor);
-  assert.deepEqual(after.descriptor, before.descriptor);
-  assert.deepEqual(after.enrollment, before.enrollment);
+  for (const key of Object.keys(before)) assert.deepEqual(after[key], before[key], key);
 }
 
 function historicalIndex() {
@@ -277,6 +281,12 @@ test('candidate measurement is the admitted source and host', async () => {
   assert.equal(measured.repository, 'epistemedeus/samedaydesk');
   assert.equal(measured.sourceSha256, CURRENT_SOURCE);
   assert.equal(measured.hostSha256, CURRENT_HOST);
+  assert.equal(measured.sourceSha256, H142_SOURCE);
+  assert.notEqual(measured.hostSha256, H142_HOST);
+  const proposalAnchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
+  assert.equal(Object.hasOwn(proposalAnchor, 'receiving'), false);
+  assert.equal(proposalAnchor.requiredProfile.sourceSha256, measured.sourceSha256);
+  assert.equal(proposalAnchor.requiredProfile.hostSha256, measured.hostSha256);
 });
 
 test('historical cafd packet remains identifiable beside later approved rows', () => {
@@ -387,9 +397,33 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
     assert.notEqual(sha256(selected.anchorBytes), ANCHOR_SHA);
   } else {
     assertExit(configured, 3);
-    assert.match(configured.stderr, new RegExp(`stale actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
+    assert.match(configured.stderr, new RegExp(`^stale actual ${CURRENT_SOURCE} expected (?:${HISTORICAL_SOURCE}|${H142_SOURCE})$`, 'm'));
     assert.equal(existsSync(configuredOut), false);
   }
+  const h142Slot = join(committedCatalog, catalogFileName(H142_SOURCE, H142_HOST));
+  const h142Before = readFileSync(h142Slot);
+  const h142Out = join(dir, 'h142-received.json');
+  const h142Selected = await run([
+    selector, '--catalog', committedCatalog, '--index', committedIndexPath,
+    '--source-sha256', H142_SOURCE, '--host-sha256', H142_HOST,
+    '--out', h142Out,
+  ]);
+  assertExit(h142Selected, 0);
+  const h142Verified = verifyPacket(parsePacket(readFileSync(h142Out, 'utf8')));
+  assert.equal(h142Verified.profile.sourceSha256, H142_SOURCE);
+  assert.equal(h142Verified.profile.hostSha256, H142_HOST);
+  assert.notEqual(h142Verified.profile.hostSha256, CURRENT_HOST);
+  assert.equal(h142Verified.anchor.receiving.owner, 'Root');
+  assert.equal(h142Verified.anchor.receiving.installed, false);
+  assert.deepEqual(readFileSync(h142Slot), h142Before);
+  const pendingOut = join(dir, 'current-candidate-pending.json');
+  const pending = await run([
+    selector, '--catalog', committedCatalog, '--index', committedIndexPath,
+    '--out', pendingOut,
+  ]);
+  assertExit(pending, 3);
+  assert.equal(existsSync(pendingOut), false);
+  assert.deepEqual(readFileSync(h142Slot), h142Before);
   assert.deepEqual(readFileSync(historicalPath), configuredHistoricalBefore);
   assert.deepEqual(readFileSync(indexPath), configuredIndexBefore);
   assertCommittedUnchanged(committedBefore);
@@ -716,7 +750,11 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.equal(enrollment.qualified, false);
   assert.equal(enrollment.installed, false);
   assert.equal(enrollment.packet.acquiredClient.sha256, CLIENT_SHA);
-  assert.match(enrollment.command, /proposed-anchor\.json/);
+  assert.equal(enrollment.measured.baseCommit, INTEGRATED_COMMIT);
+  assert.equal(enrollment.measured.hostSha256, CURRENT_HOST);
+  assert.equal(enrollment.keptReceived.hostSha256, H142_HOST);
+  assert.equal(enrollment.keptReceived.binding, 'h142');
+  assert.match(enrollment.command, /h145010-useful-tool-measurement-20261104\/proposed-anchor\.json/);
   assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
   assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
@@ -744,7 +782,7 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', BASE_COMMIT,
+    '--measured-commit', INTEGRATED_COMMIT,
   ]);
   assertExit(mismatch, 1);
   assert.match(mismatch.stderr, /propose_measurement_mismatch/);
@@ -920,17 +958,30 @@ test('ordinary producer enrollment selects and decodes the current source beside
 
 test('committed catalog retains history and the separate proposal stays unreceived', () => {
   const historical = readFileSync(committedHistoricalPath);
-  const index = readFileSync(committedIndexPath);
-  const anchor = readFileSync(join(root, proposal, 'proposed-anchor.json'));
-  const descriptor = readFileSync(join(root, proposal, 'proposed-descriptor.json'));
-  const enrollment = readFileSync(join(root, proposal, 'ENROLLMENT.json'));
+  const indexText = readFileSync(committedIndexPath, 'utf8');
+  const h142Anchor = readFileSync(join(root, h142Proposal, 'proposed-anchor.json'));
+  const h142Descriptor = readFileSync(join(root, h142Proposal, 'proposed-descriptor.json'));
+  const h142Enrollment = readFileSync(join(root, h142Proposal, 'ENROLLMENT.json'));
+  const anchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
+  const index = readIndex(indexText);
   assert.equal(sha256(historical), HISTORICAL_PACKET_SHA);
   assert.equal(historical.length, 43432);
   assertHistoricalSlot(committedCatalog);
-  assert.equal(sha256(anchor), PROPOSAL_ANCHOR_SHA);
-  assert.equal(sha256(descriptor), PROPOSAL_DESCRIPTOR_SHA);
-  assert.equal(sha256(enrollment), ENROLLMENT_SHA);
-  assert.equal(Object.hasOwn(JSON.parse(anchor.toString('utf8')), 'receiving'), false);
-  assert.equal(index.toString('utf8').includes(FIXTURE_REPLAY), false);
-  readIndex(index.toString('utf8'));
+  assert.equal(sha256(h142Anchor), PROPOSAL_ANCHOR_SHA);
+  assert.equal(sha256(h142Descriptor), PROPOSAL_DESCRIPTOR_SHA);
+  assert.equal(sha256(h142Enrollment), ENROLLMENT_SHA);
+  assert.equal(Object.hasOwn(JSON.parse(h142Anchor.toString('utf8')), 'receiving'), false);
+  assert.equal(Object.hasOwn(anchor, 'receiving'), false);
+  assert.equal(anchor.requiredProfile.sourceSha256, CURRENT_SOURCE);
+  assert.equal(anchor.requiredProfile.hostSha256, CURRENT_HOST);
+  assert.notEqual(anchor.requiredProfile.hostSha256, H142_HOST);
+  const historicalRow = index.packets.find(row => row.trustAnchorSha256 === ANCHOR_SHA
+    && row.sourceSha256 === HISTORICAL_SOURCE && row.hostSha256 === HISTORICAL_HOST);
+  const h142Row = index.packets.find(row => row.sourceSha256 === H142_SOURCE && row.hostSha256 === H142_HOST);
+  assert.ok(historicalRow);
+  assert.ok(h142Row);
+  assert.equal(h142Row.receiving.installed, false);
+  assert.equal(index.packets.some(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE), false);
+  assert.equal(indexText.includes(FIXTURE_REPLAY), false);
+  assert.equal(indexText.includes(sha256(readFileSync(join(root, proposal, 'proposed-anchor.json')))), false);
 });

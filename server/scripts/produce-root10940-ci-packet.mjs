@@ -14,6 +14,7 @@ import {
   CLIENT_VERSION,
   ENROLLMENT_SCHEMA,
   catalogFileName,
+  enrollmentCommand,
   measureCandidate,
   packetFromFiles,
   readIndex,
@@ -78,17 +79,6 @@ const HISTORICAL = {
   version: CLIENT_VERSION,
   binding: 'cafd88c9',
 };
-
-function enrollmentCommand() {
-  return [
-    'node server/scripts/produce-root10940-ci-packet.mjs',
-    '--anchor docs/receiving/h147010-source-bound-ci-input-20261104/proposed-anchor.json',
-    '--client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs',
-    '--descriptor docs/receiving/h147010-source-bound-ci-input-20261104/proposed-descriptor.json',
-    '--catalog server/scripts/fixtures/root10940-approved-ci-packets',
-    '--index server/scripts/fixtures/root10940-approved-ci-packets/index.json',
-  ].join(' \\\n  ');
-}
 
 function indexRow(verified) {
   return {
@@ -172,9 +162,16 @@ async function propose() {
       baseCommit: flag('measured-commit'),
     },
     keptHistorical: HISTORICAL,
+    keptReceived: {
+      trustAnchorSha256: 'b4a08b92f214e277550495a44a5e1e599d537922751d666f994d6aed1b92a557',
+      sourceSha256: '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82',
+      hostSha256: 'b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255',
+      binding: 'h142',
+      note: 'Root receiving for this pair stays on its own slot. It is not receiving for a different host fingerprint.',
+    },
     packet: built.packet,
     command: enrollmentCommand(),
-    note: 'Root adds receiving on a copy of proposed-anchor.json only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot or set ROOT10940_CI_PACKET.',
+    note: 'Root adds receiving on a copy of this proposed anchor only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot, the received H142 slot, or set ROOT10940_CI_PACKET.',
   };
   mkdirSync(outDir, {recursive: true});
   writeFileSync(join(outDir, 'proposed-anchor.json'), built.anchorBytes);

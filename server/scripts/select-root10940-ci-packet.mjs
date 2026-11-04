@@ -20,6 +20,7 @@ import {fileURLToPath} from 'node:url';
 import {
   ENROLLMENT_SCHEMA,
   catalogFileName,
+  enrollmentCommand,
   indexRowFor,
   measureCandidate,
   parsePacket,
@@ -121,14 +122,7 @@ function writeEnrollment(selectedClass) {
     class: selectedClass,
     measured,
     kept,
-    command: [
-      'node server/scripts/produce-root10940-ci-packet.mjs',
-      '--anchor docs/receiving/h147010-source-bound-ci-input-20261104/proposed-anchor.json',
-      '--client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs',
-      '--descriptor docs/receiving/h147010-source-bound-ci-input-20261104/proposed-descriptor.json',
-      '--catalog server/scripts/fixtures/root10940-approved-ci-packets',
-      '--index server/scripts/fixtures/root10940-approved-ci-packets/index.json',
-    ].join(' \\\n  '),
+    command: enrollmentCommand(),
   };
   const path = resolve(root, flag('enrollment-out'));
   mkdirSync(dirname(path), {recursive: true});

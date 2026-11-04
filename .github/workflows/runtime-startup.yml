@@ -46,16 +46,19 @@ jobs:
       # Each candidate selects the approved packet for its own source and
       # host fingerprints. The global ROOT10940_CI_PACKET variable remains
       # one historical input and is not current for a different fingerprint.
-      # The receive step stays red until Root enrolls this candidate. Do not
-      # rewrite the trusted expected hash or point the variable at another
-      # fingerprint. This regression takes its catalog and PostgreSQL bin
-      # from the caller. Historical-only negatives do not assume that catalog
-      # has a single row.
+      # The receive step stays red until Root enrolls the measurement-runtime
+      # candidate. Root's received H142 slot stays valid for that older host
+      # and does not satisfy this candidate. Do not rewrite the trusted
+      # expected hash or point the variable at another fingerprint. This
+      # regression takes its catalog and PostgreSQL bin from the caller.
+      # Historical-only negatives do not assume that catalog has a single row.
       - name: Check source-bound acquisition selection
         run: |
           AE14_PG_BIN="$(pg_config --bindir)" \
           ROOT10940_CI_CATALOG="server/scripts/fixtures/root10940-approved-ci-packets" \
-          node --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs
+          node --test --test-concurrency=1 \
+            server/scripts/test-h147010-source-bound-ci-input.mjs \
+            server/scripts/test-h145010-measurement-runtime-pin.mjs
       - name: Receive the independent acquisition packet
         env:
           ROOT10940_CI_PACKET: ${{ vars.ROOT10940_CI_PACKET }}
