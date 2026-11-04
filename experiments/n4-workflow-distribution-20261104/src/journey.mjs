@@ -476,6 +476,7 @@ export async function runJourney({ stateDir, inputPath, outDir }) {
       subject: doc.subject,
       sequence: doc.sequence,
       clock: doc.clock,
+      horizonHours: doc.horizonHours,
     },
   });
 

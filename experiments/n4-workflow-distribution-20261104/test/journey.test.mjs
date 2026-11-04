@@ -386,3 +386,33 @@ test("page two and a spanned table stay useful without a reader, and withdrawal 
   assert.match(again.log, /source-change-alert/);
   assert.equal(again.result.transfer.sent, false);
 });
+
+test("the prepared transfer command reuses the bound observation", () => {
+  const state = workdir();
+  install(state);
+  const out = join(state, "out");
+  const ran = runCase(state, join(fixtures, "case.json"), out, null);
+  assert.equal(ran.ran.status, 0, ran.ran.stderr || ran.ran.stdout);
+  assert.equal(ran.result.outcome, "delivered");
+  assert.equal(ran.result.identity.horizonHours, 168);
+  const command = ran.result.transfer.command;
+  assert.equal(Array.isArray(command), true);
+  assert.equal(command.includes("undefined"), false);
+  assert.equal(command[command.indexOf("--horizon") + 1], "168");
+  const placeholder = "<the same before-work manifest>";
+  const declared = command.filter((token) => token.startsWith("<") && token.endsWith(">"));
+  assert.deepEqual(declared, [placeholder]);
+  symlinkSync(join(repo, "tools"), join(out, "tools"));
+  const argv = command.slice(1).map((token) => (
+    token === placeholder ? join(fixtures, "before-work.json") : token
+  ));
+  const reused = spawnSync(process.execPath, argv, {
+    cwd: out,
+    encoding: "utf8",
+  });
+  assert.equal(reused.status, 0, `${reused.stderr || reused.stdout}\ncommand=${JSON.stringify(command)}`);
+  const body = JSON.parse(reused.stdout);
+  assert.equal(body.verdict, "reuse");
+  assert.equal(body.producerInvoked, false);
+  assert.equal(body.decision.useful.outcome, "unchanged");
+});

@@ -1,17 +1,13 @@
 # AGL decision transfer
 
-This branch stops at a missing seam. It does not grant, export, or record `useVoluntary`.
+Synthetic requester A produces one bound harbor catalog decision. Contributor B carries that decision and its before-work manifest on the existing voluntary rail. Requester A grants it to requester C. C exports it and runs `result.transfer.command` in a separate process. The source-change-alert recipe and its CLI are bind-mounted to `/dev/null` in that process, and an exec trace records that they are not executed.
 
-Synthetic participant A can produce `out/bound-observation.json` with the harbor catalog workflow. `result.transfer.command` is the prepared later call. That command is not executable. `transferCommand` reads `horizonHours` from the result identity, and the identity stores task, subject, sequence, and clock only. The prepared command therefore contains `--horizon` `undefined`. `tools/result-reuse/cli.mjs` rejects that token before it reads the saved decision.
+The prepared command carries horizon `168` because the bound identity now stores `horizonHours`. The only declared placeholder, `<the same before-work manifest>`, is filled from the exported manifest. `bound-observation.json` stays the relative artifact name.
 
-The two placeholders in the command are the before-work manifest and `bound-observation.json`. Filling those placeholders and running the remaining tokens in a separate process exits 1. A distinct participant cannot reuse the decision through the prepared command, so the disposable host journey was not started.
-
-The live public profile and accepted-work list were read and are recorded in `HANDBACK.md`. They are not the disposable-host source default.
+The disposable host is loopback, `acceptedWorkPublic` false, and unfunded `voluntary-artifact-v1`. The live public profile is read and left as it is. This run is not independent use and is not a non-Pilot grantee.
 
 ## Check
 
 ```sh
 node --test --test-concurrency=1 experiments/agl-decision-transfer-20261104/test/decision-transfer.test.mjs
 ```
-
-The test asserts that the prepared command returns verdict `reuse` with the producer uninvoked. It fails on the horizon token.
