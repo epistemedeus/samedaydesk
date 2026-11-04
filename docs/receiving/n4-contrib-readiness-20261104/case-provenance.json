@@ -1,7 +1,8 @@
 {
   "schema": "n4.query-key-seed-provenance.v1",
+  "permitTarget": "query-key-caller.json",
   "publicArtifact": "query-key-seed.json",
-  "note": "This file is not the public artifact. Commit ids and file hashes stay here because a 40-hex string in the artifact is unnecessary and the publication string budget is full.",
+  "note": "Root permits query-key-caller.json. query-key-seed.json is the superseded 9-case record. This file is not the public artifact. The caller itself holds no license, rights, or provenance fields.",
   "cases": [
     {
       "id": "grouped-ampersand",

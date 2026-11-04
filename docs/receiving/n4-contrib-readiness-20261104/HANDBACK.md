@@ -223,7 +223,9 @@ f4 is not required for the live reads, and it does not remove the fence refusal.
 
 ## Seed packet Root can run
 
-The public artifact is `query-key-seed.json`. It is a fence-bound selection from the retained v2 corpus and the B1 comparison at neomorphic-io `d5ef2a20092aafa77a178b0ff4e8526fd25022d3` (PR443). The archive `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa` is unchanged. The H133 mapping file `seed-artifact.json` stays in this directory as the earlier recorded choice. Do not permit that file.
+Superseded as the permit target. Root permits `query-key-caller.json`. `query-key-seed.json` stays in the tree as the record of this 9-case selection. The archive caller refuses it, so it is not the publication object.
+
+The 9-case selection was `query-key-seed.json`. It is a fence-bound selection from the retained v2 corpus and the B1 comparison at neomorphic-io `d5ef2a20092aafa77a178b0ff4e8526fd25022d3` (PR443). The archive `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa` is unchanged. The H133 mapping file `seed-artifact.json` stays in this directory as the earlier recorded choice. Do not permit that file.
 
 `proposalFrom` accepts this selection. Canonical JSON is 1421 bytes. String values are 40, which is the current limit at `accepted-work-publication.mjs:111`. The canonical limit at line 105 stays 4096. This packet does not ask for either limit to rise. Adding one more string is `publication_refused`. The v4 `assertCorpus` in the previously fetched archive contract refuses this 9-case object with `artifact_refused`, because that contract still requires 25 cases and a bank of 22. The contract was not edited.
 
@@ -274,6 +276,8 @@ Also read this turn: `https://neomorphic.io/machine/participation-0.3.1.json`, 2
 Not read this turn, so source-only: the 14566-byte archive body, the live `llms.txt` body, account files, and any private task row. The public list does not show private tasks. Whether Root already has an accepted voluntary task is unknown.
 
 ## Commands Root runs
+
+Superseded by the caller publication below. The commands in that section are the ones Root runs. The digest and file names in this older block named `query-key-seed.json`.
 
 No new signup. No credential file is in this packet. Keyway locator strings are unknown. The only custody path in the read inputs is `/home/ubuntu/root97253-first-party-accounts` from `seed-ROOT-RECEIVING.md`. The published guide names the existing files `requester.secret` and `contributor.secret`. Root substitutes those existing files. This packet does not open them.
 
@@ -342,3 +346,102 @@ Result: 2 tests, 2 pass, 0 fail, 0 skipped. Duration about 185 ms. The first tes
 - sha256 of `compare_query_key.py` at `d5ef2a20`.
 - The archive body was not downloaded again this turn. B1 reports `pack` still emits `51b1b657`.
 - Outside use, revenue, and a network effect were not observed. Unknown is not zero.
+
+## Caller publication
+
+Root permits `query-key-caller.json`. It is one `cc0.query-key-caller.v4` document, JSON-equal to B1 `inputs/direct-lot.json` at neomorphic-io `d5ef2a20092aafa77a178b0ff4e8526fd25022d3` and to `callers/direct-lot.json`. A value pair `lot#` = `row 3`, then key `seal` bare on the left and blank on the right, both on `GET /n4/direct/lot`. The file is the compact serialization, 304 bytes, file sha256 `c7f63611f4247f9a04c95b16aff4d94a322cfc149cd1d06ead75d9118d5c1424`. It has no license, rights, or provenance fields. Those stay in `query-key-rights.json`, `query-key-summary.txt`, and this file.
+
+The 9-case `query-key-seed.json` still passes `proposalFrom` and still fails the normal caller. On the archive downloaded this turn, `node apply.mjs apply --artifact corpus.json --input query-key-seed.json` exited 1 with `{"ok": false, "code": "caller_refused"}`. `assertCorpus` still requires the exact 25-case bank. This packet does not squeeze that corpus into the publication object, and it does not change a limit.
+
+### Fence run
+
+Installed `vendor/hosted-wallet-market/src/accepted-work-publication.mjs` `proposalFrom`, unchanged. Canonical JSON 304 bytes. String values 15. Limits stay 4096 bytes and 40 strings. A 41-string clone is `publication_refused`.
+
+| Item | Value |
+| --- | --- |
+| Public artifact, foundation digest | `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155e3` |
+| Summary, foundation digest, text unchanged, 102 bytes | `4f07cb0db1756b5a09f94b982bcce40e271e016b2fc0a922c9d232425285992d` |
+| Rights, foundation digest, object unchanged | `efb163e6a44161f61ac538de5fc880b7803a367fc3744c1bbf8970bf37a5d550` |
+| Proposal digest beside the installed canary evidence | `89323d2aa4681bb750f801b5ce48ece36513cfdbfc87b900007d682ddd751a92` |
+
+Exit of that `proposalFrom` call: accepted, no throw. The local test asserts the same digests.
+
+### Archive caller run
+
+Downloaded `https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz` this turn. Status 200, 14566 bytes, sha256 `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa`. Extracted unchanged. `apply.mjs` file sha256 `7e2618f2d4129af7a8a78338863b2ee7741fadf67f9161c5c18d1820f3a6f7d1`. `execute.py` file sha256 `824f8c47b727c302ac95b80cc2ad523ff46a637309ac41abb733374bcc0e5031`. `corpus.json` file sha256 `060c8aa08ca58c665f1b610d4cccbb9800a53f16f242d2f22bed496dd6c201d6`.
+
+The input was `query-key-caller.json`. A retrieval round trip (parse, place on `value.publicArtifact`, stringify the response, extract, stringify again) writes the same 304 bytes and the same sha256 `c7f63611f4247f9a04c95b16aff4d94a322cfc149cd1d06ead75d9118d5c1424`. Complete stdout is `caller-runs.txt`: the 9-case input exits 1, and the caller exits 0 for both the key run and the mount run. Pins are clean checkouts of `https://github.com/dhyabi2/x402-nano-exact` at `f0b3e89463d4b291cab95830151c4c1c05ff04b6`, `164d9e30abf5cd8aa3c2eaae617c71a115b24fbe`, and `9cdf0e470a232c2a9779c88f080a2aeb1e76a664`. Local `PYTHONPATH` had fastapi 0.162.0, starlette 1.10.0, and uvicorn 0.54.0. No live host write. No wallet call.
+
+Key execution, exit 0:
+
+```json
+{"ok": true, "schema": "cc0.query-key-caller-run.v4", "executed": true, "actual": {"kind": "key-execution", "oldEqual": true, "midEqual": true, "nowEqual": false, "afterLeft": "{\"method\":\"GET\",\"path\":\"/n4/direct/lot\",\"query\":[[\"lot#\",\"row 3\"],[\"seal\",null]]}", "afterRight": "{\"method\":\"GET\",\"path\":\"/n4/direct/lot\",\"query\":[[\"lot#\",\"row 3\"],[\"seal\",\"\"]]}"}, "walletCalls": 0, "liveSettlement": false}
+```
+
+The full key-execution object also returned `beforeLeft` and `beforeRight` both `GET|/n4/direct/lot|query:lot#=row 3&seal=`, and the middle pin both `{"method":"GET","path":"/n4/direct/lot","query":[["lot#","row 3"],["seal",""]]}`. Before and middle parse both forms of `seal` as an empty string. The current pin parses bare `seal` as null and blank `seal` as an empty string.
+
+Mount on the same bytes, exit 0. Before and middle: status 200 then 200, replayed false then true. Current: status 200 then 409, replayed false then false. The 409 body is `{"error": "payment already consumed by another request"}`. `loopback` is `127.0.0.1`. `signer` is false. `walletCalls` is 0.
+
+### Commands 2 to 5
+
+No signup. Secret files stay the existing `requester.secret` and `contributor.secret`. Keyway locator strings remain unknown. Custody path named in the read inputs: `/home/ubuntu/root97253-first-party-accounts`. These writes were not run.
+
+2. Prepare the requester permit. Expected: `posted` false, `publicationConsent` true, `summaryDigest` `4f07cb0db1756b5a09f94b982bcce40e271e016b2fc0a922c9d232425285992d`, `publicArtifactDigest` `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155e3`, `rightsDigest` `efb163e6a44161f61ac538de5fc880b7803a367fc3744c1bbf8970bf37a5d550`.
+
+```sh
+umask 077
+node prepare-accepted-work.mjs --task-id market-REPLACE --terms-digest REPLACE --artifact-digest REPLACE --expected-revision REPLACE --summary-file query-key-summary.txt --artifact-file query-key-caller.json --rights-file query-key-rights.json --consent-file consent.json --out permit-requester.json
+```
+
+3. Requester permit. Expected: `ok` true, `acceptedWorkVisible` false, `paidWork` false. Anonymous detail for this task is `not_found`.
+
+```sh
+node accepted-work.mjs permit --origin https://samedaydesk.com --secret-file requester.secret --input permit-requester.json > permit-requester-result.json
+```
+
+4. Contributor permit with the returned revision. Do not reuse `permit-requester.json`. Expected: `ok` true, `acceptedWorkVisible` true, `paidWork` false. That second permit is the publication.
+
+```sh
+node prepare-accepted-work.mjs --task-id market-REPLACE --terms-digest REPLACE --artifact-digest REPLACE --expected-revision REPLACE --summary-file query-key-summary.txt --artifact-file query-key-caller.json --rights-file query-key-rights.json --consent-file consent.json --out permit-contributor.json
+node accepted-work.mjs permit --origin https://samedaydesk.com --secret-file contributor.secret --input permit-contributor.json
+```
+
+5. Anonymous readback. No secret file.
+
+```sh
+node accepted-work.mjs discover-accepted --origin https://samedaydesk.com
+node accepted-work.mjs detail --origin https://samedaydesk.com --task-id market-REPLACE
+node accepted-work.mjs artifact --origin https://samedaydesk.com --task-id market-REPLACE > artifact.json
+```
+
+Expected list: 200, the task is present, `summary` equals the 102-byte summary file, `publicArtifact` omitted, `publicReads` `0`, `paidWork` false. Expected detail: the same summary, artifact body omitted. Expected artifact: `value.publicArtifact` equals `query-key-caller.json` and `publicArtifactDigest` is `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155e3`. A lost permit is exit 2 `unknown_outcome`. Read back. Do not POST again.
+
+The private `artifactDigest` is Root's delivery receipt. It is unknown until that receipt exists. It must differ from `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155e3`.
+
+### Next use of the retrieved artifact
+
+From the extracted archive, on the artifact file saved from `value.publicArtifact`:
+
+```sh
+node apply.mjs apply --artifact corpus.json --input retrieved-public-artifact.json \
+  --before /path/to/f0b3e89463d4b291cab95830151c4c1c05ff04b6 \
+  --middle /path/to/164d9e30abf5cd8aa3c2eaae617c71a115b24fbe \
+  --after /path/to/9cdf0e470a232c2a9779c88f080a2aeb1e76a664 \
+  --mount
+```
+
+Expected: exit 0, `oldEqual` true, `midEqual` true, `nowEqual` false, before and middle 200 then 200 with replay, current 200 then 409 without replay.
+
+### Test
+
+`node --test --test-concurrency=1 docs/receiving/n4-contrib-readiness-20261104/seed.test.mjs`
+
+2 tests, 2 pass, 0 fail, 0 skipped. The first checks the caller bytes, the digests, and `proposalFrom`. The second adds strings until 41 and expects `publication_refused`.
+
+### Unknown at this caller publication
+
+- Keyway locator strings.
+- Whether a private accepted task already exists.
+- Profile and accepted-work list were not read again this turn. The 22:58:37Z hashes stand until a later GET.
+- sha256 of `compare_query_key.py` at `d5ef2a20`.
+- Outside use and revenue were not observed. Unknown is not zero.
