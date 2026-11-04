@@ -1,0 +1,75 @@
+{
+  "schema": "pilot.root10940.approved-ci-packet-index.v1",
+  "packets": [
+    {
+      "trustAnchorSha256": "71e880413d2fa6711494886b7023064dea55814bd89ae0010d19b8597c5dd923",
+      "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "hostSha256": "1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "59bfca8be525503917c546f586b7c8724cc5f90fd29052cce8cfce019185148e",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "cafd88c9026688359773d9c027944bff959d7777",
+        "independentReplay": "ROOT57152",
+        "observedAt": "2026-10-31T17:57:35.068Z",
+        "passed": 18,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "predecessor": "ROOT-4BC-ACQUISITION-TRUST-ANCHOR.json",
+        "scope": "Source-bound CI input. Not hosted acquisition, deployment qualification, current selection or outside use.",
+        "qualified": false,
+        "installed": false
+      }
+    },
+    {
+      "trustAnchorSha256": "b4a08b92f214e277550495a44a5e1e599d537922751d666f994d6aed1b92a557",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84b48bcc84e1adcca1a",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "e4d2ea1f8315e02eb96c636374f4d6151fbca158",
+        "independentReplay": "ROOT45466",
+        "observedAt": "2026-11-04T03:58:05.862Z",
+        "passed": 25,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "Source-bound CI receiving only. Not deployment, hosted acquisition or outside use.",
+        "qualified": false,
+        "installed": false
+      }
+    },
+    {
+      "trustAnchorSha256": "9962da1e24792d613359ee8ae151a4d408292615619df131d387b23ae5cf7baf",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSha256": "8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "2066f94ad3bf555bf5fe46314aad7f4827d5580dac3ca14b4942529781d991c2",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "45e1c3fc23dcffd07a01c95e7b4a009d05159fc2",
+        "independentReplay": "ROOT62682",
+        "observedAt": "2026-11-04T04:50:00.683Z",
+        "passed": 54,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "Composed source and CI receiving. Not deployment, outside use or financial activation.",
+        "qualified": false,
+        "installed": false
+      }
+    }
+  ]
+}

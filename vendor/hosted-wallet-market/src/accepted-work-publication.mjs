@@ -80,10 +80,12 @@ function assertCopy(value, max, row) {
   requireThat(!privateHit(value, row), 'private_field_refused');
 }
 
-// Selected public data. Summary text stays on the plain-text fence. These
-// bytes are stored and returned; nothing here fetches a link or runs code.
+// Selected public data. An empty string is a stored scalar, not customer copy.
+// Summary, attribution and object keys stay on publicationText, which rejects
+// empty text. These bytes are stored and returned; nothing here fetches a link
+// or runs code.
 function assertArtifactString(value, row) {
-  requireThat(typeof value === 'string' && value.length >= 1 && Buffer.byteLength(value) <= 500, 'publication_refused');
+  requireThat(typeof value === 'string' && Buffer.byteLength(value) <= 500, 'publication_refused');
   requireThat(!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f]/u.test(value), 'publication_refused');
   requireThat(!/</.test(value), 'publication_refused');
   requireThat(!/%[0-9a-f]{2}|&#(?:x[0-9a-f]+|\d+);?|&[a-z][a-z0-9]{1,31};/i.test(value), 'publication_refused');

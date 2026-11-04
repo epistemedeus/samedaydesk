@@ -8,19 +8,25 @@ import {digest} from '../foundry/private-pass-core.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {installedSourceSha256,installedSourceFiles} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
+import {installedSourceSha256,installedSourceFiles,hostSourceSha256} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
 import {verifyContributorRuntime} from '../lib/contributor-artifact.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const read=name=>readFile(path.join(root,name));
 // Receive explicitly named installed source, never infer it from a dirty export.
 // The same predecessor is idempotent; ordinary refresh adds no new descriptor.
 const args=process.argv.slice(2), predecessorRefs=[];
+let joinMeasurement=false;
 while(args.length){
-  const option=args.shift(), ref=args.shift();
+  const option=args.shift();
+  if(option==='--join-measurement-runtime'){joinMeasurement=true;continue;}
+  const ref=args.shift();
   if(option!=='--receive-caller-from'||!(/^[a-f0-9]{40}$/.test(ref??'')))throw Error('full predecessor commit required');
   execFileSync('git',['merge-base','--is-ancestor',ref,'HEAD'],{cwd:root,stdio:'pipe'});
   predecessorRefs.push(ref);
 }
+// These are the host-application bytes the free-tool measurement changed.
+// The full exporter still refuses every other drifted pin member.
+const measurementRuntime=['package.json','server/lib/pulse.js','server/lib/pulse-store/free-tool-outcomes.js','server/lib/pulse-store/schema.js','server/lib/pulse-store/supabase-adapter.js','server/lib/pulse-store/wal-schema.js','server/routes/tools.js','supabase/migrations/0010_pulse_free_tool_outcomes.sql'];
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const manifestName='vendor/hosted-wallet-market/SOURCE.json';
 const manifest=JSON.parse(await read(manifestName));
@@ -44,6 +50,19 @@ const next={...pin.files};
 const hostOwned=new Set(['server/app.js','server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
   'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
+if(joinMeasurement){
+  const refreshable=new Set([...hostOwned,...measurementRuntime]);
+  for(const [name,expected] of Object.entries(pin.files)){
+    if(refreshable.has(name))continue;
+    if(sha(await read(name))!==expected)throw Error('unrelated source pin drift: '+name);
+  }
+  const ordered={};
+  for(const name of Object.keys(pin.files))ordered[name]=refreshable.has(name)?sha(await read(name)):pin.files[name];
+  for(const name of measurementRuntime)if(!Object.hasOwn(ordered,name))ordered[name]=sha(await read(name));
+  await writeFile(path.join(root,pinName),JSON.stringify({...pin,receivedCallerClosures:received,files:ordered},null,2)+'\n');
+  process.stdout.write(JSON.stringify({joined:measurementRuntime,sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(root),qualified:false,installed:false})+'\n');
+  process.exit(0);
+}
 const neoPrefix='vendor/neomorphic-contributor-journey/';
 const neo=JSON.parse(await read(neoPrefix+'SOURCE.json'));
 await verifyContributorRuntime(path.join(root,neoPrefix),neo.sourceCommit);
@@ -52,9 +71,10 @@ for(const member of [...neo.files.map(file=>file.path),'SOURCE.json'])next[neoPr
 for(const name of Object.keys(next)){
   if(name===manifestName){next[name]=sha(manifestBytes);continue;}
   const got=sha(await read(name));
-  if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name))next[name]=got;
+  if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name)||measurementRuntime.includes(name))next[name]=got;
   else if(next[name]!==got)throw Error('unrelated source pin drift: '+name);
 }
+for(const name of measurementRuntime)next[name]=sha(await read(name));
 // New additive migrations and modules join the complete host closure.
 for(const name of installedSourceFiles())next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
 // The read-only Root CLI entry and this source exporter are part of the host.

@@ -1,0 +1,36 @@
+{
+  "schema": "sds.h120010.human-comparison.v1",
+  "build": "server/scripts/publish-preserved-client.mjs",
+  "viteInvoked": false,
+  "baseline": {
+    "status": 0,
+    "body": {
+      "ok": true,
+      "viteInvoked": false,
+      "files": 352,
+      "bytes": 59951737,
+      "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+    },
+    "stderr": ""
+  },
+  "candidate": {
+    "status": 0,
+    "body": {
+      "ok": true,
+      "viteInvoked": false,
+      "files": 352,
+      "bytes": 59951737,
+      "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+    },
+    "stderr": ""
+  },
+  "byteEqual": true,
+  "files": 352,
+  "leftBytes": 59951737,
+  "rightBytes": 59951737,
+  "mismatched": [],
+  "onlyBaseline": [],
+  "onlyCandidate": [],
+  "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+  "preservedInventoryAgrees": true
+}

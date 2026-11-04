@@ -31,6 +31,7 @@ import { assertSnapshotMigrationKeys, validateLegacyFingerprintArray } from "./p
 import { classifyPulseFlushError, flushBackoffMs } from "./pulse-store/flush-error.js";
 import { mcpAdmissionForRequest } from "./mcp-admission.js";
 import { MCP_OUTCOME_KEYS, MCP_BROWSE_EVENTS, MCP_REFUSAL_EVENTS, refusalEvent, refusalCoverage, browseCoverage, classifyBrowseResult, declaredMcpSource, mergeMcpOutcomes, validateMcpOutcomes } from "./pulse-store/mcp-outcomes.js";
+import { FREE_TOOL_OUTCOME_KEYS, emptyFreeToolOutcomes, mergeFreeToolOutcomes, validateFreeToolOutcomes } from "./pulse-store/free-tool-outcomes.js";
 export { parseMcpProtocolBody, mcpMethodClass } from "./mcp-admission.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 
@@ -123,6 +124,9 @@ function addWalCounters(into) {
 
 function addSnapshotCounters(into, from) {
   into.mcpOutcomes = mergeMcpOutcomes(into.mcpOutcomes, from.mcpOutcomes);
+  if (from.freeToolOutcomes) {
+    into.freeToolOutcomes = mergeFreeToolOutcomes(into.freeToolOutcomes, from.freeToolOutcomes);
+  }
   into.total += from.total || 0;
   into.humans += from.humans || 0;
   into.bots += from.bots || 0;
@@ -316,6 +320,7 @@ async function readDurableSnapshot() {
     throw new Error("pulse_incomplete_schema:mcpToolCallsByNameObservation");
   }
   if (snapshot.mcpOutcomes != null) snapshot.mcpOutcomes = validateMcpOutcomes(snapshot.mcpOutcomes);
+  if (snapshot.freeToolOutcomes != null) snapshot.freeToolOutcomes = validateFreeToolOutcomes(snapshot.freeToolOutcomes);
   durableSnapshot = snapshot;
   if (snapshot?.observationStart) observationStartedAt = snapshot.observationStart;
   // Snapshot RPC returns timestamptz JSON (+00:00); pending deltas must use .mmmZ wire form.
@@ -984,6 +989,80 @@ export function recordClientEvent(event, props) {
   return true;
 }
 
+const observedFreeToolRequests = new WeakSet();
+const freeToolOutcomeKeys = new Set(FREE_TOOL_OUTCOME_KEYS);
+let freeToolTelemetryFault = null;
+
+function classifyFreeToolCaller(req) {
+  const ua = headerValue(req, "user-agent").trim();
+  if (!ua) return "unknown";
+  const { kind } = classify(ua);
+  if (kind === "human" || kind === "bot" || kind === "ai") return kind;
+  return "unknown";
+}
+
+// One terminal class per request that reached this process. The checked URL is
+// not an argument and is not stored. A thrown fault is cleared and not counted.
+export function recordFreeToolTerminal(req, outcome) {
+  if (freeToolTelemetryFault) {
+    const fault = freeToolTelemetryFault;
+    freeToolTelemetryFault = null;
+    throw fault;
+  }
+  if (!req || typeof req !== "object" || observedFreeToolRequests.has(req)) return false;
+  if (!freeToolOutcomeKeys.has(outcome)) return false;
+  const caller = classifyFreeToolCaller(req);
+  observedFreeToolRequests.add(req);
+  const now = new Date().toISOString();
+  if (!pendingDelta.freeToolOutcomes) pendingDelta.freeToolOutcomes = emptyFreeToolOutcomes(now);
+  const row = pendingDelta.freeToolOutcomes;
+  row.requests += 1;
+  row.outcomes[outcome] += 1;
+  row.callers[caller] += 1;
+  pushRecent({
+    t: now,
+    p: "/api/tools/ai-readiness",
+    kind: "freeTool",
+    outcome,
+    caller,
+  });
+  return true;
+}
+
+const FREE_TOOL_MEANING =
+  "Terminal GET /api/tools/ai-readiness results. One count per request that reached a server outcome. " +
+  "completed is a finished check, not a citation, rank, or paid audit. Failure classes are real non-successes and are never upgraded to completed. " +
+  "callers reuse the existing agent classes; an empty agent is unknown. The class is spoofable and is not identity. outcomes and callers partition the same requests. " +
+  "No checked URL, prompt, address, credential, or referrer is stored. Page-view acquisition stays in funnel and byReferer and is not joined. " +
+  "A browser tool_check_done event is not this counter. The checker's own fetches of the target are not extra requests or customers. " +
+  "Counts start at observedFrom and are a lower bound; earlier use is unknown, not zero. MCP check_ai_readiness and /scan are separate surfaces. " +
+  "These counts are not unique people, customers, or revenue.";
+
+function freeToolView(row) {
+  if (!row) {
+    return {
+      observedFrom: null,
+      requests: null,
+      outcomes: null,
+      callers: null,
+      coverage: "unknown",
+      complete: false,
+      reportedAcquisition: "not_stored_here",
+      meaning: FREE_TOOL_MEANING,
+    };
+  }
+  return {
+    observedFrom: row.observedFrom,
+    requests: row.requests,
+    outcomes: { ...row.outcomes },
+    callers: { ...row.callers },
+    coverage: "lower_bound_from_first_observation",
+    complete: false,
+    reportedAcquisition: "not_stored_here",
+    meaning: FREE_TOOL_MEANING,
+  };
+}
+
 export function flushPulseSnapshot() {
   const ok = admitPendingDeltaToWal();
   scheduleFlush();
@@ -1068,6 +1147,7 @@ export function pulseSnapshot() {
     byReferer: counters.byReferer,
     byAiBot: counters.byAiBot,
     sellerRepair: counters.sellerRepair,
+    freeTool: freeToolView(counters.freeToolOutcomes),
     durable,
     pending,
     knownGap: {
@@ -1097,6 +1177,7 @@ export function configurePulseStoreForTests(options = {}) {
   flushRetryState.clear();
   nowMs = () => Date.now();
   pendingDelta = emptyDelta(mcpToolCallsObservedFrom);
+  freeToolTelemetryFault = null;
   localProcess.uniqueHumans = new Set();
   localProcess.recent = [];
   legacyUncertainty = null;
@@ -1142,6 +1223,12 @@ export function __pulseTestInternals() {
     },
     stopScheduledFlush() {
       clearInterval(flushInterval);
+    },
+    setFreeToolFault(error) {
+      freeToolTelemetryFault = error ? (error instanceof Error ? error : new Error(String(error))) : null;
+    },
+    failNextFreeToolObservation() {
+      freeToolTelemetryFault = new Error("free_tool_telemetry_fault");
     },
   };
 }

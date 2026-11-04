@@ -8,6 +8,7 @@ import net from "node:net";
 // version (real citation testing vs competitors) is the paid AI-Search Visibility Audit.
 // runCheck() is exported so the server-rendered /scan proof page can reuse it.
 import { assertPublicUrl } from "../lib/agent-readiness/ssrf.js";
+import { recordFreeToolTerminal } from "../lib/pulse.js";
 import { fetchPublicBounded, createRequestBudget } from "../lib/agent-readiness/bounded-fetch.js";
 
 // One total budget per /llms-txt request: DNS (4s bound each) + redirects + bodies.
@@ -236,12 +237,46 @@ export async function runCheck(rawUrl) {
   };
 }
 
+const FREE_TOOL_INVALID_HOST = new Set([
+  "Could not resolve that domain",
+  "That host isn't a public website",
+  "That address isn't reachable for a public check",
+]);
+
+function classifyFreeToolFailure(status, message) {
+  if (status === 400 && FREE_TOOL_INVALID_HOST.has(message)) return "invalid_host";
+  if (status === 502 && message === "The site took too long to respond") return "timeout";
+  if (status === 502 && message === "Could not reach that site") return "unreachable";
+  return "other_failure";
+}
+
+function replyJson(res, status, body) {
+  if (res.writableEnded) return;
+  try { res.status(status).json(body); }
+  catch { /* caller already gone */ }
+}
+
+// This GET only. runCheck is shared with /scan and MCP, which keep their own counters.
 router.get("/ai-readiness", async (req, res) => {
+  let recorded = false;
+  const record = (outcome) => {
+    if (recorded) return;
+    recorded = true;
+    try { recordFreeToolTerminal(req, outcome); }
+    catch { /* observation failure stays off the tool response */ }
+  };
+  res.once("close", () => {
+    if (!res.writableFinished) record("abandoned");
+  });
   try {
     const result = await runCheck(req.query.url);
-    res.json(result);
+    record("completed");
+    replyJson(res, 200, result);
   } catch (e) {
-    res.status(e.status || 502).json({ error: e.message || "Could not check that site" });
+    const status = Number(e.status) || 502;
+    const message = e.message || "Could not check that site";
+    record(classifyFreeToolFailure(status, message));
+    replyJson(res, status, { error: message });
   }
 });
 

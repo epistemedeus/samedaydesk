@@ -1,0 +1,211 @@
+{
+  "commands": [
+    {
+      "name": "unit-and-publication",
+      "exit": 0,
+      "duration_ms": 399.69477,
+      "pass": 9,
+      "fail": 0,
+      "argv": [
+        "node",
+        "--max-old-space-size=512",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=60000",
+        "vendor/hosted-wallet-market/test/accepted-work-empty-data.test.mjs",
+        "vendor/hosted-wallet-market/test/accepted-work-publication.test.mjs"
+      ]
+    },
+    {
+      "name": "closure",
+      "exit": 0,
+      "duration_ms": 518.460301,
+      "pass": 1,
+      "fail": 0,
+      "argv": [
+        "node",
+        "--max-old-space-size=512",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=60000",
+        "vendor/hosted-wallet-market/test/accepted-work-closure.test.mjs"
+      ]
+    },
+    {
+      "name": "mounted-0.3.1",
+      "exit": 0,
+      "duration_ms": 5946.177094,
+      "pass": 1,
+      "fail": 0,
+      "argv": [
+        "node",
+        "--max-old-space-size=768",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=240000",
+        "server/scripts/test-h142010-empty-artifact-data.mjs"
+      ]
+    },
+    {
+      "name": "preserved-human",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "viteInvoked": false,
+        "files": 352,
+        "bytes": 59951737,
+        "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+      },
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "server/scripts/publish-preserved-client.mjs"
+      ]
+    },
+    {
+      "name": "bundle",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "members": 2,
+        "sha256": "e2273c47d0909dac3c30a370df09e5f04745311805a53b6795a2ae64084bf2c3",
+        "recordedSourceConstantAgrees": false
+      }
+    },
+    {
+      "name": "seal",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "sha256": "e662767e57efe17f36ad22b6c7cc2819092d7c804509acf58ad21a432dd28e5b",
+        "measuredCandidateSourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+        "recordedSourceConstantAgrees": false
+      }
+    },
+    {
+      "name": "verify-baseline",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+        "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+        "runtimeCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+        "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+        "publicEnabled": false
+      }
+    },
+    {
+      "name": "compare-human",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "schema": "sds.h120010.human-comparison.v1",
+        "build": "server/scripts/publish-preserved-client.mjs",
+        "viteInvoked": false,
+        "baseline": {
+          "status": 0,
+          "body": {
+            "ok": true,
+            "viteInvoked": false,
+            "files": 352,
+            "bytes": 59951737,
+            "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+          },
+          "stderr": ""
+        },
+        "candidate": {
+          "status": 0,
+          "body": {
+            "ok": true,
+            "viteInvoked": false,
+            "files": 352,
+            "bytes": 59951737,
+            "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+          },
+          "stderr": ""
+        },
+        "byteEqual": true,
+        "files": 352,
+        "leftBytes": 59951737,
+        "rightBytes": 59951737,
+        "mismatched": [],
+        "onlyBaseline": [],
+        "onlyCandidate": [],
+        "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+        "preservedInventoryAgrees": true
+      }
+    },
+    {
+      "name": "install",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "role": "candidate",
+        "before": {
+          "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+          "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0"
+        },
+        "after": {
+          "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+          "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255"
+        },
+        "members": 2,
+        "resumed": false,
+        "pinLastAloneAtomic": false
+      }
+    },
+    {
+      "name": "verify-installed",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+        "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255",
+        "runtimeCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+        "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+        "publicEnabled": false
+      }
+    },
+    {
+      "name": "rollback",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "role": "baseline",
+        "before": {
+          "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+          "hostSha256": "b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255"
+        },
+        "after": {
+          "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+          "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0"
+        },
+        "members": 2,
+        "resumed": false,
+        "pinLastAloneAtomic": false
+      }
+    },
+    {
+      "name": "verify-rollback",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+        "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+        "runtimeCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+        "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+        "publicEnabled": false
+      }
+    },
+    {
+      "name": "successor",
+      "exit": 0,
+      "result": {
+        "ok": true,
+        "sha256": "d1d84ce883e397c0b8d0dccc5f83a5d1ab9155de684b0bf5ffb46853af45d0c1",
+        "bytes": 2346,
+        "published": false
+      }
+    }
+  ]
+}
