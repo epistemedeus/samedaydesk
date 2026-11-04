@@ -205,6 +205,10 @@ The selected packet file was absent. The enrollment class was `stale`, `received
 
 No model child was started. The first-delivery footprint above is unchanged as a record of that process. Migration 0010 was not applied. No deploy, signer, grant, funding, payment, outside message, or default merge was performed. `h120010-promote` was not run.
 
+## Final head
+
+Repair commit `a05d5b160bcb9c1fb1e48424abfdbb4ab705f874`, tree `6781fde8053a65bb91a9dc33685445ee0d1937c3`, pushed `24b5c8b7..a05d5b16`. This section does not change a pinned file. `hostSourceSha256` stays `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654` on the branch tip. Root receives that tip.
+
 ## Root next action
 
 Review draft PR https://github.com/epistemedeus/samedaydesk/pull/352 on `codex/h145010-useful-tool-measurement-20261104`. The head to receive is the pushed commit that contains this pin, not `d3a9d82f0aed25b8f5dcef70096982ef93083810` and not the H142 host `b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255`.
