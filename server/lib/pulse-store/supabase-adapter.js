@@ -5,6 +5,7 @@ import {
   validateLegacyObservation,
 } from "./schema.js";
 import { validateMcpOutcomes } from "./mcp-outcomes.js";
+import { validateFreeToolOutcomes } from "./free-tool-outcomes.js";
 
 export function createSupabasePulseTransport(rpcFn) {
   return {
@@ -48,9 +49,15 @@ export function createPulseStoreFromTransport(transport, { configured = true } =
         throw err;
       }
       if (!data || typeof data !== "object") return data;
-      const snapshot = data.mcpOutcomes != null
+      let snapshot = data.mcpOutcomes != null
         ? { ...data, mcpOutcomes: validateMcpOutcomes(data.mcpOutcomes) }
         : data;
+      if (snapshot.freeToolOutcomes != null) {
+        snapshot = {
+          ...snapshot,
+          freeToolOutcomes: validateFreeToolOutcomes(snapshot.freeToolOutcomes),
+        };
+      }
       if (snapshot.mcpToolCallsObservedFrom == null) return snapshot;
       return {
         ...snapshot,
