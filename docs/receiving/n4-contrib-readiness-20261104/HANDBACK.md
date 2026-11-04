@@ -129,3 +129,94 @@ No product source change. The mounted path already accepts this public object wh
 - The pilot H124 document is unread because `epistemedeus/pilot` returned repository not found.
 - `useVoluntary` independence is unknown.
 - This run is not outside use, revenue, or a network effect.
+
+## Correction, recorded
+
+The section above treated the source default as the live process. That inference was wrong and stays in the record. `acceptedWorkPublic` is unset in source unless a profile sets it (`server/lib/hosted-wallet-market-mount.js:100-101`, `docs/reviews/h133010-opt-in-accepted-work/NEXT.md`). A source default is not the configured process state.
+
+At 22:38 UTC Root's public GET of `/api/neomorphic-contributor-journey/v1/market/profile` returned 200 with `acceptedWork` schema `pilot.machine-market.accepted-work-publication.v1`, `publicReads` `0`, `paidWork` false, `signerAuthority` false, and discovery `/v1/market/accepted-work`. This outcome's later read-only GET agrees. The live accepted-work list returns 200 with an empty list, not 404.
+
+The H133 `example.org` mapping in the section above was the wrong artifact for this completion. It stays recorded as that earlier choice. The useful artifact is the query-key 1.1.0 corpus below.
+
+## Live read, 2026-11-04T22:41:13Z
+
+Public SDS origin `https://samedaydesk.com`, from `research/06-hostinger-deploy.md` (deploy target `samedaydesk.com`) and `docs/reviews/sol-sds-visitor-delivery-261003/PRODUCTION-READBACK.json` (`origin`). `vendor/hosted-wallet-market/PARTICIPATION.md:27` uses the same origin. The live profile `capability.origin` is that origin. No other origin was tried.
+
+Plain GETs only. Nothing was funded, signed up, posted, or permitted.
+
+| GET | Status | Bytes | sha256 of the body |
+| --- | ---: | ---: | --- |
+| `/api/neomorphic-contributor-journey/v1/market/profile` | 200 | 3449 | `5d3433c4d64120239eef2aa9bd9f4fe849bbaf360d3767e042a69a1121041ac5` |
+| `/api/neomorphic-contributor-journey/v1/market/accepted-work?limit=20` | 200 | 135 | `c6a47004c3ed441a3cbef69ea8d528ddf8f1c6cf3f5c5e67c77238da4fc3f013` |
+
+Both responses: `content-type: application/json; charset=utf-8`, `cache-control: no-store`, `x-ae-wire-version: c0-1`, `x-ae-server-class: live`.
+
+Live capability: `sourceSha256` `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`, `hostSha256` `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`, `money` `unfunded`, `participation` `voluntary-artifact-v1`, tenant `samedaydesk-private`. `acceptedWork` is the object Root reported. `signerAuthority` is false. The list body is `{"ok":true,"value":{"items":[],"nextCursor":null,"acceptedWorkPublic":true,"publicReads":"0","paidWork":false,"signerAuthority":false}}`. `items` is empty, so no detail GET was sent.
+
+The live host hash is `8f8ce3b3`, the measured installed closure. It is not the proposed f4 pin `6fca4aaa`. The profile `participation.actions` list matches `voluntary-market.mjs:262-264`: the public descriptor omits `permitAcceptedWork` even when publication is on. The mounted evidence is the `acceptedWork` object and the 200 list. This outcome did not POST.
+
+## Query-key 1.1.0, read from the published Neo entry
+
+Published entry `https://neomorphic.io/machine/query-key-1.1.0.json`. Status 200, 2918 bytes, sha256 `9f5b3529b5eab1ba52a3e4d8b4cf91d9d44a7f0f1bfc04e2e5aa47917c78bd51`. Schema `neomorphic.query-key-1.1.0.entry.v1`. `sourceRepository` `epistemedeus/neomorphic-io`. `sourceCommit` `bb78211863af9bfb9d18e71ecc32af4ecb0a0902`. `sourcePath` `tools/query-key-1.1.0`. `license` `CC0-1.0`. `hostedAcquisitionVerified` false. `humanPage` false. `walletCalls` 0. `liveSettlement` false.
+
+The entry names the archive `/downloads/query-key/1.1.0/query-key.tar.gz`. GET 200, 14566 bytes, sha256 `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa`. Twelve members. The corpus member `corpus.json` matches the entry's separate corpus URL: 5219 bytes, sha256 `060c8aa08ca58c665f1b610d4cccbb9800a53f16f242d2f22bed496dd6c201d6`, schema `cc0.query-key-cases.v4`.
+
+`https://neomorphic.io/llms.txt` at the same time was 200, 14196 bytes, sha256 `d4b87c2025d8c9e4d54acef97b340c4fe5dafa83fe66a9b28ca320079d70ebb1`, and it has no query-key line. The versioned machine entry is still published. This outcome does not edit that index.
+
+The unversioned `https://neomorphic.io/machine/query-key.json` is a different publication: 200, 2160 bytes, sha256 `67445e443ec1e6c08f082a135d82d28df168a84c4d9078c8e89caa5310a9d6e7`, `sourceCommit` `027432d7cadd597daecf51de808ed7b0ab0e8f93`, archive 13443 bytes `45e933d2b1f2bd7bc2736142d447c7561a936be4d84f3ab2ea23be6d73f88d6e`. Its corpus URL is schema `cc0.query-key-cases.v3`, 3039 bytes, sha256 `ba40feee52cb1de06f5eb7fab1a25f489d8bc8b1639461987297205d8834461a`, 13 cases. That is not the 1.1.0 archive.
+
+## H124 sources now read
+
+The earlier "no H124 file" line was an input-availability miss. The pilot repository was not readable with the earlier token. The sources at pilot `9d5bf8ef` are in the Lead store and were read:
+
+- `/cursor/stores/bot/n4-cohort2/b4-amend-inputs/H124010-COOPERATIVE-ARTIFACT-HANDBACK-20261103.md`. Ordinary handoff on the existing client: offer, assent, one delivery, requester acceptance, explicit export authorization, grant to a later consumer, export and use. Installed SDS named there is `b28b3c00`. Client 0.3.1 is `accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9`, 30187 bytes. Rights stay explicit. An export is not a customer or revenue.
+- `/cursor/stores/bot/n4-cohort2/b4-amend-inputs/H124-AMENDMENT-1-REQUIREMENTS.md`. The public guide is a normal route for one role at a time. Negative controls and synthetic fixtures stay in private receiving.
+- `query-key-collision.json`, the retained public copy, 2872 bytes, sha256 `491c4562ab9acdb316983ddddd56fcea9df84ffdc1f5a7a54d6f44ff4a654a2f`.
+- `seed-INVENTORY.md`, `seed-LIMITS.md`, `seed-PROVENANCE.md`, `seed-ROOT-RECEIVING.md`, `seed-NEXT.md`.
+
+`seed-PROVENANCE.md` rights text: license `CC0-1.0`, scope `synthetic-or-authorized-reusable-artifact`, attribution `First-party seed. Not a customer and not an independent contributor.` `customerDemand` and `independentContributor` are false. Compact JSON digest of that retained artifact is `7b5e1821cc2f1b513caecca226003095d7e494348f89cfdde577e8b3f1f181a7`. This outcome recomputed the same foundation digest. The seed summary file (63 bytes, file sha256 `246c55e225e138ba118b66abadb3f5465198a7a6d29d54410acf969f77fc9216`) and the private `delivery.json` (714 bytes, file sha256 `c4e6e966c28d99844fb7578b8b109234e8da035a6495d1dbd2fb534c23be4296`) are not in the Lead store. Their preimages were not reconstructed.
+
+## Comparison
+
+The Lead-store `query-key-collision.json` and `vendor/hosted-wallet-market/test/fixtures/h142010/query-key-collision.json` are the same 2872 bytes and the same sha256 `491c4562ab9acdb316983ddddd56fcea9df84ffdc1f5a7a54d6f44ff4a654a2f`. Schema `cc0.query-key-cases.v2`, codec `urllib.parse.urlencode`, 12 cases, 39 strings, canonical JSON 1976 bytes. Those 12 case ids are a subset of the 1.1.0 ids. The file is not a member of the 1.1.0 archive.
+
+The 1.1.0 archive corpus is schema `cc0.query-key-cases.v4`, codec `urllib.parse.quote`, 25 cases, bank length 22, `role` `first-party-seed`, `customerDemand` false, `independentContributor` false. `CC0.txt` in the archive dedicates the corpus and recipe to CC0 1.0 and leaves the upstream MIT sources out. The v3 hosted corpus is a third object, 13 cases, and it is not byte-equal to the seed copy.
+
+## Validators and the fence
+
+The 1.1.0 shape owner is `contract.mjs` `assertCorpus`. Local `node apply.mjs decode --artifact corpus.json` returned ok, schema `cc0.query-key-cases.v4`, 25 cases, `executed` false. The caller shape owner is `execute.py` `read_caller` (`cc0.query-key-caller.v4`). Local `node apply.mjs apply --artifact corpus.json --input examples/next-consumer.json` with no checkouts returned ok, `executed` false, `actual` null, `walletCalls` 0, `connectAttempts` empty. Equality is unknown without the three caller checkouts. That run is not outside use.
+
+The publication fence that would carry a public artifact on the live SDS path is `vendor/hosted-wallet-market/src/accepted-work-publication.mjs`. It is the same blob on `0593026a` and `f4fba79f`. `proposalFrom` on the v4 corpus, with the retained rights object and the private canary evidence, returns `publication_refused`. The first check that fails is line 105: canonical JSON is 4485 bytes and the limit is 4096. The walk would also stop at string 41 (`cases[13].id`, `bare-versus-blank`); the corpus has 90 strings and the limit is 40 (line 111). The empty bank scalar is not the refusal. No smaller object was invented.
+
+The same `proposalFrom` accepts the retained v2 corpus. That is the H142 fixture the mounted test already publishes. It is not the 1.1.0 artifact, and `assertCorpus` would refuse it because the schema, codec, and case count differ.
+
+Digests, foundation digest unless noted as a file sha256:
+
+| Item | Digest |
+| --- | --- |
+| v4 public corpus, foundation | `e2ebad293377bbeb3e3278d2abedc2068e55a8308b0708175dcc10d7c942642b` |
+| v4 corpus file | `060c8aa08ca58c665f1b610d4cccbb9800a53f16f242d2f22bed496dd6c201d6` |
+| Rights object from `seed-PROVENANCE.md` | `efb163e6a44161f61ac538de5fc880b7803a367fc3744c1bbf8970bf37a5d550` |
+| Summary `Approved reusable query comparison sample.` (the sentence `test-h142010-empty-artifact-data.mjs:168` already pairs with the retained corpus) | `b66ce30bd20d3aa540a17d541a19b230eb09f149487ad3478ebfdd777cc64fc2` |
+| Private canary evidence used by that installed harness | `f1d716a2e4472aaef9013802bb7f642d7b6d307de19681c14723636401e19c0a` |
+| Retained v2 corpus, foundation | `7b5e1821cc2f1b513caecca226003095d7e494348f89cfdde577e8b3f1f181a7` |
+
+The v4 foundation digest differs from the canary evidence digest. The 1.1.0 archive has no private-evidence member. The seed `delivery.json` foundation digest is unknown because the file is not in the store.
+
+Rights for an offer, if a fence-accepted artifact were used: `{"license":"CC0-1.0","scope":"synthetic-or-authorized-reusable-artifact","attribution":"First-party seed. Not a customer and not an independent contributor."}`. The license const and scope const are the live path's own checks at `voluntary-market.mjs:167` and `accepted-work-publication.mjs:150`.
+
+## Command packet
+
+Anonymous reads are supported on the live process. They are not Root writes. This outcome already ran them.
+
+The ordinary write packet for the 1.1.0 corpus is not supported on that live path. `permitAcceptedWork` of this corpus does not pass the installed fence, so no permit command is issued for it. Root writes below are named so the boundary is visible. None were run. None should be run for this corpus.
+
+| Step | Command | Who | Root write | Live support for the v4 corpus |
+| --- | --- | --- | --- | --- |
+| Profile | `node vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs profile --origin https://samedaydesk.com` | Any caller | no | Yes. Observed 200 with `acceptedWork` |
+| Accepted-work list | `node vendor/hosted-wallet-market/client/accepted-work-source.mjs discover-accepted --origin https://samedaydesk.com --limit 20` | Anonymous | no | Yes. Observed 200, empty `items`, no detail |
+| Signup, post, interest, offer, assent, deliver, review | Cold client `signup`, `post`, `interest`, `act` on the live origin, first-party accounts Root already holds | Requester and contributor | yes | The routes exist on the live source hash. They do not make this corpus publishable |
+| Two permits of one proposal | Source client `permit` with `publicationConsent` true, the v4 corpus, and the digests above | Requester, then contributor | yes | No. Local `proposalFrom` returns `publication_refused` before a commit |
+| Anonymous artifact GET | Source client `artifact` | Anonymous | no | No item exists. The list is empty |
+
+f4 is not required for the live reads, and it does not remove the fence refusal. Enrollment is not required for the reads. No publish, provider, store, config, or human-page change was made.
