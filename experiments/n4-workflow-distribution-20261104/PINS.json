@@ -1,0 +1,92 @@
+{
+  "schema": "n4.workflow-distribution.pins.v1",
+  "workflowVersion": "1",
+  "embed": {
+    "commit": "1003b9ec6c3d46826f54a398fce4bb6d0821596f",
+    "path": "server/lib/observatory/maintained-capability.js",
+    "inRepo": true
+  },
+  "recur": {
+    "commit": "da769f7870e494bb583e31766a477a2ff974fc10",
+    "path": "tools/result-reuse/cli.mjs",
+    "role": "direct-only",
+    "inRepo": true
+  },
+  "native": {
+    "recipeCommit": "200d6765480f5babd4c9c61e01a0b3d2ac988757",
+    "recipePath": "tools/recurring-job-recipes/recipes/source-change-alert.mjs",
+    "recipeCli": "tools/recurring-job-recipes/cli.mjs",
+    "archiveCommit": "51b950f045555be8965eaeb6fc713e247a0ebdd7",
+    "archivePath": "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz",
+    "archiveSha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+    "archiveBytes": 5255824,
+    "rootName": "useful-jobs-1.4.7",
+    "jobId": "page-change-offline-job"
+  },
+  "dify": {
+    "inThisRepoHistory": false,
+    "repository": "epistemedeus/dify-table-csv",
+    "commit": "a31b79541838c3d0023ee1af6150fae8a7e1cb8d",
+    "version": "0.1.2",
+    "checker": "h64314.table_csv.v1",
+    "upstreamNotice": "assets/dify/SOURCE-NOTICE.txt",
+    "upstreamRepository": "epistemedeus/neomorphic-io",
+    "upstreamPath": "examples/dify-table-csv"
+  },
+  "ghost": {
+    "inThisRepoHistory": false,
+    "repository": "epistemedeus/ghost-continuity",
+    "commit": "3f0b25b57dc4639892899ba34439dbb6d9f67938",
+    "version": "0.1.0",
+    "upstreamNotice": "assets/ghost/SOURCE-NOTICE.txt",
+    "upstreamRepository": "epistemedeus/neomorphic-io",
+    "upstreamPath": "examples/ghost-continuity"
+  },
+  "files": [
+    {
+      "path": "assets/dify/table_csv.py",
+      "sha256": "ae16c9620d57a46961889b95403003e396fb45cfa3811902c2a2b8b7e85f6677",
+      "bytes": 15507
+    },
+    {
+      "path": "assets/dify/reader-table-csv.dsl.yml",
+      "sha256": "c7618a5f2dcc77060c94c0d03ead5dabf6fc3932a7beaa72a3a12ee4336aeb79",
+      "bytes": 46582
+    },
+    {
+      "path": "assets/dify/LICENSE",
+      "sha256": "238cf73a0312a806fd20a920f17422f666873f9d24e7af500211bb6658f8ef49",
+      "bytes": 1112
+    },
+    {
+      "path": "assets/dify/SOURCE-NOTICE.txt",
+      "sha256": "ae01c304764f870cb7c5226c62cfeb68b3dc56c23427f90a78c37af22dcaf5d2",
+      "bytes": 1489
+    },
+    {
+      "path": "assets/ghost/sync.mjs",
+      "sha256": "f1d0388ddd476d0811d6a5a29a030c10711ea98e2dad028145fbecf4bd34c940",
+      "bytes": 6681
+    },
+    {
+      "path": "assets/ghost/destination.mjs",
+      "sha256": "c2823f7024b3146eb6a6add8219ac0fbd9857bcbb547dc469664927fcda44121",
+      "bytes": 1623
+    },
+    {
+      "path": "assets/ghost/ghost-v6.73.json",
+      "sha256": "201956db347e42240ed9f01e7b5c4d9bfc284e9da74b89e6eddeecdadcdd871a",
+      "bytes": 2811
+    },
+    {
+      "path": "assets/ghost/LICENSE",
+      "sha256": "42b41d607eb19f5fb4bb8b8880109f12e0ad8963d7f7e96764358d5aaa675029",
+      "bytes": 1114
+    },
+    {
+      "path": "assets/ghost/SOURCE-NOTICE.txt",
+      "sha256": "1980d671f8c41dbac977f0ae68aff9a48b4ee92c6d3cfd7603a296563e097b57",
+      "bytes": 827
+    }
+  ]
+}

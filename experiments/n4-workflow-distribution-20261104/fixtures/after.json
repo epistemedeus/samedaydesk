@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "product": "samedaydesk-extract-batch",
+  "schemaVersion": "samedaydesk.extract-batch.v0",
+  "quote": {
+    "amountAtomic": "10000",
+    "displayUsdc": "0.01",
+    "meaning": "Introductory flat 0.01 USDC batch quote for a bounded 1-5 URL attempt. Not a per-URL success promise."
+  },
+  "jobId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "jobStatus": "completed",
+  "stopReason": null,
+  "partial": false,
+  "sources": [
+    {
+      "id": "harbor-light",
+      "source": "https://example.com/catalog/harbor-light/",
+      "status": "success",
+      "data": {
+        "title": "Harbor light",
+        "description": "Public catalog page"
+      },
+      "notes": [],
+      "error": null,
+      "provenance": {
+        "transport": "fixture",
+        "completedAt": "2026-09-09T08:00:00.000Z",
+        "fetchedAt": "2026-09-09T08:00:00.000Z",
+        "finalUrl": "https://example.com/catalog/harbor-light/",
+        "httpStatus": 200
+      }
+    }
+  ],
+  "accounting": {
+    "requests": 1,
+    "bytes": 400,
+    "wallMs": 10,
+    "retries": 0,
+    "succeeded": 1,
+    "partial": 0,
+    "failed": 0,
+    "unknown": 0,
+    "skippedDuplicate": 0
+  },
+  "costInputs": {
+    "admittedBodyBytes": 400,
+    "requests": 1,
+    "wallMs": 10,
+    "hostingCosts": "unknown",
+    "modelCosts": "none",
+    "monetaryMargin": null
+  },
+  "charged": false,
+  "boundary": {
+    "guaranteedUrlSuccess": false,
+    "introductoryPrice": true,
+    "sourceFetchBeforeAuthorization": false,
+    "automaticRetries": false
+  }
+}
