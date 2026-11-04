@@ -43,13 +43,27 @@ jobs:
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
-      # ROOT10940_CI_PACKET is the nonsecret repo variable
-      # pilot.participation.ci-packet.v1. An absent variable is an explicit
-      # missing-input refusal. This step does not synthesize the three files.
+      # Each candidate selects the approved packet for its own source and
+      # host fingerprints. The global ROOT10940_CI_PACKET variable remains
+      # one historical input and is not current for a different fingerprint.
+      # Selection stays red until Root enrolls this candidate. Do not rewrite
+      # the trusted expected hash or point the variable at another fingerprint.
+      - name: Check source-bound acquisition selection
+        run: AE14_PG_BIN="$(pg_config --bindir)" node --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs
       - name: Receive the independent acquisition packet
         env:
           ROOT10940_CI_PACKET: ${{ vars.ROOT10940_CI_PACKET }}
-        run: AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/decode-root10940-ci-packet.mjs
+        run: |
+          set -euo pipefail
+          selected="${RUNNER_TEMP}/root10940-selected-packet.json"
+          enrollment="${RUNNER_TEMP}/root10940-enrollment.json"
+          AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/select-root10940-ci-packet.mjs \
+            --catalog server/scripts/fixtures/root10940-approved-ci-packets \
+            --index server/scripts/fixtures/root10940-approved-ci-packets/index.json \
+            --legacy-env \
+            --out "$selected" \
+            --enrollment-out "$enrollment"
+          AE14_PG_BIN="$(pg_config --bindir)" node server/scripts/decode-root10940-ci-packet.mjs --packet "$selected"
       - run: node --test server/scripts/test-machine-guide-links.js
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:pulse
       - run: PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task

@@ -228,7 +228,16 @@ test('cold independent account roles complete voluntary delivery, requester deci
     await host.query('UPDATE cj227_earned_work.ae14_market_tasks SET requester_id=$2 WHERE id=$1',[task,current.requester_id]);
     assert.equal((await call(contributor,'reviewVoluntary',{...common(),artifactDigest:state.artifactDigest,accepted:true,exportAuthorized:true,reason:'Self claimed receipt'},id())).status,403);
     const quote=await call(requester,'quote',{taskId:task,contributorId:contributor.accountId,gross:'1',railCostCap:'0',expiresAt:new Date(Date.now()+60000).toISOString()},id());
-    assert.equal(quote.body.code,'voluntary_task_cannot_be_funded');
+    // Unfunded quote reaches requirePaid before the voluntary-task gate on the
+    // current source. The cafd-era fingerprint keeps the older refusal. Any
+    // other fingerprint fails closed instead of accepting a success.
+    const quoteBoundary={
+      '5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2':'voluntary_task_cannot_be_funded',
+      '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82':'qualified_selection_required',
+    }[anchor.requiredProfile.sourceSha256];
+    assert.equal(typeof quoteBoundary,'string');
+    assert.equal(quote.body.code,quoteBoundary);
+    assert.notEqual(quote.status,200);
     await assert.rejects(host.boot({tenant:'root10940-other-tenant'}), error => (error.codeName||error.message)==='tenant_refused');
     assert.equal((await host.query('SELECT tenant FROM hosted_wallet_market.installation WHERE id IS TRUE')).rows[0].tenant,'root10940-owner-qa-fixture');
     await host.boot();
