@@ -1,15 +1,36 @@
 import { Router } from "express";
+import crypto from "node:crypto";
 import { flushPulseSnapshot, pulseSnapshot, recordClientEvent } from "../lib/pulse.js";
 
 const router = Router();
 
-// Aggregate, non-PII traffic snapshot. Token-gated only to keep it out of casual
-// view; the data is low-sensitivity (no personal data, just counts + referers).
-const TOKEN = process.env.PULSE_TOKEN || "p7f3a9c2e";
+// Aggregate, non-PII traffic snapshot. Reads require a configured token.
+// Event writes stay public and credential-free.
+function configuredPulseToken() {
+  const value = process.env.PULSE_TOKEN;
+  if (typeof value !== "string") return null;
+  const token = value.trim();
+  if (token.length < 16) return null;
+  return token;
+}
+
+function presentedTokenMatches(presented, expected) {
+  if (typeof presented !== "string") return false;
+  const left = Buffer.from(presented, "utf8");
+  const right = Buffer.from(expected, "utf8");
+  if (left.length !== right.length) return false;
+  return crypto.timingSafeEqual(left, right);
+}
 
 router.get("/", (req, res) => {
-  if ((req.query.k || "") !== TOKEN) return res.status(404).json({ error: "Not found" });
   res.set("Cache-Control", "no-store");
+  const token = configuredPulseToken();
+  if (token === null) {
+    return res.status(503).json({ error: "Pulse read unconfigured" });
+  }
+  if (!presentedTokenMatches(req.query.k, token)) {
+    return res.status(404).json({ error: "Not found" });
+  }
   res.json(pulseSnapshot());
 });
 

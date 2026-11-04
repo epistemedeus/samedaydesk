@@ -3,7 +3,7 @@
   "descriptorRepository": "epistemedeus/samedaydesk",
   "descriptorCommit": "unreceived",
   "descriptorPath": "docs/receiving/h145010-useful-tool-measurement-20261104/proposed-descriptor.json",
-  "descriptorSha256": "2066f94ad3bf555bf5fe46314aad7f4827d5580dac3ca14b4942529781d991c2",
+  "descriptorSha256": "ce89812d7befe5f72d9de64fdf70c2471317a2c81a60a81f99790967d355a9f6",
   "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
   "clientBytes": 28081,
   "source": {
@@ -15,6 +15,6 @@
     "money": "unfunded",
     "participation": "voluntary-artifact-v1",
     "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
-    "hostSha256": "8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654"
+    "hostSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
   }
 }

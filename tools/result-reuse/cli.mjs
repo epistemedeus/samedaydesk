@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from "node:fs";
-import { exportReuse, previewReuse } from "./src/export.mjs";
+import { bindUsefulDecision, decideOrReuse, exportReuse, previewReuse } from "./src/export.mjs";
 import { INPUT_MAX_BYTES } from "./src/limits.mjs";
 
 const args = parseArgs(process.argv.slice(2));
@@ -27,18 +27,55 @@ const options = {
   correctsSequence: args.correctsSequence,
   note: args.note,
   optIn: args.optIn,
+  optInWithdrawn: args.optInWithdrawn,
+  horizonHours: args.horizonHours,
 };
 
-const result = args.command === "export" ? exportReuse(input, options) : previewReuse(input, options);
-if (!result.ok) fail(result.message);
-if (args.command === "export") {
+let decision;
+if (args.command === "decide-or-reuse" && args.decision) {
+  try {
+    decision = readBoundedJson(args.decision);
+  } catch {
+    fail("cannot read --decision as bounded JSON");
+  }
+}
+let produced;
+if (args.command === "decide-or-reuse" && args.produced) {
+  try {
+    produced = readBoundedJson(args.produced);
+  } catch {
+    fail("cannot read --produced as bounded JSON");
+  }
+}
+
+const result = args.command === "export"
+  ? exportReuse(input, options)
+  : args.command === "decide-or-reuse"
+    ? (produced
+      ? bindUsefulDecision(input, produced, options)
+      : decideOrReuse(decision, input, options))
+    : previewReuse(input, options);
+if (!result.ok) {
+  if (args.command === "decide-or-reuse") {
+    process.stderr.write(`${JSON.stringify(result)}\n`);
+    process.exit(1);
+  }
+  fail(result.message);
+}
+if (args.command === "export" || (args.command === "decide-or-reuse" && args.produced)) {
   try {
     writeFileSync(args.out, `${JSON.stringify(result.observation, null, 2)}\n`);
   } catch {
     fail("cannot write --out");
   }
 }
-process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+if (args.command === "decide-or-reuse" && args.produced) {
+  const receipt = { ...result };
+  delete receipt.observation;
+  process.stdout.write(`${JSON.stringify(receipt, null, 2)}\n`);
+} else {
+  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+}
 
 function fail(message) {
   process.stderr.write(`${JSON.stringify({ ok: false, message })}\n`);
@@ -52,8 +89,16 @@ A schema-valid export is user-selected unverified evidence, never automatic publ
 
 node tools/result-reuse/cli.mjs preview --input <result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> [--select title,description]
 node tools/result-reuse/cli.mjs export --input <result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --opt-in --out <observation.json>
+node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
+node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --decision <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
 
-Does not fetch, pay, or contact the merchant. Default outputs of page-change and record stay intact.`;
+decide-or-reuse binds a useful source-change-alert decision to the public manifest that exists before that producer runs.
+A hit returns that saved decision and its provenance. It does not run the producer.
+A changed or missing binding returns recompute-required and does not invent a fresh answer.
+Naming --producer does not execute it.
+An exported result observation is legacy input and is not upgraded.
+Does not fetch, pay, contact the merchant, or write a new store.
+Default outputs of page-change and record stay intact.`;
 }
 
 function parseArgs(argv) {
@@ -62,6 +107,7 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") out.help = true;
     else if (arg === "--opt-in") out.optIn = true;
+    else if (arg === "--withdraw-opt-in") out.optInWithdrawn = true;
     else if (arg === "--input") out.input = optionValue(argv, ++i);
     else if (arg === "--out") out.out = optionValue(argv, ++i);
     else if (arg === "--select") out.select = optionValue(argv, ++i).split(",").map((item) => item.trim()).filter(Boolean);
@@ -73,11 +119,29 @@ function parseArgs(argv) {
     else if (arg === "--class") out.recordClass = optionValue(argv, ++i);
     else if (arg === "--corrects-sequence") out.correctsSequence = positiveInteger(optionValue(argv, ++i));
     else if (arg === "--note") out.note = optionValue(argv, ++i);
+    else if (arg === "--decision") out.decision = optionValue(argv, ++i);
+    else if (arg === "--produced") out.produced = optionValue(argv, ++i);
+    else if (arg === "--producer") out.producer = optionValue(argv, ++i);
+    else if (arg === "--horizon") out.horizonHours = horizonHours(optionValue(argv, ++i));
     else fail("unknown option");
   }
+  if (out.optIn && out.optInWithdrawn) fail("opt-in and withdrawal conflict");
   if (out.command === "export" && !out.out) fail("export requires --out");
-  if (out.command && out.command !== "preview" && out.command !== "export" && !out.help) {
-    fail("command must be preview or export");
+  if (out.produced && out.command !== "decide-or-reuse") fail("--produced is only valid for decide-or-reuse");
+  if (out.producer && out.command !== "decide-or-reuse") fail("--producer is only valid for decide-or-reuse");
+  if (out.command === "decide-or-reuse" && out.produced && out.decision) fail("decide-or-reuse accepts either --decision or --produced");
+  if (out.command === "decide-or-reuse" && !out.decision && !out.produced && !out.help) {
+    fail("decide-or-reuse requires --decision or --produced");
+  }
+  if (out.produced && !out.out) fail("binding a decision requires --out");
+  if (
+    out.command
+    && out.command !== "preview"
+    && out.command !== "export"
+    && out.command !== "decide-or-reuse"
+    && !out.help
+  ) {
+    fail("command must be preview, export, or decide-or-reuse");
   }
   if (out.command && !out.input && !out.help) fail("requires --input");
   return out;
@@ -93,6 +157,13 @@ function positiveInteger(value) {
   if (!/^\d+$/.test(value)) fail("sequence options require positive integers");
   const number = Number(value);
   if (!Number.isSafeInteger(number) || number < 1) fail("sequence options require positive integers");
+  return number;
+}
+
+function horizonHours(value) {
+  if (!/^\d+(?:\.\d+)?$/.test(value)) fail("horizon requires a non-negative number of hours");
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) fail("horizon requires a non-negative number of hours");
   return number;
 }
 
