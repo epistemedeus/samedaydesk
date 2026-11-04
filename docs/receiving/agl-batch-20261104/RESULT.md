@@ -319,3 +319,66 @@ After the edit, the same command ran both files. Exit 0. tests 32, pass 32, fail
 `git merge-tree --write-tree` of this head with `1003b9ec` exited 0. The merged `package.json` keeps both lines: `test:result-reuse` names the two result-reuse files, and `test:observatory` still ends with `server/scripts/test-capability-owner-lookup.js`.
 
 `record-fields.test.mjs` remains outside `npm run test:result-reuse`, as it was at `a83647de`. The earlier glob `tools/result-reuse/test/*.test.mjs` is still the command that covers all three files.
+
+## RECUR source gate
+
+Same rules: no production, spend, publication, pull request, or merge. CONTRIB `633a1ced` and EMBED `1003b9ec` were not touched. This section is the only edit on the receiving branch.
+
+Successor of `369dfbf5c27de5e72db7554550b219c7b1b1629c` on `codex/agl-recur-amend-20261104`.
+
+- Head: `da769f7870e494bb583e31766a477a2ff974fc10`
+- Tree: `e34d2a883546e5c8b1b167d831ca0c7d6526b9b6`
+- Parent: `369dfbf5c27de5e72db7554550b219c7b1b1629c`
+
+Files changed: `package.json`, `tools/result-reuse/README.md`, `tools/result-reuse/cli.mjs`, `tools/result-reuse/src/export.mjs`, `tools/result-reuse/src/pins.mjs`, `tools/result-reuse/test/decision-reuse.test.mjs`, `tools/result-reuse/test/source-gate.test.mjs`.
+
+`tools/result-reuse/src/project.mjs` and `tools/result-reuse/src/map.mjs` are unchanged. `previewReuse` is still called only by `exportReuse`. `decideOrReuse` no longer calls it.
+
+### Countercase
+
+At `369dfbf5`, `node --test tools/result-reuse/test/source-gate.test.mjs` exited 1. tests 5, pass 0, fail 5, skipped 0. `duration_ms 293.690604`.
+
+The first assertion failed because `decideOrReuse` answered the before-work manifest with `unrecognized result; supply extract-batch, page-change brief, record report, or n45 page-change result JSON`. A hit required that finished result. The CLI cases failed with `unknown option` because `--produced` did not exist.
+
+After the fix, the same file exited 0. tests 5, pass 5, fail 0, skipped 0. `duration_ms 721.052712`. The countercase now returns the saved useful decision (`outcome` `unchanged`, recovery `keep_prior`) from the before-work manifest. Its `inputDigest` is the manifest digest, not the result content hash `sha256:fixture-example-domain-v1`.
+
+### Tests
+
+`npm run test:result-reuse` exited 0. tests 37, pass 37, fail 0, skipped 0. `duration_ms 709.690781`.
+
+- `export.test.mjs`: exit 0. tests 23, pass 23, fail 0, skipped 0. `duration_ms 229.34046`.
+- `decision-reuse.test.mjs`: exit 0. tests 9, pass 9, fail 0, skipped 0. `duration_ms 275.367033`. Legacy result observations now expect `unbound_legacy` rather than a result-hash hit. The preview and export byte hashes in that file still match.
+- `source-gate.test.mjs`: exit 0. tests 5, pass 5, fail 0, skipped 0. `duration_ms 721.052712`.
+- `record-fields.test.mjs` is still outside the maintained script. Run on its own: exit 0. tests 2, pass 2, fail 0, skipped 0. `duration_ms 57.141582`.
+
+`git merge-tree --write-tree` of `da769f78` with `1003b9ec` exited 0. The merged `package.json` keeps this `test:result-reuse` line and EMBED's `test:observatory` line.
+
+### CLI excerpts
+
+Hit, after one real `source-change-alert` run, with the producer not executed:
+
+```json
+{"ok":true,"verdict":"reuse","inputDigest":"sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c","revision":"rev_1","recipeId":"source-change-alert","decision":{"statement":"source-change-alert unchanged; recovery keep_prior","useful":{"outcome":"unchanged","recovery":{"action":"keep_prior"}}}}
+```
+
+Changed capture, recompute-required, with no invented outcome:
+
+```json
+{"ok":true,"verdict":"recompute","reason":"digest_mismatch","message":"before-work public input digest does not match the saved decision","inputDigest":"sha256:efdc2055bd751884b31d7de8bcbf9d8de87a57784eb783d94311fe0ece498664","savedInputDigest":"sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c","producerInvoked":false}
+```
+
+### What was avoided, and the capture cost
+
+The useful job is the existing `source-change-alert` recipe CLI. It ran once for the unchanged fixture pair. That run measured `producerRunNs=51043967`. The hit then named a stub that appends to a counter file and throws. Executing the stub directly appended one mark and exited non-zero. During the hit the counter stayed empty, so the producer was not invoked. The CLI field `producerInvoked: false` is not that proof.
+
+On that same hit the manifest digest measured `inputCaptureNs=79183` and `inputCaptureBytes=527`. A later hit of the same manifest measured `inputCaptureNs=135143` for the same 527 bytes. The digest work and the producer run are separate measurements. They are not a priced saving.
+
+The same file also covers a changed capture, a recipe version change, a revision change, the stale horizon and the exact horizon, withdrawn opt-in, an observation with its useful decision removed, a private `token` that is absent from the refusal and from the stored observation, a changed-capture recovery (`review_and_sequence`), and an independent CLI run on a new North dock capture.
+
+### Preserved bytes
+
+`git diff` for `project.mjs` and `map.mjs` is empty. `decision-reuse.test.mjs` still checks the previous preview and export stdout and file hashes, and that test passed.
+
+### Unknowns
+
+Live page bytes beyond the supplied manifest, a distinct later accepted task taking this reuse, recompute cost avoided net of upkeep, public-safe certification, and merchant acceptance stay unestablished. `recomputeCostAvoidedNetOfUpkeep` remains `costs_unknown`. Only `source-change-alert` is accepted as the before-work manifest. Other useful jobs are not bound by this change.
