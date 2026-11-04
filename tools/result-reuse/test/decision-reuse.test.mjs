@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { decideOrReuse, previewReuse } from "../src/export.mjs";
+import { bindUsefulDecision, decideOrReuse, previewReuse } from "../src/export.mjs";
 import { DECISION_REASONS, OBSERVATION_SCHEMA } from "../src/pins.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -44,23 +44,18 @@ function sha256(text) {
   return createHash("sha256").update(text).digest("hex");
 }
 
-test("hit reuses a saved decision for the same public inputs", () => {
+test("a preview of a finished result stays an unbound legacy observation", () => {
   const input = load("n45-page-change-result.json");
   const preview = savedFrom(input);
+  assert.equal(preview.observation.source.version.startsWith("sha256:"), true);
   const verdict = decideOrReuse(preview.observation, input, baseOptions());
   const wrapped = decideOrReuse(preview, input, baseOptions());
-  assert.equal(verdict.ok, true);
-  assert.equal(verdict.verdict, "reuse");
-  assert.equal(verdict.inputDigest, preview.observation.source.version);
-  assert.equal(verdict.inputDigest.startsWith("sha256:"), true);
-  assert.equal(verdict.sourceUri, "https://example.com/");
-  assert.equal(verdict.revision, "rev_1");
-  assert.equal(verdict.clock, CLOCK);
-  assert.equal(verdict.decision.schema, OBSERVATION_SCHEMA);
-  assert.equal(verdict.decision.observationId, preview.observation.observationId);
-  assert.equal(verdict.decision.inputDigest, verdict.inputDigest);
-  assert.equal(wrapped.verdict, "reuse");
-  assert.equal(wrapped.inputDigest, verdict.inputDigest);
+  assert.equal(verdict.ok, true, verdict.message);
+  assert.equal(verdict.verdict, "recompute");
+  assert.equal(verdict.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(verdict.decision, undefined);
+  assert.equal(wrapped.verdict, "recompute");
+  assert.equal(wrapped.reason, DECISION_REASONS.unboundLegacy);
   assert.equal(verdict.costBaseline.primary.kind, "costs_unknown");
   assert.equal(verdict.costBaseline.primary.asOf, "2026-09-09");
   assert.equal(verdict.liveMetric.distinctLaterAcceptedTasksTakingReuse, null);
@@ -68,40 +63,41 @@ test("hit reuses a saved decision for the same public inputs", () => {
   assert.equal(verdict.liveMetric.observedAcceptedTaskLedger, false);
   assert.equal(verdict.publicSafeCertified, false);
   assert.ok(verdict.cannotEstablish.some((item) => /accepted task/.test(item)));
+  assert.equal(preview.observation.schema, OBSERVATION_SCHEMA);
 });
 
-test("digest miss when public page bytes change", () => {
+test("a changed finished result is still legacy input, not a before-work digest miss", () => {
   const input = load("n45-page-change-result.json");
   const preview = savedFrom(input);
   const changed = structuredClone(input);
   changed.contentHash = `sha256:${"ab".repeat(32)}`;
   changed.bytes = input.bytes + 1;
+  const changedPreview = savedFrom(changed);
+  assert.notEqual(changedPreview.observation.source.version, preview.observation.source.version);
   const verdict = decideOrReuse(preview.observation, changed, baseOptions());
-  assert.equal(verdict.ok, true);
+  assert.equal(verdict.ok, true, verdict.message);
   assert.equal(verdict.verdict, "recompute");
-  assert.equal(verdict.reason, DECISION_REASONS.digestMismatch);
-  assert.notEqual(verdict.inputDigest, preview.observation.source.version);
-  assert.equal(verdict.savedInputDigest, preview.observation.source.version);
+  assert.equal(verdict.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(verdict.decision, undefined);
   assert.equal(verdict.liveMetric.recomputeCostAvoidedNetOfUpkeep, "costs_unknown");
 });
 
-test("stale clock beyond the recipe window recomputes and the exact horizon still reuses", () => {
+test("a legacy result observation is not reused inside or outside the recipe window", () => {
   const input = load("n45-page-change-result.json");
   const preview = savedFrom(input);
   const onWindow = decideOrReuse(preview.observation, input, baseOptions({
     clock: "2026-09-16T08:00:00.000Z",
   }));
-  assert.equal(onWindow.verdict, "reuse");
-  assert.equal(onWindow.clock, CLOCK);
+  assert.equal(onWindow.verdict, "recompute");
+  assert.equal(onWindow.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(onWindow.decision, undefined);
   const stale = decideOrReuse(preview.observation, input, baseOptions({
     clock: "2026-09-16T08:00:01.000Z",
   }));
-  assert.equal(stale.ok, true);
+  assert.equal(stale.ok, true, stale.message);
   assert.equal(stale.verdict, "recompute");
-  assert.equal(stale.reason, DECISION_REASONS.staleClock);
-  assert.equal(stale.recipeWindow.stale, true);
-  assert.equal(stale.recipeWindow.reason, "prior_older_than_horizon");
-  assert.ok(stale.recipeWindow.ageHours > WEEK);
+  assert.equal(stale.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(stale.decision, undefined);
 });
 
 test("withdrawn opt-in recomputes instead of reusing", () => {
@@ -118,17 +114,39 @@ test("withdrawn opt-in recomputes instead of reusing", () => {
 });
 
 test("oversize public input keeps the existing limits and does not reuse", () => {
-  const wide = {
-    status: "success",
-    ok: true,
-    networkUsed: false,
-    invalidRecords: [],
-    records: [{ status: "success", fields: { title: "x".repeat(40_000) } }],
+  const manifest = {
+    recipeId: "source-change-alert",
+    recipeVersion: "samedaydesk.recurring-job-recipe-result.v1",
+    fields: ["title"],
+    prior: {
+      sha256: "sha256:prior",
+      sequence: 1,
+      createdAt: CLOCK,
+      payload: { title: "Example Domain" },
+    },
+    capture: {
+      url: "https://example.com/",
+      contentHash: "sha256:wide",
+      title: "Example Domain",
+    },
   };
-  const payload = decideOrReuse({}, wide, baseOptions());
+  const wide = {
+    schema: manifest.recipeVersion,
+    recipeId: manifest.recipeId,
+    outcome: "unchanged",
+    recovery: { action: "keep_prior", operatorNext: "Keep the prior." },
+    evidence: {
+      kind: "field_diff",
+      contentHash: "sha256:wide",
+      changed: [],
+      unchanged: [{ field: "title", value: "x".repeat(40_000) }],
+    },
+  };
+  const payload = bindUsefulDecision(manifest, wide, baseOptions());
   assert.equal(payload.ok, false);
   assert.match(payload.message, /32768/);
   assert.notEqual(payload.verdict, "reuse");
+  assert.notEqual(payload.action, "bound");
 
   const huge = { blob: "y".repeat(1_048_577) };
   const capped = decideOrReuse({}, huge, baseOptions());
@@ -137,17 +155,19 @@ test("oversize public input keeps the existing limits and does not reuse", () =>
   assert.notEqual(capped.verdict, "reuse");
 });
 
-test("a different subject and a new revision each recompute", () => {
+test("a legacy result observation is not upgraded when the subject or revision differs", () => {
   const input = load("n45-page-change-result.json");
   const preview = savedFrom(input);
   const subject = decideOrReuse(preview.observation, input, baseOptions({
     subject: "other-public-subject",
   }));
   assert.equal(subject.verdict, "recompute");
-  assert.equal(subject.reason, DECISION_REASONS.subjectMismatch);
+  assert.equal(subject.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(subject.decision, undefined);
   const revision = decideOrReuse(preview.observation, input, baseOptions({ sequence: 2 }));
   assert.equal(revision.verdict, "recompute");
-  assert.equal(revision.reason, DECISION_REASONS.revisionChanged);
+  assert.equal(revision.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(revision.decision, undefined);
 });
 
 test("a private field is rejected and its value is not echoed", () => {
@@ -185,9 +205,9 @@ test("CLI decide-or-reuse hit and withdrawn opt-in", () => {
   });
   assert.equal(hit.status, 0, hit.stderr);
   const hitBody = JSON.parse(hit.stdout);
-  assert.equal(hitBody.verdict, "reuse");
-  assert.equal(hitBody.revision, "rev_1");
-  assert.equal(hitBody.sourceUri, "https://example.com/");
+  assert.equal(hitBody.verdict, "recompute");
+  assert.equal(hitBody.reason, DECISION_REASONS.unboundLegacy);
+  assert.equal(hitBody.decision, undefined);
 
   const withdrawn = spawnSync(process.execPath, [cli, "decide-or-reuse", ...common, "--withdraw-opt-in"], {
     encoding: "utf8",

@@ -29,46 +29,60 @@ explicit sequence. N54 import is later composition work.
 
 ## Decide or reuse
 
-`decide-or-reuse` compares a saved observation with a later public result. It
-does not add a store, a network call, a payment, or a schema family. The saved
-decision is keyed by the digest of the projected public inputs
-(`source.version`, a SHA-256 of those inputs). The caller supplies the same
-task id, subject, revision sequence, and clock used for export, plus a recipe
-window in hours. The window is the recurring-job stale baseline: a saved clock
-older than the supplied horizon is recomputed. The helper does not invent the
-horizon.
+`decide-or-reuse` binds one useful `source-change-alert` decision to the public
+manifest that exists before that producer runs. It does not add a store, a
+network call, a payment, or a schema family. The manifest carries the recipe
+id, the recipe version, the prior public capture, and the current public
+capture. The saved observation's `source.version` is the digest of that
+manifest. The useful outcome, recovery, and field diff are stored on the same
+observation and returned on a hit.
+
+Preview and export are unchanged. An observation they write is an unbound
+result record. It is not upgraded into a before-work decision.
 
 ```bash
 node tools/result-reuse/cli.mjs decide-or-reuse \
+  --input before-work.json \
+  --produced source-change-alert-result.json \
+  --out /tmp/reuse-observation.json \
+  --task-id source-change-example \
+  --subject source-change-example-decision \
+  --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z \
+  --horizon 168 \
+  --opt-in
+
+node tools/result-reuse/cli.mjs decide-or-reuse \
+  --input before-work.json \
   --decision /tmp/reuse-observation.json \
-  --input tools/result-reuse/fixtures/n45-page-change-result.json \
-  --task-id n45-example-com \
-  --subject n45-example-com-result \
+  --task-id source-change-example \
+  --subject source-change-example-decision \
   --sequence 1 \
   --clock 2026-09-09T08:00:00.000Z \
   --horizon 168 \
   --opt-in
 ```
 
-`--decision` is an observation previously written by `export`, or a preview
-envelope that contains one. `--opt-in` affirms that the earlier opt-in is still
-in force. `--withdraw-opt-in` records that it was withdrawn.
+`--produced` is the decision the useful job already returned. `--decision` is
+the bound observation written by the first command. `--opt-in` affirms that
+the earlier opt-in is still in force. `--withdraw-opt-in` records that it was
+withdrawn. `--producer` may name the job, and this command never executes it.
 
 | Verdict | When |
 | --- | --- |
-| `reuse` | Public digest, task and subject identity, revision, opt-in, and clock all match. Returns the decision, input digest, source URI, revision, and clock. |
-| `recompute` | Reason is `digest_mismatch` (changed public page bytes), `revision_changed`, `stale_clock`, `subject_mismatch`, or `opt_in_withdrawn`. |
+| `reuse` | Before-work digest, recipe, task and subject identity, revision, opt-in, and clock all match. Returns the useful saved decision and its provenance. |
+| `recompute` | Reason is `digest_mismatch`, `recipe_changed`, `revision_changed`, `stale_clock`, `subject_mismatch`, `opt_in_withdrawn`, `unbound_legacy`, `invalid_saved_state`, or `input_not_before_work`. No fresh answer is invented. |
 | `rejected` | A private field is present. It is not hashed into the decision. The top-level N45 boolean `payment` marker remains an origin flag. |
 
 The cost baseline is the recurring-job note for `source-change-alert`: offline
 compare does not invoke a merchant charge, and operator compute stays
 `costs_unknown`. The live metric on every verdict is unset:
 `distinctLaterAcceptedTasksTakingReuse` is null and
-`recomputeCostAvoidedNetOfUpkeep` is `costs_unknown`. A verdict shows that the
-supplied public inputs match or miss the saved decision. It cannot establish
-that live page bytes beyond that input are unchanged, that a later accepted
-task took the reuse, that recompute cost was avoided net of upkeep, or that the
-result is public-safe or accepted by a merchant.
+`recomputeCostAvoidedNetOfUpkeep` is `costs_unknown`. A hit shows that this
+caller supplied the same before-work manifest. It cannot establish that live
+page bytes beyond that manifest are unchanged, that a later accepted task took
+the reuse, that recompute cost was avoided net of upkeep, or that the result
+is public-safe or accepted by a merchant.
 
 Existing preview and export outputs stay byte-identical. Limits and the
 omission list are unchanged.

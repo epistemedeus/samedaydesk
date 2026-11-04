@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { findPrivateField, projectResult } from "./project.mjs";
 import { assertObservationShape, n45RecordToObservation } from "./map.mjs";
 import { costForRecipe } from "../../recurring-job-recipes/lib/cost.mjs";
@@ -178,52 +179,119 @@ const CANNOT_ESTABLISH = Object.freeze([
   "merchant acceptance or a payment outcome",
 ]);
 
-export function decideOrReuse(saved, input, options = {}) {
-  const inputBounds = checkInputBounds(input);
-  if (!inputBounds.ok) return inputBounds;
-  const savedBounds = checkInputBounds(saved);
-  if (!savedBounds.ok) return savedBounds;
+const SUPPORTED_RECIPE_ID = "source-change-alert";
+const USEFUL_OUTCOMES = new Set(["unchanged", "changed", "partial"]);
 
-  const privateField = findPrivateField(input) || findPrivateField(saved);
-  if (privateField) {
-    return {
-      ok: false,
-      mode: DECIDE_OR_REUSE_MODE,
-      verdict: REJECTED_VERDICT,
-      reason: DECISION_REASONS.privateField,
-      message: "refusing a public decision because a private field is present",
-    };
+export function digestPublicInput(value) {
+  const canonical = JSON.stringify(sortKeys(value));
+  return `sha256:${createHash("sha256").update(canonical, "utf8").digest("hex")}`;
+}
+
+export function bindUsefulDecision(manifest, produced, options = {}) {
+  const gated = gateDecision(manifest, produced, options, { requireOptIn: true });
+  if (!gated.ok) return gated;
+  const supported = readManifest(manifest);
+  if (!supported.ok) return supported;
+  const useful = selectUseful(produced, supported.manifest);
+  if (!useful.ok) return useful;
+  const captured = captureManifest(supported.manifest);
+  let observation;
+  try {
+    observation = n45RecordToObservation({
+      class: options.recordClass || "observation",
+      subject: options.subject,
+      note: `${useful.useful.recipeId} ${useful.useful.outcome}; recovery ${useful.useful.recovery.action}`,
+      correctsSequence: options.recordClass === "correction" ? options.correctsSequence ?? null : null,
+      data: {
+        url: supported.manifest.capture.url,
+        contentHash: captured.digest,
+        reuseProvenance: {
+          originalEvidenceUrlAvailable: true,
+          sourceRole: "original_evidence_url",
+        },
+        decisionBinding: {
+          kind: "before_work_public_input",
+          recipeId: supported.manifest.recipeId,
+          recipeVersion: supported.manifest.recipeVersion,
+          inputDigest: captured.digest,
+        },
+        usefulDecision: useful.useful,
+      },
+    }, {
+      projectId: options.taskId,
+      sequence: options.sequence,
+      ownerScope: options.ownerScope || OWNER_SCOPE_DEFAULT,
+      recordedAt: options.clock,
+    });
+  } catch {
+    return { ok: false, message: "options cannot produce a contract-valid observation" };
   }
+  const shape = assertObservationShape(observation);
+  if (!shape.ok) return shape;
+  const leaked = exportContainsCredentialShape(observation);
+  if (leaked.length) return privateRejection();
+  const payloadBound = checkPayloadBytes(observation.payload);
+  if (!payloadBound.ok) return payloadBound;
+  return {
+    ok: true,
+    mode: DECIDE_OR_REUSE_MODE,
+    action: "bound",
+    decision: decisionView(observation),
+    inputDigest: captured.digest,
+    sourceUri: observation.source.uri,
+    revision: observation.revisionId,
+    recipeId: supported.manifest.recipeId,
+    recipeVersion: supported.manifest.recipeVersion,
+    clock: observation.recordedAt.instant,
+    producerInvoked: false,
+    mechanics: captured.mechanics,
+    ...verdictLimits(null),
+    observation,
+  };
+}
 
-  const current = previewReuse(input, options);
-  if (!current.ok) return current;
-  const savedObservation = resolveSavedObservation(saved);
-  if (!savedObservation.ok) return savedObservation;
-
+export function decideOrReuse(saved, input, options = {}) {
+  const gated = gateDecision(input, saved, options, { requireOptIn: false });
+  if (!gated.ok) return gated;
   if (options.optIn === true && options.optInWithdrawn === true) {
     return { ok: false, message: "opt-in and withdrawal conflict" };
   }
   if (options.optInWithdrawn === true || options.optIn === false) {
-    return recompute(DECISION_REASONS.optInWithdrawn, "opt-in was withdrawn", current);
+    return recompute(DECISION_REASONS.optInWithdrawn, "opt-in was withdrawn");
   }
   if (options.optIn !== true) {
     return { ok: false, message: "decide-or-reuse requires opt-in unless the opt-in is withdrawn" };
   }
 
+  const savedObservation = resolveSavedObservation(saved);
+  if (!savedObservation.ok) return savedObservation;
   const prior = savedObservation.observation;
-  if (prior.observationId !== current.observation.observationId) {
+  const binding = readBinding(prior);
+  if (!binding.ok) {
     return recompute(
-      DECISION_REASONS.subjectMismatch,
-      "task and subject identity does not match the saved decision",
-      current,
+      binding.reason,
+      binding.reason === DECISION_REASONS.invalidSavedState
+        ? "saved decision binding is incomplete or inconsistent"
+        : "saved observation is an unbound result record, not a before-work decision",
     );
   }
-  if (prior.revisionId !== current.observation.revisionId) {
+
+  const supported = readManifest(input);
+  if (!supported.ok) {
     return recompute(
-      DECISION_REASONS.revisionChanged,
-      "revision sequence does not match the saved decision",
-      current,
+      DECISION_REASONS.inputNotBeforeWork,
+      "input is not the before-work public manifest for source-change-alert",
     );
+  }
+  const manifest = supported.manifest;
+  if (prior.taskScope?.taskId !== options.taskId || prior.observationId !== observationIdFor(options.taskId, options.subject)) {
+    return recompute(DECISION_REASONS.subjectMismatch, "task and subject identity does not match the saved decision");
+  }
+  if (manifest.recipeId !== binding.binding.recipeId || manifest.recipeVersion !== binding.binding.recipeVersion) {
+    return recompute(DECISION_REASONS.recipeChanged, "recipe id or version does not match the saved decision");
+  }
+  if (prior.revisionId !== `rev_${options.sequence}`) {
+    return recompute(DECISION_REASONS.revisionChanged, "revision sequence does not match the saved decision");
   }
 
   const horizon = readHorizon(options.horizonHours);
@@ -232,21 +300,19 @@ export function decideOrReuse(saved, input, options = {}) {
   if (window.reason === "unparseable_clock" || window.reason === "horizon_not_supplied") {
     return { ok: false, message: "recipe window cannot be compared to the saved decision clock" };
   }
+  const captured = captureManifest(manifest);
   if (window.stale) {
     return recompute(
       DECISION_REASONS.staleClock,
       "saved decision clock is outside the recipe window",
-      current,
-      { recipeWindow: window },
+      { recipeWindow: window, inputDigest: captured.digest, mechanics: captured.mechanics },
     );
   }
-
-  if (prior.source.version !== current.observation.source.version) {
+  if (captured.digest !== binding.binding.inputDigest || captured.digest !== prior.source.version) {
     return recompute(
       DECISION_REASONS.digestMismatch,
-      "public input digest does not match the saved decision",
-      current,
-      { recipeWindow: window, savedInputDigest: prior.source.version },
+      "before-work public input digest does not match the saved decision",
+      { recipeWindow: window, inputDigest: captured.digest, savedInputDigest: binding.binding.inputDigest, mechanics: captured.mechanics },
     );
   }
 
@@ -254,30 +320,238 @@ export function decideOrReuse(saved, input, options = {}) {
     ok: true,
     mode: DECIDE_OR_REUSE_MODE,
     verdict: REUSE_VERDICT,
-    decision: decisionRecord(prior),
-    inputDigest: prior.source.version,
+    decision: decisionView(prior),
+    inputDigest: captured.digest,
     sourceUri: prior.source.uri,
     revision: prior.revisionId,
+    recipeId: binding.binding.recipeId,
+    recipeVersion: binding.binding.recipeVersion,
     clock: prior.recordedAt.instant,
     recipeWindow: window,
-    ...verdictLimits(current),
+    producerInvoked: false,
+    mechanics: captured.mechanics,
+    ...verdictLimits(null),
   };
 }
 
-function recompute(reason, message, current, extra = {}) {
+function gateDecision(input, saved, options, { requireOptIn }) {
+  const inputBounds = checkInputBounds(input);
+  if (!inputBounds.ok) return inputBounds;
+  const savedBounds = checkInputBounds(saved);
+  if (!savedBounds.ok) return savedBounds;
+  if (rejectingPrivate(input) || rejectingPrivate(saved) || disallowedText(input) || disallowedText(selectUsefulFields(saved))) {
+    return privateRejection();
+  }
+  if (requireOptIn) {
+    const optionCheck = validateOptions(options);
+    if (!optionCheck.ok) return optionCheck;
+    if (options.optIn !== true || options.optInWithdrawn === true) {
+      return { ok: false, message: "binding a useful decision requires opt-in" };
+    }
+  }
+  return { ok: true };
+}
+
+function rejectingPrivate(value) {
+  const found = findPrivateField(value);
+  if (!found) return null;
+  if (found.path === "payment") return findPrivateField(value.payment, "payment");
+  return found;
+}
+
+function disallowedText(value, path = "") {
+  if (typeof value === "string") {
+    if (credentialHits(value).length || containsHostileMarkup(value) || looksLikeFilesystemPath(value)) {
+      return path || "(text)";
+    }
+    return null;
+  }
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      const found = disallowedText(value[index], `${path}/${index}`);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (value && typeof value === "object") {
+    for (const [key, child] of Object.entries(value)) {
+      if (credentialHits(key).length || containsHostileMarkup(key) || looksLikeFilesystemPath(key)) {
+        return path || "(key)";
+      }
+      const found = disallowedText(child, path ? `${path}/${key}` : key);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function selectUsefulFields(value) {
+  const useful = value?.payload?.usefulDecision ?? value?.usefulDecision ?? null;
+  return useful;
+}
+
+function privateRejection() {
+  return {
+    ok: false,
+    mode: DECIDE_OR_REUSE_MODE,
+    verdict: REJECTED_VERDICT,
+    reason: DECISION_REASONS.privateField,
+    message: "refusing a public decision because a private field is present",
+  };
+}
+
+function captureManifest(manifest) {
+  const started = process.hrtime.bigint();
+  const digest = digestPublicInput(manifest);
+  const inputCaptureNs = Number(process.hrtime.bigint() - started);
+  const inputCaptureBytes = Buffer.byteLength(JSON.stringify(sortKeys(manifest)), "utf8");
+  return {
+    digest,
+    mechanics: {
+      inputCaptureNs,
+      inputCaptureBytes,
+      decisionWork: "not_run",
+    },
+  };
+}
+
+function readManifest(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, message: "input is not the before-work public manifest for source-change-alert" };
+  }
+  if (value.recipeId !== SUPPORTED_RECIPE_ID) {
+    return { ok: false, message: "input is not the before-work public manifest for source-change-alert" };
+  }
+  if (typeof value.recipeVersion !== "string" || value.recipeVersion.trim() === "") {
+    return { ok: false, message: "before-work manifest is missing its recipe version" };
+  }
+  if (!Array.isArray(value.fields) || value.fields.length === 0 || value.fields.some((field) => typeof field !== "string" || field.trim() === "")) {
+    return { ok: false, message: "before-work manifest is missing its field list" };
+  }
+  const prior = value.prior;
+  const capture = value.capture;
+  if (!prior || typeof prior !== "object" || Array.isArray(prior)) {
+    return { ok: false, message: "before-work manifest is missing its prior capture" };
+  }
+  if (typeof prior.sha256 !== "string" || prior.sha256.trim() === "") {
+    return { ok: false, message: "before-work manifest is missing the prior capture identity" };
+  }
+  if (!Number.isInteger(prior.sequence) || prior.sequence < 1) {
+    return { ok: false, message: "before-work manifest is missing the prior sequence" };
+  }
+  if (typeof prior.createdAt !== "string" || Number.isNaN(Date.parse(prior.createdAt))) {
+    return { ok: false, message: "before-work manifest is missing the prior clock" };
+  }
+  if (!prior.payload || typeof prior.payload !== "object" || Array.isArray(prior.payload)) {
+    return { ok: false, message: "before-work manifest is missing the prior public payload" };
+  }
+  if (!capture || typeof capture !== "object" || Array.isArray(capture)) {
+    return { ok: false, message: "before-work manifest is missing the current capture" };
+  }
+  if (!isPublicHttpUrl(capture.url)) {
+    return { ok: false, message: "before-work capture URL must be an absolute public http(s) URL" };
+  }
+  if (typeof capture.contentHash !== "string" || capture.contentHash.trim() === "") {
+    return { ok: false, message: "before-work manifest is missing the capture identity" };
+  }
+  return { ok: true, manifest: value };
+}
+
+function selectUseful(produced, manifest) {
+  if (!produced || typeof produced !== "object" || Array.isArray(produced)) {
+    return { ok: false, message: "produced decision must be a source-change-alert result" };
+  }
+  if (produced.recipeId !== manifest.recipeId || produced.schema !== manifest.recipeVersion) {
+    return { ok: false, message: "produced decision does not match the before-work recipe" };
+  }
+  if (!USEFUL_OUTCOMES.has(produced.outcome)) {
+    return { ok: false, message: "produced decision is not a reusable useful outcome" };
+  }
+  const evidence = produced.evidence;
+  if (!evidence || typeof evidence !== "object" || evidence.contentHash !== manifest.capture.contentHash) {
+    return { ok: false, message: "produced decision does not match the before-work capture identity" };
+  }
+  const recovery = produced.recovery;
+  if (!recovery || typeof recovery.action !== "string" || typeof recovery.operatorNext !== "string") {
+    return { ok: false, message: "produced decision is missing its recovery" };
+  }
+  const useful = {
+    recipeId: produced.recipeId,
+    recipeVersion: produced.schema,
+    outcome: produced.outcome,
+    recovery: {
+      action: recovery.action,
+      operatorNext: recovery.operatorNext,
+    },
+    evidence: {
+      kind: evidence.kind ?? null,
+      contentHash: evidence.contentHash,
+      changed: Array.isArray(evidence.changed) ? evidence.changed : [],
+      unchanged: Array.isArray(evidence.unchanged) ? evidence.unchanged : [],
+    },
+  };
+  if (rejectingPrivate(useful) || disallowedText(useful)) return privateRejection();
+  return { ok: true, useful };
+}
+
+function readBinding(observation) {
+  const binding = observation.payload?.decisionBinding;
+  if (!binding || typeof binding !== "object" || binding.kind !== "before_work_public_input") {
+    return { ok: false, reason: DECISION_REASONS.unboundLegacy };
+  }
+  const useful = observation.payload?.usefulDecision;
+  if (!useful || typeof useful !== "object" || !observation.statement) {
+    return { ok: false, reason: DECISION_REASONS.invalidSavedState };
+  }
+  if (binding.inputDigest !== observation.source?.version) {
+    return { ok: false, reason: DECISION_REASONS.invalidSavedState };
+  }
+  if (typeof binding.recipeId !== "string" || typeof binding.recipeVersion !== "string" || typeof binding.inputDigest !== "string") {
+    return { ok: false, reason: DECISION_REASONS.invalidSavedState };
+  }
+  if (useful.recipeId !== binding.recipeId || useful.recipeVersion !== binding.recipeVersion || !useful.outcome || !useful.recovery) {
+    return { ok: false, reason: DECISION_REASONS.invalidSavedState };
+  }
+  return { ok: true, binding, useful };
+}
+
+function decisionView(observation) {
+  const binding = observation.payload.decisionBinding;
+  return {
+    schema: observation.schema,
+    observationId: observation.observationId,
+    revisionId: observation.revisionId,
+    inputDigest: observation.source.version,
+    sourceUri: observation.source.uri,
+    clock: observation.recordedAt.instant,
+    statement: observation.statement,
+    useful: observation.payload.usefulDecision,
+    provenance: {
+      recipeId: binding.recipeId,
+      recipeVersion: binding.recipeVersion,
+      revisionId: observation.revisionId,
+      clock: observation.recordedAt.instant,
+      sourceUri: observation.source.uri,
+      inputDigest: binding.inputDigest,
+      observationId: observation.observationId,
+    },
+  };
+}
+
+function recompute(reason, message, extra = {}) {
   return {
     ok: true,
     mode: DECIDE_OR_REUSE_MODE,
     verdict: RECOMPUTE_VERDICT,
     reason,
     message,
-    inputDigest: current.observation?.source?.version ?? null,
+    producerInvoked: false,
     ...extra,
-    ...verdictLimits(current),
+    ...verdictLimits(null),
   };
 }
 
-function verdictLimits(current) {
+function verdictLimits() {
   return {
     costBaseline: costForRecipe(COST_BASELINE_RECIPE),
     liveMetric: {
@@ -288,19 +562,28 @@ function verdictLimits(current) {
     cannotEstablish: [...CANNOT_ESTABLISH],
     publicSafeCertified: false,
     evidenceKind: "user_selected_unverified",
-    kind: current?.kind,
+    kind: null,
   };
 }
 
-function decisionRecord(observation) {
-  return {
-    schema: observation.schema,
-    observationId: observation.observationId,
-    revisionId: observation.revisionId,
-    inputDigest: observation.source.version,
-    sourceUri: observation.source.uri,
-    clock: observation.recordedAt.instant,
-  };
+function sortKeys(value) {
+  if (Array.isArray(value)) return value.map(sortKeys);
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const key of Object.keys(value).sort()) out[key] = sortKeys(value[key]);
+    return out;
+  }
+  return value;
+}
+
+function observationIdFor(taskId, subject) {
+  const digest = createHash("sha256")
+    .update(String(taskId), "utf8")
+    .update("\0", "utf8")
+    .update(String(subject), "utf8")
+    .digest("hex")
+    .slice(0, 32);
+  return `obs_${digest}`;
 }
 
 function resolveSavedObservation(saved) {

@@ -73,7 +73,7 @@
     "browser-mobile": "node tools/browser-smoke/mobile.mjs",
     "test:browser-s79": "node --test tools/browser-smoke/s79-two-origin.test.mjs",
     "browser-s79": "node tools/browser-smoke/s79-two-origin.mjs",
-    "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs tools/result-reuse/test/decision-reuse.test.mjs",
+    "test:result-reuse": "node --test tools/result-reuse/test/export.test.mjs tools/result-reuse/test/decision-reuse.test.mjs tools/result-reuse/test/source-gate.test.mjs",
     "test:public-entry": "node --test scripts/public-entry.test.mjs",
     "test:geo5-guides": "node --test scripts/geo5-cited-guides.test.mjs",
     "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",

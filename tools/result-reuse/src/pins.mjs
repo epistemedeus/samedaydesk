@@ -29,5 +29,9 @@ export const DECISION_REASONS = Object.freeze({
   subjectMismatch: "subject_mismatch",
   privateField: "private_field",
   optInWithdrawn: "opt_in_withdrawn",
+  recipeChanged: "recipe_changed",
+  unboundLegacy: "unbound_legacy",
+  invalidSavedState: "invalid_saved_state",
+  inputNotBeforeWork: "input_not_before_work",
 });
 export const COST_BASELINE_RECIPE = "source-change-alert";
