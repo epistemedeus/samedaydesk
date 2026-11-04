@@ -92,4 +92,4 @@ This writer process `grok-linux-x86_` pid 419323, parent `timeout` pid 419321: V
 
 ## Root next action
 
-Review the draft PR on `codex/h145010-useful-tool-measurement-20261104`. Root owns receiving and installation. Apply `0010_pulse_free_tool_outcomes.sql` on the pulse database, then install this server commit. Read `freeTool` from the existing pulse snapshot. Do not treat `funnel.tools` or a browser completion event as the check outcome. Do not merge, deploy, or run `h120010-promote` from this worker.
+Review draft PR https://github.com/epistemedeus/samedaydesk/pull/352 on `codex/h145010-useful-tool-measurement-20261104`. Root owns receiving and installation. Apply `0010_pulse_free_tool_outcomes.sql` on the pulse database, then install this server commit. Read `freeTool` from the existing pulse snapshot. Do not treat `funnel.tools` or a browser completion event as the check outcome. Do not merge, deploy, or run `h120010-promote` from this worker.
