@@ -1,0 +1,9 @@
+{
+  "url": "https://example.com/catalog/harbor-light/",
+  "status": 200,
+  "title": "Harbor light, corrected",
+  "fields": {
+    "title": "Harbor light, corrected"
+  },
+  "contentHash": "sha256:harbor-light-v2"
+}

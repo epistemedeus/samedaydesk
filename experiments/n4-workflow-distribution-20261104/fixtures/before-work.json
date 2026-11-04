@@ -1,0 +1,28 @@
+{
+  "recipeId": "source-change-alert",
+  "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+  "fields": ["title"],
+  "prior": {
+    "sha256": "sha256:harbor-prior-v1",
+    "sequence": 1,
+    "createdAt": "2026-09-08T12:00:00.000Z",
+    "payload": {
+      "url": "https://example.com/catalog/harbor-light/",
+      "status": 200,
+      "title": "Harbor light",
+      "fields": {
+        "title": "Harbor light"
+      },
+      "contentHash": "sha256:harbor-light-v1"
+    }
+  },
+  "capture": {
+    "url": "https://example.com/catalog/harbor-light/",
+    "status": 200,
+    "title": "Harbor light",
+    "fields": {
+      "title": "Harbor light"
+    },
+    "contentHash": "sha256:harbor-light-v1"
+  }
+}

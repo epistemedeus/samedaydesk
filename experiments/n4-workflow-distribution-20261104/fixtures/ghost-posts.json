@@ -1,0 +1,24 @@
+[
+  {
+    "id": "64102aaa0000000000000001",
+    "slug": "harbor-light",
+    "title": "Harbor light",
+    "html": "<p>First synthetic public note.</p>",
+    "status": "published",
+    "visibility": "public",
+    "updated_at": "2026-09-09T08:00:00.000Z",
+    "published_at": "2026-09-09T08:00:00.000Z",
+    "url": "https://example.com/catalog/harbor-light/"
+  },
+  {
+    "id": "64102aaa0000000000000003",
+    "slug": "members-desk",
+    "title": "Members desk",
+    "html": "<p>Not a public catalog row.</p>",
+    "status": "published",
+    "visibility": "members",
+    "updated_at": "2026-09-09T08:00:00.000Z",
+    "published_at": "2026-09-09T08:00:00.000Z",
+    "url": "https://example.com/catalog/members-desk/"
+  }
+]

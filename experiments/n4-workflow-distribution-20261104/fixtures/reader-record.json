@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "requestedUrl": "https://example.com/catalog/harbor-light/",
+  "finalUrl": "https://example.com/catalog/harbor-light/",
+  "url": "https://example.com/catalog/harbor-light/",
+  "status": 200,
+  "sourceOk": true,
+  "error": null,
+  "title": "Harbor light",
+  "markdown": "<table><tr><th>Item</th><th>Qty</th></tr><tr><td>Bolt</td><td>2</td></tr></table>",
+  "wordCount": 4,
+  "truncated": false,
+  "capture": "fixture",
+  "fetchedAt": "2026-09-09T08:00:00.000Z"
+}

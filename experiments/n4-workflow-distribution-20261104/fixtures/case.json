@@ -1,0 +1,23 @@
+{
+  "schema": "n4.workflow-distribution.case.v1",
+  "taskId": "harbor-catalog-page",
+  "subject": "harbor-catalog-page-decision",
+  "sequence": 1,
+  "clock": "2026-09-09T08:00:00.000Z",
+  "horizonHours": 168,
+  "optIn": true,
+  "jobId": "page-change-offline-job",
+  "pageJob": "page-job.json",
+  "beforeWork": "before-work.json",
+  "savedDecision": null,
+  "sourceChange": {
+    "prior": "prior.json",
+    "capture": "capture.json",
+    "fields": ["title"],
+    "schedule": "once"
+  },
+  "readerRecord": "reader-record.json",
+  "readerFields": ["Item", "Qty"],
+  "readerPage": 1,
+  "ghostPosts": "ghost-posts.json"
+}
