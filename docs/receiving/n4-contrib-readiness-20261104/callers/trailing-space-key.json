@@ -1,0 +1,19 @@
+{
+  "schema": "cc0.query-key-caller.v4",
+  "left": {
+    "method": "GET",
+    "path": "/n4/edge/mark",
+    "pairs": [
+      {"key": "bin", "form": "value", "value": "west"},
+      {"key": "mark ", "form": "bare"}
+    ]
+  },
+  "right": {
+    "method": "GET",
+    "path": "/n4/edge/mark",
+    "pairs": [
+      {"key": "bin", "form": "value", "value": "west"},
+      {"key": "mark ", "form": "blank"}
+    ]
+  }
+}

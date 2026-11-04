@@ -220,3 +220,125 @@ The ordinary write packet for the 1.1.0 corpus is not supported on that live pat
 | Anonymous artifact GET | Source client `artifact` | Anonymous | no | No item exists. The list is empty |
 
 f4 is not required for the live reads, and it does not remove the fence refusal. Enrollment is not required for the reads. No publish, provider, store, config, or human-page change was made.
+
+## Seed packet Root can run
+
+The public artifact is `query-key-seed.json`. It is a fence-bound selection from the retained v2 corpus and the B1 comparison at neomorphic-io `d5ef2a20092aafa77a178b0ff4e8526fd25022d3` (PR443). The archive `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa` is unchanged. The H133 mapping file `seed-artifact.json` stays in this directory as the earlier recorded choice. Do not permit that file.
+
+`proposalFrom` accepts this selection. Canonical JSON is 1421 bytes. String values are 40, which is the current limit at `accepted-work-publication.mjs:111`. The canonical limit at line 105 stays 4096. This packet does not ask for either limit to rise. Adding one more string is `publication_refused`. The v4 `assertCorpus` in the previously fetched archive contract refuses this 9-case object with `artifact_refused`, because that contract still requires 25 cases and a bank of 22. The contract was not edited.
+
+License `CC0-1.0`. Codec on the selection is `urllib.parse.quote`, the 1.1 codec. The six retained v2 cases keep their stored expectations. Their `nowEqual` is the 164d9e30 comparison from the v2 packet. The 9cdf0e47 result for those six is unknown. The percent-encoded key is not stored. Both the 1.1 caller validator and the publication fence refuse that literal. The case records `representation_refused` and `stored` false.
+
+| Case | Provenance | Expectations in the artifact |
+| --- | --- | --- |
+| `grouped-ampersand` | retained v2 `491c4562`, f0b3e894 collides, 164d9e30 separates | old true, now false |
+| `pair-in-one-value` | same v2 file | old true, now false |
+| `path-delimiter` | same v2 file | old true, now false |
+| `unicode-key` | same v2 file | old true, now false |
+| `dict-list` | same v2 file | old false, now true |
+| `pair-order` | same v2 file, the control that still fit | old true, now true |
+| `bare-versus-blank` | B1 `inputs/direct-lot.json` and the same class on cold-bin, hosted-shelf, adapt-tray | old true, mid true, now false. Current mount 200 then 409 |
+| `trailing-space-key` | B1 `inputs/trailing-space-key.json` | old true, mid true, now false. Current status 200 then 409 |
+| `percent-encoded-refusal` | B1 `inputs/percent-encoded-key.json` | `representation_refused` before checkout. Encoded key omitted |
+
+Full per-case notes are in `case-provenance.json`. That file is not the public artifact. Caller documents Root's consumer runs are `callers/direct-lot.json` and `callers/trailing-space-key.json`. They are JSON-equal to those B1 inputs. Their file sha256 values are `9f71900affa6bd90d7a736175ad5ce3fcac0e5c2511369fd6b967934db8d5e5f` and `cfff34df498140af3723aa904b95c92a1333226a476aea14148dbfb0b490d48b`. GitHub raw download with this environment's `gh` token returned 404, so byte-identity with the git blob was not rechecked. The GitHub contents read of those two files supplied the JSON.
+
+Digests:
+
+| Item | Value |
+| --- | --- |
+| Public artifact, foundation digest | `b142e79f055fdf6a2af863a9b344bf4eb4257d5b97bac02ffeefc2ff7251232b` |
+| `query-key-seed.json` file sha256 | `0eac1c7b523317d3c7114ea0780205c4bf96744ffb0bacaaffcb4fefc3797b15` |
+| Summary file, 102 bytes, no trailing newline | `eee5a5bd50c808b38c089ca21d3041da89519723ac00368a93e326ddcdf25ff2` |
+| Summary, foundation digest | `4f07cb0db1756b5a09f94b982bcce40e271e016b2fc0a922c9d232425285992d` |
+| Rights, foundation digest | `efb163e6a44161f61ac538de5fc880b7803a367fc3744c1bbf8970bf37a5d550` |
+| Proposal digest beside the installed canary evidence | `a6709bb7b871dc2f3d86ebaacef5de471bebc01d8d8afe7f0baa4407f9c356eb` |
+
+The summary string is `First-party query-key comparisons for a later consumer. Bare and blank keys differ on the current pin.` Rights are `query-key-rights.json`: license `CC0-1.0`, scope `synthetic-or-authorized-reusable-artifact`, attribution `First-party seed. Not a customer and not an independent contributor.` `consent.json` is `{"publicationConsent":true}`.
+
+The private artifact digest Root puts on the permit is the digest from Root's own delivery receipt. It is unknown until that receipt exists. It must differ from `b142e79f055fdf6a2af863a9b344bf4eb4257d5b97bac02ffeefc2ff7251232b`, and a private string of 8 or more characters must not occur inside the public artifact. The canary evidence digest `f1d716a2e4472aaef9013802bb7f642d7b6d307de19681c14723636401e19c0a` is only the local fence proof. It is not a live delivery.
+
+## Profile evidence, 2026-11-04T22:58:37Z
+
+Read this turn, plain GET:
+
+| GET | Status | Bytes | sha256 |
+| --- | ---: | ---: | --- |
+| `https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/profile` | 200 | 3449 | `5d3433c4d64120239eef2aa9bd9f4fe849bbaf360d3767e042a69a1121041ac5` |
+| `https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/accepted-work?limit=20` | 200 | 135 | `c6a47004c3ed441a3cbef69ea8d528ddf8f1c6cf3f5c5e67c77238da4fc3f013` |
+
+Same hashes as the 22:41:13Z read. `sourceSha256` `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`. `hostSha256` `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`. `acceptedWork` present. List `items` empty. Header date `Wed, 04 Nov 2026 22:58:37 GMT`. `cache-control: no-store`. `x-ae-server-class: live`.
+
+Also read this turn: `https://neomorphic.io/machine/participation-0.3.1.json`, 200, 5968 bytes, sha256 `2bb518aa79ec8fdab99356afe35c050d8363f69ea23e6394ba9cce460f7dcd0d`. `hostedAcquisitionVerified` false. `requiredProfile` source and host hashes match the live profile. `descriptorSha256` `de60c5132911c0a27823f193ff100ffd3b832f56def9b9f5cfb32447ec2fd6ad`. Guide `ACCEPTED-WORK.md` sha256 `8edc57f5693ce38e08eb1e57c556132eeff095da19eef7515509ad09d192ce98`, 7111 bytes, matches the entry. Prepare script sha256 `2465ee5f799545a97af3b036fe5962d5218e9ba4a998803995b8500cf059e5fe`, 4110 bytes.
+
+Not read this turn, so source-only: the 14566-byte archive body, the live `llms.txt` body, account files, and any private task row. The public list does not show private tasks. Whether Root already has an accepted voluntary task is unknown.
+
+## Commands Root runs
+
+No new signup. No credential file is in this packet. Keyway locator strings are unknown. The only custody path in the read inputs is `/home/ubuntu/root97253-first-party-accounts` from `seed-ROOT-RECEIVING.md`. The published guide names the existing files `requester.secret` and `contributor.secret`. Root substitutes those existing files. This packet does not open them.
+
+Download the three published tools once, then check the entry hashes above. `prepare-accepted-work.mjs` writes the permit body and does not post it. The summary file must be the 102 bytes with no trailing newline, because the prepare script digests the file bytes and the fence rejects surrounding whitespace.
+
+These steps are Root writes. They were not run.
+
+1. If no accepted voluntary task exists yet, the ordinary enrolled-account path is cold client `post`, `interest`, `act --action offerVoluntary` with `query-key-rights.json`, contributor `inspect`, `assentVoluntary`, `deliverVoluntary`, requester `reviewVoluntary`. Copy `termsDigest` and `artifactDigest` from that receipt. Do not fund. Do not sign up.
+2. Prepare the requester permit. Expected stdout includes `posted` false, `publicationConsent` true, `summaryDigest` `4f07cb0db1756b5a09f94b982bcce40e271e016b2fc0a922c9d232425285992d`, `publicArtifactDigest` `b142e79f055fdf6a2af863a9b344bf4eb4257d5b97bac02ffeefc2ff7251232b`, `rightsDigest` `efb163e6a44161f61ac538de5fc880b7803a367fc3744c1bbf8970bf37a5d550`.
+
+```sh
+umask 077
+node prepare-accepted-work.mjs --task-id market-REPLACE --terms-digest REPLACE --artifact-digest REPLACE --expected-revision REPLACE --summary-file query-key-summary.txt --artifact-file query-key-seed.json --rights-file query-key-rights.json --consent-file consent.json --out permit-requester.json
+```
+
+3. Requester permit. Expected: `ok` true, `acceptedWorkVisible` false, `paidWork` false. Anonymous `discover-accepted` still has no item for this task. `detail` for this task is `not_found`.
+
+```sh
+node accepted-work.mjs permit --origin https://samedaydesk.com --secret-file requester.secret --input permit-requester.json > permit-requester-result.json
+```
+
+4. Prepare the contributor permit with the revision from that result and the same task, terms digest, artifact digest, summary, artifact, rights, and consent. Do not reuse `permit-requester.json`.
+
+```sh
+node prepare-accepted-work.mjs --task-id market-REPLACE --terms-digest REPLACE --artifact-digest REPLACE --expected-revision REPLACE --summary-file query-key-summary.txt --artifact-file query-key-seed.json --rights-file query-key-rights.json --consent-file consent.json --out permit-contributor.json
+node accepted-work.mjs permit --origin https://samedaydesk.com --secret-file contributor.secret --input permit-contributor.json
+```
+
+Expected contributor result: `ok` true, `acceptedWorkVisible` true, `paidWork` false. That second permit is the publication. There is no separate publish POST.
+
+5. Anonymous readback. No secret file. These are not Root writes.
+
+```sh
+node accepted-work.mjs discover-accepted --origin https://samedaydesk.com
+node accepted-work.mjs detail --origin https://samedaydesk.com --task-id market-REPLACE
+node accepted-work.mjs artifact --origin https://samedaydesk.com --task-id market-REPLACE > artifact.json
+```
+
+Expected list: 200, `items` contains the task, `summary` equals the summary file, `publicArtifact` omitted, `publicReads` `0`, `paidWork` false. Expected detail: the same summary, artifact body omitted. Expected artifact body: `value.publicArtifact` equals `query-key-seed.json` and `publicArtifactDigest` is `b142e79f055fdf6a2af863a9b344bf4eb4257d5b97bac02ffeefc2ff7251232b`. If a permit exits 2 with `unknown_outcome`, do not POST again. Run `accepted-work.mjs readback --operation permitAcceptedWork` with that party's existing secret file.
+
+## Downstream consumer
+
+The concrete consumer is `tools/n4-compat-transfer/compare_query_key.py` at neomorphic-io `d5ef2a20092aafa77a178b0ff4e8526fd25022d3`. It is the Starlette copy-in B1 measured at 86 ms on `adapt-tray.json`, with `x402` unloaded. Its file sha256 at that commit was not recomputed here and is unknown. The next-use command, after the anonymous artifact matches `query-key-seed.json`, is:
+
+```sh
+PYTHONPATH=/path/to/py python3 tools/n4-compat-transfer/compare_query_key.py \
+  --input callers/trailing-space-key.json \
+  --before /path/to/f0b3e89463d4b291cab95830151c4c1c05ff04b6 \
+  --middle /path/to/164d9e30abf5cd8aa3c2eaae617c71a115b24fbe \
+  --after /path/to/9cdf0e470a232c2a9779c88f080a2aeb1e76a664
+```
+
+B1 reported that input as old true, middle true, current false, status 200 then 409. This packet did not re-execute the three pins. Repeat the same command with `callers/direct-lot.json` for the bare-versus-blank class. A null collision boolean means the checkouts were not executed.
+
+## Test
+
+Command: `node --test --test-concurrency=1 docs/receiving/n4-contrib-readiness-20261104/seed.test.mjs`
+
+Result: 2 tests, 2 pass, 0 fail, 0 skipped. Duration about 185 ms. The first test checks the seed, the direct-lot alignment, and `proposalFrom`. The second test adds one string and expects `publication_refused`. No live write. Not outside use.
+
+## Unknowns at this packet
+
+- Keyway locator strings for the enrolled accounts.
+- Whether a private accepted task already exists.
+- 9cdf0e47 equality for the six retained v2 cases.
+- sha256 of `compare_query_key.py` at `d5ef2a20`.
+- The archive body was not downloaded again this turn. B1 reports `pack` still emits `51b1b657`.
+- Outside use, revenue, and a network effect were not observed. Unknown is not zero.

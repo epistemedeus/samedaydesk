@@ -1,0 +1,66 @@
+{
+  "schema": "n4.query-key-seed-provenance.v1",
+  "publicArtifact": "query-key-seed.json",
+  "note": "This file is not the public artifact. Commit ids and file hashes stay here because a 40-hex string in the artifact is unnecessary and the publication string budget is full.",
+  "cases": [
+    {
+      "id": "grouped-ampersand",
+      "provenance": "Retained v2 public/query-key-collision.json sha256 491c4562ab9acdb316983ddddd56fcea9df84ffdc1f5a7a54d6f44ff4a654a2f, byte-identical to the H142 fixture. oldEqual and nowEqual are the stored v2 expectations. seed-LIMITS says the f0b3e894 key collides and the 164d9e30 key separates this case. The 9cdf0e47 result was not in the read inputs.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "pair-in-one-value",
+      "provenance": "Same retained v2 file. f0b3e894 collides and 164d9e30 separates it.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "path-delimiter",
+      "provenance": "Same retained v2 file. f0b3e894 collides and 164d9e30 separates it.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "unicode-key",
+      "provenance": "Same retained v2 file. f0b3e894 collides and 164d9e30 separates it.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "dict-list",
+      "provenance": "Same retained v2 file. Stored oldEqual is false and nowEqual is true. That nowEqual is the 164d9e30 comparison in the v2 packet, not a 9cdf0e47 measurement.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "pair-order",
+      "provenance": "Same retained v2 file. Both stored pins keep the key equal when pair order changes. Included as the control that still fits in the 40-string budget.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe"],
+      "currentPinResult": "unknown"
+    },
+    {
+      "id": "bare-versus-blank",
+      "provenance": "B1 neomorphic-io d5ef2a20092aafa77a178b0ff4e8526fd25022d3. The class is a value pair plus a bare key on the left and the same key blank on the right. Measured on inputs/direct-lot.json, inputs/cold-bin.json, inputs/hosted-shelf.json, and inputs/adapt-tray.json. oldEqual true, midEqual true, nowEqual false. Current pin query_pairs maps a bare key to null and a blank key to an empty string. Hosted mount on hosted-shelf.json returned 200 then 200 on the older pins and 200 then 409 on 9cdf0e47. The packet caller file callers/direct-lot.json is that direct-lot document.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe", "9cdf0e470a232c2a9779c88f080a2aeb1e76a664"],
+      "currentPinResult": "nowEqual false; mount 200 then 409"
+    },
+    {
+      "id": "trailing-space-key",
+      "provenance": "B1 d5ef2a20092aafa77a178b0ff4e8526fd25022d3 inputs/trailing-space-key.json. Key mark with a trailing space, bare against blank, plus bin=west. oldEqual true, midEqual true, nowEqual false. Current status 200 then 409. Older pins replay. The packet caller file is callers/trailing-space-key.json.",
+      "pinsKnown": ["f0b3e89463d4b291cab95830151c4c1c05ff04b6", "164d9e30abf5cd8aa3c2eaae617c71a115b24fbe", "9cdf0e470a232c2a9779c88f080a2aeb1e76a664"],
+      "currentPinResult": "nowEqual false; status 200 then 409"
+    },
+    {
+      "id": "percent-encoded-refusal",
+      "provenance": "B1 d5ef2a20092aafa77a178b0ff4e8526fd25022d3 inputs/percent-encoded-key.json and RESULT.md. Both the direct route and the copy-in return representation_refused before any checkout. The 1.1 caller validator refuses a percent-encoded key. The publication fence also refuses a percent-encoded artifact string. The encoded key is not stored in query-key-seed.json. RESULT.md records that the current pin and Starlette decode the raw query outside the caller document to key a+ and value 1, and that this packet's caller documents do not send that raw query.",
+      "pinsKnown": [],
+      "currentPinResult": "representation_refused before checkout"
+    }
+  ],
+  "omittedBecauseTheStringBudgetIsFull": [
+    "v2 semicolon-value, space-encodings, value-order, body-json-type, body-bool-type, body-field-shape",
+    "v4 cases beyond the retained v2 subset and the three B1 cases above",
+    "B1 inputs/newline-key.json, also representation_refused"
+  ]
+}
