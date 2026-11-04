@@ -46,9 +46,9 @@ jobs:
       # Each candidate selects the approved packet for its own source and
       # host fingerprints. The global ROOT10940_CI_PACKET variable remains
       # one historical input and is not current for a different fingerprint.
-      # The receive step stays red until Root enrolls the measurement-runtime
-      # candidate. Root's received H142 slot stays valid for that older host
-      # and does not satisfy this candidate. Do not rewrite the trusted
+      # Root receives each distinct measured host before enrolling its slot.
+      # Pending-state negatives use explicit fixture catalogs. The historical
+      # H142 slot stays valid only for its older host. Do not rewrite the trusted
       # expected hash or point the variable at another fingerprint. This
       # regression takes its catalog and PostgreSQL bin from the caller.
       # Historical-only negatives do not assume that catalog has a single row.

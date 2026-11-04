@@ -1,3 +1,4 @@
+import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
@@ -202,9 +203,10 @@ test('historical-only, received H142, and the pending measurement candidate stay
   assert.equal(h142Packet.anchor.receiving.installed, false);
   assert.notEqual(h142Packet.profile.hostSha256, measured.hostSha256);
 
+  const pendingCatalog = copyCatalogWithoutProfile(catalogDir, join(dir, 'pending-catalog'), measured);
   const pendingOut = join(dir, 'pending.json');
   const pending = await run([
-    selector, '--catalog', catalogDir, '--index', join(catalogDir, 'index.json'),
+    selector, '--catalog', pendingCatalog, '--index', join(pendingCatalog, 'index.json'),
     '--out', pendingOut,
   ]);
   assertExit(pending, 3);

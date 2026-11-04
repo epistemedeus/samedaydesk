@@ -1,3 +1,4 @@
+import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
@@ -416,9 +417,10 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
   assert.equal(h142Verified.anchor.receiving.owner, 'Root');
   assert.equal(h142Verified.anchor.receiving.installed, false);
   assert.deepEqual(readFileSync(h142Slot), h142Before);
+  const pendingCatalog = copyCatalogWithoutProfile(committedCatalog, join(dir, 'pending-catalog'), {sourceSha256: CURRENT_SOURCE, hostSha256: CURRENT_HOST});
   const pendingOut = join(dir, 'current-candidate-pending.json');
   const pending = await run([
-    selector, '--catalog', committedCatalog, '--index', committedIndexPath,
+    selector, '--catalog', pendingCatalog, '--index', join(pendingCatalog, 'index.json'),
     '--out', pendingOut,
   ]);
   assertExit(pending, 3);
@@ -981,7 +983,14 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.ok(historicalRow);
   assert.ok(h142Row);
   assert.equal(h142Row.receiving.installed, false);
-  assert.equal(index.packets.some(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE), false);
+  const currentRows = index.packets.filter(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE);
+  assert.equal(currentRows.length <= 1, true);
+  for (const row of currentRows) {
+    const packet = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(row.sourceSha256, row.hostSha256)), 'utf8')));
+    assert.equal(rootReceivingAccepted(packet.anchor.receiving, packet.source.repository), true);
+    assert.equal(rowAgrees(row, packet), true);
+    assert.notEqual(sha256(packet.anchorBytes), sha256(readFileSync(join(root, proposal, 'proposed-anchor.json'))));
+  }
   assert.equal(indexText.includes(FIXTURE_REPLAY), false);
   assert.equal(indexText.includes(sha256(readFileSync(join(root, proposal, 'proposed-anchor.json')))), false);
 });

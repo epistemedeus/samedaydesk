@@ -54,7 +54,7 @@ The producer and selector enrollment command points at this proposal. The histor
 
 ## Rollout
 
-1. Apply `supabase/migrations/0010_pulse_free_tool_outcomes.sql` on the pulse database.
+1. Root installed exact migration0010 at 2026-11-04T03:54:40Z. Preserve that journal and the nullable history. Do not replay it for this server release.
 2. Deploy the server commit that emits `freeToolOutcomes` only after that migration is in place. A new delta flushed at an old database fails closed into the existing WAL and backoff. The checker HTTP response still returns.
 3. Do not backfill. Counts start at `freeTool.observedFrom`.
 
