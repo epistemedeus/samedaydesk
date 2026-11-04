@@ -5,7 +5,8 @@
 - Subject head: `f4fba79fda839e8bfbad47b2b6883d8c2c9791a9`
 - Subject tree: `c5e12e30fec8f56806d69741f4c3eb3aef1adcc2`
 - Receiving parent: `f4fba79fda839e8bfbad47b2b6883d8c2c9791a9`
-- Branch head: recorded after the result commit in the following commit on this branch
+- Documents commit: `f19d039525311b5e4b9a7ea95b282b3b16127c64`
+- Branch head: the commit that records this line. Its parent is `f19d039525311b5e4b9a7ea95b282b3b16127c64` and its tree contains these four receiving files.
 - PR URL: none. No pull request was opened. A pull request into the PR356 branch was out of scope, and a pull request into `main` would carry the unreceived product commits. Nothing was merged.
 
 ## Changed paths
