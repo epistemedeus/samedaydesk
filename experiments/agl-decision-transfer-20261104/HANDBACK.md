@@ -10,9 +10,9 @@ Seam commit: `fa1d55a085565cd9ff58e06e1d3b2a38552151df`
 
 Seam tree: `d5b6b42a40e6d261418443984026f8ffbb30d8a9`
 
-Head: the child commit that adds this file. Its parent is the seam commit above. A file cannot contain the hash of the commit that adds it, so the head SHA is `git rev-parse HEAD` on this branch after that child commit.
+Head when this report was first committed: `a1b3fe26f300d79011f2f49d2d4997d908653f0c`, tree `7e1ae104c7b6c22ed82df0c9dcfc8931693cad26`. A later commit adds the pull request URL below. `git rev-parse HEAD` on this branch is the current head.
 
-Pull request: draft only if opened against `codex/n4-workflow-distribution-20261104`, where the diff is this directory. No pull request into PR356's branch `codex/nov04-qualified-reuse-integration`. A pull request into `codex/h136010-machine-release-20261103` would include PR356 and the N4 journey, so that base is not separable.
+Pull request: draft https://github.com/epistemedeus/samedaydesk/pull/358 into `codex/n4-workflow-distribution-20261104`. The diff is this directory. No pull request into PR356's branch `codex/nov04-qualified-reuse-integration`. A pull request into `codex/h136010-machine-release-20261103` would include PR356 and the N4 journey, so that base is not separable.
 
 ## Seam
 
@@ -68,7 +68,7 @@ Seam commit:
 - `README.md`
 - `test/decision-transfer.test.mjs`
 
-Child commit adds `HANDBACK.md`.
+The following commit adds `HANDBACK.md`. A later commit records the draft pull request URL in this file.
 
 ## Tests
 
