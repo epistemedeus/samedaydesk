@@ -28,9 +28,12 @@ Measured by `installedSourceSha256()` and `hostSourceSha256()`:
 
 - repository `epistemedeus/samedaydesk`
 - source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`
-- host `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`
+- current host pin `937a4c811ff72300f27cd1d7ca144894d07a2a3ef00e58553c5be9f2d2a6c53d`
+- prior host pin `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`
 
-The source hash is the same vendor package the H142 candidate measured. The host hash is the joined pin. H146's H142 binding remains source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82` and host `b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255`. That pair stays a valid received slot for its own candidate. It is a different runtime from this host. Neo's quote boundary is keyed only by source, so `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82` still maps to `qualified_selection_required`. No new quote key is required. `SOURCE.json` keeps its recorded `installedSourceSha256` constant.
+The current host pin changed because the `package.json` script line is inside the private-control pin. `937a4c811ff72300f27cd1d7ca144894d07a2a3ef00e58553c5be9f2d2a6c53d` is unreceived, unqualified, and unenrolled. Enrollment belongs to Root.
+
+The source hash is the same vendor package the H142 candidate measured. The prior host pin is the joined pin from before that script line. H146's H142 binding remains source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82` and host `b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255`. That pair stays a valid received slot for its own candidate. It is a different runtime from this host. Neo's quote boundary is keyed only by source, so `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82` still maps to `qualified_selection_required`. No new quote key is required. `vendor/hosted-wallet-market/SOURCE.json` previously held `458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8`, which did not match the live installer, and was corrected.
 
 ## Proposed acquisition packet
 

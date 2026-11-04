@@ -117,10 +117,10 @@ The pin at that commit still hashed `package.json` from before the pulse script 
 
 `hostSourceSha256` compares every `private-control-pin.json` member with the file bytes, then hashes those files and the pin. The narrow join refreshed the host-owned producer script and appended the measurement files from their actual bytes. `pin.base` stays `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`. The predecessor closure was received from `d3a9d82f0aed25b8f5dcef70096982ef93083810`. `SOURCE.json` was not rewritten. The full refresh path was not run.
 
-Measured pair:
+Measured pair at that correction, now the prior host pin:
 
 - source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`
-- host `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`
+- prior host pin `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`
 
 H146's H142 binding stays the older host `b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255` with the same source. That received slot remains in the catalog. This host is a separate candidate. Neo's quote map is keyed by source, and this source still selects `qualified_selection_required`. No quote key was added.
 
@@ -201,18 +201,22 @@ SELECT_EXIT:3
 stale actual 2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82 expected 2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82
 ```
 
-The selected packet file was absent. The enrollment class was `stale`, `received` false, and the measured host was `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`. The same-source message is the first catalog row, which is the received H142 slot. Its host does not match this candidate, so the selector exits 3 and writes no packet. The disposable fixture receipt in `test-h145010-measurement-runtime-pin.mjs` selected and decoded the measured host on a copy and left the committed index unchanged.
+The selected packet file was absent. The enrollment class was `stale`, `received` false, and the measured host was the prior host pin `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`. The same-source message is the first catalog row, which is the received H142 slot. Its host does not match this candidate, so the selector exits 3 and writes no packet. The disposable fixture receipt in `test-h145010-measurement-runtime-pin.mjs` selected and decoded the measured host on a copy and left the committed index unchanged.
 
 No model child was started. The first-delivery footprint above is unchanged as a record of that process. Migration 0010 was not applied. No deploy, signer, grant, funding, payment, outside message, or default merge was performed. `h120010-promote` was not run.
 
 ## Final head
 
-Repair commit `a05d5b160bcb9c1fb1e48424abfdbb4ab705f874`, tree `6781fde8053a65bb91a9dc33685445ee0d1937c3`, pushed `24b5c8b7..a05d5b16`. This section does not change a pinned file. `hostSourceSha256` stays `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654` on the branch tip. Root receives that tip.
+Repair commit `a05d5b160bcb9c1fb1e48424abfdbb4ab705f874`, tree `6781fde8053a65bb91a9dc33685445ee0d1937c3`, pushed `24b5c8b7..a05d5b16`. This section does not change a pinned file. That repair left `hostSourceSha256` at the prior host pin `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`. The current host pin is recorded below.
 
 ## Root next action
 
 Review draft PR https://github.com/epistemedeus/samedaydesk/pull/352 on `codex/h145010-useful-tool-measurement-20261104`. The head to receive is the pushed commit that contains this pin, not `d3a9d82f0aed25b8f5dcef70096982ef93083810` and not the H142 host `b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255`.
 
-Root's next control is an independent replay of that head. On a copy, add `receiving` to the proposed anchor only after that replay, then enroll a new catalog slot named `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654.json`. Leave the cafd slot and the H142 slot in place. Set `ROOT10940_CI_PACKET` only for that new packet. Until then the workflow receive step exits 3.
+Root's next control is an independent replay of that head. On a copy, add `receiving` to the proposed anchor only after that replay, then enroll a new catalog slot. The slot named `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654.json` is the prior host pin. Leave the cafd slot and the H142 slot in place. Set `ROOT10940_CI_PACKET` only for a packet Root enrolls. Until then the workflow receive step exits 3.
+
+## Current host pin
+
+`hostSourceSha256` current host pin is `937a4c811ff72300f27cd1d7ca144894d07a2a3ef00e58553c5be9f2d2a6c53d`. The prior host pin is `8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654`. The cause is the `package.json` script line inside the private-control pin. `937a4c811ff72300f27cd1d7ca144894d07a2a3ef00e58553c5be9f2d2a6c53d` is unreceived, unqualified, and unenrolled. Enrollment belongs to Root. `vendor/hosted-wallet-market/SOURCE.json` previously held `458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8`, which did not match the live installer, and was corrected.
 
 Apply `0010_pulse_free_tool_outcomes.sql` on the pulse database before installing a server that emits `freeToolOutcomes`. Read `freeTool` from token-gated `GET /api/pulse`. The preserved client boundary remains 352 files, 59951737 bytes, inventory `6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5`. Do not merge, deploy, or run `h120010-promote` from this worker.
