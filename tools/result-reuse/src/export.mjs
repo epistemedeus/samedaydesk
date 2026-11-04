@@ -1,6 +1,18 @@
-import { projectResult } from "./project.mjs";
+import { findPrivateField, projectResult } from "./project.mjs";
 import { assertObservationShape, n45RecordToObservation } from "./map.mjs";
-import { OWNER_SCOPE_DEFAULT, RECIPE_URI } from "./pins.mjs";
+import { costForRecipe } from "../../recurring-job-recipes/lib/cost.mjs";
+import { classifyStaleBaseline } from "../../recurring-job-recipes/lib/recovery.mjs";
+import {
+  COST_BASELINE_RECIPE,
+  DECIDE_OR_REUSE_MODE,
+  DECISION_REASONS,
+  OBSERVATION_SCHEMA,
+  OWNER_SCOPE_DEFAULT,
+  RECOMPUTE_VERDICT,
+  RECIPE_URI,
+  REJECTED_VERDICT,
+  REUSE_VERDICT,
+} from "./pins.mjs";
 import {
   containsHostileMarkup,
   credentialHits,
@@ -8,7 +20,7 @@ import {
   isPublicHttpUrl,
   looksLikeFilesystemPath,
 } from "./omit.mjs";
-import { checkPayloadBytes } from "./limits.mjs";
+import { checkInputBounds, checkPayloadBytes } from "./limits.mjs";
 
 export function previewReuse(input, options = {}) {
   const optionCheck = validateOptions(options);
@@ -156,4 +168,167 @@ function validateOptions(options) {
 
 function cleanRequired(value) {
   return typeof value === "string" && value.trim() !== "";
+}
+
+const CANNOT_ESTABLISH = Object.freeze([
+  "live page bytes beyond the supplied public input",
+  "a distinct later accepted task took this reuse",
+  "recompute cost avoided net of upkeep",
+  "public-safe certification",
+  "merchant acceptance or a payment outcome",
+]);
+
+export function decideOrReuse(saved, input, options = {}) {
+  const inputBounds = checkInputBounds(input);
+  if (!inputBounds.ok) return inputBounds;
+  const savedBounds = checkInputBounds(saved);
+  if (!savedBounds.ok) return savedBounds;
+
+  const privateField = findPrivateField(input) || findPrivateField(saved);
+  if (privateField) {
+    return {
+      ok: false,
+      mode: DECIDE_OR_REUSE_MODE,
+      verdict: REJECTED_VERDICT,
+      reason: DECISION_REASONS.privateField,
+      message: "refusing a public decision because a private field is present",
+    };
+  }
+
+  const current = previewReuse(input, options);
+  if (!current.ok) return current;
+  const savedObservation = resolveSavedObservation(saved);
+  if (!savedObservation.ok) return savedObservation;
+
+  if (options.optIn === true && options.optInWithdrawn === true) {
+    return { ok: false, message: "opt-in and withdrawal conflict" };
+  }
+  if (options.optInWithdrawn === true || options.optIn === false) {
+    return recompute(DECISION_REASONS.optInWithdrawn, "opt-in was withdrawn", current);
+  }
+  if (options.optIn !== true) {
+    return { ok: false, message: "decide-or-reuse requires opt-in unless the opt-in is withdrawn" };
+  }
+
+  const prior = savedObservation.observation;
+  if (prior.observationId !== current.observation.observationId) {
+    return recompute(
+      DECISION_REASONS.subjectMismatch,
+      "task and subject identity does not match the saved decision",
+      current,
+    );
+  }
+  if (prior.revisionId !== current.observation.revisionId) {
+    return recompute(
+      DECISION_REASONS.revisionChanged,
+      "revision sequence does not match the saved decision",
+      current,
+    );
+  }
+
+  const horizon = readHorizon(options.horizonHours);
+  if (!horizon.ok) return horizon;
+  const window = classifyStaleBaseline(prior.recordedAt.instant, options.clock, horizon.horizonHours);
+  if (window.reason === "unparseable_clock" || window.reason === "horizon_not_supplied") {
+    return { ok: false, message: "recipe window cannot be compared to the saved decision clock" };
+  }
+  if (window.stale) {
+    return recompute(
+      DECISION_REASONS.staleClock,
+      "saved decision clock is outside the recipe window",
+      current,
+      { recipeWindow: window },
+    );
+  }
+
+  if (prior.source.version !== current.observation.source.version) {
+    return recompute(
+      DECISION_REASONS.digestMismatch,
+      "public input digest does not match the saved decision",
+      current,
+      { recipeWindow: window, savedInputDigest: prior.source.version },
+    );
+  }
+
+  return {
+    ok: true,
+    mode: DECIDE_OR_REUSE_MODE,
+    verdict: REUSE_VERDICT,
+    decision: decisionRecord(prior),
+    inputDigest: prior.source.version,
+    sourceUri: prior.source.uri,
+    revision: prior.revisionId,
+    clock: prior.recordedAt.instant,
+    recipeWindow: window,
+    ...verdictLimits(current),
+  };
+}
+
+function recompute(reason, message, current, extra = {}) {
+  return {
+    ok: true,
+    mode: DECIDE_OR_REUSE_MODE,
+    verdict: RECOMPUTE_VERDICT,
+    reason,
+    message,
+    inputDigest: current.observation?.source?.version ?? null,
+    ...extra,
+    ...verdictLimits(current),
+  };
+}
+
+function verdictLimits(current) {
+  return {
+    costBaseline: costForRecipe(COST_BASELINE_RECIPE),
+    liveMetric: {
+      distinctLaterAcceptedTasksTakingReuse: null,
+      recomputeCostAvoidedNetOfUpkeep: "costs_unknown",
+      observedAcceptedTaskLedger: false,
+    },
+    cannotEstablish: [...CANNOT_ESTABLISH],
+    publicSafeCertified: false,
+    evidenceKind: "user_selected_unverified",
+    kind: current?.kind,
+  };
+}
+
+function decisionRecord(observation) {
+  return {
+    schema: observation.schema,
+    observationId: observation.observationId,
+    revisionId: observation.revisionId,
+    inputDigest: observation.source.version,
+    sourceUri: observation.source.uri,
+    clock: observation.recordedAt.instant,
+  };
+}
+
+function resolveSavedObservation(saved) {
+  const candidate = saved?.schema === OBSERVATION_SCHEMA
+    ? saved
+    : saved?.observation?.schema === OBSERVATION_SCHEMA
+      ? saved.observation
+      : null;
+  if (!candidate) {
+    return { ok: false, message: "saved decision must be a neomorphic.task-memory.observation.v1 record" };
+  }
+  const shape = assertObservationShape(candidate);
+  if (!shape.ok) return shape;
+  if (!candidate.observationId || !candidate.revisionId) {
+    return { ok: false, message: "saved decision is missing identity or revision" };
+  }
+  if (!candidate.recordedAt?.instant) {
+    return { ok: false, message: "saved decision is missing its clock" };
+  }
+  return { ok: true, observation: candidate };
+}
+
+function readHorizon(value) {
+  if (value == null) {
+    return { ok: false, message: "decide-or-reuse requires a recipe window in hours" };
+  }
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+    return { ok: false, message: "recipe window must be a non-negative number of hours" };
+  }
+  return { ok: true, horizonHours: value };
 }

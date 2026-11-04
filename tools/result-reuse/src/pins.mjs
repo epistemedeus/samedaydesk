@@ -16,3 +16,18 @@ export const ID_MAX = 128;
 export const VERSION_MAX = 256;
 export const URI_MAX = 2048;
 export const PAYLOAD_MAX_BYTES = 32768;
+
+// Decide-or-reuse is a mode over the existing observation. It is not a new schema family.
+export const DECIDE_OR_REUSE_MODE = "decide-or-reuse";
+export const REUSE_VERDICT = "reuse";
+export const RECOMPUTE_VERDICT = "recompute";
+export const REJECTED_VERDICT = "rejected";
+export const DECISION_REASONS = Object.freeze({
+  digestMismatch: "digest_mismatch",
+  revisionChanged: "revision_changed",
+  staleClock: "stale_clock",
+  subjectMismatch: "subject_mismatch",
+  privateField: "private_field",
+  optInWithdrawn: "opt_in_withdrawn",
+});
+export const COST_BASELINE_RECIPE = "source-change-alert";
