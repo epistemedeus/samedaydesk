@@ -1,0 +1,15 @@
+command: node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/handback-row-decision.test.mjs
+where: amendment branch before the inputs.mjs edit, parent 3ba5869d
+exit: 1
+
+not ok 1 - handback decision names the applied worker row
+  error: |-
+    Applied implementation X rename to implementation Y row SYN-Y-441. workerId SYN-Z-902 windowLabel mid.
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 165.336862

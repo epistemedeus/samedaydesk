@@ -1,0 +1,23 @@
+command: env -u MERCHANT_INPUT_ROOT npm run test:recurring-job-recipes
+where: checkout 0593026a, sibling absent
+exit: 1
+
+not ok 8 - local merchant root and packages resolve without MERCHANT_INPUT_ROOT or network
+  error: 'expected sibling x402-url-extractor with name x402-merchant'
+not ok 9 - local merchant modules export the published C31/C34 field lists
+  error: assert.ok(root) evaluated falsy
+not ok 10 - local mocked HTTP serves published C31/C34 routes
+  error: 'merchant input checkout missing. Need epistemedeus/x402-url-extractor with package.json name x402-merchant. Set MERCHANT_INPUT_ROOT or place the checkout beside samedaydesk. Do not npm-install a remote copy.'
+not ok 32 - S25 merchant package contract rejects non-x402-merchant trees
+  error: 'S25 merchant checkout missing; expected sibling x402-url-extractor or MERCHANT_INPUT_ROOT'
+ok 33 - mounted merchant E2E against C31/C34 contracts # SKIP merchant input checkout missing
+ok 55 - buyer-setup-trace loopback inspection never signs or claims wallet ownership # SKIP merchant input missing
+ok 56 - mounted HTTP origin failure injection surfaces error without payment replay # SKIP merchant input missing
+# tests 90
+# suites 0
+# pass 83
+# fail 4
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 1722.070386

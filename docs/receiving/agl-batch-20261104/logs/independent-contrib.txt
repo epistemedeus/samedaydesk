@@ -1,0 +1,12 @@
+command: AGL_CONTRIB_ROOT=<pin 3ba5869d> AE14_PG_BIN=/usr/lib/postgresql/16/bin node --test --test-concurrency=1 contrib-independent.test.mjs
+where: received code, not edited
+exit: 0
+
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5519.474967

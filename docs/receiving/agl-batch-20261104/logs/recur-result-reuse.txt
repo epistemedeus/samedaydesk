@@ -1,0 +1,12 @@
+command: node --test tools/result-reuse/test/*.test.mjs
+where: checkout a83647de
+exit: 0
+
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 684.951419

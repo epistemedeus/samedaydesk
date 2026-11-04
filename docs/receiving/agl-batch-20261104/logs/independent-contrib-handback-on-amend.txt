@@ -1,0 +1,12 @@
+command: AGL_CONTRIB_ROOT=<amendment worktree at 633a1ced> node --test --test-concurrency=1 contrib-handback-row.test.mjs
+where: same independent file, pointed at the amendment commit
+exit: 0
+
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 183.398997
