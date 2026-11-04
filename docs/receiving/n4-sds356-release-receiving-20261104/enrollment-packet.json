@@ -1,0 +1,111 @@
+{
+  "schema": "sds.n4-sds356-release-receiving.enrollment-inputs.v1",
+  "consumer": "Root",
+  "performed": false,
+  "qualified": false,
+  "rootReceiving": false,
+  "installed": false,
+  "received": false,
+  "measuredPair": {
+    "repository": "epistemedeus/samedaydesk",
+    "subjectHead": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+    "subjectTree": "c5e12e30fec8f56806d69741f4c3eb3aef1adcc2",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd",
+    "measuredBy": "vendor/hosted-wallet-market/src/native-debt.mjs installedSourceSha256 and hostSourceSha256"
+  },
+  "readiness": {
+    "repository": "epistemedeus/pilot",
+    "commit": "eb99a41f5d5b0c1560fc8683ec0452dd1021a149",
+    "path": "tools/ops/funded-continuation/release-consumer-readiness.mjs",
+    "blobSha": "94fd7a44ad2bb4062bd6786efa36f74a2bae1681",
+    "clonedIntoSds": false,
+    "function": "operationFor",
+    "rule": "source-enroll-${sourceSha256.slice(0,16)}-${hostSourceSha256.slice(0,16)}"
+  },
+  "operationId": "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320",
+  "enroll": {
+    "whenProjectionNext": "enroll-source",
+    "reasonWhenUnenrolledAndGraphReadable": "binding_unenrolled",
+    "method": "POST",
+    "route": "/api/neomorphic-contributor-journey/v1/native-debt/enroll",
+    "body": {},
+    "resend": false,
+    "idempotencyKey": "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320",
+    "requestHash": "dadd73485b8b0bcf048444f8ec91fbac4acd7f81fab3d77c9b70db5bc06dc85a",
+    "requestHashInput": {
+      "method": "POST",
+      "route": "/api/neomorphic-contributor-journey/v1/native-debt/enroll",
+      "body": {}
+    },
+    "argv": [
+      "node",
+      "<sdsRoot>/vendor/hosted-wallet-market/bin/installed-debt.mjs",
+      "enroll",
+      "--operation",
+      "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320"
+    ],
+    "env": [
+      "HOSTED_WALLET_MARKET_ORIGIN",
+      "CONTRIBUTOR_JOURNEY_OWNER_TOKEN"
+    ],
+    "sdsRootMustMeasure": "the measured pair above"
+  },
+  "readOnlyCheck": {
+    "method": "GET",
+    "route": "/api/neomorphic-contributor-journey/v1/native-debt/enrollment",
+    "writes": false,
+    "separateFromEnrollment": true,
+    "resendPost": false,
+    "argv": [
+      "node",
+      "<sdsRoot>/vendor/hosted-wallet-market/bin/installed-debt.mjs",
+      "enrollment"
+    ],
+    "env": [
+      "HOSTED_WALLET_MARKET_ORIGIN",
+      "CONTRIBUTOR_JOURNEY_OWNER_TOKEN"
+    ]
+  },
+  "unknownOperation": {
+    "graphReadByThisReceiver": false,
+    "whenExactlyOneNon200EnrollRow": {
+      "reason": "unknown_outcome_do_not_replay",
+      "next": "recover-get",
+      "useStoredOperationKey": true,
+      "resendPost": false
+    }
+  },
+  "expectedReadback": {
+    "observation": "code-derived GET view from readEnrollment. This receiver did not call a host.",
+    "cliWrapperOnHttp200": {
+      "ok": true,
+      "secretPrinted": false,
+      "result": "the view below"
+    },
+    "whenAssertBindingPasses": {
+      "schema": "pilot.root71.native-debt.enrollment.v1",
+      "state": "enrolled",
+      "qualified": true,
+      "sourceBinding": {
+        "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+        "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
+      },
+      "rowSourceSha256": "the originally inserted enrollment row, unread by this receiver",
+      "rowHostSourceSha256": "the originally inserted enrollment row, unread by this receiver"
+    },
+    "whenRowAbsent": {
+      "schema": "pilot.root71.native-debt.enrollment.v1",
+      "state": "absent",
+      "qualified": false,
+      "boundConsumer": null
+    },
+    "whenAssertBindingFails": {
+      "schema": "pilot.root71.native-debt.enrollment.v1",
+      "state": "enrolled",
+      "qualified": false,
+      "sourceBinding": "absent"
+    },
+    "thisPacketSetsQualified": false
+  }
+}

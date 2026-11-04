@@ -1,0 +1,651 @@
+{
+  "schema": "sds.n4-sds356-release-receiving.v1",
+  "outcome": "N4-SDS356-RELEASE-RECEIVING",
+  "role": "independent-receiver",
+  "subject": {
+    "repository": "epistemedeus/samedaydesk",
+    "pullRequest": 356,
+    "pullRequestUrl": "https://github.com/epistemedeus/samedaydesk/pull/356",
+    "head": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+    "tree": "c5e12e30fec8f56806d69741f4c3eb3aef1adcc2",
+    "base": "0593026ad155352f263e4749dc889a1578d91675",
+    "parent": "2941e695ec518a2de881206932fb749806392473",
+    "sourceWriter": "bc-37fae84c"
+  },
+  "branch": "codex/n4-sds356-release-receiving-20261104",
+  "flags": {
+    "qualified": false,
+    "rootReceiving": false,
+    "installed": false,
+    "received": false,
+    "approvedCatalogModified": false,
+    "ciWeakened": false,
+    "providerStoreConfigOrLiveHostAction": false
+  },
+  "runtime": {
+    "node": "v22.23.4",
+    "npm": "10.9.9",
+    "postgresql": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "pgBin": "/usr/lib/postgresql/16/bin",
+    "postgresql17Present": false,
+    "npmCi": {
+      "command": "npm ci --no-audit --no-fund",
+      "exitCode": 0,
+      "checkout": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9"
+    }
+  },
+  "hostPin": {
+    "distinctFromRouteBytes": true,
+    "distinctFromHumanInventory": true,
+    "schema": "sds.foundry.private-control-source.v1",
+    "pinFile": "server/foundry/activation/private-control-pin.json",
+    "memberCount": 1323,
+    "mismatches": 0,
+    "installedSourceFileCount": 125,
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd",
+    "routeBytesArePinMembers": false,
+    "membersChangedFromBase": [
+      "package.json",
+      "vendor/hosted-wallet-market/SOURCE.json"
+    ],
+    "pinFileChangedFromBase": true,
+    "parentToHeadPinKeyChanged": [
+      "package.json"
+    ],
+    "parentPinPackageJsonSha256": "64672f01d08f73f8915ddb473bca92a474195bdb5acffa49511d5eb3319e474e",
+    "parentPackageJsonSha256": "e2af16586935e92dde2dbb39e6d192e9cc5e845b692e426962891be203a4b0a4",
+    "parentBinding": "binding_stale",
+    "packageJson": {
+      "sha256": "e2af16586935e92dde2dbb39e6d192e9cc5e845b692e426962891be203a4b0a4",
+      "bytes": 13591,
+      "pinAgrees": true
+    },
+    "sourceJson": {
+      "path": "vendor/hosted-wallet-market/SOURCE.json",
+      "sha256": "df734fa8a1904e64fb1c7998ca8eb0a1d5d5ea2654e2352664d69fffdcd1311b",
+      "bytes": 2888,
+      "pinAgrees": true,
+      "onlyFieldChangedFromBase": "installedSourceSha256",
+      "baseInstalledSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+      "headInstalledSourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82"
+    }
+  },
+  "humanClientInventory": {
+    "command": "node server/scripts/publish-preserved-client.mjs",
+    "exitCode": 0,
+    "viteInvoked": false,
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "clientDistTree": "d5d35bdf311748ffbce6dec34579e1d708a98281",
+    "baseClientDistTree": "d5d35bdf311748ffbce6dec34579e1d708a98281",
+    "equalToBase": true
+  },
+  "pulseLoadedRoute": {
+    "routeBytesArePinMembers": false,
+    "route": {
+      "path": "server/routes/pulse.js",
+      "sha256": "15ee44563aa5d1ea6a2591788a2d9ca5bd9997d69e6c97de56462add6e060aff",
+      "bytes": 1653,
+      "pinMember": false
+    },
+    "library": {
+      "path": "server/lib/pulse.js",
+      "sha256": "fbaaa3cba57de74ecf78dcc6aa5b0c18bf90bd33ed0cada1f55b214cd3751b49",
+      "bytes": 44952,
+      "pinMember": true,
+      "pinAgrees": true
+    },
+    "loadChain": [
+      {
+        "path": "server/index.js",
+        "sha256": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
+        "bytes": 1913,
+        "pinMember": true,
+        "pinAgrees": true,
+        "loads": "server/app.js createSdsApp"
+      },
+      {
+        "path": "server/app.js",
+        "sha256": "08e0abac1c823b4b619eb8e3dd11dc655f62c8923d52c7548cff1c3849ee7f63",
+        "bytes": 11533,
+        "pinMember": true,
+        "pinAgrees": true,
+        "loads": "server/routes/pulse.js as pulseRouter and server/lib/pulse.js as pulseMiddleware"
+      },
+      {
+        "path": "server/routes/pulse.js",
+        "sha256": "15ee44563aa5d1ea6a2591788a2d9ca5bd9997d69e6c97de56462add6e060aff",
+        "bytes": 1653,
+        "pinMember": false,
+        "mountedAt": "/api/pulse"
+      }
+    ],
+    "privateReader": {
+      "path": "server/scripts/pulse-private-read.js",
+      "sha256": "344e8b34a78dbf6bff0c0fb80c9eb60718de23f52cd2c62304c17ec1ba65f215",
+      "bytes": 10245,
+      "pinMember": false,
+      "role": "current consumer, outside the loaded route"
+    },
+    "failClosedInSource": true,
+    "historicalFallbackOperatorInF4": false,
+    "nullishFallbackInF4": false,
+    "baseRouteSha256": "d6831f7c9b5c1e52d6f4d72be7633f414e15a4f97513b01a72c6dfddd734b3a6",
+    "baseHasHistoricalOrFallback": true,
+    "liveProcessObserved": false
+  },
+  "proposedAnchor": {
+    "anchorPath": "docs/receiving/h145010-useful-tool-measurement-20261104/proposed-anchor.json",
+    "anchorSha256": "b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27cfa04eba77",
+    "schema": "pilot.root10940.acquisition-trust-anchor.v1",
+    "descriptorPath": "docs/receiving/h145010-useful-tool-measurement-20261104/proposed-descriptor.json",
+    "descriptorSha256": "ce89812d7befe5f72d9de64fdf70c2471317a2c81a60a81f99790967d355a9f6",
+    "descriptorCommit": "unreceived",
+    "publicationStatus": "unreceived",
+    "hostedAcquisitionVerified": false,
+    "apiActivation": false,
+    "fundingOrPaymentActivation": false,
+    "humanPage": false,
+    "clientPath": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs",
+    "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+    "clientBytes": 28081,
+    "sourceCommit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "profileMatchesMeasuredPair": true,
+    "receivingKeyPresent": false,
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1"
+  },
+  "ci": {
+    "runId": 41909890197,
+    "url": "https://github.com/epistemedeus/samedaydesk/actions/runs/41909890197",
+    "conclusion": "failure",
+    "headSha": "8a33717f4f09d9796e45704042e8df4190cf2ba2",
+    "job": "runtime-startup",
+    "jobDatabaseId": 126854331674,
+    "failedStep": "Receive the independent acquisition packet",
+    "selectorExitCode": 3,
+    "message": "stale actual 2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82 expected 2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "messagePrintsSourceOnly": true,
+    "ciHeadMeasured": {
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSourceSha256": "937a4c811ff72300f27cd1d7ca144894d07a2a3ef00e58553c5be9f2d2a6c53d",
+      "pinMembers": 1323
+    },
+    "catalogHasHost937a4c81": false,
+    "catalogHasHost6fca4aaa": false,
+    "firstVerifiedStaleHost": "8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654",
+    "legacyEnvPacket": {
+      "trustAnchorSha256": "71e880413d2fa6711494886b7023064dea55814bd89ae0010d19b8597c5dd923",
+      "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "hostSha256": "1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c"
+    },
+    "precedingSourceBound": {
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "durationMs": 64457.767169
+    },
+    "decoderRan": false,
+    "localReproductionAtF4": {
+      "exitCode": 3,
+      "selectedFileWritten": false,
+      "enrollmentClass": "stale",
+      "received": false,
+      "measuredHost": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
+    }
+  },
+  "approvedCatalog": {
+    "path": "server/scripts/fixtures/root10940-approved-ci-packets",
+    "modified": false,
+    "indexSha256": "375ea0b83231b5e03d60fac2d5d9e892ed2bb2090b53846f93ec3d0e36754292",
+    "files": [
+      {
+        "name": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654.json",
+        "sha256": "16d65760b926265f6c371c258d815b6011ff255e14cabd32ef553e25ed822ec7",
+        "bytes": 40940,
+        "receiving": "ROOT62682",
+        "qualified": false,
+        "installed": false
+      },
+      {
+        "name": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255.json",
+        "sha256": "0c07ac231ce70c67c59e2edd55de5330411c0da3db8773af8d47c83b8348feab",
+        "bytes": 40932,
+        "receiving": "ROOT45466",
+        "qualified": false,
+        "installed": false
+      },
+      {
+        "name": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2-1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342dbacf0d289c.json",
+        "sha256": "a3fc0037802ad15c17507eda04da42490d4e1ac8470c5305aac0ad3267d28296",
+        "bytes": 43432,
+        "receiving": "ROOT57152",
+        "qualified": false,
+        "installed": false
+      },
+      {
+        "name": "index.json",
+        "sha256": "375ea0b83231b5e03d60fac2d5d9e892ed2bb2090b53846f93ec3d0e36754292",
+        "bytes": 3444
+      }
+    ]
+  },
+  "producer": {
+    "committedCatalogWasWriteTarget": false,
+    "exact": {
+      "exitCode": 1,
+      "stderr": "index_receiving_required",
+      "emittedSlot": null,
+      "disposableEqualsCommitted": true,
+      "command": "node server/scripts/produce-root10940-ci-packet.mjs --anchor docs/receiving/h145010-useful-tool-measurement-20261104/proposed-anchor.json --client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs --descriptor docs/receiving/h145010-useful-tool-measurement-20261104/proposed-descriptor.json --catalog /tmp/n4-disp-exact --index /tmp/n4-disp-exact/index.json"
+    },
+    "allowUnreceivedCatalogOnly": {
+      "exitCode": 0,
+      "received": false,
+      "anchorHasReceiving": false,
+      "indexUpdated": false,
+      "slot": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd.json",
+      "trustAnchorSha256": "b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27cfa04eba77",
+      "profile": {
+        "money": "unfunded",
+        "participation": "voluntary-artifact-v1",
+        "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+        "hostSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
+      },
+      "command": "node server/scripts/produce-root10940-ci-packet.mjs --allow-unreceived --anchor docs/receiving/h145010-useful-tool-measurement-20261104/proposed-anchor.json --client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs --descriptor docs/receiving/h145010-useful-tool-measurement-20261104/proposed-descriptor.json --catalog /tmp/n4-disp-allow"
+    }
+  },
+  "tests": [
+    {
+      "name": "pulse",
+      "command": "npm run test:pulse",
+      "exitCode": 0,
+      "tests": 94,
+      "pass": 94,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 12028.604557,
+      "postgresql": "16.15 via PULSE_PG_BIN"
+    },
+    {
+      "name": "pulse-contracts",
+      "command": "node --experimental-strip-types --test --test-concurrency=1 server/scripts/test-pulse-refusal-contract.js server/scripts/test-pulse-mcp-outcomes-contract.js server/scripts/test-pulse-browse-coverage-contract.js",
+      "exitCode": 0,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 3397.069514
+    },
+    {
+      "name": "original-task",
+      "command": "npm run test:original-task",
+      "exitCode": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 11362.17786
+    },
+    {
+      "name": "contribution-delegation",
+      "command": "node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/contribution-delegation.test.mjs",
+      "exitCode": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 6348.896574
+    },
+    {
+      "name": "handback",
+      "command": "node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/handback-row-decision.test.mjs",
+      "exitCode": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 217.021291
+    },
+    {
+      "name": "h133010",
+      "command": "node --test --test-concurrency=1 --test-timeout=420000 server/scripts/test-h133010-accepted-work.mjs",
+      "exitCode": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 12755.562941
+    },
+    {
+      "name": "capability-lookup",
+      "command": "node --test --test-concurrency=1 server/scripts/test-capability-owner-lookup.js",
+      "exitCode": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 538.363894
+    },
+    {
+      "name": "observatory",
+      "command": "npm run test:observatory",
+      "exitCode": 0,
+      "tests": 102,
+      "pass": 100,
+      "fail": 0,
+      "skipped": 2,
+      "durationMs": 1222.193393
+    },
+    {
+      "name": "result-reuse",
+      "command": "npm run test:result-reuse",
+      "exitCode": 0,
+      "tests": 37,
+      "pass": 37,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 927.795007
+    },
+    {
+      "name": "source-bound-h147-h145",
+      "command": "node --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs server/scripts/test-h145010-measurement-runtime-pin.mjs",
+      "exitCode": 0,
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 39561.065034,
+      "env": [
+        "AE14_PG_BIN=/usr/lib/postgresql/16/bin",
+        "ROOT10940_CI_CATALOG=server/scripts/fixtures/root10940-approved-ci-packets"
+      ]
+    },
+    {
+      "name": "pulse-private-read",
+      "command": "node --test --test-concurrency=1 server/scripts/test-pulse-private-read.js",
+      "exitCode": 0,
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 327.836184
+    },
+    {
+      "name": "postgres-bin",
+      "command": "node --test server/scripts/test-postgres-bin.mjs",
+      "exitCode": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 64.696293
+    }
+  ],
+  "namedCases": [
+    {
+      "suite": "pulse-private-read",
+      "name": "credential missing: no source and no request",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "credential missing: token file path does not exist",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "failure and recovery: closed port then the live server",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "failure: redirect is refused and not followed",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "failure: oversize response is refused",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "cli entry: missing credential and configured read stay quiet",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse-private-read",
+      "name": "direct consumer agrees with the cli wrapper",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse",
+      "name": "pulse aggregate reads fail closed unless PULSE_TOKEN is configured",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse",
+      "name": "pulse route source does not default PULSE_TOKEN",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse",
+      "name": "PostgreSQL 16 accepts an old delta, merges outcomes, restarts, and rejects a bad partition",
+      "result": "ok"
+    },
+    {
+      "suite": "pulse",
+      "name": "real PostgreSQL 17 replays the original entry after the contract admits it",
+      "result": "ok",
+      "binaries": "PostgreSQL 16.15 through PULSE_PG_BIN"
+    },
+    {
+      "suite": "pulse",
+      "name": "real PostgreSQL 17 upgrades historical 0005 and admits project_funnel_evidence",
+      "result": "ok",
+      "binaries": "PostgreSQL 16.15 through PULSE_PG_BIN"
+    },
+    {
+      "suite": "contribution-delegation",
+      "name": "the publication checker refuses private data and missing consent on a clone",
+      "result": "ok"
+    },
+    {
+      "suite": "contribution-delegation",
+      "name": "H-A handback and H-B delegation run on the disposable unfunded host",
+      "result": "ok"
+    },
+    {
+      "suite": "h133010",
+      "name": "pending delivery inside opt-in accepted work",
+      "result": "ok",
+      "form": "assertion in the passing test, permit code not_accepted"
+    },
+    {
+      "suite": "result-reuse",
+      "name": "incomplete failed extract stays exportable with failure codes",
+      "result": "ok"
+    },
+    {
+      "suite": "result-reuse",
+      "name": "missing original evidence URL stays disclosed and is not promoted to observed",
+      "result": "ok"
+    },
+    {
+      "suite": "result-reuse",
+      "name": "CLI recovery: a changed public capture is produced once and then reused",
+      "result": "ok"
+    },
+    {
+      "suite": "source-bound",
+      "name": "a changed measurement file is binding_stale and the original bytes recover",
+      "result": "ok"
+    },
+    {
+      "suite": "source-bound",
+      "name": "historical-only, received H142, and the pending measurement candidate stay distinct",
+      "result": "ok"
+    },
+    {
+      "suite": "source-bound",
+      "name": "missing, tampered, unreceived, wrong-source and conflicting-index controls stay closed",
+      "result": "ok"
+    },
+    {
+      "suite": "source-bound",
+      "name": "missing packet is refused",
+      "result": "ok"
+    },
+    {
+      "suite": "source-bound",
+      "name": "proposal matches a fresh measurement and enrollment refuses without Root receiving",
+      "result": "ok"
+    },
+    {
+      "suite": "observatory",
+      "name": "configured historical capture keeps its clocks and labels",
+      "result": "skip",
+      "reason": "optional historical capture is not configured"
+    },
+    {
+      "suite": "observatory",
+      "name": "optional live OBSERVATORY_LIVE real GETs for the three fixed URLs",
+      "result": "skip",
+      "reason": "OBSERVATORY_LIVE is not 1"
+    }
+  ],
+  "enrollmentPacket": {
+    "schema": "sds.n4-sds356-release-receiving.enrollment-inputs.v1",
+    "consumer": "Root",
+    "performed": false,
+    "qualified": false,
+    "rootReceiving": false,
+    "installed": false,
+    "received": false,
+    "measuredPair": {
+      "repository": "epistemedeus/samedaydesk",
+      "subjectHead": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+      "subjectTree": "c5e12e30fec8f56806d69741f4c3eb3aef1adcc2",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd",
+      "measuredBy": "vendor/hosted-wallet-market/src/native-debt.mjs installedSourceSha256 and hostSourceSha256"
+    },
+    "readiness": {
+      "repository": "epistemedeus/pilot",
+      "commit": "eb99a41f5d5b0c1560fc8683ec0452dd1021a149",
+      "path": "tools/ops/funded-continuation/release-consumer-readiness.mjs",
+      "blobSha": "94fd7a44ad2bb4062bd6786efa36f74a2bae1681",
+      "clonedIntoSds": false,
+      "function": "operationFor",
+      "rule": "source-enroll-${sourceSha256.slice(0,16)}-${hostSourceSha256.slice(0,16)}"
+    },
+    "operationId": "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320",
+    "enroll": {
+      "whenProjectionNext": "enroll-source",
+      "reasonWhenUnenrolledAndGraphReadable": "binding_unenrolled",
+      "method": "POST",
+      "route": "/api/neomorphic-contributor-journey/v1/native-debt/enroll",
+      "body": {},
+      "resend": false,
+      "idempotencyKey": "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320",
+      "requestHash": "dadd73485b8b0bcf048444f8ec91fbac4acd7f81fab3d77c9b70db5bc06dc85a",
+      "requestHashInput": {
+        "method": "POST",
+        "route": "/api/neomorphic-contributor-journey/v1/native-debt/enroll",
+        "body": {}
+      },
+      "argv": [
+        "node",
+        "<sdsRoot>/vendor/hosted-wallet-market/bin/installed-debt.mjs",
+        "enroll",
+        "--operation",
+        "source-enroll-2fc7a9888654d617-6fca4aaa8cd23320"
+      ],
+      "env": [
+        "HOSTED_WALLET_MARKET_ORIGIN",
+        "CONTRIBUTOR_JOURNEY_OWNER_TOKEN"
+      ],
+      "sdsRootMustMeasure": "the measured pair above"
+    },
+    "readOnlyCheck": {
+      "method": "GET",
+      "route": "/api/neomorphic-contributor-journey/v1/native-debt/enrollment",
+      "writes": false,
+      "separateFromEnrollment": true,
+      "resendPost": false,
+      "argv": [
+        "node",
+        "<sdsRoot>/vendor/hosted-wallet-market/bin/installed-debt.mjs",
+        "enrollment"
+      ],
+      "env": [
+        "HOSTED_WALLET_MARKET_ORIGIN",
+        "CONTRIBUTOR_JOURNEY_OWNER_TOKEN"
+      ]
+    },
+    "unknownOperation": {
+      "graphReadByThisReceiver": false,
+      "whenExactlyOneNon200EnrollRow": {
+        "reason": "unknown_outcome_do_not_replay",
+        "next": "recover-get",
+        "useStoredOperationKey": true,
+        "resendPost": false
+      }
+    },
+    "expectedReadback": {
+      "observation": "code-derived GET view from readEnrollment. This receiver did not call a host.",
+      "cliWrapperOnHttp200": {
+        "ok": true,
+        "secretPrinted": false,
+        "result": "the view below"
+      },
+      "whenAssertBindingPasses": {
+        "schema": "pilot.root71.native-debt.enrollment.v1",
+        "state": "enrolled",
+        "qualified": true,
+        "sourceBinding": {
+          "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+          "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
+        },
+        "rowSourceSha256": "the originally inserted enrollment row, unread by this receiver",
+        "rowHostSourceSha256": "the originally inserted enrollment row, unread by this receiver"
+      },
+      "whenRowAbsent": {
+        "schema": "pilot.root71.native-debt.enrollment.v1",
+        "state": "absent",
+        "qualified": false,
+        "boundConsumer": null
+      },
+      "whenAssertBindingFails": {
+        "schema": "pilot.root71.native-debt.enrollment.v1",
+        "state": "enrolled",
+        "qualified": false,
+        "sourceBinding": "absent"
+      },
+      "thisPacketSetsQualified": false
+    }
+  },
+  "rollback": {
+    "liveRowsObservedByThisReceiver": false,
+    "operatorContextRows": 90,
+    "operatorContextIncludesNewPulseToken": true,
+    "preservePulseToken": true,
+    "preserveRowCount": 90,
+    "doNotReplaySnapshot": "2afe45a622df4123442afc02b9e747db8bccda4cb505fe18889893ca63b59493",
+    "snapshotRowCountInOlderRecords": 89,
+    "baseRouteReenablesHistoricalFallbackIfTokenCleared": true,
+    "f4RouteCoversFailClosedRead": true,
+    "liveRouteBytesUnknown": true
+  },
+  "unknowns": [
+    "The live process route bytes were not read.",
+    "Whether the running process loaded server/index.js or imported server/app.js was not read.",
+    "The live enrollment graph, including any non-200 enroll idempotency row, was not read.",
+    "Health admission for the preserved consumer was not read.",
+    "The 90-row environment and the PULSE_TOKEN value are operator context. This receiver did not read the store.",
+    "f4 is not established as installed on the live host.",
+    "Root has not enrolled the measured pair."
+  ]
+}
