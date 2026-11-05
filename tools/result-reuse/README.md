@@ -63,6 +63,34 @@ node tools/result-reuse/cli.mjs decide-or-reuse \
   --opt-in
 ```
 
+### Residual need after a hit
+
+`residual` starts from the same `--decision` hit and a caller's wanted fields
+(`--want price,title`). The direct route stays the default and the baseline:
+
+| Route | When |
+| --- | --- |
+| `direct` | Every wanted field is answered by the reused decision. |
+| `direct_rerun` | A wanted field is in the saved capture but was not watched. Rerun the same recipe with it watched. |
+| `residual_need` | A wanted field is absent from the saved capture. Only those fields are printed as a residual need. |
+| `recompute` | The decision missed. The whole task is recomputed directly and never handed to someone else. |
+
+A residual need is input for the existing unfunded market rails, not a new
+store: a `post` body and the matching `cold-requester-0.3.0.mjs post` argv, an
+`offerVoluntary` input with CC0-1.0 rights and `authorizedToRequest: false` for
+the requester to affirm, and the acceptance criterion the contributor's
+`deliverVoluntary` evidence must pass before `reviewVoluntary`. The command
+posts nothing. Every route reports `paymentAuthority: "none"`, `paidWork: false`,
+`debtCreated: false`, `obligationId: null` and `sent: false`.
+
+```bash
+node tools/result-reuse/cli.mjs residual \
+  --input before-work.json --decision /tmp/reuse-observation.json \
+  --want title,price --task-id source-change-example \
+  --subject source-change-example-decision --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z --horizon 168 --opt-in
+```
+
 `--produced` is the decision the useful job already returned. `--decision` is
 the bound observation written by the first command. `--opt-in` affirms that
 the earlier opt-in is still in force. `--withdraw-opt-in` records that it was
