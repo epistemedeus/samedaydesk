@@ -81,17 +81,27 @@ function validateCapture(capture, label) {
   return { ok: true };
 }
 
+function hasOwnField(payload, field) {
+  return payload != null && typeof payload === "object" && Object.prototype.hasOwnProperty.call(payload, field);
+}
+
 function compareFields(priorPayload, capturePayload, fields) {
   const changed = [];
   const unchanged = [];
+  const absentBoth = [];
   for (const field of fields) {
-    const left = priorPayload?.[field];
-    const right = capturePayload?.[field];
-    const same = stableEqual(left, right);
-    if (same) unchanged.push(field);
+    const leftPresent = hasOwnField(priorPayload, field);
+    const rightPresent = hasOwnField(capturePayload, field);
+    if (!leftPresent && !rightPresent) {
+      absentBoth.push(field);
+      continue;
+    }
+    const left = leftPresent ? priorPayload[field] : undefined;
+    const right = rightPresent ? capturePayload[field] : undefined;
+    if (leftPresent && rightPresent && stableEqual(left, right)) unchanged.push(field);
     else changed.push(field);
   }
-  return { changed, unchanged };
+  return { changed, unchanged, absentBoth };
 }
 
 function stableEqual(a, b) {
@@ -424,6 +434,7 @@ export function evaluateDecision({
   let digestCapture = null;
   let changedFields = [];
   let unchangedFields = [];
+  let absentFields = [];
   let outcome;
   let reason;
 
@@ -431,8 +442,8 @@ export function evaluateDecision({
     if (intent.compare === "payload_digest") {
       const priorSlice = pickFields(prior.payload, intent.fields);
       const captureSlice = pickFields(capture.payload, intent.fields);
-      digestPrior = prior.contentHash || digestPayload(priorSlice);
-      digestCapture = capture.contentHash || digestPayload(captureSlice);
+      digestPrior = digestPayload(priorSlice);
+      digestCapture = digestPayload(captureSlice);
       const same = digestPrior === digestCapture;
       outcome = same ? OUTCOMES.usefulNoChange : OUTCOMES.usefulChange;
       reason = same ? REASONS.digestsMatch : REASONS.digestsDiffer;
@@ -442,11 +453,19 @@ export function evaluateDecision({
       const cmp = compareFields(prior.payload, capture.payload, intent.fields);
       changedFields = cmp.changed;
       unchangedFields = cmp.unchanged;
+      absentFields = cmp.absentBoth;
       digestPrior = digestPayload(pickFields(prior.payload, intent.fields));
       digestCapture = digestPayload(pickFields(capture.payload, intent.fields));
-      const same = changedFields.length === 0;
-      outcome = same ? OUTCOMES.usefulNoChange : OUTCOMES.usefulChange;
-      reason = same ? REASONS.fieldsMatch : REASONS.fieldsDiffer;
+      if (changedFields.length > 0) {
+        outcome = OUTCOMES.usefulChange;
+        reason = REASONS.fieldsDiffer;
+      } else if (absentFields.length > 0) {
+        outcome = OUTCOMES.unknown;
+        reason = REASONS.fieldsAbsent;
+      } else {
+        outcome = OUTCOMES.usefulNoChange;
+        reason = REASONS.fieldsMatch;
+      }
     }
   } catch (error) {
     if (error?.code === "OVERSIZE") return invalid(error.message, { clock: clockParsed.iso, horizonHours, intentId: intent.intentId, subject: intent.subject });
@@ -457,11 +476,15 @@ export function evaluateDecision({
   if (controls.falseChange) reason = REASONS.referenceFalseChange;
   if (controls.missedChange) reason = REASONS.referenceMissedChange;
 
+  const useful = (outcome === OUTCOMES.usefulChange || outcome === OUTCOMES.usefulNoChange)
+    && !controls.falseChange
+    && !controls.missedChange;
+
   return {
     ok: true,
     ...resultShell({
       outcome,
-      useful: true,
+      useful,
       reason,
       freshness: {
         clock: clockParsed.iso,
@@ -475,6 +498,7 @@ export function evaluateDecision({
         subject: intent.subject,
         changedFields,
         unchangedFields,
+        absentFields,
         digestPrior,
         digestCapture,
       },

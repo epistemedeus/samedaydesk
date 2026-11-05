@@ -33,6 +33,7 @@
         "subject": { "type": "string" },
         "changedFields": { "type": "array", "items": { "type": "string" } },
         "unchangedFields": { "type": "array", "items": { "type": "string" } },
+        "absentFields": { "type": "array", "items": { "type": "string" } },
         "digestPrior": { "type": ["string", "null"] },
         "digestCapture": { "type": ["string", "null"] }
       }

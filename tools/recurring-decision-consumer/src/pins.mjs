@@ -18,6 +18,7 @@ export const OUTCOMES = Object.freeze({
 export const REASONS = Object.freeze({
   fieldsDiffer: "fields_differ",
   fieldsMatch: "fields_match",
+  fieldsAbsent: "fields_absent",
   digestsDiffer: "digests_differ",
   digestsMatch: "digests_match",
   priorStale: "prior_outside_horizon",

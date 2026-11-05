@@ -11,7 +11,7 @@ It returns:
 | `stale` | Prior or capture sits outside the caller-supplied horizon |
 | `unavailable` | Capture/prior missing or not permitted |
 | `unsupported` | Intent/capture schema or subject not supported |
-| `unknown` | Invalid input |
+| `unknown` | Invalid input, or requested fields absent on both sides |
 
 This is not a global resident monitor, not a claim of live recurrence, and not a newly funded offer. Later voluntary paid choice stays an outside experiment.
 
@@ -46,8 +46,9 @@ node tools/recurring-decision-consumer/cli.mjs state remove --state /tmp/rdc-sta
 
 ## Workflow export
 
-Exports a caller-owned n8n or native stub only with `--verified` after the caller confirms the target runtime schema.
+Exports a caller-owned n8n or native stub only with `--verified`. That flag is a caller assertion, not executed schema or import proof. The native argv stub is the primary verified shape. The n8n stub uses `command: "node"` plus an `arguments` array rather than unquoted shell interpolation. If a runtime accepts only a single command string, callers must pass pre-validated paths through `buildSafeCommand`.
 
 ```bash
+node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime native --out /tmp/rdc-native.json --verified
 node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime n8n --out /tmp/rdc-n8n.json --verified
 ```

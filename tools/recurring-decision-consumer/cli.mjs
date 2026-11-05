@@ -36,6 +36,7 @@ try {
       reference,
       statePath: args.state ?? null,
     });
+    // Cache only useful results. Reference control failures set useful:false so they do not update state.
     if (args.state && result.ok && result.useful) {
       const saved = updateState(args.state, {
         subject: intent.subject,
