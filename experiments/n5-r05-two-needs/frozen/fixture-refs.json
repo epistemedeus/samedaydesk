@@ -1,0 +1,20 @@
+{
+  "note": "Both decisions read these source-root files. The bytes are not copied and no page was fetched.",
+  "capture": {
+    "path": "tools/recurring-job-recipes/fixtures/current/example-unchanged.json",
+    "gitBlob": "5796a1ffbe9075b249a0600666c4d0aa36f56a26",
+    "rawSha256": "9886f2edce7ee38cc8c7a67cba47edb621f0ca2497ca2aa1e5fbde34c37d0dea"
+  },
+  "prior": {
+    "path": "tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+    "gitBlob": "c2a324e82bef0b6409814515c88c6dcb77df1cff",
+    "rawSha256": "6c35116e799baefdf1c82a5379076251401dbb518f398f95865c92f959634761"
+  },
+  "changed": {
+    "path": "tools/recurring-job-recipes/fixtures/current/example-changed.json",
+    "gitBlob": "582448cf4e962af87df1fec24023481ebb78cec4",
+    "rawSha256": "65246562f86f89b250e6fe6e0b0870f713b66b36b6e2207be2f317541b50cc08"
+  },
+  "writerCaptureBlob": "5796a1ffbe9075b249a0600666c4d0aa36f56a26",
+  "writerPriorBlob": "c2a324e82bef0b6409814515c88c6dcb77df1cff"
+}
