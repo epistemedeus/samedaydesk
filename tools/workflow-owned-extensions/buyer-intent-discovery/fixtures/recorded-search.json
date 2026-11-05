@@ -1,0 +1,27 @@
+{
+  "total_count": 52803,
+  "incomplete_results": false,
+  "items": [
+    {
+      "id": 5862292636,
+      "html_url": "https://github.com/prabhuakshay/webtester/issues/9",
+      "title": "Visual baseline: save snapshots and compare",
+      "body": "## What to build\n\nLet the user save a **baseline**: a snapshot of every current screen for the current URL. Later, a compare view shows each screen's baseline against the live page with a before/after slider.\n\nBaselines are stored locally (per URL and per screen) and can be replaced or deleted.\n\n## Acceptance criteria\n\n- [ ] Save baseline captures every screen for the current URL\n- [ ] Compare view shows each screen with a draggable before/after slider\n- [ ] Baselines persist across app restarts and can be updated or deleted\n- [ ] Screens added after the baseline was taken are shown as \"no baseline\"\n\n## Blocked by\n\nNone (can start immediately)\n",
+      "state": "open",
+      "created_at": "2026-10-15T07:51:32Z",
+      "updated_at": "2026-10-15T09:28:35Z"
+    },
+    {
+      "id": 6038404544,
+      "html_url": "https://github.com/rad-security/kbom/issues/193",
+      "title": "Add `kbom diff` to compare two KBOMs",
+      "body": "Add a `kbom diff old.json new.json` command showing what changed between two snapshots: Kubernetes version, nodes, images, components and resource counts. Useful for drift detection, upgrade reviews and audit evidence. Support human-readable and JSON output.\n",
+      "state": "open",
+      "created_at": "2026-10-26T11:04:23Z",
+      "updated_at": "2026-10-26T11:04:23Z"
+    }
+  ],
+  "retainedSubset": true,
+  "fixtureNote": "Two unchanged public issue records retained from a 20-item live search page. This is a recorded subset, not a new live CLI run.",
+  "capturedAt": "2026-11-05T20:34:08.227Z"
+}

@@ -1,0 +1,5 @@
+{
+  "query": "is:issue is:public \"extract-batch\" \"compare\" in:title,body",
+  "perPage": 20,
+  "note": "One page only. A zero-fit result is expected when no explicit compatible task is present."
+}

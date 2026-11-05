@@ -1,0 +1,14 @@
+{
+  "total_count": 1,
+  "incomplete_results": false,
+  "fixtureNote": "Constructed API-shaped positive control, not observed buyer demand. No public source URL is claimed.",
+  "items": [
+    {
+      "id": 1,
+      "html_url": "https://github.com/fixture-only/fixture-only/issues/1",
+      "state": "open",
+      "title": "Compare two already-held extract-batch JSON snapshots for page changes",
+      "body": "I have two already-held extract-batch JSON snapshots. I need an offline page-change comparison with selected field evidence. No fetching or scheduling is required."
+    }
+  ]
+}

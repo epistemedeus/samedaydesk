@@ -1,0 +1,10 @@
+{
+  "query": "is:issue is:public \"compare\" \"snapshots\" \"json\"",
+  "timestamp": "2026-11-05T20:34:08.227Z",
+  "apiVersion": "2022-11-28",
+  "transport": "enrolled gh api GET search/issues",
+  "perPage": 20,
+  "recordsRetained": 2,
+  "recordsReturned": 20,
+  "source": "recorded-search.json"
+}

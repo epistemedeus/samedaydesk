@@ -1,0 +1,75 @@
+{
+  "schema": "samedaydesk.buyer-intent-discovery.v1",
+  "outcomeId": "E07",
+  "readOnly": true,
+  "acquisition": {
+    "mode": "recorded",
+    "query": "is:issue is:public \"compare\" \"snapshots\" \"json\"",
+    "timestamp": "2026-11-05T20:38:11.133Z",
+    "timezone": "UTC",
+    "apiVersion": "2022-11-28",
+    "docsUrl": "https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests",
+    "requestUrl": "https://api.github.com/search/issues?q=is%3Aissue+is%3Apublic+%22compare%22+%22snapshots%22+%22json%22&per_page=20&page=1",
+    "totalCount": 52803,
+    "incompleteResults": false,
+    "page": 1,
+    "perPage": 20,
+    "retainedSubset": true,
+    "sourceCapturedAt": "2026-11-05T20:34:08.227Z",
+    "coverage": "single search page, issue title and body only; no comments or complete-discussion claim"
+  },
+  "outcome": "no_fit",
+  "reason": "No acquired candidate explicitly qualifies within the supported offline service boundaries.",
+  "counts": {
+    "acquired": 2,
+    "fitting": 0,
+    "nonFitting": 2
+  },
+  "fixtureNote": "Two unchanged public issue records retained from a 20-item live search page. This is a recorded subset, not a new live CLI run.",
+  "candidates": [
+    {
+      "id": "5862292636",
+      "sourceUrl": "https://github.com/prabhuakshay/webtester/issues/9",
+      "title": "Visual baseline: save snapshots and compare",
+      "taskDescription": "## What to build\n\nLet the user save a **baseline**: a snapshot of every current screen for the current URL. Later, a compare view shows each screen's baseline against the live page with a before/after slider.\n\nBaselines are stored locally (per URL and per screen) and can be replaced or deleted.\n\n## Acceptance criteria\n\n- [ ] Save baseline captures every screen for the current URL\n- [ ] Compare view shows each screen with a draggable before/after slider\n- [ ] Baselines persist across app restarts and can be updated or deleted\n- [ ] Screens added after the baseline was taken are shown as \"no baseline\"\n\n## Blocked by\n\nNone (can start immediately)",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-15T09:28:35Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "6038404544",
+      "sourceUrl": "https://github.com/rad-security/kbom/issues/193",
+      "title": "Add `kbom diff` to compare two KBOMs",
+      "taskDescription": "Add a `kbom diff old.json new.json` command showing what changed between two snapshots: Kubernetes version, nodes, images, components and resource counts. Useful for drift detection, upgrade reviews and audit evidence. Support human-readable and JSON output.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-26T11:04:23Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    }
+  ],
+  "paidGateway": "paused_at_base_not_live_checked",
+  "contacted": false,
+  "posted": false,
+  "directFallback": {
+    "queryFile": "tools/workflow-owned-extensions/buyer-intent-discovery/queries.json",
+    "requestUrl": "https://api.github.com/search/issues?q=is%3Aissue+is%3Apublic+%22compare%22+%22snapshots%22+%22json%22&per_page=20&page=1",
+    "method": "GET"
+  }
+}

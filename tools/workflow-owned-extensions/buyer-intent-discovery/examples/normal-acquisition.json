@@ -1,0 +1,395 @@
+{
+  "schema": "samedaydesk.buyer-intent-discovery.v1",
+  "outcomeId": "E07",
+  "readOnly": true,
+  "acquisition": {
+    "mode": "recorded",
+    "query": "is:issue is:public \"extract-batch\" \"compare\" in:title,body",
+    "timestamp": "2026-11-05T20:38:11.171Z",
+    "timezone": "UTC",
+    "apiVersion": "2022-11-28",
+    "docsUrl": "https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests",
+    "requestUrl": "https://api.github.com/search/issues?q=is%3Aissue+is%3Apublic+%22extract-batch%22+%22compare%22+in%3Atitle%2Cbody&per_page=20&page=1",
+    "totalCount": 913,
+    "incompleteResults": false,
+    "page": 1,
+    "perPage": 20,
+    "retainedSubset": false,
+    "sourceCapturedAt": "2026-11-05T20:35:57.019Z",
+    "coverage": "single search page, issue title and body only; no comments or complete-discussion claim"
+  },
+  "outcome": "no_fit",
+  "reason": "No acquired candidate explicitly qualifies within the supported offline service boundaries.",
+  "counts": {
+    "acquired": 20,
+    "fitting": 0,
+    "nonFitting": 20
+  },
+  "fixtureNote": "Full 20-item page captured with enrolled gh api, replayed offline through the E07 CLI. No fitting demand is asserted.",
+  "candidates": [
+    {
+      "id": "6000899891",
+      "sourceUrl": "https://github.com/latentforge/VoiceStudio/issues/20",
+      "title": "Add length-aware batched device API for CosyVoice feature extraction",
+      "taskDescription": "CosyVoiceV1FeatureExtractor._mel_spectrogram already accepts rectangular tensor batches and follows the tensor device. The public feature extractor flattens batch input into one waveform, so callers cannot use CUDA preprocessing for variable-length waveform batches.\n\nPlease add a public processor or feature-extractor API that takes padded waveforms, per-waveform lengths, and a sampling rate. It should return one time-major feature tensor per input after selecting its unpadded prefix. Each result must exactly match the existing single-utterance feature extractor output.\n\nThis would make GPU batch preprocessing available without downstream users calling the protected method. Verification should compare mixed-length CPU and CUDA batches against the existing per-utterance result.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-23T15:45:31Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "6201397224",
+      "sourceUrl": "https://github.com/Si-Forces/mkvanimebatch/issues/193",
+      "title": "fix(mkv-core): extract mode lets .mkv/.MKV siblings overwrite each other's sidecars",
+      "taskDescription": "Follow-up to #175, which refuses colliding destinations in remux mode only.\n\n## Problem\n\nExtract mode has the same collision. Discovery reads the `.mkv` extension case-insensitively (`scan.rs`), so `Show - 01.mkv` and `Show - 01.MKV` in one directory are two items with the same file stem. `extract.rs` names every sidecar from that stem:\n\n- subtitle: `{stem}_{EpLabel}{ep}_{lang}_track{id}.ass`\n- chapters: `{stem}_{EpLabel}{ep}_chapters.xml`\n- cover: `{stem}_cover{ext}`\n\nThe subtitle and chapter files are promoted with `promote_file`, which replaces an existing file, so the second item silently overwrites the first one's sidecars, and both report success. The cover is skipped when `{stem}_cover{ext}` already exists, so the second item keeps the first one's cover. Under `--out-dir` the same happens for mirrored directories that differ only by case (`Season 1/` and `season 1/`).\n\nNot reproduced with real media yet; this is from reading `extract.rs` next to the remux repro.\n\n## Suggested direction\n\nMirror #175's remux check: after selected-items filtering and before any media work, refuse an extract batch whose items share a sidecar stem in the same destination directory, compared case-folded, naming the colliding Item IDs. The track ids and episode labels are only known after probing, so comparing `(destination dir, file stem)` is the simple, conservative key. #175 added `pipeline::validate_remux_destinations`; reuse or generalize it rather than adding a second rule.\n\n## Tests\n\n- A plan-only test with `.mkv`/`.MKV` siblings in extract mode.\n- A `test_real_remux`-style extract case if the existing suite has one to extend.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-11-04T11:02:05Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5947853750",
+      "sourceUrl": "https://github.com/ecmwf/WeatherGenerator/issues/2943",
+      "title": "istep not passed to `compute_loss` during validation (context-loss warmup stuck at 0)",
+      "taskDescription": "# Description\n\nFollow-up to #2720 / #2722 (on `develop-ssl-diffusion-v1`). The training path now passes `istep`\nthrough `LossCalculator.compute_loss` to the loss modules, but the validation call does not:\n\n`src/weathergen/train/trainer.py` (validate):\n```python\n_ = self.loss_calculator_val.compute_loss(\n    preds=preds,\n    targets_and_aux=targets_and_auxs,\n    metadata=extract_batch_metadata(batch),\n)\n```\n\nSo `istep` defaults to 0 in `LossLatentSSLStudentTeacher.compute_loss`. With\n`context_loss.warmup_steps > 0`, the warmup factor is always 0 during validation:\n\n- the context loss never contributes to the total validation loss, so validation and training\n  losses can't be compared\n- `context_warmup` is logged as 0 for validation\n\nTraining gradients are not affected. As with #2720, this is silent.\n\n# Fix\n\nPass `istep=self.cf.general.istep` in the validation `compute_loss` call.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-20T19:06:59Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5228479057",
+      "sourceUrl": "https://github.com/starigazdam/ai-workflow-runner/issues/9",
+      "title": "Extract batch runner / Ralph loop / circuit breaker out of core - should be a tool built on the runner",
+      "taskDescription": "## Context\n\nFollow-up to discussion in #8. Comparing our core against LangChain/LangGraph turned up real overlap - see the wheel-reimplementation analysis below.\n\n## Overlap findings\n\n| Our code | LangGraph/LangChain equivalent | Overlap |\n|---|---|---|\n| `WorkflowEngine` + `PhaseExecutor` + `routing.ts` | LangGraph `StateGraph` (nodes, edges, conditional routing) | High |\n| `ContextStore` (disk persistence, resume) | LangGraph checkpointers (SQLite/Postgres/memory) with built-in resume/replay | High |\n| Gate system `user_approval` pauses | LangGraph `interrupt()` / human-in-the-loop breakpoints | High |\n| `AgentRunner` provider abstraction (`OpenAiRunner`, `AnthropicRunner`) | LangChain `ChatModel` interface | Medium-high |\n\n## Proposal\n\n1. **Batch runner should be dropped from core and extracted as a separate tool built on top of the runner**, not embedded in `src/batch.ts` as part of the engine package. Specifically:\n   - **Batch execution** (multi-ticket sequential runs)\n   - **Ralph loop** (`--max-iterations`, re-running a ticket N times)\n   - **Circuit breaker** (stop after N consecutive failures)\n\n   None of these are workflow-engine concerns - they're orchestration/ops concerns that should sit *on top of* a stable `workflow_run` API (CLI or MCP), the same way a cron job or CI pipeline would drive it. Keeping them in core couples engine changes to batch-runner changes and duplicates what a thin wrapper script/tool could do.\n\n2. Open question (not part of this issue, tracked separately): whether `WorkflowEngine`/`ContextStore`/gate-pause machinery should eventually be rebuilt on LangGraph instead of hand-rolled, given the high overlap with `StateGraph` + checkpointer + `interrupt()`.\n\n## Acceptance criteria\n- [ ] `src/batch.ts` (batch runner, Ralph loop, circuit breaker) removed from the core package\n- [ ] Same functionality re-implemented as a standalone tool/script that calls the runner's public API (CLI invocation or MCP `workflow_run`) instead of importing engine internals\n- [ ] Docs updated to reflect batch/Ralph/circuit-breaker as an external tool, not a core feature\n- [ ] Core package README no longer advertises batch runner as a first-class surface\n\n## Non-goals\n- This issue does not cover replacing WorkflowEngine/ContextStore with LangGraph - that's a separate, bigger decision to be discussed first.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-08-23T18:41:32Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5929109075",
+      "sourceUrl": "https://github.com/AKJama/sekiro-rs/issues/118",
+      "title": "Dedupe map assets and bake static batches at extract time",
+      "taskDescription": "## Problem\n`sekiro-extract map` writes each block's own copy of shared models and DDS textures, so connected blocks load byte-identical assets under different paths.\nPR #117 (#98) undoes this at runtime: it hashes and compares every streamed texture and mesh, aliases render assets, and retires static-batch source meshes from the GPU by editing Bevy's extraction queue.\nThat works (9.5 GB to 7.4 GB on m11_00) but costs CPU while blocks stream in and depends on Bevy internals.\n\n## To do\n- Extract shared textures and models once to a shared, content-addressed folder (or remap paths in the loader), so the asset server dedupes by path and `texture_residency.rs` and `share_sources` in `mesh_residency.rs` can go.\n- Bake static batches at extract time, so their source meshes never load to the GPU and the residency surgery in `mesh_residency.rs` can go.\n- Skip top mips in a DDS loader setting instead of slicing loaded images in `vram.rs`.\n\n## Done when\n- m11_00 peak VRAM is the same or lower than with #117, the three runtime dedupe paths are removed, and the first 20 s of play stutter less.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-19T18:14:37Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5746154433",
+      "sourceUrl": "https://github.com/NL-BioImaging/biomero-scripts/issues/38",
+      "title": "Improve image-export throughput with persistent workers, bounded parallelism, and pipelined archive batches",
+      "taskDescription": "## Problem\n\nLarge image selections spend substantial time preparing inputs before Slurm processing starts.\n\nOn our local Windows/Docker Desktop deployment, a sample of 40 images averaged approximately:\n\n| Stage | Average per image |\n|---|---:|\n| Zarr export | 4.1 seconds |\n| Pixel-identity checks and canonical promotion attempt | 1.0 second |\n| Total preparation | 5.1 seconds |\n\nEach image contained approximately 16 MB of raw pixels. This corresponds to approximately 3.2 MB/s of **raw pixel-equivalent preparation throughput**, not network-transfer throughput.\n\nThe inspected implementation exports images sequentially, launches an `omero zarr` subprocess for each fresh export, and waits for export and packaging to finish before transferring and unpacking the archive.\n\nThese local measurements motivate the proposal, but should not be treated as production performance estimates.\n\nRelevant code: [`_data/_SLURM_Image_Transfer.py`](https://github.com/NL-BioImaging/biomero-scripts/blob/master/_data/_SLURM_Image_Transfer.py).\n\n## Target environments\n\nThe design should support both:\n\n- **Local development:** Windows/Docker Desktop, limited resources, and Windows-mounted working directories.\n- **Production:** Red Hat Linux, 48 CPUs, 512 GB RAM, and fast local storage. Original files reside on a mounted NAS with a maximum connection speed of **10 Gbit/s**.\n\nThe NAS connection has a theoretical ceiling of approximately **1.25 GB/s before overhead**. Additional workers should improve concurrency until CPU, OMERO, storage, or NAS throughput becomes the limiting factor. Worker count should therefore be configurable and measured, rather than automatically set to all 48 CPUs.\n\n## Suggested design\n\n### 1. Reuse exporter processes and connections\n\nIntroduce a pool of long-lived export workers.\n\nEach worker would:\n\n- Initialize its exporter and OMERO connection once.\n- Export multiple images through that connection.\n- Maintain session keepalive and reconnect after recoverable failures.\n- Close its resources on completion or cancellation.\n\nInvestigate using a supported Python exporter API or a persistent adapter around `omero-cli-zarr`, avoiding repeated interpreter initialization and connection setup.\n\nEach worker should own its connection and mutable reader state. Process workers should initialize connections after starting, rather than inherit live connections through a fork.\n\n### 2. Add bounded parallel exports\n\nAllow several independent images to export concurrently.\n\nPreassign deterministic output paths and manifest entries using image IDs and HCS field paths. Completion order must not affect naming, image ordering, or provenance.\n\nFor plate exports, workers should write separate field subtrees or temporary stores. A coordinator should finalize shared plate/well metadata, avoiding concurrent writes to shared metadata files.\n\nConcurrency should respect:\n\n- Actual CPU and memory allocations.\n- Per-worker codec thread counts.\n- Estimated decoded-image memory.\n- Available scratch space.\n- Observed NAS and OMERO throughput.\n\nLarge images should continue using bounded tile/chunk processing.\n\n### 3. Overlap export, archive creation, transfer, and extraction\n\nThe current implementation already creates ZIP archives. The proposed improvement is to create **multiple independent archive batches** and overlap the stages:\n\n```text\nExport batch N+1\n    while packaging/transferring batch N\n        while extracting batch N-1\n```\n\nA bounded queue between stages would prevent exports from filling scratch storage when transfer or extraction falls behind.\n\nBatch boundaries could use a combination of:\n\n- Maximum bytes.\n- Maximum number of images or fields.\n- Maximum waiting time before closing a partially filled batch.\n\nFor example, benchmark batches around **1-4 GiB**, with an image-count limit and a time-based flush. These should be tuning options, not fixed assumptions.\n\nEach archive should have one writer. Parallel packaging and extraction should operate on separate archives.\n\nFor Zarr, retain stored/uncompressed ZIP as an option: chunk data may already be compressed, making additional compression expensive with little benefit. Benchmark compression choices against actual transfer bandwidth.\n\n### 4. Extract batches independently and publish inputs atomically\n\nTransfer completed archives while later batches are still being produced. Extract several archives concurrently into separate staging directories on fast destination storage.\n\nA coordinator should assemble the final input layout and publish an \"inputs ready\" marker only when all required batches are complete.\n\nArchive batching should preserve the existing analysis boundary: a workflow expecting a complete plate should still receive that complete plate before submission.\n\nFor a local deployment where both stages can access the same storage, consider a direct local-copy/staging transport that avoids unnecessary archive-and-extract work.\n\n### 5. Make the pipeline resumable and capacity-aware\n\nMaintain a manifest containing image/field mappings, batch membership, sizes, completion status, and integrity information.\n\nThe pipeline should support:\n\n- Retrying a failed image or archive without repeating successful work.\n- Transferring archives under temporary names and publishing them atomically.\n- Cancelling active exporters, transfers, and extraction workers.\n- Limiting queued batches and total staging bytes.\n- Cleaning temporary data according to the existing retention policy.\n- Preserving source files and valid canonical stores.\n\nExisting pixel-identity checks should remain intact. The identity mismatches observed locally need separate investigation; this optimization must not bypass them.\n\n## Suggested initial benchmark settings\n\nThese are starting points for testing, not promised optimal values:\n\n| Stage | Local deployment | Production starting point |\n|---|---:|---:|\n| Export workers | 2 | 8; compare 4, 8, 16, and 24 |\n| Archive writers | 1 | 1-2 |\n| Transfer workers | 1 | 1-2, depending on the destination link |\n| Extraction workers | 1 | 2-4 |\n\nMeasure the NAS source link and the processor-to-Slurm transfer link separately. Increasing transfer concurrency cannot remove a bottleneck in the initial NAS reads.\n\n## Benchmark and acceptance criteria\n\nCompare the existing implementation against connection reuse, parallel export, archive pipelining, and their combination.\n\nRecord:\n\n- End-to-end time until inputs are ready.\n- Export, identity-check, packaging, transfer, and extraction times.\n- Images/s, raw pixel-equivalent MB/s, archive MB/s, and NAS read throughput.\n- CPU utilization, peak memory, scratch-space usage, and queue lengths.\n- Cold-cache and warm-cache performance.\n- Cancellation, retry, and interrupted-transfer behavior.\n\nThe new path should preserve pixel values, channels, axes, physical calibration, HCS structure, labels, and provenance. It should retain a single-worker compatibility mode and produce clear progress for each preparation stage.\n\n## Repository coordination\n\nThe main coordination belongs in `biomero-scripts`. Reusable transfer, resumability, and remote extraction functionality may require corresponding changes in [`biomero`](https://github.com/NL-BioImaging/biomero/blob/main/biomero/slurm_client.py). Deployment settings and documentation would belong in [`NL-BIOMERO`](https://github.com/NL-BioImaging/NL-BIOMERO).",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-12T13:19:23Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5197389394",
+      "sourceUrl": "https://github.com/Salk-Harnessing-Plants-Initiative/bloom/issues/703",
+      "title": "bloomctl: batch-ingest-result doesn't cross-check RunManifest.pipeline_run_id against envelope provenance",
+      "taskDescription": "## Context\n\nFound during review of bloom #678 / PR #697 (scope `cyl batch-ingest-result` discovery to the RunManifest).\n\n## The gap\n\n`discover_envelopes` scopes discovery purely by **scan_key** (matching a manifest's `scan_keys` against filename stems). `RunManifest.pipeline_run_id` is a required field, successfully parsed, but never read or compared against anything - in particular, never cross-checked against the ingested envelope's own `provenance.pipeline_run_id` (an independent field, already forwarded verbatim to the write-back RPC).\n\nThis means: if `envelopes_dir` is reused across two different pipeline runs, and a stale file from a **prior** run happens to declare the same `scan_key` the **current** run's manifest also declares, the stale file passes the scope check unmodified - scan_key identity is checked, but run identity isn't. This is the sharpest remaining form of the original \"stale file gets silently ingested\" contamination bloom #678 was meant to close, just narrowed to the specific case of a scan_key collision across runs (rather than an unrelated scan_key lingering from a prior run, which #678 does catch).\n\n## Not a regression - matches upstream's own scope\n\nNeither `sleap-roots-predict`'s `discover_scans` (predict #35) nor `sleap-roots`'s `extract_batch` (sleap-roots #263) - the two reference implementations bloom #678 mirrors - cross-check `pipeline_run_id` either. This is a pre-existing, accepted limitation across the whole chain, not something #678 introduced or was expected to close on its own.\n\n## Suggested fix direction\n\nSince `provenance.pipeline_run_id` is already present on ingested envelopes and forwarded unmodified to the RPC, `ingest_one_envelope` (or a caller) could compare it against the manifest's `pipeline_run_id` that scoped the file's discovery, rejecting or flagging a mismatch. This is a bigger, separate change than pure discovery scoping - validating envelope provenance against manifest identity is a different mechanism than filename/scan_key matching - and would need its own OpenSpec proposal given the size (and ideally should land consistently across all three repos in the chain: predict, traits, and write-back, not just write-back alone).\n\n## References\n\n- PR #697: https://github.com/Salk-Harnessing-Plants-Initiative/bloom/pull/697\n- bloom #678\n- sleap-roots-pipeline #37 (cross-repo manifest-scoping tracker)\n- `openspec/changes/add-cyl-writeback-manifest-scope/design.md`",
+      "state": "open",
+      "sourceUpdatedAt": "2026-09-16T18:17:31Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "3654605142",
+      "sourceUrl": "https://github.com/SkanderMulder/extractoR/issues/12",
+      "title": "Implement batch_extract() with parallel processing support",
+      "taskDescription": "Enable efficient batch processing of large document collections with parallel execution.\n\n## Example API\n```r\n# Sequential batch\nresults <- batch_extract(texts, schema)\n\n# Parallel batch with furrr\nresults <- batch_extract(\n  texts,\n  schema,\n  .parallel = TRUE,\n  .workers = 4\n)\n```\n\n## Tasks\n- [ ] Create `batch_extract()` function\n- [ ] Support sequential processing (default)\n- [ ] Add `.parallel` parameter for parallel execution\n- [ ] Integrate with `furrr` package for parallelization\n- [ ] Add rate limiting to respect API limits\n- [ ] Handle errors gracefully (continue on failure)\n- [ ] Add progress bar integration\n- [ ] Support result caching\n- [ ] Add parameter to control batch size\n- [ ] Write documentation with performance tips\n- [ ] Add benchmarks comparing sequential vs parallel\n\n## Success Criteria\n- Handles 1000+ documents efficiently\n- Parallel mode shows significant speedup\n- Respects rate limits\n- Clear error reporting\n\n## Timeline\nWeek 4-6 (Phase 2)",
+      "state": "open",
+      "sourceUpdatedAt": "2025-11-22T11:58:26Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "6006938043",
+      "sourceUrl": "https://github.com/apache/datafusion/issues/26689",
+      "title": "GROUPS frames and bounded rank split peers with logically equal nested dictionary nulls",
+      "taskDescription": "### Describe the bug\n\nTwo one-element Arrow lists can both represent `[NULL]` when one contains a null dictionary key and the other contains a key pointing to a null dictionary value. `GROUPS BETWEEN CURRENT ROW AND CURRENT ROW` counts one row in each group. `rank()` and `dense_rank()` also split the peers when the planner chooses `BoundedWindowAggExec`.\n\n### To reproduce\n\nRegister this two-row batch in a Rust `SessionContext`.\n\n```rust\nuse std::sync::Arc;\nuse datafusion::arrow::{\n    array::{ArrayRef, DictionaryArray, Int8Array, Int32Array, ListArray, RecordBatch},\n    buffer::OffsetBuffer,\n    datatypes::{Field, Int8Type},\n};\nuse datafusion::prelude::{SessionConfig, SessionContext};\n\nlet children: ArrayRef = Arc::new(DictionaryArray::<Int8Type>::try_new(\n    Int8Array::from(vec![None, Some(0)]),\n    Arc::new(Int32Array::from(vec![None])),\n)?);\nlet key: ArrayRef = Arc::new(ListArray::new(\n    Arc::new(Field::new(\"item\", children.data_type().clone(), true)),\n    OffsetBuffer::from_lengths([1, 1]), children, None,\n));\nlet ctx = SessionContext::new_with_config(SessionConfig::new().with_target_partitions(1));\nctx.register_batch(\"t\", RecordBatch::try_from_iter([(\"k\", key)])?)?;\n```\n\nRun these queries in that context.\n\n```sql\nSELECT count(*) OVER (ORDER BY k GROUPS BETWEEN CURRENT ROW AND CURRENT ROW) FROM t;\n\nSELECT rank() OVER w, dense_rank() OVER w FROM t WINDOW w AS (ORDER BY k);\n\nSELECT rank() OVER w, dense_rank() OVER w, percent_rank() OVER w\nFROM t WINDOW w AS (ORDER BY k);\n```\n\n| Query | Physical operator observed | Output for the two rows | Expected |\n| --- | --- | --- | --- |\n| GROUPS count | `BoundedWindowAggExec` (Sorted) | `1, 1` | `2, 2` |\n| Rank and dense rank | `BoundedWindowAggExec` (Sorted) | `1, 2` for each function | `1, 1` for each function |\n| Rank and dense rank alongside percent rank | `WindowAggExec` | `1, 1` for each rank function and `0.0, 0.0` for percent rank | Same |\n\nReproduced at `99100274dd` during review of #26067. GROUPS frame boundaries and bounded rank compare extracted `ScalarValue`s. Batch rank uses Arrow partition boundaries, which group the two rows together. [GROUPS boundaries](https://github.com/apache/datafusion/blob/99100274dd139574854e40393474caac5c97e16b/datafusion/expr/src/window_state.rs#L710-L739) · [bounded rank](https://github.com/apache/datafusion/blob/99100274dd139574854e40393474caac5c97e16b/datafusion/functions-window/src/rank.rs#L276-L308) · [batch rank](https://github.com/apache/datafusion/blob/99100274dd139574854e40393474caac5c97e16b/datafusion/physical-expr/src/window/standard.rs#L144-L147)",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-23T23:25:12Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5065391064",
+      "sourceUrl": "https://github.com/Godfrey2712/IntentifierBench/issues/6",
+      "title": "Batch tokenization/inference for sentence and pair classification",
+      "taskDescription": "Motivation\n\nextract_classification and extract_classification_pairs perform per-sentence or per-pair tokenizer+model calls in a loop. Batching sentences into a single tokenizer/model call will reduce overhead and improve throughput, especially on GPU.\n\nTasks\n\n1. Modify extract_classification to accept a batch size and tokenize a list of sentences at once using tokenizer(sentences, return_tensors='pt', padding=True, truncation=True).\n2. Use model(**inputs) once per batch and collect logits for all sentences in the batch.\n3. Similarly change extract_classification_pairs to batch adjacent pairs.\n4. Add a configurabe BATCH_SIZE env var and guard memory usage.\n5. Add benchmark script scripts/benchmark_batching.py that compares old vs new approach on sample documents.\n\nAcceptance criteria\n\n- Batching reduces processing time per document in benchmarks.\n- Implementation includes safe default batch size and optional config.\n\nFiles to change\n\n- app.py (extract_classification and extract_classification_pairs)\n- Add scripts/benchmark_batching.py\n\nEstimated effort: 4-6 hours\nLabels: enhancement, performance",
+      "state": "open",
+      "sourceUpdatedAt": "2026-08-04T22:19:26Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5648451213",
+      "sourceUrl": "https://github.com/fabiantax/zero-allocation-fileupload/issues/134",
+      "title": "Safe archive entry names for batch uploads",
+      "taskDescription": "## Story\n\nAs a caller who extracts the batch archive, I want every entry name to be safe on common file systems, so that extracting the ZIP never fails or produces a misleading file.\n\n## Background\n\nBatch entry names come from the validated `FileName` (ADR-0011, \"Names\"), which already rejects path separators, `.` and `..`. Reviewing the batch session (#114, PR #130) showed names it still accepts that are unsafe or confusing once they become archive entries:\n\n- drive-relative and alternate-data-stream forms: `C:evil.txt`, `a.txt:s.txt`\n- reserved device names: `CON.txt`\n- Unicode format characters such as the right-to-left override, which makes a name display differently from what it is\n- names of any length: a 70,004-character name is accepted, while file systems and extractors stop at 255 bytes (multipart headers cap real requests near 16 KB)\n- names that differ only in Unicode normalization (`é.txt` composed vs decomposed) count as distinct for duplicate detection but are the same file on some file systems\n\n## Acceptance criteria\n\n- [ ] A Domain rule for archive entry names rejects names longer than 255 UTF-8 bytes\n- [ ] rejects `:`, `<`, `>`, `\"`, `|`, `?`, `*` and control characters\n- [ ] rejects Windows reserved device names (CON, PRN, AUX, NUL, COM1-9, LPT1-9), with or without an extension, case-insensitively\n- [ ] rejects Unicode format characters (category Cf)\n- [ ] batch duplicate detection compares names in normalization form C; the emitted entry name is unchanged\n- [ ] a rejected name becomes an `InvalidFileName` row, like the existing rules\n- [ ] each rule has a Domain test\n\n## Out of scope\n\n- Changing the single-file endpoint: v0.3 keeps its behaviour unchanged, so the rules apply to batch entry names only.\n- Repairing or transliterating names: an unsafe name is rejected, not fixed.\n- Changing how duplicates are numbered.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-09-30T14:55:33Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5951250246",
+      "sourceUrl": "https://github.com/sierraglobalcompany-rgb/CarpiNova-Knowledge/issues/117",
+      "title": "ANTIRRUIDO - auditar y depurar ramas históricas de Knowledge y PC con evidencia de conservación",
+      "taskDescription": "## Hallazgo / objetivo\n\nTras cerrar **MVP5 (#113)** y **fidelidad p0192 (#114)**, los repositorios CarpiNova-Knowledge y CarpiNova-PC tienen **cero Issues y PR abiertos** y sus CI de integración están GREEN. La revisión de antirruido detectó **377 ramas remotas en Knowledge** (376 fuera de `main`) y **56 en PC** (55 fuera de `main`) = **431 referencias no-main**. No confundir este conteo con commits o archivos duplicados.\n\n**Objetivo:** clasificar esas referencias, demostrar qué ramas pueden retirarse sin perder trabajo, evidencia o capacidad de rollback, y **solo entonces** ejecutar una limpieza limitada, aprobada y reversible. Sin modificar código, contrato, contenido fuente ni CI. **Carpinova-Agente queda explícitamente fuera de alcance.**\n\n### Identidad inicial verificada (2026-10-20)\n\n- Knowledge main: `d350f3de1104977986f30498d212e018cbac5d29`; [postmerge QA #39503373699](https://github.com/sierraglobalcompany-rgb/CarpiNova-Knowledge/actions/runs/39503373699) SUCCESS, 451 pruebas.\n- PC main: `f78a7316bad14641338e4a0fd567e759b0dfb8e5`; [Consumer Proof #39494993658](https://github.com/sierraglobalcompanyv2/CarpiNova-PC/actions/runs/39494993658) SUCCESS, 175 pruebas, hashes/artefactos verificados.\n- Ambos: ningún Issue o PR abierto durante la inspección.\n\n### Hallazgo PC ya comprobado\n\nDe 55 ramas distintas de `main`, la comparación contra el SHA real de PC da **52 ramas cuyo commit es ancestro de `main`** (`ahead=0`; `behind>0`), agrupadas en 12 HEAD/SHA distintos. Hay **3 ramas divergentes** (`ahead>0`): `audit/mvp3-knowledge-integration-20261013`, `codex/issue108-final-semantic-sheet` y `governance/four-laws-design-20261017`. **Las tres quedan en REVIEW/HOLD**; no asumir que un diff antiguo esté o no cubierto por squash sin análisis.\n\nLas 52 ramas ancestrales son **candidatas**, no autorizaciones de borrado. Comprobar consumidores de nombres de rama, documentación, releases, workflows, dependencias externas y valor forense antes de clasificar DELETE.\n\n### Hallazgo Knowledge\n\nHay ramas históricas de tipo `audit/`, `checkpoint/`, `extract/`, `feat/`, `feature/`, `test/`, `tmp/` y otras. Una muestra comparativa demuestra estados mixtos: algunas apuntan a commits ancestros de `main`; otras tienen commits únicos por divergencia o squash. Por ejemplo `extract/batch-025` presenta `ahead=22` y `behind=499`; **mantener REVIEW**, no borrado automático. La rama fusionada `fix/knowledge-p0192-hidrosanitary-site-survey` también es divergente por el squash: el árbol funcional está representado en `main`, pero sus SHAs no están en ancestry lineal. Los conteos Knowledge requieren inventario exhaustivo previo.\n\n## Plan ejecutable mínimo (KISS)\n\n1. **Snapshot read-only** de la lista completa de ramas de ambos repositorios, con SHA y protección. Registrar SHA de ambos `main`, Issues y PR abiertos y hora UTC.\n2. **Clasificar cada referencia** con `git merge-base --is-ancestor` / GitHub Compare, diff/árbol, PR fusionado y referencias usadas por docs/workflows/releases; marcar `KEEP`, `DELETE_CANDIDATE`, `REVIEW` o `ACTIVE`. No equiparar `status=diverged` con pérdida de trabajo, pero no borrarla por deducción.\n3. **Evidencia mínima por lote**: rama+SHA exacto, `ahead/behind`, confirmación de árbol/historial representado, PR/issue, referencias y ruta de recuperación. Guardar inventario como **artefacto de revisión fuera de los repositorios**, no commitear checkpoints duplicados.\n4. **Gate de aprobación del propietario** con listado y conteo exactos. Sin aprobación **NO borrar ramas**. No crear workflows temporales o scripts persistentes.\n5. Solo tras aprobación: borrar en lotes pequeños con verificación de SHA/head inmediatamente antes de cada borrado; nunca tocar `main` ni ramas activas/ambiguas. Revalidar lista y supervivencia de commits/trabajo.\n6. Confirmar invariantes: SHAs de `main` intactos, PR/Issues intactos, CI sin degradación. Cerrar cuando no queden candidatos aprobados pendientes; los REVIEW quedan documentados sin forzar decisión.\n\n## Reglas vinculantes\n\nLas cuatro leyes de ambos `AGENTS.md`: **KISS, Antirruido, Antiparches, Diseño**. Precedencia de GitHub real y fuente canónica. Priorizar eliminar ruido únicamente con prueba de seguridad. Git history conserva historia normal, pero **no asumir** que todos los commits de ramas divergentes están integrados.\n\n**NO-TOUCH:** `Carpinova-Agente`, datos canónicos, PDF, source manifests, Knowledge distribution, UI, contratos, feature work, deployment. No force push. No cambios de `main`. No cerrar con limpieza especulativa.\n\n**Criterio de aceptación inmediato:** inventario completo y clasificación rigurosa de ramas, listado separado de `DELETE_CANDIDATE` y `REVIEW`, aprobación explícita solicitada antes de cualquier eliminación.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-21T06:41:43Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5474204094",
+      "sourceUrl": "https://github.com/memgraph/ai-toolkit/issues/339",
+      "title": "unstructured2graph: GLiNER2Backend has no cross-chunk coreference and no batched reconciliation path (LightRAG has both)",
+      "taskDescription": "## What\n\nGLiNER2Backend (#330) and LightRAGBackend are both `ExtractionBackend` implementations, but two aspects of LightRAG's behavior have no GLiNER2 equivalent today. Neither is a bug (#336/#338 already fixed the actual bug, GLiNER2's context-window truncation) -- these are architecture gaps worth closing deliberately.\n\n### 1. No cross-chunk entity coreference\n\nLightRAG's LLM merges \"the same\" entity mentioned across different chunks/documents into one canonical node, with a merged description. `GLiNER2Backend._entity_id` is deliberately scoped to `(chunk_hash, entity_type, normalized_text)` -- documented in its own docstring as a known limitation: \"unlike LightRAG, this backend does no cross-chunk coreference -- the same real-world entity mentioned in two different chunks becomes two separate Memgraph nodes.\"\n\nThis matters more than it used to: post-#331, a session is one document/chunk, so within a session this is less of an issue, but across sessions (the common case -- the same person, team, or project recurring over many sessions) GLiNER2 will keep creating duplicate nodes indefinitely, where LightRAG consolidates them.\n\nClosing this is a real design decision, not a quick fix: what counts as \"the same\" entity (exact normalized text? embedding similarity? a threshold?), and where the merge/upsert step lives (write time, per session? a periodic post-process?).\n\n### 2. No batched/parallel reconciliation path\n\nLightRAG has `SessionsGraph.reconcile_sessions_batch()` (#333): many sessions staged into one shared LightRAG worker-pool pass, `context_graph_eval.reconcile_batch`'s default path. GLiNER2 only has the plain sequential `reconcile_session` loop (`_reconcile_batch_gliner2` in `context_graph_eval/reconcile.py`, added for the GLiNER2 eval-pipeline work) -- one session at a time, `await`ed in order.\n\nUnlike LightRAG's concurrency (network-bound API calls, safe to run many at once), GLiNER2 model-instance concurrency is *not* clearly safe -- checked directly: `batch_extract`/`extract_long` call `self.eval()` and lazily cache `self._inference_collator` on every invocation, with no documented thread-safety guarantee, so firing multiple `asyncio.to_thread` calls at the same model instance from separate sessions is a real race risk (benign at best, a corrupted result at worst), not something to just try.\n\nGLiNER2 does have a real equivalent already in the library, unused: `model.batch_extract(texts, schema, ...)` performs genuine vectorized batching -- one tokenization/forward pass over many texts together, safe because it's a single call, not concurrent calls. Measured (short synthetic texts, `fastino/gliner2.5-base-v1`): 20 texts sequentially via `extract()` took 3.05s, the same 20 via one `batch_extract()` call took 2.36s (1.29x) -- a real, if modest, win on short text; likely larger on the longer real session texts `extract_long`'s own windowing already produces many chunks for.\n\n## Why it matters\n\nBoth gaps are specifically about **parity between the two backends as pluggable options**, not about either one being broken:\n\n- Coreference gap: a real graph-quality difference a user switching from LightRAG to GLiNER2 would hit silently -- more duplicate nodes over time, no error.\n- Batching gap: GLiNER2's own reconciliation path is currently slower than it needs to be for a multi-session batch (like the 100-question Tier 1 eval run), purely from the lack of batching, independent of #336's fix.\n\n## Suggested fix\n\n1. **Batching (lower-risk, do first)**: give `_reconcile_batch_gliner2` a batched variant using `model.batch_extract()` across multiple sessions' texts in one call, rather than looping `reconcile_session` one at a time. Needs `GLiNER2Backend` to expose a batch-shaped entry point (`aingest_chunks`, plural, alongside the existing `aingest_chunk`) so callers outside the eval pipeline benefit too, not just this one caller.\n2. **Coreference (real design work, do second)**: needs its own discussion on identity/merge semantics before implementation -- not sized here.\n\n<sub>Found while comparing GLiNER2Backend and LightRAGBackend after landing #338 (map: unstructured2graph pluggable backends, #330).</sub>",
+      "state": "open",
+      "sourceUpdatedAt": "2026-09-16T11:58:19Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "4458368800",
+      "sourceUrl": "https://github.com/marin-m/pbtk/issues/41",
+      "title": "Merge existing fixes from forks",
+      "taskDescription": "Potential merges:\n\n* `dex2jar` update + `RepeatedScalarFieldContainer` fix https://github.com/marin-m/pbtk/compare/master...Davis-3450:pbtk:master\n* similar but more recent (merge?): https://github.com/marin-m/pbtk/compare/master...TimLChan:pbtk:master\n* `RepeatedScalarFieldContainer` fix only https://github.com/marin-m/pbtk/compare/master...imLinguin:pbtk:master\n* Global refactor: https://github.com/marin-m/pbtk/compare/master...BellezaEmporium:pbtk:master\n* `jadx` integration (unfinished?) and `protoc` on macOS support: https://github.com/marin-m/pbtk/compare/master...netmaxt3r:pbtk:master\n* Allow to batch extract `proto` files from a folder: https://github.com/marin-m/pbtk/compare/master...maodijim:pbtk:master",
+      "state": "open",
+      "sourceUpdatedAt": "2026-05-16T04:18:46Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5411418732",
+      "sourceUrl": "https://github.com/polarbear0122/speech-deepfake-detection-toolkit/issues/3",
+      "title": "Add self-supervised speech embedding interface",
+      "taskDescription": "## Goal\nAdd a model-agnostic interface for extracting utterance- or frame-level embeddings from self-supervised speech encoders.\n\n## Scope\n- Common extractor API\n- Device and batching controls\n- Optional layer selection\n- Frame-level and pooled output modes\n- Feature caching with explicit metadata\n\n## Motivation\nA shared interface will make it easier to compare handcrafted acoustic features with modern SSL representations and to reuse the same downstream detection / attribution code.\n\n## Acceptance criteria\n- Backend-neutral base interface\n- One documented example backend when licensing permits\n- Output shape documentation\n- Unit tests using a lightweight mock backend so tests do not download large checkpoints",
+      "state": "open",
+      "sourceUpdatedAt": "2026-09-10T11:10:01Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5646744515",
+      "sourceUrl": "https://github.com/unxmaal/infovore/issues/148",
+      "title": "Extract: batch several exchanges per claude -p invocation",
+      "taskDescription": "## Measurement\n\nEvery LLM call spawns a fresh `claude -p` with `--no-session-persistence` in a new temp cwd (`infovore/llm/claude_cli.py:93`), so the CLI's own system prompt is re-sent on every call and prompt caching can never read back.\n\n`extraction_runs` for `claude-sonnet-5`: 12,246 ok runs, avg **7,616 input tokens** per exchange.\n\nRendering the real prompt offline for 30 recent exchanges (`build_request` + `render_prompt`, no API call) gives our actual payload:\n\n| part | tokens |\n|---|---|\n| user prompt (mean of 30) | ~1,820 |\n| `SYSTEM_PROMPT` | ~471 |\n| `ExtractionOut` JSON schema | ~252 |\n| **our content** | **~2,543** |\n| **billed** | **7,616** |\n| **harness overhead** | **~5,073 (67%)** |\n\nThe overhead is per *spawn*, not per exchange.\n\n## Proposal\n\nSend N exchanges (default 10) per invocation, returning a JSON array of per-exchange results keyed by index. Amortises the ~5,073 tokens to ~507 per exchange, taking input from ~7,616 to ~3,050, a ~60% cut on the input side.\n\n- Per-exchange failure handling unchanged; a malformed batch falls back to per-exchange calls for that batch.\n- Each exchange keeps its own `extraction_runs` row. Token counts are only available per call, so record the batch's usage plus the batch size and divide, or add a `batch_tokens`/`batch_size` pair rather than silently attributing the whole batch to one row.\n- Compare against per-exchange extraction on the same exchanges before switching: claim counts, and any claim the batched run drops.\n\nSibling of #126, which proposes the same for probe. Probe is the bigger win by call volume (~77,670 spawns vs ~12,656), so #126 should land first.\n\n## Constraint\n\nNo Anthropic API access on this account (Max 2x), so the Batch API and explicit prompt caching are not options. Amortising spawns is the lever that is available.",
+      "state": "closed",
+      "sourceUpdatedAt": "2026-10-03T15:13:18Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "not_open_current_request",
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "6015189632",
+      "sourceUrl": "https://github.com/ACM-VIT/Weave-ml/issues/197",
+      "title": "Validate and reduce GPU synchronization and transfer overhead in ranker training",
+      "taskDescription": "<!-- performance-audit-followup: 2026-10-24/training-cuda-overhead -->\n**Execution:** human-required  \n**Audit item:** Performance follow-up 5/8 (24 October 2026)\n\n## Problem / why this costs time\nTraining and validation extract a host loss scalar every batch. Calibration extracts five metric scalars per batch. On CUDA, these host reads introduce synchronization points. DataLoaders use default pageable memory and transfers use blocking `tensor.to(device)`. A CPU profiler around the actual evaluation functions with two fixture batches observed 3 scalar-extraction events for validation and 11 for calibration, including one DataLoader setup extraction in each run. No CUDA device was available; GPU stall duration and speedup are unknown.\n\n## Requirements\n- Human input required: provide an approved CUDA benchmark environment and review workload, resource/cost limits and the measured configuration before adopting GPU-specific defaults.\n- Preserve loss definitions, example weighting, calibration semantics, split ordering, artifact provenance and CPU support.\n- Accumulate detached metric tensors without retaining training graphs; define numerical tolerances explicitly.\n- Do not automatically add DataLoader workers or enable mixed precision/converted artifacts under this scope.\n\n## Proposed fix\nAccumulate metric totals on device and transfer only at reporting boundaries. Compare CUDA-only pinned-memory/nonblocking transfers and representative batch sizes against the current path. Keep the simpler CPU path unless evidence supports a change.\n\n## Acceptance / verification\n- [ ] Record hardware/software identity, batch sizes, profiler synchronization traces, epoch time, examples/second and memory for baseline/treatment.\n- [ ] Training/validation losses and per-head calibration agree within documented tolerances; no graph or memory retention regression occurs.\n- [ ] CPU execution and small in-memory datasets retain acceptable performance; unavailable hardware results are reported honestly.\n- [ ] An explicit benchmark decision records supported settings and rollback; no hardware provisioning or production model activation is implied.\n\n## Dependencies / cross-repo context\nNo confirmed hard dependency. [ACM-VIT/Weave-ml#67](https://github.com/ACM-VIT/Weave-ml/issues/67) concerns inference-device and converted-artifact selection; this issue covers training transfers and metric extraction. [ACM-VIT/Weave-ml#149](https://github.com/ACM-VIT/Weave-ml/issues/149) remains authoritative for preprocessing, and [ACM-VIT/Weave-ml#28](https://github.com/ACM-VIT/Weave-ml/issues/28) for model qualification. Coordinate with the separate training-memory audit item if shared loader code changes.\n\n## Source evidence\n- https://github.com/ACM-VIT/Weave-ml/blob/7da7fa8d6e947998ac634f64511c1af2f1f2ac03/Ranking_Training_module/train_ranker.py#L180\n- https://github.com/ACM-VIT/Weave-ml/blob/7da7fa8d6e947998ac634f64511c1af2f1f2ac03/Ranking_Training_module/train_ranker.py#L202\n- https://github.com/ACM-VIT/Weave-ml/blob/7da7fa8d6e947998ac634f64511c1af2f1f2ac03/Ranking_Training_module/train_ranker.py#L237\n- https://github.com/ACM-VIT/Weave-ml/blob/7da7fa8d6e947998ac634f64511c1af2f1f2ac03/Ranking_Training_module/train_ranker.py#L255\n- https://github.com/ACM-VIT/Weave-ml/blob/7da7fa8d6e947998ac634f64511c1af2f1f2ac03/Ranking_Training_module/train_ranker.py#L361\n\n## Validation status\nSource inspection and CPU scalar-operation profiling were completed at the pinned commit. No CUDA result or production improvement is asserted. Completion requires the approved hardware measurement and configuration decision; local implementation and fixtures can be prepared first.\n\nEvidence is pinned to ML commit `7da7fa8d6e947998ac634f64511c1af2f1f2ac03`. Existing open/closed issue scopes and open ML PRs were rechecked before publication. No implementation, deployment or measured production speedup is claimed by opening this issue.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-27T07:25:44Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "4090545182",
+      "sourceUrl": "https://github.com/thomaspryor/Broadwayscore/issues/193",
+      "title": "Review collection improvements: validator fix + Deep Research",
+      "taskDescription": "## Active Session: Review collection improvements\n\n**Status:** In progress - validator fix shipped, Deep Research script building\n\n### Completed\n- Fixed validate-data.js aggregator archive check (was comparing staging dir vs itself)\n- Source validation scripts extracted from batch script (checkPlausibility, normalizeFinancialValues, loadShowContext)\n\n### In progress\n- scripts/deep-research-commercial.js - core script that calls OpenAI Deep Research API, validates show identity, extracts structured data via Claude, writes to pending review with guardian-compatible metadata\n- deep-research-commercial.yml - manual dispatch + worktree-safe with concurrency group\n\n### Blocker\n- Needs OpenAI org verification for Deep Research API access",
+      "state": "open",
+      "sourceUpdatedAt": "2026-03-17T18:57:50Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "requires_implementation_or_unsupported_acquisition",
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "6037160924",
+      "sourceUrl": "https://github.com/garrytan/gbrain/issues/7651",
+      "title": "crash robot: one unreproduced projection_drift (facts fence empty, row present) under pooler_disconnect",
+      "taskDescription": "## What we saw\nOne local crash-robot replay on Postgres behind a transaction-mode PgBouncer failed with a `projection_drift` violation under the `pooler_disconnect` fault:\n\n```\noverlapping_slugs_two_sources seed=5105 pooler_disconnect: projection_drift:\n  after ov6: robot-0/notes/alpha facts fence [] != rows [\"Alpha fact mk-ov5\"]\n```\n\nThe run was on Bun 1.4.0 at about v0.60.463.0. The fact came from `ov5` (`remember`, committed). `ov6` was a `forget` refused `not_found`, so it wrote nothing. The check found the page's facts fence empty while the database still held the fact row as active.\n\n## Reproduction attempts (none reproduced)\nI replayed the failing manifest entry with `validate.ts --replay` on Postgres behind PgBouncer, at master e7bdf107b:\n- 25 replays on Bun 1.4.0 and 25 on Bun 1.4.4, run sequentially: 0 failures.\n- 24 replays with three robots running at once and two CPU spinners on a 4-vCPU machine (16 on Bun 1.4.0, 8 on Bun 1.4.4): 0 failures.\n- 20 replays (10 per Bun version) with logging on the harness's page read: 0 failures, and no read errors were swallowed.\n\nBefore the failing run, about 30 earlier replays of the same entry also passed. That puts it at roughly 1 in 125 runs.\n\n`pooler_disconnect` needs a Postgres admin connection, so this fault has no PGLite arm.\n\n## Not the #7602 shape\n#7602, fixed by #7606 in v0.60.462.0, is an `extract_facts` batch refused `revision_conflict` in facts-absorb, which then drops its facts. Here the fact came from `remember`, not extraction. The divergence also runs the other way: the fact row is present and only the page fence is missing it.\n\n## Leading hypothesis: the harness read, not the store\n`ReferenceModel.checkProjection` (`scripts/persistence/model.ts`) reads the page with `readPage` through `get_page`. `readPage` catches every error and returns `null`, and `checkProjection` then parses an empty string as the page content. `retryingRead` retries only errors that match `DROPPED_CONNECTION`. So a `get_page` that fails during a drop with any other error, such as a typed storage error, gives an empty fence while the rows are still there. That is exactly this signature, and the detail line shows nothing because `lastReadError` is not included in `projection_drift`.\n\nThis is unproven. It wasn't observed in 20 instrumented replays.\n\n## Proposed next step\n1. Have `checkProjection` treat a `null` read of a live page as a read failure. It should include `lastReadError` in the detail and not compare an empty string against the rows. The fence-equals-rows assertion stays.\n2. If the drift recurs with a clean read, treat it as a real projection divergence. Use the retained fixture database to check whether the fence and rows converge after the drain.\n\nThe fixture manifest is kept in the crew drive as GBRA-135-pooler-projection-drift.json.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-10-26T21:16:22Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    },
+    {
+      "id": "5361275932",
+      "sourceUrl": "https://github.com/salvogendut/GEMBENCH/issues/75",
+      "title": "Restart 2H: shared filesystem bindings, timer publication and parameter dispatch",
+      "taskDescription": "Continue the CPC restart after #74: finish the filesystem client/timer publication/GB_PARAMS provider boundaries while preserving current MSX2 behavior and compile-once applications.\n\nScope:\n- Separate native filesystem-client request storage from shared marshaling (full, directory-only and batch profiles).\n- Extract the app-linked native timer publisher behind explicit fixed-state/SDCC calling-convention bindings.\n- Extract receiving-side GB_PARAMS validation, caller-copy and timer operations behind MSX2 state/geometry/ownership/rendering/critical-section providers.\n- Keep the already platform-neutral universal SDK records, Z80 stack bridge and ABI 2.1 contract unchanged; do not create target-specific universal APP variants.\n- Add independent-provider/layout/actual-policy checks and build dependencies.\n\nAcceptance: capture and repeat filesystem/native Clock/public parameter runtime baselines (including Screen 6/7 parameter checks); compare affected module/app/kernel artifacts; pass a clean full check and record remaining boundaries.\n\nNo CPC desktop enablement or emulator changes. CPC runtime remains M4/Albireo-only. Preserve untracked QA/CPC. Review and merge are separate.",
+      "state": "open",
+      "sourceUpdatedAt": "2026-09-05T22:32:55Z",
+      "isPullRequest": false,
+      "fitting": false,
+      "verdict": "no_fit",
+      "capability": null,
+      "reasons": [
+        "no_explicit_supported_supplied_evidence_task"
+      ],
+      "buyerIntent": "unverified_public_work_request_not_purchase_or_contact_consent",
+      "handoff": null
+    }
+  ],
+  "paidGateway": "paused_at_base_not_live_checked",
+  "contacted": false,
+  "posted": false,
+  "directFallback": {
+    "queryFile": "tools/workflow-owned-extensions/buyer-intent-discovery/queries.json",
+    "requestUrl": "https://api.github.com/search/issues?q=is%3Aissue+is%3Apublic+%22extract-batch%22+%22compare%22+in%3Atitle%2Cbody&per_page=20&page=1",
+    "method": "GET"
+  }
+}
