@@ -10,8 +10,8 @@ import './fixtures/no-ajv-register.mjs';
 
 const {digest} = await import('../runtime/agent-economy-foundation/dist/index.js');
 
-// 0.3.1 cold client: multi-criterion post and the existing accepted-work permit
-// and public read. All HTTP goes to an in-process stub (no socket, no Postgres).
+// 0.3.1 cold client: multi-criterion post, permit-accepted-work, and accepted-work
+// list/detail/artifact. All HTTP goes to an in-process stub (no socket, no Postgres).
 
 const client = fileURLToPath(new URL('../examples/cold-requester-0.3.1.mjs', import.meta.url));
 const pinned = fileURLToPath(new URL('../client/cold-requester-0.3.0.mjs', import.meta.url));
@@ -82,14 +82,18 @@ test('post refuses over 16, duplicates, mixed forms or bad JSON before sending',
   }
 });
 
-test('accepted-work read reports public reads off without enabling them', () => {
+test('accepted-work quotes the server unavailable code without enabling anything', () => {
   const s = setup({acceptedWorkPublic:false});
   const out = s.run('accepted-work');
   assert.equal(out.status, 1);
   assert.equal(out.body.code, 'accepted_work_public_unavailable');
-  assert.equal(out.body.publicReadsEnabled, false);
-  assert.equal(out.body.serverChanged, false);
+  assert.equal(out.body.serverCode, 'accepted_work_public_unavailable');
+  assert.equal(out.body.status, 404);
+  assert.equal(out.body.serverChanged, undefined);
+  assert.ok(String(out.body.message || '').includes('does not enable'));
   assert.ok(s.requests().every(r => r.method === 'GET'), 'only reads were sent');
+  assert.equal(s.requests().some(r => r.path.startsWith('/v1/market/accepted-work')), true);
+  assert.equal(s.requests().some(r => r.method !== 'GET'), false);
 });
 
 test('accepted-work read lists published items when the server has them on', () => {
@@ -97,10 +101,62 @@ test('accepted-work read lists published items when the server has them on', () 
   const s = setup({acceptedWorkPublic:true, acceptedItems:[item]});
   const out = s.run('accepted-work', '--limit', '5');
   assert.equal(out.status, 0, JSON.stringify(out.body));
-  assert.equal(out.body.publicReadsEnabled, true);
+  assert.equal(out.body.publicReads, '0');
+  assert.equal(out.body.acceptedWorkPublic, true);
   assert.deepEqual(out.body.items, [item]);
   assert.equal(s.requests()[0].path, '/v1/market/accepted-work?limit=5');
   assert.equal(s.run('accepted-work', '--limit', '99').body.code, 'accepted_work_arguments_refused');
+});
+
+test('accepted-work list detail and artifact succeed while publicReads stay off', () => {
+  // Broader public participant reads stay '0'. Accepted-work routes are separate and already on.
+  const detail = {
+    taskId:TASK,
+    summary:'Fixture public summary',
+    summaryDigest:'d'.repeat(64),
+    termsDigest:'e'.repeat(64),
+    rightsDigest:'f'.repeat(64),
+    rights:{license:'CC0-1.0', scope:'synthetic-or-authorized-reusable-artifact', attribution:'Fixture contributor'},
+    artifactDigest:'a'.repeat(64),
+    publicArtifactDigest:'b'.repeat(64),
+    continuation:{account:'/v1/account/signup', interest:'/v1/market/interest', chosenConsumer:'/v1/market/grantVoluntary', permissionedExport:'/v1/market/exportVoluntary'},
+    publicArtifact:{method:'fixture method name', steps:['read', 'compare']},
+  };
+  const listItem = (({publicArtifact, ...view}) => view)(detail);
+  const s = setup({acceptedWorkPublic:true, acceptedItems:[detail]});
+  const listed = s.run('accepted-work', '--limit', '20');
+  assert.equal(listed.status, 0, JSON.stringify(listed.body));
+  assert.equal(listed.body.publicReads, '0');
+  assert.equal(listed.body.acceptedWorkPublic, true);
+  assert.deepEqual(listed.body.items, [listItem]);
+  assert.equal(JSON.stringify(listed.body).includes('accepted_work_public_unavailable'), false);
+
+  const got = s.run('accepted-work', '--task-id', TASK);
+  assert.equal(got.status, 0, JSON.stringify(got.body));
+  assert.deepEqual(got.body.item, listItem);
+  assert.equal(JSON.stringify(got.body).includes('accepted_work_public_unavailable'), false);
+  assert.equal(s.requests().some(r => r.path === '/v1/market/accepted-work/' + TASK), true);
+
+  const art = s.run('accepted-work', TASK, '--artifact');
+  assert.equal(art.status, 0, JSON.stringify(art.body));
+  assert.deepEqual(art.body.item, detail);
+  assert.equal(art.body.item.publicArtifact.method, 'fixture method name');
+  assert.equal(JSON.stringify(art.body).includes('accepted_work_public_unavailable'), false);
+  assert.equal(s.requests().some(r => r.path === '/v1/market/accepted-work/' + TASK + '/artifact'), true);
+  assert.ok(s.requests().every(r => r.method === 'GET'));
+});
+
+test('accepted-work reports the server unavailable response and does not enable anything', () => {
+  const s = setup({acceptedWorkPublic:false});
+  const out = s.run('accepted-work', '--limit', '10');
+  assert.equal(out.status, 1);
+  assert.equal(out.body.ok, false);
+  assert.equal(out.body.status, 404);
+  assert.equal(out.body.code, 'accepted_work_public_unavailable');
+  assert.equal(out.body.serverCode, 'accepted_work_public_unavailable');
+  assert.equal(s.requests().filter(r => r.path.split('?')[0] === '/v1/market/accepted-work').length, 1);
+  assert.ok(s.requests().every(r => r.method === 'GET'), 'no mutation and no enable attempt');
+  assert.equal(s.requests().some(r => /permit|profile/.test(r.path) && r.method === 'POST'), false);
 });
 
 test('permit-accepted-work refuses to send when public reads are off', () => {

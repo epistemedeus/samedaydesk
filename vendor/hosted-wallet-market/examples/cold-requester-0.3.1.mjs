@@ -190,14 +190,14 @@ function receiveMarket(secret,name,stored,response){
 
 const voluntaryMutations=['offerVoluntary','assentVoluntary','deliverVoluntary','reviewVoluntary','grantVoluntary','withdrawVoluntary','withdrawNeed','useVoluntary'];
 const readbackMutations=[...voluntaryMutations,'permitAcceptedWork'];
-// The server advertises accepted-work public reads in its profile only when they
-// are on. This client never asks the server to turn them on.
+// Broader public participant reads stay off (publicReads '0'). Accepted-work
+// list/detail/artifact are a separate mount. This client never enables either.
 async function acceptedWorkAdvertised(){
   const response=await request('/v1/market/profile'),value=response.body?.value;
   return response.status===200&&response.body?.ok===true&&value?.acceptedWork?.discovery==='/v1/market/accepted-work';
 }
-const PUBLIC_READS_OFF={ok:false,code:'accepted_work_public_unavailable',publicReadsEnabled:false,serverChanged:false,
-  message:'server reports accepted-work public reads are off; this client does not enable them'};
+const PUBLICATION_OFF={ok:false,code:'accepted_work_public_unavailable',sent:false,serverChanged:false,
+  message:'server reports accepted-work publication is unavailable; this client does not enable it'};
 async function participationBinding(secret){
   await marketBinding(secret);
   const binding=secret.acquisition;
@@ -379,20 +379,33 @@ async function main(){
     receiveMarket(secret,name,stored,response);
   }
   if(command==='accepted-work'){
-    const taskId=flag('task-id'),limit=flag('limit')??'20';
+    // Maps to real routes only: GET /v1/market/accepted-work, /:id, /:id/artifact.
+    // Broader publicReads stay '0' on the server; do not infer unavailability from that.
+    const positional=args[1]&&!String(args[1]).startsWith('--')?args[1]:undefined;
+    const taskId=flag('task-id')??positional,wantArtifact=args.includes('--artifact'),limit=flag('limit')??'20';
+    if(wantArtifact&&taskId===undefined)fail('accepted_work_arguments_refused');
     if(taskId!==undefined&&!/^market-[a-f0-9]{64}$/.test(taskId))fail('accepted_work_arguments_refused');
-    if(!/^[1-9][0-9]?$/.test(limit)||Number(limit)>50)fail('accepted_work_arguments_refused');
-    const cursor=flag('cursor');if(cursor!==undefined&&!/^market-[a-f0-9]{64}$/.test(cursor))fail('accepted_work_arguments_refused');
-    const route=taskId?'/v1/market/accepted-work/'+taskId:'/v1/market/accepted-work?limit='+limit+(cursor?'&cursor='+cursor:'');
-    const response=await request(route),value=response.body?.value;
-    if(response.status===200&&response.observation.complete&&response.body?.ok===true&&value){
-      if(taskId)emit({ok:true,publicReadsEnabled:true,item:value,paidWork:false});
-      const items=Array.isArray(value.items)?value.items:[];
-      emit({ok:true,publicReadsEnabled:true,items,count:items.length,nextCursor:value.nextCursor??null,
-        publicReads:value.publicReads??null,paidWork:false,signerAuthority:value.signerAuthority??null});
+    if(taskId===undefined){
+      if(!/^[1-9][0-9]?$/.test(limit)||Number(limit)>50)fail('accepted_work_arguments_refused');
+      const cursor=flag('cursor');if(cursor!==undefined&&!/^market-[a-f0-9]{64}$/.test(cursor))fail('accepted_work_arguments_refused');
     }
-    if(response.status===404&&!(await acceptedWorkAdvertised()))emit({...PUBLIC_READS_OFF,status:404,serverCode:codeOf(response)});
-    emit({ok:false,status:response.status,code:codeOf(response)||'read_unavailable',publicReadsEnabled:response.status===404?true:null});
+    const cursor=flag('cursor');
+    const route=taskId?'/v1/market/accepted-work/'+taskId+(wantArtifact?'/artifact':''):
+      '/v1/market/accepted-work?limit='+limit+(cursor?'&cursor='+cursor:'');
+    const response=await request(route),value=response.body?.value,code=codeOf(response);
+    if(response.status===200&&response.observation.complete&&response.body?.ok===true&&value){
+      if(taskId)emit({ok:true,item:value,paidWork:false,publicReads:value.publicReads??null,
+        acceptedWorkPublic:value.acceptedWorkPublic??null});
+      const items=Array.isArray(value.items)?value.items:[];
+      emit({ok:true,items,count:items.length,nextCursor:value.nextCursor??null,
+        publicReads:value.publicReads??null,acceptedWorkPublic:value.acceptedWorkPublic??null,
+        paidWork:false,signerAuthority:value.signerAuthority??null});
+    }
+    // Only quote the server's real unavailable code (machine-market discoverAccepted).
+    if(response.status===404&&code==='accepted_work_public_unavailable')
+      emit({ok:false,status:404,code,serverCode:code,
+        message:'server reports accepted-work is unavailable; this client does not enable it'},1);
+    emit({ok:false,status:response.status,code:code||'read_unavailable'},1);
   }
   if(command==='permit-accepted-work'){
     // Calls the existing permitAcceptedWork action. Both parties must permit the
@@ -403,7 +416,7 @@ async function main(){
     const publicArtifact=flag('public-artifact')?safeInput(flag('public-artifact')):null;
     archive(secret,name);
     const source=await participationBinding(secret);
-    if(!(await acceptedWorkAdvertised()))emit({...PUBLIC_READS_OFF,operation:name,sent:false});
+    if(!(await acceptedWorkAdvertised()))emit({...PUBLICATION_OFF,operation:name});
     const read=await request('/v1/market/readVoluntary',{method:'POST',body:{taskId},headers:sessionHeaders(secret)});
     const current=read.body?.value?.result;
     if(read.status!==200||!read.observation.complete||read.body?.ok!==true||read.body.value.action!=='readVoluntary'||!current)

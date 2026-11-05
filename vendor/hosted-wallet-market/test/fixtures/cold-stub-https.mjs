@@ -35,8 +35,26 @@ function route(method, path, body, headers) {
       ...(config.acceptedWorkPublic ? {acceptedWork:{schema:'pilot.machine-market.accepted-work-publication.v1', publicReads:'0', paidWork:false, signerAuthority:false, discovery:'/v1/market/accepted-work'}} : {})}}];
   }
   if (method === 'GET' && path.startsWith('/v1/market/accepted-work')) {
-    if (!config.acceptedWorkPublic) return [404, {ok:false, code:'not_found'}];
-    return [200, {ok:true, value:{items:config.acceptedItems ?? [], nextCursor:null, acceptedWorkPublic:true, publicReads:'0', paidWork:false, signerAuthority:false}}];
+    // Match machine-market discoverAccepted refuse when the mount is off.
+    if (!config.acceptedWorkPublic) return [404, {ok:false, code:'accepted_work_public_unavailable'}];
+    const artifact = path.match(/^\/v1\/market\/accepted-work\/(market-[a-f0-9]{64})\/artifact$/);
+    if (artifact) {
+      const item = (config.acceptedItems || []).find(i => i.taskId === artifact[1]) || config.acceptedDetail || null;
+      if (!item || item.publicArtifact == null) return [404, {ok:false, code:'not_found'}];
+      return [200, {ok:true, value:item}];
+    }
+    const detail = path.match(/^\/v1\/market\/accepted-work\/(market-[a-f0-9]{64})$/);
+    if (detail) {
+      const item = (config.acceptedItems || []).find(i => i.taskId === detail[1]) || config.acceptedDetail || null;
+      if (!item) return [404, {ok:false, code:'not_found'}];
+      const {publicArtifact, ...view} = item;
+      return [200, {ok:true, value:view}];
+    }
+    if (path === '/v1/market/accepted-work') {
+      const items = (config.acceptedItems ?? []).map(({publicArtifact, ...view}) => view);
+      return [200, {ok:true, value:{items, nextCursor:null, acceptedWorkPublic:true, publicReads:'0', paidWork:false, signerAuthority:false}}];
+    }
+    return [404, {ok:false, code:'not_found'}];
   }
   if (method === 'POST' && path === '/v1/market/post') {
     const operationId = headers['idempotency-key'];
