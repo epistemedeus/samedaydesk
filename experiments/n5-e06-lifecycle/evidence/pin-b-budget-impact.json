@@ -1,0 +1,56 @@
+{
+  "schema": "s233.useful-application.artifact.v1",
+  "appId": "vendor-budget-impact",
+  "status": "actionable",
+  "summary": "Pricing-row scan: added=0 removed=0 fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+  "actions": [
+    {
+      "priority": "medium",
+      "kind": "review-price-field",
+      "fieldKey": "alpha-chat-input",
+      "beforeValue": 1.25,
+      "afterValue": 1.75,
+      "unit": "USD/1M-tokens",
+      "delta": 0.5,
+      "note": "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote."
+    }
+  ],
+  "gaps": [],
+  "notMarketFact": true,
+  "notCustomerDemand": true,
+  "noPurchaseAuthority": true,
+  "caller": {
+    "before": "samples/pricing/caller-alpha/before.json",
+    "after": "samples/pricing/caller-alpha/after.json",
+    "exampleMode": false,
+    "sampleLabel": "caller-input",
+    "notMarketFact": true,
+    "notCustomerDemand": true
+  },
+  "underlying": {
+    "family": "pricing-row-unit",
+    "counts": {
+      "beforeRows": 3,
+      "afterRows": 3,
+      "added": 0,
+      "removed": 0,
+      "fieldChanges": 1,
+      "unitChanges": 0,
+      "conflicting": 0,
+      "unchanged": 2,
+      "unknown": 0
+    },
+    "ok": true
+  },
+  "generatedAt": "2026-11-05T03:36:59.340Z",
+  "purchaseAuthority": false,
+  "scope": {
+    "kind": "supplied-pricing-row-diff",
+    "billCalculation": false,
+    "liveQuote": false,
+    "unitsConverted": false,
+    "sourceCoverageVerified": false,
+    "note": "Caller supplies dated snapshots with stable field identity and comparable units. Actual usage and all tariff terms are required for a bill estimate."
+  },
+  "digest": "0ea6c814c944ec14"
+}

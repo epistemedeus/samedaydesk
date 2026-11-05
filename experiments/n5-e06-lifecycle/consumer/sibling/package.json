@@ -1,0 +1,6 @@
+{
+  "name": "consumer-sibling",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Unrelated sibling dependency. Not part of useful-jobs."
+}

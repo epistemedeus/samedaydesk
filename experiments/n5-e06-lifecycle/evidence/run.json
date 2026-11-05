@@ -1,0 +1,274 @@
+{
+  "identity": {
+    "declaredBase": "09b2d6155ce247d828355183c9367889daf5f0f0",
+    "declaredTree": "0619ee40acd45537fe1fde8723d07152ef09508a",
+    "writerCommit": "09b2d6155ce247d828355183c9367889daf5f0f0",
+    "writerTree": "0619ee40acd45537fe1fde8723d07152ef09508a",
+    "writerBranch": "codex/n5-e06-lifecycle-20261105",
+    "inputCommit": "9f6c0c4e396dd7677f334400eed93e3445fad600",
+    "inputTree": "8a85072962a71dc1b78b19a0dc0caf17aebac833",
+    "embedCommit": "1003b9ec6c3d46826f54a398fce4bb6d0821596f",
+    "admitted": {
+      "server/lib/observatory/maintained-capability.js": "b3691bced66e8c4f42e351d5c96be1962748a2bb",
+      "server/scripts/test-capability-owner-lookup.js": "369b11c4f3a55162444c8080ef64881f3d09db4a",
+      "client/public/discovery/useful-jobs.json": "de32575ea85e28aa6113b488e76cbb9f1c795b56",
+      "client/public/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz": "d8aecf276ce2eb23f4d30f5575085bc992134841"
+    },
+    "releaseHistoryMerged": false,
+    "node": "v22.23.4",
+    "npm": "10.9.9"
+  },
+  "archives": {
+    "A": {
+      "size": 2575215,
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "integrity": "sha512-OR+ZfCqQMZoEmW/UgzKWMrp4T3PoQ1PwQtdP1JtjMCKCnQNildwWkyNtzmUWNDRuyMgyBS47v46Ha/iLlZvWPw==",
+      "path": "/tmp/n5-e06-work-zC653a/cache/useful-jobs-1.4.0.tar.gz"
+    },
+    "B": {
+      "size": 5255824,
+      "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+      "integrity": "sha512-eDKT6Be1gin85rE1BmzNMVG3UGw/IwxNK1X8lzCAvo+HQLKO0vmGAc6YFRjTx73+I0rede5XaCQ+aDw+HYZzKQ==",
+      "path": "/tmp/n5-e06-work-zC653a/cache/useful-jobs-1.4.7.tar.gz"
+    }
+  },
+  "embed": {
+    "budget": {
+      "outcome": "owned",
+      "version": "1.4.7",
+      "review": "newly_reviewed",
+      "flags": [
+        "--before",
+        "--after"
+      ]
+    },
+    "feed": {
+      "outcome": "owned",
+      "version": "1.4.7",
+      "review": "inherited",
+      "flags": [
+        "--before",
+        "--after"
+      ]
+    },
+    "unknown": "unknown_need",
+    "versionNotApproved": "version_not_approved"
+  },
+  "refusals": [
+    {
+      "name": "missing",
+      "status": 2,
+      "stderr": "source-root-refused: missing\n",
+      "evidenceCreated": false,
+      "workspaceCreated": false
+    },
+    {
+      "name": "writer-checkout",
+      "status": 2,
+      "stderr": "source-root-refused: commit-mismatch 09b2d6155ce247d828355183c9367889daf5f0f0\n",
+      "evidenceCreated": false,
+      "workspaceCreated": false
+    },
+    {
+      "name": "empty-dir",
+      "status": 2,
+      "stderr": "source-root-refused: git-failed\n",
+      "evidenceCreated": false,
+      "workspaceCreated": false
+    }
+  ],
+  "pin": {
+    "install": {
+      "status": 0,
+      "kit": "/tmp/n5-e06-work-zC653a/tmp/useful-jobs.U62mSJ/useful-jobs-1.4.0",
+      "sha256": "2b1949189f0ad2e3c1bd5f7a43f7eda800fd5f0dc3a395415689feee0419ff4f",
+      "versionStatus": 0,
+      "ms": 376
+    },
+    "useA": {
+      "digest": "0c8a43129eaa451a",
+      "summary": "Budget-impact scan: fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+      "change": {
+        "priority": "medium",
+        "kind": "review-price-field",
+        "fieldKey": "alpha-chat-input",
+        "note": "Price/field delta in curated fixture rows - not a live quote."
+      }
+    },
+    "feedA": {
+      "digest": "9566ea587f0e4af9",
+      "events": 2,
+      "summary": "Agenda delta: +1/~0/-1"
+    },
+    "unknownJob": 2,
+    "http": {
+      "1.4.6": "404",
+      "9.9.9": "404"
+    },
+    "curlFail": {
+      "1.4.6": 22,
+      "9.9.9": 22
+    },
+    "acquireUnknown": {
+      "1.4.6": 1,
+      "9.9.9": 1
+    },
+    "badSha": 1,
+    "truncated": 1,
+    "killedExtract": {
+      "status": 1,
+      "signal": null
+    },
+    "stillA": "0c8a43129eaa451a",
+    "update": {
+      "status": 0,
+      "sha256": "e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",
+      "ms": 370
+    },
+    "useB": {
+      "digest": "0ea6c814c944ec14",
+      "summary": "Pricing-row scan: added=0 removed=0 fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+      "change": {
+        "priority": "medium",
+        "kind": "review-price-field",
+        "fieldKey": "alpha-chat-input",
+        "beforeValue": 1.25,
+        "afterValue": 1.75,
+        "unit": "USD/1M-tokens",
+        "delta": 0.5,
+        "note": "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote."
+      }
+    },
+    "feedB": {
+      "digest": "9566ea587f0e4af9",
+      "events": 2,
+      "summary": "Agenda delta: +1/~0/-1"
+    },
+    "feedCompare": {
+      "jsonSame": true,
+      "icsSame": true,
+      "icsDiff": []
+    },
+    "removeA": 0,
+    "removeB": 0,
+    "removedInvoke": {
+      "status": 1,
+      "error": null
+    },
+    "unrelatedChanges": [],
+    "ms": 4124,
+    "reviewMs": 417,
+    "failureMs": 1682,
+    "setupMs": 900,
+    "amendmentMs": 890,
+    "amendmentEdits": 6,
+    "recoveryCommand": null
+  },
+  "npm": {
+    "install": {
+      "status": 0,
+      "version": "1.4.0",
+      "integrity": "sha512-OR+ZfCqQMZoEmW/UgzKWMrp4T3PoQ1PwQtdP1JtjMCKCnQNildwWkyNtzmUWNDRuyMgyBS47v46Ha/iLlZvWPw==",
+      "ms": 452
+    },
+    "useA": {
+      "digest": "0c8a43129eaa451a",
+      "summary": "Budget-impact scan: fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+      "change": {
+        "priority": "medium",
+        "kind": "review-price-field",
+        "fieldKey": "alpha-chat-input",
+        "note": "Price/field delta in curated fixture rows - not a live quote."
+      }
+    },
+    "feedA": {
+      "digest": "9566ea587f0e4af9",
+      "events": 2,
+      "summary": "Agenda delta: +1/~0/-1"
+    },
+    "unknown": {
+      "1.4.6": 1,
+      "9.9.9": 1
+    },
+    "truncated": {
+      "status": 251,
+      "versionAfter": "1.4.0"
+    },
+    "integrity": {
+      "status": 1,
+      "removedA": true
+    },
+    "recovery": {
+      "command": "npm ci",
+      "status": 0,
+      "ms": 341,
+      "digest": "0c8a43129eaa451a"
+    },
+    "update": {
+      "status": 0,
+      "integrity": "sha512-eDKT6Be1gin85rE1BmzNMVG3UGw/IwxNK1X8lzCAvo+HQLKO0vmGAc6YFRjTx73+I0rede5XaCQ+aDw+HYZzKQ==",
+      "ms": 635
+    },
+    "useB": {
+      "digest": "0ea6c814c944ec14",
+      "summary": "Pricing-row scan: added=0 removed=0 fieldChanges=1 unitChanges=0 conflicting=0 unknown=0",
+      "change": {
+        "priority": "medium",
+        "kind": "review-price-field",
+        "fieldKey": "alpha-chat-input",
+        "beforeValue": 1.25,
+        "afterValue": 1.75,
+        "unit": "USD/1M-tokens",
+        "delta": 0.5,
+        "note": "Same-unit list-price field change in supplied snapshots. Delta is after minus before per stated unit, not a bill change or live quote."
+      }
+    },
+    "feedB": {
+      "digest": "9566ea587f0e4af9",
+      "events": 2,
+      "summary": "Agenda delta: +1/~0/-1"
+    },
+    "feedCompare": {
+      "jsonSame": true,
+      "icsSame": true,
+      "icsDiff": []
+    },
+    "uninstall": 0,
+    "removedInvoke": {
+      "status": 1,
+      "error": null
+    },
+    "npx": {
+      "status": 1
+    },
+    "unrelatedChanges": [],
+    "siblingLs": "n5-e06-synthetic-consumer@0.0.0 /tmp/n5-e06-work-zC653a/npm-consumer\n└── consumer-sibling@0.0.1 -> ./sibling",
+    "reviewMs": 415,
+    "failureMs": 2208,
+    "setupMs": 789,
+    "amendmentMs": 1894,
+    "amendmentEdits": 0,
+    "recoveryEdits": 2
+  },
+  "timing": {
+    "totalMs": 10165,
+    "harnessDownloadMs": 672,
+    "pinSetupMs": 900,
+    "pinReviewMs": 417,
+    "pinFailureMs": 1682,
+    "pinAmendmentMs": 890,
+    "pinUpdateMs": 370,
+    "npmSetupMs": 789,
+    "npmReviewMs": 415,
+    "npmFailureMs": 2208,
+    "npmAmendmentMs": 1894,
+    "npmRecoveryMs": 341,
+    "npmUpdateMs": 635
+  },
+  "verdict": {
+    "ordinaryRouteSuffices": true,
+    "addedHelper": false,
+    "probeDigestReproduced": false,
+    "summary": "The ordinary acquire pin change and npm tarball install both complete install, use, update, and remove. No installer was added."
+  }
+}
