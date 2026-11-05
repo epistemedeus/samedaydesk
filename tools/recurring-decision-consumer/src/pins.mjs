@@ -2,6 +2,8 @@ export const RESULT_SCHEMA = "samedaydesk.recurring-decision-consumer-result.v1"
 export const INTENT_SCHEMA = "samedaydesk.recurring-decision-intent.v1";
 export const CAPTURE_SCHEMA = "samedaydesk.recurring-decision-permitted-capture.v1";
 export const PORTABLE_CAPTURE_SCHEMA = "samedaydesk.portable-decision-capture.v1";
+/** AGL R06 portable decision (decision object, not a capture). Consume via agl-bridge. */
+export const AGL_PORTABLE_DECISION_SCHEMA = "samedaydesk.portable-decision.v1";
 export const STATE_SCHEMA = "samedaydesk.recurring-decision-state.v1";
 
 export const OUTCOMES = Object.freeze({
@@ -29,6 +31,9 @@ export const REASONS = Object.freeze({
   invalidInput: "invalid_input",
   referenceFalseChange: "reference_false_change_control",
   referenceMissedChange: "reference_missed_change_control",
+  aglModulesMissing: "agl_result_reuse_modules_missing",
+  aglReuse: "agl_decide_or_reuse",
+  aglPortableImport: "agl_portable_import",
 });
 
 export const SUPPORTED_CAPTURE_SCHEMAS = Object.freeze([
