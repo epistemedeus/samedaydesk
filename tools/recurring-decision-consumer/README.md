@@ -17,7 +17,11 @@ This is not a global resident monitor, not a claim of live recurrence, and not a
 
 ## Consume, do not duplicate
 
-R05/R06 shared capture and portable-decision producers stay with Agent Growth Loops. This package accepts `samedaydesk.portable-decision-capture.v1` when present and otherwise uses `samedaydesk.recurring-decision-permitted-capture.v1`.
+R05/R06 shared capture and portable-decision producers stay with Agent Growth Loops. See [IMPORT_MAP.md](./IMPORT_MAP.md).
+
+- Direct baseline: permitted captures (`samedaydesk.recurring-decision-permitted-capture.v1`) and optional `samedaydesk.portable-decision-capture.v1`.
+- AGL bridge (`src/agl-bridge.mjs`): vendor-free dynamic import of `tools/result-reuse/src/export.mjs` (`decideOrReuse`) and `portable.mjs` (`samedaydesk.portable-decision.v1`). No copies of those modules.
+- Candidate heads: PR364 `3a4a7538`, PR366 `95c8a841` (stacked). Prefer checkout `95c8a841` for full bridge tests.
 
 ## Run
 
