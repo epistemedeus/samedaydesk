@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "captureId": "cap-prior-different-title",
+  "subject": "example-page",
+  "capturedAt": "2026-11-05T20:00:00.000Z",
+  "payload": {
+    "title": "Prior Different Title",
+    "status": "ok"
+  },
+  "permission": {
+    "permitted": true
+  }
+}
