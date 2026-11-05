@@ -1,0 +1,213 @@
+{
+  "schema": "cc0.query-key-cases.v4",
+  "license": "CC0-1.0",
+  "role": "first-party-seed",
+  "customerDemand": false,
+  "independentContributor": false,
+  "codec": "urllib.parse.quote",
+  "selection": "fence-bound",
+  "bank": [
+    "a",
+    "1",
+    "2",
+    "1&2",
+    "b",
+    "1&b=2",
+    "/p",
+    "/p|query:a=1",
+    "qλ",
+    "lot#",
+    "row 3",
+    "seal",
+    "bin",
+    "west",
+    "mark "
+  ],
+  "cases": [
+    {
+      "id": "grouped-ampersand",
+      "left": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "right": [
+        [
+          0,
+          3
+        ]
+      ],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "pair-in-one-value",
+      "left": [
+        [
+          0,
+          1
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      "right": [
+        [
+          0,
+          5
+        ]
+      ],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "path-delimiter",
+      "lp": 6,
+      "rp": 7,
+      "left": [
+        [
+          0,
+          1
+        ]
+      ],
+      "right": [],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "unicode-key",
+      "left": [
+        [
+          8,
+          1
+        ],
+        [
+          8,
+          2
+        ]
+      ],
+      "right": [
+        [
+          8,
+          3
+        ]
+      ],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "dict-list",
+      "left": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "dictKey": 0,
+      "dictVals": [
+        1,
+        2
+      ],
+      "oldEqual": false,
+      "nowEqual": true
+    },
+    {
+      "id": "pair-order",
+      "left": [
+        [
+          4,
+          2
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "right": [
+        [
+          0,
+          1
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      "oldEqual": true,
+      "nowEqual": true
+    },
+    {
+      "id": "bare-versus-blank",
+      "path": "/n4/direct/lot",
+      "left": [
+        {
+          "k": 9,
+          "form": "value",
+          "v": 10
+        },
+        {
+          "k": 11,
+          "form": "bare"
+        }
+      ],
+      "right": [
+        {
+          "k": 9,
+          "form": "value",
+          "v": 10
+        },
+        {
+          "k": 11,
+          "form": "blank"
+        }
+      ],
+      "oldEqual": true,
+      "midEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "trailing-space-key",
+      "path": "/n4/edge/mark",
+      "left": [
+        {
+          "k": 12,
+          "form": "value",
+          "v": 13
+        },
+        {
+          "k": 14,
+          "form": "bare"
+        }
+      ],
+      "right": [
+        {
+          "k": 12,
+          "form": "value",
+          "v": 13
+        },
+        {
+          "k": 14,
+          "form": "blank"
+        }
+      ],
+      "oldEqual": true,
+      "midEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "percent-encoded-refusal",
+      "code": "representation_refused",
+      "stored": false
+    }
+  ]
+}

@@ -277,6 +277,24 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller conformance proof</a></li>
         <li><a href="${SITE_ORIGIN}/x402/verified">Inspected x402 route list</a></li>
       </ul>
+      <h2>Accepted query-key caller</h2>
+      <pre><code>
+Accepted work: ${SITE_ORIGIN}/api/neomorphic-contributor-journey/v1/market/accepted-work
+Query-key caller schema: cc0.query-key-caller.v4
+Query-key runner: query-key 1.1.0
+Query-key archive: https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
+Query-key archive sha256: 51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa
+Query-key archive bytes: 14566
+Query-key acquire: curl -fsSL -o query-key.tar.gz https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
+Query-key apply: node apply.mjs apply --artifact corpus.json --input examples/next-consumer.json
+Query-key source repository: https://github.com/epistemedeus/neomorphic-io
+Query-key source commit: bb78211863af9bfb9d18e71ecc32af4ecb0a0902
+Query-key source path: tools/query-key-1.1.0
+Query-key artifact path: value.publicArtifact
+Query-key artifact schema path: value.publicArtifact.schema
+Query-key artifact digest path: value.publicArtifactDigest
+Query-key list path: value.items
+</code></pre>
     `;
 
 export const X402_CRAWLER_HTML = `

@@ -1,0 +1,1 @@
+{"schema":"cc0.query-key-caller.v4","left":{"method":"GET","path":"/n4/direct/lot","pairs":[{"key":"lot#","form":"value","value":"row 3"},{"key":"seal","form":"bare"}]},"right":{"method":"GET","path":"/n4/direct/lot","pairs":[{"key":"lot#","form":"value","value":"row 3"},{"key":"seal","form":"blank"}]}}

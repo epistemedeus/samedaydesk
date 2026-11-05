@@ -1,8 +1,12 @@
 // Apex machine declarations. Generated from the mounted MCP inventory and the
 // HTTP routes this process actually serves. Paid gateway documents stay on
 // agents.samedaydesk.com; canonical links do not establish availability.
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
+import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
+import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import {
   AGENT_READINESS_RATE_LIMIT_DEFAULT,
@@ -601,6 +605,7 @@ export function apexApiCatalog() {
     { rel: "service-doc", href: `${APEX_ORIGIN}/skill.md`, type: "text/markdown", title: "Apex skill" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/llms.txt`, type: "text/plain", title: "Apex llms.txt" },
     { rel: "describedby", href: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`, type: "application/json", title: "Original-task help descriptor" },
+    { rel: "describedby", href: QUERY_KEY_CONSUMER.acceptedWork, type: "application/json", title: "Accepted work" },
     { rel: "service-meta", href: `${APEX_ORIGIN}/.well-known/agent-card.json`, type: "application/json", title: "Apex agent card" },
     { rel: "status", href: `${APEX_ORIGIN}/mcp`, type: "text/plain", title: "Apex MCP" },
     { rel: "status", href: `${APEX_ORIGIN}/api/health`, type: "application/json", title: "Apex health" },
@@ -812,6 +817,7 @@ export function apexOpenApiDocument() {
         "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
         "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
         "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
+        "x-query-key-caller names the schema, versioned runner, acquire command, apply command, and source identity for an accepted cc0.query-key-caller.v4 artifact. Those facts are read from this document at x-query-key-caller. The accepted-work HTTP body is the raw envelope {ok, value}. Read the caller at value.publicArtifact, its schema at value.publicArtifact.schema, its digest at value.publicArtifactDigest, and the list at value.items.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],
@@ -863,6 +869,7 @@ export function apexOpenApiDocument() {
       links: PAID_GATEWAY_LINKS.map((link) => ({ rel: link.rel, href: link.href, type: link.type })),
       note: "When available, gateway documents own current terms. Canonical links and historical launches do not establish availability.",
     },
+    "x-query-key-caller": QUERY_KEY_CONSUMER,
   };
 }
 
@@ -1030,5 +1037,37 @@ export function mountApexDeclarations(app) {
     app.get(path, handler);
   }
   app.options("/.well-known/agent-card.json", (_req, res) => sendPreflight(res));
+  // The machine guide is client/public/llms.txt. This route serves those bytes
+  // before production static, including on a host that has no built client.
+  const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
+  const sendLlms = (req, res) => {
+    const body = readFileSync(llmsPath);
+    res.status(200);
+    res.set("Cache-Control", "no-cache");
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.set("Content-Length", String(body.length));
+    if (req.method === "HEAD") return res.end();
+    return res.end(body);
+  };
+  app.head("/llms.txt", sendLlms);
+  app.get("/llms.txt", sendLlms);
+  // Production keeps the SPA shell for /for-agents. A host without that client
+  // still returns the same crawler copy the shell places in the page.
+  if (process.env.NODE_ENV !== "production") {
+    const page = Buffer.from(
+      `<!doctype html><html><head><title>Practical agent jobs | SameDayDesk</title></head><body>${FOR_AGENTS_CRAWLER_HTML}</body></html>`,
+      "utf8",
+    );
+    const sendAgents = (req, res) => {
+      res.status(200);
+      res.set("Cache-Control", "no-cache");
+      res.set("Content-Type", "text/html; charset=utf-8");
+      res.set("Content-Length", String(page.length));
+      if (req.method === "HEAD") return res.end();
+      return res.end(page);
+    };
+    app.head("/for-agents", sendAgents);
+    app.get("/for-agents", sendAgents);
+  }
   return app;
 }

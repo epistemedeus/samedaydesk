@@ -1,0 +1,66 @@
+[
+  {
+    "url": "https://samedaydesk.com/llms.txt",
+    "status": 200,
+    "bytes": 8599,
+    "sha256": "4bee826a88bb60f94e67e2bc1b87e0506d5f605aba1ec3d2bb8280b5c19d2c1c",
+    "file": "samedaydesk-llms.txt",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://samedaydesk.com/openapi.json",
+    "status": 200,
+    "bytes": 41622,
+    "sha256": "9f0ee5168bde5dfa600a744d0f027eeae5b1c8e9b9b813e2283cb3a7a43fc2dd",
+    "file": "samedaydesk-openapi.json",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://samedaydesk.com/.well-known/agent-card.json",
+    "status": 200,
+    "bytes": 2780,
+    "sha256": "e4720e6e397061a3e9f0204294b1d5bbb9e7d0b3cba15e4130e79aa4681e484d",
+    "file": "samedaydesk-agent-card.json",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://samedaydesk.com/for-agents",
+    "status": 200,
+    "bytes": 15039,
+    "sha256": "6f77d9139b4a06bae0584ad379975fedf47f97c25d68edf19751502bdc0cb7f7",
+    "file": "samedaydesk-for-agents",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://neomorphic.io/llms.txt",
+    "status": 200,
+    "bytes": 15447,
+    "sha256": "7ace1842e0c469520a445fbfe374ebb48ef2f3884d1f81c13a3026b69605d5f5",
+    "file": "neomorphic-llms.txt",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://neomorphic.io/machine/participation-0.3.1.json",
+    "status": 200,
+    "bytes": 5968,
+    "sha256": "2bb518aa79ec8fdab99356afe35c050d8363f69ea23e6394ba9cce460f7dcd0d",
+    "file": "neomorphic-participation-0.3.1.json",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://neomorphic.io/downloads/machine-participation/0.3.1/ACCEPTED-WORK.md",
+    "status": 200,
+    "bytes": 7111,
+    "sha256": "8edc57f5693ce38e08eb1e57c556132eeff095da19eef7515509ad09d192ce98",
+    "file": "neomorphic-ACCEPTED-WORK.md",
+    "observedAt": "2026-11-05T00:15:38Z"
+  },
+  {
+    "url": "https://neomorphic.io/machine/query-key-1.1.0.json",
+    "status": 200,
+    "bytes": 2918,
+    "sha256": "9f5b3529b5eab1ba52a3e4d8b4cf91d9d44a7f0f1bfc04e2e5aa47917c78bd51",
+    "file": "neomorphic-query-key-1.1.0.json",
+    "observedAt": "2026-11-05T00:15:38Z"
+  }
+]
