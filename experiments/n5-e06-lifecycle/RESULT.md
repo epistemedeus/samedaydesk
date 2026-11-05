@@ -155,3 +155,7 @@ The ordinary acquire pin change and npm tarball install both complete install, u
 ## Maintained user route
 
 See [USER-ROUTE.md](./USER-ROUTE.md). Ordinary npm of the hosted tarball is the maintained path; no installer.
+
+## Source binding (2026-11-05)
+
+Original cold receive bound to runner `a3efc2c40a246456c7909806a986442a862adfe8` (see BINDING.md). Original RECEIPT head PENDING is superseded by that bind; no D/P/M rerun.

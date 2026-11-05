@@ -116,13 +116,20 @@ else
 fi
 
 cd "$OUT"
+# Bind executable source: pinned runner commit (override with RUNNER_HEAD if needed).
+# Do not leave head PENDING after a successful suite.
+RUNNER_HEAD="${RUNNER_HEAD:-a3efc2c40a246456c7909806a986442a862adfe8}"
 {
   echo '{'
   echo '  "schema":"pilot.rd.pr363-cold-dpm.v1",'
   echo '  "pr":363,'
-  echo '  "head":"PENDING",'
+  echo '  "head":"'"$RUNNER_HEAD"'",'
+  echo '  "tree":"ed26a99c82d6bd376de34b4d0768ab0435df5971",'
   echo '  "expectDigest":"'"$EXPECT"'",'
   echo '  "invoke":"cwd=node_modules/useful-jobs samples/ relative (E06 npm shape)",'
+  echo '  "package":"useful-jobs@1.4.7",'
+  echo '  "packageSha256":"e2e9b44e4d7318ac55052953318f05e53dbc121ab02e2762e34c919ac5469dec",'
+  echo '  "e06Base":"a35510157235ddf9ecb32c843790756fbc30e8b7",'
   echo '  "outDir":"'"$OUT"'",'
   echo '  "summaryTsv":"'"$OUT"'/summary.tsv"'
   echo '}'
