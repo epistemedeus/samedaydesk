@@ -29,7 +29,8 @@ explicit sequence. N54 import is later composition work.
 
 ## Decide or reuse
 
-`decide-or-reuse` binds one useful `source-change-alert` decision to the public
+`decide-or-reuse` binds one useful `source-change-alert` or
+`verification-reconcile` decision to the public
 manifest that exists before that producer runs. It does not add a store, a
 network call, a payment, or a schema family. The manifest carries the recipe
 id, the recipe version, the prior public capture, and the current public
@@ -63,6 +64,22 @@ node tools/result-reuse/cli.mjs decide-or-reuse \
   --opt-in
 ```
 
+### Second decision on the same capture
+
+`verification-reconcile` is the second supported recipe. It reads the same
+saved capture and prior and answers a different question: is the later
+observation still the delivered content (`noChangeProven`), without replaying a
+payment. Its manifest is the same shape with `recipeId: "verification-reconcile"`;
+`fields` is optional. Produce it once with the recipe CLI
+(`--recipe verification-reconcile --prior <prior> --candidate <capture>`), bind
+it with `--produced`, then reuse it with `--decision`. Each recipe has its own
+before-work digest, so a saved `source-change-alert` decision is never served as
+a `verification-reconcile` answer (`recipe_changed`). The stored evidence keeps
+only the capture identity, mismatched field names, `partial`, `noChangeProven`
+and `automaticPaymentReplay: false`; the candidate path is not stored. Any other
+recipe id is still refused: bind exits 1 naming the supported recipes, and the
+reuse form returns `recompute` with `input_not_before_work`.
+
 `--produced` is the decision the useful job already returned. `--decision` is
 the bound observation written by the first command. `--opt-in` affirms that
 the earlier opt-in is still in force. `--withdraw-opt-in` records that it was
@@ -74,7 +91,7 @@ withdrawn. `--producer` may name the job, and this command never executes it.
 | `recompute` | Reason is `digest_mismatch`, `recipe_changed`, `revision_changed`, `stale_clock`, `subject_mismatch`, `opt_in_withdrawn`, `unbound_legacy`, `invalid_saved_state`, or `input_not_before_work`. No fresh answer is invented. |
 | `rejected` | A private field is present. It is not hashed into the decision. The top-level N45 boolean `payment` marker remains an origin flag. |
 
-The cost baseline is the recurring-job note for `source-change-alert`: offline
+The cost baseline is the recurring-job note for the bound recipe (`source-change-alert` on unbound paths): offline
 compare does not invoke a merchant charge, and operator compute stays
 `costs_unknown`. The live metric on every verdict is unset:
 `distinctLaterAcceptedTasksTakingReuse` is null and

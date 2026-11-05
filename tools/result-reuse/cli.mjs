@@ -92,7 +92,8 @@ node tools/result-reuse/cli.mjs export --input <result.json> --task-id <id> --su
 node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
 node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --decision <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
 
-decide-or-reuse binds a useful source-change-alert decision to the public manifest that exists before that producer runs.
+decide-or-reuse binds a useful source-change-alert or verification-reconcile decision to the public manifest that exists before that producer runs.
+Both recipes can read the same saved capture and prior. Each decision is bound and reused separately; any other recipe is refused.
 A hit returns that saved decision and its provenance. It does not run the producer.
 A changed or missing binding returns recompute-required and does not invent a fresh answer.
 Naming --producer does not execute it.

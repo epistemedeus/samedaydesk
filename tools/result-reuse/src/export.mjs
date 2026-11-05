@@ -179,7 +179,13 @@ const CANNOT_ESTABLISH = Object.freeze([
   "merchant acceptance or a payment outcome",
 ]);
 
-const SUPPORTED_RECIPE_ID = "source-change-alert";
+// Each supported recipe reads the same saved public capture and prior. A second
+// decision on that capture is a separate binding with its own digest, never a
+// copy of another recipe's answer.
+const SOURCE_CHANGE_RECIPE_ID = "source-change-alert";
+const VERIFY_RECIPE_ID = "verification-reconcile";
+export const SUPPORTED_RECIPE_IDS = Object.freeze([SOURCE_CHANGE_RECIPE_ID, VERIFY_RECIPE_ID]);
+const NOT_BEFORE_WORK = `input is not a before-work public manifest for a supported recipe: ${SUPPORTED_RECIPE_IDS.join(", ")}`;
 const USEFUL_OUTCOMES = new Set(["unchanged", "changed", "partial"]);
 
 export function digestPublicInput(value) {
@@ -245,7 +251,7 @@ export function bindUsefulDecision(manifest, produced, options = {}) {
     clock: observation.recordedAt.instant,
     producerInvoked: false,
     mechanics: captured.mechanics,
-    ...verdictLimits(null),
+    ...verdictLimits(supported.manifest.recipeId),
     observation,
   };
 }
@@ -280,7 +286,7 @@ export function decideOrReuse(saved, input, options = {}) {
   if (!supported.ok) {
     return recompute(
       DECISION_REASONS.inputNotBeforeWork,
-      "input is not the before-work public manifest for source-change-alert",
+      NOT_BEFORE_WORK,
     );
   }
   const manifest = supported.manifest;
@@ -330,7 +336,7 @@ export function decideOrReuse(saved, input, options = {}) {
     recipeWindow: window,
     producerInvoked: false,
     mechanics: captured.mechanics,
-    ...verdictLimits(null),
+    ...verdictLimits(binding.binding.recipeId),
   };
 }
 
@@ -417,15 +423,19 @@ function captureManifest(manifest) {
 
 function readManifest(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return { ok: false, message: "input is not the before-work public manifest for source-change-alert" };
+    return { ok: false, message: NOT_BEFORE_WORK };
   }
-  if (value.recipeId !== SUPPORTED_RECIPE_ID) {
-    return { ok: false, message: "input is not the before-work public manifest for source-change-alert" };
+  if (!SUPPORTED_RECIPE_IDS.includes(value.recipeId)) {
+    return { ok: false, message: NOT_BEFORE_WORK };
   }
   if (typeof value.recipeVersion !== "string" || value.recipeVersion.trim() === "") {
     return { ok: false, message: "before-work manifest is missing its recipe version" };
   }
-  if (!Array.isArray(value.fields) || value.fields.length === 0 || value.fields.some((field) => typeof field !== "string" || field.trim() === "")) {
+  // source-change-alert watches named fields. verification-reconcile compares the
+  // whole observation identity, so a field list is optional there but still checked.
+  const fieldsRequired = value.recipeId === SOURCE_CHANGE_RECIPE_ID;
+  if ((fieldsRequired || value.fields !== undefined)
+    && (!Array.isArray(value.fields) || value.fields.length === 0 || value.fields.some((field) => typeof field !== "string" || field.trim() === ""))) {
     return { ok: false, message: "before-work manifest is missing its field list" };
   }
   const prior = value.prior;
@@ -459,7 +469,7 @@ function readManifest(value) {
 
 function selectUseful(produced, manifest) {
   if (!produced || typeof produced !== "object" || Array.isArray(produced)) {
-    return { ok: false, message: "produced decision must be a source-change-alert result" };
+    return { ok: false, message: `produced decision must be a ${manifest.recipeId} result` };
   }
   if (produced.recipeId !== manifest.recipeId || produced.schema !== manifest.recipeVersion) {
     return { ok: false, message: "produced decision does not match the before-work recipe" };
@@ -467,6 +477,7 @@ function selectUseful(produced, manifest) {
   if (!USEFUL_OUTCOMES.has(produced.outcome)) {
     return { ok: false, message: "produced decision is not a reusable useful outcome" };
   }
+  if (manifest.recipeId === VERIFY_RECIPE_ID) return selectUsefulVerification(produced, manifest);
   const evidence = produced.evidence;
   if (!evidence || typeof evidence !== "object" || evidence.contentHash !== manifest.capture.contentHash) {
     return { ok: false, message: "produced decision does not match the before-work capture identity" };
@@ -488,6 +499,48 @@ function selectUseful(produced, manifest) {
       contentHash: evidence.contentHash,
       changed: Array.isArray(evidence.changed) ? evidence.changed : [],
       unchanged: Array.isArray(evidence.unchanged) ? evidence.unchanged : [],
+    },
+  };
+  if (rejectingPrivate(useful) || disallowedText(useful)) return privateRejection();
+  return { ok: true, useful };
+}
+
+// verification-reconcile evidence names the candidate by path. Only the public
+// identity, mismatched field names and the no-change claim are kept.
+function selectUsefulVerification(produced, manifest) {
+  const evidence = produced.evidence;
+  if (!evidence || typeof evidence !== "object" || evidence.kind !== "verification_reconcile") {
+    return { ok: false, message: "produced decision is missing its verification evidence" };
+  }
+  if (evidence.candidateDigest?.contentHash !== manifest.capture.contentHash) {
+    return { ok: false, message: "produced decision does not match the before-work capture identity" };
+  }
+  if (produced.prior?.sha256 !== manifest.prior.sha256 || produced.prior?.sequence !== manifest.prior.sequence) {
+    return { ok: false, message: "produced decision does not match the before-work prior" };
+  }
+  if (evidence.claims?.automaticPaymentReplay !== false) {
+    return { ok: false, message: "produced decision does not record that payment was not replayed" };
+  }
+  const recovery = produced.recovery;
+  if (!recovery || typeof recovery.action !== "string" || typeof recovery.operatorNext !== "string") {
+    return { ok: false, message: "produced decision is missing its recovery" };
+  }
+  const mismatches = Array.isArray(evidence.mismatches) ? evidence.mismatches : [];
+  const useful = {
+    recipeId: produced.recipeId,
+    recipeVersion: produced.schema,
+    outcome: produced.outcome,
+    recovery: {
+      action: recovery.action,
+      operatorNext: recovery.operatorNext,
+    },
+    evidence: {
+      kind: evidence.kind,
+      contentHash: evidence.candidateDigest.contentHash,
+      mismatchedFields: mismatches.map((row) => String(row?.field ?? "")).filter(Boolean),
+      partial: evidence.partial === true,
+      noChangeProven: evidence.claims?.noChangeProven === true,
+      automaticPaymentReplay: false,
     },
   };
   if (rejectingPrivate(useful) || disallowedText(useful)) return privateRejection();
@@ -551,9 +604,9 @@ function recompute(reason, message, extra = {}) {
   };
 }
 
-function verdictLimits() {
+function verdictLimits(recipeId) {
   return {
-    costBaseline: costForRecipe(COST_BASELINE_RECIPE),
+    costBaseline: costForRecipe(SUPPORTED_RECIPE_IDS.includes(recipeId) ? recipeId : COST_BASELINE_RECIPE),
     liveMetric: {
       distinctLaterAcceptedTasksTakingReuse: null,
       recomputeCostAvoidedNetOfUpkeep: "costs_unknown",
