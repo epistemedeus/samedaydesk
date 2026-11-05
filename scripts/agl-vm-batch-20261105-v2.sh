@@ -39,11 +39,11 @@ fi
 
 echo "== fetch explicit PR refs (full history)"
 git fetch origin \
-  +refs/heads/codex/h136010-machine-release-20261103:refs/heads/agl-base \
-  +pull/364/head:refs/heads/agl-pr364 \
-  +pull/365/head:refs/heads/agl-pr365 \
-  +pull/366/head:refs/heads/agl-pr366 \
-  +pull/367/head:refs/heads/agl-pr367 || { echo FETCH_FAIL; exit 9; }
+  +refs/heads/codex/h136010-machine-release-20261103:refs/remotes/agl/base \
+  +pull/364/head:refs/remotes/agl/pr364 \
+  +pull/365/head:refs/remotes/agl/pr365 \
+  +pull/366/head:refs/remotes/agl/pr366 \
+  +pull/367/head:refs/remotes/agl/pr367 || { echo FETCH_FAIL; exit 9; }
 
 verify_head() {
   local n=$1 ref=$2 want=${WANT[$1]}
@@ -61,9 +61,9 @@ verify_head() {
 echo "== verify exact heads and ancestry"
 heads_ok=1
 for n in 364 365 366 367; do
-  verify_head "$n" "agl-pr$n" || heads_ok=0
+  verify_head "$n" "agl/pr$n" || heads_ok=0
 done
-base_h=$(git rev-parse agl-base)
+base_h=$(git rev-parse agl/base)
 echo "BASE head $base_h want $BASE_SHA" | tee -a "$OUT/SUMMARY.txt"
 if [ "$base_h" != "$BASE_SHA" ]; then
   echo "BASE HEAD_MISMATCH" | tee -a "$OUT/SUMMARY.txt"
@@ -71,14 +71,14 @@ if [ "$base_h" != "$BASE_SHA" ]; then
 fi
 ancestry_ok=1
 for n in 364 365 367; do
-  if git merge-base --is-ancestor "$BASE_SHA" "agl-pr$n"; then
+  if git merge-base --is-ancestor "$BASE_SHA" "agl/pr$n"; then
     echo "ANCESTRY ok $BASE_SHA ancestor of PR$n" | tee -a "$OUT/SUMMARY.txt"
   else
     echo "ANCESTRY_FAIL $BASE_SHA not ancestor of PR$n" | tee -a "$OUT/SUMMARY.txt"
     ancestry_ok=0
   fi
 done
-if git merge-base --is-ancestor "${WANT[364]}" agl-pr366; then
+if git merge-base --is-ancestor "${WANT[364]}" agl/pr366; then
   echo "ANCESTRY ok PR364 ancestor of PR366" | tee -a "$OUT/SUMMARY.txt"
 else
   echo "ANCESTRY_FAIL PR364 not ancestor of PR366" | tee -a "$OUT/SUMMARY.txt"
@@ -131,14 +131,14 @@ add_wt() {
   local name=$1 ref=$2
   local wt=$BASE/$name
   git worktree remove -f "$wt" 2>/dev/null || true
-  git worktree add -f -q "$wt" "$ref"
+  git worktree add -f -q --detach "$wt" "$ref"
 }
 
-add_wt wt-base agl-base
-add_wt wt364 agl-pr364
-add_wt wt365 agl-pr365
-add_wt wt366 agl-pr366
-add_wt wt367 agl-pr367
+add_wt wt-base agl/base
+add_wt wt364 agl/pr364
+add_wt wt365 agl/pr365
+add_wt wt366 agl/pr366
+add_wt wt367 agl/pr367
 
 if [ ! -x "$PG_BIN/initdb" ]; then
   PG_BIN=""
