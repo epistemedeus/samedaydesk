@@ -1,0 +1,31 @@
+{
+  "$id": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "title": "Saved permitted capture (caller-owned)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "captureId", "subject", "capturedAt", "payload"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "enum": [
+        "samedaydesk.recurring-decision-permitted-capture.v1",
+        "samedaydesk.portable-decision-capture.v1"
+      ]
+    },
+    "captureId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "subject": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "capturedAt": { "type": "string" },
+    "sourceUri": { "type": ["string", "null"] },
+    "contentHash": { "type": ["string", "null"] },
+    "payload": { "type": "object" },
+    "permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["permitted"],
+      "properties": {
+        "permitted": { "type": "boolean" },
+        "note": { "type": "string", "maxLength": 256 }
+      }
+    }
+  }
+}

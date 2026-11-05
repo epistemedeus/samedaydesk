@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.portable-decision-capture.v1",
+  "captureId": "portable-1",
+  "subject": "example-page",
+  "capturedAt": "2026-11-05T11:40:00.000Z",
+  "payload": {
+    "title": "Example Domain",
+    "status": "ok"
+  },
+  "permission": {
+    "permitted": true
+  }
+}

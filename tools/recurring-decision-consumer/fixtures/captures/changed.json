@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "captureId": "cap-changed-1",
+  "subject": "example-page",
+  "capturedAt": "2026-11-05T11:45:00.000Z",
+  "sourceUri": "https://example.com/",
+  "payload": {
+    "title": "Example Domain Updated",
+    "status": "ok"
+  },
+  "permission": {
+    "permitted": true
+  }
+}
