@@ -1,0 +1,56 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "reservation-preserved-example",
+  "requesterNote": "Existing reservation and extra term fields must pass through unchanged.",
+  "customerTag": "keep-this-bundle-field",
+  "tasks": [
+    {
+      "taskId": "reserved-extract",
+      "title": "Continue an already reserved extract",
+      "summary": "Preserve the reservation identifier. Do not invent a new one.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "reservationId": "rsv_keep_exact_identity",
+      "termsDigest": "ddd444eeee5555",
+      "artifactDigest": "fff666aaa7777",
+      "rightsDigest": "ccc222bbb1111",
+      "expectedRevision": 3,
+      "publicationConsent": false,
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross",
+        "requesterLabel": "keep-this-term-field",
+        "fee": {
+          "bps": 500,
+          "basis": "new_job_gross",
+          "profile": "commerce-payments-v1.1.0-single-capture"
+        }
+      },
+      "grossAtomic": "1000000",
+      "railCostAtomic": "0",
+      "priorReviewNote": "keep-this-task-field",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "enum_in",
+            "expected": [
+              "usable"
+            ],
+            "observed": "usable"
+          }
+        },
+        "reviewerMemo": "keep-this-delivery-field"
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "50000",
+        "bundledShareAtomic": "50000",
+        "operatorClock": "keep-this-effort-field"
+      }
+    }
+  ]
+}

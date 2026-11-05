@@ -1,0 +1,73 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "bundle-helpful-example",
+  "requesterNote": "Two extract tasks that share one crawl, so measured bundled effort is lower.",
+  "bundleEffort": {
+    "measured": true,
+    "costAtomic": "250000"
+  },
+  "tasks": [
+    {
+      "taskId": "extract-home",
+      "title": "Extract public home copy",
+      "summary": "Collect the public heading text from the home page.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "4000000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "digest_match",
+            "expected": "aaa111",
+            "observed": "aaa111"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "200000",
+        "bundledShareAtomic": "125000"
+      }
+    },
+    {
+      "taskId": "extract-about",
+      "title": "Extract public about copy",
+      "summary": "Collect the public heading text from the about page.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "4000000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "digest_match",
+            "expected": "bbb222",
+            "observed": "bbb222"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "180000",
+        "bundledShareAtomic": "125000"
+      }
+    }
+  ]
+}
