@@ -1,0 +1,58 @@
+{
+  "$id": "samedaydesk.recurring-decision-consumer-result.v1",
+  "title": "Recurring decision consumer result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "outcome", "useful", "reason", "freshness", "decision", "controls"],
+  "properties": {
+    "schema": { "const": "samedaydesk.recurring-decision-consumer-result.v1" },
+    "outcome": {
+      "type": "string",
+      "enum": ["useful_change", "useful_no_change", "stale", "unavailable", "unsupported", "unknown"]
+    },
+    "useful": { "type": "boolean" },
+    "reason": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clock", "horizonHours", "withinHorizon"],
+      "properties": {
+        "clock": { "type": "string" },
+        "horizonHours": { "type": "number", "minimum": 0 },
+        "priorAt": { "type": ["string", "null"] },
+        "captureAt": { "type": ["string", "null"] },
+        "withinHorizon": { "type": "boolean" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intentId", "subject", "changedFields", "unchangedFields"],
+      "properties": {
+        "intentId": { "type": "string" },
+        "subject": { "type": "string" },
+        "changedFields": { "type": "array", "items": { "type": "string" } },
+        "unchangedFields": { "type": "array", "items": { "type": "string" } },
+        "digestPrior": { "type": ["string", "null"] },
+        "digestCapture": { "type": ["string", "null"] }
+      }
+    },
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["falseChange", "missedChange", "referenceMatched"],
+      "properties": {
+        "falseChange": { "type": "boolean" },
+        "missedChange": { "type": "boolean" },
+        "referenceMatched": { "type": ["boolean", "null"] },
+        "referenceLabel": { "type": ["string", "null"] }
+      }
+    },
+    "previous": { "type": ["object", "null"] },
+    "statePath": { "type": ["string", "null"] },
+    "cannotEstablish": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
