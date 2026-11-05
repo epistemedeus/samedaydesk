@@ -1,5 +1,8 @@
 import { evaluateCheck } from "./acceptance.mjs";
 import {
+  STRUCTURED_EXTRACT_CLASS,
+} from "./artifact.mjs";
+import {
   isAtomicString,
   KNOWN_ACQUISITION_KEYS,
   KNOWN_CITED_EVIDENCE_KEYS,
@@ -56,9 +59,23 @@ function echoObject(value, knownKeys) {
   return echoed;
 }
 
-function echoCitedEvidence(citedEvidence) {
+function echoCitedEvidence(citedEvidence, citationBinding) {
   if (!Array.isArray(citedEvidence)) return [];
-  return citedEvidence.map((item) => echoObject(item, KNOWN_CITED_EVIDENCE_KEYS) ?? item);
+  return citedEvidence.map((item, index) => {
+    const echoed = echoObject(item, KNOWN_CITED_EVIDENCE_KEYS) ?? item;
+    const bound = citationBinding?.items?.find((row) => row.index === index);
+    if (bound) {
+      return {
+        ...echoed,
+        bindingStatus: bound.status,
+        bindingReason: bound.reason,
+      };
+    }
+    return {
+      ...echoed,
+      bindingStatus: "declared",
+    };
+  });
 }
 
 function taskSpecClosure(task) {
@@ -69,21 +86,57 @@ function taskSpecClosure(task) {
     titlePresent: typeof task.title === "string" && task.title.length > 0,
     criteriaCount: criteria.length,
     criteria,
+    objectiveCriteriaPresent: task.objectiveCriteria !== undefined,
   };
 }
 
-function requiredFieldsFor(task, acceptance) {
+function requiredFieldsFor(task, acceptance, inspection) {
   const provenance = task.provenance;
+  const provenanceCheck = evaluateCheck({
+    check: "enum_in",
+    expected: [...PROVENANCE_VALUES],
+    observed: provenance,
+  });
   const fields = [
     {
       field: "provenance",
-      ...evaluateCheck({
-        check: "enum_in",
-        expected: [...PROVENANCE_VALUES],
-        observed: provenance,
-      }),
+      ...provenanceCheck,
     },
   ];
+
+  if (inspection?.artifactInspection) {
+    const loaded = inspection.loaded;
+    const artifactPresent = loaded?.status === "loaded";
+    fields.push({
+      field: "artifact",
+      check: "present",
+      decided: true,
+      ok: artifactPresent,
+      reason: artifactPresent ? undefined : (loaded?.reason || "artifact_missing"),
+      artifactClass: STRUCTURED_EXTRACT_CLASS,
+    });
+    const citationCoverage = inspection.citationBinding?.coverage;
+    fields.push({
+      field: "citedEvidence",
+      check: "present",
+      decided: true,
+      ok: citationCoverage === "bound",
+      reason: citationCoverage === "bound"
+        ? undefined
+        : (citationCoverage === "unbound" ? "cited_evidence_unbound" : "cited_evidence_missing"),
+    });
+  } else {
+    const cited = task.delivery?.citedEvidence;
+    const citedOk = Array.isArray(cited) && cited.length > 0;
+    fields.push({
+      field: "citedEvidence",
+      check: "present",
+      decided: true,
+      ok: citedOk,
+      reason: citedOk ? undefined : "cited_evidence_missing",
+    });
+  }
+
   const checks = Array.isArray(acceptance?.checks) ? acceptance.checks : [];
   for (const check of checks) {
     fields.push({
@@ -97,15 +150,16 @@ function requiredFieldsFor(task, acceptance) {
   return fields;
 }
 
-function requesterExceptionFor(acceptance, inputClosure) {
-  if (acceptance?.outcome !== "needs_reviewer_exception") {
+function requesterExceptionFor(acceptance, inputClosure, gateReasons) {
+  const needed = acceptance?.outcome === "needs_reviewer_exception" || (gateReasons && gateReasons.length > 0);
+  if (!needed) {
     return { needed: false };
   }
   const undecided = (acceptance.checks || []).filter((check) => !check.decided);
   const undecidedPredicates = undecided.map((check) => check.criterion || check.check || check.reason);
   return {
     needed: true,
-    reasons: acceptance.reasons,
+    reasons: [...new Set([...(acceptance?.reasons || []), ...(gateReasons || [])])],
     undecidedPredicates,
     reviewerMustDecide: undecidedPredicates,
     unknownCosts: inputClosure.unknownCosts,
@@ -127,7 +181,40 @@ function economicsSlice(economics) {
   };
 }
 
-function diagnoseTask(task, evaluationTask) {
+function gateEvidenceOutcome(mapped, requiredFields, inspection) {
+  const gateReasons = [];
+  for (const field of requiredFields) {
+    if (field.field === "provenance" && (!field.decided || !field.ok)) {
+      gateReasons.push("provenance_required_failed");
+    }
+    if (field.field === "citedEvidence" && (!field.decided || !field.ok)) {
+      gateReasons.push(field.reason || "cited_evidence_missing");
+    }
+    if (field.field === "artifact" && (!field.decided || !field.ok)) {
+      gateReasons.push(field.reason || "artifact_missing");
+    }
+  }
+  if (inspection?.mode === "ambiguous") {
+    gateReasons.push("artifact_source_ambiguous");
+  }
+  if (inspection?.mode === "artifact_inspection" && inspection.loaded?.status !== "loaded") {
+    gateReasons.push(inspection.loaded?.reason || inspection.loaded?.status || "artifact_missing");
+  }
+  if (inspection?.reasons?.length) {
+    for (const reason of inspection.reasons) gateReasons.push(reason);
+  }
+
+  const unique = [...new Set(gateReasons)];
+  if (unique.length === 0) {
+    return { evidenceOutcome: mapped, gateReasons: [] };
+  }
+  if (mapped === "refused") {
+    return { evidenceOutcome: "refused", gateReasons: unique };
+  }
+  return { evidenceOutcome: "needs_review", gateReasons: unique };
+}
+
+function diagnoseTask(task, evaluationTask, inspection) {
   const acceptance = evaluationTask?.acceptance;
   const classified = classifyCostLines(task.costLines);
   const inputClosure = {
@@ -135,6 +222,15 @@ function diagnoseTask(task, evaluationTask) {
     knownCosts: classified.knownCosts,
     unknownCosts: classified.unknownCosts,
   };
+  const requiredFields = requiredFieldsFor(task, acceptance, inspection);
+  const mapped = mapEvidenceOutcome(acceptance?.outcome);
+  const gated = gateEvidenceOutcome(mapped, requiredFields, inspection);
+  const evidenceBasis = inspection?.mode === "artifact_inspection"
+    ? "artifact_inspection"
+    : inspection?.mode === "ambiguous"
+      ? "ambiguous"
+      : "declared_evidence";
+
   return {
     taskId: task.taskId,
     reservationId: task.reservationId,
@@ -144,21 +240,40 @@ function diagnoseTask(task, evaluationTask) {
     expectedRevision: task.expectedRevision,
     publicationConsent: task.publicationConsent,
     provenance: task.provenance,
-    evidenceOutcome: mapEvidenceOutcome(acceptance?.outcome),
+    evidenceBasis,
+    artifactInspection: evidenceBasis === "artifact_inspection",
+    supportedArtifactClass: STRUCTURED_EXTRACT_CLASS,
+    artifactLoad: inspection?.loaded
+      ? {
+          status: inspection.loaded.status,
+          reason: inspection.loaded.reason,
+          source: inspection.loaded.source,
+          artifactClass: inspection.loaded.artifactClass,
+          schema: inspection.loaded.schema,
+          fields: inspection.loaded.fields,
+          artifactPath: inspection.loaded.artifactPath,
+        }
+      : undefined,
+    citationBinding: inspection?.citationBinding,
+    evidenceOutcome: gated.evidenceOutcome,
     acceptanceOutcome: acceptance?.outcome,
-    requiredFields: requiredFieldsFor(task, acceptance),
-    citedEvidence: echoCitedEvidence(task.delivery?.citedEvidence),
+    gateReasons: gated.gateReasons,
+    requiredFields,
+    citedEvidence: echoCitedEvidence(task.delivery?.citedEvidence, inspection?.citationBinding),
     acquisition: echoObject(task.delivery?.acquisition, KNOWN_ACQUISITION_KEYS),
     directRoute: echoObject(task.directRoute, KNOWN_DIRECT_ROUTE_KEYS),
     inputClosure,
-    requesterException: requesterExceptionFor(acceptance, inputClosure),
+    requesterException: requesterExceptionFor(acceptance, inputClosure, gated.gateReasons),
     economics: economicsSlice(evaluationTask?.economics),
   };
 }
 
-export function diagnosisReadout(evaluation, bundle) {
+export function diagnosisReadout(evaluation, bundle, inspections = []) {
   if (!evaluation?.ok) return evaluation;
-  const tasks = bundle.tasks.map((task, index) => diagnoseTask(task, evaluation.tasks[index]));
+  const byTaskId = new Map((inspections || []).map((row) => [row.taskId, row]));
+  const tasks = bundle.tasks.map((task, index) => (
+    diagnoseTask(task, evaluation.tasks[index], byTaskId.get(task.taskId))
+  ));
   const exceptionRows = tasks.filter((task) => task.requesterException.needed);
   const knownCosts = [];
   const unknownCosts = [];
@@ -178,6 +293,7 @@ export function diagnosisReadout(evaluation, bundle) {
     ok: true,
     schema: DIAGNOSIS_SCHEMA,
     artifactClass: DIAGNOSIS_ARTIFACT_CLASS,
+    supportedDeliveryArtifactClass: STRUCTURED_EXTRACT_CLASS,
     evidenceOnly: true,
     acceptance: "not_decided_by_tool",
     autoAccept: false,

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { compareFor, diagnoseFor, evaluateBundle, receiptFor } from "./src/evaluate.mjs";
 import { INPUT_MAX_BYTES } from "./src/limits.mjs";
 
@@ -10,8 +11,10 @@ if (args.help || !args.command) {
 }
 
 let input;
+let inputPath;
 try {
-  input = readBoundedJson(args.input);
+  inputPath = resolve(args.input);
+  input = readBoundedJson(inputPath);
 } catch {
   fail("cannot read --input as bounded JSON");
 }
@@ -22,7 +25,7 @@ const result = args.command === "evaluate"
     ? receiptFor(input)
     : args.command === "compare"
       ? compareFor(input)
-      : diagnoseFor(input);
+      : diagnoseFor(input, { baseDir: dirname(inputPath) });
 
 if (!result.ok) {
   process.stderr.write(`${JSON.stringify(result)}\n`);
@@ -53,7 +56,7 @@ node tools/task-bundle-economics/cli.mjs receipt --input <bundle.json> [--out <r
 node tools/task-bundle-economics/cli.mjs compare --input <bundle.json>
 node tools/task-bundle-economics/cli.mjs diagnose --input <bundle.json> [--out <diagnosis.json>]
 
-evaluate prints the full decision. receipt writes a portable requester receipt. compare focuses on measured versus unknown effort and fee totals. diagnose prints an evidence-only structured diagnosis and does not decide acceptance.`;
+evaluate prints the full decision. receipt writes a portable requester receipt. compare focuses on measured versus unknown effort and fee totals. diagnose prints an evidence-only structured diagnosis. When delivery.artifactPath is set, diagnose reads that bounded artifact file relative to the input JSON directory.`;
 }
 
 function parseArgs(argv) {

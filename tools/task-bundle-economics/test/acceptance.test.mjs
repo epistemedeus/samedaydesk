@@ -58,3 +58,48 @@ test("unknown check types need a reviewer exception", () => {
   assert.equal(result.outcome, "needs_reviewer_exception");
   assert.ok(result.reasons.includes("check_not_deterministic"));
 });
+
+test("exact_equal refuses absent expected or observed values", () => {
+  const bothAbsent = evaluateTaskAcceptance({
+    taskId: "absent-both",
+    criteria: ["flag"],
+    delivery: {
+      observations: {
+        flag: { check: "exact_equal" },
+      },
+    },
+  });
+  assert.equal(bothAbsent.outcome, "needs_reviewer_exception");
+  assert.equal(bothAbsent.checks[0].reason, "value_absent");
+  assert.equal(bothAbsent.checks[0].decided, false);
+  assert.equal(bothAbsent.checks[0].ok, false);
+
+  const observedAbsent = evaluateTaskAcceptance({
+    taskId: "absent-observed",
+    criteria: ["flag"],
+    delivery: {
+      observations: {
+        flag: { check: "exact_equal", expected: false },
+      },
+    },
+  });
+  assert.equal(observedAbsent.outcome, "needs_reviewer_exception");
+  assert.equal(observedAbsent.checks[0].reason, "value_absent");
+});
+
+test("exact_equal still accepts explicit false, zero, empty string, and null", () => {
+  for (const value of [false, 0, "", null]) {
+    const result = evaluateTaskAcceptance({
+      taskId: `present-${String(value)}`,
+      criteria: ["flag"],
+      delivery: {
+        observations: {
+          flag: { check: "exact_equal", expected: value, observed: value },
+        },
+      },
+    });
+    assert.equal(result.outcome, "objective_acceptance_met", `value=${String(value)}`);
+    assert.equal(result.checks[0].ok, true);
+    assert.equal(result.checks[0].decided, true);
+  }
+});

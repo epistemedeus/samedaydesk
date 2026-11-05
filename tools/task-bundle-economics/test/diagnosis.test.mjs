@@ -61,7 +61,10 @@ test("accepted diagnosis is evidence-only and reuses the existing 500 bps floor"
   assert.equal(diagnosis.verifierExecuted, false);
   assert.equal(diagnosis.provenance, "synthetic");
   assert.equal(diagnosis.tasks[0].provenance, "synthetic");
+  assert.equal(diagnosis.tasks[0].evidenceBasis, "declared_evidence");
+  assert.equal(diagnosis.tasks[0].artifactInspection, false);
   assert.equal(diagnosis.tasks[0].citedEvidence[0].digest, "heading-accepted");
+  assert.equal(diagnosis.tasks[0].citedEvidence[0].bindingStatus, "declared");
   assert.equal(diagnosis.rails.feeBps, FEE_BPS);
   assert.equal(diagnosis.rails.feeModule, FEE_MODULE);
   assert.equal(diagnosis.tasks[0].economics.feeReadout, "authorized_existing_terms");

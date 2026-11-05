@@ -1,4 +1,5 @@
 import { evaluateAcceptance } from "./acceptance.mjs";
+import { prepareBundleForInspection } from "./artifact.mjs";
 import { decideBundle } from "./bundle.mjs";
 import { diagnosisReadout } from "./diagnosis.mjs";
 import { evaluateBundledEconomics, railsMeta } from "./economics.mjs";
@@ -21,6 +22,12 @@ export {
 } from "./economics.mjs";
 export { compareEffort } from "./effort.mjs";
 export { diagnosisReadout } from "./diagnosis.mjs";
+export {
+  STRUCTURED_EXTRACT_CLASS,
+  STRUCTURED_EXTRACT_SCHEMA,
+  prepareBundleForInspection,
+  parseStructuredExtract,
+} from "./artifact.mjs";
 export { buildReceipt } from "./receipt.mjs";
 export { validateBundle } from "./schema.mjs";
 
@@ -105,10 +112,11 @@ export function compareFor(input) {
   };
 }
 
-export function diagnoseFor(input) {
+export function diagnoseFor(input, options = {}) {
   const validated = validateBundle(input);
   if (!validated.ok) return validated;
-  const evaluation = evaluateBundle(validated.bundle);
+  const prepared = prepareBundleForInspection(validated.bundle, options);
+  const evaluation = evaluateBundle(prepared.bundle);
   if (!evaluation.ok) return evaluation;
-  return diagnosisReadout(evaluation, validated.bundle);
+  return diagnosisReadout(evaluation, prepared.bundle, prepared.inspections);
 }

@@ -21,6 +21,7 @@ export const KNOWN_TASK_KEYS = Object.freeze([
   "title",
   "summary",
   "criteria",
+  "objectiveCriteria",
   "payableKinds",
   "terms",
   "grossAtomic",
@@ -42,6 +43,8 @@ export const KNOWN_TERMS_KEYS = Object.freeze(["feeBps", "feeBasis", "fee"]);
 export const KNOWN_FEE_KEYS = Object.freeze(["bps", "basis", "profile", "schemaVersion"]);
 export const KNOWN_DELIVERY_KEYS = Object.freeze([
   "observations",
+  "artifact",
+  "artifactPath",
   "verifier",
   "verifierPayload",
   "execute",
@@ -182,6 +185,50 @@ function validateCitedEvidence(citedEvidence, label) {
   return { ok: true, unknown };
 }
 
+export const KNOWN_OBJECTIVE_CRITERION_KEYS = Object.freeze([
+  "check",
+  "observe",
+  "expected",
+]);
+
+function validateObjectiveCriteria(objectiveCriteria, criteria, label) {
+  if (objectiveCriteria === undefined) return { ok: true, unknown: {} };
+  if (!objectiveCriteria || typeof objectiveCriteria !== "object" || Array.isArray(objectiveCriteria)) {
+    return fail(`${label} must be an object when present`);
+  }
+  const criterionSet = new Set(Array.isArray(criteria) ? criteria : []);
+  const unknown = {};
+  for (const [key, value] of Object.entries(objectiveCriteria)) {
+    if (!criterionSet.has(key)) {
+      return fail(`${label} key "${key}" must match a declared criterion`);
+    }
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return fail(`${label}.${key} must be an object`);
+    }
+    if (value.check !== undefined && typeof value.check !== "string") {
+      return fail(`${label}.${key}.check must be a string when present`);
+    }
+    if (value.observe !== undefined && typeof value.observe !== "string") {
+      return fail(`${label}.${key}.observe must be a string when present`);
+    }
+    unknown[key] = preserveUnknown(value, KNOWN_OBJECTIVE_CRITERION_KEYS);
+  }
+  return { ok: true, unknown };
+}
+
+function validateDeliveryArtifactFields(delivery, label) {
+  if (delivery === undefined) return null;
+  if (delivery.artifactPath !== undefined && typeof delivery.artifactPath !== "string") {
+    return fail(`${label}.artifactPath must be a string when present`);
+  }
+  if (delivery.artifact !== undefined) {
+    if (!delivery.artifact || typeof delivery.artifact !== "object" || Array.isArray(delivery.artifact)) {
+      return fail(`${label}.artifact must be an object when present`);
+    }
+  }
+  return null;
+}
+
 function validateAcquisition(acquisition, label) {
   if (acquisition === undefined) return { ok: true, unknown: {} };
   if (!acquisition || typeof acquisition !== "object" || Array.isArray(acquisition)) {
@@ -243,6 +290,14 @@ function validateTask(task, index) {
   if (!citedEvidence.ok) return citedEvidence;
   const acquisition = validateAcquisition(task.delivery?.acquisition, `tasks[${index}].delivery.acquisition`);
   if (!acquisition.ok) return acquisition;
+  const artifactFieldsError = validateDeliveryArtifactFields(task.delivery, `tasks[${index}].delivery`);
+  if (artifactFieldsError) return artifactFieldsError;
+  const objectiveCriteria = validateObjectiveCriteria(
+    task.objectiveCriteria,
+    criteria.criteria,
+    `tasks[${index}].objectiveCriteria`,
+  );
+  if (!objectiveCriteria.ok) return objectiveCriteria;
   return {
     ok: true,
     unknown: {
@@ -255,6 +310,7 @@ function validateTask(task, index) {
       directRoute: directRoute.unknown,
       citedEvidence: citedEvidence.unknown,
       acquisition: acquisition.unknown,
+      objectiveCriteria: objectiveCriteria.unknown,
     },
   };
 }
