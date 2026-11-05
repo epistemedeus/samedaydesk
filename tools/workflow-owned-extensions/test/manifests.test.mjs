@@ -35,11 +35,16 @@ test("source-only manifests load for Dify and Ghost without claiming installatio
   assert.ok(ghost.files.some((file) => file.endsWith("integration.json")));
 });
 
-test("no file in this package claims installation passed or runtime success", () => {
+test("no declarative file in this package claims installation or runtime success", () => {
+  // Code and tests legitimately name the forbidden phrase in their guards,
+  // so scan only what a consumer reads as a claim: manifests, schema,
+  // input/lifecycle fixtures and the README.
   const claim = /\binstallation passed\b|\binstalled successfully\b|\bruntime execution (?:passed|succeeded|complete)\b/i;
+  const declarative = ["manifests", "schema", "fixtures/inputs", "fixtures/lifecycle"].map((dir) => join(packageRoot, dir));
+  const files = [join(packageRoot, "README.md"), ...declarative.flatMap((dir) => walk(dir))];
+  assert.ok(files.length > 3, "declarative files were found");
   const hits = [];
-  for (const file of walk(packageRoot)) {
-    if (file.endsWith(".json") && file.includes("/fixtures/outputs/")) continue;
+  for (const file of files) {
     const text = readFileSync(file, "utf8");
     if (claim.test(text)) hits.push(file);
   }

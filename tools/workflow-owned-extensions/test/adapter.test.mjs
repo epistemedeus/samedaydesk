@@ -18,6 +18,24 @@ function loadOutput(name) {
   return JSON.parse(readFileSync(join(fixtures, "outputs", name), "utf8"));
 }
 
+// Measured durations (keys ending in "Ns") vary per run. Check each is a
+// non-negative integer, then replace it with the retained placeholder.
+const MEASURED = "<measured-ns>";
+function normalizeMeasured(value) {
+  if (Array.isArray(value)) return value.map(normalizeMeasured);
+  if (value === null || typeof value !== "object") return value;
+  const out = {};
+  for (const [key, child] of Object.entries(value)) {
+    if (key.endsWith("Ns") && child !== MEASURED) {
+      assert.ok(Number.isSafeInteger(child) && child >= 0, `${key} must be a non-negative integer`);
+      out[key] = MEASURED;
+    } else {
+      out[key] = normalizeMeasured(child);
+    }
+  }
+  return out;
+}
+
 const n45 = loadInput("fitting-n45-page-change.json");
 const chat = loadInput("nonfitting-unrecognized-chat-task.json");
 const before = loadInput("fitting-before-work.json");
@@ -132,7 +150,7 @@ test("decide-or-reuse binds a public synthetic decision without calling a produc
     horizon: 168,
     opt_in: true,
   });
-  assert.deepEqual(result, loadOutput("fitting-decide-or-reuse-bind.json"));
+  assert.deepEqual(normalizeMeasured(result), loadOutput("fitting-decide-or-reuse-bind.json"));
   const direct = bindUsefulDecision(before, produced, {
     taskId: "source-change-example",
     subject: "source-change-example-decision",

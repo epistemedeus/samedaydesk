@@ -78,7 +78,7 @@
     "clock": "2026-09-09T08:00:00.000Z",
     "producerInvoked": false,
     "mechanics": {
-      "inputCaptureNs": 91911,
+      "inputCaptureNs": "<measured-ns>",
       "inputCaptureBytes": 458,
       "decisionWork": "not_run"
     },
