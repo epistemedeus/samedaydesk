@@ -1,5 +1,7 @@
 # R-N5-CONSUMERS requester decision
 
+Entry label: the `https://example.com/` title change in this example is constructed, retained fixture input. "Example Domain" and "Example Domain Updated" were not observed as a website change and are not real customer demand. The preserved requester note says "real input change" for that constructed fixture change. `requester-changed-bundle.json` and `requester-receipt.local.json` stay the original input and the original generated receipt. This note does not rewrite them.
+
 Recommendation: no-fit
 
 Library action: `undecided_costs_unknown`
@@ -10,7 +12,7 @@ A requester who already holds the sequence-1 prior should treat the title change
 
 ## What changed in the input
 
-Retained prior versus a new permitted capture of the same subject `example-page` at `https://example.com/`.
+Constructed fixture, not an observed site change. Retained prior versus a new permitted capture record for the same subject `example-page`, using the fixture URI `https://example.com/`. The helper does not fetch that URI.
 
 | Side | Title | Status | Digest or content hash |
 | --- | --- | --- | --- |
@@ -87,6 +89,8 @@ Consumed as-is. None of these rails were rewritten.
 
 Consumer tip that includes TE plus RecD plus WE: `90939f157fcb33606c0f5ccfbffbc10b9e51e64a` (2026-11-05 07:41:27 PT), also the tip of `origin/codex/h136010-machine-release-20261103`.
 
+`cost.mjs` sha256 `eca3b06a6ed22d3760c90bfdc59faf0dab8b8e7a8553971f3c9c6e10cacfc69d` matches that consumer tip and writer `3eb9ce99`. It does not match the blob at recipe commit `66df4d47` (`b3a0238b9be85d949c91f764849a26f53ad1ca80d2b11489cd843a2d379ba3bf`). The table's "existing rail" cell is the later file, not the September 9 recipe commit.
+
 Local package runs from `/workspace/n5-task-economics` (writer tip `3eb9ce99`):
 
 - evaluate exit 0, stdout `/workspace/scale-1158/te-rn5-consumers/out/evaluate.stdout`
@@ -103,14 +107,16 @@ Key numbers from those runs:
 
 ## CE run script
 
-Handoff command (model-free, no git push required; input is copied from this directory):
+Historical reproduction of `evaluate`, `compare`, and `receipt`. It is not a run of the later `diagnose` artifact inspection.
+
+Checked-in command:
 
 ```bash
-bash /workspace/scale-1158/te-rn5-consumers/ce-run.sh
+bash tools/task-bundle-economics/examples/rn5-consumers/ce-run.sh
 ```
 
-The script is `/workspace/scale-1158/te-rn5-consumers/ce-run.sh`. It is idempotent, uses `set -euo pipefail`, checks out `epistemedeus/samedaydesk@90939f157fcb33606c0f5ccfbffbc10b9e51e64a` into `/tmp/n4-team/taskecon`, copies `input/requester-changed-bundle.json` beside that checkout, reruns the same three commands against the copied input, and prints a SUMMARY with the three exit codes.
+`ce-run.sh` uses `set -euo pipefail`. Its default `TIP` is `90939f157fcb33606c0f5ccfbffbc10b9e51e64a`, checked out into `/tmp/n4-team/taskecon`. That pin has the three commands above and does not have `diagnose`. The script decodes an embedded copy of `requester-changed-bundle.json` (same bytes as the file in this directory). It does not read `INPUT_SRC`, and it does not copy a separate `input/` file. Optional overrides the script actually implements: `TIP`, `REPO_URL`, `FETCH_REF`, `ROOT`, `RUN_OUT`, `WORKDIR`.
 
-Optional overrides: `TIP`, `REPO_URL`, `ROOT`, `INPUT_SRC`, `RUN_OUT`.
+The original handoff path `/workspace/scale-1158/te-rn5-consumers/ce-run.sh`, and the local outputs under `/workspace/scale-1158/te-rn5-consumers/out/` and `/workspace/n5-task-economics`, remain evidence of the run that produced this decision. They are not this checkout. That handoff did not push. A later branch commit is separate from this preserved receipt.
 
-No writer-branch commit or push was made. CE can fetch `90939f15` from GitHub (`codex/h136010-machine-release-20261103`).
+`requester-receipt.local.json` is that original generated receipt, sha256 `3d7488639413e718943cbd774f4fdcc5bbdf579edd0bbae118792d3bb2ffe4a5`. A fresh `receipt` on later source still returns `bundleDecision.action` `undecided_costs_unknown` and adds empty unknown containers (`costLines`, `directRoute`, `citedEvidence`, `acquisition`, `objectiveCriteria`). Those extra containers are not written back over the preserved file.

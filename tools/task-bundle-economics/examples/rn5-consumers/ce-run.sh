@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
-# R-N5-CONSUMERS model-free CE runner (self-contained input).
-# Checks out epistemedeus/samedaydesk@90939f15 in /tmp/n4-team/taskecon
-# and reruns evaluate, compare, and receipt against the embedded requester input.
+# Historical R-N5-CONSUMERS runner (model-free).
+# Default TIP is consumer pin 90939f157fcb33606c0f5ccfbffbc10b9e51e64a.
+# That pin has evaluate, compare, and receipt. It does not have diagnose.
+# INPUT_B64 is the retained fixture bundle, byte-identical to
+# requester-changed-bundle.json. The example.com title strings are
+# constructed fixture input, not an observed website change or customer demand.
+# Caller-owned local files only. No hosted upload, and sourceUri is not fetched.
+# There is no INPUT_SRC override.
+# Overrides: TIP, REPO_URL, FETCH_REF, ROOT, RUN_OUT, WORKDIR.
 set -euo pipefail
 
 TIP="${TIP:-90939f157fcb33606c0f5ccfbffbc10b9e51e64a}"

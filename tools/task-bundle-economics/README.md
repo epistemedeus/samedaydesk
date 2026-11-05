@@ -64,7 +64,7 @@ When `delivery.artifact` or `delivery.artifactPath` is present, diagnose loads o
 
 Caller-owned `objectiveCriteria` declare the check, observe field, and expected value. Observations are taken from the parsed artifact, not from contributor-supplied `observed` values. Cited evidence is bound only when the locator names an artifact field and the digest matches that field. Missing artifact, missing expected, unbound citation, unsupported class, or ambiguous artifact source yields `needs_review` or `refused`, never `meets_criteria`. Provenance and cited-evidence coverage gate `meets_criteria` on both paths.
 
-The diagnose CLI resolves `artifactPath` relative to the input JSON directory and reads that bounded file in the same separate process.
+The diagnose CLI resolves `artifactPath` relative to the input JSON directory and reads that bounded file in the same separate process. An absolute `artifactPath` is a caller-owned local filesystem path. This helper does not fetch `http` or `https` URLs, does not accept a hosted upload, and does not retrieve `sourceUri`. Hosted upload is a different authority boundary and is unsupported. A URL in `artifactPath` is not downloaded. It is only a local path read, which fails closed when the path is not a readable caller-owned file.
 
 ```bash
 node tools/task-bundle-economics/cli.mjs diagnose --input tools/task-bundle-economics/fixtures/diagnosis-accepted.json
@@ -113,5 +113,9 @@ Atomic amounts are decimal integer strings, matching `fee.mjs` (`^(0|[1-9][0-9]{
 | `fixtures/diagnosis-artifact-corrected.json` | Corrected artifact resubmission after tamper. |
 | `fixtures/diagnosis-artifact-embedded.json` | Artifact-backed positive with embedded extract. |
 | `fixtures/artifacts/*.json` | Bounded structured-extract bodies for the cases above. |
+
+## Example
+
+`examples/rn5-consumers/` is a historical no-fit fixture. Its `example.com` title change is constructed input, not an observed website change or customer demand. The entry label is `examples/rn5-consumers/DECISION.md`. `ce-run.sh` reproduces `evaluate`, `compare`, and `receipt` at consumer pin `90939f157fcb33606c0f5ccfbffbc10b9e51e64a` from embedded fixture bytes. `requester-receipt.local.json` is the original generated receipt and is not regenerated from later source.
 
 Cold-requester / accepted-work field names consumed for alignment (not rewritten here): `taskId`, `title`, `summary`, `criteria`, `payableKinds`, `termsDigest`, `artifactDigest`, `rightsDigest`, `expectedRevision`, `publicationConsent`, and `reservationId`.
