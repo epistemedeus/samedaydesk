@@ -159,3 +159,7 @@ See [USER-ROUTE.md](./USER-ROUTE.md). Ordinary npm of the hosted tarball is the 
 ## Source binding (2026-11-05)
 
 Original cold receive bound to runner `a3efc2c40a246456c7909806a986442a862adfe8` (see BINDING.md). Original RECEIPT head PENDING is superseded by that bind; no D/P/M rerun.
+
+## Producer gate (2026-11-05)
+
+`cold-dpm.sh` records `executed` separately from `qualifiedHistorical`, exits nonzero on any FAIL stage, and marks executed head `unknown` for unproven detached copies. Original cold RECEIPT/binding preserved; no successful-install rerun for clock refresh. See BINDING.md and `cold-dpm-producer-regression.sh`.

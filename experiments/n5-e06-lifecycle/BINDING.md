@@ -26,7 +26,7 @@ Original cold D/P/M is already received. Do not rerun installs for a newer times
 
 ## Coherent family for ordinary integration
 
-Receive E06 lifecycle evidence plus PR363 amendments (USER-ROUTE, FAIR-ROUTES, RESULT touch, cold-dpm.sh) as one scoped family. Do not merge `a3efc2c4` as an orphan leaf onto divergent default-main history. Merge to main stays Root/operator for human-facing surfaces.
+Receive E06 lifecycle evidence plus PR363 amendments (USER-ROUTE, FAIR-ROUTES, RESULT touch, cold-dpm.sh) as one scoped family. Do not merge `a3efc2c4` as an orphan leaf onto divergent default-main history. Ordinary source-only integration of this experiments/ family is team-authorized; human-facing discovery pages stay out of merge scope.
 
 ## Accepted vs not claimed
 
@@ -37,3 +37,13 @@ Not claimed: outside demand, live traffic, human-page publication, revenue, or t
 ## Named later consumer
 
 Fresh cold agent installs useful-jobs@1.4.7 with RESULT integrity and runs vendor-budget-impact on supplied-row input; not the writer checkout.
+
+## Producer gate fix (post-merge)
+
+Original cold RECEIPT (`head:PENDING` then supplemental bind) and this historical table stay as received. Do not rerun successful D/P/M merely to refresh timestamps.
+
+`cold-dpm.sh` v2 separates:
+- `executed.*` — identity of the checkout/script that produced THIS receipt (`unknown` + `unproven-detached-copy` when a detached copy cannot prove git identity)
+- `qualifiedHistorical.*` — the cold-received pins above (not a future default `head`)
+
+Any FAIL row in `summary.tsv` yields nonzero exit. Override `RUNNER_HEAD` only when explicitly set. Regression: `cold-dpm-producer-regression.sh` (no reinstall).
