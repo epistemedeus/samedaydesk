@@ -1,0 +1,57 @@
+{
+  "schema": "neomorphic.task-memory.observation.v1",
+  "contractVersion": 1,
+  "observationId": "obs_cb12649e972c894783b403f4238d88e7",
+  "revisionId": "rev_1",
+  "taskScope": {
+    "taskId": "source-change-example",
+    "taskFamily": "samedaydesk.result-reuse",
+    "ownerScope": "samedaydesk.result-reuse"
+  },
+  "source": {
+    "uri": "https://example.com/",
+    "version": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c"
+  },
+  "epistemicStatus": "observed",
+  "lifecycleStatus": "active",
+  "statement": "source-change-alert unchanged; recovery keep_prior",
+  "payload": {
+    "url": "https://example.com/",
+    "contentHash": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c",
+    "reuseProvenance": {
+      "originalEvidenceUrlAvailable": true,
+      "sourceRole": "original_evidence_url"
+    },
+    "decisionBinding": {
+      "kind": "before_work_public_input",
+      "recipeId": "source-change-alert",
+      "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+      "inputDigest": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c"
+    },
+    "usefulDecision": {
+      "recipeId": "source-change-alert",
+      "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+      "outcome": "unchanged",
+      "recovery": {
+        "action": "keep_prior",
+        "operatorNext": "No content change against the immutable prior. Keep the prior; schedule the next operator-supplied run."
+      },
+      "evidence": {
+        "kind": "field_diff",
+        "contentHash": "sha256:fixture-example-domain-v1",
+        "changed": [],
+        "unchanged": [
+          {
+            "field": "title",
+            "value": "Example Domain"
+          }
+        ]
+      }
+    }
+  },
+  "recordedAt": {
+    "instant": "2026-09-09T08:00:00.000Z",
+    "domain": "wall_utc"
+  },
+  "execute": false
+}

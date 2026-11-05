@@ -1,0 +1,95 @@
+{
+  "ok": false,
+  "schema": "samedaydesk.recurring-job-recipe-result.v1",
+  "recipeId": "verification-reconcile",
+  "meta": {
+    "recipeId": "verification-reconcile",
+    "userBenefit": "Verify that a later observation still matches the immutable prior, or reconcile partial/error rows without replaying a payment.",
+    "operatorSupplies": [
+      "priorPath",
+      "candidatePath",
+      "scheduleHint",
+      "clock",
+      "horizonHours"
+    ],
+    "acceptedContracts": [
+      "pilot/page-change-brief/v1",
+      "samedaydesk.extract-batch.v0",
+      "samedaydesk evidence reconcile patterns"
+    ]
+  },
+  "cost": {
+    "primary": {
+      "kind": "costs_unknown",
+      "asOf": "2026-09-09",
+      "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+      "examples": [
+        {
+          "item": "local page-change compare",
+          "amount": "costs_unknown",
+          "note": "no merchant charge; operator compute not priced here"
+        }
+      ]
+    },
+    "related": [
+      {
+        "kind": "sourced",
+        "asOf": "2026-09-09",
+        "source": "https://samedaydesk.com/for-agents",
+        "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+        "examples": [
+          {
+            "item": "POST /extract/batch",
+            "amount": "0.01 USDC listed",
+            "note": "sourced list price only; not invoked by these recipes"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": {
+    "action": "refresh_baseline",
+    "operatorNext": "Prior is older than the operator horizon. Capture a fresh baseline as a new sequenced artifact before alerting on change.",
+    "detail": {
+      "kind": "stale_baseline",
+      "stale": true,
+      "reason": "prior_older_than_horizon",
+      "ageHours": 188.00027777777777,
+      "horizonHours": 168
+    }
+  },
+  "outcome": "stale_baseline",
+  "clock": "2026-09-16T08:00:01.000Z",
+  "scheduleHint": "daily",
+  "prior": {
+    "path": "/tmp/samedaydesk-src-9f6c0c4e/tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+    "sha256": "placeholder",
+    "sequence": 1,
+    "createdAt": "2026-09-08T12:00:00.000Z",
+    "immutable": true
+  },
+  "payment": {
+    "ok": true,
+    "attempted": false,
+    "replayBlocked": true,
+    "hasPriorReceipt": false
+  },
+  "stale": {
+    "stale": true,
+    "reason": "prior_older_than_horizon",
+    "ageHours": 188.00027777777777,
+    "horizonHours": 168
+  },
+  "evidence": {
+    "kind": "stale_baseline",
+    "stale": true,
+    "reason": "prior_older_than_horizon",
+    "ageHours": 188.00027777777777,
+    "horizonHours": 168
+  },
+  "persisted": {
+    "ok": true,
+    "skipped": true
+  },
+  "neomorphic": null
+}

@@ -1,0 +1,1 @@
+{"ok":false,"message":"before-work manifest is missing the current capture"}
