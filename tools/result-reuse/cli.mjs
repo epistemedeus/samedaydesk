@@ -2,6 +2,7 @@
 import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { bindUsefulDecision, decideOrReuse, exportReuse, previewReuse } from "./src/export.mjs";
 import { INPUT_MAX_BYTES } from "./src/limits.mjs";
+import { residualNeed } from "./src/residual.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 if (args.help || !args.command) {
@@ -29,10 +30,12 @@ const options = {
   optIn: args.optIn,
   optInWithdrawn: args.optInWithdrawn,
   horizonHours: args.horizonHours,
+  want: args.want,
+  acceptance: args.acceptance,
 };
 
 let decision;
-if (args.command === "decide-or-reuse" && args.decision) {
+if ((args.command === "decide-or-reuse" || args.command === "residual") && args.decision) {
   try {
     decision = readBoundedJson(args.decision);
   } catch {
@@ -50,13 +53,15 @@ if (args.command === "decide-or-reuse" && args.produced) {
 
 const result = args.command === "export"
   ? exportReuse(input, options)
+  : args.command === "residual"
+    ? residualNeed(decision, input, options)
   : args.command === "decide-or-reuse"
     ? (produced
       ? bindUsefulDecision(input, produced, options)
       : decideOrReuse(decision, input, options))
     : previewReuse(input, options);
 if (!result.ok) {
-  if (args.command === "decide-or-reuse") {
+  if (args.command === "decide-or-reuse" || args.command === "residual") {
     process.stderr.write(`${JSON.stringify(result)}\n`);
     process.exit(1);
   }
@@ -97,6 +102,12 @@ A hit returns that saved decision and its provenance. It does not run the produc
 A changed or missing binding returns recompute-required and does not invent a fresh answer.
 Naming --producer does not execute it.
 An exported result observation is legacy input and is not upgraded.
+node tools/result-reuse/cli.mjs residual --input <before-work.json> --decision <observation.json> --want <field,...> [--acceptance <text>] --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
+
+residual starts from a decide-or-reuse hit and splits the wanted fields. Fields the decision answers stay direct.
+Fields the saved capture holds are a direct rerun of the same recipe. Only fields absent from the capture become a
+residual need, printed as input for the existing unfunded market rails (post, offerVoluntary, assent, deliver, review).
+It posts nothing. A miss returns route recompute and never hands the whole task to anyone. No obligation or payment.
 Does not fetch, pay, contact the merchant, or write a new store.
 Default outputs of page-change and record stay intact.`;
 }
@@ -123,6 +134,8 @@ function parseArgs(argv) {
     else if (arg === "--produced") out.produced = optionValue(argv, ++i);
     else if (arg === "--producer") out.producer = optionValue(argv, ++i);
     else if (arg === "--horizon") out.horizonHours = horizonHours(optionValue(argv, ++i));
+    else if (arg === "--want") out.want = optionValue(argv, ++i).split(",").map((item) => item.trim()).filter(Boolean);
+    else if (arg === "--acceptance") out.acceptance = optionValue(argv, ++i);
     else fail("unknown option");
   }
   if (out.optIn && out.optInWithdrawn) fail("opt-in and withdrawal conflict");
@@ -134,14 +147,17 @@ function parseArgs(argv) {
     fail("decide-or-reuse requires --decision or --produced");
   }
   if (out.produced && !out.out) fail("binding a decision requires --out");
+  if ((out.want || out.acceptance) && out.command !== "residual") fail("--want and --acceptance are only valid for residual");
+  if (out.command === "residual" && (out.produced || !out.decision) && !out.help) fail("residual requires --decision and does not accept --produced");
   if (
     out.command
     && out.command !== "preview"
     && out.command !== "export"
     && out.command !== "decide-or-reuse"
+    && out.command !== "residual"
     && !out.help
   ) {
-    fail("command must be preview, export, or decide-or-reuse");
+    fail("command must be preview, export, decide-or-reuse, or residual");
   }
   if (out.command && !out.input && !out.help) fail("requires --input");
   return out;
