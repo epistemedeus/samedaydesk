@@ -1,6 +1,7 @@
 // Apex A2A card. Skill ids are the apex MCP tool inventory, not a second list.
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { MCP_TOOL_NAMES } from "./mcp-tool-inventory.js";
+import { QUERY_KEY_CONSUMER } from "../../vendor/hosted-wallet-market/src/query-key-consumer.mjs";
 
 export const APEX_ORIGIN = "https://samedaydesk.com";
 
@@ -31,7 +32,13 @@ export function apexAgentCard() {
         url: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`,
         description: "No-spend original-task correspondence descriptor. Not an MCP skill and not a payment tool.",
       },
+      {
+        transport: "HTTP",
+        url: QUERY_KEY_CONSUMER.acceptedWork,
+        description: `Anonymous accepted work. Schema ${QUERY_KEY_CONSUMER.schema}. Runner ${QUERY_KEY_CONSUMER.runner.name} ${QUERY_KEY_CONSUMER.runner.version} archive ${QUERY_KEY_CONSUMER.runner.archive} sha256 ${QUERY_KEY_CONSUMER.runner.sha256} bytes ${QUERY_KEY_CONSUMER.runner.bytes}. Acquire: ${QUERY_KEY_CONSUMER.acquire}. Apply: ${QUERY_KEY_CONSUMER.apply}. Source ${QUERY_KEY_CONSUMER.source.repository} commit ${QUERY_KEY_CONSUMER.source.commit} path ${QUERY_KEY_CONSUMER.source.path}.`,
+      },
     ],
+    "x-query-key-caller": QUERY_KEY_CONSUMER,
     "x-paid-gateway": gatewayAvailability(),
     skills: MCP_TOOL_NAMES.map((name) => ({
       id: name,

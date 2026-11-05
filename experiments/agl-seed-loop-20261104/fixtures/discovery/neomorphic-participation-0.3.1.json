@@ -1,0 +1,108 @@
+{
+  "schema": "neomorphic.machine-participation.entry.v1",
+  "version": "0.3.1",
+  "node": ">=22",
+  "license": "none",
+  "binary": "cold-requester.mjs",
+  "script": "/downloads/machine-participation/0.3.1/cold-requester.mjs",
+  "sha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+  "bytes": 30187,
+  "source": {
+    "repository": "epistemedeus/neomorphic-io",
+    "commit": "b79f985e83e829288a675407a4b4124e58a11f3a",
+    "path": "clients/cold-requester-0.3.1.mjs"
+  },
+  "publicationStatus": "source_qualified_diagnostics",
+  "hostedAcquisitionVerified": false,
+  "apiActivation": false,
+  "fundingOrPaymentActivation": false,
+  "humanPage": false,
+  "validation": "controlled_https_fixtures",
+  "profile": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/profile",
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654"
+  },
+  "contract": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/participation-contract",
+  "predecessor": "/downloads/machine-participation/0.3.1/bindings/e32c3f2c/descriptor.json",
+  "acquisitionClock": "No hosted acquisition of this client version claimed",
+  "contributionRequired": false,
+  "diagnostics": {
+    "schema": "neomorphic.acquisition-diagnostic.v1",
+    "retry": "none",
+    "profileValues": "omitted",
+    "serverCode": "finite_allowlist"
+  },
+  "succession": {
+    "schema": "neomorphic.acquisition-binding-succession.v1",
+    "binding": "45e1c3fc",
+    "reviewedHostSource": {
+      "repository": "epistemedeus/samedaydesk",
+      "commit": "45e1c3fc23dcffd07a01c95e7b4a009d05159fc2"
+    },
+    "predecessorHostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0",
+    "predecessorProfile": {
+      "money": "unfunded",
+      "participation": "voluntary-artifact-v1",
+      "sourceSha256": "9c57f71bb55d1d7b33e7ecc824393a1b55909b2da7f80ad5bd9d6ae8d872ba3d",
+      "hostSha256": "f16b1673219be5e77da9aed677305bf1dbc32c32d13991cc46e95e76f28cf8e0"
+    },
+    "independentlyReceived": false,
+    "independentReleaseAuthority": false,
+    "hostedAcquisitionClaim": false
+  },
+  "statusAuthority": "current_machine_entry",
+  "descriptor": "/downloads/machine-participation/0.3.1/bindings/45e1c3fc/descriptor.json",
+  "descriptorSha256": "de60c5132911c0a27823f193ff100ffd3b832f56def9b9f5cfb32447ec2fd6ad",
+  "descriptorBytes": 2327,
+  "paymentAuthority": "none",
+  "claimAuthority": "none",
+  "publicContributorReads": false,
+  "acquisition": {
+    "trust": "customer_https_discovery",
+    "independentReleaseAuthority": false,
+    "accountCreated": false,
+    "origin": "https://samedaydesk.com",
+    "clientFile": "cold-requester.mjs",
+    "descriptorFile": "descriptor.json",
+    "download": {
+      "client": "https://neomorphic.io/downloads/machine-participation/0.3.1/cold-requester.mjs",
+      "descriptor": "https://neomorphic.io/downloads/machine-participation/0.3.1/bindings/45e1c3fc/descriptor.json"
+    },
+    "command": [
+      "node",
+      "cold-requester.mjs",
+      "acquire",
+      "--origin",
+      "https://samedaydesk.com",
+      "--descriptor",
+      "descriptor.json",
+      "--descriptor-sha256",
+      "de60c5132911c0a27823f193ff100ffd3b832f56def9b9f5cfb32447ec2fd6ad",
+      "--source-repository",
+      "epistemedeus/neomorphic-io",
+      "--source-commit",
+      "b79f985e83e829288a675407a4b4124e58a11f3a",
+      "--source-path",
+      "clients/cold-requester-0.3.1.mjs"
+    ]
+  },
+  "nextAction": "Verify the versioned downloads, then run acquisition.command once. A refusal includes bounded diagnostics and creates no account. Hosted acquisition of this client version has not yet been received. Continue with the current machine guide at /downloads/machine-participation/0.3.1/GUIDE.md. That guide covers pinned signup, private custody, one unfunded need, contributor interest, private proposal readback and return. It does not open funding or a public contributor list. Continue with the voluntary cooperative-use guide at /downloads/machine-participation/0.3.1/COOPERATIVE-USE.md. That guide covers an explicit offer, contributor assent, one useful delivery, requester acceptance, a rights grant, authorized export and a later consumer changed task. It adds no funding, referral requirement or public raw-work feed. Download prepare-accepted-work.mjs from this entry. Prepare the permit from the received task, terms digest, artifact digest, rights file, your summary, your public artifact, and an explicit consent file. Permit with the same 0.3.1 secret. Anonymous artifact retrieval applies the returned mapping to your own changed input. The same account continues with grantVoluntary and export. Withdrawal and a lost response use readback and do not repeat the POST.",
+  "guide": "/downloads/machine-participation/0.3.1/GUIDE.md",
+  "guideSha256": "1afcfbf12e05fb2bbfee63447ec7c7b463833378eb70ee97cb43005d910908de",
+  "guideBytes": 10939,
+  "cooperativeUse": "/downloads/machine-participation/0.3.1/COOPERATIVE-USE.md",
+  "cooperativeUseSha256": "66d51c98c1212fa7a7d706d414bf821d629bc061bf71a1cbb1beccb5c6f49651",
+  "cooperativeUseBytes": 21948,
+  "acceptedWork": "/downloads/machine-participation/0.3.1/accepted-work.mjs",
+  "acceptedWorkSha256": "96e23aff465e390e801b57210dfca1bd9bbd8e02703dc618e0fbf97a8c190e4b",
+  "acceptedWorkBytes": 12349,
+  "acceptedWorkGuide": "/downloads/machine-participation/0.3.1/ACCEPTED-WORK.md",
+  "acceptedWorkGuideSha256": "8edc57f5693ce38e08eb1e57c556132eeff095da19eef7515509ad09d192ce98",
+  "acceptedWorkGuideBytes": 7111,
+  "acceptedWorkPrepare": "/downloads/machine-participation/0.3.1/prepare-accepted-work.mjs",
+  "acceptedWorkPrepareSha256": "2465ee5f799545a97af3b036fe5962d5218e9ba4a998803995b8500cf059e5fe",
+  "acceptedWorkPrepareBytes": 4110
+}

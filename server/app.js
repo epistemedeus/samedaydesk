@@ -3,8 +3,10 @@
 // Load-bearing order: RAW body for webhooks BEFORE express.json(); exact SPA route
 // shells before static; history fallback last.
 import express from "express";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { FOR_AGENTS_CRAWLER_HTML } from "../client/src/data/machineEntry.mjs";
 
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
@@ -44,6 +46,7 @@ import {
 } from "./lib/original-task/descriptor.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const LLMS_PATH = path.resolve(__dirname, "../client/public/llms.txt");
 const isProd = process.env.NODE_ENV === "production";
 const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
   ? path.resolve(process.env.SAMEDAYDESK_CLIENT_DIST)
@@ -218,6 +221,24 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
   res.type("application/gzip");
   res.sendFile(originalTaskClientArchiveFile());
 });
+
+// Machine guide. The source file is the producer. Production static would
+// serve the same bytes after a client build copies public/llms.txt.
+app.get("/llms.txt", (_req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.type("text/plain");
+  res.send(readFileSync(LLMS_PATH));
+});
+
+// Without the production client, /for-agents still returns the crawler copy
+// that route shells put in the page. Production keeps the SPA shell.
+if (!isProd) {
+  app.get("/for-agents", (_req, res) => {
+    res.set("Cache-Control", "no-cache");
+    res.type("html");
+    res.send(`<!doctype html><html><head><title>Practical agent jobs | SameDayDesk</title></head><body>${FOR_AGENTS_CRAWLER_HTML}</body></html>`);
+  });
+}
 
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.

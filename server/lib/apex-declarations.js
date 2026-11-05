@@ -3,6 +3,7 @@
 // agents.samedaydesk.com; canonical links do not establish availability.
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
+import { QUERY_KEY_CONSUMER } from "../../vendor/hosted-wallet-market/src/query-key-consumer.mjs";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import {
   AGENT_READINESS_RATE_LIMIT_DEFAULT,
@@ -601,6 +602,7 @@ export function apexApiCatalog() {
     { rel: "service-doc", href: `${APEX_ORIGIN}/skill.md`, type: "text/markdown", title: "Apex skill" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/llms.txt`, type: "text/plain", title: "Apex llms.txt" },
     { rel: "describedby", href: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`, type: "application/json", title: "Original-task help descriptor" },
+    { rel: "describedby", href: QUERY_KEY_CONSUMER.acceptedWork, type: "application/json", title: "Accepted work" },
     { rel: "service-meta", href: `${APEX_ORIGIN}/.well-known/agent-card.json`, type: "application/json", title: "Apex agent card" },
     { rel: "status", href: `${APEX_ORIGIN}/mcp`, type: "text/plain", title: "Apex MCP" },
     { rel: "status", href: `${APEX_ORIGIN}/api/health`, type: "application/json", title: "Apex health" },
@@ -812,6 +814,7 @@ export function apexOpenApiDocument() {
         "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
         "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
         "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
+        "x-query-key-caller names the schema, versioned runner, acquire command, apply command, and source identity for an accepted cc0.query-key-caller.v4 artifact.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],
@@ -863,6 +866,7 @@ export function apexOpenApiDocument() {
       links: PAID_GATEWAY_LINKS.map((link) => ({ rel: link.rel, href: link.href, type: link.type })),
       note: "When available, gateway documents own current terms. Canonical links and historical launches do not establish availability.",
     },
+    "x-query-key-caller": QUERY_KEY_CONSUMER,
   };
 }
 

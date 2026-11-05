@@ -1,0 +1,5 @@
+{
+  "schema": "cc0.not-a-caller",
+  "left": {"method": "GET", "path": "/visitor/lot", "pairs": [{"key": "seal", "form": "bare"}]},
+  "right": {"method": "GET", "path": "/visitor/lot", "pairs": [{"key": "seal", "form": "blank"}]}
+}

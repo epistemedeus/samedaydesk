@@ -3,6 +3,7 @@
 // grant, signup, or an internal QA flag does not publish it.
 import {createHash} from 'node:crypto';
 import {digest, requireThat} from '../runtime/agent-economy-foundation/dist/index.js';
+import {consumerLinkage} from './query-key-consumer.mjs';
 
 export const PUBLICATION_SCHEMA = 'pilot.machine-market.accepted-work-publication.v1';
 export const PROPOSAL_SCHEMA = 'pilot.machine-market.accepted-work-proposal.v1';
@@ -241,6 +242,7 @@ export function publicView(row) {
   if (!publicationVisible(row)) return null;
   const proposal = row.voluntary.publication.proposal;
   const rights = row.voluntary.terms.rights;
+  const consumer = consumerLinkage(proposal.publicArtifact);
   return {
     taskId: row.id,
     summary: proposal.summary,
@@ -251,6 +253,7 @@ export function publicView(row) {
     artifactDigest: proposal.artifactDigest,
     publicArtifactDigest: proposal.publicArtifactDigest,
     continuation: {...CONTINUATION},
+    ...(consumer ? {consumer} : {}),
   };
 }
 
