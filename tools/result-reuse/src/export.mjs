@@ -358,14 +358,14 @@ function gateDecision(input, saved, options, { requireOptIn }) {
   return { ok: true };
 }
 
-function rejectingPrivate(value) {
+export function rejectingPrivate(value) {
   const found = findPrivateField(value);
   if (!found) return null;
   if (found.path === "payment") return findPrivateField(value.payment, "payment");
   return found;
 }
 
-function disallowedText(value, path = "") {
+export function disallowedText(value, path = "") {
   if (typeof value === "string") {
     if (credentialHits(value).length || containsHostileMarkup(value) || looksLikeFilesystemPath(value)) {
       return path || "(text)";
@@ -421,7 +421,7 @@ function captureManifest(manifest) {
   };
 }
 
-function readManifest(value) {
+export function readManifest(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return { ok: false, message: NOT_BEFORE_WORK };
   }
@@ -467,7 +467,7 @@ function readManifest(value) {
   return { ok: true, manifest: value };
 }
 
-function selectUseful(produced, manifest) {
+export function selectUseful(produced, manifest) {
   if (!produced || typeof produced !== "object" || Array.isArray(produced)) {
     return { ok: false, message: `produced decision must be a ${manifest.recipeId} result` };
   }
@@ -547,7 +547,7 @@ function selectUsefulVerification(produced, manifest) {
   return { ok: true, useful };
 }
 
-function readBinding(observation) {
+export function readBinding(observation) {
   const binding = observation.payload?.decisionBinding;
   if (!binding || typeof binding !== "object" || binding.kind !== "before_work_public_input") {
     return { ok: false, reason: DECISION_REASONS.unboundLegacy };
@@ -604,7 +604,7 @@ function recompute(reason, message, extra = {}) {
   };
 }
 
-function verdictLimits(recipeId) {
+export function verdictLimits(recipeId) {
   return {
     costBaseline: costForRecipe(SUPPORTED_RECIPE_IDS.includes(recipeId) ? recipeId : COST_BASELINE_RECIPE),
     liveMetric: {
@@ -619,7 +619,7 @@ function verdictLimits(recipeId) {
   };
 }
 
-function sortKeys(value) {
+export function sortKeys(value) {
   if (Array.isArray(value)) return value.map(sortKeys);
   if (value && typeof value === "object") {
     const out = {};
@@ -639,7 +639,7 @@ function observationIdFor(taskId, subject) {
   return `obs_${digest}`;
 }
 
-function resolveSavedObservation(saved) {
+export function resolveSavedObservation(saved) {
   const candidate = saved?.schema === OBSERVATION_SCHEMA
     ? saved
     : saved?.observation?.schema === OBSERVATION_SCHEMA

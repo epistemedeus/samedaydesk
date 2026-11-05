@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/alpha",
+  "status": 200,
+  "title": "Fixture Alpha Notice",
+  "contentHash": "sha256:fixture-alpha-v1"
+}

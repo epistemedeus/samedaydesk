@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/bravo",
+  "status": 200,
+  "title": "Fixture Bravo Rates",
+  "contentHash": "sha256:fixture-bravo-v1"
+}

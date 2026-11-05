@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/echo",
+  "status": 200,
+  "title": "Fixture Echo Schedule",
+  "contentHash": "sha256:fixture-echo-v1"
+}

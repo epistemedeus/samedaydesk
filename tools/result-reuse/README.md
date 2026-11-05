@@ -103,3 +103,32 @@ is public-safe or accepted by a merchant.
 
 Existing preview and export outputs stay byte-identical. Limits and the
 omission list are unchanged.
+
+## Portable decisions (opt-in, N6-R06)
+
+```bash
+node tools/result-reuse/cli.mjs export-decision --input before-work.json --decision observation.json \
+  --created-at 2026-11-05T08:00:00.000Z [--stale-after <ISO-UTC>] --opt-in --out portable.json
+node tools/result-reuse/cli.mjs import-decision --input my-before-work.json --portable portable.json [--clock <ISO-UTC>]
+node tools/result-reuse/cli.mjs retire-decision --input portable.json --retired-at <ISO-UTC> \
+  --reason "publisher withdrew it" [--state retired|stale] --out portable.retired.json
+```
+
+`export-decision` turns a bound decision into a `samedaydesk.portable-decision.v1`
+file keyed by recipe id and version, capture digest, prior digest and field
+list. It does not carry taskId, subject, observation id, local paths or
+producer state. It carries a `CC0-1.0` rights field, `createdAt`, a lifecycle
+marker (`active`, `retired` or `stale`, optional `staleAfter`) and a body
+digest that detects corruption only; it is not a signature.
+
+`import-decision` needs no shared Pilot state. It returns `reuse` only when the
+consumer's own before-work manifest produces the same key and the lifecycle is
+active. Otherwise it returns `recompute` with one of `recipe_changed`,
+`capture_digest_mismatch`, `prior_digest_mismatch`, `fields_mismatch`,
+`retired`, `stale`, `stale_unverifiable`, `integrity_mismatch`,
+`rights_missing`, `invalid_portable`, `input_not_before_work` or
+`private_field`. It never runs, loads or names a producer, and refuses
+`--producer`. Recomputing is left to the caller.
+
+The taskId/subject binding used by `decide-or-reuse` is unchanged. The bind
+step still needs a taskId and subject before a decision can be exported.
