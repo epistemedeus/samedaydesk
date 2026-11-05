@@ -3,6 +3,7 @@ import { readBoundedJson } from "./src/io.mjs";
 import { evaluateDecision } from "./src/evaluate.mjs";
 import { removeState, showState, updateState } from "./src/state.mjs";
 import { exportWorkflowStub } from "./src/workflow.mjs";
+import { receiveEvaluateRequest } from "./src/http-adapter.mjs";
 import {
   aglModulePresence,
   decideOrReuseViaAgl,
@@ -89,6 +90,13 @@ try {
     process.exit(exported.ok ? 0 : 1);
   }
 
+  if (args.command === "receive-http") {
+    const request = readBoundedJson(args.request);
+    const response = receiveEvaluateRequest(request);
+    process.stdout.write(`${JSON.stringify(response, null, 2)}\n`);
+    process.exit(response.status >= 200 && response.status < 300 ? 0 : 1);
+  }
+
 
   if (args.command === "agl-presence") {
     const presence = aglModulePresence();
@@ -152,6 +160,7 @@ node tools/recurring-decision-consumer/cli.mjs state update --state <state.json>
 node tools/recurring-decision-consumer/cli.mjs state remove --state <state.json>
 
 node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime n8n|native --out <path> [--verified]
+node tools/recurring-decision-consumer/cli.mjs receive-http --request <http-or-mcp-request.json>
 
 AGL consume (vendor-free import; requires tools/result-reuse from candidate head 95c8a841):
 node tools/recurring-decision-consumer/cli.mjs agl-presence
@@ -184,6 +193,7 @@ function parseArgs(argv) {
     else if (arg === "--horizon") out.horizonHours = horizon(need(argv, ++i));
     else if (arg === "--runtime") out.runtime = need(argv, ++i);
     else if (arg === "--out") out.out = need(argv, ++i);
+    else if (arg === "--request") out.request = need(argv, ++i);
     else if (arg === "--saved") out.saved = need(argv, ++i);
     else if (arg === "--manifest") out.manifest = need(argv, ++i);
     else if (arg === "--input") out.input = need(argv, ++i);
@@ -202,6 +212,11 @@ function parseArgs(argv) {
   if (out.command === "export-workflow") {
     if (!out.runtime || !out.out) {
       if (!out.help) fail("export-workflow requires --runtime and --out");
+    }
+  }
+  if (out.command === "receive-http") {
+    if (!out.request) {
+      if (!out.help) fail("receive-http requires --request");
     }
   }
   return out;

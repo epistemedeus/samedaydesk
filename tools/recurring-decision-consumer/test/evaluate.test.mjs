@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { evaluateDecision } from "../src/evaluate.mjs";
 import { removeState, showState, updateState } from "../src/state.mjs";
+import { receiveEvaluateRequest } from "../src/http-adapter.mjs";
 import { buildSafeCommand, exportWorkflowStub, shellSingleQuote } from "../src/workflow.mjs";
 import { OUTCOMES, REASONS } from "../src/pins.mjs";
 
@@ -379,28 +380,36 @@ test("shellSingleQuote and buildSafeCommand quote metacharacters", () => {
   assert.equal(cmd.includes(" --intent dir/file;"), false);
 });
 
-test("verified n8n export uses argv array and does not shell-concatenate interpolations", () => {
+test("verified n8n export uses HTTP Request and webhook, never executeCommand", () => {
   const dir = mkdtempSync(join(tmpdir(), "rdc-wf-safe-"));
   const out = join(dir, "wf.json");
   const exported = exportWorkflowStub({ runtime: "n8n", out, verified: true });
   assert.equal(exported.ok, true);
   assert.equal(exported.primaryVerifiedShape, "native-argv");
+  assert.equal(exported.verifiedMeans, "live_schema_or_mcp_probe_not_flag");
+  assert.ok(exported.message.includes("insufficient"));
   const raw = readFileSync(out, "utf8");
   const body = JSON.parse(raw);
-  const params = body.nodes[0].parameters;
-  assert.equal(params.command, "node");
-  assert.ok(Array.isArray(params.arguments));
-  assert.equal(params.arguments[0], "tools/recurring-decision-consumer/cli.mjs");
-  assert.ok(params.arguments.includes("evaluate"));
-  assert.ok(params.arguments.includes("={{$json.intentPath}}"));
-  assert.equal(String(params.command).includes("{{$json."), false);
-  assert.equal(/command"\s*:\s*"[^"]*\{\{\$json\./.test(raw), false);
-  assert.ok(body.meta.verifiedMeaning.includes("caller assertion"));
-  assert.equal(body.meta.primaryVerifiedShape, "native-argv");
-  assert.equal(
-    body.meta.safeCommandStatic,
-    buildSafeCommand(["node", "tools/recurring-decision-consumer/cli.mjs", "evaluate"]),
-  );
+  assert.equal(raw.includes("n8n-nodes-base.executeCommand"), false);
+  assert.equal(body.nodes.some((node) => /executeCommand/i.test(node.type || "")), false);
+  const types = body.nodes.map((node) => node.type);
+  assert.deepEqual(types, ["n8n-nodes-base.webhook", "n8n-nodes-base.httpRequest"]);
+  const httpNode = body.nodes.find((node) => node.type === "n8n-nodes-base.httpRequest");
+  assert.equal(httpNode.parameters.method, "POST");
+  assert.equal(httpNode.parameters.url, "={{$json.evaluateUrl}}");
+  assert.equal(httpNode.parameters.sendBody, true);
+  assert.ok(String(httpNode.parameters.jsonBody).includes("$json.intent"));
+  assert.equal(body.meta.instanceBase, "https://neomorphic.app.n8n.cloud");
+  assert.equal(body.meta.apiLocator, "KCH-0939616A8FF4997851894232");
+  assert.equal(body.meta.mcpLocator, "KCH-AE454DDB4C2532D780A0E689");
+  assert.equal(body.meta.mcpPath, "/mcp-server/http");
+  assert.equal(body.meta.verifiedMeans, "live_schema_or_mcp_probe_not_flag");
+  assert.equal(body.meta.executeCommand, false);
+  assert.ok(body.meta.verifiedMeaning.includes("insufficient"));
+  assert.match(raw, /KCH-0939616A8FF4997851894232/);
+  assert.match(raw, /KCH-AE454DDB4C2532D780A0E689/);
+  assert.doesNotMatch(raw, /X-N8N-API-KEY\s*[:=]\s*\S+/);
+  assert.doesNotMatch(raw, /Bearer\s+[A-Za-z0-9._-]+/);
 });
 
 test("verified native export is the primary argv shape", () => {
@@ -412,5 +421,94 @@ test("verified native export is the primary argv shape", () => {
   assert.ok(Array.isArray(body.argv));
   assert.equal(body.argv[0], "evaluate");
   assert.ok(body.note.includes("Primary verified export shape"));
+  assert.ok(body.note.includes("solid direct baseline"));
+  assert.equal(body.verifiedMeans, "live_schema_or_mcp_probe_not_flag");
   assert.ok(body.verifiedMeaning.includes("caller assertion"));
+});
+
+test("HTTP adapter POSTs evaluate inputs and returns useful_no_change", () => {
+  const response = receiveEvaluateRequest({
+    method: "POST",
+    body: {
+      intent: load("intents/watch-title.json"),
+      prior: load("captures/prior.json"),
+      capture: load("captures/same.json"),
+      clock: CLOCK,
+      horizonHours: HORIZON,
+    },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.body.ok, true);
+  assert.equal(response.body.outcome, OUTCOMES.usefulNoChange);
+  assert.equal(response.body.useful, true);
+});
+
+test("HTTP adapter reports useful_change for changed selected fields", () => {
+  const response = receiveEvaluateRequest({
+    method: "POST",
+    body: {
+      intent: load("intents/watch-title.json"),
+      prior: load("captures/prior.json"),
+      capture: load("captures/changed.json"),
+      clock: CLOCK,
+      horizonHours: HORIZON,
+    },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.body.outcome, OUTCOMES.usefulChange);
+  assert.equal(response.body.useful, true);
+});
+
+test("HTTP adapter rejects non-POST methods", () => {
+  const response = receiveEvaluateRequest({
+    method: "GET",
+    body: { intent: load("intents/watch-title.json") },
+  });
+  assert.equal(response.status, 405);
+  assert.equal(response.body.ok, false);
+});
+
+test("MCP tools/call adapter runs evaluate without executing n8n", () => {
+  const response = receiveEvaluateRequest({
+    jsonrpc: "2.0",
+    id: 7,
+    method: "tools/call",
+    params: {
+      name: "evaluate",
+      arguments: {
+        intent: load("intents/watch-title.json"),
+        prior: load("captures/prior.json"),
+        capture: load("captures/same.json"),
+        clock: CLOCK,
+        horizonHours: String(HORIZON),
+      },
+    },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.body.jsonrpc, "2.0");
+  assert.equal(response.body.id, 7);
+  assert.equal(response.body.result.outcome, OUTCOMES.usefulNoChange);
+  assert.equal(response.body.result.useful, true);
+});
+
+test("CLI receive-http maps a posted evaluate body", () => {
+  const dir = mkdtempSync(join(tmpdir(), "rdc-http-"));
+  const requestPath = join(dir, "request.json");
+  writeFileSync(requestPath, `${JSON.stringify({
+    method: "POST",
+    body: {
+      intent: load("intents/watch-title.json"),
+      prior: load("captures/prior.json"),
+      capture: load("captures/changed.json"),
+      clock: CLOCK,
+      horizonHours: HORIZON,
+    },
+  })}\n`);
+  const ran = spawnSync(process.execPath, [
+    cli, "receive-http", "--request", requestPath,
+  ], { encoding: "utf8" });
+  assert.equal(ran.status, 0, ran.stderr);
+  const response = JSON.parse(ran.stdout);
+  assert.equal(response.status, 200);
+  assert.equal(response.body.outcome, OUTCOMES.usefulChange);
 });

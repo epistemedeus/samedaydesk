@@ -46,9 +46,12 @@ node tools/recurring-decision-consumer/cli.mjs state remove --state /tmp/rdc-sta
 
 ## Workflow export
 
-Exports a caller-owned n8n or native stub only with `--verified`. That flag is a caller assertion, not executed schema or import proof. The native argv stub is the primary verified shape. The n8n stub uses `command: "node"` plus an `arguments` array rather than unquoted shell interpolation. If a runtime accepts only a single command string, callers must pass pre-validated paths through `buildSafeCommand`.
+Exports a caller-owned n8n or native stub only with `--verified`. That flag is a caller assertion, not executed schema or import proof, and is not sufficient on its own. Confirm the n8n route with a live schema or MCP probe (`verifiedMeans: live_schema_or_mcp_probe_not_flag`). The native argv stub is the primary verified shape and the solid direct baseline.
+
+The n8n stub never ships Execute Command (unavailable on n8n Cloud and disabled by default from n8n 2.0). It uses a Webhook plus an HTTP Request node that POSTs evaluate inputs to a caller-supplied HTTPS `evaluateUrl`. Mount `receiveEvaluateRequest` (`src/http-adapter.mjs`) or `receive-http` on that endpoint. Registry locators on the existing instance are recorded by id only, never as secret values.
 
 ```bash
 node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime native --out /tmp/rdc-native.json --verified
 node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime n8n --out /tmp/rdc-n8n.json --verified
+node tools/recurring-decision-consumer/cli.mjs receive-http --request /tmp/rdc-http-request.json
 ```
