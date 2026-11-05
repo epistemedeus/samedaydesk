@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 // N5-REMAINDER import gate.
 // consumer: synthetic-normal
-// This command imports the cores named by the one-writer contract.
-// A missing path stops the run. It does not create a core, copy another
-// tree, write an obligation, or call the fee function.
+// Importing this module does not exit and does not import a core.
+// Running it with no source root still checks this branch, which is the
+// default-main history, and exits 2 while the named cores are absent here.
 
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+export const writerRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
-const captureCommit = "da769f7870e494bb583e31766a477a2ff974fc10";
-const pinBlobs = {
+export const captureCommit = "da769f7870e494bb583e31766a477a2ff974fc10";
+export const pinBlobs = {
   "tools/result-reuse/src/export.mjs": "939fa19abab4cf4432f8c8bc214cbb2676aca5f7",
   "tools/result-reuse/src/project.mjs": "bff16db7f645d27926836ccc2bb8deb4158a41c4",
   "tools/result-reuse/src/map.mjs": "8dd669b8d94142b17369567126e88a354d0c47ab",
@@ -23,7 +23,7 @@ const pinBlobs = {
   "vendor/hosted-wallet-market/src/fee.mjs": "a20638869f7456b7be8e4237c6b57b691e85c98e",
 };
 
-const checks = [
+export const checks = [
   {
     role: "capture-cli",
     path: "tools/result-reuse/src/export.mjs",
@@ -61,7 +61,7 @@ const checks = [
   },
 ];
 
-function blob(relativePath) {
+function blob(root, relativePath) {
   const absolute = resolve(root, relativePath);
   if (!existsSync(absolute)) return null;
   return execFileSync("git", ["hash-object", absolute], {
@@ -70,9 +70,9 @@ function blob(relativePath) {
   }).trim();
 }
 
-async function inspect(check) {
+async function inspect(root, check) {
   const absolute = resolve(root, check.path);
-  const observedBlob = blob(check.path);
+  const observedBlob = blob(root, check.path);
   const expectedBlob = pinBlobs[check.path] ?? null;
   const row = {
     role: check.role,
@@ -108,34 +108,44 @@ async function inspect(check) {
   return row;
 }
 
-const rows = [];
-for (const check of checks) rows.push(await inspect(check));
+export async function runImportGate(root = writerRoot) {
+  const rows = [];
+  for (const check of checks) rows.push(await inspect(root, check));
+  const missing = rows.filter((row) => !row.filePresent || !row.exportPresent || !row.pinBlobMatch);
+  const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+  const stopped = missing.length > 0;
+  return {
+    consumer: "synthetic-normal",
+    command: "experiments/n5-remainder/import-gate.mjs",
+    head,
+    captureCommit,
+    stopped,
+    delegationEmitted: 0,
+    obligationCount: 0,
+    feeLine: null,
+    joinedRecord: null,
+    missing: missing.map((row) => ({
+      role: row.role,
+      path: row.path,
+      exportName: row.exportName,
+      code: row.code,
+      message: row.message,
+      filePresent: row.filePresent,
+      exportPresent: row.exportPresent,
+      pinBlobMatch: row.pinBlobMatch,
+    })),
+    checks: rows,
+  };
+}
 
-const missing = rows.filter((row) => !row.filePresent || !row.exportPresent || !row.pinBlobMatch);
-const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
-const stopped = missing.length > 0;
-const record = {
-  consumer: "synthetic-normal",
-  command: "experiments/n5-remainder/import-gate.mjs",
-  head,
-  captureCommit,
-  stopped,
-  delegationEmitted: 0,
-  obligationCount: 0,
-  feeLine: null,
-  joinedRecord: null,
-  missing: missing.map((row) => ({
-    role: row.role,
-    path: row.path,
-    exportName: row.exportName,
-    code: row.code,
-    message: row.message,
-    filePresent: row.filePresent,
-    exportPresent: row.exportPresent,
-    pinBlobMatch: row.pinBlobMatch,
-  })),
-  checks: rows,
-};
+function invokedDirectly() {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  return import.meta.url === pathToFileURL(resolve(entry)).href;
+}
 
-process.stdout.write(`${JSON.stringify(record, null, 2)}\n`);
-process.exit(stopped ? 2 : 0);
+if (invokedDirectly()) {
+  const record = await runImportGate(writerRoot);
+  process.stdout.write(`${JSON.stringify(record, null, 2)}\n`);
+  process.exit(record.stopped ? 2 : 0);
+}
