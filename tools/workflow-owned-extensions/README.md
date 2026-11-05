@@ -95,8 +95,12 @@ node tools/workflow-owned-extensions/cli.mjs manifests
 ## Ghost runtime on a Cursor VM
 
 `runtime/run-runtime.sh` is the remote install/start/acceptance script. It is
-idempotent, bounded, and model-free. It installs Ghost 6.75.0 under
-`$ROOT/runtime-home`, starts it on localhost, runs
+idempotent, bounded, and model-free. It bootstraps a task-local pnpm 11.28.11
+under `$ROOT/toolchain` (needed because Ghost 6.75.0 pins pnpm 12.16.1 and
+ghost-cli 1.34.1 will not install that pin with a PATH pnpm older than
+11.10.0), prepends that `.bin` to PATH for `ghost install` only, writes
+`$OUT/runtime-preflight.json` before the install, then installs Ghost 6.75.0
+under `$ROOT/runtime-home`, starts it on localhost, runs
 `test/runtime/acceptance.mjs` (excluded from the default unit-test glob),
 records timings, writes `EXITS.txt` and `SHA256SUMS`, and stops Ghost at the
 end. The Admin API key stays in a 0600 file under `$ROOT/runtime-home`.
@@ -109,10 +113,14 @@ BRANCH=codex/n7-workflow-extensions-20261105 \
   bash tools/workflow-owned-extensions/runtime/run-runtime.sh
 ```
 
-Expected `EXITS.txt` names: `runtime_install`, `runtime_start`,
-`runtime_acceptance`, `unit_tests`, `cli_manifests`. The VM needs node >=
-22.23.1 and network access to npm. The script uses no sudo. A VM output file
-may write `runtime-executed`. Committed manifests do not.
+Expected `EXITS.txt` names: `runtime_preflight`, `runtime_install`,
+`runtime_start`, `runtime_acceptance`, `unit_tests`, `cli_manifests`. The
+existing keys keep their meaning. `runtime_preflight` is written before
+`ghost install` and is non-zero when node, the task-local pnpm, ghost-cli,
+or free disk does not match. The VM needs node >= 22.23.1 (or >= 24.20.0)
+and network access to npm. The script uses no sudo and makes no global
+toolchain change. A VM output file may write `runtime-executed`. Committed
+manifests do not.
 
 The writer branch is `codex/n7-workflow-extensions-20261105`, based on the
 consumer tip of `codex/h136010-machine-release-20261103`. A later draft PR

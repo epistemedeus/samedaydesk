@@ -94,3 +94,29 @@ A VM output file may record `runtime-executed`. That output is not source.
   missing after Ghost is already set up, provision refuses rather than guessing.
 - Ghost local may bind as `localhost` even when `--url http://127.0.0.1:PORT` is
   passed. The script reads `config.development.json` and probes both hosts.
+
+## pnpm toolchain (2026-11-05)
+
+Cause: Cursor VM job 16161 (bc-e9a6af36) failed ghost-cli check
+"Checking pnpm installation" because PATH had pnpm v10.33.4. Ghost 6.75.0
+declares `packageManager` `pnpm@12.16.1` plus its sha512 pin
+(`npm view ghost@6.75.0 packageManager` on registry.npmjs.org). ghost-cli
+1.34.1 (`lib/utils/pnpm.js` `MINIMUM_PNPM_VERSION`, and the doctor check
+`lib/commands/doctor/checks/pnpm.js`) requires a bootstrap pnpm >= 11.10.0
+to install that pin. installMs was 7942. Unit tests and cli_manifests
+passed. The failure is not sqlite and not a missing API key.
+
+Fix: `run-runtime.sh` installs a task-local pnpm 11.28.11 (latest pnpm 11.x
+>= 11.10.0 on registry.npmjs.org; both 11.28.11 and 12.16.1 return HTTP 200
+for their registry tarballs) under `$ROOT/toolchain` with
+`npm install --prefix $ROOT/toolchain pnpm@11.28.11`. Integrity comes from
+npm's registry metadata. That `node_modules/.bin` directory is prepended to
+PATH for the ghost install step only, so ghost-cli's `execa('pnpm')` sees
+the bootstrap first. No global `npm -g`, no `corepack enable` on system
+paths, and no `~/.npmrc` edits. The default npm prefix is never used; every
+`npm install` passes an explicit `--prefix` under `$ROOT`. A capability
+preflight runs after the toolchain and ghost-cli are present and before
+`ghost install`, writes `$OUT/runtime-preflight.json` (node version,
+engines match against `^22.23.1 || ^24.20.0`, `command -v pnpm` and
+`pnpm --version` as seen on that PATH, ghost-cli version, free disk), and
+fails with a named reason plus the EXITS key `runtime_preflight`.
