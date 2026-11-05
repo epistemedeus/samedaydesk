@@ -1,0 +1,38 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "exception-needed-example",
+  "requesterNote": "Delivery needs human judgment. Do not auto-accept to make a bundle cheaper.",
+  "bundleEffort": {
+    "measured": true,
+    "costAtomic": "100000"
+  },
+  "tasks": [
+    {
+      "taskId": "tone-review",
+      "title": "Judge whether a public reply is courteous",
+      "summary": "A reviewer must read the reply. No deterministic observation is supplied.",
+      "criteria": [
+        "courteous-public-reply"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "1500000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "autoAcceptToLowerCost": true,
+        "verifierPayload": "function decide(text) { return text.includes('please'); }",
+        "notes": "Verifier text is stored only. It is not executed."
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "200000",
+        "bundledShareAtomic": "100000"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "direct-cheaper-example",
+  "requesterNote": "Two page-watch tasks that are cheaper to run separately than as one combined pass.",
+  "bundleEffort": {
+    "measured": true,
+    "costAtomic": "900000"
+  },
+  "tasks": [
+    {
+      "taskId": "page-watch-alpha",
+      "title": "Watch vendor catalog A",
+      "summary": "Record whether the public catalog page changed.",
+      "criteria": [
+        "public-example",
+        "rerun-steps"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "2000000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "https://example.test/a"
+          },
+          "rerun-steps": {
+            "check": "exact_equal",
+            "expected": "documented",
+            "observed": "documented"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "300000",
+        "bundledShareAtomic": "450000"
+      }
+    },
+    {
+      "taskId": "page-watch-beta",
+      "title": "Watch vendor catalog B",
+      "summary": "Record whether the second public catalog page changed.",
+      "criteria": [
+        "public-example",
+        "rerun-steps"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "3000000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "https://example.test/b"
+          },
+          "rerun-steps": {
+            "check": "exact_equal",
+            "expected": "documented",
+            "observed": "documented"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "400000",
+        "bundledShareAtomic": "450000"
+      }
+    }
+  ]
+}
