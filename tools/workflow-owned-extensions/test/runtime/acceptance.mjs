@@ -12,7 +12,7 @@ import {
   reuseRetainedObservation,
   updateEmbeddedDraft,
 } from "../../src/ghost-embed.mjs";
-import { listPosts, probeGhost } from "../../src/ghost-runtime.mjs";
+import { listPosts, parseAdminKey, probeGhost } from "../../src/ghost-runtime.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(here, "../..");
@@ -23,6 +23,7 @@ const url = (process.env.GHOST_URL || "").replace(/\/+$/, "");
 const outDir = process.env.OUT || "";
 const keyFile = process.env.GHOST_ADMIN_API_KEY_FILE;
 const contentKeyFile = process.env.GHOST_CONTENT_API_KEY_FILE;
+let authKeyId = null;
 
 if (!url || !keyFile) {
   fail("acceptance requires GHOST_URL and GHOST_ADMIN_API_KEY_FILE");
@@ -30,6 +31,8 @@ if (!url || !keyFile) {
 
 const auth = loadRuntimeAuth({ url, keyFile, contentKeyFile });
 if (!auth.ok) fail(auth.message);
+const parsedKey = parseAdminKey(auth.key);
+authKeyId = parsedKey.ok ? parsedKey.id : null;
 
 const n45 = readJson(join(fixtures, "fitting-n45-page-change.json"));
 const chat = readJson(join(fixtures, "nonfitting-unrecognized-chat-task.json"));
@@ -55,7 +58,13 @@ const reachable = await probeGhost(url);
 if (!reachable.reachable) fail(reachable.message || "ghost runtime is unreachable");
 
 const baseline = await listPosts({ url: auth.url, key: auth.key });
-if (!baseline.ok) fail(baseline.message);
+if (!baseline.ok) {
+  fail(baseline.message, {
+    keyId: baseline.keyId || authKeyId,
+    endpoint: baseline.endpoint || baseline.path || `${url}/ghost/api/admin/posts/`,
+    status: baseline.status ?? null,
+  });
+}
 const beforeIds = new Set(baseline.posts.map((post) => post.id));
 
 const preview = previewReuse(n45, n45Options);
@@ -203,8 +212,14 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-function fail(message) {
+function fail(message, extra = {}) {
   const body = { ok: false, message: String(message) };
+  const keyId = extra.keyId !== undefined ? extra.keyId : authKeyId;
+  const endpoint = extra.endpoint !== undefined ? extra.endpoint : extra.path;
+  const status = extra.status !== undefined ? extra.status : null;
+  if (keyId) body.keyId = keyId;
+  if (endpoint) body.endpoint = endpoint;
+  if (status != null) body.status = status;
   if (outDir) {
     mkdirSync(outDir, { recursive: true });
     writeFileSync(join(outDir, "runtime-acceptance.json"), `${JSON.stringify(body, null, 2)}\n`);

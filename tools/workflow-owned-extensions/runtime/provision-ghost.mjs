@@ -63,7 +63,8 @@ const record = integration.json?.integrations?.[0];
 const admin = (record?.api_keys || []).find((item) => item.type === "admin");
 const content = (record?.api_keys || []).find((item) => item.type === "content");
 if (!admin?.id || !admin?.secret) fail("ghost integration did not return an admin API key");
-writeSecretFile(keyFile, `${admin.id}:${admin.secret}\n`);
+const adminKey = formatAdminKey(admin);
+writeSecretFile(keyFile, `${adminKey}\n`);
 if (content?.secret) writeSecretFile(contentFile, `${content.secret}\n`);
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -71,7 +72,18 @@ process.stdout.write(`${JSON.stringify({
   keyFilePresent: true,
   contentKeyFilePresent: Boolean(content?.secret),
   integrationId: record?.id ?? null,
+  adminKeyId: admin.id,
+  adminSecretAlreadyPrefixed: String(admin.secret).startsWith(`${admin.id}:`),
 })}\n`);
+
+function formatAdminKey(admin) {
+  const id = String(admin.id);
+  const secret = String(admin.secret);
+  // Ghost 6.x integration output already formats admin secrets as "id:secret".
+  // See core/server/api/endpoints/utils/serializers/output/mappers/integrations.js.
+  if (secret.startsWith(`${id}:`)) return secret;
+  return `${id}:${secret}`;
+}
 
 function parseArgs(argv) {
   const out = {};

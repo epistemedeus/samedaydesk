@@ -120,3 +120,25 @@ preflight runs after the toolchain and ghost-cli are present and before
 engines match against `^22.23.1 || ^24.20.0`, `command -v pnpm` and
 `pnpm --version` as seen on that PATH, ghost-cli version, free disk), and
 fails with a named reason plus the EXITS key `runtime_preflight`.
+
+## Admin API JWT invalid signature (2026-11-05)
+
+Cause: Cursor VM requalification at tip adda648d failed `runtime_acceptance`
+with `Invalid token: invalid signature` in 144ms. None of the case keys were
+produced because `listPosts` failed before any fixture ran. Ghost 6.75.0
+`core/server/api/endpoints/utils/serializers/output/mappers/integrations.js`
+rewrites each admin API key `secret` to `id:secret` (the same form shown in
+Ghost Admin). `provision-ghost.mjs` then wrote `${admin.id}:${admin.secret}`,
+producing `id:id:hex`. `parseAdminKey` splits on the first colon, so `kid`
+was the real key id (Ghost found the key; the error was not
+`Unknown Admin API Key`) and the "secret" was `id:hex`.
+`Buffer.from(secret, 'hex')` silently truncates at the first non-hex
+character, so the JWT was HMAC-signed with the key id bytes instead of the
+database secret. Ghost verifies with `Buffer.from(apiKey.get('secret'), 'hex')`
+in `core/server/auth/api-key/admin.js`. The database value is the raw hex
+secret, not the mapper form.
+
+Fix: `provision-ghost.mjs` writes the Admin API key as `id:secret` without
+double-prefixing when Ghost has already combined them. JWT minting rejects a
+non-hex secret instead of truncating at a colon. Acceptance failures now
+record key id, endpoint, and HTTP status, and never print the secret.

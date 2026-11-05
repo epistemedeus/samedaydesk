@@ -35,17 +35,12 @@ export function normalizeGhostUrl(url) {
 export function ghostAdminToken(adminKey, { now = Math.floor(Date.now() / 1000), ttlSec = DEFAULT_TTL_SEC } = {}) {
   const parsed = typeof adminKey === "string" ? parseAdminKey(adminKey) : adminKey;
   if (!parsed?.ok) return { ok: false, message: parsed?.message || "admin API key is missing" };
-  let secretBuf;
-  try {
-    secretBuf = Buffer.from(parsed.secret, "hex");
-  } catch {
-    return { ok: false, message: "admin API secret is not hex" };
-  }
-  if (secretBuf.length === 0) return { ok: false, message: "admin API secret is not hex" };
+  const secretBuf = hexSecretBytes(parsed.secret);
+  if (!secretBuf) return { ok: false, message: "admin API secret is not hex", keyId: parsed.id };
   const header = b64url(JSON.stringify({ alg: "HS256", kid: parsed.id, typ: "JWT" }));
   const payload = b64url(JSON.stringify({ iat: now, exp: now + ttlSec, aud: "/admin/" }));
   const sig = createHmac("sha256", secretBuf).update(`${header}.${payload}`).digest("base64url");
-  return { ok: true, token: `${header}.${payload}.${sig}` };
+  return { ok: true, token: `${header}.${payload}.${sig}`, keyId: parsed.id };
 }
 
 export async function probeGhost(url, { timeoutMs = 4000 } = {}) {
@@ -62,9 +57,12 @@ export async function probeGhost(url, { timeoutMs = 4000 } = {}) {
 export async function adminRequest({ url, key, method = "GET", path, body, timeoutMs = 15000 } = {}) {
   const base = normalizeGhostUrl(url);
   if (!base) return { ok: false, message: "GHOST_URL is missing" };
-  const token = ghostAdminToken(key);
+  const parsedKey = typeof key === "string" ? parseAdminKey(key) : key;
+  const token = ghostAdminToken(parsedKey);
   if (!token.ok) return token;
-  const target = `${base}${path.startsWith("/") ? path : `/${path}`}`;
+  const requestPath = path.startsWith("/") ? path : `/${path}`;
+  const target = `${base}${requestPath}`;
+  const diagnostic = { keyId: token.keyId || parsedKey?.id || null, endpoint: target, path: requestPath, method };
   const headers = {
     Authorization: `Ghost ${token.token}`,
     Accept: "application/json",
@@ -91,12 +89,13 @@ export async function adminRequest({ url, key, method = "GET", path, body, timeo
       return {
         ok: false,
         status: res.status,
+        ...diagnostic,
         message: extractGhostError(json) || `ghost admin ${method} ${path} returned ${res.status}`,
       };
     }
     return { ok: true, status: res.status, json };
   } catch (error) {
-    return { ok: false, message: error?.cause?.code || error?.message || "ghost admin request failed" };
+    return { ok: false, ...diagnostic, message: error?.cause?.code || error?.message || "ghost admin request failed" };
   }
 }
 
@@ -220,6 +219,13 @@ function extractGhostError(json) {
   if (!first) return null;
   const context = typeof first.context === "string" && first.context.trim() ? ` (${first.context})` : "";
   return `${first.message || "ghost error"}${context}`;
+}
+
+function hexSecretBytes(secret) {
+  if (typeof secret !== "string" || secret.length === 0 || secret.length % 2 !== 0) return null;
+  if (!/^[0-9a-fA-F]+$/.test(secret)) return null;
+  const buf = Buffer.from(secret, "hex");
+  return buf.length > 0 ? buf : null;
 }
 
 function b64url(text) {
