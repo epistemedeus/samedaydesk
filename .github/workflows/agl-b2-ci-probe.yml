@@ -1,0 +1,17 @@
+name: agl-b2-ci-probe
+
+on:
+  push:
+    branches:
+      - codex/agl-b2-ci-probe-20261104
+
+permissions:
+  contents: read
+
+jobs:
+  unshare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: unshare user and mount
+        shell: bash --noprofile --norc {0}
+        run: unshare --user --mount --map-root-user true; echo $?
