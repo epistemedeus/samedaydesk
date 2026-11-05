@@ -10,7 +10,8 @@ import {digest as foundationDigest} from '../../../vendor/hosted-wallet-market/r
 import {apexAgentCard} from '../../../server/lib/apex-agent-card.js';
 import {apexApiCatalog, apexOpenApiDocument, apexSkillMarkdown, machineDeclarationProblems} from '../../../server/lib/apex-declarations.js';
 import {FOR_AGENTS_CRAWLER_HTML} from '../../../client/src/data/machineEntry.mjs';
-import {QUERY_KEY_CONSUMER, consumerLinkage} from '../../../vendor/hosted-wallet-market/src/query-key-consumer.mjs';
+import {hostSourceSha256, installedSourceSha256} from '../../../vendor/hosted-wallet-market/src/native-debt.mjs';
+import {QUERY_KEY_CONSUMER, consumerLinkage} from '../../../server/lib/query-key-caller.mjs';
 import {digest} from '../digest.mjs';
 import {readDiscovery} from '../discovery.mjs';
 import {prepareReturn, screenCaller} from '../screen.mjs';
@@ -235,6 +236,11 @@ test('SDS machine producers publish one query-key consumer', () => {
   assert.equal(openapi['x-query-key-caller'].source.commit, QUERY_KEY_CONSUMER.source.commit);
   assert.equal(card['x-query-key-caller'].apply, QUERY_KEY_CONSUMER.apply);
   assert.equal(card.interfaces.some((item) => item.url === QUERY_KEY_CONSUMER.acceptedWork), true);
+  assert.equal(openapi['x-query-key-caller'].extract.artifact, 'value.publicArtifact');
+  assert.equal(openapi['x-query-key-caller'].extract.schema, 'value.publicArtifact.schema');
+  assert.equal(openapi['x-query-key-caller'].extract.digest, 'value.publicArtifactDigest');
+  assert.equal(openapi['x-query-key-caller'].extract.list, 'value.items');
+  assert.deepEqual(card['x-query-key-caller'].extract, openapi['x-query-key-caller'].extract);
   const llms = readFileSync(join(ROOT, 'client/public/llms.txt'), 'utf8');
   for (const text of [llms, FOR_AGENTS_CRAWLER_HTML]) {
     assert.equal(text.includes(QUERY_KEY_CONSUMER.schema), true);
@@ -244,10 +250,16 @@ test('SDS machine producers publish one query-key consumer', () => {
     assert.equal(text.includes(QUERY_KEY_CONSUMER.source.commit), true);
     assert.equal(text.includes(QUERY_KEY_CONSUMER.source.repository), true);
     assert.equal(text.includes(QUERY_KEY_CONSUMER.acceptedWork), true);
+    assert.equal(text.includes('Query-key artifact path: value.publicArtifact'), true);
+    assert.equal(text.includes('Query-key artifact schema path: value.publicArtifact.schema'), true);
+    assert.equal(text.includes('Query-key artifact digest path: value.publicArtifactDigest'), true);
+    assert.equal(text.includes('Query-key list path: value.items'), true);
   }
   assert.equal(consumerLinkage({schema: 'cc0.not-a-caller'}), null);
   assert.equal(consumerLinkage(publicArtifact).schema, QUERY_KEY_CONSUMER.schema);
   assert.equal(JSON.stringify(publicArtifact).includes(QUERY_KEY_CONSUMER.runner.archive), false);
+  assert.equal(installedSourceSha256(), '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82');
+  assert.equal(hostSourceSha256(ROOT), '6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd');
 });
 
 test('a cold caller follows the machine instructions and a new contributor can return the document', {timeout: 480000}, async () => {
@@ -271,14 +283,17 @@ test('a cold caller follows the machine instructions and a new contributor can r
   assert.equal(result.anonymous.list, 200);
   assert.equal(result.anonymous.detail, 200);
   assert.equal(result.anonymous.artifact, 200);
-  const listed = result.published.anonymousList.body.value.items.find((item) => item.taskId === result.published.taskId);
-  assert.equal(listed.consumer.schema, QUERY_KEY_CONSUMER.schema);
-  assert.equal(listed.consumer.runner.sha256, ARCHIVE_SHA);
+  const listRaw = result.published.anonymousList.body;
+  const artifactRaw = result.published.anonymousArtifact.body;
+  assert.equal(Object.hasOwn(listRaw, 'items'), false);
+  assert.equal(Object.hasOwn(artifactRaw, 'publicArtifact'), false);
+  const listed = listRaw.value.items.find((item) => item.taskId === result.published.taskId);
+  assert.equal(Object.hasOwn(listed, 'consumer'), false);
   assert.equal(Object.hasOwn(listed, 'publicArtifact'), false);
-  const artifact = result.published.anonymousArtifact.body.value;
-  assert.equal(artifact.publicArtifact.schema, QUERY_KEY_CONSUMER.schema);
-  assert.equal(artifact.consumer.apply, QUERY_KEY_CONSUMER.apply);
-  assert.equal(artifact.consumer.source.path, QUERY_KEY_CONSUMER.source.path);
+  assert.equal(JSON.stringify(listed).includes(QUERY_KEY_CONSUMER.runner.archive), false);
+  assert.equal(artifactRaw.value.publicArtifact.schema, QUERY_KEY_CONSUMER.schema);
+  assert.equal(Object.hasOwn(artifactRaw.value, 'consumer'), false);
+  assert.equal(JSON.stringify(artifactRaw.value.publicArtifact).includes(QUERY_KEY_CONSUMER.runner.archive), false);
   const cold = result.coldCaller;
   assert.equal(cold.ok, true);
   assert.equal(cold.schema, QUERY_KEY_CONSUMER.schema);
@@ -312,4 +327,56 @@ test('a cold caller follows the machine instructions and a new contributor can r
   assert.equal(result.fund.status, 409);
   assert.equal(result.fund.code, 'qualified_selection_required');
   assert.equal(result.fund.paidWork, false);
+  const report = [];
+  async function checkRaw(example) {
+    const dir = mkdtempSync(join(tmpdir(), 'agl-envelope-'));
+    const file = join(dir, 'body.json');
+    writeFileSync(file, example.raw);
+    const args = [join(HERE, 'envelope-check.mjs'), '--raw', file, '--path', example.path];
+    if (example.equals !== undefined) args.push('--equals', example.equals);
+    if (example.schema !== undefined) args.push('--schema', example.schema);
+    if (example.task !== undefined) args.push('--task', example.task);
+    let status = 0;
+    let stdout = '';
+    try {
+      const child = await exec(process.execPath, args, {encoding: 'utf8', timeout: 10000});
+      stdout = child.stdout;
+    } catch (error) {
+      status = Number.isInteger(error.code) ? error.code : 1;
+      stdout = error.stdout || '';
+    } finally {
+      rmSync(dir, {recursive: true, force: true});
+    }
+    const parsed = stdout ? JSON.parse(stdout) : {};
+    const row = {name: example.name, path: example.path, status, excerpt: parsed.excerpt || String(example.raw).slice(0, 220)};
+    report.push(row);
+    assert.equal(status, example.exit, JSON.stringify(row));
+  }
+  function documented(text, name) {
+    const match = text.match(new RegExp('(?:^|\\n)\\s*-?\\s*' + name + ':\\s*(\\S.*\\S|\\S)', 'm'));
+    assert.ok(match, name);
+    return match[1].trim();
+  }
+  const openapi = JSON.parse(cold.raw.openapi);
+  const card = JSON.parse(cold.raw.agentCard);
+  assert.equal(documented(cold.raw.llms, 'Query-key artifact path'), 'value.publicArtifact');
+  assert.equal(documented(cold.raw.forAgents, 'Query-key artifact path'), 'value.publicArtifact');
+  assert.equal(openapi['x-query-key-caller'].extract.artifact, 'value.publicArtifact');
+  assert.equal(card['x-query-key-caller'].extract.artifact, 'value.publicArtifact');
+  assert.equal(cold.extract.artifact, 'value.publicArtifact');
+  const artifactBody = cold.raw.artifact;
+  const examples = [
+    {name: 'llms.txt artifact path on the raw accepted-work artifact body', raw: artifactBody, path: documented(cold.raw.llms, 'Query-key artifact path'), schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'for-agents artifact path on the raw accepted-work artifact body', raw: artifactBody, path: documented(cold.raw.forAgents, 'Query-key artifact path'), schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'openapi extract.artifact on the raw accepted-work artifact body', raw: artifactBody, path: openapi['x-query-key-caller'].extract.artifact, schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'agent card extract.artifact on the raw accepted-work artifact body', raw: artifactBody, path: card['x-query-key-caller'].extract.artifact, schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'value.publicArtifact.schema on the raw accepted-work artifact body', raw: artifactBody, path: openapi['x-query-key-caller'].extract.schema, equals: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'value.publicArtifactDigest on the raw accepted-work artifact body', raw: artifactBody, path: openapi['x-query-key-caller'].extract.digest, equals: ARTIFACT_DIGEST, exit: 0},
+    {name: 'value.items on the raw accepted-work list body', raw: cold.raw.list, path: openapi['x-query-key-caller'].extract.list, task: cold.taskId, exit: 0},
+    {name: 'x-query-key-caller on the raw openapi body', raw: cold.raw.openapi, path: 'x-query-key-caller', schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'x-query-key-caller on the raw agent card body', raw: cold.raw.agentCard, path: 'x-query-key-caller', schema: QUERY_KEY_CONSUMER.schema, exit: 0},
+    {name: 'publicArtifact without the value member is absent on the raw artifact body', raw: artifactBody, path: 'publicArtifact', schema: QUERY_KEY_CONSUMER.schema, exit: 1},
+  ];
+  for (const example of examples) await checkRaw(example);
+  writeFileSync('/tmp/agl-envelope-report.json', JSON.stringify(report, null, 2) + '\n');
 });

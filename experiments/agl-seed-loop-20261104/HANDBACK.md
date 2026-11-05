@@ -12,25 +12,24 @@ This file is the commit after that implementation commit. The terminal records t
 
 ## Producer paths
 
-- `vendor/hosted-wallet-market/src/query-key-consumer.mjs`
-- `vendor/hosted-wallet-market/src/accepted-work-publication.mjs`
+These producers sit outside the measured host closure. `hostSourceSha256` is `vendor/hosted-wallet-market/src/native-debt.mjs:89`. It hashes every path in `server/foundry/activation/private-control-pin.json` `files` plus that pin file. `installedSourceSha256` is `native-debt.mjs:86` and hashes `installedSourceFiles()` at `native-debt.mjs:53`. On this branch both stay at the Root-approved measurement: source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`, host `6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd`.
+
+- `server/lib/query-key-caller.mjs`
 - `server/lib/apex-declarations.js`
 - `server/lib/apex-agent-card.js`
-- `server/app.js`
 - `client/public/llms.txt`
 - `client/src/data/machineEntry.mjs`
 
-`server/foundry/activation/private-control-pin.json` records the new bytes of `server/app.js` (`5376c67e2f90d4ac210351979436862fe8f7d09c564b03ebc91a7a680cc3ec00`) and `vendor/hosted-wallet-market/src/accepted-work-publication.mjs` (`6dfc0957fc21315b2e6d6a13b47dd2e33a086e84de1f773100c5ed4fb80a274d`). No other pin entry changed. The disposable host admits those two files.
+`server/app.js`, `server/foundry/activation/private-control-pin.json`, and `vendor/hosted-wallet-market/src/accepted-work-publication.mjs` are inside that closure. Their bytes match the approved measurement again. The accepted-work list, detail, and artifact responses therefore do not grow a consumer field. The artifact schema is `value.publicArtifact.schema` on the raw accepted-work artifact body `{ok, value}`. `publicArtifact` at the root of that body is not a field. The runner, acquire command, apply command, and source identity are rendered by the producers above. `mountApexDeclarations` serves `/llms.txt` from `client/public/llms.txt` and, outside production, serves `/for-agents` from the existing crawler copy.
 
-The consumer object is rendered by the existing producers. It is not a new HTTP catalog. It is attached to an accepted-work list, detail, or artifact view only when `publicArtifact.schema` is `cc0.query-key-caller.v4`. The artifact body itself stays free of the archive URL and the archive sha256.
-
-No pulse counter was incremented. No new outcome class was added.
+No pulse counter was incremented. No new outcome class was added. `publicReads` was not edited.
 
 ## Experiment paths
 
 - `experiments/agl-seed-loop-20261104/README.md`
 - `experiments/agl-seed-loop-20261104/HANDBACK.md`
 - `experiments/agl-seed-loop-20261104/cold-caller.mjs`
+- `experiments/agl-seed-loop-20261104/envelope-check.mjs`
 - `experiments/agl-seed-loop-20261104/digest.mjs`
 - `experiments/agl-seed-loop-20261104/discovery.mjs`
 - `experiments/agl-seed-loop-20261104/host-return.mjs`
@@ -82,17 +81,17 @@ Local producers on this branch are linked. The live origin was not deployed.
 
 ## Cold caller
 
-A fresh process received only the loopback origin and its CA. It started at `/llms.txt` and followed the machine instructions. Recorded run, synthetic task `market-05ef829d8c0c849fcca233ccf305d17cef762e0601d0765d33e6ea4e44f24f04`. That id is not the live task.
+A fresh process received only the loopback origin and its CA. It started at `/llms.txt` and followed the machine instructions. Recorded run, synthetic task `market-3431c65ed60836402fe44f874440be38f0b052b50f459f55ecb48f2d318b1591`. That id is not the live task. The artifact was read at `value.publicArtifact` on the raw body. `publicArtifact` at the root of that body is absent.
 
 | GET | Status | Bytes | sha256 |
 | --- | --- | --- | --- |
-| `https://127.0.0.1:39873/llms.txt` | 200 | 9406 | `13618da3676c5867ab04ba3780bc6e72dec32aed1140a0c7b6759b09a983dfef` |
-| `https://127.0.0.1:39873/for-agents` | 200 | 10685 | `2c14d73bd4635f1d7de054d30c45d408968cb058f938b62c55a640c81c719df2` |
-| `https://127.0.0.1:39873/openapi.json` | 200 | 42649 | `e5bdd67d559b42e695777f7ed7cc365aceed4346ec408b4d5f9a75e2cd9fd0d2` |
-| `https://127.0.0.1:39873/.well-known/agent-card.json` | 200 | 4195 | `e53686cf3a197c2b32b4a3b42da49180ac6f4e4bfc6a60e5c889d6b53b8c1639` |
-| `https://127.0.0.1:39873/api/neomorphic-contributor-journey/v1/market/accepted-work` | 200 | 1814 | `0fb857b0d19308736169c9961459ee0df4006913b83407a4aa8bc96db98d182f` |
-| `https://127.0.0.1:39873/api/neomorphic-contributor-journey/v1/market/accepted-work/market-05ef829d8c0c849fcca233ccf305d17cef762e0601d0765d33e6ea4e44f24f04` | 200 | 1699 | `6a011829ffd64e82fd612da8391d402c20d3c6e31570829d6f418bae0d14de21` |
-| `https://127.0.0.1:39873/api/neomorphic-contributor-journey/v1/market/accepted-work/market-05ef829d8c0c849fcca233ccf305d17cef762e0601d0765d33e6ea4e44f24f04/artifact` | 200 | 2021 | `60e000ea19a51135eeca318480800271318a6851551dcde12046942e5a7d5572` |
+| `https://127.0.0.1:34677/llms.txt` | 200 | 9612 | `fc4f79c6424c27136c1471feca9cd8d449744e1bc23f197197ad0f09bbdd11bf` |
+| `https://127.0.0.1:34677/for-agents` | 200 | 10883 | `736715fd6d6fe4cc796d6f96c8cef78fabaa01a229f5265a1e7ba9c24b6e627b` |
+| `https://127.0.0.1:34677/openapi.json` | 200 | 43072 | `cdeb56f2e461fdc2a6e458e7fc63a684797702d51aec345093f5b2caf741e50f` |
+| `https://127.0.0.1:34677/.well-known/agent-card.json` | 200 | 4479 | `7177c798eb0bfe8aeb6a84f09f4acb9c351a48b7b4bbda7712532037f95a820f` |
+| `https://127.0.0.1:34677/api/neomorphic-contributor-journey/v1/market/accepted-work` | 200 | 1098 | `032cc6896147da6e793c2cd8ade31168ceb8064bc31e8490e09a1b1bbdc25ec5` |
+| `https://127.0.0.1:34677/api/neomorphic-contributor-journey/v1/market/accepted-work/market-3431c65ed60836402fe44f874440be38f0b052b50f459f55ecb48f2d318b1591` | 200 | 983 | `e8b312e6dd7f44603d1da0cb6521e8b2e5aad42cdf46d1e06b63d288ff10d533` |
+| `https://127.0.0.1:34677/api/neomorphic-contributor-journey/v1/market/accepted-work/market-3431c65ed60836402fe44f874440be38f0b052b50f459f55ecb48f2d318b1591/artifact` | 200 | 1305 | `bf4aa01de885c8b27ed20fc4a1bec65e5dec89114c3bcb2d949d2a6c7fcd412b` |
 | `https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz` | 200 | 14566 | `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa` |
 | `curl -fsSL -o query-key.tar.gz https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz` | 200 | 14566 | `51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa` |
 
@@ -111,6 +110,8 @@ Artifact digest: `1917f8c6d1e247001c049c208641d5c4cfc44453e5162e41b57ef206569155
 Apply on that artifact: status 0, `executed` false, wires `lot%23=row%203&seal` and `lot%23=row%203&seal=`.
 
 The exact example command also exited 0 with `executed` false.
+
+The documented extraction paths are members of the raw HTTP body. For accepted work that body is `{ok, value}`. `envelope-check.mjs` resolves each path against the cold caller's saved raw body. The parent test `a cold caller follows the machine instructions and a new contributor can return the document` exited 0.
 
 ## Unknown schema
 
@@ -165,7 +166,7 @@ curl -fsSL -o query-key.tar.gz https://neomorphic.io/downloads/query-key/1.1.0/q
 node apply.mjs apply --artifact corpus.json --input examples/next-consumer.json
 ```
 
-Replace the example input with the accepted-work `publicArtifact` to compare that caller. This branch was not deployed.
+Replace the example input with the object at `value.publicArtifact` on the raw accepted-work artifact response. This branch was not deployed.
 
 ## Outside use
 

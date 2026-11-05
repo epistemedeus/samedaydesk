@@ -64,7 +64,11 @@ function factsFromText(text) {
   const commit = label(text, 'Query-key source commit');
   const sourcePath = label(text, 'Query-key source path');
   const acceptedWork = label(text, 'Accepted work');
-  if (!schema || !runnerLine || !archive || !sha || !acquire || !apply || !repository || !commit || !sourcePath || !acceptedWork) {
+  const artifactPath = label(text, 'Query-key artifact path');
+  const schemaPath = label(text, 'Query-key artifact schema path');
+  const digestPath = label(text, 'Query-key artifact digest path');
+  const listPath = label(text, 'Query-key list path');
+  if (!schema || !runnerLine || !archive || !sha || !acquire || !apply || !repository || !commit || !sourcePath || !acceptedWork || !artifactPath || !schemaPath || !digestPath || !listPath) {
     return null;
   }
   const [name, version] = runnerLine.split(/\s+/);
@@ -75,6 +79,7 @@ function factsFromText(text) {
     apply,
     source: {repository, commit, path: sourcePath},
     acceptedWork,
+    extract: {artifact: artifactPath, schema: schemaPath, digest: digestPath, list: listPath},
   };
 }
 
@@ -100,7 +105,11 @@ function sameFacts(left, right) {
     && left.apply === right.apply
     && left.source.commit === right.source.commit
     && left.source.path === right.source.path
-    && left.source.repository === right.source.repository;
+    && left.source.repository === right.source.repository
+    && left.extract?.artifact === right.extract?.artifact
+    && left.extract?.schema === right.extract?.schema
+    && left.extract?.digest === right.extract?.digest
+    && left.extract?.list === right.extract?.list;
 }
 
 function rewrite(origin, href) {
@@ -170,16 +179,41 @@ async function main() {
     bodies.set(listUrl.href, listResponse.body.toString('utf8'));
   }
   const listBody = JSON.parse(bodies.get(listUrl.href));
-  const items = listBody.value?.items || [];
-  const item = items.find((row) => row.consumer?.schema === textFacts.schema);
-  if (!item) emit({ok: false, code: 'accepted_work_unavailable', gets}, 1);
-  if (!sameFacts(textFacts, item.consumer)) emit({ok: false, code: 'facts_mismatch', gets}, 1);
-  const detail = await get(new URL(listUrl.href.replace(/\/$/, '') + '/' + item.taskId));
-  const artifact = await get(new URL(listUrl.href.replace(/\/$/, '') + '/' + item.taskId + '/artifact'));
-  if (detail.status !== 200 || artifact.status !== 200) emit({ok: false, code: 'artifact_unavailable', gets}, 1);
-  const artifactBody = JSON.parse(artifact.body.toString('utf8'));
-  const publicArtifact = artifactBody.value?.publicArtifact;
-  if (!publicArtifact || publicArtifact.schema !== textFacts.schema) emit({ok: false, code: 'artifact_schema_mismatch', gets}, 1);
+  const items = Array.isArray(listBody.value?.items) ? listBody.value.items : [];
+  let item = null;
+  let artifactBody = null;
+  let artifactBodyText = null;
+  for (const row of items) {
+    if (!row || typeof row.taskId !== 'string') continue;
+    if (row.consumer && !sameFacts(textFacts, row.consumer)) emit({ok: false, code: 'facts_mismatch', gets}, 1);
+    const base = listUrl.href.replace(/\/$/, '');
+    const detail = await get(new URL(base + '/' + row.taskId));
+    const artifact = await get(new URL(base + '/' + row.taskId + '/artifact'));
+    if (detail.status !== 200 || artifact.status !== 200) continue;
+    let parsed = null;
+    let detailBody = null;
+    const artifactText = artifact.body.toString('utf8');
+    try {
+      parsed = JSON.parse(artifactText);
+      detailBody = JSON.parse(detail.body.toString('utf8'));
+    } catch {
+      continue;
+    }
+    if (detailBody?.value?.consumer && !sameFacts(textFacts, detailBody.value.consumer)) {
+      emit({ok: false, code: 'facts_mismatch', gets}, 1);
+    }
+    if (parsed?.value?.consumer && !sameFacts(textFacts, parsed.value.consumer)) {
+      emit({ok: false, code: 'facts_mismatch', gets}, 1);
+    }
+    const publicArtifact = parsed?.value?.publicArtifact;
+    if (!publicArtifact || publicArtifact.schema !== textFacts.schema) continue;
+    item = row;
+    artifactBody = parsed;
+    artifactBodyText = artifactText;
+    break;
+  }
+  if (!item || !artifactBody) emit({ok: false, code: 'accepted_work_unavailable', gets}, 1);
+  const publicArtifact = artifactBody.value.publicArtifact;
   const artifactDigest = digest(publicArtifact);
   if (artifactDigest !== artifactBody.value.publicArtifactDigest) emit({ok: false, code: 'artifact_digest_mismatch', gets}, 1);
   const archiveUrl = new URL(textFacts.runner.archive);
@@ -229,6 +263,15 @@ async function main() {
     acquire: textFacts.acquire,
     apply: textFacts.apply,
     source: textFacts.source,
+    extract: textFacts.extract,
+    raw: {
+      llms: llms.body.toString('utf8'),
+      openapi: bodies.get([...seen].find((href) => href.includes('/openapi.json'))) || null,
+      agentCard: bodies.get([...seen].find((href) => href.includes('/agent-card.json'))) || null,
+      forAgents: bodies.get([...seen].find((href) => new URL(href).pathname === '/for-agents')) || null,
+      list: bodies.get(listUrl.href) || null,
+      artifact: artifactBodyText,
+    },
     taskId: item.taskId,
     artifactDigest,
     exampleRun: {status: exampleRun.status, executed: exampleRun.result.executed, wire: exampleRun.result.wire},

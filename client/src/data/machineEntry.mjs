@@ -290,6 +290,10 @@ Query-key apply: node apply.mjs apply --artifact corpus.json --input examples/ne
 Query-key source repository: https://github.com/epistemedeus/neomorphic-io
 Query-key source commit: bb78211863af9bfb9d18e71ecc32af4ecb0a0902
 Query-key source path: tools/query-key-1.1.0
+Query-key artifact path: value.publicArtifact
+Query-key artifact schema path: value.publicArtifact.schema
+Query-key artifact digest path: value.publicArtifactDigest
+Query-key list path: value.items
 </code></pre>
     `;
 

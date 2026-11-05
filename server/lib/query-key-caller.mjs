@@ -1,6 +1,7 @@
-// Shared linkage for the accepted query-key caller. Existing SDS producers
-// render this object. It is not a second catalog and it is not stored inside
-// a public artifact, because publication text rejects URLs and long hex.
+// Runner facts for an accepted cc0.query-key-caller.v4 artifact.
+// Existing SDS machine producers render this object. It is not a second catalog.
+// It stays outside the measured hosted-wallet source walk and the host pin,
+// because those bytes are the Root-approved measurement fingerprint.
 export const QUERY_KEY_CALLER_SCHEMA = 'cc0.query-key-caller.v4';
 
 export const QUERY_KEY_CONSUMER = Object.freeze({
@@ -20,6 +21,14 @@ export const QUERY_KEY_CONSUMER = Object.freeze({
     path: 'tools/query-key-1.1.0',
   }),
   acceptedWork: 'https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/accepted-work',
+  // Paths into the raw HTTP JSON body. The accepted-work envelope is {ok, value}.
+  // value.publicArtifact is that body. publicArtifact at the root is not a response field.
+  extract: Object.freeze({
+    artifact: 'value.publicArtifact',
+    schema: 'value.publicArtifact.schema',
+    digest: 'value.publicArtifactDigest',
+    list: 'value.items',
+  }),
 });
 
 export function consumerLinkage(artifact) {
