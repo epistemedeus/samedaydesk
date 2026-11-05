@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/delta",
+  "status": 200,
+  "title": "Fixture Delta Hours",
+  "contentHash": "sha256:fixture-delta-v2"
+}

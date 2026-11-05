@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/foxtrot",
+  "status": 200,
+  "title": "Fixture Foxtrot Terms",
+  "contentHash": "sha256:fixture-foxtrot-v1"
+}

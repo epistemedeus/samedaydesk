@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/golf",
+  "status": 200,
+  "title": "Fixture Golf Listing",
+  "contentHash": "sha256:fixture-golf-v1"
+}

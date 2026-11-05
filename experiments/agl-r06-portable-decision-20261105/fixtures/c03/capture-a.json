@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/charlie",
+  "status": 200,
+  "title": "Fixture Charlie Policy Revised",
+  "contentHash": "sha256:fixture-charlie-v2"
+}
