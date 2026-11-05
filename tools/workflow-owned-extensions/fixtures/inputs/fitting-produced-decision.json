@@ -1,0 +1,21 @@
+{
+  "schema": "samedaydesk.recurring-job-recipe-result.v1",
+  "recipeId": "source-change-alert",
+  "outcome": "changed",
+  "recovery": {
+    "action": "replace_prior",
+    "operatorNext": "Keep the current public capture."
+  },
+  "evidence": {
+    "kind": "field_diff",
+    "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "changed": [
+      {
+        "field": "title",
+        "before": "Example Domain",
+        "after": "Example Domain Changed"
+      }
+    ],
+    "unchanged": []
+  }
+}

@@ -1,0 +1,22 @@
+version: 0.1.0
+type: plugin
+author: epistemedeus
+name: samedaydesk_result_reuse
+label:
+  en_US: SameDayDesk result reuse
+description:
+  en_US: Source-only Dify tool interface that embeds SameDayDesk result-reuse. Installation status is source_only_not_installed. Runtime execution status is "not yet executed on runtime". This package does not host uploaded code or add a catalog listing.
+icon: ""
+resource:
+  memory: 1048576
+  permission: {}
+plugins:
+  tools:
+    - provider.yaml
+meta:
+  version: 0.1.0
+  arch:
+    - amd64
+    - arm64
+created_at: 2026-11-05T12:00:00Z
+# No runner is declared. A runner would imply hosted plugin code execution.

@@ -1,0 +1,49 @@
+{
+  "$id": "samedaydesk.workflow-owned-extension.v1",
+  "title": "Workflow-owned extension record",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "version",
+    "runtime",
+    "capability",
+    "installationStatus",
+    "runtimeExecutionStatus"
+  ],
+  "properties": {
+    "schema": {
+      "const": "samedaydesk.workflow-owned-extension.v1"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "runtime": {
+      "enum": [
+        "dify",
+        "ghost"
+      ]
+    },
+    "capability": {
+      "const": "result-reuse"
+    },
+    "installationStatus": {
+      "const": "source_only_not_installed"
+    },
+    "runtimeExecutionStatus": {
+      "const": "not yet executed on runtime"
+    },
+    "catalogListed": {
+      "const": false
+    },
+    "hostedCodeExecution": {
+      "const": false
+    },
+    "removed": {
+      "type": "boolean"
+    }
+  }
+}

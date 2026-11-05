@@ -1,0 +1,12 @@
+identity:
+  author: epistemedeus
+  name: samedaydesk_result_reuse
+  label:
+    en_US: SameDayDesk result reuse
+  description:
+    en_US: Preview, export, and decide-or-reuse already produced SameDayDesk results. This interface is source-only. It has not been installed on Dify and has not been executed on that runtime.
+  icon: ""
+tools:
+  - tools/preview_reuse.yaml
+  - tools/export_reuse.yaml
+  - tools/decide_or_reuse.yaml

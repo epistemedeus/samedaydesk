@@ -1,0 +1,71 @@
+identity:
+  name: decide_or_reuse
+  author: epistemedeus
+  label:
+    en_US: Decide or reuse
+description:
+  human:
+    en_US: Bind or reuse a useful source-change-alert decision against the public before-work manifest. It does not run the producer. Installation status is source_only_not_installed. Runtime execution status is "not yet executed on runtime".
+  llm:
+    en_US: Bind or reuse a useful source-change-alert decision against the public before-work manifest. It does not run the producer. Do not claim Dify installation or runtime execution. Use the local result-reuse SDK when Dify is unavailable.
+parameters:
+  - name: input_json
+    type: string
+    required: true
+    label:
+      en_US: Result JSON
+    human_description:
+      en_US: Already produced extract-batch, page-change, record, or n45 page-change result JSON. For decide_or_reuse this is the before-work public manifest.
+    llm_description: JSON object of an already produced accepted result or before-work manifest.
+    form: llm
+  - name: task_id
+    type: string
+    required: true
+    label:
+      en_US: Task ID
+    form: llm
+  - name: subject
+    type: string
+    required: true
+    label:
+      en_US: Subject
+    form: llm
+  - name: sequence
+    type: number
+    required: true
+    label:
+      en_US: Sequence
+    form: llm
+  - name: clock
+    type: string
+    required: true
+    label:
+      en_US: Clock
+    human_description:
+      en_US: Explicit ISO-UTC clock supplied by the caller. The helper does not invent it.
+    form: llm
+  - name: horizon
+    type: number
+    required: true
+    label:
+      en_US: Horizon hours
+    form: llm
+  - name: produced
+    type: string
+    required: false
+    label:
+      en_US: Produced decision
+    form: llm
+  - name: decision
+    type: string
+    required: false
+    label:
+      en_US: Saved decision
+    form: llm
+  - name: opt_in
+    type: boolean
+    required: false
+    label:
+      en_US: Opt in
+    form: form
+# No extra.python.source. This interface has no uploaded executor.

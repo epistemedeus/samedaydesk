@@ -1,0 +1,202 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-invocation.v1",
+  "ok": true,
+  "fitting": true,
+  "capabilityApplied": true,
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "extensionId": "dify-result-reuse",
+  "extensionVersion": "0.1.0",
+  "consumerKind": "workflow_runtime_embedding",
+  "tool": "decide_or_reuse",
+  "runtime": "dify",
+  "runtimeAvailable": false,
+  "runtimeProbed": false,
+  "runtimeCalled": false,
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "installationStatus": "source_only_not_installed",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "executionPath": "direct_sdk_fallback",
+  "message": "executed through tools/result-reuse because the runtime path is unavailable",
+  "usefulDirectRoute": {
+    "package": "tools/result-reuse",
+    "cli": "node tools/result-reuse/cli.mjs preview --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>",
+    "exportCli": "node tools/result-reuse/cli.mjs export --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --opt-in --out <observation.json>",
+    "decideCli": "node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in",
+    "requiredInput": "extract-batch, page-change brief, record report, or n45 page-change result JSON",
+    "note": "Neither Dify nor Ghost is required. The existing local result-reuse CLI is the useful direct path when a workflow runtime is unavailable or the task does not fit."
+  },
+  "sdk": {
+    "ok": true,
+    "mode": "decide-or-reuse",
+    "action": "bound",
+    "decision": {
+      "schema": "neomorphic.task-memory.observation.v1",
+      "observationId": "obs_cb12649e972c894783b403f4238d88e7",
+      "revisionId": "rev_1",
+      "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3",
+      "sourceUri": "https://example.com/",
+      "clock": "2026-09-09T08:00:00.000Z",
+      "statement": "source-change-alert changed; recovery replace_prior",
+      "useful": {
+        "recipeId": "source-change-alert",
+        "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+        "outcome": "changed",
+        "recovery": {
+          "action": "replace_prior",
+          "operatorNext": "Keep the current public capture."
+        },
+        "evidence": {
+          "kind": "field_diff",
+          "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "changed": [
+            {
+              "field": "title",
+              "before": "Example Domain",
+              "after": "Example Domain Changed"
+            }
+          ],
+          "unchanged": []
+        }
+      },
+      "provenance": {
+        "recipeId": "source-change-alert",
+        "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+        "revisionId": "rev_1",
+        "clock": "2026-09-09T08:00:00.000Z",
+        "sourceUri": "https://example.com/",
+        "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3",
+        "observationId": "obs_cb12649e972c894783b403f4238d88e7"
+      }
+    },
+    "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3",
+    "sourceUri": "https://example.com/",
+    "revision": "rev_1",
+    "recipeId": "source-change-alert",
+    "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+    "clock": "2026-09-09T08:00:00.000Z",
+    "producerInvoked": false,
+    "mechanics": {
+      "inputCaptureNs": "<measured-ns>",
+      "inputCaptureBytes": 458,
+      "decisionWork": "not_run"
+    },
+    "costBaseline": {
+      "primary": {
+        "kind": "costs_unknown",
+        "asOf": "2026-09-09",
+        "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+        "examples": [
+          {
+            "item": "local page-change compare",
+            "amount": "costs_unknown",
+            "note": "no merchant charge; operator compute not priced here"
+          }
+        ]
+      },
+      "related": [
+        {
+          "kind": "costs_unknown",
+          "asOf": "2026-09-09",
+          "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+          "examples": [
+            {
+              "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+              "amount": "costs_unknown",
+              "note": "no merchant fee; operator egress/CPU not priced here"
+            }
+          ]
+        },
+        {
+          "kind": "sourced",
+          "asOf": "2026-09-09",
+          "source": "https://samedaydesk.com/for-agents",
+          "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+          "examples": [
+            {
+              "item": "POST /extract/batch",
+              "amount": "0.01 USDC listed",
+              "note": "sourced list price only; not invoked by these recipes"
+            }
+          ]
+        }
+      ]
+    },
+    "liveMetric": {
+      "distinctLaterAcceptedTasksTakingReuse": null,
+      "recomputeCostAvoidedNetOfUpkeep": "costs_unknown",
+      "observedAcceptedTaskLedger": false
+    },
+    "cannotEstablish": [
+      "live page bytes beyond the supplied public input",
+      "a distinct later accepted task took this reuse",
+      "recompute cost avoided net of upkeep",
+      "public-safe certification",
+      "merchant acceptance or a payment outcome"
+    ],
+    "publicSafeCertified": false,
+    "evidenceKind": "user_selected_unverified",
+    "kind": null,
+    "observation": {
+      "schema": "neomorphic.task-memory.observation.v1",
+      "contractVersion": 1,
+      "observationId": "obs_cb12649e972c894783b403f4238d88e7",
+      "revisionId": "rev_1",
+      "taskScope": {
+        "taskId": "source-change-example",
+        "taskFamily": "samedaydesk.result-reuse",
+        "ownerScope": "samedaydesk.result-reuse"
+      },
+      "source": {
+        "uri": "https://example.com/",
+        "version": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3"
+      },
+      "epistemicStatus": "observed",
+      "lifecycleStatus": "active",
+      "statement": "source-change-alert changed; recovery replace_prior",
+      "payload": {
+        "url": "https://example.com/",
+        "contentHash": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3",
+        "reuseProvenance": {
+          "originalEvidenceUrlAvailable": true,
+          "sourceRole": "original_evidence_url"
+        },
+        "decisionBinding": {
+          "kind": "before_work_public_input",
+          "recipeId": "source-change-alert",
+          "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+          "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3"
+        },
+        "usefulDecision": {
+          "recipeId": "source-change-alert",
+          "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+          "outcome": "changed",
+          "recovery": {
+            "action": "replace_prior",
+            "operatorNext": "Keep the current public capture."
+          },
+          "evidence": {
+            "kind": "field_diff",
+            "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "changed": [
+              {
+                "field": "title",
+                "before": "Example Domain",
+                "after": "Example Domain Changed"
+              }
+            ],
+            "unchanged": []
+          }
+        }
+      },
+      "recordedAt": {
+        "instant": "2026-09-09T08:00:00.000Z",
+        "domain": "wall_utc"
+      },
+      "execute": false
+    }
+  },
+  "recognizedKind": "before_work_public_input",
+  "runtimeNote": "not yet executed on runtime"
+}
