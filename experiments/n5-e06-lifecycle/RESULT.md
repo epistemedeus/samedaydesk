@@ -151,3 +151,7 @@ The ordinary acquire pin change and npm tarball install both complete install, u
 - `npm ci` deletes `node_modules` before the integrity check, so a bad update lock needs the saved lockfile restored and `npm ci` again.
 - `npx --no-install` queried the public npm registry and was refused. It did not download the hosted archive.
 - No deploy, no package publish, no change to hosted archives or discovery JSON.
+
+## Maintained user route
+
+See [USER-ROUTE.md](./USER-ROUTE.md). Ordinary npm of the hosted tarball is the maintained path; no installer.
