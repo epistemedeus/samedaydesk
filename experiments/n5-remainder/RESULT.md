@@ -183,6 +183,12 @@ The branch stayed on the default-main history. Retained head `84433df2c489b7c955
 
 Commands in this run executed at writer head `84433df2c489b7c95553f0cc79a40c6cf10dafb7`, tree `07468765b2f7a53fd7e1635a42ec3ff5a4aca7f2`.
 
+Run 2 code commit, parent of the receipt commit that adds this paragraph:
+
+- commit `bfb3ffb45ce510bf5eafaa889fe2b41438001f36`
+- tree `209810e8045e2cafc55268647fa0816aa0992f9d`
+- parent `84433df2c489b7c95553f0cc79a40c6cf10dafb7`
+
 Declared input, and the actual commit read by the runner:
 
 - commit `9f6c0c4e396dd7677f334400eed93e3445fad600`
