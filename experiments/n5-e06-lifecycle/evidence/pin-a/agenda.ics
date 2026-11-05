@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//useful-jobs Feed Agenda//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:9566ea587f0e4af9-1@feed-agenda.sample
+DTSTAMP:20261105T033657Z
+SUMMARY:added: SAMPLE Alpha New Item
+URL:https://example.test/sample/alpha/new
+DESCRIPTION:SAMPLE fixture feed delta. Not a live deadline.
+END:VEVENT
+BEGIN:VEVENT
+UID:9566ea587f0e4af9-2@feed-agenda.sample
+DTSTAMP:20261105T033657Z
+SUMMARY:removed: SAMPLE Alpha Retired Item
+URL:https://example.test/sample/alpha/old
+DESCRIPTION:SAMPLE fixture feed delta. Not a live deadline.
+END:VEVENT
+END:VCALENDAR

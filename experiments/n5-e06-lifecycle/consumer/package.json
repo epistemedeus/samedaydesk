@@ -1,0 +1,9 @@
+{
+  "name": "n5-e06-synthetic-consumer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Owner-run synthetic consumer for N5-E06. Not a customer.",
+  "dependencies": {
+    "consumer-sibling": "file:sibling"
+  }
+}

@@ -1,0 +1,3 @@
+Owner-run synthetic consumer for N5-E06.
+Not a customer. Not demand. Not a live quote.
+The sibling package, NOTES.txt, and scripts/note.mjs are unrelated to useful-jobs.
