@@ -1,0 +1,364 @@
+{
+  "ok": true,
+  "schema": "pilot.task-bundle-economics.receipt.v1",
+  "kind": "requester_receipt",
+  "signer": false,
+  "paymentCommand": false,
+  "fundedCommission": false,
+  "verifierExecuted": false,
+  "rails": {
+    "feeModule": "vendor/hosted-wallet-market/src/fee.mjs",
+    "feeBps": 500,
+    "feeBasis": "new_job_gross",
+    "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+    "sourcePin": "9f6c0c4e396dd7677f334400eed93e3445fad600",
+    "consumerBranch": "codex/h136010-machine-release-20261103"
+  },
+  "bundleId": "rn5-consumers-example-page-title-changed",
+  "requesterNote": "Requester decision after a real input change on example-page / https://example.com/. The retained prior title was Example Domain. The new capture title is Example Domain Updated, and status stayed ok. Recurring-decision-consumer evaluate returned useful_change (changedFields: title; unchangedFields: status; referenceMatched against expect-change.json). The sibling source-change-alert recipe on the same semantic change returned outcome changed and recovery review_and_sequence (do not overwrite the immutable sequence-1 prior). Question: should the RecD watch-title review and the source-change-alert follow-up be grouped as one bundle, or kept separate? No new payment, reservation, or take rate is requested.",
+  "tasks": [
+    {
+      "taskId": "watch-title-example-page",
+      "title": "Watch example-page title and status after the new capture",
+      "summary": "Run-once RecD evaluate of retained prior cap-prior-1 against changed capture cap-changed-1 using intent watch-title (field_equality on title and status).",
+      "criteria": [
+        "title",
+        "status"
+      ],
+      "acceptance": {
+        "outcome": "objective_acceptance_met",
+        "reasons": [],
+        "verifierExecuted": false
+      },
+      "economics": {
+        "feeReadout": "terms_absent"
+      },
+      "unknown": {
+        "task": {
+          "sourceUri": "https://example.com/",
+          "captureId": "cap-changed-1",
+          "priorCaptureId": "cap-prior-1",
+          "digestPrior": "sha256:793cfc3def7fc6ae28299cff9c4eccc4751c123eb295cf4251eebe0f3542de9d",
+          "digestCapture": "sha256:88490643762427a7837d2cf3443b2c3a3800d51613f7f7264e441c8877df5c61",
+          "permission": {
+            "permitted": true
+          }
+        },
+        "terms": {},
+        "fee": {},
+        "delivery": {
+          "recdOutcome": "useful_change",
+          "recdReason": "fields_differ",
+          "changedFields": [
+            "title"
+          ],
+          "unchangedFields": [
+            "status"
+          ],
+          "referenceMatched": true,
+          "referenceLabel": "useful_change",
+          "freshness": {
+            "clock": "2026-11-05T12:00:00.000Z",
+            "horizonHours": 24,
+            "priorAt": "2026-11-05T10:00:00.000Z",
+            "captureAt": "2026-11-05T11:45:00.000Z",
+            "withinHorizon": true
+          }
+        },
+        "effort": {
+          "reviewWallMicros": "53896",
+          "reviewWallMicrosMeasured": true,
+          "reviewWallMicrosUnit": "microseconds",
+          "reviewNote": "Timed local RecD evaluate of prior versus changed. Not a priced cost."
+        }
+      }
+    },
+    {
+      "taskId": "source-change-alert-example-page",
+      "title": "Alert when the watched page title changes since the immutable prior",
+      "summary": "Existing source-change-alert recipe against fixtures/priors/source-change.prior.json and fixtures/current/example-changed.json (title Example Domain to Example Domain Updated).",
+      "criteria": [
+        "title"
+      ],
+      "acceptance": {
+        "outcome": "objective_acceptance_met",
+        "reasons": [],
+        "verifierExecuted": false
+      },
+      "economics": {
+        "feeReadout": "terms_absent"
+      },
+      "unknown": {
+        "task": {
+          "sourceUri": "https://example.com/",
+          "recipeId": "source-change-alert",
+          "priorSequence": 1,
+          "priorSha256Field": "placeholder",
+          "contentHash": "sha256:fixture-example-domain-v2",
+          "payment": {
+            "attempted": false,
+            "replayBlocked": true,
+            "hasPriorReceipt": false
+          },
+          "recipeCost": {
+            "primaryKind": "costs_unknown",
+            "asOf": "2026-09-09",
+            "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown."
+          }
+        },
+        "terms": {},
+        "fee": {},
+        "delivery": {
+          "recipeOutcome": "changed",
+          "recoveryAction": "review_and_sequence",
+          "changed": [
+            {
+              "field": "title",
+              "before": "Example Domain",
+              "after": "Example Domain Updated"
+            }
+          ],
+          "stale": {
+            "stale": false,
+            "ageHours": 20,
+            "horizonHours": 168
+          }
+        },
+        "effort": {
+          "reviewWallMicros": "45412",
+          "reviewWallMicrosMeasured": true,
+          "reviewWallMicrosUnit": "microseconds",
+          "reviewNote": "Timed local source-change-alert CLI on the changed fixture. Not a priced cost. Recipe cost.primary.kind is costs_unknown."
+        }
+      }
+    }
+  ],
+  "bundledEconomics": {
+    "feeReadout": "no_authorized_task_quotes"
+  },
+  "feeDisclosure": {
+    "takeRateInvented": false,
+    "feeBps": 500,
+    "feeBasis": "new_job_gross",
+    "feeModule": "vendor/hosted-wallet-market/src/fee.mjs",
+    "bundledFeeDiffersFromSeparateSum": false
+  },
+  "effort": {
+    "disclosure": "costs_unknown",
+    "comparison": "costs_unknown",
+    "directCostAtomic": "costs_unknown",
+    "bundledCostAtomic": "costs_unknown",
+    "bundledSource": "status_costs_unknown",
+    "tasks": [
+      {
+        "taskId": "watch-title-example-page",
+        "directCost": "costs_unknown",
+        "bundledShare": "costs_unknown",
+        "directDisclosure": "costs_unknown",
+        "bundledShareDisclosure": "costs_unknown"
+      },
+      {
+        "taskId": "source-change-alert-example-page",
+        "directCost": "costs_unknown",
+        "bundledShare": "costs_unknown",
+        "directDisclosure": "costs_unknown",
+        "bundledShareDisclosure": "costs_unknown"
+      }
+    ],
+    "breakEven": {
+      "direct": {
+        "measuredCostAtomic": "costs_unknown",
+        "breakEvenGrossAtomic": "costs_unknown"
+      },
+      "bundled": {
+        "measuredCostAtomic": "costs_unknown",
+        "breakEvenGrossAtomic": "costs_unknown"
+      }
+    },
+    "reasons": [
+      "status_costs_unknown"
+    ],
+    "inventedPricing": false
+  },
+  "bundleDecision": {
+    "action": "undecided_costs_unknown",
+    "reasons": [
+      "costs_unknown"
+    ],
+    "taskIds": [
+      "watch-title-example-page",
+      "source-change-alert-example-page"
+    ],
+    "reservationIds": [],
+    "autoAccept": false,
+    "autoAcceptedToLowerCost": false,
+    "acceptanceBlocksCheapAutoAccept": false,
+    "exceptionTaskIds": [],
+    "rejectedTaskIds": []
+  },
+  "acceptanceSummary": {
+    "acceptedCount": 2,
+    "rejectedCount": 0,
+    "exceptionCount": 0,
+    "verifierExecuted": false,
+    "autoAcceptedToLowerCost": false
+  },
+  "reservations": [],
+  "preservedUnknown": {
+    "bundle": {
+      "inputChange": {
+        "kind": "retained_prior_versus_changed_capture",
+        "subject": "example-page",
+        "sourceUri": "https://example.com/",
+        "priorTitle": "Example Domain",
+        "changedTitle": "Example Domain Updated",
+        "statusUnchanged": "ok",
+        "recd": {
+          "intentId": "watch-title",
+          "compare": "field_equality",
+          "fields": [
+            "title",
+            "status"
+          ],
+          "clock": "2026-11-05T12:00:00.000Z",
+          "horizonHours": 24,
+          "priorCaptureId": "cap-prior-1",
+          "priorCapturedAt": "2026-11-05T10:00:00.000Z",
+          "changedCaptureId": "cap-changed-1",
+          "changedCapturedAt": "2026-11-05T11:45:00.000Z",
+          "digestPrior": "sha256:793cfc3def7fc6ae28299cff9c4eccc4751c123eb295cf4251eebe0f3542de9d",
+          "digestCapture": "sha256:88490643762427a7837d2cf3443b2c3a3800d51613f7f7264e441c8877df5c61",
+          "sameCaptureControlDigest": "sha256:793cfc3def7fc6ae28299cff9c4eccc4751c123eb295cf4251eebe0f3542de9d",
+          "outcome": "useful_change",
+          "reason": "fields_differ",
+          "controlOutcome": "useful_no_change"
+        },
+        "sourceChangeAlert": {
+          "recipeId": "source-change-alert",
+          "clock": "2026-09-09T08:00:00.000Z",
+          "horizonHours": 168,
+          "fields": [
+            "title"
+          ],
+          "priorSequence": 1,
+          "priorCreatedAt": "2026-09-08T12:00:00.000Z",
+          "priorContentHash": "sha256:fixture-example-domain-v1",
+          "changedContentHash": "sha256:fixture-example-domain-v2",
+          "outcome": "changed",
+          "recoveryAction": "review_and_sequence"
+        }
+      },
+      "railsSources": {
+        "consumerTip": "90939f157fcb33606c0f5ccfbffbc10b9e51e64a",
+        "teMergedAs": "1c7cde5d07761286c3ccc7a8403154161d2f0895",
+        "writerTip": "3eb9ce994accd78206bfa87b7a1f46992c7abc43",
+        "recdFixturesCommit": "c53a0d59a4749c2f583196b770a111c90510f31f",
+        "recipeFixturesCommit": "66df4d478c4d359229d7df820ab9cf416d2c9e1c",
+        "files": [
+          {
+            "path": "tools/recurring-decision-consumer/fixtures/captures/prior.json",
+            "sha256": "e2431b00b2b0340ca49642ee38e9a0116b177653ae6fa7e10b90513e50608e32",
+            "commit": "c53a0d59a4749c2f583196b770a111c90510f31f"
+          },
+          {
+            "path": "tools/recurring-decision-consumer/fixtures/captures/changed.json",
+            "sha256": "14890590f71a76f49415198b48d038d2cd8a76531ee42a0705187a3f78e2c875",
+            "commit": "c53a0d59a4749c2f583196b770a111c90510f31f"
+          },
+          {
+            "path": "tools/recurring-decision-consumer/fixtures/captures/same.json",
+            "sha256": "66004a27df8d620fe9eed23f724a568bb44f1fff33a92cafaaff3b009b72d880",
+            "commit": "c53a0d59a4749c2f583196b770a111c90510f31f",
+            "role": "no-change control against the same retained prior"
+          },
+          {
+            "path": "tools/recurring-decision-consumer/fixtures/intents/watch-title.json",
+            "sha256": "0c4f64ae7f3d928ebe1f7551ac92888745552167d3b8e8dc2ad77ea014850e37",
+            "commit": "c53a0d59a4749c2f583196b770a111c90510f31f"
+          },
+          {
+            "path": "tools/recurring-decision-consumer/fixtures/reference/expect-change.json",
+            "sha256": "4c5b0deee3bb05b1e70276797525c9d1fc19dcf72e367c40e9f174ddf2265446",
+            "commit": "c53a0d59a4749c2f583196b770a111c90510f31f"
+          },
+          {
+            "path": "tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+            "sha256": "6c35116e799baefdf1c82a5379076251401dbb518f398f95865c92f959634761",
+            "commit": "66df4d478c4d359229d7df820ab9cf416d2c9e1c"
+          },
+          {
+            "path": "tools/recurring-job-recipes/fixtures/current/example-changed.json",
+            "sha256": "65246562f86f89b250e6fe6e0b0870f713b66b36b6e2207be2f317541b50cc08",
+            "commit": "66df4d478c4d359229d7df820ab9cf416d2c9e1c"
+          },
+          {
+            "path": "tools/recurring-job-recipes/lib/cost.mjs",
+            "sha256": "eca3b06a6ed22d3760c90bfdc59faf0dab8b8e7a8553971f3c9c6e10cacfc69d",
+            "note": "Authoritative: offline compare operator compute is costs_unknown, not zero."
+          },
+          {
+            "path": "vendor/hosted-wallet-market/src/fee.mjs",
+            "sha256": "557cddcdb7c40fa20e1d609c670b742f2052c2bd0ab4320f8d83ab21df985b40",
+            "note": "FEE_BPS=500 feeBasis new_job_gross. Used only when task terms already say so. These captures do not."
+          }
+        ]
+      },
+      "relatedVerificationReconcile": {
+        "recipeId": "verification-reconcile",
+        "outcome": "changed",
+        "clock": "2026-09-09T08:00:00.000Z",
+        "candidateFileSha256": "65246562f86f89b250e6fe6e0b0870f713b66b36b6e2207be2f317541b50cc08",
+        "candidateSha256FromRecipe": "601b037155ff8bd8e11eeb526f4380974762bfd50d9240263e8b8bb79751aa4d",
+        "priorDigest": {
+          "contentHash": "sha256:fixture-example-domain-v1",
+          "title": "Example Domain"
+        },
+        "candidateDigest": {
+          "contentHash": "sha256:fixture-example-domain-v2",
+          "title": "Example Domain Updated"
+        },
+        "mismatches": [
+          {
+            "field": "contentHash",
+            "before": "sha256:fixture-example-domain-v1",
+            "after": "sha256:fixture-example-domain-v2"
+          },
+          {
+            "field": "title",
+            "before": "Example Domain",
+            "after": "Example Domain Updated"
+          }
+        ],
+        "claims": {
+          "noChangeProven": false,
+          "comparable": true,
+          "paymentImpliesUsefulOutput": false,
+          "automaticPaymentReplay": false
+        },
+        "payment": {
+          "attempted": false,
+          "replayBlocked": true,
+          "hasPriorReceipt": false
+        },
+        "reviewWallMicros": "42426",
+        "reviewWallMicrosMeasured": true,
+        "costKind": "costs_unknown",
+        "note": "Same example-changed.json as source-change-alert. Different question: contentHash plus title versus title only. Included as rails evidence, not as a third priced task."
+      }
+    },
+    "bundleEffort": {
+      "reviewWallMicros": "71668",
+      "reviewWallMicrosMeasured": true,
+      "reviewWallMicrosUnit": "microseconds",
+      "reviewComposition": "sequential RecD evaluate on prior versus changed, then source-change-alert on source-change.prior.json versus example-changed.json",
+      "reviewNote": "Local process wall time only. Not converted into a currency atomic amount. tools/recurring-job-recipes/lib/cost.mjs labels local CPU, disk, and wall time costs_unknown. result-reuse liveMetric.recomputeCostAvoidedNetOfUpkeep stays costs_unknown."
+    }
+  },
+  "notes": [
+    "This receipt does not pay, sign, reserve funds, or commission work.",
+    "Platform fee arithmetic uses the existing FEE_BPS=500 policy imported from vendor/hosted-wallet-market/src/fee.mjs.",
+    "When effort evidence is missing, the comparison is costs_unknown.",
+    "Objective acceptance is never flipped to accepted in order to lower cost.",
+    "Verifier payloads are recorded as data and are not executed."
+  ]
+}
