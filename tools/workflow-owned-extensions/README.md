@@ -3,10 +3,12 @@
 Source-only package that embeds the existing SameDayDesk `result-reuse`
 capability in one supported workflow runtime and one second consumer adapter.
 
-- Runtime embedding: Dify tool interface (`preview_reuse`, `export_reuse`,
-  `decide_or_reuse`).
-- Second consumer: Ghost unpublished-draft projection. It does not publish,
-  register a webhook, or call the Ghost Admin API.
+- Runtime embedding source: Ghost Admin API driver that can create, update,
+  and delete an unpublished draft from a reused observation. Committed status
+  stays `not yet executed on runtime` until a VM writes a separate output file.
+- Dify tool interface remains (`preview_reuse`, `export_reuse`, `decide_or_reuse`).
+- Offline Ghost projection still builds an unpublished-draft shape without
+  calling Ghost. The live driver is separate (`src/ghost-runtime.mjs`).
 - Capability: `tools/result-reuse` (read-only import of the existing SDK and
   schema). Merchant cores are not copied or modified.
 - Status: `installationStatus` stays `source_only_not_installed`.
@@ -18,22 +20,23 @@ capability in one supported workflow runtime and one second consumer adapter.
 This package does not add a catalog, host uploaded code, or change files
 outside `tools/workflow-owned-extensions/`.
 
-## Why Dify, and why Ghost second
+## Why Ghost for the actual runtime, and why Dify stays a source interface
 
-Dify is the best first runtime because Pilot already maintains a packaged Dify
-recipe (`dify-table-csv` 0.1.2) with a documented tool and workflow import
-interface. E02 asks for a new useful downstream Dify embedding rather than
-another installation of that table-csv recipe. Result-reuse gives a Dify author
-preview, export, and decide-or-reuse of already produced page-change,
-extract-batch, and record results, including public synthetic fixtures.
+Ghost 6.75.0 local (SQLite, ghost-cli 1.34.1, node >= 22.23.1) is the cheapest
+fitting supported runtime for an actual Admin API embedding. It needs no Docker
+compose stack or plugin daemon. The decision record is `runtime/DECISION.md`.
 
-Ghost is the second consumer because E03 and the retained Ghost archive work
-already treat Ghost as a real downstream package surface. The adapter projects
-a reused observation into an unpublished draft shape. It does not install a
-Ghost integration or rewrite hosted archives.
+Dify remains the source-only workflow tool interface. Pilot already maintains
+the `dify-table-csv` 0.1.2 recipe. E02 asked for a new useful downstream
+embedding rather than another installation of that table-csv recipe, and the
+Dify document-to-CSV versus direct-reader comparison is closed. This package
+embeds result-reuse instead.
 
 Native Tasks remains wire-only without a durable TaskStore, so it is not the
-first runtime here.
+runtime here.
+
+When Ghost is unreachable, execution uses the existing local result-reuse CLI
+and SDK. That direct path is labeled as fallback, not as a runtime claim.
 
 ## Commands
 
@@ -71,11 +74,12 @@ Fitting fixtures live under `fixtures/inputs/`. Retained outputs live under
 the package returns a useful direct result-reuse CLI route instead of forcing
 the Dify tool.
 
-## Remote VM checks
+## Offline unit checks
 
 This package uses Node builtins plus the existing `tools/result-reuse` SDK.
-No extra npm package is required. Do not install a Dify or Ghost stack to
-satisfy these tests, and do not treat generated manifests as installation.
+No extra npm package is required for the unit tests. Do not install a Dify or
+Ghost stack to satisfy `test/*.test.mjs`, and do not treat generated manifests
+as installation or as proof that a runtime ran.
 
 ```bash
 node --version   # expect v22.x, the repo engine
@@ -88,7 +92,28 @@ Optional CLI readback after the suite:
 node tools/workflow-owned-extensions/cli.mjs manifests
 ```
 
-The writer branch is `codex/n7-workflow-extensions-20261105`, based on
-`9f6c0c4e396dd7677f334400eed93e3445fad600` from
-`codex/h136010-machine-release-20261103`. A later draft PR should target that
-consumer branch, not default main.
+## Ghost runtime on a Cursor VM
+
+`runtime/run-runtime.sh` is the remote install/start/acceptance script. It is
+idempotent, bounded, and model-free. It installs Ghost 6.75.0 under
+`$ROOT/runtime-home`, starts it on localhost, runs
+`test/runtime/acceptance.mjs` (excluded from the default unit-test glob),
+records timings, writes `EXITS.txt` and `SHA256SUMS`, and stops Ghost at the
+end. The Admin API key stays in a 0600 file under `$ROOT/runtime-home`.
+
+```bash
+ROOT=<workdir> \
+OUT=<outdir> \
+TIP=<full-sha> \
+BRANCH=codex/n7-workflow-extensions-20261105 \
+  bash tools/workflow-owned-extensions/runtime/run-runtime.sh
+```
+
+Expected `EXITS.txt` names: `runtime_install`, `runtime_start`,
+`runtime_acceptance`, `unit_tests`, `cli_manifests`. The VM needs node >=
+22.23.1 and network access to npm. The script uses no sudo. A VM output file
+may write `runtime-executed`. Committed manifests do not.
+
+The writer branch is `codex/n7-workflow-extensions-20261105`, based on the
+consumer tip of `codex/h136010-machine-release-20261103`. A later draft PR
+should target that consumer branch, not default main.

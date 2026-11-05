@@ -2,6 +2,24 @@ export { invoke, projectGhostDraft } from "./adapter.mjs";
 export { registerExtension, updateExtension, removeExtension, readExtension } from "./lifecycle.mjs";
 export { loadAllInterfaces, loadConsumerInterface } from "./manifests.mjs";
 export { inspectRuntime } from "./runtime.mjs";
+export {
+  createDraft,
+  updateDraft,
+  deleteDraft,
+  getPost,
+  listPosts,
+  probeGhost,
+  ghostAdminToken,
+  readAdminKeyFromFile,
+} from "./ghost-runtime.mjs";
+export {
+  embedFittingDraft,
+  refuseNonfitting,
+  reuseRetainedObservation,
+  updateEmbeddedDraft,
+  removeEmbeddedDraft,
+  fallbackThroughCli,
+} from "./ghost-embed.mjs";
 export { assertHonestStatuses, invocationEnvelope, extensionRecord } from "./status.mjs";
 export {
   CAPABILITY,
