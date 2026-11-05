@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from "node:fs";
-import { compareFor, evaluateBundle, receiptFor } from "./src/evaluate.mjs";
+import { dirname, resolve } from "node:path";
+import { compareFor, diagnoseFor, evaluateBundle, receiptFor } from "./src/evaluate.mjs";
 import { INPUT_MAX_BYTES } from "./src/limits.mjs";
 
 const args = parseArgs(process.argv.slice(2));
@@ -10,8 +11,10 @@ if (args.help || !args.command) {
 }
 
 let input;
+let inputPath;
 try {
-  input = readBoundedJson(args.input);
+  inputPath = resolve(args.input);
+  input = readBoundedJson(inputPath);
 } catch {
   fail("cannot read --input as bounded JSON");
 }
@@ -20,7 +23,9 @@ const result = args.command === "evaluate"
   ? evaluateBundle(input)
   : args.command === "receipt"
     ? receiptFor(input)
-    : compareFor(input);
+    : args.command === "compare"
+      ? compareFor(input)
+      : diagnoseFor(input, { baseDir: dirname(inputPath) });
 
 if (!result.ok) {
   process.stderr.write(`${JSON.stringify(result)}\n`);
@@ -49,8 +54,9 @@ Does not pay, sign, reserve funds, commission work, or execute verifier payloads
 node tools/task-bundle-economics/cli.mjs evaluate --input <bundle.json>
 node tools/task-bundle-economics/cli.mjs receipt --input <bundle.json> [--out <receipt.json>]
 node tools/task-bundle-economics/cli.mjs compare --input <bundle.json>
+node tools/task-bundle-economics/cli.mjs diagnose --input <bundle.json> [--out <diagnosis.json>]
 
-evaluate prints the full decision. receipt writes a portable requester receipt. compare focuses on measured versus unknown effort and fee totals.`;
+evaluate prints the full decision. receipt writes a portable requester receipt. compare focuses on measured versus unknown effort and fee totals. diagnose prints an evidence-only structured diagnosis. When delivery.artifactPath is set, diagnose reads that bounded artifact file relative to the input JSON directory.`;
 }
 
 function parseArgs(argv) {
@@ -72,9 +78,10 @@ function parseArgs(argv) {
     && out.command !== "evaluate"
     && out.command !== "receipt"
     && out.command !== "compare"
+    && out.command !== "diagnose"
     && !out.help
   ) {
-    fail("command must be evaluate, receipt, or compare");
+    fail("command must be evaluate, receipt, compare, or diagnose");
   }
   if (out.command && !out.input && !out.help) fail("requires --input");
   return out;

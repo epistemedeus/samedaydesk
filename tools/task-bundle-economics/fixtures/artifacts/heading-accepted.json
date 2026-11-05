@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-bundle-economics.structured-extract.v1",
+  "artifactClass": "bounded_structured_extract",
+  "heading": "Example Domain",
+  "headingDigest": "heading-accepted",
+  "sourceLabel": "synthetic-page"
+}

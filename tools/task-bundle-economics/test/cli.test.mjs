@@ -48,7 +48,20 @@ test("help exits 0 and unknown commands are refused", () => {
   const help = runCli(["--help"]);
   assert.equal(help.status, 0);
   assert.match(help.stdout, /evaluate/);
+  assert.match(help.stdout, /diagnose/);
   const bad = runCli(["pay", "--input", "tools/task-bundle-economics/fixtures/bundle-helpful.json"]);
   assert.equal(bad.status, 1);
-  assert.match(bad.stderr, /evaluate, receipt, or compare/);
+  assert.match(bad.stderr, /evaluate, receipt, compare, or diagnose/);
+});
+
+test("diagnose prints an evidence-only readout", () => {
+  const result = runCli(["diagnose", "--input", "tools/task-bundle-economics/fixtures/diagnosis-accepted.json"]);
+  assert.equal(result.status, 0, result.stderr);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.schema, "pilot.task-bundle-economics.diagnosis.v1");
+  assert.equal(body.evidenceOnly, true);
+  assert.equal(body.acceptance, "not_decided_by_tool");
+  assert.equal(body.autoAccept, false);
+  assert.equal(body.tasks[0].evidenceOutcome, "meets_criteria");
 });

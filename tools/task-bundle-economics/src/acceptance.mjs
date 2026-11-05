@@ -1,14 +1,21 @@
 const VERIFIER_KEYS = Object.freeze(["verifier", "verifierPayload", "execute", "code"]);
 
-function evaluateCheck(observation) {
+function isAbsent(value) {
+  return value === undefined;
+}
+
+export function evaluateCheck(observation) {
   if (!observation || typeof observation !== "object" || Array.isArray(observation)) {
     return { decided: false, ok: false, reason: "observation_invalid" };
   }
   const check = observation.check;
   if (check === "exact_equal") {
+    if (isAbsent(observation.expected) || isAbsent(observation.observed)) {
+      return { decided: false, ok: false, reason: "value_absent", check };
+    }
     return {
       decided: true,
-      ok: Object.is(observation.expected, observation.observed) || observation.expected === observation.observed,
+      ok: Object.is(observation.expected, observation.observed),
       check,
     };
   }
