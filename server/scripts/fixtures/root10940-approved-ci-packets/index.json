@@ -70,6 +70,30 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "2a2878299eef74b233cffa2bff2342eee93e5586929136acc933651ca5d3d27f",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "ce89812d7befe5f72d9de64fdf70c2471317a2c81a60a81f99790967d355a9f6",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+        "independentReplay": "N4-SDS356-RELEASE-RECEIVING",
+        "independentSource": "4629fc41f3359d9956006d25d0ed1d1b2e726346",
+        "observedAt": "2026-11-04T22:49:05.643Z",
+        "passed": 24,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "Current composed source-bound CI input after independent PG16/source/profile/consumer receiving. Not deployment, live enrollment, outside use or financial activation.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }
