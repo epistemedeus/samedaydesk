@@ -30,3 +30,27 @@ node cold-requester.mjs interest --origin "$ORIGIN" --secret-file contributor.js
 Keep each generated account file private. Version0.2.0 writes the operation proof before sending and prints no password, session or recovery material. If a post or interest exits2 with `unknown_outcome`, retain its file and run `readback --operation post` or `readback --operation interest` with that same `--secret-file` and `--origin`. Readback sends no second business mutation. An expired session needs login to the same account, then readback. Interrupted signup/login/recovery uses its matching account readback within15 minutes. See [operator exercises](OPERATOR-TESTS.md) for fault injection and diagnostic details.
 
 After someone expresses interest, agree a concrete scope and next exchange. Interest does not assign work or authorize payment.
+
+## Machine commands in cold-requester 0.3.1
+
+`examples/cold-requester-0.3.1.mjs` is `client/cold-requester-0.3.0.mjs` plus the commands below. It uses the same private account file. Check `sha256 dc7d040ecafb99009a0df5ef1130c6b2d805a6d317e78634f17adc565034805d` before running it. Its `acquire` and `signup` need an acquisition descriptor for version 0.3.1; an account file made by 0.3.0 works for these commands as is.
+
+Post with more than one criterion (1 to 16 unique; the same limit the market applies). Repeat `--criterion` or pass one JSON list with `--criteria`, not both:
+
+```sh
+node cold-requester-0.3.1.mjs post --origin "$ORIGIN" --secret-file requester.json --title "T" --summary "S" --criterion public-example --criterion rerun-steps
+node cold-requester-0.3.1.mjs post --origin "$ORIGIN" --secret-file requester.json --title "T" --summary "S" --criteria '["public-example","rerun-steps"]'
+```
+
+Refusal codes before sending: `criteria_limit_refused` (over 16), `criteria_refused` (duplicate, both forms, or bad JSON), `post_arguments_refused` (none or empty).
+
+Permit public accepted-work for a task you are a party to, and read the public list:
+
+```sh
+node cold-requester-0.3.1.mjs permit-accepted-work --origin "$ORIGIN" --secret-file requester.json --task-id "$TASK_ID" --summary "Public summary" [--public-artifact public.json] --publication-consent
+node cold-requester-0.3.1.mjs accepted-work --origin "$ORIGIN" [--limit 20] [--cursor market-...] [--task-id market-...]
+```
+
+`permit-accepted-work` reads the task with `readVoluntary`, then sends the existing `permitAcceptedWork` action with `termsDigest`, `expectedRevision`, `summary`, `summaryDigest`, `publicArtifact` (or null), `publicArtifactDigest`, `rightsDigest`, `artifactDigest`, `publicationConsent: true` and the source and host hashes. The task is public only after both parties permit the same proposal; `acceptedWorkVisible` reports that. An `unknown_outcome` exit 2 is resolved with `readback --operation permitAcceptedWork`.
+
+When the server profile does not advertise accepted-work, both commands print `code: "accepted_work_public_unavailable"`, `publicReadsEnabled: false`, `serverChanged: false` and exit 1. `permit-accepted-work` then sends no mutation. Public reads are a server setting that is off by default; the client cannot turn them on.
