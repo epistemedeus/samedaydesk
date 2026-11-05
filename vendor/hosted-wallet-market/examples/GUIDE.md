@@ -33,7 +33,23 @@ After someone expresses interest, agree a concrete scope and next exchange. Inte
 
 ## Machine commands in cold-requester 0.3.1
 
-`examples/cold-requester-0.3.1.mjs` is `client/cold-requester-0.3.0.mjs` plus the commands below. It uses the same private account file. Check `sha256 dc7d040ecafb99009a0df5ef1130c6b2d805a6d317e78634f17adc565034805d` before running it. Its `acquire` and `signup` need an acquisition descriptor for version 0.3.1; an account file made by 0.3.0 works for these commands as is.
+`examples/cold-requester-0.3.1.mjs` is `client/cold-requester-0.3.0.mjs` plus the commands below. It uses the same private account file. Check the current file before running it:
+
+```sh
+printf '%s  %s\n' 'ad133fb820d794fb49eff6767153cd3f42202d4259e434214d9a9a4798f5fa0e' cold-requester-0.3.1.mjs | sha256sum -c -
+```
+
+That digest is this examples file after the accepted-work read separation (`97fba4ca`). The earlier digest `dc7d040ecafb99009a0df5ef1130c6b2d805a6d317e78634f17adc565034805d` is only the introduction commit `3bbbfa9d` and does not match the file to run. An account file made by 0.3.0 works for `post`, `permit-accepted-work`, and `accepted-work` as is.
+
+`acquire` and `signup` on this examples file are unqualified. They require a descriptor whose `version` is `0.3.1` and whose `bytes` and `sha256` are this file, plus matching `--source-repository`, `--source-commit`, and `--source-path` flags:
+
+```sh
+node cold-requester-0.3.1.mjs acquire --origin "$ORIGIN" \
+  --descriptor descriptor.json --descriptor-sha256 "$DESCRIPTOR_SHA256" \
+  --source-repository "$SOURCE_REPOSITORY" --source-commit "$SOURCE_COMMIT" --source-path "$SOURCE_PATH"
+```
+
+No descriptor in this repository matches this file. The installed market client stays `clients/cold-requester-0.3.1.mjs`, 30187 bytes, `sha256 accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9`. Supplying that installed descriptor, or omitting a descriptor, is a refusal (`acquisition_client_mismatch` or `acquisition_required`), not acquisition success. The pinned `client/cold-requester-0.3.0.mjs` bytes stay `38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4`. This guide does not publish a replacement descriptor or a new market identity.
 
 Post with more than one criterion (1 to 16 unique; the same limit the market applies). Repeat `--criterion` or pass one JSON list with `--criteria`, not both:
 

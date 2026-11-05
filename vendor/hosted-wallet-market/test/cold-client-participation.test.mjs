@@ -212,6 +212,76 @@ test('stub permit key list is the server permitAcceptedWork exact list', () => {
   assert.deepEqual([...stubKeys].sort(), expected);
 });
 
+test('guide pins the current examples client and keeps installed acquisition unqualified', () => {
+  const guide = readFileSync(fileURLToPath(new URL('../examples/GUIDE.md', import.meta.url)), 'utf8');
+  const examples = readFileSync(client);
+  const digest = createHash('sha256').update(examples).digest('hex');
+  assert.equal(digest, 'ad133fb820d794fb49eff6767153cd3f42202d4259e434214d9a9a4798f5fa0e');
+  assert.equal(guide.includes(digest), true);
+  assert.equal(guide.includes("printf '%s  %s\\n' '" + digest + "'"), true);
+  assert.equal(guide.includes('dc7d040ecafb99009a0df5ef1130c6b2d805a6d317e78634f17adc565034805d'), true);
+  assert.equal(guide.includes('does not match the file to run'), true);
+  assert.equal(guide.includes('acquire` and `signup` on this examples file are unqualified'), true);
+  assert.equal(guide.includes('accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9'), true);
+  assert.equal(guide.includes('not acquisition success'), true);
+  const installed = readFileSync(fileURLToPath(new URL('../../../server/scripts/fixtures/h142010-cold-requester-0.3.1.mjs', import.meta.url)));
+  assert.equal(createHash('sha256').update(installed).digest('hex'), 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9');
+  assert.equal(installed.length, 30187);
+  assert.notEqual(digest, 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9');
+});
+
+test('acquire without a descriptor is a refusal, not acquisition success', () => {
+  const s = setup();
+  const out = s.run('acquire');
+  assert.equal(out.status, 1, JSON.stringify(out.body));
+  assert.equal(out.body.ok, false);
+  assert.equal(out.body.code, 'acquisition_required');
+  assert.equal(out.body.accountCreated, undefined);
+  assert.equal(s.requests().length, 0);
+});
+
+test('the installed 0.3.1 descriptor does not acquire this examples client', () => {
+  const s = setup();
+  const descriptor = fileURLToPath(new URL('../../../docs/machine-promotion/evidence/private-successor-descriptor.json', import.meta.url));
+  const bytes = readFileSync(descriptor);
+  const descriptorSha = createHash('sha256').update(bytes).digest('hex');
+  const pinned = JSON.parse(bytes.toString('utf8'));
+  assert.equal(pinned.version, '0.3.1');
+  assert.equal(pinned.sha256, 'accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9');
+  assert.equal(pinned.bytes, 30187);
+  const out = s.run('acquire', '--descriptor', descriptor, '--descriptor-sha256', descriptorSha,
+    '--source-repository', pinned.source.repository, '--source-commit', pinned.source.commit, '--source-path', pinned.source.path);
+  assert.equal(out.status, 1, JSON.stringify(out.body));
+  assert.equal(out.body.ok, false);
+  assert.equal(out.body.code, 'acquisition_client_mismatch');
+  assert.equal(out.body.accountCreated, undefined);
+  assert.equal(s.requests().length, 0);
+});
+
+test('signup without a descriptor does not create an account', () => {
+  const s = setup();
+  const fresh = join(s.dir, 'new-requester.json');
+  const out = s.run('signup', '--secret-file', fresh, '--display-name', 'Unqualified', '--role', 'requester');
+  assert.equal(out.status, 1, JSON.stringify(out.body));
+  assert.equal(out.body.ok, false);
+  assert.equal(out.body.code, 'acquisition_required');
+  assert.equal(existsSync(fresh), false);
+  assert.equal(s.requests().length, 0);
+});
+
+test('fund stays unpaid on the unfunded rail', () => {
+  const s = setup();
+  const out = s.run('fund', '--secret-file', s.secret);
+  assert.equal(out.status, 1, JSON.stringify(out.body));
+  assert.equal(out.body.ok, false);
+  assert.equal(out.body.paidWork, false);
+  assert.equal(out.body.code, 'not_found');
+  const sent = s.requests().filter(r => r.path === '/v1/market/fund');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].method, 'POST');
+  assert.equal(sent[0].body.proofId, 'unfunded');
+});
+
 test('a server publication refusal is reported as refused, not unknown', () => {
   const s = setup({acceptedWorkPublic:true});
   const out = s.run('permit-accepted-work', '--secret-file', s.secret, '--task-id', TASK, '--summary', 'See https://example.com for details', '--publication-consent');
