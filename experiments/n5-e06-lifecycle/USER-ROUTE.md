@@ -47,3 +47,7 @@ A fresh cold agent that installs useful-jobs@1.4.7 with the B integrity above, t
 ## Compounding asset
 
 This file. Later agents reuse the npm pin and integrity instead of re-deriving an acquire helper. Upstream owners keep at most this one new useful artifact for the E06 finding.
+
+## Fair routes
+
+See [FAIR-ROUTES.md](./FAIR-ROUTES.md) for direct vs public-artifact vs maintained comparison (GRAND-PLAN B1).
