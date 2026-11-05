@@ -1,0 +1,11 @@
+{
+  "description": "Events a Ghost custom integration could later subscribe to. This package does not register webhooks or host a receiver.",
+  "installationStatus": "source_only_not_installed",
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "subscribed": false,
+  "events": [
+    "post.published",
+    "post.published.edited"
+  ],
+  "note": "A later Ghost author can map those events to a new page-change or reuse input. That mapping is not installed here."
+}

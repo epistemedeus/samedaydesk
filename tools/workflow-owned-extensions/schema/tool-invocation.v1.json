@@ -1,0 +1,70 @@
+{
+  "$id": "samedaydesk.workflow-owned-extension-invocation.v1",
+  "title": "Dify-shaped tool invocation mapped onto result-reuse",
+  "type": "object",
+  "required": [
+    "tool",
+    "input_json",
+    "task_id",
+    "subject",
+    "sequence",
+    "clock"
+  ],
+  "properties": {
+    "consumer": {
+      "enum": [
+        "dify",
+        "ghost"
+      ]
+    },
+    "tool": {
+      "enum": [
+        "preview_reuse",
+        "export_reuse",
+        "decide_or_reuse"
+      ]
+    },
+    "input_json": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": [
+        "integer",
+        "string"
+      ]
+    },
+    "clock": {
+      "type": "string"
+    },
+    "opt_in": {
+      "type": "boolean"
+    },
+    "horizon": {
+      "type": [
+        "number",
+        "string"
+      ]
+    },
+    "produced": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "decision": {
+      "type": [
+        "object",
+        "string"
+      ]
+    }
+  }
+}

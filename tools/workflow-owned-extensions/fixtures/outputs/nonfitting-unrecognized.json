@@ -1,0 +1,32 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-invocation.v1",
+  "ok": true,
+  "fitting": false,
+  "capabilityApplied": false,
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "extensionId": "dify-result-reuse",
+  "extensionVersion": "0.1.0",
+  "consumerKind": "workflow_runtime_embedding",
+  "tool": "preview_reuse",
+  "runtime": "dify",
+  "runtimeAvailable": false,
+  "runtimeProbed": false,
+  "runtimeCalled": false,
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "installationStatus": "source_only_not_installed",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "executionPath": "direct_sdk_fallback",
+  "message": "task does not fit extract-batch, page-change brief, record report, or n45 page-change result JSON",
+  "usefulDirectRoute": {
+    "package": "tools/result-reuse",
+    "cli": "node tools/result-reuse/cli.mjs preview --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>",
+    "exportCli": "node tools/result-reuse/cli.mjs export --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --opt-in --out <observation.json>",
+    "decideCli": "node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in",
+    "requiredInput": "extract-batch, page-change brief, record report, or n45 page-change result JSON",
+    "note": "Neither Dify nor Ghost is required. The existing local result-reuse CLI is the useful direct path when a workflow runtime is unavailable or the task does not fit."
+  },
+  "sdk": null,
+  "recognizedKind": "unknown"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "SameDayDesk result reuse",
+  "description": "Source-only Ghost custom integration that can turn a reused observation into an unpublished draft. It does not create a Ghost app, webhook server, or catalog listing.",
+  "installationStatus": "source_only_not_installed",
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "published": false,
+  "adminApi": {
+    "resource": "posts",
+    "method": "POST",
+    "path": "/ghost/api/admin/posts/",
+    "called": false,
+    "bodyShape": {
+      "posts": [
+        {
+          "title": "<observation.statement first line>",
+          "status": "draft",
+          "tags": [
+            {
+              "name": "samedaydesk-result-reuse"
+            }
+          ],
+          "custom_excerpt": "<schema>; not yet executed on runtime"
+        }
+      ]
+    }
+  }
+}

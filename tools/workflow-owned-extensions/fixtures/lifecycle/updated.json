@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "action": "updated",
+  "record": {
+    "schema": "samedaydesk.workflow-owned-extension.v1",
+    "id": "dify-result-reuse",
+    "version": "0.1.1",
+    "runtime": "dify",
+    "consumerKind": "workflow_runtime_embedding",
+    "capability": "result-reuse",
+    "capabilitySource": "tools/result-reuse",
+    "authorOwnership": "workflow_author",
+    "rights": "source_only_extension_no_hosted_execution",
+    "installationStatus": "source_only_not_installed",
+    "runtimeExecutionStatus": "not yet executed on runtime",
+    "runtimeAvailable": false,
+    "runtimeCalled": false,
+    "catalogListed": false,
+    "hostedCodeExecution": false,
+    "createdAt": "2026-11-05T12:00:00.000Z",
+    "updatedAt": "2026-11-05T12:05:00.000Z",
+    "previousVersions": [
+      {
+        "version": "0.1.0",
+        "updatedAt": "2026-11-05T12:00:00.000Z",
+        "supersededAt": "2026-11-05T12:05:00.000Z"
+      }
+    ],
+    "removed": false,
+    "removedAt": null
+  }
+}

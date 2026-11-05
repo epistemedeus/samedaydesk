@@ -1,0 +1,20 @@
+{
+  "recipeId": "source-change-alert",
+  "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+  "fields": [
+    "title"
+  ],
+  "prior": {
+    "sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sequence": 1,
+    "createdAt": "2026-09-09T08:00:00.000Z",
+    "payload": {
+      "title": "Example Domain"
+    }
+  },
+  "capture": {
+    "url": "https://example.com/",
+    "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "title": "Example Domain Changed"
+  }
+}
