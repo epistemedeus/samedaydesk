@@ -72,7 +72,10 @@ export function normalizeCandidate(item) {
 }
 
 function pageChangeSignals(source) {
-  const pair = /\b(?:two|2|pair of)\b/i.test(source) && /\b(?:snapshots?|extracts?|captures?)\b/i.test(source);
+  // A lone digit or "no-snapshot" is not a pair of saved page snapshots.
+  const pair = /\btwo\s+(?:already[- ](?:held|saved|captured|delivered)\s+)?(?:extract-batch\s+)?(?:json\s+)?snapshots?\b/i.test(source)
+    || /\bpair of\s+(?:json\s+)?snapshots?\b/i.test(source)
+    || /\bsnapshots?\s+of\s+(?:the\s+|a\s+)?(?:same\s+)?(?:public\s+)?pages?\b/i.test(source);
   const page = /\bpages?\b/i.test(source) || /\bselected fields?\b/i.test(source);
   const change = /\b(?:compar(?:e|ing|ison)|what changed|which fields|fields changed|field changes?)\b/i.test(source);
   return pair && page && change;
@@ -166,7 +169,7 @@ export function classify(candidate) {
     boundary = extraUnsupported
       ? "The page-snapshot field problem fits. An extra UI, dashboard, bug, or build ask is not part of that fit and is not performed."
       : "Offline page-change compare of two already-delivered extract-batch snapshots. Issue prose does not supply those snapshots.";
-    evidence.push(...excerpts(source, [/\b(?:two|2|pair of)\b/i, /\b(?:snapshots?|extracts?)\b/i, /\bpages?\b|\bselected fields?\b/i, /\b(?:compar(?:e|ing|ison)|what changed|which fields|fields changed)\b/i]));
+    evidence.push(...excerpts(source, [/\btwo\s+(?:already[- ](?:held|saved|captured|delivered)\s+)?(?:extract-batch\s+)?(?:json\s+)?snapshots?\b|\bpair of\s+(?:json\s+)?snapshots?\b|\bsnapshots?\s+of\s+(?:the\s+|a\s+)?(?:same\s+)?(?:public\s+)?pages?\b/i, /\bpages?\b|\bselected fields?\b/i, /\b(?:compar(?:e|ing|ison)|what changed|which fields|fields changed)\b/i]));
   } else if (reuseSignals(source)) {
     status = "fit";
     capability = "sdd.result_reuse_offline";

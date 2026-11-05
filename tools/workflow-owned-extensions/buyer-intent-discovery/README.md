@@ -69,4 +69,4 @@ The vocabulary page in `examples/normal-acquisition.json` is the already capture
 ROOT=/tmp/e07-fresh OUT=/tmp/e07-evidence TIP=<full-head-sha> BRANCH=codex/n7-e07-buyer-intent-20261105 bash tools/workflow-owned-extensions/buyer-intent-discovery/run-e07.sh
 ```
 
-A passing local test is not the runner receipt. The machine handoff records the fetched commit, per-step exits, and the one problem-first page actually returned.
+A passing local test is not the runner receipt. `MACHINE-HANDOFF.md` records the fetched commit, per-step exits, and the one problem-first page actually returned. The classifier count on that committed copy is separate from the manual adjudication in the handoff.

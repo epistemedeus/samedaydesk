@@ -182,6 +182,23 @@ test("explicit paid intent is distinct from another project's payment", () => {
   assert.equal(other.paidIntent.observedPayment, "not_observed");
 });
 
+test("watch logs and unrelated snapshot words are not a page-change fit", () => {
+  const watch = reportFor({
+    n: 30,
+    title: "Vendor docs changed since the last audit",
+    body: "Pages changed. customizing (no-snapshot). Comparison: source-aware-v1. See docs-2-example.delta. Next: run the audit script.",
+  });
+  assert.equal(watch.problemFit.status, "no_fit");
+  assert.equal(watch.fitting, false);
+  const impl = reportFor({
+    n: 31,
+    title: "Keep month-end snapshots so the What Changed page can diff them",
+    body: "Implement the revision store. The page lists each snapshot. After two closing dailies the index holds each snapshot. The diff engine takes two records.",
+  });
+  assert.equal(impl.problemFit.status, "no_fit");
+  assert.equal(impl.handoff, null);
+});
+
 test("implementation-only work stays outside the service", () => {
   const candidate = reportFor({
     n: 16,
