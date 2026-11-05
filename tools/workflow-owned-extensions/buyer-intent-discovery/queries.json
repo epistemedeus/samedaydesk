@@ -1,5 +1,10 @@
 {
   "query": "is:issue is:public \"extract-batch\" \"compare\" in:title,body",
   "perPage": 20,
-  "note": "One page only. A zero-fit result is expected when no explicit compatible task is present."
+  "problemFirst": {
+    "query": "is:issue is:public \"page\" \"snapshot\" \"json\" \"changed\" in:title,body",
+    "perPage": 20,
+    "note": "One public issue page for a problem description. It does not require extract-batch or task-memory. Not a census and not a retry."
+  },
+  "note": "The query field keeps the existing vocabulary command usable. Pass --problem-first to use problemFirst. One page, no OR, no pagination."
 }

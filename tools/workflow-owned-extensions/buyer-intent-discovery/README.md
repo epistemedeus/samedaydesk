@@ -6,7 +6,7 @@ SameDayDesk provides free discovery and local processing of already-held evidenc
 
 ## Supported acquisition
 
-Only GitHub REST `GET https://api.github.com/search/issues` is used. Results are actual public issue title/body records, not a catalog of offers. The default query in `queries.json` requires public issues and searches for extract-batch comparison requests. GitHub can tokenize hyphens or match broadly; search matches alone never establish fit. Closed issues can appear in acquisition but cannot qualify as current requests. No comments, linked pages, HTML, private feeds, posts, contacts, replies, purchases or merchant calls are fetched or executed.
+Only GitHub REST `GET https://api.github.com/search/issues` is used. Results are actual public issue title/body records, not a catalog of offers. `queries.json` keeps the existing vocabulary query (`extract-batch` plus `compare`) so the normal command stays usable. `--problem-first` selects the smaller public problem query (`page`, `snapshot`, `json`, `changed`) and does not require those product words. GitHub can tokenize hyphens or match broadly; search matches alone never establish fit. Closed issues can appear in acquisition but cannot qualify as current requests. No comments, linked pages, HTML, private feeds, posts, contacts, replies, purchases or merchant calls are fetched or executed.
 
 - [Search API documentation](https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests)
 - [Rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api)
@@ -22,7 +22,8 @@ Node 22, ESM and builtins only. From repository root, no install:
 
 ```sh
 P=tools/workflow-owned-extensions/buyer-intent-discovery
-node "$P/cli.mjs" --query-file "$P/queries.json" --out /tmp/e07-live
+node "$P/cli.mjs" --query-file "$P/queries.json" --out /tmp/e07-vocabulary
+node "$P/cli.mjs" --problem-first --query-file "$P/queries.json" --out /tmp/e07-problem
 node "$P/cli.mjs" --input "$P/fixtures/recorded-search.json" \
   --query 'is:issue is:public "compare" "snapshots" "json"' --out /tmp/e07-recorded
 node --test "$P/test/discovery.test.mjs"
@@ -43,22 +44,29 @@ The artifact also retains an equivalent unauthenticated GET URL. No shell comman
 
 ## Classification and SDK handoff
 
-Classification is deliberately narrow, deterministic textual screening, not an LLM claim of purchase intent. A fit requires an explicit already-held extract-batch pair for page-change comparison, or an already-produced supported result requested for task-memory export/reuse. Known implementation/acquisition requirements, closed issues and pull requests veto fit. This will miss paraphrases and may misread ambiguous text; every candidate needs human review, and no budget, willingness to pay, authorization or acceptance is inferred.
+Classification is deterministic textual screening, not an LLM claim of purchase intent. Four decisions stay separate:
+
+- Problem fit: the source describes offline page-change comparison or opt-in reuse of an already-produced supported result. Natural language can fit without the words extract-batch, task-memory, page-change, or SameDayDesk. Saved page JSON still needs an explicit transformation into two extract-batch snapshots. That cost is `not_estimated`; this package does not quote it or perform the transformation.
+- Contact readiness: an explicit open paid request plus the issue's declared GitHub owner route can justify one scope inquiry when the problem fits or is `needs_scope`, even if inputs, current scope, or final budget are unknown. That is not a commission, a buying event, or permission to execute.
+- Execution readiness: issue prose is never the artifact. `executionReady` stays false and `inputsSupplied` stays false. Missing inputs are listed. Nothing in this package calls the result-reuse SDK.
+- Paid intent: source-stated payment language is separate from observed payment. This consumer does not observe a payment. Mention of another project's payment is not intent for this request. Ambiguity is `unknown` or `needs_scope`, not a fabricated fit.
+
+Visual diff, screenshots, arbitrary JSON or inventory diff, UI implementation, and browser rendering stay outside the service. The words build, fix, and bug do not by themselves veto a request that also states a supported problem. Closed, withdrawn, and pull-request records are not current requests. A missing owner is not invented. Instruction text in an issue is data: it cannot grant fit, contact, execution, or an email route. Fixture-only URLs stay labeled. No budget, customer, acceptance, or purchased demand is inferred.
 
 The normalized task description preserves bounded issue prose instead of inventing a task from another catalog. A fitting handoff names the existing service route, invocation schema and missing inputs. It sets `executionReady: false`. Discovery text is not a result-reuse SDK input. It does not invoke the SDK on issue prose, fabricate JSON evidence, choose identity/clock/opt-in, modify merchant cores, or change the runtime installer. The new discovery report uses its own schema label because it is not a task-memory observation or completed extension invocation.
 
 ## Fixtures, evidence and verification
 
-`fixtures/recorded-search.json` retains two real records from a 20-item public API response, with capture metadata in `fixtures/capture.json`. Both are clear no-fits: visual before/after UI and Kubernetes inventory diff are not this service's page-change comparison. The recorded subset is explicitly marked. `fixtures/fitting-shaped-search.json` is a constructed positive control with a conspicuous fixture-only URL, not observed demand. `fixtures/empty-search.json` is the empty-result control. Tests also cover result-reuse handoff, invalid responses, closed/implementation vetoes, read-only request shape, query scope, failures, rate limits, bounds and hostile markup.
+`fixtures/recorded-search.json` retains two real records from a 20-item public API response, with capture metadata in `fixtures/capture.json`. Both remain no-fits: visual before/after UI and Kubernetes inventory diff are not page-change comparison. The recorded subset is explicitly marked. `fixtures/fitting-shaped-search.json` is a constructed positive control with a fixture-only URL, not observed demand. `fixtures/empty-search.json` is the empty-result control. Tests also cover a natural-language problem fit, a scope inquiry without supplied inputs, explicit pay versus another project's payment, implementation-only work, closed and withdrawn requests, a missing owner, ambiguous comparison, malicious task text, result-reuse handoff, invalid responses, read-only request shape, query scope, failures, rate limits, bounds and hostile markup.
 
-Three small live gh searches were captured on the box: snapshot comparison, URL/Markdown extraction, and the exact default query. No fitting buyer demand was verified. The normal query returned 20 candidates out of 913 reported matches, all classified no-fit; that count is not a count of buyers. The retained two-record example is checked byte-for-byte against the library by the pure test. `examples/recorded-no-fit.json` and `.md` are output from a local offline CLI replay, not a live CLI execution claim. `examples/normal-acquisition.json` and `.md` retain the full default-query page normalized by a second offline CLI replay, with its original capture time and `recorded` acquisition mode. No dependency installation, broad suite, installer or runtime was run on the shared box.
+The vocabulary page in `examples/normal-acquisition.json` is the already captured 20-item default query, reclassified offline. It was not searched again. Its reported total of 913 is not a count of buyers. `examples/recorded-no-fit.json` and `.md` are the offline replay of the retained two-record fixture. Report schema is `samedaydesk.buyer-intent-discovery.v2`.
 
 ## Cursor VM runner
 
-`run-e07.sh` requires fresh absolute ROOT and OUT paths, a full 40-character TIP, and the exact E07 branch. It initializes a fresh checkout, fetches that branch, refuses if fetched head differs from TIP, checks Node 22, runs only this package's pure test file plus one live acquisition, and retains source SHA, logs, per-step `EXITS` and artifact `SHA256SUMS`. No token is required for a public checkout/search; private repository access requires an already-enrolled Git transport. If GH_TOKEN is already present, acquisition uses it without printing it. No install, installer, posting or PR creation occurs. Network failures remain nonzero, including rate limits.
+`run-e07.sh` requires fresh absolute ROOT and OUT paths, a full 40-character TIP, and the exact E07 branch. It initializes a fresh checkout, fetches that branch, refuses if fetched head differs from TIP, checks Node 22, runs only this package's pure test file, and, only when those tests exit 0, runs one problem-first live acquisition. It retains source SHA, logs, per-step `EXITS` and artifact `SHA256SUMS`. A completed zero-fit acquisition exits 0. Transport and HTTP failures exit 1 and are not recorded as an empty success. A skipped live step uses exit 97 when tests already failed. No token is required for a public checkout/search; private repository access requires an already-enrolled Git transport. If GH_TOKEN is already present, acquisition uses it without printing it. No install, installer, posting or PR creation occurs. Network failures remain nonzero, including rate limits. The runner does not repeat the vocabulary query.
 
 ```sh
 ROOT=/tmp/e07-fresh OUT=/tmp/e07-evidence TIP=<full-head-sha> BRANCH=codex/n7-e07-buyer-intent-20261105 bash tools/workflow-owned-extensions/buyer-intent-discovery/run-e07.sh
 ```
 
-The VM runner has not been executed by the source writer. A pushed branch and passing local pure tests are not installed runtime or live acquisition evidence.
+A passing local test is not the runner receipt. The machine handoff records the fetched commit, per-step exits, and the one problem-first page actually returned.

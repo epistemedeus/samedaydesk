@@ -31,8 +31,14 @@ set +e
 node --test "$p/test/discovery.test.mjs" > "$OUT/tests.log" 2>&1
 tests=$?
 printf 'pure_tests\t%s\n' "$tests" >> "$OUT/EXITS"
-node "$p/cli.mjs" --query-file "$p/queries.json" --out "$OUT/live" > "$OUT/live.log" 2>&1
-live=$?
+live=97
+if [[ "$tests" = 0 ]]; then
+  # One problem-first page. The vocabulary query stays available and is not repeated here.
+  node "$p/cli.mjs" --problem-first --query-file "$p/queries.json" --out "$OUT/live" > "$OUT/live.log" 2>&1
+  live=$?
+else
+  printf '%s\n' "live_acquisition skipped because pure_tests failed" > "$OUT/live.log"
+fi
 printf 'live_acquisition\t%s\n' "$live" >> "$OUT/EXITS"
 set -e
 [[ "$tests" = 0 && "$live" = 0 ]]
