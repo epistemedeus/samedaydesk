@@ -30,12 +30,32 @@ Reservation identifiers, digest fields, and unknown keys are preserved and echoe
 node tools/task-bundle-economics/cli.mjs evaluate --input tools/task-bundle-economics/fixtures/bundle-helpful.json
 node tools/task-bundle-economics/cli.mjs receipt --input tools/task-bundle-economics/fixtures/bundle-helpful.json --out /tmp/bundle-receipt.json
 node tools/task-bundle-economics/cli.mjs compare --input tools/task-bundle-economics/fixtures/unknown-effort.json
+node tools/task-bundle-economics/cli.mjs diagnose --input tools/task-bundle-economics/fixtures/diagnosis-accepted.json
 node --test tools/task-bundle-economics/test/*.test.mjs
 ```
 
-`evaluate` prints the full decision. `receipt` writes a portable JSON receipt a requester can keep with the bundle. `compare` focuses on measured versus unknown effort and the fee totals.
+`evaluate` prints the full decision. `receipt` writes a portable JSON receipt a requester can keep with the bundle. `compare` focuses on measured versus unknown effort and the fee totals. `diagnose` prints an evidence-only structured diagnosis and does not decide acceptance.
 
 Input is limited to 1 MiB, 24 nested levels, 1,000 entries per array or object, 20,000 total nodes, 64 KiB per string, and 64 tasks. Criteria follow the cold-requester 0.3.1 market limit: 1 to 16 unique nonempty strings when present.
+
+
+## Diagnose (evidence, not acceptance)
+
+`diagnose` writes a bounded structured diagnosis (`pilot.task-bundle-economics.diagnosis.v1`, artifact class `bounded_structured_diagnosis`). It maps existing acceptance outcomes to evidence labels. It does not rename those acceptance strings on the evaluate path, and it does not decide acceptance.
+
+| Acceptance outcome | `evidenceOutcome` |
+| --- | --- |
+| `objective_acceptance_met` | `meets_criteria` |
+| `objective_not_met` | `refused` |
+| `needs_reviewer_exception` | `needs_review` |
+
+The diagnosis sets `evidenceOnly: true` and `acceptance: "not_decided_by_tool"`. `autoAccept` stays false. Unknown review, support, and contributor cost lines stay unknown. Fee arithmetic still uses the existing `FEE_BPS=500` rail when terms already authorize it.
+
+```bash
+node tools/task-bundle-economics/cli.mjs diagnose --input tools/task-bundle-economics/fixtures/diagnosis-accepted.json
+node tools/task-bundle-economics/cli.mjs diagnose --input tools/task-bundle-economics/fixtures/diagnosis-rejected.json
+node tools/task-bundle-economics/cli.mjs diagnose --input tools/task-bundle-economics/fixtures/diagnosis-corrected.json
+```
 
 ## Measured versus unknown
 
@@ -62,5 +82,8 @@ Atomic amounts are decimal integer strings, matching `fee.mjs` (`^(0|[1-9][0-9]{
 | `fixtures/reservation-preserved.json` | `reservationId` and extra unknown fields pass through unchanged. |
 | `fixtures/floor-delta.json` | Synthetic 19 + 19 atomic units, where the bundled floor is one unit higher than the separate floors. |
 | `fixtures/unauthorized-terms.json` | Terms that are not 500 bps / `new_job_gross` do not receive an invented take rate. |
+| `fixtures/diagnosis-accepted.json` | Synthetic accepted diagnosis case with a measured rail line and unknown review, support, and contributor lines. |
+| `fixtures/diagnosis-rejected.json` | Synthetic rejected diagnosis case used as the sibling of the corrected resubmission. |
+| `fixtures/diagnosis-corrected.json` | Synthetic corrected resubmission: `expectedRevision` increases by one, `reservationId` and `termsDigest` stay the same. |
 
 Cold-requester / accepted-work field names consumed for alignment (not rewritten here): `taskId`, `title`, `summary`, `criteria`, `payableKinds`, `termsDigest`, `artifactDigest`, `rightsDigest`, `expectedRevision`, `publicationConsent`, and `reservationId`.

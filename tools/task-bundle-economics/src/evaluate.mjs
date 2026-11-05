@@ -1,5 +1,6 @@
 import { evaluateAcceptance } from "./acceptance.mjs";
 import { decideBundle } from "./bundle.mjs";
+import { diagnosisReadout } from "./diagnosis.mjs";
 import { evaluateBundledEconomics, railsMeta } from "./economics.mjs";
 import { compareEffort } from "./effort.mjs";
 import { buildReceipt } from "./receipt.mjs";
@@ -19,6 +20,7 @@ export {
   termsAuthorizeFeeReadout,
 } from "./economics.mjs";
 export { compareEffort } from "./effort.mjs";
+export { diagnosisReadout } from "./diagnosis.mjs";
 export { buildReceipt } from "./receipt.mjs";
 export { validateBundle } from "./schema.mjs";
 
@@ -69,6 +71,8 @@ export function evaluateBundle(input) {
     preservedUnknown: {
       bundle: validated.unknown.bundle,
       bundleEffort: validated.unknown.bundleEffort,
+      costLines: validated.unknown.costLines,
+      directRoute: validated.unknown.directRoute,
     },
     bounds: validated.bounds,
   };
@@ -99,4 +103,12 @@ export function compareFor(input) {
     })),
     bundleDecision: evaluation.bundleDecision,
   };
+}
+
+export function diagnoseFor(input) {
+  const validated = validateBundle(input);
+  if (!validated.ok) return validated;
+  const evaluation = evaluateBundle(validated.bundle);
+  if (!evaluation.ok) return evaluation;
+  return diagnosisReadout(evaluation, validated.bundle);
 }

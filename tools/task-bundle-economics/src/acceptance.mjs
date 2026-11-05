@@ -1,6 +1,6 @@
 const VERIFIER_KEYS = Object.freeze(["verifier", "verifierPayload", "execute", "code"]);
 
-function evaluateCheck(observation) {
+export function evaluateCheck(observation) {
   if (!observation || typeof observation !== "object" || Array.isArray(observation)) {
     return { decided: false, ok: false, reason: "observation_invalid" };
   }

@@ -2,6 +2,8 @@ import { BUNDLE_MAX_TASKS, CRITERIA_MAX, checkInputBounds } from "./limits.mjs";
 
 export const BUNDLE_SCHEMA = "pilot.task-bundle-economics.bundle.v1";
 export const ATOMIC_PATTERN = /^(0|[1-9][0-9]{0,18})$/;
+export const PROVENANCE_VALUES = Object.freeze(["public", "synthetic"]);
+export const COST_LINE_STATUSES = Object.freeze(["measured", "unknown"]);
 
 export const KNOWN_BUNDLE_KEYS = Object.freeze([
   "schema",
@@ -9,6 +11,9 @@ export const KNOWN_BUNDLE_KEYS = Object.freeze([
   "requesterNote",
   "tasks",
   "bundleEffort",
+  "provenance",
+  "costLines",
+  "directRoute",
 ]);
 
 export const KNOWN_TASK_KEYS = Object.freeze([
@@ -28,6 +33,9 @@ export const KNOWN_TASK_KEYS = Object.freeze([
   "rightsDigest",
   "expectedRevision",
   "publicationConsent",
+  "provenance",
+  "costLines",
+  "directRoute",
 ]);
 
 export const KNOWN_TERMS_KEYS = Object.freeze(["feeBps", "feeBasis", "fee"]);
@@ -40,6 +48,8 @@ export const KNOWN_DELIVERY_KEYS = Object.freeze([
   "code",
   "autoAcceptToLowerCost",
   "notes",
+  "citedEvidence",
+  "acquisition",
 ]);
 export const KNOWN_EFFORT_KEYS = Object.freeze([
   "directCostAtomic",
@@ -48,6 +58,10 @@ export const KNOWN_EFFORT_KEYS = Object.freeze([
   "status",
 ]);
 export const KNOWN_BUNDLE_EFFORT_KEYS = Object.freeze(["costAtomic", "measured", "status"]);
+export const KNOWN_COST_LINE_KEYS = Object.freeze(["kind", "status", "atomic"]);
+export const KNOWN_CITED_EVIDENCE_KEYS = Object.freeze(["source", "locator", "digest"]);
+export const KNOWN_ACQUISITION_KEYS = Object.freeze(["processId", "processKind"]);
+export const KNOWN_DIRECT_ROUTE_KEYS = Object.freeze(["description", "provenance"]);
 
 export function preserveUnknown(value, knownKeys) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
@@ -105,6 +119,82 @@ function validateEffort(effort, knownKeys, label) {
   return { ok: true, unknown: preserveUnknown(effort, knownKeys) };
 }
 
+function validateProvenance(value, label) {
+  if (value === undefined) return null;
+  if (!PROVENANCE_VALUES.includes(value)) {
+    return fail(`${label} must be "public" or "synthetic" when present`);
+  }
+  return null;
+}
+
+function validateCostLines(costLines, label) {
+  if (costLines === undefined) return { ok: true, unknown: [] };
+  if (!Array.isArray(costLines)) return fail(`${label} must be an array when present`);
+  const unknown = [];
+  for (let index = 0; index < costLines.length; index += 1) {
+    const line = costLines[index];
+    if (!line || typeof line !== "object" || Array.isArray(line)) {
+      return fail(`${label}[${index}] must be an object`);
+    }
+    if (typeof line.kind !== "string" || line.kind.length < 1) {
+      return fail(`${label}[${index}].kind must be a nonempty string`);
+    }
+    if (line.status !== undefined && !COST_LINE_STATUSES.includes(line.status)) {
+      return fail(`${label}[${index}].status must be "measured" or "unknown" when present`);
+    }
+    if (line.atomic !== undefined && !isAtomicString(line.atomic)) {
+      return fail(`${label}[${index}].atomic must be an integer atomic decimal string when present`);
+    }
+    unknown.push(preserveUnknown(line, KNOWN_COST_LINE_KEYS));
+  }
+  return { ok: true, unknown };
+}
+
+function validateDirectRoute(directRoute, label) {
+  if (directRoute === undefined) return { ok: true, unknown: {} };
+  if (!directRoute || typeof directRoute !== "object" || Array.isArray(directRoute)) {
+    return fail(`${label} must be an object when present`);
+  }
+  if (directRoute.description !== undefined && typeof directRoute.description !== "string") {
+    return fail(`${label}.description must be a string when present`);
+  }
+  const provenanceError = validateProvenance(directRoute.provenance, `${label}.provenance`);
+  if (provenanceError) return provenanceError;
+  return { ok: true, unknown: preserveUnknown(directRoute, KNOWN_DIRECT_ROUTE_KEYS) };
+}
+
+function validateCitedEvidence(citedEvidence, label) {
+  if (citedEvidence === undefined) return { ok: true, unknown: [] };
+  if (!Array.isArray(citedEvidence)) return fail(`${label} must be an array when present`);
+  const unknown = [];
+  for (let index = 0; index < citedEvidence.length; index += 1) {
+    const item = citedEvidence[index];
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      return fail(`${label}[${index}] must be an object`);
+    }
+    for (const key of ["source", "locator", "digest"]) {
+      if (item[key] !== undefined && typeof item[key] !== "string") {
+        return fail(`${label}[${index}].${key} must be a string when present`);
+      }
+    }
+    unknown.push(preserveUnknown(item, KNOWN_CITED_EVIDENCE_KEYS));
+  }
+  return { ok: true, unknown };
+}
+
+function validateAcquisition(acquisition, label) {
+  if (acquisition === undefined) return { ok: true, unknown: {} };
+  if (!acquisition || typeof acquisition !== "object" || Array.isArray(acquisition)) {
+    return fail(`${label} must be an object when present`);
+  }
+  for (const key of ["processId", "processKind"]) {
+    if (acquisition[key] !== undefined && typeof acquisition[key] !== "string") {
+      return fail(`${label}.${key} must be a string when present`);
+    }
+  }
+  return { ok: true, unknown: preserveUnknown(acquisition, KNOWN_ACQUISITION_KEYS) };
+}
+
 function validateTask(task, index) {
   if (!task || typeof task !== "object" || Array.isArray(task)) {
     return fail(`tasks[${index}] must be an object`);
@@ -128,6 +218,8 @@ function validateTask(task, index) {
   if (task.railCostAtomic !== undefined && !isAtomicString(task.railCostAtomic)) {
     return fail(`tasks[${index}].railCostAtomic must be an integer atomic decimal string`);
   }
+  const provenanceError = validateProvenance(task.provenance, `tasks[${index}].provenance`);
+  if (provenanceError) return provenanceError;
   const criteria = validateCriteria(task.criteria);
   if (!criteria.ok) return criteria;
   if (task.payableKinds !== undefined) {
@@ -143,6 +235,14 @@ function validateTask(task, index) {
   }
   const effort = validateEffort(task.effort, KNOWN_EFFORT_KEYS, `tasks[${index}].effort`);
   if (!effort.ok) return effort;
+  const costLines = validateCostLines(task.costLines, `tasks[${index}].costLines`);
+  if (!costLines.ok) return costLines;
+  const directRoute = validateDirectRoute(task.directRoute, `tasks[${index}].directRoute`);
+  if (!directRoute.ok) return directRoute;
+  const citedEvidence = validateCitedEvidence(task.delivery?.citedEvidence, `tasks[${index}].delivery.citedEvidence`);
+  if (!citedEvidence.ok) return citedEvidence;
+  const acquisition = validateAcquisition(task.delivery?.acquisition, `tasks[${index}].delivery.acquisition`);
+  if (!acquisition.ok) return acquisition;
   return {
     ok: true,
     unknown: {
@@ -151,6 +251,10 @@ function validateTask(task, index) {
       fee: preserveUnknown(task.terms?.fee, KNOWN_FEE_KEYS),
       delivery: preserveUnknown(task.delivery, KNOWN_DELIVERY_KEYS),
       effort: effort.unknown,
+      costLines: costLines.unknown,
+      directRoute: directRoute.unknown,
+      citedEvidence: citedEvidence.unknown,
+      acquisition: acquisition.unknown,
     },
   };
 }
@@ -173,8 +277,14 @@ export function validateBundle(input) {
   if (input.requesterNote !== undefined && typeof input.requesterNote !== "string") {
     return fail("requesterNote must be a string when present");
   }
+  const provenanceError = validateProvenance(input.provenance, "provenance");
+  if (provenanceError) return provenanceError;
   const bundleEffort = validateEffort(input.bundleEffort, KNOWN_BUNDLE_EFFORT_KEYS, "bundleEffort");
   if (!bundleEffort.ok) return bundleEffort;
+  const costLines = validateCostLines(input.costLines, "costLines");
+  if (!costLines.ok) return costLines;
+  const directRoute = validateDirectRoute(input.directRoute, "directRoute");
+  if (!directRoute.ok) return directRoute;
 
   const taskIds = new Set();
   const unknownTasks = [];
@@ -194,6 +304,8 @@ export function validateBundle(input) {
     unknown: {
       bundle: preserveUnknown(input, KNOWN_BUNDLE_KEYS),
       bundleEffort: bundleEffort.unknown,
+      costLines: costLines.unknown,
+      directRoute: directRoute.unknown,
       tasks: unknownTasks,
     },
   };
