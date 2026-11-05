@@ -23,9 +23,10 @@ Cold empty directory. Ordinary npm of the hosted URL. No Pilot helper, no acquir
 ```bash
 mkdir -p /tmp/uj-direct && cd /tmp/uj-direct && npm init -y
 npm install "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz"
-node node_modules/useful-jobs/bin/useful-jobs.mjs run vendor-budget-impact \
-  --before node_modules/useful-jobs/samples/pricing/caller-alpha/before.json \
-  --after node_modules/useful-jobs/samples/pricing/caller-alpha/after.json
+cd node_modules/useful-jobs
+node bin/useful-jobs.mjs run vendor-budget-impact \
+  --before samples/pricing/caller-alpha/before.json \
+  --after samples/pricing/caller-alpha/after.json
 ```
 
 Pass: exit 0, digest `0ea6c814c944ec14`. This route must stay as easy as any maintained path.

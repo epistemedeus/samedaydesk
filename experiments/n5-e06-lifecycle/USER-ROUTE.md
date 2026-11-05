@@ -24,8 +24,9 @@ npm init -y
 npm install
 npm install "https://samedaydesk.com/for-agents/useful-jobs/useful-jobs-1.4.7.tar.gz"
 # Confirm lock integrity matches the B pin above, then:
-node node_modules/useful-jobs/bin/useful-jobs.mjs version
-node node_modules/useful-jobs/bin/useful-jobs.mjs run vendor-budget-impact \
+cd node_modules/useful-jobs
+node bin/useful-jobs.mjs version
+node bin/useful-jobs.mjs run vendor-budget-impact \
   --before samples/pricing/caller-alpha/before.json \
   --after samples/pricing/caller-alpha/after.json
 ```
