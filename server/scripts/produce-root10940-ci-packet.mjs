@@ -169,9 +169,16 @@ async function propose() {
       binding: 'h142',
       note: 'Root receiving for this pair stays on its own slot. It is not receiving for a different host fingerprint.',
     },
+    keptEnrolled: {
+      trustAnchorSha256: '2a2878299eef74b233cffa2bff2342eee93e5586929136acc933651ca5d3d27f',
+      sourceSha256: '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82',
+      hostSha256: '6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd',
+      binding: 'n4-sds356',
+      note: 'Root receiving for host 6fca4aaa stays on its own slot. It is not receiving for this measured host.',
+    },
     packet: built.packet,
     command: enrollmentCommand(),
-    note: 'Root adds receiving on a copy of this proposed anchor only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot, the received H142 slot, or set ROOT10940_CI_PACKET.',
+    note: 'Root adds receiving on a copy of this proposed anchor only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot, the received H142 slot, the received 6fca4aaa slot, or set ROOT10940_CI_PACKET.',
   };
   mkdirSync(outDir, {recursive: true});
   writeFileSync(join(outDir, 'proposed-anchor.json'), built.anchorBytes);

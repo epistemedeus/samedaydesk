@@ -27,11 +27,14 @@ const HISTORICAL_HOST = '1d75941ad2799af00f29f18b42031a4104ea247ef36c4172d1342db
 const HISTORICAL_PACKET_SHA = 'a3fc0037802ad15c17507eda04da42490d4e1ac8470c5305aac0ad3267d28296';
 const H142_RECEIVED_ANCHOR = 'b4a08b92f214e277550495a44a5e1e599d537922751d666f994d6aed1b92a557';
 const H142_PROPOSAL_ANCHOR = 'e01d2a0216540ff8a7dde315b39435b6bf31516758a5ead8cbd1bc1b1d676cc8';
+const PRIOR_HOST = '6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd';
+const PRIOR_ANCHOR_SHA = 'b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27cfa04eba77';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
 const PIN = 'server/foundry/activation/private-control-pin.json';
 const PIN_BASE = '4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134';
-const proposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
+const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
+const proposal = 'docs/receiving/h155030-sds-consumer-composition-20261106';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
@@ -108,6 +111,9 @@ function committedBytes() {
     anchor: readFileSync(join(root, proposal, 'proposed-anchor.json')),
     descriptor: readFileSync(join(root, proposal, 'proposed-descriptor.json')),
     enrollment: readFileSync(join(root, proposal, 'ENROLLMENT.json')),
+    priorAnchor: readFileSync(join(root, priorProposal, 'proposed-anchor.json')),
+    priorDescriptor: readFileSync(join(root, priorProposal, 'proposed-descriptor.json')),
+    priorEnrollment: readFileSync(join(root, priorProposal, 'ENROLLMENT.json')),
     h142Anchor: readFileSync(join(root, h142Proposal, 'proposed-anchor.json')),
   };
 }
@@ -158,6 +164,7 @@ test('measurement pin matches the bytes the host closure reads', () => {
   assert.equal(measured.repository, 'epistemedeus/samedaydesk');
   assert.equal(measured.sourceSha256, H142_SOURCE);
   assert.notEqual(measured.hostSha256, H142_HOST);
+  assert.notEqual(measured.hostSha256, PRIOR_HOST);
 });
 
 test('a changed measurement file is binding_stale and the original bytes recover', () => {
@@ -184,7 +191,7 @@ test('historical-only, received H142, and the pending measurement candidate stay
     '--out', join(dir, 'historical-live.json'),
   ]);
   assertExit(stale, 3);
-  assert.match(stale.stderr, new RegExp(`^stale actual ${measured.sourceSha256} expected ${HISTORICAL_SOURCE}$`, 'm'));
+  assert.match(stale.stderr, new RegExp(`^stale actual ${measured.sourceSha256} ${measured.hostSha256} expected ${HISTORICAL_SOURCE} ${HISTORICAL_HOST}$`, 'm'));
   assert.equal(existsSync(join(dir, 'historical-live.json')), false);
   assert.deepEqual(readFileSync(join(isolated, historicalName)), isolatedBefore);
   assert.equal(sha256(isolatedBefore), HISTORICAL_PACKET_SHA);
@@ -217,6 +224,12 @@ test('historical-only, received H142, and the pending measurement candidate stay
   assert.equal(Object.hasOwn(anchor, 'receiving'), false);
   assert.equal(anchor.requiredProfile.sourceSha256, measured.sourceSha256);
   assert.equal(anchor.requiredProfile.hostSha256, measured.hostSha256);
+  const prior = JSON.parse(before.priorAnchor.toString('utf8'));
+  assert.equal(Object.hasOwn(prior, 'receiving'), false);
+  assert.equal(prior.requiredProfile.sourceSha256, H142_SOURCE);
+  assert.equal(prior.requiredProfile.hostSha256, PRIOR_HOST);
+  assert.notEqual(prior.requiredProfile.hostSha256, measured.hostSha256);
+  assert.equal(sha256(before.priorAnchor), PRIOR_ANCHOR_SHA);
   assert.equal(sha256(before.h142Anchor), H142_PROPOSAL_ANCHOR);
   const refused = await run([
     producer,
@@ -228,6 +241,36 @@ test('historical-only, received H142, and the pending measurement candidate stay
   ]);
   assertExit(refused, 1);
   assert.match(refused.stderr, /index_receiving_required/);
+  const priorWithFixture = structuredClone(prior);
+  priorWithFixture.receiving = fixtureReceiving(FIXTURE_COMMIT);
+  const priorCatalog = historicalOnly(join(dir, 'prior-host'));
+  const priorAnchorPath = join(dir, 'prior-anchor.json');
+  writeFileSync(priorAnchorPath, `${JSON.stringify(priorWithFixture, null, 2)}\n`);
+  const priorEnrolled = await run([
+    producer, '--anchor', priorAnchorPath, '--client', CLIENT,
+    '--descriptor', `${priorProposal}/proposed-descriptor.json`,
+    '--catalog', priorCatalog, '--index', join(priorCatalog, 'index.json'),
+  ]);
+  assertExit(priorEnrolled, 0);
+  const priorLive = await run([
+    selector, '--catalog', priorCatalog, '--index', join(priorCatalog, 'index.json'),
+    '--out', join(dir, 'prior-live.json'),
+  ]);
+  assertExit(priorLive, 3);
+  assert.match(priorLive.stderr, /^stale /m);
+  assert.equal(existsSync(join(dir, 'prior-live.json')), false);
+  const priorOwn = await run([
+    selector, '--catalog', priorCatalog, '--index', join(priorCatalog, 'index.json'),
+    '--source-sha256', H142_SOURCE, '--host-sha256', PRIOR_HOST,
+    '--out', join(dir, 'prior-own.json'),
+  ]);
+  assertExit(priorOwn, 0);
+  const priorChosen = verifyPacket(parsePacket(readFileSync(join(dir, 'prior-own.json'), 'utf8')));
+  assert.equal(priorChosen.profile.hostSha256, PRIOR_HOST);
+  assert.notEqual(priorChosen.profile.hostSha256, measured.hostSha256);
+  assert.equal(priorChosen.anchor.receiving.independentReplay, FIXTURE_REPLAY);
+  assert.equal(priorChosen.anchor.receiving.qualified, false);
+  assert.equal(priorChosen.anchor.receiving.installed, false);
   assert.deepEqual(committedBytes(), before);
 });
 
@@ -292,7 +335,7 @@ test('missing, tampered, unreceived, wrong-source and conflicting-index controls
     '--out', join(dir, 'changed.json'),
   ]);
   assertExit(changed, 5);
-  assert.match(changed.stderr, new RegExp(`changed-source actual ${measured.sourceSha256} expected ${HISTORICAL_SOURCE}`));
+  assert.match(changed.stderr, new RegExp(`changed-source actual ${measured.sourceSha256} ${measured.hostSha256} expected ${HISTORICAL_SOURCE} ${HISTORICAL_HOST}`));
   assert.equal(existsSync(join(dir, 'changed.json')), false);
 
   const conflictCatalog = join(dir, 'conflict');
