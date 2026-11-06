@@ -6,14 +6,15 @@ Programme 1 journey seams are demonstrated on the prepared SDS source. This writ
 
 - Repository: `https://github.com/epistemedeus/samedaydesk.git`
 - Branch: `codex/n7-task-repeat-use-20261106`
-- Tested source: `f60a29bce5c3658db6d239590d4cb99a67040ccc`
-- Parent prepared source: `c60641e8ff2b94dd704307e57f5b6fe789ba0df7`
+- Prepared parent: `c60641e8ff2b94dd704307e57f5b6fe789ba0df7`
+- First journey commit: `f60a29bce5c3658db6d239590d4cb99a67040ccc`
+- Receipt file commit: `8c7e9d910b99cef2b674e75709180088453fbf3a`
+- Repaired tested source: `3640978865b8fe33d074cabd1995844d5f22726b`
 - PR: https://github.com/epistemedeus/samedaydesk/pull/380 (open)
 - PR base: `codex/h136010-machine-release-20261103` at `c60641e8ff2b94dd704307e57f5b6fe789ba0df7`
-- Remote `refs/heads/codex/n7-task-repeat-use-20261106` matched `f60a29bce5c3658db6d239590d4cb99a67040ccc` before this receipt file
 - Worktree: `/home/ubuntu/ae14-work/nov06-p1-agl-programme-1`
 - Writer path: `tools/task-repeat-use`
-- This file is a receipt commit on the same branch. It does not change the journey.
+- This update records the repair. It does not change the journey again.
 
 ## Installed versus prepared
 
@@ -31,7 +32,11 @@ Programme 1 journey seams are demonstrated on the prepared SDS source. This writ
 
 ## Commands and exits
 
-Working directory `/home/ubuntu/ae14-work/nov06-p1-agl-programme-1`. Test executable `/exec-daemon/node` `v22.23.4`. Commands ran on tested source `f60a29bce5c3658db6d239590d4cb99a67040ccc`.
+Working directory `/home/ubuntu/ae14-work/nov06-p1-agl-programme-1`. Test executable `/exec-daemon/node` `v22.23.4`.
+
+The first suite run on `f60a29bce5c3658db6d239590d4cb99a67040ccc` exited 0 (12 pass). A later run exited 1. `JSON.stringify(result).includes("50000")` matched digits inside a wall-clock sample (`0.6410750000000007`). `paidChoice.refused` stayed `new_price_refused` and the price field was absent. Repair `3640978865b8fe33d074cabd1995844d5f22726b` rounds samples to three decimal places and checks for an exact price value. Ten runs on that working tree exited 0, and one run on the committed repair exited 0 (12 pass, 0 fail, `duration_ms` 97.309415).
+
+CLI commands below exited 0 on `f60a29bce5c3658db6d239590d4cb99a67040ccc`. The repair does not change those seam results.
 
 | Command | Exit |
 | --- | ---: |
@@ -55,7 +60,7 @@ Signup, terms rewrite, and debt rewrite exit 0 because the seam is `demonstrated
 
 Fitting reuse: `independentReuse: true`, producer calls 0 versus direct 1, quality `same_approved_body`, money `costs_unknown`, wall-clock claim `single_sample_not_an_economic_advantage`. Changed capture: `capture_digest_mismatch`, direct outcome `changed`. Private field: direct `available: false`, producer calls 0. Unsupported recipe: direct `aglSupported: false`, `directCompleted: false`. First-party owner: `first_party_owner_control`, not independent reuse.
 
-`git ls-remote origin refs/heads/codex/n7-task-repeat-use-20261106` returned `f60a29bce5c3658db6d239590d4cb99a67040ccc` before this receipt commit. `git rev-parse HEAD` at test time was the same. `git status --porcelain` was empty.
+`git push -u origin HEAD` for `c60641e8..f60a29bc` exited 0. `gh pr create` exited 0. `git ls-remote` then matched `f60a29bce5c3658db6d239590d4cb99a67040ccc`. The receipt commit push `f60a29bc..8c7e9d91` exited 0, and `gh pr view 380` then reported `headRefOid` `8c7e9d910b99cef2b674e75709180088453fbf3a`. The repair `3640978865b8fe33d074cabd1995844d5f22726b` and this receipt update are pushed together after this file is committed. The session receipt records that `git ls-remote` and the final `git rev-parse HEAD`.
 
 ## Native receipt
 
