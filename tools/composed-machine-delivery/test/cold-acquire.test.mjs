@@ -29,6 +29,9 @@ test("a fresh extraction runs the composed command and the direct consumers", { 
   assert.equal(names.some((name) => name.includes("whole-effort-receipt.json")), false);
   assert.equal(names.includes("tools/composed-machine-delivery/examples/changed-request.json"), true);
   assert.equal(names.includes("tools/composed-machine-delivery/examples/retained-output.json"), true);
+  assert.equal(names.includes("tools/composed-machine-delivery/package.json"), true);
+  assert.equal(names.includes("package.json"), false);
+  assert.equal(names.includes("server/foundry/activation/private-control-pin.json"), false);
   assert.equal(names.includes("vendor/hosted-wallet-market/src/fee.mjs"), true);
 
   const dir = mkdtempSync(join(tmpdir(), "composed-cold-"));

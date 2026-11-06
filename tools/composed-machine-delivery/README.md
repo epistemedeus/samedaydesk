@@ -58,6 +58,14 @@ A permitted field snapshot is not a walletless verification result. Repeat use s
 
 ## Checks
 
+This package owns its checks. From the extracted tree:
+
+```bash
+npm test --prefix tools/composed-machine-delivery
+```
+
+The same run does not need npm:
+
 ```bash
 node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs
 ```

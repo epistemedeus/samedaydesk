@@ -342,6 +342,24 @@ test("owner labels on priors stay out of the public receipt", () => {
   assert.deepEqual(hidden(result.public), []);
 });
 
+test("composed checks stay outside the production caller closure", {
+  skip: !existsSync(join(root, ".git")) || !existsSync(join(root, "server/foundry/activation/private-control-pin.json")),
+}, () => {
+  const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  assert.equal(Object.hasOwn(pkg.scripts, "test:composed-machine-delivery"), false);
+  const pin = JSON.parse(readFileSync(join(root, "server/foundry/activation/private-control-pin.json"), "utf8"));
+  assert.equal(pin.base, "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134");
+  assert.equal(pin.receivedCallerClosures.length, 36);
+  const names = Object.keys(pin.files);
+  assert.equal(names.length, 1323);
+  assert.equal(names.some((name) => name.startsWith("tools/")), false);
+  const changed = spawnSync("git", ["diff", "--name-only", BASE], { cwd: root, encoding: "utf8" });
+  assert.equal(changed.status, 0, changed.stderr);
+  const bound = new Set([...names, "server/foundry/activation/private-control-pin.json", "package.json", "package-lock.json"]);
+  const hits = changed.stdout.split("\n").filter((name) => bound.has(name));
+  assert.deepEqual(hits, []);
+});
+
 test("emitted human assets match the qualified base", { skip: !existsSync(join(root, ".git")) || !existsSync(join(root, "client/dist")) }, () => {
   const diff = spawnSync("git", ["diff", "--exit-code", BASE, "--", "client/dist", "client/public", "client/src"], {
     cwd: root,

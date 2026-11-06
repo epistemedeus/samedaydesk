@@ -8,8 +8,9 @@ Private record for the integration writer. This file is excluded from the custom
 - Hostname: cursor
 - Boot id: 8356954c-bf56-4fe8-a256-d104c1c7c2ea
 - Session: d5661425-9fd0-41e8-9503-3a1fea34a944
-- Amend run: ae14-nov06-sds-compose-amend2-20261106T152929Z
-- Previous export: 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463
+- Amend run: ae14-nov06-sds-compose-amend3-20261106T163735Z
+- Previous export: 7398afde20d8c71c7aedf9a3b410347cbda6b99e
+- Earlier export: 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463
 - Catalog model declared by admission: grok-4.7
 - Effort: xhigh
 - Commit identity recorded on this amendment: epistemedeus / 124947147+epistemedeus@users.noreply.github.com
@@ -19,7 +20,8 @@ Private record for the integration writer. This file is excluded from the custom
 - Worktree: /home/ubuntu/ae14-work/nov06-sds-compose
 - Qualified base: c60641e8ff2b94dd704307e57f5b6fe789ba0df7
 - Composition parents: c60641e8ff2b94dd704307e57f5b6fe789ba0df7, 7a606b73cdc036947281182142c61f5c77fa6db8, afab23058970e88d49cbf5988fb39ef81230c0db, d413cc95d29056db80da478291d0a765a34c0556, 21fadd907c0b100905c882c9c5734e601a225c7a
-- Code commit for this amendment: 575c850b2e01c58438686b28542f0b965d28728c
+- MCP and pin-refresh commit, retained: 575c850b2e01c58438686b28542f0b965d28728c
+- Previous record commit, retained: 7398afde20d8c71c7aedf9a3b410347cbda6b99e
 - PR base read back before the previous export: codex/h136010-machine-release-20261103 at c60641e8ff2b94dd704307e57f5b6fe789ba0df7
 - Node: 22.23.4
 - Official MCP client exercised by the stdio conformance test: @modelcontextprotocol/client 2.4.0
@@ -30,10 +32,27 @@ One retained permitted capture feeds the existing recurring decision consumer. A
 
 Public stdout and `examples/retained-output.json` omit `2000000`, `100000`, `1900000`, `earnedDebtAtomic`, and `feeBps`. The caller store keeps the private quote: platform fee `100000`, contributor net `1900000`, `thisQuoteFeeIsExactFivePercent` true, earned debt `21`.
 
-## Corrections in this amendment
+## Corrections kept from the previous export
 
-- Caller pin. CI run 42237488588 on 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463 failed `npm run test:proxy-addr` because `private-control-pin.json` did not match `package.json`. That was the only mismatched member. `node server/scripts/refresh-installed-receiving-source.mjs --receive-caller-from 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463` rehashed `package.json` and no other file. All 36 received caller closures stayed. The producer appended the predecessor descriptor for that commit. The pin base stayed `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`. A seeded change to `server/lib/original-task/event-guard.mjs` still returns `caller_source_changed`.
-- MCP stdio. The 2026-07-28 transports page defines stdio as newline-delimited JSON-RPC. The linked stdio binding says one JSON-RPC message per line, logs on stderr, and stdin EOF as shutdown. The TypeScript SDK serving guide has the host parse each stdout line. Matching Content-Length frames on our own caller and server did not establish that binding. `runtime/mcp-stdio.mjs` and the workflow caller now write one JSON object per line. Legacy clients use `initialize` for `2024-10-07` through `2025-11-25`, then `notifications/initialized`, `tools/list`, and `tools/call`. A `2026-07-28` client uses `server/discover` and per-request `_meta`. An unsupported modern version returns `-32022`. A non-JSON line returns `-32700` and exits non-zero. Empty stdin exits 0 with empty stdout. The conformance test imports `@modelcontextprotocol/client` 2.4.0 and drives a separate `StdioClientTransport`: legacy initialize/list/call, and a pinned `2026-07-28` discover/list/call, including a fitting page-change call and a non-fitting chat call. Fragmented and coalesced writes are answered before EOF.
+- MCP stdio. The 2026-07-28 transports page defines stdio as newline-delimited JSON-RPC. The linked stdio binding says one JSON-RPC message per line, logs on stderr, and stdin EOF as shutdown. The TypeScript SDK serving guide has the host parse each stdout line. `runtime/mcp-stdio.mjs` and the workflow caller write one JSON object per line. Legacy clients use `initialize` for `2024-10-07` through `2025-11-25`, then `notifications/initialized`, `tools/list`, and `tools/call`. A `2026-07-28` client uses `server/discover` and per-request `_meta`. An unsupported modern version returns `-32022`. A non-JSON line returns `-32700` and exits non-zero. Empty stdin exits 0 with empty stdout. The conformance test imports `@modelcontextprotocol/client` 2.4.0 and drives a separate `StdioClientTransport`: legacy initialize/list/call, and a pinned `2026-07-28` discover/list/call, including a fitting page-change call and a non-fitting chat call. Fragmented and coalesced writes are answered before EOF.
+- The earlier caller-pin refresh remains in Git at `575c850b2e01c58438686b28542f0b965d28728c` and `7398afde20d8c71c7aedf9a3b410347cbda6b99e`. It appended one uninstalled candidate closure and is not rewritten.
+
+## Isolation in this amendment
+
+Runtime startup run 42246667573 on `7398afde20d8c71c7aedf9a3b410347cbda6b99e` failed in the H145/H147 source-bound acquisition step. Live `hostSourceSha256` was `662cae8e29890dcd4fd7f990bf68ed672af24d8960a1571a6594a94fe513a12c`. The committed proposal still requires `7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23`. Those tests were not edited and the new digest was not written into them.
+
+Compared with `c60641e8ff2b94dd704307e57f5b6fe789ba0df7`, the only production-root and server changes on that export were `package.json` (one `test:composed-machine-delivery` script) and `server/foundry/activation/private-control-pin.json` (the matching package hash, plus one closure). Root lock, server code, and `.github` had no other changes. The pin binds 1323 files, none under `tools/`.
+
+This amendment restores those two files to their exact `c60641e8ff2b94dd704307e57f5b6fe789ba0df7` bytes. The restored pin has the same 36 received caller closures and base `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`. Measured source stays `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`. Measured host returns to `7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23`.
+
+The retired closure stays in the previous commits: base `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`, source pin `02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15`, closure digest `sha256:964ccc9d7603964b45acb45a90327c8bedd91ff4e6dde2be9940f089e4d3242b`.
+
+The check now belongs to this package:
+
+```text
+npm test --prefix tools/composed-machine-delivery
+node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs
+```
 
 ## Preserved findings
 
@@ -42,7 +61,7 @@ Public stdout and `examples/retained-output.json` omit `2000000`, `100000`, `190
 
 ## Commands and exits
 
-Clean tree `575c850b2e01c58438686b28542f0b965d28728c`, serial, 2026-11-06T15:45:44Z:
+Previous export `575c850b2e01c58438686b28542f0b965d28728c`, serial, 2026-11-06T15:45:44Z. This amendment remeasures the same commands on its own committed tree:
 
 ```text
 node --test --test-concurrency=1 tools/task-repeat-use/test/*.test.mjs
@@ -85,10 +104,11 @@ EXIT 0
 
 ## Artifact
 
-- Archive: `tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz` (367436 bytes, 421 members)
+- Archive: `tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz` (367837 bytes, 422 members)
 - Input: `tools/composed-machine-delivery/examples/changed-request.json`
 - Output: `tools/composed-machine-delivery/examples/retained-output.json`
 - Command: `node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>`
+- Package check: `npm test --prefix tools/composed-machine-delivery`
 - Workflow conformance install: `npm ci --ignore-scripts --omit=dev --prefix tools/workflow-owned-extensions`
 
 The archive omits this receiving directory, the dist directory, `node_modules`, and the package operator notes `TERMINAL.md`, `N7-RECEIVING.md`, and `whole-effort-receipt.json`.

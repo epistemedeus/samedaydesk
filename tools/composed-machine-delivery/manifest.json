@@ -28,6 +28,7 @@
     }
   ],
   "composedCommand": "node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>",
+  "testCommand": "npm test --prefix tools/composed-machine-delivery",
   "exampleInput": "tools/composed-machine-delivery/examples/changed-request.json",
   "exampleOutput": "tools/composed-machine-delivery/examples/retained-output.json",
   "artifact": "tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz"
