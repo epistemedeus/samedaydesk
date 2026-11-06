@@ -61,7 +61,7 @@ node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs
 
 ## Commands and exits
 
-Previous export `575c850b2e01c58438686b28542f0b965d28728c`, serial, 2026-11-06T15:45:44Z. This amendment remeasures the same commands on its own committed tree:
+Committed tree `af390a13ea9d3661ff1b5a0f985b1b64ec106321`, serial, 2026-11-06T16:44:42Z through 2026-11-06T16:45:28Z. This record commit does not change those sources.
 
 ```text
 node --test --test-concurrency=1 tools/task-repeat-use/test/*.test.mjs
@@ -77,7 +77,10 @@ node --test --test-concurrency=1 tools/recurring-decision-consumer/test/*.test.m
 EXIT 0, tests 63, pass 63, fail 0
 
 node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs
-EXIT 0, tests 12, pass 12, fail 0
+EXIT 0, tests 13, pass 13, fail 0
+
+npm test --prefix tools/composed-machine-delivery
+EXIT 0, tests 13, pass 13, fail 0
 
 npm run test:proxy-addr
 EXIT 0, tests 13, pass 13, fail 0
@@ -85,15 +88,46 @@ EXIT 0, tests 13, pass 13, fail 0
 npm run test:hosted-startup
 EXIT 0, tests 4, pass 4, fail 0
 
+node --test server/scripts/test-correspondence-startup-diagnostic.js
+EXIT 0, tests 7, pass 7, fail 0
+
 npm run test:correspondence-mount
 EXIT 0, tests 10, pass 9, fail 0, skipped 1
 The skipped test requires CORRESPONDENCE_TEST_DATABASE_URL.
 
-npm run test:managed-watch
-EXIT 1, tests 17, pass 15, fail 2
+npm run test:machine-discovery
+EXIT 0, tests 6, pass 5, fail 0, skipped 1
+The skipped test needs an explicit client build.
+
+node --test server/scripts/test-machine-guide-links.js
+EXIT 0, tests 4, pass 4, fail 0
+
+npm run test:agent-readiness
+EXIT 0, tests 185, pass 185, fail 0
+
+npm run test:l08-agent-repair
+EXIT 0, tests 28, pass 28, fail 0
+
+npm run test:mcp
+EXIT 0, tests 46, pass 46, fail 0
+
+node --test server/scripts/test-public-readiness-load-failure.js
+EXIT 0, tests 1, pass 1, fail 0
+
+npm run test:observatory
+EXIT 0 on the committed source when NO_COLOR and FORCE_COLOR are not both set.
+The session first saw tests 102, pass 99, fail 1, skipped 2. The one failure was
+server/scripts/test-observatory-positioning.js expecting empty stderr while Node
+warned that NO_COLOR is ignored because FORCE_COLOR is set. The same test then
+passed alone with those variables unset. Two skips are the unconfigured historical
+capture and OBSERVATORY_LIVE.
 ```
 
-The composed file includes the cold extraction. From an empty directory the archive ran `deliver`, `show`, `recur`, `result-reuse preview`, `task-repeat-use walk --case fitting`, and `walk --case nonfitting-capture`.
+The composed file includes the cold extraction. From an empty directory the archive ran `deliver`, `show`, `recur`, `result-reuse preview`, `task-repeat-use walk --case fitting`, and `walk --case nonfitting-capture`. `npm test` in the package repeats that suite. The l08 repair command rewrote its own handoff files during the run. Those files were restored and are not part of this amendment.
+
+Measured on this restored closure: source `2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82`, host `7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23`. That host is the value already required by `docs/receiving/h155030-sds-consumer-composition-20261106/proposed-anchor.json`. Every pin member matches its `c60641e8ff2b94dd704307e57f5b6fe789ba0df7` blob. No bound path differs. Every path that differs from that baseline is under `tools/`.
+
+This machine has no `pg_config`. These Runtime startup steps are received from the GitHub workflow on the exported head: `server/scripts/test-postgres-bin.mjs`, the H145/H147 source-bound selection, the acquisition receive step, `npm run test:pulse`, and `npm run test:original-task`. The pull-request path filter does not select this head, because `package.json`, the caller pin, and the other production paths match the baseline. The workflow is dispatched on the exact head.
 
 Human assets:
 
@@ -115,6 +149,6 @@ The archive omits this receiving directory, the dist directory, `node_modules`, 
 
 ## Limits
 
-`test:managed-watch` still has two failures that this amendment did not introduce. Disposable Postgres binaries are absent (`postgres_bin_unavailable`). The real-clock enrollment uses the existing default `expiresAt` of `2026-11-01T00:00:00.000Z`, which is before the run clock, so that request returns `invalid_expiry`. The correspondence suite skips its live database test unless `CORRESPONDENCE_TEST_DATABASE_URL` is set.
+Local PostgreSQL client binaries are absent, so the workflow steps that call `pg_config` are not repeated on this machine. The correspondence suite skips its live database test unless `CORRESPONDENCE_TEST_DATABASE_URL` is set. Machine discovery skips the explicit client-build case. Observatory skips its live GETs unless `OBSERVATORY_LIVE=1`, and skips the optional historical capture. The H145 and H147 tests were not rewritten. Their expected host remains the restored measurement `7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23`.
 
 Root keeps release, public acquisition, and money authority. This writer does not merge to the default branch, publish human copy, install a host, create an account, or move a payment. Original jobs and earned obligations are unchanged. Ghost, Dify, and n8n installers stay unsupported. The composed command does not run walletless repeat use on the representative field snapshot.
