@@ -346,8 +346,8 @@ else
 fi
 
 if [ "$install_code" -eq 0 ] && [ ! -f "$GHOST_DIR/config.development.json" ] && [ ! -f "$GHOST_DIR/.ghost-cli" ]; then
-  if ! PATH="$INSTALL_PATH" "$GHOST_BIN" install "$GHOST_VERSION" --local --dir "$GHOST_DIR" --no-start --port "$GHOST_PORT" --url "http://127.0.0.1:${GHOST_PORT}" --db sqlite3 --no-prompt >> "$OUT/runtime-install.log" 2>&1; then
-    if ! PATH="$INSTALL_PATH" "$GHOST_BIN" install "$GHOST_VERSION" --local --dir "$GHOST_DIR" --no-start --port "$GHOST_PORT" --no-prompt >> "$OUT/runtime-install.log" 2>&1; then
+  if ! PATH="$INSTALL_PATH" "$GHOST_BIN" install "$GHOST_VERSION" --local --dir "$GHOST_DIR" --no-start --port "$GHOST_PORT" --ip 127.0.0.1 --url "http://127.0.0.1:${GHOST_PORT}" --db sqlite3 --no-prompt >> "$OUT/runtime-install.log" 2>&1; then
+    if ! PATH="$INSTALL_PATH" "$GHOST_BIN" install "$GHOST_VERSION" --local --dir "$GHOST_DIR" --no-start --port "$GHOST_PORT" --ip 127.0.0.1 --no-prompt >> "$OUT/runtime-install.log" 2>&1; then
       install_code=1
     fi
   fi

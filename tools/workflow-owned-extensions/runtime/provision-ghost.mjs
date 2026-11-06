@@ -2,81 +2,84 @@
 import { randomBytes } from "node:crypto";
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
-const args = parseArgs(process.argv.slice(2));
-if (!args.url || !args.home) {
-  process.stderr.write("provision-ghost requires --url and --home\n");
-  process.exit(2);
-}
-
-const home = args.home;
-mkdirSync(home, { recursive: true });
-const keyFile = join(home, "admin-api-key");
-const contentFile = join(home, "content-api-key");
-const ownerFile = join(home, "owner.secret");
-
-if (existsSync(keyFile) && readNonEmpty(keyFile)) {
-  process.stdout.write(`${JSON.stringify({ ok: true, action: "unchanged", keyFilePresent: true })}\n`);
-  process.exit(0);
-}
-
-const setup = await readSetup(args.url);
-if (!setup.ok) fail(setup.message);
-
-let owner = readOwner(ownerFile);
-if (!setup.ready) {
-  if (!owner) {
-    owner = {
-      name: "Runtime Owner",
-      email: "sdd-runtime-owner@example.com",
-      password: makePassword(),
-      blogTitle: "SameDayDesk result-reuse lab",
-    };
-    writeSecretFile(ownerFile, encodeOwner(owner));
+export async function provisionGhost(argv = process.argv.slice(2)) {
+  const args = parseArgs(argv);
+  if (!args.url || !args.home) {
+    process.stderr.write("provision-ghost requires --url and --home\n");
+    process.exit(2);
   }
-  const created = await postJson(`${args.url}/ghost/api/admin/authentication/setup/`, {
-    setup: [{
-      name: owner.name,
-      email: owner.email,
-      password: owner.password,
-      blogTitle: owner.blogTitle,
+
+  const home = args.home;
+  mkdirSync(home, { recursive: true });
+  const keyFile = join(home, "admin-api-key");
+  const contentFile = join(home, "content-api-key");
+  const ownerFile = join(home, "owner.secret");
+
+  if (existsSync(keyFile) && readNonEmpty(keyFile)) {
+    process.stdout.write(`${JSON.stringify({ ok: true, action: "unchanged", keyFilePresent: true })}\n`);
+    process.exit(0);
+  }
+
+  const setup = await readSetup(args.url);
+  if (!setup.ok) fail(setup.message);
+
+  let owner = readOwner(ownerFile);
+  if (!setup.ready) {
+    if (!owner) {
+      owner = {
+        name: "Runtime Owner",
+        email: "sdd-runtime-owner@example.com",
+        password: makePassword(),
+        blogTitle: "SameDayDesk result-reuse lab",
+      };
+      writeSecretFile(ownerFile, encodeOwner(owner));
+    }
+    const created = await postJson(`${args.url}/ghost/api/admin/authentication/setup/`, {
+      setup: [{
+        name: owner.name,
+        email: owner.email,
+        password: owner.password,
+        blogTitle: owner.blogTitle,
+      }],
+    }, { Origin: args.url });
+    if (!created.ok && !/already/.test(String(created.message || "").toLowerCase())) {
+      fail(created.message || "ghost setup failed");
+    }
+  } else if (!owner) {
+    fail("ghost is already set up but owner.secret is missing; cannot create an Admin API key");
+  }
+
+  const session = await createSession(args.url, owner);
+  if (!session.ok) fail(session.message);
+
+  const integration = await postJson(`${args.url}/ghost/api/admin/integrations/`, {
+    integrations: [{
+      name: "sdd-result-reuse",
+      description: "Local Admin API access for unpublished result-reuse drafts",
     }],
-  }, { Origin: args.url });
-  if (!created.ok && !/already/.test(String(created.message || "").toLowerCase())) {
-    fail(created.message || "ghost setup failed");
-  }
-} else if (!owner) {
-  fail("ghost is already set up but owner.secret is missing; cannot create an Admin API key");
+  }, { Origin: args.url, Cookie: session.cookie });
+  if (!integration.ok) fail(integration.message);
+  const record = integration.json?.integrations?.[0];
+  const admin = (record?.api_keys || []).find((item) => item.type === "admin");
+  const content = (record?.api_keys || []).find((item) => item.type === "content");
+  if (!admin?.id || !admin?.secret) fail("ghost integration did not return an admin API key");
+  const adminKey = formatAdminKey(admin);
+  writeSecretFile(keyFile, `${adminKey}\n`);
+  if (content?.secret) writeSecretFile(contentFile, `${content.secret}\n`);
+  process.stdout.write(`${JSON.stringify({
+    ok: true,
+    action: "provisioned",
+    keyFilePresent: true,
+    contentKeyFilePresent: Boolean(content?.secret),
+    integrationId: record?.id ?? null,
+    adminKeyId: admin.id,
+    adminSecretAlreadyPrefixed: String(admin.secret).startsWith(`${admin.id}:`),
+  })}\n`);
 }
 
-const session = await createSession(args.url, owner);
-if (!session.ok) fail(session.message);
-
-const integration = await postJson(`${args.url}/ghost/api/admin/integrations/`, {
-  integrations: [{
-    name: "sdd-result-reuse",
-    description: "Local Admin API access for unpublished result-reuse drafts",
-  }],
-}, { Origin: args.url, Cookie: session.cookie });
-if (!integration.ok) fail(integration.message);
-const record = integration.json?.integrations?.[0];
-const admin = (record?.api_keys || []).find((item) => item.type === "admin");
-const content = (record?.api_keys || []).find((item) => item.type === "content");
-if (!admin?.id || !admin?.secret) fail("ghost integration did not return an admin API key");
-const adminKey = formatAdminKey(admin);
-writeSecretFile(keyFile, `${adminKey}\n`);
-if (content?.secret) writeSecretFile(contentFile, `${content.secret}\n`);
-process.stdout.write(`${JSON.stringify({
-  ok: true,
-  action: "provisioned",
-  keyFilePresent: true,
-  contentKeyFilePresent: Boolean(content?.secret),
-  integrationId: record?.id ?? null,
-  adminKeyId: admin.id,
-  adminSecretAlreadyPrefixed: String(admin.secret).startsWith(`${admin.id}:`),
-})}\n`);
-
-function formatAdminKey(admin) {
+export function formatAdminKey(admin) {
   const id = String(admin.id);
   const secret = String(admin.secret);
   // Ghost 6.x integration output already formats admin secrets as "id:secret".
@@ -199,5 +202,19 @@ function urlPath(url) {
   } catch {
     return "request";
   }
+}
+
+function invokedAsCli() {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return import.meta.url === pathToFileURL(entry).href;
+  } catch {
+    return false;
+  }
+}
+
+if (invokedAsCli()) {
+  await provisionGhost();
 }
 
