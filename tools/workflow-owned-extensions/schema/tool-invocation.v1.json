@@ -14,7 +14,10 @@
     "consumer": {
       "enum": [
         "dify",
-        "ghost"
+        "ghost",
+        "native",
+        "mcp",
+        "review"
       ]
     },
     "tool": {

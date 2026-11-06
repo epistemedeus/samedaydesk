@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { installConsumer, removeInstalled, runInstalled, updateInstalled } from "./src/acquire.mjs";
 import { invoke } from "./src/adapter.mjs";
 import { registerExtension, updateExtension, removeExtension, readExtension } from "./src/lifecycle.mjs";
 import { loadAllInterfaces } from "./src/manifests.mjs";
 import { INPUT_MAX_BYTES } from "../result-reuse/src/limits.mjs";
+
+const ACQUIRABLE = new Set(["native", "mcp", "review"]);
 
 const args = parseArgs(process.argv.slice(2));
 if (args.help || !args.command) {
@@ -34,13 +37,53 @@ process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 
 function dispatch(parsed) {
   if (parsed.command === "manifests") return loadAllInterfaces();
+  if (parsed.command === "acquire") {
+    return installConsumer({
+      store: parsed.store,
+      consumer: parsed.consumer,
+      version: parsed.version,
+      clock: parsed.clock,
+      site: parsed.site,
+      sourceCommit: parsed.source,
+    });
+  }
+  if (parsed.command === "run") {
+    return runInstalled({
+      store: parsed.store,
+      consumer: parsed.consumer,
+      job: {
+        tool: parsed.tool || "preview_reuse",
+        input: parsed.inputValue,
+        task_id: parsed.taskId,
+        subject: parsed.subject,
+        sequence: parsed.sequence,
+        clock: parsed.clock,
+        opt_in: parsed.optIn,
+        horizon: parsed.horizonHours,
+        produced: parsed.producedValue,
+        publish: parsed.publish === true,
+      },
+    });
+  }
   if (parsed.command === "register") {
     return registerExtension({ store: parsed.store, consumer: parsed.consumer, version: parsed.version, clock: parsed.clock });
   }
   if (parsed.command === "update") {
+    if (ACQUIRABLE.has(parsed.consumer)) {
+      return updateInstalled({
+        store: parsed.store,
+        consumer: parsed.consumer,
+        version: parsed.version,
+        clock: parsed.clock,
+        sourceCommit: parsed.source,
+      });
+    }
     return updateExtension({ store: parsed.store, consumer: parsed.consumer, version: parsed.version, clock: parsed.clock });
   }
   if (parsed.command === "remove") {
+    if (ACQUIRABLE.has(parsed.consumer)) {
+      return removeInstalled({ store: parsed.store, consumer: parsed.consumer, clock: parsed.clock });
+    }
     return removeExtension({ store: parsed.store, consumer: parsed.consumer, clock: parsed.clock });
   }
   if (parsed.command === "status") {
@@ -99,21 +142,26 @@ node tools/workflow-owned-extensions/cli.mjs export --input <result.json> --task
 node tools/workflow-owned-extensions/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in
 node tools/workflow-owned-extensions/cli.mjs invoke --tool preview_reuse --params <params.json>
 node tools/workflow-owned-extensions/cli.mjs register --store <dir> --clock <ISO-UTC> [--consumer dify|ghost]
-node tools/workflow-owned-extensions/cli.mjs update --store <dir> --version <semver> --clock <ISO-UTC> [--consumer dify|ghost]
-node tools/workflow-owned-extensions/cli.mjs remove --store <dir> --clock <ISO-UTC> [--consumer dify|ghost]
-node tools/workflow-owned-extensions/cli.mjs status --store <dir> [--consumer dify|ghost]
-node tools/workflow-owned-extensions/cli.mjs manifests`;
+node tools/workflow-owned-extensions/cli.mjs update --store <dir> --version <semver> --clock <ISO-UTC> [--consumer dify|ghost|native|mcp|review]
+node tools/workflow-owned-extensions/cli.mjs remove --store <dir> --clock <ISO-UTC> [--consumer dify|ghost|native|mcp|review]
+node tools/workflow-owned-extensions/cli.mjs status --store <dir> [--consumer dify|ghost|native|mcp|review]
+node tools/workflow-owned-extensions/cli.mjs manifests
+node tools/workflow-owned-extensions/cli.mjs acquire --consumer <native|mcp|review> --site <samedaydesk|ein-llc|neomorphic-io> --store <dir> --source <40-hex> --clock <ISO-UTC>
+node tools/workflow-owned-extensions/cli.mjs run --consumer <native|mcp|review> --store <dir> --input <result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>`;
 }
 
 function parseArgs(argv) {
-  const out = { command: argv[0], select: [], consumer: "dify" };
+  const out = { command: argv[0], select: [], consumer: "dify", consumerExplicit: false };
   if (out.command === "invoke") {
     for (let i = 1; i < argv.length; i += 1) {
       const arg = argv[i];
       if (arg === "--help" || arg === "-h") out.help = true;
       else if (arg === "--tool") out.tool = optionValue(argv, ++i);
       else if (arg === "--params") out.paramsPath = optionValue(argv, ++i);
-      else if (arg === "--consumer") out.consumer = optionValue(argv, ++i);
+      else if (arg === "--consumer") {
+        out.consumer = optionValue(argv, ++i);
+        out.consumerExplicit = true;
+      }
       else fail("unknown option");
     }
     if (!out.help) {
@@ -145,27 +193,41 @@ function parseArgs(argv) {
     else if (arg === "--horizon") out.horizonHours = horizonHours(optionValue(argv, ++i));
     else if (arg === "--store") out.store = optionValue(argv, ++i);
     else if (arg === "--version") out.version = optionValue(argv, ++i);
-    else if (arg === "--consumer") out.consumer = optionValue(argv, ++i);
+    else if (arg === "--consumer") {
+      out.consumer = optionValue(argv, ++i);
+      out.consumerExplicit = true;
+    }
     else if (arg === "--tool") out.tool = optionValue(argv, ++i);
+    else if (arg === "--site") out.site = optionValue(argv, ++i);
+    else if (arg === "--source") out.source = optionValue(argv, ++i);
+    else if (arg === "--publish") out.publish = true;
     else fail("unknown option");
   }
   if (out.optIn && out.optInWithdrawn) fail("opt-in and withdrawal conflict");
   if (out.command === "export" && !out.out && !out.help) fail("export requires --out");
-  if (out.produced && out.command !== "decide-or-reuse") fail("--produced is only valid for decide-or-reuse");
+  if (out.produced && out.command !== "decide-or-reuse" && out.command !== "run") fail("--produced is only valid for decide-or-reuse");
   if (out.command === "decide-or-reuse" && out.produced && out.decision) fail("decide-or-reuse accepts either --decision or --produced");
   if (out.command === "decide-or-reuse" && !out.decision && !out.produced && !out.help) {
     fail("decide-or-reuse requires --decision or --produced");
   }
-  if (out.produced && !out.out) fail("binding a decision requires --out");
-  const lifecycle = ["register", "update", "remove", "status", "manifests"];
+  if (out.produced && out.command === "decide-or-reuse" && !out.out) fail("binding a decision requires --out");
+  const lifecycle = ["register", "update", "remove", "status", "manifests", "acquire", "run"];
   const known = ["preview", "export", "decide-or-reuse", "invoke", ...lifecycle];
   if (out.command && !known.includes(out.command) && !out.help) {
-    fail("command must be preview, export, decide-or-reuse, invoke, register, update, remove, status, or manifests");
+    fail("command must be preview, export, decide-or-reuse, invoke, register, update, remove, status, manifests, acquire, or run");
   }
-  if (["preview", "export", "decide-or-reuse"].includes(out.command) && !out.input && !out.help) fail("requires --input");
-  if (["register", "update", "remove", "status"].includes(out.command) && !out.store && !out.help) fail("requires --store");
+  if (["preview", "export", "decide-or-reuse", "run"].includes(out.command) && !out.input && !out.help) fail("requires --input");
+  if (["register", "update", "remove", "status", "acquire", "run"].includes(out.command) && !out.store && !out.help) fail("requires --store");
   if (out.command === "update" && !out.version && !out.help) fail("update requires --version");
-  if (["preview", "export", "decide-or-reuse"].includes(out.command) && out.input) {
+  if ((out.command === "acquire" || out.command === "run") && !out.consumerExplicit && !out.help) {
+    fail("caller must name a consumer; no selection is made");
+  }
+  if (out.command === "acquire" && !out.help) {
+    if (!out.site) fail("acquire requires --site");
+    if (!out.source) fail("acquire requires --source");
+    if (!out.clock) fail("acquire requires --clock");
+  }
+  if (["preview", "export", "decide-or-reuse", "run"].includes(out.command) && out.input) {
     out.inputValue = readBoundedJson(out.input, "--input");
   }
   if (out.produced) out.producedValue = readBoundedJson(out.produced, "--produced");

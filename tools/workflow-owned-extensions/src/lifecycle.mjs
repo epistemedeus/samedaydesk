@@ -3,7 +3,14 @@ import { join } from "node:path";
 import { DEFAULT_CONSUMER, PACKAGE_VERSION, resolveConsumer } from "./pins.mjs";
 import { extensionRecord } from "./status.mjs";
 
-export function registerExtension({ store, consumer = DEFAULT_CONSUMER, version = PACKAGE_VERSION, clock } = {}) {
+export function registerExtension({
+  store,
+  consumer = DEFAULT_CONSUMER,
+  version = PACKAGE_VERSION,
+  clock,
+  site,
+  sourceCommit,
+} = {}) {
   const resolved = resolveConsumer(consumer);
   if (!resolved.ok) return resolved;
   if (!store) return { ok: false, message: "register requires a local store directory" };
@@ -14,13 +21,26 @@ export function registerExtension({ store, consumer = DEFAULT_CONSUMER, version 
     }
     return { ok: false, message: "an active extension already exists; use update" };
   }
-  const built = extensionRecord({ consumer: resolved.consumer.key, version, clock, previousVersions: historyVersions(existing) });
+  const built = extensionRecord({
+    consumer: resolved.consumer.key,
+    version,
+    clock,
+    previousVersions: historyVersions(existing),
+    site,
+    sourceCommit,
+  });
   if (!built.ok) return built;
   writeCurrent(store, resolved.consumer.key, built.record);
   return { ok: true, action: "registered", record: built.record };
 }
 
-export function updateExtension({ store, consumer = DEFAULT_CONSUMER, version, clock } = {}) {
+export function updateExtension({
+  store,
+  consumer = DEFAULT_CONSUMER,
+  version,
+  clock,
+  sourceCommit,
+} = {}) {
   const resolved = resolveConsumer(consumer);
   if (!resolved.ok) return resolved;
   if (!store) return { ok: false, message: "update requires a local store directory" };
@@ -34,16 +54,21 @@ export function updateExtension({ store, consumer = DEFAULT_CONSUMER, version, c
   if (existing.record.version === version) {
     return { ok: false, message: "update requires a different version" };
   }
-  const previousVersions = [
-    ...historyVersions(existing),
-    { version: existing.record.version, updatedAt: existing.record.updatedAt, supersededAt: clock },
-  ];
+  const superseded = {
+    version: existing.record.version,
+    updatedAt: existing.record.updatedAt,
+    supersededAt: clock,
+  };
+  if (existing.record.sourceCommit) superseded.sourceCommit = existing.record.sourceCommit;
+  const previousVersions = [...historyVersions(existing), superseded];
   writeHistory(store, resolved.consumer.key, existing.record);
   const built = extensionRecord({
     consumer: resolved.consumer.key,
     version,
     clock,
     previousVersions,
+    site: existing.record.site,
+    sourceCommit: sourceCommit || existing.record.sourceCommit,
   });
   if (!built.ok) return built;
   built.record.createdAt = existing.record.createdAt;
