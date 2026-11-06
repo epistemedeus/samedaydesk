@@ -1037,7 +1037,20 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.equal(priorRow.receiving.installed, false);
   assert.equal(priorRow.receiving.qualified, false);
   const currentRows = index.packets.filter(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE);
-  assert.equal(currentRows.length, 0);
+  const receivedAnchorPath = join(root, proposal, 'ROOT-RECEIVED-ANCHOR.json');
+  if (existsSync(receivedAnchorPath)) {
+    const receivedAnchorBytes = readFileSync(receivedAnchorPath);
+    const receivedAnchor = JSON.parse(receivedAnchorBytes.toString('utf8'));
+    assert.equal(rootReceivingAccepted(receivedAnchor.receiving, 'epistemedeus/samedaydesk'), true);
+    assert.deepEqual(receivedAnchor.requiredProfile, anchor.requiredProfile);
+    assert.equal(currentRows.length, 1, 'one independently received current slot');
+    assert.equal(currentRows[0].trustAnchorSha256, sha256(receivedAnchorBytes));
+    const currentPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(CURRENT_SOURCE, CURRENT_HOST)), 'utf8')));
+    assert.equal(rowAgrees(currentRows[0], currentPacket), true);
+    assert.deepEqual(currentPacket.anchor, receivedAnchor);
+  } else {
+    assert.equal(currentRows.length, 0, 'no current slot without separate Root receiving');
+  }
   assert.equal(indexText.includes(FIXTURE_REPLAY), false);
   assert.equal(indexText.includes(sha256(readFileSync(join(root, proposal, 'proposed-anchor.json')))), false);
 });
