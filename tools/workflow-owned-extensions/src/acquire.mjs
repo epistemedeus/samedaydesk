@@ -222,15 +222,14 @@ function runMcp({ entry, prefix, job }) {
     id: 1,
     method: "initialize",
     params: {
-      protocolVersion: "2024-11-05",
+      protocolVersion: "2025-11-25",
       capabilities: {},
       clientInfo: { name: "samedaydesk-machine-caller", version: "0.1.0" },
     },
   };
-  const input = encodeMessage(init)
-    + encodeMessage({ jsonrpc: "2.0", method: "notifications/initialized" })
-    + encodeMessage(list)
-    + encodeMessage(call);
+  const input = [init, { jsonrpc: "2.0", method: "notifications/initialized" }, list, call]
+    .map((message) => encodeMessage(message))
+    .join("");
   const child = spawnSync(process.execPath, [entry, "--prefix", prefix], {
     input,
     encoding: "utf8",
@@ -246,7 +245,7 @@ function runMcp({ entry, prefix, job }) {
     return {
       ok: false,
       executionDeclaration: "unsupported_execution",
-      message: `MCP/CLI response was not a framed result: ${error.message}`,
+      message: `MCP stdio response was not newline-delimited JSON-RPC: ${error.message}`,
       stderr: child.stderr,
       published: false,
     };
@@ -273,7 +272,8 @@ function runMcp({ entry, prefix, job }) {
     ...body,
     childPid: child.pid,
     mcp: {
-      protocol: "2024-11-05",
+      protocol: messages.find((message) => message.id === 1)?.result?.protocolVersion || "2025-11-25",
+      framing: "newline-delimited-json-rpc",
       exitCode: child.status,
       pid: child.pid,
       tools: (listed?.result?.tools || []).map((tool) => tool.name),

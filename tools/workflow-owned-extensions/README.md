@@ -83,7 +83,7 @@ the consumer and one of `samedaydesk`, `ein-llc`, or `neomorphic-io`. The
 package does not choose for the caller and does not publish a human preview.
 
 - `native`: local package process. Native Tasks wire execution stays unsupported.
-- `mcp`: MCP stdio process for `preview_reuse`, `export_reuse`, and `decide_or_reuse`.
+- `mcp`: MCP stdio process for `preview_reuse`, `export_reuse`, and `decide_or_reuse`. The wire format is newline-delimited JSON-RPC. Legacy clients use `initialize` through `2025-11-25`. A `2026-07-28` client uses `server/discover` and per-request metadata.
 - `review`: Dify/Ghost-class unpublished draft. Human review stays unpublished. Ghost is not reopened and Dify is not cold-installed.
 
 ```bash
@@ -111,13 +111,15 @@ Remove deletes the prefix.
 
 ## Offline unit checks
 
-This package uses Node builtins plus the existing `tools/result-reuse` SDK.
-No extra npm package is required for the unit tests. Do not install a Dify or
-Ghost stack to satisfy `test/*.test.mjs`, and do not treat generated manifests
-as installation or as proof that a runtime ran.
+The server and the other unit tests use Node builtins plus the existing
+`tools/result-reuse` module. The stdio conformance test imports the pinned
+`@modelcontextprotocol/client` 2.4.0. Install that package before the suite.
+Do not install a Dify or Ghost stack to satisfy `test/*.test.mjs`, and do not
+treat generated manifests as installation or as proof that a runtime ran.
 
 ```bash
 node --version   # expect v22.x, the repo engine
+npm ci --ignore-scripts --omit=dev --prefix tools/workflow-owned-extensions
 node --test --test-concurrency=1 tools/workflow-owned-extensions/test/*.test.mjs
 ```
 

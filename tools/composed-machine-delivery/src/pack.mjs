@@ -33,7 +33,7 @@ const EXCLUDES = [
 export function packDelivery({ out, root = REPO_ROOT } = {}) {
   if (!out) return { ok: false, reason: "out_required" };
   mkdirSync(dirname(out), { recursive: true });
-  const args = ["-czf", out];
+  const args = ["-czf", out, "--exclude=node_modules"];
   for (const exclude of EXCLUDES) args.push(`--exclude=${exclude}`);
   args.push("-C", root, ...MEMBERS);
   const child = spawnSync("tar", args, { encoding: "utf8" });
