@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readBoundedJson } from "./src/io.mjs";
 import { evaluateDecision } from "./src/evaluate.mjs";
+import { evaluateStoredN8n } from "./src/n8n-stored.mjs";
 import { removeState, showState, updateState } from "./src/state.mjs";
 import { exportWorkflowStub } from "./src/workflow.mjs";
 import { receiveEvaluateRequest } from "./src/http-adapter.mjs";
@@ -97,6 +98,40 @@ try {
     process.exit(response.status >= 200 && response.status < 300 ? 0 : 1);
   }
 
+  if (args.command === "receive-stored-n8n") {
+    const saved = readBoundedJson(args.saved);
+    const intent = readBoundedJson(args.intent);
+    const prior = readBoundedJson(args.prior);
+    const previous = args.previous ? readBoundedJson(args.previous) : null;
+    const reference = args.reference ? readBoundedJson(args.reference) : null;
+    const result = evaluateStoredN8n({
+      saved,
+      workflowId: args.workflowId,
+      executionId: args.executionId,
+      nodeName: args.node,
+      intent,
+      prior,
+      clock: args.clock,
+      horizonHours: args.horizonHours,
+      previous,
+      reference,
+      statePath: args.state ?? null,
+    });
+    if (args.state && result.ok && result.useful) {
+      const savedState = updateState(args.state, {
+        subject: intent.subject,
+        intentId: intent.intentId,
+        clock: args.clock,
+        retainedResult: result,
+      });
+      if (!savedState.ok) fail(savedState.message);
+      result.statePath = args.state;
+      result.stateSequence = savedState.state.sequence;
+    }
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    process.exit(result.ok ? 0 : 1);
+  }
+
 
   if (args.command === "agl-presence") {
     const presence = aglModulePresence();
@@ -162,6 +197,11 @@ node tools/recurring-decision-consumer/cli.mjs state remove --state <state.json>
 node tools/recurring-decision-consumer/cli.mjs export-workflow --runtime n8n|native --out <path> [--verified]
 node tools/recurring-decision-consumer/cli.mjs receive-http --request <http-or-mcp-request.json>
 
+node tools/recurring-decision-consumer/cli.mjs receive-stored-n8n \\
+  --saved <execution.json> --workflow-id <id> --execution-id <id> --node <name> \\
+  --intent <intent.json> --prior <capture.json> --clock <ISO-UTC> --horizon <hours> \\
+  [--reference <label.json>] [--previous <result.json>] [--state <state.json>]
+
 AGL consume (vendor-free import; requires tools/result-reuse from candidate head 95c8a841):
 node tools/recurring-decision-consumer/cli.mjs agl-presence
 node tools/recurring-decision-consumer/cli.mjs agl-decide-or-reuse --saved <obs.json> --manifest <before-work.json> \
@@ -195,6 +235,9 @@ function parseArgs(argv) {
     else if (arg === "--out") out.out = need(argv, ++i);
     else if (arg === "--request") out.request = need(argv, ++i);
     else if (arg === "--saved") out.saved = need(argv, ++i);
+    else if (arg === "--workflow-id") out.workflowId = need(argv, ++i);
+    else if (arg === "--execution-id") out.executionId = need(argv, ++i);
+    else if (arg === "--node") out.node = need(argv, ++i);
     else if (arg === "--manifest") out.manifest = need(argv, ++i);
     else if (arg === "--input") out.input = need(argv, ++i);
     else if (arg === "--portable") out.portable = need(argv, ++i);
@@ -217,6 +260,11 @@ function parseArgs(argv) {
   if (out.command === "receive-http") {
     if (!out.request) {
       if (!out.help) fail("receive-http requires --request");
+    }
+  }
+  if (out.command === "receive-stored-n8n") {
+    if (!out.saved || !out.workflowId || !out.executionId || !out.node || !out.intent || !out.prior || !out.clock || out.horizonHours == null) {
+      if (!out.help) fail("receive-stored-n8n requires --saved --workflow-id --execution-id --node --intent --prior --clock --horizon");
     }
   }
   return out;

@@ -36,6 +36,31 @@ node tools/recurring-decision-consumer/cli.mjs evaluate \
 node --test tools/recurring-decision-consumer/test/*.test.mjs
 ```
 
+## Saved n8n execution
+
+`receive-stored-n8n` reads one already saved execution response and evaluates it with `evaluateDecision`. It does not call n8n, store credentials, or execute, update, or create a workflow.
+
+Supported envelopes are explicit. The received shape keeps execution metadata beside `data.resultData.runData`. A nested execution document, and data nested only inside `execution`, are accepted when that is the only data location. Both locations, or any other wrapper, are rejected. The selected node is exact. A missing node is unavailable and is not replaced by another node.
+
+The capture time is that node's `startTime`. The `--clock` value stays the evaluation time. A missing or invalid `startTime` is not replaced with the clock. Field comparison, absence, freshness, and reference controls are the maintained evaluator.
+
+`fixtures/n8n-stored/derived-sibling-execution-2.json` and `derived-nested-execution-2.json` are derived fixtures: metadata, node startTime, and title/status only. They are not a second observation of the stored execution.
+
+```bash
+node tools/recurring-decision-consumer/cli.mjs receive-stored-n8n \
+  --saved tools/recurring-decision-consumer/fixtures/n8n-stored/derived-sibling-execution-2.json \
+  --workflow-id eFUkVKYk8xXbM7LV \
+  --execution-id 2 \
+  --node "Shape Capture Fields" \
+  --intent tools/recurring-decision-consumer/fixtures/intents/watch-title.json \
+  --prior tools/recurring-decision-consumer/fixtures/captures/prior.json \
+  --clock 2026-11-05T23:21:56.441Z \
+  --horizon 168 \
+  --reference tools/recurring-decision-consumer/fixtures/reference/expect-no-change.json
+```
+
+Useful change and useful no-change exit 0. Fields absent on both sides exit 0 with `unknown`. A stale node startTime exits 0 with `stale`. Wrong workflow or execution id, unsuccessful status, and ambiguous wrappers exit 1. A missing node or missing items exits 0 with `unavailable`. Malformed or oversized JSON exits 1 before evaluation. `--state` still records only a useful result.
+
 ## Portable state
 
 ```bash

@@ -35,6 +35,15 @@ export const REASONS = Object.freeze({
   aglModulesMissing: "agl_result_reuse_modules_missing",
   aglReuse: "agl_decide_or_reuse",
   aglPortableImport: "agl_portable_import",
+  executionIdentityMismatch: "execution_identity_mismatch",
+  executionIdentityIncomplete: "execution_identity_incomplete",
+  executionStatusRejected: "execution_status_rejected",
+  executionAmbiguous: "execution_wrapper_ambiguous",
+  executionNodeMissing: "execution_node_missing",
+  executionDataMissing: "execution_data_missing",
+  executionItemsMissing: "execution_items_missing",
+  executionCaptureTimeMissing: "execution_capture_time_missing",
+  executionCaptureTimeInvalid: "execution_capture_time_invalid",
 });
 
 export const SUPPORTED_CAPTURE_SCHEMAS = Object.freeze([

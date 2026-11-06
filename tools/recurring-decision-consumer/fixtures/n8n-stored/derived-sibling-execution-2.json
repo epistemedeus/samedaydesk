@@ -1,0 +1,37 @@
+{
+  "derived": true,
+  "fixtureLabel": "derived",
+  "derivation": "Derived normalized fixture for stored manual execution 2 of workflow eFUkVKYk8xXbM7LV. Execution metadata, Shape Capture Fields startTime, and title/status only. HTML body omitted. Not a second outside-use observation.",
+  "execution": {
+    "id": "2",
+    "workflowId": "eFUkVKYk8xXbM7LV",
+    "mode": "manual",
+    "status": "success",
+    "finished": true,
+    "startedAt": "2026-11-05T20:47:22.000Z"
+  },
+  "data": {
+    "resultData": {
+      "runData": {
+        "Shape Capture Fields": [
+          {
+            "startTime": 1793911643165,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "title": "Example Domain",
+                      "status": "ok"
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
