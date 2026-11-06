@@ -1,0 +1,34 @@
+{
+  "schema": "samedaydesk.recurring-decision-priors.v1",
+  "ownerQa": true,
+  "customerObservation": false,
+  "default": {
+    "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+    "captureId": "cap-prior-1",
+    "subject": "example-page",
+    "capturedAt": "2026-11-05T10:00:00.000Z",
+    "sourceUri": "https://example.com/",
+    "payload": {
+      "title": "Example Domain",
+      "status": "ok"
+    },
+    "permission": {
+      "permitted": true
+    }
+  },
+  "byIntent": {
+    "watch-title-drift": {
+      "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+      "captureId": "cap-prior-different-title",
+      "subject": "example-page",
+      "capturedAt": "2026-11-05T20:00:00.000Z",
+      "payload": {
+        "title": "Prior Different Title",
+        "status": "ok"
+      },
+      "permission": {
+        "permitted": true
+      }
+    }
+  }
+}
