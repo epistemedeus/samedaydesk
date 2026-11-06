@@ -166,7 +166,8 @@
           "kind": "before_work_public_input",
           "recipeId": "source-change-alert",
           "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
-          "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3"
+          "inputDigest": "sha256:3297dbd872e24d83f92cc1d72fbc4a4c90490a0d25ea261c70debfdd7505f7b3",
+          "usefulBodyDigest": "sha256:b5d25aa4a23429e8de7a420f5a222895b474c07d18f68b93ad695f34850cba54"
         },
         "usefulDecision": {
           "recipeId": "source-change-alert",
