@@ -7,20 +7,22 @@ Private record for the integration writer. This file is excluded from the custom
 - Admission host: h10
 - Hostname: cursor
 - Boot id: 8356954c-bf56-4fe8-a256-d104c1c7c2ea
-- Gate shell pid: 16097
 - Session: d5661425-9fd0-41e8-9503-3a1fea34a944
-- Amend run: ae14-nov06-sds-compose-amend1-20261106T143908Z
+- Amend run: ae14-nov06-sds-compose-amend2-20261106T152929Z
+- Previous export: 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463
 - Catalog model declared by admission: grok-4.7
 - Effort: xhigh
-- Commit identity: pilot-heavy-worker / heavy@pilot.invalid
+- Commit identity recorded on this amendment: epistemedeus / 124947147+epistemedeus@users.noreply.github.com
 - GitHub login used by gh: epistemedeus
 - Integration owner declared by the continuation: Lead ade90474-1dc2-4ca8-b524-21eaeb1a1fbc
 - Writer: codex/n7-sds-composed-delivery-20261106
 - Worktree: /home/ubuntu/ae14-work/nov06-sds-compose
 - Qualified base: c60641e8ff2b94dd704307e57f5b6fe789ba0df7
 - Composition parents: c60641e8ff2b94dd704307e57f5b6fe789ba0df7, 7a606b73cdc036947281182142c61f5c77fa6db8, afab23058970e88d49cbf5988fb39ef81230c0db, d413cc95d29056db80da478291d0a765a34c0556, 21fadd907c0b100905c882c9c5734e601a225c7a
-- Code commit before this record: ffc1c264456200cb775f0ee528332cfc732a1f85
-- PR base read back: codex/h136010-machine-release-20261103 at c60641e8ff2b94dd704307e57f5b6fe789ba0df7
+- Code commit for this amendment: 575c850b2e01c58438686b28542f0b965d28728c
+- PR base read back before the previous export: codex/h136010-machine-release-20261103 at c60641e8ff2b94dd704307e57f5b6fe789ba0df7
+- Node: 22.23.4
+- Official MCP client exercised by the stdio conformance test: @modelcontextprotocol/client 2.4.0
 
 ## What was composed
 
@@ -28,23 +30,26 @@ One retained permitted capture feeds the existing recurring decision consumer. A
 
 Public stdout and `examples/retained-output.json` omit `2000000`, `100000`, `1900000`, `earnedDebtAtomic`, and `feeBps`. The caller store keeps the private quote: platform fee `100000`, contributor net `1900000`, `thisQuoteFeeIsExactFivePercent` true, earned debt `21`.
 
-## Advisory hypotheses
+## Corrections in this amendment
 
-- 380 actor labels. The walk result already sets `independentReuse` from the portable import verdict, not from the party strings. `admitActors` had an unused label flag named `independentReuse`. That flag was removed. Control `label-not-reuse` keeps `independentReuse` false when the caller still uses the later-agent labels and permission is absent.
-- 381 MCP framing. Both the caller and `runtime/mcp-stdio.mjs` use Content-Length frames, which is the MCP stdio framing this consumer implements. Newline-delimited JSON is not accepted as a successful call. Non-empty unframed stdin now returns a parse error and exits non-zero.
-- 382 proof replay. Confirmed. A stored proof replayed for a different subject or sequence. Replay now requires the same subject and sequence and leaves the stored proof in place on conflict.
-- The merge-ok note was not treated as a test result. The octopus merge was already present and was kept.
+- Caller pin. CI run 42237488588 on 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463 failed `npm run test:proxy-addr` because `private-control-pin.json` did not match `package.json`. That was the only mismatched member. `node server/scripts/refresh-installed-receiving-source.mjs --receive-caller-from 4441546478d4eac3ffd80b6e0ecf21a3ad7f9463` rehashed `package.json` and no other file. All 36 received caller closures stayed. The producer appended the predecessor descriptor for that commit. The pin base stayed `4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134`. A seeded change to `server/lib/original-task/event-guard.mjs` still returns `caller_source_changed`.
+- MCP stdio. The 2026-07-28 transports page defines stdio as newline-delimited JSON-RPC. The linked stdio binding says one JSON-RPC message per line, logs on stderr, and stdin EOF as shutdown. The TypeScript SDK serving guide has the host parse each stdout line. Matching Content-Length frames on our own caller and server did not establish that binding. `runtime/mcp-stdio.mjs` and the workflow caller now write one JSON object per line. Legacy clients use `initialize` for `2024-10-07` through `2025-11-25`, then `notifications/initialized`, `tools/list`, and `tools/call`. A `2026-07-28` client uses `server/discover` and per-request `_meta`. An unsupported modern version returns `-32022`. A non-JSON line returns `-32700` and exits non-zero. Empty stdin exits 0 with empty stdout. The conformance test imports `@modelcontextprotocol/client` 2.4.0 and drives a separate `StdioClientTransport`: legacy initialize/list/call, and a pinned `2026-07-28` discover/list/call, including a fitting page-change call and a non-fitting chat call. Fragmented and coalesced writes are answered before EOF.
+
+## Preserved findings
+
+- 380 actor labels. `independentReuse` comes from the portable import verdict. Control `label-not-reuse` stays false when permission is absent.
+- 382 proof replay. Replay requires the same subject and sequence and leaves the stored proof in place on conflict.
 
 ## Commands and exits
 
-Clean tree `ffc1c264456200cb775f0ee528332cfc732a1f85`, serial, 2026-11-06:
+Clean tree `575c850b2e01c58438686b28542f0b965d28728c`, serial, 2026-11-06T15:45:44Z:
 
 ```text
 node --test --test-concurrency=1 tools/task-repeat-use/test/*.test.mjs
 EXIT 0, tests 13, pass 13, fail 0
 
 node --test --test-concurrency=1 tools/workflow-owned-extensions/test/*.test.mjs
-EXIT 0, tests 32, pass 32, fail 0
+EXIT 0, tests 37, pass 37, fail 0
 
 node --test --test-concurrency=1 tools/two-sided-work-consumer/test/*.test.mjs
 EXIT 0, tests 17, pass 17, fail 0
@@ -54,11 +59,22 @@ EXIT 0, tests 63, pass 63, fail 0
 
 node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs
 EXIT 0, tests 12, pass 12, fail 0
+
+npm run test:proxy-addr
+EXIT 0, tests 13, pass 13, fail 0
+
+npm run test:hosted-startup
+EXIT 0, tests 4, pass 4, fail 0
+
+npm run test:correspondence-mount
+EXIT 0, tests 10, pass 9, fail 0, skipped 1
+The skipped test requires CORRESPONDENCE_TEST_DATABASE_URL.
+
+npm run test:managed-watch
+EXIT 1, tests 17, pass 15, fail 2
 ```
 
-The composed file includes the cold extraction. From an empty directory the archive ran `deliver`, `show`, `recur`, `result-reuse preview`, `task-repeat-use walk --case fitting`, and `walk --case nonfitting-capture`. Fitting reuse was true. The non-fitting capture stayed false and named competent direct execution.
-
-Before the code commit, task-repeat exited 1 and workflow exited 1 because `package.json` differed from HEAD. Those guards compare the worktree with HEAD. The same commands exited 0 after `ffc1c264`. Two-sided and recurring had already exited 0 on that source.
+The composed file includes the cold extraction. From an empty directory the archive ran `deliver`, `show`, `recur`, `result-reuse preview`, `task-repeat-use walk --case fitting`, and `walk --case nonfitting-capture`.
 
 Human assets:
 
@@ -67,17 +83,18 @@ git diff --exit-code c60641e8ff2b94dd704307e57f5b6fe789ba0df7 -- client/dist cli
 EXIT 0
 ```
 
-`git hash-object client/dist/index.html` matched `git rev-parse c60641e8ff2b94dd704307e57f5b6fe789ba0df7:client/dist/index.html`. Tracked emitted files were compared, not only templates.
-
 ## Artifact
 
-- Archive: `tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz` (361926 bytes, 418 members)
+- Archive: `tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz` (367436 bytes, 421 members)
 - Input: `tools/composed-machine-delivery/examples/changed-request.json`
 - Output: `tools/composed-machine-delivery/examples/retained-output.json`
 - Command: `node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>`
+- Workflow conformance install: `npm ci --ignore-scripts --omit=dev --prefix tools/workflow-owned-extensions`
 
-The archive omits this receiving directory, the dist directory, and the package operator notes `TERMINAL.md`, `N7-RECEIVING.md`, and `whole-effort-receipt.json`.
+The archive omits this receiving directory, the dist directory, `node_modules`, and the package operator notes `TERMINAL.md`, `N7-RECEIVING.md`, and `whole-effort-receipt.json`.
 
 ## Limits
+
+`test:managed-watch` still has two failures that this amendment did not introduce. Disposable Postgres binaries are absent (`postgres_bin_unavailable`). The real-clock enrollment uses the existing default `expiresAt` of `2026-11-01T00:00:00.000Z`, which is before the run clock, so that request returns `invalid_expiry`. The correspondence suite skips its live database test unless `CORRESPONDENCE_TEST_DATABASE_URL` is set.
 
 Root keeps release, public acquisition, and money authority. This writer does not merge to the default branch, publish human copy, install a host, create an account, or move a payment. Original jobs and earned obligations are unchanged. Ghost, Dify, and n8n installers stay unsupported. The composed command does not run walletless repeat use on the representative field snapshot.
