@@ -2,6 +2,13 @@ export const RESULT_SCHEMA = "samedaydesk.recurring-decision-consumer-result.v1"
 export const INTENT_SCHEMA = "samedaydesk.recurring-decision-intent.v1";
 export const CAPTURE_SCHEMA = "samedaydesk.recurring-decision-permitted-capture.v1";
 export const PORTABLE_CAPTURE_SCHEMA = "samedaydesk.portable-decision-capture.v1";
+export const RECURRING_RESULT_SCHEMA = "samedaydesk.customer-recurring-result.v1";
+export const SCHEDULE_SCHEMA = "samedaydesk.recurring-schedule.v1";
+export const INTENTS_SCHEMA = "samedaydesk.recurring-decision-intents.v1";
+export const PRIORS_SCHEMA = "samedaydesk.recurring-decision-priors.v1";
+export const REFERENCES_SCHEMA = "samedaydesk.recurring-decision-references.v1";
+export const EFFORT_SCHEMA = "samedaydesk.recurring-whole-effort.v1";
+export const RECEIPT_SCHEMA = "samedaydesk.recurring-result-receipt.v1";
 /** AGL R06 portable decision (decision object, not a capture). Consume via agl-bridge. */
 export const AGL_PORTABLE_DECISION_SCHEMA = "samedaydesk.portable-decision.v1";
 export const STATE_SCHEMA = "samedaydesk.recurring-decision-state.v1";
@@ -44,7 +51,21 @@ export const REASONS = Object.freeze({
   executionItemsMissing: "execution_items_missing",
   executionCaptureTimeMissing: "execution_capture_time_missing",
   executionCaptureTimeInvalid: "execution_capture_time_invalid",
+  scheduleCancelled: "schedule_cancelled",
+  oneCaptureManyDecisions: "one_capture_many_decisions",
 });
+
+export const BUNDLE_OUTCOMES = Object.freeze({
+  compared: "compared",
+  cancelled: "cancelled",
+});
+
+export const RECURRING_CANNOT_ESTABLISH = Object.freeze([
+  "This run-once consumer does not claim live recurrence.",
+  "It does not establish that later callers accepted the same decision.",
+  "Voluntary paid choice remains an outside experiment, not a fixture assertion.",
+  "This result does not install a watcher, add an n8n charge, or request a new execution.",
+]);
 
 export const SUPPORTED_CAPTURE_SCHEMAS = Object.freeze([
   CAPTURE_SCHEMA,

@@ -24,7 +24,10 @@
     "runtime": {
       "enum": [
         "dify",
-        "ghost"
+        "ghost",
+        "native",
+        "mcp",
+        "review-draft"
       ]
     },
     "capability": {

@@ -1,0 +1,106 @@
+{
+  "schema": "samedaydesk.two-sided-work.whole-effort.v1",
+  "publicShowcase": false,
+  "scenario": "authorized",
+  "pricingInvented": false,
+  "operatorCompute": "costs_unknown",
+  "monetaryCost": "costs_unknown",
+  "recomputeCostAvoidedNetOfUpkeep": "costs_unknown",
+  "hostedWalletMarketServer": "not_called",
+  "hostedWalletMarketServerReason": "Server claim and post write the hosted ledger and require funding. The direct fee step is vendor/hosted-wallet-market/src/fee.mjs.",
+  "composed": {
+    "stepCount": 6,
+    "steps": [
+      {
+        "name": "post",
+        "ok": true
+      },
+      {
+        "name": "claim",
+        "ok": true
+      },
+      {
+        "name": "deliver",
+        "ok": true
+      },
+      {
+        "name": "accept",
+        "ok": true
+      },
+      {
+        "name": "proof",
+        "ok": true
+      },
+      {
+        "name": "project-fee",
+        "ok": true
+      }
+    ],
+    "evidenceOutcome": "meets_criteria",
+    "effortComparison": "measured_effort_equal",
+    "effortDisclosure": "measured",
+    "feeReadout": "authorized_existing_terms",
+    "authorized": true,
+    "feeBps": 500,
+    "platformFeeAtomic": "100000",
+    "contributorNetAtomic": "1900000",
+    "cumulativeFloorDelta": "0",
+    "equalNet": true,
+    "unknownCosts": [
+      {
+        "kind": "review",
+        "status": "unknown"
+      },
+      {
+        "kind": "support",
+        "status": "unknown"
+      },
+      {
+        "kind": "contributor",
+        "status": "unknown"
+      }
+    ],
+    "rewardDisclosedPublicly": false
+  },
+  "direct": {
+    "stepCount": 4,
+    "teDiagnose": {
+      "exit": 0,
+      "evidenceOutcome": "meets_criteria",
+      "elapsedMs": 37
+    },
+    "teCompare": {
+      "exit": 0,
+      "comparison": "measured_effort_equal",
+      "elapsedMs": 32
+    },
+    "resultReuse": {
+      "exit": 0,
+      "mode": "export",
+      "elapsedMs": 33
+    },
+    "hostedWalletMarketFee": {
+      "exit": 0,
+      "feeBps": 500,
+      "platformFeeAtomic": "100000",
+      "contributorNetAtomic": "1900000",
+      "elapsedMs": 23
+    }
+  },
+  "match": {
+    "evidenceOutcome": true,
+    "effortComparison": true,
+    "fee": true,
+    "publicRewardOmitted": true
+  },
+  "ledger": false,
+  "signer": false,
+  "paymentCommand": false,
+  "automaticUnlock": false,
+  "fundedCommission": false,
+  "marketLiquidity": false,
+  "outsideUse": "not_observed",
+  "paymentEvidence": "none",
+  "installed": false,
+  "prepared": true
+}
