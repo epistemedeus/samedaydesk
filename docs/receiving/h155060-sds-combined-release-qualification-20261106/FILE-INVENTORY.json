@@ -1,0 +1,1004 @@
+{
+  "schema": "pilot.h155060.file-inventory.v1",
+  "comparedTo": "9f6c0c4e396dd7677f334400eed93e3445fad600",
+  "worktree": "/home/ubuntu/ae14-work/h155060",
+  "count": 195,
+  "byStatus": {
+    "M": 15,
+    "A": 180
+  },
+  "unusualModes": [
+    {
+      "path": "tools/recurring-decision-consumer/scripts/run-acceptance.sh",
+      "status": "A",
+      "mode": "100755"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/rn5-consumers/ce-run.sh",
+      "status": "A",
+      "mode": "100755"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/runtime/run-runtime.sh",
+      "status": "A",
+      "mode": "100755"
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/runtime-startup.yml",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/ENROLLMENT.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/PROPOSAL.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/ROOT-COMPOSED-RECEIVING.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/ROOT-RECEIVED-ANCHOR.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/proposed-anchor.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/receiving/h155030-sds-consumer-composition-20261106/proposed-descriptor.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-coherent-integration-20261105/RESULT.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-coherent-integration-20261105/ROOT-CONFIGURED-RECEIVING.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-coherent-integration-20261105/receipt.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-coherent-integration-20261105/test/acquisition.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-coherent-integration-20261105/test/profile-stub.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/README.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/RESULT.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c01/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c01/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c01/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c02/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c02/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c02/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c03/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c03/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c03/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c04/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c04/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c04/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c05/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c05/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c05/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c06/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c06/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c06/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c07/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c07/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c07/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c08/capture-a.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c08/capture-b.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/c08/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/fixtures/index.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/harness.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-r06-portable-decision-20261105/test/harness.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "experiments/agl-seed-loop-20261104/test/seed-loop.test.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "package.json",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/fixtures/root10940-approved-ci-packets/2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/fixtures/root10940-approved-ci-packets/index.json",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/produce-root10940-ci-packet.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/root10940-ci-packet.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/select-root10940-ci-packet.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/test-h145010-measurement-runtime-pin.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "server/scripts/test-h147010-source-bound-ci-input.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/IMPORT_MAP.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/README.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/cli.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/contracts/consumer-result.v1.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/contracts/decision-intent.v1.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/contracts/permitted-capture.v1.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/captures/changed.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/captures/portable-same.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/captures/prior.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/captures/same.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/captures/stale.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/intents/watch-title.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/n8n-stored/derived-nested-execution-2.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/n8n-stored/derived-sibling-execution-2.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/n8n-stored/prior-different-title.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/reference/expect-change.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/fixtures/reference/expect-no-change.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/scripts/run-acceptance.sh",
+      "status": "A",
+      "mode": "100755"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/agl-bridge.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/digest.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/evaluate.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/freshness.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/http-adapter.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/io.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/limits.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/n8n-stored.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/pins.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/state.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/src/workflow.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/test/agl-bridge.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/test/evaluate.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recurring-decision-consumer/test/n8n-stored.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/README.md",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/cli.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/src/export.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/src/pins.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/src/portable.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/src/residual.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test-vm/residual-rails.vm.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test/portable-decision.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test/residual-need.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test/shared-capture-two-decisions.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test/source-gate.test.mjs",
+      "status": "M",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/result-reuse/test/useful-body-integrity.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/README.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/cli.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/requester-walkthrough.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/rn5-consumers/DECISION.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/rn5-consumers/ce-run.sh",
+      "status": "A",
+      "mode": "100755"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/rn5-consumers/requester-changed-bundle.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/examples/rn5-consumers/requester-receipt.local.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/artifacts/heading-accepted.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/artifacts/heading-corrected.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/artifacts/heading-tampered.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/artifacts/heading-unsupported.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/bundle-helpful.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-accepted.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-ambiguous.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-citation-unbound.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-corrected.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-embedded.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-missing-expected.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-missing.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-positive.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-tamper.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-artifact-unsupported.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-corrected.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/diagnosis-rejected.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/direct-cheaper.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/exception-needed.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/floor-delta.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/reservation-preserved.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/unauthorized-terms.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/fixtures/unknown-effort.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/package.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/acceptance.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/artifact.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/bundle.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/diagnosis.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/economics.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/effort.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/evaluate.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/limits.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/receipt.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/src/schema.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/acceptance.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/artifact-diagnosis.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/bundle.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/cli.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/diagnosis.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/economics.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/effort.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/receipt.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/task-bundle-economics/test/schema.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/H155040-RECEIVING.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/README.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/cli.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/inputs/fitting-accepted-page-change-pointer.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/inputs/fitting-before-work.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/inputs/fitting-n45-page-change.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/inputs/fitting-produced-decision.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/inputs/nonfitting-unrecognized-chat-task.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/lifecycle/ghost-registered.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/lifecycle/registered.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/lifecycle/removed.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/lifecycle/updated.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/fitting-decide-or-reuse-bind.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/fitting-export-n45.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/fitting-ghost-preview-n45.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/fitting-preview-n45.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/fitting-preview-page-change.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/nonfitting-export-without-opt-in.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/nonfitting-missing-identity.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/fixtures/outputs/nonfitting-unrecognized.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/interface-status.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/manifest.yaml",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/openapi.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/provider.yaml",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/tools/decide_or_reuse.yaml",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/tools/export_reuse.yaml",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/dify/tools/preview_reuse.yaml",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/ghost/integration.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/ghost/interface-status.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/manifests/ghost/webhook-events.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/runtime/DECISION.md",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/runtime/provision-ghost.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/runtime/run-runtime.sh",
+      "status": "A",
+      "mode": "100755"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/schema/extension-record.v1.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/schema/tool-invocation.v1.json",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/adapter.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/ghost-embed.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/ghost-runtime.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/index.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/lifecycle.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/manifests.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/pins.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/runtime.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/src/status.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/adapter.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/admin-key.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/cli.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/lifecycle.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/manifests.test.mjs",
+      "status": "A",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/workflow-owned-extensions/test/runtime/acceptance.mjs",
+      "status": "A",
+      "mode": "100644"
+    }
+  ]
+}

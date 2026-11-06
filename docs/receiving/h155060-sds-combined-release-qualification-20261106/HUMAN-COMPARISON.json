@@ -1,0 +1,42 @@
+{
+  "schema": "pilot.h155060.human-comparison.v1",
+  "publisher": "server/scripts/publish-preserved-client.mjs",
+  "viteInvoked": false,
+  "dynamicExclusions": [],
+  "machineOnlyAdditionsInClientDist": [],
+  "humanTextOrLayoutChanged": false,
+  "previewPrepared": false,
+  "baseline": {
+    "commit": "9f6c0c4e396dd7677f334400eed93e3445fad600",
+    "worktree": "/tmp/h155060-baseline-9f6",
+    "exit": 0,
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "sampledRssKiB": 7044
+  },
+  "candidate": {
+    "parent": "ba18ed20e139d950bdd470a5d4bad6b2541c3a31",
+    "worktree": "/home/ubuntu/ae14-work/h155060",
+    "exit": 0,
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "sampledRssKiB": 13272
+  },
+  "independentWalk": {
+    "filesBaseline": 352,
+    "filesCandidate": 352,
+    "bytesBaseline": 59951737,
+    "bytesCandidate": 59951737,
+    "onlyBaseline": [],
+    "onlyCandidate": [],
+    "bodyDiff": [],
+    "modeDiffCount": 0,
+    "byteEqual": true,
+    "receiptEqual": true,
+    "receiptSha256": "603c714d1cda2e78d7486c0c880387dafaae17cd55e7d089184f6737b834e394"
+  },
+  "acceptedBaselineInventory": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+  "note": "The publisher checked every consumed client/dist member against publication/PRESERVED-PUBLICATION.json. It wrote no dist file. A historical CDN recompression note is not an exclusion applied by this comparison."
+}
