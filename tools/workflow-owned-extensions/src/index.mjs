@@ -21,7 +21,7 @@ export {
   fallbackThroughCli,
 } from "./ghost-embed.mjs";
 export { assertHonestStatuses, invocationEnvelope, extensionRecord } from "./status.mjs";
-export { installConsumer, updateInstalled, removeInstalled, runInstalled, acquireAndRun } from "./acquire.mjs";
+export { installConsumer, updateInstalled, removeInstalled, runInstalled, acquireAndRun, workflowInputFits } from "./acquire.mjs";
 export { SITES, resolveSite } from "./sites.mjs";
 export {
   CAPABILITY,

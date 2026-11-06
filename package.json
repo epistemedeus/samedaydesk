@@ -78,6 +78,7 @@
     "test:public-entry": "node --test scripts/public-entry.test.mjs",
     "test:geo5-guides": "node --test scripts/geo5-cited-guides.test.mjs",
     "test:recurring-job-recipes": "node --test tools/recurring-job-recipes/test/*.test.mjs",
+    "test:composed-machine-delivery": "node --test --test-concurrency=1 tools/composed-machine-delivery/test/*.test.mjs",
     "recurring-job-recipes": "node tools/recurring-job-recipes/cli.mjs",
     "recurring-job-recipes:baseline": "node tools/recurring-job-recipes/scripts/baseline-compare.mjs",
     "test:offer-routing": "node --test tools/offer-routing/route-job.test.mjs tools/offer-routing/review.test.mjs",

@@ -1,0 +1,34 @@
+{
+  "schema": "samedaydesk.composed-machine-delivery.manifest.v1",
+  "name": "composed-machine-delivery",
+  "base": "c60641e8ff2b94dd704307e57f5b6fe789ba0df7",
+  "node": "22.x",
+  "sharing": "optional",
+  "publicProofHidesRewards": true,
+  "packages": [
+    {
+      "id": "task-repeat-use",
+      "path": "tools/task-repeat-use",
+      "command": "node tools/task-repeat-use/cli.mjs walk --case fitting"
+    },
+    {
+      "id": "workflow-owned-extensions",
+      "path": "tools/workflow-owned-extensions",
+      "command": "node tools/workflow-owned-extensions/cli.mjs acquire --consumer native --site samedaydesk --store <dir> --source c60641e8ff2b94dd704307e57f5b6fe789ba0df7 --clock <ISO-UTC>"
+    },
+    {
+      "id": "two-sided-work-consumer",
+      "path": "tools/two-sided-work-consumer",
+      "command": "node tools/two-sided-work-consumer/cli.mjs post --journey <file> --input <post.json> --clock <ISO-UTC>"
+    },
+    {
+      "id": "recurring-decision-consumer",
+      "path": "tools/recurring-decision-consumer",
+      "command": "node tools/recurring-decision-consumer/cli.mjs recur --capture <capture.json> --intents <intents.json> --priors <priors.json> --schedule <schedule.json> --clock <ISO-UTC> --horizon <hours>"
+    }
+  ],
+  "composedCommand": "node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>",
+  "exampleInput": "tools/composed-machine-delivery/examples/changed-request.json",
+  "exampleOutput": "tools/composed-machine-delivery/examples/retained-output.json",
+  "artifact": "tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz"
+}

@@ -151,6 +151,15 @@ export async function runCase(name) {
     });
   }
 
+  if (name === "label-not-reuse") {
+    return walkRepeatUse({
+      ...shared,
+      permission: { optIn: false },
+      compareDirect: false,
+      newTask: { manifest, directInput },
+    });
+  }
+
   if (name === "nonfitting-capture") {
     const changedHash = "sha256:fixture-example-domain-v2";
     const dir = mkdtempSync(join(tmpdir(), "task-repeat-use-"));
@@ -200,6 +209,7 @@ export const CASE_NAMES = Object.freeze([
   "signup",
   "first-party",
   "withdrawn",
+  "label-not-reuse",
   "nonfitting-capture",
   "private",
   "unsupported",

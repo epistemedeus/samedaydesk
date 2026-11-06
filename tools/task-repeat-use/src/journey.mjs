@@ -70,7 +70,7 @@ function admitActors(producer, consumer) {
   const distinct = producer.actorId !== consumer.actorId
     && producer.party === "first_party_owner"
     && consumer.party === "later_distinct_agent";
-  return { ok: true, distinct, independentReuse: distinct };
+  return { ok: true, distinct };
 }
 
 function paidChoice(request, { distinct, fitting }) {

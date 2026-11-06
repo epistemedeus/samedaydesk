@@ -56,6 +56,8 @@ export function proveReuse(journey, options) {
     outsideUse: "not_observed",
     paymentEvidence: "none",
     taskId: journey.task.taskId,
+    subject: options.subject,
+    sequence: options.sequence,
     evidenceOutcome: journey.acceptance?.evidenceOutcome,
     reuseMode: exported.mode,
     kind: exported.kind,

@@ -19,6 +19,7 @@ import {
   claimWork,
   deliverWork,
   postWork,
+  proveWork,
   releaseWork,
   selectWork,
   showWork,
@@ -218,6 +219,42 @@ test("reusable proof omits the reward and refuses work that is not accepted or n
   assert.equal(publicShown.ok, true, JSON.stringify(publicShown));
   assert.equal(JSON.stringify(publicShown).includes("2000000"), false);
   assert.equal(publicShown.rewardDisclosed, false);
+});
+
+test("proof replay requires the same subject and sequence", () => {
+  const journeyPath = tempJourney();
+  assert.equal(postClaimDeliver(journeyPath, MEETS_ARTIFACT, "heading-accepted").delivered.ok, true);
+  assert.equal(acceptDecision(journeyPath, "accept").ok, true);
+  const proved = prove(journeyPath);
+  assert.equal(proved.ok, true, JSON.stringify(proved));
+  assert.equal(proved.proof.subject, "heading-extract-proof");
+  assert.equal(proved.proof.sequence, 1);
+  const replay = prove(journeyPath);
+  assert.equal(replay.ok, true, JSON.stringify(replay));
+  assert.equal(replay.replay, true);
+  assert.equal(replay.proof.sequence, 1);
+  const otherSequence = proveWork({
+    taskId: "heading-extract",
+    requesterId: "requester-1",
+    subject: "heading-extract-proof",
+    sequence: 2,
+    optIn: true,
+  }, env(journeyPath));
+  assert.equal(otherSequence.ok, false);
+  assert.equal(otherSequence.reason, "proof_identity_conflict");
+  const otherSubject = proveWork({
+    taskId: "heading-extract",
+    requesterId: "requester-1",
+    subject: "other-subject",
+    sequence: 1,
+    optIn: true,
+  }, env(journeyPath));
+  assert.equal(otherSubject.ok, false);
+  assert.equal(otherSubject.reason, "proof_identity_conflict");
+  const stored = JSON.parse(readFileSync(journeyPath, "utf8"));
+  assert.equal(stored.proof.subject, "heading-extract-proof");
+  assert.equal(stored.proof.sequence, 1);
+  assert.equal(stored.proof.rewardDisclosed, false);
 });
 
 test("fee projection uses FEE_BPS 500 only when terms authorize it and keeps unknown costs unknown", () => {

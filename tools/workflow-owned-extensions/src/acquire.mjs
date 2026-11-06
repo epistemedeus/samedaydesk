@@ -387,6 +387,10 @@ function cliArgs(job, inputPath, outPath) {
   return args;
 }
 
+export function workflowInputFits(input) {
+  return fittingJob({ input });
+}
+
 function fittingJob(job) {
   const input = job?.input;
   if (!input || typeof input !== "object") return false;

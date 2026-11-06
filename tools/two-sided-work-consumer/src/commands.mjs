@@ -539,6 +539,12 @@ export function proveWork(input, env) {
       return fail("acceptance_required");
     }
     if (current.proof) {
+      if (current.proof.subject !== input.subject || current.proof.sequence !== input.sequence) {
+        return fail("proof_identity_conflict", {
+          subject: current.proof.subject ?? null,
+          sequence: current.proof.sequence ?? null,
+        });
+      }
       return {
         ok: true,
         schema: current.proof.schema,

@@ -145,6 +145,18 @@ test("signup is refused for an already-public artifact and does not run the prod
   assert.equal(calls, 0);
 });
 
+test("caller-supplied later-agent labels do not count as reuse without an admitted portable import", async () => {
+  const result = await runCase("label-not-reuse");
+  assert.equal(result.seam, "demonstrated");
+  assert.equal(result.ok, true);
+  assert.equal(result.independentReuse, false);
+  assert.equal(result.fitting, false);
+  assert.equal(result.reason, "permission_absent");
+  assert.equal(result.paidChoice.eligible, false);
+  assert.equal(result.paidChoice.charged, false);
+  assert.equal(result.paidChoice.taken, false);
+});
+
 test("first-party owner control is not independent reuse", async () => {
   const result = await runCase("first-party");
   assert.equal(result.seam, "demonstrated");

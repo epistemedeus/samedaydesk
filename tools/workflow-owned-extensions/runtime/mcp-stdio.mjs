@@ -21,11 +21,20 @@ if (prefix && !prefix.startsWith("--")) {
 const decoderInput = [];
 process.stdin.on("data", (chunk) => decoderInput.push(chunk));
 process.stdin.on("end", () => {
+  const raw = Buffer.concat(decoderInput);
   let messages = [];
   try {
-    messages = decodeMessages(Buffer.concat(decoderInput));
+    messages = raw.length === 0 ? [] : decodeMessages(raw);
   } catch (error) {
     respond({ jsonrpc: "2.0", id: null, error: { code: -32700, message: error.message } });
+    process.exit(1);
+  }
+  if (raw.length > 0 && messages.length === 0) {
+    respond({
+      jsonrpc: "2.0",
+      id: null,
+      error: { code: -32700, message: "mcp frame is missing Content-Length" },
+    });
     process.exit(1);
   }
   for (const message of messages) handle(message);
