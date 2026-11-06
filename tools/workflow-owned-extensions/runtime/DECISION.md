@@ -147,3 +147,10 @@ invalid or double-prefixed secrets at `formatAdminKey` and `ghostAdminToken`.
 Invalid secrets are refused and are not truncated into a signature. The local
 install command passes `--ip 127.0.0.1` so the disposable runtime stays on
 loopback. The default in ghost-cli 1.34.1 is already that address.
+
+## Runtime clock (2026-11-06)
+
+`node -p "Date.now()"` prints an ANSI-colored number when `FORCE_COLOR` is set.
+Arithmetic expansion rejects that value, the stage still continues, and
+`runtime-timings.json` records 0 for every duration. `now_ms` uses
+`date +%s%3N` and keeps only digits.

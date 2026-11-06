@@ -27,7 +27,10 @@ PREFLIGHT="$OUT/runtime-preflight.json"
 : > "$EXITS"
 : > "$META"
 
-now_ms() { node -p "Date.now()"; }
+now_ms() {
+  # node -p colorizes numbers when FORCE_COLOR is set, and $(( )) then records 0.
+  date +%s%3N | tr -cd '0-9'
+}
 record() { printf "%s %s\n" "$1" "$2" >> "$EXITS"; }
 log() { printf "%s\n" "$*" | tee -a "$META"; }
 
