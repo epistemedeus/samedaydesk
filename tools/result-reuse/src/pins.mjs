@@ -33,5 +33,8 @@ export const DECISION_REASONS = Object.freeze({
   unboundLegacy: "unbound_legacy",
   invalidSavedState: "invalid_saved_state",
   inputNotBeforeWork: "input_not_before_work",
+  // Corruption detection for the stored useful body. Not a signature.
+  integrityMismatch: "integrity_mismatch",
+  integrityUnknown: "integrity_unknown",
 });
 export const COST_BASELINE_RECIPE = "source-change-alert";
