@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-commons.page-change-result.v1",
+  "url": "https://example.com/fixture/hotel",
+  "status": 200,
+  "title": "Fixture Hotel Status",
+  "contentHash": "sha256:fixture-hotel-v1"
+}

@@ -259,7 +259,9 @@ test('SDS machine producers publish one query-key consumer', () => {
   assert.equal(consumerLinkage(publicArtifact).schema, QUERY_KEY_CONSUMER.schema);
   assert.equal(JSON.stringify(publicArtifact).includes(QUERY_KEY_CONSUMER.runner.archive), false);
   assert.equal(installedSourceSha256(), '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82');
-  assert.equal(hostSourceSha256(ROOT), '6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd');
+  const pin = JSON.parse(readFileSync(join(ROOT, 'server/foundry/activation/private-control-pin.json'), 'utf8'));
+  assert.equal(Object.hasOwn(pin.files, 'experiments/agl-seed-loop-20261104/test/seed-loop.test.mjs'), false);
+  assert.match(hostSourceSha256(ROOT), /^[a-f0-9]{64}$/);
 });
 
 test('a cold caller follows the machine instructions and a new contributor can return the document', {timeout: 480000}, async () => {

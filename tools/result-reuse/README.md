@@ -29,7 +29,8 @@ explicit sequence. N54 import is later composition work.
 
 ## Decide or reuse
 
-`decide-or-reuse` binds one useful `source-change-alert` decision to the public
+`decide-or-reuse` binds one useful `source-change-alert` or
+`verification-reconcile` decision to the public
 manifest that exists before that producer runs. It does not add a store, a
 network call, a payment, or a schema family. The manifest carries the recipe
 id, the recipe version, the prior public capture, and the current public
@@ -63,6 +64,22 @@ node tools/result-reuse/cli.mjs decide-or-reuse \
   --opt-in
 ```
 
+### Second decision on the same capture
+
+`verification-reconcile` is the second supported recipe. It reads the same
+saved capture and prior and answers a different question: is the later
+observation still the delivered content (`noChangeProven`), without replaying a
+payment. Its manifest is the same shape with `recipeId: "verification-reconcile"`;
+`fields` is optional. Produce it once with the recipe CLI
+(`--recipe verification-reconcile --prior <prior> --candidate <capture>`), bind
+it with `--produced`, then reuse it with `--decision`. Each recipe has its own
+before-work digest, so a saved `source-change-alert` decision is never served as
+a `verification-reconcile` answer (`recipe_changed`). The stored evidence keeps
+only the capture identity, mismatched field names, `partial`, `noChangeProven`
+and `automaticPaymentReplay: false`; the candidate path is not stored. Any other
+recipe id is still refused: bind exits 1 naming the supported recipes, and the
+reuse form returns `recompute` with `input_not_before_work`.
+
 `--produced` is the decision the useful job already returned. `--decision` is
 the bound observation written by the first command. `--opt-in` affirms that
 the earlier opt-in is still in force. `--withdraw-opt-in` records that it was
@@ -70,11 +87,13 @@ withdrawn. `--producer` may name the job, and this command never executes it.
 
 | Verdict | When |
 | --- | --- |
-| `reuse` | Before-work digest, recipe, task and subject identity, revision, opt-in, and clock all match. Returns the useful saved decision and its provenance. |
-| `recompute` | Reason is `digest_mismatch`, `recipe_changed`, `revision_changed`, `stale_clock`, `subject_mismatch`, `opt_in_withdrawn`, `unbound_legacy`, `invalid_saved_state`, or `input_not_before_work`. No fresh answer is invented. |
+| `reuse` | Before-work digest, useful-body digest, recipe, task and subject identity, revision, opt-in, and clock all match. Returns the useful saved decision and its provenance. |
+| `recompute` | Reason is `digest_mismatch`, `integrity_mismatch`, `integrity_unknown`, `recipe_changed`, `revision_changed`, `stale_clock`, `subject_mismatch`, `opt_in_withdrawn`, `unbound_legacy`, `invalid_saved_state`, or `input_not_before_work`. No fresh answer is invented. |
 | `rejected` | A private field is present. It is not hashed into the decision. The top-level N45 boolean `payment` marker remains an origin flag. |
 
-The cost baseline is the recurring-job note for `source-change-alert`: offline
+Bind stores `decisionBinding.usefulBodyDigest`, the SHA-256 of the canonical useful body (outcome, recovery, and evidence). Reuse checks it before serving that body. A changed outcome or a changed `evidence.contentHash` is `integrity_mismatch` and does not invoke a producer. A saved row with no digest is `integrity_unknown`: it is not certified and it is not rewritten. The digest detects corruption of the stored body. It is not a signature and it does not detect an actor who rewrites both the body and the digest.
+
+The cost baseline is the recurring-job note for the bound recipe (`source-change-alert` on unbound paths): offline
 compare does not invoke a merchant charge, and operator compute stays
 `costs_unknown`. The live metric on every verdict is unset:
 `distinctLaterAcceptedTasksTakingReuse` is null and
@@ -86,3 +105,78 @@ is public-safe or accepted by a merchant.
 
 Existing preview and export outputs stay byte-identical. Limits and the
 omission list are unchanged.
+
+## Portable decisions (opt-in, N6-R06)
+
+```bash
+node tools/result-reuse/cli.mjs export-decision --input before-work.json --decision observation.json \
+  --created-at 2026-11-05T08:00:00.000Z [--stale-after <ISO-UTC>] --opt-in --out portable.json
+node tools/result-reuse/cli.mjs import-decision --input my-before-work.json --portable portable.json [--clock <ISO-UTC>]
+node tools/result-reuse/cli.mjs retire-decision --input portable.json --retired-at <ISO-UTC> \
+  --reason "publisher withdrew it" [--state retired|stale] --out portable.retired.json
+```
+
+`export-decision` turns a bound decision into a `samedaydesk.portable-decision.v1`
+file keyed by recipe id and version, capture digest, prior digest and field
+list. It does not carry taskId, subject, observation id, local paths or
+producer state. It carries a `CC0-1.0` rights field, `createdAt`, a lifecycle
+marker (`active`, `retired` or `stale`, optional `staleAfter`) and a body
+digest that detects corruption only; it is not a signature.
+
+`import-decision` needs no shared Pilot state. It returns `reuse` only when the
+consumer's own before-work manifest produces the same key and the lifecycle is
+active. Otherwise it returns `recompute` with one of `recipe_changed`,
+`capture_digest_mismatch`, `prior_digest_mismatch`, `fields_mismatch`,
+`retired`, `stale`, `stale_unverifiable`, `integrity_mismatch`,
+`integrity_unknown`, `rights_missing`, `invalid_portable`,
+`input_not_before_work` or `private_field`. It never runs, loads or names a producer, and refuses
+`--producer`. Recomputing is left to the caller.
+
+The taskId/subject binding used by `decide-or-reuse` is unchanged. The bind
+step still needs a taskId and subject before a decision can be exported.
+Export also copies `producerBodyDigest` and refuses a row whose useful body
+does not match the digest bound at the producer. Import refuses a missing
+producer digest (`integrity_unknown`) and a body that does not match it.
+
+Direct offline compare stays the path when there is no retained benefit: a new
+input, a changed or stale capture, a payment-replay candidate, a wider record
+job, or a corrupt stored body.
+
+## Residual need
+
+```bash
+node tools/result-reuse/cli.mjs residual \
+  --input before-work.json \
+  --decision observation.json \
+  --want title,description \
+  --task-id source-change-example \
+  --subject source-change-example-decision \
+  --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z \
+  --horizon 168 \
+  --opt-in
+```
+
+`residual` calls the same reuse check, including the useful-body digest. On
+`source-change-alert`, fields the decision answers stay `direct`. Fields the
+saved capture already holds are `direct_rerun` of that same recipe. Only a
+field absent from that capture becomes `residual_need`: an unsent post shape
+for the existing unfunded rails (`paymentAuthority` none, `paidWork` false,
+`debtCreated` false, `sent` false). `verification-reconcile` does not answer
+named content fields. A wanted field on that recipe is `recompute` with
+`unsupported_field_remainder`, not a renamed remainder post. A miss never
+hands the whole task to anyone. Nothing is posted.
+
+## Canonical client acquisition
+
+The acquirable client is the installed market client recorded at
+`server/scripts/fixtures/h142010-cold-requester-0.3.1.mjs`
+(30187 bytes, sha256 `accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9`).
+Its descriptor is `docs/machine-promotion/evidence/private-successor-descriptor.json`.
+`acquire` succeeds only when those bytes match the descriptor and the live
+profile matches `requiredProfile`. It sets `accountCreated` false. The pinned
+`vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs` stays
+`38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4` and refuses
+the 0.3.1 descriptor (`acquisition_refused`). No second 0.3.1 file is the
+acquisition path. Signup is not success without that descriptor. This package
+does not publish a replacement descriptor or a new market identity.

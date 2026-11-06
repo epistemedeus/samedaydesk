@@ -1,0 +1,291 @@
+{
+  "experiment": "agl-r06-portable-decision-20261105",
+  "hypothesis": "N6-R06: a saved decision plus its public manifest is a portable CC0 artifact that a distinct consumer with no shared Pilot state can reuse, without running the producer, when the digest of its own capture matches exactly; otherwise it recomputes.",
+  "dataLabel": "synthetic fixtures only; not real outside data",
+  "recipe": "verification-reconcile",
+  "recipeChoice": "verification-reconcile: runs offline on fixtures and is already a supported decide-or-reuse recipe. issue-evidence and comparable-record-extraction are not supported by the decision binding, and adding them was out of scope.",
+  "cases": 8,
+  "caseMixNote": "the hit rate reflects the designed case mix (2 changed captures, 1 retired manifest required by the brief), not any real-world reuse rate",
+  "hitRate": 0.625,
+  "hits": 5,
+  "falseReuseCount": 0,
+  "recomputeCount": 3,
+  "retirements": 1,
+  "refusalReasons": {
+    "c06": "retired",
+    "c07": "capture_digest_mismatch",
+    "c08": "capture_digest_mismatch"
+  },
+  "producerCallsOnHits": 0,
+  "counters": {
+    "consumerA": {
+      "producerCalls": 8,
+      "shadowCalls": 0,
+      "publishCalls": 8
+    },
+    "consumerB": {
+      "producerCalls": 11,
+      "shadowCalls": 5,
+      "publishCalls": 0
+    },
+    "note": "producerCalls counts baseline plus recompute runs; shadowCalls are verification-only runs on hits; publishCalls are A's runs before export"
+  },
+  "localPathOrStateLeaksInCommons": [],
+  "adaptationLinesChanged": {
+    "base": "3a4a7538",
+    "scope": "tools/result-reuse/src and cli.mjs, excluding tests and this harness",
+    "added": 338,
+    "removed": 10
+  },
+  "timings": {
+    "sample": "single-sample",
+    "unit": "ms wall clock per child process, includes node startup",
+    "baseline": {
+      "A": [
+        {
+          "case": "c01",
+          "outcome": "unchanged",
+          "ms": 43.526
+        },
+        {
+          "case": "c02",
+          "outcome": "unchanged",
+          "ms": 39.19
+        },
+        {
+          "case": "c03",
+          "outcome": "changed",
+          "ms": 39.489
+        },
+        {
+          "case": "c04",
+          "outcome": "changed",
+          "ms": 43.495
+        },
+        {
+          "case": "c05",
+          "outcome": "unchanged",
+          "ms": 37.543
+        },
+        {
+          "case": "c06",
+          "outcome": "unchanged",
+          "ms": 50.553
+        },
+        {
+          "case": "c07",
+          "outcome": "unchanged",
+          "ms": 37.237
+        },
+        {
+          "case": "c08",
+          "outcome": "unchanged",
+          "ms": 52.172
+        }
+      ],
+      "B": [
+        {
+          "case": "c01",
+          "outcome": "unchanged",
+          "ms": 44.697
+        },
+        {
+          "case": "c02",
+          "outcome": "unchanged",
+          "ms": 40.891
+        },
+        {
+          "case": "c03",
+          "outcome": "changed",
+          "ms": 51.789
+        },
+        {
+          "case": "c04",
+          "outcome": "changed",
+          "ms": 54.414
+        },
+        {
+          "case": "c05",
+          "outcome": "unchanged",
+          "ms": 37.975
+        },
+        {
+          "case": "c06",
+          "outcome": "unchanged",
+          "ms": 52.591
+        },
+        {
+          "case": "c07",
+          "outcome": "changed",
+          "ms": 37.948
+        },
+        {
+          "case": "c08",
+          "outcome": "changed",
+          "ms": 36.792
+        }
+      ]
+    },
+    "treatment": [
+      {
+        "case": "c01",
+        "importMs": 33.455,
+        "shadowMs": 39.389,
+        "recomputeMs": null
+      },
+      {
+        "case": "c02",
+        "importMs": 32.724,
+        "shadowMs": 37.397,
+        "recomputeMs": null
+      },
+      {
+        "case": "c03",
+        "importMs": 32.691,
+        "shadowMs": 38.013,
+        "recomputeMs": null
+      },
+      {
+        "case": "c04",
+        "importMs": 33.128,
+        "shadowMs": 39.614,
+        "recomputeMs": null
+      },
+      {
+        "case": "c05",
+        "importMs": 31.477,
+        "shadowMs": 39.133,
+        "recomputeMs": null
+      },
+      {
+        "case": "c06",
+        "importMs": 33.327,
+        "shadowMs": null,
+        "recomputeMs": 37.795
+      },
+      {
+        "case": "c07",
+        "importMs": 32.144,
+        "shadowMs": null,
+        "recomputeMs": 39.454
+      },
+      {
+        "case": "c08",
+        "importMs": 33.773,
+        "shadowMs": null,
+        "recomputeMs": 39.211
+      }
+    ]
+  },
+  "treatment": [
+    {
+      "case": "c01",
+      "verdict": "reuse",
+      "reason": null,
+      "importMs": 33.455,
+      "producerCallsDuringHit": 0,
+      "shadowMs": 39.389,
+      "matchesShadow": true,
+      "outcome": "unchanged"
+    },
+    {
+      "case": "c02",
+      "verdict": "reuse",
+      "reason": null,
+      "importMs": 32.724,
+      "producerCallsDuringHit": 0,
+      "shadowMs": 37.397,
+      "matchesShadow": true,
+      "outcome": "unchanged"
+    },
+    {
+      "case": "c03",
+      "verdict": "reuse",
+      "reason": null,
+      "importMs": 32.691,
+      "producerCallsDuringHit": 0,
+      "shadowMs": 38.013,
+      "matchesShadow": true,
+      "outcome": "changed"
+    },
+    {
+      "case": "c04",
+      "verdict": "reuse",
+      "reason": null,
+      "importMs": 33.128,
+      "producerCallsDuringHit": 0,
+      "shadowMs": 39.614,
+      "matchesShadow": true,
+      "outcome": "changed"
+    },
+    {
+      "case": "c05",
+      "verdict": "reuse",
+      "reason": null,
+      "importMs": 31.477,
+      "producerCallsDuringHit": 0,
+      "shadowMs": 39.133,
+      "matchesShadow": true,
+      "outcome": "unchanged"
+    },
+    {
+      "case": "c06",
+      "verdict": "recompute",
+      "reason": "retired",
+      "importMs": 33.327,
+      "recomputeMs": 37.795,
+      "outcome": "unchanged"
+    },
+    {
+      "case": "c07",
+      "verdict": "recompute",
+      "reason": "capture_digest_mismatch",
+      "importMs": 32.144,
+      "recomputeMs": 39.454,
+      "outcome": "changed"
+    },
+    {
+      "case": "c08",
+      "verdict": "recompute",
+      "reason": "capture_digest_mismatch",
+      "importMs": 33.773,
+      "recomputeMs": 39.211,
+      "outcome": "changed"
+    }
+  ],
+  "costs": {
+    "producer": "costs_unknown",
+    "review": "costs_unknown",
+    "upkeep": "costs_unknown"
+  },
+  "taskIdSubjectFriction": {
+    "observed": true,
+    "publishSide": "consumer A must still invent a taskId, subject and sequence to bind a decision before export-decision can run; the portable file drops them",
+    "consumeSideLegacyPath": [
+      {
+        "case": "c01",
+        "verdict": "recompute",
+        "reason": "subject_mismatch"
+      },
+      {
+        "case": "c02",
+        "verdict": "recompute",
+        "reason": "subject_mismatch"
+      }
+    ],
+    "note": "with the existing decide-or-reuse path, a distinct consumer using its own taskId gets subject_mismatch even on identical capture bytes; the portable path avoids that by keying on recipe and digests"
+  },
+  "isolation": {
+    "separateHomeDirs": true,
+    "separateStateDirs": true,
+    "sharedArtifactsOnly": "commons/*.portable.json",
+    "controlOnlyException": "the taskIdSubjectFriction control reads A's bound observation to show the legacy refusal; the treatment never does"
+  },
+  "unrun": [
+    "live public pages",
+    "a real distinct outside consumer",
+    "the VM / Postgres task-memory store",
+    "multi-sample timing"
+  ],
+  "paymentAuthority": "none"
+}

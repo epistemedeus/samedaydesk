@@ -1,0 +1,33 @@
+{
+  "schema": "pilot.root10940.acquisition-trust-anchor.v1",
+  "descriptorRepository": "epistemedeus/samedaydesk",
+  "descriptorCommit": "unreceived",
+  "descriptorPath": "docs/receiving/h155030-sds-consumer-composition-20261106/proposed-descriptor.json",
+  "descriptorSha256": "e85960134d2387cd67e1de18f6a739fc48e74afd41ad0901a928bd8a779b1cc6",
+  "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+  "clientBytes": 28081,
+  "source": {
+    "repository": "epistemedeus/samedaydesk",
+    "commit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs"
+  },
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23"
+  },
+  "receiving": {
+    "owner": "Root",
+    "candidateRepository": "epistemedeus/samedaydesk",
+    "candidateCommit": "0904e9c6d258c5ef6b2c4ebb899645eece873187",
+    "independentReplay": "ROOT15588",
+    "observedAt": "2026-11-06T02:17:17.487Z",
+    "passed": 25,
+    "failed": 0,
+    "originalWriterUnchanged": true,
+    "scope": "Exact current-source selection and cold independent-account voluntary delivery/recovery on disposable PostgreSQL. Source-bound CI only; not production, outside demand or payment.",
+    "qualified": false,
+    "installed": false
+  }
+}

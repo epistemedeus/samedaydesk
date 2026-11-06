@@ -123,6 +123,7 @@ function boundObservation(manifest, produced, extra = {}) {
         recipeId: manifest.recipeId,
         recipeVersion: manifest.recipeVersion,
         inputDigest: digest,
+        usefulBodyDigest: digestPublicInput(useful),
       },
       usefulDecision: useful,
     },

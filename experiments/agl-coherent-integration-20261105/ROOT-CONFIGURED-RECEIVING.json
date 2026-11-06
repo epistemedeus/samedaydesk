@@ -1,0 +1,82 @@
+{
+  "startedAt": "2026-11-05T23:42:08.400Z",
+  "source": "08f7e081a0dd8ceed3dbf9f1953b5fdce757befa",
+  "work": "/home/ubuntu/ae14-work/h154540",
+  "steps": [
+    {
+      "name": "merchant-clone",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "merchant-checkout",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "merchant-ci",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "sds-ci",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "recipes",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "apt-update",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "pg-install",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "residual-vm",
+      "exit": 0,
+      "signal": null,
+      "error": null
+    }
+  ],
+  "modelCalled": false,
+  "liveFinancialEffect": false,
+  "disposableDatabaseOnly": true,
+  "beforeStatus": "",
+  "pgPreviouslyInstalled": false,
+  "pgClustersBefore": "",
+  "pgBin": "/usr/lib/postgresql/16/bin",
+  "vmPass": true,
+  "afterHead": "08f7e081a0dd8ceed3dbf9f1953b5fdce757befa",
+  "afterStatus": "",
+  "complete": true,
+  "claimReleased": true,
+  "recipesCounts": [
+    "# tests 97",
+    "# pass 97",
+    "# fail 0",
+    "# skipped 0",
+    "# duration_ms 1093.927673"
+  ],
+  "residual-vmCounts": [
+    "# tests 1",
+    "# pass 1",
+    "# fail 0",
+    "# skipped 0",
+    "# duration_ms 4424.216548"
+  ],
+  "endedAt": "2026-11-05T23:42:32.860Z"
+}

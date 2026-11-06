@@ -22,6 +22,11 @@ const root = resolve(import.meta.dirname, '../..');
 const measuredCandidate = await measureCandidate(root);
 const CURRENT_SOURCE = measuredCandidate.sourceSha256;
 const CURRENT_HOST = measuredCandidate.hostSha256;
+const PRIOR_HOST = '6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd';
+const PRIOR_PROPOSAL_ANCHOR_SHA = 'b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27cfa04eba77';
+const PRIOR_PROPOSAL_DESCRIPTOR_SHA = 'ce89812d7befe5f72d9de64fdf70c2471317a2c81a60a81f99790967d355a9f6';
+const PRIOR_PROPOSAL_ENROLLMENT_SHA = '59817657a5f62b401eeda7a6c547df835ea5d96dfb370d7a543f141277a4b8f4';
+const ENROLLED_PRIOR_ANCHOR = '2a2878299eef74b233cffa2bff2342eee93e5586929136acc933651ca5d3d27f';
 const H142_SOURCE = '2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82';
 const H142_HOST = 'b7d8a722279ce801cef8c7c807b16f534985def60b247c48de89d3495072d255';
 const HISTORICAL_SOURCE = '5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2';
@@ -34,9 +39,10 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const INTEGRATED_COMMIT = 'd3a9d82f0aed25b8f5dcef70096982ef93083810';
+const MEASURED_BASE = '335a5e363bcb1798cd8d25f74324a8a4bfb5bed4';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
-const proposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
+const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
+const proposal = 'docs/receiving/h155030-sds-consumer-composition-20261106';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
 const decoder = 'server/scripts/decode-root10940-ci-packet.mjs';
@@ -156,7 +162,7 @@ function proposeArgs(outDir) {
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', INTEGRATED_COMMIT,
+    '--measured-commit', MEASURED_BASE,
   ];
 }
 
@@ -171,6 +177,9 @@ function committedSnapshot() {
     anchor: readFileSync(join(root, proposal, 'proposed-anchor.json')),
     descriptor: readFileSync(join(root, proposal, 'proposed-descriptor.json')),
     enrollment: readFileSync(join(root, proposal, 'ENROLLMENT.json')),
+    priorAnchor: readFileSync(join(root, priorProposal, 'proposed-anchor.json')),
+    priorDescriptor: readFileSync(join(root, priorProposal, 'proposed-descriptor.json')),
+    priorEnrollment: readFileSync(join(root, priorProposal, 'ENROLLMENT.json')),
   };
 }
 
@@ -284,6 +293,12 @@ test('candidate measurement is the admitted source and host', async () => {
   assert.equal(measured.hostSha256, CURRENT_HOST);
   assert.equal(measured.sourceSha256, H142_SOURCE);
   assert.notEqual(measured.hostSha256, H142_HOST);
+  assert.notEqual(measured.hostSha256, PRIOR_HOST);
+  const priorAnchor = JSON.parse(readFileSync(join(root, priorProposal, 'proposed-anchor.json'), 'utf8'));
+  assert.equal(Object.hasOwn(priorAnchor, 'receiving'), false);
+  assert.equal(priorAnchor.requiredProfile.sourceSha256, H142_SOURCE);
+  assert.equal(priorAnchor.requiredProfile.hostSha256, PRIOR_HOST);
+  assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-anchor.json'))), PRIOR_PROPOSAL_ANCHOR_SHA);
   const proposalAnchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
   assert.equal(Object.hasOwn(proposalAnchor, 'receiving'), false);
   assert.equal(proposalAnchor.requiredProfile.sourceSha256, measured.sourceSha256);
@@ -372,7 +387,7 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
     '--enrollment-out', enrollment, '--out', out,
   ]);
   assertExit(result, 3);
-  assert.match(result.stderr, new RegExp(`stale actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
+  assert.match(result.stderr, new RegExp(`stale actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${HISTORICAL_SOURCE} ${HISTORICAL_HOST}`));
   assert.equal(existsSync(out), false);
   assert.deepEqual(readFileSync(join(isolated, historicalName)), isolatedHistoricalBefore);
   assert.deepEqual(readFileSync(join(isolated, 'index.json')), isolatedIndexBefore);
@@ -398,7 +413,7 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
     assert.notEqual(sha256(selected.anchorBytes), ANCHOR_SHA);
   } else {
     assertExit(configured, 3);
-    assert.match(configured.stderr, new RegExp(`^stale actual ${CURRENT_SOURCE} expected (?:${HISTORICAL_SOURCE}|${H142_SOURCE})$`, 'm'));
+    assert.match(configured.stderr, new RegExp(`^stale actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${H142_SOURCE} ${PRIOR_HOST}$`, 'm'));
     assert.equal(existsSync(configuredOut), false);
   }
   const h142Slot = join(committedCatalog, catalogFileName(H142_SOURCE, H142_HOST));
@@ -438,7 +453,7 @@ test('a bound historical packet reports changed-source and keeps its expected ha
     '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST,
   ]);
   assertExit(result, 5);
-  assert.match(result.stderr, new RegExp(`changed-source actual ${CURRENT_SOURCE} expected ${HISTORICAL_SOURCE}`));
+  assert.match(result.stderr, new RegExp(`changed-source actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${HISTORICAL_SOURCE} ${HISTORICAL_HOST}`));
   assert.deepEqual(readFileSync(committedHistoricalPath), before);
   const profile = verifyPacket(parsePacket(before.toString('utf8'))).profile;
   assert.equal(profile.sourceSha256, HISTORICAL_SOURCE);
@@ -752,11 +767,18 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.equal(enrollment.qualified, false);
   assert.equal(enrollment.installed, false);
   assert.equal(enrollment.packet.acquiredClient.sha256, CLIENT_SHA);
-  assert.equal(enrollment.measured.baseCommit, INTEGRATED_COMMIT);
+  assert.equal(enrollment.measured.baseCommit, MEASURED_BASE);
   assert.equal(enrollment.measured.hostSha256, CURRENT_HOST);
   assert.equal(enrollment.keptReceived.hostSha256, H142_HOST);
   assert.equal(enrollment.keptReceived.binding, 'h142');
-  assert.match(enrollment.command, /h145010-useful-tool-measurement-20261104\/proposed-anchor\.json/);
+  assert.equal(enrollment.keptEnrolled.hostSha256, PRIOR_HOST);
+  assert.equal(enrollment.keptEnrolled.binding, 'n4-sds356');
+  assert.equal(enrollment.keptEnrolled.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
+  assert.match(enrollment.command, /h155030-sds-consumer-composition-20261106\/proposed-anchor\.json/);
+  assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-anchor.json'))), PRIOR_PROPOSAL_ANCHOR_SHA);
+  assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-descriptor.json'))), PRIOR_PROPOSAL_DESCRIPTOR_SHA);
+  assert.equal(sha256(readFileSync(join(root, priorProposal, 'ENROLLMENT.json'))), PRIOR_PROPOSAL_ENROLLMENT_SHA);
+  assert.notDeepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, priorProposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
   assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
@@ -784,7 +806,7 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', INTEGRATED_COMMIT,
+    '--measured-commit', MEASURED_BASE,
   ]);
   assertExit(mismatch, 1);
   assert.match(mismatch.stderr, /propose_measurement_mismatch/);
@@ -843,6 +865,25 @@ test('positive current packet decodes into the configured participation test', {
   ]);
   assertExit(unselected, 6);
   assert.equal(existsSync(join(dir, 'selected.json')), false);
+  const priorPacket = join(dir, 'prior-packet.json');
+  const priorPacked = await run([
+    producer,
+    '--anchor', `${priorProposal}/proposed-anchor.json`,
+    '--client', CLIENT,
+    '--descriptor', `${priorProposal}/proposed-descriptor.json`,
+    '--out', priorPacket,
+  ]);
+  assertExit(priorPacked, 0);
+  const priorVerified = verifyPacket(parsePacket(readFileSync(priorPacket, 'utf8')));
+  assert.equal(priorVerified.profile.hostSha256, PRIOR_HOST);
+  assert.notEqual(priorVerified.profile.hostSha256, CURRENT_HOST);
+  assert.equal(sha256(priorVerified.anchorBytes), PRIOR_PROPOSAL_ANCHOR_SHA);
+  const priorBound = await run([
+    selector, '--bound', priorPacket, '--out', join(dir, 'prior-bound.json'),
+  ]);
+  assertExit(priorBound, 5);
+  assert.match(priorBound.stderr, new RegExp(`changed-source actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${H142_SOURCE} ${PRIOR_HOST}`));
+  assert.equal(existsSync(join(dir, 'prior-bound.json')), false);
   const decoded = await run([decoder, '--packet', packet], {timeout: 340000});
   assertExit(decoded, 0);
 });
@@ -875,6 +916,8 @@ test('ordinary producer enrollment selects and decodes the current source beside
   assert.equal(summary.slot, catalogFileName(CURRENT_SOURCE, CURRENT_HOST));
   assert.notEqual(summary.trustAnchorSha256, ANCHOR_SHA);
   assert.notEqual(summary.trustAnchorSha256, PROPOSAL_ANCHOR_SHA);
+  assert.notEqual(summary.trustAnchorSha256, PRIOR_PROPOSAL_ANCHOR_SHA);
+  assert.notEqual(summary.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
   assert.deepEqual(readFileSync(join(catalog, historicalName)), historicalBefore);
   assertHistoricalSlot(catalog);
 
@@ -977,19 +1020,36 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.equal(anchor.requiredProfile.sourceSha256, CURRENT_SOURCE);
   assert.equal(anchor.requiredProfile.hostSha256, CURRENT_HOST);
   assert.notEqual(anchor.requiredProfile.hostSha256, H142_HOST);
+  assert.notEqual(anchor.requiredProfile.hostSha256, PRIOR_HOST);
+  const priorAnchor = JSON.parse(readFileSync(join(root, priorProposal, 'proposed-anchor.json'), 'utf8'));
+  assert.equal(Object.hasOwn(priorAnchor, 'receiving'), false);
+  assert.equal(priorAnchor.requiredProfile.hostSha256, PRIOR_HOST);
+  assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-anchor.json'))), PRIOR_PROPOSAL_ANCHOR_SHA);
   const historicalRow = index.packets.find(row => row.trustAnchorSha256 === ANCHOR_SHA
     && row.sourceSha256 === HISTORICAL_SOURCE && row.hostSha256 === HISTORICAL_HOST);
   const h142Row = index.packets.find(row => row.sourceSha256 === H142_SOURCE && row.hostSha256 === H142_HOST);
+  const priorRow = index.packets.find(row => row.sourceSha256 === H142_SOURCE && row.hostSha256 === PRIOR_HOST);
   assert.ok(historicalRow);
   assert.ok(h142Row);
+  assert.ok(priorRow);
   assert.equal(h142Row.receiving.installed, false);
+  assert.equal(priorRow.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
+  assert.equal(priorRow.receiving.installed, false);
+  assert.equal(priorRow.receiving.qualified, false);
   const currentRows = index.packets.filter(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE);
-  assert.equal(currentRows.length <= 1, true);
-  for (const row of currentRows) {
-    const packet = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(row.sourceSha256, row.hostSha256)), 'utf8')));
-    assert.equal(rootReceivingAccepted(packet.anchor.receiving, packet.source.repository), true);
-    assert.equal(rowAgrees(row, packet), true);
-    assert.notEqual(sha256(packet.anchorBytes), sha256(readFileSync(join(root, proposal, 'proposed-anchor.json'))));
+  const receivedAnchorPath = join(root, proposal, 'ROOT-RECEIVED-ANCHOR.json');
+  if (existsSync(receivedAnchorPath)) {
+    const receivedAnchorBytes = readFileSync(receivedAnchorPath);
+    const receivedAnchor = JSON.parse(receivedAnchorBytes.toString('utf8'));
+    assert.equal(rootReceivingAccepted(receivedAnchor.receiving, 'epistemedeus/samedaydesk'), true);
+    assert.deepEqual(receivedAnchor.requiredProfile, anchor.requiredProfile);
+    assert.equal(currentRows.length, 1, 'one independently received current slot');
+    assert.equal(currentRows[0].trustAnchorSha256, sha256(receivedAnchorBytes));
+    const currentPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(CURRENT_SOURCE, CURRENT_HOST)), 'utf8')));
+    assert.equal(rowAgrees(currentRows[0], currentPacket), true);
+    assert.deepEqual(currentPacket.anchor, receivedAnchor);
+  } else {
+    assert.equal(currentRows.length, 0, 'no current slot without separate Root receiving');
   }
   assert.equal(indexText.includes(FIXTURE_REPLAY), false);
   assert.equal(indexText.includes(sha256(readFileSync(join(root, proposal, 'proposed-anchor.json')))), false);

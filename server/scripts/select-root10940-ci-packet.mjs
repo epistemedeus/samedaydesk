@@ -140,7 +140,7 @@ if (boundLabel) {
   if (bound.cls === 'tampered') finish(1, bound.message || 'tampered');
   if (bound.cls === 'wrong-repository') finish(4, `wrong-repository ${bound.verified.source.repository}`);
   if (bound.cls === 'changed-source' || bound.cls === 'stale') {
-    finish(5, `changed-source actual ${measured.sourceSha256} expected ${bound.verified.profile.sourceSha256}`);
+    finish(5, `changed-source actual ${measured.sourceSha256} ${measured.hostSha256} expected ${bound.verified.profile.sourceSha256} ${bound.verified.profile.hostSha256}`);
   }
   if (bound.cls === 'unreceived') finish(6, `unreceived ${bound.anchorSha256}`);
 }
@@ -172,6 +172,6 @@ if (records.some(item => item.cls === 'unreceived')) finish(6, 'unreceived');
 if (records.every(item => item.cls === 'tampered')) finish(1, `tampered ${records.map(item => item.message).filter(Boolean).join('; ') || 'packet'}`);
 if (records.some(item => item.cls === 'stale' || item.cls === 'changed-source')) {
   const stale = records.find(item => item.verified);
-  finish(3, `stale actual ${measured.sourceSha256} expected ${stale.verified.profile.sourceSha256}`);
+  finish(3, `stale actual ${measured.sourceSha256} ${measured.hostSha256} expected ${stale.verified.profile.sourceSha256} ${stale.verified.profile.hostSha256}`);
 }
 finish(2, 'missing ROOT10940_CI_PACKET');
