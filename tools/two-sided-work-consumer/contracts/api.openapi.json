@@ -1,0 +1,74 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Two-sided work consumer",
+    "version": "1.0.0",
+    "description": "Caller-owned post, claim or selection, delivery, substantive acceptance, reward-free proof, and existing 5 percent fee projection. No ledger, signer, or payment command. Mount handleApi. This document does not start a server."
+  },
+  "paths": {
+    "/v1/two-sided-work/{command}": {
+      "post": {
+        "operationId": "twoSidedWork",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["post", "claim", "select", "deliver", "accept", "proof", "project-fee", "release", "recover", "show"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command completed. Acceptance is the requester decision after diagnose evidence. It is not a payment."
+          },
+          "400": {
+            "description": "The request does not fit the command."
+          },
+          "403": {
+            "description": "Requester, holder, self-claim, or payment command refusal."
+          },
+          "404": {
+            "description": "Journey file is absent, or the command is unknown."
+          },
+          "409": {
+            "description": "Double-claim, selection conflict, revision conflict, retained lock, or automatic unlock refusal."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "request": {
+        "type": "object",
+        "required": ["command", "journeyPath", "clock"],
+        "properties": {
+          "command": { "type": "string" },
+          "journeyPath": { "type": "string" },
+          "clock": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$" },
+          "input": { "type": "object" },
+          "optIn": { "type": "boolean" },
+          "public": { "type": "boolean" },
+          "automatic": { "type": "boolean", "description": "true asks for automatic unlock and is refused. The lock stays." },
+          "explicitRelease": { "type": "boolean" },
+          "holderId": { "type": "string" },
+          "fencing": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "samedaydesk.two-sided-work.public-proof.v1",
+  "rewardDisclosed": false,
+  "publicShowcase": true,
+  "marketLiquidity": false,
+  "outsideUse": "not_observed",
+  "paymentEvidence": "none",
+  "taskId": "heading-extract",
+  "evidenceOutcome": "meets_criteria",
+  "reuseMode": "export",
+  "kind": "explicit_record",
+  "observation": {
+    "schema": "neomorphic.task-memory.observation.v1",
+    "contractVersion": 1,
+    "observationId": "obs_cd163bacdb5b46f3f2e791c2d71f9c42",
+    "revisionId": "rev_1",
+    "taskScope": {
+      "taskId": "heading-extract",
+      "taskFamily": "samedaydesk.result-reuse",
+      "ownerScope": "samedaydesk.result-reuse"
+    },
+    "source": {
+      "uri": "https://samedaydesk.com/for-agents",
+      "version": "sha256:9740d64978964c0e4d7212970f43e7014231cd9af0051ff0eb8293c6295f8d0c"
+    },
+    "epistemicStatus": "source_unavailable",
+    "lifecycleStatus": "active",
+    "statement": "reuse explicit_record; original evidence URL unavailable; source URI is the reuse recipe locator",
+    "payload": {
+      "status": "success",
+      "ok": true,
+      "networkUsed": false,
+      "records": [
+        {
+          "status": "success",
+          "source": null,
+          "fields": {
+            "taskId": "heading-extract",
+            "title": "Extract public heading",
+            "summary": "Collect the public heading text into a bounded structured extract.",
+            "heading": "Example Domain",
+            "headingDigest": "heading-accepted",
+            "sourceLabel": "synthetic-page",
+            "evidenceOutcome": "meets_criteria"
+          }
+        }
+      ],
+      "invalidRecords": [],
+      "contentHash": "sha256:9740d64978964c0e4d7212970f43e7014231cd9af0051ff0eb8293c6295f8d0c",
+      "url": "https://samedaydesk.com/for-agents",
+      "reuseProvenance": {
+        "originalEvidenceUrlAvailable": false,
+        "sourceRole": "recipe_locator_not_evidence"
+      }
+    },
+    "recordedAt": {
+      "instant": "2026-11-06T12:00:00.000Z",
+      "domain": "wall_utc"
+    },
+    "execute": false
+  },
+  "provedAt": "2026-11-06T12:00:00.000Z",
+  "ledger": false,
+  "signer": false,
+  "paymentCommand": false
+}
