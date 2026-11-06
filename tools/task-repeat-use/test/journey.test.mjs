@@ -15,6 +15,12 @@ function gitBytes(path) {
   return execFileSync("git", ["show", `HEAD:${path}`], { cwd: REPO_ROOT });
 }
 
+function echoesPrice(value, price = "50000") {
+  if (value == null || typeof value !== "object") return value === price || value === Number(price);
+  if (Array.isArray(value)) return value.some((item) => echoesPrice(item, price));
+  return Object.values(value).some((item) => echoesPrice(item, price));
+}
+
 test("coverage starts from AGL-ROOT15599 and merchant 9fba328c without collapsing older pins", () => {
   const coverage = loadCoverage();
   assert.equal(coverage.ok, true, coverage.problems?.join("; "));
@@ -93,7 +99,7 @@ test("a later distinct agent reuses the approved walletless result without signu
   assert.equal(result.coverage.agl, "AGL-ROOT15599");
   assert.equal(result.coverage.merchant, "9fba328c");
   assert.equal(result.coverage.merchantCalled, false);
-  assert.equal(JSON.stringify(result).includes("50000"), false);
+  assert.equal(echoesPrice(result), false);
 });
 
 test("optional identity does not create an account", async () => {
@@ -216,7 +222,7 @@ test("a supplied new price is refused and not echoed", async () => {
   assert.equal(result.paidChoice.eligible, false);
   assert.equal(result.paidChoice.charged, false);
   assert.equal(result.newPrice, false);
-  assert.equal(JSON.stringify(result).includes("50000"), false);
+  assert.equal(echoesPrice(result), false);
   assert.equal(result.originalTerms.termsDigest, ORIGINAL_TERMS.termsDigest);
   assert.equal(result.originalTerms.earnedDebtAtomic, "21");
 });

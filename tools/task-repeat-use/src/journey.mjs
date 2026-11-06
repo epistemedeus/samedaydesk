@@ -110,6 +110,11 @@ function paidChoice(request, { distinct, fitting }) {
   };
 }
 
+function sampleMs(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  return Math.round(value * 1000) / 1000;
+}
+
 function effortReport({ reuseProducerCalls, direct, reuseDigest, directDigest, reuseMs }) {
   let quality = "not_compared";
   if (reuseDigest && directDigest) quality = reuseDigest === directDigest ? "same_approved_body" : "different_body";
@@ -125,8 +130,8 @@ function effortReport({ reuseProducerCalls, direct, reuseDigest, directDigest, r
     reuseCheaperOnProducerCalls: same && reuseProducerCalls < directCalls,
     money: "costs_unknown",
     wallClockSampleMs: {
-      reuse: reuseMs ?? null,
-      direct: direct?.elapsedMs ?? null,
+      reuse: sampleMs(reuseMs),
+      direct: sampleMs(direct?.elapsedMs),
       claim: "single_sample_not_an_economic_advantage",
     },
     signup: false,
