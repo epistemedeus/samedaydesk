@@ -1,0 +1,85 @@
+{
+  "schema": "samedaydesk.composed-machine-delivery.public.v1",
+  "ok": true,
+  "duplicateEffect": "applied",
+  "capture": {
+    "captureId": "owned-example-page-changed",
+    "subject": "example-page",
+    "capturedAt": "2026-11-06T11:00:00.000Z",
+    "digest": "277e78ca75358cffe938c2fc15c6becad24e30d25283d99930562a7236f474de",
+    "transferred": true
+  },
+  "decisions": [
+    {
+      "intentId": "watch-title",
+      "outcome": "useful_change",
+      "reason": "fields_differ",
+      "useful": true,
+      "changedFields": [
+        "title"
+      ],
+      "unchangedFields": []
+    },
+    {
+      "intentId": "watch-status",
+      "outcome": "useful_no_change",
+      "reason": "fields_match",
+      "useful": true,
+      "changedFields": [],
+      "unchangedFields": [
+        "status"
+      ]
+    },
+    {
+      "intentId": "watch-url",
+      "outcome": "useful_no_change",
+      "reason": "fields_match",
+      "useful": true,
+      "changedFields": [],
+      "unchangedFields": [
+        "url"
+      ]
+    }
+  ],
+  "decisionOutcome": "compared",
+  "extension": {
+    "need": "local-process",
+    "selected": "native",
+    "fitting": true,
+    "acquired": true,
+    "published": false,
+    "executionDeclaration": "native_package_executed",
+    "observationDigest": "ee0ae1d577fa19a6c3485f998b12d937efb35f60280652d99343ed4647af50dc",
+    "directObservationMatches": true,
+    "directCommand": "node tools/result-reuse/cli.mjs preview --input <result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>"
+  },
+  "work": {
+    "appropriate": true,
+    "reason": "useful_change",
+    "taskId": "owned-example-page",
+    "accepted": true,
+    "evidenceOutcome": "meets_criteria",
+    "readback": {
+      "taskId": "owned-example-page",
+      "evidenceOutcome": "meets_criteria",
+      "accepted": true,
+      "rewardDisclosed": false
+    },
+    "shared": false,
+    "proof": null,
+    "rewardsHidden": true
+  },
+  "repeatUse": {
+    "ran": false,
+    "appropriate": false,
+    "reason": "the retained capture is a permitted field snapshot; walletless repeat use stays on its existing command",
+    "directCommand": "node tools/task-repeat-use/cli.mjs walk --case fitting",
+    "nonFittingCommand": "node tools/task-repeat-use/cli.mjs walk --case nonfitting-capture"
+  },
+  "directDecisions": "node tools/recurring-decision-consumer/cli.mjs recur --capture <capture.json> --intents <intents.json> --priors <priors.json> --schedule <schedule.json> --clock <ISO-UTC> --horizon <hours>",
+  "originalTermsPreserved": true,
+  "pricingInvented": false,
+  "rewardsHidden": true,
+  "published": false,
+  "actor": "owned-test-recorder"
+}

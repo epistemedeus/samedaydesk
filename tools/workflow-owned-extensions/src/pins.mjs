@@ -29,6 +29,27 @@ export const CONSUMERS = Object.freeze({
     kind: "consumer_adapter",
     label: "Ghost draft integration",
   }),
+  native: Object.freeze({
+    key: "native",
+    id: "native-result-reuse",
+    runtime: "native",
+    kind: "native_package",
+    label: "Native package",
+  }),
+  mcp: Object.freeze({
+    key: "mcp",
+    id: "mcp-cli-result-reuse",
+    runtime: "mcp",
+    kind: "mcp_cli",
+    label: "MCP/CLI server",
+  }),
+  review: Object.freeze({
+    key: "review",
+    id: "review-draft-result-reuse",
+    runtime: "review-draft",
+    kind: "dify_ghost_class",
+    label: "Unpublished review draft",
+  }),
 });
 
 export const DEFAULT_CONSUMER = "dify";
@@ -37,7 +58,7 @@ export function resolveConsumer(value = DEFAULT_CONSUMER) {
   const key = typeof value === "string" ? value.trim().toLowerCase() : "";
   const consumer = CONSUMERS[key];
   if (!consumer) {
-    return { ok: false, message: "consumer must be dify or ghost" };
+    return { ok: false, message: `consumer must be ${Object.keys(CONSUMERS).join(", ")}` };
   }
   return { ok: true, consumer };
 }

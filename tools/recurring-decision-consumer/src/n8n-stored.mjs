@@ -289,19 +289,19 @@ function unavailable(reason, message, fields) {
 }
 
 /**
- * Consume one already saved n8n execution. Field comparison is evaluateDecision only.
+ * Read one permitted capture from an already saved execution.
+ * Returns the maintained rejection unchanged when the execution cannot be used.
+ * Does not compare fields and does not call n8n.
  */
-export function evaluateStoredN8n({
+export function readStoredCapture({
   saved,
   workflowId,
   executionId,
   nodeName,
-  intent,
-  prior,
+  subject = "",
   clock,
   horizonHours,
   previous = null,
-  reference = null,
   statePath = null,
 }) {
   const fields = { ...clockFields(clock, horizonHours), previous, statePath };
@@ -375,17 +375,51 @@ export function evaluateStoredN8n({
     return rejection({ ...fields, reason: REASONS.invalidInput, message: "stored capture id exceeds 128 characters" });
   }
 
-  const subject = typeof intent?.subject === "string" ? intent.subject : "";
-  return evaluateDecision({
-    intent,
-    prior,
+  return {
+    ok: true,
+    envelope: envelope.envelope,
     capture: {
       schema: CAPTURE_SCHEMA,
       captureId,
-      subject,
+      subject: typeof subject === "string" ? subject : "",
       capturedAt: captureTime.iso,
       payload: item.payload,
     },
+  };
+}
+
+/**
+ * Consume one already saved n8n execution. Field comparison is evaluateDecision only.
+ */
+export function evaluateStoredN8n({
+  saved,
+  workflowId,
+  executionId,
+  nodeName,
+  intent,
+  prior,
+  clock,
+  horizonHours,
+  previous = null,
+  reference = null,
+  statePath = null,
+}) {
+  const read = readStoredCapture({
+    saved,
+    workflowId,
+    executionId,
+    nodeName,
+    subject: typeof intent?.subject === "string" ? intent.subject : "",
+    clock,
+    horizonHours,
+    previous,
+    statePath,
+  });
+  if (!read.capture) return read;
+  return evaluateDecision({
+    intent,
+    prior,
+    capture: read.capture,
     clock,
     horizonHours,
     previous,

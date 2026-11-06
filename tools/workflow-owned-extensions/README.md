@@ -74,15 +74,52 @@ Fitting fixtures live under `fixtures/inputs/`. Retained outputs live under
 the package returns a useful direct result-reuse CLI route instead of forcing
 the Dify tool.
 
+## Native, MCP/CLI, and review-draft acquisition
+
+Three additional consumers embed the same result-reuse capability. They are
+not Ghost, Dify table-csv, or n8n installers. Committed manifests stay
+`source_only_not_installed` and `not yet executed on runtime`. A caller names
+the consumer and one of `samedaydesk`, `ein-llc`, or `neomorphic-io`. The
+package does not choose for the caller and does not publish a human preview.
+
+- `native`: local package process. Native Tasks wire execution stays unsupported.
+- `mcp`: MCP stdio process for `preview_reuse`, `export_reuse`, and `decide_or_reuse`. The wire format is newline-delimited JSON-RPC. Legacy clients use `initialize` through `2025-11-25`. A `2026-07-28` client uses `server/discover` and per-request metadata.
+- `review`: Dify/Ghost-class unpublished draft. Human review stays unpublished. Ghost is not reopened and Dify is not cold-installed.
+
+```bash
+node tools/workflow-owned-extensions/cli.mjs acquire \
+  --consumer native \
+  --site samedaydesk \
+  --store /tmp/woe-store \
+  --source c60641e8ff2b94dd704307e57f5b6fe789ba0df7 \
+  --clock 2026-11-06T12:00:00.000Z
+
+node tools/workflow-owned-extensions/cli.mjs run \
+  --consumer native \
+  --store /tmp/woe-store \
+  --input tools/workflow-owned-extensions/fixtures/inputs/fitting-n45-page-change.json \
+  --task-id n45-example-com \
+  --subject n45-example-com-result \
+  --sequence 1 \
+  --clock 2026-09-09T08:00:00.000Z
+```
+
+A prepared JSON record without a prefix is not an installation. `run` then
+uses the local result-reuse CLI and reports `unsupported_execution`. The
+retained observation matches that direct CLI. Update keeps the source pin.
+Remove deletes the prefix.
+
 ## Offline unit checks
 
-This package uses Node builtins plus the existing `tools/result-reuse` SDK.
-No extra npm package is required for the unit tests. Do not install a Dify or
-Ghost stack to satisfy `test/*.test.mjs`, and do not treat generated manifests
-as installation or as proof that a runtime ran.
+The server and the other unit tests use Node builtins plus the existing
+`tools/result-reuse` module. The stdio conformance test imports the pinned
+`@modelcontextprotocol/client` 2.4.0. Install that package before the suite.
+Do not install a Dify or Ghost stack to satisfy `test/*.test.mjs`, and do not
+treat generated manifests as installation or as proof that a runtime ran.
 
 ```bash
 node --version   # expect v22.x, the repo engine
+npm ci --ignore-scripts --omit=dev --prefix tools/workflow-owned-extensions
 node --test --test-concurrency=1 tools/workflow-owned-extensions/test/*.test.mjs
 ```
 

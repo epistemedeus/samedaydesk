@@ -1,0 +1,28 @@
+{
+  "journey": "samedaydesk.two-sided-work.journey.v1",
+  "retainedLock": "samedaydesk.two-sided-work.retained-lock.v1",
+  "post": "samedaydesk.two-sided-work.post.v1",
+  "claim": "samedaydesk.two-sided-work.claim.v1",
+  "selection": "samedaydesk.two-sided-work.selection.v1",
+  "delivery": "samedaydesk.two-sided-work.delivery.v1",
+  "acceptance": "samedaydesk.two-sided-work.acceptance.v1",
+  "publicProof": "samedaydesk.two-sided-work.public-proof.v1",
+  "publicView": "samedaydesk.two-sided-work.public-view.v1",
+  "feeProjection": "samedaydesk.two-sided-work.fee-projection.v1",
+  "wholeEffort": "samedaydesk.two-sided-work.whole-effort.v1",
+  "api": "samedaydesk.two-sided-work.api.v1",
+  "capabilities": {
+    "ledger": false,
+    "signer": false,
+    "paymentCommand": false,
+    "automaticUnlock": false,
+    "marketLiquidity": false
+  },
+  "acceptanceEvidence": ["meets_criteria", "refused", "needs_review"],
+  "fee": {
+    "appliedOnlyWhenTermsAuthorize": true,
+    "feeBps": 500,
+    "feeBasis": "new_job_gross",
+    "module": "vendor/hosted-wallet-market/src/fee.mjs"
+  }
+}

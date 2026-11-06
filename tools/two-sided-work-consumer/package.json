@@ -1,0 +1,19 @@
+{
+  "name": "two-sided-work-consumer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Agent-native two-sided work journey: post, claim or select, deliver, accept from existing diagnose outcomes, reusable proof, and the existing 5 percent fee projection.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "two-sided-work-consumer": "./cli.mjs"
+  },
+  "exports": {
+    ".": "./src/commands.mjs",
+    "./http": "./src/http.mjs",
+    "./cli": "./cli.mjs"
+  }
+}
