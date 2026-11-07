@@ -466,11 +466,17 @@ test("host trust proxy stays closed and request identity keeps ordinary hops", a
 
 // The installed source is an immutable received predecessor, not a copied member
 // of the current pin's own accepted list. CI fetches history for this contract.
-test("actual installed predecessor caller survives the source export", async () => {
-  const prior = JSON.parse(execFileSync("git", ["show", "946ccd2fafe934a0a58e7a92a441103ed25bddeb:server/foundry/activation/private-control-pin.json"], {cwd:root, encoding:"utf8", maxBuffer:4*1024*1024}));
-  const descriptor = {base: prior.base, sourcePinSha256: prior.files["vendor/visitor-foundry-receiver/SOURCE-PIN.json"], closureDigest: digest(prior)};
-  assert.equal(descriptor.closureDigest, "sha256:c064d697b343cdd02d29ae50bb60aaf198ca5a111edea390f1f60714c81507f0");
-  assert.ok(acceptedCallerPin(descriptor));
-  assert.equal(acceptedCallerPin({...descriptor, sourcePinSha256: "0".repeat(64)}), false);
-  assert.equal(acceptedCallerPin({...descriptor, base: "0".repeat(40)}), false);
+test("installed predecessor callers survive the source export", () => {
+  const predecessors = [
+    ["946ccd2fafe934a0a58e7a92a441103ed25bddeb", "sha256:c064d697b343cdd02d29ae50bb60aaf198ca5a111edea390f1f60714c81507f0"],
+    ["c60641e8ff2b94dd704307e57f5b6fe789ba0df7", "sha256:964ccc9d7603964b45acb45a90327c8bedd91ff4e6dde2be9940f089e4d3242b"],
+  ];
+  for (const [commit, expectedDigest] of predecessors) {
+    const prior = JSON.parse(execFileSync("git", ["show", `${commit}:server/foundry/activation/private-control-pin.json`], {cwd:root, encoding:"utf8", maxBuffer:4*1024*1024}));
+    const descriptor = {base: prior.base, sourcePinSha256: prior.files["vendor/visitor-foundry-receiver/SOURCE-PIN.json"], closureDigest: digest(prior)};
+    assert.equal(descriptor.closureDigest, expectedDigest);
+    assert.ok(acceptedCallerPin(descriptor));
+    assert.equal(acceptedCallerPin({...descriptor, sourcePinSha256: "0".repeat(64)}), false);
+    assert.equal(acceptedCallerPin({...descriptor, base: "0".repeat(40)}), false);
+  }
 });

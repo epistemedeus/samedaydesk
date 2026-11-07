@@ -13,7 +13,7 @@
     "pg": "8.23.0",
     "zod": "3.25.76"
   },
-  "hostLockSha256": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
+  "hostLockSha256": "bdc3a1944a7a8c7316356f7248a0d71d9ee3f83501e5fad4a0e422cf959e4811",
   "files": [
     {
       "path": "package.json",
