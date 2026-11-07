@@ -45,12 +45,13 @@ export function scoreCategories(checks) {
 export function totalScore(categories) {
     return Math.round(categories.reduce((sum, c) => sum + c.points, 0));
 }
-const SEVERITY = { fail: 0, na: 1, warn: 2, pass: 3 };
+const FIX_SEVERITY = { fail: 0, warn: 1 };
 export function topFixes(checks, categories, limit = 3) {
     const weightOf = (id) => categories.find((c) => c.id === id)?.weight ?? 0;
     return checks
-        .filter((c) => c.status !== "pass" && c.applicability !== "declared-absent" && c.applicability !== "not-probed")
-        .sort((a, b) => SEVERITY[a.status] - SEVERITY[b.status] ||
+        .filter((c) => (c.status === "fail" || c.status === "warn") &&
+            c.applicability !== "declared-absent" && c.applicability !== "not-probed")
+        .sort((a, b) => FIX_SEVERITY[a.status] - FIX_SEVERITY[b.status] ||
         weightOf(b.category) - weightOf(a.category) ||
         a.id.localeCompare(b.id))
         .slice(0, limit)
