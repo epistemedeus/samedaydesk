@@ -65,7 +65,7 @@ describe("truthfulness", () => {
   });
 });
 describe("top fixes", () => {
-  it("lists at most three non-passing checks, worst first", () => {
+  it("lists at most three actionable checks, worst first", () => {
     const report = buildReport(demoBundle("samedaydesk.com"), "2026-09-24T10:00:00Z");
     expect(report.topFixes.length).toBe(3);
     for (const fix of report.topFixes) expect(fix.fix.length).toBeGreaterThan(0);
@@ -82,6 +82,23 @@ describe("top fixes", () => {
       { id: "f", category: "cors", title: "failed", status: "fail", reason: "", fix: "f" }
     ];
     expect(topFixes(checks, scoreCategories(checks))[0].title).toBe("failed");
+  });
+  it("keeps non-applicable checks in the report but out of its next actions", () => {
+    const checks = [
+      { id: "openapi.idempotency", category: "usability", title: "Read-only API", status: "na", fix: "No action needed." },
+      { id: "x402.resources", category: "x402", title: "Missing manifest prerequisite", status: "na", fix: "List paid resources." },
+      { id: "mcp.absent", category: "mcp", title: "Declared absent", status: "fail", applicability: "declared-absent", fix: "Add MCP." },
+      { id: "static.summary", category: "discovery", title: "Not probed", status: "warn", applicability: "not-probed", fix: "Add a summary." },
+      { id: "x402.parses", category: "x402", title: "Failed manifest", status: "fail", fix: "Repair the manifest." },
+      { id: "openapi.public", category: "openapi", title: "Public operation warning", status: "warn", fix: "Document public operations." },
+      { id: "openapi.errors", category: "usability", title: "Error contract warning", status: "warn", fix: "Document errors." }
+    ];
+    const categories = scoreCategories(checks);
+    expect(categories.find((category) => category.id === "usability").checks[0].status).toBe("na");
+    expect(topFixes(checks, categories).map((row) => row.title)).toEqual([
+      "Failed manifest", "Public operation warning", "Error contract warning"
+    ]);
+    expect(topFixes(checks.slice(0, 4), categories)).toEqual([]);
   });
 });
 describe("report shape", () => {
