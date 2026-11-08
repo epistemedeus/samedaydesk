@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { runDocumentationReadiness } from "../lib/agent-readiness/documentation.js";
+import { DOCUMENTATION_READINESS_FORMAT, runDocumentationReadiness } from "../lib/agent-readiness/documentation.js";
 import { clientKey } from "../lib/agent-readiness/rate-limit.js";
 import { runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 
@@ -80,7 +80,7 @@ function statusClass(status) {
 router.get("/", async (req, res) => {
   const format = String(req.query.format || "").trim();
   const host = hostParam(req);
-  const documentation = format === "documentation";
+  const documentation = format === DOCUMENTATION_READINESS_FORMAT;
   const description = "Free agent readiness check: discovery files, MCP handshake, tools list, agent card, cross-surface identity, CORS, x402, and a fix pack. No signup.";
   if (!host) {
     if (documentation || format === "json" || format === "fix-pack") {

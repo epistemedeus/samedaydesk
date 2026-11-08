@@ -5,6 +5,9 @@ import { classifyRetrieval, contentTypeOf, isHtmlDocument } from "./retrieval.js
 import { classifySitemap, parseRobotsSitemaps } from "./sitemap-discovery.js";
 import { summarizeStaticHtml } from "./static-summary.js";
 
+export const DOCUMENTATION_READINESS_FORMAT = "documentation";
+export const DOCUMENTATION_READINESS_SCHEMA = "agent-readiness.documentation.v1";
+
 const TEXT_TYPES = new Set(["text/plain", "text/markdown"]);
 const SITEMAP_PATHS = ["/sitemap.xml", "/sitemap-index.xml"];
 
@@ -96,7 +99,7 @@ export async function runDocumentationReadiness(rawHost, options = {}) {
     const [home, llms, robots] = await Promise.all([get("/"), get("/llms.txt"), get("/robots.txt")]);
     const checks = [homepage(home), await sitemap(origin, robots, get), llmsIndex(llms)];
     return {
-      schema: "agent-readiness.documentation.v1",
+      schema: DOCUMENTATION_READINESS_SCHEMA,
       host, origin, free: true, generatedAt: new Date().toISOString(),
       checks,
       topFixes: checks.filter((row) => row.fix).map(({ id, fix }) => ({ id, fix })),
