@@ -140,6 +140,29 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "4b93401db868a8bd1d38595e865130889d61e64f21647e722e2f34737799bc31",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSha256": "1635154974b5a9e056ab3b94f738a690a82fed8a8a5e5f726d84ed0571a3da39",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "8cc684595b84594f0e81ca659cf361707ca6252904d237a8ce39a4b8b27ab761",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "b539f5f4cc2b23149009fa56f05953d2c40a5a3a",
+        "independentReplay": "nov08-visitor-promotion/acquisition-replay-v2",
+        "observedAt": "2026-11-08T05:12:37.005Z",
+        "passed": 25,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "24 source-bound acquisition selection checks and one standalone cold client journey on a clean Cursor checkout with disposable PostgreSQL 16.15. Source-bound CI only.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }
