@@ -416,7 +416,14 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
     assert.notEqual(sha256(selected.anchorBytes), ANCHOR_SHA);
   } else {
     assertExit(configured, 3);
-    assert.match(configured.stderr, new RegExp(`^stale actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${H142_SOURCE} ${PRIOR_HOST}$`, 'm'));
+    // Catalog growth changes which historical slot the diagnostic lists first.
+    // Require the measured candidate and a distinct, real approved predecessor.
+    const stale = /^stale actual ([a-f0-9]{64}) ([a-f0-9]{64}) expected ([a-f0-9]{64}) ([a-f0-9]{64})$/m.exec(configured.stderr);
+    assert.ok(stale, configured.stderr);
+    assert.deepEqual(stale.slice(1, 3), [CURRENT_SOURCE, CURRENT_HOST]);
+    assert.notDeepEqual(stale.slice(3), [CURRENT_SOURCE, CURRENT_HOST]);
+    const configuredRows = readIndex(configuredIndexBefore.toString('utf8')).packets;
+    assert.ok(configuredRows.some(row => row.sourceSha256 === stale[3] && row.hostSha256 === stale[4]));
     assert.equal(existsSync(configuredOut), false);
   }
   const h142Slot = join(committedCatalog, catalogFileName(H142_SOURCE, H142_HOST));
