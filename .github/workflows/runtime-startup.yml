@@ -42,6 +42,7 @@ jobs:
       - run: node --test server/scripts/test-postgres-bin.mjs
       - run: npm run test:proxy-addr
       - run: node --test server/scripts/test-correspondence-startup-diagnostic.js
+      - run: node --test server/scripts/test-pulse-private-metadata.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
       # Each candidate selects the approved packet for its own source and
