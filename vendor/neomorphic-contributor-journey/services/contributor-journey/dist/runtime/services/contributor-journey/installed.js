@@ -346,7 +346,10 @@ export async function createInstalledComposition(options) {
         const visitor = await resolveVisitor(request);
         if (!visitor || visitor.visitorRef !== event.visitorRef)
             throw new Error('arrival context mismatch');
-        await kernel.withOpportunityClient(async (client) => { await client.query('UPDATE journey_visitors SET arrival_event_id=$2 WHERE visitor_ref=$1', [visitor.visitorRef, event.eventId]); }, 'idempotent');
+        await kernel.withOpportunityClient(async (client) => {
+            await client.query(`INSERT INTO journey_visitors(visitor_ref,arrival_event_id)
+      VALUES($1,$2) ON CONFLICT(visitor_ref) DO UPDATE SET arrival_event_id=EXCLUDED.arrival_event_id`, [visitor.visitorRef, event.eventId]);
+        }, 'idempotent');
     };
     const bridge = (handler) => async (req, res, next) => {
         try {
@@ -365,8 +368,10 @@ export async function createInstalledComposition(options) {
             const visitor = req.journeyVisitor;
             if (!visitor || !(req.path === '/signup' || req.path === '/readback' && req.body?.operation === 'signup'))
                 return;
-            await kernel.withOpportunityClient(async (client) => { await client.query('UPDATE journey_visitors SET account_id=$2 WHERE visitor_ref=$1 AND (account_id IS NULL OR account_id=$2)', [visitor, receipt.account.accountId]); }, 'idempotent');
-            const row = await kernel.withOpportunityClient(async (client) => (await client.query('SELECT arrival_event_id FROM journey_visitors WHERE visitor_ref=$1', [visitor])).rows[0], 'read');
+            const row = await kernel.withOpportunityClient(async (client) => (await client.query(`INSERT INTO journey_visitors(visitor_ref,account_id)
+      VALUES($1,$2) ON CONFLICT(visitor_ref) DO UPDATE SET account_id=EXCLUDED.account_id
+      WHERE journey_visitors.account_id IS NULL OR journey_visitors.account_id=EXCLUDED.account_id
+      RETURNING arrival_event_id`, [visitor, receipt.account.accountId])).rows[0], 'idempotent');
             if (row?.arrival_event_id) {
                 const result = await referral.recordMilestone({ stage: 'qualified_signup', evidenceRef: `signup:${receipt.account.accountId}`, arrivalEventId: row.arrival_event_id });
                 if (!result.ok)
@@ -389,8 +394,8 @@ export async function createInstalledComposition(options) {
                 const signature = createHmac('sha256', settings.integrityKey).update(visitor).digest('hex');
                 res.append('Set-Cookie', `${visitorCookie}=${visitor}.${signature}; Path=/; Secure; HttpOnly; SameSite=Strict`);
             }
+            // The signed cookie needs no row until a verified arrival or signup.
             req.journeyVisitor = visitor;
-            await kernel.withOpportunityClient(async (client) => { await client.query('INSERT INTO journey_visitors(visitor_ref) VALUES($1) ON CONFLICT DO NOTHING', [visitor]); }, 'idempotent');
             const account = await authenticate(req);
             if (account)
                 res.setHeader('X-CJ-CSRF', csrf(account));

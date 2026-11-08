@@ -40,11 +40,12 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const MEASURED_BASE = 'cb69901fbf08aa26ec2d8b827b2b7b3668875c94';
+const MEASURED_BASE = '3040a938b3bb220205f89b42677402c73b3d229d';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
 const COMPOSED_HOST = '7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23';
+const PREDECESSOR_HOST = '208be740ff7f332219261711f99c2b5333eb977ad1db004d5b1f869ab1dd1c4c';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
 const decoder = 'server/scripts/decode-root10940-ci-packet.mjs';
@@ -415,7 +416,14 @@ test('current tree treats the cafd packet as stale and does not rewrite it', asy
     assert.notEqual(sha256(selected.anchorBytes), ANCHOR_SHA);
   } else {
     assertExit(configured, 3);
-    assert.match(configured.stderr, new RegExp(`^stale actual ${CURRENT_SOURCE} ${CURRENT_HOST} expected ${H142_SOURCE} ${PRIOR_HOST}$`, 'm'));
+    // Catalog growth changes which historical slot the diagnostic lists first.
+    // Require the measured candidate and a distinct, real approved predecessor.
+    const stale = /^stale actual ([a-f0-9]{64}) ([a-f0-9]{64}) expected ([a-f0-9]{64}) ([a-f0-9]{64})$/m.exec(configured.stderr);
+    assert.ok(stale, configured.stderr);
+    assert.deepEqual(stale.slice(1, 3), [CURRENT_SOURCE, CURRENT_HOST]);
+    assert.notDeepEqual(stale.slice(3), [CURRENT_SOURCE, CURRENT_HOST]);
+    const configuredRows = readIndex(configuredIndexBefore.toString('utf8')).packets;
+    assert.ok(configuredRows.some(row => row.sourceSha256 === stale[3] && row.hostSha256 === stale[4]));
     assert.equal(existsSync(configuredOut), false);
   }
   const h142Slot = join(committedCatalog, catalogFileName(H142_SOURCE, H142_HOST));
@@ -1039,6 +1047,12 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.notEqual(composedRow.hostSha256, CURRENT_HOST);
   const composedPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(H142_SOURCE, COMPOSED_HOST)), 'utf8')));
   assert.equal(rowAgrees(composedRow, composedPacket), true);
+  const predecessorSlot = catalogFileName(CURRENT_SOURCE, PREDECESSOR_HOST);
+  assert.notEqual(PREDECESSOR_HOST, CURRENT_HOST);
+  const predecessorPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, predecessorSlot), 'utf8')));
+  const predecessorRow = index.packets.find(row => row.sourceSha256 === CURRENT_SOURCE && row.hostSha256 === PREDECESSOR_HOST);
+  assert.ok(predecessorRow, 'the deployed predecessor keeps its approved slot');
+  assert.equal(rowAgrees(predecessorRow, predecessorPacket), true);
   assert.equal(h142Row.receiving.installed, false);
   assert.equal(priorRow.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
   assert.equal(priorRow.receiving.installed, false);
