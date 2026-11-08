@@ -120,3 +120,16 @@ test("a truncated refusal or challenge cannot yield a next action", async (t) =>
   assert.equal("nextAction" in challenge, false);
   assert.equal(challenge.evidence.find(({ path }) => path === "/").outcome, "blocked");
 });
+
+test("only over-cap HTML from a non-challenge response can offer the alternate", async (t) => {
+  for (const homepage of [
+    { ...capped(alternate()), headers: { "content-type": "application/json", link: alternate() }, body: '{"report":"bounded' },
+    { ...capped(alternate()), headers: { ...home.headers, link: alternate(), "cf-mitigated": "challenge" } },
+  ]) {
+    const seen = wire(t, { "/": homepage });
+    const report = await runDocumentationReadiness(origin, { lookup });
+    assert.equal(report.checks.find(({ id }) => id === "homepage").status, "unknown");
+    assert.equal("nextAction" in report, false);
+    assert.equal(seen.includes("/results.md"), false);
+  }
+});

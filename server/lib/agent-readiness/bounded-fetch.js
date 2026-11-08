@@ -8,6 +8,7 @@ import { PublicHostError, assertPublicUrl } from "./ssrf.js";
 import { rawExchange } from "./probe.js";
 import { createRequestBudget } from "./request-budget.js";
 import { declaredTextAlternate } from "./documentation-alternate.js";
+import { isHtmlDocument, looksLikeChallenge } from "./retrieval.js";
 export { createRequestBudget } from "./request-budget.js";
 
 export const FETCH_FAILURE = Object.freeze({
@@ -85,6 +86,7 @@ export async function fetchPublicBounded(url, opts = {}) {
       const oversize = Boolean(res.truncated) || Buffer.byteLength(body) > maxBytes;
       const ok = res.status >= 200 && res.status < 300;
       const declaredAlternate = includeOversizeAlternate && ok && oversize && current.origin === allowedOrigin
+        && isHtmlDocument(res) && !looksLikeChallenge(res)
         ? declaredTextAlternate(res.headers?.link, current)
         : null;
       return {
