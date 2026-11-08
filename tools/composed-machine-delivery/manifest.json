@@ -31,5 +31,6 @@
   "testCommand": "npm test --prefix tools/composed-machine-delivery",
   "exampleInput": "tools/composed-machine-delivery/examples/changed-request.json",
   "exampleOutput": "tools/composed-machine-delivery/examples/retained-output.json",
-  "artifact": "tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz"
+  "artifact": "tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz",
+  "artifactChecksum": "tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz.sha256"
 }

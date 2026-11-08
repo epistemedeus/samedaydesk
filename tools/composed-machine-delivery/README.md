@@ -6,26 +6,106 @@ An agent can retain one permitted capture, derive several decisions from it, sel
 
 Sharing is optional. Public output hides reward amounts. Human publication is reserved and is not performed.
 
-## Acquire
+## Acquire, update, and remove
 
-From a fresh extraction of `tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz`:
+Use Linux with Node 22, GNU tar, curl, and sha256sum. Take the 40-character
+commit from the GitHub permalink for the candidate you intend to install.
+The archive and its SHA-256 file must come from that same commit. The
+checksum verifies the downloaded bytes against that revision.
 
 ```bash
-tar -xzf composed-machine-delivery.tar.gz -C <empty-dir>
-cd <empty-dir>
-node tools/composed-machine-delivery/cli.mjs deliver \
-  --request tools/composed-machine-delivery/examples/changed-request.json \
-  --store <dir> \
-  --out <public.json>
+export REF='<40-character GitHub commit containing the candidate>'
+export DELIVERY_HOME="$PWD/composed-delivery"
+
+(
+  set -eu
+  case "$REF" in ''|*[!0-9a-f]*) exit 2 ;; esac
+  [ "${#REF}" -eq 40 ]
+  mkdir -p "$DELIVERY_HOME/installs" "$DELIVERY_HOME/data"
+  prefix="$DELIVERY_HOME/installs/$REF"
+  [ ! -e "$prefix" ] && [ ! -L "$prefix" ]
+  stage=$(mktemp -d "$DELIVERY_HOME/installs/.download.XXXXXX")
+  trap 'rm -rf -- "$stage"' EXIT
+  cd "$stage"
+  base="https://raw.githubusercontent.com/epistemedeus/samedaydesk/$REF/tools/composed-machine-delivery/dist"
+  archive=composed-machine-delivery.tar.gz
+  curl -q --fail --silent --show-error --location --output "$archive" "$base/$archive"
+  curl -q --fail --silent --show-error --location --output "$archive.sha256" "$base/$archive.sha256"
+  read -r checksum filename < "$archive.sha256"
+  [ "$filename" = "$archive" ]
+  printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check --strict
+  mkdir tree
+  tar -xzf "$archive" -C tree
+  node tree/tools/composed-machine-delivery/cli.mjs --help
+  mv -T --no-clobber -- tree "$prefix"
+  [ ! -e tree ]
+)
 ```
 
-The example input is a synthetic owned-test page whose heading changed. The public JSON is the retained useful output. The store keeps the private receipt, including the fee projection, for the caller who supplied the original terms.
+The local delivery commands use Node builtins. If you want to run the
+official Model Context Protocol (MCP) standard-input/output client checks,
+install only their locked dependency closure inside the selected installation.
 
-Build the archive from a full checkout:
+```bash
+cd "$DELIVERY_HOME/installs/$REF"
+npm ci --ignore-scripts --omit=dev --no-audit --no-fund --prefix tools/workflow-owned-extensions
+node --test tools/workflow-owned-extensions/test/sdk-stdio-client.test.mjs
+```
+
+Run a first delivery with the included synthetic page input, then inspect or
+replay the result. Keep input, caller stores, and outputs outside the install.
+
+```bash
+cd "$DELIVERY_HOME/installs/$REF"
+data="$DELIVERY_HOME/data"
+node tools/composed-machine-delivery/cli.mjs deliver \
+  --request tools/composed-machine-delivery/examples/changed-request.json \
+  --store "$data/example-store" --out "$data/example-public.json"
+node tools/composed-machine-delivery/cli.mjs show --store "$data/example-store"
+```
+
+The public output contains the title-change decision, the matching local
+observation, and the acceptance outcome. The caller store also holds a
+private receipt with its fee projection. To use your own permitted capture,
+supply your request and a fresh store. Align the capture, schedule capture ID,
+and extension input, and use a fresh store for a distinct delivery. Repeating
+the same request in its original store returns the retained result. If the
+current capture file is lost, use `recover --store <dir>` on its original store.
+
+To update the archive installation, repeat acquisition with the new reviewed
+commit and use its new directory. The existing installation remains available
+while the checksum and smoke check run. Use the same external caller store
+for compatible reads and replays. To remove an installation, leave its
+directory and delete just `"$DELIVERY_HOME/installs/$REF"` after verifying
+that `REF` is the installed commit you intend to remove.
+
+The installed workflow extension has its own lifecycle. For a delivery using
+the native selector, run the following from the installation directory. This
+updates and removes the workflow prefix inside the caller store, where the
+original delivery result is still available through `show`.
+
+```bash
+node tools/workflow-owned-extensions/cli.mjs update --consumer native \
+  --store "$DELIVERY_HOME/data/example-store/extensions" --version 0.1.1 \
+  --clock 2026-11-06T12:05:00.000Z
+node tools/workflow-owned-extensions/cli.mjs remove --consumer native \
+  --store "$DELIVERY_HOME/data/example-store/extensions" \
+  --clock 2026-11-06T12:10:00.000Z
+```
+
+The archive's task-repeat coverage reports internal enrollment evidence as
+unavailable. The underlying public pin and route checks, retained result
+import, and direct comparison still run.
+
+Build the allowlisted archive from a full checkout:
 
 ```bash
 node tools/composed-machine-delivery/cli.mjs pack \
   --out tools/composed-machine-delivery/dist/composed-machine-delivery.tar.gz
+(
+  cd tools/composed-machine-delivery/dist
+  sha256sum composed-machine-delivery.tar.gz > composed-machine-delivery.tar.gz.sha256
+)
 ```
 
 ## Commands

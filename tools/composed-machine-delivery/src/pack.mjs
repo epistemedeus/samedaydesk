@@ -1,54 +1,61 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { COVERAGE_MEMBER, portableCoverage } from "./portable-coverage.mjs";
 
 const REPO_ROOT = fileURLToPath(new URL("../../..", import.meta.url));
-
-const MEMBERS = [
-  "tools/composed-machine-delivery",
-  "tools/task-repeat-use",
-  "tools/workflow-owned-extensions",
-  "tools/two-sided-work-consumer",
-  "tools/recurring-decision-consumer",
-  "tools/result-reuse",
-  "tools/task-bundle-economics",
-  "tools/recurring-job-recipes",
-  "vendor/hosted-wallet-market/src/fee.mjs",
-  "vendor/hosted-wallet-market/src/public-route-limit.mjs",
-  "client/src/data",
-  "docs/receiving/h155030-sds-consumer-composition-20261106",
-  "docs/receiving/h155060-sds-combined-release-qualification-20261106",
-];
-
-const EXCLUDES = [
-  "tools/composed-machine-delivery/receiving",
-  "tools/composed-machine-delivery/dist",
-  "tools/task-repeat-use/TERMINAL.md",
-  "tools/workflow-owned-extensions/N7-RECEIVING.md",
-  "tools/two-sided-work-consumer/examples/TERMINAL-RECEIPT.md",
-  "tools/two-sided-work-consumer/examples/whole-effort-receipt.json",
-];
+const ALLOWLIST = new URL("../archive-files.txt", import.meta.url);
+const MEMBERS = Object.freeze(readFileSync(ALLOWLIST, "utf8").trimEnd().split("\n"));
+const MEMBER_PATH = /^(?:[\w-]+\/)+[\w.-]+$/;
 
 export function packDelivery({ out, root = REPO_ROOT } = {}) {
   if (!out) return { ok: false, reason: "out_required" };
-  mkdirSync(dirname(out), { recursive: true });
-  const args = ["-czf", out, "--exclude=node_modules"];
-  for (const exclude of EXCLUDES) args.push(`--exclude=${exclude}`);
-  args.push("-C", root, ...MEMBERS);
-  const child = spawnSync("tar", args, { encoding: "utf8" });
-  if (child.status !== 0) {
-    return { ok: false, reason: "pack_failed", message: child.stderr || child.error?.message || "tar failed" };
+  let stage;
+  try {
+    const target = resolve(out);
+    const sourceRoot = realpathSync(root);
+    mkdirSync(dirname(target), { recursive: true });
+    stage = mkdtempSync(join(dirname(target), ".composed-pack-"));
+    const tree = join(stage, "tree");
+    for (const member of MEMBERS) {
+      if (!MEMBER_PATH.test(member)) throw new Error(`invalid archive member: ${member}`);
+      const source = join(sourceRoot, member);
+      if (!lstatSync(source).isFile() || realpathSync(source) !== source) {
+        throw new Error(`archive member must be a regular file under the source root: ${member}`);
+      }
+      const staged = join(tree, member);
+      mkdirSync(dirname(staged), { recursive: true });
+      if (member === COVERAGE_MEMBER) {
+        writeFileSync(staged, portableCoverage(readFileSync(source, "utf8")));
+      } else {
+        copyFileSync(source, staged);
+      }
+    }
+
+    const candidate = join(stage, "archive.tar.gz");
+    const env = { ...process.env, LC_ALL: "C" };
+    delete env.TAR_OPTIONS;
+    delete env.GZIP;
+    const child = spawnSync("tar", [
+      "-czf", candidate, "--no-recursion", "--mtime=@0", "--owner=0", "--group=0",
+      "--numeric-owner", "--mode=0644", "-C", tree, ...MEMBERS,
+    ], { encoding: "utf8", env });
+    if (child.status !== 0) throw new Error(child.stderr || child.error?.message || "tar failed");
+    renameSync(candidate, target);
+    return {
+      ok: true,
+      artifact: out,
+      root,
+      members: MEMBERS,
+      extract: `tar -xzf ${out} -C <empty-dir>`,
+      command: "node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>",
+    };
+  } catch (error) {
+    return { ok: false, reason: "pack_failed", message: error.message };
+  } finally {
+    if (stage) rmSync(stage, { recursive: true, force: true });
   }
-  return {
-    ok: true,
-    artifact: out,
-    root,
-    members: MEMBERS,
-    excludes: EXCLUDES,
-    extract: `tar -xzf ${out} -C <empty-dir>`,
-    command: "node tools/composed-machine-delivery/cli.mjs deliver --request tools/composed-machine-delivery/examples/changed-request.json --store <dir> --out <public.json>",
-  };
 }
 
 export function repoRoot() {
