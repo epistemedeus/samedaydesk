@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
+import { createServer, request } from 'node:http';
 import { createRequire } from 'node:module';
 import test from 'node:test';
-import { gzipSync } from 'node:zlib';
+import { deflateSync, gzipSync } from 'node:zlib';
 import { createSdsApp } from '../app.js';
 
 const require = createRequire(import.meta.url);
@@ -35,6 +36,54 @@ test('the ordinary SDS parser accepts gzip and isolates malformed bodies', { tim
   assert.equal(invalid.status, 400);
   await invalid.arrayBuffer();
 
+  const healthy = await fetch(`${origin}/api/health`, { signal: AbortSignal.timeout(3000) });
+  assert.equal(healthy.status, 200);
+  assert.equal((await healthy.json()).ok, true);
+});
+
+test('the installed app drains a late compressed upload and remains available', { timeout: 10_000 }, async t => {
+  const app = createSdsApp();
+  const drained = Promise.withResolvers();
+  const finalChunk = Buffer.alloc(32);
+  const firstChunk = Buffer.concat([deflateSync('{"fixture":true}'), Buffer.alloc(1)]);
+  let upload;
+  const server = createServer((req, res) => {
+    if (req.method === 'POST') {
+      req.once('end', drained.resolve);
+      // Make the final bytes arrive after the real application responds, not
+      // in the same buffer as the valid compressed frame.
+      res.once('finish', () => upload.end(finalChunk));
+    }
+    app(req, res);
+  }).listen(0, '127.0.0.1');
+  t.after(async () => {
+    upload?.destroy();
+    server.closeAllConnections();
+    await new Promise(resolve => server.close(resolve));
+  });
+  await once(server, 'listening');
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  const status = await new Promise((resolve, reject) => {
+    upload = request(`${origin}/api/test-compressed-request-not-a-route`, {
+      method: 'POST',
+      agent: false,
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        connection: 'keep-alive',
+        'content-type': 'application/json',
+        'content-encoding': 'deflate',
+        'content-length': firstChunk.length + finalChunk.length,
+      },
+    }, res => {
+      res.once('error', reject);
+      res.once('end', () => resolve(res.statusCode));
+      res.resume();
+    });
+    upload.once('error', reject);
+    upload.write(firstChunk);
+  });
+  assert.equal(status, 404);
+  await drained.promise;
   const healthy = await fetch(`${origin}/api/health`, { signal: AbortSignal.timeout(3000) });
   assert.equal(healthy.status, 200);
   assert.equal((await healthy.json()).ok, true);
