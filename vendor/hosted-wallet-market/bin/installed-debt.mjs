@@ -3,11 +3,11 @@
 import {constants,openSync,readFileSync,fstatSync,closeSync,writeFileSync,mkdirSync} from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
-import {walletEnvironmentPacket,machineEntryEnvironmentPacket} from '../src/release-profile.mjs';
 import {unfundedFunnelSnapshot} from '../src/machine-funnel.mjs';
 import pg from 'pg';
-import {applyAdditiveSchema,assertObligationGuard,inspectInstallation,rollbackAdapter} from '../src/migrate.mjs';
-import {IMPORT_BODY_KEYS,importBodyKeys,assertImportShape} from '../src/native-debt.mjs';
+import {applyAdditiveSchema,applyLateDischargeSchema,assertObligationGuard,inspectInstallation,rollbackAdapter} from '../src/migrate.mjs';
+import {importBodyKeys,assertImportShape,IMPORT_CONTRACT_SHA256,RAIL_TOKEN} from '../src/native-debt.mjs';
+import {LATE_ACCEPTANCE_KIND,lateReceiptId} from '../src/late-discharge.mjs';
 import {dischargeReceiptId} from '../src/native-obligation-discharge.mjs';
 import {assertIdent} from '../src/profile.mjs';
 const [command,...args]=process.argv.slice(2);
@@ -29,6 +29,7 @@ async function database(){
   await client.query(`SET LOCAL search_path TO ${schema}`);
   let result;
   if(command==='migrate'){await applyAdditiveSchema(client,{earnedSchema:schema});result={migrated:true};}
+  else if(command==='migrate-late'){await applyLateDischargeSchema(client,{earnedSchema:schema});result={migrated:true,lateWritesEnabled:false};}
   else if(command==='seal'){
    const prior=await client.query('SELECT id FROM hosted_wallet_market_guard.obligation_guard_seal WHERE id IS TRUE');
    if(!prior.rows.length){
@@ -48,7 +49,20 @@ async function request(method,route,body){
  const owner=process.env.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? process.env.EARNED_WORK_OWNER_TOKEN;if(!owner||owner.length<8)stop('authority_required');
  const data=body===undefined?null:Buffer.from(JSON.stringify(body));
  const headers={authorization:'Bearer '+owner,'x-ae-wire-version':'c0-1'};
- if(data){headers['idempotency-key']=flag('operation');if(!headers['idempotency-key'])stop('idempotency_required');headers['content-type']='application/json';headers['content-length']=String(data.length);}
+ if(data){
+  const operation=flag('operation');
+  if(body.acceptanceKind===LATE_ACCEPTANCE_KIND){
+   headers['idempotency-key']='late-discharge-'+body.receiptId;
+   if(operation&&operation!==headers['idempotency-key'])stop('idempotency_required');
+   const requester=flag('requester');
+   if(requester){
+    const {cookie}=privateJson(requester);
+    if(typeof cookie!=='string'||!/^__Host-neo_contributor=acs_[A-Za-z0-9_-]{43}$/.test(cookie))stop('authority_required');
+    headers.cookie=cookie;
+   }
+  }else{headers['idempotency-key']=operation;if(!operation)stop('idempotency_required');}
+  headers['content-type']='application/json';headers['content-length']=String(data.length);
+ }
  return new Promise((resolve,reject)=>{
   const req=https.request(new URL('/api/neomorphic-contributor-journey'+route,origin),{method,headers},res=>{
    const unavailable=()=>reject(Object.assign(Error(),{codeName:method==='POST'?'unknown_outcome':'read_unavailable'}));
@@ -61,8 +75,9 @@ async function request(method,route,body){
  });
 }
 async function main(){
- if(['inspect','migrate','seal','rollback-check'].includes(command))return database();
+ if(['inspect','migrate','migrate-late','seal','rollback-check'].includes(command))return database();
  if(command==='prepare-release'||command==='prepare-machine-entry'){
+  const {walletEnvironmentPacket,machineEntryEnvironmentPacket}=await import('../src/release-profile.mjs');
   const common={manifest:privateJson(flag('manifest')),existing:privateJson(flag('input')),sdsRoot:flag('sds-root')};
   const packet=command==='prepare-release'?walletEnvironmentPacket({...common,wallet:privateJson(flag('wallet'))}):
     machineEntryEnvironmentPacket({...common,machineProfile:process.env.HOSTED_WALLET_MARKET_MACHINE_PROFILE});
@@ -89,6 +104,21 @@ async function main(){
   if(receipt.receiptId!==dischargeReceiptId(receipt)||receipt.kernelPaid!==false||receipt.kernelTransfer!==null)stop('receipt_refused');
   const input=Object.fromEntries(importBodyKeys(receipt).map(k=>[k,receipt[k]]));
   input.tenant=process.env.HOSTED_WALLET_MARKET_TENANT;input.receivedAt=flag('received-at');assertImportShape(input);
+  writeFileSync(flag('output'),JSON.stringify(input,null,2)+'\n',{mode:0o600,flag:'wx'});return {prepared:true};
+ }
+ if(command==='prepare-late'){
+  const canonical=privateJson(flag('input')),intent=privateJson(flag('intent'));
+  const fields=['obligationId','reservationId','network','amountAtomic','acceptanceOperationId','acceptanceReceiptSha256'];
+  if(intent.schema!=='pilot.native-obligation.late-intent.v1'||canonical.role!=='native_obligation'||
+    canonical.status!=='success'||canonical.exactTransferVerified!==true||canonical.noBroadcast!==true||
+    canonical.kernelPaid!==false||canonical.kernelTransfer!==null||canonical.importState!=='unbound_fail_closed'||
+    fields.some(key=>canonical[key]!==intent[key])||intent.token!==RAIL_TOKEN)stop('receipt_refused');
+  const input={...Object.fromEntries(fields.map(key=>[key,canonical[key]])), acceptanceKind:LATE_ACCEPTANCE_KIND,
+    importContractSha256:IMPORT_CONTRACT_SHA256,tenant:process.env.HOSTED_WALLET_MARKET_TENANT,
+    taskId:intent.taskId,termsVersion:intent.termsVersion,token:intent.token,
+    transactionHash:canonical.transactionHash,logIndex:canonical.logIndex,blockNumber:canonical.blockNumber,
+    blockHash:canonical.blockHash,receivedAt:canonical.observedAt};
+  input.receiptId=lateReceiptId(input);assertImportShape(input);
   writeFileSync(flag('output'),JSON.stringify(input,null,2)+'\n',{mode:0o600,flag:'wx'});return {prepared:true};
  }
  if(command==='enrollment')return request('GET','/v1/native-debt/enrollment');

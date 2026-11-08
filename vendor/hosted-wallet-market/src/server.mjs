@@ -12,8 +12,9 @@ import {continuityEvidence} from './evidence.mjs';
 import {pendingRegistryDisposition} from './discharge-authority.mjs';
 import {quoteEconomics, ROUNDING_PROFILE} from './fee.mjs';
 import {addressOf, id, sha256} from './ids.mjs';
-import {assertObligationGuard, inspectInstallation, inspectRuntimeSchema} from './migrate.mjs';
+import {assertLateDischargeSchema, assertObligationGuard, inspectInstallation, inspectRuntimeSchema} from './migrate.mjs';
 import {assertImportShape, createInstalledDebtConsumer, IMPORT_BODY_KEYS, importBodyKeys} from './native-debt.mjs';
+import {LATE_ACCEPTANCE_KIND} from './late-discharge.mjs';
 import {loadOwnerAuthority} from './owner-authority.mjs';
 import {frozenMarker} from './preserve.mjs';
 import {ADDITIVE_ENV_KEYS, loadDeploymentProfile} from './profile.mjs';
@@ -156,10 +157,12 @@ export async function openHostedMarket(options) {
   }
   const observation = {blockNumber: null, remoteRead: null, remoteDecimals: null};
   const dischargeRegistry = options.dischargeRegistry ?? process.env.HOSTED_WALLET_MARKET_DISCHARGE_REGISTRY;
+  const lateDischargeEnabled = options.lateDischargeEnabled === true;
+  if (lateDischargeEnabled && typeof options.readLateAcceptedSource !== 'function') throw httpError(409,'discharge_consumer_unbound');
   const debtConsumer = createInstalledDebtConsumer({profile, sdsRoot: options.sdsRoot,
     registryRoot: dischargeRegistry,
     authorityPrincipalId: ownerAuthority?.principalId,
-    readAcceptedSource: options.readAcceptedSource});
+    readAcceptedSource: options.readAcceptedSource, readLateAcceptedSource: options.readLateAcceptedSource, lateDischargeEnabled});
   let observed;
   try {
     observed = profile.publicChain
@@ -265,6 +268,7 @@ export async function openHostedMarket(options) {
   try {
     const shape = await withClient(client => inspectInstallation(client, {earnedSchema: profile.earnedSchema}));
     if (!shape.runtimeSchema.ready) throw httpError(503,'runtime_schema_unready');
+    if (lateDischargeEnabled) await withClient(client=>assertLateDischargeSchema(client,{earnedSchema:profile.earnedSchema}));
     if (!shape.obligationColumnsMatch || !shape.legacyTrigger || shape.configValuesCopied) {
       throw Object.assign(new Error('installation_refused'), {codeName: 'installation_refused'});
     }
@@ -1212,10 +1216,19 @@ export async function openHostedMarket(options) {
     keysOf(body, importBodyKeys(body));
     assertImportShape(body);
     const principal = ownerPrincipal(req);
+    const late = body.acceptanceKind === LATE_ACCEPTANCE_KIND;
+    let sessionToken;
+    if (late) {
+      if (!lateDischargeEnabled) throw httpError(409,'discharge_consumer_unbound');
+      if (req.headers['idempotency-key'] !== 'late-discharge-' + body.receiptId) throw httpError(409,'immutable_operation_input_changed');
+      const cookies = String(req.headers.cookie ?? '').split(';').map(value=>value.trim())
+        .filter(value=>value.startsWith('__Host-neo_contributor='));
+      if (cookies.length===1) sessionToken = /^__Host-neo_contributor=(acs_[A-Za-z0-9_-]{43})$/.exec(cookies[0])?.[1];
+    }
     const produced = await withTx(async client => {
       await debtConsumer.assertBinding(client);
       return mutate(client, req, body, {accountId: principal}, async tx => {
-        return {value: await debtConsumer.importNativeDischarge(tx, body, nowDate())};
+        return {value: await debtConsumer.importNativeDischarge(tx, body, nowDate(), sessionToken)};
       });
     });
     finish(res, produced);

@@ -4,7 +4,6 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import {isDeepStrictEqual} from 'node:util';
-import {digest} from '../foundry/private-pass-core.mjs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -30,6 +29,18 @@ const measurementRuntime=['package.json','server/lib/pulse.js','server/lib/pulse
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const manifestName='vendor/hosted-wallet-market/SOURCE.json';
 const manifest=JSON.parse(await read(manifestName));
+const lateMembers=['bin/installed-debt.mjs','schema/012_late_native_discharge.sql','src/canonical-receiving.mjs',
+  'src/discharge-authority.mjs','src/late-discharge.mjs','src/migrate.mjs','src/native-debt.mjs','src/profile.mjs','src/server.mjs'];
+const installedFiles=installedSourceFiles();
+if(manifest.lateDischargeSource||installedFiles.includes('schema/012_late_native_discharge.sql')||
+    installedFiles.includes('src/late-discharge.mjs')){
+  const overlay=manifest.lateDischargeSource;
+  if(overlay?.schema!=='pilot.sds.hosted-late-discharge-source.v1'||
+      Object.keys(overlay.files??{}).length!==lateMembers.length)throw Error('late discharge overlay missing');
+  for(const name of lateMembers)if(sha(await read('vendor/hosted-wallet-market/'+name))!==overlay.files[name]){
+    throw Error('late discharge overlay drift: '+name);
+  }
+}
 manifest.installedSourceSha256=installedSourceSha256();
 manifest.receivingSource={repository:'epistemedeus/samedaydesk',baseCommit:'2ebdd605708d91d3638ecbc9c640e570a9ad483e',
   predecessorConsumerSha256:'36dc4d34b003349ed5a6fd5ba5a50229ab4779291712ff84412e8e76125b451b',
@@ -39,6 +50,7 @@ const manifestBytes=JSON.stringify(manifest,null,2)+'\n';
 const pinName='server/foundry/activation/private-control-pin.json';
 const pin=JSON.parse(await read(pinName));
 const received=[...(pin.receivedCallerClosures??[])];
+const digest=predecessorRefs.length?(await import('../foundry/private-pass-core.mjs')).digest:null;
 for(const ref of predecessorRefs){
   const prior=JSON.parse(execFileSync('git',['show',ref+':'+pinName],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024}));
   if(typeof prior.base!=='string'||!(/^[a-f0-9]{64}$/.test(prior.files?.['vendor/visitor-foundry-receiver/SOURCE-PIN.json']??'')))throw Error('invalid predecessor caller pin');
@@ -76,7 +88,7 @@ for(const name of Object.keys(next)){
 }
 for(const name of measurementRuntime)next[name]=sha(await read(name));
 // New additive migrations and modules join the complete host closure.
-for(const name of installedSourceFiles())next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
+for(const name of installedFiles)next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
 // The read-only Root CLI entry and this source exporter are part of the host.
 for(const name of hostOwned)next[name]=sha(await read(name));
 await writeFile(path.join(root,manifestName),manifestBytes);

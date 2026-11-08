@@ -21,19 +21,21 @@ export function registryIdentity(root) {
     return configuredRegistryIdentity(resolve(root));
   } catch { fail(); }
 }
-function read(root, kind, key) {
+export function readRegistryRecord(root, kind, key, controllerOwned = false) {
   registryIdentity(root);
   const dir = join(root, kind);
   const stat = lstatSync(dir);
   if (!stat.isDirectory() || stat.isSymbolicLink() || (stat.mode & 0o077)) fail();
   const file = join(dir, `${sha(`${kind}\n${key}`)}.json`);
-  const fd = openSync(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+  const fd = openSync(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
   try {
     const stat = fstatSync(fd);
     if (!stat.isFile() || (stat.mode & 0o077) || stat.size > 131072) fail();
+    if (controllerOwned && stat.uid !== lstatSync(root).uid) fail();
     return JSON.parse(readFileSync(fd, 'utf8'));
   } finally { closeSync(fd); }
 }
+const read = readRegistryRecord;
 export function readAuthoritativeDischarge(root, body) {
   try {
     const receipt = read(root, 'discharges', body.obligationId);

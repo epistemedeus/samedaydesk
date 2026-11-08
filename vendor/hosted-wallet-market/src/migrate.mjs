@@ -162,6 +162,29 @@ export async function assertRuntimeSchema(client, options) {
   if (!shape.ready) throw Object.assign(new Error('runtime_schema_unready'), {http:503,codeName:'runtime_schema_unready'});
   return shape;
 }
+const lateMigration = '../schema/012_late_native_discharge.sql';
+export async function applyLateDischargeSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
+  assertIdent(earnedSchema);
+  await assertRuntimeSchema(client, {earnedSchema});
+  await client.query(readFileSync(join(here,lateMigration),'utf8').replaceAll('cj227_earned_work',earnedSchema));
+  await assertLateDischargeSchema(client,{earnedSchema});
+}
+
+export async function assertLateDischargeSchema(client, {earnedSchema}) {
+  assertIdent(earnedSchema);
+  const expected = readFileSync(join(here,lateMigration),'utf8').replaceAll('cj227_earned_work',earnedSchema)
+    .split('AS $$')[1].split('$$;')[0].trim();
+  const row = (await client.query(`SELECT p.prosrc, p.proconfig,
+    EXISTS (SELECT 1 FROM pg_trigger t WHERE t.tgrelid='hosted_wallet_market.native_debt_dispositions'::regclass
+      AND t.tgname='native_debt_dispositions_match_late' AND t.tgfoid=p.oid AND t.tgenabled IN ('O','A') AND t.tgtype=7) AS attached,
+    EXISTS (SELECT 1 FROM pg_constraint c WHERE c.conrelid='hosted_wallet_market.native_debt_dispositions'::regclass
+      AND c.conname='native_debt_acceptance_identity' AND c.contype='c' AND c.convalidated) AS checked
+    FROM pg_proc p WHERE p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_late_acceptance()')`)).rows[0];
+  if (row?.prosrc?.trim()!==expected || !row.attached || !row.checked ||
+      JSON.stringify(row.proconfig)!==JSON.stringify(['search_path=hosted_wallet_market, pg_temp'])) {
+    throw Object.assign(new Error('runtime_schema_unready'), {http:503,codeName:'runtime_schema_unready'});
+  }
+}
 export async function applyAdditiveSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
   await assertNativeSchemaShape(client);

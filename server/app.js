@@ -31,7 +31,7 @@ import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
 import { mountContributorManagedDesk } from "./lib/contributor-managed-mount.js";
-import { mountHostedWalletMarketAdapter } from "./lib/hosted-wallet-market-mount.js";
+import { installedLateAcceptanceReader, mountHostedWalletMarketAdapter } from "./lib/hosted-wallet-market-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
 import { mountMachineServices } from "./lib/machine-services/mount.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
@@ -59,6 +59,7 @@ app.disable("x-powered-by");
 // falls through for every path it does not serve. Unset mode registers nothing.
 // The entry is vendor/hosted-wallet-market inside this tree when unset.
 let contributor;
+const contributorEnv = options.neomorphicContributorJourney?.env ?? process.env;
 const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarket,
   env: options.hostedWalletMarket?.env ?? {...process.env,...options.neomorphicContributorJourney?.env},
   ownerToken: options.neomorphicContributorJourney?.env?.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? options.hostedWalletMarket?.ownerToken,
@@ -68,6 +69,7 @@ const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarke
     if (!installed) throw Object.assign(new Error('discharge_consumer_unbound'), {http:409, codeName:'discharge_consumer_unbound'});
     return installed.adapters.review.read(target);
   },
+  readLateAcceptedSource: installedLateAcceptanceReader(() => contributor, contributorEnv),
   ingress: (req,res,next) => contributor.guardRequest(req,res,next),
 });
 app.set("hostedWalletMarket", market);
