@@ -1,9 +1,11 @@
 import { Router } from "express";
+import { runDocumentationReadiness } from "../lib/agent-readiness/documentation.js";
 import { clientKey } from "../lib/agent-readiness/rate-limit.js";
 import { runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 
 export function createAgentReadinessRouter(deps = {}) {
   const run = deps.run || runAgentReadinessCheck;
+  const runDocumentation = deps.runDocumentation || runDocumentationReadiness;
   const router = Router();
   router.use((req, res, next) => {
     res.set("Access-Control-Allow-Origin", "*");
@@ -78,9 +80,10 @@ function statusClass(status) {
 router.get("/", async (req, res) => {
   const format = String(req.query.format || "").trim();
   const host = hostParam(req);
+  const documentation = format === "documentation";
   const description = "Free agent readiness check: discovery files, MCP handshake, tools list, agent card, cross-surface identity, CORS, x402, and a fix pack. No signup.";
   if (!host) {
-    if (format === "json" || format === "fix-pack") {
+    if (documentation || format === "json" || format === "fix-pack") {
       return res.status(400).json({ error: "Provide a host, for example example.com" });
     }
     return res.type("html").send(shell(
@@ -95,6 +98,10 @@ router.get("/", async (req, res) => {
   }
 
   try {
+    if (documentation) {
+      res.set("Cache-Control", "no-store");
+      return res.json(await runDocumentation(host, { clientKey: clientKey(req) }));
+    }
     const result = await run(host, { clientKey: clientKey(req) });
     if (format === "json") {
       res.set("Cache-Control", "no-store");
@@ -141,7 +148,7 @@ router.get("/", async (req, res) => {
   } catch (err) {
     const status = err.status || 502;
     const message = status === 400 || status === 429 ? err.message : "Could not probe that host";
-    if (format === "json" || format === "fix-pack") {
+    if (documentation || format === "json" || format === "fix-pack") {
       if (status === 429 && err.retryAfterSec) res.set("Retry-After", String(err.retryAfterSec));
       return res.status(status).json({ error: message });
     }
