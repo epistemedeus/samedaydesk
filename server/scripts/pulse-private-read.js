@@ -131,9 +131,37 @@ function numericMap(value) {
 }
 
 function timeValue(value) {
-  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(value)
-    ? value
-    : null;
+  if (typeof value !== "string") return null;
+  // Durable Postgres timestamps use offsets and up to six fractional digits.
+  // Preserve the validated wire value; JS Date would round away precision.
+  const shape = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
+  const match = shape.exec(value);
+  if (!match || match[0] !== value || !Number.isFinite(Date.parse(value))) return null;
+  const [year, month, day] = match.slice(1).map(Number);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  return day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1] ? value : null;
+}
+
+const safeCount = value => Number.isSafeInteger(value) && value >= 0 ? value : null;
+const safeBoolean = value => typeof value === "boolean" ? value : null;
+const allowed = (value, list) => list.includes(value) ? value : null;
+const FREE_TOOL_OUTCOMES = ["completed", "invalid_host", "unreachable", "timeout", "abandoned", "other_failure"];
+
+function reportCoverage(parsed) {
+  const freeTool = parsed.freeTool;
+  return {
+    complete: safeBoolean(parsed.complete),
+    authority: allowed(parsed.authority, ["durable_atomic_aggregate", "incomplete_local_fallback", "incomplete_known_gap"]),
+    pendingRequests: safeCount(parsed.pending?.total),
+    freeTool: {
+      route: "/api/tools/ai-readiness",
+      complete: safeBoolean(freeTool?.complete),
+      coverage: allowed(freeTool?.coverage, ["lower_bound_from_first_observation", "unknown"]),
+      observedFrom: timeValue(freeTool?.observedFrom),
+      // One completed response is not independent use or a conversion rate.
+      outcomes: Object.fromEntries(FREE_TOOL_OUTCOMES.map(key => [key, safeCount(freeTool?.outcomes?.[key])])),
+    },
+  };
 }
 
 export function safePulseMetadata(status, bytes) {
@@ -151,6 +179,7 @@ export function safePulseMetadata(status, bytes) {
       startedAt: timeValue(parsed.startedAt),
       now: timeValue(parsed.now),
     },
+    coverage: reportCoverage(parsed),
     counts: {
       total: numeric(parsed.total),
       humans: numeric(parsed.humans),
