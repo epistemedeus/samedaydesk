@@ -1,0 +1,20 @@
+{
+  "schema": "pilot.root10940.acquisition-trust-anchor.v1",
+  "descriptorRepository": "epistemedeus/samedaydesk",
+  "descriptorCommit": "unreceived",
+  "descriptorPath": "docs/receiving/sds388-visitor-allocation-20261108/proposed-descriptor.json",
+  "descriptorSha256": "8cc684595b84594f0e81ca659cf361707ca6252904d237a8ce39a4b8b27ab761",
+  "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+  "clientBytes": 28081,
+  "source": {
+    "repository": "epistemedeus/samedaydesk",
+    "commit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs"
+  },
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "1635154974b5a9e056ab3b94f738a690a82fed8a8a5e5f726d84ed0571a3da39"
+  }
+}

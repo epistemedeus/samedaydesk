@@ -13,7 +13,7 @@ export const DESCRIPTOR_SCHEMA = 'neomorphic.machine-participation.acquisition.v
 export const INDEX_SCHEMA = 'pilot.root10940.approved-ci-packet-index.v1';
 export const ENROLLMENT_SCHEMA = 'pilot.root10940.ci-enrollment-request.v1';
 export const CLIENT_VERSION = '0.3.0';
-export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds386-request-parser-20261107';
+export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds388-visitor-allocation-20261108';
 export function enrollmentCommand() {
   return [
     'node server/scripts/produce-root10940-ci-packet.mjs',
