@@ -7,6 +7,7 @@
 import { PublicHostError, assertPublicUrl } from "./ssrf.js";
 import { rawExchange } from "./probe.js";
 import { createRequestBudget } from "./request-budget.js";
+import { declaredTextAlternate } from "./documentation-alternate.js";
 export { createRequestBudget } from "./request-budget.js";
 
 export const FETCH_FAILURE = Object.freeze({
@@ -37,11 +38,13 @@ const stripWww = (h) => String(h || "").toLowerCase().replace(/^www\./, "");
 /**
  * fetchPublicBounded(url, opts) -> { ok, status, contentType, finalUrl, body, redirects, oversize }
  * opts: allowedOrigin | allowHostVariants, maxRedirects, maxBytes, timeoutMs, headers, budget, lookup
+ * includeOversizeAlternate opts into an unverified alternate from a successful same-origin response.
  */
 export async function fetchPublicBounded(url, opts = {}) {
   const {
     allowedOrigin = null, allowHostVariants = false, maxRedirects = 3,
     maxBytes = 2_500_000, timeoutMs = 10_000, headers = {}, budget = null, lookup,
+    includeOversizeAlternate = false,
   } = opts;
   if (budget?.exhausted || opts.signal?.aborted) throw new BoundedFetchError(FETCH_FAILURE.BUDGET_EXHAUSTED, "Request budget exhausted");
   const parentSignal = budget && opts.signal ? AbortSignal.any([budget.signal, opts.signal]) : budget?.signal || opts.signal;
@@ -80,14 +83,19 @@ export async function fetchPublicBounded(url, opts = {}) {
       }
       const body = String(res.body || "");
       const oversize = Boolean(res.truncated) || Buffer.byteLength(body) > maxBytes;
+      const ok = res.status >= 200 && res.status < 300;
+      const declaredAlternate = includeOversizeAlternate && ok && oversize && current.origin === allowedOrigin
+        ? declaredTextAlternate(res.headers?.link, current)
+        : null;
       return {
-        ok: res.status >= 200 && res.status < 300,
+        ok,
         status: res.status,
         contentType: String(res.headers?.["content-type"] || ""),
         finalUrl: current.toString(),
         body: oversize ? Buffer.from(body).subarray(0, maxBytes).toString("utf8") : body,
         redirects,
         oversize,
+        ...(declaredAlternate ? { declaredAlternate } : {}),
       };
     }
   } catch (err) {

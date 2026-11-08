@@ -43,6 +43,17 @@ The report uses only anonymous, same-origin GETs through `fetchPublicBounded`.
 It does not probe OpenAPI, initiate MCP, change the default capability score,
 or use the fix-pack path. The existing public audit rate limit is shared.
 
+When a successful homepage body exceeds its cap, the report may include
+`nextAction` with `kind: "read-declared-alternate"`, a path relative to the
+report origin, `mediaTypeHint`, and `verified: false`. The hint comes from a
+single eligible same-origin `Link` declaration on the final response. Link
+parsing is bounded at 4 KiB, projected paths at 1024 characters, and the policy
+accepts an explicit `alternate` relation with `text/plain` or `text/markdown`.
+Anchor overrides, preload relations,
+ambiguous declarations, and unsafe destinations are excluded. Clients can
+choose a separate read. The homepage finding and evidence stay unchanged, and
+a verified `llms.txt` does not verify the alternate. [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288)
+
 Run the owning suites from the repository root:
 
 ```sh
