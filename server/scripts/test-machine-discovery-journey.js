@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import express from "express";
+import Ajv2020 from "ajv/dist/2020.js";
 import { mountProductionClient } from "../lib/spa-client.js";
 import { classifyRetrieval } from "../lib/agent-readiness/retrieval.js";
 import { runChecks } from "../lib/agent-readiness/checks.js";
@@ -68,6 +69,7 @@ async function assertGuideRoute(t, dist, emitted) {
     assert.equal(response.body, emitted);
     assert.match(response.body, /^- Email: contact@neomorphic\.io$/m);
     assert.doesNotMatch(response.body, /contact@samedaydesk\.com/);
+    assert.match(response.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
   }
   const head = await request(port, { method: "HEAD", path: "/llms.txt" });
   assert.equal(head.status, 200);
@@ -138,6 +140,9 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   const openapiResponse = await request(port, { path: "/openapi.json", headers: { accept: "application/json", "user-agent": "Mozilla/5.0 discovery-replay" } });
   const skillResponse = await request(port, { path: "/skill.md", headers: { accept: "text/markdown", "user-agent": "Mozilla/5.0 discovery-replay" } });
   const catalogResponse = await request(port, { path: "/.well-known/api-catalog", headers: { accept: "application/linkset+json", "user-agent": "Mozilla/5.0 discovery-replay" } });
+  const llmsResponse = await request(port, { path: "/llms.txt" });
+  assert.equal(llmsResponse.status, 200);
+  assert.match(llmsResponse.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
   assert.equal(openapiResponse.status, 200);
   assert.match(openapiResponse.headers["content-type"], /^application\/openapi\+json/);
   assert.match(skillResponse.headers["content-type"], /^text\/markdown/);
@@ -163,6 +168,16 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   }
 
   const openapi = openapiResponse.json;
+  const readinessOperation = openapi.paths["/agent-readiness"].get;
+  assert.deepEqual(readinessOperation.parameters.find((parameter) => parameter.name === "format").schema.enum,
+    ["json", "fix-pack", "documentation"]);
+  const jsonReadiness = readinessOperation.responses["200"].content["application/json"];
+  const validateReadiness = new Ajv2020({ strict: false, validateFormats: false }).compile(jsonReadiness.schema);
+  assert.equal(validateReadiness(jsonReadiness.examples.score.value), true);
+  assert.equal(validateReadiness(jsonReadiness.examples.documentation.value), true);
+  assert.equal(validateReadiness({ ...jsonReadiness.examples.documentation.value, score: 82 }), false);
+  assert.match(skillResponse.body, /format=documentation/);
+  assert.match(skillResponse.body, /This format is HTTP-only; the MCP checker remains scored/);
   const catalog = catalogResponse.json;
   const gateway = await request(port, { path: "/discovery/paid-gateway.json" });
   assert.equal(gateway.status, 200);

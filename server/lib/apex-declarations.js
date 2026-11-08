@@ -8,6 +8,7 @@ import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
 import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
+import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
   AGENT_READINESS_RATE_LIMIT_DEFAULT,
   AGENT_READINESS_RATE_WINDOW_MS_DEFAULT,
@@ -19,6 +20,35 @@ import { SERVER_INFO, SUPPORTED_PROTOCOL_VERSIONS, TOOLS } from "../routes/mcp.j
 import { MCP_BATCH_MIN, MCP_BATCH_MAX, MCP_BATCH_PROTOCOL_VERSIONS, MCP_BODY_LIMIT, rpcMessageSchema, rpcIdSchema, rpcBatchSchema } from "./mcp-admission.js";
 
 export const PAID_ORIGIN = "https://agents.samedaydesk.com";
+
+const DOCUMENTATION_READINESS_PATH = `/agent-readiness?host=example.com&format=${DOCUMENTATION_READINESS_FORMAT}`;
+const DOCUMENTATION_READINESS_RESPONSE = {
+  type: "object",
+  required: ["schema", "host", "origin", "free", "generatedAt", "checks", "topFixes", "evidence"],
+  not: { required: ["score"] },
+  properties: {
+    schema: { const: DOCUMENTATION_READINESS_SCHEMA },
+    host: { type: "string" },
+    origin: { type: "string" },
+    free: { const: true },
+    generatedAt: { type: "string", format: "date-time" },
+    checks: { type: "array", items: {
+      type: "object", required: ["id", "status", "reason"], properties: {
+        id: { type: "string" }, status: { enum: ["pass", "warn", "fail", "unknown"] },
+        reason: { type: "string" }, fix: { type: "string" },
+      },
+    } },
+    topFixes: { type: "array", items: {
+      type: "object", required: ["id", "fix"], properties: { id: { type: "string" }, fix: { type: "string" } },
+    } },
+    evidence: { type: "array", items: {
+      type: "object", required: ["path", "httpStatus", "outcome", "contentType"], properties: {
+        path: { type: "string" }, httpStatus: { type: ["integer", "null"] },
+        outcome: { type: "string" }, contentType: { type: ["string", "null"] },
+      },
+    } },
+  },
+};
 
 // Historical canonical paid documents observed with anonymous GET on 2026-10-04.
 // /.well-known/api-catalog on that host was HTTP 404 and is not linked.
@@ -350,34 +380,41 @@ function apexPaths(catalog, skillMarkdown) {
     "/agent-readiness": {
       get: operation({
         operationId: "check_agent_readiness",
-        summary: "Free agent-readiness score or the HTML form",
-        description: `Without format=json this returns HTML for a person. With format=json and a public host it returns the score payload. format=fix-pack returns markdown. ${rate} A missing host with format=json is HTTP 400, not a signup wall. The checks array is bounded to the fixed checker and is not paginated. The probe never calls a real tool on the target.`,
+        summary: "Free agent-readiness score or documentation discovery report",
+        description: `Use format=json for the existing score, format=${DOCUMENTATION_READINESS_FORMAT} for an unscored public homepage, sitemap and llms.txt report, or format=fix-pack for Markdown. Omit format for HTML. ${rate} The named formats require a public host; missing host is HTTP 400. No account or payment is required. The bounded checks do not call tools on the target.`,
         parameters: [
           queryParam("host", { type: "string" }, "Public host, for example example.com"),
-          queryParam("format", { type: "string", enum: ["json", "fix-pack"] }, "json or fix-pack. Omit for HTML."),
+          queryParam("format", { type: "string", enum: ["json", "fix-pack", DOCUMENTATION_READINESS_FORMAT] }, "json for a score, documentation for unscored discovery, fix-pack for Markdown. Omit for HTML."),
         ],
         responses: {
           "200": {
-            description: "JSON score when format=json. HTML when format is omitted.",
+            description: "JSON score or documentation report as selected by format. Other representations are the HTML view and Markdown fix pack.",
             content: {
               "application/json": {
-                schema: {
+                schema: { oneOf: [{
                   type: "object",
                   required: ["host", "score", "checks"],
+                  not: { required: ["schema"], properties: { schema: { const: DOCUMENTATION_READINESS_SCHEMA } } },
                   properties: {
                     host: { type: "string" },
                     score: { type: "number" },
                     checks: { type: "array", items: { type: "object" } },
                     topFixes: { type: "array", items: { type: "object" } },
                   },
+                }, DOCUMENTATION_READINESS_RESPONSE] },
+                examples: {
+                  score: { value: { host: "example.com", score: 0, free: true, checks: [], topFixes: [] } },
+                  documentation: { value: {
+                    schema: DOCUMENTATION_READINESS_SCHEMA, host: "example.com", origin: "https://example.com",
+                    free: true, generatedAt: "2026-11-08T00:00:00Z", checks: [], topFixes: [], evidence: [],
+                  } },
                 },
-                example: { host: "example.com", score: 0, free: true, checks: [], topFixes: [] },
               },
               "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Agent readiness checker</body></html>" },
               "text/markdown": { schema: { type: "string" }, example: "# Agent readiness fix pack\n\nHost: example.com\n" },
             },
           },
-          "400": { description: "format=json or format=fix-pack without a host, or a host the checker rejects. Other formats return HTML errors.", content: readinessErrorContent({ error: "Provide a host, for example example.com" }) },
+          "400": { description: "Missing or rejected public host. The json, documentation and fix-pack modes return a JSON error; the HTML view returns HTML.", content: readinessErrorContent({ error: "Provide a host, for example example.com" }) },
           "429": {
             description: "Client key exceeded the agent-readiness rate limit. Retry-After is set.",
             headers: { "Retry-After": { schema: { type: "string" } } },
@@ -729,6 +766,13 @@ export function usefulNegativeExamples() {
       headers: { accept: "application/json" },
       expect: { status: 400, equals: { error: "Provide a host, for example example.com" } },
     },
+    {
+      id: "documentation_readiness_without_host",
+      method: "GET",
+      path: `/agent-readiness?format=${DOCUMENTATION_READINESS_FORMAT}`,
+      headers: { accept: "application/json" },
+      expect: { status: 400, equals: { error: "Provide a host, for example example.com" } },
+    },
   ];
 }
 
@@ -743,6 +787,11 @@ export function apexSkillMarkdown() {
     "Its live OpenAPI, MCP, agent card, x402 manifest, health, and action catalog are the authority for payment.",
     "This file does not copy route counts, prices, or payment addresses.",
     "No account signup is required for the free examples below.",
+    "",
+    "## Free documentation discovery (HTTP)",
+    "",
+    `GET \`${APEX_ORIGIN}${DOCUMENTATION_READINESS_PATH}\`. Replace example.com with the public docs host.`,
+    "Checks initial HTML, sitemap discoverability and the optional llms.txt. Returns evidence and prioritized fixes without a score. It does not follow sitemap or index entries, invoke tools, sign up, or pay. This format is HTTP-only; the MCP checker remains scored.",
     "",
     "## Protocol",
     "",
