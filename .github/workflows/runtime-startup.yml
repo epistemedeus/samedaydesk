@@ -53,10 +53,8 @@ jobs:
       # expected hash or point the variable at another fingerprint. This
       # regression takes its catalog and PostgreSQL bin from the caller.
       # Historical-only negatives do not assume that catalog has a single row.
-      # The current unreceived proposal is
-      # docs/receiving/h155030-sds-consumer-composition-20261106.
-      # Host 6fca4aaa remains the received slot for that older fingerprint only.
-      # This receive step stays stale until Root enrolls the measured host.
+      # The current proposal and its separate receiving are selected through
+      # root10940-ci-packet.mjs. Prior host approvals stay in their own slots.
       - name: Check source-bound acquisition selection
         run: |
           AE14_PG_BIN="$(pg_config --bindir)" \

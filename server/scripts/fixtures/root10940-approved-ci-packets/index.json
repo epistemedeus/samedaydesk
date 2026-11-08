@@ -117,6 +117,29 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "3e41ef9320709b84fb20e9a40a367e5c6f7047f437f36a93b22641aa84b36779",
+      "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+      "hostSha256": "208be740ff7f332219261711f99c2b5333eb977ad1db004d5b1f869ab1dd1c4c",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "40e06ccfde33dabc636e7cfa9fc18d82de22db598efce8a182b94d93c278b346",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "05e2f60c23623b0d7f43fd12fba627b4aee6c063",
+        "independentReplay": "root-nov07-sds386-acquisition",
+        "observedAt": "2026-11-08T01:20:50.000Z",
+        "passed": 25,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "24 acquisition selection controls and one standalone cold decoder journey on a separate clean Cursor checkout and disposable PostgreSQL 16.15. Source-bound CI only; not a production qualification, outside demand or payment.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }
