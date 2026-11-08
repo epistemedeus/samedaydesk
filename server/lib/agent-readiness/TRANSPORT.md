@@ -29,6 +29,20 @@ are same-origin; explicit public external references get anonymous allowlisted
 headers and their own origin scope. The separate external-reference limit is
 10. Coverage records declared outcomes and factual omissions per input.
 
+## Documentation discovery
+
+`GET /agent-readiness?host=docs.example.com&format=documentation` selects an
+unscored `agent-readiness.documentation.v1` JSON report for a caller trying to
+find and read documentation. It checks text in the initial HTML, the optional
+`llms.txt` index, and sitemap discovery from robots.txt or two conventional
+paths. It can recommend advertising an existing sitemap instead of generating
+another one. Sitemap child entries, linked documents and crawler adoption are
+not verified. `unknown` means the evidence did not qualify a finding.
+
+The report uses only anonymous, same-origin GETs through `fetchPublicBounded`.
+It does not probe OpenAPI, initiate MCP, change the default capability score,
+or use the fix-pack path. The existing public audit rate limit is shared.
+
 Run the owning suites from the repository root:
 
 ```sh
