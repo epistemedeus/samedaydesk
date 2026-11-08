@@ -8,6 +8,7 @@ import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {hostSourceSha256, installedSourceSha256} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
 import {
+  CURRENT_PROPOSAL_DIR,
   buildUnreceivedPair,
   catalogFileName,
   measureCandidate,
@@ -32,9 +33,9 @@ const PRIOR_ANCHOR_SHA = 'b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
 const PIN = 'server/foundry/activation/private-control-pin.json';
-const PIN_BASE = '4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134';
+const PIN_BASE = 'd9725a4f61b0bdf4d5355d3dbb86fa2379c71644';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
-const proposal = 'docs/receiving/h155030-sds-consumer-composition-20261106';
+const proposal = CURRENT_PROPOSAL_DIR;
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';

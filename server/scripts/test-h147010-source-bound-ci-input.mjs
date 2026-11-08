@@ -6,6 +6,7 @@ import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, 
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {
+  CURRENT_PROPOSAL_DIR,
   buildUnreceivedPair,
   catalogFileName,
   measureCandidate,
@@ -39,10 +40,11 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const MEASURED_BASE = '335a5e363bcb1798cd8d25f74324a8a4bfb5bed4';
+const MEASURED_BASE = 'cb69901fbf08aa26ec2d8b827b2b7b3668875c94';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
-const proposal = 'docs/receiving/h155030-sds-consumer-composition-20261106';
+const proposal = CURRENT_PROPOSAL_DIR;
+const COMPOSED_HOST = '7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
 const decoder = 'server/scripts/decode-root10940-ci-packet.mjs';
@@ -774,7 +776,7 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.equal(enrollment.keptEnrolled.hostSha256, PRIOR_HOST);
   assert.equal(enrollment.keptEnrolled.binding, 'n4-sds356');
   assert.equal(enrollment.keptEnrolled.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
-  assert.match(enrollment.command, /h155030-sds-consumer-composition-20261106\/proposed-anchor\.json/);
+  assert.ok(enrollment.command.includes(`--anchor ${proposal}/proposed-anchor.json `));
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-anchor.json'))), PRIOR_PROPOSAL_ANCHOR_SHA);
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-descriptor.json'))), PRIOR_PROPOSAL_DESCRIPTOR_SHA);
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'ENROLLMENT.json'))), PRIOR_PROPOSAL_ENROLLMENT_SHA);
@@ -1032,6 +1034,11 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.ok(historicalRow);
   assert.ok(h142Row);
   assert.ok(priorRow);
+  const composedRow = index.packets.find(row => row.sourceSha256 === H142_SOURCE && row.hostSha256 === COMPOSED_HOST);
+  assert.ok(composedRow, 'the preceding approved host keeps its slot');
+  assert.notEqual(composedRow.hostSha256, CURRENT_HOST);
+  const composedPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(H142_SOURCE, COMPOSED_HOST)), 'utf8')));
+  assert.equal(rowAgrees(composedRow, composedPacket), true);
   assert.equal(h142Row.receiving.installed, false);
   assert.equal(priorRow.trustAnchorSha256, ENROLLED_PRIOR_ANCHOR);
   assert.equal(priorRow.receiving.installed, false);
