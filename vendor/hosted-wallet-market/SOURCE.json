@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "4ee6086330d3c805d8a08fe7d3236d211427c848a22d477a1c806203fcac28e3",
+  "installedSourceSha256": "8be8dd13f995bf9d814a3efdd9b965a9d9a613bffc0069605b6615dce813cdf5",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
@@ -54,7 +54,7 @@
       "src/canonical-receiving.mjs": "a08bb9ff0c14561a1956e8f79f403a919e34db4387a9e47085706705b5943a74",
       "src/discharge-authority.mjs": "fb97e9f31744a43191a234d408cb9a28d13d7227613c51aca894803c82d6093b",
       "src/late-discharge.mjs": "aa12c01fde2f5f333d8b42aaa3d0c10e44eee50bc22d7a526561a229344423fb",
-      "src/migrate.mjs": "ea4bc311c30886b07e9b61cfc2889caf07636ffd6b1977af1016c7710fdb635d",
+      "src/migrate.mjs": "8e8b4806647c1dac60a9da74b6f9b2b2d583b6f06011e42c3c295550be31b72a",
       "src/native-debt.mjs": "bd2eb1c551e3331c9876d21a88d71945f1edef82ebe5df8195ca0c089bc21345",
       "src/profile.mjs": "c5bf3b71a531b5b3e3226d803f74b192aa78e948a46105896a5293cdecb3315e",
       "src/server.mjs": "7d55b6549461033ec3c9218f4e6dc28734bfc3cb13853a95995e4ad58a2abab3"

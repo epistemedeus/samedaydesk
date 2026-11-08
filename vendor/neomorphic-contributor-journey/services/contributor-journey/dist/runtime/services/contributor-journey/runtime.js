@@ -180,7 +180,7 @@ export async function openRootExternalControl(env, options = {}) {
         throw new Error('prepared live installation required');
     const resources = await openJourneyResources(config, true);
     try {
-        const installed = await createInstalledComposition({ config, services: resources.services, pool: resources.pool, lockPool: resources.lockPool, preparedOnly: true, canonicalReceiving: options.canonicalReceiving });
+        const installed = await createInstalledComposition({ config, services: resources.services, pool: resources.pool, lockPool: resources.lockPool, preparedOnly: true, canonicalReceiving: options.canonicalReceiving, lateReservationFence: options.lateReservationFence });
         return { installed, services: resources.services, close: resources.close };
     }
     catch (error) {

@@ -101,6 +101,8 @@ export type ReviewView = {
     source: SourceBinding;
     viewer: "requester" | "contributor";
     state: "awaiting_review" | "clarification_requested" | "clarification_answered" | "clarification_refused" | "clarification_expired" | "rejected" | "accepted";
+    /** The service returns null for an unknown requester decision deadline. Static previews may omit it. */
+    reviewDeadline?: null;
     verdict: {
         id: string;
         outcome: VerdictOutcome;

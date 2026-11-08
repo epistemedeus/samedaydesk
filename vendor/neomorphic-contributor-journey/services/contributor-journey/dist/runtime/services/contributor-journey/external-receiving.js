@@ -89,11 +89,22 @@ export function inspectExternalDelivery(raw, bound) {
     need(encoded.bytes <= bound.maxEvidenceBytes, 'external_report_bounded');
     return d;
 }
+const lateReaffirmationSchema = z.object({
+    requesterAccountId: z.string(), threadRef: ref, messageRef: ref, termsVersion: terms,
+    termsPacketSha256: sha, reaffirmedAt: z.string().datetime(),
+}).strict();
+const lateEvidenceSchema = z.object({ delivery: externalDeliverySchema, reaffirmation: lateReaffirmationSchema }).strict();
+const lateWitnessSchema = lateEvidenceSchema.extend({
+    schema: z.literal('neomorphic.root-external-late-evidence.v1'),
+    selectionSha256: sha, assignmentKeySha256: sha, attestedAt: z.string().datetime(), signature: sha,
+}).strict();
+const lateKey = z.string().min(8).max(200).regex(/^[A-Za-z0-9_.:-]+$/);
 export class RootExternalReceiving {
     o;
     constructor(o) {
         this.o = o;
     }
+    latePermits = new WeakMap();
     signature(entry) { return createHmac('sha256', this.o.integrityKey).update(hashRequest(entry)).digest('hex'); }
     projectIntent(credentialRef) {
         need(/^root_ext_[a-f0-9]{64}$/.test(credentialRef), 'external_reference_refused');
@@ -279,6 +290,108 @@ export class RootExternalReceiving {
         const verified = this.verifyReceipt(proof, this.receiptBinding(a, encoded));
         need(verified && proof.selectionSha256 === hashRequest(a.selection) && proof.assignmentKeySha256 === hashRequest(a.assignmentKey) && proof.deliverySha256 === hashRequest(this.unsignedDelivery(d)) && proof.receivedAt === d.rootReceipt.receivedAt, 'external_receipt_attestation_refused');
         return proof;
+    }
+    lateSignature(witness) {
+        return createHmac('sha256', this.o.integrityKey)
+            .update('root-external-late-evidence-v1:' + hashRequest(witness)).digest('hex');
+    }
+    async lateEvidence(a, raw) {
+        const input = parse(lateEvidenceSchema, raw, 'external_late_evidence_refused');
+        const d = this.checkDelivery(a, input.delivery), r = input.reaffirmation, s = a.selection;
+        const { document, offer, round } = await this.loadTerms(s);
+        need(round.status === 'closed' && offer.slotCount === 1 && !d.receiptAttestation, 'external_late_original_closed_required');
+        need(r.requesterAccountId === s.requesterAccountId && r.threadRef === s.channel.threadRef &&
+            r.termsVersion === s.termsVersion && r.termsPacketSha256 === s.termsPacketSha256 &&
+            ![s.agreement.messageRef, d.deliveryMessageRef].includes(r.messageRef), 'external_late_reaffirmation_refused');
+        const deadline = Date.parse(document.submissionDeadline), now = this.o.store.now().getTime();
+        const received = Date.parse(d.rootReceipt.receivedAt), reaffirmed = Date.parse(r.reaffirmedAt);
+        need(received > deadline && reaffirmed > deadline && received <= now && reaffirmed <= now, 'external_late_clock_refused');
+        const encoded = externalEvidence(d.report, offer.maxEffortSeconds);
+        need(encoded.bytes <= document.maxEvidenceBytes, 'external_report_bounded');
+        return { d, r, document, offer, encoded };
+    }
+    /** The configured receiver attests independently verified channel records.
+     * The requester cannot issue this witness or supply an acceptance clock. */
+    async attestLateEvidence(receiverToken, credentialRef, assignmentKey, raw) {
+        need(hashToken(receiverToken) === this.o.receiptAuthorityHash, 'external_receipt_authority_required');
+        const a = await this.readAssignment(credentialRef, assignmentKey);
+        need(a, 'external_assignment_missing');
+        const { d, r } = await this.lateEvidence(a, raw);
+        const witness = { schema: 'neomorphic.root-external-late-evidence.v1', delivery: d, reaffirmation: r,
+            selectionSha256: hashRequest(a.selection), assignmentKeySha256: hashRequest(assignmentKey),
+            attestedAt: this.o.store.now().toISOString() };
+        return { ...witness, signature: this.lateSignature(witness) };
+    }
+    async lateSource(sessionToken, credentialRef, assignmentKey, raw, key) {
+        const a = await this.readAssignment(credentialRef, assignmentKey);
+        need(a, 'external_assignment_missing');
+        const s = a.selection;
+        await this.authenticate(sessionToken, s.requesterAccountId, s.taskId);
+        const { signature, ...witness } = parse(lateWitnessSchema, raw, 'external_late_witness_refused');
+        need(witness.selectionSha256 === hashRequest(s) && witness.assignmentKeySha256 === hashRequest(assignmentKey) &&
+            timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(this.lateSignature(witness), 'hex')), 'external_late_witness_refused');
+        const { d, r, document, offer, encoded } = await this.lateEvidence(a, { delivery: witness.delivery, reaffirmation: witness.reaffirmation });
+        const attested = Date.parse(witness.attestedAt);
+        need(attested >= Math.max(Date.parse(d.rootReceipt.receivedAt), Date.parse(r.reaffirmedAt)) &&
+            attested <= this.o.store.now().getTime(), 'external_late_clock_refused');
+        const operationId = hashRequest({ domain: 'neomorphic.root-external-late-operation.v1',
+            requesterId: s.requesterAccountId, roundId: s.roundId, claimId: a.claimId, key: parse(lateKey, key, 'external_late_key_refused') });
+        const source = {
+            operationId, requestHash: hashRequest({ domain: 'neomorphic.root-external-late-intent.v1', operationId, witness }),
+            requesterId: s.requesterAccountId, roundId: s.roundId, roundKey: document.roundKey, claimId: a.claimId,
+            principalId: a.principal.id, credentialRef, termsVersion: s.termsVersion, allocationReceiptSha256: s.allocationReceiptSha256,
+            amountAtomic: String(offer.rewardAtomic), receivedAt: d.rootReceipt.receivedAt, reaffirmedAt: r.reaffirmedAt, attestedAt: witness.attestedAt,
+            receiptRef: d.rootReceipt.recordRef, deliveryMessageRef: d.deliveryMessageRef, reaffirmationMessageRef: r.messageRef,
+            artifact: { ref: 'root-external-late-artifact:' + operationId, digestSha256: encoded.digestSha256,
+                mediaType: encoded.mediaType, bytes: encoded.bytes }, evidenceJson: encoded.content,
+        };
+        return { source, selection: s, document };
+    }
+    async readLateAcceptance(sessionToken, credentialRef, assignmentKey, witness, key) {
+        const { source } = await this.lateSource(sessionToken, credentialRef, assignmentKey, witness, key);
+        return this.o.opportunity.readLateAcceptance(source);
+    }
+    async acceptLate(sessionToken, credentialRef, assignmentKey, witness, key) {
+        const { source, selection, document } = await this.lateSource(sessionToken, credentialRef, assignmentKey, witness, key);
+        return this.o.lock.run('root-external:' + credentialRef, async () => {
+            const existing = await this.o.opportunity.readLateAcceptance(source);
+            if (existing)
+                return existing;
+            need((await this.history(credentialRef)).length === 1, 'external_late_prior_delivery_refused');
+            const fence = this.o.lateReservationFence;
+            need(fence, 'external_late_reservation_fence_required');
+            const { roundId, roundKey, claimId, requesterId, termsVersion, allocationReceiptSha256, amountAtomic, operationId, requestHash } = source;
+            const binding = { roundId, roundKey, claimId, requesterId, termsVersion, allocationReceiptSha256, amountAtomic, operationId, requestHash };
+            await fence.withHeldReservation(binding, async (snapshot) => {
+                const allocation = snapshot.allocationReceipt;
+                need(snapshot.state === 'held' && snapshot.history === 'clear' && snapshot.claimId === claimId && snapshot.requesterId === requesterId &&
+                    ref.safeParse(snapshot.reservationId).success, 'external_late_reservation_unqualified');
+                need(allocation && digest(JSON.stringify(allocation)) === allocationReceiptSha256 && allocation.status === 'reserved' &&
+                    allocation.roundId === roundKey && allocation.termsVersion === termsVersion &&
+                    allocation.deadline === document.submissionDeadline && allocation.gasCapWei === document.transferFeeCap.amountAtomic &&
+                    allocation.termsPacketSha256 === selection.termsPacketSha256 &&
+                    (selection.schema === 'neomorphic.root-external-selection.v2' ? allocation.principalReserveAtomic : allocation.principalReserveAtomicUsdc) === amountAtomic &&
+                    typeof allocation.operationId === 'string' && ref.safeParse(allocation.operationId).success, 'external_allocation_mismatch');
+                need(typeof snapshot.destination === 'string' && /^0x[a-f0-9]{40}$/.test(snapshot.destination) && !/^0x0{40}$/.test(snapshot.destination) &&
+                    sha.safeParse(snapshot.destinationEvidenceSha256).success &&
+                    (selection.schema === 'neomorphic.root-external-selection.v1' || selection.agreement.payoutDestination.address === snapshot.destination), 'external_late_destination_refused');
+                const permit = {};
+                this.latePermits.set(permit, { ...source, reservationId: snapshot.reservationId, allocationOperationId: allocation.operationId,
+                    destination: snapshot.destination, destinationEvidenceSha256: snapshot.destinationEvidenceSha256 });
+                try {
+                    return await this.o.opportunity.acceptLate(permit);
+                }
+                finally {
+                    this.latePermits.delete(permit);
+                }
+            });
+            const committed = await this.o.opportunity.readLateAcceptance(source);
+            need(committed, 'external_late_outcome_unknown');
+            return committed;
+        });
+    }
+    verifyLateAcceptance(permit) {
+        return typeof permit === 'object' && permit !== null ? this.latePermits.get(permit) ?? null : null;
     }
     async receive(sessionToken, credentialRef, assignmentKey, raw, key) {
         const assignment = await this.readAssignment(credentialRef, assignmentKey);

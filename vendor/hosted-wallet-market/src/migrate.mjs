@@ -163,6 +163,16 @@ export async function assertRuntimeSchema(client, options) {
   return shape;
 }
 const lateMigration = '../schema/012_late_native_discharge.sql';
+// PostgreSQL's non-pretty deparse of the CHECK in migration 012. Keep this
+// versioned predicate exact so startup refuses a weaker same-name constraint.
+const lateAcceptanceCheck = [
+  "(((acceptance_kind = 'verdict'::text) AND (verdict_id IS NOT NULL) AND (acceptance_operation_id IS NULL)",
+  "AND (acceptance_receipt_sha256 IS NULL) AND kernel_paid AND (kernel_transfer IS NOT NULL) AND (kernel_transfer = transaction_hash))",
+  "OR ((acceptance_kind = 'late_receipt_v1'::text) AND (obligation_family = 'opportunity'::text) AND (proof_kind = 'erc20_transfer'::text)",
+  "AND (verdict_id IS NULL) AND (acceptance_operation_id IS NOT NULL) AND (acceptance_operation_id ~ '^[0-9a-f]{64}$'::text)",
+  "AND (acceptance_receipt_sha256 IS NOT NULL) AND (acceptance_receipt_sha256 ~ '^[0-9a-f]{64}$'::text)",
+  "AND (NOT kernel_paid) AND (kernel_transfer IS NULL)))",
+].join(' ');
 export async function applyLateDischargeSchema(client, {earnedSchema = 'cj227_earned_work'} = {}) {
   assertIdent(earnedSchema);
   await assertRuntimeSchema(client, {earnedSchema});
@@ -176,10 +186,12 @@ export async function assertLateDischargeSchema(client, {earnedSchema}) {
     .split('AS $$')[1].split('$$;')[0].trim();
   const row = (await client.query(`SELECT p.prosrc, p.proconfig,
     EXISTS (SELECT 1 FROM pg_trigger t WHERE t.tgrelid='hosted_wallet_market.native_debt_dispositions'::regclass
-      AND t.tgname='native_debt_dispositions_match_late' AND t.tgfoid=p.oid AND t.tgenabled IN ('O','A') AND t.tgtype=7) AS attached,
+      AND t.tgname='native_debt_dispositions_match_late' AND t.tgfoid=p.oid AND t.tgenabled IN ('O','A')
+      AND t.tgtype=7 AND NOT t.tgisinternal AND t.tgqual IS NULL AND t.tgnargs=0) AS attached,
     EXISTS (SELECT 1 FROM pg_constraint c WHERE c.conrelid='hosted_wallet_market.native_debt_dispositions'::regclass
-      AND c.conname='native_debt_acceptance_identity' AND c.contype='c' AND c.convalidated) AS checked
-    FROM pg_proc p WHERE p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_late_acceptance()')`)).rows[0];
+      AND c.conname='native_debt_acceptance_identity' AND c.contype='c' AND c.convalidated AND NOT c.connoinherit
+      AND pg_get_expr(c.conbin,c.conrelid,false)=$1) AS checked
+    FROM pg_proc p WHERE p.oid=to_regprocedure('hosted_wallet_market.native_debt_matches_late_acceptance()')`, [lateAcceptanceCheck])).rows[0];
   if (row?.prosrc?.trim()!==expected || !row.attached || !row.checked ||
       JSON.stringify(row.proconfig)!==JSON.stringify(['search_path=hosted_wallet_market, pg_temp'])) {
     throw Object.assign(new Error('runtime_schema_unready'), {http:503,codeName:'runtime_schema_unready'});

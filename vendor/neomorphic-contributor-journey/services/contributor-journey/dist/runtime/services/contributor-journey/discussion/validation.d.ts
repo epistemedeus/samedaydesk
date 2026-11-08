@@ -318,8 +318,8 @@ export declare const entrySchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     taskId: string;
     schema: "contributor-discussion-v1";
-    actorAccountId: string;
     operationId: string;
+    actorAccountId: string;
     requestDigest: string;
     command: {
         body: string;
@@ -372,8 +372,8 @@ export declare const entrySchema: z.ZodObject<{
 }, {
     taskId: string;
     schema: "contributor-discussion-v1";
-    actorAccountId: string;
     operationId: string;
+    actorAccountId: string;
     requestDigest: string;
     command: {
         body: string;
