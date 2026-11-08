@@ -38,6 +38,18 @@ const DOCUMENTATION_READINESS_RESPONSE = {
         reason: { type: "string" }, fix: { type: "string" },
       },
     } },
+    nextAction: {
+      description: "Optional caller-selected read of a same-origin text alternate declared by an over-cap homepage response. The target was not verified or fetched by this check.",
+      type: "object",
+      additionalProperties: false,
+      required: ["kind", "path", "mediaTypeHint", "verified"],
+      properties: {
+        kind: { const: "read-declared-alternate" },
+        path: { type: "string", maxLength: 1024, pattern: "^/(?!/)[^\\s?#\\\\]*$", description: "Resolve this path against the report origin." },
+        mediaTypeHint: { enum: ["text/plain", "text/markdown"] },
+        verified: { const: false },
+      },
+    },
     topFixes: { type: "array", items: {
       type: "object", required: ["id", "fix"], properties: { id: { type: "string" }, fix: { type: "string" } },
     } },

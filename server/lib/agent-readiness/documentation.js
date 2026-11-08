@@ -87,6 +87,7 @@ export async function runDocumentationReadiness(rawHost, options = {}) {
     if (!evidence.has(path)) {
       evidence.set(path, fetchPublicBounded(origin + path, {
         allowedOrigin: origin, maxRedirects: 2, maxBytes: 256_000, timeoutMs: 5_000, budget,
+        includeOversizeAlternate: path === "/",
         ...(options.lookup ? { lookup: options.lookup } : {}),
       }).catch((error) => {
         if (!(error instanceof BoundedFetchError)) throw error;
@@ -98,10 +99,12 @@ export async function runDocumentationReadiness(rawHost, options = {}) {
   try {
     const [home, llms, robots] = await Promise.all([get("/"), get("/llms.txt"), get("/robots.txt")]);
     const checks = [homepage(home), await sitemap(origin, robots, get), llmsIndex(llms)];
+    const nextAction = outcome(home) === "budget" ? home.declaredAlternate : null;
     return {
       schema: DOCUMENTATION_READINESS_SCHEMA,
       host, origin, free: true, generatedAt: new Date().toISOString(),
       checks,
+      ...(nextAction ? { nextAction } : {}),
       topFixes: checks.filter((row) => row.fix).map(({ id, fix }) => ({ id, fix })),
       evidence: await Promise.all([...evidence].map(async ([path, pending]) => {
         const response = await pending;

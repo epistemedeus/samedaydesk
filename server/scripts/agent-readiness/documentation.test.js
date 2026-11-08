@@ -66,3 +66,70 @@ test("private DNS, redirect scope, and incomplete content do not become positive
   assert.deepEqual(result.topFixes, []);
   assert.equal(result.evidence.find((row) => row.path === "/llms.txt").outcome, "failed");
 });
+
+const alternate = (target = "/results.md") => `<${target}>; rel=alternate; type="text/markdown"`;
+const capped = (link) => ({
+  ...home, truncated: true, headers: { ...home.headers, ...(link === undefined ? {} : { link }) },
+});
+
+test("the final same-origin response supplies the relative link context", async (t) => {
+  const seen = wire(t, {
+    "/": { status: 302, headers: { location: "/reports/current/index.html", link: alternate("/redirect.md") } },
+    "/reports/current/index.html": capped(
+      `</llms.txt>; rel=describedby; type="text/plain"; title="fake, </decoy.md>; rel=alternate", ` +
+      `</assets,legacy>; rel=preload; title="escaped \\"quote\\", and comma", ` +
+      `<./results.md>; REL="alternate related"; TYPE="Text/Markdown"; title="untrusted label"`,
+    ),
+  });
+  const report = await runDocumentationReadiness(origin, { lookup });
+  assert.deepEqual(report.nextAction, {
+    kind: "read-declared-alternate", path: "/reports/current/results.md", mediaTypeHint: "text/markdown", verified: false,
+  });
+  assert.equal(seen.includes("/reports/current/results.md"), false);
+  assert.equal(seen.includes("/redirect.md"), false);
+  assert.doesNotMatch(JSON.stringify(report), /decoy|untrusted label/);
+});
+
+test("no hint comes from an ordinary body, a non-home probe, or an off-origin redirect", async (t) => {
+  const seen = wire(t, {
+    "/": { ...capped(alternate()), truncated: false },
+    "/llms.txt": capped(alternate()),
+  });
+  const report = await runDocumentationReadiness(origin, { lookup });
+  assert.equal("nextAction" in report, false);
+  assert.equal(seen.includes("/results.md"), false);
+
+  const redirect = wire(t, {
+    "/": { status: 302, headers: { location: "https://outside.example/", link: alternate() } },
+  });
+  const redirected = await runDocumentationReadiness(origin, { lookup });
+  assert.equal("nextAction" in redirected, false);
+  assert.equal(redirected.evidence.find(({ path }) => path === "/").outcome, "failed");
+  assert.equal(redirect.includes("/results.md"), false);
+});
+
+test("a truncated refusal or challenge cannot yield a next action", async (t) => {
+  const paths = { "/": { ...capped(alternate()), status: 503 } };
+  wire(t, paths);
+  const errorReport = await runDocumentationReadiness(origin, { lookup });
+  assert.equal("nextAction" in errorReport, false);
+  assert.equal(errorReport.evidence.find(({ path }) => path === "/").outcome, "failed");
+
+  paths["/"] = { ...capped(alternate()), body: "<html><body>Just a moment</body></html>" };
+  const challenge = await runDocumentationReadiness(origin, { lookup });
+  assert.equal("nextAction" in challenge, false);
+  assert.equal(challenge.evidence.find(({ path }) => path === "/").outcome, "blocked");
+});
+
+test("only over-cap HTML from a non-challenge response can offer the alternate", async (t) => {
+  for (const homepage of [
+    { ...capped(alternate()), headers: { "content-type": "application/json", link: alternate() }, body: '{"report":"bounded' },
+    { ...capped(alternate()), headers: { ...home.headers, link: alternate(), "cf-mitigated": "challenge" } },
+  ]) {
+    const seen = wire(t, { "/": homepage });
+    const report = await runDocumentationReadiness(origin, { lookup });
+    assert.equal(report.checks.find(({ id }) => id === "homepage").status, "unknown");
+    assert.equal("nextAction" in report, false);
+    assert.equal(seen.includes("/results.md"), false);
+  }
+});
