@@ -39,6 +39,7 @@ export declare function prepareJourneyDeployment(options?: {
  * migrations, enrollment, HTTP listener, signup, or public writing authority. */
 export declare function openRootExternalControl(env: NodeJS.ProcessEnv, options?: {
     canonicalReceiving?: import('./canonical-qualification.js').CanonicalReceiving;
+    lateReservationFence?: import('./external-receiving.js').LateAcceptanceReservationFence;
 }): Promise<{
     installed: import("./installed.js").InstalledComposition;
     services: ExistingServices;

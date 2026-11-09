@@ -136,6 +136,7 @@ async function propose() {
     }
   }
   let built;
+  let command;
   try {
     built = buildUnreceivedPair({
       clientBytes,
@@ -145,6 +146,11 @@ async function propose() {
       descriptorCommit: flag('descriptor-commit'),
       descriptorPath: flag('descriptor-path'),
     });
+    const directory = dirname(built.anchor.descriptorPath);
+    if (built.anchor.descriptorPath !== `${directory}/proposed-descriptor.json`) {
+      throw new Error('proposal descriptor must be named proposed-descriptor.json');
+    }
+    command = enrollmentCommand(directory);
   } catch (error) {
     fail(error.message || 'propose_refused');
   }
@@ -177,7 +183,7 @@ async function propose() {
       note: 'Root receiving for host 6fca4aaa stays on its own slot. It is not receiving for this measured host.',
     },
     packet: built.packet,
-    command: enrollmentCommand(),
+    command,
     note: 'Root adds receiving on a copy of this proposed anchor only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot, the received H142 slot, the received 6fca4aaa slot, or set ROOT10940_CI_PACKET.',
   };
   mkdirSync(outDir, {recursive: true});

@@ -56,14 +56,17 @@ function rewardView(atomic, round) {
         chainId: round.chain_id,
     };
 }
+const LATE_ACCEPTANCE_SCOPE = 'opportunity_accept_late_private_v1';
 export class OpportunityService {
     kernel;
     hosted;
     verifyMediatedReceipt;
-    constructor(kernel, hosted = absentHostedDelivery(), verifyMediatedReceipt) {
+    verifyLateAcceptance;
+    constructor(kernel, hosted = absentHostedDelivery(), verifyMediatedReceipt, verifyLateAcceptance) {
         this.kernel = kernel;
         this.hosted = hosted;
         this.verifyMediatedReceipt = verifyMediatedReceipt;
+        this.verifyLateAcceptance = verifyLateAcceptance;
     }
     hostedFor(roundKey) {
         return projectionForRound(this.hosted, roundKey);
@@ -534,36 +537,7 @@ export class OpportunityService {
                     throw new ApiError(409, "oversubscribed", "remaining principal cap does not cover this reward");
                 }
             }
-            const submissionId = newId("osub");
-            await client.query(`INSERT INTO opportunity_submissions (
-           id, claim_id, round_id, terms_version, evidence, evidence_bytes,
-           artifact_ref, artifact_digest_sha256, artifact_media_type, artifact_bytes, created_at
-         ) VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11)`, [
-                submissionId,
-                claim.id,
-                round.id,
-                claim.terms_version,
-                evidenceJson,
-                evidenceBytes,
-                body.artifact.ref,
-                body.artifact.digestSha256,
-                body.artifact.mediaType,
-                body.artifact.bytes,
-                now,
-            ]);
-            const selfReport = isRecord(body.evidence.selfReport) ? body.evidence.selfReport : {};
-            const serverObserved = await this.serverObserved(client, claim.id);
-            await client.query(`INSERT INTO opportunity_source_records (id, round_id, claim_id, self_report, observed, created_at)
-         VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6)`, [
-                newId("src"),
-                round.id,
-                claim.id,
-                JSON.stringify({ ...selfReport, modelUsage: body.modelUsage ?? null, contributorActiveMinutes: body.contributorActiveMinutes ?? null }),
-                JSON.stringify(serverObserved),
-                now,
-            ]);
-            await client.query(`UPDATE opportunity_claims SET status = 'submitted', updated_at = $2 WHERE id = $1`, [claim.id, now]);
-            await this.appendEvent(client, round.id, claim.id, "submission", { submissionId, fetchedArtifact: false }, now);
+            const submissionId = await this.recordSubmission(client, round, claim, body, evidenceJson, evidenceBytes, now);
             const response = await this.submissionView(client, round, { ...claim, status: "submitted" }, submissionId, true);
             await saveIdempotency(client, "opportunity_submit", round.id, idempotencyKey, requestHash, 201, response, now, contributor.id);
             return { replayed: false, statusCode: 201, body: response };
@@ -603,29 +577,172 @@ export class OpportunityService {
             if (submissionRow.terms_version !== claim.terms_version) {
                 throw new ApiError(409, "terms_changed", "submission terms do not match the claim");
             }
-            const obligationId = newId("oobl");
-            await client.query(`INSERT INTO opportunity_obligations (
-           id, claim_id, round_id, settlement_key, reward_atomic, asset, network, chain_id, terms_version,
-           payout_state, adapter, kind, transfer, paid, settled, revenue, created_at
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'owed','null_nonpaying_v0','owed_record',NULL,FALSE,FALSE,FALSE,$10)`, [
-                obligationId,
-                claim.id,
-                round.id,
-                claim.settlement_key,
-                claim.reward_atomic,
-                round.asset,
-                round.network,
-                round.chain_id,
-                claim.terms_version,
-                now,
-            ]);
-            await client.query(`UPDATE opportunity_claims SET status = 'owed', updated_at = $2 WHERE id = $1`, [claim.id, now]);
-            await this.appendEvent(client, round.id, claim.id, "acceptance", { obligationId, requesterActiveMinutes }, now);
-            await this.appendEvent(client, round.id, claim.id, "owed", { obligationId, transfer: null, paid: false }, now);
+            const obligationId = await this.recordOwed(client, round, claim, requesterActiveMinutes, now);
             const response = await this.obligationView(client, round, { ...claim, status: "owed" }, obligationId, true);
             await saveIdempotency(client, "opportunity_accept", round.id, idempotencyKey, requestHash, 201, response, now, OWNER);
             return { replayed: false, statusCode: 201, body: response };
         }, "idempotent");
+    }
+    /** Private receipt lookup. Exact caller evidence is rejoined by RootExternalReceiving. */
+    async readLateAcceptance(source) {
+        return this.kernel.withOpportunityClient(async (client) => {
+            const round = await this.lockRound(client, source.roundKey, 'production');
+            const claim = await this.lockClaim(client, source.claimId);
+            this.assertLateIdentity(round, claim, source);
+            return this.lateAcceptanceReceipt(client, round, claim, source);
+        }, 'read');
+    }
+    async acceptLate(permit) {
+        const intent = this.verifyLateAcceptance?.(permit);
+        if (!intent)
+            throw new ApiError(403, 'forbidden', 'configured late acceptance authority required');
+        return this.kernel.withOpportunityClient(async (client) => {
+            const round = await this.lockRound(client, intent.roundKey, 'production');
+            const claim = await this.lockClaim(client, intent.claimId);
+            this.assertLateIdentity(round, claim, intent);
+            const prior = await this.lateAcceptanceReceipt(client, round, claim, intent);
+            if (prior)
+                return prior;
+            const offer = await this.offerById(client, claim.offer_id);
+            const terms = readCanonicalRoundTerms(round.terms_document, round.terms_version);
+            if (terms.receivingPolicy !== 'root_mediated_external_report_v1' || terms.offers.length !== 1 ||
+                terms.offers[0]?.offerKey !== offer.offer_key || terms.offers[0]?.slotCount !== 1 ||
+                terms.offers[0]?.publicClaimable || terms.offers[0]?.ownerReservedSlots !== 1 ||
+                Date.parse(terms.submissionDeadline) !== round.submission_deadline.getTime() || String(terms.offers[0]?.rewardAtomic) !== intent.amountAtomic ||
+                offer.round_id !== round.id || offer.public_claimable || offer.slot_count !== 1 || offer.owner_reserved_slots !== 1 ||
+                offer.reward_atomic !== claim.reward_atomic || round.principal_cap_atomic !== claim.reward_atomic) {
+                throw new ApiError(409, 'terms_changed', 'original late acceptance allocation differs');
+            }
+            if (!['reserved', 'expired'].includes(claim.status) || claim.defer_start ||
+                (await client.query(`SELECT 1 FROM opportunity_submissions WHERE claim_id=$1
+            UNION ALL SELECT 1 FROM opportunity_obligations WHERE claim_id=$1 LIMIT 1`, [claim.id])).rows.length ||
+                (await client.query(`SELECT 1 FROM opportunity_claims WHERE offer_id=$1 AND id<>$2
+            AND (created_at >= $3 OR status IN ${OCCUPYING}) LIMIT 1`, [offer.id, claim.id, claim.expires_at])).rows.length) {
+                throw new ApiError(409, 'conflict', 'original late claim already has work or capacity was reassigned');
+            }
+            const now = this.kernel.now();
+            const principal = (await client.query(`SELECT provenance, task_scope, revoked_at, expires_at,
+          payout_destination FROM earned_work_contributor_tokens WHERE id=$1 FOR SHARE`, [intent.principalId])).rows[0];
+            if (!principal || principal.provenance !== 'production' || principal.task_scope !== `opportunity:${round.id}` ||
+                principal.revoked_at || (principal.expires_at && principal.expires_at <= now) ||
+                (principal.payout_destination !== null && principal.payout_destination !== intent.destination)) {
+                throw new ApiError(409, 'conflict', 'original late acceptance principal or destination differs');
+            }
+            const deadline = round.submission_deadline.getTime();
+            const received = Date.parse(intent.receivedAt), reaffirmed = Date.parse(intent.reaffirmedAt);
+            const attested = Date.parse(intent.attestedAt);
+            if (!(claim.created_at.getTime() < deadline && round.updated_at.getTime() <= now.getTime() &&
+                received > deadline && reaffirmed > deadline && received < now.getTime() &&
+                reaffirmed < now.getTime() && attested >= Math.max(received, reaffirmed) && attested <= now.getTime())) {
+                throw new ApiError(409, 'late_submission', 'late acceptance clocks do not join');
+            }
+            const evidence = JSON.parse(intent.evidenceJson);
+            const body = { artifact: intent.artifact, evidence };
+            assertNoPrivate(body, 'submission');
+            const bytes = Buffer.byteLength(intent.evidenceJson);
+            if (bytes > round.max_evidence_bytes || bytes !== body.artifact.bytes ||
+                body.artifact.mediaType !== 'application/json' ||
+                digestText(intent.evidenceJson) !== body.artifact.digestSha256) {
+                throw new ApiError(409, 'artifact_changed', 'late acceptance artifact differs');
+            }
+            assertEvidenceShape(offer.evidence_kind, evidence);
+            const submissionId = await this.recordSubmission(client, round, claim, body, intent.evidenceJson, bytes, now);
+            const obligationId = await this.recordOwed(client, round, claim, null, now);
+            const { requestHash, ...binding } = intent;
+            const receipt = {
+                schema: 'neomorphic.opportunity-late-acceptance.v1', ...binding, submissionId, obligationId,
+                acceptedAt: now.toISOString(), paid: false, settled: false, transfer: null,
+            };
+            await saveIdempotency(client, LATE_ACCEPTANCE_SCOPE, claim.id, intent.operationId, requestHash, 201, receipt, now, intent.requesterId);
+            return receipt;
+        }, 'idempotent');
+    }
+    assertLateIdentity(round, claim, source) {
+        if (!claim || round.status !== 'closed' || !round.production_admission || round.id !== source.roundId ||
+            claim.id !== source.claimId || claim.round_id !== round.id || claim.kind !== 'owner_assigned' ||
+            claim.credential_ref !== source.credentialRef || claim.contributor_token_id !== source.principalId ||
+            claim.terms_version !== source.termsVersion || round.terms_version !== source.termsVersion ||
+            claim.reward_atomic !== source.amountAtomic) {
+            throw new ApiError(409, 'conflict', 'original closed late claim differs');
+        }
+    }
+    async lateAcceptanceReceipt(client, round, claim, source) {
+        const prior = await loadIdempotency(client, LATE_ACCEPTANCE_SCOPE, claim.id, source.operationId, source.requestHash, source.requesterId);
+        if (!prior.hit)
+            return null;
+        const receipt = prior.body;
+        const { requestHash, ...binding } = source;
+        const stored = (await client.query(`SELECT s.artifact_ref, s.artifact_digest_sha256, s.artifact_bytes,
+      s.artifact_media_type, s.evidence, s.created_at, o.reward_atomic, o.paid, o.settled, o.transfer
+      FROM opportunity_submissions s JOIN opportunity_obligations o ON o.claim_id=s.claim_id AND o.round_id=s.round_id
+      WHERE s.claim_id=$1 AND s.round_id=$2 AND s.terms_version=$3 AND o.terms_version=$3
+        AND s.id=$4 AND o.id=$5 AND o.settlement_key=$6`, [claim.id, round.id, source.termsVersion, receipt?.submissionId, receipt?.obligationId, claim.settlement_key])).rows[0];
+        if (!stored || receipt.schema !== 'neomorphic.opportunity-late-acceptance.v1' || claim.status !== 'owed' ||
+            Object.entries(binding).some(([key, value]) => hashRequest(value) !== hashRequest(receipt[key])) ||
+            stored.artifact_ref !== source.artifact.ref || stored.artifact_digest_sha256 !== source.artifact.digestSha256 ||
+            stored.artifact_bytes !== source.artifact.bytes || stored.artifact_media_type !== source.artifact.mediaType ||
+            hashRequest(stored.evidence) !== hashRequest(JSON.parse(source.evidenceJson)) ||
+            stored.created_at.toISOString() !== receipt.acceptedAt || stored.reward_atomic !== source.amountAtomic ||
+            stored.paid !== false || stored.settled !== false || stored.transfer !== null ||
+            receipt.paid !== false || receipt.settled !== false || receipt.transfer !== null) {
+            throw new ApiError(503, 'invalid_storage', 'late acceptance receipt differs from the original work');
+        }
+        return receipt;
+    }
+    async recordSubmission(client, round, claim, body, evidenceJson, evidenceBytes, now) {
+        const submissionId = newId("osub");
+        await client.query(`INSERT INTO opportunity_submissions (
+         id, claim_id, round_id, terms_version, evidence, evidence_bytes,
+         artifact_ref, artifact_digest_sha256, artifact_media_type, artifact_bytes, created_at
+       ) VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11)`, [
+            submissionId,
+            claim.id,
+            round.id,
+            claim.terms_version,
+            evidenceJson,
+            evidenceBytes,
+            body.artifact.ref,
+            body.artifact.digestSha256,
+            body.artifact.mediaType,
+            body.artifact.bytes,
+            now,
+        ]);
+        const selfReport = isRecord(body.evidence.selfReport) ? body.evidence.selfReport : {};
+        const serverObserved = await this.serverObserved(client, claim.id);
+        await client.query(`INSERT INTO opportunity_source_records (id, round_id, claim_id, self_report, observed, created_at)
+       VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6)`, [
+            newId("src"),
+            round.id,
+            claim.id,
+            JSON.stringify({ ...selfReport, modelUsage: body.modelUsage ?? null, contributorActiveMinutes: body.contributorActiveMinutes ?? null }),
+            JSON.stringify(serverObserved),
+            now,
+        ]);
+        await client.query(`UPDATE opportunity_claims SET status = 'submitted', updated_at = $2 WHERE id = $1`, [claim.id, now]);
+        await this.appendEvent(client, round.id, claim.id, "submission", { submissionId, fetchedArtifact: false }, now);
+        return submissionId;
+    }
+    async recordOwed(client, round, claim, requesterActiveMinutes, now) {
+        const obligationId = newId("oobl");
+        await client.query(`INSERT INTO opportunity_obligations (
+         id, claim_id, round_id, settlement_key, reward_atomic, asset, network, chain_id, terms_version,
+         payout_state, adapter, kind, transfer, paid, settled, revenue, created_at
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'owed','null_nonpaying_v0','owed_record',NULL,FALSE,FALSE,FALSE,$10)`, [
+            obligationId,
+            claim.id,
+            round.id,
+            claim.settlement_key,
+            claim.reward_atomic,
+            round.asset,
+            round.network,
+            round.chain_id,
+            claim.terms_version,
+            now,
+        ]);
+        await client.query(`UPDATE opportunity_claims SET status = 'owed', updated_at = $2 WHERE id = $1`, [claim.id, now]);
+        await this.appendEvent(client, round.id, claim.id, "acceptance", { obligationId, requesterActiveMinutes }, now);
+        await this.appendEvent(client, round.id, claim.id, "owed", { obligationId, transfer: null, paid: false }, now);
+        return obligationId;
     }
     /** Source-bound requester rejection, on the same opportunity authority. No IOU mutation. */
     async rejectSubmission(roundKey, claimId, provenance, idempotencyKey, expected, reason) {

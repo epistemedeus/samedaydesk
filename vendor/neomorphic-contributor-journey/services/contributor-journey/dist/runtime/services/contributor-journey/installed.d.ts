@@ -36,6 +36,7 @@ export declare function createInstalledComposition(options: {
     lockPool: pg.Pool;
     canonicalReceiving?: CanonicalReceiving;
     preparedOnly?: boolean;
+    lateReservationFence?: import('./external-receiving.js').LateAcceptanceReservationFence;
 }): Promise<InstalledComposition>;
 export type InstalledComposition = {
     external: RootExternalReceiving;

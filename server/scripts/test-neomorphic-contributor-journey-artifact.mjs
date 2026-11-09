@@ -3,6 +3,7 @@ import test from 'node:test';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
+import {loadContributorDeskAssets} from '../lib/contributor-desk-assets.js';
 
 const root=new URL('../../vendor/neomorphic-contributor-journey/',import.meta.url);
 test('default installed artifact has exact source/build provenance and every received byte matches its manifest',async()=>{
@@ -18,4 +19,16 @@ test('default installed artifact has exact source/build provenance and every rec
 test('native default artifact imports without a TS loader and disabled factory opens no store',async()=>{
   const service=await import(new URL('services/contributor-journey/dist/index.js',root));const runtime=await service.createJourneyRuntime({env:{}});
   assert.equal(runtime.config.mode,'disabled');assert.equal(runtime.services,null);await runtime.close();
+});
+
+test('Hosted late discharge source is available through the ordinary installed artifact',async()=>{
+  const hosted=JSON.parse(await readFile(new URL('../../vendor/hosted-wallet-market/SOURCE.json',import.meta.url),'utf8'));
+  const overlay=hosted.lateDischargeSource;
+  assert.equal(overlay?.schema,'pilot.sds.hosted-late-discharge-source.v1');
+  const result=await loadContributorDeskAssets(overlay.neoCommit);
+  assert.equal(result.journeySourceCommit,overlay.neoCommit);
+  assert.equal(result.manifest.publicEnabled,false);
+  const {RootExternalReceiving}=await import(new URL(
+    'services/contributor-journey/dist/runtime/services/contributor-journey/external-receiving.js',root));
+  assert.equal(typeof RootExternalReceiving.prototype.readLateAcceptance,'function');
 });

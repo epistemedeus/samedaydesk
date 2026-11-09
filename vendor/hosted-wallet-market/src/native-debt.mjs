@@ -9,6 +9,7 @@ import {readSourceSuccession as readSourceSuccessionChain, sourcePair, sourcePai
 import {assertRpcUrl, readPublicChain, readRailTransfer} from './chain.mjs';
 import {readAuthoritativeDischarge, registryIdentity, configuredRegistryIdentity, pendingRegistryDisposition} from './discharge-authority.mjs';
 import {matchDebt, storedDebt} from './debt-source.mjs';
+import {LATE_ACCEPTANCE_KIND, LATE_IMPORT_FIELDS, lateReceiptId, readLateDebt, readLateRegistry} from './late-discharge.mjs';
 
 export const IMPORT_CONTRACT_SHA256 = '414ba86df5bfacd2876f38bd62d11781e9c9971cd8219ceec577f85dc0f93063';
 export const RAIL_NETWORK = 'eip155:8453';
@@ -45,7 +46,8 @@ export const NATIVE_DEBT_CONSUMER = Object.freeze({
 export const IMPORT_BODY_KEYS = Object.freeze(['importContractSha256','tenant','obligationId','reservationId','taskId','termsVersion',
   'network','token','transactionHash','logIndex','blockNumber','amountAtomic','receiptId','receivedAt']);
 export const NATIVE_IMPORT_BODY_KEYS=Object.freeze([...IMPORT_BODY_KEYS,'proofKind','rewardAsset']);
-export const importBodyKeys=body=>body?.proofKind==='native_value_transfer'?NATIVE_IMPORT_BODY_KEYS:IMPORT_BODY_KEYS;
+export const importBodyKeys=body=>body?.acceptanceKind===LATE_ACCEPTANCE_KIND?[...IMPORT_BODY_KEYS,...LATE_IMPORT_FIELDS]:
+  body?.proofKind==='native_value_transfer'?NATIVE_IMPORT_BODY_KEYS:IMPORT_BODY_KEYS;
 const sha = value => createHash('sha256').update(value).digest('hex');
 const root = fileURLToPath(new URL('../', import.meta.url));
 const fail = (code = 'disposition_hold', http = 409) => { throw Object.assign(new Error(code), {http, codeName: code}); };
@@ -107,15 +109,22 @@ export function assertImportShape(body) {
       typeof body.blockNumber !== 'string' || !/^(0|[1-9][0-9]{0,19})$/.test(body.blockNumber) ||
       typeof body.amountAtomic !== 'string' || !/^[1-9][0-9]{0,18}$/.test(body.amountAtomic) || !/^[0-9a-f]{64}$/.test(body.receiptId) ||
       typeof body.receivedAt !== 'string' || !Number.isFinite(Date.parse(body.receivedAt)) || new Date(body.receivedAt).toISOString() !== body.receivedAt) fail('body_refused', 400);
+  if (body.acceptanceKind === LATE_ACCEPTANCE_KIND &&
+      (!/^[a-f0-9]{64}$/.test(body.acceptanceOperationId) || !/^[a-f0-9]{64}$/.test(body.acceptanceReceiptSha256) ||
+       !/^0x[a-f0-9]{64}$/.test(body.blockHash) || body.receiptId !== lateReceiptId(body))) fail('body_refused', 400);
 }
 const ROW_SQL = 'SELECT * FROM hosted_wallet_market.native_debt_dispositions';
 const ENROLL_SQL = 'SELECT * FROM hosted_wallet_market.consumer_enrollment WHERE id IS TRUE';
 export function dispositionView(row) {
-  if (row.import_state !== 'bound' || !row.kernel_paid || row.kernel_transfer !== row.transaction_hash ||
+  const late = row.acceptance_kind === LATE_ACCEPTANCE_KIND;
+  if (row.import_state !== 'bound' || (late ? row.kernel_paid !== false || row.kernel_transfer !== null :
+      !row.kernel_paid || row.kernel_transfer !== row.transaction_hash) ||
       !row.native_paid_observation || row.transfer_initiated || row.payout_state !== 'owed') fail();
   return {schema: 'pilot.root71.native-debt.disposition.v1', state: 'bound', disposition: row.disposition, importState: 'bound',
     ...(row.proof_kind==='native_value_transfer'?{proofKind:row.proof_kind,rewardAsset:row.reward_asset,feeEvidence:row.fee_evidence}:{}),
-    projection: 'native_paid', payable: false, newPayable: false, kernelPaid: true, kernelTransfer: row.kernel_transfer,
+    ...(late?{acceptanceKind:row.acceptance_kind,acceptanceOperationId:row.acceptance_operation_id,
+      acceptanceReceiptSha256:row.acceptance_receipt_sha256}:{}),
+    projection: late?'observed_discharge':'native_paid', payable: false, newPayable: false, kernelPaid: !late, kernelTransfer: row.kernel_transfer,
     nativePaidObservation: true, transferInitiated: false, payoutState: 'owed', obligationId: row.obligation_id,
     obligationFamily: row.obligation_family, tenant: row.tenant, reservationId: row.reservation_id, claimId: row.claim_id,
     taskId: row.task_id, termsVersion: row.terms_version, network: row.network, token: row.token, recipient: row.recipient,
@@ -126,7 +135,8 @@ export function dispositionView(row) {
 
 /** Called only by the installed server with its closed-over profile. No JSON
  * binding, public baseline, environment reassignment, or test seam is consulted. */
-export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, readAcceptedSource, authorityPrincipalId}) {
+export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, readAcceptedSource, readLateAcceptedSource,
+  lateDischargeEnabled = false, authorityPrincipalId}) {
   const configured = Object.freeze({...profile});
   const databaseUrl = new URL(profile.databaseUrl);
   const databaseIdentity = {host: databaseUrl.hostname, port: databaseUrl.port || '5432', database:decodeURIComponent(databaseUrl.pathname)};
@@ -149,7 +159,9 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
   const PRESERVE = Object.freeze(['obligation_id', 'authority_receipt_sha256', 'amount_atomic', 'reservation_id', 'task_id', 'terms_version', 'transaction_hash', 'log_index', 'observed_source', 'artifact_digest_sha256', 'payout_state', 'receipt_id']);
   async function observationSeal(tx, through = null, complete = false) {
     if (complete) {
-      const rows = (await tx.query(`SELECT (CASE WHEN d.proof_kind='erc20_transfer' THEN to_jsonb(d)-'proof_kind'-'reward_asset'-'fee_evidence' ELSE to_jsonb(d) END) || jsonb_build_object(
+      const rows = (await tx.query(`SELECT (CASE WHEN to_jsonb(d)->>'acceptance_kind'='late_receipt_v1' THEN to_jsonb(d)
+        ELSE (CASE WHEN d.proof_kind='erc20_transfer' THEN to_jsonb(d)-'proof_kind'-'reward_asset'-'fee_evidence' ELSE to_jsonb(d) END)
+          -'acceptance_kind'-'acceptance_operation_id'-'acceptance_receipt_sha256' END) || jsonb_build_object(
         'created_at', to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'received_at', to_char(received_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
         'block_timestamp', to_char(block_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')) AS observation
@@ -261,21 +273,31 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     view.sourceBinding = sourcePair(next);
     return view;
   }
-  async function importNativeDischarge(tx, body, createdAt) {
+  async function importNativeDischarge(tx, body, createdAt, sessionToken) {
     assertImportShape(body);
     await assertBinding(tx);
     const coin=body.proofKind==='native_value_transfer';
+    const late=body.acceptanceKind===LATE_ACCEPTANCE_KIND;
+    if (late && !lateDischargeEnabled) fail('discharge_consumer_unbound');
     if (body.importContractSha256 !== importContractSha256(coin) || body.tenant !== configured.tenant || body.network !== RAIL_NETWORK || (!coin&&body.token !== RAIL_TOKEN)) fail();
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended('native-debt-projection', 0))");
-    const {receipt, allocation} = readAuthoritativeDischarge(registryRoot, body);
-    const stored = await storedDebt(tx, body.obligationId, {readAcceptedSource});
-    matchDebt(stored, receipt);
+    const registry = late ? readLateRegistry(registryRoot, body) : null;
+    const receipt = late ? null : readAuthoritativeDischarge(registryRoot, body).receipt;
+    const legacyStored = late ? null : await storedDebt(tx, body.obligationId, {readAcceptedSource});
+    if (!late) matchDebt(legacyStored, receipt);
     // The financial reservation is separate from the kernel claim id.
     const taken = (await tx.query(`${ROW_SQL} WHERE (network=$1 AND transaction_hash=$3 AND ((token=$2 AND log_index=$4) OR ($6 AND proof_kind='native_value_transfer'))) OR reservation_id=$5`,
       [body.network, body.token, body.transactionHash, body.logIndex, body.reservationId,coin])).rows;
     if (taken.some(row => row.obligation_id !== body.obligationId)) fail(taken.some(row => row.transaction_hash === body.transactionHash && row.log_index === body.logIndex) ? 'transfer_already_allocated' : 'reservation_already_allocated');
     const existing = (await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0];
-    const receiptSha = digest(receipt), requestSha = digest(body);
+    const requestSha = digest(body);
+    if (existing && late) {
+      if (existing.acceptance_kind !== LATE_ACCEPTANCE_KIND || existing.request_sha256 !== requestSha ||
+          existing.authority_receipt_sha256 !== digest({body,registry})) fail();
+      return dispositionView(existing);
+    }
+    const stored = late ? await readLateDebt(tx, body, registry, sessionToken, readLateAcceptedSource) : legacyStored;
+    const receiptSha = late ? stored.receiptSha : digest(receipt);
     if (existing) {
       if (existing.authority_receipt_sha256 !== receiptSha || existing.request_sha256 !== requestSha) fail();
       return dispositionView(existing);
@@ -283,7 +305,14 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
     let observed;
     try { observed = await readRailTransfer(configured.rpcUrl, body); }
     catch (error) { if (error.codeName === 'transfer_unverified') fail(); throw error; }
-    for (const key of ['source','recipient','amountAtomic','blockNumber','blockHash','blockTimestamp','logIndex']) if (observed[key] !== receipt[key]) fail();
+    if (late) {
+      if (observed.source !== registry.allocation.source || observed.recipient !== registry.allocation.recipient ||
+          observed.amountAtomic !== body.amountAtomic || observed.blockNumber !== body.blockNumber ||
+          observed.blockHash !== body.blockHash || observed.logIndex !== body.logIndex ||
+          observed.blockTimestampMs < stored.acceptedAt || digest(readLateRegistry(registryRoot, body)) !== digest(registry)) fail();
+    } else {
+      for (const key of ['source','recipient','amountAtomic','blockNumber','blockHash','blockTimestamp','logIndex']) if (observed[key] !== receipt[key]) fail();
+    }
     if (Date.parse(body.receivedAt) < observed.blockTimestampMs || Date.parse(body.receivedAt) > Date.now()+5000) fail();
     const row = {obligation_id: body.obligationId, obligation_family: stored.family, tenant: body.tenant, reservation_id: body.reservationId,
       claim_id: stored.claimId, task_id: body.taskId, terms_version: body.termsVersion, submission_id: stored.submissionId,
@@ -292,10 +321,12 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       block_hash: observed.blockHash, block_timestamp: observed.blockTimestamp, amount_atomic: body.amountAtomic, receipt_id: body.receiptId,
       received_at: body.receivedAt, import_contract_sha256: importContractSha256(coin), consumer_contract_sha256: consumerContractSha256(),
       authority_receipt_sha256: receiptSha, request_sha256: requestSha, import_state: 'bound', disposition: 'external_discharge_allocated',
-      kernel_paid: true, kernel_transfer: body.transactionHash, native_paid_observation: true, transfer_initiated: false,
+      kernel_paid: !late, kernel_transfer: late?null:body.transactionHash, native_paid_observation: true, transfer_initiated: false,
       payout_state: 'owed', observed_source: observed.source,
       created_at: (await tx.query('SELECT clock_timestamp()::text AS stamp')).rows[0].stamp};
     if(coin){const names=['l2FeeWei','l1FeeWei','operatorFeeWei','knownFeeWei','feeCompleteness'];for(const name of names)if(observed[name]!==receipt[name])fail();Object.assign(row,{proof_kind:'native_value_transfer',reward_asset:body.rewardAsset,fee_evidence:Object.fromEntries(names.map(name=>[name,observed[name]]))});}
+    if(late)Object.assign(row,{acceptance_kind:LATE_ACCEPTANCE_KIND, acceptance_operation_id:body.acceptanceOperationId,
+      acceptance_receipt_sha256:body.acceptanceReceiptSha256});
     const fields = Object.keys(row);
     await tx.query(`INSERT INTO hosted_wallet_market.native_debt_dispositions (${fields.join(',')}) VALUES (${fields.map((_,i) => '$'+(i+1)).join(',')})`, Object.values(row));
     return dispositionView((await tx.query(`${ROW_SQL} WHERE obligation_id=$1`, [body.obligationId])).rows[0]);
@@ -325,7 +356,13 @@ export function createInstalledDebtConsumer({profile, sdsRoot, registryRoot, rea
       UNION ALL SELECT payout_state FROM opportunity_obligations WHERE id=$1`, [obligationId]);
     if (!found.rows.length) fail('not_found', 404);
     if (found.rows.length !== 1) fail();
-    const pending = pendingRegistryDisposition(registryRoot,obligationId);
+    let pending = pendingRegistryDisposition(registryRoot,obligationId);
+    if (!pending) {
+      const late = await tx.query(`SELECT 1 FROM opportunity_obligations o JOIN earned_work_idempotency i
+        ON i.task_id=o.claim_id AND i.scope='opportunity_accept_late_private_v1' AND i.status_code=201
+        WHERE o.id=$1 AND i.response_json->>'obligationId'=o.id LIMIT 1`,[obligationId]);
+      if (late.rows.length) pending='external_discharge_pending';
+    }
     return {schema: 'pilot.root71.native-debt.disposition.v1', state: pending?'hold':'absent', obligationId, payoutState: found.rows[0].payout_state,
       payable: !pending && found.rows[0].payout_state === 'owed', newPayable: !pending && found.rows[0].payout_state === 'owed', projection: 'owed',
       importState: pending?'unbound_fail_closed':'unbound', holdReason:pending,

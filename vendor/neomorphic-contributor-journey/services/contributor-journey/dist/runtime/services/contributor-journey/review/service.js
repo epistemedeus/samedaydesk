@@ -101,6 +101,7 @@ export class ReviewService {
         return {
             source: l.bound, viewer: l.viewer,
             state: l.handoff ? "accepted" : rejected ? "rejected" : expired ? "clarification_expired" : response?.kind === "refuse" ? "clarification_refused" : response ? "clarification_answered" : question ? "clarification_requested" : "awaiting_review",
+            reviewDeadline: null,
             verdict: l.record.aggregate.verdict ? { id: l.record.aggregate.verdict.id, outcome: l.record.aggregate.verdict.outcome } : null,
             decision: l.handoff ? { outcome: "accept", reason: null, decidedAt: l.record.aggregate.obligation.createdAt } : rejected ? { outcome: "reject", reason: l.record.rejection.reason, decidedAt: l.record.rejection.decidedAt } : null,
             clarification: { roundsUsed, maxRounds: this.policy.maxRounds, question: question ? { id: question.questionId, text: question.text, deadline: question.deadline } : null, response: response ? { kind: response.kind, text: response.text } : null, canRequest: !!l.access.contributorAccountId && !closed && l.viewer === "requester" && roundsUsed < this.policy.maxRounds && (!question || !!response) && response?.kind !== "refuse", canRespond: !closed && l.viewer === "contributor" && !!question && !response && !expired },

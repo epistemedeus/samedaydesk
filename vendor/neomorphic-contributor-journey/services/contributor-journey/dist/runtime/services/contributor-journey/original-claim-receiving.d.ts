@@ -151,8 +151,11 @@ declare const deliveryPin: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
-    receivedAt: string;
+    roundId: string;
     claimId: string;
+    allocationReceiptSha256: string;
+    receivedAt: string;
+    deliveryMessageRef: string;
     accountId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -170,13 +173,10 @@ declare const deliveryPin: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    roundId: string;
     termsPacketSha256: string;
-    allocationReceiptSha256: string;
     sender: string;
     messageRef: string;
     originalOperationRef: string;
-    deliveryMessageRef: string;
     reportSha256: string;
     contributorAuthenticated: false;
     cliSubmitted: false;
@@ -191,8 +191,11 @@ declare const deliveryPin: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
-    receivedAt: string;
+    roundId: string;
     claimId: string;
+    allocationReceiptSha256: string;
+    receivedAt: string;
+    deliveryMessageRef: string;
     accountId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -210,13 +213,10 @@ declare const deliveryPin: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    roundId: string;
     termsPacketSha256: string;
-    allocationReceiptSha256: string;
     sender: string;
     messageRef: string;
     originalOperationRef: string;
-    deliveryMessageRef: string;
     reportSha256: string;
     contributorAuthenticated: false;
     cliSubmitted: false;
@@ -317,8 +317,11 @@ export declare const originalDeliverySchema: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
-    receivedAt: string;
+    roundId: string;
     claimId: string;
+    allocationReceiptSha256: string;
+    receivedAt: string;
+    deliveryMessageRef: string;
     accountId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -336,15 +339,12 @@ export declare const originalDeliverySchema: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    roundId: string;
     termsPacketSha256: string;
-    allocationReceiptSha256: string;
     sender: string;
     messageRef: string;
     originalOperationRef: string;
     termsPacket: Record<string, unknown>;
     allocationReceipt: Record<string, unknown>;
-    deliveryMessageRef: string;
     reportSha256: string;
     contributorAuthenticated: false;
     cliSubmitted: false;
@@ -359,8 +359,11 @@ export declare const originalDeliverySchema: z.ZodObject<{
         kind: "email";
         threadRef: string;
     };
-    receivedAt: string;
+    roundId: string;
     claimId: string;
+    allocationReceiptSha256: string;
+    receivedAt: string;
+    deliveryMessageRef: string;
     accountId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -378,15 +381,12 @@ export declare const originalDeliverySchema: z.ZodObject<{
             currency: string;
         } | null | undefined;
     };
-    roundId: string;
     termsPacketSha256: string;
-    allocationReceiptSha256: string;
     sender: string;
     messageRef: string;
     originalOperationRef: string;
     termsPacket: Record<string, unknown>;
     allocationReceipt: Record<string, unknown>;
-    deliveryMessageRef: string;
     reportSha256: string;
     contributorAuthenticated: false;
     cliSubmitted: false;
@@ -424,8 +424,11 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
         kind: "email";
         threadRef: string;
     };
-    receivedAt: string;
+    roundId: string;
     claimId: string;
+    allocationReceiptSha256: string;
+    receivedAt: string;
+    deliveryMessageRef: string;
     accountId: string;
     report: {
         schema: "pilot.cold-first-use-report.v1";
@@ -443,13 +446,10 @@ export declare function inspectOriginalDelivery(raw: unknown, bound: {
             currency: string;
         } | null | undefined;
     };
-    roundId: string;
     termsPacketSha256: string;
-    allocationReceiptSha256: string;
     sender: string;
     messageRef: string;
     originalOperationRef: string;
-    deliveryMessageRef: string;
     reportSha256: string;
     contributorAuthenticated: false;
     cliSubmitted: false;

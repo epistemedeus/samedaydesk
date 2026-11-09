@@ -163,6 +163,29 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "11be0160ef4c011bdb0eff63915d84b3c275c5a37702a9c024a9e287197a4606",
+      "sourceSha256": "8be8dd13f995bf9d814a3efdd9b965a9d9a613bffc0069605b6615dce813cdf5",
+      "hostSha256": "7bc031509f23e1c52ced5cb3442a1e64ddaee6e617ad6b0c1ae12fed3cc55d23",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "55aea759408d245d2271cbacc815a7e91c60d12b51431befa5fa032fa0703629",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "8513dc0a2b8dd3a1e495d8684edeac990d1579ee",
+        "independentReplay": "epistemedeus/pilot/actions/runs/42570951860",
+        "observedAt": "2026-11-09T06:07:11.609Z",
+        "passed": 25,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "24 source-bound selection checks and one standalone cold consumer journey on exact tree 106eb29d1bbe67f97ba4f057b25c85f16e217e61, disposable PostgreSQL 17. CI only; no live money or feature activation.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }

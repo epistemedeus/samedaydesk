@@ -3,7 +3,7 @@
   "pilotCommit": "f764645e13771dcf79c5172b8397bb35417de98e",
   "adoptedPilot": "f4dcfa92f169ec367d98a8010d411b37e3c87e9a",
   "sdsBase": "2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e",
-  "installedSourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+  "installedSourceSha256": "8be8dd13f995bf9d814a3efdd9b965a9d9a613bffc0069605b6615dce813cdf5",
   "publicMoney": "versioned_candidate_requires_scoped_authority",
   "candidateProducer": "0b14ec03d3a45f2669eb7a0024ad86ca43ed68eb",
   "installed": false,
@@ -41,6 +41,23 @@
       "src/native-coin-proof.mjs": "88dea106d72dba81bd8b9361dfe4c187d36cc2269cc5a08bc1ee40f5b4f47463",
       "src/retained-award-validate.mjs": "4905ddeeeb0424438c2391890eaca9bf47bcc6f560f881242b27593b18492594",
       "src/native-obligation-discharge.mjs": "2eb1d83fe5b7ecb2331a1eb3b3ad0674c37ae310b45f03c4a4c9ab009c70877f"
+    }
+  },
+  "lateDischargeSource": {
+    "schema": "pilot.sds.hosted-late-discharge-source.v1",
+    "baseCommit": "34a67df780cff74defa9a52683e9b09bd5b64c6d",
+    "neoCommit": "85a5863e346b9678f3c1c1422cdec52cb8ef7ec6",
+    "pilotCommit": "a456098471f9af0a17f870cd4ecfced9bd09e7a6",
+    "files": {
+      "bin/installed-debt.mjs": "714147e89a64012b9957c173ba02ac2d4fa9ead01181cf35310edc060d013eec",
+      "schema/012_late_native_discharge.sql": "be9807859d45b13e4e370be1a8db4124d6520464a40d66543cf9b757cf2010aa",
+      "src/canonical-receiving.mjs": "a08bb9ff0c14561a1956e8f79f403a919e34db4387a9e47085706705b5943a74",
+      "src/discharge-authority.mjs": "fb97e9f31744a43191a234d408cb9a28d13d7227613c51aca894803c82d6093b",
+      "src/late-discharge.mjs": "aa12c01fde2f5f333d8b42aaa3d0c10e44eee50bc22d7a526561a229344423fb",
+      "src/migrate.mjs": "8e8b4806647c1dac60a9da74b6f9b2b2d583b6f06011e42c3c295550be31b72a",
+      "src/native-debt.mjs": "bd2eb1c551e3331c9876d21a88d71945f1edef82ebe5df8195ca0c089bc21345",
+      "src/profile.mjs": "c5bf3b71a531b5b3e3226d803f74b192aa78e948a46105896a5293cdecb3315e",
+      "src/server.mjs": "7d55b6549461033ec3c9218f4e6dc28734bfc3cb13853a95995e4ad58a2abab3"
     }
   }
 }

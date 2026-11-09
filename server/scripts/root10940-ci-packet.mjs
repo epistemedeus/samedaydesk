@@ -13,13 +13,16 @@ export const DESCRIPTOR_SCHEMA = 'neomorphic.machine-participation.acquisition.v
 export const INDEX_SCHEMA = 'pilot.root10940.approved-ci-packet-index.v1';
 export const ENROLLMENT_SCHEMA = 'pilot.root10940.ci-enrollment-request.v1';
 export const CLIENT_VERSION = '0.3.0';
-export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds388-visitor-allocation-20261108';
-export function enrollmentCommand() {
+export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds392-late-discharge-20261109';
+export function enrollmentCommand(proposalDir = CURRENT_PROPOSAL_DIR) {
+  if (!/^docs\/receiving\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(proposalDir)) {
+    throw new PacketError('proposal directory must be one shell-safe child of docs/receiving', 2);
+  }
   return [
     'node server/scripts/produce-root10940-ci-packet.mjs',
-    `--anchor ${CURRENT_PROPOSAL_DIR}/proposed-anchor.json`,
+    `--anchor ${proposalDir}/proposed-anchor.json`,
     '--client vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs',
-    `--descriptor ${CURRENT_PROPOSAL_DIR}/proposed-descriptor.json`,
+    `--descriptor ${proposalDir}/proposed-descriptor.json`,
     '--catalog server/scripts/fixtures/root10940-approved-ci-packets',
     '--index server/scripts/fixtures/root10940-approved-ci-packets/index.json',
   ].join(' \\\n  ');

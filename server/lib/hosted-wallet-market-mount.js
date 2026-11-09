@@ -5,6 +5,19 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import pg from 'pg';
 
 const PREFIX = '/api/neomorphic-contributor-journey';
+const LATE_ACCEPTANCE_SOURCE = '85a5863e346b9678f3c1c1422cdec52cb8ef7ec6';
+
+export function installedLateAcceptanceReader(getContributor, env) {
+  const qualified = env.CONTRIBUTOR_JOURNEY_MODE === 'live' && env.CONTRIBUTOR_JOURNEY_SOURCE_COMMIT === LATE_ACCEPTANCE_SOURCE;
+  return async ({sessionToken, credentialRef, assignmentKey, witness, key}) => {
+    if (!qualified) refuse('discharge_consumer_unbound');
+    const contributor = getContributor();
+    await contributor?.ensure();
+    const external = contributor?.state.runtime?.installed?.external;
+    if (typeof external?.readLateAcceptance !== 'function') refuse('discharge_consumer_unbound');
+    return external.readLateAcceptance(sessionToken, credentialRef, assignmentKey, witness, key);
+  };
+}
 // Existing contributor browser/session/review routes retain their consumer.
 // The maintained client sends this wire header on every request.
 export const isWalletRequest = req => {
@@ -93,6 +106,8 @@ function configured(options, env) {
     settlementToken: options.settlementToken ?? env.HOSTED_WALLET_MARKET_SETTLEMENT_TOKEN,
     replayKey: options.replayKey ?? env.CONTRIBUTOR_JOURNEY_REPLAY_KEY,
     readAcceptedSource: options.readAcceptedSource,
+    readLateAcceptedSource: options.readLateAcceptedSource,
+    lateDischargeEnabled: env.HOSTED_WALLET_MARKET_LATE_DISCHARGE === '1',
     machineProfile: options.machineProfile ?? env.HOSTED_WALLET_MARKET_MACHINE_PROFILE,
     machineAuthority: options.machineAuthority ?? env.HOSTED_WALLET_MARKET_MACHINE_AUTHORITY_MODULE,
     qualifiedCapability: options.qualifiedCapability ?? env.HOSTED_WALLET_MARKET_QUALIFIED_CAPABILITY,

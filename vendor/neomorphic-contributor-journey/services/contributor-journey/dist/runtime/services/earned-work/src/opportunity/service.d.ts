@@ -22,11 +22,53 @@ export type MediatedReceiptVerifier = (proof: unknown, binding: MediatedReceiptB
     receivedAt: string;
     attestedAt: string;
 } | null;
+export type LateOpportunitySource = {
+    operationId: string;
+    requestHash: string;
+    requesterId: string;
+    roundId: string;
+    roundKey: string;
+    claimId: string;
+    principalId: string;
+    credentialRef: string;
+    termsVersion: string;
+    allocationReceiptSha256: string;
+    amountAtomic: string;
+    receivedAt: string;
+    reaffirmedAt: string;
+    attestedAt: string;
+    receiptRef: string;
+    deliveryMessageRef: string;
+    reaffirmationMessageRef: string;
+    artifact: {
+        ref: string;
+        digestSha256: string;
+        mediaType: string;
+        bytes: number;
+    };
+    evidenceJson: string;
+};
+export type LateOpportunityIntent = LateOpportunitySource & {
+    reservationId: string;
+    allocationOperationId: string;
+    destination: string;
+    destinationEvidenceSha256: string;
+};
+export type LateOpportunityReceipt = Omit<LateOpportunityIntent, 'requestHash'> & {
+    schema: 'neomorphic.opportunity-late-acceptance.v1';
+    submissionId: string;
+    obligationId: string;
+    acceptedAt: string;
+    paid: false;
+    settled: false;
+    transfer: null;
+};
 export declare class OpportunityService {
     private readonly kernel;
     private readonly hosted;
     private readonly verifyMediatedReceipt?;
-    constructor(kernel: OpportunityKernel, hosted?: HostedDeliveryProjection, verifyMediatedReceipt?: MediatedReceiptVerifier | undefined);
+    private readonly verifyLateAcceptance?;
+    constructor(kernel: OpportunityKernel, hosted?: HostedDeliveryProjection, verifyMediatedReceipt?: MediatedReceiptVerifier | undefined, verifyLateAcceptance?: ((permit: unknown) => LateOpportunityIntent | null) | undefined);
     private hostedFor;
     createRound(body: RoundBody, idempotencyKey: string): Promise<{
         replayed: boolean;
@@ -93,6 +135,13 @@ export declare class OpportunityService {
         statusCode: number;
         body: unknown;
     }>;
+    /** Private receipt lookup. Exact caller evidence is rejoined by RootExternalReceiving. */
+    readLateAcceptance(source: LateOpportunitySource): Promise<LateOpportunityReceipt | null>;
+    acceptLate(permit: unknown): Promise<LateOpportunityReceipt>;
+    private assertLateIdentity;
+    private lateAcceptanceReceipt;
+    private recordSubmission;
+    private recordOwed;
     /** Source-bound requester rejection, on the same opportunity authority. No IOU mutation. */
     rejectSubmission(roundKey: string, claimId: string, provenance: Provenance, idempotencyKey: string, expected: {
         submissionId: string;

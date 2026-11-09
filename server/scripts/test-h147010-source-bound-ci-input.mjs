@@ -40,7 +40,7 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const MEASURED_BASE = '3040a938b3bb220205f89b42677402c73b3d229d';
+const MEASURED_BASE = '09be1d313e9d608b08db1199ae68f18684970c0e';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
@@ -294,7 +294,6 @@ test('candidate measurement is the admitted source and host', async () => {
   assert.equal(measured.repository, 'epistemedeus/samedaydesk');
   assert.equal(measured.sourceSha256, CURRENT_SOURCE);
   assert.equal(measured.hostSha256, CURRENT_HOST);
-  assert.equal(measured.sourceSha256, H142_SOURCE);
   assert.notEqual(measured.hostSha256, H142_HOST);
   assert.notEqual(measured.hostSha256, PRIOR_HOST);
   const priorAnchor = JSON.parse(readFileSync(join(root, priorProposal, 'proposed-anchor.json'), 'utf8'));
@@ -791,6 +790,13 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.notDeepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, priorProposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
+  const unsafe = join(dir, 'unsafe-path');
+  const unsafeArgs = proposeArgs(unsafe);
+  unsafeArgs[unsafeArgs.indexOf('--descriptor-path') + 1] = 'docs/receiving/unsafe;command/proposed-descriptor.json';
+  const unsafeResult = await run(unsafeArgs);
+  assertExit(unsafeResult, 1);
+  assert.match(unsafeResult.stderr, /shell-safe child/);
+  assert.equal(existsSync(unsafe), false);
   assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
   const refused = await run([
     producer,
@@ -1047,10 +1053,10 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.notEqual(composedRow.hostSha256, CURRENT_HOST);
   const composedPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, catalogFileName(H142_SOURCE, COMPOSED_HOST)), 'utf8')));
   assert.equal(rowAgrees(composedRow, composedPacket), true);
-  const predecessorSlot = catalogFileName(CURRENT_SOURCE, PREDECESSOR_HOST);
+  const predecessorSlot = catalogFileName(H142_SOURCE, PREDECESSOR_HOST);
   assert.notEqual(PREDECESSOR_HOST, CURRENT_HOST);
   const predecessorPacket = verifyPacket(parsePacket(readFileSync(join(committedCatalog, predecessorSlot), 'utf8')));
-  const predecessorRow = index.packets.find(row => row.sourceSha256 === CURRENT_SOURCE && row.hostSha256 === PREDECESSOR_HOST);
+  const predecessorRow = index.packets.find(row => row.sourceSha256 === H142_SOURCE && row.hostSha256 === PREDECESSOR_HOST);
   assert.ok(predecessorRow, 'the deployed predecessor keeps its approved slot');
   assert.equal(rowAgrees(predecessorRow, predecessorPacket), true);
   assert.equal(h142Row.receiving.installed, false);

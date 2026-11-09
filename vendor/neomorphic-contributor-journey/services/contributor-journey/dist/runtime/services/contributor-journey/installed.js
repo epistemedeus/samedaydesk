@@ -68,7 +68,7 @@ export async function createInstalledComposition(options) {
             }
             return false;
         } });
-    const opportunity = new OpportunityService(kernel, undefined, (proof, binding) => external.verifyReceipt(proof, binding));
+    const opportunity = new OpportunityService(kernel, undefined, (proof, binding) => external.verifyReceipt(proof, binding), permit => external.verifyLateAcceptance(permit));
     const lock = new PostgresProjectLock(lockPool);
     const fetchRequest = (req) => {
         const headers = new Headers();
@@ -112,7 +112,7 @@ export async function createInstalledComposition(options) {
         return kernel.withOpportunityClient(async (client) => (await client.query('SELECT principal_id FROM journey_account_kernel_bindings WHERE account_id=$1 AND kernel_scope=$2', [accountId, `opportunity:${round.id}`])).rows[0]?.principal_id ?? null, 'read');
     });
     const resolvePrincipal = async (accountId, roundKey, provenance) => principal(accountId, roundKey, provenance);
-    const external = new RootExternalReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, receiptAuthorityHash: hashToken(config.storage.ownerToken), accounts, admission, lock, opportunity });
+    const external = new RootExternalReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, receiptAuthorityHash: hashToken(config.storage.ownerToken), accounts, admission, lock, opportunity, lateReservationFence: options.lateReservationFence });
     const originalClaim = new RootOriginalClaimReceiving({ store: kernel, correspondence: services.correspondence.store, integrityKey: settings.integrityKey, accounts, admission, lock, opportunity });
     const adapters = createOpportunityJourneyAdapters({ external, originalClaim, store: kernel, opportunity, futureRounds: settings.futureRounds,
         principal: resolvePrincipal, accountForPrincipal: id => db.accountForPrincipal(id), persistence,
