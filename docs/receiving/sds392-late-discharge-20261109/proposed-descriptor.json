@@ -1,0 +1,25 @@
+{
+  "schema": "neomorphic.machine-participation.acquisition.v1",
+  "version": "0.3.0",
+  "node": ">=22",
+  "license": "none",
+  "binary": "cold-requester.mjs",
+  "bytes": 28081,
+  "sha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+  "source": {
+    "repository": "epistemedeus/samedaydesk",
+    "commit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs"
+  },
+  "publicationStatus": "unreceived",
+  "hostedAcquisitionVerified": false,
+  "apiActivation": false,
+  "fundingOrPaymentActivation": false,
+  "humanPage": false,
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "8be8dd13f995bf9d814a3efdd9b965a9d9a613bffc0069605b6615dce813cdf5",
+    "hostSha256": "7bc031509f23e1c52ced5cb3442a1e64ddaee6e617ad6b0c1ae12fed3cc55d23"
+  }
+}

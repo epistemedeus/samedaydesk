@@ -177,7 +177,7 @@ async function propose() {
       note: 'Root receiving for host 6fca4aaa stays on its own slot. It is not receiving for this measured host.',
     },
     packet: built.packet,
-    command: enrollmentCommand(),
+    command: enrollmentCommand(dirname(built.anchor.descriptorPath)),
     note: 'Root adds receiving on a copy of this proposed anchor only after an independent replay. This command refuses until that receipt exists. It must not overwrite the historical cafd slot, the received H142 slot, the received 6fca4aaa slot, or set ROOT10940_CI_PACKET.',
   };
   mkdirSync(outDir, {recursive: true});
