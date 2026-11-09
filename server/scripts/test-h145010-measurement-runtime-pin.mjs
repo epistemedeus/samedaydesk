@@ -441,13 +441,15 @@ test('the received H142 proposal does not decode as this measurement runtime', {
   ]);
   assertExit(packed, 0);
   const verified = verifyPacket(parsePacket(readFileSync(packet, 'utf8')));
+  assert.equal(verified.profile.sourceSha256, H142_SOURCE);
   assert.equal(verified.profile.hostSha256, H142_HOST);
   assert.notEqual(verified.profile.hostSha256, measured.hostSha256);
   assert.equal(Object.hasOwn(verified.anchor, 'receiving'), false);
   const decoded = await run([decoder, '--packet', packet], {timeout: 220000});
   assertExit(decoded, 1);
   const output = `${decoded.stderr}\n${decoded.stdout}`;
-  assert.match(output, new RegExp(H142_HOST));
-  assert.match(output, new RegExp(measured.hostSha256));
+  assert.ok(output.includes(
+    `acquisition identity mismatch: installed ${measured.sourceSha256} ${measured.hostSha256}; trusted ${H142_SOURCE} ${H142_HOST}`,
+  ), output);
   assert.deepEqual(committedBytes(), before);
 });

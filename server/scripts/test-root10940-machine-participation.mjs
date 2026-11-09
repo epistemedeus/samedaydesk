@@ -62,8 +62,10 @@ test('cold independent account roles complete voluntary delivery, requester deci
     assert.equal(existsSync(absentSecret),false);
     assert.equal(await accounts(),beforeAccounts,'refused acquisition creates no account');
     let capability=await host.boot();
-    assert.equal(capability.sourceSha256,anchor.requiredProfile.sourceSha256);
-    assert.equal(capability.hostSha256,anchor.requiredProfile.hostSha256);
+    const installedIdentity=[capability.sourceSha256,capability.hostSha256];
+    const trustedIdentity=[anchor.requiredProfile.sourceSha256,anchor.requiredProfile.hostSha256];
+    assert.deepEqual(installedIdentity,trustedIdentity,
+      `acquisition identity mismatch: installed ${installedIdentity.join(' ')}; trusted ${trustedIdentity.join(' ')}`);
     const wrongRepo=await cold(client,['acquire','--origin',host.origin,'--ca-file',host.caFile,'--descriptor',descriptor,
       '--descriptor-sha256',anchor.descriptorSha256,'--source-repository','example/other','--source-commit',anchor.source.commit,'--source-path',anchor.source.path]);
     assert.equal(wrongRepo.body.code,'acquisition_source_mismatch');
