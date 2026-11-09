@@ -15,6 +15,9 @@ export const ENROLLMENT_SCHEMA = 'pilot.root10940.ci-enrollment-request.v1';
 export const CLIENT_VERSION = '0.3.0';
 export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds392-late-discharge-20261109';
 export function enrollmentCommand(proposalDir = CURRENT_PROPOSAL_DIR) {
+  if (!/^docs\/receiving\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(proposalDir)) {
+    throw new PacketError('proposal directory must be one shell-safe child of docs/receiving', 2);
+  }
   return [
     'node server/scripts/produce-root10940-ci-packet.mjs',
     `--anchor ${proposalDir}/proposed-anchor.json`,

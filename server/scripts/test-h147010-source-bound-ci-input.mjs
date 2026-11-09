@@ -790,6 +790,13 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.notDeepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, priorProposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
   assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
+  const unsafe = join(dir, 'unsafe-path');
+  const unsafeArgs = proposeArgs(unsafe);
+  unsafeArgs[unsafeArgs.indexOf('--descriptor-path') + 1] = 'docs/receiving/unsafe;command/proposed-descriptor.json';
+  const unsafeResult = await run(unsafeArgs);
+  assertExit(unsafeResult, 1);
+  assert.match(unsafeResult.stderr, /shell-safe child/);
+  assert.equal(existsSync(unsafe), false);
   assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
   const refused = await run([
     producer,
