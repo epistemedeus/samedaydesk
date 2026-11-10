@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { safePulseMetadata } from "./pulse-private-read.js";
 
@@ -45,4 +46,38 @@ test("does not turn a missing, malformed, or unrecognized field into a zero or c
   assert.deepEqual(project({}).coverage, result.coverage);
   assert.equal(project({ complete: true, authority: "durable_atomic_aggregate", pending: { total: 0 } }).coverage.pendingRequests, 0);
   assert.equal(project({ freeTool: { complete: false, coverage: "unknown" } }).coverage.freeTool.coverage, "unknown");
+});
+
+
+test("preserves every producer-admitted MCP method class, including slash names", () => {
+  const source = readFileSync(new URL("../lib/pulse-store/schema.js", import.meta.url), "utf8");
+  const declaration = source.match(/export const MCP_METHOD_KEYS = Object\.freeze\(\[([\s\S]*?)\]\);/);
+  assert.ok(declaration, "actual producer method declaration required");
+  const keys = [...declaration[1].matchAll(/"([^"]+)"/g)].map(match => match[1]);
+  const methods = Object.fromEntries(keys.map((key, index) => [key, index + 1]));
+  const messages = Object.values(methods).reduce((sum, count) => sum + count, 0);
+  const result = project({ mcpProtocol: { messages, byMethod: methods } });
+  assert.deepEqual(result.counts.mcpByMethod, methods);
+  assert.equal(Object.values(result.counts.mcpByMethod).reduce((sum, count) => sum + count, 0), messages);
+  assert.equal(result.counts.mcpProtocolMessages, messages);
+});
+
+test("method projection rejects private labels and malformed counts without losing valid zero", () => {
+  const methods = Object.fromEntries([
+    ["initialize", -1], ["tools/list", 1.5], ["tools/call", 0],
+    ["notifications", "2"], ["other", 3],
+    ["tools/private-caller-marker", 88], ["https://private.invalid/input", 99],
+    ["constructor", 12], ["__proto__", 13],
+  ]);
+  const result = project({ mcpProtocol: { byMethod: methods }, funnel: { tools: 4 } });
+  assert.deepEqual(result.counts.mcpByMethod, { "tools/call": 0, other: 3 });
+  assert.deepEqual(result.counts.funnel, { tools: 4 });
+  assert.doesNotMatch(JSON.stringify(result), /private-caller-marker|private\.invalid|__proto__|constructor/);
+});
+
+test("missing or malformed method maps stay unknown and an empty map stays empty", () => {
+  for (const byMethod of [undefined, null, [], "methods", 0]) {
+    assert.equal(project({ mcpProtocol: { byMethod } }).counts.mcpByMethod, null);
+  }
+  assert.deepEqual(project({ mcpProtocol: { byMethod: {} } }).counts.mcpByMethod, {});
 });
