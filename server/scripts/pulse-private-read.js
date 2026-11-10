@@ -147,6 +147,16 @@ const safeBoolean = value => typeof value === "boolean" ? value : null;
 const allowed = (value, list) => list.includes(value) ? value : null;
 const FREE_TOOL_OUTCOMES = ["completed", "invalid_host", "unreachable", "timeout", "abandoned", "other_failure"];
 
+
+// The producer admits these fixed classes, not arbitrary request methods or URLs.
+// The metadata regression checks parity with pulse-store/schema.js.
+const MCP_METHOD_CLASSES = new Set(["initialize", "tools/list", "tools/call", "notifications", "other"]);
+function mcpMethodCounts(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  return Object.fromEntries(Object.entries(value).filter(([key, count]) =>
+    MCP_METHOD_CLASSES.has(key) && Number.isSafeInteger(count) && count >= 0));
+}
+
 function reportCoverage(parsed) {
   const freeTool = parsed.freeTool;
   return {
@@ -189,7 +199,7 @@ export function safePulseMetadata(status, bytes) {
       mcpSurfaceGet: numeric(parsed.mcpSurfaceGet?.requests),
       mcpProtocolRequests: numeric(parsed.mcpProtocol?.httpRequests),
       mcpProtocolMessages: numeric(parsed.mcpProtocol?.messages),
-      mcpByMethod: numericMap(parsed.mcpProtocol?.byMethod),
+      mcpByMethod: mcpMethodCounts(parsed.mcpProtocol?.byMethod),
       sellerRepairBriefViews: numeric(parsed.sellerRepair?.briefViews),
       sellerRepairScopeClicks: numeric(parsed.sellerRepair?.scopeClicks),
       sellerRepairCheckoutStarts: numeric(parsed.sellerRepair?.checkoutStarts),
