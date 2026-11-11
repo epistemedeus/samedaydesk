@@ -167,10 +167,20 @@ export const TOOLS = [
       properties: {
         packet: {
           type: "object",
-          description: "Caller-supplied observation packet. URLs inside it are not fetched.",
+          description:
+            "Caller-supplied neomorphic.funnel-decision-request.v1 core packet or neomorphic.live-measurement-input.v1 consumer packet. " +
+            "The copyable core example requires schema, asOf (your observation time as an ISO UTC string), and sources. " +
+            "Empty sources means no observations, not zero activity. URLs inside it are not fetched.",
         },
       },
       required: ["packet"],
+      examples: [{
+        packet: {
+          schema: "neomorphic.funnel-decision-request.v1",
+          asOf: "2026-10-10T03:42:00.000Z",
+          sources: [],
+        },
+      }],
     },
   },
 ];

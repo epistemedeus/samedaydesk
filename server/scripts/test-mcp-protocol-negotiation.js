@@ -27,7 +27,7 @@ const EXPECTED_ANNOTATIONS = {
 };
 const EXPECTED_TOOL_NAMES = [...MCP_TOOL_NAMES];
 // Byte-semantic pin of the apex tool surface definitions. Recomputed when TOOLS changes.
-const FROZEN_TOOLS_BLOCK_SHA256 = "0f433cb9ee83e08fee57d72f2a4d82cdb88627467135b669d8b94bffdaac7aa4";
+const FROZEN_TOOLS_BLOCK_SHA256 = "cc472087c0ecd3ba2d95cec0697dcc9b2f8a34f67f5728c8be3c5a28c2da559b";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
