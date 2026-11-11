@@ -357,6 +357,47 @@ test("cold process projects core-only without the server install", async () => {
   }
 });
 
+test("MCP discovery alone supplies a callable no-observations example", async () => {
+  const mcpUrl = `http://127.0.0.1:${port}/mcp`;
+  const listed = await postRpc(mcpUrl, {
+    jsonrpc: "2.0", id: "discover-example", method: "tools/list", params: {},
+  });
+  assert.equal(listed.status, 200);
+  const tool = listed.json.result.tools.find((item) => item.name === "project_funnel_evidence");
+  assert.ok(tool);
+  assert.ok(Array.isArray(tool.inputSchema.examples), "tools/list must supply copyable arguments, not require a repository fixture");
+  assert.equal(tool.inputSchema.examples.length, 1);
+  const args = structuredClone(tool.inputSchema.examples[0]);
+  assert.deepEqual(Object.keys(args), ["packet"]);
+  assert.equal(args.packet.schema, REQUEST);
+  assert.ok(Number.isFinite(Date.parse(args.packet.asOf)));
+  assert.deepEqual(args.packet.sources, []);
+  assert.match(tool.inputSchema.properties.packet.description, /no observations/i);
+
+  // The HTTP declaration already advertises this packet. Keep both transports
+  // aligned without loading a private fixture to construct the MCP call.
+  const openapi = await request(port, { method: "GET", path: "/openapi.json" });
+  assert.equal(openapi.status, 200);
+  assert.deepEqual(args.packet, openapi.json.paths["/api/funnel-evidence"].post.requestBody.content["application/json"].example);
+
+  const call = await postRpc(mcpUrl, {
+    jsonrpc: "2.0", id: "call-discovered-example", method: "tools/call",
+    params: { name: tool.name, arguments: args },
+  });
+  assert.equal(call.status, 200);
+  assert.equal(call.json.error, undefined);
+  assert.equal(call.json.result.isError, undefined);
+  const result = call.json.result.structuredContent;
+  assert.equal(result.evidenceAuthority, "caller-declared");
+  assert.equal(result.inputFetched, false);
+  assert.equal(result.hostedAcquisitionVerified, false);
+  assert.equal(result.recognizedIncomeAtomic, null);
+  assert.equal(result.independentCustomers, null);
+  assert.equal(result.projection.decision.kind, "measure");
+  assert.ok(result.nextAction.action);
+  assert.ok(result.projection.stages.every((stage) => stage.observed === false));
+});
+
 test("maintained MCP client receives the same projection", async () => {
   await withShippedHost(root, async ({ origin, logs }) => {
     const probe = await probeApex(origin);
