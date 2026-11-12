@@ -1,0 +1,33 @@
+{
+  "schema": "samedaydesk.cli.vendor-source.v1",
+  "name": "task-continuation",
+  "version": "1.1.0",
+  "repository": "epistemedeus/x402-url-extractor",
+  "commit": "6c8edfd755d8e254659d9f8357c123c8da36bd44",
+  "status": "Agent Entry Nov12 pin, supersedes 578396b6 (v1.0.0, draft PR https://github.com/epistemedeus/x402-url-extractor/pull/273); unmerged",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "index.mjs",
+      "sourcePath": "packages/task-continuation/index.mjs",
+      "gitBlob": "957b23cfce756a5a8b567742d3cbc08e6bb73635",
+      "sha256": "a882ba7ce25939a45b05ddf19f2c483ef908540b83d0a30e2fb8916e04b10b07"
+    },
+    {
+      "path": "LICENSE",
+      "sourcePath": "LICENSE",
+      "gitBlob": "34e784554d75f424552ad2198708c8d99c5b4b67",
+      "sha256": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
+    }
+  ],
+  "consumedExports": [
+    "mintCorrelationId",
+    "isCorrelationId",
+    "discovery",
+    "measurementRecord",
+    "stepEventId",
+    "DISCOVERY_STATUSES"
+  ],
+  "notConsumed": "issueContinuation and verifyContinuation need an issuer keyring; no SameDayDesk issuer exists at samedaydesk@32437117.",
+  "contract": "packages/task-continuation/CONTRACT.md git blob 00e3a4a54c374a6f0ba7e27da602b31e10c50774"
+}
