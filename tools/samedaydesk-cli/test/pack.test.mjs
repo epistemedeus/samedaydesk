@@ -20,13 +20,15 @@ test("pack stage is self-contained and copies the exact machine-gateway closure"
       assert.deepEqual(copied, original);
       assert.equal(file.sha256, createHash("sha256").update(original).digest("hex"));
     }
-    // Until draft PR #398 lands, the closure must be the frozen pin's bytes.
+    // The closure is the repaired client exactly as shipped in machine-gateway 0.1.3.
     const PINNED = {
-      "server/vendor/machine-gateway/bin/client-io.mjs": "a24d2df5fd403fccbbd308d7759d50d293f6984154a9fbbf7e3380ad0d427807",
+      "server/vendor/machine-gateway/bin/client-io.mjs": "c6613e44349a5741308d551df41c85b55709f48ea1ce7cf72f229dc00939a8aa",
       "server/vendor/machine-gateway/src/util.mjs": "0d6835e1bc32a3d2224bfee3ce0e56fe9b8ef6b899d2a498bc4ccf51e1fea4b8",
       "server/vendor/machine-gateway/src/errors.mjs": "56317ae7cb5a920f952fb493022fb409fe5fbc893ff38603baaa62d2bbbec303",
     };
     assert.deepEqual(Object.fromEntries(closure.files.map(file => [file.sourcePath, file.sha256])), PINNED);
+    const released = JSON.parse(readFileSync(join(repo, "server/vendor/machine-gateway/deploy/RECEIVED-0.1.3.json"), "utf8")).files;
+    for (const file of closure.files) assert.equal(file.sha256, released[file.sourcePath.replace("server/vendor/machine-gateway/", "")], file.sourcePath);
     for (const name of readdirSync(join(target, "src"))) {
       assert.ok(!readFileSync(join(target, "src", name), "utf8").includes("../../../server/"), name);
     }

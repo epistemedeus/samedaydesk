@@ -110,14 +110,14 @@ export const RUNTIME = Object.freeze({
     signal: "SIGINT",
     exit: 130,
     code: "cancelled",
-    inFlight: "Aborted through AbortSignal when client-io accepts one (draft PR #398). With the pinned client-io the CLI stops waiting; the request may still complete remotely, so recovery is sent_unconfirmed.",
+    inFlight: "Aborted through AbortSignal when client-io accepts one (machine-gateway 0.1.3 client). With the pinned client-io the CLI stops waiting; the request may still complete remotely, so recovery is sent_unconfirmed.",
     remoteWork: "Not cancelled remotely by SIGINT.",
   }),
   timeout: Object.freeze({ code: "request_timeout", exit: 2, retry: "GET only, bounded" }),
   recoveryValues: Object.freeze(["not_sent", "sent_unconfirmed", "remote_refused", "remote_committed", "remote_cancelled"]),
   clientIo: Object.freeze([
-    Object.freeze({ version: "pinned", source: "samedaydesk@32437117e5232480b18349721069b2a8a0fc2a2c:server/vendor/machine-gateway/bin/client-io.mjs", errors: "message only; CLI observes the refusal body and infers recovery" }),
-    Object.freeze({ version: "repaired", source: "samedaydesk@7f270b233f44ceb8ccdabf51f674d739a5beb475:server/vendor/machine-gateway/bin/client-io.mjs (draft PR #398, unmerged)", errors: "code, serverCode, status and recovery on the error; preferred when present" }),
+    Object.freeze({ version: "pinned", source: "machine-gateway 0.1.2 bin/client-io.mjs (= samedaydesk@32437117e5232480b18349721069b2a8a0fc2a2c:server/vendor/machine-gateway/bin/client-io.mjs)", errors: "message only; CLI observes the refusal body and infers recovery" }),
+    Object.freeze({ version: "repaired", source: "machine-gateway 0.1.3 bin/client-io.mjs (in-tree server/vendor/machine-gateway/bin/client-io.mjs, sha256 c6613e44349a5741308d551df41c85b55709f48ea1ce7cf72f229dc00939a8aa)", errors: "code, serverCode, status and recovery on the error; preferred when present" }),
   ]),
 });
 

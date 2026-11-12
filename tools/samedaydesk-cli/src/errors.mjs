@@ -33,7 +33,7 @@ const CODES = {
   // Server refusal code from the market 400 body, kept verbatim in
   // evidence.server. Same code as the ae SERVER_CODES entry. Never retried.
   cursor_refused: ["input", false, "market discover (restart without --cursor)"],
-  // Repaired market (draft PR #398): mc1 cursors. malformed: not a cursor this
+  // Repaired market (PR #398): mc1 cursors. malformed: not a cursor this
   // server could emit. unrecognized: well formed but not issued by this server
   // or no longer valid. Both: restart pagination without the cursor.
   cursor_malformed: ["input", false, "market discover (restart without --cursor)"],

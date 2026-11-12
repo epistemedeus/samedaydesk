@@ -2,8 +2,8 @@
 
 Status: draft for operator review. Not published, not linked from any page and
 not human website copy. Nothing here changes the homepage or any hosted route.
-Facts are stated as of samedaydesk@32437117 plus the CLI branch, and live reads
-on 2026-11-12 PST.
+Facts are stated as of samedaydesk@32437117 plus the CLI branch and the #398
+client repair (release branch), and live reads on 2026-11-12 PST.
 
 ## What this package is
 
@@ -27,7 +27,10 @@ license is inferred.
   that file only.
 - The packed archive also copies the SameDayDesk shared-client closure:
   `server/vendor/machine-gateway/bin/client-io.mjs`, `src/util.mjs` and
-  `src/errors.mjs`, taken from samedaydesk@32437117. There is no LICENSE file at
+  `src/errors.mjs`. On the release branch `client-io.mjs` is the repaired client,
+  byte-identical to the `bin/client-io.mjs` member of the prepared
+  machine-gateway 0.1.3 archive; `util.mjs` and `errors.mjs` are unchanged from
+  samedaydesk@32437117. There is no LICENSE file at
   the inspected path (`server/vendor/machine-gateway/`), and the
   `@neomorphic/machine-gateway` `package.json` states no license.
 - **Public promotion is a separate future step.** It is gated on the actual
@@ -53,6 +56,15 @@ cd tools/samedaydesk-cli
 npm run pack:clean -- /abs/out          # writes samedaydesk-cli-0.1.0.tgz plus sha256
 npm install --prefix /tmp/sds-cli --ignore-scripts /abs/out/samedaydesk-cli-0.1.0.tgz
 /tmp/sds-cli/node_modules/.bin/samedaydesk version
+```
+
+The archive has no registry dependencies, so it also installs from an empty,
+offline prefix and cache:
+
+```sh
+npm install --global --offline --prefix /abs/empty-prefix --cache /abs/empty-cache \
+  --ignore-scripts --no-audit --no-fund /abs/out/samedaydesk-cli-0.1.0.tgz
+/abs/empty-prefix/bin/samedaydesk version
 ```
 
 There is no hosted download of this archive, no install script on any

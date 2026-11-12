@@ -87,7 +87,8 @@ test("failure: transport errors stop after three attempts with exit 2", async ()
   assert.equal(calls.length, 3);
   assert.equal(out[0].error.code, "transport_failed");
   assert.equal(out[0].error.retryable, true);
-  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3, clientIo: "pinned", recovery: "sent_unconfirmed", recoverySource: "cli-inferred", abortSupported: false });
+  // The in-tree client is the repaired one (machine-gateway 0.1.3); the pinned 0.1.2 shape is covered in client-io-dual.test.mjs.
+  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3, clientIo: "repaired", clientIoCode: "transport_failed", recovery: "sent_unconfirmed", recoverySource: "client-io", abortSupported: true });
   assert.equal(err[0].code, "transport_failed");
 });
 
@@ -244,7 +245,9 @@ test("market cursor_refused keeps the server code and body, is not retried, and 
   assert.equal(direct.exit, EXIT.input);
   assert.equal(direct.out[0].schema, "samedaydesk.cli.error.v1");
   assert.equal(direct.out[0].error.code, "cursor_refused");
-  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false, source: "observed-response" });
+  // The repaired client carries the server code itself and, by design, never the response text.
+  // The observed body is kept only with the pinned 0.1.2 client (client-io-dual.test.mjs).
+  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: null, source: "client-io" });
   assert.equal(end.error.evidence.server.code, "cursor_refused");
   assert.equal(direct.out[0].error.evidence.httpStatus, 400);
   assert.match(JSON.stringify(direct.err), /cursor_refused/);

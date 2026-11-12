@@ -1,6 +1,6 @@
-// The same CLI behavior against both client-io versions: pinned
-// (samedaydesk@32437117, in-tree) and repaired (draft PR #398 @7f270b23,
-// byte-exact fixture). Injected fetch only; no network.
+// The same CLI behavior against both client-io versions: pinned (the
+// immutable machine-gateway 0.1.2 client, byte-exact fixture) and repaired
+// (in-tree, shipped as machine-gateway 0.1.3). Injected fetch only; no network.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -9,8 +9,8 @@ import { execFileSync, spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as pinned from "../../../server/vendor/machine-gateway/bin/client-io.mjs";
-import * as repaired from "./fixtures/client-io-7f270b23.mjs";
+import * as pinned from "./fixtures/client-io-0.1.2.mjs";
+import * as repaired from "../../../server/vendor/machine-gateway/bin/client-io.mjs";
 import { capabilitiesOf, createTransport } from "../src/transport.mjs";
 import { EXIT } from "../src/errors.mjs";
 import { json, run, REPORT } from "./helpers.mjs";
@@ -20,7 +20,12 @@ const VERSIONS = [["pinned", pinned], ["repaired", repaired]];
 const refusal = code => json(400, { ok: false, code, message: "refused" });
 const hang = (url, init) => new Promise((_, reject) => init.signal?.addEventListener("abort", () => reject(init.signal.reason), { once: true }));
 
-test("repaired fixture bytes match FIXTURES.json and src never imports it", () => {
+test("0.1.2 fixture and in-tree client match the received 0.1.2 and prepared 0.1.3 archives; src never imports the fixture", () => {
+  const gateway = join(root, "../../server/vendor/machine-gateway/deploy");
+  const received = version => JSON.parse(readFileSync(join(gateway, `RECEIVED-${version}.json`), "utf8")).files["bin/client-io.mjs"];
+  const sha = path => createHash("sha256").update(readFileSync(path)).digest("hex");
+  assert.equal(sha(join(root, "test/fixtures/client-io-0.1.2.mjs")), received("0.1.2"));
+  assert.equal(sha(join(root, "../../server/vendor/machine-gateway/bin/client-io.mjs")), received("0.1.3"));
   const fixtures = JSON.parse(readFileSync(join(root, "test/fixtures/FIXTURES.json"), "utf8"));
   for (const file of fixtures.files) {
     const bytes = readFileSync(join(root, file.path));

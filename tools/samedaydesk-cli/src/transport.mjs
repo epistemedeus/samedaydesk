@@ -5,9 +5,10 @@
 // never retried.
 //
 // It works with two client-io versions:
-// - pinned (samedaydesk@32437117): throws Error("gateway_http_<status>") with
-//   no body, code or recovery, and takes no AbortSignal.
-// - repaired (draft PR #398 @7f270b23): throws GatewayRequestError with
+// - pinned (machine-gateway 0.1.2, = samedaydesk@32437117): throws
+//   Error("gateway_http_<status>") with no body, code or recovery, and takes
+//   no AbortSignal.
+// - repaired (machine-gateway 0.1.3, in-tree): throws GatewayRequestError with
 //   code (server code passthrough), serverCode, status and recovery, and
 //   accepts signal.
 // Fields on the error are always preferred. The response observation below
