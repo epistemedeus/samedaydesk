@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "d9725a4f61b0bdf4d5355d3dbb86fa2379c71644",
+  "base": "7f270b233f44ceb8ccdabf51f674d739a5beb475",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -165,9 +165,10 @@
     "server/vendor/machine-gateway/npm-shrinkwrap.json": "1ef597c95ef4082fe8593b6b1ed35828c1ce375eb612af9023aa9d312ee0f2cf",
     "server/vendor/machine-gateway/openapi.json": "1072b17a5647bd1aac7d6f37e3b24a92329b662fb051e1f84155698ea3e26ab4",
     "server/vendor/machine-gateway/package.json": "59e527baf3cc5d8dd212ef7df948939fc47ddb61b6fac61bdc330b2c038013e6",
-    "server/vendor/machine-gateway/releases/SHA256SUMS": "ff748923c2b041afd9141c2d82882cfdc29d9229bcb1861b3a8cfac656ca86d9",
+    "server/vendor/machine-gateway/releases/SHA256SUMS": "32aaa44cdd5e1e3bafdf56632dd1de7fba4655dd96bc7f68511d4f3fbcd1e8d5",
     "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.0.tgz": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
     "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+    "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.3.tgz": "c8b62df2ff0bca12585f563250a6fb261a0085289146a8cb17b9ed2257fc43ea",
     "server/vendor/machine-gateway/schemas/contracts.json": "386e7ba10d2e2b0998ba4865ad7eba8ed6c2a584515359454a2c9bc93621927f",
     "server/vendor/machine-gateway/src/config.mjs": "49f3d00e4f2b96e247816b386adc4bb1400555b14438f7a05a5e02d56eae8003",
     "server/vendor/machine-gateway/src/contracts.mjs": "eb577805aad46c4bbac16798da4483fe93a2033dce5672ce168d0dab11ffea1f",
@@ -1514,6 +1515,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:964ccc9d7603964b45acb45a90327c8bedd91ff4e6dde2be9940f089e4d3242b"
+    },
+    {
+      "base": "d9725a4f61b0bdf4d5355d3dbb86fa2379c71644",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:d064b9a7c99574acb451715f6d916239d5a67269fbd2e3cfeaf969a65508127b"
     }
   ]
 }

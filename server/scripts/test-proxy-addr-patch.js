@@ -470,6 +470,8 @@ test("installed predecessor callers survive the source export", () => {
   const predecessors = [
     ["946ccd2fafe934a0a58e7a92a441103ed25bddeb", "sha256:c064d697b343cdd02d29ae50bb60aaf198ca5a111edea390f1f60714c81507f0"],
     ["c60641e8ff2b94dd704307e57f5b6fe789ba0df7", "sha256:964ccc9d7603964b45acb45a90327c8bedd91ff4e6dde2be9940f089e4d3242b"],
+    // machine release base before the #398 cursor/error/cancellation client repair
+    ["32437117e5232480b18349721069b2a8a0fc2a2c", "sha256:d064b9a7c99574acb451715f6d916239d5a67269fbd2e3cfeaf969a65508127b"],
   ];
   for (const [commit, expectedDigest] of predecessors) {
     const prior = JSON.parse(execFileSync("git", ["show", `${commit}:server/foundry/activation/private-control-pin.json`], {cwd:root, encoding:"utf8", maxBuffer:4*1024*1024}));
