@@ -22,7 +22,7 @@ export const CLOSURE = Object.freeze(["bin/client-io.mjs", "src/util.mjs", "src/
 const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 
 export function stage(target = mkdtempSync(join(tmpdir(), "samedaydesk-cli-stage-"))) {
-  for (const part of ["package.json", "README.md", "bin", "src", "vendor"]) cpSync(join(root, part), join(target, part), { recursive: true });
+  for (const part of ["package.json", "README.md", "bin", "src", "vendor", "generated"]) cpSync(join(root, part), join(target, part), { recursive: true });
   const files = [];
   for (const file of CLOSURE) {
     const source = join(repo, "server/vendor/machine-gateway", file);

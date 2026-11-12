@@ -1,0 +1,13 @@
+{
+  "schema": "samedaydesk.cli.test-fixtures.v1",
+  "files": [
+    {
+      "path": "test/fixtures/client-io-7f270b23.mjs",
+      "source": "epistemedeus/samedaydesk@7f270b233f44ceb8ccdabf51f674d739a5beb475:server/vendor/machine-gateway/bin/client-io.mjs",
+      "pr": "https://github.com/epistemedeus/samedaydesk/pull/398",
+      "status": "draft, unmerged; test fixture only, never imported by src/ and never packed",
+      "gitBlob": "3b04aa6f32213873d5c17a7b7d27e37a3d3f5b71",
+      "sha256": "c6613e44349a5741308d551df41c85b55709f48ea1ce7cf72f229dc00939a8aa"
+    }
+  ]
+}

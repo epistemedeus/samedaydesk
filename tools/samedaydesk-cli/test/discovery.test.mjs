@@ -26,7 +26,7 @@ test("no arguments is help", async () => {
 test("every manifest command declares effect, auth, output, retry and recovery", () => {
   for (const command of COMMANDS) {
     for (const key of ["id", "argv", "group", "summary", "effect", "auth", "output", "retry", "recovery"]) assert.ok(command[key] !== undefined, `${command.id} lacks ${key}`);
-    assert.ok(["none", "read", "fixture", "preview"].includes(command.effect), command.id);
+    assert.ok(["none", "read", "fixture", "remote_quote"].includes(command.effect), command.id);
     assert.equal(command.auth, "none", command.id);
     if (command.effect !== "none") assert.ok(Array.isArray(command.http) && command.http.length > 0, command.id);
   }

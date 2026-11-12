@@ -87,7 +87,7 @@ test("failure: transport errors stop after three attempts with exit 2", async ()
   assert.equal(calls.length, 3);
   assert.equal(out[0].error.code, "transport_failed");
   assert.equal(out[0].error.retryable, true);
-  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3 });
+  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3, clientIo: "pinned", recovery: "sent_unconfirmed", recoverySource: "cli-inferred", abortSupported: false });
   assert.equal(err[0].code, "transport_failed");
 });
 
@@ -159,7 +159,7 @@ test("dry-run returns the request and sends nothing", async () => {
   assert.equal(out[0].result.sent, false);
 });
 
-test("gateway quote reads stdin and returns a non-executable preview", async () => {
+test("gateway quote reads stdin and returns a labeled remote quote, not a local preview", async () => {
   const quote = { schema: "neomorphic.machine-gateway.quote.v1", quoteId: "00000000-0000-4000-8000-000000000000", routeId: "lockfile.delta", tenantBound: false, executable: false, price: { amount: 0, unit: "usd-micros" } };
   const stdin = Readable.from([Buffer.from('{"before":"a","after":"b"}')]);
   const { exit, out, calls } = await run(["gateway", "quote", "--route", "lockfile.delta", "--input-file", "-"], { answers: [json(200, quote)], stdin });
@@ -168,8 +168,12 @@ test("gateway quote reads stdin and returns a non-executable preview", async () 
   assert.deepEqual(calls[0].body, { routeId: "lockfile.delta", input: { before: "a", after: "b" } });
   assert.equal(calls[0].headers.authorization, undefined);
   assert.equal(calls[0].headers["idempotency-key"], undefined);
-  assert.equal(out[0].result.preview, true);
+  assert.equal(out[0].result.kind, "remote_quote");
+  assert.equal(out[0].result.sent, true);
+  assert.equal(out[0].result.reservation, "none");
   assert.equal(out[0].result.executable, false);
+  assert.deepEqual(out[0].result.recovery, { persisted: false, recoveryClass: "unresolved_post_no_key" });
+  assert.equal(out[0].result.handback.references.quoteId, quote.quoteId);
   assert.match(out[0].result.requiredAuthorityForNextStep.execute, /tenantBearer/);
 });
 
@@ -240,7 +244,7 @@ test("market cursor_refused keeps the server code and body, is not retried, and 
   assert.equal(direct.exit, EXIT.input);
   assert.equal(direct.out[0].schema, "samedaydesk.cli.error.v1");
   assert.equal(direct.out[0].error.code, "cursor_refused");
-  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false });
+  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false, source: "observed-response" });
   assert.equal(end.error.evidence.server.code, "cursor_refused");
   assert.equal(direct.out[0].error.evidence.httpStatus, 400);
   assert.match(JSON.stringify(direct.err), /cursor_refused/);

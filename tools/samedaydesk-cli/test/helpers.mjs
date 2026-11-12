@@ -31,7 +31,7 @@ export function fakeFetch(answers) {
   return { fetch, calls };
 }
 
-export async function run(argv, { answers = [], stdin, now } = {}) {
+export async function run(argv, { answers = [], stdin, now, clientIo, signal } = {}) {
   const original = globalThis.fetch;
   const { fetch, calls } = fakeFetch(answers);
   globalThis.fetch = fetch;
@@ -39,7 +39,7 @@ export async function run(argv, { answers = [], stdin, now } = {}) {
   const stderr = sink();
   const sleeps = [];
   try {
-    const exit = await main(argv, { stdout, stderr, stdin, sleep: async ms => { sleeps.push(ms); }, now: now ?? (() => new Date("2026-11-12T10:00:00.000Z")) });
+    const exit = await main(argv, { stdout, stderr, stdin, clientIo, signal, sleep: async ms => { sleeps.push(ms); }, now: now ?? (() => new Date("2026-11-12T10:00:00.000Z")) });
     return { exit, out: stdout.lines(), err: stderr.lines(), calls, sleeps };
   } finally {
     globalThis.fetch = original;

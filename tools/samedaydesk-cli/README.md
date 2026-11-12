@@ -32,9 +32,14 @@ samedaydesk result show --file "$PWD/readiness.json"
 `readiness check` is the same operation as the MCP tool
 `check_agent_readiness` and `GET /agent-readiness?format=json`. GET requests
 retry at most three times with 200 ms and 400 ms backoff. POST requests
-(`gateway test`, `gateway quote`) are never retried. `gateway quote` is an
-anonymous preview: execution needs an operator-enrolled tenant bearer, which
-this version does not handle.
+(`gateway test`, `gateway quote`) are never retried; pass `--recovery-file ABS`
+to persist the attempt identity before sending. `--dry-run` is a local preview
+(nothing sent). `gateway quote` is a remote anonymous quote (`kind:
+"remote_quote"`, not a reservation); execution needs an operator-enrolled
+tenant bearer, which this version does not handle.
+
+Generated references (bash, zsh and fish completion, man page, SKILL.md) live in
+`generated/` and come from the manifest: `npm run generate`, checked by tests.
 
 Tests: `npm test` in this directory (node:test, injected fetch, no network).
 
