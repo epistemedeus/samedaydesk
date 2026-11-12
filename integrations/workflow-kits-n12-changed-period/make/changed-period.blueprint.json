@@ -1,0 +1,486 @@
+{
+  "name": "SameDayDesk changed period, record to accepted output (workflow-kits-n12-changed-period)",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": null,
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Receive Changed Period"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "util:SetVariable2",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "name": "mappings",
+        "scope": "roundtrip",
+        "value": "{\"schema\":\"samedaydesk.workflow-kits-n12-changed-period.mapping-registry.v1\",\"notice\":\"Declared mappings, one per workflow output schema. A new period schema gets a new mappingVersion; existing versions are never edited, so earlier periods stay reproducible. Synthetic field names.\",\"versions\":[{\"mappingVersion\":\"workflow-output.v1\",\"appliesFrom\":\"period-N\",\"notes\":\"Period N workflow output rows.\",\"source\":{\"rowId\":\"string\",\"captureRef\":\"string\",\"capturedAt\":\"string\",\"heading\":\"string\",\"state\":\"string\",\"keys\":\"array\",\"notes\":\"string\",\"consent\":\"boolean\"},\"ignore\":[\"notes\"],\"targets\":{\"recordKey\":{\"from\":\"rowId\"},\"capture.captureId\":{\"from\":\"captureRef\"},\"capture.capturedAt\":{\"from\":\"capturedAt\"},\"capture.subject\":{\"const\":\"synthetic-csv-header-record\"},\"capture.sourceUri\":{\"const\":\"https://seller.example/synthetic-recurring-record\"},\"capture.permitted\":{\"from\":\"consent\"},\"payload.title\":{\"from\":\"heading\"},\"payload.status\":{\"from\":\"state\",\"enum\":{\"complete\":\"complete\",\"pending\":\"pending\"}},\"payload.output\":{\"from\":\"keys\"}}},{\"mappingVersion\":\"workflow-output.v2\",\"appliesFrom\":\"period-N+1\",\"notes\":\"Period N+1 rows: captureRef and capturedAt moved under capture, heading renamed title, state replaced by boolean done, keys renamed outputKeys, consent changed from boolean to yes/no, notes removed, priority added.\",\"source\":{\"rowId\":\"string\",\"capture.id\":\"string\",\"capture.at\":\"string\",\"title\":\"string\",\"done\":\"boolean\",\"outputKeys\":\"array\",\"priority\":\"number\",\"consent\":\"string\"},\"ignore\":[\"priority\"],\"targets\":{\"recordKey\":{\"from\":\"rowId\"},\"capture.captureId\":{\"from\":\"capture.id\"},\"capture.capturedAt\":{\"from\":\"capture.at\"},\"capture.subject\":{\"const\":\"synthetic-csv-header-record\"},\"capture.sourceUri\":{\"const\":\"https://seller.example/synthetic-recurring-record\"},\"capture.permitted\":{\"from\":\"consent\",\"enum\":{\"yes\":true,\"no\":false}},\"payload.title\":{\"from\":\"title\"},\"payload.status\":{\"from\":\"done\",\"enum\":{\"true\":\"complete\",\"false\":\"pending\"}},\"payload.output\":{\"from\":\"outputKeys\"}}}]}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "Period Mappings"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "json:TransformToJSON",
+      "version": 1,
+      "parameters": {
+        "space": ""
+      },
+      "mapper": {
+        "object": "{{1.period}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "Period JSON"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "json:TransformToJSON",
+      "version": 1,
+      "parameters": {
+        "space": ""
+      },
+      "mapper": {
+        "object": "{{1.records}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0,
+          "name": "Records JSON"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "https://client.example.invalid/samedaydesk/workflow-kits-changed-period/evaluate",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "data": "{\"kind\":\"samedaydesk.workflow-kits-n12-changed-period.request.v1\",\"platform\":\"make\",\"period\":{{3.json}},\"records\":{{4.json}},\"mappings\":{{2.mappings}}}",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 1200,
+          "y": 0,
+          "name": "Evaluate Records"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "module": "json:TransformToJSON",
+      "version": 1,
+      "parameters": {
+        "space": ""
+      },
+      "mapper": {
+        "object": "{{5.data}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1500,
+          "y": 0,
+          "name": "Evaluation JSON"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 1800,
+          "y": 0,
+          "name": "Config Valid?"
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 8,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "filter": {
+                "name": "Config invalid",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{5.data.ok}}",
+                      "b": "false",
+                      "o": "boolean:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{{6.json}}",
+                "status": "422",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 300,
+                  "name": "Respond Config Errors"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 9,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "filter": {
+                "name": "Config valid",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{5.data.ok}}",
+                      "b": "true",
+                      "o": "boolean:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{{6.json}}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 0,
+                  "name": "Respond Evaluation"
+                }
+              }
+            },
+            {
+              "id": 10,
+              "module": "builtin:BasicFeeder",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "array": "{{5.data.records}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2400,
+                  "y": 0,
+                  "name": "One Bundle Per Record"
+                }
+              }
+            },
+            {
+              "id": 11,
+              "module": "builtin:BasicRouter",
+              "version": 1,
+              "mapper": null,
+              "metadata": {
+                "designer": {
+                  "x": 2700,
+                  "y": 0,
+                  "name": "Route Record"
+                }
+              },
+              "routes": [
+                {
+                  "flow": [
+                    {
+                      "id": 12,
+                      "module": "http:ActionSendData",
+                      "version": 3,
+                      "parameters": {
+                        "handleErrors": false,
+                        "useNewZLibDeCompress": true
+                      },
+                      "filter": {
+                        "name": "Ready",
+                        "conditions": [
+                          [
+                            {
+                              "a": "{{10.outcome}}",
+                              "b": "ready",
+                              "o": "text:equal"
+                            }
+                          ]
+                        ]
+                      },
+                      "mapper": {
+                        "ca": "",
+                        "qs": [],
+                        "url": "https://client.example.invalid/samedaydesk/workflow-kits-changed-period/apply",
+                        "gzip": true,
+                        "method": "post",
+                        "headers": [
+                          {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "name": "Idempotency-Key",
+                            "value": "{{10.ledgerKey}}"
+                          }
+                        ],
+                        "timeout": "",
+                        "useMtls": false,
+                        "authPass": "",
+                        "authUser": "",
+                        "bodyType": "raw",
+                        "contentType": "application/json",
+                        "data": "{\"ledgerKey\":\"{{10.ledgerKey}}\",\"idempotencyKey\":\"{{10.idempotencyKey}}\",\"recordKey\":\"{{10.recordKey}}\",\"periodId\":\"{{5.data.periodId}}\"}",
+                        "serializeUrl": false,
+                        "shareCookies": false,
+                        "parseResponse": true,
+                        "followRedirect": true,
+                        "useQuerystring": false,
+                        "followAllRedirects": false,
+                        "rejectUnauthorized": true
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3000,
+                          "y": -300,
+                          "name": "Apply Accepted Record"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "flow": [
+                    {
+                      "id": 13,
+                      "module": "util:FunctionSleep",
+                      "version": 1,
+                      "parameters": {},
+                      "filter": {
+                        "name": "Replayable",
+                        "conditions": [
+                          [
+                            {
+                              "a": "{{10.retryable}}",
+                              "b": "true",
+                              "o": "boolean:equal"
+                            },
+                            {
+                              "a": "{{10.sameIdempotencyKey}}",
+                              "o": "exist"
+                            }
+                          ]
+                        ]
+                      },
+                      "mapper": {
+                        "duration": "60"
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3000,
+                          "y": 0,
+                          "name": "Wait Before Replay"
+                        }
+                      }
+                    },
+                    {
+                      "id": 14,
+                      "module": "http:ActionSendData",
+                      "version": 3,
+                      "parameters": {
+                        "handleErrors": false,
+                        "useNewZLibDeCompress": true
+                      },
+                      "mapper": {
+                        "ca": "",
+                        "qs": [],
+                        "url": "https://client.example.invalid/samedaydesk/workflow-kits-changed-period/replay",
+                        "gzip": true,
+                        "method": "post",
+                        "headers": [
+                          {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "name": "Idempotency-Key",
+                            "value": "{{10.sameIdempotencyKey}}"
+                          }
+                        ],
+                        "timeout": "",
+                        "useMtls": false,
+                        "authPass": "",
+                        "authUser": "",
+                        "bodyType": "raw",
+                        "contentType": "application/json",
+                        "data": "{\"idempotencyKey\":\"{{10.sameIdempotencyKey}}\",\"recordKey\":\"{{10.recordKey}}\"}",
+                        "serializeUrl": false,
+                        "shareCookies": false,
+                        "parseResponse": true,
+                        "followRedirect": true,
+                        "useQuerystring": false,
+                        "followAllRedirects": false,
+                        "rejectUnauthorized": true
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3300,
+                          "y": 0,
+                          "name": "Replay Same Key"
+                        }
+                      }
+                    },
+                    {
+                      "id": 15,
+                      "module": "http:ActionSendData",
+                      "version": 3,
+                      "parameters": {
+                        "handleErrors": false,
+                        "useNewZLibDeCompress": true
+                      },
+                      "filter": {
+                        "name": "Replay ready",
+                        "conditions": [
+                          [
+                            {
+                              "a": "{{14.data.record.outcome}}",
+                              "b": "ready",
+                              "o": "text:equal"
+                            }
+                          ]
+                        ]
+                      },
+                      "mapper": {
+                        "ca": "",
+                        "qs": [],
+                        "url": "https://client.example.invalid/samedaydesk/workflow-kits-changed-period/apply",
+                        "gzip": true,
+                        "method": "post",
+                        "headers": [
+                          {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "name": "Idempotency-Key",
+                            "value": "{{14.data.record.ledgerKey}}"
+                          }
+                        ],
+                        "timeout": "",
+                        "useMtls": false,
+                        "authPass": "",
+                        "authUser": "",
+                        "bodyType": "raw",
+                        "contentType": "application/json",
+                        "data": "{\"ledgerKey\":\"{{14.data.record.ledgerKey}}\",\"idempotencyKey\":\"{{14.data.record.idempotencyKey}}\",\"recordKey\":\"{{14.data.record.recordKey}}\",\"periodId\":\"{{5.data.periodId}}\"}",
+                        "serializeUrl": false,
+                        "shareCookies": false,
+                        "parseResponse": true,
+                        "followRedirect": true,
+                        "useQuerystring": false,
+                        "followAllRedirects": false,
+                        "rejectUnauthorized": true
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3600,
+                          "y": 0,
+                          "name": "Apply Replayed Record"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": true,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "us2.make.com"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "notice": "Faults injected by the simulation at the client endpoint only.",
+  "faults": [
+    {
+      "type": "uncommitted",
+      "periodId": "period-N+1",
+      "recordKey": "r-002"
+    },
+    {
+      "type": "lost_apply_reply",
+      "periodId": "period-N+1",
+      "recordKey": "r-003"
+    }
+  ]
+}

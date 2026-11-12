@@ -1,0 +1,526 @@
+{
+  "name": "SameDayDesk changed period, record to accepted output (workflow-kits-n12-changed-period)",
+  "nodes": [
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000001",
+      "name": "Receive Changed Period",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "5d2a7c10-3e4b-4f8a-9b1c-000000001001",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "samedaydesk-changed-period",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000002",
+      "name": "Kit Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000220",
+              "name": "clientEndpoint",
+              "value": "https://client.example.invalid/samedaydesk/workflow-kits-changed-period",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000003",
+      "name": "Period Mappings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000230",
+              "name": "mappingsJson",
+              "value": "{\"schema\":\"samedaydesk.workflow-kits-n12-changed-period.mapping-registry.v1\",\"notice\":\"Declared mappings, one per workflow output schema. A new period schema gets a new mappingVersion; existing versions are never edited, so earlier periods stay reproducible. Synthetic field names.\",\"versions\":[{\"mappingVersion\":\"workflow-output.v1\",\"appliesFrom\":\"period-N\",\"notes\":\"Period N workflow output rows.\",\"source\":{\"rowId\":\"string\",\"captureRef\":\"string\",\"capturedAt\":\"string\",\"heading\":\"string\",\"state\":\"string\",\"keys\":\"array\",\"notes\":\"string\",\"consent\":\"boolean\"},\"ignore\":[\"notes\"],\"targets\":{\"recordKey\":{\"from\":\"rowId\"},\"capture.captureId\":{\"from\":\"captureRef\"},\"capture.capturedAt\":{\"from\":\"capturedAt\"},\"capture.subject\":{\"const\":\"synthetic-csv-header-record\"},\"capture.sourceUri\":{\"const\":\"https://seller.example/synthetic-recurring-record\"},\"capture.permitted\":{\"from\":\"consent\"},\"payload.title\":{\"from\":\"heading\"},\"payload.status\":{\"from\":\"state\",\"enum\":{\"complete\":\"complete\",\"pending\":\"pending\"}},\"payload.output\":{\"from\":\"keys\"}}},{\"mappingVersion\":\"workflow-output.v2\",\"appliesFrom\":\"period-N+1\",\"notes\":\"Period N+1 rows: captureRef and capturedAt moved under capture, heading renamed title, state replaced by boolean done, keys renamed outputKeys, consent changed from boolean to yes/no, notes removed, priority added.\",\"source\":{\"rowId\":\"string\",\"capture.id\":\"string\",\"capture.at\":\"string\",\"title\":\"string\",\"done\":\"boolean\",\"outputKeys\":\"array\",\"priority\":\"number\",\"consent\":\"string\"},\"ignore\":[\"priority\"],\"targets\":{\"recordKey\":{\"from\":\"rowId\"},\"capture.captureId\":{\"from\":\"capture.id\"},\"capture.capturedAt\":{\"from\":\"capture.at\"},\"capture.subject\":{\"const\":\"synthetic-csv-header-record\"},\"capture.sourceUri\":{\"const\":\"https://seller.example/synthetic-recurring-record\"},\"capture.permitted\":{\"from\":\"consent\",\"enum\":{\"yes\":true,\"no\":false}},\"payload.title\":{\"from\":\"title\"},\"payload.status\":{\"from\":\"done\",\"enum\":{\"true\":\"complete\",\"false\":\"pending\"}},\"payload.output\":{\"from\":\"outputKeys\"}}}]}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000004",
+      "name": "Evaluate Records",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Kit Settings').first().json.clientEndpoint }}/evaluate",
+        "sendHeaders": false,
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ kind: \"samedaydesk.workflow-kits-n12-changed-period.request.v1\", platform: \"n8n\", period: $('Receive Changed Period').first().json.body.period, records: $('Receive Changed Period').first().json.body.records, mappings: JSON.parse($('Period Mappings').first().json.mappingsJson) }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000005",
+      "name": "Config Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000105",
+              "leftValue": "={{ $json.ok === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000006",
+      "name": "Respond Config Errors",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 422
+        }
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000007",
+      "name": "Respond Evaluation",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000008",
+      "name": "One Item Per Record",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000009",
+      "name": "Ready To Apply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000109",
+              "leftValue": "={{ $json.outcome === 'ready' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000010",
+      "name": "Apply Accepted Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Kit Settings').first().json.clientEndpoint }}/apply",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.ledgerKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ledgerKey: $json.ledgerKey, idempotencyKey: $json.idempotencyKey, recordKey: $json.recordKey, periodId: $('Evaluate Records').first().json.periodId }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000011",
+      "name": "Replayable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000111",
+              "leftValue": "={{ $json.retryable === true && Boolean($json.sameIdempotencyKey) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000012",
+      "name": "Wait Before Replay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        200
+      ],
+      "webhookId": "5d2a7c10-3e4b-4f8a-9b1c-000000001012",
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000013",
+      "name": "Replay Same Key",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Kit Settings').first().json.clientEndpoint }}/replay",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.sameIdempotencyKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ idempotencyKey: $json.sameIdempotencyKey, recordKey: $json.recordKey }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000014",
+      "name": "Replay Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000114",
+              "leftValue": "={{ $json.record.outcome === 'ready' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5d2a7c10-3e4b-4f8a-9b1c-000000000015",
+      "name": "Apply Replayed Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Kit Settings').first().json.clientEndpoint }}/apply",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.record.ledgerKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ledgerKey: $json.record.ledgerKey, idempotencyKey: $json.record.idempotencyKey, recordKey: $json.record.recordKey, periodId: $('Evaluate Records').first().json.periodId }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Receive Changed Period": {
+      "main": [
+        [
+          {
+            "node": "Kit Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kit Settings": {
+      "main": [
+        [
+          {
+            "node": "Period Mappings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Period Mappings": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Records": {
+      "main": [
+        [
+          {
+            "node": "Config Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config Valid?": {
+      "main": [
+        [
+          {
+            "node": "Respond Evaluation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Config Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Evaluation": {
+      "main": [
+        [
+          {
+            "node": "One Item Per Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Item Per Record": {
+      "main": [
+        [
+          {
+            "node": "Ready To Apply?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ready To Apply?": {
+      "main": [
+        [
+          {
+            "node": "Apply Accepted Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replayable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replayable?": {
+      "main": [
+        [
+          {
+            "node": "Wait Before Replay",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Wait Before Replay": {
+      "main": [
+        [
+          {
+            "node": "Replay Same Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replay Same Key": {
+      "main": [
+        [
+          {
+            "node": "Replay Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replay Ready?": {
+      "main": [
+        [
+          {
+            "node": "Apply Replayed Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}

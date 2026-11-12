@@ -1,0 +1,804 @@
+{
+  "schema": "samedaydesk.workflow-kits-n12-changed-period.effort.v1",
+  "notice": "Counted from committed files and the deterministic fixture simulation by scripts/compute-effort.mjs. Not a Make or n8n provider run. Native is the vendored Useful Commerce journey run on its own fixtures.",
+  "formula": "total = mapping.declaredTargets + mapping.wiringReferences + adaptation.registryFieldEdits + adaptation.artifactLeafEdits + adaptation.requestFieldEdits + review.reviewItems",
+  "definitions": {
+    "declaredTargets": "mapping targets declared across mapping versions v1 and v2 in config/mapping-registry.json",
+    "wiringReferences": "data references the route itself carries outside the mapping registry: Make {{n.x}} template refs, n8n $json / $('Node').first().json refs, direct property reads in src/direct-route.mjs",
+    "registryFieldEdits": "source fields added, removed or type-changed plus target rules and ignore entries changed between v1 and v2",
+    "registryLinesAdded": "lines in the pretty-printed v2 mapping entry",
+    "artifactLeafEdits": "JSON leaves that differ between the artifact built with mapping v1 only and the committed artifact with v1 and v2",
+    "requestFieldEdits": "period.mappingVersion changes from workflow-output.v1 to workflow-output.v2",
+    "reviewItems": "exceptions surfaced across the scenario, minus those recovered automatically by same-key replay"
+  },
+  "artifacts": {
+    "make": {
+      "path": "make/changed-period.blueprint.json",
+      "sha256": "80d7f9c5c8d67403ee2ca0772887567aeb639280735546239dc602474bf20f35",
+      "bytes": 17357
+    },
+    "n8n": {
+      "path": "n8n/changed-period.workflow.json",
+      "sha256": "b1465a72c331d3386ea99f489c8554c9a6e4461aacbcf2ce1218fa8ec73007a8",
+      "bytes": 15132
+    }
+  },
+  "registryDiff": {
+    "sourceAdded": [
+      "capture.id",
+      "capture.at",
+      "title",
+      "done",
+      "outputKeys",
+      "priority"
+    ],
+    "sourceRemoved": [
+      "captureRef",
+      "capturedAt",
+      "heading",
+      "state",
+      "keys",
+      "notes"
+    ],
+    "sourceTypeChanged": [
+      "consent"
+    ],
+    "targetsChanged": [
+      "capture.captureId",
+      "capture.capturedAt",
+      "capture.permitted",
+      "payload.title",
+      "payload.status",
+      "payload.output"
+    ],
+    "ignoreChanged": [
+      "notes",
+      "priority"
+    ],
+    "fieldEdits": 21,
+    "linesAdded": 55
+  },
+  "artifactLeafEdits": {
+    "make": [
+      "$.flow.1.mapper.value"
+    ],
+    "n8n": [
+      "$.nodes.2.parameters.assignments.assignments.0.value"
+    ]
+  },
+  "rows": {
+    "make": {
+      "mapping": {
+        "declaredTargets": 18,
+        "declaredSourceFields": 16,
+        "wiringReferences": 28
+      },
+      "adaptation": {
+        "registryFieldEdits": 21,
+        "registryLinesAdded": 55,
+        "artifactLeafEdits": 1,
+        "requestFieldEdits": 1
+      },
+      "review": {
+        "exceptionsSurfaced": 18,
+        "autoRecoveredBySameKeyReplay": 1,
+        "reviewItems": 17,
+        "distinctReviewDecisions": 12
+      },
+      "total": 86
+    },
+    "n8n": {
+      "mapping": {
+        "declaredTargets": 18,
+        "declaredSourceFields": 16,
+        "wiringReferences": 25
+      },
+      "adaptation": {
+        "registryFieldEdits": 21,
+        "registryLinesAdded": 55,
+        "artifactLeafEdits": 1,
+        "requestFieldEdits": 1
+      },
+      "review": {
+        "exceptionsSurfaced": 18,
+        "autoRecoveredBySameKeyReplay": 1,
+        "reviewItems": 17,
+        "distinctReviewDecisions": 12
+      },
+      "total": 83
+    },
+    "direct": {
+      "mapping": {
+        "declaredTargets": 18,
+        "declaredSourceFields": 16,
+        "wiringReferences": 21
+      },
+      "adaptation": {
+        "registryFieldEdits": 21,
+        "registryLinesAdded": 55,
+        "artifactLeafEdits": 0,
+        "requestFieldEdits": 1
+      },
+      "review": {
+        "exceptionsSurfaced": 18,
+        "autoRecoveredBySameKeyReplay": 1,
+        "reviewItems": 17,
+        "distinctReviewDecisions": 12
+      },
+      "total": 78
+    },
+    "native": {
+      "mapping": {
+        "declaredTargets": 0,
+        "agreedFields": 3,
+        "source": {
+          "repo": "epistemedeus/pilot",
+          "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+          "path": "tools/payment-rail/recurring-journey/journey.mjs",
+          "line": 69,
+          "text": "requiredFields = [\"title\", \"status\", \"output\"]"
+        }
+      },
+      "adaptation": {
+        "supported": false,
+        "observed": {
+          "exception": "schema_changed",
+          "missingFields": [
+            "output"
+          ],
+          "complete": false,
+          "retryable": false,
+          "adapted": false
+        },
+        "reason": "The native journey has no mapping layer. A renamed field is refused as schema_changed; auto-migrating the schema-change fixture is listed as a change-direction trigger.",
+        "source": {
+          "repo": "epistemedeus/pilot",
+          "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+          "path": "tools/payment-rail/recurring-journey/README.md",
+          "line": 148
+        }
+      },
+      "review": {
+        "exceptionsSurfaced": 1,
+        "reviewItems": 1
+      },
+      "steps": {
+        "value": "4: project permitted capture, bind the exchange-supplied termsVersion, build job contract, run acceptance",
+        "source": {
+          "repo": "epistemedeus/pilot",
+          "pull": 687,
+          "sha": "0230cda1743a25840b808573b7be3a4b11d42b9a",
+          "path": "tools/payment-rail/recurring-journey/journey.mjs",
+          "line": 556,
+          "export": "COMPARISON_ROWS.native.steps"
+        }
+      },
+      "total": null,
+      "totalNote": "Not summed: native cannot adapt to the changed schema, so its adaptation effort is unsupported rather than zero.",
+      "control": {
+        "periodN": {
+          "decision": "accept",
+          "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+          "exception": null
+        },
+        "lostReplyReplay": {
+          "recovered": true,
+          "secondEffect": false,
+          "sameKey": true
+        },
+        "laterChanged": {
+          "outcome": "useful_change",
+          "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+          "priorTermsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925"
+        },
+        "laterSchemaChange": {
+          "exception": "schema_changed",
+          "missingFields": [
+            "output"
+          ],
+          "complete": false,
+          "retryable": false,
+          "adapted": false
+        }
+      }
+    }
+  },
+  "simulation": {
+    "clock": "2026-11-12T10:30:00.000Z",
+    "steps": [
+      "period-N",
+      "period-N+1 unadapted",
+      "period-N+1 attempt",
+      "period-N+1 rerun",
+      "period-N+1 rerun again",
+      "period-N under changed terms",
+      "period-N+1 local hash"
+    ],
+    "routes": {
+      "make": {
+        "externalEffects": 7,
+        "maxAppliesPerKey": 1,
+        "journeyCommits": 7,
+        "endpointCalls": 15,
+        "steps": [
+          {
+            "step": "period-N",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 3,
+              "alreadyApplied": 0,
+              "exceptions": 0,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "ready",
+              "r-003": "ready"
+            },
+            "applied": [
+              "period-N/r-001",
+              "period-N/r-002",
+              "period-N/r-003"
+            ],
+            "calls": 4,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 unadapted",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:schema_changed",
+              "r-002": "exception:schema_changed",
+              "r-003": "exception:schema_changed",
+              "r-004": "exception:schema_changed",
+              "r-005": "exception:schema_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 attempt",
+            "status": "error",
+            "error": "Apply Accepted Record: connection reset after the apply was committed (injected lost reply)",
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 2,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 2
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "exception:uncommitted",
+              "r-003": "ready",
+              "r-004": "exception:capture_stale",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-001",
+              "period-N+1/r-002",
+              "period-N+1/r-003"
+            ],
+            "calls": 5,
+            "externalEffects": 6
+          },
+          {
+            "step": "period-N+1 rerun",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 1,
+              "alreadyApplied": 3,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "already_applied",
+              "r-003": "already_applied",
+              "r-004": "ready",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-004"
+            ],
+            "calls": 2,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 rerun again",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 4,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "already_applied",
+              "r-003": "already_applied",
+              "r-004": "already_applied",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N under changed terms",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 local hash",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed",
+              "r-004": "exception:terms_changed",
+              "r-005": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          }
+        ]
+      },
+      "n8n": {
+        "externalEffects": 7,
+        "maxAppliesPerKey": 1,
+        "journeyCommits": 7,
+        "endpointCalls": 14,
+        "steps": [
+          {
+            "step": "period-N",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 3,
+              "alreadyApplied": 0,
+              "exceptions": 0,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "ready",
+              "r-003": "ready"
+            },
+            "applied": [
+              "period-N/r-001",
+              "period-N/r-002",
+              "period-N/r-003"
+            ],
+            "calls": 4,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 unadapted",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:schema_changed",
+              "r-002": "exception:schema_changed",
+              "r-003": "exception:schema_changed",
+              "r-004": "exception:schema_changed",
+              "r-005": "exception:schema_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 attempt",
+            "status": "error",
+            "error": "Apply Accepted Record: connection reset after the apply was committed (injected lost reply)",
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 2,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 2
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "exception:uncommitted",
+              "r-003": "ready",
+              "r-004": "exception:capture_stale",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-001",
+              "period-N+1/r-003"
+            ],
+            "calls": 3,
+            "externalEffects": 5
+          },
+          {
+            "step": "period-N+1 rerun",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 2,
+              "alreadyApplied": 2,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "ready",
+              "r-003": "already_applied",
+              "r-004": "ready",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-002",
+              "period-N+1/r-004"
+            ],
+            "calls": 3,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 rerun again",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 4,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "already_applied",
+              "r-003": "already_applied",
+              "r-004": "already_applied",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N under changed terms",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 local hash",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed",
+              "r-004": "exception:terms_changed",
+              "r-005": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          }
+        ]
+      },
+      "direct": {
+        "externalEffects": 7,
+        "maxAppliesPerKey": 1,
+        "journeyCommits": 7,
+        "endpointCalls": 15,
+        "steps": [
+          {
+            "step": "period-N",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 3,
+              "alreadyApplied": 0,
+              "exceptions": 0,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "ready",
+              "r-003": "ready"
+            },
+            "applied": [
+              "period-N/r-001",
+              "period-N/r-002",
+              "period-N/r-003"
+            ],
+            "calls": 4,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 unadapted",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:schema_changed",
+              "r-002": "exception:schema_changed",
+              "r-003": "exception:schema_changed",
+              "r-004": "exception:schema_changed",
+              "r-005": "exception:schema_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 3
+          },
+          {
+            "step": "period-N+1 attempt",
+            "status": "error",
+            "error": "connection reset after the apply was committed (injected lost reply)",
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 2,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 2
+            },
+            "outcomes": {
+              "r-001": "ready",
+              "r-002": "exception:uncommitted",
+              "r-003": "ready",
+              "r-004": "exception:capture_stale",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-001",
+              "period-N+1/r-002",
+              "period-N+1/r-003"
+            ],
+            "calls": 5,
+            "externalEffects": 6
+          },
+          {
+            "step": "period-N+1 rerun",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 1,
+              "alreadyApplied": 3,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "already_applied",
+              "r-003": "already_applied",
+              "r-004": "ready",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [
+              "period-N+1/r-004"
+            ],
+            "calls": 2,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 rerun again",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 4,
+              "exceptions": 1,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "already_applied",
+              "r-002": "already_applied",
+              "r-003": "already_applied",
+              "r-004": "already_applied",
+              "r-005": "exception:ingestion_not_permitted"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N under changed terms",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 3,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 3,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          },
+          {
+            "step": "period-N+1 local hash",
+            "status": "success",
+            "error": null,
+            "responseCode": 200,
+            "summary": {
+              "records": 5,
+              "ready": 0,
+              "alreadyApplied": 0,
+              "exceptions": 5,
+              "retryable": 0
+            },
+            "outcomes": {
+              "r-001": "exception:terms_changed",
+              "r-002": "exception:terms_changed",
+              "r-003": "exception:terms_changed",
+              "r-004": "exception:terms_changed",
+              "r-005": "exception:terms_changed"
+            },
+            "applied": [],
+            "calls": 1,
+            "externalEffects": 7
+          }
+        ]
+      }
+    },
+    "finalReceiptsEqual": true,
+    "receipts": [
+      {
+        "periodId": "period-N",
+        "recordKey": "r-001",
+        "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+        "mappingVersion": "workflow-output.v1",
+        "idempotencyKey": "sha256:47443f60d4820077e4bb0ed3dc611262c92cc3694c7b3788e891ed7661ac156e",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N",
+        "recordKey": "r-002",
+        "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+        "mappingVersion": "workflow-output.v1",
+        "idempotencyKey": "sha256:1d5205e15bb0c7d462880ba7041152d3a173d2693b04482280b99da16f4fc34f",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N",
+        "recordKey": "r-003",
+        "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+        "mappingVersion": "workflow-output.v1",
+        "idempotencyKey": "sha256:5d3fbaf0b600eefd26d8b271dfed2fda3fe1fee70ba0839646728614e07039ad",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N+1",
+        "recordKey": "r-001",
+        "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+        "mappingVersion": "workflow-output.v2",
+        "idempotencyKey": "sha256:069eaabacbe3b96d0e402fde52c82d639d82933349e2c3697a183ea45c666248",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N+1",
+        "recordKey": "r-002",
+        "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+        "mappingVersion": "workflow-output.v2",
+        "idempotencyKey": "sha256:9784774f1a9c75bde28f3212f61469dc46431673f3f412fc0c2264fd46de7411",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N+1",
+        "recordKey": "r-003",
+        "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+        "mappingVersion": "workflow-output.v2",
+        "idempotencyKey": "sha256:e81c9b839d19b09d8e2ec4388df76e91a314b6510f6099db94cedb79fbbb61a7",
+        "applyCount": 1
+      },
+      {
+        "periodId": "period-N+1",
+        "recordKey": "r-004",
+        "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+        "mappingVersion": "workflow-output.v2",
+        "idempotencyKey": "sha256:734d44a2c50fb54d6fd039584b694616ac889b4a33396c85cc63e92a91600ba5",
+        "applyCount": 1
+      }
+    ]
+  }
+}
