@@ -76,3 +76,9 @@ the exact machine-gateway client closure (hashes in
 
 Market pagination: HTTP 400 on a request that carried a cursor is
 `cursor_refused` (exit 1, not retried). Restart without `--cursor`.
+
+## Root VM journey
+
+`npm run journey:vm` (or `node scripts/vm-journey.mjs [--no-live] [--origin URL] [--keep]`) runs one installed journey from a checkout: pack, cold offline install into an empty prefix and cache, then only the installed binary for version and commands, the first credential-free task (`readiness check`, a free live GET), a batch of public reads, the configured-tenant journey against the inert authority port (server quote, execute, verified result and acceptance, a lost committed response recovered by `gateway resume` in a fresh process with the authority commit count unchanged, a tenant batch of receipts ending partial with exit 12, and the paid-route handoff refusal), a check that the credential never appears in output, and the coverage map. It prints one `samedaydesk.cli.vm-journey.v1` JSONL record per step and a summary, and exits 1 if any step fails. The real MachineGateway contract test runs when `ajv` resolves from `server/vendor/machine-gateway` (after `npm ci` there) and is reported as skipped otherwise. Tenant steps prove client behavior against a contract port with no provider and no money; they are not evidence of live funded execution.
+
+The coverage map lives in `docs/COVERAGE.md` and `generated/coverage.json` (also `samedaydesk coverage`).
