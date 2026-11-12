@@ -87,7 +87,7 @@ test("failure: transport errors stop after three attempts with exit 2", async ()
   assert.equal(calls.length, 3);
   assert.equal(out[0].error.code, "transport_failed");
   assert.equal(out[0].error.retryable, true);
-  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3 });
+  assert.deepEqual(out[0].error.evidence, { method: "GET", attempts: 3, clientIo: "pinned", recovery: "sent_unconfirmed", recoverySource: "cli-inferred", abortSupported: false });
   assert.equal(err[0].code, "transport_failed");
 });
 
@@ -244,7 +244,7 @@ test("market cursor_refused keeps the server code and body, is not retried, and 
   assert.equal(direct.exit, EXIT.input);
   assert.equal(direct.out[0].schema, "samedaydesk.cli.error.v1");
   assert.equal(direct.out[0].error.code, "cursor_refused");
-  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false });
+  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false, source: "observed-response" });
   assert.equal(end.error.evidence.server.code, "cursor_refused");
   assert.equal(direct.out[0].error.evidence.httpStatus, 400);
   assert.match(JSON.stringify(direct.err), /cursor_refused/);

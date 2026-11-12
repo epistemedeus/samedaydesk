@@ -56,7 +56,11 @@ const BASE_COMMANDS = [
   { id: "market.discover", argv: ["market", "discover"], group: "market", summary: "Public listings. --stream emits JSONL pages with a terminal record.", effect: "read", auth: "none",
     flags: { limit: { type: "integer", required: false, minimum: 1, maximum: 20, description: "Page size. Default 20." }, cursor: { type: "string", required: false, maxLength: 512, description: "Opaque cursor from nextCursor." }, "max-pages": { type: "integer", required: false, minimum: 1, maximum: 10, description: "With --stream. Default 3." }, stream: { type: "boolean", required: false, description: "JSONL output." }, ...ORIGIN_FLAGS },
     http: [{ method: "GET", path: `${MARKET_PATH}/v1/market/discover?limit={limit}&cursor={cursor}`, operationId: "machine.discover" }], output: "c0-1 discover value", retry: "bounded_get", recovery: "resume with --cursor nextCursor; on cursor_refused (exit 1) restart without --cursor",
-    errors: [{ code: "cursor_refused", when: "server answered with code cursor_refused (HTTP 400); evidence.server keeps the original code and body", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" }] },
+    errors: [
+      { code: "cursor_refused", when: "server answered with code cursor_refused (HTTP 400); evidence.server keeps the original code and body", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" },
+      { code: "cursor_malformed", when: "repaired market (mc1 cursors): the cursor is not one this server version could emit", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" },
+      { code: "cursor_unrecognized", when: "repaired market (mc1 cursors): well formed but not issued by this server, or no longer valid", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" },
+    ] },
   { id: "readiness.check", argv: ["readiness", "check"], group: "readiness", summary: "Free agent-readiness report for a public host. Same operation as MCP check_agent_readiness.", effect: "read", auth: "none",
     flags: { host: { type: "string", required: true, pattern: "^(?=.{1,253}$)[a-z0-9-]+(\\.[a-z0-9-]+)+$", description: "Public host, for example example.com." }, out: { type: "string", required: false, description: "Absolute path for a new 0600 result record." }, discovery: { type: "string", required: false, enum: ["mcp", "a2a", "llms-txt", "skill-md", "openapi", "registry", "search", "referral", "operator"], description: "Caller-declared acquisition label. Recorded as declared, never observed." }, ...ORIGIN_FLAGS },
     http: [{ method: "GET", path: "/agent-readiness?host={host}&format=json", operationId: "check_agent_readiness" }], output: "agent-readiness.report.v1", retry: "bounded_get", recovery: "result show --file OUT, or rerun the GET" },
@@ -99,6 +103,23 @@ export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze
   recoveryClass: RECOVERY_CLASS[command.id],
   schemaRefs: SCHEMA_REFS[command.id] ?? [],
 })));
+
+// Runtime facts every command shares.
+export const RUNTIME = Object.freeze({
+  cancellation: Object.freeze({
+    signal: "SIGINT",
+    exit: 130,
+    code: "cancelled",
+    inFlight: "Aborted through AbortSignal when client-io accepts one (draft PR #398). With the pinned client-io the CLI stops waiting; the request may still complete remotely, so recovery is sent_unconfirmed.",
+    remoteWork: "Not cancelled remotely by SIGINT.",
+  }),
+  timeout: Object.freeze({ code: "request_timeout", exit: 2, retry: "GET only, bounded" }),
+  recoveryValues: Object.freeze(["not_sent", "sent_unconfirmed", "remote_refused", "remote_committed", "remote_cancelled"]),
+  clientIo: Object.freeze([
+    Object.freeze({ version: "pinned", source: "samedaydesk@32437117e5232480b18349721069b2a8a0fc2a2c:server/vendor/machine-gateway/bin/client-io.mjs", errors: "message only; CLI observes the refusal body and infers recovery" }),
+    Object.freeze({ version: "repaired", source: "samedaydesk@7f270b233f44ceb8ccdabf51f674d739a5beb475:server/vendor/machine-gateway/bin/client-io.mjs (draft PR #398, unmerged)", errors: "code, serverCode, status and recovery on the error; preferred when present" }),
+  ]),
+});
 
 // Consume-only capability providers. Their output schema is referenced by
 // package export and sha256, never copied. Not installed in this version.
@@ -150,6 +171,7 @@ export function manifest(version, group) {
     credentialSources: ["none in this version"],
     groups: GROUPS,
     recoveryClasses: RECOVERY_CLASSES,
+    runtime: RUNTIME,
     providers: PROVIDERS,
     tasks: TASKS,
     commands: group ? COMMANDS.filter(command => command.group === group) : COMMANDS,

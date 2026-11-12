@@ -17,16 +17,24 @@ on 2026-11-12 PST.
 
 ## Package rights (truthful state)
 
-- The CLI's own files carry `"license": "UNLICENSED"` in `package.json`: no
-  license is granted yet. The operator decides the license before any
-  distribution.
-- `vendor/task-continuation/` is a byte-exact copy of an MIT-licensed file
-  (`LICENSE` beside it, Copyright (c) 2026 SameDayDesk).
-- The packed archive copies `server/vendor/machine-gateway/bin/client-io.mjs`,
-  `src/util.mjs` and `src/errors.mjs`. The `@neomorphic/machine-gateway`
-  package states no license, and the samedaydesk repository has no LICENSE
-  file. Redistribution rights for that closure need an operator decision.
-- No right to use any result for a particular purpose is stated by the server.
+Root ruling, 2026-11-12: the package stays `UNLICENSED`. No repository-wide
+license is inferred.
+
+- The CLI's own files carry `"license": "UNLICENSED"` in `package.json`, so no
+  license is granted.
+- `vendor/task-continuation/` is a byte-exact copy of a file that ships with an
+  MIT `LICENSE` beside it (Copyright (c) 2026 SameDayDesk). That grant covers
+  that file only.
+- The packed archive also copies the SameDayDesk shared-client closure:
+  `server/vendor/machine-gateway/bin/client-io.mjs`, `src/util.mjs` and
+  `src/errors.mjs`, taken from samedaydesk@32437117. There is no LICENSE file at
+  the inspected path (`server/vendor/machine-gateway/`), and the
+  `@neomorphic/machine-gateway` `package.json` states no license.
+- **Public promotion is a separate future step.** It is gated on the actual
+  license grant of each bundled archive and file, checked one by one. It is not
+  part of this preview, and nothing here should be read as permission to
+  redistribute.
+- The server states no right to use any result for a particular purpose.
   Handbacks say `rights: {stated: false}`.
 
 ## How someone would install it today
@@ -83,7 +91,9 @@ Not hosted:
 ## Limits stated to users
 
 - POST requests are never retried. A failure after sending does not show
-  whether the server applied the request. `--recovery-file` records the attempt
+  whether the server applied the request; read `error.evidence.recovery`.
+- Ctrl-C (SIGINT) exits 130. With the pinned client it stops waiting, but a
+  request already sent may still complete remotely. `--recovery-file` records the attempt
   identity before sending and nothing more.
 - Saved records live only where the caller puts them. If that storage is lost,
   rerun the read.

@@ -121,6 +121,7 @@ export function manPage(version) {
   }
   out.push(".SH EXIT STATUS");
   for (const [category, code] of Object.entries(EXIT)) out.push(".TP", `.B ${code}`, roff(category));
+  out.push(".SH SIGNALS", roff("SIGINT aborts an in-flight request where client-io supports AbortSignal, prints a cancelled error envelope and exits 130. Remote work already sent is not cancelled."));
   out.push(".SH ERROR CODES", roff(Object.keys(ERROR_CODES).sort().join(", ")), ".SH SEE ALSO", roff(`${BIN} schema <command-id>, ${BIN} commands`));
   return `${out.join("\n")}\n`;
 }
@@ -143,7 +144,9 @@ Generated from the command manifest; do not edit. Source of truth: \`${BIN} comm
 - Never pass a credential on the command line. This version needs none and refuses secret-named flags.
 - Use \`--dry-run\` to see the exact request, effect and required authority before sending.
 - Do not retry a POST. GET retries are already bounded inside the CLI.
-- On \`cursor_refused\`, restart \`market discover\` without \`--cursor\`; \`error.evidence.server\` holds the server's own refusal.
+- On \`cursor_refused\`, \`cursor_malformed\` or \`cursor_unrecognized\`, restart \`market discover\` without \`--cursor\`. \`error.evidence.server.code\` holds the server's own code.
+- Read \`error.evidence.recovery\` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
+- SIGINT exits 130 with \`error.code\` \`cancelled\`. It does not cancel remote work that was already sent.
 
 ## Start
 

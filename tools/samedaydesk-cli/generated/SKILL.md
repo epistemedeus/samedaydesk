@@ -14,7 +14,9 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 - Never pass a credential on the command line. This version needs none and refuses secret-named flags.
 - Use `--dry-run` to see the exact request, effect and required authority before sending.
 - Do not retry a POST. GET retries are already bounded inside the CLI.
-- On `cursor_refused`, restart `market discover` without `--cursor`; `error.evidence.server` holds the server's own refusal.
+- On `cursor_refused`, `cursor_malformed` or `cursor_unrecognized`, restart `market discover` without `--cursor`. `error.evidence.server.code` holds the server's own code.
+- Read `error.evidence.recovery` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
+- SIGINT exits 130 with `error.code` `cancelled`. It does not cancel remote work that was already sent.
 
 ## Start
 
@@ -55,3 +57,4 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 - 9: retryable
 - 10: unknown_mutation_outcome
 - 11: pending
+- 130: cancelled

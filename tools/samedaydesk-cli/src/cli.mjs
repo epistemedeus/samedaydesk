@@ -5,7 +5,7 @@ import { argumentsFor, baseUrl, inputText, privateText, savePrivate } from "../.
 import { boundedJson, digest } from "../../../server/vendor/machine-gateway/src/util.mjs";
 import { discovery as discoveryLabel, measurementRecord, mintCorrelationId, stepEventId } from "../vendor/task-continuation/index.mjs";
 import { CliError, describe } from "./errors.mjs";
-import { call } from "./transport.mjs";
+import { call as defaultCall, createTransport } from "./transport.mjs";
 import { bashCompletion, fishCompletion, helpFor, zshCompletion } from "./generate.mjs";
 import {
   COMMANDS, DEFAULT_ORIGIN, ERROR_SCHEMA, GATEWAY_PATH, GROUPS, MARKET_PATH, RECORD_SCHEMA, RESULT_SCHEMA, STREAM_SCHEMA,
@@ -153,7 +153,7 @@ const HANDLERS = {
     if (flags["dry-run"]) return { ...plan(command, "GET", `${base}/healthz`), alsoReads: [`${base}/v1/discover`, `${market}/v1/market/profile`] };
     const sources = {};
     const read = async (name, origin, path) => {
-      try { const { value, attempts } = await call(origin, path, { sleep: io.sleep }); sources[name] = { ok: true, attempts, value }; }
+      try { const { value, attempts } = await io.call(origin, path, { sleep: io.sleep }); sources[name] = { ok: true, attempts, value }; }
       catch (error) { const { code, category } = describe(error); sources[name] = { ok: false, code, category }; }
     };
     await read("gatewayHealth", base, "/healthz");
@@ -178,21 +178,21 @@ const HANDLERS = {
   "gateway.routes": async ({ flags, command, io }) => {
     const base = gatewayBase(flags);
     if (flags["dry-run"]) return plan(command, "GET", `${base}/v1/discover`);
-    const { value, attempts } = await call(base, "/v1/discover", { sleep: io.sleep });
+    const { value, attempts } = await io.call(base, "/v1/discover", { sleep: io.sleep });
     return { ...value, attempts };
   },
   "gateway.schema": async ({ flags, command, io }) => {
     const base = gatewayBase(flags);
     const path = `/v1/routes/${flags.route}/${flags.kind ?? "input"}.schema.json`;
     if (flags["dry-run"]) return plan(command, "GET", `${base}${path}`);
-    return (await call(base, path, { sleep: io.sleep })).value;
+    return (await io.call(base, path, { sleep: io.sleep })).value;
   },
   "gateway.test": async ({ flags, command, io }) => {
     const base = gatewayBase(flags);
     const body = { routeId: flags.route };
     if (flags["dry-run"]) return plan(command, "POST", `${base}/v1/test`, body);
     const recovery = persistRecovery(flags, command, base, "/v1/test", body, io);
-    const { value } = await call(base, "/v1/test", { body, sleep: io.sleep });
+    const { value } = await io.call(base, "/v1/test", { body, sleep: io.sleep });
     return { fixture: true, providerCalled: false, recovery, value };
   },
   "gateway.quote": async ({ flags, command, io }) => {
@@ -206,7 +206,7 @@ const HANDLERS = {
     const body = { routeId: flags.route, input: parseJsonInput(text) };
     if (flags["dry-run"]) return plan(command, "POST", `${base}/v1/quote`, body);
     const recovery = persistRecovery(flags, command, base, "/v1/quote", body, io);
-    const { value } = await call(base, "/v1/quote", { body, sleep: io.sleep });
+    const { value } = await io.call(base, "/v1/quote", { body, sleep: io.sleep });
     const tenantBound = value?.tenantBound === true;
     const observedAt = io.now().toISOString();
     return {
@@ -229,7 +229,7 @@ const HANDLERS = {
   "market.profile": async ({ flags, command, io }) => {
     const market = `${originOf(flags)}${MARKET_PATH}`;
     if (flags["dry-run"]) return plan(command, "GET", `${market}/v1/market/profile`);
-    const { value } = await call(market, "/v1/market/profile", { sleep: io.sleep });
+    const { value } = await io.call(market, "/v1/market/profile", { sleep: io.sleep });
     if (value?.ok !== true) throw new CliError("response_invalid");
     return value.value;
   },
@@ -239,7 +239,7 @@ const HANDLERS = {
     const pathFor = cursor => `/v1/market/discover?limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
     if (flags["dry-run"]) return plan(command, "GET", `${market}${pathFor(flags.cursor)}`);
     const page = async cursor => {
-      const { value } = await call(market, pathFor(cursor), { sleep: io.sleep });
+      const { value } = await io.call(market, pathFor(cursor), { sleep: io.sleep });
       if (value?.ok !== true || !Array.isArray(value.value?.items)) throw new CliError("response_invalid");
       return value.value;
     };
@@ -259,7 +259,7 @@ const HANDLERS = {
     } catch (error) {
       const described = describe(error);
       // A refused cursor is not resumable: restart pagination from the first page.
-      const refused = described.code === "cursor_refused";
+      const refused = ["cursor_refused", "cursor_malformed", "cursor_unrecognized"].includes(described.code);
       await emit({ schema: STREAM_SCHEMA, type: "end", command: command.id, ok: false, pages, count, resumeCursor: refused ? null : cursor, restartWithoutCursor: refused, error: described });
       return { streamed: true, exit: described.exit };
     }
@@ -274,7 +274,7 @@ const HANDLERS = {
       if (existsSync(flags.out)) throw new CliError("output_exists");
     }
     if (flags["dry-run"]) return plan(command, "GET", `${origin}${path}`);
-    const { value: report, attempts } = await call(origin, path, { sleep: io.sleep });
+    const { value: report, attempts } = await io.call(origin, path, { sleep: io.sleep });
     if (report?.schema !== READINESS_SCHEMA) throw new CliError("response_invalid");
     const correlationId = mintCorrelationId();
     const record = {
@@ -332,7 +332,9 @@ function writeLine(stream, value) {
 export async function main(argv, io = {}) {
   const stdout = io.stdout ?? process.stdout;
   const stderr = io.stderr ?? process.stderr;
-  const context = { stdin: io.stdin ?? process.stdin, sleep: io.sleep, now: io.now ?? (() => new Date()) };
+  const transport = io.clientIo ? createTransport(io.clientIo) : { call: defaultCall };
+  const context = { stdin: io.stdin ?? process.stdin, sleep: io.sleep, now: io.now ?? (() => new Date()), signal: io.signal,
+    call: (base, path, options = {}) => transport.call(base, path, { ...options, signal: io.signal }) };
   // A lost stdout consumer does not cancel anything; it only ends output.
   stdout.on?.("error", () => {});
   let command = null;
