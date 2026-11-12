@@ -1401,6 +1401,15 @@ export async function openHostedMarket(options) {
     return {limit, cursor};
   }
 
+  // Machine market pages: the machine producer emits and decodes its own opaque
+  // cursor (market-cursor.mjs). Decoding it here as base64url turned every
+  // emitted cursor into cursor_refused.
+  function machinePage(url) {
+    const limit = Number(url.searchParams.get('limit') || '20');
+    if (!Number.isInteger(limit) || limit < 1 || limit > 50) throw httpError(400, 'limit_refused');
+    return {limit, cursor: url.searchParams.get('cursor') || ''};
+  }
+
   async function discover(res, url) {
     const {limit, cursor} = page(url);
     if (profile.publicReads === '0') return send(res,200,{ok:true,value:{items:[],nextCursor:null,publicEnabled:false}});
@@ -1708,11 +1717,11 @@ export async function openHostedMarket(options) {
         return send(res,200,machine.participationContract);
       }
       if (path === '/v1/market/discover' && req.method === 'GET' && machine) {
-        return send(res, 200, {ok: true, value: await machine.discover(page(url))});
+        return send(res, 200, {ok: true, value: await machine.discover(machinePage(url))});
       }
       if (machine?.acceptedWorkPublic && req.method === 'GET' && (path === '/v1/market/accepted-work' || path.startsWith('/v1/market/accepted-work/'))) {
         if (path === '/v1/market/accepted-work') {
-          return send(res, 200, {ok: true, value: await machine.discoverAccepted(page(url))});
+          return send(res, 200, {ok: true, value: await machine.discoverAccepted(machinePage(url))});
         }
         const artifact = path.match(/^\/v1\/market\/accepted-work\/(market-[a-f0-9]{64})\/artifact$/);
         if (artifact) {
