@@ -105,7 +105,11 @@ export class MachineGateway {
       assertActive();
       return { receipt: await this.store.finish(receiptId, { output }), replay: false };
     } catch (error) {
-      const code = signal.aborted ? (deadline.signal.aborted ? "deadline_exceeded" : "execution_aborted")
+      // Once this attempt's own deadline has fired, the outcome is interrupted (uncertain), exactly as the
+      // store's expiry would record it. Do not re-derive it from a second clock read in the store: the
+      // timer can fire while store.now() is still short of deadlineAt, which used to persist "failed".
+      if (deadline.signal.aborted) return { receipt: await this.store.finish(receiptId, { interrupted: true }), replay: false };
+      const code = signal.aborted ? "execution_aborted"
         : error instanceof GatewayError ? error.code : "provider_failed";
       return { receipt: await this.store.finish(receiptId, { error: { code }, declined: code === "payment_declined" }), replay: false };
     } finally { clearTimeout(timer); }

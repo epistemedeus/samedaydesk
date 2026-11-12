@@ -87,7 +87,10 @@ test("tenant lifetime budget reservations are atomic across concurrent distinct 
   assert.deepEqual(results.map(r => r.status).sort(), [200, 429]);
   assert.equal(adapter.calls.settle, 1);
   await f.restart();
-  assert.equal((await f.execute(two, "budget-after-restart1", { payment: "unsigned-local-fixture-intent3" })).status, 429);
+  // Either concurrent intent may win admission; re-sending the winner's quote would be quote_already_used (409).
+  // A fresh quote isolates the property under test: the reserved budget survives restart.
+  const three = await f.quote({ value: "three" }, "fixture.paid");
+  assert.equal((await f.execute(three, "budget-after-restart1", { payment: "unsigned-local-fixture-intent3" })).status, 429);
 });
 
 test("verification decline releases spend reservation; no settlement occurs", async t => {
@@ -129,12 +132,17 @@ test("distinct concurrent intents with the same authorization can verify but onl
 });
 
 test("timeout during verification cannot start a late settlement", async t => {
-  const adapter = unsignedPaymentAdapter({ verify: () => delay(80) });
-  const f = await fixture(t, paidOptions(adapter, { timeoutMs: 20 }));
+  // Injected store clock that never reaches deadlineAt: only the gateway's deadline timer can end the attempt,
+  // and verification signals entry, so uncertain is asserted only after verification was actually entered.
+  const frozen = Date.now(); let returned = 0;
+  const adapter = unsignedPaymentAdapter({ verify: async () => { await delay(80); returned++; } });
+  const f = await fixture(t, { ...paidOptions(adapter, { timeoutMs: 20 }), storeOptions: { now: () => frozen } });
   const body = await f.quote({ value: "x" }, "fixture.paid");
   const result = await f.execute(body, "verification-timeout1", { payment });
+  assert.deepEqual(adapter.calls, { verify: 1, settle: 0 }); assert.equal(returned, 0);
   assert.equal(result.body.status, "uncertain"); assert.equal(result.body.payment.state, "not_attempted");
-  await delay(100);
+  assert.equal(result.body.error.code, "execution_interrupted");
+  await until(() => returned === 1); await delay(20);
   assert.deepEqual(adapter.calls, { verify: 1, settle: 0 });
   assert.equal(f.store.db.prepare("SELECT units FROM usage").get().units, 0);
   assert.equal((await f.execute(body, "verification-timeout1", { payment })).body.id, result.body.id);

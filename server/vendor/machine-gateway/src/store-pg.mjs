@@ -121,13 +121,14 @@ export class PostgresGatewayStore {
       await this.#save(row, body);
     });
   }
-  async finish(id, { output = null, error = null, declined = false } = {}) {
+  async finish(id, { output = null, error = null, declined = false, interrupted = false } = {}) {
     return this.transaction(async () => {
       await this.#expire();
       const row = (await this.one("SELECT * FROM attempts WHERE id=?", id));
       if (!row) fail("receipt_not_found", 404);
       if (!row.active) return this.#body(row);
-      if (row.deadline <= this.now()) return this.#interrupt(row);
+      // interrupted: the caller observed its own deadline; record the same outcome expiry would.
+      if (interrupted || row.deadline <= this.now()) return this.#interrupt(row);
       const body = this.#body(row);
       body.output = output;
       body.error = error;

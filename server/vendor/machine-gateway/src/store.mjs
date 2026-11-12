@@ -84,15 +84,17 @@ export class SqliteStore {
     if (row.reservation) this.db.prepare("UPDATE usage SET units=units-? WHERE tenant=?").run(row.reservation, row.tenant);
   }
   #expire() {
-    for (const row of this.db.prepare("SELECT * FROM attempts WHERE active=1 AND deadline<=?").all(this.now())) {
-      const body = this.#body(row);
-      body.status = "uncertain";
-      body.completedAt = this.now();
-      body.error = { code: "execution_interrupted" };
-      // No payment can start past deadline. Possible spend is never refunded.
-      if (!row.possible) this.#release(row);
-      this.#save(row, body, { active: 0, reservation: row.possible ? row.reservation : 0 });
-    }
+    for (const row of this.db.prepare("SELECT * FROM attempts WHERE active=1 AND deadline<=?").all(this.now())) this.#interrupt(row);
+  }
+  #interrupt(row) {
+    const body = this.#body(row);
+    body.status = "uncertain";
+    body.completedAt = this.now();
+    body.error = { code: "execution_interrupted" };
+    // No payment can start past deadline. Possible spend is never refunded.
+    if (!row.possible) this.#release(row);
+    this.#save(row, body, { active: 0, reservation: row.possible ? row.reservation : 0 });
+    return body;
   }
   replay(tenant, idem, requestDigest) {
     return this.transaction(() => {
@@ -162,12 +164,14 @@ export class SqliteStore {
       this.#save(row, body);
     });
   }
-  finish(id, { output = null, error = null, declined = false } = {}) {
+  finish(id, { output = null, error = null, declined = false, interrupted = false } = {}) {
     return this.transaction(() => {
       this.#expire();
       const row = this.db.prepare("SELECT * FROM attempts WHERE id=?").get(id);
       if (!row) fail("receipt_not_found", 404);
       if (!row.active) return this.#body(row);
+      // The caller observed its own deadline: record the same outcome expiry would, whatever this clock reads.
+      if (interrupted) return this.#interrupt(row);
       const body = this.#body(row);
       body.output = output;
       body.error = error;

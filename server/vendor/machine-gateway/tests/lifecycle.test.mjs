@@ -57,11 +57,18 @@ test("disconnect during settlement retains possible spend without late provider 
 });
 
 test("deadline stops uncooperative provider observation; late output is never persisted", async t => {
-  const f = await fixture(t, { extraRoutes: [echoRoute({ id: "late.echo", timeoutMs: 20, run: async input => { await delay(80); return input; } })] });
+  // Injected store clock that never reaches deadlineAt: the gateway's own deadline timer is the only authority,
+  // so a timer firing before the wall clock catches up cannot turn the outcome into "failed". The provider
+  // signals entry, so uncertain is asserted only after the provider was actually entered.
+  const frozen = Date.now(); let entered = 0, returned = 0;
+  const f = await fixture(t, { storeOptions: { now: () => frozen }, extraRoutes: [echoRoute({ id: "late.echo", timeoutMs: 20,
+    run: async input => { entered++; await delay(80); returned++; return input; } })] });
   const body = await f.quote({ value: "late" }, "late.echo");
   const result = await f.execute(body, "deadline-echo-key-01");
+  assert.equal(entered, 1); assert.equal(returned, 0);
   assert.equal(result.body.status, "uncertain"); assert.equal(result.body.output, null);
-  await delay(100);
+  assert.equal(result.body.error.code, "execution_interrupted");
+  await until(() => returned === 1); await delay(20);
   assert.deepEqual((await f.request(`/v1/receipts/${result.body.id}`)).body, result.body);
 });
 
