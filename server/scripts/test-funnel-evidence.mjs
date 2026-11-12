@@ -145,8 +145,10 @@ test.after(async () => {
 
 test("vendor blobs stay the accepted projection and consumer", () => {
   assert.equal(gitBlob(join(vendor, "funnel-decision-projection-141100/src/project.mjs")), "9ca997bc2f0a51e1ab283bb87943ada151708ddf");
-  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/consume.mjs")), "106f71299fce208069f9830d4dd13de1a5a5762f");
-  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/capture.mjs")), "5a8d191bb62e8b089055cf8c5261077bd7b265e9");
+  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/consume.mjs")), "b23f36932ae9fb7ce5c1a7061a9da267e11e47c1");
+  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/capture.mjs")), "e36a44a60de37037fb11506f98efe196d03fd56d");
+  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/settlement-unit-map.mjs")), "78cade92fc4e025f6029cec6e6d18be6c5cb60ca");
+  assert.equal(gitBlob(join(vendor, "live-measurement-consumer-142500/src/settlement-unit-catalog.json")), "88a04618e02ad5e81f09658efd1a10cab2e61b9b");
   assert.equal(gitBlob(join(fixtures, "core-only.json")), "337cd439692401b058dbc54f9d5f29fb40432238");
   assert.equal(gitBlob(join(fixtures, "public-payment-cut.json")), "8e40f9b361dd2f379ee8cc1bf02441d9ca0cbb33");
   assert.equal(gitBlob(join(fixtures, "ein-window-135600.json")), "9cc54698971fb269a385fbc620c7dc74a03918f7");
