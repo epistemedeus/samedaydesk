@@ -70,12 +70,15 @@ async function archiveMatchesReceived(archiveName, receivedName) {
 
 test("the selected immutable candidate archive matches every shipped source file and manifest digest", async () => {
   const manifest = read("../deploy/upstream-machine-manifest.json");
-  // 0.1.0 and 0.1.1 stay immutable. SDS PG/async adaptations are not repacked into either archive.
+  // 0.1.0 to 0.1.2 stay immutable and received. SDS PG/async adaptations are not repacked into any archive.
   await archiveMatchesReceived("neomorphic-machine-gateway-0.1.1.tgz", "RECEIVED-0.1.1.json");
-  const bytes = await archiveMatchesReceived("neomorphic-machine-gateway-0.1.2.tgz", "RECEIVED-0.1.2.json");
+  const prior = await archiveMatchesReceived("neomorphic-machine-gateway-0.1.2.tgz", "RECEIVED-0.1.2.json");
+  assert.equal(createHash("sha256").update(prior).digest("hex"), "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6");
+  // 0.1.3 is the producer's own build (neomorphic-io PR #479) and is the selected archive.
+  const bytes = await archiveMatchesReceived("neomorphic-machine-gateway-0.1.3.tgz", "RECEIVED-0.1.3.json");
   assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.sourceArchive.sha256);
   assert.equal(bytes.length, manifest.sourceArchive.bytes);
-  assert.equal(manifest.sourceArchive.repositoryPath.endsWith("neomorphic-machine-gateway-0.1.2.tgz"), true);
+  assert.equal(manifest.sourceArchive.repositoryPath.endsWith("neomorphic-machine-gateway-0.1.3.tgz"), true);
   assert.equal(manifest.version, read("../package.json").version);
   const selected = fileURLToPath(new URL(`../releases/${manifest.sourceArchive.repositoryPath.split("/").at(-1)}`, import.meta.url));
   assert.equal(JSON.parse((await execFile("tar", ["-xOf", selected, "package/package.json"])).stdout).version, manifest.version);

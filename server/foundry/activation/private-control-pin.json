@@ -1,11 +1,11 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "7f270b233f44ceb8ccdabf51f674d739a5beb475",
+  "base": "1199727fb014ad1a41fb294a322f852d274e28bf",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
-    "package-lock.json": "bdc3a1944a7a8c7316356f7248a0d71d9ee3f83501e5fad4a0e422cf959e4811",
+    "package-lock.json": "b1686de198157ef5add715bd322eefd94c816b83568d31b470fe324bc89b5f40",
     "package.json": "c6250a9cab07b37ac0076111f0af76d7dcf63f6f3705ab9651a01bb35e579947",
     "server/app.js": "2873087b75ddb8715875e7131a1618e6c8e86f9a00016f07013800fc7773cd23",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
@@ -164,11 +164,11 @@
     "server/vendor/machine-gateway/bin/readiness.mjs": "74d654c413536669225e11f5f6f013dee838f0d119981cb6740a0f2a3903b845",
     "server/vendor/machine-gateway/npm-shrinkwrap.json": "1ef597c95ef4082fe8593b6b1ed35828c1ce375eb612af9023aa9d312ee0f2cf",
     "server/vendor/machine-gateway/openapi.json": "1072b17a5647bd1aac7d6f37e3b24a92329b662fb051e1f84155698ea3e26ab4",
-    "server/vendor/machine-gateway/package.json": "59e527baf3cc5d8dd212ef7df948939fc47ddb61b6fac61bdc330b2c038013e6",
-    "server/vendor/machine-gateway/releases/SHA256SUMS": "32aaa44cdd5e1e3bafdf56632dd1de7fba4655dd96bc7f68511d4f3fbcd1e8d5",
+    "server/vendor/machine-gateway/package.json": "eb4e12f4d5d0734c9064258c386a63897f5908d74e958f3652054fe7a1cfcc5d",
+    "server/vendor/machine-gateway/releases/SHA256SUMS": "9dad0836d9f1c268b15db57e2c74a325ec3b601bcc568629a34e8e647eea48b2",
     "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.0.tgz": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
     "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
-    "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.3.tgz": "c8b62df2ff0bca12585f563250a6fb261a0085289146a8cb17b9ed2257fc43ea",
+    "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.3.tgz": "2ae4cf46486c06166eda3a1817493f38e23e789cda490eec548da748692dca52",
     "server/vendor/machine-gateway/schemas/contracts.json": "386e7ba10d2e2b0998ba4865ad7eba8ed6c2a584515359454a2c9bc93621927f",
     "server/vendor/machine-gateway/src/config.mjs": "49f3d00e4f2b96e247816b386adc4bb1400555b14438f7a05a5e02d56eae8003",
     "server/vendor/machine-gateway/src/contracts.mjs": "eb577805aad46c4bbac16798da4483fe93a2033dce5672ce168d0dab11ffea1f",
@@ -1327,7 +1327,7 @@
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.d.mts": "7ceac6755ad3cfa5c5001e6166b6569192d50a99942810c27040a29e86e42a83",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs": "28658be92f163cb743753961970e936aff77f851fe125c9289208c91dcb58513",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/src/lib/reward-receiving/settlement.mjs.map": "e3bb5c743e092a37b09d15ae50ed98d2e9240637303ab7d2b2a6291d1466a7ae",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "3c45e29f3fe0b3b0c5e95bfe687eb478293c1451589e5265073e40336fa0cbc0",
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "7274ecf34570ea82348318dffc47e405dc1609fc97ed3218c26cd106927fc144",
     "vendor/hosted-wallet-market/src/market-cursor.mjs": "85c3ff8349cca4c33a2631256cf90208e9821df1a129ed0a333d09b6e990ccf2"
   },
   "receivedCallerClosures": [
@@ -1520,6 +1520,11 @@
       "base": "d9725a4f61b0bdf4d5355d3dbb86fa2379c71644",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:d064b9a7c99574acb451715f6d916239d5a67269fbd2e3cfeaf969a65508127b"
+    },
+    {
+      "base": "7f270b233f44ceb8ccdabf51f674d739a5beb475",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:a3a79031788f4f1084f93a39507c78c5aba7ca7feb4d3fded3664fa6a0784936"
     }
   ]
 }

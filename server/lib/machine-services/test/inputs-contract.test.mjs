@@ -75,8 +75,10 @@ test('active deploy inputs match env.keys, install archives, and the extraction 
 
   const selected = inputs.gateway.archives.filter(archive => archive.selected);
   assert.equal(selected.length, 1);
-  assert.equal(selected[0].version, '0.1.2');
-  assert.equal(selected[0].sha256, pins.urlExtract.u1.sha256);
+  assert.equal(selected[0].version, '0.1.3');
+  assert.equal(selected[0].sha256, pins.gatewayArchives.find(archive => archive.selectedReceivedArtifact).sha256);
+  // The U1 url.extract archive (0.1.2) stays received and unchanged beside the selected 0.1.3.
+  assert.equal(inputs.gateway.archives.find(archive => archive.version === '0.1.2').sha256, pins.urlExtract.u1.sha256);
   assert.deepEqual(inputs.gateway.archives.map(archive => archive.sha256), pins.gatewayArchives.map(archive => archive.sha256));
   for (const archive of inputs.gateway.archives) {
     const bytes = await readFile(path.join(repo, archive.path));

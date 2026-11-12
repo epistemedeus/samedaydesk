@@ -1,51 +1,27 @@
 {
-  "repository": "epistemedeus/samedaydesk",
-  "commit": "7f270b233f44ceb8ccdabf51f674d739a5beb475",
-  "branch": "codex/n12-sds-shared-repair-20261112",
-  "pullRequest": 398,
-  "archiveSha256": "c8b62df2ff0bca12585f563250a6fb261a0085289146a8cb17b9ed2257fc43ea",
-  "bytes": 55809,
-  "state": "prepared-not-deployed",
-  "derivedFrom": {
-    "version": "0.1.2",
-    "archive": "neomorphic-machine-gateway-0.1.2.tgz",
-    "archiveSha256": "0171af58f67ac845b720ee6d1cf7765cc1a0b4c65c5b258fc1dbd5ea99f5cfb6",
-    "bytes": 53193,
-    "repository": "epistemedeus/neomorphic-io",
-    "commit": "09d37501dc0ffedc67e3e7c8c3e3e97a05bef3a3",
-    "branch": "codex/ae21-u1-gateway-url-extract",
-    "unchanged": true
-  },
-  "derivation": "node releases/derive-0.1.3.mjs --check",
-  "changedMembers": {
-    "bin/caller.mjs": {
-      "from": "27ea509d672c71a726ea6ff58364ae66bf5a4fc4ef065159a398aea74835aab1",
-      "to": "55576da6a5232e1727c68bb324f3d8102ed35c3a52319bfc5d7b3cee8673b54b"
-    },
-    "bin/client-io.mjs": {
-      "from": "a24d2df5fd403fccbbd308d7759d50d293f6984154a9fbbf7e3380ad0d427807",
-      "to": "c6613e44349a5741308d551df41c85b55709f48ea1ce7cf72f229dc00939a8aa"
-    },
-    "npm-shrinkwrap.json": {
-      "from": "1ef597c95ef4082fe8593b6b1ed35828c1ce375eb612af9023aa9d312ee0f2cf",
-      "to": "5cdda14595e9d75dfa232685f108b8d046194840c98eb729a0481cce36e8baa9"
-    },
-    "package.json": {
-      "from": "59e527baf3cc5d8dd212ef7df948939fc47ddb61b6fac61bdc330b2c038013e6",
-      "to": "eb4e12f4d5d0734c9064258c386a63897f5908d74e958f3652054fe7a1cfcc5d"
-    }
-  },
+  "repository": "epistemedeus/neomorphic-io",
+  "commit": "0a0e91d013daa1dc0be915279c55c4bda868895e",
+  "branch": "codex/n12-gateway-client-0.1.3-20261112",
+  "pullRequest": "https://github.com/epistemedeus/neomorphic-io/pull/479",
+  "builder": "npm pack ./services/machine-gateway --ignore-scripts (deploy/RUNBOOK.md); the same command at 09d37501 reproduces 0.1.2 byte for byte",
+  "archiveSha256": "2ae4cf46486c06166eda3a1817493f38e23e789cda490eec548da748692dca52",
+  "bytes": 56488,
   "rights": {
     "notices": {
       "vendor/extractor/LICENSE": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c",
       "vendor/extractor/lockfile/LICENSE": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
     },
-    "noticesUnchanged": true,
-    "packageLicenseField": null,
-    "note": "Rights are carried exactly as received in 0.1.2. No license is added or inferred."
+    "noticesUnchangedFrom": "0.1.2",
+    "packageLicenseField": null
+  },
+  "supersededDiagnostic": {
+    "note": "A derived 0.1.3 (not built by the producer, never selected or deployed) existed only on samedaydesk@1199727f. One version has one byte sequence, so it is not carried here.",
+    "commit": "1199727fb014ad1a41fb294a322f852d274e28bf",
+    "path": "server/vendor/machine-gateway/releases/neomorphic-machine-gateway-0.1.3.tgz",
+    "sha256": "c8b62df2ff0bca12585f563250a6fb261a0085289146a8cb17b9ed2257fc43ea"
   },
   "files": {
-    "README.md": "71648262ed0194d3e1dc477a124efa6829128951fb8f2c383e8dc65561bd1178",
+    "README.md": "1f0c2e3f3a37430d19dea3eebe7a6a631800507157999637d86d4f7618364fe5",
     "SOURCE.json": "ff8feed9029d9aa60253133ce9b03ebeaecadc7169ad150190f275b1a5e4b94e",
     "bin/caller.mjs": "55576da6a5232e1727c68bb324f3d8102ed35c3a52319bfc5d7b3cee8673b54b",
     "bin/check.mjs": "a69d478c4de207e0346c80df8a8b26807186addc0b32c5f2252f0a7d14704042",
@@ -54,7 +30,7 @@
     "bin/enroll.mjs": "90a64fe5d3a1a2a471f726fd67e3fdab4246c7778f6412e17f648a2266d0a528",
     "bin/readiness.mjs": "74d654c413536669225e11f5f6f013dee838f0d119981cb6740a0f2a3903b845",
     "deploy/LAUNCH-INTEGRATION.md": "f5058c83ba09b91bdb99426e994370c345683e6d6332e90b1faedecfba1e39c4",
-    "deploy/RUNBOOK.md": "c1337c6f9051aebe9e374e09dc8fea78801db73108214b0ef8da256a6fda0758",
+    "deploy/RUNBOOK.md": "55a27fbed875dd1ae31aada3a53144e19cd7acf091e4d93ee60a9f5bb9f880c4",
     "deploy/hostinger.env.example": "2658434b5ca4e51ed7ce682a8e73cc86478b4519a1a35224ad05548e905ab24f",
     "deploy/hostinger.json": "8f101d4b16db19ab1b1bc8101e334812a4264b6293caf5e44902faef16a1f4cc",
     "deploy/samedaydesk.patch": "db4036b144fe016fc4da01f52502c588ef7b6598beeaa6d3f60e9f7ea5b2bcf4",
