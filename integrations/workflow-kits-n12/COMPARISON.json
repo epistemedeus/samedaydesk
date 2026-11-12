@@ -11,6 +11,7 @@
     "failureHandling: branches the platform itself evaluates (Make router routes with filters, n8n If nodes and Respond outcomes); exception typing comes from period.exception.code returned by the client endpoint.",
     "recovery: modules or nodes on the retry route and whether the replay reuses period.retry.sameIdempotencyKey.",
     "duplicateEffects: simulated lost reply through src/client-endpoint.mjs with the synthetic export fixtures: the same request evaluated twice and the accepted hand-off posted twice; counts extra acceptance effects plus extra hand-off deliveries.",
+    "direct: the same accepted, retry and changed-schema periods posted straight to src/client-endpoint.mjs with no workflow platform (scripts/direct-baseline.mjs); steps and retry steps are endpoint calls; measured by local simulation.",
     "Computed by scripts/compute-comparison.mjs; no live Make or n8n run is claimed."
   ],
   "rows": {
@@ -107,12 +108,148 @@
         "handOffDeliveries": 1,
         "duplicateEffects": 0
       }
+    },
+    "direct": {
+      "steps": "2 calls on the accepted path: POST /periods > POST /periods/accepted",
+      "failureHandling": "0 platform branches; the caller reads period.exception.code and period.retry.retryable (capture_stale retryable true, uncommitted retryable true, continuation_file_missing retryable false, schema_changed retryable false); typed period.exception.code from the SameDayDesk client endpoint (same vendored journey as native)",
+      "recovery": "1 call on the retry route (POST /periods with Idempotency-Key = period.retry.sameIdempotencyKey); replay recovered true, secondEffect false; uncommitted then committed on the same key true; changed schema recovered by the declared adapter later-period-output-keys.v1 on a new key",
+      "duplicateEffects": "0: 11 calls over 2 accepted keys gave 2 acceptance effects and 2 deliveries",
+      "source": "measured by local simulation: scripts/direct-baseline.mjs posts to src/client-endpoint.mjs with no workflow platform; synthetic fixtures; not a live run",
+      "measured": {
+        "acceptedPathSteps": 2,
+        "acceptedPath": [
+          "POST /periods",
+          "POST /periods/accepted"
+        ],
+        "retrySteps": 1,
+        "retryPath": [
+          "POST /periods with Idempotency-Key = period.retry.sameIdempotencyKey"
+        ],
+        "totalCalls": 11,
+        "acceptedKeys": 2,
+        "acceptanceEffects": 2,
+        "deliveries": 2,
+        "duplicateEffects": 0,
+        "periods": {
+          "staleCapture": {
+            "status": 200,
+            "decision": null,
+            "exception": "capture_stale",
+            "retryable": true,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "uncommitted": {
+            "status": 200,
+            "decision": "reject",
+            "exception": "uncommitted",
+            "retryable": true,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "accepted": {
+            "status": 200,
+            "decision": "accept",
+            "exception": null,
+            "retryable": false,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "handOff": {
+            "status": 201,
+            "decision": null,
+            "exception": null,
+            "retryable": null,
+            "recovered": null,
+            "secondEffect": null,
+            "duplicate": false,
+            "adapter": null
+          },
+          "replay": {
+            "status": 200,
+            "decision": "accept",
+            "exception": null,
+            "retryable": false,
+            "recovered": true,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "handOffAgain": {
+            "status": 200,
+            "decision": null,
+            "exception": null,
+            "retryable": null,
+            "recovered": null,
+            "secondEffect": null,
+            "duplicate": true,
+            "adapter": null
+          },
+          "nonRetryable": {
+            "status": 200,
+            "decision": null,
+            "exception": "continuation_file_missing",
+            "retryable": false,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "schemaChanged": {
+            "status": 200,
+            "decision": null,
+            "exception": "schema_changed",
+            "retryable": false,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": null
+          },
+          "adapted": {
+            "status": 200,
+            "decision": "accept",
+            "exception": null,
+            "retryable": false,
+            "recovered": false,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": "later-period-output-keys.v1"
+          },
+          "adaptedHandOff": {
+            "status": 201,
+            "decision": null,
+            "exception": null,
+            "retryable": null,
+            "recovered": null,
+            "secondEffect": null,
+            "duplicate": false,
+            "adapter": null
+          },
+          "adaptedReplay": {
+            "status": 200,
+            "decision": "accept",
+            "exception": null,
+            "retryable": false,
+            "recovered": true,
+            "secondEffect": false,
+            "duplicate": null,
+            "adapter": "later-period-output-keys.v1"
+          }
+        }
+      }
     }
   },
   "nativeVsDirect": [
     "Native row: vendored PR 684 recurring-journey COMPARISON_ROWS.native, unchanged (repo and sha in vendor/PINS.json).",
     "Both kits reach the same period.* as native because the client endpoint runs the same vendored journey; the platform adds trigger, shaping, routing and hand-off steps around it.",
     "Duplicate-effect protection comes from the request-digest idempotency key enforced by the client endpoint, not from Make or n8n. A platform-level retry that bypasses the endpoint would not be deduplicated by the platform.",
+    "Direct row: a caller posting to the client endpoint itself needs 2 calls on the accepted path and 1 on the retry route, with 0 duplicate effects; the platforms add trigger, shaping, routing and response steps around the same endpoint.",
     "Counts are from committed JSON and a local simulation, not from a live Make or n8n execution."
   ]
 }

@@ -40,13 +40,17 @@ Nothing was executed.
 
 ## Make
 
-No hosted import yet. The existing Make session is expired, and the Google
-sign-in for that account needs a phone approval, which is a physical factor.
-Nothing was created in Make, so there is nothing to clean up. A route through
-an existing session is being checked.
+No hosted import yet. The Google sign-in callback works, but Make does not keep
+the organization session afterwards; that diagnosis is still open. Nothing was
+created in Make, so there is nothing to clean up.
 
 ## VM receipt
 
 Frozen kit `783f0841` passed all 3 producer `--check` commands and 113/113 node tests
 (0 failed, 0 skipped) on Node 22.23.4. This was Root VM2, and the logs and RECEIPT
 are at `/home/ubuntu/n12-root-vm2-second-1124`.
+
+Kit `806ebd9efe60b41943814bfb87bb293ea0d7fc9d` passed all 3 producer checks and
+`npm test`, 115/115 (0 failed, 0 skipped) on Node 22.23.4, from
+2026-11-12T11:41:16.520Z to 2026-11-12T11:41:17.713Z. This was Root VM2, and the
+original is at `/home/ubuntu/n12-root-vm2-workflow-1144`.

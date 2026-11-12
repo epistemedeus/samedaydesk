@@ -9,3 +9,5 @@ export { SCHEMA_ADAPTERS, applyDeclaredSchemaAdapter } from "./src/schema-adapte
 export { EXIT_STATES, FLOWASSERT_PIN, mapExit, runFlowAssertCli, runPackagedCheck, withFlowAssert } from "./src/flowassert-bridge.mjs";
 export { createClientEndpoint } from "./src/client-endpoint.mjs";
 export { COMPARISON_COLUMNS, COMPARISON_ROWS } from "./src/vendor-paths.mjs";
+export { KIT_ARTIFACTS, artifactDigests, kitPath } from "./src/artifacts.mjs";
+export { DIRECT_CLOCK, DIRECT_SCHEMA_ADAPTER, runDirectJourney } from "./src/direct-journey.mjs";

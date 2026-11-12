@@ -1,22 +1,48 @@
 {
   "name": "@samedaydesk/workflow-kits-n12",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "SameDayDesk importable Make and n8n kits and client adapters for the recurring record-to-accepted-output journey.",
+  "license": "UNLICENSED",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
-    ".": "./index.mjs"
+    ".": "./index.mjs",
+    "./package.json": "./package.json",
+    "./make/*": "./make/*",
+    "./n8n/*": "./n8n/*",
+    "./fixtures/*": "./fixtures/*"
   },
+  "bin": {
+    "workflow-kits-n12": "./bin/workflow-kits-n12.mjs",
+    "workflow-kits-n12-serve": "./bin/serve.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "src/",
+    "bin/",
+    "make/",
+    "n8n/",
+    "fixtures/",
+    "vendor/",
+    "scripts/build-artifacts.mjs",
+    "scripts/direct-baseline.mjs",
+    "COMPARISON.json",
+    "README.md",
+    "LICENSE-NOTES.md"
+  ],
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
+  "dependencies": {},
   "scripts": {
     "test": "node --test",
+    "test:install": "node --test install-check/cold-install.mjs",
     "vendor:check": "node scripts/vendor-sync.mjs --check",
     "vendor:sync": "node scripts/vendor-sync.mjs --sync",
     "build": "node scripts/build-artifacts.mjs && node scripts/compute-comparison.mjs",
     "build:check": "node scripts/build-artifacts.mjs --check && node scripts/compute-comparison.mjs --check",
+    "direct": "node scripts/direct-baseline.mjs",
     "serve": "node bin/serve.mjs"
   }
 }

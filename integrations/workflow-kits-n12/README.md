@@ -26,23 +26,62 @@ commercial acceptance.
 | `src/flowassert-bridge.mjs` | Upstream FlowAssert, unchanged, kept separate from acceptance. |
 | `src/client-endpoint.mjs`, `bin/serve.mjs` | The client endpoint both kits post to. |
 | `vendor/` | Byte-exact copies of the job contract, the recurring journey and FlowAssert, listed with sha256 in `vendor/PINS.json`. |
-| `COMPARISON.json` | Make and n8n rows for steps, failureHandling, recovery and duplicateEffects, computed from the artifacts. |
+| `src/artifacts.mjs` | Paths and sha256 of the packaged Make and n8n files. |
+| `src/direct-journey.mjs`, `scripts/direct-baseline.mjs` | The direct route: the same periods posted straight to the client endpoint, with no workflow platform. |
+| `bin/workflow-kits-n12.mjs` | Command line: `hashes`, `paths`, `direct`, `serve`. |
+| `COMPARISON.json` | Make, n8n and direct rows for steps, failureHandling, recovery and duplicateEffects, computed from the artifacts and a local simulation. The native row is the vendored row, unchanged. |
+| `install-check/` | Cold-consumer install test (`npm run test:install`); not shipped in the tarball. |
+| `LICENSE-NOTES.md` | License notes for the kit and the vendored files. |
 | `VM-RUN.md` | Model-free commands for the official VM run. |
 | `IMPORTS.md` | Cloud import, readback and cleanup receipts, including the n8n Cloud QA import and the VM2 test receipt. |
 
 ## Install
 
-Node 22 or later. There are no dependencies and nothing to install.
+Node 20 or later (tested on Node 22). The package has zero runtime dependencies.
+
+Build the tarball from this folder, then install it into your project. No registry
+access is needed:
 
 ```sh
 cd integrations/workflow-kits-n12
-node --test
+npm pack                                   # writes samedaydesk-workflow-kits-n12-0.2.0.tgz
+cd /path/to/your-project
+npm install --no-audit --no-fund /path/to/samedaydesk-workflow-kits-n12-0.2.0.tgz
 ```
+
+The package is marked `private`, so it is installed from the tarball and is not
+published to a registry. See `LICENSE-NOTES.md`.
 
 Import from the package entry only:
 
 ```js
-import { fromMakeExecution, fromN8nExecution, runPeriod, createKitEffects } from "./index.mjs";
+import {
+  createClientEndpoint, createKitEffects, fromMakeExecution, fromN8nExecution,
+  runPeriod, artifactDigests, kitPath, runDirectJourney,
+} from "@samedaydesk/workflow-kits-n12";
+
+const blueprintPath = kitPath("make/record-to-accepted-output.blueprint.json");
+const workflowPath = kitPath("n8n/record-to-accepted-output.workflow.json");
+```
+
+The Make and n8n files also resolve as package subpaths, for example
+`import.meta.resolve("@samedaydesk/workflow-kits-n12/n8n/record-to-accepted-output.workflow.json")`.
+
+Command line, after install:
+
+```sh
+npx workflow-kits-n12 hashes   # bytes and sha256 of the packaged Make and n8n files
+npx workflow-kits-n12 paths    # absolute paths of those files, for import
+npx workflow-kits-n12 direct   # the direct journey, synthetic and in process
+npx workflow-kits-n12 serve    # the local client endpoint (127.0.0.1:8787)
+```
+
+Tests, from this folder:
+
+```sh
+npm test               # unit, adapter, artifact and doc tests; no install
+npm run test:install   # cold consumer: npm pack, npm install of the tarball, then
+                       # the public exports and the bin from a fresh project
 ```
 
 ## Import into Make

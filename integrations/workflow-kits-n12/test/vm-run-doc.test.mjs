@@ -20,6 +20,13 @@ describe("VM-RUN.md required block", () => {
     assert.match(required, /git rev-parse FETCH_HEAD/);
   });
 
+  test("runs npm test and the separate cold-consumer install check", () => {
+    assert.match(required, /^npm test /m);
+    assert.match(required, /^npm run test:install /m);
+    assert.equal(readJson("package.json").scripts["test:install"], "node --test install-check/cold-install.mjs");
+    assert.ok(existsSync(join(PKG_ROOT, "install-check/cold-install.mjs")));
+  });
+
   test("every script it runs exists", () => {
     for (const [, script] of required.matchAll(/^node (scripts\/[\w.-]+\.mjs)/gm)) {
       assert.ok(existsSync(join(PKG_ROOT, script)), script);
@@ -93,6 +100,9 @@ describe("IMPORTS.md receipts", () => {
     assert.match(imports, /No hosted import yet/);
     assert.match(imports, /113\/113 node tests/);
     assert.match(imports, /n12-root-vm2-second-1124/);
+    assert.match(imports, /806ebd9efe60b41943814bfb87bb293ea0d7fc9d/);
+    assert.match(imports, /115\/115/);
+    assert.match(imports, /n12-root-vm2-workflow-1144/);
   });
 
   test("states the meaning of import acceptance and has no go-ahead language", () => {

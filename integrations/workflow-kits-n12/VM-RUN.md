@@ -8,7 +8,8 @@ Run on the Cursor VM assigned by VM Console. No model calls are needed. Source:
 
 ```sh
 set -eu
-node --version                      # expect v22.x (tested locally on v22.23.2)
+node --version                      # expect v20 or later (VM-received on v22.23.4)
+npm --version                       # npm ships with Node; needed for test:install
 BRANCH=codex/n12-workflow-kits-20261112
 git clone --filter=blob:none --no-checkout https://github.com/epistemedeus/samedaydesk.git sds-wk-n12
 cd sds-wk-n12
@@ -22,14 +23,30 @@ cd integrations/workflow-kits-n12
 node scripts/vendor-sync.mjs --check
 node scripts/build-artifacts.mjs --check
 node scripts/compute-comparison.mjs --check
-node --test 2>&1 | tee ../../wk-n12-node-test.txt
+npm test 2>&1 | tee ../../wk-n12-npm-test.txt
+npm run test:install 2>&1 | tee ../../wk-n12-test-install.txt
 ```
 
 To pin a reported head, run with `HEAD_SHA=<sha>` set in the environment; otherwise the
 block checks out the tip of the fetched branch and prints it. Sparse checkout is set
 before the first checkout so only `integrations/workflow-kits-n12/` is materialised.
 
-`node --test` also runs the vendored PR 682 and PR 684 suites.
+`npm test` runs `node --test`, which also runs the vendored PR 682 and PR 684
+suites. It never packs or installs anything.
+
+`npm run test:install` is the cold-consumer install check
+(`install-check/cold-install.mjs`). It runs `npm pack` into a temporary folder,
+creates a fresh project there, runs `npm install --no-audit --no-fund <tgz>`
+(zero dependencies, so no registry access), then from that project imports the
+public exports and runs the `workflow-kits-n12` bin. It checks the packaged Make
+and n8n sha256 values, an accepted period, retryable `uncommitted` and
+`capture_stale` periods recovered on the same idempotency key with
+`secondEffect` false, the non-retryable `continuation_file_missing`, and the
+changed-schema later period (`schema_changed`, then the declared adapter) with no
+duplicate effect. It removes the temporary folder afterwards and skips with a
+message if npm is missing.
+
+To see the direct baseline row on its own: `node scripts/direct-baseline.mjs`.
 
 ## Optional: upstream FlowAssert CLI, pinned
 

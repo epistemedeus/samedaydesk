@@ -16,6 +16,7 @@ import { createClientEndpoint } from "../src/client-endpoint.mjs";
 import { fromMakeExecution } from "../src/make-adapter.mjs";
 import { fromN8nExecution } from "../src/n8n-adapter.mjs";
 import { buildWorkflowRequest } from "../src/workflow-request.mjs";
+import { directRow } from "./direct-baseline.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (rel) => JSON.parse(readFileSync(join(root, rel), "utf8"));
@@ -131,6 +132,7 @@ export function computeComparison() {
   const n8n = n8nMeasure(workflow);
   const makeDup = duplicateEffects(fromMakeExecution(readJson("fixtures/make/execution-period-n.json"), { clock: CLOCK }));
   const n8nDup = duplicateEffects(fromN8nExecution(readJson("fixtures/n8n/execution-period-n.json"), { clock: CLOCK }));
+  const direct = directRow();
   const codes = "typed period.exception.code from the SameDayDesk client endpoint (same vendored journey as native)";
   return {
     schema: "samedaydesk.workflow-kits-n12.comparison.v1",
@@ -140,6 +142,7 @@ export function computeComparison() {
       "failureHandling: branches the platform itself evaluates (Make router routes with filters, n8n If nodes and Respond outcomes); exception typing comes from period.exception.code returned by the client endpoint.",
       "recovery: modules or nodes on the retry route and whether the replay reuses period.retry.sameIdempotencyKey.",
       "duplicateEffects: simulated lost reply through src/client-endpoint.mjs with the synthetic export fixtures: the same request evaluated twice and the accepted hand-off posted twice; counts extra acceptance effects plus extra hand-off deliveries.",
+      "direct: the same accepted, retry and changed-schema periods posted straight to src/client-endpoint.mjs with no workflow platform (scripts/direct-baseline.mjs); steps and retry steps are endpoint calls; measured by local simulation.",
       "Computed by scripts/compute-comparison.mjs; no live Make or n8n run is claimed.",
     ],
     rows: {
@@ -158,11 +161,13 @@ export function computeComparison() {
         duplicateEffects: `${n8nDup.duplicateEffects}: ${n8nDup.evaluations} evaluations gave ${n8nDup.acceptanceEffects} acceptance effect (replay recovered ${n8nDup.replayRecovered}, secondEffect ${n8nDup.replaySecondEffect}); ${n8nDup.handOffPosts} hand-off posts gave ${n8nDup.handOffDeliveries} delivery`,
         measured: { ...n8n, ...n8nDup },
       },
+      direct,
     },
     nativeVsDirect: [
       "Native row: vendored PR 684 recurring-journey COMPARISON_ROWS.native, unchanged (repo and sha in vendor/PINS.json).",
       "Both kits reach the same period.* as native because the client endpoint runs the same vendored journey; the platform adds trigger, shaping, routing and hand-off steps around it.",
       "Duplicate-effect protection comes from the request-digest idempotency key enforced by the client endpoint, not from Make or n8n. A platform-level retry that bypasses the endpoint would not be deduplicated by the platform.",
+      `Direct row: a caller posting to the client endpoint itself needs ${direct.measured.acceptedPathSteps} calls on the accepted path and ${direct.measured.retrySteps} on the retry route, with ${direct.measured.duplicateEffects} duplicate effects; the platforms add trigger, shaping, routing and response steps around the same endpoint.`,
       "Counts are from committed JSON and a local simulation, not from a live Make or n8n execution.",
     ],
   };
