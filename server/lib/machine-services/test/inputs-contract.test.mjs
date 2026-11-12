@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { prepareMachineEnvironment } from '../deploy/environment-packet.mjs';
 import { EXTRACTION_SCHEMA } from '../extraction.mjs';
 import { SCHEMAS } from '../postgres.mjs';
+import { hash } from '../../../../vendor/visitor-foundry-receiver/scripts/visitor-foundry/capabilities/src/contracts.mjs';
 
 const deploy = fileURLToPath(new URL('../deploy/', import.meta.url));
 const repo = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -54,7 +55,27 @@ test('active deploy inputs match env.keys, install archives, and the extraction 
   assert.equal(inputs.environment.sqliteProduction, false);
   assert.equal(inputs.closure.replacesPriors, false);
   assert.equal(inputs.closure.preserved, true);
-  assert.equal(pin.receivedCallerClosures.length, pins.sourceQualification.priorCallerDescriptorsAccepted);
+  // Accepted caller closures are append-only (inputs.closure.replacesPriors false, preserved true).
+  // The first priorCallerDescriptorsAccepted entries are the set accepted at 2b8a9993 and must stay byte-identical;
+  // both recorded caller closure digests are members of that accepted prefix.
+  const closures = pin.receivedCallerClosures;
+  const accepted = pins.sourceQualification.priorCallerDescriptorsAccepted;
+  assert.ok(closures.length >= accepted);
+  const prefix = closures.slice(0, accepted);
+  assert.equal(hash(prefix), 'sha256:f1a1aa1858ecf967d5aa411667a0a8c1e63891a27e563bc0df21ff4481cc9419');
+  assert.ok(prefix.some(entry => entry.closureDigest === pins.sourceQualification.priorCallerClosureDigest));
+  assert.ok(prefix.some(entry => entry.closureDigest === pins.sourceQualification.callerClosureDigest));
+  // Entries past the accepted prefix are appended re-admissions of predecessor caller pins at the current source pin.
+  const sourcePin = pin.files['vendor/visitor-foundry-receiver/SOURCE-PIN.json'];
+  assert.match(sourcePin, /^[0-9a-f]{64}$/);
+  for (const entry of closures.slice(accepted)) {
+    assert.deepEqual(Object.keys(entry).sort(), ['base', 'closureDigest', 'sourcePinSha256']);
+    assert.match(entry.base, /^[0-9a-f]{40}$/);
+    assert.equal(entry.sourcePinSha256, sourcePin);
+    assert.match(entry.closureDigest, /^sha256:[0-9a-f]{64}$/);
+  }
+  assert.equal(new Set(closures.map(entry => entry.closureDigest)).size, closures.length);
+  assert.equal(closures.some(entry => entry.closureDigest === hash(pin)), false);
   assert.ok(pin.receivedCallerClosures.length >= 1);
 
   assert.equal(inputs.gateway.mountPrefix, '/api/machine-gateway');
