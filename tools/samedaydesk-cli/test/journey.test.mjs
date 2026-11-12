@@ -208,13 +208,54 @@ test("market discover --stream emits JSONL pages and a terminal record", async (
   assert.deepEqual(out[2], { schema: "samedaydesk.cli.stream.v1", type: "end", command: "market.discover", ok: true, pages: 2, count: 2, nextCursor: null });
 });
 
-test("market discover --stream failure ends with a resumable terminal record", async () => {
+test("market discover --stream transport failure ends with a resumable terminal record", async () => {
   const page = json(200, { ok: true, value: { items: [{ taskId: "a" }], nextCursor: "c1" } });
-  const { exit, out } = await run(["market", "discover", "--stream", "--limit", "1"], { answers: [page, json(400, { ok: false, code: "cursor_refused" })] });
-  assert.equal(exit, EXIT.input);
+  const down = () => json(503, { ok: false });
+  const { exit, out } = await run(["market", "discover", "--stream", "--limit", "1"], { answers: [page, down(), down(), down()] });
+  assert.equal(exit, EXIT.unavailable);
   const end = out.at(-1);
   assert.equal(end.type, "end");
   assert.equal(end.ok, false);
   assert.equal(end.resumeCursor, "c1");
-  assert.equal(end.error.code, "http_refused");
+  assert.equal(end.restartWithoutCursor, false);
+  assert.equal(end.error.code, "unavailable");
+});
+
+test("market cursor_refused (HTTP 400 with a cursor) is typed and says restart without the cursor", async () => {
+  // Live shape seen 2026-11-12: limit=1 returns nextCursor equal to the taskId, then 400 cursor_refused.
+  const refused = () => json(400, { ok: false, code: "cursor_refused" });
+  const page = json(200, { ok: true, value: { items: [{ taskId: "t1" }], nextCursor: "t1" } });
+  const streamed = await run(["market", "discover", "--stream", "--limit", "1"], { answers: [page, refused()] });
+  assert.equal(streamed.exit, EXIT.input);
+  assert.equal(streamed.calls.length, 2, "a refused cursor is not retried");
+  const end = streamed.out.at(-1);
+  assert.equal(end.error.code, "cursor_refused");
+  assert.equal(end.error.exit, 1);
+  assert.equal(end.error.retryable, false);
+  assert.equal(end.error.nextAction, "market discover (restart without --cursor)");
+  assert.equal(end.resumeCursor, null);
+  assert.equal(end.restartWithoutCursor, true);
+
+  const direct = await run(["market", "discover", "--cursor", "t1"], { answers: [refused()] });
+  assert.equal(direct.exit, EXIT.input);
+  assert.equal(direct.out[0].schema, "samedaydesk.cli.error.v1");
+  assert.equal(direct.out[0].error.code, "cursor_refused");
+  assert.equal(direct.out[0].error.evidence.cursorSent, true);
+  assert.equal(direct.out[0].error.evidence.httpStatus, 400);
+  assert.match(JSON.stringify(direct.err), /cursor_refused/);
+
+  // Recovery: restarting without the cursor succeeds.
+  const restart = await run(["market", "discover"], { answers: [json(200, { ok: true, value: { items: [{ taskId: "t1" }], nextCursor: null } })] });
+  assert.equal(restart.exit, EXIT.ok);
+  assert.ok(!restart.calls[0].url.includes("cursor="));
+
+  // Without a cursor, a 400 stays the generic http_refused.
+  const plain = await run(["market", "discover"], { answers: [refused()] });
+  assert.equal(plain.out[0].error.code, "http_refused");
+});
+
+test("manifest documents cursor_refused on market.discover", async () => {
+  const { out } = await run(["schema", "market.discover"]);
+  const entry = out[0].result.command.errors.find(item => item.code === "cursor_refused");
+  assert.deepEqual(entry, { code: "cursor_refused", when: "HTTP 400 on a request that carried a cursor", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" });
 });

@@ -187,7 +187,17 @@ const HANDLERS = {
     const pathFor = cursor => `/v1/market/discover?limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
     if (flags["dry-run"]) return plan(command, "GET", `${market}${pathFor(flags.cursor)}`);
     const page = async cursor => {
-      const { value } = await call(market, pathFor(cursor), { sleep: io.sleep });
+      let value;
+      try { ({ value } = await call(market, pathFor(cursor), { sleep: io.sleep })); }
+      catch (error) {
+        // client-io.request does not expose the 400 body, so the server's
+        // cursor_refused code is identified by status plus a sent cursor. Limit
+        // is validated locally, so a cursor is the only caller-controlled input left.
+        if (cursor && error instanceof CliError && error.code === "http_refused" && error.evidence?.httpStatus === 400) {
+          throw new CliError("cursor_refused", { ...error.evidence, cursorSent: true, serverCodeRead: false });
+        }
+        throw error;
+      }
       if (value?.ok !== true || !Array.isArray(value.value?.items)) throw new CliError("response_invalid");
       return value.value;
     };
@@ -206,7 +216,9 @@ const HANDLERS = {
       } while (cursor && pages < maxPages);
     } catch (error) {
       const described = describe(error);
-      await emit({ schema: STREAM_SCHEMA, type: "end", command: command.id, ok: false, pages, count, resumeCursor: cursor, error: described });
+      // A refused cursor is not resumable: restart pagination from the first page.
+      const refused = described.code === "cursor_refused";
+      await emit({ schema: STREAM_SCHEMA, type: "end", command: command.id, ok: false, pages, count, resumeCursor: refused ? null : cursor, restartWithoutCursor: refused, error: described });
       return { streamed: true, exit: described.exit };
     }
     await emit({ schema: STREAM_SCHEMA, type: "end", command: command.id, ok: true, pages, count, nextCursor: cursor });

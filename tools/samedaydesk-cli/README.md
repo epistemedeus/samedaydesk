@@ -37,3 +37,10 @@ anonymous preview: execution needs an operator-enrolled tenant bearer, which
 this version does not handle.
 
 Tests: `npm test` in this directory (node:test, injected fetch, no network).
+
+Clean-directory package: `npm run pack:clean -- /abs/out` stages the package with
+the exact machine-gateway client closure (hashes in
+`vendor/machine-gateway/CLOSURE.json`) and runs `npm pack`.
+
+Market pagination: HTTP 400 on a request that carried a cursor is
+`cursor_refused` (exit 1, not retried). Restart without `--cursor`.
