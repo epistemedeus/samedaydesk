@@ -29,8 +29,8 @@ const CODES = {
   route_unknown: ["input", false, "gateway routes"],
   host_refused: ["input", false, "schema"],
   http_refused: ["input", false, "schema"],
-  // Market HTTP 400 on a request that carried a cursor. Same code as the ae
-  // SERVER_CODES entry. Recovery: restart pagination without --cursor.
+  // Server refusal code from the market 400 body, kept verbatim in
+  // evidence.server. Same code as the ae SERVER_CODES entry. Never retried.
   cursor_refused: ["input", false, "market discover (restart without --cursor)"],
   absolute_private_file_required: ["input", false, "schema"],
   invalid_private_file: ["input", false, "schema"],

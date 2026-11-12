@@ -221,9 +221,9 @@ test("market discover --stream transport failure ends with a resumable terminal 
   assert.equal(end.error.code, "unavailable");
 });
 
-test("market cursor_refused (HTTP 400 with a cursor) is typed and says restart without the cursor", async () => {
+test("market cursor_refused keeps the server code and body, is not retried, and says restart without the cursor", async () => {
   // Live shape seen 2026-11-12: limit=1 returns nextCursor equal to the taskId, then 400 cursor_refused.
-  const refused = () => json(400, { ok: false, code: "cursor_refused" });
+  const refused = () => json(400, { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" });
   const page = json(200, { ok: true, value: { items: [{ taskId: "t1" }], nextCursor: "t1" } });
   const streamed = await run(["market", "discover", "--stream", "--limit", "1"], { answers: [page, refused()] });
   assert.equal(streamed.exit, EXIT.input);
@@ -240,7 +240,8 @@ test("market cursor_refused (HTTP 400 with a cursor) is typed and says restart w
   assert.equal(direct.exit, EXIT.input);
   assert.equal(direct.out[0].schema, "samedaydesk.cli.error.v1");
   assert.equal(direct.out[0].error.code, "cursor_refused");
-  assert.equal(direct.out[0].error.evidence.cursorSent, true);
+  assert.deepEqual(direct.out[0].error.evidence.server, { code: "cursor_refused", body: { ok: false, code: "cursor_refused", message: "cursor not accepted", nextStep: "restart" }, truncated: false });
+  assert.equal(end.error.evidence.server.code, "cursor_refused");
   assert.equal(direct.out[0].error.evidence.httpStatus, 400);
   assert.match(JSON.stringify(direct.err), /cursor_refused/);
 
@@ -249,13 +250,16 @@ test("market cursor_refused (HTTP 400 with a cursor) is typed and says restart w
   assert.equal(restart.exit, EXIT.ok);
   assert.ok(!restart.calls[0].url.includes("cursor="));
 
-  // Without a cursor, a 400 stays the generic http_refused.
-  const plain = await run(["market", "discover"], { answers: [refused()] });
-  assert.equal(plain.out[0].error.code, "http_refused");
+  // A different server code stays generic but is still surfaced verbatim.
+  const other = await run(["market", "discover"], { answers: [json(400, { ok: false, code: "limit_refused" })] });
+  assert.equal(other.out[0].error.code, "http_refused");
+  assert.equal(other.out[0].error.evidence.server.code, "limit_refused");
+  // globalThis.fetch is restored after each request.
+  assert.equal(typeof globalThis.fetch, "function");
 });
 
 test("manifest documents cursor_refused on market.discover", async () => {
   const { out } = await run(["schema", "market.discover"]);
   const entry = out[0].result.command.errors.find(item => item.code === "cursor_refused");
-  assert.deepEqual(entry, { code: "cursor_refused", when: "HTTP 400 on a request that carried a cursor", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" });
+  assert.deepEqual(entry, { code: "cursor_refused", when: "server answered with code cursor_refused (HTTP 400); evidence.server keeps the original code and body", exit: 1, retryable: false, nextAction: "market discover (restart without --cursor)" });
 });

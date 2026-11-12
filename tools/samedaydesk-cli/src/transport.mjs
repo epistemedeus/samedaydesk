@@ -6,6 +6,55 @@ import { request } from "../../../server/vendor/machine-gateway/bin/client-io.mj
 import { CliError } from "./errors.mjs";
 
 export const RETRY = Object.freeze({ attempts: 3, baseDelayMs: 200, maxDelayMs: 2000 });
+export const SERVER_BODY_MAX_BYTES = 16384;
+const SERVER_CODE_RE = /^[a-z][a-z0-9_]{0,63}$/;
+
+// client-io.request throws gateway_http_<status> and does not read a non-2xx
+// body. To keep the server's own refusal visible without changing client-io
+// and without a second request, the CLI observes the same Response for the
+// duration of one request() call and keeps a clone when it is a non-2xx JSON
+// answer. The clone is read once, bounded, and returned as data only.
+async function observed(run) {
+  const original = globalThis.fetch;
+  let refusal = null;
+  globalThis.fetch = async (...args) => {
+    const response = await original(...args);
+    if (!response.ok && response.headers.get("content-type")?.includes("application/json")) refusal = response.clone();
+    return response;
+  };
+  try {
+    return { value: await run(), refusal: null };
+  } catch (error) {
+    return { error, refusal };
+  } finally {
+    globalThis.fetch = original;
+  }
+}
+
+export async function readServerRefusal(response) {
+  if (!response?.body) return null;
+  const reader = response.body.getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      const next = await reader.read();
+      if (next.done) break;
+      size += next.value.byteLength;
+      if (size > SERVER_BODY_MAX_BYTES) { await reader.cancel(); return { code: null, body: null, truncated: true }; }
+      chunks.push(Buffer.from(next.value));
+    }
+  } catch { return null; } finally { try { reader.releaseLock(); } catch {} }
+  let body;
+  try { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { return { code: null, body: null, truncated: false }; }
+  const code = typeof body?.code === "string" && SERVER_CODE_RE.test(body.code) ? body.code
+    : typeof body?.error === "string" && SERVER_CODE_RE.test(body.error) ? body.error : null;
+  return { code, body, truncated: false };
+}
+
+// Server refusal codes the CLI types directly. The server code is always kept
+// in evidence.server, typed or not.
+const TYPED_SERVER_CODES = new Set(["cursor_refused"]);
 
 export function classify(error) {
   if (error instanceof CliError) return error;
@@ -36,12 +85,13 @@ export async function call(base, path, { body, sleep = defaultSleep, retry = RET
   const attempts = method === "GET" ? retry.attempts : 1;
   let last;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const value = await request(base, path, body === undefined ? {} : { body });
-      return { value, attempts: attempt };
-    } catch (error) {
-      last = classify(error);
-      last.evidence = { ...(last.evidence || {}), method, attempts: attempt };
+    const outcome = await observed(() => request(base, path, body === undefined ? {} : { body }));
+    if (!outcome.error) return { value: outcome.value, attempts: attempt };
+    {
+      const server = outcome.refusal ? await readServerRefusal(outcome.refusal) : null;
+      last = classify(outcome.error);
+      if (server?.code && TYPED_SERVER_CODES.has(server.code) && last.code === "http_refused") last = new CliError(server.code, last.evidence);
+      last.evidence = { ...(last.evidence || {}), method, attempts: attempt, ...(server ? { server } : {}) };
       if (!RETRYABLE.has(last.code) || attempt === attempts) break;
       await sleep(Math.min(retry.maxDelayMs, retry.baseDelayMs * 2 ** (attempt - 1)));
     }
