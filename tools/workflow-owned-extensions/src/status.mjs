@@ -108,6 +108,8 @@ export function extensionRecord({
   previousVersions = [],
   removed = false,
   removedAt = null,
+  site,
+  sourceCommit,
 } = {}) {
   const resolved = resolveConsumer(consumer);
   if (!resolved.ok) return resolved;
@@ -116,7 +118,7 @@ export function extensionRecord({
   if (typeof clock !== "string" || Number.isNaN(Date.parse(clock))) {
     return { ok: false, message: "extension records require an explicit ISO-UTC clock" };
   }
-  return {
+  const built = {
     ok: true,
     record: {
       schema: EXTENSION_SCHEMA,
@@ -141,4 +143,7 @@ export function extensionRecord({
       removedAt,
     },
   };
+  if (typeof site === "string" && site) built.record.site = site;
+  if (typeof sourceCommit === "string" && sourceCommit) built.record.sourceCommit = sourceCommit;
+  return built;
 }
