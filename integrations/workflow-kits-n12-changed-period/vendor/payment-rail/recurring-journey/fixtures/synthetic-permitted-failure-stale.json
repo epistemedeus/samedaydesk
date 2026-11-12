@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "label": "synthetic permitted-failure / counterexample",
+  "notice": "Permitted stale-capture counterexample fixture. Not a live outage and not an assumed customer.",
+  "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "captureId": "cap-synthetic-stale",
+  "subject": "synthetic-csv-header-record",
+  "capturedAt": "2026-11-10T09:00:00.000Z",
+  "sourceUri": "https://seller.example/synthetic-recurring-record",
+  "payload": {
+    "title": "Synthetic: convert a CSV header row to JSON keys",
+    "status": "complete",
+    "output": [
+      "order_id",
+      "ship_date"
+    ]
+  },
+  "permission": {
+    "permitted": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@samedaydesk/workflow-kits-n12-changed-period",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SameDayDesk importable Make and n8n recipe for a materially changed later period: declared record mapping, rerun without double-apply, preserved accepted terms.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json",
+    "./make/*": "./make/*",
+    "./n8n/*": "./n8n/*",
+    "./fixtures/*": "./fixtures/*",
+    "./config/*": "./config/*"
+  },
+  "bin": {
+    "workflow-kits-n12-changed-period": "./bin/workflow-kits-n12-changed-period.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "src/",
+    "bin/",
+    "config/",
+    "make/",
+    "n8n/",
+    "fixtures/",
+    "vendor/",
+    "scripts/build-artifacts.mjs",
+    "scripts/compute-effort.mjs",
+    "EFFORT.json",
+    "OBSERVATIONS.json",
+    "OBSERVATIONS.md",
+    "README.md",
+    "LICENSE-NOTES.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "node --test test/*.test.mjs vendor/payment-rail/recurring-journey/*.test.mjs vendor/payment-rail/job-contract/*.test.mjs",
+    "test:install": "node --test install-check/cold-install.mjs",
+    "vendor:check": "node scripts/vendor-sync.mjs --check",
+    "vendor:sync": "node scripts/vendor-sync.mjs --sync",
+    "build": "node scripts/build-artifacts.mjs && node scripts/compute-effort.mjs",
+    "build:check": "node scripts/build-artifacts.mjs --check && node scripts/compute-effort.mjs --check",
+    "validate": "node bin/workflow-kits-n12-changed-period.mjs validate"
+  }
+}

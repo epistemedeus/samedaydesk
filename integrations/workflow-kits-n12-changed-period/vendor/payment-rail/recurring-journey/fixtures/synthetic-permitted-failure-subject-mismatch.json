@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "label": "synthetic permitted-failure / counterexample",
+  "notice": "Permitted Agent Entry refusal shape from CALLER-EXAMPLES.md at pilot-heavy-relay 3007012257ef1ca6adf75e0fa26afffde60124a7. Not a live continuation or token.",
+  "ok": false,
+  "charged": false,
+  "paymentRequired": false,
+  "error": "continuation_subject_mismatch",
+  "code": "continuation_subject_mismatch",
+  "message": "after observation is not for the same sources",
+  "nextMethod": "tools/call",
+  "nextTool": "compare_page_observations",
+  "nextStep": "Send the held after observation of the saved step as before, the same fields, and a new after for the same sources."
+}
