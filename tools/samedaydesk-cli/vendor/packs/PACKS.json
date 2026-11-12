@@ -8,11 +8,21 @@
       "sha256": null,
       "status": "awaiting_tgz",
       "sourceRepo": "epistemedeus/x402-url-extractor",
-      "sourceSha": "60c8e161c6694df6da6f8476e87f29794954c136",
+      "sourceSha": "967ec6a29a593b41e846b7b9004cbd5ad4c6b908",
       "sourcePath": "packs/samedaydesk-capability-compat",
       "sourcePr": "https://github.com/epistemedeus/x402-url-extractor/pull/274",
       "owner": "Compatibility Knowledge Nov12",
-      "use": "Consume-only capability provider (describeCapabilities). Not a dependency yet. The install test stays skipped while sha256 is null; null never matches."
+      "use": "Consume-only capability provider (describeCapabilities). Not a dependency yet. The install test stays skipped while the tgz sha256 is null; null never matches. After install, the installed schema file must hash to schemas[0].sha256.",
+      "schemas": [
+        {
+          "export": "samedaydesk-capability-compat/schema/preview.v1",
+          "path": "schema/capability-provider.preview.v1.schema.json",
+          "sourcePath": "packs/samedaydesk-capability-compat/schema/capability-provider.preview.v1.schema.json",
+          "sha256": "7ca5b23a84683ca24d2140d0dfa81a5de23ff583f247626c3f53a3b549d824e2",
+          "gitBlob": "1bb26379ab34048726c6e4b9ca424a7d2d30f701",
+          "verifiedAt": "2026-11-12T11:17:00Z"
+        }
+      ]
     }
   ]
 }

@@ -100,10 +100,25 @@ export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze
   schemaRefs: SCHEMA_REFS[command.id] ?? [],
 })));
 
+// Consume-only capability providers. Their output schema is referenced by
+// package export and sha256, never copied. Not installed in this version.
+export const PROVIDERS = Object.freeze([Object.freeze({
+  id: "samedaydesk-capability-compat",
+  version: "0.1.0",
+  status: "not_installed",
+  entry: "describeCapabilities",
+  output: "samedaydesk.capability-provider.preview.v1",
+  schemaRef: "samedaydesk-capability-compat/schema/preview.v1",
+  schemaFile: "packs/samedaydesk-capability-compat/schema/capability-provider.preview.v1.schema.json",
+  schemaSha256: "7ca5b23a84683ca24d2140d0dfa81a5de23ff583f247626c3f53a3b549d824e2",
+  source: "epistemedeus/x402-url-extractor@967ec6a29a593b41e846b7b9004cbd5ad4c6b908",
+  pin: "vendor/packs/PACKS.json",
+})]);
+
 // Thin task manifest: curated tasks mapped to component commands and their
 // wire operation ids. Wire ids are preserved, not renamed.
 export const TASKS = Object.freeze([
-  { id: "task.find_capability", summary: "Find a useful current capability and its health.", steps: ["capabilities", "gateway.routes"] },
+  { id: "task.find_capability", summary: "Find a useful current capability and its health.", steps: ["capabilities", "gateway.routes"], providerRefs: ["samedaydesk-capability-compat"] },
   { id: "task.inspect_inputs_and_cost", summary: "Read exact inputs and outputs, then a remote anonymous quote.", steps: ["gateway.schema", "gateway.quote"] },
   { id: "task.free_readiness", summary: "Run the free readiness check and save a recoverable record.", steps: ["readiness.check"] },
   { id: "task.recover_result", summary: "Recover a saved result offline after a lost process or stdout.", steps: ["result.show"] },
@@ -135,6 +150,7 @@ export function manifest(version, group) {
     credentialSources: ["none in this version"],
     groups: GROUPS,
     recoveryClasses: RECOVERY_CLASSES,
+    providers: PROVIDERS,
     tasks: TASKS,
     commands: group ? COMMANDS.filter(command => command.group === group) : COMMANDS,
   };

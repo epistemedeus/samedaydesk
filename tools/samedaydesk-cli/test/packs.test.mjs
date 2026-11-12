@@ -11,7 +11,8 @@ export const packMatches = (entry, sha256) => typeof entry.sha256 === "string" &
 test("capability-compat pack entry is a placeholder until its tgz sha256 is recorded", () => {
   const entry = packs.packs.find(item => item.name === "samedaydesk-capability-compat");
   assert.equal(entry.version, "0.1.0");
-  assert.equal(entry.sourceSha, "60c8e161c6694df6da6f8476e87f29794954c136");
+  assert.equal(entry.sourceSha, "967ec6a29a593b41e846b7b9004cbd5ad4c6b908");
+  assert.deepEqual(entry.schemas.map(item => [item.export, item.sha256]), [["samedaydesk-capability-compat/schema/preview.v1", "7ca5b23a84683ca24d2140d0dfa81a5de23ff583f247626c3f53a3b549d824e2"]]);
   if (entry.sha256 === null) {
     assert.equal(entry.status, "awaiting_tgz");
     assert.equal(packMatches(entry, null), false);
@@ -21,4 +22,17 @@ test("capability-compat pack entry is a placeholder until its tgz sha256 is reco
   }
   const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   assert.equal(pkg.dependencies, undefined, "no runtime dependency yet");
+});
+
+test("manifest references the provider schema by export and hash, matching PACKS.json, without copying it", async () => {
+  const { PROVIDERS, TASKS } = await import("../src/manifest.mjs");
+  const entry = packs.packs.find(item => item.name === "samedaydesk-capability-compat");
+  const provider = PROVIDERS.find(item => item.id === entry.name);
+  assert.equal(provider.schemaRef, entry.schemas[0].export);
+  assert.equal(provider.schemaSha256, entry.schemas[0].sha256);
+  assert.equal(provider.source, `${entry.sourceRepo}@${entry.sourceSha}`);
+  assert.ok(TASKS.find(task => task.id === "task.find_capability").providerRefs.includes(provider.id));
+  const { readdirSync } = await import("node:fs");
+  const all = dir => readdirSync(join(root, dir), { withFileTypes: true }).flatMap(item => item.isDirectory() ? all(join(dir, item.name)) : [join(dir, item.name)]);
+  assert.deepEqual(all(".").filter(path => path.endsWith(".schema.json")), [], "schema is referenced, not vendored");
 });
