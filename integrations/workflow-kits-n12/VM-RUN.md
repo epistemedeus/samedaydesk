@@ -82,9 +82,12 @@ http://127.0.0.1:5678 and repeat the POST. Export the execution with
 `npx n8n@2.46.4 export:workflow --id=sdsWkN12Rta00001` and the execution JSON from the
 public API if enabled, and keep `serve.log` and `n8n.log`.
 
-Cloud import, readback and cleanup evidence, when an operator does it, goes in
+Cloud import, readback and cleanup evidence is recorded in
 [IMPORTS.md](IMPORTS.md).
 
-## Not run here
+## Cloud import status
 
-No Make or n8n Cloud import. That needs the operator's explicit go-ahead.
+An n8n Cloud QA import of the workflow was created, read back and deleted;
+nothing was executed. There is no hosted Make import yet. Import acceptance
+means the workflow was imported, read back and deleted. It is not an executed
+hosted workflow, and it is not paid or commercial acceptance.

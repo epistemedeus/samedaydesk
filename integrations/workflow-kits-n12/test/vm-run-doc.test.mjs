@@ -68,14 +68,37 @@ describe("VM-RUN.md optional n8n step resolves", () => {
   });
 });
 
-describe("IMPORTS.md receipt template", () => {
+describe("IMPORTS.md receipts", () => {
   const imports = readText("IMPORTS.md");
-  test("has the required fields and no filled values", () => {
-    for (const f of ["Platform", "File sha256", "Import time", "Readback time", "Active", "Import warnings", "Cleanup time", "Confirmation"]) {
-      assert.match(imports, new RegExp(`\\| ${f}`), f);
-    }
-    for (const label of ["Workflow id", "Scenario id", "Import time", "Cleanup time"]) {
-      for (const row of imports.split("\n").filter((l) => l.startsWith(`| ${label} `))) assert.match(row, /\| TBD/, row);
-    }
+
+  test("records the n8n Cloud QA import, readback and cleanup", () => {
+    assert.match(imports, /n8n Cloud QA import, received/);
+    assert.match(imports, /783f0841d56a44acd4dcce1b5a29a5060e04824b/);
+    assert.match(imports, /n8n\/record-to-accepted-output\.workflow\.json/);
+    assert.match(imports, /119262 bytes/);
+    assert.match(imports, /4a7d556b9720a64637bb1811b48284035a37a2f063961d7351559bdba694362b/);
+    assert.match(imports, /CREATE 200/);
+    assert.match(imports, /2026-11-12T11:24:30\.213Z/);
+    assert.match(imports, /0ouvpy0FyuZ1WkIe/);
+    assert.match(imports, /GET 200/);
+    assert.match(imports, /15 nodes/);
+    assert.match(imports, /active` false/);
+    assert.match(imports, /DELETE 200/);
+    assert.match(imports, /GET 404/);
+    assert.match(imports, /2026-11-12T11:24:34\.609Z/);
+    assert.match(imports, /Nothing was executed/);
+  });
+
+  test("records that Make has no hosted import and that VM2 passed the kit tests", () => {
+    assert.match(imports, /No hosted import yet/);
+    assert.match(imports, /113\/113 node tests/);
+    assert.match(imports, /n12-root-vm2-second-1124/);
+  });
+
+  test("states the meaning of import acceptance and has no go-ahead language", () => {
+    assert.match(imports, /import acceptance means the workflow was imported, read back and deleted/i);
+    assert.match(imports, /not an executed hosted workflow/);
+    assert.match(imports, /not paid or commercial acceptance/);
+    assert.doesNotMatch(imports, /go-ahead/i);
   });
 });

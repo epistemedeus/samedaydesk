@@ -6,8 +6,12 @@ fields, and posts its output with the record evidence to the SameDayDesk client
 endpoint. The endpoint runs the frozen journey and returns `period.*`. The workflow
 then routes on that result.
 
-Status: source only. Nothing here has been imported into Make or n8n Cloud. The tests
-use synthetic fixtures. No buyer, payment or live run is claimed.
+Status: source kits plus recorded import evidence. An n8n Cloud QA import of the
+workflow was created, read back and deleted; nothing was executed. There is no
+hosted Make import yet. The tests use synthetic fixtures. No buyer, payment or
+live run is claimed. Import acceptance means the workflow was imported, read
+back and deleted. It is not an executed hosted workflow, and it is not paid or
+commercial acceptance.
 
 ## Contents
 
@@ -24,7 +28,7 @@ use synthetic fixtures. No buyer, payment or live run is claimed.
 | `vendor/` | Byte-exact copies of the job contract, the recurring journey and FlowAssert, listed with sha256 in `vendor/PINS.json`. |
 | `COMPARISON.json` | Make and n8n rows for steps, failureHandling, recovery and duplicateEffects, computed from the artifacts. |
 | `VM-RUN.md` | Model-free commands for the official VM run. |
-| `IMPORTS.md` | Receipt template for cloud import, readback and cleanup evidence (unfilled). |
+| `IMPORTS.md` | Cloud import, readback and cleanup receipts, including the n8n Cloud QA import and the VM2 test receipt. |
 
 ## Install
 
@@ -153,9 +157,10 @@ node --test
 
 ## Limits
 
-- Not run on Make or n8n Cloud. The Make execution-export envelope is this kit's
-  documented shape, built from per-module output bundles, and has not been compared
-  with a live Make export.
+- No hosted Make import yet, and no executed hosted workflow. The n8n Cloud QA
+  import was created, read back and deleted; see `IMPORTS.md`. The Make
+  execution-export envelope is this kit's documented shape, built from
+  per-module output bundles, and has not been compared with a live Make export.
 - The blueprint ships with `hook: null` and placeholder endpoint URLs.
 - Make filter operators and module versions follow published blueprint conventions;
   a live import is the confirmation.
