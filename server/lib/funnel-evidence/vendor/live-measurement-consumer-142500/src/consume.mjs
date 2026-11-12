@@ -1,4 +1,5 @@
 import { projectFunnel } from "../../funnel-decision-projection-141100/src/project.mjs";
+import { matchesCheckedUnit } from "./settlement-unit-map.mjs";
 import {
   ENTRY_URL,
   PAYMENT_URL,
@@ -145,6 +146,31 @@ export function comparePlanes(older, newer) {
   };
 }
 
+function qualifiedKey(payment) {
+  const unit = payment?.unit;
+  if (!unit || unit.decision !== "qualified" || unit.comparable !== true || !matchesCheckedUnit(unit)) return null;
+  if (!Number.isInteger(unit.decimals) || typeof unit.network !== "string" || typeof unit.asset !== "string" || typeof unit.symbol !== "string") return null;
+  return `${unit.network}|${unit.asset.toLowerCase()}|${unit.decimals}|${unit.symbol}`;
+}
+
+function sameQualifiedUnit(older, newer) {
+  const left = qualifiedKey(older);
+  return Boolean(left && left === qualifiedKey(newer));
+}
+
+function hasUnitEvidence(payment) {
+  return Boolean(payment?.unit?.decision && payment.unit.decision !== "absent");
+}
+
+function atomicDelta(newer, older) {
+  if (typeof newer !== "string" || typeof older !== "string" || !/^\d+$/.test(newer) || !/^\d+$/.test(older)) return null;
+  try {
+    return (BigInt(newer) - BigInt(older)).toString();
+  } catch {
+    return null;
+  }
+}
+
 function comparePayment(older, newer) {
   const base = {
     compatible: false,
@@ -156,6 +182,11 @@ function comparePayment(older, newer) {
     retainedActorDelta: null,
     currency: null,
     currencies: [older?.currency, newer?.currency].filter((value, index, list) => value && list.indexOf(value) === index),
+    unitDecision: "absent",
+    unitSymbol: null,
+    unitNetwork: null,
+    unitAsset: null,
+    unitDecimals: null,
     olderCumulative: older?.cumulative?.reconciledSettlements ?? null,
     newerCumulative: newer?.cumulative?.reconciledSettlements ?? null,
     olderAmountAtomic: older?.cumulative?.amountAtomic ?? null,
@@ -184,10 +215,19 @@ function comparePayment(older, newer) {
   const sameCurrency = older.currency && older.currency === newer.currency;
   base.currency = sameCurrency ? older.currency : null;
   base.currencies = [older.currency, newer.currency].filter((value, index, list) => value && list.indexOf(value) === index);
-  if (!sameCurrency) base.amountDelta = null;
-  else if (older.cumulative.amountAtomic && newer.cumulative.amountAtomic) {
-    base.amountDelta = (BigInt(newer.cumulative.amountAtomic) - BigInt(older.cumulative.amountAtomic)).toString();
-  }
+  const qualified = sameQualifiedUnit(older, newer);
+  if (qualified) {
+    base.unitDecision = "same_qualified_unit";
+    base.unitSymbol = older.unit.symbol;
+    base.unitNetwork = older.unit.network;
+    base.unitAsset = older.unit.asset;
+    base.unitDecimals = older.unit.decimals;
+    base.amountDelta = atomicDelta(newer.cumulative.amountAtomic, older.cumulative.amountAtomic);
+  } else if (hasUnitEvidence(older) || hasUnitEvidence(newer)) {
+    base.unitDecision = older.unit?.decision === "stale_cut" || newer.unit?.decision === "stale_cut" ? "stale_cut" : "not_comparable";
+    base.amountDelta = null;
+  } else if (!sameCurrency) base.amountDelta = null;
+  else base.amountDelta = atomicDelta(newer.cumulative.amountAtomic, older.cumulative.amountAtomic);
   if (windowsKnown && !sameWindow) base.windowInterpretation = "window_mismatch";
   else if (!windowsKnown || older.requestedWindow?.complete !== true || newer.requestedWindow?.complete !== true) base.windowInterpretation = "window_unknown";
   else base.windowInterpretation = "same_window";
@@ -339,6 +379,14 @@ export async function readPublicOnce(options = {}) {
   return assertClean(readout);
 }
 
+function unitPhrase(unit) {
+  if (!unit || !unit.decision || unit.decision === "absent") return "unit absent";
+  if (unit.decision === "qualified" && unit.comparable === true) {
+    return `unit qualified ${unit.symbol} ${unit.network} decimals ${unit.decimals}`;
+  }
+  return `unit ${unit.decision}`;
+}
+
 export function renderReadout(result) {
   const payment = result.payment || result.newer?.payment;
   const ein = result.ein || result.newer?.ein;
@@ -351,7 +399,7 @@ export function renderReadout(result) {
     `reasons: ${(decision?.reasons || []).join(", ") || "none"}`,
     "",
     payment?.status === "observed"
-      ? `Payment cumulative reconciled ${payment.cumulative.reconciledSettlements}, amount atomic ${payment.cumulative.amountAtomic}, currency ${payment.cumulative.currency || "unknown"}, baseline ${payment.cumulative.baseline}`
+      ? `Payment cumulative reconciled ${payment.cumulative.reconciledSettlements}, amount atomic ${payment.cumulative.amountAtomic}, currency ${payment.cumulative.currency || "unknown"}, ${unitPhrase(payment.unit)}, baseline ${payment.cumulative.baseline}`
       : `Payment ${payment?.status || "absent"}`,
     payment?.status === "observed"
       ? `Requested window coverage ${payment.requestedWindow.coverage || "unknown"}, complete ${payment.requestedWindow.complete}, paid actors ${payment.eventPlane.requestedWindowPaidSuccessActors}`
@@ -361,6 +409,9 @@ export function renderReadout(result) {
       : `EIN ${ein?.status || "absent"}`,
     "Recognized income unknown",
     "Customers unknown",
+    ...(result.comparison?.payment
+      ? [`Compared unit ${result.comparison.payment.unitDecision}, amount delta atomic ${result.comparison.payment.amountDelta ?? "unknown"}`]
+      : []),
     "",
     "Next action",
     result.nextAction.action,
