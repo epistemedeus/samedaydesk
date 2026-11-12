@@ -6,6 +6,8 @@ import { boundedJson, digest } from "../../../server/vendor/machine-gateway/src/
 import { discovery as discoveryLabel, measurementRecord, mintCorrelationId, stepEventId } from "../vendor/task-continuation/index.mjs";
 import { CliError, describe } from "./errors.mjs";
 import { call as defaultCall, createTransport } from "./transport.mjs";
+import { loadCredential } from "./auth.mjs";
+import { runBatch } from "./batch.mjs";
 import { bashCompletion, fishCompletion, helpFor, zshCompletion } from "./generate.mjs";
 import {
   COMMANDS, DEFAULT_ORIGIN, ERROR_SCHEMA, GATEWAY_PATH, GROUPS, MARKET_PATH, RECORD_SCHEMA, RESULT_SCHEMA, STREAM_SCHEMA,
@@ -309,6 +311,14 @@ const HANDLERS = {
     }
     return { ...record, saved };
   },
+  "batch.run": async ({ flags, io }) => {
+    if (!flags["dry-run"] && flags["state-dir"] === undefined) throw new CliError("input_required", { flag: "state-dir" });
+    const origin = originOf(flags);
+    const bases = { origin, gateway: gatewayBase(flags), market: `${origin}${MARKET_PATH}` };
+    const credential = await loadCredential(flags, { origin, scopePath: GATEWAY_PATH, stdin: io.stdin });
+    return runBatch(flags, { origin, bases, credential, transport: io.transport, stdin: io.stdin, stdout: io.stdout, stderr: io.stderr,
+      signal: io.signal, now: io.now, sleep: io.sleep, cliVersion: CLI_VERSION });
+  },
   "result.show": async ({ flags }) => {
     let record;
     try { record = JSON.parse(privateText(flags.file)); }
@@ -333,7 +343,7 @@ export async function main(argv, io = {}) {
   const stdout = io.stdout ?? process.stdout;
   const stderr = io.stderr ?? process.stderr;
   const transport = io.clientIo ? createTransport(io.clientIo) : { call: defaultCall };
-  const context = { stdin: io.stdin ?? process.stdin, sleep: io.sleep, now: io.now ?? (() => new Date()), signal: io.signal,
+  const context = { stdin: io.stdin ?? process.stdin, stdout, stderr, transport, sleep: io.sleep, now: io.now ?? (() => new Date()), signal: io.signal,
     call: (base, path, options = {}) => transport.call(base, path, { ...options, signal: io.signal }) };
   // A lost stdout consumer does not cancel anything; it only ends output.
   stdout.on?.("error", () => {});

@@ -8,6 +8,9 @@ export const RECORD_SCHEMA = "samedaydesk.cli.readiness-record.v1";
 export const DEFAULT_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_PATH = "/api/machine-gateway";
 export const MARKET_PATH = "/api/neomorphic-contributor-journey";
+import { BATCH_LIMITS, BATCH_SCHEMA, batchOpsDescription } from "./batch.mjs";
+import { CREDENTIAL_FLAGS, CREDENTIAL_SCOPE, CREDENTIAL_SOURCES } from "./auth.mjs";
+import { EXIT } from "./errors.mjs";
 
 const ORIGIN_FLAGS = {
   origin: { type: "string", required: false, description: "https origin. Default https://samedaydesk.com." },
@@ -25,6 +28,7 @@ export const GROUPS = Object.freeze([
   { id: "gateway", summary: "Machine-gateway routes: schemas, labeled fixture and anonymous quote preview." },
   { id: "market", summary: "Public machine-market profile and listing reads." },
   { id: "readiness", summary: "Free agent-readiness check with a saved, recoverable result." },
+  { id: "batch", summary: "Bounded JSONL batches of the supported read and readiness operations with persisted per-item recovery." },
 ]);
 
 const BASE_COMMANDS = [
@@ -64,6 +68,29 @@ const BASE_COMMANDS = [
   { id: "readiness.check", argv: ["readiness", "check"], group: "readiness", summary: "Free agent-readiness report for a public host. Same operation as MCP check_agent_readiness.", effect: "read", auth: "none",
     flags: { host: { type: "string", required: true, pattern: "^(?=.{1,253}$)[a-z0-9-]+(\\.[a-z0-9-]+)+$", description: "Public host, for example example.com." }, out: { type: "string", required: false, description: "Absolute path for a new 0600 result record." }, discovery: { type: "string", required: false, enum: ["mcp", "a2a", "llms-txt", "skill-md", "openapi", "registry", "search", "referral", "operator"], description: "Caller-declared acquisition label. Recorded as declared, never observed." }, ...ORIGIN_FLAGS },
     http: [{ method: "GET", path: "/agent-readiness?host={host}&format=json", operationId: "check_agent_readiness" }], output: "agent-readiness.report.v1", retry: "bounded_get", recovery: "result show --file OUT, or rerun the GET" },
+  { id: "batch.run", argv: ["batch", "run"], group: "batch", summary: "Run a JSONL batch of supported reads. One JSONL record per item plus start and summary records; per-item state persisted before dispatch; rerun skips completed items.", effect: "read", auth: "optional_tenant",
+    flags: {
+      "input-file": { type: "string", required: true, description: "JSONL items file, or - for stdin. Each line: {\"id\"?: string, \"op\": string, \"args\"?: object}." },
+      "state-dir": { type: "string", required: false, description: "Absolute 0700 directory for per-item recovery state and archived results. Required unless --dry-run. Reuse it to resume." },
+      concurrency: { type: "integer", required: false, minimum: BATCH_LIMITS.concurrency.minimum, maximum: BATCH_LIMITS.concurrency.maximum, description: `Items in flight. Default ${BATCH_LIMITS.concurrency.default}, hard cap ${BATCH_LIMITS.concurrency.maximum}.` },
+      "max-items": { type: "integer", required: false, minimum: BATCH_LIMITS.maxItems.minimum, maximum: BATCH_LIMITS.maxItems.maximum, description: `Refuse input past this many items. Default ${BATCH_LIMITS.maxItems.default}, hard cap ${BATCH_LIMITS.maxItems.maximum}.` },
+      "max-line-bytes": { type: "integer", required: false, minimum: BATCH_LIMITS.maxLineBytes.minimum, maximum: BATCH_LIMITS.maxLineBytes.maximum, description: `Refuse a longer input line. Default ${BATCH_LIMITS.maxLineBytes.default}, hard cap ${BATCH_LIMITS.maxLineBytes.maximum}.` },
+      "timeout-ms": { type: "integer", required: false, minimum: BATCH_LIMITS.timeoutMs.minimum, maximum: BATCH_LIMITS.timeoutMs.maximum, description: `Per-item deadline, reported as request_timeout. Default ${BATCH_LIMITS.timeoutMs.default}.` },
+      ...CREDENTIAL_FLAGS, ...ORIGIN_FLAGS,
+    },
+    http: Object.entries(batchOpsDescription()).map(([op, value]) => ({ method: "GET", path: `(batch op ${op})`, operationId: value.operationId })),
+    batchOps: batchOpsDescription(), limits: BATCH_LIMITS,
+    output: `${BATCH_SCHEMA} (JSONL: type start, item, summary)`, retry: "bounded_get per item; no POST", recovery: "rerun with the same --state-dir: completed items are skipped with their archived result, changed terms for an existing id are refused, unconfirmed reads are rerun",
+    errors: [
+      { code: "batch_partial", when: "some items ok, some failed or refused", exit: EXIT.partial, retryable: false },
+      { code: "batch_all_failed", when: "no item succeeded and at least one failed or was refused", exit: EXIT.all_failed, retryable: false },
+      { code: "cancelled", when: "SIGINT: unread or not yet sent items are not_sent, in-flight items sent_unconfirmed", exit: EXIT.cancelled, retryable: false },
+      { code: "output_closed", when: "stdout consumer went away (EPIPE): dispatch stops, state is persisted, summary goes to stderr", exit: EXIT.output_closed, retryable: false },
+      { code: "batch_too_many_items", when: "input has more than --max-items items; items before the cap keep their records", exit: EXIT.input, retryable: false },
+      { code: "batch_line_too_long", when: "an input line is longer than --max-line-bytes", exit: EXIT.input, retryable: false },
+      { code: "item_terms_changed", when: "per item: the id exists in the state dir with different terms; refused, archive kept", exit: EXIT.conflict, retryable: false },
+      { code: "batch_state_locked", when: "another live run holds the state dir", exit: EXIT.conflict, retryable: false },
+    ] },
   { id: "result.show", argv: ["result", "show"], group: "readiness", summary: "Read a saved result record offline after a lost process or stdout.", effect: "none", auth: "none",
     flags: { file: { type: "string", required: true, description: "Absolute path written by readiness check --out." } }, output: RECORD_SCHEMA, retry: "not_applicable", recovery: "rerun" },
 ];
@@ -80,6 +107,7 @@ const SCHEMA_REFS = {
   "market.profile": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile"],
   "market.discover": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
   "readiness.check": ["server/lib/agent-readiness/schema.js#agent-readiness.report.v1"],
+  "batch.run": [`${OPENAPI}/health`, `${OPENAPI}/discovery`, `${OPENAPI}/receipt`, "server/lib/agent-readiness/schema.js#agent-readiness.report.v1", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
 };
 
 // Recovery contract per command (plan runtime item 6). No class claims
@@ -88,6 +116,7 @@ export const RECOVERY_CLASSES = Object.freeze({
   local_no_dispatch: "No network dispatch. Rerun.",
   safe_read_rerun: "GET with bounded backoff. Rerun; the read has no server effect.",
   local_record_readback: "Reads a record this CLI wrote earlier. If the record is lost, rerun the producing read.",
+  batch_persisted_items: "Per-item state (0600) says sent_unconfirmed before each dispatch. Completed items are archived once and skipped on rerun. Every batch op is a read, so an unconfirmed item is rerun; a non-read class in sent_unconfirmed would be refused (uncertain_mutation_not_replayed). It makes no single-execution promise; a lost state dir loses the skip list, not correctness of reads.",
   unresolved_post_no_key: "POST with no idempotency key, readback or server id. The server documents no effect for this route, but a failure after sending does not prove none occurred. Never retried automatically. Use --recovery-file to persist the attempt identity before sending.",
 });
 const RECOVERY_CLASS = {
@@ -96,6 +125,7 @@ const RECOVERY_CLASS = {
   "market.discover": "safe_read_rerun", "readiness.check": "safe_read_rerun",
   "gateway.test": "unresolved_post_no_key", "gateway.quote": "unresolved_post_no_key",
   "result.show": "local_record_readback",
+  "batch.run": "batch_persisted_items",
 };
 
 export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze({
@@ -168,7 +198,8 @@ export function manifest(version, group) {
     schema: MANIFEST_SCHEMA,
     cliVersion: version,
     envelopes: { result: RESULT_SCHEMA, error: ERROR_SCHEMA, stream: STREAM_SCHEMA },
-    credentialSources: ["none in this version"],
+    credentialSources: CREDENTIAL_SOURCES.map(source => ({ ...source, scope: CREDENTIAL_SCOPE, boundTo: "the run's --origin and the gateway mount path", printed: false, argv: false, environment: false })),
+    exitCodes: EXIT,
     groups: GROUPS,
     recoveryClasses: RECOVERY_CLASSES,
     runtime: RUNTIME,

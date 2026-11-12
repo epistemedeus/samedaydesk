@@ -2,7 +2,7 @@
 _samedaydesk() {
   local cur="${COMP_WORDS[COMP_CWORD]}" words="" flags="" key
   if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness result" -- "$cur") ); return
+    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness batch result" -- "$cur") ); return
   fi
   if [ "$COMP_CWORD" -eq 2 ] && [[ "$cur" != -* ]]; then
     case "${COMP_WORDS[1]}" in
@@ -15,6 +15,7 @@ _samedaydesk() {
     gateway) words="routes schema test quote" ;;
     market) words="profile discover" ;;
     readiness) words="check" ;;
+    batch) words="run" ;;
     result) words="show" ;;
     esac
     [ -n "$words" ] && { COMPREPLY=( $(compgen -W "$words" -- "$cur") ); return; }
@@ -28,6 +29,7 @@ _samedaydesk() {
     "market profile") key="market profile" ;;
     "market discover") key="market discover" ;;
     "readiness check") key="readiness check" ;;
+    "batch run") key="batch run" ;;
     "result show") key="result show" ;;
   esac
   case "$key" in
@@ -44,6 +46,7 @@ _samedaydesk() {
     "market profile") flags="--origin --allow-loopback --dry-run" ;;
     "market discover") flags="--limit --cursor --max-pages --stream --origin --allow-loopback --dry-run" ;;
     "readiness check") flags="--host --out --discovery --origin --allow-loopback --dry-run" ;;
+    "batch run") flags="--input-file --state-dir --concurrency --max-items --max-line-bytes --timeout-ms --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
     "result show") flags="--file" ;;
   esac
   COMPREPLY=( $(compgen -W "$flags" -- "$cur") )

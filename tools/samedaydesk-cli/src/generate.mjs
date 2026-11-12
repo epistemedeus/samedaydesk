@@ -110,7 +110,7 @@ export function manPage(version) {
   const out = [`.TH SAMEDAYDESK 1 "" "samedaydesk ${version}" "User Commands"`, ".\\\" Generated from the command manifest; do not edit.",
     ".SH NAME", `${BIN} \\- SameDayDesk agent CLI`, ".SH SYNOPSIS", `.B ${BIN}`, "\\fIcommand\\fR [\\fI\\-\\-flag value\\fR]",
     ".SH DESCRIPTION",
-    roff(`Noninteractive CLI for agents. One JSON envelope on stdout (${RESULT_SCHEMA} or ${ERROR_SCHEMA}), JSONL (${STREAM_SCHEMA}) when streaming, one diagnostic line on stderr on failure. No prompts. This version reads no credential and refuses secret-named flags.`),
+    roff(`Noninteractive CLI for agents. One JSON envelope on stdout (${RESULT_SCHEMA} or ${ERROR_SCHEMA}), JSONL (${STREAM_SCHEMA}) when streaming, one diagnostic line on stderr on failure. No prompts. Secret-named flags are refused. A tenant credential is read only from an existing 0600 --credential-file or the first line of stdin (--credential-stdin), is bound to the run's origin and the gateway path, and is never printed or forwarded across origins or redirects.`),
     ".SH COMMANDS"];
   for (const group of GROUPS) {
     out.push(`.SS ${roff(group.id)}`, roff(group.summary));
@@ -121,8 +121,8 @@ export function manPage(version) {
   }
   out.push(".SH EXIT STATUS");
   for (const [category, code] of Object.entries(EXIT)) out.push(".TP", `.B ${code}`, roff(category));
-  out.push(".SH SIGNALS", roff("SIGINT aborts an in-flight request where client-io supports AbortSignal, prints a cancelled error envelope and exits 130. Remote work already sent is not cancelled."));
-  out.push(".SH ERROR CODES", roff(Object.keys(ERROR_CODES).sort().join(", ")), ".SH SEE ALSO", roff(`${BIN} schema <command-id>, ${BIN} commands`));
+  out.push(".SH SIGNALS", roff("SIGINT aborts an in-flight request where client-io supports AbortSignal, prints a cancelled error envelope (or, in batch run, cancelled item records and a summary) and exits 130. Remote work already sent is not cancelled. A closed stdout (EPIPE) in batch run stops dispatch, persists state and exits 14."));
+  out.push(".SH ERROR CODES", roff([...ERROR_CODES].sort().join(", ")), ".SH SEE ALSO", roff(`${BIN} schema <command-id>, ${BIN} commands`));
   return `${out.join("\n")}\n`;
 }
 
@@ -141,12 +141,13 @@ Generated from the command manifest; do not edit. Source of truth: \`${BIN} comm
 
 - Run commands noninteractively and parse stdout as JSON. Check \`ok\`, then \`schema\`.
 - On failure read \`error.code\`, \`error.exit\`, \`error.retryable\` and \`error.nextAction\`. Do not parse stderr for data.
-- Never pass a credential on the command line. This version needs none and refuses secret-named flags.
+- Never pass a credential on the command line; secret-named flags are refused. When a command needs the tenant credential, name an existing 0600 file with \`--credential-file\` or pipe it with \`--credential-stdin\`. It is bound to the run's origin and never printed.
 - Use \`--dry-run\` to see the exact request, effect and required authority before sending.
 - Do not retry a POST. GET retries are already bounded inside the CLI.
 - On \`cursor_refused\`, \`cursor_malformed\` or \`cursor_unrecognized\`, restart \`market discover\` without \`--cursor\`. \`error.evidence.server.code\` holds the server's own code.
 - Read \`error.evidence.recovery\` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
 - SIGINT exits 130 with \`error.code\` \`cancelled\`. It does not cancel remote work that was already sent.
+- \`batch run\` prints JSONL: one \`start\`, one \`item\` per input line, one \`summary\`. Exit 0 all ok, 12 partial, 13 all failed, 130 cancelled, 14 stdout closed. Rerun with the same \`--state-dir\` to resume; completed items are skipped.
 
 ## Start
 

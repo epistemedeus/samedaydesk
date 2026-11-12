@@ -6,7 +6,7 @@ samedaydesk \- SameDayDesk agent CLI
 .B samedaydesk
 \fIcommand\fR [\fI\-\-flag value\fR]
 .SH DESCRIPTION
-Noninteractive CLI for agents. One JSON envelope on stdout (samedaydesk.cli.result.v1 or samedaydesk.cli.error.v1), JSONL (samedaydesk.cli.stream.v1) when streaming, one diagnostic line on stderr on failure. No prompts. This version reads no credential and refuses secret\-named flags.
+Noninteractive CLI for agents. One JSON envelope on stdout (samedaydesk.cli.result.v1 or samedaydesk.cli.error.v1), JSONL (samedaydesk.cli.stream.v1) when streaming, one diagnostic line on stderr on failure. No prompts. Secret\-named flags are refused. A tenant credential is read only from an existing 0600 \-\-credential\-file or the first line of stdin (\-\-credential\-stdin), is bound to the run's origin and the gateway path, and is never printed or forwarded across origins or redirects.
 .SH COMMANDS
 .SS discovery
 Read this CLI's own command contract. Local, no network.
@@ -260,6 +260,66 @@ Read a saved result record offline after a lost process or stdout. Effect: none.
 .B \-\-file
 Absolute path written by readiness check \-\-out. Required.
 .RE
+.SS batch
+Bounded JSONL batches of the supported read and readiness operations with persisted per\-item recovery.
+.TP
+.B samedaydesk batch run \-\-input\-file <string> [\-\-state\-dir <string>] [\-\-concurrency <integer>] [\-\-max\-items <integer>] [\-\-max\-line\-bytes <integer>] [\-\-timeout\-ms <integer>] [\-\-credential\-file <string>] [\-\-credential\-stdin] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Run a JSONL batch of supported reads. One JSONL record per item plus start and summary records; per\-item state persisted before dispatch; rerun skips completed items. Effect: read. Auth: optional_tenant. Retry: bounded_get per item; no POST. Recovery: rerun with the same \-\-state\-dir: completed items are skipped with their archived result, changed terms for an existing id are refused, unconfirmed reads are rerun.
+.RS
+.TP
+.B \-\-input\-file
+JSONL items file, or \- for stdin. Each line: {"id"?: string, "op": string, "args"?: object}. Required.
+.RE
+.RS
+.TP
+.B \-\-state\-dir
+Absolute 0700 directory for per\-item recovery state and archived results. Required unless \-\-dry\-run. Reuse it to resume.
+.RE
+.RS
+.TP
+.B \-\-concurrency
+Items in flight. Default 4, hard cap 8.
+.RE
+.RS
+.TP
+.B \-\-max\-items
+Refuse input past this many items. Default 1000, hard cap 10000.
+.RE
+.RS
+.TP
+.B \-\-max\-line\-bytes
+Refuse a longer input line. Default 16384, hard cap 65536.
+.RE
+.RS
+.TP
+.B \-\-timeout\-ms
+Per\-item deadline, reported as request_timeout. Default 15000.
+.RE
+.RS
+.TP
+.B \-\-credential\-file
+Absolute path to an existing 0600 tenant credential file. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-credential\-stdin
+Read the tenant credential from the first line of stdin. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
 .SH EXIT STATUS
 .TP
 .B 0
@@ -298,11 +358,23 @@ unknown_mutation_outcome
 .B 11
 pending
 .TP
+.B 12
+partial
+.TP
+.B 13
+all_failed
+.TP
+.B 14
+output_closed
+.TP
+.B 15
+remote_failed
+.TP
 .B 130
 cancelled
 .SH SIGNALS
-SIGINT aborts an in\-flight request where client\-io supports AbortSignal, prints a cancelled error envelope and exits 130. Remote work already sent is not cancelled.
+SIGINT aborts an in\-flight request where client\-io supports AbortSignal, prints a cancelled error envelope (or, in batch run, cancelled item records and a summary) and exits 130. Remote work already sent is not cancelled. A closed stdout (EPIPE) in batch run stops dispatch, persists state and exits 14.
 .SH ERROR CODES
-0, 1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 3, 30, 31, 4, 5, 6, 7, 8, 9
+absolute_private_file_required, batch_all_failed, batch_line_too_long, batch_partial, batch_state_invalid, batch_state_locked, batch_state_origin_mismatch, batch_too_many_items, cancelled, conflict, credential_invalid, credential_required, credential_scope_refused, credential_unavailable, cursor_malformed, cursor_refused, cursor_unrecognized, execution_failed, execution_pending, execution_uncertain, host_refused, http_refused, input_required, input_too_large, internal, invalid_arguments, invalid_input, invalid_input_file, invalid_private_file, item_duplicate, item_invalid, item_op_unsupported, item_terms_changed, not_found, origin_refused, output_closed, output_exists, paid_route_requires_payment_authority, quote_not_executable, rate_limited, readback_mismatch, receipt_unknown, recovery_record_failed, request_timeout, response_interrupted, response_invalid, response_oversize, result_file_invalid, route_unknown, secret_in_argv_refused, state_binding_conflict, state_exists, state_invalid, state_missing, transport_failed, unauthorized, unavailable, uncertain_mutation_not_replayed, unknown_command, usage
 .SH SEE ALSO
 samedaydesk schema <command\-id>, samedaydesk commands

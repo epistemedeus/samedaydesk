@@ -14,6 +14,10 @@ export const EXIT = Object.freeze({
   retryable: 9,
   unknown_mutation_outcome: 10,
   pending: 11,
+  partial: 12,
+  all_failed: 13,
+  output_closed: 14,
+  remote_failed: 15,
   cancelled: 130,
 });
 
@@ -55,6 +59,37 @@ const CODES = {
   transport_failed: ["transport", true, "retry"],
   response_oversize: ["transport", false, "capabilities"],
   response_invalid: ["transport", true, "retry"],
+  // Credentials (src/auth.mjs). Evidence never holds the value.
+  credential_unavailable: ["auth", false, "name an existing 0600 --credential-file or pipe it with --credential-stdin"],
+  credential_invalid: ["auth", false, "check the credential source; the value is never printed"],
+  credential_required: ["auth", false, "schema"],
+  credential_scope_refused: ["origin", false, "the credential is bound to another origin or scope; nothing was sent"],
+  // Batch (src/batch.mjs).
+  item_invalid: ["input", false, "schema batch.run"],
+  item_op_unsupported: ["input", false, "schema batch.run (supported ops are reads only)"],
+  item_duplicate: ["conflict", false, "give each item a unique id"],
+  item_terms_changed: ["conflict", false, "use a new item id or a new --state-dir; archived results are kept"],
+  uncertain_mutation_not_replayed: ["unknown_mutation_outcome", false, "read back by operation identity; never resend"],
+  batch_too_many_items: ["input", false, "split the input or raise --max-items (hard cap 10000)"],
+  batch_line_too_long: ["input", false, "shorten the line or raise --max-line-bytes (hard cap 65536)"],
+  batch_state_invalid: ["input", false, "pass a new absolute --state-dir"],
+  batch_state_origin_mismatch: ["origin", false, "a state dir is bound to one origin; pass a new --state-dir"],
+  batch_state_locked: ["conflict", false, "another run holds this state dir; wait for it or pass a new --state-dir"],
+  batch_partial: ["partial", false, "rerun with the same --state-dir; completed items are skipped"],
+  batch_all_failed: ["all_failed", false, "rerun with the same --state-dir after fixing the cause"],
+  output_closed: ["output_closed", false, "rerun with the same --state-dir; state was persisted"],
+  // Tenant journey (gateway execute, resume, result).
+  quote_not_executable: ["input", false, "gateway quote with a tenant credential for a route the tenant may run"],
+  paid_route_requires_payment_authority: ["funding", false, "paid execution needs an operator-approved payment authority; this CLI never pays"],
+  state_exists: ["conflict", false, "gateway resume --state-file, or a new absolute --state-file"],
+  state_missing: ["input", false, "gateway execute --state-file NEW"],
+  state_invalid: ["input", false, "pass the state file written by gateway execute or the direct client"],
+  state_binding_conflict: ["conflict", false, "the state file is bound to another origin, credential, route or input; start a new state file"],
+  receipt_unknown: ["input", false, "gateway resume --state-file (no receipt id was received yet)"],
+  readback_mismatch: ["conflict", false, "do not resend; report the receipt id to the operator"],
+  execution_pending: ["pending", true, "gateway result --state-file later"],
+  execution_uncertain: ["unknown_mutation_outcome", false, "do not resend; the receipt is uncertain at its deadline"],
+  execution_failed: ["remote_failed", false, "read evidence.receiptError; a new attempt needs a new quote and state file"],
   internal: ["input", false, "help"],
 };
 

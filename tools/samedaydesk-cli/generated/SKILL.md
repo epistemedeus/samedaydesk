@@ -11,12 +11,13 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 
 - Run commands noninteractively and parse stdout as JSON. Check `ok`, then `schema`.
 - On failure read `error.code`, `error.exit`, `error.retryable` and `error.nextAction`. Do not parse stderr for data.
-- Never pass a credential on the command line. This version needs none and refuses secret-named flags.
+- Never pass a credential on the command line; secret-named flags are refused. When a command needs the tenant credential, name an existing 0600 file with `--credential-file` or pipe it with `--credential-stdin`. It is bound to the run's origin and never printed.
 - Use `--dry-run` to see the exact request, effect and required authority before sending.
 - Do not retry a POST. GET retries are already bounded inside the CLI.
 - On `cursor_refused`, `cursor_malformed` or `cursor_unrecognized`, restart `market discover` without `--cursor`. `error.evidence.server.code` holds the server's own code.
 - Read `error.evidence.recovery` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
 - SIGINT exits 130 with `error.code` `cancelled`. It does not cancel remote work that was already sent.
+- `batch run` prints JSONL: one `start`, one `item` per input line, one `summary`. Exit 0 all ok, 12 partial, 13 all failed, 130 cancelled, 14 stdout closed. Rerun with the same `--state-dir` to resume; completed items are skipped.
 
 ## Start
 
@@ -41,6 +42,7 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 | `market.profile` | `samedaydesk market profile [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Public machine-market source and capability fields. |
 | `market.discover` | `samedaydesk market discover [--limit <integer>] [--cursor <string>] [--max-pages <integer>] [--stream] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Public listings. --stream emits JSONL pages with a terminal record. |
 | `readiness.check` | `samedaydesk readiness check --host <string> [--out <string>] [--discovery <mcp|a2a|llms-txt|skill-md|openapi|registry|search|referral|operator>] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Free agent-readiness report for a public host. Same operation as MCP check_agent_readiness. |
+| `batch.run` | `samedaydesk batch run --input-file <string> [--state-dir <string>] [--concurrency <integer>] [--max-items <integer>] [--max-line-bytes <integer>] [--timeout-ms <integer>] [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | read | optional_tenant | Run a JSONL batch of supported reads. One JSONL record per item plus start and summary records; per-item state persisted before dispatch; rerun skips completed items. |
 | `result.show` | `samedaydesk result show --file <string>` | none | none | Read a saved result record offline after a lost process or stdout. |
 
 ## Exit codes
@@ -57,4 +59,8 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 - 9: retryable
 - 10: unknown_mutation_outcome
 - 11: pending
+- 12: partial
+- 13: all_failed
+- 14: output_closed
+- 15: remote_failed
 - 130: cancelled
