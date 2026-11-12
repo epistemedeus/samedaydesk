@@ -2,7 +2,7 @@
 _samedaydesk() {
   local cur="${COMP_WORDS[COMP_CWORD]}" words="" flags="" key
   if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness result" -- "$cur") ); return
+    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness batch tools coverage result" -- "$cur") ); return
   fi
   if [ "$COMP_CWORD" -eq 2 ] && [[ "$cur" != -* ]]; then
     case "${COMP_WORDS[1]}" in
@@ -12,9 +12,12 @@ _samedaydesk() {
     commands) words="" ;;
     schema) words="" ;;
     capabilities) words="" ;;
-    gateway) words="routes schema test quote" ;;
+    gateway) words="routes schema test quote execute resume result" ;;
     market) words="profile discover" ;;
     readiness) words="check" ;;
+    batch) words="run" ;;
+    tools) words="ai-readiness llms-txt" ;;
+    coverage) words="" ;;
     result) words="show" ;;
     esac
     [ -n "$words" ] && { COMPREPLY=( $(compgen -W "$words" -- "$cur") ); return; }
@@ -25,9 +28,15 @@ _samedaydesk() {
     "gateway schema") key="gateway schema" ;;
     "gateway test") key="gateway test" ;;
     "gateway quote") key="gateway quote" ;;
+    "gateway execute") key="gateway execute" ;;
+    "gateway resume") key="gateway resume" ;;
+    "gateway result") key="gateway result" ;;
     "market profile") key="market profile" ;;
     "market discover") key="market discover" ;;
     "readiness check") key="readiness check" ;;
+    "batch run") key="batch run" ;;
+    "tools ai-readiness") key="tools ai-readiness" ;;
+    "tools llms-txt") key="tools llms-txt" ;;
     "result show") key="result show" ;;
   esac
   case "$key" in
@@ -40,10 +49,17 @@ _samedaydesk() {
     "gateway routes") flags="--origin --allow-loopback --dry-run" ;;
     "gateway schema") flags="--route --kind --origin --allow-loopback --dry-run" ;;
     "gateway test") flags="--route --recovery-file --origin --allow-loopback --dry-run" ;;
-    "gateway quote") flags="--route --input-file --recovery-file --origin --allow-loopback --dry-run" ;;
+    "gateway quote") flags="--route --input-file --recovery-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway execute") flags="--route --input-file --state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway resume") flags="--state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway result") flags="--state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
     "market profile") flags="--origin --allow-loopback --dry-run" ;;
     "market discover") flags="--limit --cursor --max-pages --stream --origin --allow-loopback --dry-run" ;;
     "readiness check") flags="--host --out --discovery --origin --allow-loopback --dry-run" ;;
+    "batch run") flags="--input-file --state-dir --concurrency --max-items --max-line-bytes --timeout-ms --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "tools ai-readiness") flags="--url --origin --allow-loopback --dry-run" ;;
+    "tools llms-txt") flags="--url --origin --allow-loopback --dry-run" ;;
+    "coverage") flags="" ;;
     "result show") flags="--file" ;;
   esac
   COMPREPLY=( $(compgen -W "$flags" -- "$cur") )
