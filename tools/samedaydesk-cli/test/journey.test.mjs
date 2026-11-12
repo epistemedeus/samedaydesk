@@ -159,7 +159,7 @@ test("dry-run returns the request and sends nothing", async () => {
   assert.equal(out[0].result.sent, false);
 });
 
-test("gateway quote reads stdin and returns a non-executable preview", async () => {
+test("gateway quote reads stdin and returns a labeled remote quote, not a local preview", async () => {
   const quote = { schema: "neomorphic.machine-gateway.quote.v1", quoteId: "00000000-0000-4000-8000-000000000000", routeId: "lockfile.delta", tenantBound: false, executable: false, price: { amount: 0, unit: "usd-micros" } };
   const stdin = Readable.from([Buffer.from('{"before":"a","after":"b"}')]);
   const { exit, out, calls } = await run(["gateway", "quote", "--route", "lockfile.delta", "--input-file", "-"], { answers: [json(200, quote)], stdin });
@@ -168,8 +168,12 @@ test("gateway quote reads stdin and returns a non-executable preview", async () 
   assert.deepEqual(calls[0].body, { routeId: "lockfile.delta", input: { before: "a", after: "b" } });
   assert.equal(calls[0].headers.authorization, undefined);
   assert.equal(calls[0].headers["idempotency-key"], undefined);
-  assert.equal(out[0].result.preview, true);
+  assert.equal(out[0].result.kind, "remote_quote");
+  assert.equal(out[0].result.sent, true);
+  assert.equal(out[0].result.reservation, "none");
   assert.equal(out[0].result.executable, false);
+  assert.deepEqual(out[0].result.recovery, { persisted: false, recoveryClass: "unresolved_post_no_key" });
+  assert.equal(out[0].result.handback.references.quoteId, quote.quoteId);
   assert.match(out[0].result.requiredAuthorityForNextStep.execute, /tenantBearer/);
 });
 

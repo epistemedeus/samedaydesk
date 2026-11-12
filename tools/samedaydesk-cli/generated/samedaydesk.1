@@ -1,0 +1,303 @@
+.TH SAMEDAYDESK 1 "" "samedaydesk 0.1.0" "User Commands"
+.\" Generated from the command manifest; do not edit.
+.SH NAME
+samedaydesk \- SameDayDesk agent CLI
+.SH SYNOPSIS
+.B samedaydesk
+\fIcommand\fR [\fI\-\-flag value\fR]
+.SH DESCRIPTION
+Noninteractive CLI for agents. One JSON envelope on stdout (samedaydesk.cli.result.v1 or samedaydesk.cli.error.v1), JSONL (samedaydesk.cli.stream.v1) when streaming, one diagnostic line on stderr on failure. No prompts. This version reads no credential and refuses secret\-named flags.
+.SH COMMANDS
+.SS discovery
+Read this CLI's own command contract. Local, no network.
+.TP
+.B samedaydesk help [<group>]
+Progressive help: groups, then one group's commands with usage. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.TP
+.B samedaydesk version
+Package and manifest version. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.TP
+.B samedaydesk completion <shell>
+Print a shell completion script generated from this manifest. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.TP
+.B samedaydesk commands [\-\-group <string>]
+The complete command manifest. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.RS
+.TP
+.B \-\-group
+Only commands in this group.
+.RE
+.TP
+.B samedaydesk schema <command>
+One command's inputs, output, effect, authority, route and recovery. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.SS capabilities
+Read current hosted capability, health and cost facts.
+.TP
+.B samedaydesk capabilities [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Gateway health and routes plus the market profile, each with its own status. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.SS gateway
+Machine\-gateway routes: schemas, labeled fixture and anonymous quote preview.
+.TP
+.B samedaydesk gateway routes [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Gateway routes with price, timeout, output bound and schema paths. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk gateway schema \-\-route <string> [\-\-kind <input|output>] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+A route's input or output JSON Schema. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-route
+Gateway route id from gateway routes. Required.
+.RE
+.RS
+.TP
+.B \-\-kind
+Default input.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk gateway test \-\-route <string> [\-\-recovery\-file <string>] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+The route's labeled test fixture. No provider, payment or tenant. Effect: fixture. Auth: none. Retry: none. Recovery: rerun; the server documents no effect.
+.RS
+.TP
+.B \-\-route
+Gateway route id from gateway routes. Required.
+.RE
+.RS
+.TP
+.B \-\-recovery\-file
+Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk gateway quote \-\-route <string> \-\-input\-file <string> [\-\-recovery\-file <string>] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Remote anonymous quote from the gateway for exact input (sent to the server; not a local preview, not a reservation). Never executable; execution needs an operator\-enrolled tenant bearer. Effect: remote_quote. Auth: none. Retry: none. Recovery: rerun; anonymous quotes cannot execute.
+.RS
+.TP
+.B \-\-route
+Gateway route id from gateway routes. Required.
+.RE
+.RS
+.TP
+.B \-\-input\-file
+JSON input file, or \- for stdin. At most 131072 bytes. Required.
+.RE
+.RS
+.TP
+.B \-\-recovery\-file
+Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.SS market
+Public machine\-market profile and listing reads.
+.TP
+.B samedaydesk market profile [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Public machine\-market source and capability fields. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk market discover [\-\-limit <integer>] [\-\-cursor <string>] [\-\-max\-pages <integer>] [\-\-stream] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Public listings. \-\-stream emits JSONL pages with a terminal record. Effect: read. Auth: none. Retry: bounded_get. Recovery: resume with \-\-cursor nextCursor; on cursor_refused (exit 1) restart without \-\-cursor.
+.RS
+.TP
+.B \-\-limit
+Page size. Default 20.
+.RE
+.RS
+.TP
+.B \-\-cursor
+Opaque cursor from nextCursor.
+.RE
+.RS
+.TP
+.B \-\-max\-pages
+With \-\-stream. Default 3.
+.RE
+.RS
+.TP
+.B \-\-stream
+JSONL output.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.SS readiness
+Free agent\-readiness check with a saved, recoverable result.
+.TP
+.B samedaydesk readiness check \-\-host <string> [\-\-out <string>] [\-\-discovery <mcp|a2a|llms\-txt|skill\-md|openapi|registry|search|referral|operator>] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Free agent\-readiness report for a public host. Same operation as MCP check_agent_readiness. Effect: read. Auth: none. Retry: bounded_get. Recovery: result show \-\-file OUT, or rerun the GET.
+.RS
+.TP
+.B \-\-host
+Public host, for example example.com. Required.
+.RE
+.RS
+.TP
+.B \-\-out
+Absolute path for a new 0600 result record.
+.RE
+.RS
+.TP
+.B \-\-discovery
+Caller\-declared acquisition label. Recorded as declared, never observed.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk result show \-\-file <string>
+Read a saved result record offline after a lost process or stdout. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.RS
+.TP
+.B \-\-file
+Absolute path written by readiness check \-\-out. Required.
+.RE
+.SH EXIT STATUS
+.TP
+.B 0
+ok
+.TP
+.B 1
+input
+.TP
+.B 2
+transport
+.TP
+.B 3
+auth
+.TP
+.B 4
+origin
+.TP
+.B 5
+not_found
+.TP
+.B 6
+conflict
+.TP
+.B 7
+funding
+.TP
+.B 8
+unavailable
+.TP
+.B 9
+retryable
+.TP
+.B 10
+unknown_mutation_outcome
+.TP
+.B 11
+pending
+.SH ERROR CODES
+0, 1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 21, 22, 23, 24, 25, 26, 27, 3, 4, 5, 6, 7, 8, 9
+.SH SEE ALSO
+samedaydesk schema <command\-id>, samedaydesk commands

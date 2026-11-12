@@ -1,0 +1,36 @@
+#compdef samedaydesk
+# zsh completion for samedaydesk. Generated from the command manifest; do not edit.
+_samedaydesk() {
+  local -a flags
+  if (( CURRENT == 2 )); then
+    compadd -- help version completion commands schema capabilities gateway market readiness result; return
+  fi
+  if (( CURRENT == 3 )) && [[ ${words[CURRENT]} != -* ]]; then
+    case ${words[2]} in
+      gateway) compadd -- routes schema test quote; return ;;
+      market) compadd -- profile discover; return ;;
+      readiness) compadd -- check; return ;;
+      result) compadd -- show; return ;;
+    esac
+  fi
+  local key="${words[2]}"
+  [[ -n "${words[3]}" && "${words[3]}" != -* ]] && key="${words[2]} ${words[3]}"
+  case $key in
+    'help') flags=() ;;
+    'version') flags=() ;;
+    'completion') flags=() ;;
+    'commands') flags=('--group[Only commands in this group.]') ;;
+    'schema') flags=() ;;
+    'capabilities') flags=('--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'gateway routes') flags=('--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'gateway schema') flags=('--route[Gateway route id from gateway routes.]' '--kind[Default input.]' '--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'gateway test') flags=('--route[Gateway route id from gateway routes.]' '--recovery-file[Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent.]' '--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'gateway quote') flags=('--route[Gateway route id from gateway routes.]' '--input-file[JSON input file, or - for stdin. At most 131072 bytes.]' '--recovery-file[Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent.]' '--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'market profile') flags=('--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'market discover') flags=('--limit[Page size. Default 20.]' '--cursor[Opaque cursor from nextCursor.]' '--max-pages[With --stream. Default 3.]' '--stream[JSONL output.]' '--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'readiness check') flags=('--host[Public host, for example example.com.]' '--out[Absolute path for a new 0600 result record.]' '--discovery[Caller-declared acquisition label. Recorded as declared, never observed.]' '--origin[https origin. Default https://samedaydesk.com.]' '--allow-loopback[Permit http://127.0.0.1 or http://[::1] for local tests.]' '--dry-run[Return the validated request, effect and required authority without sending.]') ;;
+    'result show') flags=('--file[Absolute path written by readiness check --out.]') ;;
+  esac
+  _arguments -s $flags
+}
+_samedaydesk "$@"

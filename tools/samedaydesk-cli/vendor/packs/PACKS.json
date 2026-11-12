@@ -1,0 +1,18 @@
+{
+  "schema": "samedaydesk.cli.packs.v1",
+  "packs": [
+    {
+      "name": "samedaydesk-capability-compat",
+      "version": "0.1.0",
+      "file": "samedaydesk-capability-compat-0.1.0.tgz",
+      "sha256": null,
+      "status": "awaiting_tgz",
+      "sourceRepo": "epistemedeus/x402-url-extractor",
+      "sourceSha": "60c8e161c6694df6da6f8476e87f29794954c136",
+      "sourcePath": "packs/samedaydesk-capability-compat",
+      "sourcePr": "https://github.com/epistemedeus/x402-url-extractor/pull/274",
+      "owner": "Compatibility Knowledge Nov12",
+      "use": "Consume-only capability provider (describeCapabilities). Not a dependency yet. The install test stays skipped while sha256 is null; null never matches."
+    }
+  ]
+}

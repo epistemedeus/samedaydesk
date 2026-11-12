@@ -36,6 +36,7 @@ const CODES = {
   invalid_private_file: ["input", false, "schema"],
   result_file_invalid: ["input", false, "readiness check"],
   output_exists: ["conflict", false, "result show"],
+  recovery_record_failed: ["input", false, "pass a new absolute --recovery-file path; nothing was sent"],
   origin_refused: ["origin", false, "schema"],
   unauthorized: ["auth", false, "capabilities"],
   not_found: ["not_found", false, "capabilities"],

@@ -14,6 +14,9 @@ const ORIGIN_FLAGS = {
   "allow-loopback": { type: "boolean", required: false, description: "Permit http://127.0.0.1 or http://[::1] for local tests." },
   "dry-run": { type: "boolean", required: false, description: "Return the validated request, effect and required authority without sending." },
 };
+const RECOVERY_FLAG = {
+  "recovery-file": { type: "string", required: false, description: "Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent." },
+};
 const ROUTE_ID = { type: "string", required: true, pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$", description: "Gateway route id from gateway routes." };
 
 export const GROUPS = Object.freeze([
@@ -24,9 +27,10 @@ export const GROUPS = Object.freeze([
   { id: "readiness", summary: "Free agent-readiness check with a saved, recoverable result." },
 ]);
 
-export const COMMANDS = Object.freeze([
-  { id: "help", argv: ["help"], group: "discovery", summary: "List groups and command ids.", effect: "none", auth: "none", flags: {}, output: "samedaydesk.cli.help.v1", retry: "not_applicable", recovery: "rerun" },
+const BASE_COMMANDS = [
+  { id: "help", argv: ["help"], group: "discovery", summary: "Progressive help: groups, then one group's commands with usage.", effect: "none", auth: "none", positional: { name: "group", required: false, description: "Group id, for example readiness." }, flags: {}, output: "samedaydesk.cli.help.v1", retry: "not_applicable", recovery: "rerun" },
   { id: "version", argv: ["version"], group: "discovery", summary: "Package and manifest version.", effect: "none", auth: "none", flags: {}, output: "samedaydesk.cli.version.v1", retry: "not_applicable", recovery: "rerun" },
+  { id: "completion", argv: ["completion"], group: "discovery", summary: "Print a shell completion script generated from this manifest.", effect: "none", auth: "none", positional: { name: "shell", required: true, enum: ["bash", "zsh", "fish"], description: "bash, zsh or fish." }, flags: {}, output: "text/plain (script on stdout)", retry: "not_applicable", recovery: "rerun" },
   { id: "commands", argv: ["commands"], group: "discovery", summary: "The complete command manifest.", effect: "none", auth: "none", flags: { group: { type: "string", required: false, description: "Only commands in this group." } }, output: MANIFEST_SCHEMA, retry: "not_applicable", recovery: "rerun" },
   { id: "schema", argv: ["schema"], group: "discovery", summary: "One command's inputs, output, effect, authority, route and recovery.", effect: "none", auth: "none", positional: { name: "command", description: "Command id, for example readiness.check." }, flags: {}, output: "samedaydesk.cli.command.v1", retry: "not_applicable", recovery: "rerun" },
   { id: "capabilities", argv: ["capabilities"], group: "capabilities", summary: "Gateway health and routes plus the market profile, each with its own status.", effect: "read", auth: "none", flags: { ...ORIGIN_FLAGS },
@@ -41,10 +45,10 @@ export const COMMANDS = Object.freeze([
     flags: { route: ROUTE_ID, kind: { type: "string", required: false, enum: ["input", "output"], description: "Default input." }, ...ORIGIN_FLAGS },
     http: [{ method: "GET", path: `${GATEWAY_PATH}/v1/routes/{route}/{kind}.schema.json`, operationId: "{route}_{kind}_schema" }], output: "json-schema", retry: "bounded_get", recovery: "rerun" },
   { id: "gateway.test", argv: ["gateway", "test"], group: "gateway", summary: "The route's labeled test fixture. No provider, payment or tenant.", effect: "fixture", auth: "none",
-    flags: { route: ROUTE_ID, ...ORIGIN_FLAGS },
+    flags: { route: ROUTE_ID, ...RECOVERY_FLAG, ...ORIGIN_FLAGS },
     http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/test`, operationId: "testRouteFixture" }], output: "neomorphic.machine-gateway.test", retry: "none", recovery: "rerun; the server documents no effect" },
-  { id: "gateway.quote", argv: ["gateway", "quote"], group: "gateway", summary: "Anonymous quote preview for exact input. Never executable; execution needs an operator-enrolled tenant bearer.", effect: "preview", auth: "none",
-    flags: { route: ROUTE_ID, "input-file": { type: "string", required: true, description: "JSON input file, or - for stdin. At most 131072 bytes." }, ...ORIGIN_FLAGS },
+  { id: "gateway.quote", argv: ["gateway", "quote"], group: "gateway", summary: "Remote anonymous quote from the gateway for exact input (sent to the server; not a local preview, not a reservation). Never executable; execution needs an operator-enrolled tenant bearer.", effect: "remote_quote", auth: "none",
+    flags: { route: ROUTE_ID, "input-file": { type: "string", required: true, description: "JSON input file, or - for stdin. At most 131072 bytes." }, ...RECOVERY_FLAG, ...ORIGIN_FLAGS },
     http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/quote`, operationId: "quoteRoute" }], output: "neomorphic.machine-gateway.quote", retry: "none", recovery: "rerun; anonymous quotes cannot execute",
     requiredAuthorityForNextStep: { execute: "tenantBearer (operator-enrolled; not self-serve)" } },
   { id: "market.profile", argv: ["market", "profile"], group: "market", summary: "Public machine-market source and capability fields.", effect: "read", auth: "none", flags: { ...ORIGIN_FLAGS },
@@ -58,7 +62,60 @@ export const COMMANDS = Object.freeze([
     http: [{ method: "GET", path: "/agent-readiness?host={host}&format=json", operationId: "check_agent_readiness" }], output: "agent-readiness.report.v1", retry: "bounded_get", recovery: "result show --file OUT, or rerun the GET" },
   { id: "result.show", argv: ["result", "show"], group: "readiness", summary: "Read a saved result record offline after a lost process or stdout.", effect: "none", auth: "none",
     flags: { file: { type: "string", required: true, description: "Absolute path written by readiness check --out." } }, output: RECORD_SCHEMA, retry: "not_applicable", recovery: "rerun" },
-]);
+];
+
+// Authoritative product schemas, referenced instead of restated. Paths are at
+// samedaydesk@32437117 unless named otherwise.
+const OPENAPI = "server/vendor/machine-gateway/openapi.json#/components/schemas";
+const SCHEMA_REFS = {
+  capabilities: [`${OPENAPI}/health`, `${OPENAPI}/discovery`, "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile"],
+  "gateway.routes": [`${OPENAPI}/discovery`],
+  "gateway.schema": ["server/vendor/machine-gateway/openapi.json#/paths/~1v1~1routes~1{route}~1{kind}.schema.json"],
+  "gateway.test": [`${OPENAPI}/test`],
+  "gateway.quote": [`${OPENAPI}/quoteRequest`, `${OPENAPI}/quote`],
+  "market.profile": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile"],
+  "market.discover": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
+  "readiness.check": ["server/lib/agent-readiness/schema.js#agent-readiness.report.v1"],
+};
+
+// Recovery contract per command (plan runtime item 6). No class claims
+// exactly-once execution or survival of lost local storage.
+export const RECOVERY_CLASSES = Object.freeze({
+  local_no_dispatch: "No network dispatch. Rerun.",
+  safe_read_rerun: "GET with bounded backoff. Rerun; the read has no server effect.",
+  local_record_readback: "Reads a record this CLI wrote earlier. If the record is lost, rerun the producing read.",
+  unresolved_post_no_key: "POST with no idempotency key, readback or server id. The server documents no effect for this route, but a failure after sending does not prove none occurred. Never retried automatically. Use --recovery-file to persist the attempt identity before sending.",
+});
+const RECOVERY_CLASS = {
+  help: "local_no_dispatch", version: "local_no_dispatch", completion: "local_no_dispatch", commands: "local_no_dispatch", schema: "local_no_dispatch",
+  capabilities: "safe_read_rerun", "gateway.routes": "safe_read_rerun", "gateway.schema": "safe_read_rerun", "market.profile": "safe_read_rerun",
+  "market.discover": "safe_read_rerun", "readiness.check": "safe_read_rerun",
+  "gateway.test": "unresolved_post_no_key", "gateway.quote": "unresolved_post_no_key",
+  "result.show": "local_record_readback",
+};
+
+export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze({
+  ...command,
+  recoveryClass: RECOVERY_CLASS[command.id],
+  schemaRefs: SCHEMA_REFS[command.id] ?? [],
+})));
+
+// Thin task manifest: curated tasks mapped to component commands and their
+// wire operation ids. Wire ids are preserved, not renamed.
+export const TASKS = Object.freeze([
+  { id: "task.find_capability", summary: "Find a useful current capability and its health.", steps: ["capabilities", "gateway.routes"] },
+  { id: "task.inspect_inputs_and_cost", summary: "Read exact inputs and outputs, then a remote anonymous quote.", steps: ["gateway.schema", "gateway.quote"] },
+  { id: "task.free_readiness", summary: "Run the free readiness check and save a recoverable record.", steps: ["readiness.check"] },
+  { id: "task.recover_result", summary: "Recover a saved result offline after a lost process or stdout.", steps: ["result.show"] },
+  { id: "task.browse_market", summary: "Read the public market profile and listings.", steps: ["market.profile", "market.discover"] },
+].map(task => Object.freeze({
+  ...task,
+  wire: task.steps.map(id => {
+    const command = BASE_COMMANDS.find(entry => entry.id === id);
+    return { command: id, operations: (command.http ?? []).map(item => item.operationId) };
+  }),
+})));
+
 
 export function commandById(id) {
   return COMMANDS.find(command => command.id === id) ?? null;
@@ -77,6 +134,8 @@ export function manifest(version, group) {
     envelopes: { result: RESULT_SCHEMA, error: ERROR_SCHEMA, stream: STREAM_SCHEMA },
     credentialSources: ["none in this version"],
     groups: GROUPS,
+    recoveryClasses: RECOVERY_CLASSES,
+    tasks: TASKS,
     commands: group ? COMMANDS.filter(command => command.group === group) : COMMANDS,
   };
 }
