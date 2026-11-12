@@ -34,6 +34,7 @@ const ID_RE = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/;
 const ROUTE_RE = /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$/;
 const HOST_RE = /^(?=.{1,253}$)[a-z0-9-]+(\.[a-z0-9-]+)+$/;
 const RECEIPT_RE = /^[a-f0-9-]{36}$/;
+export const URL_ARG_RE = /^(https?:\/\/)?[A-Za-z0-9.-]+(:[0-9]{1,5})?(\/[^\s]*)?$/;
 const READINESS_SCHEMA = "agent-readiness.report.v1";
 const HISTORY_MAX = 20;
 
@@ -50,6 +51,11 @@ export const BATCH_OPS = Object.freeze({
     path: args => `/v1/routes/${args.route}/${args.kind ?? "input"}.schema.json`, accept: value => value !== null && typeof value === "object" },
   "gateway.receipt": { base: "gateway", operationId: "readPersistedReceipt", auth: "tenant", args: { id: { ...str(RECEIPT_RE), required: true } },
     path: args => `/v1/receipts/${args.id}`, accept: value => typeof value?.id === "string" && typeof value?.status === "string" },
+  "tools.ai_readiness": { base: "origin", operationId: "check_ai_readiness", auth: "none", args: { url: { ...str(URL_ARG_RE, 2048), required: true } },
+    path: args => `/api/tools/ai-readiness?url=${encodeURIComponent(args.url)}`, accept: value => Number.isInteger(value?.score) && Array.isArray(value?.checks) },
+  "tools.llms_txt": { base: "origin", operationId: "generate_llms_txt", auth: "none", args: { url: { ...str(URL_ARG_RE, 2048), required: true } },
+    path: args => `/api/tools/llms-txt?url=${encodeURIComponent(args.url)}`, accept: value => typeof value?.llmsTxt === "string" },
+  "apex.health": { base: "origin", operationId: "getHealth", auth: "none", args: {}, path: () => "/api/health", accept: value => value?.ok === true },
   "market.profile": { base: "market", operationId: "machine.profile", auth: "none", args: {}, path: () => "/v1/market/profile", accept: value => value?.ok === true },
   "market.discover": { base: "market", operationId: "machine.discover", auth: "none",
     args: { limit: { type: "integer", minimum: 1, maximum: 20 }, cursor: { type: "string", maxLength: 512 } },

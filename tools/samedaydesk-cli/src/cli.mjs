@@ -8,6 +8,7 @@ import { CliError, describe } from "./errors.mjs";
 import { call as defaultCall, createTransport } from "./transport.mjs";
 import { loadCredential } from "./auth.mjs";
 import { runBatch } from "./batch.mjs";
+import { coverageDocument } from "./coverage.mjs";
 import { execute as tenantExecute, resume as tenantResume, result as tenantResult, tenantQuote } from "./tenant.mjs";
 import { bashCompletion, fishCompletion, helpFor, zshCompletion } from "./generate.mjs";
 import {
@@ -356,6 +357,23 @@ const HANDLERS = {
     return runBatch(flags, { origin, bases, credential, transport: io.transport, stdin: io.stdin, stdout: io.stdout, stderr: io.stderr,
       signal: io.signal, now: io.now, sleep: io.sleep, cliVersion: CLI_VERSION });
   },
+  "tools.ai_readiness": async ({ flags, command, io }) => {
+    const origin = originOf(flags);
+    const path = `/api/tools/ai-readiness?url=${encodeURIComponent(flags.url)}`;
+    if (flags["dry-run"]) return plan(command, "GET", `${origin}${path}`);
+    const { value } = await io.call(origin, path, { sleep: io.sleep });
+    if (!Number.isInteger(value?.score) || !Array.isArray(value?.checks)) throw new CliError("response_invalid");
+    return value;
+  },
+  "tools.llms_txt": async ({ flags, command, io }) => {
+    const origin = originOf(flags);
+    const path = `/api/tools/llms-txt?url=${encodeURIComponent(flags.url)}`;
+    if (flags["dry-run"]) return plan(command, "GET", `${origin}${path}`);
+    const { value } = await io.call(origin, path, { sleep: io.sleep });
+    if (typeof value?.llmsTxt !== "string") throw new CliError("response_invalid");
+    return value;
+  },
+  coverage: async () => coverageDocument(CLI_VERSION),
   "result.show": async ({ flags }) => {
     let record;
     try { record = JSON.parse(privateText(flags.file)); }

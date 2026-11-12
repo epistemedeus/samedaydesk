@@ -2,7 +2,7 @@
 _samedaydesk() {
   local cur="${COMP_WORDS[COMP_CWORD]}" words="" flags="" key
   if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness batch result" -- "$cur") ); return
+    COMPREPLY=( $(compgen -W "help version completion commands schema capabilities gateway market readiness batch tools coverage result" -- "$cur") ); return
   fi
   if [ "$COMP_CWORD" -eq 2 ] && [[ "$cur" != -* ]]; then
     case "${COMP_WORDS[1]}" in
@@ -16,6 +16,8 @@ _samedaydesk() {
     market) words="profile discover" ;;
     readiness) words="check" ;;
     batch) words="run" ;;
+    tools) words="ai-readiness llms-txt" ;;
+    coverage) words="" ;;
     result) words="show" ;;
     esac
     [ -n "$words" ] && { COMPREPLY=( $(compgen -W "$words" -- "$cur") ); return; }
@@ -33,6 +35,8 @@ _samedaydesk() {
     "market discover") key="market discover" ;;
     "readiness check") key="readiness check" ;;
     "batch run") key="batch run" ;;
+    "tools ai-readiness") key="tools ai-readiness" ;;
+    "tools llms-txt") key="tools llms-txt" ;;
     "result show") key="result show" ;;
   esac
   case "$key" in
@@ -53,6 +57,9 @@ _samedaydesk() {
     "market discover") flags="--limit --cursor --max-pages --stream --origin --allow-loopback --dry-run" ;;
     "readiness check") flags="--host --out --discovery --origin --allow-loopback --dry-run" ;;
     "batch run") flags="--input-file --state-dir --concurrency --max-items --max-line-bytes --timeout-ms --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "tools ai-readiness") flags="--url --origin --allow-loopback --dry-run" ;;
+    "tools llms-txt") flags="--url --origin --allow-loopback --dry-run" ;;
+    "coverage") flags="" ;;
     "result show") flags="--file" ;;
   esac
   COMPREPLY=( $(compgen -W "$flags" -- "$cur") )

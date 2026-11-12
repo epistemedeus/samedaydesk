@@ -30,6 +30,9 @@ Only commands in this group.
 .TP
 .B samedaydesk schema <command>
 One command's inputs, output, effect, authority, route and recovery. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
+.TP
+.B samedaydesk coverage
+Advertised normal\-user actions at the release head, each classified as a CLI command, a real handoff, or unsupported by the backend. Effect: none. Auth: none. Retry: not_applicable. Recovery: rerun.
 .SS capabilities
 Read current hosted capability, health and cost facts.
 .TP
@@ -269,6 +272,54 @@ Read a saved result record offline after a lost process or stdout. Effect: none.
 .TP
 .B \-\-file
 Absolute path written by readiness check \-\-out. Required.
+.RE
+.SS tools
+Free public\-site tools: AI\-readiness score and llms.txt draft.
+.TP
+.B samedaydesk tools ai\-readiness \-\-url <string> [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Free AI\-readiness score for one public website. Same check as the MCP tool check_ai_readiness. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-url
+Public website, for example https://example.com. Required.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk tools llms\-txt \-\-url <string> [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Free llms.txt draft from one public site's sitemap or homepage links. Effect: read. Auth: none. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-url
+Public website, for example https://example.com. Required.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
 .RE
 .SS tenant
 Configured\-tenant journey on the machine gateway: execute, resume and verified result. Needs an operator\-enrolled credential.

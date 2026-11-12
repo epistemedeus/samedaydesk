@@ -3,6 +3,7 @@
 // and test/generate.test.mjs fails when a checked-in file drifts.
 import { COMMANDS, GROUPS, ERROR_SCHEMA, RESULT_SCHEMA, STREAM_SCHEMA } from "./manifest.mjs";
 import { EXIT, ERROR_CODES } from "./errors.mjs";
+import { coverageDocument, coverageMarkdown } from "./coverage.mjs";
 
 const BIN = "samedaydesk";
 const words = command => command.argv.join(" ");
@@ -173,4 +174,6 @@ export const GENERATED = Object.freeze({
   "generated/samedaydesk.fish": () => fishCompletion(),
   "generated/samedaydesk.1": version => manPage(version),
   "generated/SKILL.md": version => skillMd(version),
+  "generated/coverage.json": version => `${JSON.stringify(coverageDocument(version), null, 2)}\n`,
+  "docs/COVERAGE.md": version => coverageMarkdown(version),
 });

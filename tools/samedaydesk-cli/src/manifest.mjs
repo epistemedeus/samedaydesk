@@ -8,7 +8,7 @@ export const RECORD_SCHEMA = "samedaydesk.cli.readiness-record.v1";
 export const DEFAULT_ORIGIN = "https://samedaydesk.com";
 export const GATEWAY_PATH = "/api/machine-gateway";
 export const MARKET_PATH = "/api/neomorphic-contributor-journey";
-import { BATCH_LIMITS, BATCH_SCHEMA, batchOpsDescription } from "./batch.mjs";
+import { BATCH_LIMITS, BATCH_SCHEMA, URL_ARG_RE, batchOpsDescription } from "./batch.mjs";
 import { CREDENTIAL_FLAGS, CREDENTIAL_SCOPE, CREDENTIAL_SOURCES } from "./auth.mjs";
 import { EXIT } from "./errors.mjs";
 
@@ -39,6 +39,7 @@ export const GROUPS = Object.freeze([
   { id: "gateway", summary: "Machine-gateway routes: schemas, labeled fixture and anonymous quote preview." },
   { id: "market", summary: "Public machine-market profile and listing reads." },
   { id: "readiness", summary: "Free agent-readiness check with a saved, recoverable result." },
+  { id: "tools", summary: "Free public-site tools: AI-readiness score and llms.txt draft." },
   { id: "tenant", summary: "Configured-tenant journey on the machine gateway: execute, resume and verified result. Needs an operator-enrolled credential." },
   { id: "batch", summary: "Bounded JSONL batches of the supported read and readiness operations with persisted per-item recovery." },
 ]);
@@ -116,6 +117,13 @@ const BASE_COMMANDS = [
       { code: "item_terms_changed", when: "per item: the id exists in the state dir with different terms; refused, archive kept", exit: EXIT.conflict, retryable: false },
       { code: "batch_state_locked", when: "another live run holds the state dir", exit: EXIT.conflict, retryable: false },
     ] },
+  { id: "tools.ai_readiness", argv: ["tools", "ai-readiness"], group: "tools", summary: "Free AI-readiness score for one public website. Same check as the MCP tool check_ai_readiness.", effect: "read", auth: "none",
+    flags: { url: { type: "string", required: true, pattern: URL_ARG_RE.source, maxLength: 2048, description: "Public website, for example https://example.com." }, ...ORIGIN_FLAGS },
+    http: [{ method: "GET", path: "/api/tools/ai-readiness?url={url}", operationId: "check_ai_readiness" }], output: "check_ai_readiness result (url, score, grade, checks)", retry: "bounded_get", recovery: "rerun" },
+  { id: "tools.llms_txt", argv: ["tools", "llms-txt"], group: "tools", summary: "Free llms.txt draft from one public site's sitemap or homepage links.", effect: "read", auth: "none",
+    flags: { url: { type: "string", required: true, pattern: URL_ARG_RE.source, maxLength: 2048, description: "Public website, for example https://example.com." }, ...ORIGIN_FLAGS },
+    http: [{ method: "GET", path: "/api/tools/llms-txt?url={url}", operationId: "generate_llms_txt" }], output: "generate_llms_txt result (origin, siteName, count, llmsTxt)", retry: "bounded_get", recovery: "rerun" },
+  { id: "coverage", argv: ["coverage"], group: "discovery", summary: "Advertised normal-user actions at the release head, each classified as a CLI command, a real handoff, or unsupported by the backend.", effect: "none", auth: "none", flags: {}, output: "samedaydesk.cli.coverage.v1", retry: "not_applicable", recovery: "rerun" },
   { id: "result.show", argv: ["result", "show"], group: "readiness", summary: "Read a saved result record offline after a lost process or stdout.", effect: "none", auth: "none",
     flags: { file: { type: "string", required: true, description: "Absolute path written by readiness check --out." } }, output: RECORD_SCHEMA, retry: "not_applicable", recovery: "rerun" },
 ];
@@ -135,7 +143,9 @@ const SCHEMA_REFS = {
   "market.profile": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile"],
   "market.discover": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
   "readiness.check": ["server/lib/agent-readiness/schema.js#agent-readiness.report.v1"],
-  "batch.run": [`${OPENAPI}/health`, `${OPENAPI}/discovery`, `${OPENAPI}/receipt`, "server/lib/agent-readiness/schema.js#agent-readiness.report.v1", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
+  "tools.ai_readiness": ["server/lib/apex-declarations.js#/api/tools/ai-readiness (check_ai_readiness)"],
+  "tools.llms_txt": ["server/lib/apex-declarations.js#/api/tools/llms-txt (generate_llms_txt)"],
+  "batch.run": ["server/lib/apex-declarations.js#/api/tools/ai-readiness", "server/lib/apex-declarations.js#/api/tools/llms-txt", "server/lib/apex-declarations.js#/api/health", `${OPENAPI}/health`, `${OPENAPI}/discovery`, `${OPENAPI}/receipt`, "server/lib/agent-readiness/schema.js#agent-readiness.report.v1", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile", "vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
 };
 
 // Recovery contract per command (plan runtime item 6). No class claims
@@ -149,7 +159,7 @@ export const RECOVERY_CLASSES = Object.freeze({
   unresolved_post_no_key: "POST with no idempotency key, readback or server id. The server documents no effect for this route, but a failure after sending does not prove none occurred. Never retried automatically. Use --recovery-file to persist the attempt identity before sending.",
 });
 const RECOVERY_CLASS = {
-  help: "local_no_dispatch", version: "local_no_dispatch", completion: "local_no_dispatch", commands: "local_no_dispatch", schema: "local_no_dispatch",
+  help: "local_no_dispatch", coverage: "local_no_dispatch", "tools.ai_readiness": "safe_read_rerun", "tools.llms_txt": "safe_read_rerun", version: "local_no_dispatch", completion: "local_no_dispatch", commands: "local_no_dispatch", schema: "local_no_dispatch",
   capabilities: "safe_read_rerun", "gateway.routes": "safe_read_rerun", "gateway.schema": "safe_read_rerun", "market.profile": "safe_read_rerun",
   "market.discover": "safe_read_rerun", "readiness.check": "safe_read_rerun",
   "gateway.test": "unresolved_post_no_key", "gateway.quote": "unresolved_post_no_key",

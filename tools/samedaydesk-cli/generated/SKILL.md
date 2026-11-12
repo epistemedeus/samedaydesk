@@ -46,6 +46,9 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 | `market.discover` | `samedaydesk market discover [--limit <integer>] [--cursor <string>] [--max-pages <integer>] [--stream] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Public listings. --stream emits JSONL pages with a terminal record. |
 | `readiness.check` | `samedaydesk readiness check --host <string> [--out <string>] [--discovery <mcp|a2a|llms-txt|skill-md|openapi|registry|search|referral|operator>] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Free agent-readiness report for a public host. Same operation as MCP check_agent_readiness. |
 | `batch.run` | `samedaydesk batch run --input-file <string> [--state-dir <string>] [--concurrency <integer>] [--max-items <integer>] [--max-line-bytes <integer>] [--timeout-ms <integer>] [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | read | optional_tenant | Run a JSONL batch of supported reads. One JSONL record per item plus start and summary records; per-item state persisted before dispatch; rerun skips completed items. |
+| `tools.ai_readiness` | `samedaydesk tools ai-readiness --url <string> [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Free AI-readiness score for one public website. Same check as the MCP tool check_ai_readiness. |
+| `tools.llms_txt` | `samedaydesk tools llms-txt --url <string> [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Free llms.txt draft from one public site's sitemap or homepage links. |
+| `coverage` | `samedaydesk coverage` | none | none | Advertised normal-user actions at the release head, each classified as a CLI command, a real handoff, or unsupported by the backend. |
 | `result.show` | `samedaydesk result show --file <string>` | none | none | Read a saved result record offline after a lost process or stdout. |
 
 ## Exit codes
