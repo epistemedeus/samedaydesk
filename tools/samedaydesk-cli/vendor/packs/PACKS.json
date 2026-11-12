@@ -5,14 +5,22 @@
       "name": "samedaydesk-capability-compat",
       "version": "0.1.0",
       "file": "samedaydesk-capability-compat-0.1.0.tgz",
-      "sha256": null,
-      "status": "awaiting_tgz",
+      "sha256": "66158687088ae9347a61b2b97ace25267d65e2d673d1827bf768896bc7f61f41",
+      "size": 16688,
+      "status": "pinned",
+      "qualified": {
+        "host": "Cursor VM1 bc-0e1741b5",
+        "result": "14/14 (x402-url-extractor #274 suite)",
+        "sourceSha": "967ec6a29a593b41e846b7b9004cbd5ad4c6b908"
+      },
+      "reproducedBy": "npm pack (npm 11.21.1) of packs/samedaydesk-capability-compat at 967ec6a2, byte identical",
+      "tgzCommitted": false,
       "sourceRepo": "epistemedeus/x402-url-extractor",
       "sourceSha": "967ec6a29a593b41e846b7b9004cbd5ad4c6b908",
       "sourcePath": "packs/samedaydesk-capability-compat",
       "sourcePr": "https://github.com/epistemedeus/x402-url-extractor/pull/274",
       "owner": "Compatibility Knowledge Nov12",
-      "use": "Consume-only capability provider (describeCapabilities). Not a dependency yet. The install test stays skipped while the tgz sha256 is null; null never matches. After install, the installed schema file must hash to schemas[0].sha256.",
+      "use": "Consume-only capability provider (describeCapabilities). Not a runtime dependency. The tgz is not committed in either repo: test/capability-compat.install.test.mjs reads it from SAMEDAYDESK_CLI_COMPAT_TGZ, refuses any sha256 other than this pin (a null pin never matches), and after install requires the installed schema file to hash to schemas[0].sha256.",
       "schemas": [
         {
           "export": "samedaydesk-capability-compat/schema/preview.v1",

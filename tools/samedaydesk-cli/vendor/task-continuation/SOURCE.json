@@ -1,17 +1,18 @@
 {
   "schema": "samedaydesk.cli.vendor-source.v1",
   "name": "task-continuation",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "repository": "epistemedeus/x402-url-extractor",
-  "commit": "6c8edfd755d8e254659d9f8357c123c8da36bd44",
-  "status": "Agent Entry Nov12 pin, supersedes 578396b6 (v1.0.0, draft PR https://github.com/epistemedeus/x402-url-extractor/pull/273); unmerged",
+  "commit": "d74c37ffd14b1285c74b4521d7a7ec43f5bbd85d",
+  "pullRequest": "https://github.com/epistemedeus/x402-url-extractor/pull/279",
+  "status": "Pre-VM-run pin: PR #279 head, additive over 1.2.0, not yet run on a VM by its owner. Supersedes 6c8edfd7 (1.1.0). Unmerged.",
   "license": "MIT",
   "files": [
     {
       "path": "index.mjs",
       "sourcePath": "packages/task-continuation/index.mjs",
-      "gitBlob": "957b23cfce756a5a8b567742d3cbc08e6bb73635",
-      "sha256": "a882ba7ce25939a45b05ddf19f2c483ef908540b83d0a30e2fb8916e04b10b07"
+      "gitBlob": "cc33811d9a6b8497cde4993aabe1d26e401cdaa1",
+      "sha256": "1c8c540f008faac1932aea2e90d7c618ad2eb3ce11fd7fe773710b91e1b80951"
     },
     {
       "path": "LICENSE",
@@ -26,8 +27,31 @@
     "discovery",
     "measurementRecord",
     "stepEventId",
-    "DISCOVERY_STATUSES"
+    "DISCOVERY_STATUSES",
+    "ERROR_CODES",
+    "ContinuationError",
+    "taskBinding",
+    "createHandback",
+    "checkHandback",
+    "assertSameTask",
+    "beginDispatch",
+    "recordResult",
+    "markResultUnknown",
+    "applyReadback",
+    "advanceHandback",
+    "saveHandbackFile",
+    "loadHandbackFile",
+    "hashJson"
   ],
-  "notConsumed": "issueContinuation and verifyContinuation need an issuer keyring; no SameDayDesk issuer exists at samedaydesk@32437117.",
-  "contract": "packages/task-continuation/CONTRACT.md git blob 00e3a4a54c374a6f0ba7e27da602b31e10c50774"
+  "notConsumed": "issueContinuation and verifyContinuation need an issuer keyring; no SameDayDesk issuer exists at the release head. tc1 token files are not produced or read by this CLI; the vendored module still reads them (loadContinuationFile) unchanged.",
+  "contract": "packages/task-continuation/CONTRACT.md git blob e05c3534e1efe0bc41b800b2806a25705e78d23e",
+  "referencedSchemas": [
+    {
+      "export": "task-continuation/handback.schema.json",
+      "sourcePath": "packages/task-continuation/handback.schema.json",
+      "gitBlob": "9d9c258069a70f48fb1934e2af621f00c11ccf33",
+      "sha256": "ca35cb30d356c7db48ec8dc89ba2c18e6e7b31eb91b9cefadc881c930ae19fda",
+      "note": "Referenced, not copied. The handback shape is enforced by checkHandback in the vendored index.mjs."
+    }
+  ]
 }

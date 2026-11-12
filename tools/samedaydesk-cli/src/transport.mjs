@@ -148,8 +148,8 @@ const RETRYABLE = new Set(["transport_failed", "request_timeout", "response_inva
 
 export function createTransport(clientIo = pinnedClientIo, { timeoutMs } = {}) {
   const caps = capabilitiesOf(clientIo);
-  async function attempt(base, path, body, signal) {
-    const options = body === undefined ? {} : { body };
+  async function attempt(base, path, body, signal, extra) {
+    const options = { ...(body === undefined ? {} : { body }), ...extra };
     if (caps.structuredErrors) {
       try { return { value: await clientIo.request(base, path, { ...options, ...(signal ? { signal } : {}), ...(timeoutMs ? { timeoutMs } : {}) }) }; }
       catch (error) { return { error: error instanceof clientIo.GatewayRequestError ? classifyStructured(error) : classifyPinned(error) }; }
@@ -159,17 +159,30 @@ export function createTransport(clientIo = pinnedClientIo, { timeoutMs } = {}) {
     const server = outcome.refusal ? await readServerRefusal(outcome.refusal) : null;
     return { error: classifyPinned(outcome.error, server) };
   }
-  async function call(base, path, { body, sleep = defaultSleep, retry = RETRY, signal } = {}) {
+  // credential: a BoundCredential (src/auth.mjs). Its bearer is attached only
+  // when the exact request URL is inside its origin and scope.
+  // key: an Idempotency-Key the server supports (POST /v1/execute).
+  // itemTimeoutMs: a per-call deadline. Expiry is reported as request_timeout
+  // (never success); recovery stays what the client observed.
+  async function call(base, path, { body, sleep = defaultSleep, retry = RETRY, signal, credential = null, key, itemTimeoutMs } = {}) {
     const method = body === undefined ? "GET" : "POST";
     const attempts = method === "GET" ? retry.attempts : 1;
     if (signal?.aborted) throw new CliError("cancelled", { method, attempts: 0, recovery: "not_sent", recoverySource: "cli", clientIo: caps.version });
+    const token = credential ? credential.tokenFor(`${base}${path}`) : null;
+    if (credential && !token) throw new CliError("credential_scope_refused", { method, attempts: 0, recovery: "not_sent", recoverySource: "cli", scope: credential.scope });
+    const extra = { ...(token ? { token } : {}), ...(key ? { key } : {}) };
     let last;
     for (let index = 1; index <= attempts; index += 1) {
-      const result = await attempt(base, path, body, signal);
+      const deadline = itemTimeoutMs ? AbortSignal.timeout(itemTimeoutMs) : null;
+      const combined = deadline ? (signal ? AbortSignal.any([signal, deadline]) : deadline) : signal;
+      const result = await attempt(base, path, body, combined, extra);
       if (!result.error) return { value: result.value, attempts: index };
       last = result.error;
+      if (deadline?.aborted && !signal?.aborted && last.code === "cancelled") {
+        last = new CliError("request_timeout", { ...(last.evidence || {}), timeoutMs: itemTimeoutMs, recovery: last.evidence?.recovery ?? "sent_unconfirmed" });
+      }
       last.evidence = { ...(last.evidence || {}), method, attempts: index, abortSupported: caps.abortSignal };
-      if (!RETRYABLE.has(last.code) || index === attempts || signal?.aborted) break;
+      if (!RETRYABLE.has(last.code) || index === attempts || signal?.aborted || deadline?.aborted) break;
       await sleep(Math.min(retry.maxDelayMs, retry.baseDelayMs * 2 ** (index - 1)));
     }
     throw last;

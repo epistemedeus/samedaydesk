@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { join, resolve, dirname } from "node:path";
@@ -33,7 +33,7 @@ test("0.1.2 fixture and in-tree client match the received 0.1.2 and prepared 0.1
     const blob = execFileSync("git", ["hash-object", "--stdin"], { input: bytes, encoding: "utf8" }).trim();
     assert.equal(blob, file.gitBlob);
   }
-  for (const name of ["cli.mjs", "transport.mjs", "index.mjs", "manifest.mjs", "errors.mjs", "generate.mjs"]) {
+  for (const name of readdirSync(join(root, "src"))) {
     assert.ok(!readFileSync(join(root, "src", name), "utf8").includes("fixtures/"), name);
   }
   assert.deepEqual(capabilitiesOf(pinned), { version: "pinned", structuredErrors: false, abortSignal: false });

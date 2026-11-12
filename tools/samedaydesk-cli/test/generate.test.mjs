@@ -18,10 +18,10 @@ test("checked-in generated files match the manifest (run scripts/generate.mjs on
 });
 
 test("every command and every flag appears in each completion, the man page and SKILL.md", () => {
-  for (const path of Object.keys(GENERATED)) {
+  for (const path of Object.keys(GENERATED).filter(name => !/coverage/i.test(name))) {
     const text = file(path);
     for (const command of COMMANDS) {
-      for (const word of command.argv) assert.ok(text.includes(word), `${path}: ${command.id} word ${word}`);
+      for (const word of command.argv) assert.ok(text.includes(path.endsWith(".1") ? word.replace(/-/g, "\\-") : word), `${path}: ${command.id} word ${word}`);
       for (const flag of Object.keys(command.flags)) {
         const needle = path.endsWith(".1") ? `\\-\\-${flag.replace(/-/g, "\\-")}` : path.endsWith(".fish") ? `-l ${flag}` : `--${flag}`;
         assert.ok(text.includes(needle), `${path}: ${command.id} flag ${flag}`);
