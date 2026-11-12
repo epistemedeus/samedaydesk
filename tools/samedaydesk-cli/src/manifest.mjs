@@ -164,6 +164,23 @@ export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze
   schemaRefs: SCHEMA_REFS[command.id] ?? [],
 })));
 
+// task-continuation 1.3.0 (vendor/task-continuation, PR #279 head d74c37ff,
+// pre-VM-run) refusal codes as this CLI reports them. tcExit is the module's
+// own ERROR_CODES exit; cliExit is this CLI's. Where they differ the CLI
+// table already gives that number another meaning, so the CLI exit is used
+// and error.evidence.continuation carries the module row unchanged.
+export const CONTINUATION_EXIT_MAP = Object.freeze([
+  { code: "continuation_revoked", tcExit: 3, cliCode: "continuation_revoked", cliExit: EXIT.auth, conflict: null },
+  { code: "continuation_task_changed", tcExit: 5, cliCode: "continuation_task_changed", cliExit: EXIT.conflict, conflict: "CLI exit 5 is not_found" },
+  { code: "continuation_dispatch_pending", tcExit: 5, cliCode: "continuation_dispatch_pending", cliExit: EXIT.conflict, conflict: "CLI exit 5 is not_found" },
+  { code: "continuation_result_unknown", tcExit: 5, retryable: true, cliCode: "continuation_result_unknown", cliExit: EXIT.unknown_mutation_outcome, conflict: "CLI exit 5 is not_found; 10 is this CLI's unknown outcome" },
+  { code: "continuation_handback_invalid", tcExit: 6, cliCode: "continuation_handback_invalid", cliExit: EXIT.input, conflict: "CLI exit 6 is conflict" },
+  { code: "continuation_measurement_invalid", tcExit: 6, cliCode: null, cliExit: null, conflict: "not produced by this CLI (it emits measurements, never ingests them)" },
+  { code: "continuation_measurement_late", tcExit: 8, cliCode: null, cliExit: null, conflict: "not produced by this CLI; CLI exit 8 is unavailable" },
+  { code: "continuation_state_invalid", tcExit: 2, cliCode: "continuation_state_invalid", cliExit: EXIT.input, conflict: "CLI exit 2 is transport" },
+  { code: "continuation_expired", tcExit: 8, cliCode: "continuation_expired", cliExit: EXIT.input, conflict: "CLI exit 8 is unavailable" },
+]);
+
 // Runtime facts every command shares.
 export const RUNTIME = Object.freeze({
   cancellation: Object.freeze({
@@ -233,6 +250,7 @@ export function manifest(version, group) {
     envelopes: { result: RESULT_SCHEMA, error: ERROR_SCHEMA, stream: STREAM_SCHEMA },
     credentialSources: CREDENTIAL_SOURCES.map(source => ({ ...source, scope: CREDENTIAL_SCOPE, boundTo: "the run's --origin and the gateway mount path", printed: false, argv: false, environment: false })),
     exitCodes: EXIT,
+    continuationExitMap: CONTINUATION_EXIT_MAP,
     groups: GROUPS,
     recoveryClasses: RECOVERY_CLASSES,
     runtime: RUNTIME,

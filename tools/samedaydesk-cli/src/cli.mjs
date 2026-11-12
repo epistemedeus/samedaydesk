@@ -325,7 +325,7 @@ const HANDLERS = {
       correlationId,
       step: 0,
       stepEventId: stepEventId(correlationId, 0, "samedaydesk-cli"),
-      // task-continuation 1.1.0: discovery lives only on the separate measurement record.
+      // task-continuation 1.1.0 and later: discovery lives only on the separate measurement record.
       measurement: measurementRecord({
         correlationId,
         discovery: discoveryLabel({ declared: flags.discovery ?? null, sources: command.flags.discovery.enum }),

@@ -28,6 +28,50 @@ import { isAbsolute as absolute } from "node:path";
 import { privateText, savePrivate } from "../../../server/vendor/machine-gateway/bin/client-io.mjs";
 import { boundedJson, digest, sha256 } from "../../../server/vendor/machine-gateway/src/util.mjs";
 import { CliError, describe } from "./errors.mjs";
+import {
+  ContinuationError, ERROR_CODES as TC_ERROR_CODES, HASH_ALG, advanceHandback, applyReadback, assertSameTask, beginDispatch, createHandback,
+  loadHandbackFile, markResultUnknown, mintCorrelationId, recordResult, saveHandbackFile, taskBinding,
+} from "../vendor/task-continuation/index.mjs";
+
+// task-continuation 1.3.0 handback (nonsecret, 0600) beside the state file.
+// Task binding: tool executeBoundQuote, the gateway origin, subject = digest of
+// route and exact input, terms = digest of quote id, route digest and maxUnits.
+// The idempotency key is the handback's pending.stepEventId, saved before the
+// POST. The bearer stays in its own 0600 file and is never in either file.
+export const HANDBACK_TOOL = "executeBoundQuote";
+export const handbackPath = file => `${file}.handback.json`;
+export function taskFor(state) {
+  return taskBinding({ tool: HANDBACK_TOOL, origin: new URL(state.base).origin, subject: digest({ routeId: state.route, input: state.request.input }),
+    termsVersion: `sha256:${digest({ quoteId: state.request.quoteId, routeDigest: state.cli?.serverQuote?.routeDigest ?? null, maxUnits: state.request.maxUnits })}` });
+}
+
+// CLI code for each continuation refusal. Where the module's own exit code
+// collides with a different meaning in this CLI's table, the CLI code wins and
+// evidence.continuation carries the module's row unchanged (documented in the
+// manifest as continuationExitMap).
+export const CONTINUATION_CLI_CODES = Object.freeze({
+  continuation_task_changed: "continuation_task_changed",
+  continuation_dispatch_pending: "continuation_dispatch_pending",
+  continuation_result_unknown: "continuation_result_unknown",
+  continuation_handback_invalid: "continuation_handback_invalid",
+  continuation_state_invalid: "continuation_state_invalid",
+  continuation_expired: "continuation_expired",
+  continuation_revoked: "continuation_revoked",
+  continuation_hash_legacy: "continuation_handback_invalid",
+});
+export function fromContinuation(error) {
+  if (!(error instanceof ContinuationError)) return error;
+  const row = TC_ERROR_CODES[error.code] ?? null;
+  const code = CONTINUATION_CLI_CODES[error.code] ?? "continuation_file_invalid";
+  return new CliError(code, { continuation: { code: error.code, ...(row ?? {}) }, ...(Array.isArray(error.changed) ? { changed: error.changed } : {}) });
+}
+async function tc(work) {
+  try { return await work(); } catch (error) { throw fromContinuation(error); }
+}
+async function saveHandback(file, handback) {
+  try { await saveHandbackFile(handbackPath(file), handback); }
+  catch (error) { throw error instanceof ContinuationError ? new CliError("recovery_record_failed", { stateFile: file, continuation: { code: error.code } }) : error; }
+}
 
 export const CALLER_STATE_SCHEMA = "neomorphic.machine-gateway.caller-state.v1";
 export const TENANT_RESULT_SCHEMA = "samedaydesk.cli.tenant-result.v1";
@@ -98,11 +142,11 @@ function acceptance(receipt, state) {
 }
 
 // Turns a final receipt into the command outcome.
-function outcome(receipt, state, file, stagesSoFar) {
+function outcome(receipt, state, file, stagesSoFar, handback = null) {
   const result = { schema: TENANT_RESULT_SCHEMA, stateFile: file, receipt: summarize(receipt), output: receipt.output ?? null, acceptance: acceptance(receipt, state),
     recovery: state.dispatch?.recovery ?? "remote_committed", stages: { ...stagesSoFar, result: { route: "readPersistedReceipt", verified: true } },
-    settlement: receipt.price?.amount === 0 ? "not_required (free route)" : "not handled by this CLI", singleExecutionClaimed: false };
-  const evidence = { receiptId: receipt.id, status: receipt.status, stateFile: file, recovery: result.recovery };
+    settlement: receipt.price?.amount === 0 ? "not_required (free route)" : "not handled by this CLI", handback, singleExecutionClaimed: false };
+  const evidence = { receiptId: receipt.id, status: receipt.status, stateFile: file, recovery: result.recovery, handback };
   if (receipt.status === "completed") return result;
   if (receipt.status === "running") throw new CliError("execution_pending", evidence);
   if (receipt.status === "uncertain") throw new CliError("execution_uncertain", { ...evidence, receiptError: receipt.error });
@@ -120,8 +164,9 @@ async function readback(ctx, state, file, credential) {
 }
 
 // One POST /v1/execute with the persisted key. The dispatch record is saved
-// first; if that fails nothing is sent.
-async function dispatch(ctx, state, file, credential) {
+// first; if that fails nothing is sent. With a handback, a lost or refused
+// reply moves it to result_unknown (saved) before the error is reported.
+async function dispatch(ctx, state, file, credential, hb) {
   state.dispatch = { schema: "neomorphic.machine-gateway.dispatch-record.v1", method: "POST", path: "/v1/execute", idempotencyKeySha256: sha256(state.key),
     recovery: "sent_unconfirmed", attempts: (state.dispatch?.attempts ?? 0) + 1, at: ctx.now().toISOString() };
   save(file, state);
@@ -131,10 +176,12 @@ async function dispatch(ctx, state, file, credential) {
     const described = describe(error);
     state.dispatch.recovery = described.evidence?.recovery ?? "sent_unconfirmed";
     try { savePrivate(file, JSON.stringify(state)); } catch {}
+    if (hb.handback) {
+      try { hb.handback = markResultUnknown(hb.handback); await saveHandbackFile(handbackPath(file), hb.handback); } catch {}
+    }
     error.evidence = { ...(error.evidence || {}), stage: "execution", stateFile: file,
-      next: ["not_sent", "remote_refused"].includes(state.dispatch.recovery) && described.evidence?.server?.code !== "idempotency_conflict"
-        ? "gateway resume --state-file (resends the identical request with the same key)"
-        : "gateway resume --state-file (the gateway answers a repeated key from its stored receipt; it does not run the route twice)" };
+      ...(hb.handback ? { continuation: { state: hb.handback.state, stepEventId: hb.handback.pending?.stepEventId ?? null } } : {}),
+      next: "gateway resume --state-file (the gateway answers a repeated key from its stored attempt and never admits the same key twice)" };
     throw error;
   }
   receiptChecks(value, state);
@@ -145,6 +192,27 @@ async function dispatch(ctx, state, file, credential) {
   return value;
 }
 
+// Record a read-back receipt in the handback: execution or result_unknown ->
+// result (applyReadback), then acceptance when every local check passed.
+async function settleHandback(file, hb, receipt, state) {
+  if (!hb.handback) return null;
+  await tc(async () => {
+    const event = hb.handback.pending?.stepEventId ?? hb.handback.result?.stepEventId;
+    if (hb.handback.state === "execution" || hb.handback.state === "result_unknown") {
+      const applied = applyReadback(hb.handback, { found: true, stepEventId: event, digest: digest(receipt) });
+      hb.handback = applied.handback;
+    } else if (hb.handback.state === "result" && hb.handback.result.digest !== digest(receipt) && receipt.status !== "running") {
+      throw new CliError("readback_mismatch", { stage: "result", fields: ["handback.result.digest"] });
+    }
+    const checks = acceptance(receipt, state);
+    if (hb.handback.state === "result" && receipt.status === "completed" && checks.requestDigestMatches && checks.inputDigestMatches && checks.quoteMatches && checks.routeMatches) {
+      hb.handback = advanceHandback(hb.handback, "acceptance");
+    }
+  });
+  await saveHandback(file, hb.handback);
+  return { file: handbackPath(file), state: hb.handback.state, correlationId: hb.handback.correlationId, step: hb.handback.step, stepEventId: hb.handback.result?.stepEventId ?? null };
+}
+
 export async function tenantQuote(ctx, { base, routeId, input, credential }) {
   const { value } = await ctx.call(base, "/v1/quote", { body: { routeId, input }, credential, sleep: ctx.sleep, signal: ctx.signal });
   quoteChecks(value, { routeId, input });
@@ -153,7 +221,7 @@ export async function tenantQuote(ctx, { base, routeId, input, credential }) {
 
 export async function execute(ctx, { base, routeId, input, credential, file }) {
   if (!absolute(file || "")) throw new CliError("absolute_private_file_required", { flag: "state-file" });
-  if (existsSync(file)) throw new CliError("state_exists", { stateFile: file });
+  if (existsSync(file) || existsSync(handbackPath(file))) throw new CliError("state_exists", { stateFile: file });
   const quote = await tenantQuote(ctx, { base, routeId, input, credential });
   const serverQuote = { route: "quoteRoute", quoteId: quote.quoteId, routeDigest: quote.routeDigest, inputDigest: quote.inputDigest, expiresAt: quote.expiresAt, price: quote.price, tenantBound: quote.tenantBound, executable: quote.executable };
   if (quote.tenantBound !== true || !UUID_RE.test(quote.quoteId ?? "")) throw new CliError("quote_not_executable", { stage: "server_quote", tenantBound: quote.tenantBound === true });
@@ -163,28 +231,65 @@ export async function execute(ctx, { base, routeId, input, credential, file }) {
   }
   if (quote.executable !== true) throw new CliError("quote_not_executable", { stage: "server_quote" });
   const state = { schema: CALLER_STATE_SCHEMA, base, tenantBinding: credential.binding, route: routeId,
-    request: { quoteId: quote.quoteId, input, maxUnits: 0 }, key: randomUUID(), receipt: null,
-    cli: { createdBy: "samedaydesk-cli", serverQuote, expectedRequestDigest: null } };
+    request: { quoteId: quote.quoteId, input, maxUnits: 0 }, key: null, receipt: null,
+    cli: { createdBy: "samedaydesk-cli", serverQuote, expectedRequestDigest: null, handback: null } };
   state.cli.expectedRequestDigest = expectedRequestDigest(state.request);
+  // Handback: quote state, then pending before the POST. Its stepEventId is
+  // the idempotency key. Saved before the state file and before dispatch.
+  const hb = { handback: null };
+  await tc(async () => {
+    const issued = { tool: HANDBACK_TOOL, correlationId: mintCorrelationId(), step: 0, expiresAt: new Date(quote.expiresAt).toISOString(), hashAlg: HASH_ALG };
+    hb.handback = beginDispatch(createHandback({ task: taskFor(state), issued, state: "quote" }), { nowMs: ctx.now().getTime() });
+  });
+  state.key = hb.handback.pending.stepEventId;
+  state.cli.handback = { file: handbackPath(file), correlationId: hb.handback.correlationId, step: hb.handback.step };
+  await saveHandback(file, hb.handback);
   try { savePrivate(file, JSON.stringify(state), { exclusive: true }); }
   catch (error) { throw new CliError(error?.code === "EEXIST" ? "state_exists" : "recovery_record_failed", { stateFile: file }); }
-  await dispatch(ctx, state, file, credential);
+  await dispatch(ctx, state, file, credential, hb);
   const receipt = await readback(ctx, state, file, credential);
-  return outcome(receipt, state, file, { serverQuote, reservation: "none (the tenant quote is the server-side binding)", execution: { route: "executeBoundQuote", idempotencyKeySha256: sha256(state.key) } });
+  const handback = await settleHandback(file, hb, receipt, state);
+  return outcome(receipt, state, file, { serverQuote, reservation: "none (the tenant quote is the server-side binding)", execution: { route: "executeBoundQuote", idempotencyKeySha256: sha256(state.key) } }, handback);
+}
+
+async function loadHandbackFor(state, file) {
+  if (!existsSync(handbackPath(file))) {
+    if (state.cli?.handback) throw new CliError("continuation_handback_invalid", { reason: "handback file missing", file: handbackPath(file) });
+    return { handback: null };
+  }
+  const handback = await tc(() => loadHandbackFile(handbackPath(file)));
+  await tc(async () => assertSameTask(handback, taskFor(state)));
+  const event = handback.pending?.stepEventId ?? handback.result?.stepEventId ?? null;
+  if (event && event !== state.key) throw new CliError("state_binding_conflict", { fields: ["key"] });
+  return { handback };
 }
 
 export async function resume(ctx, { base, credential, file }) {
   const state = readState(file);
   bindingCheck(state, { base, credential });
-  if (!state.receipt?.id) await dispatch(ctx, state, file, credential);
+  const hb = await loadHandbackFor(state, file);
+  if (!state.receipt?.id) {
+    if (hb.handback && (hb.handback.state === "preview" || hb.handback.state === "quote")) {
+      // Never dispatched: open the dispatch now, saved before the POST.
+      await tc(async () => { hb.handback = beginDispatch(hb.handback, { nowMs: ctx.now().getTime() }); });
+      await saveHandback(file, hb.handback);
+    }
+    // execution or result_unknown: the identical request with the same key is
+    // the gateway's read back by key. It returns the stored attempt, or admits
+    // the key once if it never arrived; the gateway never admits a key twice.
+    await dispatch(ctx, state, file, credential, hb);
+  }
   const receipt = await readback(ctx, state, file, credential);
-  return outcome(receipt, state, file, { serverQuote: state.cli?.serverQuote ?? { quoteId: state.request.quoteId }, execution: { route: "executeBoundQuote", resumed: true, idempotencyKeySha256: sha256(state.key) } });
+  const handback = await settleHandback(file, hb, receipt, state);
+  return outcome(receipt, state, file, { serverQuote: state.cli?.serverQuote ?? { quoteId: state.request.quoteId }, execution: { route: "executeBoundQuote", resumed: true, idempotencyKeySha256: sha256(state.key) } }, handback);
 }
 
 export async function result(ctx, { base, credential, file }) {
   const state = readState(file);
   bindingCheck(state, { base, credential });
-  if (!state.receipt?.id) throw new CliError("receipt_unknown", { stateFile: file, recovery: state.dispatch?.recovery ?? "not_sent" });
+  const hb = await loadHandbackFor(state, file);
+  if (!state.receipt?.id) throw new CliError("receipt_unknown", { stateFile: file, recovery: state.dispatch?.recovery ?? "not_sent", ...(hb.handback ? { continuation: { state: hb.handback.state } } : {}) });
   const receipt = await readback(ctx, state, file, credential);
-  return outcome(receipt, state, file, { serverQuote: state.cli?.serverQuote ?? { quoteId: state.request.quoteId } });
+  const handback = await settleHandback(file, hb, receipt, state);
+  return outcome(receipt, state, file, { serverQuote: state.cli?.serverQuote ?? { quoteId: state.request.quoteId } }, handback);
 }

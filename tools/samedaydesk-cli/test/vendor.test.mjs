@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 
 test("vendored task-continuation bytes match SOURCE.json", () => {
   const source = JSON.parse(readFileSync(join(root, "vendor/task-continuation/SOURCE.json"), "utf8"));
-  assert.equal(source.commit, "6c8edfd755d8e254659d9f8357c123c8da36bd44");
+  assert.equal(source.commit, "d74c37ffd14b1285c74b4521d7a7ec43f5bbd85d");
   for (const file of source.files) {
     const bytes = readFileSync(join(root, "vendor/task-continuation", file.path));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), file.sha256, file.path);

@@ -90,6 +90,16 @@ const CODES = {
   execution_pending: ["pending", true, "gateway result --state-file later"],
   execution_uncertain: ["unknown_mutation_outcome", false, "do not resend; the receipt is uncertain at its deadline"],
   execution_failed: ["remote_failed", false, "read evidence.receiptError; a new attempt needs a new quote and state file"],
+  // task-continuation 1.3.0 refusals as CLI codes. evidence.continuation keeps
+  // the module's own { code, exitCategory, exitCode, retryable } row.
+  continuation_task_changed: ["conflict", false, "the tool, origin, terms or subject changed; start a new state file (the old task is not rebound)"],
+  continuation_dispatch_pending: ["conflict", false, "gateway resume (read back by key); never a new dispatch"],
+  continuation_result_unknown: ["unknown_mutation_outcome", true, "gateway resume later; do not dispatch again"],
+  continuation_handback_invalid: ["input", false, "the handback file does not validate; reconcile the receipt out of band and start a new state file"],
+  continuation_state_invalid: ["input", false, "follow quote, execution, result, acceptance in order"],
+  continuation_expired: ["input", false, "the quote expired before dispatch; gateway execute with a new state file"],
+  continuation_revoked: ["auth", false, "start a new task; do not retry"],
+  continuation_file_invalid: ["input", false, "the continuation file does not validate"],
   internal: ["input", false, "help"],
 };
 

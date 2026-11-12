@@ -75,6 +75,13 @@ test("tenant: server quote, execute, verified result; caller-state v1 persisted 
     assert.equal(stateAtExecute.dispatch.recovery, "sent_unconfirmed");
     const execute = authority.requests.find(request => request.url.endsWith("/v1/execute"));
     assert.equal(execute.headers["idempotency-key"], saved.key);
+    const handback = JSON.parse(readFileSync(`${state}.handback.json`, "utf8"));
+    assert.equal(statSync(`${state}.handback.json`).mode & 0o777, 0o600);
+    assert.equal(handback.schema, "task-continuation.handback.v1");
+    assert.equal(handback.state, "acceptance");
+    assert.equal(handback.result.stepEventId, saved.key, "the idempotency key is the handback stepEventId");
+    assert.equal(result.handback.state, "acceptance");
+    assert.ok(!readFileSync(`${state}.handback.json`, "utf8").includes(TOKEN_A) && !readFileSync(`${state}.handback.json`, "utf8").includes("actual"), "no token or raw input in the handback");
     assert.equal(execute.headers.authorization, `Bearer ${TOKEN_A}`);
     for (const text of [run.raw, quote.raw, JSON.stringify(saved)]) assert.ok(!text.includes(TOKEN_A));
     const again = await cli(["gateway", "result", "--state-file", state, "--credential-file", credential(), ...loop(authority.origin)]);
@@ -116,6 +123,7 @@ test("tenant child: lost committed response, then resume in a fresh process reco
     const persisted = readState(state);
     assert.equal(persisted.receipt, null);
     assert.equal(persisted.dispatch.recovery, "sent_unconfirmed");
+    assert.equal(JSON.parse(readFileSync(`${state}.handback.json`, "utf8")).state, "result_unknown");
     const premature = spawnCli(["gateway", "result", "--state-file", state, "--credential-file", credential(), ...loop(authority.origin)]);
     assert.equal((await premature.exited).code, EXIT.input);
     assert.equal(premature.lines()[0].error.code, "receipt_unknown");
@@ -124,6 +132,7 @@ test("tenant child: lost committed response, then resume in a fresh process reco
     const result = resumed.lines()[0].result;
     assert.equal(result.receipt.status, "completed");
     assert.equal(authority.control.commits, 1, "resume was answered from the stored receipt; the route did not run again");
+    assert.equal(JSON.parse(readFileSync(`${state}.handback.json`, "utf8")).state, "acceptance");
     assert.equal(authority.control.executeRequests, 2);
     const keys = authority.requests.filter(request => request.url.endsWith("/v1/execute")).map(request => request.headers["idempotency-key"]);
     assert.equal(keys[0], keys[1], "same key on resume");
@@ -182,6 +191,33 @@ test("tenant: resume of a direct-client (caller.mjs) state file; changed terms a
     assert.equal(refused.out.error.code, "state_binding_conflict");
     assert.equal(authority.requests.filter(request => request.url.endsWith("/v1/execute")).length, 2, "a changed request is never sent");
     assert.ok(authority.requests.length > sent);
+  } finally { await authority.close(); }
+});
+
+test("tenant: a changed task against its handback is continuation_task_changed and nothing is sent", async () => {
+  const authority = await startAuthority();
+  try {
+    const { dir, credential, input } = setup();
+    const file = join(dir, "t.json");
+    authority.control.loseNextExecuteResponse = true;
+    const first = await cli(["gateway", "execute", "--route", "fixture.echo", "--input-file", input(), "--state-file", file, "--credential-file", credential(), ...loop(authority.origin)]);
+    assert.equal(first.exit, EXIT.transport);
+    const state = readState(file);
+    delete state.cli.expectedRequestDigest;
+    delete state.cli.serverQuote.inputDigest;
+    state.request.input = { value: "changed" };
+    writeFileSync(file, JSON.stringify(state));
+    const executes = authority.control.executeRequests;
+    const refused = await cli(["gateway", "resume", "--state-file", file, "--credential-file", credential(), ...loop(authority.origin)]);
+    assert.equal(refused.exit, EXIT.conflict);
+    assert.equal(refused.out.error.code, "continuation_task_changed");
+    assert.deepEqual(refused.out.error.evidence.changed, ["subject"]);
+    assert.equal(refused.out.error.evidence.continuation.exitCode, 5, "the module's own exit row is carried");
+    assert.equal(authority.control.executeRequests, executes);
+    const missing = join(dir, "m.json");
+    writeFileSync(missing, JSON.stringify({ ...readState(file), request: { ...readState(file).request, input: { value: "actual" } } }), { mode: 0o600 });
+    const noHandback = await cli(["gateway", "resume", "--state-file", missing, "--credential-file", credential(), ...loop(authority.origin)]);
+    assert.equal(noHandback.out.error.code, "continuation_handback_invalid");
   } finally { await authority.close(); }
 });
 
