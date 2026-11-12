@@ -9,17 +9,25 @@ Run on the Cursor VM assigned by VM Console. No model calls are needed. Source:
 ```sh
 set -eu
 node --version                      # expect v22.x (tested locally on v22.23.2)
+BRANCH=codex/n12-workflow-kits-20261112
 git clone --filter=blob:none --no-checkout https://github.com/epistemedeus/samedaydesk.git sds-wk-n12
 cd sds-wk-n12
-git fetch origin codex/n12-workflow-kits-20261112
-git checkout <HEAD_SHA>             # the exact head reported with this branch
 git sparse-checkout set integrations/workflow-kits-n12
+git fetch origin "$BRANCH"
+# HEAD_SHA: substitute the exact head reported for this run, or take the fetched branch tip.
+HEAD_SHA="${HEAD_SHA:-$(git rev-parse FETCH_HEAD)}"
+git checkout --detach "$HEAD_SHA"
+git rev-parse HEAD                  # record this SHA with the run evidence
 cd integrations/workflow-kits-n12
 node scripts/vendor-sync.mjs --check
 node scripts/build-artifacts.mjs --check
 node scripts/compute-comparison.mjs --check
 node --test 2>&1 | tee ../../wk-n12-node-test.txt
 ```
+
+To pin a reported head, run with `HEAD_SHA=<sha>` set in the environment; otherwise the
+block checks out the tip of the fetched branch and prints it. Sparse checkout is set
+before the first checkout so only `integrations/workflow-kits-n12/` is materialised.
 
 `node --test` also runs the vendored PR 682 and PR 684 suites.
 
@@ -73,6 +81,9 @@ not available in that n8n version, activate the workflow in the editor at
 http://127.0.0.1:5678 and repeat the POST. Export the execution with
 `npx n8n@2.46.4 export:workflow --id=sdsWkN12Rta00001` and the execution JSON from the
 public API if enabled, and keep `serve.log` and `n8n.log`.
+
+Cloud import, readback and cleanup evidence, when an operator does it, goes in
+[IMPORTS.md](IMPORTS.md).
 
 ## Not run here
 

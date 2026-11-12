@@ -24,6 +24,7 @@ use synthetic fixtures. No buyer, payment or live run is claimed.
 | `vendor/` | Byte-exact copies of the job contract, the recurring journey and FlowAssert, listed with sha256 in `vendor/PINS.json`. |
 | `COMPARISON.json` | Make and n8n rows for steps, failureHandling, recovery and duplicateEffects, computed from the artifacts. |
 | `VM-RUN.md` | Model-free commands for the official VM run. |
+| `IMPORTS.md` | Receipt template for cloud import, readback and cleanup evidence (unfilled). |
 
 ## Install
 
