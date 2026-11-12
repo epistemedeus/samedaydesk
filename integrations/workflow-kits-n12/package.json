@@ -1,0 +1,22 @@
+{
+  "name": "@samedaydesk/workflow-kits-n12",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SameDayDesk importable Make and n8n kits and client adapters for the recurring record-to-accepted-output journey.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "vendor:check": "node scripts/vendor-sync.mjs --check",
+    "vendor:sync": "node scripts/vendor-sync.mjs --sync",
+    "build": "node scripts/build-artifacts.mjs && node scripts/compute-comparison.mjs",
+    "build:check": "node scripts/build-artifacts.mjs --check && node scripts/compute-comparison.mjs --check",
+    "serve": "node bin/serve.mjs"
+  }
+}

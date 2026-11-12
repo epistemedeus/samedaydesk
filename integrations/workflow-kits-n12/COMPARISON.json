@@ -1,0 +1,118 @@
+{
+  "schema": "samedaydesk.workflow-kits-n12.comparison.v1",
+  "columns": [
+    "steps",
+    "failureHandling",
+    "recovery",
+    "duplicateEffects"
+  ],
+  "method": [
+    "steps: modules (Make) or nodes (n8n) on the accepted path from trigger to webhook response, counted from the committed blueprint and workflow JSON; the Make router counts as a module.",
+    "failureHandling: branches the platform itself evaluates (Make router routes with filters, n8n If nodes and Respond outcomes); exception typing comes from period.exception.code returned by the client endpoint.",
+    "recovery: modules or nodes on the retry route and whether the replay reuses period.retry.sameIdempotencyKey.",
+    "duplicateEffects: simulated lost reply through src/client-endpoint.mjs with the synthetic export fixtures: the same request evaluated twice and the accepted hand-off posted twice; counts extra acceptance effects plus extra hand-off deliveries.",
+    "Computed by scripts/compute-comparison.mjs; no live Make or n8n run is claimed."
+  ],
+  "rows": {
+    "native": {
+      "steps": "4: project permitted capture, bind the exchange-supplied termsVersion, build job contract, run acceptance",
+      "failureHandling": "typed exception per period: ingestion_missing, ingestion_not_permitted, capture_stale, schema_changed, terms_changed, token_used_as_task_ref, follow_up_not_new_task",
+      "recovery": "replay with the same idempotencyKey (request digest) returns the original committed result; uncommitted first request fabricates nothing",
+      "duplicateEffects": "0: secondEffect is false on replay",
+      "source": "vendored PR 684 recurring-journey COMPARISON_ROWS.native (repo and sha in vendor/PINS.json)"
+    },
+    "make": {
+      "steps": "7 modules on the accepted path (11 in the scenario): Receive Period Capture > Shape Capture Fields > Period Record JSON > Evaluate Period > Route On Period > Post Accepted Output > Respond Accepted",
+      "failureHandling": "3 router routes with filters (Accepted, Retryable, Not retryable); typed period.exception.code from the SameDayDesk client endpoint (same vendored journey as native)",
+      "recovery": "3 modules on the retry route (Wait Before Replay > Replay Same Key > Respond Replayed); replay reuses period.retry.sameIdempotencyKey: true",
+      "duplicateEffects": "0: 2 evaluations gave 1 acceptance effect (replay recovered true, secondEffect false); 2 hand-off posts gave 1 delivery",
+      "measured": {
+        "totalModules": 11,
+        "acceptedPathModules": 7,
+        "acceptedPath": [
+          "Receive Period Capture",
+          "Shape Capture Fields",
+          "Period Record JSON",
+          "Evaluate Period",
+          "Route On Period",
+          "Post Accepted Output",
+          "Respond Accepted"
+        ],
+        "routerRoutes": 3,
+        "routeFilters": [
+          "Accepted",
+          "Retryable",
+          "Not retryable"
+        ],
+        "retryModules": 3,
+        "retryPath": [
+          "Wait Before Replay",
+          "Replay Same Key",
+          "Respond Replayed"
+        ],
+        "replayUsesSameIdempotencyKey": true,
+        "acceptedHandOffUsesIdempotencyKey": true,
+        "modulesReadingPeriodException": 3,
+        "paidOrCodeModules": 0,
+        "evaluations": 2,
+        "acceptanceEffects": 1,
+        "replayRecovered": true,
+        "replaySecondEffect": false,
+        "handOffPosts": 2,
+        "handOffDeliveries": 1,
+        "duplicateEffects": 0
+      }
+    },
+    "n8n": {
+      "steps": "7 nodes on the accepted path (15 in the workflow, 3 of them the separate FlowAssert branch): Receive Period Capture > Kit Settings > Shape Capture Fields > Evaluate Period > Accepted? > Post Accepted Output > Respond Accepted",
+      "failureHandling": "2 If nodes (Accepted?, Retryable?) and 3 response outcomes (Respond Accepted 200, Respond Replayed 202, Respond Exception 422); typed period.exception.code from the SameDayDesk client endpoint (same vendored journey as native)",
+      "recovery": "3 nodes on the retry route (Wait Before Replay > Replay Same Key > Respond Replayed); replay reuses period.retry.sameIdempotencyKey: true",
+      "duplicateEffects": "0: 2 evaluations gave 1 acceptance effect (replay recovered true, secondEffect false); 2 hand-off posts gave 1 delivery",
+      "measured": {
+        "totalNodes": 15,
+        "acceptedPathNodes": 7,
+        "acceptedPath": [
+          "Receive Period Capture",
+          "Kit Settings",
+          "Shape Capture Fields",
+          "Evaluate Period",
+          "Accepted?",
+          "Post Accepted Output",
+          "Respond Accepted"
+        ],
+        "branchNodes": [
+          "Accepted?",
+          "Retryable?"
+        ],
+        "responseOutcomes": [
+          "Respond Accepted 200",
+          "Respond Replayed 202",
+          "Respond Exception 422"
+        ],
+        "retryNodes": 3,
+        "retryPath": [
+          "Wait Before Replay",
+          "Replay Same Key",
+          "Respond Replayed"
+        ],
+        "replayUsesSameIdempotencyKey": true,
+        "acceptedHandOffUsesIdempotencyKey": true,
+        "flowassertBranchNodes": 3,
+        "executeCommandNodes": 0,
+        "evaluations": 2,
+        "acceptanceEffects": 1,
+        "replayRecovered": true,
+        "replaySecondEffect": false,
+        "handOffPosts": 2,
+        "handOffDeliveries": 1,
+        "duplicateEffects": 0
+      }
+    }
+  },
+  "nativeVsDirect": [
+    "Native row: vendored PR 684 recurring-journey COMPARISON_ROWS.native, unchanged (repo and sha in vendor/PINS.json).",
+    "Both kits reach the same period.* as native because the client endpoint runs the same vendored journey; the platform adds trigger, shaping, routing and hand-off steps around it.",
+    "Duplicate-effect protection comes from the request-digest idempotency key enforced by the client endpoint, not from Make or n8n. A platform-level retry that bypasses the endpoint would not be deduplicated by the platform.",
+    "Counts are from committed JSON and a local simulation, not from a live Make or n8n execution."
+  ]
+}
