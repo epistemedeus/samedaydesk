@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "1199727fb014ad1a41fb294a322f852d274e28bf",
+  "base": "0d89256c745cc90b9375ac602f47722a9ac9733a",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -46,7 +46,7 @@
     "server/lib/machine-services/postgres.mjs": "4888dac6b79778dbb5b94ce7e1a9750340775215acaab193b2e2b77628d599d9",
     "server/lib/machine-services/private-config.mjs": "92b91fd959e73c044c4085881a181da9118b925eed97a63fcf577bc993cc2090",
     "server/lib/machine-services/test/entry-preload.mjs": "80c1ad9d61740f06e9cd05409cd8771ff4a0ac251421c8472e0ad55228f9993f",
-    "server/lib/machine-services/test/integration.test.mjs": "ec98096d67a7abd78856ec6109781cc81125ceaaaf53c0efde7c3b66796a94ff",
+    "server/lib/machine-services/test/integration.test.mjs": "abe533668ede2218e28fbb5ac87c4ec157281be5911bafea1632bc53c5eb9f75",
     "server/lib/machine-services/test/lifecycle.test.mjs": "05578edcf75634dae9185d125130ba14ab8973cb59154d5e5e0cd9a59ca3411e",
     "server/lib/machine-services/test/run.mjs": "a0c9e92bd0a83efcf5e2b7261d8d5cbe0085a0ed67c9bb7b035b428a44c9999b",
     "server/lib/managed-watch/claim.mjs": "bc706b232c49c8704bc8be47234dfff79077d4cf659bd1d1a33779b9f80a2041",
@@ -175,7 +175,7 @@
     "server/vendor/machine-gateway/src/errors.mjs": "56317ae7cb5a920f952fb493022fb409fe5fbc893ff38603baaa62d2bbbec303",
     "server/vendor/machine-gateway/src/facilitator-io.mjs": "9b454a1c0b07732d6009c49badb7361cbcc80fdb8528ccdc6bdef3c371a3d045",
     "server/vendor/machine-gateway/src/facilitator-worker.mjs": "e3c985442a260c1ceca61ed03fa0183b0e554dad5c5c5a9be7aca4dd67ef6b7f",
-    "server/vendor/machine-gateway/src/gateway.mjs": "359aef549eaced58b48e208ce65f36985228268e7d5c6a518206a8e1856e433e",
+    "server/vendor/machine-gateway/src/gateway.mjs": "cdd711c4ec7d3d53b283ed5245eae730d134b23bb73bbec989b82bc4b2d2fbbe",
     "server/vendor/machine-gateway/src/http.mjs": "2b78adf3f71f6e6b5faba15458051ad147e156cbb198c69a0800e99f013fb4e1",
     "server/vendor/machine-gateway/src/index.mjs": "cfb5eabfc80a2bfddca09d804fa8310b5902913d762d5833640b07e616894cce",
     "server/vendor/machine-gateway/src/payments.mjs": "0269ede6ed5fe3fb1e1553713801111bbf95e61eede21dfbe9bf382325e258ca",
@@ -183,8 +183,8 @@
     "server/vendor/machine-gateway/src/registry.mjs": "3d037fd35c8bb0a0b46c735012ef388a58c4642e51415ade07c436193c312d78",
     "server/vendor/machine-gateway/src/schemas.mjs": "b0ef3433d54284aad459fdb70ab68426cd3ac068f4726a8a6f71f1834f6f7f51",
     "server/vendor/machine-gateway/src/server.mjs": "ab82aee68c1acf1b542c713fd6d1f167ffea389740928a821e7c28d9f116cb4a",
-    "server/vendor/machine-gateway/src/store-pg.mjs": "9624a15de319e3c875d7ff891e2835ecd40312ed588c2a6c92d22409af79219e",
-    "server/vendor/machine-gateway/src/store.mjs": "861d65f104a61c9c49c0c0f1c2573141f468553c826dffec858da64195c3c4ef",
+    "server/vendor/machine-gateway/src/store-pg.mjs": "26dcaecf8b9fc74a5b9a941b1b9116feb84b6d0f367c27e320976833759d0982",
+    "server/vendor/machine-gateway/src/store.mjs": "3aee49d3257fcfa7b08df843d1c812f47d813edb45e1a7b76c3da4b606bf24e2",
     "server/vendor/machine-gateway/src/util.mjs": "0d6835e1bc32a3d2224bfee3ce0e56fe9b8ef6b899d2a498bc4ccf51e1fea4b8",
     "server/vendor/machine-gateway/src/worker.mjs": "8c521071bbd61e6b05a5f7e4d16ec6b56fb9218a751a801ef893fc4036dd04c1",
     "server/vendor/machine-gateway/vendor/extractor/LICENSE": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c",
@@ -1525,6 +1525,11 @@
       "base": "7f270b233f44ceb8ccdabf51f674d739a5beb475",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:a3a79031788f4f1084f93a39507c78c5aba7ca7feb4d3fded3664fa6a0784936"
+    },
+    {
+      "base": "1199727fb014ad1a41fb294a322f852d274e28bf",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:55dbbc9a312318f8dbebae4bdb178b0706de45a0ceb0bb979375a0c68cdb3d93"
     }
   ]
 }

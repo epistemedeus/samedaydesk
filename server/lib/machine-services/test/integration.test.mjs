@@ -501,6 +501,35 @@ test('received PG: completion waits cannot commit an output after the persisted 
   assert.equal(result.receipt.status, 'uncertain'); assert.equal(result.receipt.output, null);
 });
 
+test('received PG: a fired attempt deadline persists uncertain while the store clock is short of deadlineAt', async () => {
+  // Store clock frozen 60s ahead: deadlineAt is beyond both the store clock and the database clock_timestamp()
+  // expiry, so only finish({ interrupted: true }) can record the outcome expiry would. A provider that was
+  // entered and outlives its own deadline timer is never persisted as failed.
+  const frozen = Date.now() + 60000; let entered = 0, returned = 0;
+  const store = new PostgresGatewayStore(gatewayPort, { now: () => frozen });
+  const route = { id: 'fixture.late', version: '1', provider: 'unsigned-local-only', description: 'local deadline test',
+    price: { amount: 0, unit: 'usd-micros' }, timeoutMs: 20, maxOutputBytes: 1024,
+    inputSchema: object({ value: text() }), outputSchema: object({ value: text() }),
+    run: async input => { entered++; await new Promise(resolve => setTimeout(resolve, 80)); returned++; return input; },
+    test: () => ({ value: 'fixture' }) };
+  const grant = { ...tenants[0], routes: [route.id] };
+  const gateway = new MachineGateway({ store, registry: new RouteRegistry([route]), tenants: [grant] });
+  const tenant = gateway.authenticate('Bearer ' + token), input = { value: 'late' };
+  const quote = await gateway.quote({ routeId: route.id, input }, tenant);
+  const body = { quoteId: quote.quoteId, input, maxUnits: 0 };
+  const result = await gateway.execute(body, { tenant, idempotencyKey: 'received-pg-fired-deadline' });
+  assert.equal(entered, 1); assert.equal(returned, 0);
+  assert.ok(frozen < result.receipt.deadlineAt);
+  assert.equal(result.receipt.status, 'uncertain'); assert.equal(result.receipt.output, null);
+  assert.equal(result.receipt.error.code, 'execution_interrupted');
+  const row = await gatewayPort.one('SELECT active, deadline, body FROM attempts WHERE id=?', result.receipt.id);
+  assert.equal(Number(row.active), 0); assert.ok(Number(row.deadline) > Date.now());
+  const saved = JSON.parse(row.body);
+  assert.equal(saved.status, 'uncertain'); assert.equal(saved.output, null); assert.equal(saved.error.code, 'execution_interrupted');
+  await new Promise(resolve => setTimeout(resolve, 100)); assert.equal(returned, 1);
+  assert.deepEqual((await gateway.execute(body, { tenant, idempotencyKey: 'received-pg-fired-deadline' })).receipt, result.receipt);
+});
+
 test('received PG: transaction wait consumes the monitor start and staging lease', async t => {
   const f = await monitorFixture(t);
   const row = await f.store.owned('customer', f.id);
