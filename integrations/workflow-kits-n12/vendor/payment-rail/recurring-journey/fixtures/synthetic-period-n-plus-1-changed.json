@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "label": "synthetic",
+  "notice": "Synthetic later-period capture whose output field changed. Not a live capture or assumed customer event.",
+  "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "captureId": "cap-synthetic-period-n-plus-1-changed",
+  "subject": "synthetic-csv-header-record",
+  "capturedAt": "2026-11-12T10:00:00.000Z",
+  "sourceUri": "https://seller.example/synthetic-recurring-record",
+  "payload": {
+    "title": "Synthetic: convert a CSV header row to JSON keys",
+    "status": "complete",
+    "output": [
+      "order_id",
+      "ship_date",
+      "notes"
+    ]
+  },
+  "permission": {
+    "permitted": true
+  }
+}

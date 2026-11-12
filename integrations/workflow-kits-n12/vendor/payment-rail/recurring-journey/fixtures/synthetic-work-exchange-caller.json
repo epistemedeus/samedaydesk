@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "label": "synthetic",
+  "notice": "Synthetic Work Exchange caller example projected from epistemedeus/neomorphic-io PR 463 head 585c80b91a15d7cf6fd97a5afc085d246efead7d services/work-exchange/fixtures/two-agent-journey.json. Not a live task, payment, or customer.",
+  "source": {
+    "repo": "epistemedeus/neomorphic-io",
+    "pull": 463,
+    "sha": "585c80b91a15d7cf6fd97a5afc085d246efead7d",
+    "path": "services/work-exchange/fixtures/two-agent-journey.json"
+  },
+  "reward": {
+    "amount": "1.00",
+    "asset": "USDC",
+    "network": "base"
+  },
+  "caller": {
+    "publicId": "wx-synthetic-agent-a"
+  },
+  "request": {
+    "title": "Synthetic: convert a CSV header row to JSON keys",
+    "summary": "Synthetic test task. Turn the supplied CSV header line into a JSON array of snake_case keys.",
+    "acceptanceExample": "Input: Order ID,Ship Date -> Output: [\"order_id\",\"ship_date\"]"
+  },
+  "contextId": "wx-synthetic-recurring-context",
+  "periodNTaskId": "tsk_synthetic_period_n",
+  "periodNPlus1TaskId": "tsk_synthetic_period_n_plus_1"
+}

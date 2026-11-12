@@ -1,0 +1,29 @@
+{
+  "synthetic": true,
+  "label": "synthetic work-exchange preview and readAccepted",
+  "notice": "Synthetic kernel termsVersion values standing in for the exchange preview or readAccepted result, as required by epistemedeus/neomorphic-io@ab7a3a0552e07ef5055ce48b442d7c0ee96bbaad services/work-exchange/INTEGRATION.md and examples/recurring-job.mjs. These are not a hash of the caller-side terms projection and not a live kernel preview.",
+  "source": {
+    "repo": "epistemedeus/neomorphic-io",
+    "pull": 463,
+    "sha": "ab7a3a0552e07ef5055ce48b442d7c0ee96bbaad",
+    "contractPath": "services/work-exchange/INTEGRATION.md",
+    "examplePath": "services/work-exchange/examples/recurring-job.mjs"
+  },
+  "receipt": {
+    "repo": "epistemedeus/pilot-heavy-relay",
+    "sha": "98f561e1ab3f75478da08f711b37af8fc9f04562"
+  },
+  "periodN": {
+    "schema": "neomorphic.work-exchange.preview.v1",
+    "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+    "standsInFor": "synthetic-kernel-f01-period-n"
+  },
+  "periodNPlus1": {
+    "schema": "neomorphic.work-exchange.preview.v1",
+    "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+    "standsInFor": "synthetic-kernel-f01-period-n-plus-1"
+  },
+  "readAcceptedPeriodN": {
+    "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925"
+  }
+}

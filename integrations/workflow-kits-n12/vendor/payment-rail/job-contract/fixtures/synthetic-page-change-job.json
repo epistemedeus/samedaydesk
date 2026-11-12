@@ -1,0 +1,53 @@
+{
+  "synthetic": true,
+  "label": "synthetic",
+  "notice": "Synthetic fixture modeled on the free page-change exact-request and recovery flow at epistemedeus/x402-url-extractor e90676f48da875c5e0f475f57f7774de947b75a7. Not a live merchant request, payment, or product change.",
+  "modeledOn": {
+    "repo": "epistemedeus/x402-url-extractor",
+    "sha": "e90676f48da875c5e0f475f57f7774de947b75a7",
+    "pull": 271,
+    "branch": "codex/page-change-mcp-recovery-20261109"
+  },
+  "task": {
+    "id": "synthetic-page-change-001",
+    "terms": "Reproduce the exact free page-change request, recover from a wrong-tool refusal through the advertised tools/list hint, and return the useful comparison result plus a buyer-owned rerunnable acceptance check.",
+    "consumer": "Maintainer or operator of one exact route who must decide whether to ship, retry, reconcile, or repair, and who can rerun this check on the next release."
+  },
+  "source": {
+    "repo": "epistemedeus/x402-url-extractor",
+    "sha": "e90676f48da875c5e0f475f57f7774de947b75a7",
+    "ref": "codex/page-change-mcp-recovery-20261109",
+    "path": "receive-page-change-example.mjs"
+  },
+  "target": "https://seller.example/platforms/methodology",
+  "request": {
+    "method": "POST",
+    "effect": "read_only",
+    "mediaType": "application/json",
+    "body": {
+      "synthetic": true,
+      "tool": "page_change_example",
+      "path": "/platforms/methodology",
+      "traceId": "synthetic-trace-fixed"
+    }
+  },
+  "quote": {
+    "amountAtomic": "5000",
+    "asset": "USDC",
+    "network": "eip155:8453",
+    "unsigned": true,
+    "note": "Synthetic unsigned 0.005 USDC quote on Base, modeled on the unchanged extract quote. Not a live payment or authorization."
+  },
+  "acceptance": {
+    "expectedResult": {
+      "status": "changed",
+      "tool": "page_change_example",
+      "path": "/platforms/methodology"
+    },
+    "requiredEvidence": [
+      { "name": "recoveryHint", "value": "tools/list recovered page_change_example" },
+      { "name": "comparisonRecord", "value": { "expected": "changed", "observed": "changed" } }
+    ],
+    "immaterialInputPaths": ["traceId"]
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "name": "SameDayDesk record to accepted output (workflow-kits-n12)",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": null,
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Receive Period Capture"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "json:TransformToJSON",
+      "version": 1,
+      "parameters": {
+        "space": ""
+      },
+      "mapper": {
+        "object": "{{1.period.capture.payload}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "Shape Capture Fields"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "json:TransformToJSON",
+      "version": 1,
+      "parameters": {
+        "space": ""
+      },
+      "mapper": {
+        "object": "{{1.period}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "Period Record JSON"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "https://client.example.invalid/samedaydesk/workflow-kits/periods",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "data": "{\"kind\":\"samedaydesk.workflow-kits-n12.workflow-request.v1\",\"platform\":\"make\",\"committed\":true,\"period\":{{3.json}},\"workflowOutput\":{{2.json}},\"comparisonRecord\":{\"expected\":\"accepted-output\",\"observed\":\"accepted-output\"}}",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0,
+          "name": "Evaluate Period"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 1200,
+          "y": 0,
+          "name": "Route On Period"
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 6,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "filter": {
+                "name": "Accepted",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{4.data.period.decision}}",
+                      "b": "accept",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{4.data.period.exception}}",
+                      "o": "notexist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "https://client.example.invalid/samedaydesk/workflow-kits/periods/accepted",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "name": "Idempotency-Key",
+                    "value": "{{4.data.period.idempotencyKey}}"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "data": "{\"idempotencyKey\":\"{{4.data.period.idempotencyKey}}\",\"taskId\":\"{{4.data.period.recordEvidence.taskId}}\",\"captureId\":\"{{4.data.period.recordEvidence.captureId}}\",\"termsVersion\":\"{{4.data.period.recordEvidence.termsVersion}}\",\"output\":{{2.json}}}",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": -300,
+                  "name": "Post Accepted Output"
+                }
+              }
+            },
+            {
+              "id": 7,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "body": "{\"decision\":\"{{4.data.period.decision}}\",\"idempotencyKey\":\"{{4.data.period.idempotencyKey}}\",\"duplicate\":{{6.data.duplicate}}}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": -300,
+                  "name": "Respond Accepted"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 8,
+              "module": "util:FunctionSleep",
+              "version": 1,
+              "parameters": {},
+              "filter": {
+                "name": "Retryable",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{4.data.period.retry.retryable}}",
+                      "b": "true",
+                      "o": "boolean:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "duration": "60"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 0,
+                  "name": "Wait Before Replay"
+                }
+              }
+            },
+            {
+              "id": 9,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "https://client.example.invalid/samedaydesk/workflow-kits/periods",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "name": "Idempotency-Key",
+                    "value": "{{4.data.period.retry.sameIdempotencyKey}}"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "data": "{\"kind\":\"samedaydesk.workflow-kits-n12.workflow-request.v1\",\"platform\":\"make\",\"committed\":true,\"period\":{{3.json}},\"workflowOutput\":{{2.json}},\"comparisonRecord\":{\"expected\":\"accepted-output\",\"observed\":\"accepted-output\"}}",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 0,
+                  "name": "Replay Same Key"
+                }
+              }
+            },
+            {
+              "id": 10,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "body": "{\"decision\":\"{{9.data.period.decision}}\",\"code\":\"{{9.data.period.exception.code}}\",\"idempotencyKey\":\"{{9.data.period.idempotencyKey}}\"}",
+                "status": "202",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 0,
+                  "name": "Respond Replayed"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 11,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "filter": {
+                "name": "Not retryable",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{4.data.period.exception.code}}",
+                      "o": "exist"
+                    },
+                    {
+                      "a": "{{4.data.period.retry.retryable}}",
+                      "b": "false",
+                      "o": "boolean:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\"code\":\"{{4.data.period.exception.code}}\",\"idempotencyKey\":\"{{4.data.period.idempotencyKey}}\"}",
+                "status": "422",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 300,
+                  "name": "Respond Exception"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": true,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "us2.make.com"
+  }
+}

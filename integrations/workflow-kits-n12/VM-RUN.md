@@ -1,0 +1,110 @@
+# VM run (model-free)
+
+Run on the Cursor VM assigned by VM Console. No model calls are needed. Source:
+`epistemedeus/samedaydesk`, branch `codex/n12-workflow-kits-20261112`, path
+`integrations/workflow-kits-n12/`.
+
+## Required
+
+```sh
+set -eu
+node --version                      # expect v20 or later (VM-received on v22.23.4)
+npm --version                       # npm ships with Node; needed for test:install
+BRANCH=codex/n12-workflow-kits-20261112
+git clone --filter=blob:none --no-checkout https://github.com/epistemedeus/samedaydesk.git sds-wk-n12
+cd sds-wk-n12
+git sparse-checkout set integrations/workflow-kits-n12
+git fetch origin "$BRANCH"
+# HEAD_SHA: substitute the exact head reported for this run, or take the fetched branch tip.
+HEAD_SHA="${HEAD_SHA:-$(git rev-parse FETCH_HEAD)}"
+git checkout --detach "$HEAD_SHA"
+git rev-parse HEAD                  # record this SHA with the run evidence
+cd integrations/workflow-kits-n12
+node scripts/vendor-sync.mjs --check
+node scripts/build-artifacts.mjs --check
+node scripts/compute-comparison.mjs --check
+npm test 2>&1 | tee ../../wk-n12-npm-test.txt
+npm run test:install 2>&1 | tee ../../wk-n12-test-install.txt
+```
+
+To pin a reported head, run with `HEAD_SHA=<sha>` set in the environment; otherwise the
+block checks out the tip of the fetched branch and prints it. Sparse checkout is set
+before the first checkout so only `integrations/workflow-kits-n12/` is materialised.
+
+`npm test` runs `node --test`, which also runs the vendored PR 682 and PR 684
+suites. It never packs or installs anything.
+
+`npm run test:install` is the cold-consumer install check
+(`install-check/cold-install.mjs`). It runs `npm pack` into a temporary folder,
+creates a fresh project there, runs `npm install --no-audit --no-fund <tgz>`
+(zero dependencies, so no registry access), then from that project imports the
+public exports and runs the `workflow-kits-n12` bin. It checks the packaged Make
+and n8n sha256 values, an accepted period, retryable `uncommitted` and
+`capture_stale` periods recovered on the same idempotency key with
+`secondEffect` false, the non-retryable `continuation_file_missing`, and the
+changed-schema later period (`schema_changed`, then the declared adapter) with no
+duplicate effect. It removes the temporary folder afterwards and skips with a
+message if npm is missing.
+
+To see the direct baseline row on its own: `node scripts/direct-baseline.mjs`.
+
+## Optional: upstream FlowAssert CLI, pinned
+
+```sh
+python3 -m venv .venv-flowassert
+. .venv-flowassert/bin/activate
+pip install "git+https://github.com/Sun-sh902/FlowAssert@3960c04dc3ee39138ed918c2226194638e13422a#subdirectory=offline"
+flowassert-verify --source vendor/flowassert/offline/examples/source.csv \
+  --destination vendor/flowassert/offline/examples/destination.csv \
+  --key external_id --field phone --field email:hs_email; echo "exit=$?"   # expect exit=1 (Mismatch)
+flowassert-verify --source vendor/flowassert/offline/examples/source.csv \
+  --destination fixtures/flowassert/destination-complete.csv \
+  --key external_id --field phone --field email:hs_email \
+  --source-complete --destination-complete; echo "exit=$?"                # expect exit=0 (Verified)
+deactivate
+```
+
+## Optional: self-hosted n8n import and execution, pinned
+
+Uses n8n 2.46.4, the version upstream FlowAssert's Code-node example was tested on.
+Local only; this is not n8n Cloud.
+
+```sh
+export N8N_USER_FOLDER="$PWD/.n8n-wk-n12"
+PORT=8787 node bin/serve.mjs > serve.log 2>&1 &
+node -e '
+const fs = require("fs");
+const w = JSON.parse(fs.readFileSync("n8n/record-to-accepted-output.workflow.json", "utf8"));
+w.id = "sdsWkN12Rta00001";
+w.nodes.find((n) => n.name === "Kit Settings").parameters.assignments.assignments[0].value = "http://127.0.0.1:8787";
+fs.writeFileSync("/tmp/wk-n12-local.workflow.json", JSON.stringify(w));
+'
+npx --yes n8n@2.46.4 import:workflow --input=/tmp/wk-n12-local.workflow.json
+npx --yes n8n@2.46.4 update:workflow --id=sdsWkN12Rta00001 --active=true
+npx --yes n8n@2.46.4 start > n8n.log 2>&1 &
+sleep 20
+node --input-type=module -e '
+import { periodNWebhookBody } from "./scripts/build-artifacts.mjs";
+const res = await fetch("http://127.0.0.1:5678/webhook/samedaydesk-record-to-accepted-output", {
+  method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(periodNWebhookBody()) });
+console.log(res.status, await res.text());
+'
+```
+
+Expected: HTTP 200 with `period.decision` `accept` and a `delivery` with
+`duplicate: false`. Posting the same body again should return `period.retry.recovered`
+`true`, `secondEffect` `false` and `duplicate: true`. If `update:workflow --active` is
+not available in that n8n version, activate the workflow in the editor at
+http://127.0.0.1:5678 and repeat the POST. Export the execution with
+`npx n8n@2.46.4 export:workflow --id=sdsWkN12Rta00001` and the execution JSON from the
+public API if enabled, and keep `serve.log` and `n8n.log`.
+
+Cloud import, readback and cleanup evidence is recorded in
+[IMPORTS.md](IMPORTS.md).
+
+## Cloud import status
+
+An n8n Cloud QA import of the workflow was created, read back and deleted;
+nothing was executed. There is no hosted Make import yet. Import acceptance
+means the workflow was imported, read back and deleted. It is not an executed
+hosted workflow, and it is not paid or commercial acceptance.

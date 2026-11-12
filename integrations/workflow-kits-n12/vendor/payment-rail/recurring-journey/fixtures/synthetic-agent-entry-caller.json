@@ -1,0 +1,29 @@
+{
+  "synthetic": true,
+  "label": "synthetic illustrative",
+  "notice": "Synthetic Agent Entry caller shape from epistemedeus/x402-url-extractor PR 273 head 6c8edfd755d8e254659d9f8357c123c8da36bd44 (task-continuation 1.1.0). publicView carries no discovery; discovery is only on the separate measurement record. Real correlationIds are random and are not hardcoded as live emissions. The token is redacted and non-authorizing.",
+  "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+  "step": 0,
+  "token": "<REDACTED>",
+  "tool": "compare_page_observations",
+  "expiresAt": "2026-11-19T10:12:00.000Z",
+  "publicView": {
+    "tool": "compare_page_observations",
+    "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+    "step": 0,
+    "expiresAt": "2026-11-19T10:12:00.000Z",
+    "tokenHeld": true
+  },
+  "measurement": {
+    "v": 1,
+    "kind": "measurement",
+    "tool": "compare_page_observations",
+    "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+    "step": 0,
+    "discovery": {
+      "status": "declared",
+      "source": "cli"
+    },
+    "outcome": null
+  }
+}

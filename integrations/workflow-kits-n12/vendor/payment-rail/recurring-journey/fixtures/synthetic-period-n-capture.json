@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "label": "synthetic",
+  "notice": "Synthetic permitted-capture projection modeled on the samedaydesk.recurring-decision-permitted-capture.v1 schema at epistemedeus/samedaydesk 32437117e5232480b18349721069b2a8a0fc2a2c. Not a live capture or customer page.",
+  "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+  "captureId": "cap-synthetic-period-n",
+  "subject": "synthetic-csv-header-record",
+  "capturedAt": "2026-11-12T09:00:00.000Z",
+  "sourceUri": "https://seller.example/synthetic-recurring-record",
+  "payload": {
+    "title": "Synthetic: convert a CSV header row to JSON keys",
+    "status": "complete",
+    "output": [
+      "order_id",
+      "ship_date"
+    ]
+  },
+  "permission": {
+    "permitted": true
+  }
+}
