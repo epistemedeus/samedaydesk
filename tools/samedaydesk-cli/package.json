@@ -1,0 +1,21 @@
+{
+  "name": "@samedaydesk/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SameDayDesk agent CLI: schema-generated discovery and a credential-free readiness journey over the existing machine-gateway client.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "bin": {
+    "samedaydesk": "./bin/samedaydesk.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "pack:clean": "node scripts/pack.mjs --out"
+  }
+}
