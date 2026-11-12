@@ -127,8 +127,8 @@ Permit http://127.0.0.1 or http://[::1] for local tests.
 Return the validated request, effect and required authority without sending.
 .RE
 .TP
-.B samedaydesk gateway quote \-\-route <string> \-\-input\-file <string> [\-\-recovery\-file <string>] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
-Remote anonymous quote from the gateway for exact input (sent to the server; not a local preview, not a reservation). Never executable; execution needs an operator\-enrolled tenant bearer. Effect: remote_quote. Auth: none. Retry: none. Recovery: rerun; anonymous quotes cannot execute.
+.B samedaydesk gateway quote \-\-route <string> \-\-input\-file <string> [\-\-recovery\-file <string>] [\-\-credential\-file <string>] [\-\-credential\-stdin] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Server quote for exact input (sent to the server; not a local preview). Anonymous: never executable, not a reservation. With a tenant credential: tenant\-bound for 60 s, one execution per quote. Effect: remote_quote. Auth: optional_tenant. Retry: none. Recovery: rerun; an unused quote expires on the server after 60 s and cannot execute by itself.
 .RS
 .TP
 .B \-\-route
@@ -143,6 +143,16 @@ JSON input file, or \- for stdin. At most 131072 bytes. Required.
 .TP
 .B \-\-recovery\-file
 Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent.
+.RE
+.RS
+.TP
+.B \-\-credential\-file
+Absolute path to an existing 0600 tenant credential file. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-credential\-stdin
+Read the tenant credential from the first line of stdin. The value is never printed.
 .RE
 .RS
 .TP
@@ -259,6 +269,117 @@ Read a saved result record offline after a lost process or stdout. Effect: none.
 .TP
 .B \-\-file
 Absolute path written by readiness check \-\-out. Required.
+.RE
+.SS tenant
+Configured\-tenant journey on the machine gateway: execute, resume and verified result. Needs an operator\-enrolled credential.
+.TP
+.B samedaydesk gateway execute \-\-route <string> \-\-input\-file <string> \-\-state\-file <string> [\-\-credential\-file <string>] [\-\-credential\-stdin] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Configured tenant: server quote, then execution with a persisted idempotency key, then verified receipt readback. Free routes only; a paid route stops before execution. Effect: tenant_execute. Auth: tenant. Retry: POST never retried; receipt GET bounded. Recovery: gateway resume \-\-state\-file: read back by receipt id, or resend the identical request with the persisted key.
+.RS
+.TP
+.B \-\-route
+Gateway route id from gateway routes. Required.
+.RE
+.RS
+.TP
+.B \-\-input\-file
+JSON input file, or \- for stdin. At most 131072 bytes. Required.
+.RE
+.RS
+.TP
+.B \-\-state\-file
+Absolute path for a new 0600 state file (direct\-client caller\-state v1). Written with the idempotency key before execution. Required.
+.RE
+.RS
+.TP
+.B \-\-credential\-file
+Absolute path to an existing 0600 tenant credential file. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-credential\-stdin
+Read the tenant credential from the first line of stdin. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk gateway resume \-\-state\-file <string> [\-\-credential\-file <string>] [\-\-credential\-stdin] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Recover a tenant execution from its state file (this CLI's or the direct client's caller\-state v1): read back by receipt id, or resend the identical request with the same key. Effect: tenant_execute. Auth: tenant. Retry: POST never retried; receipt GET bounded. Recovery: rerun gateway resume.
+.RS
+.TP
+.B \-\-state\-file
+Absolute path of a state file written by gateway execute or the direct client (caller.mjs). Required.
+.RE
+.RS
+.TP
+.B \-\-credential\-file
+Absolute path to an existing 0600 tenant credential file. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-credential\-stdin
+Read the tenant credential from the first line of stdin. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
+.RE
+.TP
+.B samedaydesk gateway result \-\-state\-file <string> [\-\-credential\-file <string>] [\-\-credential\-stdin] [\-\-origin <string>] [\-\-allow\-loopback] [\-\-dry\-run]
+Read back and verify the receipt named in a state file. Never sends a POST. Effect: read. Auth: tenant. Retry: bounded_get. Recovery: rerun.
+.RS
+.TP
+.B \-\-state\-file
+Absolute path of a state file written by gateway execute or the direct client (caller.mjs). Required.
+.RE
+.RS
+.TP
+.B \-\-credential\-file
+Absolute path to an existing 0600 tenant credential file. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-credential\-stdin
+Read the tenant credential from the first line of stdin. The value is never printed.
+.RE
+.RS
+.TP
+.B \-\-origin
+https origin. Default https://samedaydesk.com.
+.RE
+.RS
+.TP
+.B \-\-allow\-loopback
+Permit http://127.0.0.1 or http://[::1] for local tests.
+.RE
+.RS
+.TP
+.B \-\-dry\-run
+Return the validated request, effect and required authority without sending.
 .RE
 .SS batch
 Bounded JSONL batches of the supported read and readiness operations with persisted per\-item recovery.

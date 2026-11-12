@@ -12,7 +12,7 @@ _samedaydesk() {
     commands) words="" ;;
     schema) words="" ;;
     capabilities) words="" ;;
-    gateway) words="routes schema test quote" ;;
+    gateway) words="routes schema test quote execute resume result" ;;
     market) words="profile discover" ;;
     readiness) words="check" ;;
     batch) words="run" ;;
@@ -26,6 +26,9 @@ _samedaydesk() {
     "gateway schema") key="gateway schema" ;;
     "gateway test") key="gateway test" ;;
     "gateway quote") key="gateway quote" ;;
+    "gateway execute") key="gateway execute" ;;
+    "gateway resume") key="gateway resume" ;;
+    "gateway result") key="gateway result" ;;
     "market profile") key="market profile" ;;
     "market discover") key="market discover" ;;
     "readiness check") key="readiness check" ;;
@@ -42,7 +45,10 @@ _samedaydesk() {
     "gateway routes") flags="--origin --allow-loopback --dry-run" ;;
     "gateway schema") flags="--route --kind --origin --allow-loopback --dry-run" ;;
     "gateway test") flags="--route --recovery-file --origin --allow-loopback --dry-run" ;;
-    "gateway quote") flags="--route --input-file --recovery-file --origin --allow-loopback --dry-run" ;;
+    "gateway quote") flags="--route --input-file --recovery-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway execute") flags="--route --input-file --state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway resume") flags="--state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
+    "gateway result") flags="--state-file --credential-file --credential-stdin --origin --allow-loopback --dry-run" ;;
     "market profile") flags="--origin --allow-loopback --dry-run" ;;
     "market discover") flags="--limit --cursor --max-pages --stream --origin --allow-loopback --dry-run" ;;
     "readiness check") flags="--host --out --discovery --origin --allow-loopback --dry-run" ;;

@@ -130,7 +130,7 @@ export function skillMd(version) {
   const rows = COMMANDS.map(command => `| \`${command.id}\` | \`${usageLine(command)}\` | ${command.effect} | ${command.auth} | ${command.summary} |`).join("\n");
   return `---
 name: samedaydesk-cli
-description: Use when an agent needs SameDayDesk capability facts, gateway route schemas or a free quote preview, public market listings, or a free agent-readiness report for a public host, through the samedaydesk CLI ${version}.
+description: Use when an agent needs SameDayDesk capability facts, gateway route schemas, a server quote, a configured tenant's free-route execution with recovery, public market listings, a free agent-readiness report, or a bounded batch of those reads, through the samedaydesk CLI ${version}.
 ---
 
 # samedaydesk CLI ${version}
@@ -143,7 +143,7 @@ Generated from the command manifest; do not edit. Source of truth: \`${BIN} comm
 - On failure read \`error.code\`, \`error.exit\`, \`error.retryable\` and \`error.nextAction\`. Do not parse stderr for data.
 - Never pass a credential on the command line; secret-named flags are refused. When a command needs the tenant credential, name an existing 0600 file with \`--credential-file\` or pipe it with \`--credential-stdin\`. It is bound to the run's origin and never printed.
 - Use \`--dry-run\` to see the exact request, effect and required authority before sending.
-- Do not retry a POST. GET retries are already bounded inside the CLI.
+- Do not retry a POST. GET retries are already bounded inside the CLI. After a lost tenant execution, run \`gateway resume --state-file\`: it reads back by receipt id or resends the identical request with the same key.
 - On \`cursor_refused\`, \`cursor_malformed\` or \`cursor_unrecognized\`, restart \`market discover\` without \`--cursor\`. \`error.evidence.server.code\` holds the server's own code.
 - Read \`error.evidence.recovery\` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
 - SIGINT exits 130 with \`error.code\` \`cancelled\`. It does not cancel remote work that was already sent.

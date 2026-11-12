@@ -1,6 +1,6 @@
 ---
 name: samedaydesk-cli
-description: Use when an agent needs SameDayDesk capability facts, gateway route schemas or a free quote preview, public market listings, or a free agent-readiness report for a public host, through the samedaydesk CLI 0.1.0.
+description: Use when an agent needs SameDayDesk capability facts, gateway route schemas, a server quote, a configured tenant's free-route execution with recovery, public market listings, a free agent-readiness report, or a bounded batch of those reads, through the samedaydesk CLI 0.1.0.
 ---
 
 # samedaydesk CLI 0.1.0
@@ -13,7 +13,7 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 - On failure read `error.code`, `error.exit`, `error.retryable` and `error.nextAction`. Do not parse stderr for data.
 - Never pass a credential on the command line; secret-named flags are refused. When a command needs the tenant credential, name an existing 0600 file with `--credential-file` or pipe it with `--credential-stdin`. It is bound to the run's origin and never printed.
 - Use `--dry-run` to see the exact request, effect and required authority before sending.
-- Do not retry a POST. GET retries are already bounded inside the CLI.
+- Do not retry a POST. GET retries are already bounded inside the CLI. After a lost tenant execution, run `gateway resume --state-file`: it reads back by receipt id or resends the identical request with the same key.
 - On `cursor_refused`, `cursor_malformed` or `cursor_unrecognized`, restart `market discover` without `--cursor`. `error.evidence.server.code` holds the server's own code.
 - Read `error.evidence.recovery` (not_sent, sent_unconfirmed, remote_refused, remote_committed, remote_cancelled) before deciding to resend anything.
 - SIGINT exits 130 with `error.code` `cancelled`. It does not cancel remote work that was already sent.
@@ -38,7 +38,10 @@ Generated from the command manifest; do not edit. Source of truth: `samedaydesk 
 | `gateway.routes` | `samedaydesk gateway routes [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Gateway routes with price, timeout, output bound and schema paths. |
 | `gateway.schema` | `samedaydesk gateway schema --route <string> [--kind <input|output>] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | A route's input or output JSON Schema. |
 | `gateway.test` | `samedaydesk gateway test --route <string> [--recovery-file <string>] [--origin <string>] [--allow-loopback] [--dry-run]` | fixture | none | The route's labeled test fixture. No provider, payment or tenant. |
-| `gateway.quote` | `samedaydesk gateway quote --route <string> --input-file <string> [--recovery-file <string>] [--origin <string>] [--allow-loopback] [--dry-run]` | remote_quote | none | Remote anonymous quote from the gateway for exact input (sent to the server; not a local preview, not a reservation). Never executable; execution needs an operator-enrolled tenant bearer. |
+| `gateway.quote` | `samedaydesk gateway quote --route <string> --input-file <string> [--recovery-file <string>] [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | remote_quote | optional_tenant | Server quote for exact input (sent to the server; not a local preview). Anonymous: never executable, not a reservation. With a tenant credential: tenant-bound for 60 s, one execution per quote. |
+| `gateway.execute` | `samedaydesk gateway execute --route <string> --input-file <string> --state-file <string> [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | tenant_execute | tenant | Configured tenant: server quote, then execution with a persisted idempotency key, then verified receipt readback. Free routes only; a paid route stops before execution. |
+| `gateway.resume` | `samedaydesk gateway resume --state-file <string> [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | tenant_execute | tenant | Recover a tenant execution from its state file (this CLI's or the direct client's caller-state v1): read back by receipt id, or resend the identical request with the same key. |
+| `gateway.result` | `samedaydesk gateway result --state-file <string> [--credential-file <string>] [--credential-stdin] [--origin <string>] [--allow-loopback] [--dry-run]` | read | tenant | Read back and verify the receipt named in a state file. Never sends a POST. |
 | `market.profile` | `samedaydesk market profile [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Public machine-market source and capability fields. |
 | `market.discover` | `samedaydesk market discover [--limit <integer>] [--cursor <string>] [--max-pages <integer>] [--stream] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Public listings. --stream emits JSONL pages with a terminal record. |
 | `readiness.check` | `samedaydesk readiness check --host <string> [--out <string>] [--discovery <mcp|a2a|llms-txt|skill-md|openapi|registry|search|referral|operator>] [--origin <string>] [--allow-loopback] [--dry-run]` | read | none | Free agent-readiness report for a public host. Same operation as MCP check_agent_readiness. |

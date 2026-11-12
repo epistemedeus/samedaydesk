@@ -20,6 +20,17 @@ const ORIGIN_FLAGS = {
 const RECOVERY_FLAG = {
   "recovery-file": { type: "string", required: false, description: "Absolute path for a new 0600 recovery record written before the POST is sent. If it cannot be written, nothing is sent." },
 };
+const STATE_FILE_NEW = { type: "string", required: true, description: "Absolute path for a new 0600 state file (direct-client caller-state v1). Written with the idempotency key before execution." };
+const STATE_FILE_EXISTING = { type: "string", required: true, description: "Absolute path of a state file written by gateway execute or the direct client (caller.mjs)." };
+const TENANT_ERRORS = [
+  { code: "paid_route_requires_payment_authority", when: "the tenant quote has a nonzero price; nothing is executed or paid", exit: 7, retryable: false },
+  { code: "execution_pending", when: "receipt status running", exit: 11, retryable: true },
+  { code: "execution_uncertain", when: "receipt status uncertain (deadline passed); never resent", exit: 10, retryable: false },
+  { code: "execution_failed", when: "receipt status failed; evidence.receiptError holds the server code", exit: 15, retryable: false },
+  { code: "readback_mismatch", when: "the receipt does not match the persisted request, input, route or quote", exit: 6, retryable: false },
+  { code: "state_binding_conflict", when: "the state file belongs to another origin or credential", exit: 6, retryable: false },
+  { code: "credential_required", when: "no --credential-file or --credential-stdin", exit: 3, retryable: false },
+];
 const ROUTE_ID = { type: "string", required: true, pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$", description: "Gateway route id from gateway routes." };
 
 export const GROUPS = Object.freeze([
@@ -28,6 +39,7 @@ export const GROUPS = Object.freeze([
   { id: "gateway", summary: "Machine-gateway routes: schemas, labeled fixture and anonymous quote preview." },
   { id: "market", summary: "Public machine-market profile and listing reads." },
   { id: "readiness", summary: "Free agent-readiness check with a saved, recoverable result." },
+  { id: "tenant", summary: "Configured-tenant journey on the machine gateway: execute, resume and verified result. Needs an operator-enrolled credential." },
   { id: "batch", summary: "Bounded JSONL batches of the supported read and readiness operations with persisted per-item recovery." },
 ]);
 
@@ -51,10 +63,23 @@ const BASE_COMMANDS = [
   { id: "gateway.test", argv: ["gateway", "test"], group: "gateway", summary: "The route's labeled test fixture. No provider, payment or tenant.", effect: "fixture", auth: "none",
     flags: { route: ROUTE_ID, ...RECOVERY_FLAG, ...ORIGIN_FLAGS },
     http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/test`, operationId: "testRouteFixture" }], output: "neomorphic.machine-gateway.test", retry: "none", recovery: "rerun; the server documents no effect" },
-  { id: "gateway.quote", argv: ["gateway", "quote"], group: "gateway", summary: "Remote anonymous quote from the gateway for exact input (sent to the server; not a local preview, not a reservation). Never executable; execution needs an operator-enrolled tenant bearer.", effect: "remote_quote", auth: "none",
-    flags: { route: ROUTE_ID, "input-file": { type: "string", required: true, description: "JSON input file, or - for stdin. At most 131072 bytes." }, ...RECOVERY_FLAG, ...ORIGIN_FLAGS },
-    http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/quote`, operationId: "quoteRoute" }], output: "neomorphic.machine-gateway.quote", retry: "none", recovery: "rerun; anonymous quotes cannot execute",
+  { id: "gateway.quote", argv: ["gateway", "quote"], group: "gateway", summary: "Server quote for exact input (sent to the server; not a local preview). Anonymous: never executable, not a reservation. With a tenant credential: tenant-bound for 60 s, one execution per quote.", effect: "remote_quote", auth: "optional_tenant",
+    flags: { route: ROUTE_ID, "input-file": { type: "string", required: true, description: "JSON input file, or - for stdin. At most 131072 bytes." }, ...RECOVERY_FLAG, ...CREDENTIAL_FLAGS, ...ORIGIN_FLAGS },
+    http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/quote`, operationId: "quoteRoute" }], output: "neomorphic.machine-gateway.quote", retry: "none", recovery: "rerun; an unused quote expires on the server after 60 s and cannot execute by itself",
     requiredAuthorityForNextStep: { execute: "tenantBearer (operator-enrolled; not self-serve)" } },
+  { id: "gateway.execute", argv: ["gateway", "execute"], group: "tenant", summary: "Configured tenant: server quote, then execution with a persisted idempotency key, then verified receipt readback. Free routes only; a paid route stops before execution.", effect: "tenant_execute", auth: "tenant",
+    flags: { route: ROUTE_ID, "input-file": { type: "string", required: true, description: "JSON input file, or - for stdin. At most 131072 bytes." }, "state-file": STATE_FILE_NEW, ...CREDENTIAL_FLAGS, ...ORIGIN_FLAGS },
+    http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/quote`, operationId: "quoteRoute" }, { method: "POST", path: `${GATEWAY_PATH}/v1/execute`, operationId: "executeBoundQuote" }, { method: "GET", path: `${GATEWAY_PATH}/v1/receipts/{id}`, operationId: "readPersistedReceipt" }],
+    output: "samedaydesk.cli.tenant-result.v1", retry: "POST never retried; receipt GET bounded", recovery: "gateway resume --state-file: read back by receipt id, or resend the identical request with the persisted key",
+    errors: TENANT_ERRORS },
+  { id: "gateway.resume", argv: ["gateway", "resume"], group: "tenant", summary: "Recover a tenant execution from its state file (this CLI's or the direct client's caller-state v1): read back by receipt id, or resend the identical request with the same key.", effect: "tenant_execute", auth: "tenant",
+    flags: { "state-file": STATE_FILE_EXISTING, ...CREDENTIAL_FLAGS, ...ORIGIN_FLAGS },
+    http: [{ method: "POST", path: `${GATEWAY_PATH}/v1/execute`, operationId: "executeBoundQuote" }, { method: "GET", path: `${GATEWAY_PATH}/v1/receipts/{id}`, operationId: "readPersistedReceipt" }],
+    output: "samedaydesk.cli.tenant-result.v1", retry: "POST never retried; receipt GET bounded", recovery: "rerun gateway resume", errors: TENANT_ERRORS },
+  { id: "gateway.result", argv: ["gateway", "result"], group: "tenant", summary: "Read back and verify the receipt named in a state file. Never sends a POST.", effect: "read", auth: "tenant",
+    flags: { "state-file": STATE_FILE_EXISTING, ...CREDENTIAL_FLAGS, ...ORIGIN_FLAGS },
+    http: [{ method: "GET", path: `${GATEWAY_PATH}/v1/receipts/{id}`, operationId: "readPersistedReceipt" }],
+    output: "samedaydesk.cli.tenant-result.v1", retry: "bounded_get", recovery: "rerun", errors: TENANT_ERRORS },
   { id: "market.profile", argv: ["market", "profile"], group: "market", summary: "Public machine-market source and capability fields.", effect: "read", auth: "none", flags: { ...ORIGIN_FLAGS },
     http: [{ method: "GET", path: `${MARKET_PATH}/v1/market/profile`, operationId: "machine.profile" }], output: "c0-1 profile value", retry: "bounded_get", recovery: "rerun" },
   { id: "market.discover", argv: ["market", "discover"], group: "market", summary: "Public listings. --stream emits JSONL pages with a terminal record.", effect: "read", auth: "none",
@@ -104,6 +129,9 @@ const SCHEMA_REFS = {
   "gateway.schema": ["server/vendor/machine-gateway/openapi.json#/paths/~1v1~1routes~1{route}~1{kind}.schema.json"],
   "gateway.test": [`${OPENAPI}/test`],
   "gateway.quote": [`${OPENAPI}/quoteRequest`, `${OPENAPI}/quote`],
+  "gateway.execute": [`${OPENAPI}/quoteRequest`, `${OPENAPI}/quote`, `${OPENAPI}/executeRequest`, `${OPENAPI}/receipt`, "server/vendor/machine-gateway/bin/caller.mjs#caller-state.v1"],
+  "gateway.resume": [`${OPENAPI}/executeRequest`, `${OPENAPI}/receipt`, "server/vendor/machine-gateway/bin/caller.mjs#caller-state.v1"],
+  "gateway.result": [`${OPENAPI}/receipt`],
   "market.profile": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.profile"],
   "market.discover": ["vendor/hosted-wallet-market/client/agent-economy-client-0.3.0.tgz:src/catalog.mjs#machine.discover"],
   "readiness.check": ["server/lib/agent-readiness/schema.js#agent-readiness.report.v1"],
@@ -116,6 +144,7 @@ export const RECOVERY_CLASSES = Object.freeze({
   local_no_dispatch: "No network dispatch. Rerun.",
   safe_read_rerun: "GET with bounded backoff. Rerun; the read has no server effect.",
   local_record_readback: "Reads a record this CLI wrote earlier. If the record is lost, rerun the producing read.",
+  idempotent_key_readback: "The state file (0600, caller-state v1) holds the quote, exact input and idempotency key before execution; a dispatch record (sent_unconfirmed) is saved before every POST. Recovery reads back by receipt id, or resends the identical request with the same key, which the gateway answers from its stored receipt. Never a new key for the same quote. A lost state file cannot be recovered by this CLI.",
   batch_persisted_items: "Per-item state (0600) says sent_unconfirmed before each dispatch. Completed items are archived once and skipped on rerun. Every batch op is a read, so an unconfirmed item is rerun; a non-read class in sent_unconfirmed would be refused (uncertain_mutation_not_replayed). It makes no single-execution promise; a lost state dir loses the skip list, not correctness of reads.",
   unresolved_post_no_key: "POST with no idempotency key, readback or server id. The server documents no effect for this route, but a failure after sending does not prove none occurred. Never retried automatically. Use --recovery-file to persist the attempt identity before sending.",
 });
@@ -126,6 +155,7 @@ const RECOVERY_CLASS = {
   "gateway.test": "unresolved_post_no_key", "gateway.quote": "unresolved_post_no_key",
   "result.show": "local_record_readback",
   "batch.run": "batch_persisted_items",
+  "gateway.execute": "idempotent_key_readback", "gateway.resume": "idempotent_key_readback", "gateway.result": "safe_read_rerun",
 };
 
 export const COMMANDS = Object.freeze(BASE_COMMANDS.map(command => Object.freeze({
@@ -174,6 +204,9 @@ export const TASKS = Object.freeze([
   { id: "task.free_readiness", summary: "Run the free readiness check and save a recoverable record.", steps: ["readiness.check"] },
   { id: "task.recover_result", summary: "Recover a saved result offline after a lost process or stdout.", steps: ["result.show"] },
   { id: "task.browse_market", summary: "Read the public market profile and listings.", steps: ["market.profile", "market.discover"] },
+  { id: "task.tenant_execute", summary: "Configured tenant: inspect inputs, server quote, execute a free route, verified result.", steps: ["gateway.schema", "gateway.quote", "gateway.execute", "gateway.result"] },
+  { id: "task.tenant_recover", summary: "Recover a tenant execution after a lost response or process from its state file.", steps: ["gateway.resume", "gateway.result"] },
+  { id: "task.batch_reads", summary: "Run many supported reads with persisted per-item recovery.", steps: ["batch.run"] },
 ].map(task => Object.freeze({
   ...task,
   wire: task.steps.map(id => {

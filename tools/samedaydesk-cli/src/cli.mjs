@@ -8,6 +8,7 @@ import { CliError, describe } from "./errors.mjs";
 import { call as defaultCall, createTransport } from "./transport.mjs";
 import { loadCredential } from "./auth.mjs";
 import { runBatch } from "./batch.mjs";
+import { execute as tenantExecute, resume as tenantResume, result as tenantResult, tenantQuote } from "./tenant.mjs";
 import { bashCompletion, fishCompletion, helpFor, zshCompletion } from "./generate.mjs";
 import {
   COMMANDS, DEFAULT_ORIGIN, ERROR_SCHEMA, GATEWAY_PATH, GROUPS, MARKET_PATH, RECORD_SCHEMA, RESULT_SCHEMA, STREAM_SCHEMA,
@@ -122,6 +123,22 @@ function parseJsonInput(text) {
   catch (error) { throw new CliError(error?.code === "body_too_large" ? "input_too_large" : "invalid_input"); }
 }
 
+async function readInput(flags, io) {
+  let text;
+  if (flags["input-file"] === "-") text = await readStdin(io.stdin);
+  else {
+    try { text = inputText(flags["input-file"]); }
+    catch { throw new CliError("invalid_input_file"); }
+  }
+  return parseJsonInput(text);
+}
+
+async function requireCredential(flags, io) {
+  const credential = await loadCredential(flags, { origin: originOf(flags), scopePath: GATEWAY_PATH, stdin: io.stdin });
+  if (!credential) throw new CliError("credential_required", { sources: ["--credential-file", "--credential-stdin"] });
+  return credential;
+}
+
 function compactRoutes(discovery) {
   return (discovery?.routes ?? []).map(route => ({ id: route.id, version: route.version, description: route.description, price: route.price,
     timeoutMs: route.timeoutMs, maxOutputBytes: route.maxOutputBytes, executable: route.executable,
@@ -199,34 +216,54 @@ const HANDLERS = {
   },
   "gateway.quote": async ({ flags, command, io }) => {
     const base = gatewayBase(flags);
-    let text;
-    if (flags["input-file"] === "-") text = await readStdin(io.stdin);
-    else {
-      try { text = inputText(flags["input-file"]); }
-      catch { throw new CliError("invalid_input_file"); }
-    }
-    const body = { routeId: flags.route, input: parseJsonInput(text) };
+    const input = await readInput(flags, io);
+    const body = { routeId: flags.route, input };
     if (flags["dry-run"]) return plan(command, "POST", `${base}/v1/quote`, body);
+    const credential = await loadCredential(flags, { origin: originOf(flags), scopePath: GATEWAY_PATH, stdin: io.stdin });
     const recovery = persistRecovery(flags, command, base, "/v1/quote", body, io);
-    const { value } = await io.call(base, "/v1/quote", { body, sleep: io.sleep });
+    const value = credential ? await tenantQuote(io, { base, routeId: flags.route, input, credential })
+      : (await io.call(base, "/v1/quote", { body, sleep: io.sleep })).value;
     const tenantBound = value?.tenantBound === true;
     const observedAt = io.now().toISOString();
+    const next = tenantBound ? { execute: "gateway execute (free routes; paid routes need a payment authority this CLI does not hold)" } : command.requiredAuthorityForNextStep;
     return {
       kind: "remote_quote",
       sent: true,
-      anonymous: true,
+      anonymous: !credential,
+      credential: credential ? credential.toJSON() : null,
       reservation: tenantBound ? "tenant_bound_by_server" : "none",
       serverExpiresAt: Number.isSafeInteger(value?.expiresAt) ? value.expiresAt : null,
       executable: value?.executable === true,
       tenantBound,
       quote: value,
       recovery,
-      requiredAuthorityForNextStep: command.requiredAuthorityForNextStep,
+      requiredAuthorityForNextStep: next,
       handback: handback({ operationId: "quoteRoute", origin: base, contract: "neomorphic.machine-gateway.quote.v1",
         references: { quoteId: typeof value?.quoteId === "string" ? value.quoteId : null, routeId: flags.route, inputDigest: typeof value?.inputDigest === "string" ? value.inputDigest : digest(body.input) },
-        observedAt, applicability: "Anonymous quote for this exact input at observedAt. Not executable and not a reservation.",
-        requiredNextAuthority: command.requiredAuthorityForNextStep }),
+        observedAt, applicability: tenantBound ? "Tenant-bound quote for this exact input until serverExpiresAt. One execution per quote." : "Anonymous quote for this exact input at observedAt. Not executable and not a reservation.",
+        requiredNextAuthority: next }),
     };
+  },
+  "gateway.execute": async ({ flags, command, io }) => {
+    const base = gatewayBase(flags);
+    const input = await readInput(flags, io);
+    if (flags["dry-run"]) return { ...plan(command, "POST", `${base}/v1/quote`, { routeId: flags.route, input }),
+      then: [{ method: "POST", url: `${base}/v1/execute`, body: { quoteId: "(from the tenant quote)", input, maxUnits: 0 }, headers: ["authorization: Bearer [redacted]", "idempotency-key: (new, persisted first)"] },
+        { method: "GET", url: `${base}/v1/receipts/{id}` }], stateFile: flags["state-file"] };
+    const credential = await requireCredential(flags, io);
+    return tenantExecute(io, { base, routeId: flags.route, input, credential, file: flags["state-file"] });
+  },
+  "gateway.resume": async ({ flags, command, io }) => {
+    const base = gatewayBase(flags);
+    if (flags["dry-run"]) return { ...plan(command, "GET", `${base}/v1/receipts/{id from state}`), alternative: { method: "POST", url: `${base}/v1/execute`, note: "only when the state holds no receipt id: the identical request with the persisted key" } };
+    const credential = await requireCredential(flags, io);
+    return tenantResume(io, { base, credential, file: flags["state-file"] });
+  },
+  "gateway.result": async ({ flags, command, io }) => {
+    const base = gatewayBase(flags);
+    if (flags["dry-run"]) return plan(command, "GET", `${base}/v1/receipts/{id from state}`);
+    const credential = await requireCredential(flags, io);
+    return tenantResult(io, { base, credential, file: flags["state-file"] });
   },
   "market.profile": async ({ flags, command, io }) => {
     const market = `${originOf(flags)}${MARKET_PATH}`;

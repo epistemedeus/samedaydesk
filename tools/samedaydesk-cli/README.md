@@ -37,9 +37,25 @@ samedaydesk result show --file "$PWD/readiness.json"
 retry at most three times with 200 ms and 400 ms backoff. POST requests
 (`gateway test`, `gateway quote`) are never retried; pass `--recovery-file ABS`
 to persist the attempt identity before sending. `--dry-run` is a local preview
-(nothing sent). `gateway quote` is a remote anonymous quote (`kind:
-"remote_quote"`, not a reservation); execution needs an operator-enrolled
-tenant bearer, which this version does not handle.
+(nothing sent). `gateway quote` is a server quote (`kind: "remote_quote"`, not a local preview).
+Without a credential it is anonymous, never executable and not a reservation.
+With a tenant credential it is tenant-bound by the server for 60 seconds.
+
+Configured tenant (operator-enrolled credential, free routes):
+
+```sh
+samedaydesk gateway execute --route lockfile.delta --input-file in.json \
+  --state-file "$PWD/task.state.json" --credential-file "$HOME/.config/tenant.credential"
+samedaydesk gateway result --state-file "$PWD/task.state.json" --credential-file ...
+samedaydesk gateway resume --state-file "$PWD/task.state.json" --credential-file ...
+```
+
+The state file is the direct client's caller-state v1 (`bin/caller.mjs`), so
+either client can resume the other's task. It holds the quote, exact input and
+idempotency key before execution. `resume` reads back by receipt id, or
+resends the identical request with the same key; the gateway answers that from
+its stored receipt. A paid route stops before execution
+(`paid_route_requires_payment_authority`, exit 7): this CLI never pays or signs.
 
 Batch reads: `samedaydesk batch run --input-file items.jsonl --state-dir /abs/dir`
 runs the supported read and readiness operations (`samedaydesk schema
