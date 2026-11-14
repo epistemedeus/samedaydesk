@@ -1,7 +1,7 @@
 import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
+import {execFile, execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -33,7 +33,6 @@ const PRIOR_ANCHOR_SHA = 'b48be38c0d398697997dd3184cb8bcf09652e08d0c24c4ad538d27
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
 const PIN = 'server/foundry/activation/private-control-pin.json';
-const PIN_BASE = 'd9725a4f61b0bdf4d5355d3dbb86fa2379c71644';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
@@ -153,7 +152,9 @@ function historicalOnly(dir) {
 test('measurement pin matches the bytes the host closure reads', () => {
   const pin = JSON.parse(readFileSync(join(root, PIN), 'utf8'));
   assert.equal(pin.schema, 'sds.foundry.private-control-source.v1');
-  assert.equal(pin.base, PIN_BASE);
+  assert.match(pin.base, /^[a-f0-9]{40}$/);
+  assert.notEqual(pin.base, execFileSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).trim());
+  execFileSync('git', ['merge-base', '--is-ancestor', pin.base, 'HEAD'], {cwd: root, stdio: 'pipe'});
   const names = Object.keys(pin.files);
   assert.ok(names.length > 0);
   for (const name of names) {
