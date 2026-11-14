@@ -1,0 +1,10 @@
+{
+  "name": "job-contract-recurring-journey",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Recurring record-to-accepted-output journey on the job-contract runner, projecting existing ingestion and results. No new store.",
+  "scripts": {
+    "test": "node --test recurring-journey.test.mjs"
+  }
+}

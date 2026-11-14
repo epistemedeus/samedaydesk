@@ -1,0 +1,64 @@
+{
+  "schema": "samedaydesk.workflow-kits-n12-changed-period.observations.v1",
+  "notice": "Actual-provider observations are listed separately from fixture and simulation results. A provider import that did not happen is recorded as unreceived, never as a pass.",
+  "actualProvider": [
+    {
+      "provider": "n8n Cloud",
+      "scope": "earlier kit, not this one",
+      "artifact": {
+        "repo": "epistemedeus/samedaydesk",
+        "kitSha": "783f0841d56a44acd4dcce1b5a29a5060e04824b",
+        "path": "integrations/workflow-kits-n12/n8n/record-to-accepted-output.workflow.json",
+        "bytes": 119262,
+        "sha256": "4a7d556b9720a64637bb1811b48284035a37a2f063961d7351559bdba694362b"
+      },
+      "status": "cloud_qa_import_received",
+      "performedBy": "operator, with the existing n8n API key; reported by the lead",
+      "workflowId": "0ouvpy0FyuZ1WkIe",
+      "createdAtUtc": "2026-11-12T11:24:30.213Z",
+      "readback": "GET 200: 15 nodes, inactive, no credentials, node content and connections exact",
+      "cleanup": "DELETE 200, then GET 404, finished 2026-11-12T11:24:34.609Z (UTC)",
+      "executed": false,
+      "receipt": {
+        "repo": "epistemedeus/samedaydesk",
+        "sha": "806ebd9efe60b41943814bfb87bb293ea0d7fc9d",
+        "path": "integrations/workflow-kits-n12/IMPORTS.md"
+      },
+      "meaning": "Import, readback and cleanup only. Not an executed hosted workflow and not paid or commercial acceptance."
+    },
+    {
+      "provider": "Make",
+      "scope": "earlier kit, not this one",
+      "artifact": {
+        "repo": "epistemedeus/samedaydesk",
+        "path": "integrations/workflow-kits-n12/make/record-to-accepted-output.blueprint.json",
+        "sha256": "92b9976f60d6586540bf601e7e6315a56684946603c0b0ca7308bac5cffb588e"
+      },
+      "status": "unreceived",
+      "meaning": "No hosted Make import. The existing-account sign-in route is unresolved. Nothing was created in Make."
+    }
+  ],
+  "thisKit": {
+    "make": {
+      "path": "make/changed-period.blueprint.json",
+      "bytes": 17357,
+      "sha256": "80d7f9c5c8d67403ee2ca0772887567aeb639280735546239dc602474bf20f35",
+      "providerImport": "unsupported_unreceived",
+      "evidence": "fixture_only",
+      "meaning": "Not imported into Make. Built and simulated locally only."
+    },
+    "n8n": {
+      "path": "n8n/changed-period.workflow.json",
+      "bytes": 15132,
+      "sha256": "b1465a72c331d3386ea99f489c8554c9a6e4461aacbcf2ce1218fa8ec73007a8",
+      "providerImport": "unsupported_unreceived",
+      "evidence": "fixture_only",
+      "meaning": "Not imported into n8n Cloud or self-hosted n8n. Built and simulated locally only. The earlier n8n Cloud QA import does not carry over to this artifact."
+    }
+  },
+  "fixtureObservations": {
+    "source": "EFFORT.json (simulation section), computed by scripts/compute-effort.mjs",
+    "method": "src/simulate.mjs walks the committed Make blueprint and n8n workflow graphs against an in-process client endpoint that runs the vendored Useful Commerce journey. Faults (one uncommitted first request, one lost apply reply) are injected at that endpoint only.",
+    "notProvider": true
+  }
+}

@@ -1,0 +1,347 @@
+{
+  "schema": "samedaydesk.workflow-kits-n12-changed-period.vendor-pins.v1",
+  "notice": "Vendored bytes are unchanged copies of Useful Commerce source. Regenerate with node scripts/vendor-sync.mjs --sync after editing a source sha; verify with --check. The kernel stays owned by Useful Commerce; this kit never edits these files.",
+  "stack": [
+    {
+      "pull": 682,
+      "branch": "codex/n12-useful-commerce-job-contracts-20261112",
+      "head": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "role": "job contract; request digest is the idempotency key"
+    },
+    {
+      "pull": 684,
+      "branch": "codex/n12-useful-commerce-recurring-journey-20261112",
+      "head": "175245e38f86431dcdfcf6607580e3af0b999d68",
+      "role": "recurring journey, frozen period interface"
+    },
+    {
+      "pull": 687,
+      "branch": "codex/n12-useful-commerce-quote-continuity-20261112",
+      "head": "0230cda1743a25840b808573b7be3a4b11d42b9a",
+      "role": "quote continuity, comparison rows, native failure list"
+    },
+    {
+      "pull": 689,
+      "branch": "codex/n12-useful-commerce-owed-reference-20261112",
+      "head": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "role": "consume-only owed reference binding"
+    }
+  ],
+  "stackNote": "689 is stacked on 687, which is stacked on 684, which is stacked on 682. GitHub compare reports each head strictly ahead of the one below with 0 behind, and 682...689 changes only tools/payment-rail/recurring-journey/, so the job-contract and request-contract bytes at 689 equal those at 682.",
+  "sources": [
+    {
+      "name": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "pull": 689,
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "path": "tools/payment-rail/recurring-journey/",
+      "dest": "payment-rail/recurring-journey"
+    },
+    {
+      "name": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "pull": 682,
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "path": "tools/payment-rail/job-contract/",
+      "dest": "payment-rail/job-contract"
+    },
+    {
+      "name": "request-contract",
+      "repo": "epistemedeus/pilot",
+      "pull": 682,
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "path": "tools/payment-rail/buyer/request-contract.mjs",
+      "dest": "payment-rail/buyer/request-contract.mjs"
+    }
+  ],
+  "files": [
+    {
+      "path": "payment-rail/buyer/request-contract.mjs",
+      "source": "request-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/buyer/request-contract.mjs",
+      "sha256": "7c06970a9c398a8b147efa8368e4c29f2e82157aa01bb375c584622b61095ccb"
+    },
+    {
+      "path": "payment-rail/job-contract/acceptance.mjs",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/acceptance.mjs",
+      "sha256": "0305ca10199f180b4ff5656e3ff2e4b5564f0f78969b1128de753cdb826e562a"
+    },
+    {
+      "path": "payment-rail/job-contract/fixtures/load-synthetic-page-change.mjs",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/fixtures/load-synthetic-page-change.mjs",
+      "sha256": "cb344ad7e780d0df341f3d0172d54e2186f896b089573b0679f721b4605e8ffc"
+    },
+    {
+      "path": "payment-rail/job-contract/fixtures/synthetic-page-change-deliveries.json",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/fixtures/synthetic-page-change-deliveries.json",
+      "sha256": "3608bd94f134f4095c62e7dddfd581ef24b4c49e5c327f7a32198a384e78ee2f"
+    },
+    {
+      "path": "payment-rail/job-contract/fixtures/synthetic-page-change-job.json",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/fixtures/synthetic-page-change-job.json",
+      "sha256": "3f1a47732fafbc0fce1773a2da0a68398d2f389c0fbc580d582bfa7cbd781125"
+    },
+    {
+      "path": "payment-rail/job-contract/job-contract.mjs",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/job-contract.mjs",
+      "sha256": "bfb602b8bacf6c0e6b34cb4e78b7d360085726e7af6b9435f7102c592b53ef6e"
+    },
+    {
+      "path": "payment-rail/job-contract/job-contract.test.mjs",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/job-contract.test.mjs",
+      "sha256": "38d2656f24f881949f6da8f1855201df5d267bd99ed8f82c56974ee9b3f1aa64"
+    },
+    {
+      "path": "payment-rail/job-contract/package.json",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/package.json",
+      "sha256": "cf0a110772162c0d40547ef41a32fe7191bebc4557d82bafc1d3e5789c305c92"
+    },
+    {
+      "path": "payment-rail/job-contract/README.md",
+      "source": "job-contract",
+      "repo": "epistemedeus/pilot",
+      "sha": "fb8228a90a3f12221451ab27a3c9dc9eccc5ab6e",
+      "repoPath": "tools/payment-rail/job-contract/README.md",
+      "sha256": "55ab14531fa259657d92ffb855ad2ccdd247eaf37dae10889a822ce3d70e7e73"
+    },
+    {
+      "path": "payment-rail/recurring-journey/caller-projection.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/caller-projection.mjs",
+      "sha256": "2517566177c7553d352e1828779fd1b3514db0de7037546b2e1fdb4f5bc8873e"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/load-synthetic-recurring.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/load-synthetic-recurring.mjs",
+      "sha256": "2404a8128a3caba89b7fb7a91dab5666961f42013d803ebeb446551f761e32f7"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-agent-entry-caller.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-agent-entry-caller.json",
+      "sha256": "1958f80b183324e7c4ca8f5dd434402db3e085d77947d76b9435e048410969fa"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-exchange-preview.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-exchange-preview.json",
+      "sha256": "d49640f40918e430e22c3e98f7eb3e8b8e2c927ac64cf90562b465f48dfa5226"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-later-period-schema-change.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-later-period-schema-change.json",
+      "sha256": "14950a88161aa0c122866402a197ee81bdcf0f437a3509c62849f3fdf2ed1d86"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-n8n-equivalent-same.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-n8n-equivalent-same.json",
+      "sha256": "2f63ea3e087ebb57c225c7fa69fb2d1e41db047b1d919e7101037653e349e220"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-period-n-capture.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-period-n-capture.json",
+      "sha256": "415584ffbd227d04d68544ee6f57e853eb2468f857e0883572566b74580c520e"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-period-n-plus-1-changed.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-period-n-plus-1-changed.json",
+      "sha256": "2c3ba6994fe7a715361c672450c94a217e597e70334d88aa147cb9e4e32cc3d5"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-period-n-plus-1-same.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-period-n-plus-1-same.json",
+      "sha256": "ec5b02a09e9d478b0a8178cdc29dc8d03f7532bdcc3274b2a69f068dc834ec83"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-ambiguous-hosted.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-ambiguous-hosted.json",
+      "sha256": "470da304a28011818fed67c5000a830c5ed1134d7d65b592c655373ba83fb6f0"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-stale.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-stale.json",
+      "sha256": "9103186021c23f42b2fddb5ea8570cf8c2d67e59d07d2baf69bb5f2e37f52d02"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-subject-mismatch.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-subject-mismatch.json",
+      "sha256": "c76bb05f1e807c9b8fb0ec619e75d2db45e7ba71054177992cb41c33fb9d93e1"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-token-as-taskref.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-token-as-taskref.json",
+      "sha256": "f8267b8e70f0fff06048295c21b0363b2f77781f3fb9de965c42d5695d3d2f68"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-unpermitted.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-permitted-failure-unpermitted.json",
+      "sha256": "ea156c0090c0cce7c7ddc0461efd57b577f751fa0e1e66667bb0569feecfa9ff"
+    },
+    {
+      "path": "payment-rail/recurring-journey/fixtures/synthetic-work-exchange-caller.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/fixtures/synthetic-work-exchange-caller.json",
+      "sha256": "a306199f78f43c6de7f48489bdad682481ce89dc8fd12f922e3d9c8f9c8a6bc2"
+    },
+    {
+      "path": "payment-rail/recurring-journey/hash-terms-version.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/hash-terms-version.mjs",
+      "sha256": "d433f88ca2b877edb773790813225bd75241cee48fc4c2c3249ccfc7bf44ac22"
+    },
+    {
+      "path": "payment-rail/recurring-journey/ingestion-projection.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/ingestion-projection.mjs",
+      "sha256": "d5f5533c7df167c9f952e14fdc957a53bf087cbff90ddeacfb7a382483c9c2ef"
+    },
+    {
+      "path": "payment-rail/recurring-journey/journey.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/journey.mjs",
+      "sha256": "e3605ba075fe80c3a7ca08abd7ba3b87e6f2ac377f0cfee21b6cc548cca81e10"
+    },
+    {
+      "path": "payment-rail/recurring-journey/owed-reference.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/owed-reference.mjs",
+      "sha256": "aacbcf65e9cb9a94abc2d69130ffc9868ef2335f97e43faff496353fdb7263d5"
+    },
+    {
+      "path": "payment-rail/recurring-journey/owed-reference.test.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/owed-reference.test.mjs",
+      "sha256": "1d1e4449d067777c8a4d5017c675e82a2b25297c0c937446ff39b66db579f06c"
+    },
+    {
+      "path": "payment-rail/recurring-journey/package.json",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/package.json",
+      "sha256": "1a187df0413fdf2db591846fb7eb6afaf0fed94225a53f11aded600da9822926"
+    },
+    {
+      "path": "payment-rail/recurring-journey/pins.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/pins.mjs",
+      "sha256": "ade7d4ee1a4ddd10f07c64f5845c549fbd648e5e1cd8a5e1602d10177da1cbee"
+    },
+    {
+      "path": "payment-rail/recurring-journey/quote-continuity.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/quote-continuity.mjs",
+      "sha256": "94acf59466e0ddf70efa01d064b6a14c0d16d0a48222a1fdc01ab878c2d23bef"
+    },
+    {
+      "path": "payment-rail/recurring-journey/quote-continuity.test.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/quote-continuity.test.mjs",
+      "sha256": "4fef7847ff3176b8f1e84985f287e9383b06377b7867ef6566991db481c6af43"
+    },
+    {
+      "path": "payment-rail/recurring-journey/README.md",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/README.md",
+      "sha256": "dee007cac83fbb2ba647486050ec931e278e5e20e6e671df703135ed895921d2"
+    },
+    {
+      "path": "payment-rail/recurring-journey/recurring-journey.test.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/recurring-journey.test.mjs",
+      "sha256": "80136ec5e290dcadff6184a266a9b109ddf7669f1d5fbd42ec6165f302da60eb"
+    },
+    {
+      "path": "payment-rail/recurring-journey/terms-projection.mjs",
+      "source": "recurring-journey",
+      "repo": "epistemedeus/pilot",
+      "sha": "f04125452e8e75d4f6aa7932bb013709d4f4d53e",
+      "repoPath": "tools/payment-rail/recurring-journey/terms-projection.mjs",
+      "sha256": "1a8a38a9889cca75df824d90884fc33ed41cb5576988c80f9f47b6755ee165e5"
+    }
+  ]
+}

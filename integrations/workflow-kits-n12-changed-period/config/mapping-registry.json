@@ -1,0 +1,60 @@
+{
+  "schema": "samedaydesk.workflow-kits-n12-changed-period.mapping-registry.v1",
+  "notice": "Declared mappings, one per workflow output schema. A new period schema gets a new mappingVersion; existing versions are never edited, so earlier periods stay reproducible. Synthetic field names.",
+  "versions": [
+    {
+      "mappingVersion": "workflow-output.v1",
+      "appliesFrom": "period-N",
+      "notes": "Period N workflow output rows.",
+      "source": {
+        "rowId": "string",
+        "captureRef": "string",
+        "capturedAt": "string",
+        "heading": "string",
+        "state": "string",
+        "keys": "array",
+        "notes": "string",
+        "consent": "boolean"
+      },
+      "ignore": ["notes"],
+      "targets": {
+        "recordKey": { "from": "rowId" },
+        "capture.captureId": { "from": "captureRef" },
+        "capture.capturedAt": { "from": "capturedAt" },
+        "capture.subject": { "const": "synthetic-csv-header-record" },
+        "capture.sourceUri": { "const": "https://seller.example/synthetic-recurring-record" },
+        "capture.permitted": { "from": "consent" },
+        "payload.title": { "from": "heading" },
+        "payload.status": { "from": "state", "enum": { "complete": "complete", "pending": "pending" } },
+        "payload.output": { "from": "keys" }
+      }
+    },
+    {
+      "mappingVersion": "workflow-output.v2",
+      "appliesFrom": "period-N+1",
+      "notes": "Period N+1 rows: captureRef and capturedAt moved under capture, heading renamed title, state replaced by boolean done, keys renamed outputKeys, consent changed from boolean to yes/no, notes removed, priority added.",
+      "source": {
+        "rowId": "string",
+        "capture.id": "string",
+        "capture.at": "string",
+        "title": "string",
+        "done": "boolean",
+        "outputKeys": "array",
+        "priority": "number",
+        "consent": "string"
+      },
+      "ignore": ["priority"],
+      "targets": {
+        "recordKey": { "from": "rowId" },
+        "capture.captureId": { "from": "capture.id" },
+        "capture.capturedAt": { "from": "capture.at" },
+        "capture.subject": { "const": "synthetic-csv-header-record" },
+        "capture.sourceUri": { "const": "https://seller.example/synthetic-recurring-record" },
+        "capture.permitted": { "from": "consent", "enum": { "yes": true, "no": false } },
+        "payload.title": { "from": "title" },
+        "payload.status": { "from": "done", "enum": { "true": "complete", "false": "pending" } },
+        "payload.output": { "from": "outputKeys" }
+      }
+    }
+  ]
+}

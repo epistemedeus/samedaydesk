@@ -1,0 +1,94 @@
+{
+  "synthetic": true,
+  "notice": "Synthetic period request built by scripts/build-artifacts.mjs from vendored Useful Commerce synthetic fixtures. Not a live Make or n8n run and not customer data.",
+  "period": {
+    "periodId": "period-N",
+    "taskId": "tsk_synthetic_period_n",
+    "contextId": "wx-synthetic-recurring-context",
+    "followsTaskId": null,
+    "priorPeriodId": null,
+    "mappingVersion": "workflow-output.v1",
+    "termsInput": {
+      "caller": {
+        "publicId": "wx-synthetic-agent-a"
+      },
+      "request": {
+        "title": "Synthetic: convert a CSV header row to JSON keys",
+        "summary": "Synthetic test task. Turn the supplied CSV header line into a JSON array of snake_case keys.",
+        "acceptanceExample": "Input: Order ID,Ship Date -> Output: [\"order_id\",\"ship_date\"]"
+      },
+      "reward": {
+        "amount": "1.00",
+        "asset": "USDC",
+        "network": "base"
+      },
+      "contextId": "wx-synthetic-recurring-context",
+      "followsTaskId": null,
+      "preview": {
+        "schema": "neomorphic.work-exchange.preview.v1",
+        "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+        "standsInFor": "synthetic-kernel-f01-period-n-plus-1"
+      },
+      "readAccepted": null,
+      "claimedTermsVersion": null
+    },
+    "caller": {
+      "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+      "step": 0,
+      "tool": "compare_page_observations",
+      "measurement": {
+        "v": 1,
+        "kind": "measurement",
+        "tool": "compare_page_observations",
+        "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+        "step": 0,
+        "discovery": {
+          "status": "declared",
+          "source": "cli"
+        },
+        "outcome": null
+      }
+    }
+  },
+  "records": [
+    {
+      "rowId": "r-001",
+      "captureRef": "cap-wk-cp-n-r-001",
+      "capturedAt": "2026-11-12T09:00:00.000Z",
+      "heading": "Synthetic: convert a CSV header row to JSON keys",
+      "state": "complete",
+      "keys": [
+        "order_id",
+        "ship_date"
+      ],
+      "notes": "synthetic row",
+      "consent": true
+    },
+    {
+      "rowId": "r-002",
+      "captureRef": "cap-wk-cp-n-r-002",
+      "capturedAt": "2026-11-12T09:00:00.000Z",
+      "heading": "Synthetic: convert a CSV header row to JSON keys (returns)",
+      "state": "complete",
+      "keys": [
+        "return_id",
+        "reason"
+      ],
+      "notes": "synthetic row",
+      "consent": true
+    },
+    {
+      "rowId": "r-003",
+      "captureRef": "cap-wk-cp-n-r-003",
+      "capturedAt": "2026-11-12T09:00:00.000Z",
+      "heading": "Synthetic: convert a CSV header row to JSON keys (inventory)",
+      "state": "complete",
+      "keys": [
+        "sku",
+        "on_hand"
+      ],
+      "notes": "synthetic row",
+      "consent": true
+    }
+  ]
+}

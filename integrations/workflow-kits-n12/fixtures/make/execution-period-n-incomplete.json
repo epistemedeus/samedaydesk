@@ -1,0 +1,95 @@
+{
+  "synthetic": true,
+  "notice": "Synthetic export built by scripts/build-artifacts.mjs from vendored synthetic fixtures. Not a live Make or n8n run.",
+  "execution": {
+    "id": "synthetic-make-exec-incomplete",
+    "status": "incomplete"
+  },
+  "modules": {
+    "1": {
+      "module": "gateway:CustomWebHook",
+      "name": "Receive Period Capture",
+      "output": [
+        {
+          "period": {
+            "periodId": "period-N",
+            "taskId": "tsk_synthetic_period_n",
+            "contextId": "wx-synthetic-recurring-context",
+            "followsTaskId": null,
+            "termsInput": {
+              "caller": {
+                "publicId": "wx-synthetic-agent-a"
+              },
+              "request": {
+                "title": "Synthetic: convert a CSV header row to JSON keys",
+                "summary": "Synthetic test task. Turn the supplied CSV header line into a JSON array of snake_case keys.",
+                "acceptanceExample": "Input: Order ID,Ship Date -> Output: [\"order_id\",\"ship_date\"]"
+              },
+              "reward": {
+                "amount": "1.00",
+                "asset": "USDC",
+                "network": "base"
+              },
+              "contextId": "wx-synthetic-recurring-context",
+              "followsTaskId": null,
+              "preview": {
+                "schema": "neomorphic.work-exchange.preview.v1",
+                "termsVersion": "sha256:a7d5f8c4ed0d155d05ed5fa0800dd99c01815a4e8ecb53be0f53f148bde39925",
+                "standsInFor": "synthetic-kernel-f01-period-n"
+              },
+              "readAccepted": null,
+              "claimedTermsVersion": null
+            },
+            "capture": {
+              "synthetic": true,
+              "label": "synthetic",
+              "notice": "Synthetic permitted-capture projection modeled on the samedaydesk.recurring-decision-permitted-capture.v1 schema at epistemedeus/samedaydesk 32437117e5232480b18349721069b2a8a0fc2a2c. Not a live capture or customer page.",
+              "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+              "captureId": "cap-synthetic-period-n",
+              "subject": "synthetic-csv-header-record",
+              "capturedAt": "2026-11-12T09:00:00.000Z",
+              "sourceUri": "https://seller.example/synthetic-recurring-record",
+              "payload": {
+                "title": "Synthetic: convert a CSV header row to JSON keys",
+                "status": "complete",
+                "output": [
+                  "order_id",
+                  "ship_date"
+                ]
+              },
+              "permission": {
+                "permitted": true
+              }
+            },
+            "caller": {
+              "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+              "step": 0,
+              "tool": "compare_page_observations",
+              "measurement": {
+                "v": 1,
+                "kind": "measurement",
+                "tool": "compare_page_observations",
+                "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+                "step": 0,
+                "discovery": {
+                  "status": "declared",
+                  "source": "cli"
+                },
+                "outcome": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2": {
+      "module": "json:TransformToJSON",
+      "name": "Shape Capture Fields",
+      "output": [
+        {
+          "json": "{\"title\":\"Synthetic: convert a CSV header row to JSON keys\",\"status\":\"complete\",\"output\":[\"order_id\",\"ship_date\"]}"
+        }
+      ]
+    }
+  }
+}

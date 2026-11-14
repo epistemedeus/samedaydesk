@@ -1,0 +1,37 @@
+{
+  "synthetic": true,
+  "label": "synthetic n8n-equivalent stored execution, not a live n8n or Make run",
+  "notice": "Hosted-equivalent envelope projected from the retained SDS stored-execution sibling shape at epistemedeus/samedaydesk 32437117e5232480b18349721069b2a8a0fc2a2c tools/recurring-decision-consumer. The paid-API release-acceptance corpus at this programme's pin has no n8n or Make fixtures, so this envelope is synthetic. It does not contact n8n or Make.",
+  "execution": {
+    "id": "synthetic-exec-2",
+    "workflowId": "synthetic-wf",
+    "status": "success"
+  },
+  "data": {
+    "resultData": {
+      "runData": {
+        "Shape Capture Fields": [
+          {
+            "startTime": "2026-11-12T09:00:00.000Z",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "title": "Synthetic: convert a CSV header row to JSON keys",
+                      "status": "complete",
+                      "output": [
+                        "order_id",
+                        "ship_date"
+                      ]
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

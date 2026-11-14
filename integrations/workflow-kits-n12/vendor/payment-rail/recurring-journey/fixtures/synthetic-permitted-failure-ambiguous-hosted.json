@@ -1,0 +1,39 @@
+{
+  "synthetic": true,
+  "label": "synthetic permitted-failure / counterexample",
+  "notice": "Ambiguous hosted envelope with data in both sibling and execution locations. Must not pass. Not a live n8n execution.",
+  "execution": {
+    "id": "synthetic-exec-ambiguous",
+    "workflowId": "synthetic-wf",
+    "status": "success",
+    "data": {
+      "resultData": {
+        "runData": {}
+      }
+    }
+  },
+  "data": {
+    "resultData": {
+      "runData": {
+        "Shape Capture Fields": [
+          {
+            "startTime": "2026-11-12T09:00:00.000Z",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "title": "x",
+                      "status": "complete",
+                      "output": []
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

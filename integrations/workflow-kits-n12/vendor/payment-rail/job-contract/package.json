@@ -1,0 +1,10 @@
+{
+  "name": "job-contract-buyer-acceptance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Complete useful job contracts and buyer-owned rerunnable acceptance, reusing existing request-contract kernels.",
+  "scripts": {
+    "test": "node --test *.test.mjs"
+  }
+}
