@@ -30,7 +30,10 @@ if (action === 'prepare') {
   }
 } else if (action === 'serve') {
   const base = createClientEndpoint({clock: CLOCK});
-  const changed = createChangedPeriodEndpoint({clock: SCENARIO_CLOCK});
+  const changed = createChangedPeriodEndpoint({clock: SCENARIO_CLOCK,
+    faults: [{type: 'lost_apply_reply', periodId: 'period-N+1', recordKey: 'r-003'}]});
+  const changedApplyCalls = new Map();
+  let changedLostReplies = 0;
   const reply = (res, status, body) => {
     res.writeHead(status, {'content-type': 'application/json'});
     res.end(JSON.stringify(body));
@@ -39,9 +42,10 @@ if (action === 'prepare') {
     try {
       const path = new URL(req.url, origin).pathname;
       if (req.method === 'GET' && path === '/observe') return reply(res, 200, {
-        baseEffects: base.deliveriesTotal(), changedEffects: changed.externalEffects(),
+        baseEffects: base.deliveriesTotal(), changedEffects: changed.externalEffects(), changedLostReplies,
         changedReceipts: changed.receipts.snapshot().map(({periodId, recordKey, applyCount, termsVersion}) =>
           ({periodId, recordKey, applyCount, termsVersion})),
+        changedApplyCalls: [...changedApplyCalls],
       });
       assert.equal(req.method, 'POST');
       const chunks = [];
@@ -51,9 +55,17 @@ if (action === 'prepare') {
       let result;
       if (/^\/base\/periods(?:\/(accepted|flowassert))?$/.test(path))
         result = base.handle({method: req.method, path, headers, body});
-      if (/^\/changed\/(evaluate|apply|replay)$/.test(path))
+      if (/^\/changed\/(evaluate|apply|replay)$/.test(path)) {
         result = changed.handle({method: req.method, url: CLIENT_ENDPOINT + path.slice('/changed'.length), headers, body});
-      if (result?.transportError) return req.socket.destroy();
+        if (path === '/changed/apply') {
+          const key = body.periodId + '/' + body.recordKey;
+          changedApplyCalls.set(key, (changedApplyCalls.get(key) ?? 0) + 1);
+        }
+      }
+      if (result?.transportError) {
+        changedLostReplies++;
+        return req.socket.destroy();
+      }
       return reply(res, result?.status ?? 404, result?.body ?? {});
     } catch (error) {
       console.error(error.message);
@@ -102,9 +114,14 @@ if (action === 'prepare') {
   const rejected = await request(changedPath, unadapted);
   assert.deepEqual(rejected.records.map(r => r.exception.code), Array(5).fill('schema_changed'));
   await expectEffects('changedEffects', 3);
-  const accepted = await request(changedPath, next);
-  assert.equal(accepted.summary.ready, 4);
-  assert.equal(accepted.records.find(r => r.recordKey === 'r-005').exception.code, 'ingestion_not_permitted');
+  const one = {...next, records:next.records.filter(r => r.rowId === 'r-003')};
+  assert.equal((await request(changedPath, one)).summary.ready, 1);
+  const interrupted = await expectEffects('changedEffects', 4);
+  assert.equal(interrupted.changedLostReplies, 1);
+  const resumed = await request(changedPath, next);
+  assert.equal(resumed.summary.ready, 3);
+  assert.equal(resumed.records.find(r => r.recordKey === 'r-003').outcome, 'already_applied');
+  assert.equal(resumed.records.find(r => r.recordKey === 'r-005').exception.code, 'ingestion_not_permitted');
   await expectEffects('changedEffects', 7);
   const replay = await request(changedPath, next);
   assert.equal(replay.summary.alreadyApplied, 4);
@@ -113,8 +130,10 @@ if (action === 'prepare') {
   const final = await expectEffects('changedEffects', 7);
   assert.deepEqual(final.changedReceipts.filter(r => r.periodId === 'period-N'), initial.changedReceipts);
   assert.ok(final.changedReceipts.every(r => r.applyCount === 1));
-  console.log(JSON.stringify({received: true, runtime: 'n8n', synthetic: true, runs: 7,
-    baseEffects: final.baseEffects, changedEffects: final.changedEffects, maxAppliesPerKey: 1, oldTermsPreserved: true}));
+  assert.deepEqual(final.changedApplyCalls, final.changedReceipts.map(({periodId, recordKey}) => [periodId + '/' + recordKey, 1]));
+  console.log(JSON.stringify({received: true, runtime: 'n8n', synthetic: true, runs: 8,
+    baseEffects: final.baseEffects, changedEffects: final.changedEffects, changedLostReplies: final.changedLostReplies,
+    maxAppliesPerKey: 1, oldTermsPreserved: true}));
 } else {
   throw new Error('Expected prepare, serve, or verify');
 }
