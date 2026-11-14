@@ -186,6 +186,29 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "18c3edbdfb0bb51b09010d1e290f6a6b2b4a41350a92e1c9818b559d25b78ae6",
+      "sourceSha256": "e3f58e2f652213050c1a093105f69b09024909e5263fb3c5773d574f13164d3c",
+      "hostSha256": "86b24fd0ac5b5f4f77ede7e43afa2b88ff99d0379f1d0567833dfc683c62b1d6",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "4cf44a6926deb5213150de629f622d6c6c8eb1fb979832da7ab232e0a44fc14c",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "2d2096e91d03662feb6f53fb716af5e1462e7499",
+        "independentReplay": "epistemedeus/pilot/actions/runs/43629563961",
+        "observedAt": "2026-11-14T19:00:36Z",
+        "passed": 25,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "Exact tree 1f6b007457a70f1fb7b5cb70418f446fb949f1d6. Clean remote checkout, stale refusal before enrollment, 24 source-bound tests plus one standalone cold Postgres consumer journey. CI only; no live money, installation or public activation.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }
