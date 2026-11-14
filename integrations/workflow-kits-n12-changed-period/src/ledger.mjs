@@ -15,21 +15,27 @@ export function ledgerKeyOf(idempotencyKey, recordKey) {
 export function createApplyReceipts() {
   const byKey = new Map();
   const byPeriodRecord = new Map();
+  const scope = (period, record, context) => JSON.stringify([context, period, record]);
   let effects = 0;
   return {
     get(ledgerKey) {
       return byKey.get(ledgerKey) ?? null;
     },
-    forPeriodRecord(periodId, recordKey) {
-      return byPeriodRecord.get(`${periodId}\u0000${recordKey}`) ?? null;
+    forPeriodRecord(periodId, recordKey, contextId) {
+      if (contextId !== undefined) return byPeriodRecord.get(scope(periodId, recordKey, contextId)) ?? null;
+      const matches = [...byKey.values()].filter(r => r.periodId === periodId && r.recordKey === recordKey);
+      return matches.length === 1 ? matches[0] : null;
     },
     /** Write once. Returns { applied, receipt }; a second write for the same key applies nothing. */
     apply(draft) {
       const existing = byKey.get(draft.ledgerKey);
       if (existing) return { applied: false, receipt: existing };
+      const identity = scope(draft.periodId, draft.recordKey, draft.contextId);
+      const earlier = byPeriodRecord.get(identity);
+      if (earlier) return { applied: false, conflict: true, receipt: earlier };
       const receipt = Object.freeze({ kind: RECEIPT_KIND, ...draft, applyCount: 1 });
       byKey.set(draft.ledgerKey, receipt);
-      byPeriodRecord.set(`${draft.periodId}\u0000${draft.recordKey}`, receipt);
+      byPeriodRecord.set(identity, receipt);
       effects += 1;
       return { applied: true, receipt };
     },

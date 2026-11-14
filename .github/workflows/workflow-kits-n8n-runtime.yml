@@ -2,7 +2,7 @@ name: Workflow kits on actual n8n
 
 on:
   push:
-    branches: [codex/n12-sds-workflow-runtime-20261114, codex/n12-sds-release-20261112]
+    branches: [codex/n12-sds-workflow-runtime-20261114, codex/n12-sds-durable-workflows-20261114, codex/n12-sds-release-20261112]
     paths:
       - .github/workflows/workflow-kits-n8n-runtime.yml
       - tools/workflow-kits-n8n-runtime.mjs

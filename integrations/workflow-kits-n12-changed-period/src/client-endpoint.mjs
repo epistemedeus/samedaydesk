@@ -52,9 +52,8 @@ function countingEffects() {
   };
 }
 
-export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORIZON_HOURS, faults = [] } = {}) {
+export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORIZON_HOURS, faults = [], receipts = createApplyReceipts() } = {}) {
   if (!clock) throw new Error("clock is required so every run is deterministic");
-  const receipts = createApplyReceipts();
   const effects = countingEffects();
   const contexts = new Map();
   const pending = new Map();
@@ -88,7 +87,7 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
     const ledgerKey = ledgerKeyOf(period.idempotencyKey, recordKey);
     const existing = receipts.get(ledgerKey);
     if (existing) return { ...base, ledgerKey, outcome: "already_applied", retryable: false, sameIdempotencyKey: null, exception: null, receipt: existing };
-    const earlier = receipts.forPeriodRecord(periodId, recordKey);
+    const earlier = receipts.forPeriodRecord(periodId, recordKey, period.recordEvidence.contextId);
     if (earlier) {
       const terms = assertTermsUnchanged(earlier.termsVersion, period.recordEvidence.termsVersion);
       const exception = terms.ok
@@ -115,9 +114,9 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
       ingestionDigest: period.recordEvidence.ingestionDigest,
       mappingVersion,
       platform,
-      output: capture.payload,
+      output: journeyResult?.acceptedOutput?.result ?? capture.payload,
     });
-    const acceptedKey = `${periodId}\u0000${recordKey}`;
+    const acceptedKey = JSON.stringify([period.recordEvidence.contextId, periodId, recordKey]);
     if (journeyResult?.acceptedOutput && !accepted.has(acceptedKey)) accepted.set(acceptedKey, journeyResult);
     return { ...base, ledgerKey, outcome: "ready", retryable: false, sameIdempotencyKey: null, exception: null };
   }
@@ -147,7 +146,11 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
       continuationFileMissing: caller.continuationFileMissing === true,
       tool: caller.tool ?? null,
     };
-    const prior = p.priorPeriodId ? accepted.get(`${p.priorPeriodId}\u0000${recordKey}`) : null;
+    const previous = p.priorPeriodId ? receipts.forPeriodRecord(p.priorPeriodId, recordKey, p.contextId) : null;
+    const prior = !p.priorPeriodId ? null : previous ? {
+      artifact: { decision: "accept" },
+      acceptedOutput: { taskId: previous.taskId, contextId: previous.contextId, termsVersion: previous.termsVersion, result: previous.output },
+    } : receipts.durable ? null : accepted.get(JSON.stringify([p.contextId, p.priorPeriodId, recordKey]));
     if (prior) {
       const result = replayLaterPeriod({
         periodN: prior,
@@ -179,7 +182,7 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
    * evaluated or applied under the new terms.
    */
   function termsPreservedCheck(p, recordKey) {
-    const earlier = receipts.forPeriodRecord(p.periodId, recordKey);
+    const earlier = receipts.forPeriodRecord(p.periodId, recordKey, p.contextId);
     if (!earlier) return null;
     let projection;
     try {
@@ -287,11 +290,25 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
       return { status: 400, body: { outcome: "exception", exception: kitException("request_invalid", { message: "Idempotency-Key header must equal body.ledgerKey", fieldPath: "ledgerKey" }) } };
     }
     const existing = receipts.get(key);
+    const binding = existing ?? pending.get(key);
+    if (receipts.durable && binding && ["periodId", "recordKey", "idempotencyKey"].some(field => body[field] !== binding[field])) {
+      return { status: 409, body: { outcome: "exception", exception: kitException("request_invalid", {
+        message: "Apply must match the evaluated period, record and request key.", fieldPath: "ledgerKey",
+      }) } };
+    }
     if (existing) return { status: 200, body: { outcome: "already_applied", duplicate: true, receipt: existing } };
-    const draft = pending.get(key);
+    const draft = binding;
     if (!draft) return { status: 409, body: { outcome: "exception", exception: kitException("apply_without_evaluation", { message: `no ready evaluation for ${key}`, fieldPath: "ledgerKey" }) } };
-    const { receipt } = receipts.apply({ ...draft, appliedAt: currentClock });
+    const { receipt, applied, conflict } = receipts.apply({ ...draft, appliedAt: currentClock });
     pending.delete(key);
+    if (conflict) {
+      const code = receipt.termsVersion === draft.termsVersion ? "record_already_applied" : "terms_changed";
+      return { status: 409, body: { outcome: "exception", exception: kitException(code, {
+        message: "This record already has an applied result; its original terms and output are unchanged.",
+        recordKey: draft.recordKey, source: "ledger",
+      }) } };
+    }
+    if (!applied) return { status: 200, body: { outcome: "already_applied", duplicate: true, receipt } };
     if (takeFault("lost_apply_reply", draft.periodId, draft.recordKey)) {
       return { transportError: true, message: "connection reset after the apply was committed (injected lost reply)" };
     }
