@@ -87,7 +87,7 @@ test("cold consumer: npm pack, npm install of the tarball, bin and a fresh-opera
     mkdirSync(packDir);
     const packed = JSON.parse(run(["pack", "--json", "--pack-destination", packDir], root));
     const files = packed[0].files.map((f) => f.path);
-    for (const rel of [RECORDED.make.path, RECORDED.n8n.path, "index.mjs", "bin/workflow-kits-n12-changed-period.mjs", "config/mapping-registry.json", "EFFORT.json", "OBSERVATIONS.json", "README.md", "vendor/PINS.json", "vendor/payment-rail/recurring-journey/journey.mjs", "package.json"]) {
+    for (const rel of [RECORDED.make.path, RECORDED.n8n.path, "index.mjs", "bin/workflow-kits-n12-changed-period.mjs", "src/serve.mjs", "src/durable-receipts.mjs", "config/mapping-registry.json", "EFFORT.json", "OBSERVATIONS.json", "README.md", "vendor/PINS.json", "vendor/payment-rail/recurring-journey/journey.mjs", "package.json"]) {
       assert.ok(files.includes(rel), `tarball has ${rel}`);
     }
     for (const f of files) assert.ok(!f.startsWith("test/") && !f.startsWith("install-check/"), `tarball excludes ${f}`);
@@ -107,6 +107,13 @@ test("cold consumer: npm pack, npm install of the tarball, bin and a fresh-opera
       assert.equal(digests[name].bytes, RECORDED[name].bytes, name);
     }
     assert.equal(spawnSync(bin, ["validate"], { cwd: app }).status, 0);
+    if (typeof process.getBuiltinModule === "function" && process.getBuiltinModule("node:sqlite")) {
+      const state = join(app, "receipt-state");
+      mkdirSync(state, { mode: 0o700 });
+      const db = join(state, "receipts.sqlite");
+      assert.equal(spawnSync(bin, ["init", db], { cwd: app }).status, 0);
+      assert.notEqual(spawnSync(bin, ["init", db], { cwd: app }).status, 0);
+    }
     const sim = spawnSync(bin, ["simulate", "make"], { cwd: app, encoding: "utf8" });
     assert.equal(sim.status, 0, sim.stderr);
     assert.equal(JSON.parse(sim.stdout).maxAppliesPerKey, 1);

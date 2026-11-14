@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 
 import { KIT_ARTIFACTS, ROUTES, artifactDigests, kitPath, runNativeControl, runScenario, validateMappingRegistry } from "../index.mjs";
 
-const USAGE = "usage: workflow-kits-n12-changed-period <hashes|paths|validate [file]|simulate <make|n8n|direct>|native|serve <absolute-state-file> [port]>\n";
+const USAGE = "usage: workflow-kits-n12-changed-period <hashes|paths|validate [file]|simulate <make|n8n|direct>|native|init <absolute-state-file>|serve <absolute-state-file> [port]>\n";
 const [command, arg] = process.argv.slice(2);
 const print = (value) => process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 
@@ -33,6 +33,10 @@ if (command === "hashes") {
   print(runScenario(arg));
 } else if (command === "native") {
   print(runNativeControl());
+} else if (command === "init" && arg) {
+  const { openDurableApplyReceipts } = await import("../src/durable-receipts.mjs");
+  openDurableApplyReceipts(arg, { initialize: true }).close();
+  print({ initialized: true });
 } else if (command === "serve" && arg) {
   const { serveLocalChangedPeriod } = await import("../src/serve.mjs");
   serveLocalChangedPeriod(arg, { port: Number(process.argv[4] ?? 8788) });

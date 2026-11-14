@@ -14,6 +14,12 @@ export function serveLocalChangedPeriod(file, { port = 8788, now = () => new Dat
     res.end(JSON.stringify(body));
   };
   const server = createServer({ requestTimeout: 15000 }, async (req, res) => {
+    // A loopback service is still reachable by browsers. No DNS rebinding or
+    // browser-origin writes; the intended co-located runner is server-to-server.
+    if (req.headers.origin !== undefined || req.headers.host !== `127.0.0.1:${server.address()?.port}`) {
+      req.resume();
+      return send(res, 403, { error: "local_runner_required" });
+    }
     if (req.method !== "POST" || !ROUTES.has(req.url)) {
       req.resume();
       return send(res, 404, { error: "not_found" });
@@ -29,6 +35,7 @@ export function serveLocalChangedPeriod(file, { port = 8788, now = () => new Dat
         size += chunk.length;
         if (size > MAX_BYTES) {
           // No partial capture is retained or evaluated.
+          res.setHeader("connection", "close");
           send(res, 413, { error: "request_too_large" });
           return;
         }

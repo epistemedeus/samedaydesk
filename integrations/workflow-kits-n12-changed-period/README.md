@@ -74,6 +74,31 @@ import {
 } from "@samedaydesk/workflow-kits-n12-changed-period";
 ```
 
+### Local endpoint with restart recovery
+
+Node 22.13 or later is required for the built-in SQLite endpoint. Use a private
+local directory (0700) and an absolute path. Initialize exactly once:
+
+```sh
+mkdir -m 700 /absolute/private/workflow-state
+workflow-kits-n12-changed-period init /absolute/private/workflow-state/receipts.sqlite
+workflow-kits-n12-changed-period serve /absolute/private/workflow-state/receipts.sqlite 8788
+```
+
+For a co-located workflow, set its client endpoint to
+`http://127.0.0.1:8788`. The listener is loopback only and this is not an
+authenticated hosted service. Preserve this database with its original
+trusted local storage. A missing or foreign database refuses startup rather
+than starting with an empty history. Use one database per operator.
+
+A committed row is the local accepted-output effect, not confirmation of a
+write to an external API. Repeating the same apply after a lost reply
+returns the original receipt. If only evaluation occurred and the worker
+restarted, reevaluate with the original permitted input. An open or unknown
+external effect needs the destination's own idempotency or readback; this
+endpoint does not call the destination, grant payment authority, or maintain
+financial obligations.
+
 ## The recipe
 
 Both artifacts do the same thing:

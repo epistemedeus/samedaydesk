@@ -147,10 +147,11 @@ export function createChangedPeriodEndpoint({ clock, horizonHours = DEFAULT_HORI
       tool: caller.tool ?? null,
     };
     const previous = p.priorPeriodId ? receipts.forPeriodRecord(p.priorPeriodId, recordKey, p.contextId) : null;
-    const prior = !p.priorPeriodId ? null : previous ? {
+    const prior = !p.priorPeriodId ? null : !receipts.durable
+      ? accepted.get(JSON.stringify([p.contextId, p.priorPeriodId, recordKey])) : previous ? {
       artifact: { decision: "accept" },
       acceptedOutput: { taskId: previous.taskId, contextId: previous.contextId, termsVersion: previous.termsVersion, result: previous.output },
-    } : receipts.durable ? null : accepted.get(JSON.stringify([p.contextId, p.priorPeriodId, recordKey]));
+    } : null;
     if (prior) {
       const result = replayLaterPeriod({
         periodN: prior,

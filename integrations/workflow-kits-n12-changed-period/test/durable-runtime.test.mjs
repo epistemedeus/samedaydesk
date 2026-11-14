@@ -19,6 +19,7 @@ const storeFile = t => {
   t.after(() => rmSync(temp, { recursive: true, force: true }));
   return join(temp, "receipts.sqlite");
 };
+const init = file => openDurableApplyReceipts(file, {initialize:true}).close();
 
 async function start(t, path, faults = []) {
   const code = `import {serveLocalChangedPeriod} from ${JSON.stringify(entry)}; serveLocalChangedPeriod(process.argv[1], {
@@ -61,6 +62,7 @@ async function start(t, path, faults = []) {
 
 test("committed lost reply and prior terms survive a killed worker and the normal HTTP restart", async t => {
   const file = storeFile(t);
+  init(file);
   const first = await start(t, file, [{type:"lost_apply_reply", periodId:"period-N+1", recordKey:"r-003"}]);
   const base = await first.evaluate(periodNRequest());
   const firstReceipts = [];
@@ -100,6 +102,7 @@ test("committed lost reply and prior terms survive a killed worker and the norma
 
 test("two open writers preserve the first same-context result and isolate different contexts", t => {
   const file = storeFile(t);
+  init(file);
   const a = openDurableApplyReceipts(file), b = openDurableApplyReceipts(file);
   try {
     const idempotencyKey = "sha256:" + "a".repeat(64);
@@ -115,4 +118,13 @@ test("two open writers preserve the first same-context result and isolate differ
     assert.equal(b.apply({...conflicting, contextId:"c2"}).applied, true);
     assert.equal(a.effects(), 2);
   } finally { a.close(); b.close(); }
+});
+
+test("a missing database cannot be silently recreated, and init never overwrites it", t => {
+  const file = storeFile(t);
+  assert.throws(() => openDurableApplyReceipts(file), {code:"ENOENT"});
+  init(file);
+  assert.throws(() => init(file), {code:"EEXIST"});
+  const store = openDurableApplyReceipts(file);
+  try { assert.equal(store.effects(), 0); } finally { store.close(); }
 });

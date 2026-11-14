@@ -11,15 +11,14 @@ const DIGEST = /^sha256:[0-9a-f]{64}$/;
 const identity = value => typeof value === "string" && value.length > 0 &&
   value.length <= 256 && !/[\u0000-\u001f\u007f]/.test(value);
 
-export function openDurableApplyReceipts(file) {
+export function openDurableApplyReceipts(file, { initialize = false } = {}) {
   if (!isAbsolute(file ?? "")) throw new Error("absolute receipt database required");
   file = resolve(file);
   const dir = dirname(file);
   const folder = lstatSync(dir);
   if (!folder.isDirectory() || realpathSync(dir) !== dir || (folder.mode & 0o077))
     throw new Error("owner-only canonical receipt directory required");
-  try { closeSync(openSync(file, "wx", 0o600)); }
-  catch (error) { if (error.code !== "EEXIST") throw error; }
+  if (initialize) closeSync(openSync(file, "wx", 0o600));
   const st = lstatSync(file);
   if (!st.isFile() || st.nlink !== 1 || (st.mode & 0o077))
     throw new Error("owner-only regular receipt database required");
@@ -41,7 +40,7 @@ export function openDurableApplyReceipts(file) {
       const app = db.prepare("PRAGMA application_id").get().application_id;
       const version = db.prepare("PRAGMA user_version").get().user_version;
       if (app === APPLICATION && version === V) return;
-      if (app !== 0 || version !== 0 ||
+      if (!initialize || app !== 0 || version !== 0 ||
           db.prepare("SELECT count(*) AS n FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'").get().n)
         throw new Error("foreign or unsupported receipt database");
       db.exec(`
