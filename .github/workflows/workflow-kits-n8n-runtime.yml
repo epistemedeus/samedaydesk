@@ -1,0 +1,68 @@
+name: Workflow kits on actual n8n
+
+on:
+  push:
+    branches: [codex/n12-sds-workflow-runtime-20261114, codex/n12-sds-release-20261112]
+    paths:
+      - .github/workflows/workflow-kits-n8n-runtime.yml
+      - tools/workflow-kits-n8n-runtime.mjs
+      - integrations/workflow-kits-n12*/**
+
+permissions:
+  contents: read
+
+jobs:
+  disposable-n8n:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.23.4
+      - name: Verify both package outputs
+        run: |
+          for kit in integrations/workflow-kits-n12 integrations/workflow-kits-n12-changed-period; do
+            npm --prefix "$kit" run build:check
+            npm --prefix "$kit" test
+            npm --prefix "$kit" run test:install
+          done
+      - name: Import and run the generated workflows in disposable n8n
+        run: |
+          set -euo pipefail
+          export NO_PROXY=127.0.0.1,localhost
+          name=sds-n8n-kit-receive
+          image=docker.n8n.io/n8nio/n8n:2.47.7
+          assets=$(mktemp -d)
+          chmod 755 "$assets"
+          node tools/workflow-kits-n8n-runtime.mjs prepare "$assets"
+          node tools/workflow-kits-n8n-runtime.mjs serve &
+          endpoint=$!
+          cleanup() {
+            rc=$?
+            if [ "$rc" != 0 ]; then docker logs "$name" 2>&1 | tail -70 || true; fi
+            docker rm -f "$name" >/dev/null 2>&1 || true
+            docker volume rm "$name" >/dev/null 2>&1 || true
+            kill "$endpoint" 2>/dev/null || true
+            return "$rc"
+          }
+          trap cleanup EXIT
+          docker pull "$image"
+          docker image inspect "$image" --format '{{index .RepoDigests 0}}'
+          docker volume create "$name"
+          args=(--network host -e N8N_PORT=15678 -e N8N_LISTEN_ADDRESS=127.0.0.1 -e N8N_DIAGNOSTICS_ENABLED=false -e N8N_VERSION_NOTIFICATIONS_ENABLED=false -e N8N_TEMPLATES_ENABLED=false -v "$name:/home/node/.n8n" -v "$assets:/fixtures:ro")
+          for kind in base changed; do
+            docker run --rm "${args[@]}" "$image" import:workflow --input="/fixtures/$kind.json"
+          done
+          for id in n12BaseKit000001 n12ChangeKit0001; do
+            docker run --rm "${args[@]}" "$image" publish:workflow --id="$id"
+          done
+          docker run -d --name "$name" "${args[@]}" "$image" start
+          for turn in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:15678/healthz/readiness >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:15678/healthz/readiness
+          node tools/workflow-kits-n8n-runtime.mjs verify
