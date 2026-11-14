@@ -130,7 +130,10 @@ if (action === 'prepare') {
   const final = await expectEffects('changedEffects', 7);
   assert.deepEqual(final.changedReceipts.filter(r => r.periodId === 'period-N'), initial.changedReceipts);
   assert.ok(final.changedReceipts.every(r => r.applyCount === 1));
-  assert.deepEqual(final.changedApplyCalls, final.changedReceipts.map(({periodId, recordKey}) => [periodId + '/' + recordKey, 1]));
+  // The receipt export sorts by key; the request trace preserves arrival.
+  // Compare keyed multisets so the deliberately early r-003 keeps its place.
+  assert.deepEqual(new Map(final.changedApplyCalls),
+    new Map(final.changedReceipts.map(({periodId, recordKey}) => [periodId + '/' + recordKey, 1])));
   console.log(JSON.stringify({received: true, runtime: 'n8n', synthetic: true, runs: 8,
     baseEffects: final.baseEffects, changedEffects: final.changedEffects, changedLostReplies: final.changedLostReplies,
     maxAppliesPerKey: 1, oldTermsPreserved: true}));
