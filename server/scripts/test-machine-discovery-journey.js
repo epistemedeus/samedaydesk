@@ -67,7 +67,7 @@ async function assertGuideRoute(t, dist, emitted) {
     const response = await request(port, { path: "/llms.txt", headers: { accept } });
     assert.equal(response.status, 200);
     assert.match(response.headers["content-type"], /^text\/plain/);
-    assert.equal(response.body, emitted + queryKeyReuseMarkdown());
+    assert.equal(response.body, emitted);
     assert.match(response.body, /^- Email: contact@neomorphic\.io$/m);
     assert.doesNotMatch(response.body, /contact@samedaydesk\.com/);
     assert.match(response.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
@@ -75,7 +75,7 @@ async function assertGuideRoute(t, dist, emitted) {
   const head = await request(port, { method: "HEAD", path: "/llms.txt" });
   assert.equal(head.status, 200);
   assert.equal(head.body, "");
-  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted + queryKeyReuseMarkdown()));
+  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted));
 }
 
 test("machine guide source serves the active contact over the production static path", async (t) => {
@@ -435,6 +435,7 @@ test("production fallback keeps declarations out of the HTML shell and preserves
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>spa-shell</body></html>");
   writeFileSync(join(dist, "openapi.json"), "{\"openapi\":\"static-decoy\"}");
+  writeFileSync(join(dist, "llms.txt"), "static guide decoy\n");
   mkdirSync(join(dist, ROUTE_SHELL_DIR), { recursive: true });
   writeFileSync(
     join(dist, ROUTE_SHELL_DIR, shellFileName(NOT_FOUND_SHELL.path)),
@@ -476,6 +477,19 @@ test("production fallback keeps declarations out of the HTML shell and preserves
 
   const openapi = await request(port, { path: "/openapi.json" });
   assert.equal(openapi.status, 200);
+  const servedGuide = await request(port, { path: "/llms.txt" });
+  assert.equal(servedGuide.status, 200);
+  assert.match(servedGuide.headers["content-type"], /^text\/plain/);
+  const staticSource = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.equal(servedGuide.body, staticSource + queryKeyReuseMarkdown());
+  assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 1);
+  const declaredReuse = openapi.json["x-query-key-caller"];
+  assert.ok(servedGuide.body.includes(declaredReuse.runner.alternateArchive));
+  assert.ok(servedGuide.body.includes(declaredReuse.reuse.applyCaller));
+  const headGuide = await request(port, { method: "HEAD", path: "/llms.txt" });
+  assert.equal(headGuide.status, 200);
+  assert.equal(headGuide.body, "");
+  assert.equal(Number(headGuide.headers["content-length"]), Buffer.byteLength(servedGuide.body));
   assert.equal(openapi.json.openapi, "3.1.0");
   assert.equal(openapi.body.includes("static-decoy"), false);
   const skill = await request(port, { path: "/skill.md" });
