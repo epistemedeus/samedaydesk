@@ -46,6 +46,7 @@ jobs:
       - run: node --test server/scripts/test-pulse-private-metadata.js
       - run: npm run test:hosted-startup
       - run: npm run test:machine-discovery
+      - run: node --test server/scripts/test-query-key-alternate.mjs
       # Each candidate selects the approved packet for its own source and
       # host fingerprints. The global ROOT10940_CI_PACKET variable remains
       # one historical input and is not current for a different fingerprint.

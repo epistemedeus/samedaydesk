@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
-import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
+import { QUERY_KEY_CONSUMER, queryKeyReuseMarkdown } from "./query-key-caller.mjs";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
@@ -878,7 +878,7 @@ export function apexOpenApiDocument() {
         "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
         "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
         "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
-        "x-query-key-caller names the schema, versioned runner, acquire command, apply command, and source identity for an accepted cc0.query-key-caller.v4 artifact. Those facts are read from this document at x-query-key-caller. The accepted-work HTTP body is the raw envelope {ok, value}. Read the caller at value.publicArtifact, its schema at value.publicArtifact.schema, its digest at value.publicArtifactDigest, and the list at value.items.",
+        "x-query-key-caller gives the accepted-work collection, required license and schema, runner, and source. Append the selected task ID to the collection URL for its detail, then /artifact for the reusable bytes. Match taskId, rightsDigest, and publicArtifactDigest across the list, detail, and artifact before selecting value.publicArtifact as caller.json. Download the runner from its primary or alternate archive and verify the same byte count and SHA-256 before extracting. Use reuse.applyCaller for that input; the older apply command runs the bundled example. These reads do not claim work or pay anyone.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],
@@ -1099,10 +1099,11 @@ export function mountApexDeclarations(app) {
   }
   app.options("/.well-known/agent-card.json", (_req, res) => sendPreflight(res));
   // The machine guide is client/public/llms.txt. This route serves those bytes
-  // before production static, including on a host that has no built client.
+  // plus a generated accepted-work appendix before production static. The
+  // protected static build and the shared machine declaration stay separate.
   const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
   const sendLlms = (req, res) => {
-    const body = readFileSync(llmsPath);
+    const body = Buffer.concat([readFileSync(llmsPath), Buffer.from(queryKeyReuseMarkdown())]);
     res.status(200);
     res.set("Cache-Control", "no-cache");
     res.set("Content-Type", "text/plain; charset=utf-8");

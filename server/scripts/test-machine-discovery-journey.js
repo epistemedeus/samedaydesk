@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { queryKeyReuseMarkdown } from "../lib/query-key-caller.mjs";
 import http from "node:http";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
@@ -190,6 +191,15 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.ok(skillResponse.body.includes(expectedGateway.summary));
   assert.ok(skillResponse.body.includes(expectedGateway.nextAction));
   assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes(`Paid gateway MCP (${expectedGateway.state})`)));
+  const reuse = openapi["x-query-key-caller"];
+  assert.equal(new URL(reuse.runner.alternateArchive).origin, "https://raw.githubusercontent.com");
+  assert.notEqual(new URL(reuse.runner.archive).origin, new URL(reuse.runner.alternateArchive).origin);
+  assert.equal(reuse.reuse.license, "CC0-1.0");
+  assert.equal(reuse.reuse.artifactPathSuffix, "/{taskId}/artifact");
+  assert.match(reuse.reuse.applyCaller, /--input caller\.json$/);
+  const reuseLlms = (await request(port, { path: "/llms.txt" })).body;
+  assert.ok(reuseLlms.includes(reuse.runner.alternateArchive));
+  assert.ok(reuseLlms.includes(reuse.reuse.applyCaller));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -260,6 +270,7 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
   assert.equal(card.status, 200);
+  assert.deepEqual(card.json["x-query-key-caller"], reuse);
   assert.deepEqual(card.json["x-paid-gateway"], expectedGateway);
   assert.ok(card.json.skills.some((skill) => skill.id === "check_ai_readiness"));
   assert.equal(card.status, 200);
@@ -424,6 +435,7 @@ test("production fallback keeps declarations out of the HTML shell and preserves
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>spa-shell</body></html>");
   writeFileSync(join(dist, "openapi.json"), "{\"openapi\":\"static-decoy\"}");
+  writeFileSync(join(dist, "llms.txt"), "static guide decoy\n");
   mkdirSync(join(dist, ROUTE_SHELL_DIR), { recursive: true });
   writeFileSync(
     join(dist, ROUTE_SHELL_DIR, shellFileName(NOT_FOUND_SHELL.path)),
@@ -465,6 +477,19 @@ test("production fallback keeps declarations out of the HTML shell and preserves
 
   const openapi = await request(port, { path: "/openapi.json" });
   assert.equal(openapi.status, 200);
+  const servedGuide = await request(port, { path: "/llms.txt" });
+  assert.equal(servedGuide.status, 200);
+  assert.match(servedGuide.headers["content-type"], /^text\/plain/);
+  const staticSource = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.equal(servedGuide.body, staticSource + queryKeyReuseMarkdown());
+  assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 1);
+  const declaredReuse = openapi.json["x-query-key-caller"];
+  assert.ok(servedGuide.body.includes(declaredReuse.runner.alternateArchive));
+  assert.ok(servedGuide.body.includes(declaredReuse.reuse.applyCaller));
+  const headGuide = await request(port, { method: "HEAD", path: "/llms.txt" });
+  assert.equal(headGuide.status, 200);
+  assert.equal(headGuide.body, "");
+  assert.equal(Number(headGuide.headers["content-length"]), Buffer.byteLength(servedGuide.body));
   assert.equal(openapi.json.openapi, "3.1.0");
   assert.equal(openapi.body.includes("static-decoy"), false);
   const skill = await request(port, { path: "/skill.md" });
