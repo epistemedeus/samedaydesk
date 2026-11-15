@@ -1,0 +1,168 @@
+{
+  "schema": "samedaydesk.composed-machine-delivery.request.v1",
+  "clock": "2026-11-06T12:00:00.000Z",
+  "horizonHours": 168,
+  "cancel": false,
+  "actor": {
+    "actorId": "owned-test-recorder",
+    "party": "owned_test"
+  },
+  "capture": {
+    "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+    "captureId": "owned-example-page-changed",
+    "subject": "example-page",
+    "capturedAt": "2026-11-06T11:00:00.000Z",
+    "sourceUri": "https://example.com/",
+    "payload": {
+      "title": "Example Domain (changed heading)",
+      "status": "ok",
+      "url": "https://example.com/",
+      "contentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "httpStatus": 200
+    },
+    "permission": {
+      "permitted": true
+    },
+    "provenance": "synthetic",
+    "note": "Owned test actor. Synthetic public page. No independent demand."
+  },
+  "intents": [
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-title",
+      "subject": "example-page",
+      "fields": ["title"],
+      "compare": "field_equality"
+    },
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-status",
+      "subject": "example-page",
+      "fields": ["status"],
+      "compare": "field_equality"
+    },
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-url",
+      "subject": "example-page",
+      "fields": ["url"],
+      "compare": "field_equality"
+    }
+  ],
+  "priors": {
+    "schema": "samedaydesk.recurring-decision-priors.v1",
+    "default": {
+      "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+      "captureId": "owned-example-page-prior",
+      "subject": "example-page",
+      "capturedAt": "2026-11-05T10:00:00.000Z",
+      "sourceUri": "https://example.com/",
+      "payload": {
+        "title": "Example Domain",
+        "status": "ok",
+        "url": "https://example.com/"
+      },
+      "permission": {
+        "permitted": true
+      }
+    },
+    "byIntent": {}
+  },
+  "schedule": {
+    "schema": "samedaydesk.recurring-schedule.v1",
+    "scheduleId": "owned-example-page-caller",
+    "subject": "example-page",
+    "explicit": true,
+    "cancellable": true,
+    "resident": false,
+    "standingWatcher": false,
+    "paidPromise": false,
+    "status": "prepared",
+    "cadence": {
+      "kind": "caller-invoked",
+      "resident": false
+    },
+    "scope": {
+      "horizonHours": 168,
+      "intentIds": ["watch-title", "watch-status", "watch-url"],
+      "source": {
+        "kind": "permitted-capture",
+        "captureId": "owned-example-page-changed",
+        "newCharge": false,
+        "newExecution": false
+      }
+    }
+  },
+  "extension": {
+    "need": "local-process",
+    "site": "samedaydesk",
+    "source": "c60641e8ff2b94dd704307e57f5b6fe789ba0df7",
+    "taskId": "example-page",
+    "subject": "example-page",
+    "sequence": 1,
+    "publish": false,
+    "input": {
+      "schema": "pilot.task-commons.page-change-result.v1",
+      "publicSafe": true,
+      "url": "https://example.com/",
+      "status": 200,
+      "fetchedAt": "2026-11-06T11:00:00.000Z",
+      "contentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "bytes": 512,
+      "title": "Example Domain (changed heading)",
+      "credentials": false,
+      "liveParticipant": false,
+      "payment": false
+    }
+  },
+  "originalTerms": {
+    "termsDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "rightsDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "earnedDebtAtomic": "21",
+    "feeBps": 500,
+    "feeBasis": "new_job_gross"
+  },
+  "work": {
+    "taskId": "owned-example-page",
+    "title": "Retain the changed public heading",
+    "summary": "Keep the public heading from the retained synthetic page capture.",
+    "requesterId": "owned-test-requester",
+    "holderId": "owned-test-agent",
+    "requesterNote": "Synthetic owned-test work. No independent demand.",
+    "criteria": ["public-heading"],
+    "objectiveCriteria": {
+      "public-heading": {
+        "check": "digest_match",
+        "observe": "headingDigest",
+        "expected": "heading-accepted"
+      }
+    },
+    "payableKinds": ["usable"],
+    "publicationConsent": false,
+    "provenance": "synthetic",
+    "grossAtomic": "2000000",
+    "railCostAtomic": "0",
+    "costLines": [
+      { "kind": "rail", "status": "measured", "atomic": "0" },
+      { "kind": "review", "status": "unknown" },
+      { "kind": "support", "status": "unknown" },
+      { "kind": "contributor", "status": "unknown" }
+    ],
+    "artifact": {
+      "schema": "pilot.task-bundle-economics.structured-extract.v1",
+      "artifactClass": "bounded_structured_extract",
+      "heading": "Example Domain (changed heading)",
+      "headingDigest": "heading-accepted",
+      "sourceLabel": "synthetic-page"
+    },
+    "citedEvidence": [
+      {
+        "source": "synthetic-page",
+        "locator": "headingDigest",
+        "digest": "heading-accepted"
+      }
+    ],
+    "decision": "accept",
+    "share": false
+  }
+}

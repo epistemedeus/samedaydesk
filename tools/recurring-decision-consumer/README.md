@@ -61,6 +61,60 @@ node tools/recurring-decision-consumer/cli.mjs receive-stored-n8n \
 
 Useful change and useful no-change exit 0. Fields absent on both sides exit 0 with `unknown`. A stale node startTime exits 0 with `stale`. Wrong workflow or execution id, unsuccessful status, and ambiguous wrappers exit 1. A missing node or missing items exits 0 with `unavailable`. Malformed or oversized JSON exits 1 before evaluation. `--state` still records only a useful result.
 
+## Customer recurring result
+
+`recur` compares one permitted capture with every intent in an explicit schedule. The schedule names its subject, intent ids, horizon, and source. It is caller-invoked, cancellable, and prepared. It does not install a resident watcher, add an n8n charge, or request a new execution.
+
+The maintained path reads the saved execution once through `readStoredCapture`, then compares each intent with `evaluateDecision`. `--adapt` rewrites a useful changed field into a retained prior and stores that adapted result. `--cancel`, or a schedule whose status is already `cancelled`, removes the portable state for those intents and does not compare again.
+
+Priors in `fixtures/recurring/priors.json` are owner QA. The stored execution fixtures are derived from execution 2 of workflow `eFUkVKYk8xXbM7LV`: decision fields only, not a new observation and not a live n8n call. A useful no-change result is valid.
+
+```bash
+node tools/recurring-decision-consumer/cli.mjs recur \
+  --saved tools/recurring-decision-consumer/fixtures/n8n-stored/derived-sibling-execution-2.json \
+  --workflow-id eFUkVKYk8xXbM7LV \
+  --execution-id 2 \
+  --node "Shape Capture Fields" \
+  --intents tools/recurring-decision-consumer/fixtures/recurring/intents.json \
+  --priors tools/recurring-decision-consumer/fixtures/recurring/priors.json \
+  --schedule tools/recurring-decision-consumer/fixtures/recurring/schedule.json \
+  --clock 2026-11-05T23:21:56.441Z \
+  --horizon 168 \
+  --adapt \
+  --state /tmp/rdc-recur
+
+node tools/recurring-decision-consumer/cli.mjs recur \
+  --saved tools/recurring-decision-consumer/fixtures/n8n-stored/derived-sibling-execution-2.json \
+  --workflow-id eFUkVKYk8xXbM7LV \
+  --execution-id 2 \
+  --node "Shape Capture Fields" \
+  --intents tools/recurring-decision-consumer/fixtures/recurring/intents.json \
+  --priors tools/recurring-decision-consumer/fixtures/recurring/priors.json \
+  --schedule tools/recurring-decision-consumer/fixtures/recurring/schedule.json \
+  --clock 2026-11-05T23:21:56.441Z \
+  --horizon 168 \
+  --cancel \
+  --state /tmp/rdc-recur
+```
+
+`effort` runs that same stored execution, including the nested envelope, through the maintained caller and a competent direct baseline. The baseline reimplements envelope selection, freshness, field comparison, controls, adaptation, and cancellation. It does not import the maintained evaluator. The report records build bytes, review surface bytes, and in-process operating time. It is not a change score. Field-equality is the compared customer case.
+
+```bash
+node tools/recurring-decision-consumer/cli.mjs effort \
+  --saved tools/recurring-decision-consumer/fixtures/n8n-stored/derived-sibling-execution-2.json \
+  --nested tools/recurring-decision-consumer/fixtures/n8n-stored/derived-nested-execution-2.json \
+  --workflow-id eFUkVKYk8xXbM7LV \
+  --execution-id 2 \
+  --node "Shape Capture Fields" \
+  --intents tools/recurring-decision-consumer/fixtures/recurring/intents.json \
+  --priors tools/recurring-decision-consumer/fixtures/recurring/priors.json \
+  --schedule tools/recurring-decision-consumer/fixtures/recurring/schedule.json \
+  --clock 2026-11-05T23:21:56.441Z \
+  --horizon 168
+```
+
+`receipt` prints the live process receipt. The package stays prepared. Payment and outside use stay none until a real consented caller appears.
+
 ## Portable state
 
 ```bash
