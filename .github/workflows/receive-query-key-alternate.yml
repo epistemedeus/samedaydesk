@@ -1,0 +1,19 @@
+name: Receive the existing accepted-work fallback
+on:
+  push:
+    branches: [codex/verify-query-key-alternate-20261115]
+permissions:
+  contents: read
+jobs:
+  alternate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.23.2
+      - run: node --test server/scripts/test-query-key-alternate.mjs
+      - run: node server/scripts/test-query-key-alternate.mjs --live
