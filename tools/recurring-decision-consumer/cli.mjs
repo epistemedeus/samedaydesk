@@ -5,6 +5,10 @@ import { evaluateStoredN8n } from "./src/n8n-stored.mjs";
 import { removeState, showState, updateState } from "./src/state.mjs";
 import { exportWorkflowStub } from "./src/workflow.mjs";
 import { receiveEvaluateRequest } from "./src/http-adapter.mjs";
+import { produceRecurringResult } from "./src/recurring-result.mjs";
+import { measureWholeEffort } from "./src/effort.mjs";
+import { sourceReceipt } from "./src/receipt.mjs";
+import { EFFORT_SCHEMA, INTENTS_SCHEMA, PRIORS_SCHEMA, REFERENCES_SCHEMA } from "./src/pins.mjs";
 import {
   aglModulePresence,
   decideOrReuseViaAgl,
@@ -132,6 +136,23 @@ try {
     process.exit(result.ok ? 0 : 1);
   }
 
+  if (args.command === "recur") {
+    const result = produceRecurringResult(loadRecurring(args));
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    process.exit(result.ok ? 0 : 1);
+  }
+
+  if (args.command === "effort") {
+    const input = loadRecurring(args);
+    const report = measureWholeEffort({ ...input, nestedSaved: readBoundedJson(args.nested) });
+    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+    process.exit(report.ok && report.schema === EFFORT_SCHEMA ? 0 : 1);
+  }
+
+  if (args.command === "receipt") {
+    process.stdout.write(`${JSON.stringify(sourceReceipt(), null, 2)}\n`);
+    process.exit(0);
+  }
 
   if (args.command === "agl-presence") {
     const presence = aglModulePresence();
@@ -202,6 +223,19 @@ node tools/recurring-decision-consumer/cli.mjs receive-stored-n8n \\
   --intent <intent.json> --prior <capture.json> --clock <ISO-UTC> --horizon <hours> \\
   [--reference <label.json>] [--previous <result.json>] [--state <state.json>]
 
+node tools/recurring-decision-consumer/cli.mjs recur \\
+  --saved <execution.json> --workflow-id <id> --execution-id <id> --node <name> \\
+  --intents <intents.json> --priors <priors.json> --schedule <schedule.json> \\
+  --clock <ISO-UTC> --horizon <hours> [--adapt] [--cancel] [--state <directory>]
+
+node tools/recurring-decision-consumer/cli.mjs effort \\
+  --saved <execution.json> --nested <nested-execution.json> \\
+  --workflow-id <id> --execution-id <id> --node <name> \\
+  --intents <intents.json> --priors <priors.json> --schedule <schedule.json> \\
+  --clock <ISO-UTC> --horizon <hours>
+
+node tools/recurring-decision-consumer/cli.mjs receipt
+
 AGL consume (vendor-free import; requires tools/result-reuse from candidate head 95c8a841):
 node tools/recurring-decision-consumer/cli.mjs agl-presence
 node tools/recurring-decision-consumer/cli.mjs agl-decide-or-reuse --saved <obs.json> --manifest <before-work.json> \
@@ -245,6 +279,13 @@ function parseArgs(argv) {
     else if (arg === "--sequence") out.sequence = need(argv, ++i);
     else if (arg === "--opt-in") out.optIn = true;
     else if (arg === "--opt-in-withdrawn") out.optInWithdrawn = true;
+    else if (arg === "--intents") out.intents = need(argv, ++i);
+    else if (arg === "--priors") out.priors = need(argv, ++i);
+    else if (arg === "--references") out.references = need(argv, ++i);
+    else if (arg === "--schedule") out.schedule = need(argv, ++i);
+    else if (arg === "--nested") out.nested = need(argv, ++i);
+    else if (arg === "--adapt") out.adapt = true;
+    else if (arg === "--cancel") out.cancel = true;
     else fail(`unknown option ${arg}`);
   }
   if (out.command === "evaluate") {
@@ -267,7 +308,51 @@ function parseArgs(argv) {
       if (!out.help) fail("receive-stored-n8n requires --saved --workflow-id --execution-id --node --intent --prior --clock --horizon");
     }
   }
+  if (out.command === "recur") {
+    const hasStored = out.saved && out.workflowId && out.executionId && out.node;
+    const hasCapture = Boolean(out.capture);
+    if (!out.schedule || !out.intents || !out.clock || out.horizonHours == null || (!hasStored && !hasCapture) || (hasStored && hasCapture)) {
+      if (!out.help) fail("recur requires --schedule --intents --clock --horizon and one of stored execution or --capture");
+    }
+    if (out.adapt && out.cancel) {
+      if (!out.help) fail("adapt and cancel are separate caller actions");
+    }
+  }
+  if (out.command === "effort") {
+    if (!out.saved || !out.nested || !out.workflowId || !out.executionId || !out.node || !out.schedule || !out.intents || !out.clock || out.horizonHours == null) {
+      if (!out.help) fail("effort requires --saved --nested --workflow-id --execution-id --node --schedule --intents --clock --horizon");
+    }
+  }
   return out;
+}
+
+function loadRecurring(args) {
+  const intentsDoc = readBoundedJson(args.intents);
+  if (!intentsDoc || intentsDoc.schema !== INTENTS_SCHEMA || !Array.isArray(intentsDoc.intents)) {
+    fail("intents schema unsupported");
+  }
+  const schedule = readBoundedJson(args.schedule);
+  const priors = args.priors ? readBoundedJson(args.priors) : { default: null, byIntent: {} };
+  if (args.priors && priors?.schema !== PRIORS_SCHEMA) fail("priors schema unsupported");
+  const references = args.references ? readBoundedJson(args.references) : { byIntent: {} };
+  if (args.references && references?.schema !== REFERENCES_SCHEMA) fail("references schema unsupported");
+  return {
+    saved: args.saved ? readBoundedJson(args.saved) : null,
+    capture: args.capture ? readBoundedJson(args.capture) : null,
+    workflowId: args.workflowId,
+    executionId: args.executionId,
+    nodeName: args.node,
+    intents: intentsDoc.intents,
+    priors,
+    references,
+    clock: args.clock,
+    horizonHours: args.horizonHours,
+    schedule,
+    stateDir: args.state ?? null,
+    adapt: args.adapt === true,
+    cancel: args.cancel === true,
+    ownerQaPriors: priors.ownerQa === true,
+  };
 }
 
 function need(argv, index) {

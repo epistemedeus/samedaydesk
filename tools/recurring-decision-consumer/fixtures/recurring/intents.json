@@ -1,0 +1,26 @@
+{
+  "schema": "samedaydesk.recurring-decision-intents.v1",
+  "intents": [
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-title",
+      "subject": "example-page",
+      "fields": ["title", "status"],
+      "compare": "field_equality"
+    },
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-status",
+      "subject": "example-page",
+      "fields": ["status"],
+      "compare": "field_equality"
+    },
+    {
+      "schema": "samedaydesk.recurring-decision-intent.v1",
+      "intentId": "watch-title-drift",
+      "subject": "example-page",
+      "fields": ["title"],
+      "compare": "field_equality"
+    }
+  ]
+}

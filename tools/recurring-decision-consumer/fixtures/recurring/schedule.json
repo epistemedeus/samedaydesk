@@ -1,0 +1,28 @@
+{
+  "schema": "samedaydesk.recurring-schedule.v1",
+  "scheduleId": "example-page-stored-execution-2",
+  "subject": "example-page",
+  "explicit": true,
+  "cancellable": true,
+  "resident": false,
+  "standingWatcher": false,
+  "paidPromise": false,
+  "status": "prepared",
+  "cadence": {
+    "kind": "caller-invoked",
+    "resident": false
+  },
+  "scope": {
+    "horizonHours": 168,
+    "intentIds": ["watch-title", "watch-status", "watch-title-drift"],
+    "source": {
+      "kind": "stored-n8n",
+      "workflowId": "eFUkVKYk8xXbM7LV",
+      "executionId": "2",
+      "nodeName": "Shape Capture Fields",
+      "newCharge": false,
+      "newExecution": false,
+      "unpublishedWorkflowReused": true
+    }
+  }
+}
