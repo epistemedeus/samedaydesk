@@ -1,0 +1,160 @@
+{
+  "schema": "h154510.agl-coherent-receiving.v1",
+  "measuredAt": "2026-11-05T22:27:23Z",
+  "node": "v22.23.4",
+  "writer": {
+    "repo": "https://github.com/epistemedeus/samedaydesk.git",
+    "ref": "codex/n6-b4-cold-client-participation-20261105",
+    "admittedHead": "c1d7fae74a4e10016c36d41b16f2d36ddc0737ca",
+    "pr": 367,
+    "worktree": "/home/ubuntu/ae14-work/h154510"
+  },
+  "comparisonHeads": {
+    "pr364": "3a4a7538329292c11d94b148d58964fc0656dece",
+    "pr365": "9d1f3f9677ade404131fc62ee3e3ab99b10ec144",
+    "pr366": "95c8a84155d01d67c707170e94aa148ba6542c50"
+  },
+  "merchant": {
+    "repo": "epistemedeus/x402-url-extractor",
+    "commit": "f9dd59aeeb200881bc1313ed846ba002e7081258",
+    "packageName": "x402-merchant",
+    "version": "1.23.45",
+    "install": "npm ci --no-audit --no-fund --ignore-scripts of that checkout lockfile",
+    "packagesAdded": 241,
+    "role": "sibling resolver pin for recurring-job-recipes; not a registry install"
+  },
+  "examplesClient": {
+    "path": "vendor/hosted-wallet-market/examples/cold-requester-0.3.1.mjs",
+    "sha256": "ad133fb820d794fb49eff6767153cd3f42202d4259e434214d9a9a4798f5fa0e",
+    "bytesUnchanged": true,
+    "pinned030Sha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+    "installedMarketSha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+    "installedMarketBytes": 30187,
+    "acquireDisposition": "unqualified",
+    "missingDescriptorCode": "acquisition_required",
+    "installedDescriptorCode": "acquisition_client_mismatch"
+  },
+  "commands": [
+    {
+      "cwd": "vendor/hosted-wallet-market",
+      "command": "node --test --test-concurrency=1 --test-timeout=120000 test/cold-client-participation.test.mjs",
+      "exit": 0,
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 2236.99
+    },
+    {
+      "cwd": "/tmp/h154510-wt/pr366",
+      "head": "95c8a84155d01d67c707170e94aa148ba6542c50",
+      "command": "npm run test:result-reuse",
+      "exit": 0,
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 2435.321159
+    },
+    {
+      "cwd": "/tmp/h154510-wt/pr366",
+      "head": "95c8a84155d01d67c707170e94aa148ba6542c50",
+      "command": "npm run test:recurring-job-recipes",
+      "exit": 0,
+      "tests": 97,
+      "pass": 97,
+      "fail": 0,
+      "skipped": 0,
+      "duration_ms": 929.862341
+    },
+    {
+      "cwd": "/tmp/h154510-wt/pr366",
+      "head": "95c8a84155d01d67c707170e94aa148ba6542c50",
+      "command": "node experiments/agl-r06-portable-decision-20261105/harness.mjs",
+      "exit": 0,
+      "stdout": {
+        "hitRate": 0.625,
+        "falseReuseCount": 0,
+        "recomputeCount": 3,
+        "retirements": 1
+      },
+      "hitRateMeaning": "designed 8-case mix (2 capture mismatches, 1 retired), not a world rate and not a saving"
+    }
+  ],
+  "clocks": {
+    "produced": "2026-09-09T15:00:00.000Z",
+    "nextEligible": "2026-09-10T15:00:00.000Z",
+    "stale": "2026-09-20T15:00:00.000Z",
+    "horizonHours": 168
+  },
+  "identity": {
+    "task": "agl-h154510-source-change",
+    "subject": "example-domain-title",
+    "sequence": "1",
+    "inputDigest": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c",
+    "observationId": "obs_5975f55a136e9bf9e6fe1bdca8222395",
+    "revision": "rev_1"
+  },
+  "costs": "costs_unknown",
+  "timingNote": "ms is one wall-clock sample of one node CLI process, including startup. Requester review and producer upkeep were not measured.",
+  "outputMatchOnEligibleReuse": true,
+  "direct": [
+    {"id": "source-unchanged", "exit": 0, "ms": 44.73, "outcome": "unchanged", "paymentAttempted": false, "replayBlocked": true},
+    {"id": "source-changed", "exit": 0, "ms": 39.516, "outcome": "changed", "paymentAttempted": false, "replayBlocked": true},
+    {"id": "source-stale-prior", "exit": 0, "ms": 39.737, "outcome": "stale_baseline", "ok": false, "paymentAttempted": false, "replayBlocked": true},
+    {"id": "source-paid-prior", "exit": 0, "ms": 39.728, "outcome": "unchanged", "payment": {"ok": true, "attempted": false, "replayBlocked": true, "hasPriorReceipt": true}},
+    {"id": "verify-unchanged", "exit": 0, "ms": 36.81, "outcome": "unchanged", "paymentAttempted": false, "replayBlocked": true},
+    {"id": "verify-changed", "exit": 0, "ms": 39.331, "outcome": "changed", "paymentAttempted": false, "replayBlocked": true},
+    {"id": "verify-payment-replay", "exit": 1, "ms": 38.344, "outcome": "error", "payment": {"ok": false, "code": "payment_replay_blocked", "attempted": false, "replayBlocked": true}},
+    {"id": "record-extract", "exit": 0, "ms": 38.909, "outcome": "partial", "paymentAttempted": false, "replayBlocked": true}
+  ],
+  "reuse": [
+    {"label": "bind:source-unchanged", "exit": 0, "ms": 34.521, "action": "bound", "producerInvoked": false},
+    {"label": "reuse:next-eligible", "exit": 0, "ms": 37.292, "verdict": "reuse", "producerInvoked": false},
+    {"label": "reuse:changed-capture", "exit": 0, "ms": 32.254, "verdict": "recompute", "reason": "digest_mismatch", "producerInvoked": false},
+    {"label": "reuse:stale-clock", "exit": 0, "ms": 30.888, "verdict": "recompute", "reason": "stale_clock", "producerInvoked": false},
+    {"label": "reuse:other-subject", "exit": 0, "ms": 33.941, "verdict": "recompute", "reason": "subject_mismatch", "producerInvoked": false},
+    {"label": "reuse:source-decision-on-verify-manifest", "exit": 0, "ms": 32.814, "verdict": "recompute", "reason": "recipe_changed", "producerInvoked": false},
+    {"label": "bind:verify-same-capture-family", "exit": 0, "ms": 35.669, "action": "bound", "producerInvoked": false},
+    {"label": "reuse:verify-next-eligible", "exit": 0, "ms": 35.767, "verdict": "reuse", "producerInvoked": false}
+  ],
+  "usefulBodyTamper": [
+    {"mutation": "payload.usefulDecision.outcome=changed", "exit": 0, "ms": 42.304, "verdict": "reuse", "reason": null, "producerInvoked": false, "servedOutcome": "changed", "servedHash": "sha256:fixture-example-domain-v1"},
+    {"mutation": "payload.usefulDecision.evidence.contentHash=sha256:tampered", "exit": 0, "ms": 36.346, "verdict": "reuse", "reason": null, "producerInvoked": false, "servedOutcome": "unchanged", "servedHash": "sha256:tampered"}
+  ],
+  "portable": [
+    {"label": "export", "exit": 0, "ms": 32.035},
+    {"label": "import-same-capture-other-task", "exit": 0, "ms": 33.44, "verdict": "reuse"},
+    {"label": "import-changed-capture", "exit": 0, "ms": 34.353, "verdict": "recompute", "reason": "capture_digest_mismatch"},
+    {"label": "import-tampered", "exit": 0, "ms": 31.126, "verdict": "recompute", "reason": "integrity_mismatch"},
+    {"label": "retire", "exit": 0, "ms": 32.472},
+    {"label": "import-retired", "exit": 0, "ms": 31.314, "verdict": "recompute", "reason": "retired"},
+    {"label": "export-already-stale", "exit": 0, "ms": 32.254},
+    {"label": "import-stale", "exit": 0, "ms": 31.924, "verdict": "recompute", "reason": "stale"}
+  ],
+  "residual": [
+    {"label": "answered-title", "exit": 0, "ms": 32.358, "route": "direct", "verdict": "reuse", "sent": false, "paidWork": false, "paymentAuthority": "none", "debtCreated": false, "funding": "voluntary", "producerInvoked": false},
+    {"label": "absent-description", "exit": 0, "ms": 35.522, "confirmMs": 38.132, "route": "residual_need", "verdict": "reuse", "sent": false, "paidWork": false, "debtCreated": false, "obligationId": null, "funding": "voluntary", "criterion": "remainder:description", "posted": false},
+    {"label": "changed-capture", "exit": 0, "ms": 33.445, "route": "recompute", "reason": "digest_mismatch", "sent": false, "paidWork": false},
+    {"label": "verify-decision-on-365", "exit": 0, "ms": 34.054, "route": "recompute", "reason": "input_not_before_work", "message": "input is not the before-work public manifest for source-change-alert"}
+  ],
+  "widerRecordBind": {
+    "exit": 1,
+    "ms": 32.079,
+    "message": "input is not a before-work public manifest for a supported recipe: source-change-alert, verification-reconcile"
+  },
+  "historicalAuthority": {
+    "rerun": false,
+    "weakened": false,
+    "reason": "H103010_OPERATOR_ENTRY absent on this host",
+    "retained": "prior PG16 f965/231ad294: PR365 vm 1/1, delegation 5/5, PR367 96/97 with that one input held"
+  },
+  "conclusion": "Direct execution for new, drifted, stale, payment-replay, and wider-record inputs. Portable import when a distinct consumer holds the same capture and needs another task id. Task-bound reuse only for the same task, subject, and sequence, and only while the stored useful body is the publisher's bytes. Residual is an unsent unfunded post shape. costs_unknown.",
+  "nextConsumer": "A later caller who already holds the same source-change or verification before-work capture and needs that saved answer under a different task id. Import the portable decision. Recompute on capture_digest_mismatch, integrity_mismatch, retired, or stale.",
+  "fileInventory": [
+    {"path": "vendor/hosted-wallet-market/examples/GUIDE.md", "bytes": 6680, "change": "current examples digest and unqualified acquire/signup"},
+    {"path": "vendor/hosted-wallet-market/test/cold-client-participation.test.mjs", "bytes": 17282, "change": "five acquire, signup, fund, and guide checks"},
+    {"path": "experiments/agl-coherent-receiving-20261105/RESULT.md", "bytes": 15508, "change": "receiving report"},
+    {"path": "experiments/agl-coherent-receiving-20261105/receipt.json", "change": "measured receipt"}
+  ]
+}

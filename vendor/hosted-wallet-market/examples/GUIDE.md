@@ -30,3 +30,43 @@ node cold-requester.mjs interest --origin "$ORIGIN" --secret-file contributor.js
 Keep each generated account file private. Version0.2.0 writes the operation proof before sending and prints no password, session or recovery material. If a post or interest exits2 with `unknown_outcome`, retain its file and run `readback --operation post` or `readback --operation interest` with that same `--secret-file` and `--origin`. Readback sends no second business mutation. An expired session needs login to the same account, then readback. Interrupted signup/login/recovery uses its matching account readback within15 minutes. See [operator exercises](OPERATOR-TESTS.md) for fault injection and diagnostic details.
 
 After someone expresses interest, agree a concrete scope and next exchange. Interest does not assign work or authorize payment.
+
+## Machine commands in cold-requester 0.3.1
+
+`examples/cold-requester-0.3.1.mjs` is `client/cold-requester-0.3.0.mjs` plus the commands below. It uses the same private account file. Check the current file before running it:
+
+```sh
+printf '%s  %s\n' 'ad133fb820d794fb49eff6767153cd3f42202d4259e434214d9a9a4798f5fa0e' cold-requester-0.3.1.mjs | sha256sum -c -
+```
+
+That digest is this examples file after the accepted-work read separation (`97fba4ca`). The earlier digest `dc7d040ecafb99009a0df5ef1130c6b2d805a6d317e78634f17adc565034805d` is only the introduction commit `3bbbfa9d` and does not match the file to run. An account file made by 0.3.0 works for `post`, `permit-accepted-work`, and `accepted-work` as is.
+
+`acquire` and `signup` on this examples file are unqualified. They require a descriptor whose `version` is `0.3.1` and whose `bytes` and `sha256` are this file, plus matching `--source-repository`, `--source-commit`, and `--source-path` flags:
+
+```sh
+node cold-requester-0.3.1.mjs acquire --origin "$ORIGIN" \
+  --descriptor descriptor.json --descriptor-sha256 "$DESCRIPTOR_SHA256" \
+  --source-repository "$SOURCE_REPOSITORY" --source-commit "$SOURCE_COMMIT" --source-path "$SOURCE_PATH"
+```
+
+No descriptor in this repository matches this file. The installed market client stays `clients/cold-requester-0.3.1.mjs`, 30187 bytes, `sha256 accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9`. Supplying that installed descriptor, or omitting a descriptor, is a refusal (`acquisition_client_mismatch` or `acquisition_required`), not acquisition success. The pinned `client/cold-requester-0.3.0.mjs` bytes stay `38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4`. This guide does not publish a replacement descriptor or a new market identity.
+
+Post with more than one criterion (1 to 16 unique; the same limit the market applies). Repeat `--criterion` or pass one JSON list with `--criteria`, not both:
+
+```sh
+node cold-requester-0.3.1.mjs post --origin "$ORIGIN" --secret-file requester.json --title "T" --summary "S" --criterion public-example --criterion rerun-steps
+node cold-requester-0.3.1.mjs post --origin "$ORIGIN" --secret-file requester.json --title "T" --summary "S" --criteria '["public-example","rerun-steps"]'
+```
+
+Refusal codes before sending: `criteria_limit_refused` (over 16), `criteria_refused` (duplicate, both forms, or bad JSON), `post_arguments_refused` (none or empty).
+
+Permit public accepted-work for a task you are a party to, and read the public list:
+
+```sh
+node cold-requester-0.3.1.mjs permit-accepted-work --origin "$ORIGIN" --secret-file requester.json --task-id "$TASK_ID" --summary "Public summary" [--public-artifact public.json] --publication-consent
+node cold-requester-0.3.1.mjs accepted-work --origin "$ORIGIN" [--limit 20] [--cursor market-...] [--task-id market-...]
+```
+
+`permit-accepted-work` reads the task with `readVoluntary`, then sends the existing `permitAcceptedWork` action with `termsDigest`, `expectedRevision`, `summary`, `summaryDigest`, `publicArtifact` (or null), `publicArtifactDigest`, `rightsDigest`, `artifactDigest`, `publicationConsent: true` and the source and host hashes. The task is public only after both parties permit the same proposal; `acceptedWorkVisible` reports that. An `unknown_outcome` exit 2 is resolved with `readback --operation permitAcceptedWork`.
+
+Accepted-work list, detail and artifact routes (GET `/v1/market/accepted-work`, GET `/v1/market/accepted-work/:taskId`, GET `/v1/market/accepted-work/:taskId/artifact`) are enabled independently of a profile flag. The `accepted-work` command reports `accepted_work_public_unavailable` only when the server returns that 404. Broader public participant reads stay off (`publicReads` off). This client does not enable public reads.

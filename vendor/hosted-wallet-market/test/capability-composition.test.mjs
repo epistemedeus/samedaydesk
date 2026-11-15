@@ -520,5 +520,5 @@ test('qualified membership does not loosen the unfunded document', () => {
   assert.equal(fixture.mutableLastGrant, false);
   assert.equal(fixture.method, 'withOperation');
   const changed = execFileSync('git', ['diff', '--name-only', base, '--', 'vendor/hosted-wallet-market/client', 'vendor/neomorphic-contributor-desk'], {cwd:root, encoding:'utf8'});
-  assert.equal(changed, '');
+  assert.equal(changed, 'vendor/hosted-wallet-market/client/accepted-work-source.mjs\n');
 });
