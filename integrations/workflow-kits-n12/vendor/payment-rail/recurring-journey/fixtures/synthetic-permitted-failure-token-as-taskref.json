@@ -1,0 +1,6 @@
+{
+  "synthetic": true,
+  "label": "synthetic permitted-failure / counterexample",
+  "notice": "Permitted counterexample: a bearer-token-shaped value must not be accepted as taskRef, task id, or termsVersion. The value is fake and not a live token.",
+  "taskRef": "pc1.not-a-live-token.invalid-signature-placeholder-value-000000000000000000000"
+}

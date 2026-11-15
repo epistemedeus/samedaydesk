@@ -1,0 +1,224 @@
+{
+  "synthetic": true,
+  "notice": "Synthetic export built by scripts/build-artifacts.mjs from vendored synthetic fixtures. Not a live Make or n8n run.",
+  "id": "synthetic-n8n-exec-schema-change",
+  "finished": true,
+  "mode": "webhook",
+  "status": "success",
+  "workflowId": "synthetic-samedaydesk-wk-n12",
+  "startedAt": "2026-11-12T10:29:00.000Z",
+  "stoppedAt": "2026-11-12T10:29:00.050Z",
+  "data": {
+    "resultData": {
+      "runData": {
+        "Receive Period Capture": [
+          {
+            "startTime": 1794479340000,
+            "executionTime": 3,
+            "source": [],
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "headers": {},
+                      "params": {},
+                      "query": {},
+                      "body": {
+                        "period": {
+                          "periodId": "period-N+1",
+                          "taskId": "tsk_synthetic_period_n_plus_1",
+                          "contextId": "wx-synthetic-recurring-context",
+                          "followsTaskId": "tsk_synthetic_period_n",
+                          "termsInput": {
+                            "caller": {
+                              "publicId": "wx-synthetic-agent-a"
+                            },
+                            "request": {
+                              "title": "Synthetic: convert a CSV header row to JSON keys",
+                              "summary": "Synthetic test task. Turn the supplied CSV header line into a JSON array of snake_case keys.",
+                              "acceptanceExample": "Input: Order ID,Ship Date -> Output: [\"order_id\",\"ship_date\"]"
+                            },
+                            "reward": {
+                              "amount": "1.00",
+                              "asset": "USDC",
+                              "network": "base"
+                            },
+                            "contextId": "wx-synthetic-recurring-context",
+                            "followsTaskId": null,
+                            "preview": {
+                              "schema": "neomorphic.work-exchange.preview.v1",
+                              "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+                              "standsInFor": "synthetic-kernel-f01-period-n-plus-1"
+                            },
+                            "readAccepted": null,
+                            "claimedTermsVersion": null
+                          },
+                          "capture": {
+                            "synthetic": true,
+                            "label": "synthetic later-period schema change",
+                            "notice": "The single named later-period schema-change fixture. Period N+1 renames output to outputKeys. Workflow Kits adapters should reproduce this case. Not a live capture.",
+                            "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+                            "captureId": "cap-synthetic-period-n-plus-1-schema-change",
+                            "subject": "synthetic-csv-header-record",
+                            "capturedAt": "2026-11-12T10:00:00.000Z",
+                            "sourceUri": "https://seller.example/synthetic-recurring-record",
+                            "payload": {
+                              "title": "Synthetic: convert a CSV header row to JSON keys",
+                              "status": "complete",
+                              "outputKeys": [
+                                "order_id",
+                                "ship_date"
+                              ]
+                            },
+                            "permission": {
+                              "permitted": true
+                            }
+                          },
+                          "caller": {
+                            "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+                            "step": 1,
+                            "tool": "compare_page_observations",
+                            "measurement": {
+                              "v": 1,
+                              "kind": "measurement",
+                              "tool": "compare_page_observations",
+                              "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+                              "step": 0,
+                              "discovery": {
+                                "status": "declared",
+                                "source": "cli"
+                              },
+                              "outcome": null
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Kit Settings": [
+          {
+            "startTime": 1794479340005,
+            "executionTime": 3,
+            "source": [],
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "headers": {},
+                      "params": {},
+                      "query": {},
+                      "body": {
+                        "period": {
+                          "periodId": "period-N+1",
+                          "taskId": "tsk_synthetic_period_n_plus_1",
+                          "contextId": "wx-synthetic-recurring-context",
+                          "followsTaskId": "tsk_synthetic_period_n",
+                          "termsInput": {
+                            "caller": {
+                              "publicId": "wx-synthetic-agent-a"
+                            },
+                            "request": {
+                              "title": "Synthetic: convert a CSV header row to JSON keys",
+                              "summary": "Synthetic test task. Turn the supplied CSV header line into a JSON array of snake_case keys.",
+                              "acceptanceExample": "Input: Order ID,Ship Date -> Output: [\"order_id\",\"ship_date\"]"
+                            },
+                            "reward": {
+                              "amount": "1.00",
+                              "asset": "USDC",
+                              "network": "base"
+                            },
+                            "contextId": "wx-synthetic-recurring-context",
+                            "followsTaskId": null,
+                            "preview": {
+                              "schema": "neomorphic.work-exchange.preview.v1",
+                              "termsVersion": "sha256:23b6d18bc818eb6bf8579bebb22505d2b806af6dd4a5af3028a5810307196069",
+                              "standsInFor": "synthetic-kernel-f01-period-n-plus-1"
+                            },
+                            "readAccepted": null,
+                            "claimedTermsVersion": null
+                          },
+                          "capture": {
+                            "synthetic": true,
+                            "label": "synthetic later-period schema change",
+                            "notice": "The single named later-period schema-change fixture. Period N+1 renames output to outputKeys. Workflow Kits adapters should reproduce this case. Not a live capture.",
+                            "schema": "samedaydesk.recurring-decision-permitted-capture.v1",
+                            "captureId": "cap-synthetic-period-n-plus-1-schema-change",
+                            "subject": "synthetic-csv-header-record",
+                            "capturedAt": "2026-11-12T10:00:00.000Z",
+                            "sourceUri": "https://seller.example/synthetic-recurring-record",
+                            "payload": {
+                              "title": "Synthetic: convert a CSV header row to JSON keys",
+                              "status": "complete",
+                              "outputKeys": [
+                                "order_id",
+                                "ship_date"
+                              ]
+                            },
+                            "permission": {
+                              "permitted": true
+                            }
+                          },
+                          "caller": {
+                            "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+                            "step": 1,
+                            "tool": "compare_page_observations",
+                            "measurement": {
+                              "v": 1,
+                              "kind": "measurement",
+                              "tool": "compare_page_observations",
+                              "correlationId": "ae:corr:v1:n12UcRecurring00000001",
+                              "step": 0,
+                              "discovery": {
+                                "status": "declared",
+                                "source": "cli"
+                              },
+                              "outcome": null
+                            }
+                          }
+                        }
+                      },
+                      "clientEndpoint": "https://client.example.invalid/samedaydesk/workflow-kits"
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Shape Capture Fields": [
+          {
+            "startTime": 1794479340010,
+            "executionTime": 3,
+            "source": [],
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "title": "Synthetic: convert a CSV header row to JSON keys",
+                      "status": "complete",
+                      "outputKeys": [
+                        "order_id",
+                        "ship_date"
+                      ]
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

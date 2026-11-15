@@ -1,0 +1,30 @@
+{
+  "synthetic": true,
+  "label": "synthetic",
+  "notice": "Synthetic deliveries for buyer-owned acceptance. Not live merchant traffic or payment.",
+  "evidence": [
+    { "name": "recoveryHint", "value": "tools/list recovered page_change_example" },
+    { "name": "comparisonRecord", "value": { "expected": "changed", "observed": "changed" } }
+  ],
+  "usefulResult": {
+    "status": "changed",
+    "tool": "page_change_example",
+    "path": "/platforms/methodology"
+  },
+  "wrongResult": {
+    "status": "incomplete",
+    "tool": "page_change_example",
+    "path": "/platforms/methodology"
+  },
+  "wrongHint": "tools/list recovered another_tool",
+  "typedOutputAlone": {
+    "type": "application/json",
+    "body": { "ok": true, "status": "changed" }
+  },
+  "chargeAlone": {
+    "amountAtomic": "5000",
+    "asset": "USDC",
+    "network": "eip155:8453",
+    "unsigned": true
+  }
+}
