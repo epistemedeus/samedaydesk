@@ -1,6 +1,12 @@
 name: Workflow kits on actual n8n
 
 on:
+  pull_request:
+    branches: [codex/n12-sds-release-20261112]
+    paths:
+      - .github/workflows/workflow-kits-n8n-runtime.yml
+      - tools/workflow-kits-n8n-runtime.mjs
+      - integrations/workflow-kits-n12*/**
   push:
     branches: [codex/n12-sds-workflow-runtime-20261114, codex/n12-sds-durable-workflows-20261114, codex/n12-sds-release-20261112]
     paths:
@@ -38,7 +44,7 @@ jobs:
           assets=$(mktemp -d)
           chmod 755 "$assets"
           node tools/workflow-kits-n8n-runtime.mjs prepare "$assets"
-          node tools/workflow-kits-n8n-runtime.mjs serve &
+          node tools/workflow-kits-n8n-runtime.mjs serve "$assets" &
           endpoint=$!
           cleanup() {
             rc=$?
@@ -46,6 +52,7 @@ jobs:
             docker rm -f "$name" >/dev/null 2>&1 || true
             docker volume rm "$name" >/dev/null 2>&1 || true
             kill "$endpoint" 2>/dev/null || true
+            wait "$endpoint" 2>/dev/null || true
             return "$rc"
           }
           trap cleanup EXIT
