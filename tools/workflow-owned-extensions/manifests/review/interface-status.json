@@ -1,0 +1,35 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-interface.v1",
+  "id": "review-draft-result-reuse",
+  "version": "0.1.0",
+  "runtime": "review-draft",
+  "kind": "dify_ghost_class",
+  "class": "dify_ghost_class",
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "authorOwnership": "workflow_author",
+  "installationStatus": "source_only_not_installed",
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "published": false,
+  "tools": [
+    "preview_reuse",
+    "export_reuse",
+    "decide_or_reuse"
+  ],
+  "acquisition": {
+    "sites": [
+      "samedaydesk",
+      "ein-llc",
+      "neomorphic-io"
+    ],
+    "command": "node tools/workflow-owned-extensions/cli.mjs acquire --consumer review --site <samedaydesk|ein-llc|neomorphic-io> --store <dir> --source <40-hex> --clock <ISO-UTC>"
+  },
+  "externalInstallers": {
+    "ghost": "not_reopened",
+    "dify": "source_interface_only",
+    "n8n": "not_duplicated"
+  },
+  "humanPreview": "unpublished_pending_human_review"
+}
