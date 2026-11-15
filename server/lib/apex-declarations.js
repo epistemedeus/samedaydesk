@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
-import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
+import { QUERY_KEY_CONSUMER, queryKeyReuseMarkdown } from "./query-key-caller.mjs";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
@@ -1099,10 +1099,11 @@ export function mountApexDeclarations(app) {
   }
   app.options("/.well-known/agent-card.json", (_req, res) => sendPreflight(res));
   // The machine guide is client/public/llms.txt. This route serves those bytes
-  // before production static, including on a host that has no built client.
+  // plus a generated accepted-work appendix before production static. The
+  // protected static build and the shared machine declaration stay separate.
   const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
   const sendLlms = (req, res) => {
-    const body = readFileSync(llmsPath);
+    const body = Buffer.concat([readFileSync(llmsPath), Buffer.from(queryKeyReuseMarkdown())]);
     res.status(200);
     res.set("Cache-Control", "no-cache");
     res.set("Content-Type", "text/plain; charset=utf-8");

@@ -87,7 +87,6 @@ Generated from the mounted apex tools. These are not the paid gateway.
 - Query-key caller schema: cc0.query-key-caller.v4
 - Query-key runner: query-key 1.1.0
 - Query-key archive: https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
-- Query-key alternate archive (same bytes if the primary host is unreachable): https://raw.githubusercontent.com/epistemedeus/samedaydesk/32437117e5232480b18349721069b2a8a0fc2a2c/experiments/agl-seed-loop-20261104/fixtures/query-key-1.1.0.tar.gz
 - Query-key archive sha256: 51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa
 - Query-key archive bytes: 14566
 - Query-key acquire: curl -fsSL -o query-key.tar.gz https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
@@ -99,4 +98,3 @@ Generated from the mounted apex tools. These are not the paid gateway.
 - Query-key artifact schema path: value.publicArtifact.schema
 - Query-key artifact digest path: value.publicArtifactDigest
 - Query-key list path: value.items
-- To reuse: append the chosen task ID to the collection URL for detail and append `/artifact` for the reusable bytes. Match `taskId`, `rightsDigest`, and `publicArtifactDigest` in all three responses. Select `value.publicArtifact` as `caller.json` only for `cc0.query-key-caller.v4` under `CC0-1.0`. Verify archive bytes and SHA-256 before extraction, then from the directory containing `caller.json` run `node query-key-1.1.0/apply.mjs apply --artifact query-key-1.1.0/corpus.json --input caller.json`. The previous apply command uses the bundled example instead.

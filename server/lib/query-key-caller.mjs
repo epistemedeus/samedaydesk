@@ -37,6 +37,21 @@ export const QUERY_KEY_CONSUMER = Object.freeze({
   }),
 });
 
+export function queryKeyReuseMarkdown() {
+  const { runner, reuse, schema, extract } = QUERY_KEY_CONSUMER;
+  return [
+    '',
+    '## Reuse an accepted query-key result',
+    '',
+    `- Query-key alternate archive (same bytes if the primary host is unreachable): ${runner.alternateArchive}`,
+    `- Verify either archive is ${runner.bytes} bytes and has the SHA-256 above before extracting.`,
+    '- Append the selected task ID to the collection URL for detail, then `/artifact` for the reusable bytes. Match `taskId`, `rightsDigest`, and `publicArtifactDigest` across the three responses.',
+    `- Save \`${extract.artifact}\` as \`caller.json\` only for \`${schema}\` under \`${reuse.license}\`.`,
+    `- Run \`${reuse.applyCaller}\` from the directory containing \`caller.json\`. The older command uses the bundled example.`,
+    '',
+  ].join('\n');
+}
+
 export function consumerLinkage(artifact) {
   if (!artifact || artifact.schema !== QUERY_KEY_CALLER_SCHEMA) return null;
   return structuredClone(QUERY_KEY_CONSUMER);

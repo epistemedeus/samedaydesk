@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { queryKeyReuseMarkdown } from "../lib/query-key-caller.mjs";
 import http from "node:http";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
@@ -66,7 +67,7 @@ async function assertGuideRoute(t, dist, emitted) {
     const response = await request(port, { path: "/llms.txt", headers: { accept } });
     assert.equal(response.status, 200);
     assert.match(response.headers["content-type"], /^text\/plain/);
-    assert.equal(response.body, emitted);
+    assert.equal(response.body, emitted + queryKeyReuseMarkdown());
     assert.match(response.body, /^- Email: contact@neomorphic\.io$/m);
     assert.doesNotMatch(response.body, /contact@samedaydesk\.com/);
     assert.match(response.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
@@ -74,7 +75,7 @@ async function assertGuideRoute(t, dist, emitted) {
   const head = await request(port, { method: "HEAD", path: "/llms.txt" });
   assert.equal(head.status, 200);
   assert.equal(head.body, "");
-  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted));
+  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted + queryKeyReuseMarkdown()));
 }
 
 test("machine guide source serves the active contact over the production static path", async (t) => {
