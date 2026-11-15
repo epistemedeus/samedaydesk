@@ -21,6 +21,12 @@ jobs:
   disposable-n8n:
     runs-on: ubuntu-24.04
     timeout-minutes: 9
+    strategy:
+      fail-fast: false
+      matrix:
+        reply_fault: [socket-reset, gateway-503]
+    env:
+      N8N_KIT_REPLY_FAULT: ${{ matrix.reply_fault }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:

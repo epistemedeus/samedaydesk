@@ -66,6 +66,9 @@ if (action === 'prepare') {
   let restartStarted = false;
   const changedApplyCalls = new Map();
   let changedLostReplies = 0;
+  let observedFault = null;
+  const replyFault = process.env.N8N_KIT_REPLY_FAULT ?? 'socket-reset';
+  assert.ok(['socket-reset', 'gateway-503'].includes(replyFault));
   const reply = (res, status, body) => {
     res.writeHead(status, {'content-type': 'application/json'});
     res.end(JSON.stringify(body));
@@ -75,7 +78,7 @@ if (action === 'prepare') {
       const path = new URL(req.url, origin).pathname;
       if (req.method === 'GET' && path === '/observe') return reply(res, 200, {
         baseEffects: base.deliveriesTotal(), changedEffects: receiptObserver.effects(), changedLostReplies,
-        changedReceipts: receiptObserver.snapshot(), changedGeneration: changed.generation,
+        changedReceipts: receiptObserver.snapshot(), changedGeneration: changed.generation, observedFault,
         changedPid: changed.child.pid,
         changedApplyCalls: [...changedApplyCalls],
       });
@@ -121,6 +124,13 @@ if (action === 'prepare') {
               body.periodId === 'period-N+1' && body.recordKey === 'r-003' &&
               receiptObserver.get(body.ledgerKey)?.recordKey === body.recordKey) {
             changedLostReplies++;
+            observedFault = replyFault;
+            // A gateway can return an ordinary status after losing the upstream reply.
+            // The durable receiver has already proved the effect above.
+            if (replyFault === 'gateway-503') {
+              res.setHeader('retry-after', '1');
+              return reply(res, 503, {error:'synthetic_gateway_unavailable'});
+            }
             return req.socket.destroy();
           }
           return reply(res, 502, {error:'unexpected_changed_worker_transport'});
@@ -187,6 +197,7 @@ if (action === 'prepare') {
   assert.equal((await request(changedPath, one)).summary.ready, 1);
   const interrupted = await expectEffects('changedEffects', 4, state => state.changedLostReplies === 1);
   assert.equal(interrupted.changedLostReplies, 1);
+  assert.equal(interrupted.observedFault, process.env.N8N_KIT_REPLY_FAULT ?? 'socket-reset');
   const beforeRestart = interrupted.changedReceipts.find(r => r.periodId === 'period-N+1' && r.recordKey === 'r-003');
   assert.ok(beforeRestart);
   const restart = await fetch(origin + '/restart-changed', {method:'POST', signal:AbortSignal.timeout(9000)});
@@ -218,6 +229,7 @@ if (action === 'prepare') {
     new Map(final.changedReceipts.map(({periodId, recordKey}) => [periodId + '/' + recordKey, 1])));
   console.log(JSON.stringify({received: true, runtime: 'n8n', synthetic: true, runs: 8,
     baseEffects: final.baseEffects, changedEffects: final.changedEffects, changedLostReplies: final.changedLostReplies,
+    receivedFault: final.observedFault,
     maxAppliesPerKey: 1, oldTermsPreserved: true, actualWorkerRestart:true, originalReceiptRecovered:true}));
 } else {
   throw new Error('Expected prepare, serve, or verify');
