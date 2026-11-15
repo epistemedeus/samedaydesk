@@ -72,8 +72,11 @@ test('the alternate delivers the old pinned runner for a real caller, not the bu
     assert.equal(result.status, 0, result.stderr);
     const body = JSON.parse(result.stdout);
     assert.equal(body.executed, false);
-    assert.ok(body.wire.left.includes(artifact.value.publicArtifact.left.path));
-    assert.ok(body.wire.right.includes(artifact.value.publicArtifact.right.path));
+    // The runner exposes query wires and the chosen paths separately.
+    assert.equal(body.input.left.path, artifact.value.publicArtifact.left.path);
+    assert.equal(body.input.right.path, artifact.value.publicArtifact.right.path);
+    assert.equal(body.input.left.raw, body.wire.left);
+    assert.equal(body.input.right.raw, body.wire.right);
     assert.notEqual(body.wire.left, body.wire.right);
     if (live) console.log(JSON.stringify({ calls, archiveBytes: archive.length, wire: body.wire, executed: body.executed }));
   } finally { rmSync(dir, { recursive: true, force: true }); }
