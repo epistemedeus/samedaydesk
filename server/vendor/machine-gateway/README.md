@@ -57,6 +57,37 @@ when running `node --test services/machine-gateway/tests/cold.test.mjs` under
 the same host lock. That check installs only the archive's locked production
 dependencies, executes useful lockfile work, restarts, and resumes its receipt.
 
+### Client errors, cancellation and recovery
+
+`bin/client-io.mjs#request` throws `GatewayRequestError`. Its `message` keeps
+the earlier values (`gateway_http_<status>`, `gateway_response_too_large`).
+`code` is the server's own code when it sent one (`{error:{code}}` or
+`{ok:false,code}`), including codes this client does not know yet. Otherwise
+`code` equals `message`. `operation` keeps the method, path and idempotency key.
+`diagnostics` hold the phase, status, content type, byte count and a body
+digest, never a credential, request body or response text.
+
+`recovery` says what the client observed. It is not an exactly-once promise.
+It does not cover loss of the caller's own state file or host.
+
+| recovery | meaning | next step |
+| --- | --- | --- |
+| `not_sent` | aborted before dispatch, recovery record not saved, or connection refused | safe to start again |
+| `sent_unconfirmed` | dispatch began, no server outcome received (local abort, SIGINT, timeout, reset, 5xx, non-JSON) | `--resume`; the gateway replays the same key and digest without running again |
+| `remote_refused` | server answered with an error code | fix input; the code is final for this attempt |
+| `remote_committed` | server answered 2xx, possibly with the body lost | `--resume` reads back by receipt ID or the same key |
+| `remote_cancelled` | the server reported `execution_aborted` | the receipt records the abort |
+
+`signal` accepts an `AbortSignal`. A local abort is never reported as a remote
+cancellation, and an abort after dispatch is `sent_unconfirmed`, not
+`not_sent`. `beforeDispatch(record)` runs before a POST is sent; if it throws,
+nothing is sent. `bin/caller.mjs` uses it to save a nonsecret dispatch record
+(method, path, key digest, attempt count) in its 0600 state file before
+execution. SIGINT exits 130 and leaves remote work alone. With a saved receipt
+ID, `--resume` reads `/v1/receipts/<id>` and sends no POST. `request` never
+retries a POST. `tests/caller-recovery.test.mjs` drops a committed execute
+response, resumes in a fresh process, and checks the store's commit count.
+
 `SOURCE.json` records the exact fetched sibling SHAs, inspected integration
 boundaries, unchanged vendored files and checksums. No shared navigation,
 homepage, `site.ts` or `commerce.astro` change is required to run the service.

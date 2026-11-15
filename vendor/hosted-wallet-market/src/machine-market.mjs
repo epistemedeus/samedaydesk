@@ -20,6 +20,7 @@ import {voluntaryMarket} from './voluntary-market.mjs';
 import {ACCEPTED_WORK_MEASURE, acceptedWorkEventId, publicArtifactView, publicView, publicationVisible} from './accepted-work-publication.mjs';
 import {createClosureAdmission,authorizeMachineMutation} from './machine-closure-admission.mjs';
 import {recordPublicDiscovery} from './machine-public-read.mjs';
+import {createMarketCursor} from './market-cursor.mjs';
 
 const refuse=(code,http=409)=>{throw Object.assign(Error(code),{code,codeName:code,http});};
 const address=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/.test(v)&&v!=='0x'+'0'.repeat(40);
@@ -34,6 +35,7 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
   verify:()=>({sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(sdsRoot)})});
  await admission.admit();
  function assertCurrent(){admission.current();}
+ const cursors=createMarketCursor(profile.replayKey);
  const source=pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/earned-work/src/store/postgres.js'));
  const {createPostgresStore}=await import(source.href);
  const {ContributorAccountService}=await import(pathToFileURL(join(sdsRoot,'vendor/neomorphic-contributor-journey/services/contributor-journey/dist/runtime/services/contributor-journey/account/service.js')).href);
@@ -382,11 +384,12 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
   async function discoverAccepted({limit=20,cursor=''}={}){
    admission.current();
    if(!acceptedWork)refuse('accepted_work_public_unavailable',404);
-   if(!Number.isSafeInteger(limit)||limit<1||limit>50||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
-   if(cursor&&!/^market-[a-f0-9]{64}$/.test(cursor))refuse('cursor_refused',400);
+   if(!Number.isSafeInteger(limit)||limit<1||limit>50)refuse('page_refused',400);
+   // The route passes the opaque cursor it received; only this producer decodes it.
+   const position=cursors.read('market.accepted-work',cursor);
    const items=[];
-   let scan=cursor;
-   const page=nextCursor=>({items,nextCursor,acceptedWorkPublic:true,publicReads:'0',paidWork:false,signerAuthority:false});
+   let scan=position;
+   const page=last=>({items,nextCursor:last===null?null:cursors.emit('market.accepted-work',last),acceptedWorkPublic:true,publicReads:'0',paidWork:false,signerAuthority:false});
    while(items.length<limit){
     const rows=(await pool.query(`SELECT id FROM "${profile.earnedSchema}".ae14_market_tasks
       WHERE tenant_id=$1 AND id>$2 AND voluntary IS NOT NULL ORDER BY id LIMIT 50`,[profile.tenant,scan])).rows;
@@ -405,16 +408,20 @@ export async function openMachineMarket({capability,authority,qualifiedCapabilit
   async function readAcceptedArtifact(taskId){admission.current();return loadAccepted(taskId,'artifact');}
   async function discover({limit=50,cursor=''}={}){
    admission.current();
-   if(!Number.isSafeInteger(limit)||limit<1||limit>100||typeof cursor!=='string'||cursor.length>200)refuse('page_refused',400);
-   const rows=(await pool.query(`SELECT t.id,t.spec,t.selected_quote,EXISTS(SELECT 1 FROM "${profile.earnedSchema}".ae14_market_funding f
+   if(!Number.isSafeInteger(limit)||limit<1||limit>100)refuse('page_refused',400);
+   const position=cursors.read('market.discover',cursor);
+   // Read one row past the page so a cursor is emitted only when a next row exists.
+   const found=(await pool.query(`SELECT t.id,t.spec,t.selected_quote,EXISTS(SELECT 1 FROM "${profile.earnedSchema}".ae14_market_funding f
      JOIN "${profile.earnedSchema}".ae14_market_quotes q ON q.allocation_id=f.allocation_id AND q.tenant_id=f.tenant_id
      WHERE q.tenant_id=t.tenant_id AND q.task_id=t.id) AS funding_started
      FROM "${profile.earnedSchema}".ae14_market_tasks t WHERE tenant_id=$1 AND id>$2
-     AND voluntary IS NULL ORDER BY id LIMIT $3`,[profile.tenant,cursor,limit])).rows;
+     AND voluntary IS NULL ORDER BY id LIMIT $3`,[profile.tenant,position,limit+1])).rows;
+   const more=found.length>limit;
+   const rows=more?found.slice(0,limit):found;
    const items=rows.map(r=>({taskId:r.id,title:r.spec.title,summary:r.spec.summary,criteria:r.spec.criteria,payableKinds:r.spec.payableKinds,assigned:Boolean(r.selected_quote),fundingState:r.funding_started?'funding_started':'unfunded_interest'}));
    await recordPublicDiscovery(store,{tenant:profile.tenant,rows,sourceSha256:capability.sourceSha256,nowMs:now(),
     payload:{verification:'server_observed',source:capability.sourceSha256,operation:'anonymous-page-read',acquisition:'unknown',uniquePrincipal:null}});
-   return {items,nextCursor:rows.length===limit?rows.at(-1).id:null,publicEnabled:true,moneyQualified:capability.money==='qualified'&&Boolean(networkSource&&rail),signerAuthority:false,provenance:capability.money==='unfunded'?'unavailable':money.qualification};
+   return {items,nextCursor:more?cursors.emit('market.discover',rows.at(-1).id):null,publicEnabled:true,moneyQualified:capability.money==='qualified'&&Boolean(networkSource&&rail),signerAuthority:false,provenance:capability.money==='unfunded'?'unavailable':money.qualification};
   }
   function publicProfile(){
    admission.current();const fields=['schema','profile','origin','tenant','sourceSha256','hostSha256','discovery','money','networkSource','execution','participation'];
