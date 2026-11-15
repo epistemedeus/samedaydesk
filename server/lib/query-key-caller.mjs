@@ -10,6 +10,7 @@ export const QUERY_KEY_CONSUMER = Object.freeze({
     name: 'query-key',
     version: '1.1.0',
     archive: 'https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz',
+    alternateArchive: 'https://raw.githubusercontent.com/epistemedeus/samedaydesk/32437117e5232480b18349721069b2a8a0fc2a2c/experiments/agl-seed-loop-20261104/fixtures/query-key-1.1.0.tar.gz',
     sha256: '51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa',
     bytes: 14566,
   }),
@@ -21,6 +22,11 @@ export const QUERY_KEY_CONSUMER = Object.freeze({
     path: 'tools/query-key-1.1.0',
   }),
   acceptedWork: 'https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/accepted-work',
+  reuse: Object.freeze({
+    license: 'CC0-1.0',
+    artifactPathSuffix: '/{taskId}/artifact',
+    applyCaller: 'node query-key-1.1.0/apply.mjs apply --artifact query-key-1.1.0/corpus.json --input caller.json',
+  }),
   // Paths into the raw HTTP JSON body. The accepted-work envelope is {ok, value}.
   // value.publicArtifact is that body. publicArtifact at the root is not a response field.
   extract: Object.freeze({

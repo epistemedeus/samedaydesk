@@ -878,7 +878,7 @@ export function apexOpenApiDocument() {
         "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
         "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
         "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
-        "x-query-key-caller names the schema, versioned runner, acquire command, apply command, and source identity for an accepted cc0.query-key-caller.v4 artifact. Those facts are read from this document at x-query-key-caller. The accepted-work HTTP body is the raw envelope {ok, value}. Read the caller at value.publicArtifact, its schema at value.publicArtifact.schema, its digest at value.publicArtifactDigest, and the list at value.items.",
+        "x-query-key-caller gives the accepted-work collection, required license and schema, runner, and source. Append the selected task ID to the collection URL for its detail, then /artifact for the reusable bytes. Match taskId, rightsDigest, and publicArtifactDigest across the list, detail, and artifact before selecting value.publicArtifact as caller.json. Download the runner from its primary or alternate archive and verify the same byte count and SHA-256 before extracting. Use reuse.applyCaller for that input; the older apply command runs the bundled example. These reads do not claim work or pay anyone.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],

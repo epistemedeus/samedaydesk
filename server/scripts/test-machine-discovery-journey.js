@@ -190,6 +190,15 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.ok(skillResponse.body.includes(expectedGateway.summary));
   assert.ok(skillResponse.body.includes(expectedGateway.nextAction));
   assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes(`Paid gateway MCP (${expectedGateway.state})`)));
+  const reuse = openapi["x-query-key-caller"];
+  assert.equal(new URL(reuse.runner.alternateArchive).origin, "https://raw.githubusercontent.com");
+  assert.notEqual(new URL(reuse.runner.archive).origin, new URL(reuse.runner.alternateArchive).origin);
+  assert.equal(reuse.reuse.license, "CC0-1.0");
+  assert.equal(reuse.reuse.artifactPathSuffix, "/{taskId}/artifact");
+  assert.match(reuse.reuse.applyCaller, /--input caller\.json$/);
+  const reuseLlms = (await request(port, { path: "/llms.txt" })).body;
+  assert.ok(reuseLlms.includes(reuse.runner.alternateArchive));
+  assert.ok(reuseLlms.includes(reuse.reuse.applyCaller));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -260,6 +269,7 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
   assert.equal(card.status, 200);
+  assert.deepEqual(card.json["x-query-key-caller"], reuse);
   assert.deepEqual(card.json["x-paid-gateway"], expectedGateway);
   assert.ok(card.json.skills.some((skill) => skill.id === "check_ai_readiness"));
   assert.equal(card.status, 200);
