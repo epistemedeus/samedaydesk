@@ -1,3 +1,5 @@
+import { isCheckedPair, matchesCheckedCatalogClaim, matchesCheckedUnit } from "./settlement-unit-map.mjs";
+
 const PRIVATE_KEY = /^(uid|user_id|userid|aid|email|e-mail|ip|ip_address|wallet|wallet_address|authorization|authorisation|bearer|token|access_token|password|secret|document_id|documentid|subject_id|subjectid|cookie|session|session_id|credential|credentiallocator)$/i;
 const PRIVATE_VALUE = /user_secret_value|sk_live|bearer\s|eyJ[A-Za-z0-9_-]{10,}/i;
 const EMAIL_VALUE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -65,6 +67,145 @@ function atomicOrNull(value) {
 function boolOrNull(value) {
   if (value === true || value === false) return value;
   return null;
+}
+
+const UNIT_SCHEMA = "samedaydesk.commerce-settlement-unit.v1";
+const SUMMARY_SCHEMA = "samedaydesk.commerce-settlement-summary.v1";
+const UNIT_DECISIONS = new Set([
+  "qualified",
+  "missing",
+  "partial",
+  "conflicting",
+  "rejected",
+  "unmapped",
+  "empty",
+  "stale_cut",
+  "unreadable",
+  "absent",
+]);
+const OPEN_UNIT_DECISIONS = new Set(["missing", "partial", "conflicting", "rejected", "empty"]);
+const FORBIDDEN_UNIT_KEY = /^(settlementreference|payer|treasury|sourceeventid|reconciliationid|paymentactor|wallet|email|uid|token|authorization|payto)$/i;
+const TX_HASH = /0x[0-9a-fA-F]{64}/;
+const UNIT_NETWORK = /^eip155:[1-9][0-9]{0,9}$/;
+const UNIT_ASSET = /^0x[0-9a-fA-F]{40}$/;
+const UNIT_SYMBOL = /^[A-Z0-9]{2,12}$/;
+
+export function absentUnit(decision = "absent") {
+  return {
+    decision,
+    comparable: false,
+    network: null,
+    asset: null,
+    symbol: null,
+    decimals: null,
+    atomicScale: null,
+    sourceCutSha256: null,
+    recognizedIncomeAtomic: null,
+  };
+}
+
+function forbiddenUnit(value) {
+  try {
+    const rendered = JSON.stringify(value);
+    if (TX_HASH.test(rendered) || privateValue(rendered)) return true;
+  } catch {
+    return true;
+  }
+  const stack = [value];
+  const seen = new Set();
+  while (stack.length) {
+    const current = stack.pop();
+    if (!current || typeof current !== "object" || seen.has(current)) continue;
+    seen.add(current);
+    for (const [key, item] of Object.entries(current)) {
+      if (FORBIDDEN_UNIT_KEY.test(key)) return true;
+      if (item && typeof item === "object") stack.push(item);
+    }
+  }
+  return false;
+}
+
+function cutHash(value) {
+  return typeof value === "string" && /^[0-9a-f]{64}$/.test(value) ? value : null;
+}
+
+export function interpretSettlementUnit(doc, plane) {
+  if (!doc || typeof doc !== "object") return absentUnit();
+  const top = Object.hasOwn(doc, "settlementUnit") ? doc.settlementUnit : undefined;
+  const nested = doc.settlementReconciliation && typeof doc.settlementReconciliation === "object"
+    ? doc.settlementReconciliation.settlementUnit
+    : undefined;
+  if (top == null && nested == null) return absentUnit();
+  if (top != null && nested != null && JSON.stringify(top) !== JSON.stringify(nested)) return absentUnit("rejected");
+  const raw = top ?? nested;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw) || forbiddenUnit(raw)) return absentUnit("rejected");
+  if (raw.schemaVersion !== UNIT_SCHEMA || !UNIT_DECISIONS.has(raw.decision)) return absentUnit("rejected");
+  if (raw.recognizedIncomeAtomic !== null || raw.customerAttribution !== null) return absentUnit("rejected");
+  if (raw.decision === "absent") return absentUnit();
+  if (raw.decision === "stale_cut" || raw.decision === "unreadable") return absentUnit(raw.decision);
+  const binding = raw.bindsToParent;
+  const bound = Boolean(
+    binding
+    && binding.summarySchema === SUMMARY_SCHEMA
+    && binding.matchesSuppliedSummary === true
+    && binding.amountAtomic === plane.amountAtomic
+    && binding.reconciledSettlements === plane.reconciledSettlements
+    && typeof binding.admissionCutId === "string"
+    && /^[0-9a-f]{64}$/.test(binding.admissionCutId),
+  );
+  if (!bound) return absentUnit("stale_cut");
+  if (raw.comparable !== (raw.decision === "qualified")) return absentUnit("rejected");
+  if (raw.decision === "qualified") {
+    const unit = raw.unit;
+    if (!unit || typeof unit !== "object") return absentUnit("rejected");
+    if (typeof unit.network !== "string" || !UNIT_NETWORK.test(unit.network)) return absentUnit("rejected");
+    if (typeof unit.asset !== "string" || !UNIT_ASSET.test(unit.asset)) return absentUnit("rejected");
+    if (typeof unit.symbol !== "string" || !UNIT_SYMBOL.test(unit.symbol)) return absentUnit("rejected");
+    if (!Number.isInteger(unit.decimals) || unit.decimals < 0 || unit.decimals > 36) return absentUnit("rejected");
+    let scale;
+    try {
+      scale = (10n ** BigInt(unit.decimals)).toString();
+    } catch {
+      return absentUnit("rejected");
+    }
+    if (raw.atomicScale !== scale || !cutHash(raw.sourceCutSha256)) return absentUnit("rejected");
+    if (!matchesCheckedCatalogClaim(raw.catalog) || !matchesCheckedUnit(unit)) return absentUnit("rejected");
+    return {
+      decision: "qualified",
+      comparable: true,
+      network: unit.network,
+      asset: unit.asset,
+      symbol: unit.symbol,
+      decimals: unit.decimals,
+      atomicScale: scale,
+      sourceCutSha256: cutHash(raw.sourceCutSha256),
+      recognizedIncomeAtomic: null,
+    };
+  }
+  if (raw.decision === "unmapped") {
+    const unit = raw.unit;
+    if (!unit || raw.unit.symbol !== null || raw.unit.decimals !== null || raw.atomicScale !== null) return absentUnit("rejected");
+    if (typeof unit.network !== "string" || !UNIT_NETWORK.test(unit.network)) return absentUnit("rejected");
+    if (typeof unit.asset !== "string" || !UNIT_ASSET.test(unit.asset)) return absentUnit("rejected");
+    if (isCheckedPair(unit)) return absentUnit("rejected");
+    if (raw.catalog != null && !(raw.catalog.usableEntries === 0 || matchesCheckedCatalogClaim(raw.catalog))) return absentUnit("rejected");
+    return {
+      decision: "unmapped",
+      comparable: false,
+      network: unit.network,
+      asset: unit.asset.toLowerCase(),
+      symbol: null,
+      decimals: null,
+      atomicScale: null,
+      sourceCutSha256: cutHash(raw.sourceCutSha256),
+      recognizedIncomeAtomic: null,
+    };
+  }
+  if (!OPEN_UNIT_DECISIONS.has(raw.decision) || raw.unit !== null || raw.atomicScale !== null) return absentUnit("rejected");
+  return {
+    ...absentUnit(raw.decision),
+    sourceCutSha256: cutHash(raw.sourceCutSha256),
+  };
 }
 
 function sumAtomic(rows) {
@@ -135,6 +276,12 @@ export function capturePayment(doc) {
   const invalid = amountAtomic === undefined || reconciled === undefined || byClass.invalid || byRoute.invalid;
   const classSum = byClass.rows ? sumAtomic(Object.values(byClass.rows)) : null;
   const routeSum = byRoute.rows ? sumAtomic(Object.values(byRoute.rows)) : null;
+  const unit = invalid
+    ? ((doc.settlementUnit || doc.settlementReconciliation?.settlementUnit) ? absentUnit("rejected") : absentUnit())
+    : interpretSettlementUnit(doc, {
+      amountAtomic: amountAtomic ?? null,
+      reconciledSettlements: reconciled ?? null,
+    });
   const rare = doc.durableRareFunnel;
   const rareOk = rare && rare.schemaVersion === "samedaydesk.commerce-rare-funnel-evidence.v1";
   const tail = doc.coverage?.prospectiveTail;
@@ -175,6 +322,7 @@ export function capturePayment(doc) {
       byRoute: byRoute.rows,
       classTotalsMatch: Boolean(classSum && amountAtomic && classSum === amountAtomic),
       routeTotalsMatch: Boolean(routeSum && amountAtomic && routeSum === amountAtomic),
+      unit,
     },
     rareFunnel: rareOk ? {
       schema: rare.schemaVersion,
@@ -208,6 +356,7 @@ export function capturePayment(doc) {
     rowsMaterialized: 0,
     recognizedIncomeAtomic: null,
     currency,
+    unit,
   };
 }
 
