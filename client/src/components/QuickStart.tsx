@@ -6,6 +6,15 @@ import { QUICKSTART } from "../data/quickstart";
 
 
 type Tab = "prompt" | "cli" | "mcp";
+const ICONS: Record<Tab | "copy", React.ReactNode> = {
+  prompt: <><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" /><path d="M5 6.2h6M5 8.2h4" /></>,
+  cli: <><rect x="1.5" y="2.5" width="13" height="11" rx="1.5" /><path d="M4 6l2.2 2L4 10M8 10.5h4" /></>,
+  mcp: <path d="M5.5 1.5v3M10.5 1.5v3M3.5 4.5h9v2.5a4.5 4.5 0 0 1-9 0zM8 11.5v3" />,
+  copy: <><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5v-3h-8v8h3" /></>,
+};
+const Icon = ({ name }: { name: Tab | "copy" }) => (
+  <svg className={styles.icon} viewBox="0 0 16 16" aria-hidden="true">{ICONS[name]}</svg>
+);
 const TABS: { id: Tab; label: string }[] = [
   { id: "prompt", label: "Prompt" },
   { id: "cli", label: "Command line" },
@@ -79,36 +88,41 @@ export default function QuickStart({ className }: { className?: string }) {
 
   return (
     <section ref={root} className={`${styles.qs} ${className ?? ""}`} aria-labelledby="qs-label">
-      <p className={styles.label} id="qs-label">{QUICKSTART.label}</p>
+      <div className={styles.head}>
+        <span className={styles.dot} aria-hidden="true" />
+        <p className={styles.label} id="qs-label">{QUICKSTART.label}</p>
+        <div className={styles.tabs} role="tablist" aria-label="Route">
+          {TABS.map((t, i) => (
+            <button
+              key={t.id}
+              ref={(el) => { tabRefs.current[i] = el; }}
+              type="button"
+              role="tab"
+              id={`qs-tab-${t.id}`}
+              aria-controls={`qs-panel-${t.id}`}
+              aria-selected={tab === t.id}
+              tabIndex={tab === t.id ? 0 : -1}
+              onClick={() => { choose(t.id); track("quickstart_tab", { ...meta, tab: t.id }); }}
+              onKeyDown={(e) => onKey(e, i)}
+            >
+              <Icon name={t.id} />
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className={styles.slip} id={`qs-panel-${tab}`} role="tabpanel" aria-labelledby={`qs-tab-${tab}`}>
         {tab === "prompt" ? (
           <p className={styles.line}>{TEXT[tab]}</p>
         ) : (
-          <code className={styles.code}>{TEXT[tab]}</code>
+          <code className={styles.code}><span className={styles.prompt} aria-hidden="true">{tab === "cli" ? "$ " : ""}</span>{TEXT[tab]}</code>
         )}
         <button type="button" className={styles.copy} data-copied={copied || undefined} onClick={onCopy}>
+          <Icon name="copy" />
           {copied ? "Copied" : tab === "prompt" ? "Copy for your agent" : "Copy"}
         </button>
       </div>
       <p className={styles.help}>{HELP[tab]}</p>
-      <div className={styles.tabs} role="tablist" aria-label="Route">
-        {TABS.map((t, i) => (
-          <button
-            key={t.id}
-            ref={(el) => { tabRefs.current[i] = el; }}
-            type="button"
-            role="tab"
-            id={`qs-tab-${t.id}`}
-            aria-controls={`qs-panel-${t.id}`}
-            aria-selected={tab === t.id}
-            tabIndex={tab === t.id ? 0 : -1}
-            onClick={() => { choose(t.id); track("quickstart_tab", { ...meta, tab: t.id }); }}
-            onKeyDown={(e) => onKey(e, i)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
       <p className="visually-hidden" aria-live="polite">{status}</p>
     </section>
   );
