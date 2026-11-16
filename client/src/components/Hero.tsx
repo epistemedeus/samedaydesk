@@ -2,6 +2,7 @@ import { useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
 import MagneticButton from "./MagneticButton";
 import EnergySurface from "./EnergySurface";
+import QuickStart from "./QuickStart";
 import { setupGsap, gsap, SplitText, prefersReducedMotion } from "../motion/gsap";
 import { track } from "../lib/posthog";
 import styles from "./Hero.module.css";
@@ -44,6 +45,8 @@ export default function Hero() {
           We build agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine
           storefronts. Specific scope, working code, tests, and a deployment handoff.
         </p>
+
+        <QuickStart />
 
         <div className={styles.ctas} data-hero-fade>
           <MagneticButton
