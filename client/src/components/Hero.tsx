@@ -1,7 +1,8 @@
 import { useRef, useLayoutEffect } from "react";
 import clsx from "clsx";
 import MagneticButton from "./MagneticButton";
-import EnergySurface from "./EnergySurface";
+import Wire from "./Wire";
+import DraftingCursor from "./DraftingCursor";
 import QuickStart from "./QuickStart";
 import { setupGsap, gsap, SplitText, prefersReducedMotion } from "../motion/gsap";
 import { track } from "../lib/posthog";
@@ -25,16 +26,15 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className={styles.hero}>
-      <EnergySurface />
-      <div className={styles.scrim} aria-hidden="true" />
-
-      <div ref={root} className={clsx("container", styles.content)}>
+    <section className={styles.hero} data-measure-scope>
+      <DraftingCursor />
+      <div ref={root} className={clsx("container", styles.grid)}>
+        <div className={styles.content}>
         <p className={styles.eyebrow} data-hero-fade>
           <span className={styles.tick} aria-hidden="true" /> Agent commerce · built and shipped
         </p>
 
-        <h1 ref={h1} className={styles.h1}>
+        <h1 ref={h1} className={styles.h1} data-measure>
           <span className={styles.line}>Make your service</span>
           <span className={styles.line}>
             ready for <span className={styles.lime}>agents</span>.
@@ -50,7 +50,7 @@ export default function Hero() {
 
         <div className={styles.ctas} data-hero-fade>
           <MagneticButton
-            to="/signup"
+            href="#check"
             variant="primary"
             magnetic
             ariaLabel="Get a free route check"
@@ -60,7 +60,10 @@ export default function Hero() {
           </MagneticButton>
           <MagneticButton href="#services" variant="ghost">See agent builds</MagneticButton>
         </div>
-
+        </div>
+        <div className={styles.side} data-measure>
+          <Wire />
+        </div>
       </div>
 
       <a href="#proof" className={styles.scrollcue} aria-label="See what gets delivered">

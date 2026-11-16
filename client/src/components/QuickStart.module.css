@@ -15,8 +15,12 @@
   gap: var(--space-s);
   padding: 0.9rem 0.9rem 0.9rem 1.1rem;
   background: var(--bg-1);
-  border: 1px solid var(--line-2);
-  border-radius: var(--radius-s);
+  border: 1px dashed var(--line-2);
+  border-radius: 0;
+  /* torn till-roll edge along the bottom */
+  -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 6px) no-repeat, radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px) bottom left / 10px 6px repeat-x;
+  mask: linear-gradient(#000, #000) top / 100% calc(100% - 6px) no-repeat, radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px) bottom left / 10px 6px repeat-x;
+  padding-bottom: 1.3rem;
 }
 .line { flex: 1; font-size: var(--step-0); line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .code { flex: 1; font-family: var(--font-mono); font-size: var(--step--1); line-height: 1.55; color: var(--ink); overflow-wrap: anywhere; }

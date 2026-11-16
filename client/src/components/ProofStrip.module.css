@@ -1,0 +1,10 @@
+.strip { border-block: 1px solid var(--line); background: var(--bg-1); }
+.row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; align-items: stretch; }
+.cell { display: grid; gap: 0.3rem; padding: 1.1rem 1rem; border-inline-start: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+.cell:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.cell:hover b { color: var(--lime); }
+.cell b { font-family: var(--font-mono); font-size: var(--step-2); font-weight: 500; transition: color var(--t2) var(--ease); }
+.cell b.small { font-size: var(--step-0); padding-top: 0.35rem; }
+.cell span { font-size: var(--step--2); color: var(--ink-dim); }
+.note { align-self: center; font-size: var(--step--2); color: var(--ink-faint); padding-inline-start: 1rem; }
+@media (max-width: 900px) { .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cell:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; } .note { grid-column: 1 / -1; padding: 0 0 0.8rem; } }

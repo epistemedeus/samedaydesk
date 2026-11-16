@@ -18,7 +18,10 @@
     linear-gradient(0deg, var(--bg), transparent 40%);
   pointer-events: none;
 }
-.content { position: relative; z-index: 2; max-width: 50rem; }
+.grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--space-l); align-items: center; }
+.content { max-width: 50rem; }
+.side { align-self: center; }
+@media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
 
 .eyebrow {
   display: inline-flex;

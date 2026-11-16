@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import type Lenis from "lenis";
 
 // Height of the fixed header + a small breathing gap, so a scrolled-to
 // section isn't hidden underneath the nav.
@@ -10,18 +9,12 @@ function headerOffset() {
   return h + 16;
 }
 
-// Scroll to an element id. Route transitions can mount the target while Lenis is
-// still easing from the previous page, so use an immediate destination update.
-// This keeps every section aligned under the fixed header instead of sometimes
-// stopping a few hundred pixels early.
+// Scroll to an element id, aligned under the fixed header. Native scrolling
+// only: the smooth-scroll layer was removed in the grand phase redesign.
 function scrollToId(id: string): boolean {
   const el = document.getElementById(id);
   if (!el) return false;
   const target = Math.max(0, el.getBoundingClientRect().top + window.scrollY - headerOffset());
-  const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
-  if (lenis && typeof lenis.scrollTo === "function") {
-    lenis.scrollTo(target, { immediate: true });
-  }
   window.scrollTo(0, target);
   return true;
 }
@@ -38,10 +31,6 @@ export default function ScrollToHash() {
   // the visitor just left.
   useEffect(() => {
     if (hash) return;
-    const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
-    if (lenis && typeof lenis.scrollTo === "function") {
-      lenis.scrollTo(0, { immediate: true });
-    }
     window.scrollTo(0, 0);
   }, [pathname, search, hash, key]);
 

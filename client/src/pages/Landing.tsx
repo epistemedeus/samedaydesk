@@ -1,7 +1,10 @@
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
-import Proof from "../components/Proof";
-import Services from "../components/Services";
+import ProofStrip from "../components/ProofStrip";
+import DomainCheck from "../components/DomainCheck";
+import BuildsTable from "../components/BuildsTable";
+import AgentReadyScene from "../components/AgentReadyScene";
+import FurtherOffers from "../components/FurtherOffers";
 import HowItWorks from "../components/HowItWorks";
 import Guarantee from "../components/Guarantee";
 import Footer from "../components/Footer";
@@ -15,9 +18,12 @@ export default function Landing() {
       <Nav />
       <main id="main">
         <Hero />
-        <Proof />
-        <Services />
+        <ProofStrip />
+        <DomainCheck />
+        <BuildsTable />
+        <AgentReadyScene />
         <HowItWorks />
+        <FurtherOffers />
         <Guarantee />
       </main>
       <Footer />

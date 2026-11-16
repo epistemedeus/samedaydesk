@@ -18,6 +18,16 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // One menu open at a time; Escape and an outside click close them.
+  useEffect(() => {
+    const menus = () => Array.from(document.querySelectorAll<HTMLDetailsElement>("details[data-menu]"));
+    const onClick = (e: MouseEvent) => menus().forEach((d) => { if (d.open && !d.contains(e.target as Node)) d.open = false; });
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") menus().forEach((d) => { if (d.open) { d.open = false; d.querySelector("summary")?.focus(); } }); };
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("click", onClick); document.removeEventListener("keydown", onKey); };
+  }, []);
+
   return (
     <header className={clsx(styles.nav, scrolled && styles.scrolled)}>
       <div className={clsx("container", styles.inner)}>
@@ -27,9 +37,23 @@ export default function Nav() {
         </Link>
 
         <nav className={styles.links} aria-label="Primary">
-          <Link to="/#services">Services</Link>
+          <details className={styles.menu} data-menu>
+            <summary>Builds</summary>
+            <div className={styles.panel}>
+              <Link to="/#services"><strong>The four builds</strong><span>Scope, time, price and test, compared.</span></Link>
+              <Link to="/x402" viewTransition><strong>Paid machine routes</strong><span>The x402 gateway, live on Base.</span></Link>
+              <Link to="/#check"><strong>Free route check</strong><span>Run it on your own domain.</span></Link>
+            </div>
+          </details>
           <Link to="/#how">How it works</Link>
-          <Link to="/tools/ai-readiness" viewTransition>Free tool</Link>
+          <details className={styles.menu} data-menu>
+            <summary>Company</summary>
+            <div className={styles.panel}>
+              <Link to="/company" viewTransition><strong>About</strong><span>What we do and how.</span></Link>
+              <Link to="/security" viewTransition><strong>Security and trust</strong><span>Payments, credentials, evidence.</span></Link>
+              <Link to="/changelog" viewTransition><strong>Changelog</strong><span>What changed, dated.</span></Link>
+            </div>
+          </details>
         </nav>
 
         <div className={styles.actions}>

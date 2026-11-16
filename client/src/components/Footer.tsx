@@ -34,6 +34,10 @@ export default function Footer() {
           <a href="/resources.html">Guides &amp; reports</a>
           <Link to="/#how">How it works</Link>
           <Link to="/#guarantee">Guarantee</Link>
+          <Link to="/company" viewTransition>About</Link>
+          <Link to="/security" viewTransition>Security and trust</Link>
+          <Link to="/changelog" viewTransition>Changelog</Link>
+          <a href="/start.md">Start file for agents</a>
           <Link to="/terms" viewTransition>Terms</Link>
         </nav>
       </div>

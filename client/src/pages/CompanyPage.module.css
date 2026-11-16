@@ -1,0 +1,7 @@
+.wrap { padding-top: calc(var(--nav-h) + var(--space-xl)); padding-bottom: var(--space-xl); }
+.h1 { font-family: var(--font-display); font-size: var(--step-5); letter-spacing: -0.03em; line-height: 1; margin-top: var(--space-xs); }
+.list { margin-top: var(--space-l); border-top: 1px solid var(--line-2); max-width: 60rem; }
+.row { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: 1.5rem; padding-block: 1.1rem; border-bottom: 1px solid var(--line); }
+.row dt { font-family: var(--font-mono); font-size: var(--step--2); text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-dim); padding-top: 0.25rem; }
+.row dd { margin: 0; line-height: 1.55; }
+@media (max-width: 640px) { .row { grid-template-columns: 1fr; gap: 0.3rem; } }

@@ -1,0 +1,26 @@
+.section { padding-block: var(--space-xl); border-top: 1px solid var(--line); }
+.title { font-family: var(--font-display); font-size: var(--step-4); letter-spacing: -0.02em; line-height: 1.05; margin-top: var(--space-xs); }
+.lead { margin-top: var(--space-s); color: var(--ink-dim); max-width: 60ch; line-height: 1.55; }
+.scroller { margin-top: var(--space-l); }
+.table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.table th, .table td { text-align: start; vertical-align: top; padding: 1rem 0.9rem; border-bottom: 1px solid var(--line); transition: background-color var(--t2) var(--ease); }
+.table thead th { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; border-bottom: 1px solid var(--line-2); }
+.table tbody th { width: 9.5rem; font-family: var(--font-mono); font-size: var(--step--2); text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-dim); font-weight: 500; }
+.table [data-col] { background: var(--lime-soft); }
+.table ul, .card ul { margin: 0; padding-inline-start: 1rem; display: grid; gap: 0.25rem; font-size: var(--step--1); color: var(--ink-dim); }
+.flag { display: block; margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: var(--step--2); text-transform: uppercase; letter-spacing: 0.08em; color: var(--lime); font-weight: 500; }
+.price { font-family: var(--font-mono); font-size: var(--step-2); color: var(--ink); }
+.price span { font-size: var(--step--1); color: var(--ink-dim); margin-inline-start: 0.5rem; }
+.acc { font-size: var(--step--1); line-height: 1.5; }
+.cta { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--line-2); border-radius: 99px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: var(--step--1); }
+.cta[data-primary] { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); }
+.cta:hover { border-color: var(--lime); }
+.cards { display: none; }
+.custom { margin-top: var(--space-m); color: var(--ink-dim); font-size: var(--step--1); max-width: 70ch; }
+.custom a { color: var(--ink); }
+@media (max-width: 900px) {
+  .scroller { display: none; }
+  .cards { display: flex; gap: 0.8rem; margin: var(--space-m) calc(-1 * var(--gutter, 1.25rem)) 0; padding: 0 var(--gutter, 1.25rem) 0.5rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+  .card { flex: 0 0 82%; scroll-snap-align: start; display: grid; gap: 0.7rem; align-content: start; padding: 1.1rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1); }
+  .cardName { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; }
+}

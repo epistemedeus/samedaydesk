@@ -51,6 +51,11 @@
   --dur-2: 0.36s;
   --dur-3: 0.6s;
 
+  /* Tempo of the shared motion engine: four durations, one easing. */
+  --t1: 120ms; --t2: 240ms; --t3: 480ms; --t4: 900ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --stagger: 52ms;
+
   /* ── Layout ── */
   --nav-h: 68px;
 
