@@ -109,3 +109,7 @@
 .panel a:hover, .panel a:focus-visible { background: var(--lime-soft); }
 .panel strong { color: var(--ink); font-weight: 600; font-size: 0.95rem; }
 .panel span { color: var(--ink-dim); font-size: 0.82rem; }
+
+.mobileMenu { display: none; margin-inline-start: auto; }
+.mobileMenu > summary { min-height: 44px; padding: 0 0.8rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); font-size: var(--step--1); }
+@media (max-width: 899px) { .mobileMenu { display: block; } }

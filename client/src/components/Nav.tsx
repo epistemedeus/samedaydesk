@@ -56,6 +56,18 @@ export default function Nav() {
           </details>
         </nav>
 
+        <details className={`${styles.menu} ${styles.mobileMenu}`} data-menu>
+          <summary aria-label="Menu">Menu</summary>
+          <div className={styles.panel} style={{ insetInlineStart: "auto", insetInlineEnd: 0 }}>
+            <Link to="/#services"><strong>The four builds</strong><span>Scope, time, price and test.</span></Link>
+            <Link to="/#check"><strong>Free route check</strong><span>Run it on your own domain.</span></Link>
+            <Link to="/x402" viewTransition><strong>Paid machine routes</strong><span>The x402 gateway.</span></Link>
+            <Link to="/#how"><strong>How it works</strong></Link>
+            <Link to="/company" viewTransition><strong>About</strong></Link>
+            <Link to="/security" viewTransition><strong>Security and trust</strong></Link>
+          </div>
+        </details>
+
         <div className={styles.actions}>
           <Link
             to="/x402"
