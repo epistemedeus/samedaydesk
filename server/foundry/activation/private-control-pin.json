@@ -2,12 +2,12 @@
   "schema": "sds.foundry.private-control-source.v1",
   "base": "08b90bdef8dbd198023be447942a3119cb268235",
   "files": {
-    "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
+    "client/package-lock.json": "593d112676f99835654fb325ad4800db095bae7f7746c126aaa7673a0987cce6",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
     "package-lock.json": "b1967d7aab10dc77a308c4fff7e2adb892a2ea749c69e7ea434de58eff103e21",
     "package.json": "bf5ac27326b8b2302055d31cc4619d4c3550b245f4272ad7bd7802c092d4bbee",
-    "server/app.js": "83a2e96316ff09f1ccb768aa8d83cf198bf218ac62a0a9f03b3d9a6b7c88f006",
+    "server/app.js": "e47ca0ba76ad99a038a49f64fa524a1b0f70d170c577d8e5d958a3932f0e2ee5",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
     "server/foundry/compose.js": "f6ea003f60c97da5f53e940da85854fd774b451d8cd83b197ebe4ecfd2abd0be",
@@ -549,7 +549,8 @@
     "vendor/neomorphic-opportunity/services/earned-work/tests/opportunity-migration-isolation.test.ts": "4c9d17efff04796ee27893f54a9a1be9087011822cde661231358e7bedb7c9c6",
     "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/hosted.d.ts": "818948a229c0bde8e340675a7f8198d157ff2fc97f42458b7462a6ce1ffe35ba",
     "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/hosted.js": "3391fc0ad95f11311999eb6ac48119bef7eba14d7a705a28cb0107bf313e47a4",
-    "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/hosted.js.map": "dbe00d4f993fd080a69abaecacf1634567e378383ee7d86147b5bd9df2884df7"
+    "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/hosted.js.map": "dbe00d4f993fd080a69abaecacf1634567e378383ee7d86147b5bd9df2884df7",
+    "server/routes/proof.js": "5dd9da62958f8ebcaad845b69325899d375306aa57845e5e0be5bd0367e2018a"
   },
   "receivedCallerClosures": [
     {
@@ -656,6 +657,11 @@
       "base": "08b90bdef8dbd198023be447942a3119cb268235",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:fc14eac1601172bfbfc9a30480455281ae75d6528e24733740f022939496d68e"
+    },
+    {
+      "base": "08b90bdef8dbd198023be447942a3119cb268235",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:855798f4388baf944a6d8d7792d8769303564e00a17ce7bbe36c958df67859b0"
     }
   ]
 }
