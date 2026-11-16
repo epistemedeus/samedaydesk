@@ -27,7 +27,7 @@
     "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
     "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
-    "server/lib/accepted-work-browser-read.js": "0b7cdb503d4538fdb58bcdacfb2181bc1202df3bea4162a56439b686ec8c86e2",
+    "server/lib/accepted-work-browser-read.js": "8b38713bd75160ccd9916256bfbddbce24c2db673a50791a84703edc2211084a",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",

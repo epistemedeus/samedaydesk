@@ -2,12 +2,12 @@ import {rawHeaderValues} from './contributor-native-ingress.js';
 
 const acceptedWorkPath = /^\/api\/neomorphic-contributor-journey\/v1\/market\/accepted-work(?:\/market-[a-f0-9]{64}(?:\/artifact)?)?$/;
 
-// This is a transport opt-in for the existing consented public projection,
-// not a publication grant. The market checks consent on every read, independently
-// of the broader contributor journey's public-read setting.
+// Browser transport of the existing consented public projection. This does not
+// publish anything: the market checks its source-bound profile and current
+// consent before serving these three reserved routes. No release-time config
+// knob or broader public-journey switch grants access.
 export function allowsAcceptedWorkBrowserRead(req, env) {
-  if (env.CONTRIBUTOR_JOURNEY_PUBLIC_ACCEPTED_WORK_BROWSER_READS !== '1' ||
-      env.CONTRIBUTOR_JOURNEY_MODE !== 'live' ||
+  if (env.CONTRIBUTOR_JOURNEY_MODE !== 'live' ||
       req.method !== 'GET' || !acceptedWorkPath.test((req.originalUrl || req.url || '').split('?')[0])) return false;
   const origin = req.headers.origin;
   if (typeof origin !== 'string' || origin === env.CONTRIBUTOR_JOURNEY_ORIGIN ||

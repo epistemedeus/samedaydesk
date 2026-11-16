@@ -15,13 +15,13 @@ const item = list + '/market-' + 'b'.repeat(64);
 
 // Real Express/HTTP mount and selected listener. The public producer is a
 // fixture; the existing DB acceptance tests own publication and consent.
-async function harness(t, flag) {
+async function harness(t, mode = 'live') {
   const env = {
-    CONTRIBUTOR_JOURNEY_MODE: 'live',
+    CONTRIBUTOR_JOURNEY_MODE: mode,
     CONTRIBUTOR_JOURNEY_INSTALLED: '1',
     CONTRIBUTOR_JOURNEY_ORIGIN: own,
+    CONTRIBUTOR_JOURNEY_PREVIEW_ORIGIN: own,
     CONTRIBUTOR_JOURNEY_PUBLIC_READS: '0',
-    CONTRIBUTOR_JOURNEY_PUBLIC_ACCEPTED_WORK_BROWSER_READS: flag,
     CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS: '["127.0.0.1"]',
   };
   const app = express();
@@ -79,7 +79,7 @@ async function harness(t, flag) {
 }
 
 test('anonymous cross-origin reads use only the public market while broader contributor reads stay off', async t => {
-  const {read, seen, withdraw, unpublish} = await harness(t, '1');
+  const {read, seen, withdraw, unpublish} = await harness(t);
   for (const path of [list + '?limit=1', item, item + '/artifact']) {
     const result = await read(path, {headers: {origin: other}});
     assert.equal(result.status, 200);
@@ -108,7 +108,7 @@ test('anonymous cross-origin reads use only the public market while broader cont
 });
 
 test('same guard refuses other routes, mutations, credentials and untrusted transport', async t => {
-  const {read, seen} = await harness(t, '1');
+  const {read, seen} = await harness(t);
   const foreign = {origin: other};
   for (const path of [prefix + '/market/profile', prefix + '/account/session', list + '/',
     list + '/market-short', item + '/private', list + '/%2e']) {
@@ -133,8 +133,8 @@ test('same guard refuses other routes, mutations, credentials and untrusted tran
   assert.deepEqual(seen, []);
 });
 
-test('transport opt-in is off by default', async t => {
-  const {read, seen} = await harness(t);
+test('staging never allows the browser-public transport', async t => {
+  const {read, seen} = await harness(t, 'staging');
   const foreign = await read(list, {headers: {origin: other}});
   assert.equal(foreign.status, 403);
   assert.equal(foreign.headers['access-control-allow-origin'], undefined);
