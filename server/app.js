@@ -70,7 +70,7 @@ const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarke
     return installed.adapters.review.read(target);
   },
   readLateAcceptedSource: installedLateAcceptanceReader(() => contributor, contributorEnv),
-  ingress: (req,res,next) => contributor.guardRequest(req,res,next),
+  ingress: (req,res,next,walletBrowserRead) => contributor.guardRequest(req,res,next,walletBrowserRead),
 });
 app.set("hostedWalletMarket", market);
 contributor = mountContributorManagedDesk(app, {...options.neomorphicContributorJourney,
