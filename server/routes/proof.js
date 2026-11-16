@@ -8,16 +8,22 @@ const SOURCE = "https://agents.samedaydesk.com/healthz";
 const TTL_MS = 5 * 60 * 1000;
 let cache = null;
 
+function count(value) {
+  return Number.isSafeInteger(value) && value >= 0 ? value : null;
+}
+
 export function projectProof(health, readAt = new Date().toISOString()) {
   const ledger = health?.settlementReconciliation?.ledger;
-  if (!ledger || typeof ledger.reconciledSettlements !== "number") return null;
+  const settlements = count(ledger?.reconciledSettlements);
+  if (settlements === null) return null;
+  const internal = count(ledger.byClass?.internal?.settlements);
   return {
     schema: "samedaydesk.proof.v1",
     readAt,
     source: SOURCE,
-    settlements: ledger.reconciledSettlements,
-    internalSettlements: ledger.byClass?.internal?.settlements ?? 0,
-    x402Routes: health?.paymentProtocols?.x402?.routeCount ?? null,
+    settlements,
+    internalSettlements: internal !== null && internal <= settlements ? internal : null,
+    x402Routes: count(health?.paymentProtocols?.x402?.routeCount),
     lastReconciledAt: health?.settlementReconciliation?.lastRunAt ?? null,
     payTo: health?.payTo ?? null,
     network: health?.network ?? null,
@@ -30,7 +36,7 @@ proofRouter.get("/", async (_req, res) => {
   if (cache && Date.now() - cache.at < TTL_MS) return res.json(cache.body);
   try {
     const r = await fetch(SOURCE, { signal: AbortSignal.timeout(4000) });
-    const body = projectProof(await r.json());
+    const body = r.ok ? projectProof(await r.json()) : null;
     if (!body) return res.status(502).json({ error: "proof_unavailable" });
     cache = { at: Date.now(), body };
     return res.json(body);
