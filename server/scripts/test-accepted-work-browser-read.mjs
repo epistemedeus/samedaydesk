@@ -20,8 +20,7 @@ async function harness(t, flag) {
     CONTRIBUTOR_JOURNEY_MODE: 'live',
     CONTRIBUTOR_JOURNEY_INSTALLED: '1',
     CONTRIBUTOR_JOURNEY_ORIGIN: own,
-    CONTRIBUTOR_JOURNEY_PUBLIC_READS: '1',
-    CONTRIBUTOR_JOURNEY_PUBLIC_REVIEW_REF: 'review_browser_transport_test',
+    CONTRIBUTOR_JOURNEY_PUBLIC_READS: '0',
     CONTRIBUTOR_JOURNEY_PUBLIC_ACCEPTED_WORK_BROWSER_READS: flag,
     CONTRIBUTOR_DESK_TRUSTED_PROXY_IPS: '["127.0.0.1"]',
   };
@@ -79,7 +78,7 @@ async function harness(t, flag) {
   return {read, seen, withdraw: () => { withdrawn = true; }, unpublish: () => { published = false; }};
 }
 
-test('anonymous cross-origin GET reads only the three public routes after the trusted ingress', async t => {
+test('anonymous cross-origin reads use only the public market while broader contributor reads stay off', async t => {
   const {read, seen, withdraw, unpublish} = await harness(t, '1');
   for (const path of [list + '?limit=1', item, item + '/artifact']) {
     const result = await read(path, {headers: {origin: other}});
