@@ -16,14 +16,16 @@ export default function FurtherOffers() {
         <div className={styles.grid}>
           {OFFERS.map((o) => (
             <article key={o.id} className={styles.card}>
-              <h3>{o.name}</h3>
-              <p className={styles.price}>{o.price} <span>{o.time}</span></p>
+              <div className={styles.top}>
+                <h3>{o.name}</h3>
+                <p className={styles.price}>{o.price}<span>{o.time}</span></p>
+              </div>
               <p>{o.body}</p>
-              <p className={styles.test}><b>Test:</b> {o.test}</p>
+              <p className={styles.test}><b>Test</b> {o.test}</p>
             </article>
           ))}
         </div>
-        <p className={styles.note}>Ask for any of these at contact@samedaydesk.com. Ordering opens after review.</p>
+        <p className={styles.note}>Ask for any of these at <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>. Ordering opens after review.</p>
       </div>
     </section>
   );

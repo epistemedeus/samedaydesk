@@ -1,26 +1,35 @@
-.section { padding-block: var(--space-2xl); }
-.head { margin-bottom: var(--space-xl); }
+.section { padding-block: var(--space-xl); }
+.head { margin-bottom: var(--space-l); }
 .title { font-family: var(--font-display); font-size: var(--step-4); margin-top: var(--space-s); }
 
+/* A work order: one sheet, three stations joined by the route line. */
 .steps {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-l);
-  counter-reset: step;
+  gap: 0;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-s);
+  background: var(--bg-1);
 }
-.step {
-  position: relative;
-  padding-top: var(--space-m);
-  border-top: 1px solid var(--line);
-}
+.step { position: relative; padding: var(--space-m); }
+.step + .step { border-top: 1px dashed var(--line-2); }
 .num {
-  display: block;
-  font-size: var(--step-2);
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--lime);
+  border-radius: 99px;
+  background: var(--bg-1);
+  font-size: var(--step--1);
   color: var(--lime);
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-s);
+  position: relative;
+  z-index: 1;
 }
-.stepTitle { font-size: var(--step-2); font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.4em; }
+.step:last-child .num { background: var(--lime); color: var(--lime-ink); }
+.stepTitle { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.4em; }
 .stepDesc { color: var(--ink-dim); font-size: var(--step-0); max-width: 42ch; }
 
 .cta {
@@ -30,8 +39,14 @@
   align-items: center;
   gap: var(--space-m);
 }
-.note { font-size: var(--step--1); color: var(--ink-faint); }
+.note { font-size: var(--step--1); color: var(--ink-dim); }
 
 @media (min-width: 760px) {
-  .steps { grid-template-columns: repeat(3, 1fr); gap: var(--space-m); }
+  .steps { grid-template-columns: repeat(3, 1fr); }
+  .step + .step { border-top: 0; border-inline-start: 1px dashed var(--line-2); }
+  /* the route line runs through the station marks */
+  .steps::before {
+    content: ""; position: absolute; inset-inline: var(--space-m); top: calc(var(--space-m) + 1.3rem);
+    border-top: 1px dashed var(--lime);
+  }
 }

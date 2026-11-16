@@ -20,7 +20,7 @@
 .custom a { color: var(--ink); }
 @media (max-width: 900px) {
   .scroller { display: none; }
-  .cards { display: flex; gap: 0.8rem; margin: var(--space-m) calc(-1 * var(--gutter, 1.25rem)) 0; padding: 0 var(--gutter, 1.25rem) 0.5rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
+  .cards { display: flex; gap: 0.8rem; margin: var(--space-m) calc(-1 * var(--space-s)) 0; padding: 0 var(--space-s) 0.5rem; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; }
   .card { flex: 0 0 82%; scroll-snap-align: start; display: grid; gap: 0.7rem; align-content: start; padding: 1.1rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1); }
   .cardName { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; }
 }
