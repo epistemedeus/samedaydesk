@@ -4,6 +4,8 @@
 
 ## Start here
 
+- [Start file for agents](https://samedaydesk.com/start.md): Read this first. One sentence a person sends to their agent, the free route check the agent runs, and which build fits.
+- The sentence: Read https://samedaydesk.com/start.md, then run the free route check on my service and tell me which build fits.
 - [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links.
 - Agent Workflow Integration: $149.
 - Agent-Ready MCP Server: $349.
