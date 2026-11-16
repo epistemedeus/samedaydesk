@@ -1,5 +1,7 @@
-.wire { margin: 0; border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1); overflow: hidden; }
-.head { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: var(--step--2); color: var(--ink-dim); letter-spacing: 0.04em; }
+/* the field record: squared, hairlined, pinned to the same board as the
+   work order (same hard offset shadow) */
+.wire { margin: var(--space-s) 0 0; border: 1px solid var(--line-2); border-radius: 0; background: var(--bg-1); overflow: hidden; box-shadow: 5px 5px 0 color-mix(in srgb, var(--line-2) 45%, transparent); }
+.head { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: var(--step--2); color: var(--ink-dim); letter-spacing: 0.04em; text-transform: uppercase; }
 .dot { width: 7px; height: 7px; border-radius: 99px; background: var(--lime); }
 .pause { margin-inline-start: auto; min-height: 28px; padding: 0 0.7rem; border: 1px solid var(--line-2); border-radius: 99px; font: inherit; color: var(--ink); background: transparent; cursor: pointer; }
 .pause:hover { border-color: var(--lime); }

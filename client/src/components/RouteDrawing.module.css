@@ -1,0 +1,77 @@
+/* The schematic, drawn with the drafting tokens: graphite hairlines, one
+   oxide node for the money moment, phosphor lines under dark. */
+.drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.center {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 10 4 2 4;
+}
+.link {
+  stroke: var(--ink-dim);
+  stroke-width: 1.25;
+}
+.arrow {
+  fill: none;
+  stroke: var(--ink-dim);
+  stroke-width: 1.25;
+}
+.linklabel {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  fill: var(--ink-faint);
+}
+.node {
+  fill: var(--bg-1);
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+.nodeHot {
+  fill: var(--lime-soft);
+  stroke: var(--lime);
+  stroke-width: 1.25;
+}
+.who {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--ink-faint);
+}
+.what {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.whatHot {
+  composes: what;
+  fill: var(--lime);
+}
+.pin {
+  fill: var(--bg);
+  stroke: var(--lime);
+  stroke-width: 1.25;
+}
+.pintext {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--lime);
+}
+.dim {
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+.dimlabel {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: var(--ink-faint);
+}

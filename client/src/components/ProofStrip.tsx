@@ -15,7 +15,7 @@ export default function ProofStrip() {
   }, []);
   const when = (iso: string | null) => (iso ? iso.slice(0, 16).replace("T", " ") + " UTC" : "not read");
   return (
-    <section className={styles.strip} aria-label="Proof from the paid gateway">
+    <section id="proof" className={styles.strip} aria-label="Proof from the paid gateway">
       <div className={`container ${styles.row}`}>
         <a className={styles.cell} href={p.source}><b>{p.settlements}</b><span>settlements reconciled, {p.internalSettlements} of them our own</span></a>
         <a className={styles.cell} href="https://agents.samedaydesk.com/.well-known/x402"><b>{p.x402Routes}</b><span>paid x402 routes on Base</span></a>

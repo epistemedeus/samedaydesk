@@ -4,6 +4,7 @@ import MagneticButton from "./MagneticButton";
 import Wire from "./Wire";
 import DraftingCursor from "./DraftingCursor";
 import QuickStart from "./QuickStart";
+import RouteDrawing from "./RouteDrawing";
 import { setupGsap, gsap, SplitText, prefersReducedMotion } from "../motion/gsap";
 import { track } from "../lib/posthog";
 import styles from "./Hero.module.css";
@@ -46,8 +47,6 @@ export default function Hero() {
           storefronts. Specific scope, working code, tests, and a deployment handoff.
         </p>
 
-        <QuickStart />
-
         <div className={styles.ctas} data-hero-fade>
           <MagneticButton
             href="#check"
@@ -61,7 +60,9 @@ export default function Hero() {
           <MagneticButton href="#services" variant="ghost">See agent builds</MagneticButton>
         </div>
         </div>
-        <div className={styles.side} data-measure>
+        <div className={styles.drawing} data-measure>
+          <RouteDrawing />
+          <QuickStart className={styles.workorder} />
           <Wire />
         </div>
       </div>
