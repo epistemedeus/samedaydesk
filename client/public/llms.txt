@@ -4,7 +4,6 @@
 
 ## Start here
 
-- [SameDayDesk start guide](https://samedaydesk.com/start.md): run the free route check and bring back the first repair.
 - [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links.
 - Agent Workflow Integration: $149.
 - Agent-Ready MCP Server: $349.

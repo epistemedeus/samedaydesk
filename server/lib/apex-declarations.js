@@ -7,7 +7,7 @@ import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
 import { QUERY_KEY_CONSUMER, queryKeyReuseMarkdown } from "./query-key-caller.mjs";
-import { START_GUIDE_LINK, START_GUIDE_PATH, startGuideMarkdown } from "./start-guide.js";
+import { indexWithStartGuide, START_GUIDE_LINK, START_GUIDE_PATH, startGuideMarkdown } from "./start-guide.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
@@ -1101,12 +1101,11 @@ export function mountApexDeclarations(app) {
     app.get(path, handler);
   }
   app.options("/.well-known/agent-card.json", (_req, res) => sendPreflight(res));
-  // The machine guide is client/public/llms.txt. This route serves those bytes
-  // plus a generated accepted-work appendix before production static. The
-  // protected static build and the shared machine declaration stay separate.
+  // Compose discovery and the accepted-work appendix from the retained index
+  // before production static. The managed client trees stay byte-identical.
   const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
   const sendLlms = (req, res) => {
-    const body = Buffer.concat([readFileSync(llmsPath), Buffer.from(queryKeyReuseMarkdown())]);
+    const body = Buffer.from(indexWithStartGuide(readFileSync(llmsPath, "utf8")) + queryKeyReuseMarkdown());
     res.status(200);
     res.set("Cache-Control", "no-cache");
     res.set("Link", START_GUIDE_LINK);

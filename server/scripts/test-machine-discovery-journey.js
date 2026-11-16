@@ -482,7 +482,10 @@ test("production fallback keeps declarations out of the HTML shell and preserves
   assert.equal(servedGuide.status, 200);
   assert.match(servedGuide.headers["content-type"], /^text\/plain/);
   const staticSource = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
-  assert.equal(servedGuide.body, staticSource + queryKeyReuseMarkdown());
+  const startGuideEntry = "- [SameDayDesk start guide](https://samedaydesk.com/start.md): run the free route check and bring back the first repair.\n";
+  const startGuideSection = "## Start here\n\n" + startGuideEntry;
+  assert.ok(servedGuide.body.includes(startGuideSection));
+  assert.equal(servedGuide.body.replace(startGuideEntry, ""), staticSource + queryKeyReuseMarkdown());
   assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 1);
   const declaredReuse = openapi.json["x-query-key-caller"];
   assert.ok(servedGuide.body.includes(declaredReuse.runner.alternateArchive));
@@ -587,7 +590,7 @@ test("an apex client follows the homepage link to the live machine start guide",
   const guide = await request(port, { path: "/start.md", headers: { accept: "text/html" } });
   assert.equal(guide.status, 200);
   assert.equal(guide.headers["content-type"], "text/markdown; charset=utf-8");
-  assert.equal(guide.body, readFileSync(new URL("../../client/public/start.md", import.meta.url), "utf8"));
+  assert.equal(guide.body, readFileSync(new URL("../lib/start-guide.md", import.meta.url), "utf8"));
   assert.match(guide.body, /GET https:\/\/samedaydesk\.com\/api\/tools\/ai-readiness/);
   const guideHead = await request(port, { method: "HEAD", path: "/start.md" });
   assert.equal(guideHead.status, 200);
