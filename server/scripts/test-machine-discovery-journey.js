@@ -22,6 +22,7 @@ import { createSdsApp } from "../app.js";
 import {
   assertMachineDeclarationContract,
   machineDeclarationProblems,
+  mountApexDeclarations,
   planToolArguments,
   planToolResult,
 } from "../lib/apex-declarations.js";
@@ -559,4 +560,37 @@ test("refusal and truncated retrieval stay distinct from a missing declaration",
   assert.match(refusedCheck.reason, /refused/);
   assert.match(refusedCheck.reason, /not evidence it is absent/);
   assert.equal(classifyRetrieval(refused.responses["/openapi.json"]).kind, "blocked");
+});
+
+test("an apex client follows the homepage link to the live machine start guide", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "start-guide-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  const home = "<!doctype html><html><body>retained home fixture</body></html>";
+  writeFileSync(join(dist, "index.html"), home);
+  const app = express();
+  mountApexDeclarations(app);
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const link = '<https://samedaydesk.com/start.md>; rel="alternate"; type="text/markdown"';
+  const get = await request(port, { path: "/" });
+  assert.equal(get.status, 200);
+  assert.equal(get.headers.link, link);
+  assert.equal(get.body, home);
+  const head = await request(port, { method: "HEAD", path: "/" });
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.link, link);
+  assert.equal(head.body, "");
+  const index = await request(port, { path: "/llms.txt" });
+  assert.equal(index.headers.link, link);
+  assert.match(index.body, /^## Start here\n\n- \[SameDayDesk start guide\]\(https:\/\/samedaydesk\.com\/start\.md\)/m);
+  const guide = await request(port, { path: "/start.md", headers: { accept: "text/html" } });
+  assert.equal(guide.status, 200);
+  assert.equal(guide.headers["content-type"], "text/markdown; charset=utf-8");
+  assert.equal(guide.body, readFileSync(new URL("../../client/public/start.md", import.meta.url), "utf8"));
+  assert.match(guide.body, /GET https:\/\/samedaydesk\.com\/api\/tools\/ai-readiness/);
+  const guideHead = await request(port, { method: "HEAD", path: "/start.md" });
+  assert.equal(guideHead.status, 200);
+  assert.equal(guideHead.body, "");
+  assert.equal(Number(guideHead.headers["content-length"]), Buffer.byteLength(guide.body));
 });

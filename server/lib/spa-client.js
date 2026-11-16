@@ -1,6 +1,7 @@
 import path from "node:path";
 import express from "express";
 import { createSpaFallback } from "./spa-fallback.js";
+import { START_GUIDE_LINK } from "./start-guide.js";
 import { createRouteShellMiddleware } from "./spa-route-shells.js";
 
 export function mountProductionClient(app, clientDist) {
@@ -8,6 +9,7 @@ export function mountProductionClient(app, clientDist) {
   app.use(
     express.static(clientDist, {
       setHeaders(res, file) {
+        if (path.resolve(file) === path.resolve(clientDist, "index.html")) res.setHeader("Link", START_GUIDE_LINK);
         if (file.endsWith(".html")) res.setHeader("Cache-Control", "no-cache");
         else if (/\.[0-9a-f]{8,}\./.test(file)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
         else res.setHeader("Cache-Control", "public, max-age=3600");

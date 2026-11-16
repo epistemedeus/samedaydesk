@@ -7,6 +7,7 @@ import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
 import { QUERY_KEY_CONSUMER, queryKeyReuseMarkdown } from "./query-key-caller.mjs";
+import { START_GUIDE_LINK, START_GUIDE_PATH, startGuideMarkdown } from "./start-guide.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
@@ -1048,6 +1049,7 @@ export function assertMachineDeclarationContract(openapi, skillMarkdown, catalog
 }
 
 const DECLARATION_TYPES = Object.freeze({
+  [START_GUIDE_PATH]: "text/markdown; charset=utf-8",
   "/openapi.json": "application/openapi+json; charset=utf-8",
   "/skill.md": "text/markdown; charset=utf-8",
   "/.well-known/api-catalog": 'application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727"',
@@ -1083,6 +1085,7 @@ export function mountApexDeclarations(app) {
     res.json(gatewayAvailability());
   });
   const builders = {
+    [START_GUIDE_PATH]: startGuideMarkdown,
     "/openapi.json": () => JSON.stringify(apexOpenApiDocument()),
     "/skill.md": () => apexSkillMarkdown(),
     "/.well-known/api-catalog": () => JSON.stringify(apexApiCatalog()),
@@ -1106,6 +1109,7 @@ export function mountApexDeclarations(app) {
     const body = Buffer.concat([readFileSync(llmsPath), Buffer.from(queryKeyReuseMarkdown())]);
     res.status(200);
     res.set("Cache-Control", "no-cache");
+    res.set("Link", START_GUIDE_LINK);
     res.set("Content-Type", "text/plain; charset=utf-8");
     res.set("Content-Length", String(body.length));
     if (req.method === "HEAD") return res.end();
