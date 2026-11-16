@@ -31,3 +31,6 @@
   .tl, .bl { left: 12px; }
   .tr, .br { right: 12px; }
 }
+
+/* Phones: the registration crosses would land on content; the gutter is too narrow for them. */
+@media (max-width: 600px) { .tl, .tr, .bl, .br { display: none; } }

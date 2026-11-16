@@ -78,9 +78,10 @@ export default function DomainCheck() {
             <div className={styles.row}>
               <input id="check-url" name="url" inputMode="url" autoComplete="url" spellCheck={false}
                 value={url} onChange={(e) => setUrl(e.target.value)} aria-invalid={state === "error" || undefined}
-                aria-describedby={error ? "check-err" : undefined} className={styles.input} />
+                aria-describedby={error ? "check-err check-eg" : "check-eg"} className={styles.input} />
               <button type="submit" className={styles.go} disabled={state === "pending"}>{state === "pending" ? "Checking" : "Run the check"}</button>
             </div>
+            <p id="check-eg" className={styles.eg}>For example: api.yourcompany.com</p>
             <p id="check-err" className={styles.err} role="alert">{error}</p>
           </form>
         </div>

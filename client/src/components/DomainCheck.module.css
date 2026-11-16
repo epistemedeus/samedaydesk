@@ -1,4 +1,5 @@
-.section { padding-block: var(--space-xl); border-top: 1px solid var(--line); }
+.section { padding-block: var(--space-xl) var(--space-l); border-top: 1px solid var(--line); }
+.eg { margin: 0.5rem 0 0; font-family: var(--font-mono); font-size: var(--step--2); color: var(--ink-dim); }
 .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: var(--space-l); align-items: start; }
 .title { font-family: var(--font-display); font-size: var(--step-4); letter-spacing: -0.02em; line-height: 1.05; margin-top: var(--space-xs); }
 .lead { margin-top: var(--space-s); color: var(--ink-dim); max-width: 46ch; line-height: 1.55; }

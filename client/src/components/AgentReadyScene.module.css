@@ -18,3 +18,10 @@
   .steps { padding: 0; gap: var(--space-s); }
   .step:not([data-on]) { opacity: 1; }
 }
+/* At rest (reduced motion) nothing pins: the file, then the steps close together. */
+@media (prefers-reduced-motion: reduce) {
+  .stage { position: relative; top: auto; }
+  .steps { padding: 0; gap: var(--space-s); }
+  .step:not([data-on]) { opacity: 1; }
+  .file[data-armed] .block:not([data-on]) { opacity: 1; }
+}

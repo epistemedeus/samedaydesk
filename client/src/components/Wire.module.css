@@ -11,5 +11,6 @@
 .who b { color: var(--ink); font-weight: 600; }
 .code { margin: 0; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; color: var(--ink-dim); white-space: pre-wrap; overflow-wrap: anywhere; }
 .cap { padding: 0.6rem 0.9rem; border-top: 1px solid var(--line); font-size: var(--step--2); color: var(--ink-faint); }
-.cap a { color: var(--ink-dim); }
+.cap a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.cap a::after { content: " \2192"; }
 @media (prefers-reduced-motion: reduce) { .frame { transition: none; } }
