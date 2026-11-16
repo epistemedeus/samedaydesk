@@ -18,23 +18,10 @@
     linear-gradient(0deg, var(--bg), transparent 40%);
   pointer-events: none;
 }
-.grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--space-l); align-items: center; }
-.content { max-width: 44rem; }
-/* the drawing column: schematic on the board, work order pinned to it,
-   the field record filed beneath */
-.drawing { display: grid; align-content: center; }
-.drawing .workorder {
-  position: relative;
-  z-index: 2;
-  width: min(27rem, 94%);
-  margin: -1.4rem auto 0;
-  transform: rotate(-0.9deg);
-}
-@media (max-width: 960px) {
-  .grid { grid-template-columns: 1fr; }
-  .content { max-width: 50rem; }
-  .drawing .workorder { margin: var(--space-s) 0 0; width: 100%; transform: none; }
-}
+.grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--space-l); align-items: center; }
+.content { max-width: 50rem; }
+.side { align-self: center; }
+@media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
 
 .eyebrow {
   display: inline-flex;

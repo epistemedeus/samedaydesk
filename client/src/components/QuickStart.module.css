@@ -1,57 +1,26 @@
-/* The work order: one pinned sheet on the drawing board. The sheet itself is
-   the object (pin, job number, torn bottom edge); the routes are its fields,
-   so nothing inside is boxed again. */
-.qs {
-  position: relative;
-  margin-top: var(--space-m);
-  max-width: 44rem;
-  background: var(--bg-1);
-  border: 1px solid var(--line-2);
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--line-2) 45%, transparent);
-  padding: 0.95rem 1.1rem 1.5rem;
-  /* torn till-roll edge along the bottom of the whole sheet */
-  -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle at 6px 0, transparent 5px, #000 5.5px) bottom left / 12px 8px repeat-x;
-  mask: linear-gradient(#000, #000) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle at 6px 0, transparent 5px, #000 5.5px) bottom left / 12px 8px repeat-x;
-}
-/* the pin */
-.qs::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  width: 11px;
-  height: 11px;
-  margin-left: -5.5px;
-  border-radius: 99px;
-  background: var(--lime);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.28), inset 0 -2px 3px rgba(0, 0, 0, 0.22);
-}
-/* the job number, stamped on the form header */
-.qs::after {
-  content: "WO-001";
-  position: absolute;
-  top: 0.95rem;
-  right: 1.1rem;
-  font-family: var(--font-mono);
-  font-size: var(--step--2);
-  letter-spacing: 0.14em;
-  color: var(--reg);
-}
+/* Quick start in the present hero style: mono label, one ruled slip on the
+   elevated surface, the signal colour on the active route only. */
+.qs { margin-top: var(--space-m); max-width: 44rem; }
 .label {
   font-family: var(--font-mono);
   font-size: var(--step--2);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-dim);
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid var(--line);
-  padding-right: 4.5rem;
+  margin-bottom: 0.6rem;
 }
 .slip {
   display: flex;
   align-items: center;
   gap: var(--space-s);
+  padding: 0.9rem 0.9rem 0.9rem 1.1rem;
+  background: var(--bg-1);
+  border: 1px dashed var(--line-2);
+  border-radius: 0;
+  /* torn till-roll edge along the bottom */
+  -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 6px) no-repeat, radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px) bottom left / 10px 6px repeat-x;
+  mask: linear-gradient(#000, #000) top / 100% calc(100% - 6px) no-repeat, radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px) bottom left / 10px 6px repeat-x;
+  padding-bottom: 1.3rem;
 }
 .line { flex: 1; font-size: var(--step-0); line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .code { flex: 1; font-family: var(--font-mono); font-size: var(--step--1); line-height: 1.55; color: var(--ink); overflow-wrap: anywhere; }
@@ -68,14 +37,8 @@
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .copy:hover, .copy[data-copied] { background: var(--lime); color: var(--lime-ink); }
-.help { margin-top: 0.7rem; font-size: var(--step--1); color: var(--ink-dim); line-height: 1.5; }
-.tabs {
-  display: flex;
-  gap: 1.2rem;
-  margin-top: 0.8rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--line);
-}
+.help { margin-top: 0.55rem; font-size: var(--step--1); color: var(--ink-dim); line-height: 1.5; }
+.tabs { display: flex; gap: 1.2rem; margin-top: 0.6rem; }
 .tabs [role="tab"] {
   font-family: var(--font-mono);
   font-size: var(--step--2);
