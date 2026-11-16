@@ -3,6 +3,7 @@ import {realpathSync,readFileSync} from 'node:fs';
 import {dirname, relative, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import pg from 'pg';
+import {allowsAcceptedWorkBrowserRead} from './accepted-work-browser-read.js';
 
 const PREFIX = '/api/neomorphic-contributor-journey';
 const LATE_ACCEPTANCE_SOURCE = '85a5863e346b9678f3c1c1422cdec52cb8ef7ec6';
@@ -252,12 +253,25 @@ export function mountHostedWalletMarketAdapter(app, options = {}) {
   pending.catch(() => {});
   app.use((req, res, next) => {
     if (!isWalletRequest(req)) return next();
+    const browserRead = allowsAcceptedWorkBrowserRead(req, env);
     const enter = () => pending.then(
-      market => Promise.resolve(market.layer(req, res, next)).catch(error => send(res, 503, {ok: false, code: publicCode(error)})),
+      market => {
+        const missed = browserRead ? () => {
+          // An unserved cross-origin request must never reach another consumer.
+          if (!res.headersSent) res.removeHeader('Access-Control-Allow-Origin');
+          send(res, 404, {ok: false, code: 'not_found'});
+        } : next;
+        if (browserRead) {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.vary('Origin');
+        }
+        return Promise.resolve().then(() => market.layer(req, res, missed))
+          .catch(error => send(res, 503, {ok: false, code: publicCode(error)}));
+      },
       error => send(res, 503, {ok: false, code: publicCode(error)}),
     );
-    if (req.socket?.encrypted) return enter();
-    if (typeof options.ingress === 'function') return options.ingress(req, res, enter);
+    if (req.socket?.encrypted && !browserRead) return enter();
+    if (typeof options.ingress === 'function') return options.ingress(req, res, enter, browserRead);
     return send(res, 426, {ok: false, code: 'https_edge_required'});
   });
   return {

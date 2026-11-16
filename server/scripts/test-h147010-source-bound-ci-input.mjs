@@ -1,7 +1,7 @@
 import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
+import {execFile, execFileSync} from 'node:child_process';
 import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
@@ -40,10 +40,10 @@ const PROPOSAL_DESCRIPTOR_SHA = '946fceedf7af5827b49e9e9bf434fefb0186b62d3498f84
 const ENROLLMENT_SHA = 'dcdf009200a6204ef1fb4799d579b95df88f17bc174a55c351ac359d38dd9221';
 const CLIENT = 'vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs';
 const SOURCE_COMMIT = 'e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9';
-const MEASURED_BASE = '09be1d313e9d608b08db1199ae68f18684970c0e';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
+const measuredBase = JSON.parse(readFileSync(join(root, proposal, 'ENROLLMENT.json'), 'utf8')).measured.baseCommit;
 const COMPOSED_HOST = '7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23';
 const PREDECESSOR_HOST = '208be740ff7f332219261711f99c2b5333eb977ad1db004d5b1f869ab1dd1c4c';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
@@ -165,7 +165,7 @@ function proposeArgs(outDir) {
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', MEASURED_BASE,
+    '--measured-commit', measuredBase,
   ];
 }
 
@@ -290,6 +290,11 @@ function writeReceivedPair(dir, {sourceSha256, hostSha256, descriptorPath, candi
 }
 
 test('candidate measurement is the admitted source and host', async () => {
+  assert.match(measuredBase, /^[a-f0-9]{40}$/);
+  execFileSync('git', ['merge-base', '--is-ancestor', measuredBase, 'HEAD'], {cwd: root, stdio: 'pipe'});
+  const closure = 'server/foundry/activation/private-control-pin.json';
+  const measuredClosure = execFileSync('git', ['show', `${measuredBase}:${closure}`], {cwd: root, maxBuffer: 4 * 1024 * 1024});
+  assert.deepEqual(measuredClosure, readFileSync(join(root, closure)));
   const measured = await measureCandidate(root);
   assert.equal(measured.repository, 'epistemedeus/samedaydesk');
   assert.equal(measured.sourceSha256, CURRENT_SOURCE);
@@ -776,7 +781,7 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.equal(enrollment.qualified, false);
   assert.equal(enrollment.installed, false);
   assert.equal(enrollment.packet.acquiredClient.sha256, CLIENT_SHA);
-  assert.equal(enrollment.measured.baseCommit, MEASURED_BASE);
+  assert.equal(enrollment.measured.baseCommit, measuredBase);
   assert.equal(enrollment.measured.hostSha256, CURRENT_HOST);
   assert.equal(enrollment.keptReceived.hostSha256, H142_HOST);
   assert.equal(enrollment.keptReceived.binding, 'h142');
@@ -822,7 +827,7 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
     '--descriptor-repository', 'epistemedeus/samedaydesk',
     '--descriptor-commit', 'unreceived',
     '--descriptor-path', `${proposal}/proposed-descriptor.json`,
-    '--measured-commit', MEASURED_BASE,
+    '--measured-commit', measuredBase,
   ]);
   assertExit(mismatch, 1);
   assert.match(mismatch.stderr, /propose_measurement_mismatch/);
