@@ -7,6 +7,8 @@ export type Offer = {
   turnaround: string;
   blurb: string;
   includes: string[];
+  /** The check that proves the build is done. */
+  acceptance?: string;
   flagship?: boolean;
   bestValue?: boolean;
   intake?: { label: string; placeholder: string; accept: string };
@@ -27,6 +29,7 @@ export const CATEGORIES: Category[] = [
     offers: [
       {
         slug: "agent_workflow",
+        acceptance: "The workflow runs end to end on your input and its tests pass in your environment.",
         name: "Agent Workflow Integration",
         price: 149,
         turnaround: "Same day",
@@ -47,6 +50,7 @@ export const CATEGORIES: Category[] = [
       },
       {
         slug: "agent_mcp_server",
+        acceptance: "A fresh MCP client lists the tools and each returns a typed result.",
         name: "Agent-Ready MCP Server",
         price: 349,
         turnaround: "1 to 2 days",
@@ -75,6 +79,7 @@ export const CATEGORIES: Category[] = [
     offers: [
       {
         slug: "machine_payment_route",
+        acceptance: "An unpaid call gets exact 402 terms; one payment returns 200 with a verifiable receipt; a replay is refused.",
         name: "x402 + MPP Payment Route",
         price: 499,
         turnaround: "2 to 3 days",
@@ -95,6 +100,7 @@ export const CATEGORIES: Category[] = [
       },
       {
         slug: "agent_storefront",
+        acceptance: "Catalog and live terms match, and a cold agent finds, pays for and uses one operation.",
         name: "Agent Commerce Storefront",
         price: 999,
         turnaround: "3 to 5 days",

@@ -22,6 +22,7 @@ import { mcpHeaders, mcpJsonParser, mcpBodyError } from "./lib/mcp-http.js";
 import agentReadinessRouter from "./routes/agent-readiness.js";
 import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
+import { proofRouter } from "./routes/proof.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { pulseMiddleware } from "./lib/pulse.js";
@@ -127,6 +128,7 @@ app.use("/api/pulse", pulseRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
+app.use("/api/proof", proofRouter);
 app.use("/api/checkout", checkoutRouter);
 app.use("/api/uploads", uploadsRouter);
 app.use("/api/stripe", stripeWebhookRouter);
@@ -177,6 +179,23 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
   res.set("Cache-Control", "no-cache");
   res.type("application/gzip");
   res.sendFile(originalTaskClientArchiveFile());
+});
+
+// The agent start file: the short path for an agent told one sentence. Same
+// bytes for every client, open CORS, linked from the page head and llms.txt.
+app.get("/start.md", (_req, res, next) => {
+  const file = path.join(CLIENT_DIST, "start.md");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Cache-Control", "public, max-age=300");
+  res.type("text/markdown; charset=utf-8");
+  res.sendFile(file, (err) => { if (err) next(); });
+});
+
+app.use((req, res, next) => {
+  if ((req.method === "GET" || req.method === "HEAD") && req.path === "/") {
+    res.append("Link", '</start.md>; rel="alternate"; type="text/markdown"; title="Start here"');
+  }
+  next();
 });
 
 // 4) Exact SPA route shells, then static files, then history fallback.

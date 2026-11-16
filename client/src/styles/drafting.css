@@ -40,13 +40,10 @@
   font-weight: 600;
 }
 
-/* Accent words (the old lime highlights) read as oxide annotations, lightly underlined. */
+/* Accent words (the old lime highlights) read as oxide annotations. No underline:
+   underlines are kept for links, so an accent never looks clickable. */
 [data-theme="drafting"] .lime {
   color: var(--reg);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--reg) 45%, transparent);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 4px;
 }
 
 /* Skip-link text stays legible on the oxide chip in both themes. */

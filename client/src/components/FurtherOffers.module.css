@@ -1,0 +1,29 @@
+.section { padding-block: var(--space-xl); border-top: 1px solid var(--line); }
+.title { font-family: var(--font-display); font-size: var(--step-4); letter-spacing: -0.02em; line-height: 1.05; margin-top: var(--space-xs); }
+.grid { margin-top: var(--space-l); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+/* job tickets: punched corners, the price as a tag, the test torn off below a perforation */
+.card {
+  position: relative; display: flex; flex-direction: column; gap: 0.8rem; padding: 1.3rem 1.3rem 0;
+  border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1);
+  -webkit-mask: radial-gradient(circle 7px at 0 calc(100% - 3.6rem), transparent 6.5px, #000 7px) left / 51% 100% no-repeat,
+                radial-gradient(circle 7px at 100% calc(100% - 3.6rem), transparent 6.5px, #000 7px) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 7px at 0 calc(100% - 3.6rem), transparent 6.5px, #000 7px) left / 51% 100% no-repeat,
+        radial-gradient(circle 7px at 100% calc(100% - 3.6rem), transparent 6.5px, #000 7px) right / 51% 100% no-repeat;
+}
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.8rem; }
+.card h3 { font-family: var(--font-display); font-size: var(--step-1); line-height: 1.15; }
+.card p { color: var(--ink-dim); font-size: var(--step--1); line-height: 1.55; }
+.price {
+  flex: none; display: grid; justify-items: end; gap: 0.15rem; padding: 0.35rem 0.6rem;
+  border: 1px solid var(--lime); border-radius: var(--radius-s);
+  font-family: var(--font-mono); font-size: var(--step-0) !important; color: var(--lime) !important; line-height: 1.1 !important;
+}
+.price span { font-size: var(--step--2); color: var(--ink-dim); }
+.test {
+  margin: auto -1.3rem 0; padding: 0 1.3rem; height: 3.6rem; flex: none; display: flex; align-items: center; gap: 0.6rem;
+  border-top: 1px dashed var(--line-2);
+}
+.test b { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.1em; text-transform: uppercase; color: var(--lime); }
+.note a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.note { margin-top: var(--space-m); color: var(--ink-dim); font-size: var(--step--1); }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }

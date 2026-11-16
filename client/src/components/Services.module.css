@@ -1,4 +1,4 @@
-.section { padding-block: var(--space-2xl); }
+.section { padding-block: var(--space-xl); }
 .head { max-width: 50ch; margin-bottom: var(--space-xl); }
 .title { font-family: var(--font-display); font-size: var(--step-4); margin-top: var(--space-s); }
 .lead { margin-top: var(--space-s); color: var(--ink-dim); font-size: var(--step-1); max-width: 56ch; }

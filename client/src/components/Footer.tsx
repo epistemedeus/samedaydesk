@@ -32,8 +32,16 @@ export default function Footer() {
               does a full navigation instead of React Router hitting the fallback. */}
           <a href="/tools/free-seo-ai-tools.html">All free tools</a>
           <a href="/resources.html">Guides &amp; reports</a>
+          <a href="/start.md">Start file for agents</a>
+        </nav>
+
+        <nav className={styles.col} aria-label="Company">
+          <h3 className={styles.colhead}>Company</h3>
           <Link to="/#how">How it works</Link>
           <Link to="/#guarantee">Guarantee</Link>
+          <Link to="/company" viewTransition>About</Link>
+          <Link to="/security" viewTransition>Security and trust</Link>
+          <Link to="/changelog" viewTransition>Changelog</Link>
           <Link to="/terms" viewTransition>Terms</Link>
         </nav>
       </div>

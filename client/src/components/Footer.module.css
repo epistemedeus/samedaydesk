@@ -1,8 +1,10 @@
 .footer {
   border-top: 1px solid var(--line);
   padding-top: var(--space-xl);
-  margin-top: var(--space-2xl);
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--lime) 3%, transparent));
+  margin-top: 0;
+  position: relative;
+  /* the footer is the solid base of the sheet: the drafting grid stops here */
+  background: var(--bg-2);
 }
 .inner {
   display: grid;
@@ -55,10 +57,9 @@
 }
 .usco { color: var(--ink-faint); }
 .related {
-  margin: 0;
+  margin-inline: auto;
   padding-bottom: var(--space-l);
-  max-width: 72ch;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-size: var(--step--2);
   line-height: 1.5;
 }
@@ -70,5 +71,5 @@
 .related a:hover { color: var(--ink); }
 
 @media (min-width: 720px) {
-  .inner { grid-template-columns: 2fr 1fr 1fr; gap: var(--space-xl); }
+  .inner { grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: var(--space-l); }
 }

@@ -22,3 +22,5 @@
 .note { color: var(--ink-dim); max-width: 42ch; }
 .home { color: var(--lime); font-weight: 600; }
 .home:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.json { margin-top: 1.5rem; padding: 1.1rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }

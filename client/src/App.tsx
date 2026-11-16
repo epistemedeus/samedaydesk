@@ -8,7 +8,6 @@ import DraftingFrame from "./components/DraftingFrame";
 import ScrollToHash from "./components/ScrollToHash";
 import { AuthProvider } from "./lib/auth";
 import { initAnalytics } from "./lib/posthog";
-import { useSmoothScroll } from "./motion/useSmoothScroll";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -22,12 +21,12 @@ const ConsumerRepeat = lazy(() => import("./pages/ConsumerRepeat"));
 const UsefulJobs = lazy(() => import("./pages/UsefulJobs"));
 const SellerConformance = lazy(() => import("./pages/SellerConformance"));
 const VerifiedRoutes = lazy(() => import("./pages/VerifiedRoutes"));
+const CompanyPage = lazy(() => import("./pages/CompanyPage"));
 
 export default function App() {
   useEffect(() => {
     initAnalytics();
   }, []);
-  useSmoothScroll();
 
   return (
     <AuthProvider>
@@ -51,7 +50,10 @@ export default function App() {
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/terms" element={<StubPage title="Terms of Service" note="Legal copy coming soon." />} />
           <Route path="/privacy" element={<StubPage title="Privacy Policy" note="Legal copy coming soon." />} />
-          <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />
+          <Route path="/company" element={<CompanyPage kind="about" />} />
+          <Route path="/security" element={<CompanyPage kind="security" />} />
+          <Route path="/changelog" element={<CompanyPage kind="changelog" />} />
+          <Route path="*" element={<StubPage title="404" note="Nothing is served at this address. The response, as an agent would read it:" notFound />} />
         </Routes>
       </Suspense>
     </AuthProvider>

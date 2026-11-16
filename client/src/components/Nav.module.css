@@ -83,8 +83,8 @@
   .brand { font-size: var(--step-0); gap: 0.4em; }
   .mark { width: 1.4em; height: 1.4em; }
   .word { display: none; }
-  .inner { gap: var(--space-s); }
-  .actions { gap: 0.45rem; }
+  .inner { gap: 0.5rem; }
+  .actions { gap: 0.35rem; }
   .x402 { min-height: 2.2rem; padding: 0.35rem 0.58rem; }
   .cta :global(.inner) { padding: 0.55em 0.85em; }
 }
@@ -96,4 +96,25 @@
 @media (min-width: 980px) {
   .links { gap: var(--space-l); }
   .x402Label { display: inline; }
+}
+
+/* grouped menus */
+.menu { position: relative; }
+.menu > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4em; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu > summary::after { content: ""; width: 5px; height: 5px; border: solid currentColor; border-width: 0 1px 1px 0; transform: translateY(-2px) rotate(45deg); }
+.panel { position: absolute; inset-inline-start: -14px; top: calc(100% + 12px); z-index: 60; width: min(22rem, 86vw); padding: 0.4rem; display: grid; gap: 2px;
+  background: var(--bg-1); border: 1px solid var(--line-2); border-radius: var(--radius-s); }
+.panel a { display: grid; gap: 2px; padding: 0.7rem 0.8rem; border-radius: var(--radius-s); text-decoration: none; }
+.panel a:hover, .panel a:focus-visible { background: var(--lime-soft); }
+.panel strong { color: var(--ink); font-weight: 600; font-size: 0.95rem; }
+.panel span { color: var(--ink-dim); font-size: 0.82rem; }
+
+.mobileMenu { display: none; margin-inline-start: auto; }
+.mobileMenu > summary { min-height: 44px; padding: 0 0.8rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); font-size: var(--step--1); }
+@media (max-width: 899px) { .mobileMenu { display: block; } }
+
+/* Narrowest phones: the x402 route stays in the Menu; the pill steps aside so the CTA fits. */
+@media (max-width: 400px) {
+  .x402 { display: none; }
 }

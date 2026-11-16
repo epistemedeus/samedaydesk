@@ -37,6 +37,14 @@ export default function StubPage({
       </Link>
       <h1 className={styles.h1}>{title}</h1>
       {note && <p className={styles.note}>{note}</p>}
+      {notFound && (
+        <pre className={styles.json} aria-label="Response">{JSON.stringify({
+          status: 404,
+          error: "not_found",
+          path: typeof window === "undefined" ? "" : window.location.pathname,
+          next: ["/", "/#check", "/#services", "/start.md"],
+        }, null, 2)}</pre>
+      )}
       <Link to="/" className={styles.home} viewTransition>← Back home</Link>
     </main>
   );

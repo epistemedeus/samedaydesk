@@ -1,0 +1,8 @@
+.marks { position: absolute; left: 0; top: 0; z-index: 3; width: 0; height: 0; pointer-events: none; opacity: 0; transition: opacity var(--t2) var(--ease), transform var(--t2) var(--ease); }
+.marks[data-on] { opacity: 1; }
+.marks i { position: absolute; width: 14px; height: 14px; border: 0 solid var(--lime); }
+.tl { left: -8px; top: -8px; border-left-width: 1px !important; border-top-width: 1px !important; }
+.tr { left: calc(var(--w) - 6px); top: -8px; border-right-width: 1px !important; border-top-width: 1px !important; }
+.bl { left: -8px; top: calc(var(--h) - 6px); border-left-width: 1px !important; border-bottom-width: 1px !important; }
+.br { left: calc(var(--w) - 6px); top: calc(var(--h) - 6px); border-right-width: 1px !important; border-bottom-width: 1px !important; }
+.dim { position: absolute; left: 0; top: calc(var(--h) + 10px); font-family: var(--font-mono); font-size: var(--step--2); color: var(--lime); letter-spacing: 0.06em; white-space: nowrap; }
