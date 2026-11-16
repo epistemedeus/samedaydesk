@@ -7,7 +7,7 @@
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
     "package-lock.json": "bdc3a1944a7a8c7316356f7248a0d71d9ee3f83501e5fad4a0e422cf959e4811",
     "package.json": "c6250a9cab07b37ac0076111f0af76d7dcf63f6f3705ab9651a01bb35e579947",
-    "server/app.js": "2873087b75ddb8715875e7131a1618e6c8e86f9a00016f07013800fc7773cd23",
+    "server/app.js": "5972af8bc1762185902165997b6cb7848024cfa1e38cd73e779d21772119bfd0",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -27,16 +27,17 @@
     "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
     "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
+    "server/lib/accepted-work-browser-read.js": "fa565f68d38a59341169a93254e1e040442dfe6e44989c00bc97b130291aa4cf",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
     "server/lib/contributor-host-observation.js": "42df6596dc4b1554f4d0ad78fea39deee5fafdcb0cc698187c787adea91fefcd",
-    "server/lib/contributor-https-qualification.js": "09e503051d9bf832ddc3b925438477ca56ae819963ccad4f97d16ac251794814",
-    "server/lib/contributor-managed-mount.js": "e39d30d28533c36f1741e703a0988d87ec535c781eb3be072d745df072227eab",
+    "server/lib/contributor-https-qualification.js": "331e19001dd559f493c635e6d605a359909f79d655bc5eb701432242e3c7ffad",
+    "server/lib/contributor-managed-mount.js": "9d18d61a0ceaad54424585730fc9b11f516634bbe101957c2b906afba30b0336",
     "server/lib/contributor-mount-recovery.js": "b36d3160a351eb055149edbff0bc4bcaa0279454ded016acc7d2e97bdd53cdf1",
     "server/lib/contributor-native-ingress.js": "4092ff40f5a58f28ec6d617b3fe855d1c1a8166b64c32caf7cf8294398306df3",
     "server/lib/correspondence-mount.js": "0eed54a732ebefdebf78e4eff59d5b3a0b309c5ba060f74fe3caaa38d1d125f7",
-    "server/lib/hosted-wallet-market-mount.js": "e2f4b590b9d25ff9080ea5e2eee09dc72a4d92edcc8b2f64957b59ea1ec74803",
+    "server/lib/hosted-wallet-market-mount.js": "020c2475019162a6b34cac2ec956f88fd6f950e94120c3be2a952facd4edbf6e",
     "server/lib/machine-services/deploy/environment-packet.mjs": "2fa1f9b2f707ebe50613af4291eb6374d347907e454dd135059e82f2dd3dcfdc",
     "server/lib/machine-services/deploy/gateway-001.sql": "3d976adf4979825a551257c49abd9cfb8f1cef79fd8fda83d408fcf84fd84d6d",
     "server/lib/machine-services/deploy/monitor-001.sql": "520f55f23cd66fd5add2c83ec9ec4bf320df43b47eabdc0d66225f5be73cb68f",
@@ -1513,6 +1514,11 @@
       "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:964ccc9d7603964b45acb45a90327c8bedd91ff4e6dde2be9940f089e4d3242b"
+    },
+    {
+      "base": "d9725a4f61b0bdf4d5355d3dbb86fa2379c71644",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:d064b9a7c99574acb451715f6d916239d5a67269fbd2e3cfeaf969a65508127b"
     }
   ]
 }
