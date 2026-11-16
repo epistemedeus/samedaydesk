@@ -186,6 +186,29 @@
         "qualified": false,
         "installed": false
       }
+    },
+    {
+      "trustAnchorSha256": "9601172750742ddcb2ac0a37cc1738a3a2f1a17a86561a811e477fccfa520bf7",
+      "sourceSha256": "8be8dd13f995bf9d814a3efdd9b965a9d9a613bffc0069605b6615dce813cdf5",
+      "hostSha256": "1b4c0c89f1c64b49dcafdfa076e8d60bf59fdc78aa304ada97941fbac8202b4e",
+      "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+      "clientBytes": 28081,
+      "descriptorSha256": "f5371ac2bdf87dad453ef86de809b5d44973f70c466acff783fa590133c03e2b",
+      "repository": "epistemedeus/samedaydesk",
+      "version": "0.3.0",
+      "receiving": {
+        "owner": "Root",
+        "candidateRepository": "epistemedeus/samedaydesk",
+        "candidateCommit": "cf67722787620a3f8d111f5d65837d58a583bb9a",
+        "independentReplay": "epistemedeus/pilot/actions/runs/43795145604",
+        "observedAt": "2026-11-16T02:58:49Z",
+        "passed": 61,
+        "failed": 0,
+        "originalWriterUnchanged": true,
+        "scope": "Exact tree 8d416e02a116be023b5823e3ea2adceb36259372. Clean Linux checkout, 23 transport/managed ingress checks, 13 private caller checks, 24 acquisition checks and one standalone cold PostgreSQL journey. Selection refused the pair before enrollment. All 352 emitted client files match the deployed source. CI only. No managed-host qualification, installation, publication or live authority.",
+        "qualified": false,
+        "installed": false
+      }
     }
   ]
 }
