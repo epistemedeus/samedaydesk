@@ -22,6 +22,8 @@ const ConsumerRepeat = lazy(() => import("./pages/ConsumerRepeat"));
 const UsefulJobs = lazy(() => import("./pages/UsefulJobs"));
 const SellerConformance = lazy(() => import("./pages/SellerConformance"));
 const VerifiedRoutes = lazy(() => import("./pages/VerifiedRoutes"));
+const Terms = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Terms })));
+const Privacy = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Privacy })));
 
 export default function App() {
   useEffect(() => {
@@ -49,8 +51,8 @@ export default function App() {
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/terms" element={<StubPage title="Terms of Service" note="Legal copy coming soon." />} />
-          <Route path="/privacy" element={<StubPage title="Privacy Policy" note="Legal copy coming soon." />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />
         </Routes>
       </Suspense>

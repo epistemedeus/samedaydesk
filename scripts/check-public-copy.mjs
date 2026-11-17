@@ -53,7 +53,7 @@ server.close();
   for (const name of readdirSync(d)) {
     const p = join(d, name);
     const rel = relative(dist, p);
-    if (statSync(p).isDirectory()) { if (!/^(route-shells|assets)$/.test(rel)) walk(p); continue; }
+    if (statSync(p).isDirectory()) { if (rel !== 'assets') walk(p); continue; }
     if (name.endsWith('.html') && rel !== 'index.html') files.push(p);
     if (d === dist && MACHINE.includes(name)) files.push(p);
   }

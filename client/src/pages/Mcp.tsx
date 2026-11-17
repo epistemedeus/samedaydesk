@@ -192,9 +192,7 @@ export default function Mcp() {
             Agents discover a service, call it, <span className="lime">pay, and continue</span>
           </h1>
           <p className={styles.lead}>
-            SameDayDesk machine services settle exact Base USDC through x402 or native MPP. No API
-            key, subscription, or account is required. Live catalogs are authoritative; this page does
-            not freeze a tool count. Practical jobs start at{" "}
+            Paid tools your agent can call and pay for in the same request: exact USDC on Base through x402 or native MPP. No API key, subscription or account. Start with web data at{" "}
             <Link className={styles.inlineLink} to={FOR_AGENTS_PATH}>
               /for-agents
             </Link>
@@ -267,9 +265,9 @@ export default function Mcp() {
         <section className={styles.sellerOffer} aria-labelledby="seller-title">
           <div>
             <p className="eyebrow">Machine purchase gates</p>
-            <h2 id="seller-title">Inspect before an agent authorizes payment</h2>
+            <h2 id="seller-title">Check a seller before your agent pays</h2>
             <p>
-              Discovery is not authorization. These live tools check whether a buyer can construct the request,
+              These live tools check whether a buyer can construct the request,
               inspect exact payment terms, verify the promised output contract, and reconcile a settlement. They use
               no target credentials, wallet signing, or target payment during inspection.
             </p>
@@ -325,14 +323,12 @@ export default function Mcp() {
         <section className={styles.marketEvidence} aria-labelledby="evidence-title">
           <div>
             <p className="eyebrow">Live storefront contract</p>
-            <h2 id="evidence-title">Live catalogs, not a frozen count.</h2>
+            <h2 id="evidence-title">Every tool, live</h2>
           </div>
           <div>
             <p>
               The live HTTP catalog, x402 manifest, health readout, OpenAPI, MCP tools, and A2A card
-              are the current inventories. A Circle Gateway alternate exists for payment preflight; it is
-              an access path, not a separate product family. Discovery is not authorization, settlement,
-              demand, or revenue.
+              are the current inventories. A Circle Gateway alternate exists for payment preflight; it is another way to pay for the same tools.
             </p>
             <Link
               className={styles.inlineLink}

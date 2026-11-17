@@ -179,6 +179,23 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
   res.sendFile(originalTaskClientArchiveFile());
 });
 
+// The agent start file: the short path for an agent told one sentence. Same
+// bytes for every client, open CORS, linked from the page head and llms.txt.
+app.get("/start.md", (_req, res, next) => {
+  const file = path.join(CLIENT_DIST, "start.md");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Cache-Control", "public, max-age=300");
+  res.type("text/markdown; charset=utf-8");
+  res.sendFile(file, (err) => { if (err) next(); });
+});
+
+app.use((req, res, next) => {
+  if ((req.method === "GET" || req.method === "HEAD") && req.path === "/") {
+    res.append("Link", '</start.md>; rel="alternate"; type="text/markdown"; title="Start here"');
+  }
+  next();
+});
+
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
 if (isProd) {

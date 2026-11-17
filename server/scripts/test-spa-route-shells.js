@@ -205,15 +205,13 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
 });
 
 test("apex machine documentation separates free and paid MCP and keeps homepage SKUs", () => {
-  assert.match(LLMS_TXT, /Free apex MCP readiness surface/);
+  assert.match(LLMS_TXT, /Free MCP server\]\(https:\/\/samedaydesk\.com\/mcp\)/);
+  assert.match(LLMS_TXT, /^- \[Start file for agents\]\(https:\/\/samedaydesk\.com\/start\.md\)/m);
   assert.match(LLMS_TXT, /https:\/\/agents\.samedaydesk\.com\/mcp/);
   assert.match(LLMS_TXT, /GET https:\/\/agents\.samedaydesk\.com\/extract\?url=https:\/\/example\.com/);
   assert.match(LLMS_TXT, /POST https:\/\/agents\.samedaydesk\.com\/extract\/batch/);
   assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/for-agents/);
-  assert.match(LLMS_TXT, /offline comparison/);
-  assert.match(LLMS_TXT, /user-selected unverified evidence/);
-  assert.match(LLMS_TXT, /not automatic public-safe certification/);
-  assert.match(LLMS_TXT, /Purchasing never requires publishing/);
+  assert.match(LLMS_TXT, /local comparison/);
   assert.equal(LLMS_TXT.includes("Twenty-two canonical"), false);
   for (const sku of ["Agent Workflow Integration", "Agent-Ready MCP Server", "Agent Commerce Storefront"]) {
     assert.match(LLMS_TXT, new RegExp(sku));
@@ -241,17 +239,13 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /npm ci/);
   assert.match(route.crawlerHtml, /npm start/);
   assert.match(route.crawlerHtml, /page-change/);
-  assert.match(route.crawlerHtml, /coverage unknown/);
-  assert.match(route.crawlerHtml, /charged: true/);
+  assert.match(route.crawlerHtml, /reconcile it rather than paying again/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/api\/actions/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/healthz/);
-  assert.match(route.crawlerHtml, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.match(route.crawlerHtml, /Job 4\. Save a result so the next agent can reuse it/);
   assert.match(route.crawlerHtml, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.match(route.crawlerHtml, /immutable prior/);
-  assert.match(route.crawlerHtml, /never automatically replayed/);
-  assert.match(route.crawlerHtml, /Purchasing never requires publishing/);
-  assert.match(route.crawlerHtml, /user-selected unverified evidence/);
-  assert.match(route.crawlerHtml, /never automatic public-safe\s+certification/);
+  assert.match(route.crawlerHtml, /copies only the fields you choose/);
   assert.match(route.crawlerHtml, /neomorphic\.task-memory\.observation\.v1/);
   assert.match(route.crawlerHtml, /--opt-in/);
   assert.equal(route.crawlerHtml.includes("Twenty-two"), false);
@@ -261,15 +255,14 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.equal(app.includes('path="/for-agents" element={<Mcp />}'), false);
   const react = readFileSync(join(here, "../../client/src/pages/ForAgents.tsx"), "utf8");
   for (const copy of [route.crawlerHtml, react]) {
-    assert.match(copy, /Node.js 22\.x/);
+    assert.match(copy, /Node\.js 22/);
     assert.match(copy, /organization\/contact examples/);
     assert.match(copy, /missing .*sku.*email.*optional/s);
     assert.match(copy, /required-field\s+example/);
     assert.match(copy, /writes.*three artifacts.*exits 1/s);
-    assert.match(copy, /against the live merchant, not an offline fixture/);
+    assert.match(copy, /show the price and terms first and sign nothing/);
     assert.match(copy, /fixtures\/authorization-batch.json/);
-    assert.match(copy, /Reconcile an unknown payment outcome instead of automatically retrying/);
-    assert.match(copy, /Purchasing never requires publishing/);
+    assert.match(copy, /reconcile it rather than paying again/);
     assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
   }
   assert.match(route.crawlerHtml, /node --version # must report v22\.x/);
@@ -344,16 +337,16 @@ test("generator derives route shells from the built index.html without rewriting
 
   const x402 = inspectHtmlShell(readFileSync(join(dist, written[0].relativeFile), "utf8"));
   assert.equal(x402.title, SPA_ROUTE_SHELLS[0].title);
-  assert.match(x402.noscript, /Live catalogs are authoritative/);
+  assert.match(x402.noscript, /No API key, subscription or account/);
   assert.match(x402.noscript, /for-agents/);
   const forAgents = written.find((entry) => entry.path === "/for-agents");
   const forAgentsHtml = inspectHtmlShell(readFileSync(join(dist, forAgents.relativeFile), "utf8"));
   assert.equal(forAgentsHtml.title, FOR_AGENTS_SHELL.title);
   assert.equal(forAgentsHtml.canonical, FOR_AGENTS_SHELL.canonical);
-  assert.match(forAgentsHtml.noscript, /Job 1\. Obtain bounded extracted observations/);
+  assert.match(forAgentsHtml.noscript, /Job 1\. Fetch fields from up to five pages/);
   assert.match(forAgentsHtml.noscript, /Job 2\. Compare explicit fields from two already-held observations/);
   assert.match(forAgentsHtml.noscript, /Job 3\. Map already-held JSON into buyer records/);
-  assert.match(forAgentsHtml.noscript, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.match(forAgentsHtml.noscript, /Job 4\. Save a result so the next agent can reuse it/);
   assert.match(forAgentsHtml.noscript, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.equal(forAgentsHtml.noscript.includes(REUSE_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(RECURRING_QUICKSTART), true);
@@ -364,9 +357,9 @@ test("generator derives route shells from the built index.html without rewriting
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("FAQPage"), false);
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Review"), false);
   const seller = inspectHtmlShell(readFileSync(join(dist, written[1].relativeFile), "utf8"));
-  assert.match(seller.noscript, /not a product, certificate, or runtime monitor/);
+  assert.match(seller.noscript, /Find out why AI agents can't pay you, and fix it/);
   const verified = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));
-  assert.match(verified.noscript, /Inspected routes, not a certificate/);
+  assert.match(verified.noscript, /Every paid route, checked as an agent meets it/);
   const tool = inspectHtmlShell(readFileSync(join(dist, written[3].relativeFile), "utf8"));
   assert.match(tool.noscript, /No\s+email required/);
   for (const routePath of ["/login", "/signup", "/dashboard", "/checkout"]) {

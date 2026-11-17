@@ -42,8 +42,8 @@ export default function Footer() {
         <span className="mono">© {year} SameDayDesk</span>
       </div>
       <p className={clsx("container", styles.related)}>
-        SameDayDesk is the operating merchant.{" "}
-        <a href="https://ein.llc/">EIN.LLC</a> is a separate formation product.
+        Need a US company to sell from?{" "}
+        <a href="https://ein.llc/">EIN.LLC</a> forms it, with the EIN, in days.
       </p>
     </footer>
   );

@@ -65,6 +65,8 @@ for (const file of files) {
     if (rule.sites && site && !rule.sites.includes(site)) continue;
     if (rule.sites && !site) continue;
     if (soft && rule.level === 'warn') continue;
+    // Selling rules, section 3: the other brand's legal name may appear in the Terms and Privacy.
+    if (rule.cls === 'cross-brand-legal' && /(?:^|[/_.-])(?:terms|privacy)(?:[/_.-]|$)/i.test(file)) continue;
     for (const m of text.matchAll(rule.re)) {
       findings.push({cls: rule.cls, level: rule.level, quote: m[0].replace(/\s+/g, ' ').trim().slice(0, 120)});
       totals[rule.cls] = (totals[rule.cls] || 0) + 1;

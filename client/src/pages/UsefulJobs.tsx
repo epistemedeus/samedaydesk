@@ -214,11 +214,11 @@ export default function UsefulJobs() {
             <p className="eyebrow">Scope</p>
             <h2 id="boundary-title">What this package covers</h2>
             <p>
-              Free local package only; it does not start hosted extract on{" "}
+              A free package that runs on your own machine. For fresh web data, use the paid extract on{" "}
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
               </Link>
-              . It is not a live paid merchant route. Release 1.4.7 adds fresh verification for{" "}
+              . Release 1.4.7 adds fresh verification for{" "}
               <code>lockfile-pin-delta</code>, <code>json-schema-webhook-drift</code>,{" "}
               <code>route-table-diff</code>, <code>page-change-offline-job</code>, and{" "}
               <code>vendor-budget-impact</code>. The other five jobs are carried forward without a

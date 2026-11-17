@@ -11,7 +11,7 @@ export const SITE_ORIGIN = "https://samedaydesk.com";
 export const HOME_TITLE = "SameDayDesk: agent commerce, built and shipped";
 export const HOME_CANONICAL = `${SITE_ORIGIN}/`;
 export const HOME_DESCRIPTION =
-  "Agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine storefronts. Bounded scope, working code, tests, and deployment handoff.";
+  "We make your service usable and payable by AI agents: workflows, MCP servers, x402 and MPP payments, agent storefronts. Fixed prices from 149 USD, working this week.";
 
 const PUBLIC_SHELLS = [
   {
@@ -82,52 +82,46 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
   }),
   Object.freeze({
     path: "/x402/seller-conformance",
-    title: "Seller conformance proof | SameDayDesk",
+    title: "Seller audit: get paid by AI agents | SameDayDesk",
     description:
-      "Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand.",
+      "We call your paid endpoint the way a buying AI agent does and send you exactly what to fix. Live audit 0.01 USDC; fixed repair of one route 490 USD. Agent402 bought one audit and repaired 557 routes.",
     canonical: `${SITE_ORIGIN}/x402/seller-conformance`,
     crawlerHtml: `
-      <h1>Seller-conformance proof is inspection, not a guarantee</h1>
+      <h1>Find out why AI agents can't pay you, and fix it</h1>
       <p>
-        Existing SameDayDesk seller-conformance proof: inspect unpaid 402 terms, pin the integrity
-        Action SHA, and separate release verification from marketplace listing, merged contract
-        projection, deployment, settlement, demand, and revenue. This page is human-auditable
-        inspection evidence. It is not a product, certificate, or runtime monitor.
+        We call your paid endpoint the way a buying agent does, read the payment terms it gets back,
+        and send you exactly what to change. A live audit is 0.01 USDC a call. A fixed repair of one
+        route is 490 USD, and it works or we keep fixing it.
       </p>
       <p>
-        One recruited Agent402 payment led to deployed upstream repairs. That receipt does not prove
-        organic demand, repeat use, or a repair sale.
+        Agent402 bought one audit, then repaired the seller contract and deployed a catalog repair
+        across 557 of 560 production routes.
       </p>
       <ul>
-        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
-        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi resolved diagnostic case</a></li>
-        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
-        <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
+        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 payment receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi, fixed in the open</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Routes we checked</a></li>
+        <li><a href="https://samedaydesk.com/x402">Paid tools for AI agents</a></li>
       </ul>
     `,
   }),
   Object.freeze({
     path: "/x402/verified",
-    title: "Inspected x402 routes | SameDayDesk",
+    title: "Checked x402 routes | SameDayDesk",
     description:
-      "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
+      "Every SameDayDesk paid route, checked the way a buying agent meets it: live 402 terms, contract hash, OpenAPI and CDP Bazaar listing, with a machine-readable feed.",
     canonical: `${SITE_ORIGIN}/x402/verified`,
     crawlerHtml: `
-      <h1>Inspected routes, not a certificate</h1>
+      <h1>Every paid route, checked as an agent meets it</h1>
       <p>
-        Build-time list of current SameDayDesk routes from the existing seller-conformance crawl.
-        Each row has a live unpaid 402 check and contract hash. It records whether the operation was
-        observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days
-        of the crawl. The badge is verified, drift, or unverified.
-      </p>
-      <p>
-        Owner QA is labeled internal. This page is inspection evidence. It is not a product,
-        guarantee, or runtime monitor.
+        Each row is one of our paid routes with its live 402 terms and contract hash, whether its
+        operation appears in our OpenAPI, and whether CDP Bazaar lists it within the last seven days.
+        The badge reads verified, drift or unverified.
       </p>
       <ul>
         <li><a href="https://samedaydesk.com/x402/verified.json">Machine-readable feed</a></li>
         <li><a href="https://samedaydesk.com/x402/verified.schema.json">Feed schema</a></li>
-        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller audit</a></li>
       </ul>
     `,
   }),

@@ -20,7 +20,7 @@ const PAGE_SPECS = Object.freeze([
     path: "/for-agents",
     screenshot: "for-agents-desktop.png",
     expect: {
-      titleIncludes: "Practical agent jobs",
+      titleIncludes: "Fresh web data for agents",
       h1Includes: "opt-in reuse",
       bodyIncludes: [
         "POST /extract/batch",
@@ -116,7 +116,7 @@ const PAGE_SPECS = Object.freeze([
     path: "/x402/verified",
     screenshot: "verified-desktop.png",
     expect: {
-      titleIncludes: "Inspected x402 routes",
+      titleIncludes: "Checked x402 routes",
       h1Includes: "Inspected routes",
       bodyIncludes: ["unpaid 402", "Machine-readable feed"],
     },

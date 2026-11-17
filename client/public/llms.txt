@@ -1,30 +1,31 @@
 # SameDayDesk
 
-> SameDayDesk builds agent-ready workflows, MCP servers, x402 and native MPP payment routes, and machine storefronts. Each build has bounded scope, working code, tests, and a deployment handoff.
+> SameDayDesk makes your service usable and payable by AI agents, at a fixed price, working this week. It works or we keep fixing it.
 
 ## Start here
 
-- [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links.
-- Agent Workflow Integration: $149.
-- Agent-Ready MCP Server: $349.
-- x402 and native MPP Payment Route: $499.
-- Agent Commerce Storefront: $999.
-- [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): Check crawler access, metadata, structured data, sitemap, and llms.txt.
-- [Resources](https://samedaydesk.com/resources.html): Original research, practical guides, and free AI-search tools.
+- [Start file for agents](https://samedaydesk.com/start.md): read first. The free route check, the builds and how to order.
+- Hand one job to AI (Agent Workflow Integration): 149 USD, same day.
+- Put your app inside ChatGPT and Claude (Agent-Ready MCP Server): 349 USD, 1 to 2 days.
+- Get paid by AI agents (x402 and MPP Payment Route): 499 USD, 2 to 3 days.
+- A shop AI agents can buy from (Agent Commerce Storefront): 999 USD, 3 to 5 days.
+- [Seller audit](https://samedaydesk.com/x402/seller-conformance): we call your paid endpoint as a buying agent does and send the fixes. 0.01 USDC live audit; 490 USD fixed repair per route.
+- [Homepage](https://samedaydesk.com/): the builds, prices and order links.
+- [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): crawler access, metadata, structured data, sitemap and llms.txt, with the fix for each.
+- [Resources](https://samedaydesk.com/resources.html): research, guides and free AI-search tools.
 
 ## Agent interfaces
 
-- [Free apex MCP readiness surface](https://samedaydesk.com/mcp): Streamable HTTP MCP interface for the free AI-readiness checker. This is separate from the paid gateway.
-- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Paid MCP tools from the canonical SameDayDesk machine gateway. Live MCP inventory is authoritative.
-- Practical paid job: `POST https://agents.samedaydesk.com/extract/batch` (1 to 5 public HTTPS URLs, 0.01 USDC bounded attempt). Backward-compatible `GET https://agents.samedaydesk.com/extract?url=https://example.com` remains available.
-- [Practical agent jobs](https://samedaydesk.com/for-agents): Obtain a bounded batch extraction, then offline comparison or record mapping of already-held JSON, optionally export a reuse reference, or run one-shot recurring recipes (`source-change-alert`, `issue-to-work-brief`, `buyer-setup-trace`) against an immutable prior. A schema-valid export is user-selected unverified evidence, not automatic public-safe certification. Purchasing never requires publishing. Copyable no-key commands are in the initial HTML.
-- [Agent payment infrastructure](https://samedaydesk.com/x402): Human storefront for other named machine services. Live HTTP, x402, health, OpenAPI, and MCP inventories are authoritative; this file does not freeze a route count.
-- [Seller conformance proof](https://samedaydesk.com/x402/seller-conformance): a human-auditable seller-conformance proof page, not a product or certificate.
-- [Inspected x402 route list](https://samedaydesk.com/x402/verified): build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement.
-- [Agent402 validation receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): One recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, unsolicited demand, repeat use, or repair sale.
+- [Free MCP server](https://samedaydesk.com/mcp): the AI-readiness checker over Streamable HTTP.
+- [Paid MCP gateway](https://agents.samedaydesk.com/mcp): paid tools, each priced per call in USDC.
+- Fresh web data: `POST https://agents.samedaydesk.com/extract/batch` takes 1 to 5 public HTTPS URLs and the fields you want, 0.01 USDC a batch. Single URL: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
+- [Web data and free tools for agents](https://samedaydesk.com/for-agents): paid batch extraction, then free local comparison, record mapping, result reuse and recurring page and issue checks (`source-change-alert`, `issue-to-work-brief`, `buyer-setup-trace`). Copyable commands are in the initial HTML.
+- [Paid tools for agents](https://samedaydesk.com/x402): every paid tool, paid with x402 or MPP on Base.
+- [Routes we checked](https://samedaydesk.com/x402/verified): feed of build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement.
+- [Agent402 payment receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): the paid seller audit Agent402 bought and the result it delivered.
 - [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
 - [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection to the current tool surface.
-- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Live paid x402 inventory on Base mainnet using USDC, plus any labeled alternate access path. The manifest is authoritative; this file does not copy a count.
+- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Live paid x402 inventory on Base mainnet using USDC, plus any labeled alternate access path. 
 - [x402 gateway llms.txt](https://agents.samedaydesk.com/llms.txt): Endpoint descriptions, callable examples, and payment instructions.
 - [x402 service health](https://agents.samedaydesk.com/healthz): Live health, prices, and protocol route counts for the SameDayDesk agent data gateway.
 - [HTTP action catalog](https://agents.samedaydesk.com/api/actions): Live paid HTTP actions.
@@ -53,11 +54,9 @@
 - [X](https://x.com/samedaydesk)
 - Email: contact@samedaydesk.com
 
-## Related properties
+## Need a US company?
 
-SameDayDesk is the operating merchant. The following site is a separate product, not a SameDayDesk service.
-
-- [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation.
+- [EIN.LLC](https://ein.llc/): US LLC formation and EIN for founders abroad.
 
 Last updated: 2026-09-09
 - [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
