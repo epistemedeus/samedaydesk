@@ -1,7 +1,8 @@
 # SameDayDesk: start here
 
 SameDayDesk makes a service usable and payable by AI agents, at a fixed price, working this week.
-Builds: one workflow 149 USD, an MCP server 349 USD, an x402 payment route 499 USD, an agent storefront 999 USD.
+Builds: one workflow 149 USD, an agent front door 249 USD, an MCP server 349 USD, an x402 payment route
+499 USD, an agent storefront 999 USD. Keep it working: 100 USD a month.
 The route check below is free. Version 2, 2026-11.
 
 ## What you can do for your person

@@ -22,6 +22,7 @@ const ConsumerRepeat = lazy(() => import("./pages/ConsumerRepeat"));
 const UsefulJobs = lazy(() => import("./pages/UsefulJobs"));
 const SellerConformance = lazy(() => import("./pages/SellerConformance"));
 const VerifiedRoutes = lazy(() => import("./pages/VerifiedRoutes"));
+const Receipts = lazy(() => import("./pages/Receipts"));
 const Terms = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Terms })));
 const Privacy = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Privacy })));
 
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/receipts" element={<Receipts />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />

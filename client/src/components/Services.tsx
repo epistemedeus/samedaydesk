@@ -11,11 +11,11 @@ export default function Services() {
         <header className={styles.head} data-reveal>
           <p className="eyebrow">Agent builds · flat fees</p>
           <h2 className={styles.title}>
-            Clear scope. Clear price. <span className="lime">A real acceptance test.</span>
+            Pick what you need. Fixed price. <span className="lime">Working this week.</span>
           </h2>
           <p className={styles.lead}>
-            Start with an existing API or workflow. Each build has a bounded route count, a concrete
-            handoff, and tests for the path you paid us to make work.
+            Each one starts from the service you already have. You get it working, the code to keep,
+            and if it does not work as promised, we keep fixing it.
           </p>
         </header>
 
@@ -34,33 +34,46 @@ export default function Services() {
                     {o.bestValue && <span className={styles.badge}>Best value</span>}
 
                     <div className={styles.cardTop}>
-                      <h4 className={styles.cardName}>{o.name}</h4>
+                      <div>
+                        <h4 className={styles.cardName}>{o.plain}</h4>
+                        <p className={clsx("mono", styles.techName)}>{o.name}</p>
+                      </div>
                       <div className={styles.price}>
                         <span className={styles.cur}>$</span>
                         <span className={clsx("mono", styles.amount)}>{o.price}</span>
+                        {o.per && <span className={styles.cur}>{o.per}</span>}
                       </div>
                     </div>
 
                     <p className={styles.turn}><span className={styles.dot} aria-hidden="true" /> {o.turnaround}</p>
-                    <p className={styles.blurb}>{o.blurb}</p>
+                    <p className={styles.outcome}>{o.outcome}</p>
+                    <p className={styles.example}><span className="mono">For example</span> {o.example}</p>
 
-                    <ul className={styles.includes}>
-                      {o.includes.map((i) => (
+                    <ul className={styles.includes} aria-label="You receive">
+                      {o.receive.map((i) => (
                         <li key={i}><span className={styles.check} aria-hidden="true">›</span> {i}</li>
                       ))}
                     </ul>
 
+                    <details className={styles.tech}>
+                      <summary className="mono">Technical details</summary>
+                      <p>{o.blurb}</p>
+                      <ul>{o.includes.map((i) => <li key={i}>{i}</li>)}</ul>
+                    </details>
+
                     <MagneticButton
-                      {...(PAYMENT_LINKS[o.slug]
-                        ? { href: PAYMENT_LINKS[o.slug] }
-                        : { to: `/signup?offer=${o.slug}` })}
+                      {...(o.mailto
+                        ? { href: o.mailto }
+                        : PAYMENT_LINKS[o.slug]
+                          ? { href: PAYMENT_LINKS[o.slug] }
+                          : { to: `/signup?offer=${o.slug}` })}
                       variant={o.flagship ? "primary" : "ghost"}
                       magnetic={o.flagship}
                       className={styles.cardCta}
-                      ariaLabel={`Start ${o.name} for $${o.price}`}
+                      ariaLabel={o.mailto ? `Ask for ${o.plain}` : `Start ${o.plain} for $${o.price}`}
                       onClick={() => track("offer_selected", { offer: o.slug, price: o.price })}
                     >
-                      Start · ${o.price}
+                      {o.mailto ? "Ask for it" : `Start · $${o.price}`}
                     </MagneticButton>
                   </article>
                 ))}

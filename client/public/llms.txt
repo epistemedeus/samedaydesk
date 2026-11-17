@@ -9,6 +9,8 @@
 - Put your app inside ChatGPT and Claude (Agent-Ready MCP Server): 349 USD, 1 to 2 days.
 - Get paid by AI agents (x402 and MPP Payment Route): 499 USD, 2 to 3 days.
 - A shop AI agents can buy from (Agent Commerce Storefront): 999 USD, 3 to 5 days.
+- One line for your customers' AI (Agent Front Door): 249 USD, 1 to 2 days. Ask by email to contact@samedaydesk.com.
+- Keep it working (monthly care): 100 USD a month for one workflow, MCP server or payment route. Ask by email to contact@samedaydesk.com.
 - [Seller audit](https://samedaydesk.com/x402/seller-conformance): we call your paid endpoint as a buying agent does and send the fixes. 0.01 USDC live audit; 490 USD fixed repair per route.
 - [Homepage](https://samedaydesk.com/): the builds, prices and order links.
 - [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): crawler access, metadata, structured data, sitemap and llms.txt, with the fix for each.
