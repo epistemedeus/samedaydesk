@@ -1,0 +1,31 @@
+.mark { position: relative; display: inline-flex; align-items: center; gap: 0.1rem; }
+.label {
+  color: var(--ink-dim);
+  background: linear-gradient(var(--lime), var(--lime)) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.35s var(--ease-out), color 0.18s;
+  padding-bottom: 2px;
+}
+.label:hover, .label:focus-visible { color: var(--ink); background-size: 100% 1px; }
+.glyph { color: var(--lime); }
+.more {
+  min-width: 24px; min-height: 24px; padding: 0; border: 0; background: none;
+  color: var(--ink-dim); font: inherit; cursor: pointer; opacity: 0; transition: opacity 0.2s;
+}
+.mark:hover .more, .more:focus-visible { opacity: 1; }
+@media (hover: none) { .more { opacity: 1; } }
+.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.pop {
+  inset: auto; top: 4.5rem; right: max(1rem, calc((100vw - var(--maxw)) / 2));
+  width: min(30rem, calc(100vw - 2rem)); margin: 0; padding: var(--space-s);
+  background: var(--bg-1); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--radius-s);
+  font-size: var(--step--1);
+}
+.head { font-family: var(--font-display); font-size: var(--step-0); margin-bottom: 0.4rem; }
+.line { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.8rem; padding-block: 0.6rem; border-top: 1px solid var(--line); }
+.line span { grid-column: 1 / -1; color: var(--lime); font-size: 0.75em; letter-spacing: 0.1em; text-transform: uppercase; }
+.line code { font-family: var(--font-mono); overflow-wrap: anywhere; color: var(--ink-dim); }
+.line button { min-height: 24px; border: 0; background: none; color: var(--lime); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
+.foot { padding-top: 0.6rem; border-top: 1px solid var(--line); color: var(--ink-dim); }
+/* In the nav only where the row has room; the footer carries it at every width. */
+.inNav { display: none; }
+@media (min-width: 1180px) { .inNav { display: inline-flex; } }

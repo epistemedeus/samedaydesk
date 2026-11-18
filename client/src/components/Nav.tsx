@@ -4,6 +4,7 @@ import clsx from "clsx";
 import MagneticButton from "./MagneticButton";
 import BrandMark from "./BrandMark";
 import ThemeToggle from "./ThemeToggle";
+import AgentMark from "./AgentMark";
 import { useAuth } from "../lib/auth";
 import styles from "./Nav.module.css";
 
@@ -30,6 +31,7 @@ export default function Nav() {
           <Link to="/#services">Services</Link>
           <Link to="/#how">How it works</Link>
           <Link to="/tools/ai-readiness" viewTransition>Free tool</Link>
+          <AgentMark placement="nav" />
         </nav>
 
         <div className={styles.actions}>

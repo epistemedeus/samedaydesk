@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import BrandMark from "./BrandMark";
+import AgentMark from "./AgentMark";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -14,6 +15,7 @@ export default function Footer() {
           </Link>
           <p className={styles.tag}>Agent commerce, built and shipped.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
+          <p className={styles.tag}><AgentMark placement="footer" /></p>
         </div>
 
         <nav className={styles.col} aria-label="Services">
@@ -35,6 +37,7 @@ export default function Footer() {
           <Link to="/#how">How it works</Link>
           <Link to="/#guarantee">Guarantee</Link>
           <Link to="/terms" viewTransition>Terms</Link>
+          <Link to="/privacy" viewTransition>Privacy</Link>
         </nav>
       </div>
 

@@ -53,7 +53,33 @@ const fragment = /* glsl */ `
 
 export default function EnergySurface() {
   const host = useRef<HTMLDivElement>(null);
+  const reticle = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+
+  // The reticle sights the pointer: within the hero it drifts a short way toward it, like a
+  // drafting sight finding its mark. Fine pointers only; still under reduced motion.
+  useEffect(() => {
+    const el = reticle.current;
+    const hero = el?.closest("section");
+    if (!el || !hero || theme !== "drafting") return;
+    if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let x = 0, y = 0, tx = 0, ty = 0, raf = 0;
+    const step = () => {
+      x += (tx - x) * 0.1; y += (ty - y) * 0.1;
+      el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.2 ? requestAnimationFrame(step) : 0;
+    };
+    const move = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      tx = Math.max(-28, Math.min(28, (e.clientX - (r.left + r.width / 2)) * 0.05));
+      ty = Math.max(-28, Math.min(28, (e.clientY - (r.top + r.height / 2)) * 0.05));
+      if (!raf) raf = requestAnimationFrame(step);
+    };
+    const leave = () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(step); };
+    hero.addEventListener("pointermove", move);
+    hero.addEventListener("pointerleave", leave);
+    return () => { hero.removeEventListener("pointermove", move); hero.removeEventListener("pointerleave", leave); cancelAnimationFrame(raf); el.style.transform = ""; };
+  }, [theme]);
 
   useEffect(() => {
     // The shader is a dark-brand artifact. Under the paper "Drafting Table" theme the hero
@@ -197,7 +223,7 @@ export default function EnergySurface() {
       <div ref={host} className={styles.canvasHost} />
       <div className={styles.glow} />
       <div className={styles.grid} />
-      <div className={styles.draftMark} />
+      <div ref={reticle} className={styles.draftMark} />
     </div>
   );
 }

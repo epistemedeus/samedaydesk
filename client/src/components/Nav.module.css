@@ -38,6 +38,7 @@
   gap: var(--space-m);
   font-size: var(--step--1);
   color: var(--ink-dim);
+  white-space: nowrap;
 }
 .links a { transition: color 0.18s; }
 .links a:hover { color: var(--ink); }
@@ -72,6 +73,7 @@
   font-size: var(--step--1);
   color: var(--ink-dim);
   transition: color 0.18s;
+  white-space: nowrap;
   display: none;
 }
 .signin:hover { color: var(--ink); }
@@ -95,5 +97,7 @@
 }
 @media (min-width: 980px) {
   .links { gap: var(--space-l); }
-  .x402Label { display: inline; }
+}
+@media (min-width: 1180px) {
+  .x402Label { display: inline; white-space: nowrap; }
 }
