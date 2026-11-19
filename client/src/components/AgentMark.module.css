@@ -1,31 +1,159 @@
-.mark { position: relative; display: inline-flex; align-items: center; gap: 0.1rem; }
-.label {
-  color: var(--ink-dim);
+/* "For AI agents": a callout on the drafting sheet. A leader line runs from the nav item to a
+   panel with corner crosses, set like a terminal, with copy chips in the accent (oxide on the
+   Drafting Table, lime on the dark theme). */
+.desk { position: relative; display: inline-flex; }
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0 2px;
+  border: 0;
   background: linear-gradient(var(--lime), var(--lime)) 0 100% / 0 1px no-repeat;
+  color: var(--ink-dim);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
   transition: background-size 0.35s var(--ease-out), color 0.18s;
-  padding-bottom: 2px;
 }
-.label:hover, .label:focus-visible { color: var(--ink); background-size: 100% 1px; }
-.glyph { color: var(--lime); }
-.more {
-  min-width: 24px; min-height: 24px; padding: 0; border: 0; background: none;
-  color: var(--ink-dim); font: inherit; cursor: pointer; opacity: 0; transition: opacity 0.2s;
-}
-.mark:hover .more, .more:focus-visible { opacity: 1; }
-@media (hover: none) { .more { opacity: 1; } }
-.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.pop {
-  inset: auto; top: 4.5rem; right: max(1rem, calc((100vw - var(--maxw)) / 2));
-  width: min(30rem, calc(100vw - 2rem)); margin: 0; padding: var(--space-s);
-  background: var(--bg-1); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--radius-s);
+.trigger:hover, .trigger:focus-visible { color: var(--ink); background-size: 100% 1px; }
+.chevron { color: var(--lime); transition: transform var(--dur-1) var(--ease-out); }
+.trigger:has(+ .callout:popover-open) { color: var(--ink); background-size: 100% 1px; }
+.trigger:has(+ .callout:popover-open) .chevron { transform: rotate(180deg); }
+
+.callout {
+  --cross: 9px;
+  inset: auto;
+  position-area: block-end span-inline-start;
+  position-try-fallbacks: flip-block, flip-inline;
+  width: min(31rem, calc(100vw - 2rem));
+  margin: 34px 0;
+  padding: calc(var(--grid) * 2.5) calc(var(--grid) * 2.5) calc(var(--grid) * 2);
+  overflow: visible;
+  border: var(--hair) solid var(--line-2);
+  border-radius: 0;
+  color: var(--ink);
   font-size: var(--step--1);
+  white-space: normal;
+  text-align: start;
+  /* Corner crosses, a faint 8px grid inside, on the elevated sheet. */
+  background:
+    linear-gradient(var(--ink-dim), var(--ink-dim)) 6px 6px / 1px var(--cross) no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) 2px 10px / var(--cross) 1px no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) calc(100% - 6px) 6px / 1px var(--cross) no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) calc(100% - 2px) 10px / var(--cross) 1px no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) 6px calc(100% - 6px) / 1px var(--cross) no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) 2px calc(100% - 10px) / var(--cross) 1px no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) calc(100% - 6px) calc(100% - 6px) / 1px var(--cross) no-repeat,
+    linear-gradient(var(--ink-dim), var(--ink-dim)) calc(100% - 2px) calc(100% - 10px) / var(--cross) 1px no-repeat,
+    linear-gradient(color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px) 0 0 / 100% var(--grid),
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px) 0 0 / var(--grid) 100%,
+    var(--bg-1);
+  background-blend-mode: normal;
+  box-shadow: 0 24px 50px -30px rgb(0 0 0 / 0.55);
 }
-.head { font-family: var(--font-display); font-size: var(--step-0); margin-bottom: 0.4rem; }
-.line { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.8rem; padding-block: 0.6rem; border-top: 1px solid var(--line); }
-.line span { grid-column: 1 / -1; color: var(--lime); font-size: 0.75em; letter-spacing: 0.1em; text-transform: uppercase; }
-.line code { font-family: var(--font-mono); overflow-wrap: anywhere; color: var(--ink-dim); }
-.line button { min-height: 24px; border: 0; background: none; color: var(--lime); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
-.foot { padding-top: 0.6rem; border-top: 1px solid var(--line); color: var(--ink-dim); }
-/* In the nav only where the row has room; the footer carries it at every width. */
+[data-theme="drafting"] .callout { box-shadow: 6px 6px 0 -1px color-mix(in srgb, var(--ink) 8%, transparent); }
+.callout:popover-open { animation: draw-in var(--dur-2) var(--ease-out); }
+@keyframes draw-in { from { opacity: 0; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+@media (prefers-reduced-motion: reduce) { .callout:popover-open { animation: none; } }
+
+/* The leader: a hairline from the callout up to the nav item, ending in a dot on the item. */
+.leader {
+  position: absolute;
+  inset-inline-end: 3.2rem;
+  inset-block-end: 100%;
+  width: 1px;
+  height: 34px;
+  background: var(--lime);
+}
+.leader::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -2.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+}
+.up .leader { inset-block-end: auto; inset-block-start: 100%; inset-inline-end: auto; inset-inline-start: 3.2rem; }
+.up .leader::before { top: auto; bottom: -3px; }
+
+.fig {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 calc(var(--grid) * 1.5);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+.fig::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.4; }
+.person { margin: 0 0 calc(var(--grid) * 2); font-family: var(--font-display); font-size: var(--step-0); line-height: 1.35; }
+
+.rows { display: grid; gap: var(--grid); margin: 0; padding: 0; list-style: none; }
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "label label label" "prompt value chip";
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  padding: var(--grid) calc(var(--grid) * 1.5);
+  border: var(--hair) solid var(--line-2);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  font-family: var(--font-mono);
+  transition: border-color var(--dur-1);
+}
+.row[data-copied] { border-color: var(--lime); }
+.rowLabel { grid-area: label; font-size: var(--step--2); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+.prompt { grid-area: prompt; color: var(--lime); font-size: 0.82rem; }
+.value { grid-area: value; min-width: 0; white-space: normal; word-break: break-word; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; overflow-wrap: anywhere; color: var(--ink); }
+.chip {
+  grid-area: chip;
+  align-self: center;
+  min-height: 24px;
+  min-width: 3.6rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--lime);
+  border-radius: 0;
+  background: transparent;
+  color: var(--lime);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.chip:hover, .chip:focus-visible, .row[data-copied] .chip { background: var(--lime); color: var(--lime-ink); }
+.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.more {
+  display: inline-flex;
+  gap: 0.4rem;
+  margin-top: calc(var(--grid) * 2);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+.more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* In the phone menu: the same rows inline, under a heading. */
+.inline { padding-top: var(--space-s); border-top: var(--hair) solid var(--line-2); }
+.inlineTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+/* In the nav only where the links show; the footer carries it at every width. */
 .inNav { display: none; }
-@media (min-width: 1180px) { .inNav { display: inline-flex; } }
+@media (min-width: 900px) { .inNav { display: inline-flex; } }
+.inFooter .trigger { color: var(--ink-dim); }
+.up { position-area: block-start span-inline-end; position-try-fallbacks: flip-inline; }

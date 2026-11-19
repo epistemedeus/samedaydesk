@@ -76,9 +76,18 @@ export default function EnergySurface() {
       if (!raf) raf = requestAnimationFrame(step);
     };
     const leave = () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(step); };
-    hero.addEventListener("pointermove", move);
+    // While the agent callout is open the reticle sights it instead of the pointer.
+    let sighting = false;
+    const sight = (e: Event) => {
+      const at = (e as CustomEvent<{ x: number; y: number } | null>).detail;
+      sighting = !!at;
+      if (at) move({ clientX: at.x, clientY: at.y } as PointerEvent); else leave();
+    };
+    const follow = (e: PointerEvent) => { if (!sighting) move(e); };
+    hero.addEventListener("pointermove", follow);
     hero.addEventListener("pointerleave", leave);
-    return () => { hero.removeEventListener("pointermove", move); hero.removeEventListener("pointerleave", leave); cancelAnimationFrame(raf); el.style.transform = ""; };
+    window.addEventListener("sdd:sight", sight);
+    return () => { hero.removeEventListener("pointermove", follow); hero.removeEventListener("pointerleave", leave); window.removeEventListener("sdd:sight", sight); cancelAnimationFrame(raf); el.style.transform = ""; };
   }, [theme]);
 
   useEffect(() => {
