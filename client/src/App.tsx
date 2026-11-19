@@ -5,6 +5,7 @@ import Landing from "./pages/Landing";
 import StubPage from "./pages/StubPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DraftingFrame from "./components/DraftingFrame";
+import DraftingCrosshair from "./components/DraftingCrosshair";
 import ScrollToHash from "./components/ScrollToHash";
 import { AuthProvider } from "./lib/auth";
 import { initAnalytics } from "./lib/posthog";
@@ -35,6 +36,7 @@ export default function App() {
   return (
     <AuthProvider>
       <DraftingFrame />
+      <DraftingCrosshair />
       <ScrollToHash />
       <Suspense fallback={<div className="route-loading" aria-busy="true" />}>
         <Routes>

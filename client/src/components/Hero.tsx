@@ -24,7 +24,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className={styles.hero}>
+    <section className={styles.hero} data-hero>
       <EnergySurface />
       <div className={styles.scrim} aria-hidden="true" />
 
