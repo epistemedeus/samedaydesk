@@ -94,3 +94,14 @@
   @keyframes rundown { from { transform: translateY(-100%); } to { transform: translateY(260%); } }
   .arrowhead { transform: rotate(90deg); }
 }
+
+/* The "What an AI sees" switch: a drafting toggle above the figure. */
+.headRow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-s); margin-bottom: var(--space-xl); }
+.headRow > .head { margin-bottom: 0; }
+.switch { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; padding: 0 0.9rem 0 0.4rem; border: 1px solid var(--line-2); border-radius: 999px; background: var(--bg-1); color: var(--ink); font: 500 var(--step--1) var(--font-mono); letter-spacing: 0.04em; cursor: pointer; }
+.knob { position: relative; width: 2.2rem; height: 1.2rem; border-radius: 999px; background: var(--line-2); transition: background 0.2s; }
+.knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.2rem - 4px); height: calc(1.2rem - 4px); border-radius: 50%; background: var(--bg); transition: translate 0.2s var(--ease-out); }
+.switch[aria-pressed="true"] .knob { background: var(--lime); }
+.switch[aria-pressed="true"] .knob::after { translate: 1rem 0; }
+.switch:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .knob, .knob::after { transition: none; } }

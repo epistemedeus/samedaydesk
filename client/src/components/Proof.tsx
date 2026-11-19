@@ -1,6 +1,7 @@
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState } from "react";
 import clsx from "clsx";
 import { setupGsap, gsap, prefersReducedMotion } from "../motion/gsap";
+import AiView from "./AiView";
 import styles from "./Proof.module.css";
 
 // A "job ticket" that travels from an existing service to a verified agent-ready path.
@@ -8,6 +9,7 @@ import styles from "./Proof.module.css";
 // SameDayDesk visual system.
 export default function Proof() {
   const root = useRef<HTMLElement>(null);
+  const [aiView, setAiView] = useState(false);
 
   useLayoutEffect(() => {
     if (prefersReducedMotion() || !root.current) return;
@@ -31,14 +33,19 @@ export default function Proof() {
   return (
     <section id="proof" className={styles.section} data-proof ref={root}>
       <div className="container">
+        <div className={styles.headRow}>
         <header className={styles.head} data-reveal>
           <p className="eyebrow">Before and after</p>
           <h2 className={styles.title}>
             It is done when <span className="lime">an AI can use it.</span>
           </h2>
         </header>
+          <button type="button" className={styles.switch} aria-pressed={aiView} onClick={() => setAiView(!aiView)}>
+            <span className={styles.knob} aria-hidden="true" /> What an AI sees
+          </button>
+        </div>
 
-        <div className={styles.ticket} data-reveal>
+        {aiView ? <AiView /> : <div className={styles.ticket} data-reveal>
           <div className={styles.col} data-step="in">
             <div className={styles.stamp}><span className={styles.dotMuted} /> Your service today</div>
             <p className={styles.label}>Where it starts</p>
@@ -61,7 +68,7 @@ export default function Proof() {
               “The assistant finds it, uses it and pays for it, and a test shows it happening.”
             </p>
           </div>
-        </div>
+        </div>}
 
         <p className={styles.foot}>
           <a className="mono lime" href="/receipts">See the receipts</a> of work delivered and paid for
