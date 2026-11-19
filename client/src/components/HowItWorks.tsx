@@ -49,15 +49,18 @@ export default function HowItWorks() {
 
         <div className={styles.cta}>
           <MagneticButton
-            to="/signup"
+            href="#hero-check-url"
             variant="primary"
             magnetic
-            ariaLabel="Get a free route check"
-            onClick={() => track("cta_clicked", { where: "how", action: "route_check" })}
+            onClick={() => {
+              track("cta_clicked", { where: "how", action: "hero_check" });
+              // The one free check is the hero's: after the jump to its field, put the cursor in it.
+              requestAnimationFrame(() => document.getElementById("hero-check-url")?.focus({ preventScroll: true }));
+            }}
           >
-            Get a free route check <span aria-hidden="true">→</span>
+            Run the free check <span aria-hidden="true">↑</span>
           </MagneticButton>
-          <span className={styles.note}>Free: we check one part of your service and tell you what it needs.</span>
+          <span className={styles.note}>Free: paste your website at the top and see what an AI can read of it.</span>
         </div>
       </div>
     </section>

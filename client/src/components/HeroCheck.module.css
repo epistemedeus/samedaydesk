@@ -50,3 +50,6 @@
 }
 .buy:hover { filter: brightness(1.08); }
 .err { color: var(--ink); }
+
+/* A jump to the field (from § 03) stops with its label clear of the fixed nav. */
+.input { scroll-margin-top: calc(var(--nav-h) + 4rem); }
