@@ -56,10 +56,6 @@
 - [X](https://x.com/samedaydesk)
 - Email: contact@samedaydesk.com
 
-## Need a US company?
-
-- [EIN.LLC](https://ein.llc/): US LLC formation and EIN for founders abroad.
-
 Last updated: 2026-09-09
 - [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
 Last updated: 2026-09-10

@@ -45,10 +45,6 @@ export default function Footer() {
       <div className={clsx("container", styles.base)}>
         <span className="mono">© {year} SameDayDesk</span>
       </div>
-      <p className={clsx("container", styles.related)}>
-        Need a US company to sell from?{" "}
-        <a href="https://ein.llc/">EIN.LLC</a> forms it, with the EIN, in days.
-      </p>
     </footer>
   );
 }
