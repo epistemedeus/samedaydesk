@@ -8,13 +8,13 @@ On the first approved release, save the baseline in the customer's private
 service record. Use a separate baseline for each endpoint.
 
 ```sh
-npm run --silent test:keep-it-working -- "$MCP_URL" > baseline.json
+tools/keep-it-working/test-release "$MCP_URL" > baseline.json
 ```
 
 After each release, compare the new result with the approved baseline.
 
 ```sh
-npm run --silent test:keep-it-working -- "$MCP_URL" baseline.json > candidate.json
+tools/keep-it-working/test-release "$MCP_URL" baseline.json > candidate.json
 ```
 
 The result includes the negotiated protocol version, tool definitions, and a
