@@ -24,7 +24,11 @@ if (!inputs.length) {
 
 // block: must never ship. warn: rewrite or move unless the sentence helps the visitor decide.
 const rules = [
-  {cls: 'internal-name', level: 'block', re: /\bPilot\b(?! (?:program|project|customer))|\bAlpha (?:desk|hunt|round)\b|\bN-(?:LAB|BTY)-\d+\b|\bH15-BEE\b|\bSol handoff\b|\b(?:lane|gate|stage) [A-Z]\d?\b|\bowner QA\b|\bprivate controller\b/g},
+  {cls: 'internal-name', level: 'block', re: /\b[Pp]ilot\b(?! (?:program|project|customer))|\bAlpha (?:desk|hunt|round)\b|\bN-(?:LAB|BTY)-\d+\b|\bH15-BEE\b|\bSol handoff\b|\b(?:lane|gate|stage) [A-Z]\d?\b|\bowner QA\b|\bprivate controller\b/g},
+  // Workbench language: how we work inside, never what a customer buys. Legal pages and guides are exempt.
+  {cls: 'workbench', level: 'block', customer: true, re: /\bconfigured workbench\b|\bhand-?offs?\b|\bhuman review\b|\bdoes not host a public board API\b|\boperator (?:handoff|queue|review)\b/gi},
+  // An offer that cannot be bought on the page (selling rules 6d).
+  {cls: 'unfinished-action', level: 'block', customer: true, re: /\bAsk for it\b|\bwait-?list\b|\bRequest access\b|\bjoin the queue\b/gi},
   {cls: 'cross-brand-legal', level: 'block', sites: ['samedaydesk', 'ein'], re: /\bNeomorphic LLC\b|\bportfolio (?:product|service|boundary)\b|\btrade name or DBA\b/g},
   {cls: 'status-confession', level: 'block', re: /\bnot (?:yet )?(?:launched|established|published|available)\b|\bin build\b|\bcoming soon\b|\bprice hypothes[ie]s\b|\binternal (?:prototype|candidate|research preview)\b|\bno live (?:listings|liquidity|offers)\b|\bzero admitted\b|\bzeroes remain visible\b|\b(?:demand|revenue|use) (?:is|remains?|are) unproved\b|\bexternal paid demand\b|\bnot a (?:product|second storefront)\b|\bstaged (?:surface|state|experiment)\b/gi},
   {cls: 'zero-counter', level: 'block', re: /(?:^|\n)\s*0\s*\n\s*(?:External|Externally|live|paid|admitted)[^\n]{0,60}/g},
@@ -64,7 +68,7 @@ for (const file of files) {
   for (const rule of rules) {
     if (rule.sites && site && !rule.sites.includes(site)) continue;
     if (rule.sites && !site) continue;
-    if (soft && rule.level === 'warn') continue;
+    if (soft && (rule.level === 'warn' || rule.customer)) continue;
     // Selling rules, section 3: the other brand's legal name may appear in the Terms and Privacy.
     if (rule.cls === 'cross-brand-legal' && /(?:^|[/_.-])(?:terms|privacy)(?:[/_.-]|$)/i.test(file)) continue;
     for (const m of text.matchAll(rule.re)) {
@@ -72,6 +76,22 @@ for (const file of files) {
       totals[rule.cls] = (totals[rule.cls] || 0) + 1;
     }
   }
+  // Route names count as copy: an internal page name in a path or a link fails.
+  const internalRoute = /\/(?:operator-handoff|qualified-route|review-preview|signed-agent-sprint|task-square|town-square|work-board|shared-task|outside-operator-first-job|exchange-townsquare|external-job-intake|contributor-desk)\b/;
+  if (internalRoute.test(file.replace(/\\/g, '/'))) findings.push({cls: 'internal-route', level: 'block', quote: file.match(internalRoute)[0]});
+  const source = await readFile(file, 'utf8');
+  for (const m of source.matchAll(/href="([^"]*)"/g)) {
+    const hit = m[1].match(internalRoute);
+    if (hit) findings.push({cls: 'internal-route', level: 'block', quote: m[1].slice(0, 120)});
+  }
+  // A priced offer's action that opens an email draft.
+  for (const m of source.matchAll(/<a\b[^>]*href="mailto:([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    const words = toText(m[2]);
+    if (/\b(?:order|buy|start|request|ask for|get started|purchase|subscribe|apply|book)\b/i.test(words) || /subject=[^"&]*\border\b/i.test(m[1])) {
+      findings.push({cls: 'unfinished-action', level: 'block', quote: `mailto:${m[1].slice(0, 60)} ${words.slice(0, 50)}`});
+    }
+  }
+  for (const f of findings) if (f.cls === 'internal-route' || (f.cls === 'unfinished-action' && f.quote.startsWith('mailto:'))) totals[f.cls] = (totals[f.cls] || 0) + 1;
   if (findings.length) report.push({file, block: findings.filter((f) => f.level === 'block').length, warn: findings.filter((f) => f.level === 'warn').length, findings});
 }
 
