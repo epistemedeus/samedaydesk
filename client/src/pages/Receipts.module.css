@@ -1,0 +1,26 @@
+/* /receipts: the whole tape as a ledger, one ruled line per entry with its proof. */
+.wrap { max-width: var(--maxw); margin-inline: auto; padding: calc(var(--nav-h) + var(--space-l)) var(--space-s) var(--space-xl); }
+.h1 { font-family: var(--font-display); font-size: var(--step-5); line-height: 1.02; margin-top: var(--space-s); max-width: 16ch; }
+.lead { margin-top: var(--space-s); max-width: 62ch; color: var(--ink-dim); font-size: var(--step-0); }
+.lead a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.ledger { margin-top: var(--space-l); border-top: 1px solid var(--line-2); font-family: var(--font-mono); font-size: var(--step--1); }
+.line {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) 7rem 4.5rem;
+  gap: 0.25rem var(--space-s);
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.date { color: var(--ink-faint); letter-spacing: 0.06em; }
+.what { display: grid; gap: 0.15rem; }
+.for { color: var(--ink); font-family: var(--font-sans); font-size: var(--step-0); }
+.got { color: var(--ink-dim); }
+.amount { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+.proof { justify-self: end; color: var(--lime); }
+.proof:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) {
+  .line { grid-template-columns: 4rem minmax(0, 1fr) auto; }
+  .amount { grid-column: 2; text-align: left; }
+  .proof { grid-column: 3; grid-row: 1; }
+}

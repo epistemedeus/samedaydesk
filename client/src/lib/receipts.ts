@@ -22,6 +22,6 @@ export const tapeShown = () => RECEIPTS.length >= TAPE_FLOOR;
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 export const tapeDate = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${Number(iso.slice(8, 10))}`;
 export const tapeLine = (r: Receipt) =>
-  [tapeDate(r.date), r.for, r.kind === "delivered" ? r.delivered : null, r.amount ? `${r.amount} · ${r.rail}` : "settled"]
+  [tapeDate(r.date), r.for, r.kind === "delivered" ? r.delivered : null, r.amount ? `${r.amount} · ${r.rail}` : null]
     .filter(Boolean)
     .join(" · ");

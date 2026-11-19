@@ -12,6 +12,33 @@
       "proof": "https://basescan.org/tx/0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
       "more": "https://github.com/MikeyPetrillo/Agent402/issues/1047",
       "source": "client/public/research/agent402-seller-integrity-validation-2026-08-29.json"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "Vet402",
+      "delivered": "a public recount that makes all 11,840 settled Base payments in the agreed window reproducible",
+      "proof": "https://github.com/kzmttkc/vet402/issues/86#issuecomment-6816657360",
+      "source": "pilot overview/research/phase-20261109/vet402-delivery/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "a SwarmMemo requester",
+      "delivered": "a report on a confusing notary receipt; the requester fixed it upstream",
+      "amount": "50 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/9af1fd9c80e4df51baac180d5275fe5b",
+      "source": "pilot overview/research/phase-20261114/n8n-output-readback/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "AIBTC's x402 API",
+      "delivered": "a relay fix handed back as a pull request, passing 117 of its own unit tests",
+      "proof": "https://github.com/aibtcdev/x402-api/pull/150",
+      "source": "pilot overview/research/phase-20261109/aibtc-relay/ROOT-RECEIVING.md"
     }
   ]
 }
