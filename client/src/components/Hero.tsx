@@ -1,14 +1,14 @@
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState } from "react";
 import clsx from "clsx";
-import MagneticButton from "./MagneticButton";
 import EnergySurface from "./EnergySurface";
 import { setupGsap, gsap, SplitText, prefersReducedMotion } from "../motion/gsap";
-import { track } from "../lib/posthog";
+import { HeroCheckForm, HeroCheckReceipt } from "./HeroCheck";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const root = useRef<HTMLDivElement>(null);
   const h1 = useRef<HTMLHeadingElement>(null);
+  const [check, setCheck] = useState<{ result: Parameters<typeof HeroCheckReceipt>[0]["result"]; err: string | null; busy: boolean }>({ result: null, err: null, busy: false });
 
   useLayoutEffect(() => {
     if (prefersReducedMotion() || !root.current || !h1.current) return;
@@ -24,6 +24,7 @@ export default function Hero() {
   }, []);
 
   return (
+    <>
     <section className={styles.hero} data-hero>
       <EnergySurface />
       <div className={styles.scrim} aria-hidden="true" />
@@ -45,17 +46,9 @@ export default function Hero() {
           and gets paid. Fixed prices, working the same day.
         </p>
 
-        <div className={styles.ctas} data-hero-fade>
-          <MagneticButton
-            to="/signup"
-            variant="primary"
-            magnetic
-            ariaLabel="Get a free route check"
-            onClick={() => track("cta_clicked", { where: "hero", action: "route_check" })}
-          >
-            Get a free route check <span aria-hidden="true">→</span>
-          </MagneticButton>
-          <MagneticButton href="#services" variant="ghost">See what we build</MagneticButton>
+        <div data-hero-fade>
+          <HeroCheckForm onResult={(result, err, busy) => setCheck({ result, err, busy })} />
+          <p className={styles.alt}><a href="#services">Or see what we build, at fixed prices</a></p>
         </div>
         <p className={styles.fine} data-hero-fade>
           For engineers: MCP servers, x402 and MPP payment routes, and machine storefronts, built
@@ -69,5 +62,7 @@ export default function Hero() {
         <span className={styles.cueline} aria-hidden="true" />
       </a>
     </section>
+    <HeroCheckReceipt {...check} />
+    </>
   );
 }

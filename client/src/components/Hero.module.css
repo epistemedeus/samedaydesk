@@ -114,3 +114,6 @@
   letter-spacing: 0.02em;
   color: var(--ink-faint);
 }
+.alt { margin-top: 0.8rem; font-size: var(--step--1); }
+.alt a { color: var(--ink-dim); text-decoration: underline; text-underline-offset: 3px; }
+.alt a:hover { color: var(--ink); }
