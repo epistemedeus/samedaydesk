@@ -1,0 +1,19 @@
+/* A single receipt: the tape's printed slip, at page size, torn at the foot. */
+.wrap { max-width: 40rem; margin-inline: auto; padding: calc(var(--nav-h) + var(--space-l)) var(--space-s) calc(var(--section) / 2); }
+.slip {
+  margin-top: var(--space-s); padding: var(--space-m) var(--space-m) calc(var(--space-m) + 10px);
+  background: var(--bg-1); border: 1px solid var(--line-2); border-bottom: 0;
+  -webkit-mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+  mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+}
+.head { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--line-2); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.wrap h1.h1 { margin-top: var(--space-s); font-family: var(--font-display); font-size: var(--step-3); line-height: 1.12; letter-spacing: -0.02em; }
+.lines { margin: var(--space-s) 0 0; border-top: 1px dashed var(--line-2); }
+.lines > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; padding-block: 0.7rem; border-bottom: 1px dashed var(--line-2); }
+.lines dt { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+.lines dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.proof { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: var(--space-s); font-family: var(--font-mono); font-size: var(--step--1); }
+.ref { color: var(--ink-faint); overflow-wrap: anywhere; flex-basis: 100%; }
+.proof a, .back a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.back { margin-top: var(--space-m); font-family: var(--font-mono); font-size: var(--step--1); }
+@media (max-width: 520px) { .lines > div { grid-template-columns: 1fr; gap: 0.2rem; } }

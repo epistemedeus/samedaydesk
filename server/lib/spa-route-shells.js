@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { RECEIPT_SHELLS } from "../../client/src/data/receiptPages.mjs";
 import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, RECORD_REPEAT_SHELL, USEFUL_JOBS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
 
 // Exact public SPA paths that must return their own crawler-readable HTML.
@@ -162,6 +163,11 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
   ...ACCOUNT_SHELLS.map(Object.freeze),
 ]);
 
+// One shell per tape entry (/receipts/<id>), from the same module the React page reads.
+export const RECEIPT_ROUTE_SHELLS = Object.freeze(
+  RECEIPT_SHELLS.map(({ id: _id, ...route }) => Object.freeze({ ...route, canonical: `${SITE_ORIGIN}${route.path}` })),
+);
+
 export const NOT_FOUND_SHELL = Object.freeze({
   path: "/404",
   title: "Not found | SameDayDesk",
@@ -278,7 +284,7 @@ export function applyRouteShell(indexHtml, route) {
   return html;
 }
 
-export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
+export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   assertRouteCatalog(routes);
   return routes.map((route) => ({
     route,
@@ -287,7 +293,7 @@ export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_S
   }));
 }
 
-export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
+export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   const indexPath = path.join(distDir, "index.html");
   if (!existsSync(indexPath)) {
     throw new Error(`route-shells: missing ${indexPath}; run the Vite build first`);
@@ -314,7 +320,7 @@ export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, NOT_FOU
   return written;
 }
 
-export function createRouteShellMiddleware(clientDist, routes = SPA_ROUTE_SHELLS) {
+export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS]) {
   assertRouteCatalog(routes);
   const map = new Map();
   for (const route of routes) {

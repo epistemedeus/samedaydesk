@@ -1,8 +1,9 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import StubPage from "./StubPage";
-import { DAYS, DELIVERED, SETTLED, SETTLED_TOTAL, callsLabel, tapeDate, tapeShown } from "../lib/receipts";
+import { DAYS, DELIVERED, SETTLED, SETTLED_TOTAL, callsLabel, receiptId, tapeDate, tapeShown } from "../lib/receipts";
 import styles from "./Receipts.module.css";
 
 // The whole tape. Delivered work first, as full entries; then the paid calls from AI agents,
@@ -33,7 +34,7 @@ export default function Receipts() {
               <li key={r.proof} className={styles.job}>
                 <span className={styles.date}>{tapeDate(r.date)}</span>
                 <div className={styles.what}>
-                  <p className={styles.for}>{r.for}</p>
+                  <p className={styles.for}><Link to={`/receipts/${receiptId(r)}`}>{r.for}</Link></p>
                   <p className={styles.got}>{r.delivered}</p>
                   {r.amount && <p className={styles.paid}>Paid {r.amount} on {r.rail}{r.paidHow ? `, ${r.paidHow}` : ""}</p>}
                 </div>
@@ -64,7 +65,7 @@ export default function Receipts() {
                   <ul className={styles.calls}>
                     {d.calls.map((r) => (
                       <li key={r.proof}>
-                        <span>{r.amount}</span>
+                        <Link to={`/receipts/${receiptId(r)}`}>{r.amount}</Link>
                         <a href={r.proof} target="_blank" rel="noopener noreferrer">Proof <span aria-hidden="true">↗</span></a>
                       </li>
                     ))}

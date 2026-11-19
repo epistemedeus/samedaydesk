@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { DAYS, DELIVERED, dayLine, tapeLine, tapeShown, type Day, type Receipt } from "../lib/receipts";
+import { DAYS, DELIVERED, dayLine, receiptId, tapeLine, tapeShown, type Day, type Receipt } from "../lib/receipts";
 import styles from "./Tape.module.css";
 
 type Item = { kind: "work"; r: Receipt } | { kind: "day"; d: Day };
@@ -67,14 +67,14 @@ export default function Tape() {
                 <dt>Received</dt><dd>{open.r.delivered}</dd>
                 {open.r.amount && (<><dt>Paid</dt><dd>{open.r.amount} on {open.r.rail}{open.r.paidHow ? `, ${open.r.paidHow}` : ""}</dd></>)}
               </dl>
-              <p><a href={open.r.proof} target="_blank" rel="noopener noreferrer">See the proof ↗</a>
-                {open.r.more && <> · <a href={open.r.more} target="_blank" rel="noopener noreferrer">The work itself ↗</a></>}</p>
+              <p><Link to={`/receipts/${receiptId(open.r)}`}>The full receipt</Link>
+                {" · "}<a href={open.r.proof} target="_blank" rel="noopener noreferrer">See the proof ↗</a></p>
             </>
           ) : (
             <>
               <ul className={styles.calls}>
                 {open.d.calls.slice(0, 5).map((r) => (
-                  <li key={r.proof}><span>{r.amount}</span><a href={r.proof} target="_blank" rel="noopener noreferrer">Proof ↗</a></li>
+                  <li key={r.proof}><Link to={`/receipts/${receiptId(r)}`}>{r.amount}</Link><a href={r.proof} target="_blank" rel="noopener noreferrer">Proof ↗</a></li>
                 ))}
               </ul>
               <p><Link to={`/receipts#day-${open.d.date}`}>{open.d.calls.length > 5 ? `All ${open.d.calls.length} calls that day` : "On the receipts page"}</Link></p>

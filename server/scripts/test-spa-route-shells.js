@@ -10,6 +10,7 @@ import express from "express";
 import { mountProductionClient } from "../lib/spa-client.js";
 import { SPA_HISTORY_ROUTES } from "../lib/spa-fallback.js";
 import {
+  RECEIPT_ROUTE_SHELLS,
   HOME_CANONICAL,
   HOME_DESCRIPTION,
   HOME_TITLE,
@@ -322,14 +323,15 @@ test("generator derives route shells from the built index.html without rewriting
   const built = asBuiltIndex();
   writeFileSync(join(dist, "index.html"), built);
 
+  // The catalog, one shell per tape entry (/receipts/<id>), and the 404.
   const generated = generateRouteShellsFromIndex(built);
-  assert.equal(generated.length, SPA_ROUTE_SHELLS.length + 1);
+  assert.equal(generated.length, SPA_ROUTE_SHELLS.length + RECEIPT_ROUTE_SHELLS.length + 1);
   for (const item of generated) {
     assertRouteDocument(item.html, item.route);
   }
 
   const written = writeRouteShells(dist);
-  assert.equal(written.length, SPA_ROUTE_SHELLS.length + 1);
+  assert.equal(written.length, SPA_ROUTE_SHELLS.length + RECEIPT_ROUTE_SHELLS.length + 1);
   assert.equal(readFileSync(join(dist, "index.html"), "utf8"), built);
   const home = inspectHtmlShell(readFileSync(join(dist, "index.html"), "utf8"));
   assert.equal(home.title, HOME_TITLE);

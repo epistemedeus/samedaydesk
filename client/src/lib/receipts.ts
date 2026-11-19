@@ -26,11 +26,7 @@ export const tapeLine = (r: Receipt) =>
     .filter(Boolean)
     .join(" · ");
 
-/** A stable address for each entry: the transaction for a settlement, date and party for work. */
-export const receiptId = (r: Receipt): string =>
-  r.kind === "settlement"
-    ? (r.proof.match(/0x([0-9a-f]{10})/i)?.[1] ?? r.date).toLowerCase()
-    : `${r.date}-${r.for.toLowerCase().replace(/['’]s\b/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+export { receiptId } from "../data/receiptPages.mjs";
 
 export const DELIVERED = RECEIPTS.filter((r) => r.kind === "delivered").sort((a, b) => b.date.localeCompare(a.date));
 export const SETTLED = RECEIPTS.filter((r) => r.kind === "settlement");
