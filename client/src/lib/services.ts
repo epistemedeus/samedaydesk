@@ -10,13 +10,10 @@ export type Offer = {
   per?: string;
   /** One line in everyday words: what changes for the business. */
   outcome: string;
-  /** One line showing it happen to one of their customers. */
-  example: string;
+  /** One short scene of it happening to one of their customers, set in italics. */
+  scene: string;
   /** What the buyer receives, in plain words. */
   receive: string[];
-  /** Ordered by a prepared email when there is no payment link. */
-  mailto?: string;
-  turnaround: string;
   blurb: string;
   /** For engineers: the technical details fold. */
   includes: string[];
@@ -41,8 +38,8 @@ export const CATEGORIES: Category[] = [
       {
         slug: "agent_workflow",
         plain: "Hand one job to AI",
-        outcome: "One task your team repeats, done by an AI assistant from start to finish.",
-        example: "New orders go from your inbox to your spreadsheet and a reply goes out, with nobody copying and pasting.",
+        outcome: "A task your team repeats, done by AI from start to finish.",
+        scene: "An order email arrives, the spreadsheet fills itself and the customer gets a reply.",
         receive: [
           "The job running on its own",
           "A live demo you can try",
@@ -51,7 +48,6 @@ export const CATEGORIES: Category[] = [
         ],
         name: "Agent Workflow Integration",
         price: 149,
-        turnaround: "Same day",
         blurb: "One useful workflow across the APIs and tools you already use, delivered as runnable code instead of a diagram.",
         includes: [
           "One bounded workflow",
@@ -70,8 +66,8 @@ export const CATEGORIES: Category[] = [
       {
         slug: "agent_mcp_server",
         plain: "Put your app inside ChatGPT and Claude",
-        outcome: "People use your service by asking their AI assistant.",
-        example: "A customer types \"book me a table for Friday\" into Claude and your booking system takes it.",
+        outcome: "Customers use your service by asking their AI.",
+        scene: "\"Book a table for Friday,\" typed into Claude, lands in your booking system.",
         receive: [
           "Your service, usable from ChatGPT and Claude",
           "Up to five things people can ask it to do",
@@ -80,7 +76,6 @@ export const CATEGORIES: Category[] = [
         ],
         name: "Agent-Ready MCP Server",
         price: 349,
-        turnaround: "1 to 2 days",
         flagship: true,
         blurb: "Turn an existing API into a focused MCP server agents can select and call without guessing the request or response shape.",
         includes: [
@@ -89,7 +84,7 @@ export const CATEGORIES: Category[] = [
           "Authentication boundary",
           "Streamable HTTP transport",
           "Tests and setup guide",
-          "Public or private deployment handoff",
+          "Public or private deployment",
         ],
         intake: {
           label: "Your API docs, OpenAPI file, or repository",
@@ -107,8 +102,8 @@ export const CATEGORIES: Category[] = [
       {
         slug: "machine_payment_route",
         plain: "Get paid by AI agents",
-        outcome: "AI agents pay you each time they use your service, with no sign-up and no invoice.",
-        example: "A research agent pays 5 cents per lookup on your data and the money lands in your account.",
+        outcome: "Agents pay you each time they use your service. No sign-up, no invoice.",
+        scene: "A research agent pays 5 cents a lookup, and the money is yours the same minute.",
         receive: [
           "Pay-per-use on one part of your service",
           "Payments in digital dollars, straight to you",
@@ -117,7 +112,6 @@ export const CATEGORIES: Category[] = [
         ],
         name: "x402 + MPP Payment Route",
         price: 499,
-        turnaround: "2 to 3 days",
         blurb: "Make one existing API operation machine-payable with exact Base USDC terms, dual-rail negotiation, and settlement evidence.",
         includes: [
           "One existing GET or POST operation",
@@ -125,7 +119,7 @@ export const CATEGORIES: Category[] = [
           "Exact asset, amount, recipient, and route binding",
           "Idempotent retry path",
           "Settlement and receipt verification",
-          "Deployment tests and handoff",
+          "Deployment and its tests",
         ],
         intake: {
           label: "The route, repository, and intended price",
@@ -136,8 +130,8 @@ export const CATEGORIES: Category[] = [
       {
         slug: "agent_storefront",
         plain: "A shop AI agents can buy from",
-        outcome: "AI shopping assistants can find your products, buy and come back.",
-        example: "Someone asks their assistant for a gift under 50 dollars and it buys from you.",
+        outcome: "AI shopping assistants find your products and buy them.",
+        scene: "\"A gift under 50 dollars,\" and their assistant buys it from you.",
         receive: [
           "Up to five things agents can buy",
           "Listings AI assistants can find",
@@ -146,7 +140,6 @@ export const CATEGORIES: Category[] = [
         ],
         name: "Agent Commerce Storefront",
         price: 999,
-        turnaround: "3 to 5 days",
         bestValue: true,
         blurb: "A compact machine-facing storefront for an existing service: discovery, callable examples, payment, and evidence that stay in sync.",
         includes: [
@@ -175,9 +168,8 @@ export const CATEGORIES: Category[] = [
         plain: "One line for your customers' AI",
         name: "Agent Front Door",
         price: 249,
-        turnaround: "1 to 2 days",
-        outcome: "A single sentence your customers give their AI, and it knows how to use you.",
-        example: "You print one line on your site; a visitor pastes it into ChatGPT and gets served.",
+        outcome: "One sentence on your site, and any AI that reads it knows how to use you.",
+        scene: "A visitor pastes it into ChatGPT and is served in seconds.",
         receive: [
           "The sentence, ready to put on your site",
           "A start file AI assistants read first",
@@ -191,7 +183,6 @@ export const CATEGORIES: Category[] = [
           "A Link header and head links to the start file",
           "A cold-agent test of one named action",
         ],
-        mailto: "mailto:contact@samedaydesk.com?subject=Agent%20Front%20Door&body=My%20site%3A%20%0AThe%20one%20thing%20a%20customer%27s%20AI%20should%20do%20there%3A%20",
       },
       {
         slug: "keep_it_working",
@@ -199,9 +190,8 @@ export const CATEGORIES: Category[] = [
         name: "Monthly care",
         price: 100,
         per: "/mo",
-        turnaround: "Monthly",
-        outcome: "We watch it, test it after every change and fix it when it breaks.",
-        example: "An update on your side breaks the payment step; we catch it the same day and fix it.",
+        outcome: "We test it every month and after every change, and fix what breaks.",
+        scene: "An update breaks checkout on Tuesday morning. It works again by Tuesday afternoon.",
         receive: [
           "One workflow or route watched",
           "A check every month and after your changes",
@@ -215,7 +205,6 @@ export const CATEGORIES: Category[] = [
           "Repairs within the scope of the original build",
           "Cancel at the end of any month",
         ],
-        mailto: "mailto:contact@samedaydesk.com?subject=Keep%20it%20working&body=What%20should%20we%20keep%20working%3F%20",
       },
     ],
   },
@@ -223,8 +212,8 @@ export const CATEGORIES: Category[] = [
 
 export const CUSTOM = {
   slug: "custom_quote",
-  name: "A harder agent-commerce problem?",
-  blurb: "Tell us what must work. You get a written scope and a fixed quote before any work starts.",
+  name: "Something bigger?",
+  blurb: "Tell us what must work. You get a written scope and a fixed price before any work starts.",
 };
 
 export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((category) => category.offers);
@@ -237,5 +226,7 @@ export const PAYMENT_LINKS: Record<string, string> = {
   agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
   machine_payment_route: "https://buy.stripe.com/eVqfZibce2bd2OP7smeZ20D",
   agent_storefront: "https://buy.stripe.com/dRm4gAdkmbLN4WX7smeZ20E",
+  agent_front_door: "https://buy.stripe.com/9B6bJ2gwyaHJ899h2WeZ20I",
+  keep_it_working: "https://buy.stripe.com/5kQ4gAgwyaHJbll8wqeZ20J",
   custom_quote: "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
 };
