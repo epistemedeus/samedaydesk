@@ -155,9 +155,10 @@
   .signin { display: inline; }
   .menuButton, .sheet { display: none; }
 }
-@media (min-width: 980px) {
-  .links { gap: var(--space-l); }
+.links { gap: var(--space-s); }
+@media (min-width: 1280px) {
+  .links { gap: var(--space-m); }
 }
-@media (min-width: 1180px) {
+@media (min-width: 1400px) {
   .x402Label { display: inline; white-space: nowrap; }
 }

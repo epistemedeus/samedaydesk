@@ -154,6 +154,6 @@
 
 /* In the nav only where the links show; the footer carries it at every width. */
 .inNav { display: none; }
-@media (min-width: 900px) { .inNav { display: inline-flex; } }
+@media (min-width: 1100px) { .inNav { display: inline-flex; } }
 .inFooter .trigger { color: var(--ink-dim); }
 .up { position-area: block-start span-inline-end; position-try-fallbacks: flip-inline; }
