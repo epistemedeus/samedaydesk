@@ -187,17 +187,13 @@ export default function Mcp() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine commerce · x402 and native MPP on Base</p>
+          <p className="eyebrow">Agent payments · x402</p>
           <h1 className={styles.h1}>
-            Agents discover a service, call it, <span className="lime">pay, and continue</span>
+            AI agents pay for what they use, <span className="lime">in the same request</span>
           </h1>
           <p className={styles.lead}>
-            Paid tools your agent can call and pay for in the same request: exact USDC on Base through x402 or native MPP. No API key, subscription or account. Start with web data at{" "}
-            <Link className={styles.inlineLink} to={FOR_AGENTS_PATH}>
-              /for-agents
-            </Link>
-            : paid bounded extraction, offline comparison and records, then opt-in reuse.
-            Purchasing never requires publishing.
+            Our gateway sells web data and tools to AI agents. An agent asks, pays a few cents in digital
+            dollars and gets the answer, with no account and no key. We build the same for your service.
           </p>
           <div className={styles.actions}>
             <Link
@@ -205,8 +201,17 @@ export default function Mcp() {
               to={FOR_AGENTS_PATH}
               onClick={() => trackAction("open_for_agents", "hero")}
             >
-              Practical agent jobs →
+              See what agents buy here →
             </Link>
+          </div>
+          <h2 className={styles.engHead}>For engineers</h2>
+          <p className={styles.lead}>
+            Paid tools your agent can call and pay for in the same request: exact USDC on Base through
+            x402 or native MPP. No API key, subscription or account. Start with web data at{" "}
+            <Link className={styles.inlineLink} to={FOR_AGENTS_PATH}>/for-agents</Link>: paid
+            extraction, offline comparison and records, then opt-in reuse.
+          </p>
+          <div className={styles.actions}>
             <a
               className={styles.secondary}
               href="https://github.com/epistemedeus/x402-url-extractor"

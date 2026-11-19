@@ -43,6 +43,14 @@ export default function ForAgents() {
             Fresh web data for your agent, and <span className="lime">free tools to use it</span>
           </h1>
           <p className={styles.lead}>
+            Your agent names up to five web pages and the details it needs from them, and gets clean data
+            back for one cent. No key, no account. Comparing and reusing what it fetched is free.
+          </p>
+          <div className={styles.actions}>
+            <a className={styles.primary} href="#observe-title">Fetch your first pages →</a>
+          </div>
+          <h2 className={styles.engHead}>For engineers</h2>
+          <p className={styles.lead}>
             Your agent sends up to five public web pages and the fields it wants to <code>POST /extract/batch</code>, and gets them back as clean JSON. 0.01 USDC a batch, paid per call with x402: no key, account or subscription. Comparing, mapping and reusing what you already fetched is free and runs on your own machine.
           </p>
           <p className={styles.lead}>

@@ -253,7 +253,7 @@ export const FOR_AGENTS_CRAWLER_HTML = `
     `;
 
 export const X402_CRAWLER_HTML = `
-      <h1>Agents discover a service, call it, pay, and continue</h1>
+      <h1>AI agents pay for what they use, in the same request</h1>
       <p>
         Paid tools your agent can call and pay for in the same request: exact USDC on Base through x402 or native MPP. No API key, subscription or account.
       </p>
