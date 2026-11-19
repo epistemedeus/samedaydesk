@@ -22,6 +22,11 @@
 .entry { display: inline-flex; align-items: center; gap: 0.6em; min-height: 32px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; white-space: nowrap; cursor: pointer; }
 .entry:hover { color: var(--lime); }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); }
+/* A day of paid calls: a hollow mark, so delivered work reads first. */
+.entry[data-kind="day"] { color: var(--ink-dim); }
+.entry[data-kind="day"] .dot { background: none; box-shadow: inset 0 0 0 1.5px var(--lime); }
+.calls { display: grid; gap: 0.2rem; margin: var(--space-xs) 0; padding: 0; list-style: none; font-family: var(--font-mono); }
+.calls li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.2rem; border-bottom: 1px dashed var(--line); }
 .controls { display: flex; gap: var(--space-s); }
 .pause, .all { min-height: 32px; padding: 0 0.2em; border: 0; background: none; color: var(--ink-dim); font: inherit; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; }
 .pause:hover, .all:hover { color: var(--ink); }
@@ -42,7 +47,8 @@
 .tuck { margin-top: var(--space-xs); min-height: 32px; padding: 0; border: 0; background: none; color: var(--ink-dim); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .track, .pause { display: none; }
-  .still { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; width: auto; }
-  .window { mask-image: none; }
+  /* Still, and still one line: it scrolls sideways instead of wrapping. */
+  .still { display: flex; gap: 2rem; width: max-content; }
+  .window { mask-image: none; overflow-x: auto; scrollbar-width: thin; }
 }
 @media (max-width: 600px) { .band { grid-template-columns: 1fr auto; } .cross { display: none; } }
