@@ -34,15 +34,15 @@ export default function Hero() {
         </p>
 
         <h1 ref={h1} className={styles.h1}>
-          <span className={styles.line}>Make your service</span>
+          <span className={styles.line}>Make your business</span>
           <span className={styles.line}>
-            ready for <span className={styles.lime}>agents</span>.
+            usable by <span className={styles.lime}>AI</span>.
           </span>
         </h1>
 
         <p className={styles.sub} data-hero-fade>
-          We build agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine
-          storefronts. Specific scope, working code, tests, and a deployment handoff.
+          When people ask ChatGPT or Claude to book, buy or look something up, your service answers
+          and gets paid. Fixed prices, working the same day.
         </p>
 
         <div className={styles.ctas} data-hero-fade>
@@ -55,8 +55,12 @@ export default function Hero() {
           >
             Get a free route check <span aria-hidden="true">→</span>
           </MagneticButton>
-          <MagneticButton href="#services" variant="ghost">See agent builds</MagneticButton>
+          <MagneticButton href="#services" variant="ghost">See what we build</MagneticButton>
         </div>
+        <p className={styles.fine} data-hero-fade>
+          For engineers: MCP servers, x402 and MPP payment routes, and machine storefronts, built
+          on the service you already run, with the tests that prove them.
+        </p>
 
       </div>
 

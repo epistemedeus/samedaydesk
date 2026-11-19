@@ -126,7 +126,7 @@ export default function Checkout() {
         <aside className={styles.summary}>
           <p className="eyebrow">Order summary</p>
           <h1 className={styles.name}>{offer.name}</h1>
-          <p className={styles.turn}>{offer.turnaround} · acceptance-tested handoff</p>
+          <p className={styles.turn}>Tested before it is delivered to you</p>
           <ul className={styles.includes}>
             {offer.includes.map((i) => (
               <li key={i}><span className={styles.check} aria-hidden="true">›</span> {i}</li>

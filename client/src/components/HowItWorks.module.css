@@ -35,3 +35,7 @@
 @media (min-width: 760px) {
   .steps { grid-template-columns: repeat(3, 1fr); gap: var(--space-m); }
 }
+.stepTech { margin-top: 0.6rem; font-size: var(--step--1); color: var(--ink-dim); }
+.stepTech summary { cursor: pointer; min-height: 24px; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.stepTech summary:hover { color: var(--ink); }
+.stepTech p { margin-top: 0.4rem; }
