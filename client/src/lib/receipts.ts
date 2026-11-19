@@ -46,3 +46,18 @@ export const DAYS: Day[] = Object.entries(
 export const callsLabel = (n: number) => `${n} paid ${n === 1 ? "call" : "calls"} from AI agents`;
 export const dayLine = (d: Day) => [tapeDate(d.date), callsLabel(d.calls.length), d.total].join(" · ");
 export const SETTLED_TOTAL = usdc(SETTLED.reduce((sum, r) => sum + micro(r.amount), 0));
+
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export type Month = { month: string; name: string; days: Day[]; calls: number; total: string };
+/** Paid-call days grouped by month, newest first, for /receipts; the year shows only when it differs from the newest. */
+export const MONTHS_OF_CALLS: Month[] = Object.entries(
+  DAYS.reduce<Record<string, Day[]>>((months, d) => ((months[d.date.slice(0, 7)] ??= []).push(d), months), {}),
+)
+  .sort(([a], [b]) => b.localeCompare(a))
+  .map(([month, days], _, all) => ({
+    month,
+    name: MONTH_NAMES[Number(month.slice(5, 7)) - 1] + (month.slice(0, 4) === all[0][0].slice(0, 4) ? "" : ` ${month.slice(0, 4)}`),
+    days,
+    calls: days.reduce((n, d) => n + d.calls.length, 0),
+    total: usdc(days.flatMap((d) => d.calls).reduce((sum, r) => sum + micro(r.amount), 0)),
+  }));
