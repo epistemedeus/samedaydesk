@@ -1,4 +1,4 @@
-.section { padding-block: var(--space-2xl); }
+.section { padding-block: calc(var(--section) / 2); }
 .head { max-width: 50ch; margin-bottom: var(--space-xl); }
 .title { font-family: var(--font-display); font-size: var(--step-4); margin-top: var(--space-s); }
 .lead { margin-top: var(--space-s); color: var(--ink-dim); font-size: var(--step-1); max-width: 56ch; }
@@ -40,21 +40,30 @@
 }
 .flagship:hover { border-color: var(--lime); }
 
+/* A tag is a dimension label hanging from the card's top rule, inside the card; every card in
+   a row with a tag keeps the same top space, so titles align. Short ticks
+   down from the rule at both ends, the words between them. One style for every tag. */
+.cards:has(.badge) .card { padding-top: calc(var(--space-m) + 1.4em); }
 .badge {
   position: absolute;
-  top: -10px;
-  right: var(--space-m);
+  top: 0;
+  inset-inline-start: var(--space-m);
+  max-width: calc(100% - 2 * var(--space-m));
+  padding: 0.45em 0.7em 0;
+  border-inline: 1px solid currentColor;
   font-family: var(--font-mono);
   font-size: var(--step--2);
+  line-height: 1.2;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0.35em 0.7em;
-  border-radius: 99px;
-  background: var(--bg-2);
-  border: 1px solid var(--line-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--ink-dim);
+  /* The ticks are the side borders, cut to the top 0.7em. */
+  border-image: linear-gradient(currentColor 0.7em, transparent 0) 1;
 }
-.badgeLime { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); font-weight: 600; }
+.badgeLime { color: var(--lime); font-weight: 600; }
 
 .cardTop { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-s); }
 .cardName { font-size: var(--step-2); font-weight: 600; letter-spacing: -0.01em; }
@@ -133,5 +142,6 @@
 .cover { color: inherit; text-decoration: none; outline: none; }
 .cover::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
 .card:has(.cover:focus-visible) { outline: 2px solid var(--lime); outline-offset: 3px; }
-.tech, .cardCta, .badge { position: relative; z-index: 1; }
+.tech, .cardCta { position: relative; z-index: 1; }
+.badge { z-index: 1; }
 .card:hover .cardName { color: var(--lime); }
