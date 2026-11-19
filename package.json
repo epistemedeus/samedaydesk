@@ -15,6 +15,7 @@
     "build": "npm --prefix client install --include=dev && npm --prefix client run build && node scripts/check-public-copy.mjs",
     "check:copy": "node scripts/check-public-copy.mjs",
     "test:keep-list": "node --test tests/keep-list.test.mjs",
+    "test:task-requests": "node --test server/scripts/test-task-requests.js",
     "test:hosted-startup": "node --test server/scripts/test-hosted-startup.js",
     "test:proxy-addr": "node --test --test-concurrency=1 server/scripts/test-proxy-addr-patch.js",
     "start": "node server/index.js",

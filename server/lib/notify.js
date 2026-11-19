@@ -51,6 +51,34 @@ export async function notifyAdmin(subject, html) {
   }
 }
 
+export async function sendTaskRequestReceived({ to, reference, task }) {
+  if (!isEmailConfigured() || !to) return;
+  try {
+    await resend.emails.send({
+      from: FROM,
+      replyTo: REPLY_TO,
+      to,
+      subject: `We have your task (${reference})`,
+      html: taskRequestHtml({ reference, task }),
+    });
+  } catch (e) {
+    console.error("[notify] task request failed", e?.message);
+  }
+}
+
+const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+function taskRequestHtml({ reference, task }) {
+  return `
+  <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
+    <h1 style="font-size:18px;margin:0 0 8px">We have your task</h1>
+    <p style="color:#555">You will get a written scope and a fixed price by email, with a link to pay when you
+    are happy with it. Nothing is charged before that.</p>
+    <p style="margin:16px 0;padding:12px;border:1px solid #ddd;color:#333;white-space:pre-wrap">${escapeHtml(task)}</p>
+    <p style="color:#888;font-size:12px">Reference ${escapeHtml(reference)}. Reply to this email to add anything.</p>
+  </div>`;
+}
+
 function welcomeHtml() {
   return `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
