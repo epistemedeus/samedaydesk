@@ -32,18 +32,18 @@ export default function Proof() {
     <section id="proof" className={styles.section} data-proof ref={root}>
       <div className="container">
         <header className={styles.head} data-reveal>
-          <p className="eyebrow">From working API to agent-ready service</p>
+          <p className="eyebrow">Before and after</p>
           <h2 className={styles.title}>
-            The build is not done until <span className="lime">an agent can use it.</span>
+            It is done when <span className="lime">an AI can use it.</span>
           </h2>
         </header>
 
         <div className={styles.ticket} data-reveal>
           <div className={styles.col} data-step="in">
-            <div className={styles.stamp}><span className={styles.dotMuted} /> Existing service</div>
+            <div className={styles.stamp}><span className={styles.dotMuted} /> Your service today</div>
             <p className={styles.label}>Where it starts</p>
             <p className={clsx(styles.snippet, styles.before)}>
-              “The API works, but an agent cannot discover the right operation, construct the call, or pay for it.”
+              “Our service works for people. When someone asks ChatGPT to use it, nothing happens.”
             </p>
           </div>
 
@@ -54,17 +54,17 @@ export default function Proof() {
 
           <div className={styles.col} data-step="out">
             <div className={clsx(styles.stamp, styles.stampLive)}>
-              <span className={styles.dotLive} /> Acceptance · <span className="mono" data-timestamp>Passed</span>
+              <span className={styles.dotLive} /> Test · <span className="mono" data-timestamp>Passed</span>
             </div>
             <p className={styles.label}>What gets delivered</p>
             <p className={clsx(styles.snippet, styles.after)}>
-              “Published discovery, callable examples, exact payment terms, and a test that proves the result and receipt.”
+              “The assistant finds it, uses it and pays for it, and a test shows it happening.”
             </p>
           </div>
         </div>
 
         <p className={styles.foot}>
-          <span className="mono lime">Working evidence</span> ships with every build
+          <a className="mono lime" href="/receipts">See the receipts</a> of work delivered and paid for
         </p>
       </div>
     </section>
