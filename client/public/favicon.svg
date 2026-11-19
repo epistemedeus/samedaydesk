@@ -1,15 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Theme-adaptive favicon. prefers-color-scheme keys off the BROWSER chrome, not the
-       site theme: oxide stamp on a light tab bar, lime stamp on a dark tab bar. Same mark. -->
-  <style>
-    .tile { fill: #9e3b2e; }
-    .chev { fill: #f4f1ea; }
-    @media (prefers-color-scheme: dark) {
-      .tile { fill: #ccff00; }
-      .chev { fill: #0a0b0d; }
-    }
-  </style>
-  <rect class="tile" width="32" height="32" rx="7"/>
-  <path class="chev" d="M6.5 8.5 L15 16 L6.5 23.5 Z"/>
-  <path class="chev" d="M15.5 8.5 L24 16 L15.5 23.5 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- SameDayDesk: the drafting reticle on a bone tile. A dark browser bar gets the dark tile. -->
+  <style>.t{fill:#f4f1ea}.g{stroke:#c9c4b8}.r{stroke:#9e3b2e}
+  @media (prefers-color-scheme: dark){.t{fill:#101216}.g{stroke:#2a2d33}.r{stroke:#ccff00}}</style>
+  <rect class="t" width="100" height="100" rx="22"/>
+  <path class="g" stroke-width="2" d="M25 0V100M75 0V100M0 25H100M0 75H100"/>
+  <g class="r" fill="none" stroke-width="6"><circle cx="50" cy="50" r="31"/><circle cx="50" cy="50" r="12"/></g>
+  <path class="r" stroke-width="6" d="M50 8V92M8 50H92"/>
 </svg>

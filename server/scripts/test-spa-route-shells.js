@@ -44,6 +44,7 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/for-agents/distribution-repair",
   "/for-agents/consumer-repeat",
   "/for-agents/useful-jobs",
+  "/receipts",
   "/login",
   "/signup",
   "/dashboard",
@@ -57,7 +58,7 @@ const SOURCE_INDEX = readFileSync(join(here, "../../client/index.html"), "utf8")
 const LLMS_TXT = readFileSync(join(here, "../../client/public/llms.txt"), "utf8");
 const BUNDLE_SRC = "/assets/index-8f3a1b2c.js";
 const BUNDLE_CSS = "/assets/index-8f3a1b2c.css";
-const HOME_H1 = "SameDayDesk: make your service ready for agents";
+const HOME_H1 = "SameDayDesk: make your business usable by AI";
 
 test("sitemap lists canonical documentation introductions, not their duplicate directory indexes", () => {
   const publicDir = join(here, "../../client/public");
@@ -176,6 +177,7 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
     SPA_ROUTE_SHELLS.map((route) => route.path),
     [
       "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/for-agents",
+      "/receipts",
       "/for-agents/record-repeat",
       "/for-agents/distribution-repair",
       "/for-agents/consumer-repeat",

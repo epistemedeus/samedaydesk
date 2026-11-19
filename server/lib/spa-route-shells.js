@@ -8,10 +8,10 @@ import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, REC
 // cannot drift from the initial HTML.
 export const ROUTE_SHELL_DIR = "route-shells";
 export const SITE_ORIGIN = "https://samedaydesk.com";
-export const HOME_TITLE = "SameDayDesk: agent commerce, built and shipped";
+export const HOME_TITLE = "SameDayDesk: make your business usable by AI";
 export const HOME_CANONICAL = `${SITE_ORIGIN}/`;
 export const HOME_DESCRIPTION =
-  "We make your service usable and payable by AI agents: workflows, MCP servers, x402 and MPP payments, agent storefronts. Fixed prices from 149 USD, working this week.";
+  "When people ask ChatGPT or Claude to book, buy or look something up, your service answers and gets paid. Fixed prices from 149 USD, working the same day.";
 
 const PUBLIC_SHELLS = [
   {
@@ -19,6 +19,14 @@ const PUBLIC_SHELLS = [
     title: FOR_AGENTS_SHELL.title,
     description: FOR_AGENTS_SHELL.description,
     crawlerHtml: FOR_AGENTS_SHELL.crawlerHtml,
+    ogImage: "/og/for-agents.png",
+  },
+  {
+    path: "/receipts",
+    title: "Receipts: work delivered and paid for | SameDayDesk",
+    description: "Every paid call settled on Base and every piece of delivered work, each with its proof.",
+    crawlerHtml: "<h1>Work delivered, and paid for.</h1><p>Every line links its proof. For agents: <a href=\"/receipts.json\">/receipts.json</a>.</p>",
+    ogImage: "/og/receipts.png",
   },
   {
     path: RECORD_REPEAT_SHELL.path,
@@ -79,6 +87,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
     description: X402_SHELL.description,
     canonical: X402_SHELL.canonical,
     crawlerHtml: X402_SHELL.crawlerHtml,
+    ogImage: "/og/x402.png",
   }),
   Object.freeze({
     path: "/x402/seller-conformance",
@@ -131,6 +140,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
     description:
       "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
     canonical: `${SITE_ORIGIN}/tools/ai-readiness`,
+    ogImage: "/og/ai-readiness.png",
     crawlerHtml: `
       <h1>Is your site visible to AI search?</h1>
       <p>
@@ -257,6 +267,10 @@ export function applyRouteShell(indexHtml, route) {
   html = replaceMetaContent(html, "property", "og:url", route.canonical);
   html = replaceMetaContent(html, "name", "twitter:title", ogTitle);
   html = replaceMetaContent(html, "name", "twitter:description", ogDescription);
+  if (route.ogImage) {
+    html = replaceMetaContent(html, "property", "og:image", `${SITE_ORIGIN}${route.ogImage}`);
+    html = replaceMetaContent(html, "name", "twitter:image", `${SITE_ORIGIN}${route.ogImage}`);
+  }
   if (route.robots) html = upsertMetaContent(html, "robots", route.robots);
   html = replaceJsonLd(html, routeJsonLd(route));
   html = replaceNoscript(html, route.crawlerHtml);
