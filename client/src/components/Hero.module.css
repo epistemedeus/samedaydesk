@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding-top: calc(var(--nav-h) + var(--space-l));
-  padding-bottom: var(--space-xl);
+  padding-bottom: calc(var(--section) / 2);
   overflow: hidden;
   isolation: isolate;
 }

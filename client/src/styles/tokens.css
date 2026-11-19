@@ -38,6 +38,8 @@
   --space-l:   clamp(2.50rem, 2.13rem + 1.85vw, 4.00rem);
   --space-xl:  clamp(4.00rem, 3.30rem + 3.50vw, 7.00rem);
   --space-2xl: clamp(6.00rem, 4.80rem + 6.00vw, 11.0rem);
+  /* One section step: each section pads half of it, so two sections meet one step apart. */
+  --section: var(--space-xl);
 
   /* ── Geometry ── */
   --maxw: 78rem;

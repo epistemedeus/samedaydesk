@@ -1,7 +1,7 @@
 .footer {
   border-top: 1px solid var(--line);
-  padding-top: var(--space-xl);
-  margin-top: var(--space-2xl);
+  padding-top: calc(var(--section) / 2);
+  margin-top: calc(var(--section) / 2);
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--lime) 3%, transparent));
 }
 .inner {
