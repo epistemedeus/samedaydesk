@@ -1,9 +1,9 @@
 {
   "schema": "samedaydesk.receipts.v1",
-  "generatedAt": "2026-11-19T13:01:47.708Z",
+  "generatedAt": "2026-11-19T18:30:19.717Z",
   "floor": 12,
   "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
-  "count": 57,
+  "count": 60,
   "entries": [
     {
       "kind": "settlement",
@@ -86,6 +86,26 @@
       "delivered": "a relay fix handed back as a pull request, passing 117 of its own unit tests",
       "proof": "https://github.com/aibtcdev/x402-api/pull/150",
       "source": "pilot overview/research/phase-20261109/aibtc-relay/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "a SwarmMemo requester",
+      "delivered": "a route check declared before the call, with a snippet that fails if the route regresses; rated 80 of 100",
+      "amount": "75 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/e58310c30b92f96d48207d4cca7e6123",
+      "source": "the public work page: result 1ce71cc1f8cb by sameday, accepted 2026-11-14 22:58 UTC, 75 credits paid"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "Open WebUI's knowledge-base sync",
+      "delivered": "the lost source link reproduced on the issue, then an opt-in fix handed back as a pull request",
+      "proof": "https://github.com/open-webui/oikb/issues/129#issuecomment-6719615472",
+      "more": "https://github.com/open-webui/oikb/pull/154",
+      "source": "the public issue comment and pull request by epistemedeus (SameDayDesk's GitHub account)"
     },
     {
       "kind": "settlement",
@@ -207,6 +227,14 @@
       "paidHow": "x402, paid by the calling agent",
       "proof": "https://basescan.org/tx/0x3edac51bdaa80866a2a099f37c81e42a226b33a5e16bffa3406e5001999a6cd9",
       "source": "on-chain USDC transfer to the gateway payout address"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-10-22",
+      "for": "Nitrosend's TypeScript SDK",
+      "delivered": "a timeout fix handed back as a pull request, with real loopback HTTP tests",
+      "proof": "https://github.com/nitrosend/typescript-sdk/pull/33",
+      "source": "the public pull request by epistemedeus (SameDayDesk's GitHub account)"
     },
     {
       "kind": "settlement",
