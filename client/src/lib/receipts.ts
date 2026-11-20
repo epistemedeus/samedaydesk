@@ -50,10 +50,6 @@ export const tapeShown = () => RECEIPTS.length >= TAPE_FLOOR;
 
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 export const tapeDate = (iso: string) => `${MONTHS[Number(iso.slice(5, 7)) - 1]} ${Number(iso.slice(8, 10))}`;
-export const tapeLine = (r: Receipt) =>
-  [tapeDate(r.date), r.for, r.kind === "delivered" ? r.delivered : null, r.amount ? `${r.amount} · ${r.rail}` : null]
-    .filter(Boolean)
-    .join(" · ");
 
 export { receiptId } from "../data/receiptPages.mjs";
 
@@ -73,7 +69,6 @@ export const DAYS: Day[] = Object.entries(
   .map(([date, calls]) => ({ date, calls, total: usdc(calls.reduce((sum, r) => sum + micro(r.amount), 0)) }));
 
 export const callsLabel = (n: number) => `${n} paid ${n === 1 ? "call" : "calls"}`;
-export const dayLine = (d: Day) => [tapeDate(d.date), callsLabel(d.calls.length), d.total].join(" · ");
 export const SETTLED_TOTAL = usdc(SETTLED.reduce((sum, r) => sum + micro(r.amount), 0));
 
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

@@ -1,6 +1,6 @@
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
-import Tape from "../components/Tape";
+import CreditsRoll from "../components/CreditsRoll";
 import Proof from "../components/Proof";
 import Services from "../components/Services";
 import HowItWorks from "../components/HowItWorks";
@@ -16,7 +16,7 @@ export default function Landing() {
       <Nav />
       <main id="main">
         <Hero />
-        <Tape />
+        <CreditsRoll />
         <Proof />
         <Services />
         <HowItWorks />
