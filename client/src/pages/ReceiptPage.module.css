@@ -32,8 +32,11 @@
 .check p { margin-top: var(--space-xs); color: var(--ink-dim); overflow-wrap: anywhere; }
 .check a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
 .cmd { position: relative; margin-top: var(--space-xs); background: var(--bg-1); border: 1px solid var(--line-2); }
-.cmd pre { margin: 0; padding: var(--space-s); overflow-x: auto; font-family: var(--font-mono); font-size: var(--step--2); line-height: 1.6; color: var(--ink); }
+.cmd pre { margin: 0; padding: var(--space-s); white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: var(--step--2); line-height: 1.6; color: var(--ink); }
 .copy { min-height: 32px; padding: 0 0.8rem; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+/* One block per line: a wrapped line continues at its own indent. */
+.cmdLine { display: block; }
+@media (max-width: 480px) { .check { padding: var(--space-s); } .cmd pre { padding: var(--space-xs); } }
 .copy:hover, .copy:focus-visible { border-color: var(--lime); color: var(--lime); }
 .cmdBar { display: flex; justify-content: space-between; align-items: center; margin: 0 !important; padding: 0.35rem 0.5rem 0.35rem var(--space-s); border-bottom: 1px solid var(--line-2); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
 .chain > div { grid-template-columns: 8.5rem 1fr; }

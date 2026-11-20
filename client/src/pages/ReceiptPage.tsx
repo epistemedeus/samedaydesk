@@ -105,9 +105,14 @@ function Call({ r }: { r: Receipt }) {
 
 function Check({ r }: { r: Receipt }) {
   const [copied, setCopied] = useState(false);
-  const command = `curl -s ${r.check!.rpc} -H 'content-type: application/json' \\\n  -d '${JSON.stringify(r.check!.request)}'`;
+  // One argument per line and one JSON field per line, so the box wraps nothing but the hash.
+  const fields = Object.entries(r.check!.request as Record<string, unknown>);
+  const body = fields.map(([k, v]) => Array.isArray(v)
+    ? `    ${JSON.stringify(k)}: [\n${v.map((x) => `      ${JSON.stringify(x)}`).join(",\n")}\n    ]`
+    : `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`).join(",\n");
+  const command = `curl -s ${r.check!.rpc} \\\n  -H 'content-type: application/json' \\\n  -d '{\n${body}\n  }'`;
   const copy = async () => {
-    try { await navigator.clipboard.writeText(command.replace("\\\n  ", "")); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* select by hand */ }
+    try { await navigator.clipboard.writeText(command); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* select by hand */ }
   };
   return (
     <section className={styles.check} aria-labelledby="check-title">
@@ -115,7 +120,11 @@ function Check({ r }: { r: Receipt }) {
       <p>Ask Base's public endpoint for the transaction's receipt. No account or key.</p>
       <div className={styles.cmd}>
         <p className={styles.cmdBar}><span>Terminal</span><button type="button" onClick={copy} className={styles.copy}>{copied ? "Copied" : "Copy"}</button></p>
-        <pre><code>{command}</code></pre>
+        <pre><code>{command.split("\n").map((line, i) => {
+          // Each line keeps its indent when it wraps, so a long hash stays under its own line.
+          const indent = line.length - line.trimStart().length;
+          return <span key={i} className={styles.cmdLine} style={{ paddingInlineStart: `${indent}ch` }}>{line.trimStart()}{"\n"}</span>;
+        })}</code></pre>
       </div>
       <p>You should see <span className="mono">"status": "0x1"</span> and {r.check!.expect}.</p>
       <p><a href={r.proof} target="_blank" rel="noopener noreferrer">Or open it on Basescan <span aria-hidden="true">↗</span></a></p>
