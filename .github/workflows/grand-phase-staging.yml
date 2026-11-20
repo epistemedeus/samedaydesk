@@ -8,6 +8,48 @@ on:
 permissions:
   contents: read
 jobs:
+  rollback-rehearsal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Merge and revert exclusively on a runner scratch branch
+        env:
+          RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GIT_AUTHOR_NAME: Private rehearsal
+          GIT_AUTHOR_EMAIL: rollback@example.test
+          GIT_COMMITTER_NAME: Private rehearsal
+          GIT_COMMITTER_EMAIL: rollback@example.test
+        run: |
+          set -euo pipefail
+          root="$(mktemp -d)"
+          base="$(git rev-parse refs/remotes/origin/main)"
+          git worktree add -b preview/rollback-"$GITHUB_RUN_ID" "$root/repo" "$base"
+          cd "$root/repo"
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+          manifest() {
+            find client/dist -type f -print0 | sort -z | xargs -0 -r sha256sum
+          }
+          manifest > "$root/prior.sha"
+          test -s "$root/prior.sha"
+          git diff --exit-code "$base" --
+          git merge --no-ff --no-edit "$RELEASE_SHA"
+          merged="$(git rev-parse HEAD)"
+          test "$(git rev-parse "$merged^2")" = "$RELEASE_SHA"
+          git revert -m 1 --no-edit "$merged"
+          reverted="$(git rev-parse HEAD)"
+          git diff --exit-code "$base" "$reverted"
+          npm run build
+          manifest > "$root/revert.sha"
+          diff -u "$root/prior.sha" "$root/revert.sha"
+          echo "ROLLBACK_REHEARSED base=$base release=$RELEASE_SHA merge=$merged revert=$reverted compared=$(wc -l < "$root/revert.sha")"
   site-and-checkout:
     runs-on: ubuntu-24.04
     timeout-minutes: 22
