@@ -6,7 +6,6 @@ import {
   findSellerRepairBrief,
   sellerRepairBriefs,
   sellerRepairBriefUrl,
-  sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
 import {
   findSellerResolvedCase,
@@ -14,12 +13,12 @@ import {
   sellerResolvedCases,
 } from "../data/sellerResolvedCases";
 import { track } from "../lib/posthog";
-import { sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
+import { sellerConformanceCheckout, sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
 import styles from "./SellerConformance.module.css";
 
 const PAGE_TITLE = "Seller audit: get paid by AI agents | SameDayDesk";
 const PAGE_DESCRIPTION =
-  "We call your paid endpoint the way a buying AI agent does and send you exactly what to fix. Live audit 0.01 USDC; fixed repair of one route 490 USD. Agent402 bought one audit and repaired 557 routes.";
+  "We call your paid endpoint the way a buying AI agent does and show you what to fix. Live audit 0.01 USDC; one-route report 490 USD. Agent402 bought one audit and repaired 557 routes.";
 const PAGE_URL = "https://samedaydesk.com/x402/seller-conformance";
 const ACTION_SHA = "ef519956505b195454aa670230b0936258b451fb";
 const MERGE_SHA = "086163e979b6a91a73a8eb82664336ae6dbc5473";
@@ -35,8 +34,6 @@ const AGENT402_BUYER_GUARD_PR_URL = "https://github.com/MikeyPetrillo/Agent402/p
 const AGENT402_DEPLOYED_REPAIR_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/1060";
 const VALIDATION_RECEIPT_URL =
   "/research/agent402-seller-integrity-validation-2026-08-29.json";
-const CTA_MAILTO =
-  "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";
 
 function restoreAttribute(el: Element | null, attribute: string, previous: string | null) {
   if (previous !== null) el?.setAttribute(attribute, previous);
@@ -122,8 +119,8 @@ export default function SellerConformance() {
           </h1>
           <p className={styles.lead}>
             We call your paid endpoint the way a buying agent does, read the payment terms it gets
-            back, and send you exactly what to change. A live audit is 0.01 USDC a call. A fixed
-            repair of one route is 490 USD, and it works or we keep fixing it.
+            back, and show you what to change. The live audit is 0.01 USDC a call. A written
+            report for one public route, with the recommended fixes, is 490 USD.
           </p>
           <div className={styles.actions}>
             <a
@@ -136,11 +133,9 @@ export default function SellerConformance() {
             </a>
             <a
               className={styles.secondary}
-              href={CTA_MAILTO}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={sellerConformanceCheckout(null)}
             >
-              Send us your endpoint
+              Buy the one-route report · 490 USD
             </a>
           </div>
         </header>
@@ -190,7 +185,7 @@ export default function SellerConformance() {
             </div>
             <div className={styles.comparison}>
               <div>
-                <h3>Fixed one-route scope · $490</h3>
+                <h3>One-route report · 490 USD</h3>
                 <ul>
                   {selectedBrief.scope.map((item) => <li key={item}>{item}</li>)}
                 </ul>
@@ -205,21 +200,19 @@ export default function SellerConformance() {
             <div className={styles.actions}>
               <a
                 className={styles.primary}
-                href={sellerRepairFixedScopeUrl(selectedBrief.id)}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={sellerConformanceCheckout(selectedBrief.id)}
               >
-                Open the fixed-scope page
+                Buy the one-route report
               </a>
               <a
                 className={styles.secondary}
-                href={sellerRepairScopeMailto(selectedBrief)}
+                href={sellerRepairFixedScopeUrl(selectedBrief.id)}
                 onClick={() => track("seller_repair_scope_clicked", {
                   finding_id: selectedBrief.id,
                   route_class: selectedBrief.routeClass,
                 })}
               >
-                Approve by email or change scope
+                Read the report scope
               </a>
               {selectedBrief.evidence.map((item) => (
                 <a
@@ -311,7 +304,7 @@ export default function SellerConformance() {
             <li>Each gap named: price, asset, network, recipient, the output a buyer can count on</li>
             <li>The exact change for each one, route by route</li>
             <li>A GitHub check that catches drift on every release</li>
-            <li>The repair itself if you want it: 490 USD a route, fixed price</li>
+            <li>One written report for a public route: 490 USD</li>
           </ol>
         </section>
 
@@ -360,7 +353,7 @@ export default function SellerConformance() {
           </div>
           <p className={styles.prose}>
             Each finding names one route, what a buying agent sees there and the fix. Open one to
-            order its repair at a fixed 490 USD.
+            order a written report at a fixed 490 USD.
           </p>
           <ul className={styles.briefIndex}>
             {sellerRepairBriefs.map((brief) => (
@@ -437,8 +430,8 @@ export default function SellerConformance() {
               <a className={styles.secondary} href="/x402/verified">
                 Routes we checked
               </a>
-              <a className={styles.secondary} href={CTA_MAILTO} target="_blank" rel="noopener noreferrer">
-                Send us your endpoint
+              <a className={styles.secondary} href={sellerConformanceCheckout(null)}>
+                Buy the one-route report · 490 USD
               </a>
             </div>
           </div>

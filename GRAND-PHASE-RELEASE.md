@@ -21,6 +21,14 @@ For Sentinel, confirm the first release check, agreed scope and real paid order 
 
 On rollback stop the newly introduced jobs first. Keep the tables, amount and old obligations, including paid months whose review or mail is pending. Reconcile signed events received during the rollback window before reopening. There is no table-drop or database reset in the rollback.
 
+## Fixed quotes and the 490 USD report
+
+Apply `0010_task_quotes.sql` after 0008/0009. Use the same project and existing `public.task_requests`, not an empty replacement database. Before turning the new routes on, the scoped application login needs SELECT and INSERT on `task_requests` and `task_quotes`, UPDATE on task-request status and quote receipt columns, and the previously listed care-table grants. Use an explicit role policy for these two RLS tables and confirm as that login that both an old task and a newly persisted request can be read. Verify unauthenticated app callers cannot list either table. Connection strings and customer information go only in the host environment and restricted workspace.
+
+Prepare a quote only after the expected scope, acceptance check and amount are known. Write `{"amountCents":12300,"scope":"...","acceptance":"..."}` to a mode-0600 file. Run `node server/scripts/issue-task-quote.mjs <task-uuid> <terms-file> <new-private-receipt-file>`. The command does not send anything. It verifies the immutable price and gives you the one-use link and exact scope for the existing recipient. Reissue with the same terms only; reconcile an ambiguous Stripe response instead of creating a new quote. The signed webhook updates the existing task projection only once. An email mismatch or refund sets `needs_review`; always check that before delivery. Do not infer collected revenue from an opened link.
+
+The SameDayDesk 490 USD report button redirects to the existing Stripe link containing the public-target field. The preview rejects that live URL; set `SDS_TEST_SELLER_CONFORMANCE_LINK` to its test counterpart. At release verify the exact configured payment-link ID, USD amount, target field, and canonical source finding when present. The link buys the report, not realization of every suggested repair.
+
 ## Receipts refresh
 
 Enable the existing application's private `SDS_RECEIPTS_SNAPSHOT_PATH`, an absolute persistent path outside the webroot. The path's parent must be writable by the scheduled writer and readable by the web process. Use the scheduled runner already available on the current hosting account. Confirm `BASE_RPC` serves finalized Base data and old log ranges before starting. Set `RECEIPTS_PRIVATE_EXPORT` to the most recent qualified restricted route and payer projection. Old proof files and the bundled snapshot stay as a fallback.

@@ -93,6 +93,16 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   t.after(() => new Promise((resolve) => server.close(resolve)));
   await once(server, "listening");
   const origin = `http://127.0.0.1:${server.address().port}`;
+  const seller = (query = "") => fetch(origin + "/api/checkout/seller-conformance" + query, { redirect: "manual" });
+  assert.equal((await seller()).status, 503);
+  process.env.SDS_TEST_SELLER_CONFORMANCE_LINK = "https://buy.stripe.com/7sY00keoqbLN899282eZ20F";
+  assert.equal((await seller()).status, 503); // A live link cannot slip into preview.
+  process.env.SDS_TEST_SELLER_CONFORMANCE_LINK = "https://buy.stripe.com/test_preview";
+  const sale = await seller("?finding=hypernatt-liq-radar-20260830");
+  assert.equal(sale.status, 303);
+  assert.equal(sale.headers.get("location"), "https://buy.stripe.com/test_preview?client_reference_id=hypernatt-liq-radar-20260830");
+  assert.equal((await seller("?finding=https%3A%2F%2Fexample.test")).headers.get("location"), "https://buy.stripe.com/test_preview");
+  delete process.env.SDS_TEST_SELLER_CONFORMANCE_LINK;
   const post = (action, body) => fetch(`${origin}/api/care/${action}`, {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
   });
