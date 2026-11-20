@@ -82,12 +82,14 @@ jobs:
           for page in / /receipts /x402 /start.md; do
             curl -fsSL --max-redirs 1 "http://127.0.0.1:31861$page" -o /dev/null
           done
+          node scripts/check-preview-sitemap.mjs http://127.0.0.1:31861 "$(git rev-parse refs/remotes/origin/main)"
           node scripts/check-receipts-refresh.mjs http://127.0.0.1:31861 "$RUNNER_TEMP/receipt-snapshot.json"
           curl -fsS http://127.0.0.1:31861/api/requests -H 'Content-Type: application/json' \
             --data-binary '{"email":"buyer@example.test","task":"Review the example project and agree on scope."}' \
             | jq -e '.received and (.reference | startswith("SDD-"))'
           jq -es 'length == 2 and all(.[]; (.from | contains("@samedaydesk.com")) and (.replyTo == "contact@samedaydesk.com")) and .[0].to == "buyer@example.test" and .[1].to == "desk@example.test"' "$RUNNER_TEMP/sds-outbox.jsonl"
       - name: Paid intake, invoice replay, cancellation and private mail
+        if: success() || failure()
         run: |
           pg_bin="$(pg_config --bindir)"
           pg_root="$(mktemp -d)"
@@ -100,6 +102,7 @@ jobs:
             SDS_PREVIEW_MAIL_OUTBOX="$RUNNER_TEMP/sds-care-outbox.jsonl" STRIPE_SECRET_KEY=sk_test_private_fixture \
             STRIPE_WEBHOOK_SECRET=whsec_private_fixture node --test server/scripts/test-care-preview.mjs
       - run: npm run test:keep-list
+        if: success() || failure()
       - run: node --test scripts/receipts-route-projection.test.mjs
       - run: npm run test:task-requests
       - run: npm run test:checkout-idempotency
