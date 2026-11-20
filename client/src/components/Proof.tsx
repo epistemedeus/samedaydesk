@@ -1,6 +1,5 @@
-import { useRef, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
-import { setupGsap, gsap, prefersReducedMotion } from "../motion/gsap";
 import AiView from "./AiView";
 import styles from "./Proof.module.css";
 
@@ -8,30 +7,10 @@ import styles from "./Proof.module.css";
 // On scroll-in, the connector and acceptance result animate through the established
 // SameDayDesk visual system.
 export default function Proof() {
-  const root = useRef<HTMLElement>(null);
   const [aiView, setAiView] = useState(false);
 
-  useLayoutEffect(() => {
-    if (prefersReducedMotion() || !root.current) return;
-    setupGsap();
-    const ctx = gsap.context(() => {
-      const ts = root.current!.querySelector<HTMLElement>("[data-timestamp]");
-      const out = root.current!.querySelector<HTMLElement>("[data-step='out']");
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: root.current!, start: "top 70%", once: true },
-      });
-      if (out) tl.from(out, { opacity: 0, x: 24, duration: 0.7 }, 0);
-      if (ts) {
-        ts.textContent = "...";
-        tl.to(ts, { duration: 1.2, scrambleText: { text: "Passed", chars: "PASS0123456789 ", speed: 0.4 } }, 0.5);
-      }
-    }, root);
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section id="proof" className={styles.section} data-proof ref={root}>
+    <section id="proof" className={styles.section} data-proof>
       <div className="container">
         <div className={styles.headRow}>
         <header className={styles.head} data-reveal>

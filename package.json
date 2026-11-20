@@ -118,6 +118,7 @@
     "@neomorphic/correspondence": "file:./vendor/visitor-foundry-receiver/services/correspondence",
     "@neomorphic/earned-work": "file:./vendor/neomorphic-opportunity/services/earned-work",
     "@supabase/supabase-js": "^2.108.2",
+    "compression": "1.8.2",
     "express": "^5.2.1",
     "ipaddr.js": "1.9.1",
     "jose": "^6.2.3",

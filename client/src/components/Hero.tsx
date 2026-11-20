@@ -1,27 +1,11 @@
-import { useRef, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import EnergySurface from "./EnergySurface";
-import { setupGsap, gsap, SplitText, prefersReducedMotion } from "../motion/gsap";
 import { HeroCheckForm, HeroCheckReceipt } from "./HeroCheck";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
-  const root = useRef<HTMLDivElement>(null);
-  const h1 = useRef<HTMLHeadingElement>(null);
   const [check, setCheck] = useState<{ result: Parameters<typeof HeroCheckReceipt>[0]["result"]; err: string | null; busy: boolean }>({ result: null, err: null, busy: false });
-
-  useLayoutEffect(() => {
-    if (prefersReducedMotion() || !root.current || !h1.current) return;
-    setupGsap();
-    const ctx = gsap.context(() => {
-      // Velocity headline: split into lines, each masked, snap-in on a soft-settle ease.
-      const split = new SplitText(h1.current!, { type: "lines", mask: "lines", linesClass: "h1line" });
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-      tl.from(split.lines, { yPercent: 115, duration: 0.95, stagger: 0.12 }, 0)
-        .from(root.current!.querySelectorAll("[data-hero-fade]"), { opacity: 0, y: 18, duration: 0.7, stagger: 0.1 }, 0.35);
-    }, root);
-    return () => ctx.revert();
-  }, []);
 
   return (
     <>
@@ -29,12 +13,12 @@ export default function Hero() {
       <EnergySurface />
       <div className={styles.scrim} aria-hidden="true" />
 
-      <div ref={root} className={clsx("container", styles.content)}>
+      <div className={clsx("container", styles.content)}>
         <p className={styles.eyebrow} data-hero-fade>
           <span className={styles.tick} aria-hidden="true" /> Agent commerce · built and shipped
         </p>
 
-        <h1 ref={h1} className={styles.h1}>
+        <h1 className={styles.h1}>
           <span className={styles.line}>Make your business</span>
           <span className={styles.line}>
             usable by <span className={styles.lime}>AI</span>.

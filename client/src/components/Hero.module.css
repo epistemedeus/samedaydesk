@@ -48,6 +48,11 @@
 }
 .line { display: block; }
 .lime { color: var(--lime); }
+@media (prefers-reduced-motion: no-preference) {
+  .line { animation: line-settle 540ms var(--ease-out) both; }
+  .line + .line { animation-delay: 80ms; }
+  @keyframes line-settle { from { transform: translateY(.22em); } to { transform: translateY(0); } }
+}
 
 .sub {
   margin-top: var(--space-m);
