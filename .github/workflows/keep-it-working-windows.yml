@@ -1,4 +1,5 @@
 name: Keep it working, release check
+run-name: Keep it working ${{ inputs.receipt || 'release check' }}
 
 # Installs a named npm MCP server the way a user does, runs its own self-check, starts
 # it over stdio with the Claude Desktop and VS Code configurations, lists its tools and calls one
@@ -17,6 +18,9 @@ on:
       - '.github/workflows/keep-it-working-windows.yml'
   workflow_dispatch:
     inputs:
+      receipt:
+        description: Opaque paid-period run reference
+        default: ''
       package:
         description: npm spec, as the user's configuration names it
         default: sentinel-ir-mcp@0.5.13

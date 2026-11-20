@@ -130,6 +130,50 @@ export function createCareStore(pool) {
       });
     },
 
+    async admitSentinel(id, { spec, at = new Date() }) {
+      return txn(async (db) => {
+        const current = await order(id, db, "for update");
+        if (current?.offer !== "keep_it_working" || current.state !== "paid" || !current.intake) return null;
+        const assigned = await first(db.query(`select * from public.care_periods where order_id = $1
+          and status = 'assigned' order by period_start limit 1`, [id]));
+        if (assigned) return assigned;
+        return first(db.query(`with due as (
+          select invoice_id from public.care_periods where order_id = $1 and status = 'ready'
+            and period_start <= $2 order by period_start limit 1 for update
+          ) update public.care_periods p set status = 'assigned', lease = $3, package_spec = $4,
+            task_ref = $5 from due where p.invoice_id = due.invoice_id returning p.*`,
+        [id, at, randomUUID(), spec, randomUUID()]));
+      });
+    },
+
+    async markSentinelDispatch(id, lease, at = new Date()) {
+      return txn(async (db) => {
+        if ((await order(id, db, "for update"))?.state !== "paid") return null;
+        return first(db.query(`update public.care_periods set dispatch_at = $3
+          where order_id = $1 and lease = $2 and status = 'assigned' and dispatch_at is null returning *`,
+        [id, lease, at]));
+      });
+    },
+
+    async recordSentinelRun(id, lease, runId) {
+      await pool.query(`update public.care_periods set run_id = $3 where order_id = $1 and lease = $2
+        and status = 'assigned' and dispatch_at is not null and (run_id is null or run_id = $3)`, [id, lease, runId]);
+    },
+
+    async reportSentinel(id, lease, runId, checks) {
+      return txn(async (db) => {
+        if ((await order(id, db, "for update"))?.state !== "paid") return false;
+        const period = await first(db.query(`select * from public.care_periods where order_id = $1
+          and lease = $2 and run_id = $3 and status = 'assigned' for update`, [id, lease, runId]));
+        if (!period) return false;
+        const report = { start: period.period_start, end: period.period_end, package: period.package_spec, checks };
+        await db.query("update public.care_periods set status = 'reported',report = $2 where invoice_id = $1",
+          [period.invoice_id, report]);
+        await mail(db, id, `report/${period.invoice_id}`, "report", report);
+        return true;
+      });
+    },
+
     async nextMail(at = new Date()) {
       return first(pool.query(`with chosen as (
         select mail_key from public.care_mail where accepted_at is null and next_attempt_at <= $1

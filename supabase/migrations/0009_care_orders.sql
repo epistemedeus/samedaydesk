@@ -30,7 +30,10 @@ create table if not exists public.care_periods (
   period_end timestamptz not null check (period_end > period_start),
   status text not null default 'ready' check (status in ('ready', 'assigned', 'reported', 'review')),
   lease uuid,
+  package_spec text,
   task_ref text,
+  dispatch_at timestamptz,
+  run_id bigint unique,
   report jsonb,
   unique (order_id, period_start)
 );

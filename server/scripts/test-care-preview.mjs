@@ -9,6 +9,7 @@ import { createCareService } from "../lib/care-service.js";
 import { openCareStore } from "../lib/care-store.js";
 import { careToken } from "../lib/care-contract.js";
 import { drainCareMail } from "../lib/care-mail.js";
+import { sentinelReportingChecks, tickSentinel } from "../lib/care-sentinel.js";
 import { FROM, resend } from "../lib/resend.js";
 import { stripe as signingClient } from "../lib/stripe.js";
 
@@ -142,12 +143,57 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const expired = await start("agent_front_door", expiring);
   assert.equal(expired.status, 409);
   assert.equal((await expired.json()).code, "checkout_expired");
+
+  let runs = [], dispatches = 0, jobReads = 0;
+  const github = {
+    branch: "grand-phase/redo",
+    async dispatch(period) {
+      dispatches++;
+      assert.equal(period.package_spec, "sentinel-ir-mcp@0.5.13");
+      assert.deepEqual(Object.keys(period).filter((key) => ["email", "intake"].includes(key)), []);
+      runs = [{ id: 4123, event: "workflow_dispatch", head_branch: this.branch, status: "in_progress",
+        display_title: `Keep it working ${period.task_ref}`, created_at: new Date().toISOString(), run_attempt: 1 }];
+      throw new Error("lost response after provider admitted the run");
+    },
+    async runs() { return [{ ...runs[0], id: 4124, head_branch: "main" }, ...runs]; },
+    async run(id) { assert.equal(id, 4123); return runs[0]; },
+    async jobs(id, attempt) {
+      jobReads++;
+      assert.equal(id, 4123);
+      assert.equal(attempt, 1);
+      return ["windows-latest", "macos-latest", "ubuntu-24.04"].map((os) => ({
+        name: `release-check (${os})`, status: "completed",
+        steps: [{ name: "Release check", conclusion: os === "macos-latest" ? "failure" : "success" }],
+      }));
+    },
+  };
+  const tick = () => tickSentinel({ store, github, orderId: recurring, spec: "sentinel-ir-mcp@0.5.13" });
+  assert.equal(await tick(), "nothing_due"); // Paid, but scope has not been received.
+  assert.equal((await post("intake", { ...access(recurring), intake })).status, 200);
+  const concurrent = await Promise.all([tick(), tick()]);
+  assert.ok(concurrent.includes("dispatch_needs_readback"));
+  assert.equal(dispatches, 1);
+  assert.equal(await tick(), "running"); // Reconciles from list, not another POST.
+  assert.equal(jobReads, 0);
+  runs[0].status = "completed";
+  assert.equal(await tick(), "reported");
+  assert.equal(await tick(), "nothing_due");
+  assert.equal(dispatches, 1);
+  assert.equal(jobReads, 1);
+  assert.equal(sentinelReportingChecks([{ name: "release-check (ubuntu-24.04)" }]), null);
+  assert.deepEqual((await db.query("select invoice_id,status from public.care_periods order by period_start")).rows,
+    [{ invoice_id: "in_initial", status: "reported" }, { invoice_id: "in_next", status: "review" }]);
+
   const mail = () => drainCareMail({ store, secret, from: FROM, replyTo: "contact@samedaydesk.com",
     send: (...args) => resend.emails.send(...args) });
-  assert.deepEqual(await mail(), { accepted: 4, deferred: 0 });
+  assert.deepEqual(await mail(), { accepted: 6, deferred: 0 });
   assert.deepEqual(await mail(), { accepted: 0, deferred: 0 });
   const messages = (await readFile(process.env.SDS_PREVIEW_MAIL_OUTBOX, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
-  assert.equal(messages.length, 4);
+  assert.equal(messages.length, 6);
   assert.ok(messages.every((message) => message.from.includes("@samedaydesk.com") && message.replyTo === "contact@samedaydesk.com"));
   assert.ok(messages.find((message) => message.to === "two@example.test" && message.subject.endsWith("receipt")).text.includes(access(recurring, "cancel").key));
+  const report = messages.find((message) => message.subject === "Your monthly Keep it working report");
+  assert.match(report.text, /Windows: Passed\./);
+  assert.match(report.text, /macOS: Needs attention\./);
+  assert.match(report.text, /Linux: Passed\./);
 });
