@@ -31,7 +31,23 @@ const entries = [...new Set([...((await sitemap.text()).matchAll(/<loc>([^<]+)<\
     return entry.pathname;
   }))].sort();
 assert.ok(entries.length > 1 && entries[0] === '/', 'The homepage and sitemap inventory are required');
-const paths = entries.filter((_, i) => i % shards === shard);
+const assigned = entries.filter((_, i) => i % shards === shard);
+// A sitemap can also enumerate machine documents. They still need a working
+// route, but Lighthouse's visual budget does not apply to a text file.
+const nonHtml = [];
+const paths = [];
+for (const path of assigned) {
+  const check = await fetch(new URL(path, preview), {
+    method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(8_000),
+  });
+  const contentType = check.headers.get('content-type') ?? '';
+  if (check.status === 200 && contentType && !contentType.includes('text/html')) {
+    nonHtml.push({ path, contentType });
+    console.log('MOBILE_NON_HTML', JSON.stringify(nonHtml.at(-1)));
+  } else {
+    paths.push(path);
+  }
+}
 assert.ok(paths.length > 0);
 const browser = await puppeteer.launch({
   executablePath: AUDIT_CHROME,
@@ -50,6 +66,7 @@ async function measure(origin, path, sample, kind) {
   let finalUrl = null;
   let receipt = null;
   let reportError = null;
+  let slowPage = null;
   const target = new URL(path, origin).href;
   const reportName = `${kind}-${createHash('sha256').update(path).digest('hex').slice(0, 10)}-${sample}.json`;
   try {
@@ -90,6 +107,23 @@ async function measure(origin, path, sample, kind) {
         tbtMs: lhr.audits['total-blocking-time']?.numericValue ?? null,
         navigation: lhr.configSettings.throttlingMethod,
       };
+      if (!onBudget(receipt)) {
+        const details = lhr.audits['lcp-breakdown-insight']?.details?.items ?? [];
+        const timings = details.find((item) => item.type === 'table')?.items ?? [];
+        const blockers = lhr.audits['render-blocking-insight']?.details?.items ?? [];
+        const tasks = lhr.audits['long-tasks']?.details?.items ?? [];
+        const safePath = (value) => {
+          try {
+            const url = new URL(value);
+            return url.origin === origin.origin ? url.pathname : '(other origin)';
+          } catch { return '(unattributed)'; }
+        };
+        slowPage = {
+          timingMs: Object.fromEntries(timings.map(({ subpart, duration }) => [subpart, Math.round(duration)])),
+          blockers: blockers.slice(0, 5).map(({ url, totalBytes, wastedMs }) => [safePath(url), totalBytes, wastedMs]),
+          tasks: tasks.slice(0, 5).map(({ url, duration }) => [safePath(url), Math.round(duration)]),
+        };
+      }
     } else {
       reportError = 'lighthouse_missing_report';
     }
@@ -110,6 +144,7 @@ async function measure(origin, path, sample, kind) {
     path, sample, kind, status: documentStatus, lcpMs: result.lcpMs, cls: result.cls, tbtMs: result.tbtMs,
     pass: result.withinLimits, error: reportError,
   }));
+  if (slowPage && documentStatus === 200) console.log('MOBILE_CAUSAL_TIMING', JSON.stringify({ path, sample, kind, ...slowPage }));
   return result;
 }
 
@@ -144,7 +179,8 @@ const failures = results.filter((r) => r.kind === 'preview' && !r.withinLimits);
 await writeFile(reportFor('summary.json'), JSON.stringify({
   source: GITHUB_SHA ?? null, version, formFactor: 'mobile', throttling: 'simulate', limits,
   scope: 'Public sitemap; browser traffic is limited to same-origin GET/HEAD. Authenticated states are not covered.',
-  shard, shards, totalPages: entries.length, pagesAudited: paths.length, failures: failures.length, compare, results,
+  shard, shards, totalSitemapEntries: entries.length, pagesAudited: paths.length, nonHtml,
+  failures: failures.length, compare, results,
 }, null, 2) + '\n');
 console.log('MOBILE_AUDIT_SUMMARY', JSON.stringify({ pagesAudited: paths.length, failures: failures.length, compare }));
 if (failures.length || (compare && !compare.pass)) process.exitCode = 1;
