@@ -33,7 +33,12 @@ jobs:
           git worktree add -b preview/rollback-"$GITHUB_RUN_ID" "$root/repo" "$base"
           cd "$root/repo"
           npm ci --ignore-scripts --no-audit --no-fund
-          npm run build
+          build() {
+            npm --prefix client ci --include=dev --no-audit --no-fund
+            npm --prefix client run build
+            node scripts/check-public-copy.mjs
+          }
+          build
           manifest() {
             find client/dist -type f -print0 | sort -z | xargs -0 -r sha256sum
           }
@@ -46,7 +51,7 @@ jobs:
           git revert -m 1 --no-edit "$merged"
           reverted="$(git rev-parse HEAD)"
           git diff --exit-code "$base" "$reverted"
-          npm run build
+          build
           manifest > "$root/revert.sha"
           diff -u "$root/prior.sha" "$root/revert.sha"
           echo "ROLLBACK_REHEARSED base=$base release=$RELEASE_SHA merge=$merged revert=$reverted compared=$(wc -l < "$root/revert.sha")"

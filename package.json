@@ -12,7 +12,7 @@
     "dev": "concurrently -k -n server,client -c green,cyan \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "node --watch --env-file=.env server/index.js",
     "dev:client": "npm --prefix client run dev",
-    "build": "npm --prefix client install --include=dev && npm --prefix client run build && node scripts/check-public-copy.mjs",
+    "build": "npm --prefix client ci --include=dev --no-audit --no-fund && npm --prefix client run build && node scripts/check-public-copy.mjs",
     "check:copy": "node scripts/check-public-copy.mjs",
     "test:keep-list": "node --test tests/keep-list.test.mjs",
     "test:task-requests": "node --test server/scripts/test-task-requests.js",
