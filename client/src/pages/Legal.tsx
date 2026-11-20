@@ -48,8 +48,8 @@ export function Terms() {
       <section>
         <h2>1. Who you contract with</h2>
         <p>
-          SameDayDesk is operated by Neomorphic LLC. When you order a build, a monthly service or a
-          paid tool, your agreement is with Neomorphic LLC. Write to us at{" "}
+          The checkout or written order terms identify who provides your service. Write to
+          SameDayDesk at{" "}
           <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
         </p>
       </section>
@@ -68,8 +68,9 @@ export function Terms() {
       <section>
         <h2>3. Monthly services</h2>
         <p>
-          A monthly service is billed each month in advance for the workflow named in its scope. You
-          can cancel at any time; the service runs to the end of the month you paid for.
+          Keep it working covers the workflow named in your order. It renews monthly and is billed in
+          advance. You can cancel future renewals at any time. Your service continues through the
+          end of the paid billing period.
         </p>
       </section>
       <section>
@@ -123,8 +124,8 @@ export function Privacy() {
       <section>
         <h2>1. Who we are</h2>
         <p>
-          SameDayDesk is operated by Neomorphic LLC, which decides how the information below is used.
-          Write to us at <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+          This notice covers the information used to run SameDayDesk. Write to us at{" "}
+          <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
         </p>
       </section>
       <section>
@@ -141,7 +142,9 @@ export function Privacy() {
         <h2>3. Why</h2>
         <p>
           To deliver what you ordered, answer you, run the checks you ask for, keep accurate payment
-          records and see which pages help visitors. We do not sell your information.
+          records and see which pages help visitors. For Keep it working, we use the workflow
+          and release details you supply to run the checks and send your reports. We do not sell
+          your information.
         </p>
       </section>
       <section>

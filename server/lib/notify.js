@@ -1,23 +1,25 @@
 // Transactional + ops notifications via Resend. All best-effort: a failure here must
 // never break the user's request or fulfillment. No-ops until Resend is configured (P3).
-import { resend, isEmailConfigured, FROM } from "./resend.js";
+import { resend, isEmailConfigured, FROM, ownSender } from "./resend.js";
 
 // Transactional mail sends from the mail.samedaydesk.com subdomain (protects the root
 // domain's reputation); replies route to the human-monitored contact@ inbox.
 const REPLY_TO = process.env.RESEND_REPLY_TO || "contact@samedaydesk.com";
+if (!ownSender(REPLY_TO)) throw new Error("SameDayDesk transactional mail needs its own reply address");
 
-const dollars = (cents) => `$${(Number(cents) / 100).toFixed(2)}`;
+const dollars = (cents) => `${(Number(cents) / 100).toFixed(2)} USD`;
 
 export async function sendReceipt({ to, label, amount, orderId }) {
   if (!isEmailConfigured() || !to) return;
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM,
       replyTo: REPLY_TO,
       to,
-      subject: `Your SameDayDesk order — ${label}`,
+      subject: `Your SameDayDesk order: ${label}`,
       html: receiptHtml({ label, amount, orderId }),
-    });
+    }, { idempotencyKey: `order-receipt/${orderId}` });
+    if (error) console.error("[notify] receipt refused");
   } catch (e) {
     console.error("[notify] receipt failed", e?.message);
   }
@@ -45,22 +47,24 @@ export async function notifyAdmin(subject, html) {
   const admin = process.env.ADMIN_EMAIL;
   if (!isEmailConfigured() || !admin) return;
   try {
-    await resend.emails.send({ from: FROM, replyTo: REPLY_TO, to: admin, subject, html });
+    const { error } = await resend.emails.send({ from: FROM, replyTo: REPLY_TO, to: admin, subject, html });
+    if (error) console.error("[notify] admin refused");
   } catch (e) {
     console.error("[notify] admin failed", e?.message);
   }
 }
 
-export async function sendTaskRequestReceived({ to, reference, task }) {
+export async function sendTaskRequestReceived({ to, reference }) {
   if (!isEmailConfigured() || !to) return;
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM,
       replyTo: REPLY_TO,
       to,
       subject: `We have your task (${reference})`,
-      html: taskRequestHtml({ reference, task }),
-    });
+      html: taskRequestHtml({ reference }),
+    }, { idempotencyKey: `task-received/${reference}` });
+    if (error) console.error("[notify] task request refused");
   } catch (e) {
     console.error("[notify] task request failed", e?.message);
   }
@@ -68,13 +72,12 @@ export async function sendTaskRequestReceived({ to, reference, task }) {
 
 const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
-function taskRequestHtml({ reference, task }) {
+function taskRequestHtml({ reference }) {
   return `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
     <h1 style="font-size:18px;margin:0 0 8px">We have your task</h1>
     <p style="color:#555">You will get a written scope and a fixed price by email, with a link to pay when you
     are happy with it. Nothing is charged before that.</p>
-    <p style="margin:16px 0;padding:12px;border:1px solid #ddd;color:#333;white-space:pre-wrap">${escapeHtml(task)}</p>
     <p style="color:#888;font-size:12px">Reference ${escapeHtml(reference)}. Reply to this email to add anything.</p>
   </div>`;
 }
@@ -96,13 +99,13 @@ function welcomeHtml() {
 function receiptHtml({ label, amount, orderId }) {
   return `
   <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:auto;padding:28px;color:#1a1a1a">
-    <h1 style="font-size:18px;margin:0 0 8px">Thanks — we've got your order</h1>
-    <p style="color:#555">We're on it. You'll receive your deliverable by email today.</p>
+    <h1 style="font-size:18px;margin:0 0 8px">We received your order</h1>
+    <p style="color:#555">Keep this receipt for your records.</p>
     <table style="width:100%;border-collapse:collapse;margin:16px 0">
-      <tr><td style="padding:8px 0;color:#888">Service</td><td style="text-align:right;font-weight:600">${label}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Service</td><td style="text-align:right;font-weight:600">${escapeHtml(label)}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Paid</td><td style="text-align:right;font-weight:600">${dollars(amount)}</td></tr>
-      <tr><td style="padding:8px 0;color:#888">Order</td><td style="text-align:right;font-family:monospace">${orderId}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Order</td><td style="text-align:right;font-family:monospace">${escapeHtml(orderId)}</td></tr>
     </table>
-    <p style="color:#888;font-size:12px">SameDayDesk · same-day, money-back guaranteed. Reply to this email any time.</p>
+    <p style="color:#888;font-size:12px">SameDayDesk. Reply to ask about your order.</p>
   </div>`;
 }
