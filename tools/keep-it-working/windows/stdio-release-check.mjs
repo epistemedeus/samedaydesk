@@ -14,7 +14,7 @@
 // passed, 1 when one failed, 2 for a wrong invocation.
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { homedir, tmpdir, release, arch } from "node:os";
+import { tmpdir, release, arch } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
@@ -23,6 +23,7 @@ const { values: opt } = parseArgs({
     package: { type: "string" },
     name: { type: "string" },
     "self-check": { type: "string" },
+    "self-check-config": { type: "boolean", default: false },
     tool: { type: "string" },
     "tool-args": { type: "string", default: "{}" },
     folder: { type: "string" },
@@ -53,7 +54,11 @@ function record(name, ok, said, detail = {}) {
   return ok;
 }
 // What a person types in a terminal: on Windows npx is npx.cmd, so it goes through cmd.
-const terminal = (args) => (WINDOWS ? ["cmd", ["/d", "/s", "/c", ["npx", ...args].join(" ")]] : ["npx", args]);
+function windowsArg(arg) {
+  if (/["%\x21&|<>^\r\n\0]/.test(arg)) throw new Error("Invalid command argument");
+  return /\s/.test(arg) ? `"${arg}"` : arg;
+}
+const terminal = (args) => (WINDOWS ? ["cmd", ["/d", "/s", "/c", ["npx", ...args.map(windowsArg)].join(" ")]] : ["npx", args]);
 const shown = (command, args) => [command, ...args.map((a) => (/[\s"{}]/.test(a) ? JSON.stringify(a) : a))].join(" ");
 
 // ---- 1. The machine, and what npm resolves the package to ------------------------------------------
@@ -96,6 +101,7 @@ try {
 // ---- 4. The package's own self-check, run the way its README says --------------------------------------
 if (opt["self-check"]) {
   const args = ["-y", spec, ...opt["self-check"].split(/\s+/).filter(Boolean)];
+  if (opt["self-check-config"]) args.push("--config", claudeConfigPath);
   const [command, commandArgs] = terminal(args);
   const t0 = Date.now();
   const run = spawnSync(command, commandArgs, { cwd: folder, encoding: "utf8", timeout: firstAnswerMs * 2, env: { ...process.env, NO_COLOR: "1" } });
@@ -105,7 +111,7 @@ if (opt["self-check"]) {
   record("Run the package's own self-check", run.status === 0,
     run.status === 0 ? `It passed in ${Math.round((Date.now() - t0) / 1000)} s. Its last line: "${lastLine}".`
       : run.error ? `It did not finish: ${run.error.code ?? run.error.message}.` : `It exited with ${run.status}. Its last line: "${lastLine}". The full output is in self-check.txt.`,
-    { command: `npx ${args.join(" ")}` });
+    { command: shown("npx", args) });
 }
 
 // ---- 5. Start each configuration over stdio and talk MCP to it -------------------------------------------
@@ -253,7 +259,7 @@ const md = [
   "On the tested operating system with Node 20 or newer, from a copy of the SameDayDesk repository:",
   "",
   "```bat",
-  `node tools\\keep-it-working\\windows\\stdio-release-check.mjs --package ${spec}${opt["self-check"] ? ` --self-check "${opt["self-check"]}"` : ""} --tool ${opt.tool} --tool-args "${opt["tool-args"].replaceAll('"', '\\"')}" --out report`,
+  `node tools/keep-it-working/windows/stdio-release-check.mjs --package ${spec}${opt["self-check"] ? ` --self-check "${opt["self-check"]}"` : ""}${opt["self-check-config"] ? " --self-check-config" : ""} --tool ${opt.tool} --tool-args "${opt["tool-args"].replaceAll('"', '\\"')}" --out report`,
   "```",
   "",
   "Or each step by hand:",

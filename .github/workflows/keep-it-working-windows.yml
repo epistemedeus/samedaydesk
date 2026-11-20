@@ -55,7 +55,7 @@ jobs:
           SELF_CHECK: ${{ inputs.self_check || 'doctor --client claude-desktop' }}
           TOOL: ${{ inputs.tool || 'analyze_directory' }}
           TOOL_ARGS: ${{ inputs.tool_args || '{"path":"{folder}","max_files":10}' }}
-        run: node tools/keep-it-working/windows/stdio-release-check.mjs --package "$PACKAGE" --self-check "$SELF_CHECK" --tool "$TOOL" --tool-args "$TOOL_ARGS" --out report
+        run: node tools/keep-it-working/windows/stdio-release-check.mjs --package "$PACKAGE" --self-check "$SELF_CHECK" --self-check-config --tool "$TOOL" --tool-args "$TOOL_ARGS" --out report
       - name: Report
         if: always()
         shell: bash
