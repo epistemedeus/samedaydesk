@@ -1,4 +1,4 @@
-name: Grand phase SameDayDesk staging checks
+name: Grand phase SameDayDesk private preview
 on:
   push:
     branches: [grand-phase/redo]
@@ -21,8 +21,21 @@ jobs:
           node-version: '22'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run build
+      - name: Built Node app on a private runner
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" NODE_ENV=production PORT=31861 node server/index.js > "$RUNNER_TEMP/sds-preview.log" 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          if ! curl --retry 12 --retry-delay 1 --retry-connrefused -fsS http://127.0.0.1:31861/api/health; then
+            tail -50 "$RUNNER_TEMP/sds-preview.log"
+            exit 1
+          fi
+          for page in / /receipts /x402 /start.md; do
+            curl -fsSL --max-redirs 1 "http://127.0.0.1:31861$page" -o /dev/null
+          done
       - run: npm run test:keep-list
       - run: npm run test:task-requests
       - run: npm run test:checkout-idempotency
       - run: npm run test:seller-repair-checkout
       - run: npm run test:verified-feed
+        if: success() || failure()
