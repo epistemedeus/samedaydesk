@@ -224,8 +224,8 @@ export const flagship = ALL_OFFERS.find((offer) => offer.flagship)!;
 export const PAYMENT_LINKS: Record<string, string> = {
   agent_workflow: "https://buy.stripe.com/7sY3cw8025np9dd282eZ20B",
   agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
-  machine_payment_route: "https://buy.stripe.com/eVqfZibce2bd2OP7smeZ20D",
-  agent_storefront: "https://buy.stripe.com/dRm4gAdkmbLN4WX7smeZ20E",
+  machine_payment_route: "/care/buy?offer=machine_payment_route",
+  agent_storefront: "/care/buy?offer=agent_storefront",
   agent_front_door: "/care/buy?offer=agent_front_door",
   keep_it_working: "/care/buy?offer=keep_it_working",
   custom_quote: "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",

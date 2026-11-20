@@ -3,6 +3,8 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 const immutable = (value) => Object.freeze(value);
 export const CARE_OFFERS = immutable({
   agent_front_door: immutable({ title: "One line for your customers' AI", cents: 24900, mode: "payment" }),
+  machine_payment_route: immutable({ title: "Get paid by AI agents", cents: 49900, mode: "payment" }),
+  agent_storefront: immutable({ title: "A shop AI agents can buy from", cents: 99900, mode: "payment" }),
   keep_it_working: immutable({ title: "Keep it working", cents: 10000, mode: "subscription" }),
 });
 export const isOrderId = (value) => typeof value === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value);

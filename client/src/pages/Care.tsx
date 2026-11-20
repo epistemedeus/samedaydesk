@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ALL_OFFERS } from "../lib/services";
+import { ALL_OFFERS, PAYMENT_LINKS } from "../lib/services";
 import styles from "./Care.module.css";
 
 type Receipt = {
@@ -42,7 +42,7 @@ export function BuyCare() {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const offer = ALL_OFFERS.find((item) => item.slug === query.get("offer") &&
-    ["agent_front_door", "keep_it_working"].includes(item.slug));
+    PAYMENT_LINKS[item.slug]?.startsWith("/care/buy?"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const buy = async () => {

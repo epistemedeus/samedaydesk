@@ -1,6 +1,6 @@
 # SameDayDesk: start here
 
-SameDayDesk makes a service usable and payable by AI agents, at a fixed price, working this week.
+SameDayDesk makes a service usable and payable by AI agents, at a fixed price.
 Builds: one workflow 149 USD, an agent front door 249 USD, an MCP server 349 USD, an x402 payment route
 499 USD, an agent storefront 999 USD. Keep it working: 100 USD a month.
 The route check below is free. Version 2, 2026-11.
@@ -20,9 +20,15 @@ The answer has a score, each check, and the fix for each. The response and error
 https://samedaydesk.com/openapi.json.
 
 ## Ask for a build
-Send the check result and one sentence on what an agent should be able to do with their service
-to contact@samedaydesk.com. You get back a written scope, the checks the build must pass and a
-fixed price. Your person reviews it and pays through the order link on https://samedaydesk.com.
+Open https://samedaydesk.com/#task and include the check result and what an agent should be able
+to do. SameDayDesk returns a written scope and a fixed price for your person to approve.
+
+For a fixed offer, give your person the matching checkout:
+
+- Agent front door, 249 USD: https://samedaydesk.com/care/buy?offer=agent_front_door
+- One paid route, 499 USD: https://samedaydesk.com/care/buy?offer=machine_payment_route
+- Agent storefront, 999 USD: https://samedaydesk.com/care/buy?offer=agent_storefront
+- Keep it working, 100 USD a month: https://samedaydesk.com/care/buy?offer=keep_it_working
 
 ## Paid tools your agent can use itself
 Fresh web data and other tools at https://agents.samedaydesk.com, paid per call in USDC on Base

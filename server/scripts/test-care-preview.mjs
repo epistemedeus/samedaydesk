@@ -16,6 +16,7 @@ import { stripe as signingClient } from "../lib/stripe.js";
 test("built HTTP preview and real PostgreSQL receive both checkouts, money authority and branded delivery", async (t) => {
   const secret = "isolated care access secret sufficient length";
   const primary = randomUUID(), recurring = randomUUID(), expiring = randomUUID();
+  const route = randomUUID(), shop = randomUUID();
   const provider = new Map();
   const db = new pg.Pool({ connectionString: process.env.SDS_CARE_DATABASE_URL });
   const store = openCareStore();
@@ -32,7 +33,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
         assert.equal(args.line_items[0].quantity, 1);
         assert.match(args.integration_identifier, /^sameday-care-[a-z]{8}$/);
         assert.equal(args.line_items[0].price_data.currency, "usd");
-        const expected = id === recurring ? 10000 : 24900;
+        const expected = id === recurring ? 10000 : id === route ? 49900 : id === shop ? 99900 : 24900;
         assert.equal(args.line_items[0].price_data.unit_amount, expected);
         assert.equal(args.line_items[0].price_data.recurring?.interval, id === recurring ? "month" : undefined);
         assert.equal(new URL(args.success_url).search, "");
@@ -143,6 +144,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const expired = await start("agent_front_door", expiring);
   assert.equal(expired.status, 409);
   assert.equal((await expired.json()).code, "checkout_expired");
+  assert.equal((await start("machine_payment_route", route)).status, 200);
+  assert.equal((await start("agent_storefront", shop)).status, 200);
+  assert.equal((await store.order(route)).amount_cents, 49900);
+  assert.equal((await store.order(shop)).amount_cents, 99900);
 
   let runs = [], dispatches = 0, jobReads = 0;
   const github = {

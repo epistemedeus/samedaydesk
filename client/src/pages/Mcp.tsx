@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
 import { applyMachineMetadata, FOR_AGENTS_PATH, X402_SHELL } from "../data/machineEntry.mjs";
 import { receiptId, short, tapeDate, useReceiptFeed, type Receipt } from "../lib/receipts";
+import { ALL_OFFERS, PAYMENT_LINKS } from "../lib/services";
 import styles from "./Mcp.module.css";
 import x from "./X402.module.css";
 
@@ -282,6 +283,29 @@ export default function Mcp() {
               <li>The exact route, method, price, asset and recipient</li>
               <li>Whether the answer will carry the fields it needs</li>
               <li>Whether a payment it made really settled</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className={styles.sellerOffer} aria-labelledby="machine-build-title">
+          <div>
+            <p className="eyebrow">Make your own service payable</p>
+            <h2 id="machine-build-title">Give buying agents a working route</h2>
+            <p>We can make one existing API operation payable, or build a storefront for up to five.</p>
+            <div className={styles.actions}>
+              {ALL_OFFERS.filter(({ slug }) => slug === "machine_payment_route" || slug === "agent_storefront")
+                .map(({ slug, price }) => <a className={slug === "machine_payment_route" ? styles.primary : styles.secondary}
+                  href={PAYMENT_LINKS[slug]} key={slug}>
+                  {slug === "machine_payment_route" ? "Buy a payment route" : "Buy an agent storefront"} · {price} USD
+                </a>)}
+            </div>
+          </div>
+          <div className={styles.offerCard}>
+            <span>Both builds include</span>
+            <ul>
+              <li>A request an agent can build and run</li>
+              <li>Tests for the payment and receipt</li>
+              <li>Instructions to keep it working</li>
             </ul>
           </div>
         </section>

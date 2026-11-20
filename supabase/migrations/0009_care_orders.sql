@@ -1,8 +1,9 @@
 -- Owner-only checkout and fulfilment journal. Existing tasks and orders are unchanged.
 create table if not exists public.care_orders (
   id uuid primary key,
-  offer text not null check (offer in ('agent_front_door', 'keep_it_working')),
-  amount_cents integer not null check ((offer = 'agent_front_door' and amount_cents = 24900) or (offer = 'keep_it_working' and amount_cents = 10000)),
+  offer text not null,
+  amount_cents integer not null check ((offer, amount_cents) in
+    (('agent_front_door', 24900), ('keep_it_working', 10000), ('machine_payment_route', 49900), ('agent_storefront', 99900))),
   live_mode boolean not null,
   created_at timestamptz not null default now(),
   checkout_expires_at timestamptz not null,
