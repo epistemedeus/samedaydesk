@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import StubPage from "./StubPage";
-import { RECEIPTS, tapeShown, utcTime, type Receipt } from "../lib/receipts";
+import { useReceiptFeed, utcTime, type Receipt } from "../lib/receipts";
 import { longDate, receiptHeading, receiptId } from "../data/receiptPages.mjs";
 import styles from "./ReceiptPage.module.css";
 
@@ -12,14 +12,16 @@ import styles from "./ReceiptPage.module.css";
 // it, decoded from the transaction, and the one request anyone can send to see the same log.
 export default function ReceiptPage() {
   const { id } = useParams();
-  const r = RECEIPTS.find((entry) => receiptId(entry) === id);
+  const { entries, floor, ready } = useReceiptFeed();
+  const r = entries.find((entry) => receiptId(entry) === id);
   useEffect(() => {
     if (!r) return;
     const previous = document.title;
     document.title = `Receipt ${id} | SameDayDesk`;
     return () => { document.title = previous; };
   }, [r, id]);
-  if (!r || !tapeShown()) return <StubPage title="Not found" note="That receipt doesn't exist." notFound />;
+  if (!r && !ready) return <StubPage title="Opening receipt" note="Reading the receipt." />;
+  if (!r || entries.length < floor) return <StubPage title="Not found" note="That receipt doesn't exist." notFound />;
   const work = r.kind === "delivered";
   return (
     <>

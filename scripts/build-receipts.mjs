@@ -17,12 +17,13 @@
 //   node scripts/build-receipts.mjs [--from-block N]
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { exclusionPolicy } from "./receipts-route-projection.mjs";
+import { applyRouteExport } from "./receipts-route-projection.mjs";
+import { writeReceiptSnapshot } from "../server/lib/receipt-snapshot.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 // Ranges of old logs need an RPC that serves them (publicnode does, 10,000 blocks a call); single
 // transactions and blocks by hash or number are read from Base's own endpoint, which serves old ones.
-const LOG_RPC = process.env.BASE_RPC || "https://base-rpc.publicnode.com";
+const LOG_RPC = process.env.BASE_RPC;
 const HASH_RPC = process.env.BASE_HASH_RPC || "https://mainnet.base.org";
 // What a visitor runs to check a receipt: the public endpoint, one request, the same log back.
 const CHECK_RPC = "https://mainnet.base.org";
@@ -35,10 +36,11 @@ const fromArg = process.argv.indexOf("--from-block");
 const FROM = fromArg > 0 ? Number(process.argv[fromArg + 1]) : 51_000_000;
 const read = (path) => JSON.parse(readFileSync(`${root}/${path}`, "utf8"));
 const restrictedPolicyPath = process.env.RECEIPTS_PRIVATE_EXPORT;
+if (!LOG_RPC || new URL(LOG_RPC).protocol !== "https:") throw new Error("BASE_RPC must identify the admitted archive endpoint.");
 if (!restrictedPolicyPath) throw new Error("RECEIPTS_PRIVATE_EXPORT must identify the current private payer policy projection.");
 const policy = JSON.parse(readFileSync(restrictedPolicyPath, "utf8"));
 if (policy.invalid !== 0 || !Array.isArray(policy.rows)) throw new Error("Incomplete private payment policy projection.");
-const privateExcluded = exclusionPolicy(policy.internalHashes, policy.rows.filter((r) => r.internal).map((r) => r.transaction));
+const { routes, exclude: privateExcluded } = applyRouteExport(read("data/receipts/routes.json"), policy);
 
 async function rpc(url, method, params, tries = 5) {
   for (let i = 0; i < tries; i++) {
@@ -62,7 +64,10 @@ const topicTo = "0x" + PAY_TO.slice(2).toLowerCase().padStart(64, "0");
 const logs = [];
 let head;
 try {
-  head = parseInt(await rpc(LOG_RPC, "eth_blockNumber", []), 16);
+  if (await rpc(LOG_RPC, "eth_chainId", []) !== "0x2105") throw new Error("Wrong settlement network");
+  const finalized = await rpc(LOG_RPC, "eth_getBlockByNumber", ["finalized", false]);
+  head = Number.parseInt(finalized?.number ?? "", 16);
+  if (!Number.isSafeInteger(head) || head < FROM) throw new Error("Finalized source head unavailable");
   for (let from = FROM; from <= head; from += STEP) {
     const to = Math.min(head, from + STEP - 1);
     logs.push(...await rpc(LOG_RPC, "eth_getLogs", [{ address: USDC, topics: [TRANSFER, null, topicTo], fromBlock: "0x" + from.toString(16), toBlock: "0x" + to.toString(16) }]));
@@ -73,7 +78,7 @@ try {
     logs.push(...receipt.logs.filter((l) => l.address.toLowerCase() === USDC && l.topics[0] === TRANSFER && l.topics[2] === topicTo));
   }
 } catch (error) {
-  console.error(`receipts: on-chain history unavailable (${String(error.message).slice(0, 160)}). Set BASE_RPC to an endpoint that serves old log ranges.`);
+  console.error(`receipts: on-chain history unavailable (${error.name}). BASE_RPC must serve finalized head and old logs.`);
   process.exit(1);
 }
 
@@ -85,7 +90,6 @@ const address = (w) => "0x" + w.slice(24);
 const payers = read("data/receipts/payers.json");
 const internal = new Set(payers.internal.map((p) => p.address.toLowerCase()));
 const independent = new Map(payers.independent.map((p) => [p.address.toLowerCase(), p]));
-const routes = read("data/receipts/routes.json");
 const delivered = read("data/receipts/delivered.json").entries;
 const deliveredTx = new Set(delivered.map((e) => e.proof.match(/\/tx\/(0x[0-9a-f]{64})/i)?.[1]?.toLowerCase()).filter(Boolean));
 const blockTimes = new Map();
@@ -181,11 +185,15 @@ const out = {
   method: "Each paid call is read from Base: the USDC Transfer to the payout address, made by a transferWithAuthorization call. Payers are classified from cited records; our own wallets are left out; unresolved payers are shown with no claim about who they are.",
   entries,
 };
-writeFileSync(`${root}/client/public/receipts.json`, JSON.stringify(out, null, 2) + "\n");
-// The same bytes, imported by the tape and /receipts at build time.
-writeFileSync(`${root}/client/src/data/receipts.json`, JSON.stringify(out, null, 2) + "\n");
-console.log(`receipts: ${calls} paid calls (${out.classes.independent} independent, ${out.classes.unresolved} unresolved; ${left.internal} from our own wallets and ${left.notSettlement} other transfers left out, ${left.duplicate} already delivered work) of ${logs.length} transfers in through block ${head}; ${delivered.length} delivered; ${entries.length} total (floor ${FLOOR})`);
 if (entries.length < FLOOR) {
   console.error(`receipts: ${entries.length} entries is under the floor of ${FLOOR}; the tape would not show.`);
   process.exit(1);
 }
+const bytes = JSON.stringify(out, null, 2) + "\n";
+if (process.env.SDS_RECEIPTS_SNAPSHOT_PATH) await writeReceiptSnapshot(process.env.SDS_RECEIPTS_SNAPSHOT_PATH, bytes);
+else {
+  writeFileSync(`${root}/client/public/receipts.json`, bytes);
+  // Same bytes for the static fallback shipped with the release.
+  writeFileSync(`${root}/client/src/data/receipts.json`, bytes);
+}
+console.log(`receipts: ${calls} paid calls through finalized block ${head}; ${delivered.length} delivered; ${entries.length} total`);

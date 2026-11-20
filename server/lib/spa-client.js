@@ -2,8 +2,10 @@ import path from "node:path";
 import express from "express";
 import { createSpaFallback } from "./spa-fallback.js";
 import { createRouteShellMiddleware } from "./spa-route-shells.js";
+import { mountReceiptSnapshot } from "./receipt-snapshot.js";
 
 export function mountProductionClient(app, clientDist) {
+  mountReceiptSnapshot(app, clientDist);
   app.use(createRouteShellMiddleware(clientDist));
   app.use(
     express.static(clientDist, {

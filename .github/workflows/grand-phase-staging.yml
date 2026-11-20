@@ -23,7 +23,7 @@ jobs:
       - run: npm run build
       - name: Built Node app on a private runner
         run: |
-          env -i PATH="$PATH" HOME="$RUNNER_TEMP" NODE_ENV=production PORT=31861 node server/index.js > "$RUNNER_TEMP/sds-preview.log" 2>&1 &
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" NODE_ENV=production PORT=31861 SDS_RECEIPTS_SNAPSHOT_PATH="$RUNNER_TEMP/receipt-snapshot.json" node server/index.js > "$RUNNER_TEMP/sds-preview.log" 2>&1 &
           pid=$!
           trap 'kill "$pid" 2>/dev/null || true' EXIT
           if ! curl --retry 12 --retry-delay 1 --retry-connrefused -fsS http://127.0.0.1:31861/api/health; then
@@ -33,6 +33,7 @@ jobs:
           for page in / /receipts /x402 /start.md; do
             curl -fsSL --max-redirs 1 "http://127.0.0.1:31861$page" -o /dev/null
           done
+          node scripts/check-receipts-refresh.mjs http://127.0.0.1:31861 "$RUNNER_TEMP/receipt-snapshot.json"
       - run: npm run test:keep-list
       - run: node --test scripts/receipts-route-projection.test.mjs
       - run: npm run test:task-requests

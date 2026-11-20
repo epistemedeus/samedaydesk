@@ -4,7 +4,7 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
 import { applyMachineMetadata, FOR_AGENTS_PATH, X402_SHELL } from "../data/machineEntry.mjs";
-import { CLASSES, RECEIPTS, receiptId, short, tapeDate } from "../lib/receipts";
+import { receiptId, short, tapeDate, useReceiptFeed, type Receipt } from "../lib/receipts";
 import styles from "./Mcp.module.css";
 import x from "./X402.module.css";
 
@@ -131,6 +131,8 @@ function MachineName({ name }: { name: string }) {
 }
 
 export default function Mcp() {
+  const { entries } = useReceiptFeed();
+  const latestPaid = entries.find((r) => r.kind === "settlement");
   useEffect(() => {
     const restoreMetadata = applyMachineMetadata(document, X402_SHELL);
 
@@ -229,8 +231,8 @@ export default function Mcp() {
               <h3>See every payment</h3>
               <p>
                 Each paid call is one USDC transfer on Base, with its own transaction. Ours are on{" "}
-                <Link to="/receipts">the receipts page</Link>, each decoded with a request you can send to check it;{" "}
-                <Link to={`/receipts/${receiptId(RECEIPTS.find((r) => r.kind === "settlement")!)}`}>here is the latest</Link>.
+                <Link to="/receipts">the receipts page</Link>, each decoded with a request you can send to check it.
+                {latestPaid && <> <Link to={`/receipts/${receiptId(latestPaid)}`}>See the latest paid call.</Link></>}
               </p>
             </article>
             <article>
@@ -353,8 +355,9 @@ function Sequence() {
 
 // A small strip of the latest receipts, linking to all of them.
 function CreditsStrip() {
-  const latest = RECEIPTS.slice(0, 8);
-  const item = (r: (typeof RECEIPTS)[number], copy = false) => (
+  const { entries, classes } = useReceiptFeed();
+  const latest = entries.slice(0, 8);
+  const item = (r: Receipt, copy = false) => (
     <li key={`${r.proof}${copy ? "-again" : ""}`} aria-hidden={copy || undefined}>
       <Link to={`/receipts/${receiptId(r)}`} tabIndex={copy ? -1 : undefined}>
         <span>{tapeDate(r.date)}</span>
@@ -364,7 +367,7 @@ function CreditsStrip() {
   );
   return (
     <aside className={x.strip} aria-label="Latest receipts">
-      <Link to="/receipts" className={x.stripHead}>{CLASSES.paidCalls} paid calls, read from Base <span aria-hidden="true">→</span></Link>
+      <Link to="/receipts" className={x.stripHead}>{classes.paidCalls} paid calls, read from Base <span aria-hidden="true">→</span></Link>
       <div className={x.stripWindow}>
         <ul className={x.stripTrack}>{latest.map((r) => item(r))}{latest.map((r) => item(r, true))}</ul>
       </div>

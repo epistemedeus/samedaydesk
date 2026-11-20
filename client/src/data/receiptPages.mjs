@@ -20,7 +20,7 @@ export function receiptHeading(r) {
   return r.kind === "settlement" ? (r.tool ? `A paid call: ${r.tool.name}` : "A paid call to the gateway") : r.for;
 }
 
-export const RECEIPT_SHELLS = data.entries.map((r) => {
+export function receiptShell(r) {
   const id = receiptId(r);
   const what = r.kind === "settlement"
     ? `A paid call to the SameDayDesk gateway${r.tool ? ` (${r.tool.name})` : ""}, settled on ${r.rail} on ${longDate(r.date)}: transaction ${r.chain.transactionHash}, block ${r.chain.blockNumber}, from wallet ${r.payer.address}${r.payer.class === "independent" ? `, ${r.payer.label}` : ""}.`
@@ -33,7 +33,9 @@ export const RECEIPT_SHELLS = data.entries.map((r) => {
     crawlerHtml: `<h1>${esc(receiptHeading(r))}</h1><p>${esc(what)}</p><p><a href="${esc(r.proof)}">The proof</a> · <a href="/receipts">All receipts</a></p>`,
     ogImage: "/og/receipts.png",
   };
-});
+}
+
+export const RECEIPT_SHELLS = data.entries.map(receiptShell);
 
 const seen = new Set();
 for (const shell of RECEIPT_SHELLS) {

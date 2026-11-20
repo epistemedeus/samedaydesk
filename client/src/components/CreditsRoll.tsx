@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { CLASSES, RECEIPTS, receiptId, short, tapeDate, tapeShown, utcTime, type Receipt } from "../lib/receipts";
+import { receiptId, short, tapeDate, useReceiptFeed, utcTime, type Receipt } from "../lib/receipts";
 import styles from "./CreditsRoll.module.css";
 
 const SPEED = 22; // px per second, upward
@@ -12,6 +12,8 @@ const EASE_MS = 400; // the roll eases to a stop, and back, over this long
 // the rest dim; leaving resumes from where it stopped. With reduced motion the screen is a still
 // list that scrolls.
 export default function CreditsRoll() {
+  const { entries, classes, floor } = useReceiptFeed();
+  const shown = entries.length >= floor;
   const screen = useRef<HTMLDivElement>(null);
   const reel = useRef<HTMLDivElement>(null);
   const first = useRef<HTMLOListElement>(null);
@@ -64,9 +66,9 @@ export default function CreditsRoll() {
       box.removeEventListener("focusout", blur);
       box.removeEventListener("scroll", unscroll);
     };
-  }, []);
+  }, [shown]);
 
-  if (!tapeShown()) return null;
+  if (!shown) return null;
   return (
     <section className={styles.band} aria-labelledby="credits-title">
       <div className={styles.frame}>
@@ -75,18 +77,18 @@ export default function CreditsRoll() {
         <header className={styles.head}>
           <h2 id="credits-title" className={styles.title}>Receipts, read from Base</h2>
           <p className={styles.counts}>
-            <span><b>{CLASSES.delivered}</b> delivered jobs</span>
-            <span><b>{CLASSES.paidCalls}</b> paid calls</span>
+            <span><b>{classes.delivered}</b> delivered jobs</span>
+            <span><b>{classes.paidCalls}</b> paid calls</span>
             <span>each one checked on Base</span>
           </p>
         </header>
         <div ref={screen} className={styles.screen}>
           <div ref={reel} className={styles.reel}>
             <ol ref={first} className={styles.list}>
-              {RECEIPTS.map((r) => <Entry key={r.proof} r={r} />)}
+              {entries.map((r) => <Entry key={r.proof} r={r} />)}
             </ol>
             <ol className={`${styles.list} ${styles.again}`} aria-hidden="true">
-              {RECEIPTS.map((r) => <Entry key={r.proof} r={r} copy />)}
+              {entries.map((r) => <Entry key={r.proof} r={r} copy />)}
             </ol>
           </div>
         </div>

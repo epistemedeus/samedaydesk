@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import StubPage from "./StubPage";
-import { CLASSES, DELIVERED, MONTHS_OF_CALLS, SETTLED, SETTLED_TOTAL, callsLabel, receiptId, short, tapeDate, tapeShown, utcTime } from "../lib/receipts";
+import { callsLabel, monthsOfCalls, receiptId, settledTotal, short, tapeDate, useReceiptFeed, utcTime } from "../lib/receipts";
 import styles from "./Receipts.module.css";
 
 // The whole tape. Delivered work first, as full entries; then the paid calls to the gateway, one
@@ -11,6 +11,9 @@ import styles from "./Receipts.module.css";
 // record says, the paying wallet and the transaction. Built from receiving records and the chain;
 // present only once the tape is.
 export default function Receipts() {
+  const { entries, classes, floor } = useReceiptFeed();
+  const delivered = entries.filter((r) => r.kind === "delivered").sort((a, b) => b.date.localeCompare(a.date));
+  const settled = entries.filter((r) => r.kind === "settlement");
   useEffect(() => {
     const previous = document.title;
     document.title = "Receipts: work delivered and paid | SameDayDesk";
@@ -24,8 +27,8 @@ export default function Receipts() {
     for (let el: Element | null = target; el; el = el.parentElement) if (el instanceof HTMLDetailsElement) el.open = true;
     target.querySelector("details")?.setAttribute("open", "");
     target.scrollIntoView({ block: "start" });
-  }, [hash]);
-  if (!tapeShown()) return <StubPage title="Not found" note="That page doesn't exist." notFound />;
+  }, [hash, entries]);
+  if (entries.length < floor) return <StubPage title="Not found" note="That page doesn't exist." notFound />;
   return (
     <>
       <Nav />
@@ -33,14 +36,14 @@ export default function Receipts() {
         <p className="eyebrow">Receipts · from the ledger</p>
         <h1 className={styles.h1}>Work delivered, and paid for.</h1>
         <p className={styles.lead}>
-          {DELIVERED.length} pieces of delivered work, and {SETTLED.length} paid calls to the SameDayDesk gateway
-          settled on Base from {CLASSES.distinctWallets} wallets. Every line links its proof. For agents: <a href="/receipts.json">/receipts.json</a>.
+          {delivered.length} pieces of delivered work, and {settled.length} paid calls to the SameDayDesk gateway
+          settled on Base from {classes.distinctWallets} wallets. Every line links its proof. For agents: <a href="/receipts.json">/receipts.json</a>.
         </p>
 
         <section aria-labelledby="delivered">
           <h2 id="delivered" className={styles.h2}>Delivered work</h2>
           <ol className={styles.work}>
-            {DELIVERED.map((r) => (
+            {delivered.map((r) => (
               <li key={r.proof} className={styles.job}>
                 <span className={styles.date}>{tapeDate(r.date)}</span>
                 <div className={styles.what}>
@@ -60,17 +63,17 @@ export default function Receipts() {
         <section aria-labelledby="calls">
           <h2 id="calls" className={styles.h2}>Paid calls to the SameDayDesk gateway</h2>
           <p className={styles.note}>
-            Paid per call over x402, {SETTLED_TOTAL} in all, each read from Base. Each month opens to its days, and each day to its calls.
+            Paid per call over x402, {settledTotal(settled)} in all, each read from Base. Each month opens to its days, and each day to its calls.
           </p>
           {/* Who paid: the counts behind the homepage's roll, with what each class means. */}
           <dl className={styles.legend} aria-label="Who paid">
-            <div><dt>{CLASSES.paidCalls}</dt><dd>paid calls, each with its transaction on Base</dd></div>
-            <div><dt>{CLASSES.distinctWallets}</dt><dd>wallets paid for them; our own {CLASSES.ourOwnWalletsLeftOut} are left out</dd></div>
-            <div><dt>{CLASSES.independent}</dt><dd>calls from parties we can name, marked <span className={styles.ind}>independent</span></dd></div>
-            <div><dt>{CLASSES.unresolved}</dt><dd>calls shown by wallet alone, with no claim about who runs it</dd></div>
+            <div><dt>{classes.paidCalls}</dt><dd>paid calls, each with its transaction on Base</dd></div>
+            <div><dt>{classes.distinctWallets}</dt><dd>paying wallets</dd></div>
+            {classes.independent > 0 && <div><dt>{classes.independent}</dt><dd>calls marked <span className={styles.ind}>independent</span></dd></div>}
+            {classes.unresolved > 0 && <div><dt>{classes.unresolved}</dt><dd>calls shown by wallet address</dd></div>}
           </dl>
           <ol className={styles.months}>
-            {MONTHS_OF_CALLS.map((m) => (
+            {monthsOfCalls(settled).map((m) => (
               <li key={m.month} id={`month-${m.month}`} className={styles.month}>
                 <details>
                   <summary>
