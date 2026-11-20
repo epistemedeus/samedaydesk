@@ -147,7 +147,7 @@ export const FOR_AGENTS_CANONICAL = `${SITE_ORIGIN}${FOR_AGENTS_PATH}`;
 export const X402_PATH = "/x402";
 export const X402_TITLE = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
 export const X402_DESCRIPTION =
-  "Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents.";
+  "Web data and checks your AI agent can buy one call at a time: read the web, check a payment or seller, company and wallet profiles, lending positions on Base. From 0.002 USDC per call over x402 or MPP, no account or key.";
 export const X402_CANONICAL = `${SITE_ORIGIN}${X402_PATH}`;
 
 // Client-side navigation must update the same metadata as a direct route-shell load.

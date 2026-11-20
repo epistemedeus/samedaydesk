@@ -25,6 +25,7 @@ import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
+import { createX402QuoteRouter } from "./routes/x402-quote.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
@@ -135,6 +136,7 @@ app.use("/api/stripe", stripeWebhookRouter);
 app.use("/api/webhooks/resend", resendWebhookRouter);
 app.use("/api/market-observations", marketObservationsRouter);
 app.use("/api/observatory", observatoryRouter);
+app.use("/api/x402-quote", createX402QuoteRouter());
 // Optional public-readiness adapter. Vendored MIT checker, no private Git.
 // A disabled checker answers healthz and leaves every other route up.
 mountPublicReadiness(app, options.publicReadiness || {});
