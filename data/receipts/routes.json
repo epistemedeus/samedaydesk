@@ -1,0 +1,19 @@
+{
+  "about": "Which gateway route a settlement paid for, where a receiving record joins the transaction to the paid request. Without a join the tape names no route.",
+  "tools": {
+    "/extract": { "tool": "extract", "what": "read a web page as structured data" },
+    "/defi/morpho-position": { "tool": "morpho_position", "what": "check a lending position on Base" },
+    "/commerce/seller-integrity-audit": { "tool": "seller_integrity_audit", "what": "audit a paid route before buying" }
+  },
+  "joins": {
+    "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1": { "route": "/extract", "source": "pilot overview/research/PAYAPI-VERIFIED-SETTLEMENT-2026-08-09.md" },
+    "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2": { "route": "/extract", "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (what-agents-buy-independent-benchmark-2026-08-30)" },
+    "0x3e3dee90f56fb88f9f1ec334dd4b78b119ab2a408c8181c273e8e22685d12090": { "route": "/extract", "source": "pilot overview/research/phase-20261001/extract-payment-1004/ROOT-VOLUME-JOIN.json" },
+    "0x104467b62ad4edff622eb0f008e9d127b59c75075947ce3962dbf7c4d622887f": { "route": "/extract", "source": "pilot overview/research/phase-20261001/extract-payment-1004/ROOT-VOLUME-JOIN.json" },
+    "0x2439870db33f6e81157beffed44c26b02aad663aff595424929ac04f9030008d": { "route": "/defi/morpho-position", "source": "pilot overview/research/phase-20261001/morpho-payment-1005/ROOT-VOLUME-JOIN.json" },
+    "0xd25a99db16a17f3758189bd01b2a0e2fe38834a99265bad308a83b6d6ab86dee": { "route": "/extract", "source": "pilot overview/research/phase-20261001/ordinary-paid-delivery-1006/ROOT-VOLUME-JOIN.json" },
+    "0x819b2f890028acd1d1b2efa2ac9aa398994bfe81bee9ad25d8a3afeb47b1038f": { "route": "/defi/morpho-position", "source": "pilot overview/research/phase-20261001/ordinary-paid-delivery-1006/ROOT-VOLUME-JOIN.json" },
+    "0x1c1f260cd50ef107beb6ecbf308e475a661686f71181d57dfbe0f686af5a869d": { "route": "/extract", "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (previousMerchantPaymentReceiving)" },
+    "0xfef68804ac362fe4304aa91c33497b4541bd4776b16d3671c8102c917ca56969": { "route": "/commerce/seller-integrity-audit", "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (latestMerchantPaymentReceiving)" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "about": "Who controls the wallets that paid the SameDayDesk gateway, from records we can cite. Internal (project-controlled) wallets are left off the public tape. Independent wallets carry a short name for what they were. Every other payer is unresolved: shown as its wallet, with its chain facts and no claim about who it is.",
+  "internal": [
+    { "address": "0x6e031d550e5d2ee9b2ee3518ac823000f4c2b54b", "what": "CDP x402 canary wallet", "source": "pilot overview/SERVICE-ACCOUNT-REGISTRY.md (CDP x402 canary, project-controlled)" },
+    { "address": "0x5b3119d7fb7086a912ee6147cd5fa31b1904dfe3", "what": "MoonPay Agents canary wallet", "source": "pilot overview/SERVICE-ACCOUNT-REGISTRY.md (MoonPay Agents, isolated wallet samedaydesk-canary)" }
+  ],
+  "independent": [
+    { "address": "0x7e6b6556322c4e26c567a867964ac793f5ee2b1c", "label": "a marketplace check", "who": "PayAPI's listing verifier", "source": "pilot overview/research/PAYAPI-VERIFIED-SETTLEMENT-2026-08-09.md" },
+    { "address": "0xc533bf5268a2f64adde58dce380651f70aa92d7a", "label": "a benchmark", "who": "What Agents Buy's real-wallet market benchmark (receipt wab_c2964c433918bea3)", "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (what-agents-buy-independent-benchmark-2026-08-30); overview/PLATFORM-EXPERIMENT-LEDGER.md" },
+    { "address": "0x902dcf34e53695bdea2ffb354b1a2e58bd598256", "label": "an outside test we asked for", "who": "Agent402's maintainer, from Agent402's own workflow, recruited and externally funded", "source": "pilot overview/history/platform-events/PLATFORM-EVENTS-2026-08.md (2026-08-29)" }
+  ]
+}

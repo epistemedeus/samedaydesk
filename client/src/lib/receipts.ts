@@ -2,9 +2,27 @@
 // records (on-chain payments and public proofs). Never edited by hand.
 import data from "../data/receipts.json";
 
+/** Who paid: an independent party named for what it was, or an unresolved wallet with no claim. */
+export type Payer = { address: string; class: "independent" | "unresolved"; label?: string; who?: string };
+/** A paid call as Base recorded it: the transferWithAuthorization the facilitator submitted. */
+export type Chain = {
+  network: string;
+  token: string;
+  tokenContract: string;
+  method: string;
+  authorization: { from: string; to: string; value: string; validAfter: string; validBefore: string; nonce: string };
+  transactionHash: string;
+  blockNumber: number;
+  blockTime: string;
+  logIndex: number;
+  submittedBy: string;
+  status: string;
+  verifiedAt: string;
+};
 export type Receipt = {
   kind: "settlement" | "delivered";
   date: string;
+  time?: string;
   for: string;
   delivered: string;
   amount?: string;
@@ -12,9 +30,20 @@ export type Receipt = {
   paidHow?: string;
   proof: string;
   more?: string;
+  payer?: Payer;
+  tool?: { route: string; name: string; what: string } | null;
+  chain?: Chain;
+  check?: { rpc: string; request: unknown; expect: string };
 };
 
 export const RECEIPTS = data.entries as Receipt[];
+/** Counts by class for the frame's header: delivered, paid calls, distinct wallets, independent. */
+export const CLASSES = data.classes;
+export const CHAIN_READ_AT = data.generatedAt;
+/** "0x8904…3cee": the head and tail of an address or hash. */
+export const short = (hex: string, head = 6, tail = 4) => `${hex.slice(0, head)}…${hex.slice(-tail)}`;
+/** "14:05 UTC" from an ISO time. */
+export const utcTime = (iso?: string) => (iso ? `${iso.slice(11, 16)} UTC` : "");
 /** The tape appears only once it holds this many entries; below it, the band is absent. */
 export const TAPE_FLOOR = data.floor;
 export const tapeShown = () => RECEIPTS.length >= TAPE_FLOOR;
@@ -43,7 +72,7 @@ export const DAYS: Day[] = Object.entries(
   .sort(([a], [b]) => b.localeCompare(a))
   .map(([date, calls]) => ({ date, calls, total: usdc(calls.reduce((sum, r) => sum + micro(r.amount), 0)) }));
 
-export const callsLabel = (n: number) => `${n} paid ${n === 1 ? "call" : "calls"} from AI agents`;
+export const callsLabel = (n: number) => `${n} paid ${n === 1 ? "call" : "calls"}`;
 export const dayLine = (d: Day) => [tapeDate(d.date), callsLabel(d.calls.length), d.total].join(" · ");
 export const SETTLED_TOTAL = usdc(SETTLED.reduce((sum, r) => sum + micro(r.amount), 0));
 

@@ -17,12 +17,14 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 
 /** What the page's title says the entry is. */
 export function receiptHeading(r) {
-  return r.kind === "settlement" ? "A paid call from an AI agent" : r.for;
+  return r.kind === "settlement" ? (r.tool ? `A paid call: ${r.tool.name}` : "A paid call to the gateway") : r.for;
 }
 
 export const RECEIPT_SHELLS = data.entries.map((r) => {
   const id = receiptId(r);
-  const what = r.kind === "settlement" ? `A paid call from an AI agent to the SameDayDesk gateway, settled on ${r.rail} on ${longDate(r.date)}.` : `Delivered for ${r.for} on ${longDate(r.date)}: ${r.delivered}.`;
+  const what = r.kind === "settlement"
+    ? `A paid call to the SameDayDesk gateway${r.tool ? ` (${r.tool.name})` : ""}, settled on ${r.rail} on ${longDate(r.date)}: transaction ${r.chain.transactionHash}, block ${r.chain.blockNumber}, from wallet ${r.payer.address}${r.payer.class === "independent" ? `, ${r.payer.label}` : ""}.`
+    : `Delivered for ${r.for} on ${longDate(r.date)}: ${r.delivered}.`;
   return {
     id,
     path: `/receipts/${id}`,

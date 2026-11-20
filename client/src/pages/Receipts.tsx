@@ -3,11 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import StubPage from "./StubPage";
-import { DELIVERED, MONTHS_OF_CALLS, SETTLED, SETTLED_TOTAL, callsLabel, receiptId, tapeDate, tapeShown } from "../lib/receipts";
+import { CLASSES, DELIVERED, MONTHS_OF_CALLS, SETTLED, SETTLED_TOTAL, callsLabel, receiptId, short, tapeDate, tapeShown, utcTime } from "../lib/receipts";
 import styles from "./Receipts.module.css";
 
-// The whole tape. Delivered work first, as full entries; then the paid calls from AI agents,
-// one line per month that opens to its days, and a day to its calls and their proofs. Built from receiving records;
+// The whole tape. Delivered work first, as full entries; then the paid calls to the gateway, one
+// line per month that opens to its days, and a day to its calls: time, what was bought where a
+// record says, the paying wallet and the transaction. Built from receiving records and the chain;
 // present only once the tape is.
 export default function Receipts() {
   useEffect(() => {
@@ -32,8 +33,8 @@ export default function Receipts() {
         <p className="eyebrow">Receipts · from the ledger</p>
         <h1 className={styles.h1}>Work delivered, and paid for.</h1>
         <p className={styles.lead}>
-          {DELIVERED.length} pieces of delivered work, and {SETTLED.length} paid calls from AI agents settled on
-          Base. Every line links its proof. For agents: <a href="/receipts.json">/receipts.json</a>.
+          {DELIVERED.length} pieces of delivered work, and {SETTLED.length} paid calls to the SameDayDesk gateway
+          settled on Base from {CLASSES.distinctWallets} wallets. Every line links its proof. For agents: <a href="/receipts.json">/receipts.json</a>.
         </p>
 
         <section aria-labelledby="delivered">
@@ -57,9 +58,11 @@ export default function Receipts() {
         </section>
 
         <section aria-labelledby="calls">
-          <h2 id="calls" className={styles.h2}>Paid calls from AI agents</h2>
+          <h2 id="calls" className={styles.h2}>Paid calls to the SameDayDesk gateway</h2>
           <p className={styles.note}>
-            Agents paid the SameDayDesk gateway per call over x402, {SETTLED_TOTAL} in all. Each month opens to its days, and each day to its calls.
+            Paid per call over x402, {SETTLED_TOTAL} in all, each read from Base. Payments from our own wallets are left out.
+            {" "}{CLASSES.independent} came from parties we can name, marked <span className={styles.ind}>independent</span>;
+            for the others we show the wallet and make no claim about who runs it. Each month opens to its days, and each day to its calls.
           </p>
           <ol className={styles.months}>
             {MONTHS_OF_CALLS.map((m) => (
@@ -83,9 +86,15 @@ export default function Receipts() {
                           </summary>
                           <ul className={styles.calls}>
                             {d.calls.map((r) => (
-                              <li key={r.proof}>
-                                <Link to={`/receipts/${receiptId(r)}`}>{r.amount}</Link>
-                                <a href={r.proof} target="_blank" rel="noopener noreferrer">Proof <span aria-hidden="true">↗</span></a>
+                              <li key={r.proof} className={styles.call}>
+                                <span className={styles.time}>{utcTime(r.time)}</span>
+                                <span className={styles.callWhat}>
+                                  {r.tool ? r.tool.name : "a paid call"}
+                                  <span className={styles.wallet}> from {short(r.payer!.address)}</span>
+                                  {r.payer!.class === "independent" && <span className={styles.ind}>independent · {r.payer!.label}</span>}
+                                </span>
+                                <Link to={`/receipts/${receiptId(r)}`} className={styles.callAmount}>{r.amount}</Link>
+                                <a href={r.proof} target="_blank" rel="noopener noreferrer" className={styles.tx}>{short(r.chain!.transactionHash)} <span aria-hidden="true">↗</span></a>
                               </li>
                             ))}
                           </ul>
