@@ -60,10 +60,15 @@ export default function Receipts() {
         <section aria-labelledby="calls">
           <h2 id="calls" className={styles.h2}>Paid calls to the SameDayDesk gateway</h2>
           <p className={styles.note}>
-            Paid per call over x402, {SETTLED_TOTAL} in all, each read from Base. Payments from our own wallets are left out.
-            {" "}{CLASSES.independent} came from parties we can name, marked <span className={styles.ind}>independent</span>;
-            for the others we show the wallet and make no claim about who runs it. Each month opens to its days, and each day to its calls.
+            Paid per call over x402, {SETTLED_TOTAL} in all, each read from Base. Each month opens to its days, and each day to its calls.
           </p>
+          {/* Who paid: the counts behind the homepage's roll, with what each class means. */}
+          <dl className={styles.legend} aria-label="Who paid">
+            <div><dt>{CLASSES.paidCalls}</dt><dd>paid calls, each with its transaction on Base</dd></div>
+            <div><dt>{CLASSES.distinctWallets}</dt><dd>wallets paid for them; our own {CLASSES.ourOwnWalletsLeftOut} are left out</dd></div>
+            <div><dt>{CLASSES.independent}</dt><dd>calls from parties we can name, marked <span className={styles.ind}>independent</span></dd></div>
+            <div><dt>{CLASSES.unresolved}</dt><dd>calls shown by wallet alone, with no claim about who runs it</dd></div>
+          </dl>
           <ol className={styles.months}>
             {MONTHS_OF_CALLS.map((m) => (
               <li key={m.month} id={`month-${m.month}`} className={styles.month}>

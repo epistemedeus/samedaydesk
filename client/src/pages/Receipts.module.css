@@ -5,6 +5,10 @@
 .lead a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
 .wrap h2.h2 { margin-top: var(--space-xl); padding-bottom: var(--space-xs); border-bottom: 1px solid var(--line-2); font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; line-height: 1.4; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
 .note { margin-top: var(--space-xs); max-width: 62ch; color: var(--ink-dim); font-size: var(--step--1); }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0 var(--space-m); margin: var(--space-s) 0 0; border-top: 1px solid var(--line-2); }
+.legend > div { display: flex; align-items: baseline; gap: 0.6rem; padding-block: 0.6rem; border-bottom: 1px solid var(--line-2); }
+.legend dt { font-family: var(--font-mono); font-size: var(--step-1); color: var(--ink); font-variant-numeric: tabular-nums; }
+.legend dd { margin: 0; color: var(--ink-dim); font-size: var(--step--1); }
 .date { color: var(--ink-faint); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; }
 
 /* Delivered work: full entries, one per ruled line. */

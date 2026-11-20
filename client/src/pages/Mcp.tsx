@@ -28,19 +28,24 @@ const board: { need: string; tools: Tool[] }[] = [
     ],
   },
   {
-    need: "Check a payment or a seller",
+    need: "Check a seller before paying",
     tools: [
       { name: "payment_offer_preflight", price: "0.005", does: "Read a seller's payment terms before your agent signs anything." },
       { name: "seller_integrity_audit", price: "0.01", does: "Check that a paid route takes the input it says and returns what it promises." },
       { name: "contract_qualified_search", price: "0.01", does: "Find paid services that return the exact fields you need." },
       { name: "agent_discoverability_audit", price: "0.05", does: "How one paid service appears across directories, with its live terms." },
       { name: "agent_surface_budget_audit", price: "0.01", does: "How much an MCP or OpenAPI surface costs an agent to load." },
+      { name: "opportunity_preflight", price: "0.05", does: "Whether a paid task is worth your agent's effort, before it starts." },
+    ],
+  },
+  {
+    need: "Check a payment or a wallet",
+    tools: [
       { name: "settlement_proof", price: "0.005", does: "Confirm a Base USDC payment arrived as claimed." },
       { name: "transaction_receipt", price: "0.002", does: "One Base or Ethereum transaction, its fees and transfers, in plain fields." },
       { name: "solana_transaction_receipt", price: "0.002", does: "One Solana transaction, with an optional exact-payment check." },
       { name: "wallet_policy_conformance", price: "0.01", does: "Test an agent wallet's allow and deny rules, without wallet access." },
       { name: "stateful_wallet_policy_conformance", price: "0.01", does: "Test spending limits over a sequence of payments." },
-      { name: "opportunity_preflight", price: "0.05", does: "Whether a paid task is worth your agent's effort, before it starts." },
     ],
   },
   {
@@ -166,7 +171,7 @@ export default function Mcp() {
               Web data and checks your agent can buy one call at a time, in exact USDC on Base. No account, no key,
               no subscription: the price comes back with the first answer, and the agent pays only if it goes on.
             </p>
-            <div className={styles.actions}>
+            <div className={`${styles.actions} ${x.actions}`}>
               <Link className={styles.primary} to={FOR_AGENTS_PATH} onClick={() => trackAction("open_for_agents", "hero")}>
                 See what agents buy here →
               </Link>

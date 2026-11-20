@@ -75,10 +75,9 @@ export default function CreditsRoll() {
         <header className={styles.head}>
           <h2 id="credits-title" className={styles.title}>Receipts, read from Base</h2>
           <p className={styles.counts}>
-            <span><b>{CLASSES.delivered}</b> delivered</span>
+            <span><b>{CLASSES.delivered}</b> delivered jobs</span>
             <span><b>{CLASSES.paidCalls}</b> paid calls</span>
-            <span><b>{CLASSES.distinctWallets}</b> wallets</span>
-            <span><b>{CLASSES.independent}</b> independent</span>
+            <span>each one checked on Base</span>
           </p>
         </header>
         <div ref={screen} className={styles.screen}>
@@ -92,8 +91,8 @@ export default function CreditsRoll() {
           </div>
         </div>
         <footer className={styles.foot}>
-          <span>Our own wallets are left out. Unmarked wallets are shown without a claim about who runs them.</span>
-          <Link to="/receipts" className={styles.all}>All receipts <span aria-hidden="true">→</span></Link>
+          <span>Each entry opens its receipt, with the command to check it yourself.</span>
+          <Link to="/receipts" className={styles.all}>All receipts, and who paid <span aria-hidden="true">→</span></Link>
         </footer>
         <span className={styles.corner} data-at="bl" aria-hidden="true" />
         <span className={styles.corner} data-at="br" aria-hidden="true" />
@@ -110,7 +109,7 @@ function Entry({ r, copy = false }: { r: Receipt; copy?: boolean }) {
         <span className={styles.when}>{tapeDate(r.date)}{r.time ? ` ${utcTime(r.time)}` : ""}</span>
         <span className={styles.kind}>{call ? "Paid call" : "Delivered"}</span>
         <span className={styles.what}>
-          {call ? (r.tool ? <><b>{r.tool.name}</b> {r.tool.what}</> : "a call to the gateway") : <><b>{r.for}</b> {r.delivered}</>}
+          {call ? (r.tool ? <><b>{r.tool.name}</b>: {r.tool.what}</> : "a paid call") : <><b>{r.for}</b> {r.delivered}</>}
         </span>
         <span className={styles.amount}>{r.amount ?? ""}</span>
         <span className={styles.chain}>
