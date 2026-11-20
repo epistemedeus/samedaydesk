@@ -30,7 +30,9 @@ const { values: opt } = parseArgs({
     "first-answer-seconds": { type: "string", default: "180" },
   },
 });
-if (!opt.package || !opt.tool) {
+if (!/^(?:@[a-z\d][a-z\d._-]*\/)?[a-z\d][a-z\d._-]*@\d+\.\d+\.\d+(?:-[a-zA-Z\d.]+)?$/.test(opt.package ?? "")
+    || !/^[a-zA-Z][a-zA-Z\d_.-]{0,100}$/.test(opt.tool ?? "")
+    || !/^[a-zA-Z\d. _-]*$/.test(opt["self-check"] ?? "")) {
   console.error("Usage: stdio-release-check.mjs --package <npm spec> --tool <read-only tool> [--tool-args <json>] [--self-check <args>] [--folder <dir>] [--out <dir>]");
   process.exit(2);
 }
@@ -76,9 +78,8 @@ if (!opt.folder) {
 const claudeEntry = WINDOWS
   ? { command: "cmd", args: ["/c", "npx", "-y", spec, folder] }
   : { command: "npx", args: ["-y", spec, folder] };
-const claudeConfigPath = WINDOWS
-  ? join(process.env.APPDATA ?? join(homedir(), "AppData", "Roaming"), "Claude", "claude_desktop_config.json")
-  : process.platform === "darwin" ? join(homedir(), "Library", "Application Support", "Claude", "claude_desktop_config.json") : join(out, "claude_desktop_config.json");
+// Generate the client file but never overwrite an installed desktop client's settings.
+const claudeConfigPath = join(out, "claude_desktop_config.json");
 // VS Code reads .vscode/mcp.json in the workspace: a stdio server with command "npx".
 const vscodeEntry = { type: "stdio", command: "npx", args: ["-y", spec, folder] };
 const vscodeConfigPath = join(folder, ".vscode", "mcp.json");
@@ -249,7 +250,7 @@ const md = [
   "",
   "## To reproduce",
   "",
-  "On a Windows machine with Node 20 or newer, from a copy of the SameDayDesk repository:",
+  "On the tested operating system with Node 20 or newer, from a copy of the SameDayDesk repository:",
   "",
   "```bat",
   `node tools\\keep-it-working\\windows\\stdio-release-check.mjs --package ${spec}${opt["self-check"] ? ` --self-check "${opt["self-check"]}"` : ""} --tool ${opt.tool} --tool-args "${opt["tool-args"].replaceAll('"', '\\"')}" --out report`,
