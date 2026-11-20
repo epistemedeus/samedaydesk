@@ -26,3 +26,22 @@ Keep the approved baseline until the service owner accepts the candidate.
 
 This is the tool-definition step in the release test. Run the customer task in
 the agreed client and operating system as part of the same review.
+
+## Windows release check for an npm MCP server
+
+`windows/stdio-release-check.mjs` checks a release the way a user installs it. It runs in the
+`Keep it working, Windows release check` workflow on `windows-latest`, and runs the same way on any
+machine with Node 20 or newer:
+
+```sh
+node tools/keep-it-working/windows/stdio-release-check.mjs --package sentinel-ir-mcp@stable-0.5 \
+  --self-check "doctor --client claude-desktop" \
+  --tool analyze_directory --tool-args '{"path":"{folder}","max_files":10}' --out report
+```
+
+It resolves the release on npm and writes the Claude Desktop and VS Code configurations. It runs
+the package's own self-check through `npx`, and starts the server over stdio exactly as each
+configuration says. Then it lists the tools and calls one read-only tool on a sample folder.
+`report/REPORT.md` says what passed, the exact step that failed and the commands to reproduce.
+The transcripts and the self-check output sit beside it. Exit status 0 means every step passed
+and 1 means one failed. The check reads and runs only; it opens no issue and sends nothing.
