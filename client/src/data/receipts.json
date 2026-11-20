@@ -20,7 +20,7 @@
       "date": "2026-11-19",
       "time": "2026-11-19T21:16:44.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -28,7 +28,11 @@
         "address": "0xf2a3fd7a54b91e1efe2f427afdf574903a1d3bff",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -70,7 +74,7 @@
       "date": "2026-11-17",
       "time": "2026-11-17T08:04:13.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -78,7 +82,11 @@
         "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -120,7 +128,7 @@
       "date": "2026-11-17",
       "time": "2026-11-17T03:35:42.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
       "amount": "0.02 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -128,7 +136,11 @@
         "address": "0x79f896ff38691931fc2494610c106ad755e6f758",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -170,7 +182,7 @@
       "date": "2026-11-17",
       "time": "2026-11-17T03:25:43.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -178,7 +190,11 @@
         "address": "0x79f896ff38691931fc2494610c106ad755e6f758",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -220,7 +236,7 @@
       "date": "2026-11-16",
       "time": "2026-11-16T04:02:29.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -228,7 +244,11 @@
         "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -270,7 +290,7 @@
       "date": "2026-11-16",
       "time": "2026-11-16T03:48:23.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -278,7 +298,11 @@
         "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -367,7 +391,7 @@
       "date": "2026-11-13",
       "time": "2026-11-13T23:19:22.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -375,7 +399,11 @@
         "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -417,7 +445,7 @@
       "date": "2026-11-09",
       "time": "2026-11-09T03:40:33.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -425,7 +453,11 @@
         "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -467,7 +499,7 @@
       "date": "2026-11-02",
       "time": "2026-11-02T03:43:31.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -475,7 +507,11 @@
         "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -517,7 +553,7 @@
       "date": "2026-10-31",
       "time": "2026-10-31T01:18:51.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -525,7 +561,11 @@
         "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -567,7 +607,7 @@
       "date": "2026-10-29",
       "time": "2026-10-29T07:18:13.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -575,7 +615,11 @@
         "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -617,7 +661,7 @@
       "date": "2026-10-27",
       "time": "2026-10-27T20:36:23.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -625,7 +669,11 @@
         "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -667,7 +715,7 @@
       "date": "2026-10-27",
       "time": "2026-10-27T00:21:59.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -675,7 +723,11 @@
         "address": "0x7722dfae6bbed2fd02dc07455c2f5bf14be25e4a",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -717,7 +769,7 @@
       "date": "2026-10-26",
       "time": "2026-10-26T10:09:23.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -725,7 +777,11 @@
         "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -767,7 +823,7 @@
       "date": "2026-10-26",
       "time": "2026-10-26T02:31:45.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -775,7 +831,11 @@
         "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -825,7 +885,7 @@
       "date": "2026-10-20",
       "time": "2026-10-20T04:30:51.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -833,7 +893,11 @@
         "address": "0x3ed93a7b87832f04a91137cacb273d39295e430e",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -983,7 +1047,7 @@
       "date": "2026-10-17",
       "time": "2026-10-17T09:09:23.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -991,7 +1055,11 @@
         "address": "0xefa9f8a2e77418da4ad2e0536f95a8afa3a279af",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1033,7 +1101,7 @@
       "date": "2026-10-16",
       "time": "2026-10-16T19:50:01.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1041,7 +1109,11 @@
         "address": "0xcc09c1131c53013f386b0ceaf9319d94f8c540d8",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1083,7 +1155,7 @@
       "date": "2026-10-15",
       "time": "2026-10-15T07:18:25.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1091,7 +1163,11 @@
         "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1133,7 +1209,7 @@
       "date": "2026-10-14",
       "time": "2026-10-14T02:55:43.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1141,7 +1217,11 @@
         "address": "0x941a98301faf12200c813e76269855558218ff3f",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1183,7 +1263,7 @@
       "date": "2026-10-14",
       "time": "2026-10-14T02:49:53.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1191,7 +1271,11 @@
         "address": "0x941a98301faf12200c813e76269855558218ff3f",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1233,7 +1317,7 @@
       "date": "2026-10-13",
       "time": "2026-10-13T03:18:19.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1241,7 +1325,11 @@
         "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1283,7 +1371,7 @@
       "date": "2026-10-09",
       "time": "2026-10-09T06:28:17.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1291,7 +1379,11 @@
         "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1333,7 +1425,7 @@
       "date": "2026-10-09",
       "time": "2026-10-09T06:08:03.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1341,7 +1433,11 @@
         "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1383,7 +1479,7 @@
       "date": "2026-10-08",
       "time": "2026-10-08T20:56:19.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1391,7 +1487,11 @@
         "address": "0x0ffab3cea2221070abfb6deb76206946d5e0daaf",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1433,7 +1533,7 @@
       "date": "2026-10-08",
       "time": "2026-10-08T06:14:37.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1441,7 +1541,11 @@
         "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1483,7 +1587,7 @@
       "date": "2026-10-08",
       "time": "2026-10-08T05:32:25.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1491,7 +1595,11 @@
         "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1533,7 +1641,7 @@
       "date": "2026-10-08",
       "time": "2026-10-08T05:32:25.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1541,7 +1649,11 @@
         "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1583,7 +1695,7 @@
       "date": "2026-10-06",
       "time": "2026-10-06T12:01:39.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1591,7 +1703,11 @@
         "address": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1903,7 +2019,7 @@
       "date": "2026-10-04",
       "time": "2026-10-04T02:53:13.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1911,7 +2027,11 @@
         "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -1953,7 +2073,7 @@
       "date": "2026-10-01",
       "time": "2026-10-01T00:29:35.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -1961,7 +2081,11 @@
         "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2003,7 +2127,7 @@
       "date": "2026-09-28",
       "time": "2026-09-28T06:02:23.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2011,7 +2135,11 @@
         "address": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2053,7 +2181,7 @@
       "date": "2026-09-28",
       "time": "2026-09-28T00:20:15.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2061,7 +2189,11 @@
         "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2103,7 +2235,7 @@
       "date": "2026-09-22",
       "time": "2026-09-22T15:50:49.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2111,7 +2243,11 @@
         "address": "0x72c573fd7de6a3dec3035d48db938ebf733d159b",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2153,7 +2289,7 @@
       "date": "2026-09-19",
       "time": "2026-09-19T15:57:15.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
       "amount": "0.01 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2161,7 +2297,11 @@
         "address": "0x35ed8c8bf74b610b5d7e401b18420e1760603e59",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2203,7 +2343,7 @@
       "date": "2026-09-17",
       "time": "2026-09-17T04:03:31.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2211,7 +2351,11 @@
         "address": "0x7dd81398fac7de0bf843bfd874cbea68face17d2",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2253,7 +2397,7 @@
       "date": "2026-09-15",
       "time": "2026-09-15T19:50:31.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2261,7 +2405,11 @@
         "address": "0x9a07cea7ed111c93a233d1d12bbb68a511b59eea",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2303,7 +2451,7 @@
       "date": "2026-09-14",
       "time": "2026-09-14T18:44:03.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
       "amount": "0.02 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2311,7 +2459,11 @@
         "address": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2353,7 +2505,7 @@
       "date": "2026-09-13",
       "time": "2026-09-13T20:47:29.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2361,7 +2513,11 @@
         "address": "0x99d5667c7528003d5c5cf063016266843daacf80",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2403,7 +2559,7 @@
       "date": "2026-09-13",
       "time": "2026-09-13T20:00:11.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2411,7 +2567,11 @@
         "address": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2453,7 +2613,7 @@
       "date": "2026-09-11",
       "time": "2026-09-11T16:06:45.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2461,7 +2621,11 @@
         "address": "0x99d5667c7528003d5c5cf063016266843daacf80",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2503,7 +2667,7 @@
       "date": "2026-09-11",
       "time": "2026-09-11T03:39:57.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2511,7 +2675,11 @@
         "address": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2553,7 +2721,7 @@
       "date": "2026-09-09",
       "time": "2026-09-09T16:16:01.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2561,7 +2729,11 @@
         "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",
@@ -2603,7 +2775,7 @@
       "date": "2026-09-08",
       "time": "2026-09-08T23:27:53.000Z",
       "for": "a paid call to the SameDayDesk gateway",
-      "delivered": "an answer from the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
       "amount": "0.005 USDC",
       "rail": "Base",
       "paidHow": "x402",
@@ -2611,7 +2783,11 @@
         "address": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
         "class": "unresolved"
       },
-      "tool": null,
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
       "chain": {
         "network": "eip155:8453",
         "token": "USDC",

@@ -17,6 +17,7 @@
 //   node scripts/build-receipts.mjs [--from-block N]
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { exclusionPolicy } from "./receipts-route-projection.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 // Ranges of old logs need an RPC that serves them (publicnode does, 10,000 blocks a call); single
@@ -33,6 +34,11 @@ const STEP = 9_999;
 const fromArg = process.argv.indexOf("--from-block");
 const FROM = fromArg > 0 ? Number(process.argv[fromArg + 1]) : 51_000_000;
 const read = (path) => JSON.parse(readFileSync(`${root}/${path}`, "utf8"));
+const restrictedPolicyPath = process.env.RECEIPTS_PRIVATE_EXPORT;
+if (!restrictedPolicyPath) throw new Error("RECEIPTS_PRIVATE_EXPORT must identify the current private payer policy projection.");
+const policy = JSON.parse(readFileSync(restrictedPolicyPath, "utf8"));
+if (policy.invalid !== 0 || !Array.isArray(policy.rows)) throw new Error("Incomplete private payment policy projection.");
+const privateExcluded = exclusionPolicy(policy.internalHashes, policy.rows.filter((r) => r.internal).map((r) => r.transaction));
 
 async function rpc(url, method, params, tries = 5) {
   for (let i = 0; i < tries; i++) {
@@ -101,7 +107,7 @@ for (const log of logs) {
   if (tx.to?.toLowerCase() !== USDC || !X402_SETTLE.has(selector) || receipt.status !== "0x1") { left.notSettlement++; continue; }
   const from = address(word(tx.input, 0)).toLowerCase();
   if (from === PAY_TO.toLowerCase() || from !== address(log.topics[1].slice(2)).toLowerCase()) { left.notSettlement++; continue; }
-  if (internal.has(from)) { left.internal++; continue; }
+  if (internal.has(from) || privateExcluded(from, hash)) { left.internal++; continue; }
   if (deliveredTx.has(hash)) { left.duplicate++; continue; }
   const value = BigInt("0x" + word(tx.input, 2));
   const seconds = await blockTime(log.blockNumber);

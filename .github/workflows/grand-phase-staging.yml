@@ -34,6 +34,7 @@ jobs:
             curl -fsSL --max-redirs 1 "http://127.0.0.1:31861$page" -o /dev/null
           done
       - run: npm run test:keep-list
+      - run: node --test scripts/receipts-route-projection.test.mjs
       - run: npm run test:task-requests
       - run: npm run test:checkout-idempotency
       - run: npm run test:seller-repair-checkout
