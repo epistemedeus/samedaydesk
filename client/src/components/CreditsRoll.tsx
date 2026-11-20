@@ -108,9 +108,8 @@ function Entry({ r, copy = false }: { r: Receipt; copy?: boolean }) {
       <Link to={`/receipts/${receiptId(r)}`} tabIndex={copy ? -1 : undefined} className={styles.row}>
         <span className={styles.when}>{tapeDate(r.date)}{r.time ? ` ${utcTime(r.time)}` : ""}</span>
         <span className={styles.kind}>{call ? "Paid call" : "Delivered"}</span>
-        <span className={styles.what}>
-          {call ? (r.tool ? <><b>{r.tool.name}</b>: {r.tool.what}</> : "a paid call") : <><b>{r.for}</b> {r.delivered}</>}
-        </span>
+        {/* A paid call names its tool when the route record has it; otherwise the tag says it all. */}
+        <span className={styles.what}>{call ? (r.tool ? <><b>{r.tool.name}</b>: {r.tool.what}</> : null) : <><b>{r.for}</b> {r.delivered}</>}</span>
         <span className={styles.amount}>{r.amount ?? ""}</span>
         <span className={styles.chain}>
           {call && (

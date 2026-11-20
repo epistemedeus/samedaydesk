@@ -56,6 +56,8 @@
   .what { grid-column: 1 / -1; }
   .chain { grid-column: 1; }
   .amount { grid-column: 2; grid-row: 3; }
+  .what:empty { display: none; }
+  .what:empty + .amount { grid-row: 2; }
   .screen { height: 22rem; }
 }
 
