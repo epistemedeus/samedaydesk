@@ -43,17 +43,20 @@ for (let i = 0; i < union.length; i += 8) {
       }
       assert.equal(response.status, 200, "Route did not serve in one hop");
       if (!current.has(path) || !response.headers.get("content-type")?.includes("text/html")) return;
-      const html = await response.text();
-      assert(/<title>[^<\s][^<]*<\/title>/i.test(html), "Missing title");
-      const meta = html.match(/<meta\b[^>]*>/gi) || [];
+      const html = (await response.text()).replace(/<!--[\s\S]*?-->/g, "");
+      const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
+      const head = html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "").match(/<head\b[^>]*>([\s\S]*?)<\/head\s*>/i)?.[1] || "";
+      assert(/<title>[^<\s][^<]*<\/title>/i.test(head), "Missing title");
+      const meta = head.match(/<meta\b[^>]*>/gi) || [];
       assert(meta.some(tag => attr(tag, "name") === "description" && attr(tag, "content")?.trim()), "Missing description");
       assert(!meta.some(tag => attr(tag, "name") === "robots" && /\bnoindex\b/i.test(attr(tag, "content") || "")), "Noindex route listed in sitemap");
-      const links = html.match(/<link\b[^>]*>/gi) || [];
+      const links = head.match(/<link\b[^>]*>/gi) || [];
       const canonical = links.filter(tag => attr(tag, "rel") === "canonical");
       assert.equal(canonical.length, 1, "One canonical URL required");
       assert.equal(decode(attr(canonical[0], "href") || ""), brand + path, "Canonical disagrees with sitemap");
       count.metadata++;
-      for (const [, json] of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+      for (const [, attributes, json] of scripts) {
+        if (attr(attributes, "type")?.toLowerCase() !== "application/ld+json") continue;
         const ld = JSON.parse(json);
         assert(ld && typeof ld === "object", "Invalid structured-data shape");
         count.structuredData++;
