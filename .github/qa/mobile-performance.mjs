@@ -41,7 +41,8 @@ for (const path of assigned) {
     method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(8_000),
   });
   const contentType = check.headers.get('content-type') ?? '';
-  if (check.status === 200 && contentType && !contentType.includes('text/html')) {
+  const machineDocument = /\.(?:txt|md|json|xml)$/.test(path);
+  if (machineDocument && check.status === 200 && contentType && !contentType.includes('text/html')) {
     nonHtml.push({ path, contentType });
     console.log('MOBILE_NON_HTML', JSON.stringify(nonHtml.at(-1)));
   } else {
