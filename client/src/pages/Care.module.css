@@ -1,0 +1,11 @@
+.shell { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem 5rem; }
+.home { display: inline-block; padding: .5rem 0; }
+.ticket { margin-top: 2rem; padding: clamp(1rem, 5vw, 3rem); border: 1px solid currentColor; }
+.ticket h1 { margin: 0 0 1.25rem; }
+.ticket p { margin: 0 0 1rem; }
+.form { display: grid; gap: .9rem; }
+.form label { display: grid; gap: .35rem; }
+.form input, .form textarea { width: 100%; padding: .65rem; background: transparent; border: 1px solid currentColor; color: inherit; }
+.ticket button { justify-self: start; padding: .65rem .9rem; background: transparent; color: inherit; border: 1px solid currentColor; cursor: pointer; }
+.ticket :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.ticket button:disabled { opacity: .7; cursor: wait; }

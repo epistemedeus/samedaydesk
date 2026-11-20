@@ -14,6 +14,8 @@ import { useSmoothScroll } from "./motion/useSmoothScroll";
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
+const BuyCare = lazy(() => import("./pages/Care").then((module) => ({ default: module.BuyCare })));
+const CareReceipt = lazy(() => import("./pages/Care").then((module) => ({ default: module.CareReceipt })));
 const AiReadiness = lazy(() => import("./pages/AiReadiness"));
 const Mcp = lazy(() => import("./pages/Mcp"));
 const ForAgents = lazy(() => import("./pages/ForAgents"));
@@ -55,6 +57,9 @@ export default function App() {
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/care/buy" element={<BuyCare />} />
+          <Route path="/care/intake" element={<CareReceipt mode="intake" />} />
+          <Route path="/care/subscription" element={<CareReceipt mode="cancel" />} />
           <Route path="/receipts" element={<Receipts />} />
           <Route path="/receipts/:id" element={<ReceiptPage />} />
           <Route path="/terms" element={<Terms />} />

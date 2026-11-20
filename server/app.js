@@ -14,7 +14,9 @@ import scanRouter from "./routes/scan.js";
 import requestsRouter from "./routes/requests.js";
 import checkoutRouter from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
-import stripeWebhookRouter from "./routes/stripe-webhook.js";
+import { createStripeWebhookRouter } from "./routes/stripe-webhook.js";
+import { createCareRouter } from "./routes/care.js";
+import { configuredCareService } from "./lib/care-service.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
@@ -48,6 +50,8 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 
 export function createSdsApp(options = {}) {
 const app = express();
+const care = Object.hasOwn(options, "care") ? options.care : configuredCareService();
+app.set("sdsCare", care);
 app.disable("x-powered-by");
 
 // Include bearer-return redirects in the same cache/referrer protection as the
@@ -130,9 +134,10 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
+app.use("/api/care", createCareRouter(care));
 app.use("/api/requests", requestsRouter);
 app.use("/api/uploads", uploadsRouter);
-app.use("/api/stripe", stripeWebhookRouter);
+app.use("/api/stripe", createStripeWebhookRouter({ care }));
 app.use("/api/webhooks/resend", resendWebhookRouter);
 app.use("/api/market-observations", marketObservationsRouter);
 app.use("/api/observatory", observatoryRouter);
@@ -203,6 +208,10 @@ app.use((req, res, next) => {
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
 if (isProd) {
+  app.use("/care", (_req, res, next) => {
+    res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    next();
+  });
   mountProductionClient(app, CLIENT_DIST);
 }
 

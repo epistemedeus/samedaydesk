@@ -226,7 +226,7 @@ export const PAYMENT_LINKS: Record<string, string> = {
   agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
   machine_payment_route: "https://buy.stripe.com/eVqfZibce2bd2OP7smeZ20D",
   agent_storefront: "https://buy.stripe.com/dRm4gAdkmbLN4WX7smeZ20E",
-  agent_front_door: "https://buy.stripe.com/9B6bJ2gwyaHJ899h2WeZ20I",
-  keep_it_working: "https://buy.stripe.com/5kQ4gAgwyaHJbll8wqeZ20J",
+  agent_front_door: "/care/buy?offer=agent_front_door",
+  keep_it_working: "/care/buy?offer=keep_it_working",
   custom_quote: "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
 };

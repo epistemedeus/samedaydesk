@@ -28,6 +28,7 @@ export function createStripeWebhookRouter({
   fulfill = fulfillFromIntent,
   notify = notifyAdmin,
   neomorphicPaymentLinkId = configuredNeomorphicSellerConformancePaymentLinkId(),
+  care,
 } = {}) {
   const router = Router();
 
@@ -50,6 +51,9 @@ export function createStripeWebhookRouter({
     }
 
     try {
+      if (care && await care.eventIsCare(event)) {
+        return res.json({ received: true });
+      }
       if (event.type === "payment_intent.succeeded") {
         await fulfill(event.data.object);
       } else if (event.type === "checkout.session.expired") {

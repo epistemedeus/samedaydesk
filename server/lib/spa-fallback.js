@@ -24,6 +24,9 @@ export const SPA_HISTORY_ROUTES = Object.freeze([
   "/signup",
   "/dashboard",
   "/checkout",
+  "/care/buy",
+  "/care/intake",
+  "/care/subscription",
   "/terms",
   "/privacy",
 ]);
