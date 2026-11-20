@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
+import { createTaskQuoteStore } from "./task-quotes.js";
 
 const first = async (query) => (await query).rows[0] ?? null;
 
@@ -42,6 +43,9 @@ export function createCareStore(pool) {
     bySubscription: (id) => first(pool.query("select * from public.care_orders where subscription_id = $1", [id])),
     byPayment: (id) => first(pool.query("select * from public.care_orders where payment_intent_id = $1", [id])),
     close: () => pool.end(),
+    quotes: createTaskQuoteStore(pool, txn),
+    taskRequests: { insert: (request) => first(pool.query(`insert into public.task_requests(email,website,task)
+      values ($1,$2,$3) returning *`, [request.email, request.website, request.task])) },
 
     async reserve({ id, offer, cents, live, expires, origin, integrationId }) {
       await pool.query(`insert into public.care_orders

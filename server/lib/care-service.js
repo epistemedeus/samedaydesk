@@ -4,6 +4,7 @@ import {
   isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, verifyCareToken,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
+import { createTaskQuoteService } from "./task-quotes.js";
 
 const HOUR = 3600_000;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
@@ -34,6 +35,7 @@ export function configuredCareService(env = process.env) {
 }
 
 export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, now = () => new Date() }) {
+  const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
 
@@ -144,6 +146,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     if (event.livemode !== live) return false;
     const object = event.data?.object;
     if (!object) return false;
+    if (await quotes.event(event)) return true;
     if (["checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed",
       "checkout.session.expired"].includes(event.type)) {
       const id = object.metadata?.sds_care_order;
@@ -211,5 +214,6 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return false;
   }
 
-  return { start, read, submit, portal, eventIsCare, close: () => store.close() };
+  return { start, read, submit, portal, eventIsCare, taskRequests: store.taskRequests,
+    issueQuote: quotes.issue, close: () => store.close() };
 }

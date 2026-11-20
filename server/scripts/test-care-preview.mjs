@@ -22,6 +22,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const store = openCareStore();
   t.after(() => Promise.all([db.end(), store.close()]));
   let cancellations = false, creates = 0, sequence = 0, advance = 0;
+  let quotePrice, quoteLink, quoteWrites = 0, priceWrites = 0;
   const sub = () => ({ id: "sub_keep", customer: "cus_keep", livemode: false,
     status: "active", cancel_at_period_end: cancellations });
   const stripe = {
@@ -62,6 +63,29 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
       assert.equal(id, "in_next");
       return { parent: { subscription_details: { subscription: "sub_keep" } } };
     } },
+    paymentIntents: { async retrieve(id) {
+      if (id === "pi_quote") return { id, amount: 12300, currency: "usd", livemode: false, metadata: quoteLink.metadata };
+      assert.ok(["pi_primary", "pi_next"].includes(id));
+      return { id, livemode: false, metadata: {} };
+    } },
+    prices: { async create(args, options) {
+      priceWrites++;
+      assert.ok(options.idempotencyKey.startsWith("sds-task-price/"));
+      assert.equal(args.unit_amount, 12300);
+      quotePrice = { id: "price_task", livemode: false, ...args };
+      return quotePrice;
+    } },
+    paymentLinks: {
+      async create(args, options) {
+        quoteWrites++;
+        assert.ok(options.idempotencyKey.startsWith("sds-task-link/"));
+        assert.equal(args.restrictions.completed_sessions.limit, 1);
+        assert.deepEqual(args.line_items, [{ price: quotePrice.id, quantity: 1 }]);
+        quoteLink = { id: "plink_task", active: true, livemode: false, url: "https://buy.stripe.com/test_private", metadata: args.metadata };
+        return quoteLink;
+      },
+      async retrieve(id) { assert.equal(id, quoteLink.id); return quoteLink; },
+    },
   };
   const care = createCareService({ store, stripe, live: false, secret, origin: "http://127.0.0.1:31861",
     portalConfiguration: "bpc_private", now: () => new Date(Date.now() + advance) });
@@ -201,4 +225,29 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.match(report.text, /Windows: Passed\./);
   assert.match(report.text, /macOS: Needs attention\./);
   assert.match(report.text, /Linux: Passed\./);
+
+  const intakeResponse = await fetch(`${origin}/api/requests`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: "task@example.test", task: "Check both clients and reproduce the stated failure." }),
+  });
+  assert.equal(intakeResponse.status, 201);
+  const requestId = (await db.query("select id from public.task_requests where email='task@example.test'")).rows[0].id;
+  assert.equal((await intakeResponse.json()).reference, `SDD-${requestId.slice(0, 8).toUpperCase()}`);
+  const terms = { amountCents: 12300, scope: "Check both generated client configurations.", acceptance: "Both clients complete a tool list call." };
+  const offer = await care.issueQuote(requestId, terms);
+  assert.equal(offer.to, "task@example.test");
+  assert.equal(offer.amountCents, 12300);
+  assert.deepEqual(await care.issueQuote(requestId, terms), offer);
+  await assert.rejects(() => care.issueQuote(requestId, { ...terms, amountCents: 12400 }), { status: 409 });
+  assert.equal(quoteWrites, 1);
+  assert.equal(priceWrites, 1);
+  const paidQuote = { id: "cs_test_paid_quote", livemode: false, mode: "payment", currency: "usd",
+    payment_link: quoteLink.id, status: "complete", payment_status: "paid", amount_total: 12300,
+    customer_details: { email: "task@example.test" }, payment_intent: "pi_quote", metadata: quoteLink.metadata };
+  assert.equal((await event("checkout.session.completed", { ...paidQuote, payment_link: "plink_wrong" })).status, 500);
+  assert.equal((await event("checkout.session.completed", paidQuote)).status, 200);
+  assert.equal((await event("checkout.session.completed", paidQuote)).status, 200);
+  assert.equal((await db.query("select status from public.task_requests where id=$1", [requestId])).rows[0].status, "paid");
+  assert.equal((await event("charge.refunded", { id: "ch_quote", payment_intent: "pi_quote" })).status, 200);
+  assert.equal((await store.quotes.order(offer.quoteId)).needs_review, true);
 });
