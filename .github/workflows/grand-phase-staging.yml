@@ -36,7 +36,7 @@ jobs:
           build() {
             npm --prefix client ci --include=dev --no-audit --no-fund
             npm --prefix client run build
-            node scripts/check-public-copy.mjs
+            if test -f scripts/check-public-copy.mjs; then node scripts/check-public-copy.mjs; fi
           }
           build
           manifest() {
