@@ -15,6 +15,12 @@
 .head h2.title { margin: 0; line-height: 1.4; font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
 .counts { display: flex; flex-wrap: wrap; gap: 0.2rem 1.2rem; margin: 0; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-dim); }
 .counts b { color: var(--ink); font-weight: 600; }
+.pause {
+  min-height: 2.25rem; padding: .2rem .65rem;
+  border: 1px solid var(--line-2); color: var(--ink);
+  font: 500 var(--step--1)/1.2 var(--font-mono);
+}
+.pause[aria-pressed="true"] { border-color: var(--lime); background: var(--bg-2); }
 
 .screen { position: relative; height: 19rem; overflow: hidden; mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
 .reel { position: relative; will-change: transform; }
@@ -62,9 +68,14 @@
 }
 
 /* Still: one copy of the list, and the screen scrolls. */
+.screen[data-paused="true"] { overflow-y: auto; mask-image: none; }
+.screen[data-paused="true"] .again { display: none; }
+.screen[data-paused="true"] .reel { transform: none !important; }
 @media (prefers-reduced-motion: reduce) {
+  .pause { display: none; }
   .again { display: none; }
   .screen { overflow-y: auto; mask-image: none; }
+  .reel { transform: none !important; }
   .row { transition: none; }
   .screen .row:hover, .screen .row:focus-visible { transform: none; }
 }

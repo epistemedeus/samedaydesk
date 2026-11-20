@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { receiptId, short, tapeDate, useReceiptFeed, utcTime, type Receipt } from "../lib/receipts";
 import styles from "./CreditsRoll.module.css";
@@ -17,11 +17,17 @@ export default function CreditsRoll() {
   const screen = useRef<HTMLDivElement>(null);
   const reel = useRef<HTMLDivElement>(null);
   const first = useRef<HTMLOListElement>(null);
+  const offset = useRef(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const box = screen.current, track = reel.current, list = first.current;
     if (!box || !track || !list || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let y = 0, v = SPEED, target = SPEED, last = 0, raf = 0, visible = true;
+    if (paused) {
+      box.scrollTop = offset.current;
+      return () => { offset.current = box.scrollTop; box.scrollTop = 0; };
+    }
+    let y = offset.current, v = SPEED, target = SPEED, last = 0, raf = 0, visible = true;
     const tick = (t: number) => {
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
       last = t;
@@ -30,6 +36,7 @@ export default function CreditsRoll() {
       v = v < target ? Math.min(target, v + step) : Math.max(target, v - step);
       const loop = list.offsetHeight;
       y = loop ? (y + v * dt) % loop : 0;
+      offset.current = y;
       track.style.transform = `translate3d(0, ${-y}px, 0)`;
       raf = visible && !document.hidden ? requestAnimationFrame(tick) : 0;
     };
@@ -65,8 +72,9 @@ export default function CreditsRoll() {
       box.removeEventListener("focusin", focus);
       box.removeEventListener("focusout", blur);
       box.removeEventListener("scroll", unscroll);
+      track.style.transform = "";
     };
-  }, [shown]);
+  }, [shown, paused]);
 
   if (!shown) return null;
   return (
@@ -81,8 +89,13 @@ export default function CreditsRoll() {
             <span><b>{classes.paidCalls}</b> paid calls</span>
             <span>each one checked on Base</span>
           </p>
+          <button type="button" className={styles.pause} aria-pressed={paused}
+            aria-controls="receipt-roll-screen" onClick={() => setPaused((value) => !value)}>
+            Pause roll
+          </button>
         </header>
-        <div ref={screen} className={styles.screen}>
+        <div ref={screen} className={styles.screen} id="receipt-roll-screen" data-paused={paused}
+          tabIndex={paused ? 0 : undefined} role="region" aria-labelledby="credits-title">
           <div ref={reel} className={styles.reel}>
             <ol ref={first} className={styles.list}>
               {entries.map((r) => <Entry key={r.proof} r={r} />)}
