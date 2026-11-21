@@ -7,6 +7,7 @@ import { setTimeout as wait } from "node:timers/promises";
 import pg from "pg";
 import { createSdsApp } from "../app.js";
 import { createCareService } from "../lib/care-service.js";
+import { careTable } from "../lib/care-database.js";
 import { openCareStore } from "../lib/care-store.js";
 import { careToken } from "../lib/care-contract.js";
 import { drainCareMail } from "../lib/care-mail.js";
@@ -144,14 +145,14 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await event("checkout.session.completed", { ...one, amount_total: 1 })).status, 500);
   assert.equal((await event("checkout.session.completed", { ...one, id: "cs_test_foreign" })).status, 500);
   assert.equal((await (await post("receipt", access(primary))).json()).state, "created");
-  assert.equal((await db.query("select count(*)::int as n from journey_events where event='payment_verified'")).rows[0].n, 0,
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("journey_events")} where event='payment_verified'`)).rows[0].n, 0,
     "invalid signatures and mismatched payments must not write payment observations");
   const intake = { surface: "A public MCP URL", outcome: "Tools list and return the declared outcome.", releaseChannel: "npm" };
   assert.equal((await post("intake", { ...access(primary), intake })).status, 409);
   assert.equal((await event("checkout.session.completed", one)).status, 200);
   assert.equal((await event("checkout.session.completed", one)).status, 200);
-  assert.equal((await db.query("select count(*)::int as n from journey_events where event='payment_verified' and order_id=$1", [primary])).rows[0].n, 1);
-  assert.equal((await db.query("select session_id from journey_events where event='payment_verified' and order_id=$1", [primary])).rows[0].session_id, journeySession);
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("journey_events")} where event='payment_verified' and order_id=$1`, [primary])).rows[0].n, 1);
+  assert.equal((await db.query(`select session_id from ${careTable("journey_events")} where event='payment_verified' and order_id=$1`, [primary])).rows[0].session_id, journeySession);
   assert.equal((await post("receipt", { order: recurring, key: access(primary).key })).status, 404);
   assert.equal((await post("intake", { ...access(primary), intake })).status, 200);
   assert.equal((await post("intake", { ...access(primary), intake })).status, 200);
@@ -169,7 +170,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     parent: { subscription_details: { subscription: "sub_keep", metadata: { sds_care_order: recurring } } },
     lines: { data: [{ amount: 10000, period: { start: first, end: first + month } }], has_more: false } };
   assert.equal((await event("invoice.paid", invoice)).status, 500);
-  assert.equal((await db.query("select count(*)::int as n from care_periods")).rows[0].n, 0);
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("care_periods")}`)).rows[0].n, 0);
   const two = { ...provider.get("cs_test_2"), status: "complete", payment_status: "paid", customer: "cus_keep",
     subscription: "sub_keep", customer_details: { email: "two@example.test" } };
   provider.set(two.id, two);
@@ -197,7 +198,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const next = { ...invoice, id: "in_next", billing_reason: "subscription_cycle",
     lines: { data: [{ amount: 10000, period: { start: first + month, end: first + month * 2 } }] } };
   assert.equal((await event("invoice.paid", next)).status, 200);
-  assert.deepEqual((await db.query("select invoice_id,status from public.care_periods order by period_start")).rows,
+  assert.deepEqual((await db.query(`select invoice_id,status from ${careTable("care_periods")} order by period_start`)).rows,
     [{ invoice_id: "in_initial", status: "ready" }, { invoice_id: "in_next", status: "review" }]);
   assert.equal((await start("agent_front_door", expiring)).status, 200);
   provider.get("cs_test_3").status = "expired";
@@ -287,7 +288,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     } while (Date.now() < deadline);
     assert.equal(state, "reported", "native run and three attempt-matched report artifacts must be received");
     actualRunId = Number((await db.query(
-      "select run_id from public.care_periods where order_id = $1 and invoice_id = 'in_initial'", [recurring],
+      `select run_id from ${careTable("care_periods")} where order_id = $1 and invoice_id = 'in_initial'`, [recurring],
     )).rows[0].run_id);
     assert.ok(Number.isSafeInteger(actualRunId) && actualRunId > 0);
   } else {
@@ -314,7 +315,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal(sentinelReportArtifacts(fakeArtifacts, artifactRun), true);
   assert.equal(sentinelReportArtifacts(fakeArtifacts, { ...artifactRun, run_attempt: 2 }), false);
   assert.equal(sentinelReportArtifacts(fakeArtifacts.concat(fakeArtifacts[0]), artifactRun), false);
-  assert.deepEqual((await db.query("select invoice_id,status from public.care_periods order by period_start")).rows,
+  assert.deepEqual((await db.query(`select invoice_id,status from ${careTable("care_periods")} order by period_start`)).rows,
     [{ invoice_id: "in_initial", status: "reported" }, { invoice_id: "in_next", status: "review" }]);
 
   const mail = () => drainCareMail({ store, secret, from: FROM, replyTo: "contact@samedaydesk.com",
@@ -340,7 +341,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     body: JSON.stringify({ email: "task@example.test", task: "Check both clients and reproduce the stated failure." }),
   });
   assert.equal(intakeResponse.status, 201);
-  const requestId = (await db.query("select id from public.task_requests where email='task@example.test'")).rows[0].id;
+  const requestId = (await db.query(`select id from ${careTable("task_requests")} where email='task@example.test'`)).rows[0].id;
   assert.equal((await intakeResponse.json()).reference, `SDD-${requestId.slice(0, 8).toUpperCase()}`);
   const terms = { amountCents: 12300, scope: "Check both generated client configurations.", acceptance: "Both clients complete a tool list call." };
   const offer = await care.issueQuote(requestId, terms);
@@ -356,7 +357,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await event("checkout.session.completed", { ...paidQuote, payment_link: "plink_wrong" })).status, 500);
   assert.equal((await event("checkout.session.completed", paidQuote)).status, 200);
   assert.equal((await event("checkout.session.completed", paidQuote)).status, 200);
-  assert.equal((await db.query("select status from public.task_requests where id=$1", [requestId])).rows[0].status, "paid");
+  assert.equal((await db.query(`select status from ${careTable("task_requests")} where id=$1`, [requestId])).rows[0].status, "paid");
   assert.equal((await event("charge.refunded", { id: "ch_quote", payment_intent: "pi_quote" })).status, 200);
   assert.equal((await store.quotes.order(offer.quoteId)).needs_review, true);
 
@@ -369,7 +370,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     payment_intent: "pi_return", customer_details: { email: "one@example.test" } };
   assert.equal((await event("checkout.session.completed", returningSession)).status, 200);
   assert.equal((await event("checkout.session.completed", returningSession)).status, 200);
-  const rows = (await db.query("select event,brand,test,session_id,order_id,referrer,utm from journey_events order by event")).rows;
+  const rows = (await db.query(`select event,brand,test,session_id,order_id,referrer,utm from ${careTable("journey_events")} order by event`)).rows;
   assert.deepEqual([...new Set(rows.map(row => row.event))], ["checkout_started", "payment_verified", "receipt_sent", "return", "visit"]);
   assert.ok(rows.every(row => row.brand === "samedaydesk" && row.test === true));
   assert.equal(rows.filter(row => row.event === "return" && row.order_id === returning).length, 1);
@@ -388,10 +389,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     headers: { "Content-Type": "application/json", "svix-id": mailId, "svix-timestamp": timestamp,
       "svix-signature": "v1," + (valid ? signature : "invalid") } });
   assert.equal((await mailEvent(false)).status, 400);
-  assert.equal((await db.query("select count(*)::int as n from public.mail_events")).rows[0].n, 0);
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("mail_events")} `)).rows[0].n, 0);
   assert.equal((await mailEvent(true)).status, 200);
   assert.equal((await mailEvent(true)).status, 200);
-  const mailRows = (await db.query("select event_id,email_id,event_type,test from public.mail_events")).rows;
+  const mailRows = (await db.query(`select event_id,email_id,event_type,test from ${careTable("mail_events")} `)).rows;
   assert.deepEqual(mailRows, [{ event_id: mailId, email_id: emailId, event_type: "email.bounced", test: true }]);
   console.log("MAIL_BOUNCE_STORAGE_OK signed synthetic bounce stored once; invalid signature refused");
 });

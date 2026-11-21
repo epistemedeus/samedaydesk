@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { careDatabaseOptions } from "../lib/care-store.js";
+import { careDatabaseOptions, careSchema, careTable } from "../lib/care-database.js";
 
 test("Care and diagnostic writers share the private socket and verified production TLS rules", (t) => {
   const dir = mkdtempSync(join(tmpdir(), "sds-db-config-"));
@@ -17,7 +17,17 @@ test("Care and diagnostic writers share the private socket and verified producti
   assert.throws(() => careDatabaseOptions(preview(base + `?host=${encodeURIComponent(link)}`)), /private directory/);
   assert.throws(() => careDatabaseOptions(preview(base + `?host=${encodeURIComponent(dir)}&host=%2Ftmp`)), /URL option/);
   assert.throws(() => careDatabaseOptions(preview(base.replace("127.0.0.1", "db.example.test"))), /loopback/);
-  assert.throws(() => careDatabaseOptions({ SDS_CARE_DATABASE_URL: base }), /verified TLS CA/);
-  assert.throws(() => careDatabaseOptions({ SDS_CARE_DATABASE_URL: base + "?host=%2Ftmp", SDS_CARE_DATABASE_CA_BASE64: "Zml4dHVyZQ==" }), /URL option/);
+  assert.throws(() => careDatabaseOptions({ SDS_CARE_SCHEMA: "samedaydesk_care", SDS_CARE_DATABASE_URL: base }), /verified TLS CA/);
+  assert.throws(() => careDatabaseOptions({ SDS_CARE_SCHEMA: "samedaydesk_care", SDS_CARE_DATABASE_URL: base + "?host=%2Ftmp", SDS_CARE_DATABASE_CA_BASE64: "Zml4dHVyZQ==" }), /URL option/);
   assert.throws(() => careDatabaseOptions(preview(base + "?sslmode=disable")), /TLS overrides/);
+});
+
+test("Care schema identifiers fail closed outside isolated preview", () => {
+  assert.equal(careSchema({ SDS_PRIVATE_PREVIEW: "1" }), "public");
+  assert.equal(careSchema({ SDS_CARE_SCHEMA: "samedaydesk_care" }), "samedaydesk_care");
+  for (const value of [undefined, "public", "auth", "storage", "extensions", "pg_temp", "information_schema", 'care";drop schema public', "a.b", "UPPER"]) {
+    assert.throws(() => careSchema({ SDS_CARE_SCHEMA: value }), /dedicated private schema/);
+  }
+  assert.equal(careTable("care_orders", "samedaydesk_care"), '"samedaydesk_care"."care_orders"');
+  assert.throws(() => careTable("users", "samedaydesk_care"), /Unknown Care table/);
 });
