@@ -191,7 +191,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await store.order(route)).amount_cents, 49900);
   assert.equal((await store.order(shop)).amount_cents, 99900);
 
-  let runs = [], dispatches = 0, jobReads = 0, evidenceReady = false;
+  let runs = [], dispatches = 0, jobReads = 0, evidenceReady = false, expectedTitle, lastIdentity;
   const head = "a".repeat(40);
   const fakeArtifacts = ["windows-latest", "macos-latest", "ubuntu-24.04"].map((os) => ({
     name: `release-check-report-${os}-attempt-1`, expired: false, size_in_bytes: 100,
@@ -232,7 +232,17 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
       dispatches++;
       assert.equal(period.package_spec, "sentinel-ir-mcp@0.5.13");
       assert.deepEqual(Object.keys(period).filter((key) => ["email", "intake"].includes(key)), []);
+      expectedTitle = `Keep it working ${period.task_ref}`;
       return realGateway.dispatch(period);
+    },
+    async run(id) {
+      const row = await realGateway.run(id);
+      const identity = JSON.stringify({ event: row.event === "workflow_dispatch",
+        branch: row.head_branch === process.env.GITHUB_REF_NAME, source: row.head_sha === process.env.GITHUB_SHA,
+        title: row.display_title === expectedTitle, terminal: row.status === "completed" });
+      if (identity !== lastIdentity) console.log(`SDS_SENTINEL_PROVIDER_READ ${identity}`);
+      lastIdentity = identity;
+      return row;
     },
     async jobs(id, attempt) {
       const run = await realGateway.run(id);
@@ -266,6 +276,13 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     assert.ok(concurrent.includes("dispatch_needs_readback"));
     assert.equal(await tick(), "running"); // Reconcile the exact run without another POST.
     assert.equal(jobReads, 0);
+    const title = runs[0].display_title;
+    runs[0].display_title = "Keep it working release check";
+    assert.equal(await tick(), "awaiting_run");
+    runs[0].display_title = `Keep it working ${randomUUID()}`;
+    assert.equal(await tick(), "run_mismatch");
+    runs[0].display_title = title;
+    assert.equal(jobReads, 0);
     runs[0].status = "completed";
     assert.equal(await tick(), "report_needs_review"); // An incomplete artifact set cannot send a report.
     evidenceReady = true;
@@ -290,7 +307,9 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal(messages.length, 6);
   assert.ok(messages.every((message) => message.from.includes("@samedaydesk.com") && message.replyTo === "contact@samedaydesk.com"));
   assert.ok(messages.find((message) => message.to === "two@example.test" && message.subject.endsWith("receipt")).text.includes(access(recurring, "cancel").key));
-  const report = messages.find((message) => message.subject === "Your monthly Keep it working report");
+  const reports = messages.filter((message) => message.subject === "Your monthly Keep it working report");
+  assert.equal(reports.length, 1);
+  const [report] = reports;
   assert.match(report.text, /Windows: Passed\./);
   assert.match(report.text, nativeActions ? /macOS: Passed\./ : /macOS: Needs attention\./);
   assert.match(report.text, /Linux: Passed\./);

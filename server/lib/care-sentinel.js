@@ -12,6 +12,18 @@ const knownRun = (run, period, branch) => runId(run) && run.event === "workflow_
   run.head_branch === branch && run.display_title === titleOf(period) &&
   Date.parse(run.created_at) >= new Date(period.dispatch_at).getTime() - 60_000;
 
+function awaitingRunIdentity(run, period, branch, at) {
+  const dispatched = new Date(period.dispatch_at).getTime();
+  const age = at.getTime() - dispatched;
+  if (!Number.isFinite(age) || age < 0 || age > 120_000 || run?.status === "completed" ||
+      runId(run) !== Number(period.run_id)) return false;
+  if ((run.event && run.event !== "workflow_dispatch") || (run.head_branch && run.head_branch !== branch)) return false;
+  const created = Date.parse(run.created_at);
+  if (Number.isFinite(created) && created < dispatched - 60_000) return false;
+  const title = run.display_title;
+  return typeof title !== "string" || !isOrderId(title.slice("Keep it working ".length)) || title === titleOf(period);
+}
+
 export function sentinelReportingChecks(jobs) {
   if (!Array.isArray(jobs) || jobs.length !== 3) return null;
   const rows = [];
@@ -85,7 +97,11 @@ export async function tickSentinel({ store, github, orderId, spec, now = () => n
   let run;
   if (period.run_id) {
     run = await github.run(Number(period.run_id));
-    if (!knownRun(run, period, github.branch)) return "run_mismatch";
+    if (runId(run) !== Number(period.run_id) || !knownRun(run, period, github.branch)) {
+      // The dispatch response can precede GitHub's indexed display title.
+      // Waiting here never authorizes another dispatch, job read, or report.
+      return awaitingRunIdentity(run, period, github.branch, now()) ? "awaiting_run" : "run_mismatch";
+    }
   } else {
     const matches = (await github.runs(period)).filter((entry) => knownRun(entry, period, github.branch));
     if (matches.length !== 1) {
