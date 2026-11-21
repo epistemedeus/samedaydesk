@@ -1,0 +1,66 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const base = new URL(process.argv[2]);
+assert.match(base.origin, /^http:\/\/127\.0\.0\.1:\d+$/);
+const require = createRequire(join(process.env.SDS_BROWSER_MODULES, 'package.json'));
+const { default: puppeteer } = await import(pathToFileURL(require.resolve('puppeteer-core')).href);
+const chrome = await puppeteer.launch({
+  headless: true, executablePath: '/usr/bin/google-chrome-stable', args: ['--disable-dev-shm-usage'],
+});
+const cases = ['/', '/for-agents', '/for-agents/record-repeat', '/terms', '/privacy', '/x402/verified', '/tools/ai-readiness'];
+const marker = 'name="sdd-public-first-render"';
+try {
+  for (const path of cases) {
+    const response = await fetch(new URL(path, base), { redirect: 'error' });
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(html.includes(`${marker} content="${path}"`), path);
+    assert.match(html, /<div id="root">[\s\S]*?<main\b[^>]*\bid="main"/);
+    assert.match(html, /rel="modulepreload"/);
+  }
+  for (const [path, status] of [['/login', 200], ['/checkout', 200], ['/care/intake', 200],
+    ['/x402/seller-conformance?resolved=preview-only', 200], ['/no-such-public-route', 404]]) {
+    const response = await fetch(new URL(path, base), { redirect: 'error' });
+    assert.equal(response.status, status, path);
+    assert.equal((await response.text()).includes(marker), false, path);
+  }
+  for (const [path, theme] of [['/', 'dark'], ['/for-agents', 'drafting'], ['/terms', 'dark']]) {
+    const ctx = await chrome.createBrowserContext();
+    try {
+      const page = await ctx.newPage();
+      const errors = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      page.on('console', (msg) => { if (msg.type() === 'error' && /hydration|Minified React|initial page/.test(msg.text())) errors.push(msg.text()); });
+      await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+      await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+      await page.evaluateOnNewDocument((theme) => {
+        localStorage.setItem('sdd-theme', theme);
+        const watch = new MutationObserver(() => {
+          const heading = document.querySelector('#root main h1');
+          if (heading) { window.__sddInitialHeading = heading; watch.disconnect(); }
+        });
+        watch.observe(document, { subtree: true, childList: true });
+      }, theme);
+      await page.setRequestInterception(true);
+      page.on('request', (request) => {
+        const own = new URL(request.url()).origin === base.origin;
+        const read = request.method() === 'GET';
+        void (own && read ? request.continue() : request.abort()).catch(() => {});
+      });
+      assert.equal((await page.goto(new URL(path, base).href)).status(), 200);
+      await page.waitForFunction(() => performance.getEntriesByName('sdd:react-ready').length > 0);
+      assert.equal(await page.evaluate(() => window.__sddInitialHeading === document.querySelector('#root main h1')), true, path);
+      assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), theme);
+      const direction = theme === 'dark' ? 'Switch to Drafting Table (light) theme' : 'Switch to Engineered Speed (dark) theme';
+      const toggle = `button[aria-label="${direction}"]`;
+      await page.waitForSelector(toggle, { visible: true });
+      await page.click(toggle);
+      await page.waitForFunction((initial) => document.documentElement.dataset.theme !== initial, {}, theme);
+      assert.deepEqual(errors, [], path);
+    } finally { await ctx.close(); }
+  }
+  console.log('SDS_PUBLIC_FIRST_RENDER_OK html=7 hydration=3 private-shells=5 theme-switch=true');
+} finally { await chrome.close(); }

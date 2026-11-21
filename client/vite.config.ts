@@ -18,6 +18,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
+    manifest: true,
     // OGL is dynamically imported (its own chunk, loaded after LCP). GSAP is split by
     // route/usage automatically. Keep the config minimal so types stay clean.
   },

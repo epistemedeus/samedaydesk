@@ -19,6 +19,7 @@ import {
   applyRouteShell,
   generateRouteShellsFromIndex,
   inspectHtmlShell,
+  publicFirstRenderPath,
   writeRouteShells,
 } from "../lib/spa-route-shells.js";
 import {
@@ -50,6 +51,9 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/signup",
   "/dashboard",
   "/checkout",
+  "/care/buy",
+  "/care/intake",
+  "/care/subscription",
   "/terms",
   "/privacy",
 ]);
@@ -253,9 +257,8 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /--opt-in/);
   assert.equal(route.crawlerHtml.includes("Twenty-two"), false);
   assert.equal(route.crawlerHtml.includes("hasOfferCatalog"), false);
-  const app = readFileSync(join(here, "../../client/src/App.tsx"), "utf8");
-  assert.match(app, /path="\/for-agents" element=\{<ForAgents \/>\}/);
-  assert.equal(app.includes('path="/for-agents" element={<Mcp />}'), false);
+  const routes = readFileSync(join(here, "../../client/src/public-pages.ts"), "utf8");
+  assert.match(routes, /\["\/for-agents", "src\/pages\/ForAgents\.tsx", \(\) => import\("\.\/pages\/ForAgents"\)\]/);
   const react = readFileSync(join(here, "../../client/src/pages/ForAgents.tsx"), "utf8");
   for (const copy of [route.crawlerHtml, react]) {
     assert.match(copy, /Node\.js 22/);
@@ -457,6 +460,31 @@ test("production Express serves exact route shells, 200s every declared React ro
   const skillguard = await request(port, "/skillguard");
   assert.equal(skillguard.status, 200);
   assert.match(skillguard.body, /SkillGuard/);
+});
+
+test("canonical public HTML is selected without replacing query variants, private routes or 404s", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-first-render-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex());
+  writeRouteShells(dist);
+  for (const route of ["/", "/x402/seller-conformance", "/checkout"]) {
+    const target = publicFirstRenderPath(dist, route);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, `<html><head><meta name="sdd-public-first-render" content="${route}"></head></html>`);
+  }
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  for (const route of ["/", "/x402/seller-conformance"]) {
+    assert.match((await request(port, route)).body, /sdd-public-first-render/);
+    assert.doesNotMatch((await request(port, `${route}?resolved=example`)).body, /sdd-public-first-render/);
+  }
+  assert.doesNotMatch((await request(port, "/checkout")).body, /sdd-public-first-render/);
+  assert.equal((await request(port, "/route-shells/.public-first-render/home.html")).status, 404);
+  const missing = await request(port, "/no-such-public-route");
+  assert.equal(missing.status, 404);
+  assert.doesNotMatch(missing.body, /sdd-public-first-render/);
 });
 
 test("production entrypoint serves the apex A2A card from the tool inventory", async (t) => {

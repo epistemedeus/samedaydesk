@@ -8,6 +8,7 @@ import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, REC
 // /for-agents and /x402 copy lives in client/src/data/machineEntry.mjs so React pages
 // cannot drift from the initial HTML.
 export const ROUTE_SHELL_DIR = "route-shells";
+const PUBLIC_FIRST_RENDER_DIR = ".public-first-render";
 export const SITE_ORIGIN = "https://samedaydesk.com";
 export const HOME_TITLE = "SameDayDesk: make your business usable by AI";
 export const HOME_CANONICAL = `${SITE_ORIGIN}/`;
@@ -191,6 +192,10 @@ export function shellFilePath(clientDist, routePath) {
   return path.join(clientDist, ROUTE_SHELL_DIR, shellFileName(routePath));
 }
 
+export function publicFirstRenderPath(clientDist, routePath) {
+  return path.join(clientDist, ROUTE_SHELL_DIR, PUBLIC_FIRST_RENDER_DIR, routePath === "/" ? "home.html" : shellFileName(routePath));
+}
+
 export function assertRouteCatalog(routes = SPA_ROUTE_SHELLS) {
   const seen = new Set();
   for (const route of routes) {
@@ -323,6 +328,11 @@ export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, ...RECE
 export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS]) {
   assertRouteCatalog(routes);
   const map = new Map();
+  const firstRender = new Map();
+  for (const routePath of ["/", ...routes.filter((route) => !route.robots).map((route) => route.path)]) {
+    const file = publicFirstRenderPath(clientDist, routePath);
+    if (existsSync(file)) firstRender.set(routePath, file);
+  }
   for (const route of routes) {
     const file = shellFilePath(clientDist, route.path);
     if (existsSync(file)) map.set(route.path, file);
@@ -333,10 +343,12 @@ export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SH
   }
   return function routeShellMiddleware(req, res, next) {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
-    const file = map.get(req.path);
+    // A query can select different content. Keep that request on the normal
+    // shell so a canonical anonymous snapshot never masks the requested view.
+    const file = (!req.originalUrl.includes("?") && firstRender.get(req.path)) || map.get(req.path);
     if (!file) return next();
     res.setHeader("Cache-Control", "no-cache");
-    res.sendFile(file, (err) => (err ? next(err) : undefined));
+    res.sendFile(file, { dotfiles: "allow" }, (err) => (err ? next(err) : undefined));
   };
 }
 

@@ -69,6 +69,7 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run build
       - run: node --test tests/private-static-compression.test.mjs
+      - run: node --test --test-name-pattern='canonical public HTML' server/scripts/test-spa-route-shells.js
       - name: Built Node app on a private runner
         run: |
           export SDS_BROWSER_MODULES="$RUNNER_TEMP/sds-browser-tools"
@@ -86,6 +87,7 @@ jobs:
             curl -fsSL --max-redirs 1 "http://127.0.0.1:31861$page" -o /dev/null
           done
           node scripts/check-preview-sitemap.mjs http://127.0.0.1:31861 "$(git rev-parse refs/remotes/origin/main)"
+          node .github/qa/public-first-render.mjs http://127.0.0.1:31861
           node .github/qa/receipt-roll-motion.mjs http://127.0.0.1:31861
           node scripts/check-receipts-refresh.mjs http://127.0.0.1:31861 "$RUNNER_TEMP/receipt-snapshot.json"
           curl -fsS http://127.0.0.1:31861/api/requests -H 'Content-Type: application/json' \
