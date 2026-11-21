@@ -10,8 +10,8 @@ import styles from "./Mcp.module.css";
 import x from "./X402.module.css";
 import board from "../data/paidTools.json";
 
-const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
 const GATEWAY_URL = "https://agents.samedaydesk.com";
+const CONNECTION_GUIDE_URL = `${GATEWAY_URL}/llms.txt`;
 const DEMO_URL = "https://youtu.be/QTsTs_ZjwNo";
 const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
@@ -60,10 +60,7 @@ console.log(await res.json(), res.headers.get("PAYMENT-RESPONSE"));`,
   "mcpServers": {
     "samedaydesk": { "url": "${GATEWAY_URL}/mcp" }
   }
-}
-
-# Or through Smithery:
-smithery mcp add epistemedeus/x402-data-gateway`,
+}`,
 } as const;
 type SetupTab = keyof typeof setup;
 
@@ -457,7 +454,7 @@ function Setup({ onCopy }: { onCopy: (tab: string) => void }) {
       <pre id="setup-panel" role="tabpanel" aria-labelledby={`setup-tab-${tab.replace(/\s+/g, "-")}`} className={x.code} tabIndex={0}><code>{setup[tab]}</code></pre>
       <p className={x.after}>
         Full reference: <a href="/docs/x402-sdk/">x402 SDK integration notes</a> · <a href={`${GATEWAY_URL}/.well-known/x402`} target="_blank" rel="noopener noreferrer">the gateway's x402 manifest</a> ·{" "}
-        <a href="https://github.com/epistemedeus/x402-url-extractor" target="_blank" rel="noopener noreferrer">source</a> · <a href={SMITHERY_URL} target="_blank" rel="noopener noreferrer">Smithery listing</a>
+        <a href="https://github.com/epistemedeus/x402-url-extractor" target="_blank" rel="noopener noreferrer">source</a> · <a href={CONNECTION_GUIDE_URL} target="_blank" rel="noopener noreferrer">Connection instructions</a>
       </p>
     </section>
   );

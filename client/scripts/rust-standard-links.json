@@ -1,0 +1,22 @@
+{
+  "https://doc.rust-lang.org/stable/core/iter/traits/collect/IntoIterator": "https://doc.rust-lang.org/stable/core/iter/trait.IntoIterator.html",
+  "https://doc.rust-lang.org/stable/core/iter/sources/empty/empty": "https://doc.rust-lang.org/stable/core/iter/fn.empty.html",
+  "https://doc.rust-lang.org/nightly/core/fmt/Formatter": "https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html",
+  "https://doc.rust-lang.org/nightly/core/fmt/Result": "https://doc.rust-lang.org/nightly/core/fmt/type.Result.html",
+  "https://doc.rust-lang.org/nightly/core/any/TypeId": "https://doc.rust-lang.org/nightly/core/any/struct.TypeId.html",
+  "https://doc.rust-lang.org/nightly/core/result/Result": "https://doc.rust-lang.org/nightly/core/result/enum.Result.html",
+  "https://doc.rust-lang.org/stable/core/convert/From": "https://doc.rust-lang.org/stable/core/convert/trait.From.html",
+  "https://doc.rust-lang.org/stable/core/iter/traits/iterator/Iterator": "https://doc.rust-lang.org/stable/core/iter/trait.Iterator.html",
+  "https://doc.rust-lang.org/stable/core/iter/traits/double_ended/DoubleEndedIterator": "https://doc.rust-lang.org/stable/core/iter/trait.DoubleEndedIterator.html",
+  "https://doc.rust-lang.org/stable/core/iter/traits/exact_size/ExactSizeIterator": "https://doc.rust-lang.org/stable/core/iter/trait.ExactSizeIterator.html",
+  "https://doc.rust-lang.org/stable/core/ops/range/RangeInclusive": "https://doc.rust-lang.org/stable/core/ops/struct.RangeInclusive.html",
+  "https://doc.rust-lang.org/stable/core/convert/Into": "https://doc.rust-lang.org/stable/core/convert/trait.Into.html",
+  "https://doc.rust-lang.org/stable/core/clone/Clone": "https://doc.rust-lang.org/stable/core/clone/trait.Clone.html",
+  "https://doc.rust-lang.org/nightly/core/option/Option": "https://doc.rust-lang.org/nightly/core/option/enum.Option.html",
+  "https://doc.rust-lang.org/stable/core/iter/traits/collect/Extend": "https://doc.rust-lang.org/stable/core/iter/trait.Extend.html",
+  "https://doc.rust-lang.org/nightly/alloc/vec/Vec": "https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html",
+  "https://doc.rust-lang.org/nightly/alloc/string/String": "https://doc.rust-lang.org/nightly/alloc/string/struct.String.html",
+  "https://doc.rust-lang.org/nightly/alloc/vec/into_iter/IntoIter": "https://doc.rust-lang.org/nightly/alloc/vec/struct.IntoIter.html",
+  "https://doc.rust-lang.org/nightly/alloc/collections/vec_deque/into_iter/IntoIter": "https://doc.rust-lang.org/nightly/alloc/collections/vec_deque/struct.IntoIter.html",
+  "https://doc.rust-lang.org/nightly/std/collections/hash/map/HashMap": "https://doc.rust-lang.org/nightly/std/collections/hash_map/struct.HashMap.html"
+}
