@@ -3,7 +3,7 @@
 (() => {
   const watched = new WeakSet();
   const receive = (element) => {
-    if (element.scrollWidth <= element.clientWidth + 1) return;
+    if (element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1) return;
     if (!element.hasAttribute("tabindex")) element.tabIndex = 0;
     if (!element.hasAttribute("aria-label") && !element.hasAttribute("aria-labelledby")) {
       element.setAttribute("aria-label", element.tagName === "PRE" ? "Code example" : "Scrollable table");
@@ -14,7 +14,8 @@
   const scan = () => {
     scheduled = false;
     document.querySelectorAll('pre, [class*="tableWrap"], [class*="table-wrap"], [class*="overflow-x-auto"]').forEach(element => {
-      if (!watched.has(element)) { watched.add(element); resize.observe(element); receive(element); }
+      if (!watched.has(element)) { watched.add(element); resize.observe(element); }
+      receive(element);
     });
   };
   new MutationObserver(() => {
