@@ -26,6 +26,17 @@ export function sentinelReportingChecks(jobs) {
   return rows;
 }
 
+export function sentinelReportArtifacts(artifacts, run) {
+  if (!Array.isArray(artifacts) || !runId(run) || !Number.isSafeInteger(run.run_attempt)) return false;
+  return Object.keys(SYSTEMS).every((runner) => {
+    const name = `release-check-report-${runner}-attempt-${run.run_attempt}`;
+    const matches = artifacts.filter((entry) => entry.name === name);
+    return matches.length === 1 && matches[0].expired === false && matches[0].size_in_bytes > 0 &&
+      matches[0].workflow_run?.id === run.id && matches[0].workflow_run.head_sha === run.head_sha &&
+      typeof run.head_sha === "string" && /^[0-9a-f]{40}$/.test(run.head_sha);
+  });
+}
+
 export function githubSentinel({ token, branch = "main", fetcher = fetch }) {
   async function request(path, opts = {}) {
     const response = await fetcher(`https://api.github.com/repos/${REPOSITORY}/actions/${path}`, {
@@ -52,6 +63,7 @@ export function githubSentinel({ token, branch = "main", fetcher = fetch }) {
     },
     run: (id) => request(`runs/${id}`),
     async jobs(id, attempt) { return (await request(`runs/${id}/attempts/${attempt}/jobs?per_page=10`)).jobs; },
+    async artifacts(id) { return (await request(`runs/${id}/artifacts?per_page=100`)).artifacts; },
   };
 }
 
@@ -87,5 +99,6 @@ export async function tickSentinel({ store, github, orderId, spec, now = () => n
   if (!Number.isSafeInteger(run.run_attempt) || run.run_attempt < 1) return "report_needs_review";
   const checks = sentinelReportingChecks(await github.jobs(run.id, run.run_attempt));
   if (!checks) return "report_needs_review";
+  if (!sentinelReportArtifacts(await github.artifacts(run.id), run)) return "report_needs_review";
   return await store.reportSentinel(orderId, period.lease, run.id, checks) ? "reported" : "owned_elsewhere";
 }

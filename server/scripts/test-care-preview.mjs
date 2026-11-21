@@ -3,17 +3,25 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { once } from "node:events";
+import { setTimeout as wait } from "node:timers/promises";
 import pg from "pg";
 import { createSdsApp } from "../app.js";
 import { createCareService } from "../lib/care-service.js";
 import { openCareStore } from "../lib/care-store.js";
 import { careToken } from "../lib/care-contract.js";
 import { drainCareMail } from "../lib/care-mail.js";
-import { sentinelReportingChecks, tickSentinel } from "../lib/care-sentinel.js";
+import { githubSentinel, sentinelReportArtifacts, sentinelReportingChecks, tickSentinel } from "../lib/care-sentinel.js";
 import { FROM, resend } from "../lib/resend.js";
 import { stripe as signingClient } from "../lib/stripe.js";
 
-test("built HTTP preview and real PostgreSQL receive both checkouts, money authority and branded delivery", async (t) => {
+const nativeActions = process.env.SDS_PRIVATE_NATIVE_SENTINEL === "1";
+if (nativeActions && (process.env.GITHUB_ACTIONS !== "true" || process.env.GITHUB_EVENT_NAME !== "push" ||
+    process.env.GITHUB_REPOSITORY !== "epistemedeus/samedaydesk" || process.env.GITHUB_REF_NAME !== "grand-phase/redo" ||
+    !/^[0-9a-f]{40}$/.test(process.env.GITHUB_SHA ?? "") || process.env.SDS_PRIVATE_PREVIEW !== "1" ||
+    !process.env.SDS_PRIVATE_ACTIONS_TOKEN)) throw new Error("Native Sentinel canary is only allowed on its private release branch runner");
+
+test("built HTTP preview and real PostgreSQL receive both checkouts, money authority and branded delivery",
+  { timeout: nativeActions ? 16 * 60_000 : 90_000 }, async (t) => {
   const secret = "isolated care access secret sufficient length";
   const primary = randomUUID(), recurring = randomUUID(), expiring = randomUUID();
   const route = randomUUID(), shop = randomUUID();
@@ -183,14 +191,19 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await store.order(route)).amount_cents, 49900);
   assert.equal((await store.order(shop)).amount_cents, 99900);
 
-  let runs = [], dispatches = 0, jobReads = 0;
-  const github = {
+  let runs = [], dispatches = 0, jobReads = 0, evidenceReady = false;
+  const head = "a".repeat(40);
+  const fakeArtifacts = ["windows-latest", "macos-latest", "ubuntu-24.04"].map((os) => ({
+    name: `release-check-report-${os}-attempt-1`, expired: false, size_in_bytes: 100,
+    workflow_run: { id: 4123, head_sha: head },
+  }));
+  const fixtureGateway = {
     branch: "grand-phase/redo",
     async dispatch(period) {
       dispatches++;
       assert.equal(period.package_spec, "sentinel-ir-mcp@0.5.13");
       assert.deepEqual(Object.keys(period).filter((key) => ["email", "intake"].includes(key)), []);
-      runs = [{ id: 4123, event: "workflow_dispatch", head_branch: this.branch, status: "in_progress",
+      runs = [{ id: 4123, event: "workflow_dispatch", head_branch: this.branch, head_sha: head, status: "in_progress",
         display_title: `Keep it working ${period.task_ref}`, created_at: new Date().toISOString(), run_attempt: 1 }];
       throw new Error("lost response after provider admitted the run");
     },
@@ -205,21 +218,67 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
         steps: [{ name: "Release check", conclusion: os === "macos-latest" ? "failure" : "success" }],
       }));
     },
+    async artifacts(id) {
+      assert.equal(id, 4123);
+      return evidenceReady ? fakeArtifacts : fakeArtifacts.slice(0, 2);
+    },
   };
+  const realGateway = nativeActions ? githubSentinel({
+    token: process.env.SDS_PRIVATE_ACTIONS_TOKEN, branch: process.env.GITHUB_REF_NAME,
+  }) : null;
+  const github = realGateway ? {
+    ...realGateway,
+    async dispatch(period) {
+      dispatches++;
+      assert.equal(period.package_spec, "sentinel-ir-mcp@0.5.13");
+      assert.deepEqual(Object.keys(period).filter((key) => ["email", "intake"].includes(key)), []);
+      return realGateway.dispatch(period);
+    },
+    async jobs(id, attempt) {
+      const run = await realGateway.run(id);
+      assert.equal(run.head_sha, process.env.GITHUB_SHA, "child must run the reviewed candidate revision");
+      assert.equal(run.event, "workflow_dispatch");
+      jobReads++;
+      return realGateway.jobs(id, attempt);
+    },
+  } : fixtureGateway;
   const tick = () => tickSentinel({ store, github, orderId: recurring, spec: "sentinel-ir-mcp@0.5.13" });
   assert.equal(await tick(), "nothing_due"); // Paid, but scope has not been received.
   assert.equal((await post("intake", { ...access(recurring), intake })).status, 200);
   const concurrent = await Promise.all([tick(), tick()]);
-  assert.ok(concurrent.includes("dispatch_needs_readback"));
-  assert.equal(dispatches, 1);
-  assert.equal(await tick(), "running"); // Reconciles from list, not another POST.
-  assert.equal(jobReads, 0);
-  runs[0].status = "completed";
-  assert.equal(await tick(), "reported");
+  let actualRunId;
+  if (realGateway) {
+    assert.ok(concurrent.some((state) => ["submitted", "dispatch_needs_readback"].includes(state)));
+    const deadline = Date.now() + 14 * 60_000;
+    let state;
+    do {
+      state = await tick();
+      if (state === "reported") break;
+      assert.ok(["running", "awaiting_run", "report_needs_review"].includes(state), `Unexpected worker state: ${state}`);
+      await wait(8000, undefined, { signal: t.signal });
+    } while (Date.now() < deadline);
+    assert.equal(state, "reported", "native run and three attempt-matched report artifacts must be received");
+    actualRunId = Number((await db.query(
+      "select run_id from public.care_periods where order_id = $1 and invoice_id = 'in_initial'", [recurring],
+    )).rows[0].run_id);
+    assert.ok(Number.isSafeInteger(actualRunId) && actualRunId > 0);
+  } else {
+    assert.ok(concurrent.includes("dispatch_needs_readback"));
+    assert.equal(await tick(), "running"); // Reconcile the exact run without another POST.
+    assert.equal(jobReads, 0);
+    runs[0].status = "completed";
+    assert.equal(await tick(), "report_needs_review"); // An incomplete artifact set cannot send a report.
+    evidenceReady = true;
+    assert.equal(await tick(), "reported");
+    assert.equal(jobReads, 2);
+  }
   assert.equal(await tick(), "nothing_due");
   assert.equal(dispatches, 1);
-  assert.equal(jobReads, 1);
   assert.equal(sentinelReportingChecks([{ name: "release-check (ubuntu-24.04)" }]), null);
+  const artifactRun = { id: 4123, run_attempt: 1, head_sha: head };
+  assert.equal(sentinelReportArtifacts(fakeArtifacts, artifactRun), true);
+  assert.equal(sentinelReportArtifacts(fakeArtifacts, { ...artifactRun, run_attempt: 2 }), false);
+  assert.equal(sentinelReportArtifacts(fakeArtifacts.concat(fakeArtifacts[0]), artifactRun), false);
   assert.deepEqual((await db.query("select invoice_id,status from public.care_periods order by period_start")).rows,
     [{ invoice_id: "in_initial", status: "reported" }, { invoice_id: "in_next", status: "review" }]);
 
@@ -233,8 +292,11 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.ok(messages.find((message) => message.to === "two@example.test" && message.subject.endsWith("receipt")).text.includes(access(recurring, "cancel").key));
   const report = messages.find((message) => message.subject === "Your monthly Keep it working report");
   assert.match(report.text, /Windows: Passed\./);
-  assert.match(report.text, /macOS: Needs attention\./);
+  assert.match(report.text, nativeActions ? /macOS: Passed\./ : /macOS: Needs attention\./);
   assert.match(report.text, /Linux: Passed\./);
+  if (actualRunId) {
+    console.log(`SDS_SENTINEL_CLOSED_LOOP run=${actualRunId} dispatches=${dispatches} paidScope=true systems=3 outboxReports=1`);
+  }
 
   const intakeResponse = await fetch(`${origin}/api/requests`, {
     method: "POST", headers: { "Content-Type": "application/json" },
