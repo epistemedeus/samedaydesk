@@ -138,8 +138,8 @@
 <h2>The direct answer: two blocks, in the head, today</h2>
 <p>JSON-LD is a small JSON script that describes what a page <em>is</em> in a format machines read without guessing. For AI search in 2026 you need two blocks on the page, server-rendered into the <code>&lt;head&gt;</code> so a crawler that does not run JavaScript still sees them:</p>
 <ol>
-  <li><strong>Organization</strong> &mdash; who publishes the site (name, URL, logo, social profiles). One block, sitewide.</li>
-  <li><strong>Article</strong> &mdash; what this specific page is (headline, author, publisher, dates). One block per content page.</li>
+  <li><strong>Organization</strong> : who publishes the site (name, URL, logo, social profiles). One block, sitewide.</li>
+  <li><strong>Article</strong> : what this specific page is (headline, author, publisher, dates). One block per content page.</li>
 </ol>
 <p>Here is the Organization block. Drop it in the <code>&lt;head&gt;</code> of every page and change the four values:</p>
 
@@ -178,8 +178,8 @@
 
 <p>That is the whole job for most pages. Validate it once at <a href="https://validator.schema.org/">validator.schema.org</a>, ship it, and the parts AI engines care about are in place. The rest of this page explains <em>why</em> these two types and not the ones you were probably about to reach for.</p>
 
-<h2>Skip FAQPage and HowTo for "rich results" &mdash; that win is gone</h2>
-<p>If your old SEO checklist says "add FAQPage schema for the accordion in search," delete that line. Google deprecated and removed FAQPage and HowTo rich results between 2023 and 2026. The markup is still <em>valid</em> and still machine-readable Q&amp;A, so you can keep a small FAQPage block as a secondary signal &mdash; but it will not produce a SERP feature, and you should not build your structured-data strategy around it.</p>
+<h2>Skip FAQPage and HowTo for "rich results" : that win is gone</h2>
+<p>If your old SEO checklist says "add FAQPage schema for the accordion in search," delete that line. Google deprecated and removed FAQPage and HowTo rich results between 2023 and 2026. The markup is still <em>valid</em> and still machine-readable Q&amp;A, so you can keep a small FAQPage block as a secondary signal : but it will not produce a SERP feature, and you should not build your structured-data strategy around it.</p>
 <p>The durable, extractable layer is Organization and Article. For a free tool, add <code>SoftwareApplication</code>. For a paid offering, add <code>Service</code> with an <code>Offer</code> that carries a real <code>price</code>. Those are the types that survive, and they map cleanly onto what an AI engine needs to attribute a claim: who said it, on what page, published when.</p>
 
 <table>
@@ -187,24 +187,24 @@
     <tr><th>Schema type</th><th>2026 status</th><th>Use it for</th></tr>
   </thead>
   <tbody>
-    <tr><td>Organization</td><td>Core &mdash; extracted</td><td>Publisher identity, sitewide</td></tr>
-    <tr><td>Article</td><td>Core &mdash; extracted</td><td>Every content / blog page</td></tr>
-    <tr><td>SoftwareApplication</td><td>Core &mdash; extracted</td><td>A tool or app page</td></tr>
-    <tr><td>Service + Offer (price)</td><td>Core &mdash; extracted</td><td>A paid product / service</td></tr>
+    <tr><td>Organization</td><td>Core : extracted</td><td>Publisher identity, sitewide</td></tr>
+    <tr><td>Article</td><td>Core : extracted</td><td>Every content / blog page</td></tr>
+    <tr><td>SoftwareApplication</td><td>Core : extracted</td><td>A tool or app page</td></tr>
+    <tr><td>Service + Offer (price)</td><td>Core : extracted</td><td>A paid product / service</td></tr>
     <tr><td>FAQPage</td><td>Rich result removed</td><td>Optional secondary Q&amp;A only</td></tr>
     <tr><td>HowTo</td><td>Rich result removed</td><td>Do not rely on it</td></tr>
   </tbody>
 </table>
 
 <h2>Why this moves the needle for ChatGPT, Perplexity and AI Overviews</h2>
-<p>AI search retrieves live. ChatGPT Search and Microsoft Copilot largely pull from the Bing index &mdash; about 87% of SearchGPT citations matched Bing's top 20 (Seer Interactive, reconfirmed by Search Engine Land, April 2026). Perplexity runs its own crawler and tends to cite fresher pages, so first citations on low-competition queries can land in days. Google AI Overviews is the wild card: citation there is largely independent of organic rank, with about 68% of AIO-cited pages <em>not</em> in the top 10 organic results.</p>
-<p>Because retrieval is live (RAG), a freshly indexed page can be cited without ever being in a model's training set. That is the opening. But to be cited, the engine has to parse your page cleanly &mdash; and that is exactly where structured data earns its keep. JSON-LD hands the machine the headline, the publisher, and the dates as data instead of asking it to scrape them out of your markup.</p>
+<p>AI search retrieves live. ChatGPT Search and Microsoft Copilot largely pull from the Bing index : about 87% of SearchGPT citations matched Bing's top 20 (Seer Interactive, reconfirmed by Search Engine Land, April 2026). Perplexity runs its own crawler and tends to cite fresher pages, so first citations on low-competition queries can land in days. Google AI Overviews is the wild card: citation there is largely independent of organic rank, with about 68% of AIO-cited pages <em>not</em> in the top 10 organic results.</p>
+<p>Because retrieval is live (RAG), a freshly indexed page can be cited without ever being in a model's training set. That is the opening. But to be cited, the engine has to parse your page cleanly : and that is exactly where structured data earns its keep. JSON-LD hands the machine the headline, the publisher, and the dates as data instead of asking it to scrape them out of your markup.</p>
 
 <blockquote>About 44% of LLM citations come from the first 30% of a page, and adding direct quotations raised visibility about 41% in the Princeton/Georgia Tech GEO study (KDD 2024). Put your answer up top, mark up who said it, and you are playing both sides of how these systems pick sources.</blockquote>
 
 <h2>The benchmark: the sites you'd assume are dialed in, aren't</h2>
-<p>We scored 189 well-known companies across 10 industries on six fundamentals, including JSON-LD structured data. SaaS averaged 87/100 &mdash; respectable &mdash; yet <strong>8 of the 24 SaaS sites we scanned ship no JSON-LD at all</strong>. That list includes Notion, Linear, Airtable, Clerk, Cal.com, PostHog and Gumroad. These are product-led teams that obsess over conversion, and they are leaving the machine-readable layer blank.</p>
-<p>The contrast is sharp. Stripe, Supabase, Webflow, Vercel (93) and HubSpot (90) score an A. Meanwhile Figma (73), Linear (71), Substack (68), Airtable (68) and Clerk (61) sit in C territory. The gap between an A and a C here is rarely talent &mdash; it is whether someone pasted two blocks into the <code>&lt;head&gt;</code>.</p>
+<p>We scored 189 well-known companies across 10 industries on six fundamentals, including JSON-LD structured data. SaaS averaged 87/100 : respectable : yet <strong>8 of the 24 SaaS sites we scanned ship no JSON-LD at all</strong>. That list includes Notion, Linear, Airtable, Clerk, Cal.com, PostHog and Gumroad. These are product-led teams that obsess over conversion, and they are leaving the machine-readable layer blank.</p>
+<p>The contrast is sharp. Stripe, Supabase, Webflow, Vercel (93) and HubSpot (90) score an A. Meanwhile Figma (73), Linear (71), Substack (68), Airtable (68) and Clerk (61) sit in C territory. The gap between an A and a C here is rarely talent : it is whether someone pasted two blocks into the <code>&lt;head&gt;</code>.</p>
 
 <table>
   <thead>
@@ -221,11 +221,11 @@
   </tbody>
 </table>
 
-<p class="muted">It is not just SaaS. In the full 189-company set, OpenAI and GitHub scored a D on JS-heavy homepages with thin server-rendered content; Perplexity &mdash; an AI search engine &mdash; scored a C; LlamaIndex scored a D; Klarna scored an F (38, the lowest). Ars Technica scored an F too: it lets crawlers in but ships no structured data. The full raw data is open under CC-BY: <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">ai-search-readiness-2026.csv</a>.</p>
+<p class="muted">It is not just SaaS. In the full 189-company set, OpenAI and GitHub scored a D on JS-heavy homepages with thin server-rendered content; Perplexity : an AI search engine : scored a C; LlamaIndex scored a D; Klarna scored an F (38, the lowest). Ars Technica scored an F too: it lets crawlers in but ships no structured data. The full raw data is open under CC-BY: <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">ai-search-readiness-2026.csv</a>.</p>
 
 <div class="cta">
   <h2>Check your site in 30 seconds</h2>
-  <p>Run the free browser checker to see whether your JSON-LD, crawler access, Open Graph and sitemap pass &mdash; the same six fundamentals we scored 189 companies on. Then grab the 9 USD Kit with every template ready to paste.</p>
+  <p>Run the free browser checker to see whether your JSON-LD, crawler access, Open Graph and sitemap pass : the same six fundamentals we scored 189 companies on. Then grab the 9 USD Kit with every template ready to paste.</p>
   <a class="btn" href="https://samedaydesk.com/tools/ai-readiness">Run the free check</a>
   <a class="btn alt" href="https://buy.stripe.com/7sYbJ2946179611dQKeZ20i">Get the 9 USD AI Readiness Kit</a>
 </div>
@@ -235,12 +235,12 @@
   <li><strong>Add the two blocks.</strong> Paste Organization sitewide and Article on every content page, server-rendered into the <code>&lt;head&gt;</code>. If your homepage is a heavy JavaScript bundle (the trap OpenAI and GitHub fell into), make sure the JSON-LD is in the initial HTML, not injected after load.</li>
   <li><strong>Validate.</strong> Run it through <a href="https://validator.schema.org/">validator.schema.org</a>. Zero errors, no exceptions.</li>
   <li><strong>Tool and product pages.</strong> Add <code>SoftwareApplication</code> to any app page and <code>Service</code> + <code>Offer</code> (with a real price) to anything you sell.</li>
-  <li><strong>Push to the index now.</strong> Bing indexes new content in hours to days, and IndexNow needs no account &mdash; that is the fast lane to ChatGPT visibility. Do not gate on Google: new domains can sit in a 3&ndash;9 month sandbox on commercial queries.</li>
+  <li><strong>Push to the index now.</strong> Bing indexes new content in hours to days, and IndexNow needs no account : that is the fast lane to ChatGPT visibility. Do not gate on Google: new domains can sit in a 3 to 9 month sandbox on commercial queries.</li>
   <li><strong>Skip llms.txt as a priority.</strong> Google's Gary Illyes says it is not supported and not planned, and roughly 97% of LLM crawler hits never fetch it (Ahrefs). Optional hygiene, not a ranking factor.</li>
   <li><strong>Audit it.</strong> Run our open-source CLI from your terminal: <code>npx github:epistemedeus/ai-readiness yoursite.com</code> (<a href="https://github.com/epistemedeus/ai-readiness">repo</a>).</li>
 </ol>
 
-<p>Want it done for you? The <a href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">39 USD Fix Pack</a> ships the exact JSON-LD, Open Graph and crawler config built for your site. And the <a href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">199 USD AI-Search Visibility Audit</a> tests whether ChatGPT, Perplexity and AI Overviews actually cite you against named competitors &mdash; the thing structured data is supposed to unlock. Given that AI-search referral traffic reportedly converts about 4.4x organic, and comparison and "alternatives to" formats draw roughly 40.9% of AI citations on commercial-intent queries, this is the cheapest visibility you will buy this quarter.</p>
+<p>Want it done for you? The <a href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">39 USD Fix Pack</a> ships the exact JSON-LD, Open Graph and crawler config built for your site. And the <a href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">199 USD AI-Search Visibility Audit</a> tests whether ChatGPT, Perplexity and AI Overviews actually cite you against named competitors : the thing structured data is supposed to unlock. Given that AI-search referral traffic reportedly converts about 4.4x organic, and comparison and "alternatives to" formats draw roughly 40.9% of AI citations on commercial-intent queries, this is the cheapest visibility you will buy this quarter.</p>
 
 <footer>
   <p>SameDayDesk &middot; June 2026. Benchmark figures from our scan of 189 companies across 10 industries; GEO lift figures from the Princeton/Georgia Tech GEO paper (KDD 2024); citation-source figures from Seer Interactive and Search Engine Land (April 2026) and Ahrefs. Raw data: <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">CC-BY CSV</a>. Verify your own site free at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
