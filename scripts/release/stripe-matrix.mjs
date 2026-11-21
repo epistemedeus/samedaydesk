@@ -132,7 +132,8 @@ async function payHosted(page, url, card, { threeDS } = {}) {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
     // Clear whatever the page or the browser put there first; a triple click can leave text behind.
-    await x.h.click();
+    await x.h.focus();
+    if (!(await x.h.evaluate((el) => document.activeElement === el))) throw new Error(`hosted page: could not focus ${sel}`);
     await page.keyboard.down("Control"); await page.keyboard.press("KeyA"); await page.keyboard.up("Control");
     await page.keyboard.press("Backspace");
     await x.h.type(text, { delay: 20 });
@@ -151,7 +152,12 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   if (optIn && await optIn.h.evaluate((e) => e.checked)) await optIn.h.click();
   const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]', 15000, "^(subscribe|pay(?:\\s|$))");
   if (!submit) throw new Error("hosted page: no enabled Pay or Subscribe action");
-  await submit.h.click();
+  // Use the focused control's keyboard action. Remote desktop geometry can
+  // differ from the cross-origin frame's coordinates; a coordinate click may
+  // leave the correctly filled form untouched.
+  await submit.h.focus();
+  if (!(await submit.h.evaluate((el) => document.activeElement === el))) throw new Error("hosted page: could not focus Subscribe or Pay");
+  await page.keyboard.press("Enter");
   if (threeDS) {
     // Stripe's 3D Secure 2 test page: a Complete and a Fail button inside nested frames.
     const label = threeDS === "pass" ? /^(complete|authorize)/i : /^fail/i;
@@ -175,7 +181,7 @@ async function buyerSaw(page, name) {
   await page.screenshot({ path: file, fullPage: true }).catch(() => {});
   const frames = await Promise.all(page.frames().map((f) => f.evaluate(() => {
     const body = document.body?.cloneNode(true);
-    body?.querySelectorAll("select option").forEach((el) => el.remove());
+    body?.querySelectorAll("select option, script, style").forEach((el) => el.remove());
     return body?.textContent ?? "";
   }).catch(() => "")));
   return { url: page.url().replace(/#.*/, "#<capability>"), screenshot: file.slice(root.length + 1), text: frames.join("\n").replace(/\s+\n/g, "\n").slice(0, 1500) };
@@ -339,13 +345,13 @@ try {
           await page.click("main button");
           await page.waitForFunction(() => location.hostname === "billing.stripe.com", { timeout: 30000 });
           const button = await within(page, '[data-testid="cancel-subscription"], button[type="submit"]', 10000);
-          if (button) await button.h.click();
+          if (button) { await button.h.focus(); await page.keyboard.press("Enter"); }
           else {
             const buttons = await page.$$("button");
             let clicked = false;
             for (const b of buttons) {
               if (/cancel subscription/i.test(await b.evaluate((el) => el.textContent)) && await b.boundingBox()) {
-                await b.click(); clicked = true; break;
+                await b.focus(); await page.keyboard.press("Enter"); clicked = true; break;
               }
             }
             if (!clicked) throw new Error("The hosted portal showed no cancellation action");
