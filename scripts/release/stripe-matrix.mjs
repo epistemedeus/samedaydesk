@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // npm run release:stripe -- [--offers id,id] [--cases success,expire,replay,refund] [--lane SDS] [--headed]
+//                          [--form-check N]  (load N fresh hosted pages, pay nothing; see formCheck)
 //
 // The money matrix of the pass bar (16 §3 C) in Stripe TEST mode, against the private preview.
 // release/offers.json lists every priced offer with its checkout entry and shown price;
@@ -50,7 +51,7 @@ async function stripe(method, path, params) {
   const res = await fetch(`https://api.stripe.com/v1/${path}${method === "GET" && body ? `?${body}` : ""}`, {
     method, headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/x-www-form-urlencoded", "Stripe-Version": config.stripeVersion ?? "2026-11-18.endive" },
     body: method === "GET" ? undefined : body, redirect: "error", signal: AbortSignal.timeout(20000),
-  });
+  }).catch((e) => { throw new Error(`Stripe ${method} ${path}: ${e.cause?.code ?? e.message}`); });
   const json = await res.json();
   if (!res.ok) throw new Error(`Stripe ${method} ${path}: ${json.error?.message ?? res.status}`);
   if (json.livemode === true) throw new Error("A live-mode object came back. Stopping.");
@@ -89,7 +90,10 @@ if (!existsSync(join(tools, "node_modules", "puppeteer-core"))) {
 }
 const { default: puppeteer } = await import(pathToFileURL(createRequire(join(tools, "package.json")).resolve("puppeteer-core")).href);
 const chrome = process.env.RELEASE_CHROME || ["/usr/bin/google-chrome", "/usr/local/bin/google-chrome", "/opt/google/chrome/google-chrome", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"].find(existsSync);
-const browser = await puppeteer.launch({ executablePath: chrome, headless: !args.includes("--headed"), args: ["--no-first-run", "--disable-dev-shm-usage"] });
+// Site isolation is off in this test browser only. With it on, Puppeteer loses the execution context of
+// Stripe's out-of-process Elements frame in about two loads in five (7 of 12 reached on November 21)
+// although the form is on screen; with it off, 12 of 12. That was the "form did not appear" failure.
+const browser = await puppeteer.launch({ executablePath: chrome, headless: !args.includes("--headed"), args: ["--no-first-run", "--disable-dev-shm-usage", "--disable-features=IsolateOrigins,site-per-process", "--disable-site-isolation-trials"] });
 
 // Stripe's hosted Checkout page: the payment form lives in one Elements frame. Link opt-in is on by
 // default and would ask for a phone number, so it is switched off.
@@ -97,31 +101,62 @@ const CARDS = { success: "4242424242424242", decline: "4000000000000002", block:
 async function within(page, selector, ms = 15000) {
   const end = Date.now() + ms;
   while (Date.now() < end) {
-    for (const f of page.frames()) {
-      const h = await f.$(selector).catch(() => null);
-      if (h && await h.boundingBox().catch(() => null)) return { f, h };
+    for (const f of formFrames(page)) {
+      const h = await quick(f.$(selector));
+      if (h && await quick(h.boundingBox())) return { f, h };
     }
     await sleep(300);
   }
   return null;
 }
-// Stripe's hosted form sometimes renders blank (seen about one load in four on this VM); fill it again
-// after a fresh load once before calling the case failed.
-async function payHosted(page, url, card, options = {}) {
-  try { await payHostedOnce(page, url, card, options); }
-  catch (e) {
-    if (!/hosted page: (no |the payment form)|Navigation timeout/.test(e.message)) throw e;
-    await payHostedOnce(page, url, card, options);
+// The hosted form is ready when the card number input is visible inside Stripe's frame and that frame
+// is wider than 300 px. When the account offers several payment methods the form opens as a list with
+// Card collapsed; Card is clicked once, when its row has not moved for half a second (the wallet buttons
+// load late and push the list down, and an earlier click lands on empty space: 7 of 10 were lost on
+// November 21). A form that is not ready in 30 s fails the case with its evidence: no reload, no second
+// attempt.
+const CARD_INPUT = "#payment-numberInput, #cardNumber";
+const CARD_CHOICE = '[data-value="card"]';
+// Only the page itself and Stripe's Elements frames are asked: a call into one of the other frames
+// (fraud, captcha, wallets) can hang for 30 s, which looked like a form that never appeared.
+const formFrames = (page) => page.frames().filter((f) => f === page.mainFrame() || f.url().startsWith("https://js.stripe.com/v3/elements-inner"));
+const quick = (p) => Promise.race([p.catch(() => null), sleep(2000).then(() => null)]);
+async function formState(page) {
+  const state = { inDom: false, visible: false, frameWidth: 0, choice: null };
+  for (const f of formFrames(page)) {
+    const h = await quick(f.$(CARD_INPUT));
+    const choice = h ? null : await quick(f.$(CARD_CHOICE));
+    if (!h && !choice) continue;
+    const frameEl = f === page.mainFrame() ? null : await quick(f.frameElement());
+    const frameBox = frameEl ? await quick(frameEl.boundingBox()) : await quick(page.evaluate(() => ({ width: innerWidth })));
+    Object.assign(state, { frame: f, frameEl, frameWidth: Math.round(frameBox?.width ?? 0) });
+    if (h) {
+      const box = await quick(h.boundingBox());
+      return { ...state, inDom: true, visible: Boolean(box && box.width > 0 && box.height > 0) };
+    }
+    const box = await quick(choice.boundingBox());
+    if (box) Object.assign(state, { choice, choiceAt: `${Math.round(box.x)},${Math.round(box.y)}` });
   }
+  return state;
 }
-async function payHostedOnce(page, url, card, { threeDS } = {}) {
-  // The payment form sometimes stays blank after load; wait for it, then reload once.
-  const formReady = "#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value=\"card\"]";
-  await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-  if (!(await within(page, formReady, 30000))) {
-    await page.reload({ waitUntil: "networkidle2", timeout: 60000 });
-    if (!(await within(page, formReady, 45000))) throw new Error("hosted page: the payment form did not appear");
+async function openHosted(page, url) {
+  const t0 = Date.now();
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+  let st, chose = null, at = null, still = 0;
+  while (Date.now() - t0 < 30000) {
+    st = await formState(page);
+    if (st.visible && st.frameWidth > 300) return { ...st, msToReady: Date.now() - t0, msToCardChoice: chose };
+    still = st.choiceAt && st.choiceAt === at ? still + 1 : 0;
+    at = st.choiceAt ?? null;
+    if (!st.inDom && still >= 2 && chose === null && await quick(st.choice.click().then(() => true))) chose = Date.now() - t0;
+    await sleep(250);
   }
+  const e = new Error(`hosted page: the card form was not ready in 30 s (card input in DOM ${st.inDom}, visible ${st.visible}, frame ${st.frameWidth} px, card choice ${st.choice ? "shown" : "not shown"}${chose !== null ? " and clicked" : ""})`);
+  e.form = { inDom: st.inDom, visible: st.visible, frameWidth: st.frameWidth, cardChoice: Boolean(st.choice), cardChoiceClicked: chose !== null };
+  throw e;
+}
+async function payHosted(page, url, card, { threeDS } = {}) {
+  await openHosted(page, url);
   const typeInto = async (sel, text, need = true) => {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
@@ -132,8 +167,6 @@ async function payHostedOnce(page, url, card, { threeDS } = {}) {
     await x.h.type(text, { delay: 20 });
   };
   await typeInto("#linkAuthentication-emailInput, #email, input[name=email]", `buyer+${run}@example.com`, false);
-  const cardTab = await within(page, '[data-value="card"], button[value="card"], #payment-card-tab, input[type=radio][value=card]', 4000);
-  if (cardTab) await cardTab.h.click();
   await typeInto("#payment-numberInput, #cardNumber", card);
   await typeInto("#payment-expiryInput, #cardExpiry", "1234");
   await typeInto("#payment-cvcInput, #cardCvc", "123");
@@ -143,7 +176,17 @@ async function payHostedOnce(page, url, card, { threeDS } = {}) {
   await typeInto("#payment-postalCodeInput, #billingPostalCode", "10001", false);
   const optIn = await within(page, "#payment-linkOptInInput, #enableStripePass", 2000);
   if (optIn && await optIn.h.evaluate((e) => e.checked)) await optIn.h.click();
-  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]');
+  // Unchecking Link moves the Pay button; click it once it has stood still for half a second.
+  const submitSel = '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]';
+  let at = null, still = 0, submit = null;
+  for (const end = Date.now() + 15000; Date.now() < end && still < 2; await sleep(250)) {
+    submit = await within(page, submitSel, 2000);
+    const box = submit && await quick(submit.h.boundingBox());
+    const now = box ? `${Math.round(box.x)},${Math.round(box.y)}` : null;
+    still = now && now === at ? still + 1 : 0;
+    at = now;
+  }
+  if (!submit || still < 2) throw new Error("hosted page: the Pay button did not settle in 15 s");
   await submit.h.click();
   if (threeDS) {
     // Stripe's 3D Secure 2 test page: a Complete and a Fail button inside nested frames.
@@ -151,10 +194,10 @@ async function payHostedOnce(page, url, card, { threeDS } = {}) {
     let clicked = false;
     for (let i = 0; i < 60 && !clicked; i++) {
       for (const f of page.frames()) {
-        const buttons = await f.$$("button").catch(() => []);
+        const buttons = (await quick(f.$$("button"))) ?? [];
         for (const b of buttons) {
-          const text = (await b.evaluate((el) => el.textContent.trim()).catch(() => "")) ?? "";
-          if (label.test(text) && await b.boundingBox().catch(() => null)) { await b.click(); clicked = true; break; }
+          const text = (await quick(b.evaluate((el) => el.textContent.trim()))) ?? "";
+          if (label.test(text) && await quick(b.boundingBox())) { await b.click(); clicked = true; break; }
         }
         if (clicked) break;
       }
@@ -163,10 +206,14 @@ async function payHostedOnce(page, url, card, { threeDS } = {}) {
     if (!clicked) throw new Error("no 3D Secure test challenge appeared");
   }
 }
-async function buyerSaw(page, name) {
+// Viewport screenshots only: a full-page capture resizes the viewport, and Stripe's out-of-process
+// frames are often not repainted when it is taken (they come out blank). Scroll the part that matters
+// into view instead.
+async function buyerSaw(page, name, focus = null) {
   const file = join(out, `${name}.png`);
-  await page.screenshot({ path: file, fullPage: true }).catch(() => {});
-  const frames = await Promise.all(page.frames().map((f) => f.evaluate(() => document.body?.innerText ?? "").catch(() => "")));
+  if (focus) await focus.evaluate((e) => e.scrollIntoView({ block: "center" })).catch(() => {});
+  await page.screenshot({ path: file }).catch(() => {});
+  const frames = await Promise.all(page.frames().map(async (f) => (await quick(f.evaluate(() => document.body?.innerText ?? ""))) ?? ""));
   return { url: page.url().replace(/#.*/, "#<capability>"), screenshot: file.slice(root.length + 1), text: frames.join("\n").replace(/\s+\n/g, "\n").slice(0, 1500) };
 }
 
@@ -205,6 +252,78 @@ function signed(payload) {
   return `t=${t},v1=${createHmac("sha256", webhookSecret).update(`${t}.${payload}`).digest("hex")}`;
 }
 
+// --form-check N: open N fresh sessions of the first offer and load each hosted page once, paying
+// nothing. Per load: is the card input in the DOM and visible, the frame's width, time to ready, and
+// how blank the form area is in a viewport screenshot and in a full-page one (luminance spread in the
+// frame's rectangle; under 3 counts as blank). Console errors and failed requests are kept per load.
+async function spread(png, rect) {
+  const p = await browser.newPage();
+  try {
+    return await p.evaluate(async (src, r) => {
+      const img = new Image(); img.src = src; await img.decode();
+      const c = new OffscreenCanvas(Math.max(1, r.width), Math.max(1, r.height)).getContext("2d");
+      c.drawImage(img, r.x, r.y, r.width, r.height, 0, 0, r.width, r.height);
+      const d = c.getImageData(0, 0, r.width, r.height).data;
+      let n = 0, sum = 0, sq = 0;
+      for (let i = 0; i < d.length; i += 16) { const y = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]; n++; sum += y; sq += y * y; }
+      return Math.round(Math.sqrt(Math.max(0, sq / n - (sum / n) ** 2)) * 10) / 10;
+    }, `data:image/png;base64,${png}`, rect);
+  } finally { await p.close(); }
+}
+async function formCheck(offer, n) {
+  const loads = [];
+  for (let i = 1; i <= n; i++) {
+    const a = await adapter.open(ctx, offer);
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 1000 });
+    const errors = [];
+    page.on("console", (m) => { if (m.type() === "error") errors.push(m.text().slice(0, 200)); });
+    page.on("requestfailed", (r) => errors.push(`failed ${r.url().slice(0, 120)}: ${r.failure()?.errorText}`));
+    page.on("response", (r) => { if (r.status() >= 400) errors.push(`${r.status()} ${r.url().slice(0, 120)}`); });
+    const load = { i, session: a.sessionId, headed: args.includes("--headed") };
+    try {
+      const st = await openHosted(page, a.url);
+      Object.assign(load, { inDom: true, visible: true, frameWidth: st.frameWidth, msToReady: st.msToReady, msToCardChoice: st.msToCardChoice });
+      await sleep(1500);
+      // The viewport capture first: a full-page capture resizes the viewport and can leave Stripe's
+      // frame unpainted for the captures after it.
+      await st.frameEl.evaluate((e) => e.scrollIntoView({ block: "start" }));
+      const box = await st.frameEl.boundingBox();
+      const file = join(out, `form-check-${String(i).padStart(2, "0")}.png`);
+      const view = await page.screenshot({ encoding: "base64" });
+      writeFileSync(file, Buffer.from(view, "base64"));
+      const y = Math.max(0, Math.round(box.y));
+      load.viewportSpread = await spread(view, { x: Math.round(box.x), y, width: Math.round(box.width), height: Math.min(Math.round(box.height), 1000 - y) });
+      await page.evaluate(() => scrollTo(0, 0));
+      const top = await st.frameEl.boundingBox();
+      const full = await page.screenshot({ fullPage: true, encoding: "base64" });
+      load.fullPageSpread = await spread(full, { x: Math.round(top.x), y: Math.round(top.y), width: Math.round(top.width), height: Math.round(Math.min(top.height, 900)) });
+      load.screenshot = file.slice(root.length + 1);
+    } catch (e) {
+      Object.assign(load, e.form ?? { inDom: false }, { error: e.message.slice(0, 200), frames: page.frames().map((f) => f.url().replace(/#.*/, "#<redacted>").slice(0, 120)),
+        formFrames: await Promise.all(formFrames(page).map(async (f) => ({ url: f.url().slice(0, 70), detached: f.detached, page: await quick(f.evaluate(() => `${document.readyState}, ${document.querySelectorAll("*").length} elements, card choice ${Boolean(document.querySelector('[data-value="card"]'))}, card input ${Boolean(document.querySelector("#payment-numberInput"))}`)) }))) });
+      const file = join(out, `form-check-${String(i).padStart(2, "0")}-missing.png`);
+      await page.screenshot({ path: file }).catch(() => {});
+      load.screenshot = file.slice(root.length + 1);
+    }
+    load.viewportBlank = load.viewportSpread !== undefined ? load.viewportSpread < 3 : null;
+    load.fullPageBlank = load.fullPageSpread !== undefined ? load.fullPageSpread < 3 : null;
+    load.errors = errors.slice(0, 20);
+    loads.push(load);
+    console.log(`load ${i}: in DOM ${load.inDom}, visible ${load.visible ?? false}, frame ${load.frameWidth ?? 0} px, ready ${load.msToReady ?? "-"} ms, spread viewport ${load.viewportSpread ?? "-"} full page ${load.fullPageSpread ?? "-"}`);
+    await page.close().catch(() => {});
+    await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
+  }
+  const count = (f) => loads.filter(f).length;
+  const summary = { run, offer: offer.id, loads: n, headed: args.includes("--headed"),
+    formMissingInDom: count((l) => !l.inDom), inDomNotReady: count((l) => l.inDom && l.error),
+    viewportBlank: count((l) => l.viewportBlank), fullPageBlankOnly: count((l) => l.fullPageBlank && !l.viewportBlank),
+    msToReady: loads.filter((l) => l.msToReady).map((l) => l.msToReady).sort((x, y) => x - y), records: loads };
+  writeFileSync(join(out, "form-check.json"), JSON.stringify(summary, null, 2) + "\n");
+  console.log(`\nform check: ${n} loads, missing in DOM ${summary.formMissingInDom}, in DOM but not ready ${summary.inDomNotReady}, viewport blank ${summary.viewportBlank}, blank only in the full-page capture ${summary.fullPageBlankOnly}. release/out/stripe/${run}/form-check.json`);
+  return summary;
+}
+
 const pick = (s) => s && ({ id: s.id, status: s.status, payment_status: s.payment_status, amount_total: s.amount_total, currency: s.currency, mode: s.mode, livemode: s.livemode, release_run: s.metadata?.release_run, payment_intent: typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id ?? null, subscription: s.subscription ?? null });
 const records = [];
 function record(offer, name, rec) {
@@ -217,6 +336,12 @@ function record(offer, name, rec) {
 try {
   app = await adapter.start(ctx);
   console.log(`preview ${preview} started`);
+  if (value("--form-check")) {
+    const summary = await formCheck(offers[0], Number(value("--form-check")));
+    await browser.close().catch(() => {});
+    await shutdown();
+    process.exit(summary.formMissingInDom || summary.inDomNotReady || summary.viewportBlank ? 1 : 0);
+  }
   const paid = new Map(); // offer id -> { session, order, page }
   for (const offer of offers) {
     for (const name of cases) {
@@ -248,15 +373,11 @@ try {
           const a = await adapter.open(ctx, offer);
           const shouldPay = name === "success" || name === "3ds-pass";
           let hosted = null;
-          // The hosted page occasionally sits on its loading state; one more attempt on the same open session.
-          for (let attempt = 1; attempt <= 2; attempt++) {
-            await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
-            if (!shouldPay) break;
+          await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
+          if (shouldPay) {
             let back = false;
             for (let w = 0; w < 120 && !back; w++) { back = Boolean(page.returnedTo) || page.url().startsWith(preview); if (!back) await sleep(500); }
-            if (back) { hosted = null; break; }
-            hosted = { attempt, ...(await buyerSaw(page, `${offer.id}-${name}-hosted-${attempt}`)) };
-            if ((await stripe("GET", `checkout/sessions/${a.sessionId}`)).status !== "open") break;
+            if (!back) hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`);
           }
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
@@ -323,7 +444,7 @@ try {
             buyer, stripe: { refund: { id: refund.id, status: refund.status, amount: refund.amount }, session: pick(p.session) }, webhook, stored });
         }
       } catch (e) {
-        record(offer, name, { state: "failed", why: e.message.slice(0, 300), buyer: await buyerSaw(page, `${offer.id}-${name}-error`) });
+        record(offer, name, { state: "failed", why: e.message.slice(0, 300), form: e.form, buyer: await buyerSaw(page, `${offer.id}-${name}-error`) });
       } finally { await page.close().catch(() => {}); }
     }
   }
