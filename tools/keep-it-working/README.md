@@ -57,7 +57,7 @@ read-only tool and sample input; a later independently retained report demonstra
 
 Run the production preview and its real PostgreSQL acceptance with
 `npm run release:check`. With the existing Stripe test key file and CLI configured,
-use `npm run release:stripe -- --lane SENTINEL --offers keep_it_working --cases readback,success,renewal,cancel --headed`.
+use `npm run release:stripe -- --lane SENTINEL --offers keep_it_working --cases readback,success,renewal,cancellation --headed`.
 This creates a test clock customer before hosted Checkout, pays 100 USD,
 advances one billing cycle and its invoice-finalization window, then cancels
 through the receipt's hosted customer portal. Each case retains the buyer's view,

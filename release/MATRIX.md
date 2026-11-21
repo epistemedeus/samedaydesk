@@ -7,7 +7,7 @@ commit it names. Update the lane status file (`overview/grand-phase/release/SDS.
 as lines pass; refresh this file when the list itself changes.
 
 Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `npm run release:stripe`,
-`node scripts/release/post-status.mjs <sha> <state> <log-url>`.
+`npm run release:status -- <sha> <state> <log-url>` (the shared kit, pinned in `release/kit.json`).
 
 In one checkout, start Stripe after release:check's install and build gates finish; it can run
 alongside the remaining gates. npm ci replaces dependencies and Vite replaces build assets, so

@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9",
+  "base": "18285f775621eef7ea1da360a0df8cccbf07ce2a",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -9,7 +9,7 @@
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "98c27a329c069022cec7b52bfb44dbd62d317759b2dbda9c0bf7f9a2c32593f8",
-    "package.json": "73834dcdcd8effb9545f6b5cfe8addc2edaa4f9139c6e584c017c347f081b205",
+    "package.json": "e72c8863dfa8b236e335e667c4b25fe743cc83eb16c2d6ef518fe9fabce2f071",
     "server/app.js": "c6d302bbb2325f1369b84b5551db6355f5cec8d9f26a1ef0b861e1b92004b145",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
@@ -1778,6 +1778,11 @@
       "base": "9566334b3661a69bfb15d3ff22d98c47b54c0f57",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:503308e0272b473a31af7b8d9af1799032d83dc185c41bcc15d84b9afcbcd5aa"
+    },
+    {
+      "base": "cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:b4748ea095269042e66ae7e1c8401561971bd25dd640e668c5573c0225abc7ca"
     }
   ]
 }

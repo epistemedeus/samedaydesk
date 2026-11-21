@@ -1,4 +1,4 @@
-// SameDayDesk's side of scripts/release/stripe-matrix.mjs: the care checkout (one-time services and
+// SameDayDesk's side of the shared release kit's stripe-matrix.mjs (pinned in release/kit.json): the care checkout (one-time services and
 // the Keep it working subscription) on the built Node app, with a throwaway local PostgreSQL for
 // care_orders and the private preview mail outbox (no mail leaves the machine).
 import { execFileSync, spawn, spawnSync } from "node:child_process";
@@ -141,7 +141,7 @@ export async function open(ctx, offer, { again, page } = {}) {
     const sessions = await ctx.stripe("GET", "checkout/sessions", { payment_link: link.id, limit: "5" });
     const own = sessions.data.filter(s => s.status === "open" && s.metadata?.release_run === ctx.run);
     if (own.length !== 1) throw new Error("One actual hosted session for this test link is required");
-    return { kind: "link", sessionId: own[0].id, url: null };
+    return { kind: "link", sessionId: own[0].id, url: null, confirmText: "Payment received" };
   }
   if (offer.kind === "quote") {
     const q = await prepareQuote(ctx); nextQuote = null;
@@ -149,7 +149,7 @@ export async function open(ctx, offer, { again, page } = {}) {
     const sessions = await ctx.stripe("GET", "checkout/sessions", { payment_link: q.linkId, limit: "2" });
     const own = sessions.data.filter(s => s.metadata?.sds_task_quote === q.quoteId && s.metadata?.release_run === ctx.run);
     if (own.length !== 1) throw new Error("One actual hosted session for the exact quote link is required");
-    return { kind: "quote", order: q.quoteId, requestId: q.requestId, sessionId: own[0].id, url: null };
+    return { kind: "quote", order: q.quoteId, requestId: q.requestId, sessionId: own[0].id, url: null, confirmText: "Payment received" };
   }
   const order = again?.order ?? randomUUID();
   const res = await fetch(`${ctx.preview}/api/care/checkout`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ offer: offer.offer, order }) });
@@ -169,14 +169,17 @@ export async function storedRow(_ctx, a) {
     q.stripe_session as session_id,q.payment_intent is not null as has_payment,q.needs_review,
     r.status as request_state,case when q.paid_at is not null and not q.needs_review and r.status='paid' then 'paid' else 'created' end as state
     from task_quotes q join task_requests r on r.id=q.request_id where q.id='${a.order}') o`));
-  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_status, cancel_at_period_end, refunded_cents from care_orders where id = '${a.order}') o`);
+  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_status, cancel_at_period_end, refunded_cents,
+    (select count(*) from care_periods p where p.order_id = care_orders.id and p.status = 'ready') as ready_periods from care_orders where id = '${a.order}') o`);
   return row ? JSON.parse(row) : null;
 }
 export async function orderCount(_ctx, a) {
   return Number(psql(`select count(*) from care_orders where session_id = '${a.sessionId}'`));
 }
 export const isPaid = (row) => row?.state === "paid" || row?.kind === "hosted" && row.state === "received";
-export const paymentFailureMatches = (a, intent) => intent.metadata?.sds_care_order === a.order;
+export const failureMatches = (_ctx, a, intent) => intent.metadata?.sds_care_order === a.order;
+export const isRenewed = (row) => row?.ready_periods === 2;
+export const isCanceled = (row) => row?.cancel_at_period_end === true;
 export const isExpired = (row) => row?.state === "expired";
 export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
 export const describe = (row) => row ? `${row.state}, refunded ${row.refunded_cents}` : "no row";
@@ -205,7 +208,46 @@ export function periods(_ctx, a) {
   return JSON.parse(psql(`select coalesce(json_agg(p order by period_start),'[]') from
     (select invoice_id,period_start,period_end,status from care_periods where order_id='${a.order}') p`));
 }
-export const cancellationLink = (ctx, a) => careLink({ id: a.order, checkout_origin: ctx.preview }, accessSecret, "cancel");
+const cancellationLink = (ctx, a) => careLink({ id: a.order, checkout_origin: ctx.preview }, accessSecret, "cancel");
+const subscriptionOf = (a) => psql(`select subscription_id from care_orders where id = '${a.order}'`);
+
+// Keep it working is bought by the run's test clock customer, so the clock can move past the period.
+export const usesTestClock = true;
+
+// Renewal: the clock passes the paid period's end; Stripe bills the next month on its own.
+export async function renew(ctx, a) {
+  const initial = periods(ctx, a);
+  if (initial.length !== 1) throw new Error(`Expected one paid initial period, got ${initial.length}`);
+  const boundary = Math.floor(Date.parse(initial[0].period_end) / 1000);
+  const clocks = [await ctx.advanceClock(boundary), await ctx.advanceClock(boundary + 7200)];
+  const invoices = await ctx.stripe("GET", "invoices", { customer: ctx.clockCustomer, subscription: subscriptionOf(a), limit: "10" });
+  const renewal = invoices.data.find((i) => i.billing_reason === "subscription_cycle");
+  if (!renewal) throw new Error("The clock produced no renewal invoice");
+  const amount = Number(psql(`select amount_cents from care_orders where id = '${a.order}'`));
+  return { ok: renewal.status === "paid" && renewal.amount_paid === amount && renewal.currency === "usd", eventObject: renewal.id,
+    clock: clocks.map(({ id, status, frozen_time }) => ({ id, status, frozen_time })),
+    invoice: { id: renewal.id, status: renewal.status, amount_paid: renewal.amount_paid, billing_reason: renewal.billing_reason } };
+}
+
+// Cancellation: the buyer's cancel link opens Stripe's hosted portal, which cancels at the period end.
+export async function cancel(ctx, a, page) {
+  await page.goto(cancellationLink(ctx, a), { waitUntil: "networkidle2" });
+  await page.click("main button");
+  await page.waitForFunction(() => location.hostname === "billing.stripe.com", { timeout: 30000 });
+  const handle = await page.waitForFunction(() => [...document.querySelectorAll('[data-testid="cancel-subscription"], button')]
+    .find((b) => (b.dataset.testid === "cancel-subscription" || /cancel subscription/i.test(b.textContent)) && b.getBoundingClientRect().width > 0), { timeout: 20000 });
+  await handle.asElement().focus();
+  await page.keyboard.press("Enter");
+  const id = subscriptionOf(a);
+  let subscription;
+  for (let i = 0; i < 20; i++) {
+    subscription = await ctx.stripe("GET", `subscriptions/${id}`);
+    if (subscription.cancel_at_period_end === true || subscription.cancel_at > 0) break;
+    await sleep(1000);
+  }
+  return { ok: subscription.cancel_at_period_end === true || subscription.cancel_at > 0, eventObject: id,
+    subscription: { id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end, cancel_at: subscription.cancel_at } };
+}
 
 // The buyer's receipt page, reached by the success URL (its capability key stays in the fragment).
 export async function buyerScreen(ctx, a, page, name) {
@@ -225,7 +267,8 @@ export async function buyerScreen(ctx, a, page, name) {
     url: page.url().replace(/#.*/, "#<capability>"),
     screenshot: file.slice(ctx.root.length + 1),
     text: text.slice(0, 800),
-    ok: /Paid: [\d,.]+ USD/.test(text) || /Payment refunded/.test(text) || /expired/i.test(text),
+    ok: /Paid: [\d,.]+ USD/.test(text) || /Payment refunded/.test(text) || /expired/i.test(text) || /will not renew/i.test(text),
     showsRefund: /Payment refunded/.test(text),
+    showsCanceled: /will not renew/i.test(text),
   };
 }
