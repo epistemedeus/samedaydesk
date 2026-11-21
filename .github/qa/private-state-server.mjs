@@ -22,7 +22,7 @@ const stripe={checkout:{sessions:{
  async create(args){const s={id:'cs_test_'+randomUUID().replaceAll('-',''),livemode:false,mode:args.mode,client_reference_id:args.client_reference_id,
   currency:'usd',amount_total:args.line_items[0].price_data.unit_amount,metadata:args.metadata,status:'open',payment_status:'unpaid',url:'https://checkout.stripe.com/c/pay/cs_test_private_fixture'};sessions.set(s.id,s);return s;},
  async retrieve(id){if(!sessions.has(id))throw new Error('unknown fixture session');return sessions.get(id);},
-}},paymentIntents:{async retrieve(id){return {id,livemode:false,metadata:{}};}},subscriptions:{async retrieve(){return {id:'sub_fixture',livemode:false,customer:'cus_fixture',status:'active',cancel_at_period_end:false};}},
+}},paymentIntents:{async retrieve(id){return {id,livemode:false,metadata:{}};}},subscriptions:{async retrieve(id){return {id,livemode:false,customer:'cus_fixture',status:'active',cancel_at_period_end:false};}},
  billingPortal:{sessions:{async create(){return {livemode:false,url:'https://billing.stripe.com/p/session/test_private_fixture'};}}}};
 signer.paymentIntents.create=async()=>{throw new Error('Hosted Stripe acceptance requires a claimed test sandbox');};
 stripe.charges={async retrieve(id){return charges.get(id);}};
@@ -38,7 +38,7 @@ async function event(type,object){const payload=JSON.stringify({type,livemode:fa
 for(const [name,offer] of [['pending','agent_front_door'],['paid','agent_front_door'],['intake-received','agent_front_door'],['expired','agent_front_door'],['refunded','agent_front_door'],['review','agent_front_door'],['subscription','keep_it_working'],['paid-route','machine_payment_route'],['paid-storefront','agent_storefront'],...[390,768,1440].flatMap(w=>['drafting','dark'].map(t=>[`action-${w}-${t}`,'agent_front_door']))]){
  const id=randomUUID();await care.start(offer,id);const order=await store.order(id);const session=sessions.get(order.session_id);
  if(name!=='pending'&&name!=='expired'){
-  Object.assign(session,{status:'complete',payment_status:'paid',payment_intent:'pi_'+id.replaceAll('-',''),customer:'cus_fixture',customer_details:{email:'buyer@example.test'},...(offer==='keep_it_working'?{subscription:'sub_fixture'}:{})});
+  Object.assign(session,{status:'complete',payment_status:'paid',payment_intent:'pi_'+id.replaceAll('-',''),customer:'cus_fixture',customer_details:{email:'buyer@example.test'},...(offer==='keep_it_working'?{subscription:'sub_fixture_'+id.replaceAll('-','')}:{})});
   await event('checkout.session.completed',session);await event('checkout.session.completed',session);
  }
  if(name==='expired'){session.status='expired';await event('checkout.session.expired',session);}
