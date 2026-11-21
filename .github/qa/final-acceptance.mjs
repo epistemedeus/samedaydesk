@@ -53,6 +53,7 @@ for(const path of selected) {
    await page.addScriptTag({content:axe});
    const ar=await page.evaluate(async()=>{const r=await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}});const cut=v=>({id:v.id,impact:v.impact,help:v.help,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary,html:n.html.slice(0,300)}))});return {violations:r.violations.map(cut),incomplete:r.incomplete.map(cut)};});
    row.axe=ar.violations;row.incomplete=ar.incomplete;
+   row.ariaReferences=await page.$$eval('[aria-controls]',es=>es.map(e=>({id:e.id,controls:e.getAttribute('aria-controls'),exists:e.getAttribute('aria-controls').split(/\s+/).every(id=>Boolean(document.getElementById(id)))})));
    await page.keyboard.press('Tab');
    row.focus=await page.evaluate(()=>{
     const elements=[...document.querySelectorAll('a[href],button,input,textarea,select,summary,[tabindex="0"]')].filter(e=>e.checkVisibility({checkVisibilityCSS:true,checkOpacity:true})&&!e.disabled&&e.tabIndex>=0);
