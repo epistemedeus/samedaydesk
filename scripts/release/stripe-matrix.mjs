@@ -104,7 +104,11 @@ async function within(page, selector, ms = 15000) {
   const end = Date.now() + ms;
   while (Date.now() < end) {
     for (const f of page.frames()) {
-      const h = await f.$(selector).catch(() => null);
+      // Query in the frame's main realm. Stripe's helper frames can prevent
+      // Puppeteer's isolated selector realm from starting, stalling every field.
+      const handle = await f.evaluateHandle((sel) => document.querySelector(sel), selector).catch(() => null);
+      const h = handle?.asElement();
+      if (!h) { await handle?.dispose(); continue; }
       if (h && await h.boundingBox().catch(() => null)) return { f, h };
     }
     await sleep(300);
