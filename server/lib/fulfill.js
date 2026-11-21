@@ -18,10 +18,12 @@ export function legacyOrderIdForUidOffer(uid, offer) {
   return `order_${uid}_${offer}`;
 }
 
-export async function fulfillFromIntent(intent, { sb = supabaseAdmin(), attemptStore = paymentAttemptStoreDeps.getStore() } = {}) {
+export async function fulfillFromIntent(intent, { sb, attemptStore } = {}) {
   const meta = intent.metadata || {};
   const uid = meta.uid;
   if (!uid) return { ok: false, reason: "no_uid" }; // e.g. an operator Payment Link w/o an account
+  sb ??= supabaseAdmin();
+  attemptStore ??= paymentAttemptStoreDeps.getStore();
 
   const pricing = trustPricingFromMetadata(meta);
   let orderId = orderIdForPaymentIntent(intent);

@@ -65,6 +65,21 @@ export function createCareStore(pool) {
     [row.stripe_email, row.id, row.received_at])),
     close: () => pool.end(),
     quotes: createTaskQuoteStore(pool, txn),
+    async hostedOrder(facts) {
+      const row = await first(pool.query(`insert into public.hosted_orders
+        (id,session_id,payment_intent_id,offer,label,amount_cents,currency,live_mode)
+        values ($1,$2,$3,$4,$5,$6,$7,$8) on conflict (payment_intent_id) do nothing returning id`,
+      [facts.id,facts.session,facts.payment,facts.offer,facts.label,facts.amount,facts.currency,facts.live]));
+      const stored = await first(pool.query("select * from public.hosted_orders where payment_intent_id=$1", [facts.payment]));
+      if (!stored || stored.id !== facts.id || stored.session_id !== facts.session || stored.amount_cents !== facts.amount ||
+          stored.currency !== facts.currency || stored.live_mode !== facts.live || stored.offer !== facts.offer || stored.label !== facts.label) throw conflict();
+      return { ok: true, orderId: stored.id, isNew: Boolean(row) };
+    },
+    async hostedRefund(payment, amount, total) {
+      const result = await pool.query(`update public.hosted_orders set state=$2,refunded_cents=greatest(refunded_cents,$3)
+        where payment_intent_id=$1 returning id`, [payment, total ? "refunded" : "review", amount]);
+      return result.rowCount > 0;
+    },
     taskRequests: { insert: (request) => first(pool.query(`insert into public.task_requests(email,website,task)
       values ($1,$2,$3) returning *`, [request.email, request.website, request.task])) },
 

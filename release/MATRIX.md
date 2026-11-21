@@ -19,6 +19,12 @@ Machine discovery derives the optional accepted-work collection from the existin
 profile. When disabled, declarations retain the offline query-key runner and omit that collection.
 Care, commerce and mail writers share one database URL/TLS parser and use private Unix sockets in preview.
 
+Migration `0016_hosted_orders.sql` stores paid hosted work that has no account, with one row per
+PaymentIntent and exact session, amount, currency and mode checks. The receiver reads the current
+charge before sending a receipt, so a refund or dispute arriving first still holds delivery.
+Account storage is opened only for linked users. Quote and fixed-report checks use actual test
+Payment Links; no local Stripe fixture counts as their provider proof.
+
 ## A. Every page, automated (`release:sweep -- --cheap`, 51 sitemap pages)
 
 | Line | State at foundation | How to pass |

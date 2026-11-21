@@ -89,7 +89,7 @@ for (let i = 0; i < 60 && !webhookSecret && listener.exitCode === null; i++) awa
 if (!webhookSecret) { console.error("stripe listen did not start (is the Stripe CLI installed? set STRIPE_CLI)"); process.exit(2); }
 console.log(`run ${run}: listener ready`);
 
-const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out, buyerEmail };
+const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out, buyerEmail, offers };
 let app;
 const shutdown = async () => { try { await app?.stop(); } catch {} listener.kill("SIGTERM"); };
 process.on("SIGINT", async () => { await shutdown(); process.exit(130); });
@@ -137,7 +137,7 @@ async function within(page, selector, ms = 15000, buttonText = null) {
 // November 21). A form that is not ready in 30 s fails the case with its evidence: no reload, no second
 // attempt.
 const CARD_INPUT = "#payment-numberInput, #cardNumber";
-const CARD_CHOICE = '[data-value="card"]';
+const CARD_CHOICE = '[data-value="card"], #payment-method-label-card';
 // Only the page itself and Stripe's Elements frames are asked: a call into one of the other frames
 // (fraud, captcha, wallets) can hang for 30 s, which looked like a form that never appeared.
 const formFrames = (page) => page.frames().filter((f) => f === page.mainFrame() || f.url().startsWith("https://js.stripe.com/v3/elements-inner"));

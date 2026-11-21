@@ -8,6 +8,7 @@ import { createTaskQuoteService } from "./task-quotes.js";
 import { releaseRunOf } from "./release-run.js";
 import { recordJourney } from "./journey-events.js";
 import { recordCommerceJourney } from "./commerce-journey.js";
+import { getOffer } from "../pricing.js";
 
 const HOUR = 3600_000;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
@@ -212,6 +213,8 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (charge.livemode !== live) return false;
       const payment = providerId(charge.payment_intent, "pi");
       if (!payment) return false;
+      if (await store.hostedRefund(payment, event.type === "charge.refunded" ? charge.amount_refunded : 0,
+        event.type === "charge.refunded" && charge.refunded === true)) return true;
       let order = await store.byPayment(payment);
       let invoiceId = null;
       if (!order && providerId(charge.customer, "cus")) {
@@ -234,6 +237,32 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return false;
   }
 
-  return { start, read, submit, portal, eventIsCare, taskRequests: store.taskRequests,
+  async function recordHosted(session, intent) {
+    if (session?.livemode !== live || intent?.livemode !== live || session.mode !== "payment" ||
+        session.status !== "complete" || session.payment_status !== "paid" || intent.status !== "succeeded" ||
+        !providerId(session, "cs") || !providerId(intent, "pi") || session.payment_intent !== intent.id ||
+        !Number.isInteger(session.amount_total) || session.amount_total < 1 || intent.amount !== session.amount_total ||
+        session.currency !== "usd" || intent.currency !== "usd") throw new CareError(409, "The hosted payment is not confirmed.");
+    const meta = { ...intent.metadata, ...session.metadata };
+    const offer = typeof meta.offer === "string" && /^[a-z0-9_]{1,64}$/.test(meta.offer) ? meta.offer : "custom_quote";
+    const known = getOffer(offer);
+    if (known && known.amount !== session.amount_total) throw new CareError(409, "The hosted price does not match the offer.");
+    const label = known?.label || (typeof meta.label === "string" && meta.label.length <= 160 ? meta.label : "Hosted work");
+    const result = await store.hostedOrder({ id: `order_${intent.id}`, session: session.id, payment: intent.id,
+      offer, label, amount: session.amount_total, currency: "usd", live });
+    if (providerId(intent.latest_charge, "ch")) {
+      const charge = await stripe.charges.retrieve(providerId(intent.latest_charge, "ch"));
+      if (charge.livemode !== live || providerId(charge.payment_intent, "pi") !== intent.id) {
+        throw new CareError(409, "The hosted charge does not match the payment.");
+      }
+      if (charge.refunded || charge.disputed || charge.amount_refunded > 0) {
+        await store.hostedRefund(intent.id, charge.amount_refunded || 0, charge.refunded === true);
+        result.held = true;
+      }
+    }
+    return result;
+  }
+
+  return { start, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
     issueQuote: quotes.issue, close: () => store.close() };
 }

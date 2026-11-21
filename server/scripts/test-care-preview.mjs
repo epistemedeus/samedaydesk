@@ -360,6 +360,25 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await event("charge.refunded", { id: "ch_quote", payment_intent: "pi_quote" })).status, 200);
   assert.equal((await store.quotes.order(offer.quoteId)).needs_review, true);
 
+  // Hosted work without an account must survive notification loss and webhook replay.
+  const hostedSession = { id: "cs_test_hosted", livemode: false, mode: "payment", currency: "usd",
+    status: "complete", payment_status: "paid", amount_total: 49000, payment_intent: "pi_hosted",
+    metadata: { offer: "seller_contract_repair", label: "One-route seller contract repair" } };
+  const hostedIntent = { id: "pi_hosted", livemode: false, status: "succeeded", amount: 49000, currency: "usd" };
+  await assert.rejects(() => care.recordHosted({ ...hostedSession, amount_total: 1 }, hostedIntent), { status: 409 });
+  await assert.rejects(() => care.recordHosted({ ...hostedSession, amount_total: 1 }, { ...hostedIntent, amount: 1 }), { status: 409 });
+  await assert.rejects(() => care.recordHosted(hostedSession, { ...hostedIntent, status: "processing" }), { status: 409 });
+  assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, true);
+  assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, false);
+  assert.equal((await db.query("select count(*)::int as n from hosted_orders where payment_intent_id='pi_hosted'")).rows[0].n, 1);
+  assert.equal(await store.hostedRefund("pi_hosted", 49000, true), true);
+  assert.equal((await db.query("select state from hosted_orders where payment_intent_id='pi_hosted'")).rows[0].state, "refunded");
+  stripe.charges = { async retrieve(id) {
+    assert.equal(id, "ch_hosted");
+    return { livemode: false, payment_intent: "pi_hosted", refunded: true, amount_refunded: 49000 };
+  } };
+  assert.equal((await care.recordHosted(hostedSession, { ...hostedIntent, latest_charge: "ch_hosted" })).held, true);
+
   // A later paid order from the same verified buyer is a return, even when the
   // older order was refunded. A replay still contributes only one observation.
   const returning = randomUUID();

@@ -76,16 +76,24 @@
         "success"
       ],
       "note": "123 USD is the synthetic release quote; production amounts remain set per agreed scope."
+    },
+    {
+      "id": "seller_conformance_report",
+      "kind": "link",
+      "name": "One-route seller report",
+      "cents": 49000,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/api/checkout/seller-conformance",
+      "pricePage": "/x402/seller-conformance",
+      "cases": [
+        "readback",
+        "success"
+      ],
+      "note": "The existing preview setting points to a real run-tagged Stripe test Payment Link."
     }
   ],
   "notInHarnessYet": [
-    {
-      "id": "seller_conformance_report",
-      "name": "x402 seller report",
-      "cents": 49000,
-      "entry": "the report button, SDS_TEST_SELLER_CONFORMANCE_LINK in preview",
-      "why": "Stripe payment link; the lane adds an adapter case"
-    },
     {
       "id": "account_checkout",
       "name": "Account checkout (/checkout)",

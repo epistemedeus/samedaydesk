@@ -11,6 +11,7 @@ import { pathToFileURL } from "node:url";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let pg, dsn, server, scratch, accessSecret, careLink;
 let nextQuote;
+const paymentLinks = new Map();
 
 async function prepareQuote(ctx) {
   if (nextQuote) return nextQuote;
@@ -53,7 +54,7 @@ export async function start(ctx) {
   execFileSync(join(pg, "initdb"), ["-A", "trust", "-D", join(scratch, "data")], { stdio: "ignore" });
   execFileSync(join(pg, "pg_ctl"), ["-D", join(scratch, "data"), "-l", join(scratch, "pg.log"), "-o", `-F -p ${pgPort} -k ${scratch} -c listen_addresses=''`, "-w", "start"], { stdio: "ignore" });
   dsn = `postgresql://${os.userInfo().username}@127.0.0.1/postgres?host=${encodeURIComponent(scratch)}&port=${pgPort}`;
-  for (const m of ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql", "0014_commerce_journey.sql", "0015_mail_events.sql"]) {
+  for (const m of ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql", "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql"]) {
     execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", dsn, "-f", join(root, "supabase/migrations", m)], { stdio: "ignore" });
   }
   const portal = await ctx.stripe("POST", "billing_portal/configurations", {
@@ -62,6 +63,18 @@ export async function start(ctx) {
     "features[subscription_cancel][mode]": "at_period_end",
     "metadata[release_run]": run,
   });
+  for (const offer of ctx.offers.filter(o => o.kind === "link")) {
+    const price = await ctx.stripe("POST", "prices", { currency: offer.currency, unit_amount: String(offer.cents),
+      "product_data[name]": `SameDayDesk ${offer.name}`, "metadata[release_run]": run });
+    const link = await ctx.stripe("POST", "payment_links", { "line_items[0][price]": price.id,
+      "line_items[0][quantity]": "1", "metadata[release_run]": run, "metadata[offer]": offer.id,
+      "metadata[label]": offer.name, "payment_intent_data[metadata][release_run]": run,
+      "payment_intent_data[metadata][offer]": offer.id, "payment_intent_data[metadata][label]": offer.name,
+      "after_completion[type]": "hosted_confirmation",
+      "after_completion[hosted_confirmation][custom_message]": "Payment received. Your SameDayDesk order is recorded." });
+    if (link.livemode !== false || !link.url?.startsWith("https://buy.stripe.com/test_")) throw new Error("An actual test Payment Link is required");
+    paymentLinks.set(offer.id, link);
+  }
   server = spawn(process.execPath, [ctx.clockCustomer ? "scripts/release/clock-preview.mjs" : "server/index.js"], {
     cwd: root, stdio: ["ignore", "pipe", "pipe"],
     env: {
@@ -70,6 +83,9 @@ export async function start(ctx) {
       SDS_CARE_ORIGIN: `http://127.0.0.1:${port}`, SDS_CARE_ACCESS_SECRET: accessSecret,
       STRIPE_SECRET_KEY: key, STRIPE_WEBHOOK_SECRET: webhookSecret, RELEASE_RUN: run,
       GITHUB_SHA: ctx.source,
+      PUBLIC_URL: ctx.preview,
+      SDS_TEST_SELLER_CONFORMANCE_LINK: paymentLinks.get("seller_conformance_report")?.url,
+      NEOMORPHIC_SELLER_CONFORMANCE_STRIPE_PAYMENT_LINK_ID: paymentLinks.get("seller_conformance_report")?.id,
       SDS_CARE_PORTAL_CONFIGURATION: portal.id, RELEASE_CLOCK_CUSTOMER: ctx.clockCustomer,
       SDS_PREVIEW_MAIL_OUTBOX: join(scratch, "outbox.jsonl"), ADMIN_EMAIL: "desk@example.test",
       SDS_RECEIPTS_SNAPSHOT_PATH: join(scratch, "receipt-snapshot.json"),
@@ -104,6 +120,12 @@ export async function shownPrice(ctx, offer, page) {
     const q = await prepareQuote(ctx);
     return { page: "operator-issued written quote", label: `${q.scope} ${q.amountCents / 100} USD`, cents: q.amountCents, acceptance: q.acceptance };
   }
+  if (offer.kind === "link") {
+    await page.goto(ctx.preview + offer.pricePage, { waitUntil: "networkidle2" });
+    const text = await page.evaluate(() => document.querySelector("main")?.innerText || document.body.innerText);
+    const m = text.match(/report[^\n]*?([\d,]+) USD/i);
+    return { page: offer.pricePage, label: m?.[0] || null, cents: m ? Number(m[1].replaceAll(",", "")) * 100 : null };
+  }
   await page.goto(`${ctx.preview}${offer.entry}`, { waitUntil: "networkidle2" });
   const text = await page.$$eval("button", (bs) => bs.map((b) => b.textContent).join("\n"));
   const m = text.match(/Continue to pay ([\d,]+(?:\.\d\d)?) USD/);
@@ -113,6 +135,14 @@ export async function shownPrice(ctx, offer, page) {
 
 // The same call the buy page makes. `again` repeats it for the same order (a lost response).
 export async function open(ctx, offer, { again, page } = {}) {
+  if (offer.kind === "link") {
+    const link = paymentLinks.get(offer.id);
+    await page.goto(ctx.preview + offer.entry, { waitUntil: "networkidle2", timeout: 60000 });
+    const sessions = await ctx.stripe("GET", "checkout/sessions", { payment_link: link.id, limit: "5" });
+    const own = sessions.data.filter(s => s.status === "open" && s.metadata?.release_run === ctx.run);
+    if (own.length !== 1) throw new Error("One actual hosted session for this test link is required");
+    return { kind: "link", sessionId: own[0].id, url: null };
+  }
   if (offer.kind === "quote") {
     const q = await prepareQuote(ctx); nextQuote = null;
     await page.goto(q.url, { waitUntil: "networkidle2", timeout: 60000 });
@@ -130,6 +160,11 @@ export async function open(ctx, offer, { again, page } = {}) {
 }
 
 export async function storedRow(_ctx, a) {
+  if (a.kind === "link") {
+    const row = psql(`select row_to_json(o) from (select id,session_id,offer,amount_cents,live_mode,state,
+      refunded_cents,'hosted' as kind from hosted_orders where session_id='${a.sessionId}') o`);
+    return row ? JSON.parse(row) : null;
+  }
   if (a.kind === "quote") return JSON.parse(psql(`select row_to_json(o) from (select q.id,q.amount_cents,q.live_mode,
     q.stripe_session as session_id,q.payment_intent is not null as has_payment,q.needs_review,
     r.status as request_state,case when q.paid_at is not null and not q.needs_review and r.status='paid' then 'paid' else 'created' end as state
@@ -140,7 +175,7 @@ export async function storedRow(_ctx, a) {
 export async function orderCount(_ctx, a) {
   return Number(psql(`select count(*) from care_orders where session_id = '${a.sessionId}'`));
 }
-export const isPaid = (row) => row?.state === "paid";
+export const isPaid = (row) => row?.state === "paid" || row?.kind === "hosted" && row.state === "received";
 export const paymentFailureMatches = (a, intent) => intent.metadata?.sds_care_order === a.order;
 export const isExpired = (row) => row?.state === "expired";
 export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
@@ -174,7 +209,7 @@ export const cancellationLink = (ctx, a) => careLink({ id: a.order, checkout_ori
 
 // The buyer's receipt page, reached by the success URL (its capability key stays in the fragment).
 export async function buyerScreen(ctx, a, page, name) {
-  if (a.kind === "quote") {
+  if (["quote", "link"].includes(a.kind)) {
     const text = await page.evaluate(() => document.body.innerText);
     const file = join(ctx.out, `${name}.png`); await page.screenshot({ path: file });
     return { url: page.url().replace(/[?#].*/, "?<redacted>"), screenshot: file.slice(ctx.root.length + 1),
