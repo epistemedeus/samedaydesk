@@ -26,6 +26,7 @@ for(const path of selected) {
  const probe=await fetch(origin+path); const type=probe.headers.get('content-type');
  if(!type?.includes('text/html')) {report.machine.push({path,status:probe.status,type});continue;}
  for(const width of JSON.parse(process.env.SDS_AUDIT_WIDTHS||'[390,768,1440]')) for(const theme of JSON.parse(process.env.SDS_AUDIT_THEMES||'["drafting","dark"]')) {
+  const viewStarted=Date.now();
   const context=await browser.createBrowserContext();const page=await context.newPage();
   await page.setViewport({width,height:900,deviceScaleFactor:1});
   await page.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
@@ -63,6 +64,8 @@ for(const path of selected) {
    if(height>15000){row.screenshots=[];for(let y=0;y<height;y+=12000){const name=row.screenshot.replace('.jpg','-part-'+Math.floor(y/12000)+'.jpg');await page.screenshot({path:join(out,name),clip:{x:0,y,width,height:Math.min(12000,height-y)},captureBeyondViewport:true,type:'jpeg',quality:72});row.screenshots.push(name);}delete row.screenshot;}else await page.screenshot({path:join(out,row.screenshot),fullPage:true,type:'jpeg',quality:72});
   } catch(e) {row.error=e.message;}
   report.views.push(row);await context.close();
+  // Four full-route workers share one anonymous event rate limit.
+  await new Promise(resolve=>setTimeout(resolve,Math.max(0,2200-(Date.now()-viewStarted))));
   await writeFile(join(out,'report.json'),JSON.stringify(report,null,2));
   console.log(JSON.stringify({view:report.views.length,path,width,theme,status:row.status,axe:row.axe.map(x=>x.id),outside:row.layout?.outside.length,errors:row.console.length+row.requests.length,error:row.error}));
  }

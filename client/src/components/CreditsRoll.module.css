@@ -33,6 +33,7 @@
 .row {
   position: relative; display: grid; grid-template-columns: 9.5rem 6.5rem minmax(0, 1fr) 6.5rem minmax(0, 1.25fr);
   align-items: baseline; gap: 0.3rem var(--space-s); padding: 0.75rem var(--space-s);
+  background: var(--bg-1);
   color: var(--ink); text-decoration: none; font-family: var(--font-mono); font-size: var(--step--1);
   transition: opacity var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
 }
