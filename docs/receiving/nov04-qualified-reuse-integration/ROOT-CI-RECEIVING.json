@@ -1,0 +1,206 @@
+{
+  "schema": "pilot.nov04-sds-current-ci-receiving.v1",
+  "owner": "Root",
+  "subject": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+  "subjectTree": "c5e12e30fec8f56806d69741f4c3eb3aef1adcc2",
+  "independentSource": "4629fc41f3359d9956006d25d0ed1d1b2e726346",
+  "receiving": {
+    "owner": "Root",
+    "candidateRepository": "epistemedeus/samedaydesk",
+    "candidateCommit": "f4fba79fda839e8bfbad47b2b6883d8c2c9791a9",
+    "independentReplay": "N4-SDS356-RELEASE-RECEIVING",
+    "independentSource": "4629fc41f3359d9956006d25d0ed1d1b2e726346",
+    "observedAt": "2026-11-04T22:49:05.643Z",
+    "passed": 24,
+    "failed": 0,
+    "originalWriterUnchanged": true,
+    "scope": "Current composed source-bound CI input after independent PG16/source/profile/consumer receiving. Not deployment, live enrollment, outside use or financial activation.",
+    "qualified": false,
+    "installed": false
+  },
+  "normalProducer": {
+    "argv": [
+      "server/scripts/produce-root10940-ci-packet.mjs",
+      "--anchor",
+      "docs/receiving/nov04-qualified-reuse-integration/ROOT-CI-ANCHOR.json",
+      "--client",
+      "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs",
+      "--descriptor",
+      "docs/receiving/nov04-qualified-reuse-integration/ROOT-CI-DESCRIPTOR.json",
+      "--catalog",
+      "server/scripts/fixtures/root10940-approved-ci-packets",
+      "--index",
+      "server/scripts/fixtures/root10940-approved-ci-packets/index.json"
+    ],
+    "result": {
+      "slot": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd.json",
+      "trustAnchorSha256": "2a2878299eef74b233cffa2bff2342eee93e5586929136acc933651ca5d3d27f",
+      "received": true
+    }
+  },
+  "tests": [
+    {
+      "name": "pulse",
+      "command": "npm run test:pulse",
+      "pass": 94,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "pulse-contracts",
+      "command": "node --experimental-strip-types --test --test-concurrency=1 server/scripts/test-pulse-refusal-contract.js server/scripts/test-pulse-mcp-outcomes-contract.js server/scripts/test-pulse-browse-coverage-contract.js",
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "original-task",
+      "command": "npm run test:original-task",
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "contribution-delegation",
+      "command": "node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/contribution-delegation.test.mjs",
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "handback",
+      "command": "node --test --test-concurrency=1 experiments/agl-contribution-delegation-20261104/test/handback-row-decision.test.mjs",
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "h133010",
+      "command": "node --test --test-concurrency=1 --test-timeout=420000 server/scripts/test-h133010-accepted-work.mjs",
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "capability-lookup",
+      "command": "node --test --test-concurrency=1 server/scripts/test-capability-owner-lookup.js",
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "observatory",
+      "command": "npm run test:observatory",
+      "pass": 100,
+      "fail": 0,
+      "skipped": 2,
+      "exitCode": 0
+    },
+    {
+      "name": "result-reuse",
+      "command": "npm run test:result-reuse",
+      "pass": 37,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "source-bound-h147-h145",
+      "command": "node --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs server/scripts/test-h145010-measurement-runtime-pin.mjs",
+      "pass": 24,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "pulse-private-read",
+      "command": "node --test --test-concurrency=1 server/scripts/test-pulse-private-read.js",
+      "pass": 27,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "name": "postgres-bin",
+      "command": "node --test server/scripts/test-postgres-bin.mjs",
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "exitCode": 0
+    }
+  ],
+  "loadedRoute": {
+    "routeBytesArePinMembers": false,
+    "route": {
+      "path": "server/routes/pulse.js",
+      "sha256": "15ee44563aa5d1ea6a2591788a2d9ca5bd9997d69e6c97de56462add6e060aff",
+      "bytes": 1653,
+      "pinMember": false
+    },
+    "library": {
+      "path": "server/lib/pulse.js",
+      "sha256": "fbaaa3cba57de74ecf78dcc6aa5b0c18bf90bd33ed0cada1f55b214cd3751b49",
+      "bytes": 44952,
+      "pinMember": true,
+      "pinAgrees": true
+    },
+    "loadChain": [
+      {
+        "path": "server/index.js",
+        "sha256": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
+        "bytes": 1913,
+        "pinMember": true,
+        "pinAgrees": true,
+        "loads": "server/app.js createSdsApp"
+      },
+      {
+        "path": "server/app.js",
+        "sha256": "08e0abac1c823b4b619eb8e3dd11dc655f62c8923d52c7548cff1c3849ee7f63",
+        "bytes": 11533,
+        "pinMember": true,
+        "pinAgrees": true,
+        "loads": "server/routes/pulse.js as pulseRouter and server/lib/pulse.js as pulseMiddleware"
+      },
+      {
+        "path": "server/routes/pulse.js",
+        "sha256": "15ee44563aa5d1ea6a2591788a2d9ca5bd9997d69e6c97de56462add6e060aff",
+        "bytes": 1653,
+        "pinMember": false,
+        "mountedAt": "/api/pulse"
+      }
+    ],
+    "privateReader": {
+      "path": "server/scripts/pulse-private-read.js",
+      "sha256": "344e8b34a78dbf6bff0c0fb80c9eb60718de23f52cd2c62304c17ec1ba65f215",
+      "bytes": 10245,
+      "pinMember": false,
+      "role": "current consumer, outside the loaded route"
+    },
+    "failClosedInSource": true,
+    "historicalFallbackOperatorInF4": false,
+    "nullishFallbackInF4": false,
+    "baseRouteSha256": "d6831f7c9b5c1e52d6f4d72be7633f414e15a4f97513b01a72c6dfddd734b3a6",
+    "baseHasHistoricalOrFallback": true,
+    "liveProcessObserved": false
+  },
+  "human": {
+    "command": "node server/scripts/publish-preserved-client.mjs",
+    "exitCode": 0,
+    "viteInvoked": false,
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "clientDistTree": "d5d35bdf311748ffbce6dec34579e1d708a98281",
+    "baseClientDistTree": "d5d35bdf311748ffbce6dec34579e1d708a98281",
+    "equalToBase": true
+  },
+  "sourceCodeChanged": false,
+  "liveAction": false
+}

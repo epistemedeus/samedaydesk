@@ -1,0 +1,437 @@
+{
+  "schema": "ae14.bytecode-report.v1",
+  "input": "receiving/v1.1.0-b748fdd",
+  "contracts": {
+    "AuthCaptureEscrow": {
+      "status": "match",
+      "metadataEqual": true,
+      "observedBytes": 10978,
+      "compiledBytes": 10978,
+      "observedSolc": "0.8.28",
+      "compiledSolc": "0.8.28",
+      "observedIpfs": "0x1220725808fe4f39f81f973ed646aec7783bda61f886f915098479638600eac99a04",
+      "compiledIpfs": "0x1220725808fe4f39f81f973ed646aec7783bda61f886f915098479638600eac99a04",
+      "masked": [
+        "cbor-metadata",
+        "immutable@5432+32",
+        "immutable@9686+32",
+        "immutable@10516+32"
+      ],
+      "missing": [],
+      "compiler": {
+        "solc": "0.8.28+commit.7893614a",
+        "evmVersion": "cancun",
+        "viaIR": true,
+        "optimizer": {
+          "enabled": true,
+          "runs": 100000
+        }
+      },
+      "sourceCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "observedCodeHash": "0x33558f6cb34733174fdd6ec5ca8257834a8e4302abc08a4542f73ddf07d8702a",
+      "subjects": [
+        {
+          "chainId": 8453,
+          "address": "0xf96815976523E00e65Be8f34cA5e64b4f41EB19c",
+          "observedCodeHash": "0x33558f6cb34733174fdd6ec5ca8257834a8e4302abc08a4542f73ddf07d8702a",
+          "observedBlock": {
+            "number": "0x3251613",
+            "hash": "0x6451c08001b8db8ec22aa0995910c949770a7ae46a1ba3eee595de8988e30cdd"
+          }
+        },
+        {
+          "chainId": 84532,
+          "address": "0xf96815976523E00e65Be8f34cA5e64b4f41EB19c",
+          "observedCodeHash": "0x33558f6cb34733174fdd6ec5ca8257834a8e4302abc08a4542f73ddf07d8702a",
+          "observedBlock": {
+            "number": "0x2e094d3",
+            "hash": "0xf52266bfeba4bf42d6eaa1d281af46bf1bd3213c1db8616963c42615b3c829bc"
+          }
+        }
+      ],
+      "immutables": [
+        {
+          "id": "3055",
+          "start": 5432,
+          "length": 32,
+          "word": "0x000000000000000000000000e4be44b1505d29ae640748b4cce530ece6dcd450",
+          "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+          "name": "tokenStoreImplementation"
+        },
+        {
+          "id": "3055",
+          "start": 9686,
+          "length": 32,
+          "word": "0x000000000000000000000000e4be44b1505d29ae640748b4cce530ece6dcd450",
+          "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+          "name": "tokenStoreImplementation"
+        },
+        {
+          "id": "3055",
+          "start": 10516,
+          "length": 32,
+          "word": "0x000000000000000000000000e4be44b1505d29ae640748b4cce530ece6dcd450",
+          "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+          "name": "tokenStoreImplementation"
+        }
+      ],
+      "immutableLayoutCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "librariesCompared": true,
+      "libraries": [],
+      "sepoliaCodeSameAsMainnet": true
+    },
+    "ERC3009PaymentCollector": {
+      "status": "match",
+      "metadataEqual": true,
+      "observedBytes": 3982,
+      "compiledBytes": 3982,
+      "observedSolc": "0.8.28",
+      "compiledSolc": "0.8.28",
+      "observedIpfs": "0x1220f849b43f2ee7d5bbd85c00a460780b9dc2fa046f822a6d4aa95c385d46ad4f2c",
+      "compiledIpfs": "0x1220f849b43f2ee7d5bbd85c00a460780b9dc2fa046f822a6d4aa95c385d46ad4f2c",
+      "masked": [
+        "cbor-metadata",
+        "immutable@473+32",
+        "immutable@3622+32",
+        "immutable@305+32",
+        "immutable@590+32",
+        "immutable@2249+32"
+      ],
+      "missing": [],
+      "compiler": {
+        "solc": "0.8.28+commit.7893614a",
+        "evmVersion": "cancun",
+        "viaIR": true,
+        "optimizer": {
+          "enabled": true,
+          "runs": 100000
+        }
+      },
+      "sourceCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "observedCodeHash": "0xe27322c83d2cb91d01f59fc5c86512f4ecb5e9f300ed17120d78c55fbc5fb62f",
+      "subjects": [
+        {
+          "chainId": 8453,
+          "address": "0x8612dfdc421f80336cd14E8EF9cb1E765dB5ab88",
+          "observedCodeHash": "0xe27322c83d2cb91d01f59fc5c86512f4ecb5e9f300ed17120d78c55fbc5fb62f",
+          "observedBlock": {
+            "number": "0x3251613",
+            "hash": "0x6451c08001b8db8ec22aa0995910c949770a7ae46a1ba3eee595de8988e30cdd"
+          }
+        },
+        {
+          "chainId": 84532,
+          "address": "0x8612dfdc421f80336cd14E8EF9cb1E765dB5ab88",
+          "observedCodeHash": "0xe27322c83d2cb91d01f59fc5c86512f4ecb5e9f300ed17120d78c55fbc5fb62f",
+          "observedBlock": {
+            "number": "0x2e094d3",
+            "hash": "0xf52266bfeba4bf42d6eaa1d281af46bf1bd3213c1db8616963c42615b3c829bc"
+          }
+        }
+      ],
+      "immutables": [
+        {
+          "id": "4486",
+          "start": 473,
+          "length": 32,
+          "word": "0x000000000000000000000000ca11bde05977b3631167028862be2a173976ca11",
+          "address": "0xca11bde05977b3631167028862be2a173976ca11",
+          "name": "multicall3"
+        },
+        {
+          "id": "4486",
+          "start": 3622,
+          "length": 32,
+          "word": "0x000000000000000000000000ca11bde05977b3631167028862be2a173976ca11",
+          "address": "0xca11bde05977b3631167028862be2a173976ca11",
+          "name": "multicall3"
+        },
+        {
+          "id": "4688",
+          "start": 305,
+          "length": 32,
+          "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "name": "authCaptureEscrow"
+        },
+        {
+          "id": "4688",
+          "start": 590,
+          "length": 32,
+          "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "name": "authCaptureEscrow"
+        },
+        {
+          "id": "4688",
+          "start": 2249,
+          "length": 32,
+          "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "name": "authCaptureEscrow"
+        }
+      ],
+      "immutableLayoutCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "librariesCompared": true,
+      "libraries": [],
+      "sepoliaCodeSameAsMainnet": true
+    },
+    "OperatorRefundCollector": {
+      "status": "match",
+      "metadataEqual": true,
+      "observedBytes": 844,
+      "compiledBytes": 844,
+      "observedSolc": "0.8.28",
+      "compiledSolc": "0.8.28",
+      "observedIpfs": "0x1220da104c7d88741ab3ceecc85fd5c46c791420c8cf6883459f21406bcc43d389ee",
+      "compiledIpfs": "0x1220da104c7d88741ab3ceecc85fd5c46c791420c8cf6883459f21406bcc43d389ee",
+      "masked": [
+        "cbor-metadata",
+        "immutable@297+32",
+        "immutable@754+32"
+      ],
+      "missing": [],
+      "compiler": {
+        "solc": "0.8.28+commit.7893614a",
+        "evmVersion": "cancun",
+        "viaIR": true,
+        "optimizer": {
+          "enabled": true,
+          "runs": 100000
+        }
+      },
+      "sourceCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "observedCodeHash": "0x2fbd6518baaaea91574657f8b8be683e3aa72ac46f9603903ab99b6ccf4142f7",
+      "subjects": [
+        {
+          "chainId": 8453,
+          "address": "0x7a03443724d14798c4AB4622F1DAAcA761Fea486",
+          "observedCodeHash": "0x2fbd6518baaaea91574657f8b8be683e3aa72ac46f9603903ab99b6ccf4142f7",
+          "observedBlock": {
+            "number": "0x3251613",
+            "hash": "0x6451c08001b8db8ec22aa0995910c949770a7ae46a1ba3eee595de8988e30cdd"
+          }
+        },
+        {
+          "chainId": 84532,
+          "address": "0x7a03443724d14798c4AB4622F1DAAcA761Fea486",
+          "observedCodeHash": "0x2fbd6518baaaea91574657f8b8be683e3aa72ac46f9603903ab99b6ccf4142f7",
+          "observedBlock": {
+            "number": "0x2e094d3",
+            "hash": "0xf52266bfeba4bf42d6eaa1d281af46bf1bd3213c1db8616963c42615b3c829bc"
+          }
+        }
+      ],
+      "immutables": [
+        {
+          "id": "4688",
+          "start": 297,
+          "length": 32,
+          "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "name": "authCaptureEscrow"
+        },
+        {
+          "id": "4688",
+          "start": 754,
+          "length": 32,
+          "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+          "name": "authCaptureEscrow"
+        }
+      ],
+      "immutableLayoutCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "librariesCompared": true,
+      "libraries": [],
+      "sepoliaCodeSameAsMainnet": true
+    },
+    "assetImplementation": {
+      "status": "match",
+      "metadataEqual": false,
+      "observedBytes": 23464,
+      "compiledBytes": 23464,
+      "observedSolc": "0.6.12",
+      "compiledSolc": "0.6.12",
+      "observedIpfs": "0x122095af58d34dc61f2d38582351b7afb76e51215fd029dc4b9dabd56172fbaac9d5",
+      "compiledIpfs": "0x1220323ab21f15de4f2f37904a4649f31e9f9432e783eb6f690e2a48fa5dd822a5c6",
+      "masked": [
+        "cbor-metadata",
+        "library@18391+20",
+        "library@20106+20"
+      ],
+      "missing": [],
+      "sourceCommit": "405efc100c016ed1a437063b6274b4e24ea7b8b1",
+      "compiler": {
+        "solc": "0.6.12+commit.27d51765",
+        "optimizer": {
+          "enabled": true,
+          "runs": 10000000
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        }
+      },
+      "note": "FiatTokenV2_2 executable body is compared after zeroing compiler link placeholders and masking those ranges. Metadata is compared separately and is not equal. SignatureChecker is compared per chain with the solc 0.6 library self-address guard.",
+      "subjects": [
+        {
+          "chainId": 8453,
+          "address": "0x2ce6311ddae708829bc0784c967b7d77d19fd779",
+          "proxy": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "observedCodeHash": "0x11b75a237997ab8328f65b2d5a55c10f0346d0a175741ed42ddf4f2c66b9e873",
+          "observedBlock": {
+            "number": "0x3251613",
+            "hash": "0x6451c08001b8db8ec22aa0995910c949770a7ae46a1ba3eee595de8988e30cdd"
+          },
+          "eip1967Implementation": "0x0000000000000000000000000000000000000000",
+          "linkedRuntime": [
+            {
+              "name": "SignatureChecker",
+              "file": "contracts/util/SignatureChecker.sol",
+              "address": "0x2d943e25e1859ed786afe4afb2b42e14efac691e",
+              "observedCodeHash": "0x150ffd179e8052572b1f2a18fa2f51c387038269a39d4284c83064aa1f41de3f",
+              "bodyEqual": true,
+              "metadataEqual": false,
+              "unlistedInImmutableReferences": true,
+              "guard": {
+                "start": 1,
+                "length": 20,
+                "kind": "library-self-address",
+                "derivedFrom": "solc-0.6-external-library-guard",
+                "matchesAccount": true,
+                "unlistedInImmutableReferences": true
+              }
+            }
+          ]
+        },
+        {
+          "chainId": 84532,
+          "address": "0xd74cc5d436923b8ba2c179b4bca2841d8a52c5b5",
+          "proxy": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+          "observedCodeHash": "0x1254951e5483b882fd5def9452f58fe786eb3380c0bf9bb2744fa21a0a97a16c",
+          "observedBlock": {
+            "number": "0x2e094d3",
+            "hash": "0xf52266bfeba4bf42d6eaa1d281af46bf1bd3213c1db8616963c42615b3c829bc"
+          },
+          "eip1967Implementation": "0x0000000000000000000000000000000000000000",
+          "linkedRuntime": [
+            {
+              "name": "SignatureChecker",
+              "file": "contracts/util/SignatureChecker.sol",
+              "address": "0xba3b60c21e28c41df4babd90f228e1d368627da6",
+              "observedCodeHash": "0x0855e691adf48a1a47437ec347119ebfea7d3997af9a17f253178569753665c0",
+              "bodyEqual": true,
+              "metadataEqual": false,
+              "unlistedInImmutableReferences": true,
+              "guard": {
+                "start": 1,
+                "length": 20,
+                "kind": "library-self-address",
+                "derivedFrom": "solc-0.6-external-library-guard",
+                "matchesAccount": true,
+                "unlistedInImmutableReferences": true
+              }
+            }
+          ]
+        }
+      ],
+      "librariesCompared": true,
+      "libraries": [
+        {
+          "file": "contracts/util/SignatureChecker.sol",
+          "name": "SignatureChecker",
+          "ranges": [
+            {
+              "length": 20,
+              "start": 18391
+            },
+            {
+              "length": 20,
+              "start": 20106
+            }
+          ]
+        }
+      ],
+      "immutables": [],
+      "compilerLibraryGuard": {
+        "start": 1,
+        "length": 20,
+        "kind": "library-self-address",
+        "derivedFrom": "solc-0.6-external-library-guard",
+        "unlistedInImmutableReferences": true
+      }
+    }
+  },
+  "reproducedRuntime": {
+    "commit": null,
+    "admitsRelease": false,
+    "compared": false,
+    "note": "Parent comparison remains on the historical report for the v1.0.0 addresses. It was not reused as a match for this deployment.",
+    "contracts": {}
+  },
+  "sepoliaCodeSameAsMainnet": {
+    "AuthCaptureEscrow": true,
+    "ERC3009PaymentCollector": true,
+    "OperatorRefundCollector": true
+  },
+  "tokenStore": {
+    "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+    "note": "Returned by AuthCaptureEscrow.tokenStoreImplementation() on both chains at the pinned block. Compared with the selected v1.1.0 TokenStore compile. This is not the historical TokenStore.",
+    "subjects": [
+      {
+        "chainId": 8453,
+        "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+        "observedCodeHash": "0x8ff35d5d4032deaf1cd8e71f770db006d6e1b1ade58dfcaf3cb8b99204a9600a",
+        "observedBlock": {
+          "number": "0x3251613",
+          "hash": "0x6451c08001b8db8ec22aa0995910c949770a7ae46a1ba3eee595de8988e30cdd"
+        }
+      },
+      {
+        "chainId": 84532,
+        "address": "0xe4be44b1505d29ae640748b4cce530ece6dcd450",
+        "observedCodeHash": "0x8ff35d5d4032deaf1cd8e71f770db006d6e1b1ade58dfcaf3cb8b99204a9600a",
+        "observedBlock": {
+          "number": "0x2e094d3",
+          "hash": "0xf52266bfeba4bf42d6eaa1d281af46bf1bd3213c1db8616963c42615b3c829bc"
+        }
+      }
+    ],
+    "immutables": [
+      {
+        "id": "4306",
+        "start": 186,
+        "length": 32,
+        "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+        "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+        "name": "authCaptureEscrow"
+      },
+      {
+        "id": "4306",
+        "start": 579,
+        "length": 32,
+        "word": "0x000000000000000000000000f96815976523e00e65be8f34ca5e64b4f41eb19c",
+        "address": "0xf96815976523e00e65be8f34ca5e64b4f41eb19c",
+        "name": "authCaptureEscrow"
+      }
+    ],
+    "librariesCompared": true,
+    "libraries": [],
+    "pinned": {
+      "status": "match",
+      "metadataEqual": true,
+      "observedBytes": 669,
+      "compiledBytes": 669,
+      "observedSolc": "0.8.28",
+      "compiledSolc": "0.8.28",
+      "observedIpfs": "0x1220fc6c9dd775420269ba90eb1968b00e064898846d5131997baafdbb0166a570bf",
+      "compiledIpfs": "0x1220fc6c9dd775420269ba90eb1968b00e064898846d5131997baafdbb0166a570bf",
+      "masked": [
+        "cbor-metadata",
+        "immutable@186+32",
+        "immutable@579+32"
+      ],
+      "missing": [],
+      "sourceCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9"
+    }
+  }
+}

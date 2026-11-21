@@ -1,0 +1,48 @@
+{
+  "command": [
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=384",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "server/scripts/test-r4-wallet-continuation.mjs"
+  ],
+  "cwd": "/home/ubuntu/ae14-work/root4550-sds-consumer-integration-20261023",
+  "exitCode": 1,
+  "startedUtc": "2026-10-23T11:23:48Z",
+  "elapsedSeconds": 37.943,
+  "peakOwnedRssKiB": 951012,
+  "reserveKiB": 4194304,
+  "nativeObserved": [
+    576692,
+    576693
+  ],
+  "peakPids": [
+    576692,
+    576693,
+    576700,
+    577317,
+    578295,
+    578719,
+    578825,
+    578827,
+    578833,
+    578885,
+    578886,
+    578887,
+    578889,
+    578890,
+    578891,
+    578910,
+    578953,
+    578967,
+    578969,
+    578970,
+    578972,
+    578973
+  ],
+  "sampleIntervalMs": 100,
+  "samples": 372,
+  "modelChildren": 0,
+  "scope": "Exact admitted native/supervisor PID+start time, their descendants and newly created detached fixture PostgreSQL. Shared pages repeat in summed RSS; between-sample peaks unmeasured."
+}

@@ -1,0 +1,128 @@
+{
+  "schema": "cc0.query-key-cases.v2",
+  "license": "CC0-1.0",
+  "role": "first-party-seed",
+  "customerDemand": false,
+  "independentContributor": false,
+  "identity": "decoded-multiset",
+  "order": "consumer-canonical",
+  "codec": "urllib.parse.urlencode",
+  "legend": "Indexes select bank strings. Omitted method is GET and omitted path is bank entry 6. Body t 0 is a number, t 1 is a bank string, and t 2 is a boolean. Wires are built by the codec field and are not stored. Stored oldEqual and nowEqual are expectations for the pinned consumers.",
+  "bank": [
+    "a",
+    "1",
+    "2",
+    "1&2",
+    "b",
+    "1&b=2",
+    "/p",
+    "/p|query:a=1",
+    "q",
+    "a b",
+    "1;b=2",
+    "n",
+    "true",
+    "x",
+    "y",
+    "x', 'b': 'y",
+    "POST",
+    "qλ",
+    "é",
+    "ü"
+  ],
+  "cases": [
+    {
+      "id": "grouped-ampersand",
+      "left": [[0, 1], [0, 2]],
+      "right": [[0, 3]],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "pair-in-one-value",
+      "left": [[0, 1], [4, 2]],
+      "right": [[0, 5]],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "pair-order",
+      "left": [[4, 2], [0, 1]],
+      "right": [[0, 1], [4, 2]],
+      "oldEqual": true,
+      "nowEqual": true
+    },
+    {
+      "id": "value-order",
+      "left": [[0, 2], [0, 1]],
+      "right": [[0, 1], [0, 2]],
+      "oldEqual": true,
+      "nowEqual": true
+    },
+    {
+      "id": "path-delimiter",
+      "lp": 6,
+      "rp": 7,
+      "left": [[0, 1]],
+      "right": [],
+      "oldEqual": true,
+      "nowEqual": false
+    },
+    {
+      "id": "space-encodings",
+      "left": [[8, 9]],
+      "right": [[8, 9]],
+      "oldEqual": true,
+      "nowEqual": true
+    },
+    {
+      "id": "semicolon-value",
+      "left": [[0, 10]],
+      "right": [[0, 1], [4, 2]],
+      "oldEqual": false,
+      "nowEqual": false
+    },
+    {
+      "id": "dict-list",
+      "left": [[0, 1], [0, 2]],
+      "dictKey": 0,
+      "dictVals": [1, 2],
+      "oldEqual": false,
+      "nowEqual": true
+    },
+    {
+      "id": "body-json-type",
+      "m": 16,
+      "include": [11],
+      "bodyL": [{"k": 11, "t": 0, "v": 1}],
+      "bodyR": [{"k": 11, "t": 1, "v": 1}],
+      "oldEqual": false,
+      "nowEqual": false
+    },
+    {
+      "id": "body-bool-type",
+      "m": 16,
+      "include": [11],
+      "bodyL": [{"k": 11, "t": 2, "v": true}],
+      "bodyR": [{"k": 11, "t": 1, "v": 12}],
+      "oldEqual": false,
+      "nowEqual": false
+    },
+    {
+      "id": "body-field-shape",
+      "m": 16,
+      "include": [0, 4],
+      "bodyL": [{"k": 0, "t": 1, "v": 13}, {"k": 4, "t": 1, "v": 14}],
+      "bodyR": [{"k": 0, "t": 1, "v": 15}],
+      "oldEqual": false,
+      "nowEqual": false
+    },
+    {
+      "id": "unicode-key",
+      "left": [[17, 1], [17, 2]],
+      "right": [[17, 3]],
+      "oldEqual": true,
+      "nowEqual": false
+    }
+  ]
+}

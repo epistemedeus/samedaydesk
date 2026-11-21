@@ -1,0 +1,55 @@
+{
+  "schema": "sds.machine-services.validation.v1",
+  "sourceHead": "d1b63983f0320d6b6213501cab72cc487c8464b2",
+  "branch": "codex/ae18-host-integration-243001",
+  "recordedAt": "2026-10-15T06:34:42.731404+00:00",
+  "adapter": "postgres",
+  "databaseFixture": "owned disposable PostgreSQL 16; verify-full TLS with matching CA and hostname mismatch refusal",
+  "runtime": "Node v22.14.0",
+  "productionInstall": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock npm ci --omit=dev --ignore-scripts --no-audit --no-fund",
+    "exitCode": 0,
+    "result": "added 137 packages in 3s"
+  },
+  "checks": [
+    {
+      "name": "postgres-final",
+      "command": "npm run test:machine-services",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "tapSha256": "1f890bb8ac4d41f5fcd57d1a9f3d69abf0f79a2dc7b3ecb8779e5361f0a0c51d"
+    },
+    {
+      "name": "native-sqlite",
+      "command": "npm run test:machine-services:sqlite",
+      "tests": 76,
+      "pass": 76,
+      "fail": 0,
+      "tapSha256": "01624c5559c85a39d74cb9a00f780687c75eb2289bb6d16defbd2f9362d1c3f6"
+    },
+    {
+      "name": "monitor-final",
+      "command": "node --test --test-concurrency=1 server/vendor/continuous-monitoring/test/*.test.mjs (under build flock)",
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "tapSha256": "a34ef215d6468f65443318aef1735e37f9db9d7478f81e85be0e2e54eefc9b32"
+    },
+    {
+      "name": "old-runtime-regression",
+      "command": "npm run test:machine-services:regression",
+      "tests": 49,
+      "pass": 49,
+      "fail": 0,
+      "tapSha256": "16eeedcdc76c632ee8cc841fc7f9b7d7b65c4310182e9414736e05485d202dd3"
+    }
+  ],
+  "sourceScopeVerified": true,
+  "heavyCommandsSerialized": true,
+  "deployed": false,
+  "paymentsEnabled": false,
+  "liveFundMovement": false,
+  "subscriberCharge": false,
+  "publicLaunchVerified": false
+}

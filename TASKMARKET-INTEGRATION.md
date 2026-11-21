@@ -1,5 +1,75 @@
 # TaskMarket delegation integration pitch
 
+## Current machine contract, 2026-10-23 source
+
+The shared browse, track and plan implementation now binds amounts to each
+task's explicit chain and public served-chain metadata. This is a source change,
+not installed receiving. The original pitch and observations below are historical.
+
+Authority is the anonymous [network.info](https://api.taskmarket.dev/trpc/network.info)
+`result.data.chains` inventory, refreshed on demand with a five-minute maximum
+cache age, eight-second timeout and 64KiB metadata limit. Failed, malformed or
+conflicting refreshes refuse; there is no stale fallback or refresh loop. Reads
+use fixed public routes, omit credentials, reject redirects, and never follow
+RPCs/URLs supplied by metadata or task text. Task reads are capped at 2MiB.
+
+The [raw API](https://docs.taskmarket.dev/reference/raw-api) binds operations to
+the task's chain and requires a selector for other chain-scoped operations.
+The [network reference](https://docs.taskmarket.dev/reference/network) identifies
+Base8453's USDC contract. [Networks and fees](https://docs.taskmarket.dev/getting-started/networks-and-fees)
+documents six decimals; the [Tempo reference](https://docs.taskmarket.dev/reference/tempo)
+also explicitly binds OUSD's six decimals to
+`0x20c0000000000000000000006a37da5c996874be` on4217/42431. Display conversion
+is pinned to these exact mainnet chain/token pairs, never inferred from a symbol.
+Other served assets retain raw integer strings with unknown decimals even if an
+undocumented metadata field suggests a value. Missing legacy chains remain
+unknown. No exchange rate or combined cross-asset total is produced.
+
+Browse summaries expose `chain_id`, `asset`, `reward` and `net_reward`.
+Tracking uses the same contract for action payments and award payments.
+Amounts contain `base_units`, nullable display `amount`, and `decimals_known`.
+Only qualified Base USDC retains `*_usdc` compatibility fields. An explicit
+`min_reward_usdc` selects Base USDC, excludes other known assets, and refuses
+unknown/conflicting assets or an unlike `chain_id`. Without that filter, assets
+are listed without conversion. Search/tag/status/mode/order and the existing
+10-result default/25-result cap remain; counts describe the returned bounded
+inventory, not the whole market or an actionable funded opportunity.
+
+Plans require explicit `chain_id` and `token_address` matching current metadata.
+Use exact string `reward_base_units` and `max_spend_base_units` in that asset;
+the legacy `reward_usdc`/`max_spend_usdc` pair is allowed only for qualified Base
+USDC, never mixed with raw fields. Plans bind the brief, ceiling and asset in
+their id and API payload. Base CLI arguments include `--network base`.
+Tempo plans use the documented `POST /api/tasks` payload with `chainId` and MPP,
+not x402. The first-party CLI/network references still call Tempo mainnet
+unavailable while the served inventory and fees guide call it live; therefore
+Tempo CLI arguments remain null until that separate support boundary is received.
+The [OpenAPI](https://api.taskmarket.dev/openapi.json) documents the creation
+route and required idempotency header. All plans remain `approval_required` and
+`executed:false`; execution, legal receipt, payment and total cost require a
+separate authorized handoff. No wallet initialization is suggested or performed.
+Generated machine declaration examples are labelled illustrative in their source;
+their frozen metadata is never used by runtime planning.
+
+The existing Pulse producer/store/protected summary adds only empty/non-empty/
+unclassified normal browse-result categories. See
+[the owning storage contract](server/lib/pulse-store/README.md) for prospective
+coverage, migration0008 and the precise rollback boundary.
+
+Run the focused receiving serially (Node22; existing dependencies; disposable PG):
+
+```bash
+SUPABASE_URL= SUPABASE_SERVICE_ROLE_KEY= NODE_OPTIONS=--max-old-space-size=384 \
+  node --test --test-concurrency=1 \
+  server/scripts/test-taskmarket-integration.js \
+  server/scripts/test-taskmarket-multichain-coverage.js \
+  server/scripts/test-pulse-browse-coverage-contract.js \
+  server/scripts/test-pulse-mcp-outcomes-contract.js
+```
+
+Set `PULSE_PG_BIN`/`PULSE_PSQL` to isolated supported PostgreSQL binaries if they
+are not at the helper's default. No frontend build or release is required.
+
 Prepared before implementation on 2026-08-08 for TaskMarket task
 `0x21cc30011dddb8c7a5e91b4c70c140defab447507169513745d0389572255a42`.
 

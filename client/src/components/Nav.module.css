@@ -35,9 +35,11 @@
 }
 .links {
   display: none;
+  align-items: center;
   gap: var(--space-m);
   font-size: var(--step--1);
   color: var(--ink-dim);
+  white-space: nowrap;
 }
 .links a { transition: color 0.18s; }
 .links a:hover { color: var(--ink); }
@@ -72,28 +74,91 @@
   font-size: var(--step--1);
   color: var(--ink-dim);
   transition: color 0.18s;
+  white-space: nowrap;
   display: none;
 }
 .signin:hover { color: var(--ink); }
 .cta :global(.inner) { padding: 0.6em 1.1em; font-size: var(--step--1); }
 
-/* Small phones: the theme toggle adds width, so tighten the brand + gaps to keep the
-   wordmark visible and the CTA on-screen. */
-@media (max-width: 460px) {
-  .brand { font-size: var(--step-0); gap: 0.4em; }
-  .mark { width: 1.4em; height: 1.4em; }
-  .word { display: none; }
-  .inner { gap: var(--space-s); }
-  .actions { gap: 0.45rem; }
-  .x402 { min-height: 2.2rem; padding: 0.35rem 0.58rem; }
-  .cta :global(.inner) { padding: 0.55em 0.85em; }
+/* The phone menu: a sheet under the header with the links, the agent rows and sign in. */
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.4rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--ink);
+  font: 500 var(--step--1) / 1 var(--font-sans);
+  cursor: pointer;
+}
+.menuGlyph, .menuGlyph::before {
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: currentColor;
+  box-shadow: 0 -4px 0 currentColor;
+}
+.menuGlyph { position: relative; top: 2px; }
+.menuGlyph::before { content: ""; position: absolute; top: 8px; box-shadow: none; }
+.sheet {
+  inset: var(--nav-h) 0 auto 0;
+  width: auto;
+  max-height: calc(100dvh - var(--nav-h));
+  margin: 0;
+  padding: var(--space-s) var(--space-s) var(--space-m);
+  overflow-y: auto;
+  border: 0;
+  border-bottom: 1px solid var(--line-2);
+  background: var(--bg);
+  color: var(--ink);
+}
+.sheet:popover-open { display: grid; gap: var(--space-s); animation: sheet-in var(--dur-2) var(--ease-out); }
+@keyframes sheet-in { from { opacity: 0; translate: 0 -8px; } }
+@media (prefers-reduced-motion: reduce) { .sheet:popover-open { animation: none; } }
+.sheetLinks { display: grid; }
+.sheetLinks a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  border-bottom: var(--hair) solid var(--line);
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+}
+.sheetActions { display: flex; gap: var(--space-xs); }
+.sheetPrimary, .sheetSecondary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-s);
+  font-weight: 600;
+}
+.sheetPrimary { background: var(--lime); border-color: var(--lime); color: var(--lime-ink); }
+
+/* Phones: the name stays; the x402 chip and the call to action move into the menu. */
+@media (max-width: 639px) {
+  .x402, .cta { display: none; }
+  .actions { gap: 0.5rem; }
+}
+@media (max-width: 360px) {
+  .brand { font-size: var(--step-0); }
 }
 
 @media (min-width: 900px) {
   .links { display: flex; }
   .signin { display: inline; }
+  .menuButton, .sheet { display: none; }
 }
-@media (min-width: 980px) {
-  .links { gap: var(--space-l); }
-  .x402Label { display: inline; }
+.links { gap: var(--space-s); }
+@media (min-width: 1280px) {
+  .links { gap: var(--space-m); }
+}
+@media (min-width: 1400px) {
+  .x402Label { display: inline; white-space: nowrap; }
 }

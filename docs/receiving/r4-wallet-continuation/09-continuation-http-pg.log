@@ -1,0 +1,982 @@
+TAP version 13
+# (node:566498) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+    # Subtest: baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+    ok 1 - baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+      ---
+      duration_ms: 108.295557
+      type: 'test'
+      ...
+    # Subtest: synthetic historical accepted debt and already-paid disposition are usable before continuation
+    not ok 2 - synthetic historical accepted debt and already-paid disposition are usable before continuation
+      ---
+      duration_ms: 8.061664
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:236:13'
+      failureType: 'testCodeFailure'
+      error: 'duplicate key value violates unique constraint "preserved_obligation_ids_pkey"'
+      code: '23505'
+      name: 'error'
+      stack: |-
+        /home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/node_modules/pg/lib/client.js:694:17
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async insert (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:261:9)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:273:18)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:236:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+    not ok 3 - intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+      ---
+      duration_ms: 5626.757789
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:315:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [],
+        +   'hosted_wallet_market.consumer_enrollment': [],
+        +   'hosted_wallet_market.funding_intents': [],
+        +   'hosted_wallet_market.grants': [],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: []
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+        journey_account_kernel_bindings:
+        hosted_wallet_market.quotes:
+        hosted_wallet_market.funding_intents:
+        hosted_wallet_market.grants:
+        hosted_wallet_market.captures:
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:339:59)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:315:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+    ok 4 - unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+      ---
+      duration_ms: 706.18612
+      type: 'test'
+      ...
+    # Subtest: expired and exited predecessor intents remain stale
+    ok 5 - expired and exited predecessor intents remain stale
+      ---
+      duration_ms: 614.689945
+      type: 'test'
+      ...
+    # Subtest: dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+    not ok 6 - dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+      ---
+      duration_ms: 819.531144
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:361:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [],
+        +   'hosted_wallet_market.consumer_enrollment': [],
+        +   'hosted_wallet_market.funding_intents': [],
+        +   'hosted_wallet_market.grants': [],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: []
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+        journey_account_kernel_bindings:
+        hosted_wallet_market.quotes:
+        hosted_wallet_market.funding_intents:
+        hosted_wallet_market.grants:
+        hosted_wallet_market.captures:
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:367:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:361:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    # Subtest: missing capability and stale current source refuse the legacy continuation route, including cached mutations
+    ok 7 - missing capability and stale current source refuse the legacy continuation route, including cached mutations
+      ---
+      duration_ms: 1339.352226
+      type: 'test'
+      ...
+    # Subtest: concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+    ok 8 - concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+      ---
+      duration_ms: 1356.313186
+      type: 'test'
+      ...
+    # Subtest: real process crash before-update reconciles the same journal key after restart
+    ok 9 - real process crash before-update reconciles the same journal key after restart
+      ---
+      duration_ms: 3014.650839
+      type: 'test'
+      ...
+    # Subtest: real process crash before-commit reconciles the same journal key after restart
+    ok 10 - real process crash before-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 3003.438026
+      type: 'test'
+      ...
+    # Subtest: real process crash after-commit reconciles the same journal key after restart
+    ok 11 - real process crash after-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 2678.319356
+      type: 'test'
+      ...
+    # Subtest: lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+    ok 12 - lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+      ---
+      duration_ms: 1891.216811
+      type: 'test'
+      ...
+    # Subtest: old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+    not ok 13 - old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+      ---
+      duration_ms: 2.910814
+      type: 'test'
+      location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:421:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+        + {
+        +   'hosted_wallet_market.captures': [],
+        +   'hosted_wallet_market.consumer_enrollment': [],
+        +   'hosted_wallet_market.funding_intents': [],
+        +   'hosted_wallet_market.grants': [],
+        +   'hosted_wallet_market.native_debt_dispositions': [],
+        +   'hosted_wallet_market.quotes': [],
+        +   earned_work_contributor_tokens: [
+        +     {
+        +       value: {
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         expires_at: null,
+        +         id: 'tok_legacy23410001',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         provenance: 'production',
+        +         public_id: 'legacy-public-234100',
+        +         revoked_at: null,
+        +         task_scope: 'continuity-234100-v1',
+        +         token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         expires_at: null,
+        +         id: 'tok_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         provenance: 'test',
+        +         public_id: 'pub_r4433paid0000000',
+        +         revoked_at: null,
+        +         task_scope: 'task_r4433paid0000000',
+        +         token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_obligations: [
+        +     {
+        +       value: {
+        +         adapter: 'staging-representation',
+        +         contributor_public_id: 'legacy-public-234100',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         id: 'obl_legacy23410001',
+        +         idempotency_key: 'legacy-234100-obligation',
+        +         payout_destination: '0x1111111111111111111111111111111111111111',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c',
+        +         verdict_id: 'ver_legacy23410001'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         adapter: 'synthetic',
+        +         contributor_public_id: 'pub_r4433paid0000000',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         id: 'obl_r4433paid0000000',
+        +         idempotency_key: 'obl_r4433paid0000000',
+        +         payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063',
+        +         payout_state: 'owed',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         submission_id: 'sub_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9',
+        +         verdict_id: 'ver_r4433paid0000000'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_submissions: [
+        +     {
+        +       value: {
+        +         artifact_bytes: 27,
+        +         artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'staging-stand-in:legacy',
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479',
+        +         id: 'sub_legacy23410001',
+        +         reservation_id: 'rsv_legacy23410001',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         artifact_bytes: 30,
+        +         artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba',
+        +         artifact_media_type: 'text/plain',
+        +         artifact_ref: 'synthetic:preserved',
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e',
+        +         id: 'sub_r4433paid0000000',
+        +         reservation_id: 'rsv_r4433paid0000000',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     }
+        +   ],
+        +   earned_work_terms: [
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-20T10:00:00+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '0.095000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Fixed old net',
+        +         task_id: 'task_r4433paid0000000',
+        +         terms_revision: 1,
+        +         version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+        +       }
+        +     },
+        +     {
+        +       value: {
+        +         allowed_media_types: [
+        +           'text/plain'
+        +         ],
+        +         claim_ttl_seconds: 7200,
+        +         created_at: '2026-10-14T08:19:30.261+00:00',
+        +         max_artifact_bytes: 16384,
+        +         reward_amount: '100000',
+        +         reward_asset: 'USDC',
+        +         reward_network: 'eip155:8453',
+        +         schema_version: 1,
+        +         slot_limit: 1,
+        +         summary: 'Staging stand-in terms. Not a copy of live terms.',
+        +         task_id: 'continuity-234100-v1',
+        +         terms_revision: 1,
+        +         version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+        +       }
+        +     }
+        +   ],
+        +   journey_account_kernel_bindings: []
+        + }
+        - undefined
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      actual:
+        earned_work_obligations:
+          0:
+            value:
+              id: 'obl_legacy23410001'
+              adapter: 'staging-representation'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              verdict_id: 'ver_legacy23410001'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              submission_id: 'sub_legacy23410001'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              reservation_id: 'rsv_legacy23410001'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'legacy-234100-obligation'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+              contributor_public_id: 'legacy-public-234100'
+          1:
+            value:
+              id: 'obl_r4433paid0000000'
+              adapter: 'synthetic'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              verdict_id: 'ver_r4433paid0000000'
+              payout_state: 'owed'
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              submission_id: 'sub_r4433paid0000000'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              reservation_id: 'rsv_r4433paid0000000'
+              reward_network: 'eip155:8453'
+              idempotency_key: 'obl_r4433paid0000000'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+              contributor_public_id: 'pub_r4433paid0000000'
+        earned_work_terms:
+          0:
+            value:
+              summary: 'Fixed old net'
+              task_id: 'task_r4433paid0000000'
+              version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              created_at: '2026-10-20T10:00:00+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '0.095000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+          1:
+            value:
+              summary: 'Staging stand-in terms. Not a copy of live terms.'
+              task_id: 'continuity-234100-v1'
+              version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              slot_limit: 1
+              reward_asset: 'USDC'
+              reward_amount: '100000'
+              reward_network: 'eip155:8453'
+              schema_version: 1
+              terms_revision: 1
+              claim_ttl_seconds: 7200
+              max_artifact_bytes: 16384
+              allowed_media_types:
+                0: 'text/plain'
+        earned_work_submissions:
+          0:
+            value:
+              id: 'sub_legacy23410001'
+              task_id: 'continuity-234100-v1'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              artifact_ref: 'staging-stand-in:legacy'
+              terms_version: 'sha256:12ce54256fa4efcbc3756fe8a5026d1df6acf3dbc75921c911d1a03ce622893c'
+              artifact_bytes: 27
+              evidence_bytes: '\\x73746167696e672d7374616e642d696e2d636f6e74696e75697479'
+              reservation_id: 'rsv_legacy23410001'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+          1:
+            value:
+              id: 'sub_r4433paid0000000'
+              task_id: 'task_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              artifact_ref: 'synthetic:preserved'
+              terms_version: 'sha256:268ad70eb5bc4737a2ae28162cbca30118cc94520e49ef1ac5f72c85d3f2caa9'
+              artifact_bytes: 30
+              evidence_bytes: '\\x50726573657276656420616363657074656420706169642062797465732e'
+              reservation_id: 'rsv_r4433paid0000000'
+              artifact_media_type: 'text/plain'
+              artifact_digest_sha256: 'd84049b44fede2ad60a6f96bc281a07beca73424c0f3bf211632a18aaaccdaba'
+        earned_work_contributor_tokens:
+          0:
+            value:
+              id: 'tok_legacy23410001'
+              public_id: 'legacy-public-234100'
+              created_at: '2026-10-14T08:19:30.261+00:00'
+              expires_at: ~
+              provenance: 'production'
+              revoked_at: ~
+              task_scope: 'continuity-234100-v1'
+              token_hash: 'b0b0f3755b34fdc1e053956043185842ae781004d8e7a3325cc3173098b922bc'
+              payout_destination: '0x1111111111111111111111111111111111111111'
+          1:
+            value:
+              id: 'tok_r4433paid0000000'
+              public_id: 'pub_r4433paid0000000'
+              created_at: '2026-10-20T10:00:00+00:00'
+              expires_at: ~
+              provenance: 'test'
+              revoked_at: ~
+              task_scope: 'task_r4433paid0000000'
+              token_hash: 'e92a3c7c54122ea258d3539a05f9c94dba32f628357d625b699c4b328db8b2c4'
+              payout_destination: '0x345df76cc72f493b549cf28d728a2f4d836ab063'
+        journey_account_kernel_bindings:
+        hosted_wallet_market.quotes:
+        hosted_wallet_market.funding_intents:
+        hosted_wallet_market.grants:
+        hosted_wallet_market.captures:
+        hosted_wallet_market.native_debt_dispositions:
+        hosted_wallet_market.consumer_enrollment:
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:422:14)
+        process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:421:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..13
+not ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 24578.146518
+  type: 'test'
+  location: '/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023/server/scripts/test-r4-wallet-continuation.mjs:71:8'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 14
+# suites 0
+# pass 9
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24724.07395

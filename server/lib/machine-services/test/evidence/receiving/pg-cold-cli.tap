@@ -1,0 +1,17 @@
+TAP version 13
+# (node:681960) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: received PG: fresh adapted CLI callers execute useful work and resume the same persisted receipt after app restart
+ok 1 - received PG: fresh adapted CLI callers execute useful work and resume the same persisted receipt after app restart
+  ---
+  duration_ms: 1463.443897
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1632.458407

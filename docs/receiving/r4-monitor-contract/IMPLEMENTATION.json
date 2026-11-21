@@ -1,0 +1,20 @@
+{
+  "schema": "root4431.tested-implementation.v1",
+  "head": "498a18093d78e8e801c334b1b33de1a22583cc27",
+  "tree": "870809fd1c4f7ed73616b960987523244cfa6c45",
+  "sourceFiles": {
+    "server/lib/machine-services/mount.mjs": "270e28085a442c03427f02c3b53d78ab1b1adf77aca0cc508ad63877119bdb7c",
+    "server/lib/machine-services/monitor-manifest.mjs": "b11ccabb6f6efe67e0d0cb3a76a79c1d6d0407dab746abd9510d398604c64b4f",
+    "server/vendor/continuous-monitoring/src/api.mjs": "03ae09cb6d6f1f6fb8f9223d530d60c284a6a22deb301f13072a02e1daa2c02c",
+    "server/vendor/continuous-monitoring/openapi.json": "18a25d6aec57b87de64d4145fd75bdf17d2e7c209ffbcbb8ea598912a5d5d272",
+    "server/lib/machine-services/test/monitor-manifest-journey.test.mjs": "f4564d028a20102832d56d50744b768631cccc7845285d1777248f4de01990a2"
+  },
+  "tests": {
+    "serialPass": 39,
+    "serialFail": 0,
+    "serialSkip": 0,
+    "focusedStandalonePass": 1,
+    "baselineFail": 2
+  },
+  "installed": false
+}

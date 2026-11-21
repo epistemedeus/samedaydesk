@@ -1,0 +1,188 @@
+
+> samedaydesk@1.0.0 test:l08-agent-repair
+> node --test --test-concurrency=1 tools/l08-agent-repair/test/repair.test.mjs tools/l08-agent-repair/test/task-readiness.test.mjs tools/l08-agent-repair/test/public-install.test.mjs server/scripts/test-public-readiness-mount.js server/scripts/test-public-readiness-supplied.js server/scripts/test-public-readiness-load-failure.js
+
+TAP version 13
+# Subtest: missing checker dependency is a redacted 503, not a visitor error
+ok 1 - missing checker dependency is a redacted 503, not a visitor error
+  ---
+  duration_ms: 536.873019
+  ...
+# PayloadTooLargeError: request entity too large
+#     at readStream (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:163:17)
+#     at getRawBody (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:116:12)
+#     at read (/home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/read.js:113:3)
+#     at jsonParser (/home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/types/json.js:60:5)
+#     at Layer.handleRequest (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/lib/layer.js:152:17)
+#     at trimPrefix (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:342:13)
+#     at /home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:297:9
+#     at processParams (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:582:12)
+#     at next (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:291:5)
+#     at file:///home/ubuntu/root-sol-window100337/243001/source/server/app.js:86:3
+# Subtest: existing host keeps its routes and distinguishes compiled repair from deployment
+ok 2 - existing host keeps its routes and distinguishes compiled repair from deployment
+  ---
+  duration_ms: 266.952553
+  ...
+# SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+#     at JSON.parse (<anonymous>)
+#     at parse (/home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/types/json.js:91:21)
+#     at /home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/read.js:162:18
+#     at AsyncResource.runInAsyncScope (node:async_hooks:211:14)
+#     at invokeCallback (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:238:16)
+#     at done (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:227:7)
+#     at IncomingMessage.onEnd (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:287:7)
+#     at IncomingMessage.emit (node:events:518:28)
+#     at endReadableNT (node:internal/streams/readable:1698:12)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+# PayloadTooLargeError: request entity too large
+#     at readStream (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:163:17)
+#     at getRawBody (/home/ubuntu/root-sol-window100337/243001/source/node_modules/raw-body/index.js:116:12)
+#     at read (/home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/read.js:113:3)
+#     at jsonParser (/home/ubuntu/root-sol-window100337/243001/source/node_modules/body-parser/lib/types/json.js:60:5)
+#     at Layer.handleRequest (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/lib/layer.js:152:17)
+#     at trimPrefix (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:342:13)
+#     at /home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:297:9
+#     at processParams (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:582:12)
+#     at next (/home/ubuntu/root-sol-window100337/243001/source/node_modules/router/index.js:291:5)
+#     at file:///home/ubuntu/root-sol-window100337/243001/source/server/app.js:86:3
+# Subtest: createSdsApp serves a visitor supplied row and keeps unrelated routes
+ok 3 - createSdsApp serves a visitor supplied row and keeps unrelated routes
+  ---
+  duration_ms: 487.337035
+  ...
+# Subtest: supplied-row limits overlapping checker work
+ok 4 - supplied-row limits overlapping checker work
+  ---
+  duration_ms: 7.966241
+  ...
+# Subtest: anonymous clean install refuses git and runs the seeded rows
+ok 5 - anonymous clean install refuses git and runs the seeded rows
+  ---
+  duration_ms: 2701.532353
+  ...
+# Subtest: two cold callers receive different contract patches and run them
+ok 6 - two cold callers receive different contract patches and run them
+  ---
+  duration_ms: 895.223948
+  ...
+# Subtest: ambiguous contracts ask a question and bad repairs are rejected
+ok 7 - ambiguous contracts ask a question and bad repairs are rejected
+  ---
+  duration_ms: 884.566557
+  ...
+# Subtest: a local ref to a bare object is not treated as one closed shape
+ok 8 - a local ref to a bare object is not treated as one closed shape
+  ---
+  duration_ms: 0.565544
+  ...
+# Subtest: the contract repair module does not fetch or edit a seller checkout route
+ok 9 - the contract repair module does not fetch or edit a seller checkout route
+  ---
+  duration_ms: 0.197904
+  ...
+# Subtest: l08 agent repair
+    # Subtest: prove runs both owned endpoints and rejects seeded failures
+    ok 1 - prove runs both owned endpoints and rejects seeded failures
+      ---
+      duration_ms: 2322.176322
+      ...
+    # Subtest: an unrepaired target is rejected by POST /v1/regress
+    ok 2 - an unrepaired target is rejected by POST /v1/regress
+      ---
+      duration_ms: 956.374971
+      ...
+    # Subtest: a scored handoff is rejected
+    ok 3 - a scored handoff is rejected
+      ---
+      duration_ms: 838.63421
+      ...
+    # Subtest: the cold client refuses a non-loopback origin
+    ok 4 - the cold client refuses a non-loopback origin
+      ---
+      duration_ms: 371.776125
+      ...
+    # Subtest: two ordinary seller-repair callers receive maintenance scope
+    ok 5 - two ordinary seller-repair callers receive maintenance scope
+      ---
+      duration_ms: 868.427798
+      ...
+    # Subtest: journey negatives reject a second wallet, a header echo, and a disposable-only result
+    ok 6 - journey negatives reject a second wallet, a header echo, and a disposable-only result
+      ---
+      duration_ms: 1965.319395
+      ...
+    # Subtest: seller-repair cold path stops before the allowlist and leaves the catalog
+    ok 7 - seller-repair cold path stops before the allowlist and leaves the catalog
+      ---
+      duration_ms: 905.496719
+      ...
+    # Subtest: cold client drives diagnose, repair, and regress
+    ok 8 - cold client drives diagnose, repair, and regress
+      ---
+      duration_ms: 7924.647487
+      ...
+    # Subtest: a mutated catalog claim and a nested score are rejected
+    ok 9 - a mutated catalog claim and a nested score are rejected
+      ---
+      duration_ms: 1.855493
+      ...
+    # Subtest: retained readiness, repair, and MCP contracts remain compatible
+    ok 10 - retained readiness, repair, and MCP contracts remain compatible
+      ---
+      duration_ms: 222.038514
+      ...
+    1..10
+ok 10 - l08 agent repair
+  ---
+  duration_ms: 16379.531516
+  ...
+# Subtest: committed task-readiness catalog matches the generator and stays truthful
+ok 11 - committed task-readiness catalog matches the generator and stays truthful
+  ---
+  duration_ms: 0.68846
+  ...
+# Subtest: a correctly shaped string quote is not a ready repair
+ok 12 - a correctly shaped string quote is not a ready repair
+  ---
+  duration_ms: 0.363217
+  ...
+# Subtest: a failed probe does not become absence of demand
+ok 13 - a failed probe does not become absence of demand
+  ---
+  duration_ms: 0.158475
+  ...
+# Subtest: caller headers do not cross origins and private redirects are refused
+ok 14 - caller headers do not cross origins and private redirects are refused
+  ---
+  duration_ms: 6.926592
+  ...
+# Subtest: caller fetch stops at the byte cap and the time cap
+ok 15 - caller fetch stops at the byte cap and the time cap
+  ---
+  duration_ms: 210.201161
+  ...
+# Subtest: unqualified sibling pins and a wrong checkout are refused without moving HEAD
+ok 16 - unqualified sibling pins and a wrong checkout are refused without moving HEAD
+  ---
+  duration_ms: 24.546894
+  ...
+# Subtest: cold task-readiness reaches the public adapter without private git and the negative exits 1
+ok 17 - cold task-readiness reaches the public adapter without private git and the negative exits 1
+  ---
+  duration_ms: 2455.393471
+  ...
+# Subtest: seeded catalog defect is repaired only after the changed target
+ok 18 - seeded catalog defect is repaired only after the changed target
+  ---
+  duration_ms: 160.671258
+  ...
+1..18
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26302.907747

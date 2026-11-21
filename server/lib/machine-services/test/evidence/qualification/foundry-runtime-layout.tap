@@ -1,0 +1,54 @@
+
+> samedaydesk@1.0.0 test:foundry-runtime-layout
+> node --test --test-concurrency=1 server/scripts/test-foundry-runtime-layout.js
+
+TAP version 13
+# Subtest: managed build with no system Python/prlimit packs the exact accepted runtime with no links
+ok 1 - managed build with no system Python/prlimit packs the exact accepted runtime with no links
+  ---
+  duration_ms: 22051.059807
+  ...
+# Subtest: readable legacy receipt preserves byte pins; bad wheel and changed incoming interpreter never replace it
+ok 2 - readable legacy receipt preserves byte pins; bad wheel and changed incoming interpreter never replace it
+  ---
+  duration_ms: 7091.616471
+  ...
+# Subtest: ordinary copy, relocation and removed source tree execute offline; missing/broken/changed artifacts fail closed
+ok 3 - ordinary copy, relocation and removed source tree execute offline; missing/broken/changed artifacts fail closed
+  ---
+  duration_ms: 1963.528317
+  ...
+# Subtest: actual accepted producer with umask077 is build-readable but not independently serve-readable; staged receiving preserves exact bytes and public read/execute modes
+ok 4 - actual accepted producer with umask077 is build-readable but not independently serve-readable; staged receiving preserves exact bytes and public read/execute modes
+  ---
+  duration_ms: 6095.869253
+  ...
+# Subtest: normal serving refuses a read-only mode transition with closed EROFS evidence, preserves bytes/private modes and drains
+ok 5 - normal serving refuses a read-only mode transition with closed EROFS evidence, preserves bytes/private modes and drains
+  ---
+  duration_ms: 1794.719034
+  ...
+# Subtest: copied normal production serving retains original pending A, then same-attempt recovery and A/restart/B execute the packed generation
+ok 6 - copied normal production serving retains original pending A, then same-attempt recovery and A/restart/B execute the packed generation
+  ---
+  duration_ms: 35946.619636
+  ...
+# Subtest: mode-stripped relocated normal startup as its unprivileged owner repairs once, refuses unsafe receiving, then executes exact A/restart/B
+ok 7 - mode-stripped relocated normal startup as its unprivileged owner repairs once, refuses unsafe receiving, then executes exact A/restart/B
+  ---
+  duration_ms: 17497.43732
+  ...
+# Subtest: closed private metadata evidence excludes error prose/paths and never traverses an external link
+ok 8 - closed private metadata evidence excludes error prose/paths and never traverses an external link
+  ---
+  duration_ms: 608.853763
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 94170.496475

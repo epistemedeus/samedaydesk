@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neomorphic.io/schema/change-monitor.subscription.v1.json",
+  "title": "Change monitor subscription",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["subscriptionId", "owner", "source", "comparison", "destination", "budget", "expiresAt"],
+  "properties": {
+    "subscriptionId": { "type": "string" },
+    "owner": { "type": "string" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "scope"],
+      "properties": {
+        "kind": { "enum": ["release-gate", "route-lock", "source-projection"] },
+        "scope": { "type": "string" }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy"],
+      "properties": {
+        "policy": { "const": "material-fields" },
+        "materialFields": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receiverId"],
+      "properties": {
+        "receiverId": { "type": "string" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxUsefulEvents"],
+      "properties": {
+        "maxUsefulEvents": { "type": "integer", "minimum": 1, "maximum": 10000 }
+      }
+    },
+    "expiresAt": { "type": "string", "format": "date-time" }
+  }
+}

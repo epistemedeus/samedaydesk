@@ -1,0 +1,14 @@
+{
+  "schema": "samedaydesk.recurring-decision-intent.v1",
+  "intentId": "watch-title",
+  "subject": "example-page",
+  "fields": [
+    "title",
+    "status"
+  ],
+  "compare": "field_equality",
+  "supportedCaptureSchemas": [
+    "samedaydesk.recurring-decision-permitted-capture.v1",
+    "samedaydesk.portable-decision-capture.v1"
+  ]
+}

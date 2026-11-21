@@ -7,6 +7,7 @@ import { trustPricingFromMetadata } from "../pricing.js";
 import { sendReceipt } from "./notify.js";
 import { markPaymentAttemptSucceeded } from "./payment-attempt.js";
 import { paymentAttemptStoreDeps } from "./payment-attempt-store.js";
+import { recordJourney } from "./journey-events.js";
 
 export function orderIdForPaymentIntent(intent) {
   if (!intent?.id) throw new Error("payment intent id required for order identity");
@@ -97,6 +98,7 @@ export async function fulfillFromIntent(intent, { sb = supabaseAdmin(), attemptS
   }
 
   if (isNew) {
+    recordJourney("payment_confirmed", { path: "/checkout", offer: pricing.offer, state: "paid" }, "server");
     // best-effort; never fail fulfillment on a notification error
     sendReceipt({ to: intent.receipt_email || meta.email, label: pricing.label, amount: intent.amount ?? pricing.amount, orderId }).catch(() => {});
   }

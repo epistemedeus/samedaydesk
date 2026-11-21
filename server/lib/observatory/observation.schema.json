@@ -295,6 +295,123 @@
             "type": "string"
           }
         },
+        "sourceLifecycle": {
+          "type": "object",
+          "properties": {
+            "sourceId": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "provider_declared_retirement"
+            },
+            "announcement": {
+              "type": "object",
+              "properties": {
+                "precision": {
+                  "const": "date"
+                },
+                "date": {
+                  "type": "string",
+                  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+                },
+                "time": {
+                  "type": "null"
+                },
+                "timeZone": {
+                  "type": "null"
+                },
+                "officialInstant": {
+                  "type": "null"
+                },
+                "sourceUrl": {
+                  "type": "string"
+                }
+              },
+              "required": ["precision", "date", "time", "timeZone", "officialInstant", "sourceUrl"],
+              "additionalProperties": false
+            },
+            "collectionPolicy": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "const": "sds_collection_policy"
+                },
+                "timeBasis": {
+                  "const": "utc_start_of_announced_calendar_date"
+                },
+                "admitBefore": {
+                  "type": "string"
+                },
+                "officialShutdown": {
+                  "type": "null"
+                },
+                "measuredShutdown": {
+                  "type": "null"
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": ["role", "timeBasis", "admitBefore", "officialShutdown", "measuredShutdown", "note"],
+              "additionalProperties": false
+            },
+            "capturePlacement": {
+              "enum": ["before_collection_policy", "at_or_after_collection_policy", "unplaced"]
+            },
+            "currentAdmission": {
+              "enum": ["open", "closed", "not_evaluated"]
+            },
+            "policyAdmitsCapture": {
+              "type": "boolean"
+            },
+            "observedFailure": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "availability": {
+                      "enum": ["unavailable", "error"]
+                    }
+                  },
+                  "required": ["code", "availability"],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "announcementIsOutage": {
+              "const": false
+            },
+            "measuredShutdown": {
+              "type": "null"
+            },
+            "doesNotEstablish": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "sourceId",
+            "kind",
+            "announcement",
+            "collectionPolicy",
+            "capturePlacement",
+            "currentAdmission",
+            "policyAdmitsCapture",
+            "observedFailure",
+            "announcementIsOutage",
+            "measuredShutdown",
+            "doesNotEstablish"
+          ],
+          "additionalProperties": false
+        },
         "rawExcerpt": {
           "type": "string"
         },

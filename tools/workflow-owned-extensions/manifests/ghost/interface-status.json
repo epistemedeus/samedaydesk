@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-interface.v1",
+  "id": "ghost-result-reuse",
+  "version": "0.1.0",
+  "runtime": "ghost",
+  "kind": "consumer_adapter",
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "authorOwnership": "workflow_author",
+  "installationStatus": "source_only_not_installed",
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "tools": [
+    "preview_reuse",
+    "export_reuse",
+    "decide_or_reuse"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "sourceHead": "ab0a7752780995421da5752d9d6811d56e6d3891",
+  "sourceExport": "git archive ab0a7752780995421da5752d9d6811d56e6d3891",
+  "coldProductionDependencies": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --offline",
+  "lock": "single parent flock /home/ubuntu/.cache/pilot-ae18-build.lock; child node commands do not acquire it",
+  "environment": "sanitized disposable verify-full TLS PostgreSQL fixture only",
+  "checks": [
+    {
+      "name": "machine",
+      "command": [
+        "node",
+        "server/lib/machine-services/test/run.mjs"
+      ],
+      "log": "/tmp/ae18-lifecycle-cold-machine.tap",
+      "counts": {
+        "tests": 63,
+        "pass": 63,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "sqlite",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/vendor/machine-gateway/tests/cold.test.mjs",
+        "server/vendor/machine-gateway/tests/contracts.test.mjs",
+        "server/vendor/machine-gateway/tests/http-bounds.test.mjs",
+        "server/vendor/machine-gateway/tests/lifecycle.test.mjs",
+        "server/vendor/machine-gateway/tests/mount-config.test.mjs",
+        "server/vendor/machine-gateway/tests/mounted-services.test.mjs",
+        "server/vendor/machine-gateway/tests/network.test.mjs",
+        "server/vendor/machine-gateway/tests/payments.test.mjs",
+        "server/vendor/machine-gateway/tests/process.test.mjs",
+        "server/vendor/machine-gateway/tests/receiving.test.mjs",
+        "server/vendor/machine-gateway/tests/release.test.mjs",
+        "server/vendor/continuous-monitoring/test/00-mounted-journey.test.mjs",
+        "server/vendor/continuous-monitoring/test/01-safety.test.mjs",
+        "server/vendor/continuous-monitoring/test/02-service.test.mjs",
+        "server/vendor/continuous-monitoring/test/03-durability.test.mjs",
+        "server/vendor/continuous-monitoring/test/04-entitlement-contract.test.mjs",
+        "server/vendor/continuous-monitoring/test/05-receiving.test.mjs",
+        "server/vendor/continuous-monitoring/test/06-mounted-boundaries.test.mjs",
+        "server/vendor/continuous-monitoring/test/07-cold-source.test.mjs"
+      ],
+      "log": "/tmp/ae18-lifecycle-cold-sqlite.tap",
+      "counts": {
+        "tests": 95,
+        "pass": 95,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "name": "regression",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "server/scripts/test-hosted-startup.js",
+        "server/scripts/test-spa-fallback.js",
+        "server/scripts/test-correspondence-mount-disabled.js",
+        "server/scripts/test-seller-repair-webhook.js",
+        "server/scripts/test-foundry-listener-drain.js"
+      ],
+      "log": "/tmp/ae18-lifecycle-cold-regression.tap",
+      "counts": {
+        "tests": 49,
+        "pass": 49,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "testTreeRemoved": true,
+  "deployed": false
+}

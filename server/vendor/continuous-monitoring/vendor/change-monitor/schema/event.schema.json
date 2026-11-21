@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neomorphic.io/schema/change-monitor.event.v1.json",
+  "title": "Change monitor event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "eventId", "idempotencyKey", "subscriptionId", "subscriptionRevision", "transition", "evidenceClass", "task", "destination"],
+  "properties": {
+    "schema": { "const": "change-monitor.event.v1" },
+    "eventId": { "type": "string" },
+    "idempotencyKey": { "type": "string" },
+    "subscriptionId": { "type": "string" },
+    "subscriptionRevision": { "type": "integer" },
+    "admissionOrdinal": { "type": "integer" },
+    "owner": { "type": "string" },
+    "source": { "type": "object" },
+    "transition": { "enum": ["content_changed", "service_restored", "evidence_unavailable"] },
+    "serviceRestored": { "type": "boolean" },
+    "priorBaselineDigest": { "type": ["string", "null"] },
+    "evidenceId": { "type": "string" },
+    "evidenceClass": { "enum": ["comparable", "missing", "stale", "incomparable", "source_failure"] },
+    "materialDigest": { "type": ["string", "null"] },
+    "material": { "type": ["object", "null"] },
+    "failureCode": { "type": ["string", "null"] },
+    "capture": { "type": ["string", "null"] },
+    "correctsEvidenceId": { "type": ["string", "null"] },
+    "priorEventId": { "type": ["string", "null"] },
+    "admittedAt": { "type": "string" },
+    "destination": { "type": "object" },
+    "task": { "type": "object" },
+    "identity": { "type": "object" }
+  }
+}

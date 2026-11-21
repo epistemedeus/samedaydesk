@@ -1,0 +1,83 @@
+TAP version 13
+# TAP version 13
+# \# Subtest: cookie-only login delivery, recovery delivery, tamper and expiry use the same authenticated seal
+# ok 1 - cookie-only login delivery, recovery delivery, tamper and expiry use the same authenticated seal
+#   ---
+#   duration_ms: 2.693649
+#   type: 'test'
+#   ...
+# \# Subtest: ordinary debt administration refuses with its JSON error alone, without loading a journal
+# ok 2 - ordinary debt administration refuses with its JSON error alone, without loading a journal
+#   ---
+#   duration_ms: 237.79899
+#   type: 'test'
+#   ...
+# \# (node:571329) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# \# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Subtest: runtime and release bind origin, tenant, both actual source hashes and required roots
+# ok 3 - runtime and release bind origin, tenant, both actual source hashes and required roots
+#   ---
+#   duration_ms: 335.563078
+#   type: 'test'
+#   ...
+# \# Subtest: release and runtime refuse the same incomplete qualified capability
+# ok 4 - release and runtime refuse the same incomplete qualified capability
+#   ---
+#   duration_ms: 405.083931
+#   type: 'test'
+#   ...
+# \# Subtest: an unfunded release cannot carry a money authority module
+# ok 5 - an unfunded release cannot carry a money authority module
+#   ---
+#   duration_ms: 116.566398
+#   type: 'test'
+#   ...
+# \# Subtest: profile files reject parent symlinks
+# ok 6 - profile files reject parent symlinks
+#   ---
+#   duration_ms: 59.039368
+#   type: 'test'
+#   ...
+# \# Subtest: generation refuses before an escaping write
+# ok 7 - generation refuses before an escaping write
+#   ---
+#   duration_ms: 262.582486
+#   type: 'test'
+#   ...
+# \# Subtest: host hashing refuses symlinked parent directories in the pinned source closure
+# ok 8 - host hashing refuses symlinked parent directories in the pinned source closure
+#   ---
+#   duration_ms: 0.854702
+#   type: 'test'
+#   ...
+# \# Subtest: post-qualification entry preparation changes only the capability and captures the exact current rollback
+# ok 9 - post-qualification entry preparation changes only the capability and captures the exact current rollback
+#   ---
+#   duration_ms: 355.656623
+#   type: 'test'
+#   ...
+# 1..9
+# \# tests 9
+# \# suites 0
+# \# pass 9
+# \# fail 0
+# \# cancelled 0
+# \# skipped 0
+# \# todo 0
+# \# duration_ms 2146.690587
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 2738.843563
+  type: 'test'
+  ...
+# Candidate-only regression command: node --test --test-concurrency=1 vendor/hosted-wallet-market/test/account-delivery.test.mjs vendor/hosted-wallet-market/test/machine-profile-receiving.test.mjs
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2889.367267

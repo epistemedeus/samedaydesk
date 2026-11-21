@@ -1,0 +1,78 @@
+{
+  "package": "change-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "admittedOn": "2026-09-30",
+  "repository": "epistemedeus/neomorphic-io",
+  "tip": "2e7403f53967c0056163c62f591eeda7f0a52c83",
+  "operationId": "2e57d0be-6613-48f5-be44-3068c8c59b0e",
+  "writer": "packages/change-monitor",
+  "imports": {
+    "release-gate": {
+      "version": "0.1.4",
+      "path": "https://neomorphic.io/downloads/release-gate/0.1.4/release-gate-0.1.4.tgz",
+      "archive": "release-gate-0.1.4.tgz",
+      "sha256": "f14eac0c4c10bba3f3d8b2e89d6eed1a87f47077bb06a7c70f96409ced9d7bef",
+      "bytes": 16254,
+      "exports": ["evaluateRelease", "RECEIPT_SCHEMA"],
+      "schema": "release-gate.receipt.v1",
+      "privateSibling": false,
+      "sourceCommits": {
+        "samedaydesk-catalog-release-gate": "142d0c15647d5992d339a21d4071159679f686fd",
+        "samedaydesk-catalog-publication-pipeline": "9fa796b56643db8123bcce74d7451ff7f28e60c2"
+      }
+    },
+    "route-lock": {
+      "version": "0.1.0",
+      "path": null,
+      "exports": ["DECISION_SCHEMA", "DIMENSIONS"],
+      "schema": "route-lock.decision.v1",
+      "loadedAtRuntime": false,
+      "reason": "Decision documents are consumed as envelopes. decide() is not loaded. DECISION_SCHEMA and DIMENSIONS are pinned in src/adapters/route-lock.mjs. This package does not import packages/route-lock."
+    },
+    "agent-payment-policy": {
+      "version": "0.14.0",
+      "role": "route-lock dependency recorded from packages/route-lock/package.json. Not imported by change-monitor."
+    },
+    "observatory": {
+      "schemaVersion": "pilot.external-observatory.v1",
+      "projectionSchema": "pilot.external-observatory.source-projection.v1",
+      "projectionId": "agent-economy-observatory.source-projection",
+      "path": "packages/change-monitor/vendor/s12-observatory",
+      "publicInput": "https://samedaydesk.com/api/observatory/snapshot",
+      "exports": ["SCHEMA_VERSION", "SOURCE_IDS", "parseSnapshot", "observationById", "projectSnapshot", "applySourceUpdate", "rejectSeededFailure"],
+      "sourceIds": ["moltjobs", "x402stats", "smithery_mcp"],
+      "s12MaintainedProjection": "maintained",
+      "tipIncludesS12Writer": false,
+      "consumedFrom": {
+        "repository": "epistemedeus/neomorphic-io",
+        "branch": "heavy/s12-observatory-0930",
+        "commit": "1d9e6eb50ded038acd9511bc689a23f2fbb15eac",
+        "path": "public/labs/agent-economy-observatory/projection.js",
+        "gitBlob": "fbe47481bf25936c33d336c8ec137d2f22bfe03d",
+        "sha256": "3a4559e2150694e61cc40868a37711b4f50496960234d337b8693bcfdcaceba4"
+      },
+      "uiCopied": false
+    },
+    "routeLockReleaseGateCompatibility": {
+      "consumedRuntime": {
+        "release-gate": "0.1.4",
+        "releaseGateArchive": "release-gate-0.1.4.tgz",
+        "sha256": "f14eac0c4c10bba3f3d8b2e89d6eed1a87f47077bb06a7c70f96409ced9d7bef",
+        "bytes": 16254,
+        "url": "https://neomorphic.io/downloads/release-gate/0.1.4/release-gate-0.1.4.tgz",
+        "route-lock": "0.1.0",
+        "routeLockLoadedAtRuntime": false,
+        "privateSibling": false
+      },
+      "amendment": {
+        "pr": 219,
+        "branch": "heavy/c-post-deploy-cold-0930",
+        "head": "2c5a6d6efee3e8fe4bee5278f987683f10345282",
+        "releaseGateVersionOnThatHead": "0.1.3",
+        "status": "superseded",
+        "reason": "Root deployed Release Gate 0.1.4. The 0.1.0 and 0.1.3 pending-dependency claim is stale. This package loads the public 0.1.4 archive after an exact-byte check and does not import packages/release-gate."
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "diagnosis-accepted-example",
+  "requesterNote": "Synthetic accepted diagnosis case with a measured rail line and unknown review, support, and contributor lines.",
+  "provenance": "synthetic",
+  "directRoute": {
+    "description": "Collect the public heading once, without sharing a crawl.",
+    "provenance": "synthetic"
+  },
+  "tasks": [
+    {
+      "taskId": "diagnosis-extract",
+      "title": "Extract public heading",
+      "summary": "Collect the public heading text from a declared page.",
+      "provenance": "synthetic",
+      "criteria": [
+        "public-heading"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "2000000",
+      "railCostAtomic": "0",
+      "reservationId": "rsv_diagnosis_accepted",
+      "termsDigest": "terms-diagnosis-accepted-001",
+      "artifactDigest": "artifact-diagnosis-accepted-001",
+      "rightsDigest": "rights-diagnosis-accepted-001",
+      "expectedRevision": 1,
+      "publicationConsent": false,
+      "delivery": {
+        "observations": {
+          "public-heading": {
+            "check": "digest_match",
+            "expected": "heading-accepted",
+            "observed": "heading-accepted"
+          }
+        },
+        "citedEvidence": [
+          {
+            "source": "synthetic-page",
+            "locator": "fixtures/diagnosis-accepted.json#public-heading",
+            "digest": "heading-accepted"
+          }
+        ],
+        "acquisition": {
+          "processId": "task-bundle-economics-cli-diagnose",
+          "processKind": "separate_cli_process"
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "100000",
+        "bundledShareAtomic": "100000"
+      },
+      "costLines": [
+        {
+          "kind": "rail",
+          "status": "measured",
+          "atomic": "0"
+        },
+        {
+          "kind": "review",
+          "status": "unknown"
+        },
+        {
+          "kind": "support",
+          "status": "unknown"
+        },
+        {
+          "kind": "contributor",
+          "status": "unknown"
+        }
+      ],
+      "directRoute": {
+        "description": "Collect the heading without a shared crawl.",
+        "provenance": "synthetic"
+      }
+    }
+  ]
+}

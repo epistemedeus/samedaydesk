@@ -6,18 +6,21 @@ import styles from "./HowItWorks.module.css";
 const STEPS = [
   {
     n: "01",
-    t: "Show us the existing service",
-    d: "Send the API docs, repository, or workflow and name the one outcome an agent must be able to complete.",
+    t: "Show us what you have",
+    d: "Your website, your app or the job your team does by hand, and the one thing AI should be able to do with it.",
+    tech: "Send the API docs, repository or workflow, and name the outcome an agent must complete.",
   },
   {
     n: "02",
-    t: "We bind the exact contract",
-    d: "We make the request constructible, expose the right discovery surfaces, and wire the payment and evidence path the scope requires.",
+    t: "We make it work with AI",
+    d: "Assistants can find it, use it and, where you charge, pay for it.",
+    tech: "We make the request constructible, publish the discovery files, and wire the payment route the scope needs.",
   },
   {
     n: "03",
-    t: "Run the acceptance test",
-    d: "You get source, deployment notes, and a repeatable test showing discovery, the call, the response, and any settlement evidence.",
+    t: "You get it running",
+    d: "Working on your service, with the code to keep and the test that proves it.",
+    tech: "A repeatable test covers discovery, the call, the response and, where paid, the settlement receipt.",
   },
 ];
 
@@ -27,7 +30,7 @@ export default function HowItWorks() {
       <div className="container">
         <header className={styles.head}>
           <p className="eyebrow">How it works</p>
-          <h2 className={styles.title}>Three steps. <span className="lime">No friction.</span></h2>
+          <h2 className={styles.title}>Show us. We build it. <span className="lime">You run it.</span></h2>
         </header>
 
         <ol className={styles.steps} data-reveal data-reveal-stagger>
@@ -36,21 +39,28 @@ export default function HowItWorks() {
               <span className={clsx("mono", styles.num)}>{s.n}</span>
               <h3 className={styles.stepTitle}>{s.t}</h3>
               <p className={styles.stepDesc}>{s.d}</p>
+              <details className={styles.stepTech}>
+                <summary className="mono">Technical detail</summary>
+                <p>{s.tech}</p>
+              </details>
             </li>
           ))}
         </ol>
 
         <div className={styles.cta}>
           <MagneticButton
-            to="/signup"
+            href="#hero-check-url"
             variant="primary"
             magnetic
-            ariaLabel="Get a free route check"
-            onClick={() => track("cta_clicked", { where: "how", action: "route_check" })}
+            onClick={() => {
+              track("cta_clicked", { where: "how", action: "hero_check" });
+              // The one free check is the hero's: after the jump to its field, put the cursor in it.
+              requestAnimationFrame(() => document.getElementById("hero-check-url")?.focus({ preventScroll: true }));
+            }}
           >
-            Get a free route check <span aria-hidden="true">→</span>
+            Run the free check <span aria-hidden="true">↑</span>
           </MagneticButton>
-          <span className={styles.note}>One route · one failure mode · one useful next step</span>
+          <span className={styles.note}>Free: paste your website at the top and see what an AI can read of it.</span>
         </div>
       </div>
     </section>

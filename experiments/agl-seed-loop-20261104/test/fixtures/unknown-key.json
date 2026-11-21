@@ -1,0 +1,14 @@
+{
+  "schema": "cc0.query-key-caller.v4",
+  "note": "extra",
+  "left": {
+    "method": "GET",
+    "path": "/visitor/lot",
+    "pairs": [{"key": "seal", "form": "bare"}]
+  },
+  "right": {
+    "method": "GET",
+    "path": "/visitor/lot",
+    "pairs": [{"key": "seal", "form": "blank"}]
+  }
+}

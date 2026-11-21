@@ -1,0 +1,64 @@
+{
+  "operation": "root6000-mcp-managed-qualification-20261024",
+  "session": "01a16d92-464c-7181-8053-3494b16a17bc",
+  "executionContextSha256": "03c2b9012582d47a50adfc00e58e278b424eb570667c299c45f569f89729988f",
+  "immutableReceiptsVerified": {
+    "authority": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/LAUNCH-AUTHORITY.json",
+      "sha256": "85002cfebfc670e379dcda996ce123d3acc3362dcc1b6aca3a818d1efe7f4d91"
+    },
+    "dispatch": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/DISPATCH-INTENT.json",
+      "sha256": "e15460c6d16f7bac7a3f1b72711c1dff7401357f911eb70fa1a42207c618dc59"
+    },
+    "usage": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/ORDINARY-ADMISSION.json",
+      "sha256": "54c5083bf816b66a5a7ff8d19e69b3fbfc88f51ed596a8d75da4cdc273a3143f"
+    },
+    "spec": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/RESUME-SPEC.json",
+      "sha256": "f16b13366b5bca2637cea58f7bb59ccdfc03da5ce6d3d465e1f67d4cbe8debc5"
+    },
+    "preparation": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/PREPARATION.json",
+      "sha256": "e8697eccc8fdac2109152f277a1118c2dd4ea3d8023e4b2b8301e303ec1a2cfa"
+    },
+    "source": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/SOURCE-BINDING.json",
+      "sha256": "f76783f6aea49357d70d7f1a06a8e4f0e5b9860ee4c250dfd284d252351acd11"
+    },
+    "controller": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/LAUNCH-RECEIVED.mjs",
+      "sha256": "404fe9174901f545c3152cb81b596dcf21000e46a747da1a1e45d17e0839e725"
+    }
+  },
+  "operatingCommit": "06f9d96f736874fcf4cb532e239e4b888a3f5a08",
+  "operatingReceiptSha256": "2a52067bd151f0b7999d289aa9f9b218ebbb91c1b3be56f6010c323219fa95fc",
+  "ownAdmission": "/home/ubuntu/root-sol-window100337/root5950-mcp-refusal-reasons-20261024/admissions/b883657c-2eb1-46c3-a4f2-7148ee13ef66/OWN-ADMISSION.json",
+  "spec": {
+    "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/RESUME-SPEC.json",
+    "sha256": "f16b13366b5bca2637cea58f7bb59ccdfc03da5ce6d3d465e1f67d4cbe8debc5"
+  },
+  "claimId": "ad4febc10ca44c0bb2fef6d22f5d8de2",
+  "reserveKiB": 2621440,
+  "executionLifetime": {
+    "enrollment": {
+      "path": "/home/ubuntu/root-sol-window100337/root6000-mcp-managed-qualification-20261024/pre-admission-2/LIFETIME-ENROLLMENT.json",
+      "sha256": "d68f038e55ebd9f3fd537537d2cc3df4e6c3f2978a47eadc956d46103092dc6c"
+    },
+    "host": {
+      "provider": "cursor",
+      "agentId": "bc-5f9c9a54-299d-4699-929e-589622608e64",
+      "bootId": "d9551aaa-044f-4a54-90ae-4b19ff129cac"
+    },
+    "operationId": "root6000-mcp-managed-qualification-20261024",
+    "route": "finite-foreground",
+    "requiredUntil": "2026-10-24T12:53:04.032Z",
+    "checkpointBy": "2026-10-24T12:02:07.485Z",
+    "expiresAt": "2026-10-24T12:56:04.032891Z",
+    "providerRetentionGuaranteed": false
+  },
+  "predecessorRunSnapshotSha256": "fc1d397d7cc2f3e1b3a7d088ed1b4e394068059d0992b515a07c3dcb42c0e6d6",
+  "predecessorReceiving": "Root received terminal/reaped/cleanup at clean1d31cb0f; original receipts remain untouched.",
+  "readMethod": "Full staged assignment and owning receiving read; unchanged instructions byte-verified and current STATE/plan received through complete differences from the fully read prior staged roles."
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Schedule bounded continuous-monitoring ticks
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=15s
+AccuracySec=1s
+RandomizedDelaySec=2s
+Unit=neomorphic-monitor-worker.service
+
+[Install]
+WantedBy=timers.target

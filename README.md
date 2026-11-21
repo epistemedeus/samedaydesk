@@ -14,7 +14,10 @@ Start with the examples below, then open the helper documentation for options an
 | [tools/offer-routing/README.md](tools/offer-routing/README.md) | Task → existing SameDayDesk/Neomorphic offer |
 | [tools/offer-routing/capability-limits-matrix.json](tools/offer-routing/capability-limits-matrix.json) | Machine-readable capability/limits matrix |
 
-Live free catalogs (no pay): `https://agents.samedaydesk.com/llms.txt` and `https://agents.samedaydesk.com/.well-known/skills/index.json`. Apex `https://samedaydesk.com/for-agents` may TLS/connect-fail; cold-read falls back to those alternates.
+Current paid-dependency state: `https://samedaydesk.com/discovery/paid-gateway.json`.
+The paid gateway is paused. Its canonical catalogs are identity references during
+the pause. Free apex tools and hosted offline archives remain separate; acquired
+packages still run locally. Cold-read fixtures are historical examples.
 
 ## Free / live vs offline fixtures
 
@@ -101,4 +104,55 @@ npm run test:public-entry
 ```
 
 That script runs the offline cold-read and fixture export commands cited above (no network, no payment). Existing focused suites: `npm run test:presence`, `npm run test:result-reuse`, `npm run test:offer-routing`.
+
+## Received gateway availability and managed release
+
+`server/config/paid-gateway-availability.json` owns this external dependency's
+received state. It does not replace package identity, launch history or retained
+entitlements. `available`, `paused` and `unknown` project deterministically into
+the guide/status file and apex skill, OpenAPI, catalog and agent card. Invalid or
+missing input projects as unknown and cannot advertise a callable paid job.
+The task-to-offer router reads the same state before selecting paid extraction;
+the matrix's hosting field describes the delivery type, not current uptime.
+
+After actual configured-runtime recovery, Root supplies a received state JSON:
+`state`, ISO `observedAt`, and `received` containing the same `observedAt`, exact
+40-character `sourceCommit`, `deploymentId`, non-secret `receipt` reference, and
+true `configuredRuntime`, `freshAuthority`, `oldAuthorityRefused`, `retainedState`
+and `sharedConsumers`. The receiver must establish these facts on the actual
+configured deployment after the pause, using the existing incident recovery
+workflow. A source merge, old healthy image or elapsed time is insufficient.
+The receipt reference contains no credential, private handle or financial row.
+The update command validates this supplied receiving; it does not perform it.
+
+```sh
+NODE_OPTIONS=--max-old-space-size=1280 node server/scripts/project-gateway-availability.js --receive /absolute/received-gateway-state.json
+NODE_OPTIONS=--max-old-space-size=1280 npm --prefix client run build
+NODE_OPTIONS=--max-old-space-size=1280 node --test --test-concurrency=1 server/scripts/test-gateway-availability.js server/scripts/test-machine-guide-links.js server/scripts/test-machine-discovery-journey.js
+```
+
+To regenerate the current machine projection, omit `--receive`. To pause again,
+receive `{"state":"paused","observedAt":"<new ISO timestamp>"}`. Tests pin the
+admitted paused state; update that expected release state when receiving an
+authorized restoration, preserving the paused fixture and failure controls.
+
+Root then uses Pilot OPERATOR-RUNBOOK's existing parameterized machine-only
+managed release, controller `7c798f18c9f385b51139bcf4f03b1458dc928c56`, a fresh
+operation/current activated baseline, and the managed source lineage
+`codex/root1434-native-response-completion-20261020`. Canonical source staging:
+
+```sh
+node tools/ops/hostinger-contributor-qualification-cli.mjs \
+  --phase source --step stage --manifest "$MANIFEST" \
+  --sds-root "$NEW_ISSUER" --source-checkout "$SDS_GIT" \
+  --reuse-source "$RECEIVED_HOST_SOURCE" --dependencies-root "$DEPENDENCIES_ROOT" \
+  --entry-closure true
+```
+
+Run that command from the pinned Pilot controller checkout with actual received
+inputs. Continue the same owning release's qualification/activation, preserving
+wallet/admin/issuer bytes. Receive unchanged emitted human HTML/assets, exact
+new source/build, private health, public guide, status JSON and apex declarations.
+No migration, payment, enrollment or Railway restart follows this source repair.
+A pushed source branch is not installed availability.
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
@@ -17,8 +18,17 @@ type Result = {
 const STATUS_ICON: Record<Check["status"], string> = { pass: "✓", warn: "!", fail: "✕" };
 
 export default function AiReadiness() {
+  const carried = (useLocation().state as { readiness?: Result } | null)?.readiness;
+  const initial = carried && typeof carried.url === "string" && typeof carried.score === "number" &&
+    typeof carried.grade === "string" && Array.isArray(carried.checks) ? carried : null;
   const [url, setUrl] = useState("");
   const [result, setResult] = useState<Result | null>(null);
+  // The server shell has no browser history. Restore the actual carried report
+  // after hydration so refresh and back navigation keep matching initial HTML.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore the carried report after hydration (see above)
+    if (initial) { setUrl(initial.url); setResult(initial); }
+  }, [initial]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +51,7 @@ export default function AiReadiness() {
   // its own title + description so search engines (which render JS) rank it for its query.
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = "Free AI Readiness Checker — is your site visible to ChatGPT & Perplexity? | SameDayDesk";
+    document.title = "Free AI Readiness Checker: is your site visible to ChatGPT & Perplexity? | SameDayDesk";
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute("content") ?? null;
     meta?.setAttribute(
@@ -164,7 +174,7 @@ export default function AiReadiness() {
                   className={styles.ctaBtnSecondary}
                   onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_fixpack" })}
                 >
-                  Done-for-you Fix Pack · $39 →
+                  Done-for-you Fix Pack · 39 USD →
                 </a>
                 <a
                   href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u"

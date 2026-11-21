@@ -1,0 +1,67 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "floor-delta-example",
+  "requesterNote": "Synthetic atomic amounts chosen so the bundled 500 bps floor is one unit higher than the sum of separate floors.",
+  "tasks": [
+    {
+      "taskId": "remainder-one",
+      "title": "Tiny first capture",
+      "summary": "Synthetic 19 atomic units to show per-capture floor leftovers.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "19",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "one"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "1",
+        "bundledShareAtomic": "1"
+      }
+    },
+    {
+      "taskId": "remainder-two",
+      "title": "Tiny second capture",
+      "summary": "Synthetic 19 atomic units paired with the first capture.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "19",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "two"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "1",
+        "bundledShareAtomic": "1"
+      }
+    }
+  ]
+}

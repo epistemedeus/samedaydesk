@@ -4,6 +4,7 @@ import { runChecks } from "../../lib/agent-readiness/checks.js";
 import { DEMO_BUNDLES } from "../../lib/agent-readiness/demo.js";
 import { rawExchange } from "../../lib/agent-readiness/probe.js";
 import { buildReport } from "../../lib/agent-readiness/score.js";
+import { PUBLIC_IP, wireSockets } from "./fixtures/socket-controls.mjs";
 
 const PUBLISH_OPENAPI = "Serve a valid JSON OpenAPI document at /openapi.json.";
 const ABSENT_OPENAPI = "No OpenAPI document at /openapi.json or /.well-known/openapi.json.";
@@ -258,10 +259,11 @@ describe("probe records retrieval limits", () => {
       res.end(`{"openapi":"${"x".repeat(4000)}"}`);
     });
     const port = await listen(server);
+    const wiring = wireSockets([{ address: PUBLIC_IP, server }]);
     try {
-      const cut = await rawExchange(new URL(`http://127.0.0.1:${port}/doc`), {
+      const cut = await rawExchange(new URL(`http://retrieval.example:${port}/doc`), {
         method: "GET",
-        address: { address: "127.0.0.1", family: 4 },
+        address: { address: PUBLIC_IP, family: 4 },
         maxBytes: 64,
         timeoutMs: 1000,
       });
@@ -269,15 +271,16 @@ describe("probe records retrieval limits", () => {
       expect(cut.truncated).toBe(true);
       expect(Buffer.byteLength(cut.body)).toBe(64);
 
-      const hung = await rawExchange(new URL(`http://127.0.0.1:${port}/hang`), {
+      const hung = await rawExchange(new URL(`http://retrieval.example:${port}/hang`), {
         method: "GET",
-        address: { address: "127.0.0.1", family: 4 },
+        address: { address: PUBLIC_IP, family: 4 },
         timeoutMs: 100,
       });
       expect(hung.status).toBe(0);
       expect(hung.error).toBe("timeout");
       expect(hung.body).toBe("");
     } finally {
+      wiring.restore();
       await new Promise((resolve) => server.close(resolve));
     }
   });
@@ -317,15 +320,17 @@ describe("partial transport and byte-budget receiving", () => {
       setTimeout(() => res.destroy(), 20);
     });
     const port = await listen(server);
+    const wiring = wireSockets([{ address: PUBLIC_IP, server }]);
     try {
-      const got = await rawExchange(new URL(`http://127.0.0.1:${port}/doc`), {
-        address: { address: "127.0.0.1", family: 4 },
+      const got = await rawExchange(new URL(`http://retrieval.example:${port}/doc`), {
+        address: { address: PUBLIC_IP, family: 4 },
         timeoutMs: 1000,
       });
       expect(got.status).toBe(200);
       expect(got.error).toBe("connection");
       expect(got.body).toBe(prefix);
     } finally {
+      wiring.restore();
       await new Promise((resolve) => server.close(resolve));
     }
   });

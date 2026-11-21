@@ -11,9 +11,12 @@ import authRouter from "./routes/auth.js";
 import teaserRouter from "./routes/teaser.js";
 import toolsRouter from "./routes/tools.js";
 import scanRouter from "./routes/scan.js";
+import requestsRouter, { createRequestsRouter } from "./routes/requests.js";
 import checkoutRouter from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
-import stripeWebhookRouter from "./routes/stripe-webhook.js";
+import { createStripeWebhookRouter } from "./routes/stripe-webhook.js";
+import { createCareRouter } from "./routes/care.js";
+import { configuredCareService } from "./lib/care-service.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
@@ -24,11 +27,18 @@ import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
+import { createX402QuoteRouter } from "./routes/x402-quote.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { commerceVisit } from "./lib/commerce-journey.js";
+import { discoveryLogMiddleware, fileSink } from "./lib/discovery-log/log.js";
+import { mountDiscoveryLogExport } from "./lib/discovery-log/http.mjs";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
+import { mountContributorManagedDesk } from "./lib/contributor-managed-mount.js";
+import { installedLateAcceptanceReader, mountHostedWalletMarketAdapter } from "./lib/hosted-wallet-market-mount.js";
 import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
+import { mountMachineServices } from "./lib/machine-services/mount.mjs";
 import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
 import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
 import {
@@ -46,7 +56,36 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 
 export function createSdsApp(options = {}) {
 const app = express();
+const care = Object.hasOwn(options, "care") ? options.care : configuredCareService();
+app.set("sdsCare", care);
 app.disable("x-powered-by");
+
+// Exact contributor assets/API own their edge checks and failures before host
+// redirects, parsers and SPA fallback. No global proxy or CORS policy changes.
+// The packaged wallet market owns the packed-client routes on this prefix and
+// falls through for every path it does not serve. Unset mode registers nothing.
+// The entry is vendor/hosted-wallet-market inside this tree when unset.
+let contributor;
+const contributorEnv = options.neomorphicContributorJourney?.env ?? process.env;
+const market = mountHostedWalletMarketAdapter(app, {...options.hostedWalletMarket,
+  env: options.hostedWalletMarket?.env ?? {...process.env,...options.neomorphicContributorJourney?.env},
+  ownerToken: options.neomorphicContributorJourney?.env?.CONTRIBUTOR_JOURNEY_OWNER_TOKEN ?? options.hostedWalletMarket?.ownerToken,
+  readAcceptedSource: async target => {
+    await contributor?.ensure();
+    const installed = contributor?.state.runtime?.installed;
+    if (!installed) throw Object.assign(new Error('discharge_consumer_unbound'), {http:409, codeName:'discharge_consumer_unbound'});
+    return installed.adapters.review.read(target);
+  },
+  readLateAcceptedSource: installedLateAcceptanceReader(() => contributor, contributorEnv),
+  ingress: (req,res,next) => contributor.guardRequest(req,res,next),
+});
+app.set("hostedWalletMarket", market);
+contributor = mountContributorManagedDesk(app, {...options.neomorphicContributorJourney,
+  // A configured consumer is a required runtime dependency. Its failed schema
+  // admission must reach the existing journey qualification/health producer.
+  nativeDebtReceiving: async () => market.opened ? (await market.opened).canonicalReceiving : undefined,
+});
+app.set("neoContributorJourney", contributor);
 
 // Include bearer-return redirects in the same cache/referrer protection as the
 // endpoint. This does not change the canonical host or redirect destination.
@@ -99,6 +138,10 @@ app.set("s51Correspondence", correspondence);
 // routes and the foundry CJS/runtime materialization path stay as they are.
 app.set("l12ManagedWatch", mountManagedWatch(app, options.managedWatch || {}));
 
+// Machine APIs consume bounded raw bodies before the ordinary JSON parser.
+// Persistence and scheduler opt-ins are isolated from existing app settings.
+app.set("machineServices", mountMachineServices(app, options.machineServices || {}));
+
 // Bounded raw intake before the global parser. Admission needs enrolled PG;
 // anonymous snapshot evaluation and current publication facts remain separate.
 app.set("s346HostedUsefulJourney", mountHostedUsefulJourney(app, options.hostedUsefulJourney || {}));
@@ -118,7 +161,10 @@ app.use(express.json({ limit: "1mb" }));
 
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
+// 2a) AE21 J9-LOG: append-only, privacy-limited stage-1 discovery log for apex MCP/llms routes. Off unless DISCOVERY_LOG_DIR is set.
+if (process.env.DISCOVERY_LOG_DIR) app.use(discoveryLogMiddleware({ sink: fileSink(process.env.DISCOVERY_LOG_DIR) }));
 app.use(pulseMiddleware);
+app.use(commerceVisit);
 
 // 3) API routes.
 app.use("/api", healthRouter);
@@ -128,14 +174,21 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
+app.use("/api/care", createCareRouter(care));
+app.use("/api/requests", care?.taskRequests ? createRequestsRouter({ store: care.taskRequests }) : requestsRouter);
 app.use("/api/uploads", uploadsRouter);
-app.use("/api/stripe", stripeWebhookRouter);
+app.use("/api/stripe", createStripeWebhookRouter({ care }));
 app.use("/api/webhooks/resend", resendWebhookRouter);
 app.use("/api/market-observations", marketObservationsRouter);
 app.use("/api/observatory", observatoryRouter);
+app.use("/api/x402-quote", createX402QuoteRouter());
 // Optional public-readiness adapter. Vendored MIT checker, no private Git.
 // A disabled checker answers healthz and leaves every other route up.
 mountPublicReadiness(app, options.publicReadiness || {});
+
+// Private discovery-log read. The writer above is unchanged. This route does not
+// list days, take a directory, or start another process.
+mountDiscoveryLogExport(app, options.discoveryLog || {});
 
 // Unknown /api route → JSON 404 (never fall through to the SPA shell).
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
@@ -159,12 +212,12 @@ app.get("/.well-known/mcp-registry-auth", (_req, res) =>
 // stays on agents.samedaydesk.com and is named in the description, not copied.
 app.get("/.well-known/agent-card.json", (_req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
-  res.type("application/json").send(apexAgentCard());
+  res.type("application/json").send(apexAgentCard(contributorEnv));
 });
 
 // Machine declarations derived from the mounted tools. Mounted before the SPA
 // so a missing static file cannot turn them into an HTML document.
-mountApexDeclarations(app);
+mountApexDeclarations(app, { env: contributorEnv });
 
 // Existing discovery directory. This descriptor does not call a network endpoint.
 app.get(ORIGINAL_TASK_DESCRIPTOR_PATH, (_req, res) => {
@@ -179,9 +232,30 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
   res.sendFile(originalTaskClientArchiveFile());
 });
 
+// The agent start file: the short path for an agent told one sentence. Same
+// bytes for every client, open CORS, linked from the page head and llms.txt.
+app.get("/start.md", (_req, res, next) => {
+  const file = path.join(CLIENT_DIST, "start.md");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Cache-Control", "public, max-age=300");
+  res.type("text/markdown; charset=utf-8");
+  res.sendFile(file, (err) => { if (err) next(); });
+});
+
+app.use((req, res, next) => {
+  if ((req.method === "GET" || req.method === "HEAD") && req.path === "/") {
+    res.append("Link", '</start.md>; rel="alternate"; type="text/markdown"; title="Start here"');
+  }
+  next();
+});
+
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
 if (isProd) {
+  app.use("/care", (_req, res, next) => {
+    res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    next();
+  });
   mountProductionClient(app, CLIENT_DIST);
 }
 

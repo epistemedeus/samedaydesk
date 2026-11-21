@@ -50,7 +50,7 @@ test(
     assert.equal(forAgents.linksDisplay, "none");
     assert.equal(forAgents.x402LabelDisplay, "none");
     assert.equal(forAgents.signinDisplay, "none");
-    assert.equal(forAgents.wordDisplay, "none");
+    assert.notEqual(forAgents.wordDisplay, "none", "the current phone navigation retains the brand name");
     assert.ok(forAgents.preOverflowX === "auto" || forAgents.preOverflowX === "scroll");
     const fixture = report.pages.find((page) => page.id === "fixture-example-a");
     assert.equal(fixture.h1, "Alpha");

@@ -1,0 +1,7 @@
+{
+  "kind": "commerce_payments",
+  "repository": "https://github.com/base/commerce-payments",
+  "tag": "v1.1.0",
+  "commit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+  "abiSha256": "4eadfac88b44c0ff00c9274f98821031f6600145e57800d8ced405f2452c03d5"
+}

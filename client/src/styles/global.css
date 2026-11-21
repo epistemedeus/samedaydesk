@@ -63,6 +63,21 @@ ul, ol { list-style: none; padding: 0; }
 /* route suspense / auth-loading placeholder */
 .route-loading { min-height: 100svh; background: var(--bg); }
 
+/* Keep content readable without script or timeline support. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal], [data-reveal-stagger] > * {
+      animation: sheet-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+    @keyframes sheet-rise {
+      from { transform: translateY(12px); }
+      to { transform: translateY(0); }
+    }
+  }
+}
+
 /* hide text but keep for AT */
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;

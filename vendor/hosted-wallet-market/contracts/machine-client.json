@@ -1,0 +1,220 @@
+{
+  "schema": "neomorphic.wallet-market-client.archive.v1",
+  "product": "wallet-market-client",
+  "packageName": "agent-economy-client",
+  "version": "0.2.0",
+  "license": "MIT",
+  "node": ">=22.12.0",
+  "binary": "ae",
+  "archive": "agent-economy-client-0.2.0.tgz",
+  "bytes": 191433,
+  "sha256": "c9074d9b598d0e1b5afa12ba0ca602ad9c9c55480a9583c444907af8e12cfe57",
+  "source": {
+    "repository": "epistemedeus/pilot",
+    "commit": "63baf0ccde74b98e099f380d4e4e8d0fd072deb4",
+    "path": "tools/agent-economy-client",
+    "acceptedBase": "983d515eb7fa2c1663b4781d57999c67ad7a5e61"
+  },
+  "publicationStatus": "candidate",
+  "hostedAcquisitionVerified": false,
+  "npmPublished": false,
+  "runtimeDependencies": [],
+  "installScripts": [],
+  "runtimeDownloads": false,
+  "runtimeImports": [
+    "bin/ae.mjs",
+    "src/adapter.mjs",
+    "src/api.mjs",
+    "src/c0/participant-wire.mjs",
+    "src/canonical.mjs",
+    "src/catalog.mjs",
+    "src/cli.mjs",
+    "src/commands.mjs",
+    "src/eip191.mjs",
+    "src/error-codes.mjs",
+    "src/errors.mjs",
+    "src/failure-evidence.mjs",
+    "src/fee.mjs",
+    "src/hosted-binding.mjs",
+    "src/index.mjs",
+    "src/job-gateway.mjs",
+    "src/journal.mjs",
+    "src/loopback.mjs",
+    "src/machine-wallet.mjs",
+    "src/network-identity.mjs",
+    "src/profile.mjs",
+    "src/redact.mjs",
+    "src/retained-outcome.mjs",
+    "src/signer.mjs",
+    "src/transport.mjs",
+    "src/vendor/ethers.mjs",
+    "src/version.mjs",
+    "src/wallet-adapter.mjs"
+  ],
+  "files": {
+    "LICENSE": {
+      "bytes": 1085,
+      "sha256": "2f36f1034df1eeb0c9e8986a36e2f1dbaf7873132458ca31a77d8e375bb64d84"
+    },
+    "PROVENANCE.json": {
+      "bytes": 3494,
+      "sha256": "1f03adbf5edecfe7ae3403a46e9cb9f1a431e37a65e394ad63783f2b6e7b43f7"
+    },
+    "README.md": {
+      "bytes": 7767,
+      "sha256": "53c776856b3dea350fe5e78a1ee6fcb3a6e539488f3aff3f4acdad49ae6a1c8a"
+    },
+    "SOURCE-NOTICE.txt": {
+      "bytes": 1102,
+      "sha256": "6ea0c159376d663b623d5ad7654190ed78e4a1fd6cd508c0802a6f9b9103ad4e"
+    },
+    "bin/ae.mjs": {
+      "bytes": 129,
+      "sha256": "5ac3c3e105db1b9f399bb3023a7ce9dd5357a3a0cd52b01cda732c87c1922d0a"
+    },
+    "docs/HTTP.md": {
+      "bytes": 17734,
+      "sha256": "9d55e5a17fa4cc9f3e2a33bd5dc3dcd9fcd833d5e68b13ef125b24c0f7550207"
+    },
+    "docs/MACHINE-MARKET.md": {
+      "bytes": 5765,
+      "sha256": "df6c245a2088864a05e40fd7a13379b2d6b5d574daf8cfa1aabc9d2dfc47df50"
+    },
+    "docs/OBSERVER.md": {
+      "bytes": 2276,
+      "sha256": "faa20473b5fcafd8e391f9fc9b2ca813871803919ecc8daa7dcb35a1c90d3915"
+    },
+    "docs/RUNTIME.md": {
+      "bytes": 1504,
+      "sha256": "885d6902cc32859e0a1eb827963dbc03147400ae3a7d3292891f561284c13bd1"
+    },
+    "package.json": {
+      "bytes": 1468,
+      "sha256": "2a688106a3a7b5d281a98da9e2e8b951a3c78a91c72ba473bf44b3c38f1c896f"
+    },
+    "src/adapter.mjs": {
+      "bytes": 3760,
+      "sha256": "5360bac680dbc0cd29a37ce2e96a65d9ba05dc64f3cefdf6f4982293c5cd228f"
+    },
+    "src/api.mjs": {
+      "bytes": 5878,
+      "sha256": "91c178ae2f1b4a7e91f186da59edc7d18528821e31a4f6bf6d32ec9383ec0d46"
+    },
+    "src/c0/PROVENANCE.json": {
+      "bytes": 609,
+      "sha256": "199c856bda65e5e206aeb5335a7b3af5c438ac644b49e3667e432128c116bf2d"
+    },
+    "src/c0/participant-wire.mjs": {
+      "bytes": 7750,
+      "sha256": "4422b4ca87eefd62833c4db0bfdfd0ffcf5aa438da6371d9b5cf47ae53896df4"
+    },
+    "src/canonical.mjs": {
+      "bytes": 854,
+      "sha256": "7a6f56131f1c445727d9cf828394ea19c2ea57f6640d0002f4ba6162cda63222"
+    },
+    "src/catalog.mjs": {
+      "bytes": 20073,
+      "sha256": "98d38e39acd83310b2167304224d9f49ae56638b449cc3b4363ce53694e4dbe2"
+    },
+    "src/cli.mjs": {
+      "bytes": 8319,
+      "sha256": "3f26ee241b39e6284618486d24b2be16e307d77c55bf9011505462c620947e2e"
+    },
+    "src/commands.mjs": {
+      "bytes": 51089,
+      "sha256": "a8ef9f9972540ba723f822344578ae28d2af35c15c6a5efda0ca078a27005c51"
+    },
+    "src/eip191.mjs": {
+      "bytes": 10130,
+      "sha256": "bfc8fd51a0a3b197a459bc94b1412e431823c53a14a09c2f4e7d301be7de116f"
+    },
+    "src/error-codes.mjs": {
+      "bytes": 5948,
+      "sha256": "2925bba2b6e7cc9b11d90785fa8d65b5493b331fd92e9e332d35e0b89f3b6b9b"
+    },
+    "src/errors.mjs": {
+      "bytes": 1756,
+      "sha256": "390cdf5647839ff77d4a26fa0ed62fdcd2d18002f22a24d955c2a4db53ff80ba"
+    },
+    "src/failure-evidence.mjs": {
+      "bytes": 5672,
+      "sha256": "ee6ee5b804fdfe7fd2ec9d313a2dc2b44d93e8f6f69618e24444b10311aff3af"
+    },
+    "src/fee.mjs": {
+      "bytes": 2149,
+      "sha256": "20df3025e4c79268880b8a1f70cce6109ec6cc0c45bc74b0455c9c003a752f6e"
+    },
+    "src/hosted-binding.mjs": {
+      "bytes": 2585,
+      "sha256": "b2b76cafcbfd994ef7b1e86bb2732bedf33cad7c9b1379dada067402fc4a9b93"
+    },
+    "src/index.mjs": {
+      "bytes": 432,
+      "sha256": "47390da99320dce588dbd2535a1958b97bbdad461bf23a88b4aa20985de70e2e"
+    },
+    "src/job-gateway.mjs": {
+      "bytes": 27892,
+      "sha256": "89e4772043af9c3d2ad76cdf4e99face0a0625568c88039bdfd79cf8504dc8e8"
+    },
+    "src/journal.mjs": {
+      "bytes": 5858,
+      "sha256": "4f7fa04a8ef934434afc36ee6c8076edeac68b9ff7643076bd059847b751c408"
+    },
+    "src/loopback.mjs": {
+      "bytes": 1697,
+      "sha256": "fceba52ab6be544b379e7ed611bbf3ad12df3b9c4b80ab1f0aeb592f1eafbaa7"
+    },
+    "src/machine-wallet.mjs": {
+      "bytes": 9058,
+      "sha256": "c4803d0184852db78a9948e192fd2780546496d88f253183a9f848734e1d5c2e"
+    },
+    "src/network-identity.mjs": {
+      "bytes": 2669,
+      "sha256": "3c9b3025f69cb6daf8884dffaf742ce0ad52fd9c5b1647df2818c1fa10fc4990"
+    },
+    "src/profile.mjs": {
+      "bytes": 5033,
+      "sha256": "ebacecc81707bcc29361e0187dee6d871cd7f4be3d62646f3af754e08e95cf93"
+    },
+    "src/redact.mjs": {
+      "bytes": 878,
+      "sha256": "e4281a6c4b055b98f4f9ebc837f633b64ac78de24cf60541bdb9e37dec93a788"
+    },
+    "src/retained-outcome.mjs": {
+      "bytes": 4869,
+      "sha256": "3f44161d1e0adf40bf2f7b74d83eca7983eaba7c6948ef33a7ba6b90cbb28e91"
+    },
+    "src/signer.mjs": {
+      "bytes": 1593,
+      "sha256": "a2d72a7e67ba0c318bc5a24b3a35def39a760c366eeec44a69f89ae413b5332e"
+    },
+    "src/transport.mjs": {
+      "bytes": 4281,
+      "sha256": "4acf4051b57e3b06c3c19fc6dd8c3298c72fee99157ddf71606c9e2105798672"
+    },
+    "src/vendor/ETHERS-LICENSE.md": {
+      "bytes": 1075,
+      "sha256": "44eea86637405118248327fbe9d9fa95d04c7a57221c7e8c155f736db9f1b612"
+    },
+    "src/vendor/PROVENANCE.json": {
+      "bytes": 912,
+      "sha256": "ef15dc8cd7022bbb5c65c22dc29b448626d0875f7866a4bcba40a5b43361ed1f"
+    },
+    "src/vendor/THIRD-PARTY-LICENSES.txt": {
+      "bytes": 6763,
+      "sha256": "ba49514326bbdf84e7a0d55d3538ec3f3ffb343425924bd100eab8cd797acea4"
+    },
+    "src/vendor/ethers.mjs": {
+      "bytes": 324728,
+      "sha256": "ba6ab771fedc6dbc661397b96e4aff2b809ffda5351421506e98c54f45be89bc"
+    },
+    "src/version.mjs": {
+      "bytes": 227,
+      "sha256": "be6f74ee1a0337e2542091883416b835808b185741609b685467972256f4b882"
+    },
+    "src/wallet-adapter.mjs": {
+      "bytes": 4858,
+      "sha256": "6e90033cd438ec5fe1d7b23861a91a12af135c8713e8aaceeac43ba4cefd9603"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "neomorphic.machine-gateway.source.v1",
+  "repositoryBase": "ccffedf34f356ed6a90123b80f655df9ae7ce850",
+  "inspected": [
+    {
+      "repository": "epistemedeus/neomorphic-io",
+      "paths": [
+        "packs",
+        "experiments",
+        "runtime-proxy"
+      ],
+      "result": "No reusable mounted gateway. runtime-proxy is a read-only stats stub explicitly unavailable on static hosting."
+    },
+    {
+      "repository": "epistemedeus/x402-url-extractor",
+      "sha": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+      "paths": [
+        "idempotency-replay.mjs",
+        "internal-opportunity-gateway.mjs",
+        "extract-batch-c1/public-fetch.mjs",
+        "extract-batch-c1/url-guard.mjs",
+        "lockfile-pin-delta.mjs",
+        "vendor/lockfile-pin-delta/lib"
+      ],
+      "result": "Reuse unchanged DNS-pinned public transport and accepted lockfile engine. Delegate verify/settle to enrolled SDK client; retain its durable possible-spend-before-call invariant. Do not transplant its Express singleton/paywalls or create a signer."
+    },
+    {
+      "repository": "epistemedeus/samedaydesk",
+      "sha": "d8cea059213e06d2f263be67f82e498f8052a50f",
+      "paths": [
+        "server/app.js",
+        "server/lib/neomorphic-opportunity-mount.js",
+        "server/lib/correspondence-mount.js",
+        "server/lib/payment-attempt.js",
+        "docs/CORRESPONDENCE-SHARED-HOST.md"
+      ],
+      "result": "Follow optional prefix mount before host parsers, isolate invalid configuration, reuse existing Hostinger Node22 process. A known or uncertain payment cannot authorize a replacement payment."
+    }
+  ],
+  "vendor": {
+    "repository": "epistemedeus/x402-url-extractor",
+    "sha": "82a51274e7dc7a7600b90f1317a6be6b28442592",
+    "unchanged": true,
+    "files": [
+      {
+        "path": "vendor/extractor/LICENSE",
+        "sourcePath": "LICENSE",
+        "sha256": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
+      },
+      {
+        "path": "vendor/extractor/lockfile/LICENSE",
+        "sourcePath": "vendor/lockfile-pin-delta/LICENSE",
+        "sha256": "c9e2795d29bf1008cbd36ac045bd3c77d537438a51d8dda34e158f4e82a6a27c"
+      },
+      {
+        "path": "vendor/extractor/lockfile/PROVENANCE.json",
+        "sourcePath": "vendor/lockfile-pin-delta/PROVENANCE.json",
+        "sha256": "4d84c229bf9cb14d2a54148c98c698e9c7a27015e75fa8523d7df9bbd3f4e356"
+      },
+      {
+        "path": "vendor/extractor/lockfile/compare.mjs",
+        "sourcePath": "vendor/lockfile-pin-delta/lib/compare.mjs",
+        "sha256": "2d437b7684ebe3b19259f42122c1f08446441a6d4806d4f3acdc0bb7d28c8a81"
+      },
+      {
+        "path": "vendor/extractor/lockfile/errors.mjs",
+        "sourcePath": "vendor/lockfile-pin-delta/lib/errors.mjs",
+        "sha256": "1c85418f2599141216057a0e5a28b07f33216a36a86fc322d7ebd0863680665f"
+      },
+      {
+        "path": "vendor/extractor/lockfile/hash-terms.mjs",
+        "sourcePath": "vendor/lockfile-pin-delta/lib/hash-terms.mjs",
+        "sha256": "14f6994c9641d38915f2dc2783beb84612bd409c025fd05b21c9bc5d04a77494"
+      },
+      {
+        "path": "vendor/extractor/lockfile/parse-lockfile.mjs",
+        "sourcePath": "vendor/lockfile-pin-delta/lib/parse-lockfile.mjs",
+        "sha256": "d5e5be6d9f79eba5ab31e744fcb31391bef3ffda176acce186c0a01c0f7670a0"
+      },
+      {
+        "path": "vendor/extractor/public-fetch.mjs",
+        "sourcePath": "extract-batch-c1/public-fetch.mjs",
+        "sha256": "780264c1f85a32c7dda9432d6590775553f1a8afd21d677d53d7f34c0048a082"
+      },
+      {
+        "path": "vendor/extractor/url-guard.mjs",
+        "sourcePath": "extract-batch-c1/url-guard.mjs",
+        "sha256": "85931890091efa2b91399b4356764e8bb6adb7f1f81bcf61ad8e5b0e5935193d"
+      }
+    ]
+  },
+  "paymentSdk": {
+    "package": "@x402/core",
+    "version": "2.16.0",
+    "sourcePin": "epistemedeus/x402-url-extractor@82a51274e7dc7a7600b90f1317a6be6b28442592:package.json",
+    "integrity": "sha512-7MjwOEiE6ICAYtOsK9vQl66Ho4jERDuuoRg/No2Nc2GQ7y/M/yu4DJ65LzeBycQE+Qrg2RqQG7KR51tyT+hzjQ==",
+    "inspected": [
+      "dist/esm/chunk-YEYZQZNL.mjs:HTTPFacilitatorClient",
+      "dist/esm/chunk-FPXAE3OS.mjs:PaymentPayloadV2Schema"
+    ],
+    "transport": "SDK invoked in bounded worker; worker-local fetch disallows redirects, caps replies and is terminated on abort. No host-global fetch patch."
+  }
+}

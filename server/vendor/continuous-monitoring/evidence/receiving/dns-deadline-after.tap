@@ -1,0 +1,17 @@
+TAP version 13
+# (node:2240375) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: an elapsed DNS budget fences socket entry before a delayed timeout callback runs
+ok 1 - an elapsed DNS budget fences socket entry before a delayed timeout callback runs
+  ---
+  duration_ms: 85.810793
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.526281

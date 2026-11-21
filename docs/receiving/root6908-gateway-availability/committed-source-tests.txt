@@ -1,0 +1,307 @@
+TAP version 13
+# Subtest: emitted guide and descriptor match the validated received dependency state
+ok 1 - emitted guide and descriptor match the validated received dependency state
+  ---
+  duration_ms: 1.959505
+  type: 'test'
+  ...
+# Subtest: paused projection retains canonical identity and useful free/offline/entitlement paths
+ok 2 - paused projection retains canonical identity and useful free/offline/entitlement paths
+  ---
+  duration_ms: 0.236485
+  type: 'test'
+  ...
+# Subtest: unknown, malformed and unreceived available state cannot become callable
+ok 3 - unknown, malformed and unreceived available state cannot become callable
+  ---
+  duration_ms: 0.883172
+  type: 'test'
+  ...
+# Subtest: normal received availability emits inventory and paid next action
+ok 4 - normal received availability emits inventory and paid next action
+  ---
+  duration_ms: 0.157001
+  type: 'test'
+  ...
+# Subtest: task selection shares received dependency state while offline jobs remain useful
+ok 5 - task selection shares received dependency state while offline jobs remain useful
+  ---
+  duration_ms: 0.980738
+  type: 'test'
+  ...
+# Subtest: restoration needs new configured runtime and authority receiving after pause
+ok 6 - restoration needs new configured runtime and authority receiving after pause
+  ---
+  duration_ms: 0.459073
+  type: 'test'
+  ...
+# Subtest: projection replaces its owned block deterministically and preserves other guide bytes
+ok 7 - projection replaces its owned block deterministically and preserves other guide bytes
+  ---
+  duration_ms: 0.282499
+  type: 'test'
+  ...
+# Subtest: the real update command emits restored, paused and unknown machine files in an isolated source fixture
+ok 8 - the real update command emits restored, paused and unknown machine files in an isolated source fixture
+  ---
+  duration_ms: 193.805871
+  type: 'test'
+  ...
+# Subtest: received transitions reach every apex machine consumer without a restart
+    # Subtest: received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router
+    ok 1 - received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router
+      ---
+      duration_ms: 70.243017
+      type: 'test'
+      ...
+    # Subtest: new pause reaches all consumers
+    ok 2 - new pause reaches all consumers
+      ---
+      duration_ms: 45.866303
+      type: 'test'
+      ...
+    # Subtest: stale restoration refuses without changing any consumer
+    ok 3 - stale restoration refuses without changing any consumer
+      ---
+      duration_ms: 40.612365
+      type: 'test'
+      ...
+    # Subtest: health 200 and challenge 402 cannot replace any of the five evidence predicates
+    ok 4 - health 200 and challenge 402 cannot replace any of the five evidence predicates
+      ---
+      duration_ms: 209.347036
+      type: 'test'
+      ...
+    # Subtest: fresh full receiving restores every consumer
+    ok 5 - fresh full receiving restores every consumer
+      ---
+      duration_ms: 38.911435
+      type: 'test'
+      ...
+    # Subtest: missing and invalid config fail closed in dynamic consumers then recover
+    ok 6 - missing and invalid config fail closed in dynamic consumers then recover
+      ---
+      duration_ms: 223.577151
+      type: 'test'
+      ...
+    # Subtest: explicit unknown reprojects both static and dynamic consumers
+    ok 7 - explicit unknown reprojects both static and dynamic consumers
+      ---
+      duration_ms: 39.228135
+      type: 'test'
+      ...
+    1..7
+ok 9 - received transitions reach every apex machine consumer without a restart
+  ---
+  duration_ms: 806.099629
+  type: 'test'
+  ...
+# [route-shells] missing /x402, /x402/seller-conformance, /x402/verified, /tools/ai-readiness, /for-agents, /for-agents/record-repeat, /for-agents/distribution-repair, /for-agents/consumer-repeat, /for-agents/useful-jobs, /terms, /privacy, /login, /signup, /dashboard, /checkout under /tmp/machine-guide-source-26zHhd
+# Subtest: machine guide source serves the active contact over the production static path
+ok 10 - machine guide source serves the active contact over the production static path
+  ---
+  duration_ms: 28.121477
+  type: 'test'
+  ...
+# Subtest: explicit client build emits and serves the exact active machine guide
+ok 11 - explicit client build emits and serves the exact active machine guide
+  ---
+  duration_ms: 6.785937
+  type: 'test'
+  ...
+# Subtest: discovery documents are acquired over HTTP and a free tool returns a useful plan
+ok 12 - discovery documents are acquired over HTTP and a free tool returns a useful plan
+  ---
+  duration_ms: 98.111614
+  type: 'test'
+  ...
+# {"source":"server/lib/apex-declarations.js","responses":{"/openapi.json":{"status":200,"sha256":"9f0ee5168bde5dfa600a744d0f027eeae5b1c8e9b9b813e2283cb3a7a43fc2dd"},"/skill.md":{"status":200,"sha256":"4a4b5d8a062a6d28251d938ce7170203d05dda65bc649c55427acdbf9c176db3"},"/.well-known/api-catalog":{"status":200,"sha256":"f9661789e211aa92b3d0905fd31653e0fc630e800feb151df27722673ab96be0"}},"get_health":{"status":200,"sha256":"0eefb1ed7c7b1bbdad2f532a89aaf7c5e4a5ee33345036c871437b6252faaedb"},"mcp_initialize":{"status":200,"sha256":"9af0d5c9a15d78e9439652f6aea39478cb0abb53ea72ed923dc3b9f98607a44f"},"mcp_tools_list":{"status":200,"sha256":"d37abd58916e2d31373eb196483b675307b7ec80057e52da5180b1d16117a0ca"},"plan_taskmarket_delegation":{"status":200,"sha256":"54fc54bf53afcb798b2528367ea260653a5dad4e305eb73e0fd7c36910b0a820"},"changedPlan":{"plan_id":"13132ae20fe6c8afa44d86837b3fd9c35312c50845364c66cc3c297f81f07bc4","executed":false},"checker":{"warn":["discovery.robots: No response was recorded for /robots.txt. The robots.txt was not read, so this is not evidence it is absent or invalid. Agent rules are therefore unknown.","identity.consistency: 3 of 44 operations appear on every naming surface.","apiCatalog.links: 7 of 15 catalog links resolve inside this bundle.","usability.mcp.props: Properties missing a type or description: plan_taskmarket_delegation.mode, plan_taskmarket_delegation.tags, browse_taskmarket_tasks.status, browse_taskmarket_tasks.mode +1 more.","usability.mcp.required: Tools with inputs but no required array: browse_taskmarket_tasks.","usability.mcp.output: Tools without outputSchema: check_ai_readiness, generate_complete_fix_pack, plan_taskmarket_delegation, browse_taskmarket_tasks +2 more.","usability.openapi.errors: Operations with no 4xx response or a 4xx without schema: getHealth, describeMcpEndpoint, getAgentCard, getMcpRegistryAuth +6 more."],"fail":["discovery.llms: No response was recorded for /llms.txt. The document was not read, so this is not evidence it is absent or invalid.","x402.parses: No response was recorded for /.well-known/x402. The document was not read, so this is not evidence it is absent or invalid."]},"pulse":{"declarationFetchDelta":{"/openapi.json":1,"/skill.md":1,"/.well-known/api-catalog":1},"toolAttemptDelta":4,"humansUnchanged":true,"deliveryStoredInPulse":false}}
+# Subtest: published response variants match the actual HTTP transports
+ok 13 - published response variants match the actual HTTP transports
+  ---
+  duration_ms: 11.856292
+  type: 'test'
+  ...
+# Subtest: production fallback keeps declarations out of the HTML shell and preserves old routes
+ok 14 - production fallback keeps declarations out of the HTML shell and preserves old routes
+  ---
+  duration_ms: 1507.023341
+  type: 'test'
+  ...
+# Subtest: refusal and truncated retrieval stay distinct from a missing declaration
+ok 15 - refusal and truncated retrieval stay distinct from a missing declaration
+  ---
+  duration_ms: 1.122489
+  type: 'test'
+  ...
+# Subtest: the shipped machine guide names the maintained external listing
+ok 16 - the shipped machine guide names the maintained external listing
+  ---
+  duration_ms: 1.673998
+  type: 'test'
+  ...
+# Subtest: a server implementation name cannot silently replace the listing identity
+ok 17 - a server implementation name cannot silently replace the listing identity
+  ---
+  duration_ms: 0.189102
+  type: 'test'
+  ...
+# Subtest: listing discovery does not replace the no-key canonical MCP entry
+ok 18 - listing discovery does not replace the no-key canonical MCP entry
+  ---
+  duration_ms: 0.177788
+  type: 'test'
+  ...
+# Subtest: the Smithery line keeps the qualified listing and sends acquisition to the direct endpoint
+ok 19 - the Smithery line keeps the qualified listing and sends acquisition to the direct endpoint
+  ---
+  duration_ms: 0.921393
+  type: 'test'
+  ...
+# Subtest: SPA history authority is the explicit App.tsx list, not any extensionless string
+ok 20 - SPA history authority is the explicit App.tsx list, not any extensionless string
+  ---
+  duration_ms: 1.839233
+  type: 'test'
+  ...
+# Subtest: production-like static + fallback 200s declared React routes, 404s unknown HTML with SPA body, and plain-404s machine paths
+ok 21 - production-like static + fallback 200s declared React routes, 404s unknown HTML with SPA body, and plain-404s machine paths
+  ---
+  duration_ms: 58.123353
+  type: 'test'
+  ...
+# Subtest: sitemap lists canonical documentation introductions, not their duplicate directory indexes
+ok 22 - sitemap lists canonical documentation introductions, not their duplicate directory indexes
+  ---
+  duration_ms: 4.250419
+  type: 'test'
+  ...
+# Subtest: catalog is exact, unique, and sufficient to add another public SPA route
+ok 23 - catalog is exact, unique, and sufficient to add another public SPA route
+  ---
+  duration_ms: 2.913426
+  type: 'test'
+  ...
+# Subtest: apex machine documentation separates free and paid MCP and keeps homepage SKUs
+ok 24 - apex machine documentation separates free and paid MCP and keeps homepage SKUs
+  ---
+  duration_ms: 0.776232
+  type: 'test'
+  ...
+# Subtest: for-agents shell, React route, and machineEntry share one copy authority
+ok 25 - for-agents shell, React route, and machineEntry share one copy authority
+  ---
+  duration_ms: 0.713904
+  type: 'test'
+  ...
+# Subtest: client metadata transitions match route shells and restore prior attributes
+ok 26 - client metadata transitions match route shells and restore prior attributes
+  ---
+  duration_ms: 0.632405
+  type: 'test'
+  ...
+# Subtest: sitemap lists /for-agents once with the existing /x402 loc
+ok 27 - sitemap lists /for-agents once with the existing /x402 loc
+  ---
+  duration_ms: 0.231948
+  type: 'test'
+  ...
+# Subtest: generator derives route shells from the built index.html without rewriting the homepage
+ok 28 - generator derives route shells from the built index.html without rewriting the homepage
+  ---
+  duration_ms: 29.202676
+  type: 'test'
+  ...
+# Subtest: production Express serves exact route shells, 200s every declared React route, and 404s unknown HTML with the SPA index
+ok 29 - production Express serves exact route shells, 200s every declared React route, and 404s unknown HTML with the SPA index
+  ---
+  duration_ms: 62.438901
+  type: 'test'
+  ...
+# Subtest: production entrypoint serves the apex A2A card from the tool inventory
+ok 30 - production entrypoint serves the apex A2A card from the tool inventory
+  ---
+  duration_ms: 429.545993
+  type: 'test'
+  ...
+# Subtest: fixture processing is distinct from complete acquisition and criteria remain unassessed
+ok 31 - fixture processing is distinct from complete acquisition and criteria remain unassessed
+  ---
+  duration_ms: 2.15411
+  type: 'test'
+  ...
+# Subtest: notFor and complete-issue hard rule filter candidates, not just annotate them
+ok 32 - notFor and complete-issue hard rule filter candidates, not just annotate them
+  ---
+  duration_ms: 0.423244
+  type: 'test'
+  ...
+# Subtest: no-payment and offline-only never fall back to a paid merchant
+ok 33 - no-payment and offline-only never fall back to a paid merchant
+  ---
+  duration_ms: 0.369841
+  type: 'test'
+  ...
+# Subtest: published download and browser page do not imply hosted worker service
+ok 34 - published download and browser page do not imply hosted worker service
+  ---
+  duration_ms: 0.905524
+  type: 'test'
+  ...
+# Subtest: matrix schema and hard-rule offers exist
+ok 35 - matrix schema and hard-rule offers exist
+  ---
+  duration_ms: 0.841128
+  type: 'test'
+  ...
+# Subtest: complete discussion acquisition cannot be substituted by packaging
+ok 36 - complete discussion acquisition cannot be substituted by packaging
+  ---
+  duration_ms: 0.919364
+  type: 'test'
+  ...
+# Subtest: page_change_evidence prefers offline page-change / result-reuse
+ok 37 - page_change_evidence prefers offline page-change / result-reuse
+  ---
+  duration_ms: 0.403295
+  type: 'test'
+  ...
+# Subtest: cross_workspace_correction routes to agent-task-kit
+ok 38 - cross_workspace_correction routes to agent-task-kit
+  ---
+  duration_ms: 0.22686
+  type: 'test'
+  ...
+# Subtest: moltjobs rehearsal selects unhosted sample, not live service label
+ok 39 - moltjobs rehearsal selects unhosted sample, not live service label
+  ---
+  duration_ms: 0.339874
+  type: 'test'
+  ...
+# Subtest: bounded_html_observation refuses the paused paid dependency even when payment is allowed
+ok 40 - bounded_html_observation refuses the paused paid dependency even when payment is allowed
+  ---
+  duration_ms: 0.201332
+  type: 'test'
+  ...
+# Subtest: bounded_html_observation with no_payment does not select paid extract
+ok 41 - bounded_html_observation with no_payment does not select paid extract
+  ---
+  duration_ms: 0.349072
+  type: 'test'
+  ...
+# Subtest: README documents matrix path and mistake pair
+ok 42 - README documents matrix path and mistake pair
+  ---
+  duration_ms: 0.319005
+  type: 'test'
+  ...
+1..42
+# tests 49
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4275.998379

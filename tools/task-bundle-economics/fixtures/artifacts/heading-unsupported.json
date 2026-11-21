@@ -1,0 +1,7 @@
+{
+  "schema": "pilot.task-bundle-economics.made-up.v0",
+  "artifactClass": "unbounded_blob",
+  "heading": "Example Domain",
+  "headingDigest": "heading-accepted",
+  "sourceLabel": "synthetic-page"
+}

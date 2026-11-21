@@ -1,0 +1,89 @@
+{
+  "schema": "pilot.h155060.command-exits.v1",
+  "serial": true,
+  "nodeOldSpaceMiB": 768,
+  "aggregateCapKiB": 2097152,
+  "commands": [
+    {
+      "name": "postgresql-client-install",
+      "command": "sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql postgresql-client",
+      "exit": 0,
+      "peakKiB": 210664,
+      "observed": "postgresql-16 16.15-0ubuntu0.24.04.1. Distro cluster 16/main left down. AE14_PG_BIN=/usr/lib/postgresql/16/bin."
+    },
+    {
+      "name": "production-install",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 npm ci --omit=dev --ignore-scripts",
+      "cwd": "/home/ubuntu/ae14-work/h155060",
+      "exit": 0,
+      "peakKiB": 211428,
+      "observed": "added 138 packages, and audited 145 packages in 3s. Installer reported 6 vulnerabilities (2 moderate, 4 high). Lockfile was not changed. node_modules is gitignored."
+    },
+    {
+      "name": "affected-consumers-before-fixture",
+      "exit": 1,
+      "peakKiB": 141364,
+      "counts": {"tests": 186, "pass": 185, "fail": 1, "duration_ms": 8865.02113},
+      "failure": "tools/workflow-owned-extensions/test/adapter.test.mjs:153 missing usefulBodyDigest sha256:b5d25aa4a23429e8de7a420f5a222895b474c07d18f68b93ad695f34850cba54"
+    },
+    {
+      "name": "affected-consumers-after-fixture",
+      "exit": 0,
+      "peakKiB": null,
+      "peakNote": "The second sampler returned 0 because of an unbound variable under set -u. That value is not a measurement. The process shape matches the first run.",
+      "counts": {"tests": 186, "pass": 186, "fail": 0, "duration_ms": 9211.643708},
+      "concurrency": 1,
+      "files": [
+        "tools/task-bundle-economics/test/*.test.mjs",
+        "tools/recurring-decision-consumer/test/*.test.mjs",
+        "tools/workflow-owned-extensions/test/*.test.mjs",
+        "tools/result-reuse/test/export.test.mjs",
+        "tools/result-reuse/test/decision-reuse.test.mjs",
+        "tools/result-reuse/test/source-gate.test.mjs",
+        "tools/result-reuse/test/shared-capture-two-decisions.test.mjs",
+        "tools/result-reuse/test/portable-decision.test.mjs",
+        "tools/result-reuse/test/residual-need.test.mjs",
+        "tools/result-reuse/test/useful-body-integrity.test.mjs",
+        "experiments/agl-r06-portable-decision-20261105/test/harness.test.mjs",
+        "experiments/agl-coherent-integration-20261105/test/acquisition.test.mjs"
+      ]
+    },
+    {
+      "name": "source-bound-selection",
+      "command": "AE14_PG_BIN=/usr/lib/postgresql/16/bin ROOT10940_CI_CATALOG=server/scripts/fixtures/root10940-approved-ci-packets node --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs server/scripts/test-h145010-measurement-runtime-pin.mjs",
+      "exit": 0,
+      "counts": {"tests": 24, "pass": 24, "fail": 0, "duration_ms": 41917.996152},
+      "env": "ROOT10940_CI_PACKET unset. NODE_OPTIONS=--max-old-space-size=768. UV_THREADPOOL_SIZE=1."
+    },
+    {
+      "name": "select-enrolled-packet",
+      "command": "node server/scripts/select-root10940-ci-packet.mjs --catalog server/scripts/fixtures/root10940-approved-ci-packets --index server/scripts/fixtures/root10940-approved-ci-packets/index.json --legacy-env --out /tmp/h155060-selected-packet.json --enrollment-out /tmp/h155060-enrollment-out.json",
+      "exit": 0,
+      "selected": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82-7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23.json",
+      "trustAnchorSha256": "1244c48e4797ad0995695e86f80591a0f3c2db4e4ad1106d812d0107878aefd4",
+      "legacyEnv": "ROOT10940_CI_PACKET was empty, so legacy-env injected nothing."
+    },
+    {
+      "name": "decode-normal-consumer",
+      "command": "node server/scripts/decode-root10940-ci-packet.mjs --packet /tmp/h155060-selected-packet.json",
+      "exit": 0,
+      "counts": {"tests": 1, "pass": 1, "fail": 0, "duration_ms": 10092.720073},
+      "test": "cold independent account roles complete voluntary delivery, requester decision and later byte use; adverse/recovery retain authority"
+    },
+    {
+      "name": "selection-select-decode-peak",
+      "peakKiB": 600488,
+      "after": "pgrep postgres empty. pg_lsclusters 16/main down."
+    },
+    {
+      "name": "publish-preserved-client-baseline",
+      "exit": 0,
+      "sampledRssKiB": 7044
+    },
+    {
+      "name": "publish-preserved-client-candidate",
+      "exit": 0,
+      "sampledRssKiB": 13272
+    }
+  ]
+}

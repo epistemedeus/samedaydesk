@@ -1,0 +1,82 @@
+{
+  "schema": "sds.machine-services.receiving-validation.v1",
+  "recordedAt": "2026-10-15T07:16:00.963919+00:00",
+  "branch": "codex/ae18-host-integration-243001",
+  "sourceHead": "cc85b7b59a46605090049be06431eebb7c873c24",
+  "receivedCommit": "667fba353e9082d8a0842437442dabc42843abf8",
+  "receivedTestedImplementation": "4248874f2fa63636659fad164fb29ed193018104",
+  "adapter": "postgres",
+  "databaseFixture": "disposable PostgreSQL 16 with verify-full TLS, matching CA/hostname, negative hostname and restricted-role tests",
+  "productionInstall": {
+    "command": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --offline",
+    "exactSourceExport": "git archive cc85b7b59a46605090049be06431eebb7c873c24",
+    "result": "added 137 packages in 3s",
+    "exitCode": 0,
+    "testSourceRemoved": true
+  },
+  "failingFirst": {
+    "nativeBefore": {
+      "tests": 16,
+      "fail": 11,
+      "pass": 5
+    },
+    "PGReceivedBefore": {
+      "tests": 6,
+      "fail": 6,
+      "pass": 0
+    },
+    "PGAsyncBefore": {
+      "tests": 2,
+      "fail": 2,
+      "pass": 0
+    }
+  },
+  "checks": [
+    {
+      "name": "pg-cold-exact-source",
+      "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock python3 /tmp/ae18-cold-source-verify.py; in exact git archive: node server/lib/machine-services/test/run.mjs",
+      "pass": 30,
+      "fail": 0,
+      "sha256": "a3186f9cf68bf0fb6f080a474a967cc9f6c196e282468dd4f4871aeb1c52fe94"
+    },
+    {
+      "name": "native-after",
+      "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/vendor/machine-gateway/tests/*.test.mjs server/vendor/continuous-monitoring/test/*.test.mjs",
+      "pass": 95,
+      "fail": 0,
+      "sha256": "ce52cf064260944283084a1cff3806124ebc119088d929afa1cab479e8ffb06f"
+    },
+    {
+      "name": "old-runtime-after",
+      "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/scripts/test-hosted-startup.js server/scripts/test-spa-fallback.js server/scripts/test-correspondence-mount-disabled.js server/scripts/test-seller-repair-webhook.js server/scripts/test-foundry-listener-drain.js",
+      "pass": 49,
+      "fail": 0,
+      "sha256": "b16945a5082a03103034ab98f539d0a6908f7411552ce44edc68f1eb60623683"
+    },
+    {
+      "name": "candidate-cold",
+      "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock env MACHINE_GATEWAY_TEST_ARCHIVE=<absolute-received-0.1.1-archive> node --test --test-concurrency=1 server/vendor/machine-gateway/tests/cold.test.mjs",
+      "pass": 1,
+      "fail": 0,
+      "sha256": "fa480444849905ee721701922dd56fcd9976fb421b9ec1926b828b9f4952a2d4"
+    },
+    {
+      "name": "foundation-offline",
+      "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 --test-name-pattern=\"projection failures|seeded mutation|failed public read|fixture capture\" server/vendor/continuous-monitoring/vendor/change-monitor/test/projection-integration.test.mjs",
+      "pass": 4,
+      "fail": 0,
+      "sha256": "57f7bcd2e787c46e0f87b27b5003acdcbc8abdb7564a6eeb65a31344f7b630ef"
+    }
+  ],
+  "heavyCommandsSerialized": true,
+  "availableMemorySampleMiB": 13865,
+  "sourceScopeVerified": true,
+  "originalHumanAndServerSourcesChangedByAmendment": false,
+  "actualRolePrivilegesVerified": false,
+  "actualRolePrivilegeRequirement": "actual migrate checks CREATE capability; Root/G1 inspects the retained project role during installation",
+  "unfilteredFoundationLiveCase": "not rerun by this amendment; received 4-pass/1-fail partial-metrics evidence remains unchanged in vendored evidence",
+  "deployed": false,
+  "productionPaymentsEnabled": false,
+  "liveFundMovement": false,
+  "unsignedPaymentFixturesQualifyPaidRail": false
+}

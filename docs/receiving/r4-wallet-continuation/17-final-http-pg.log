@@ -1,0 +1,135 @@
+TAP version 13
+# (node:570479) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+    # Subtest: baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+    ok 1 - baseline bind refuses replacement, exit preserves address and current machine challenge refuses migration
+      ---
+      duration_ms: 82.662543
+      type: 'test'
+      ...
+    # Subtest: existing machine quote binds its original wallet, control epoch and 5% gross terms
+    ok 2 - existing machine quote binds its original wallet, control epoch and 5% gross terms
+      ---
+      duration_ms: 450.891441
+      type: 'test'
+      ...
+    # Subtest: synthetic historical accepted debt and already-paid disposition are usable before continuation
+    ok 3 - synthetic historical accepted debt and already-paid disposition are usable before continuation
+      ---
+      duration_ms: 766.328354
+      type: 'test'
+      ...
+    # Subtest: receive pre-existing native session retained-reader hash mismatch without changing its contract
+    ok 4 - receive pre-existing native session retained-reader hash mismatch without changing its contract
+      ---
+      duration_ms: 85.30192
+      type: 'test'
+      ...
+    # Subtest: intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+    ok 5 - intent and commit require account session, origin, CSRF, operation key and both independent EOA signatures
+      ---
+      duration_ms: 5564.773761
+      type: 'test'
+      ...
+    # Subtest: unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+    ok 6 - unsupported schemes and either contract wallet hold, without a new row or a lost-key exception
+      ---
+      duration_ms: 667.764279
+      type: 'test'
+      ...
+    # Subtest: expired and exited predecessor intents remain stale
+    ok 7 - expired and exited predecessor intents remain stale
+      ---
+      duration_ms: 602.308411
+      type: 'test'
+      ...
+    # Subtest: native password recovery revokes the old session and cannot replace old wallet control
+    ok 8 - native password recovery revokes the old session and cannot replace old wallet control
+      ---
+      duration_ms: 1169.045169
+      type: 'test'
+      ...
+    # Subtest: session expiry during configured RPC reads rolls back both binding and receipt
+    ok 9 - session expiry during configured RPC reads rolls back both binding and receipt
+      ---
+      duration_ms: 2500.691807
+      type: 'test'
+      ...
+    # Subtest: dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+    ok 10 - dual control changes only future binding, atomically clears old proof, and preserves old accepted/paid/owed work
+      ---
+      duration_ms: 1324.42873
+      type: 'test'
+      ...
+    # Subtest: missing capability and stale current source refuse the legacy continuation route, including cached mutations
+    ok 11 - missing capability and stale current source refuse the legacy continuation route, including cached mutations
+      ---
+      duration_ms: 1339.936265
+      type: 'test'
+      ...
+    # Subtest: a freshly admitted successor source cannot consume the predecessor challenge or renew old operations
+    ok 12 - a freshly admitted successor source cannot consume the predecessor challenge or renew old operations
+      ---
+      duration_ms: 2361.982706
+      type: 'test'
+      ...
+    # Subtest: concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+    ok 13 - concurrent distinct replacements consume at most one predecessor, and restoring an old address never restores its epoch
+      ---
+      duration_ms: 1344.186929
+      type: 'test'
+      ...
+    # Subtest: real process crash before-update reconciles the same journal key after restart
+    ok 14 - real process crash before-update reconciles the same journal key after restart
+      ---
+      duration_ms: 3013.925197
+      type: 'test'
+      ...
+    # Subtest: real process crash before-commit reconciles the same journal key after restart
+    ok 15 - real process crash before-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 3017.060204
+      type: 'test'
+      ...
+    # Subtest: real process crash after-commit reconciles the same journal key after restart
+    ok 16 - real process crash after-commit reconciles the same journal key after restart
+      ---
+      duration_ms: 2559.184444
+      type: 'test'
+      ...
+    # Subtest: lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+    ok 17 - lost HTTP response and ordinary retry/readback survive restart with one epoch increment
+      ---
+      duration_ms: 1873.796665
+      type: 'test'
+      ...
+    # Subtest: owned PostgreSQL immediate-stop crash recovers committed binding, epoch and journal through WAL
+    ok 18 - owned PostgreSQL immediate-stop crash recovers committed binding, epoch and journal through WAL
+      ---
+      duration_ms: 1135.308428
+      type: 'test'
+      ...
+    # Subtest: old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+    ok 19 - old accepted bytes, fixed net, exact gross fee, payout destinations, paid-once and uncertain old identities survive all restarts
+      ---
+      duration_ms: 307.0086
+      type: 'test'
+      ...
+    1..19
+ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 34418.332821
+  type: 'test'
+  ...
+# {"sourceKind":"job-local-candidate","candidateSourceSha256":"8537179c0bc3bedc77b8c44a8903e97ef5c98873e02e9a4dade61f49e8eaf7b2","candidateHostSha256":"7b6487c325f0d9b1ca4acfd4391e61b7826297acac4af1f0dba87eb5a611c9b0","qualified":false,"installed":false}
+# {"candidateSourceSha256":"8537179c0bc3bedc77b8c44a8903e97ef5c98873e02e9a4dade61f49e8eaf7b2","candidateHostSha256":"7b6487c325f0d9b1ca4acfd4391e61b7826297acac4af1f0dba87eb5a611c9b0","migrationAdded":false,"rpcMutations":0,"financialRowsPreserved":true,"peakOwnedRssKiB":589404}
+1..1
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34561.283954

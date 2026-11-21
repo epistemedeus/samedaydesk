@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, cp, symlink, rm, readFile } from "node:fs/promises";
+import { mkdtemp, cp, symlink, rm, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,12 +18,23 @@ test("Root patch applies and actual SDS app/index mount evaluation before raw in
   await cp(join(root, "package.json"), join(dir, "package.json"));
   for (const path of ["tools", "vendor", "node_modules", "client"]) await symlink(join(root, path), join(dir, path));
   const patch = fileURLToPath(new URL("../patches/ROOT-MOUNT.patch", import.meta.url));
-  // Receiving has installed the patch. Reconstruct its exact unchanged input
-  // and reapply it, while all journey tests now run the actual mounted SDS app.
+  // Preserve the immutable receiving patch against the exact installed edition.
+  // Current startup has acquired later mounts and shutdown handling, so reversing
+  // a historical patch against the latest bytes no longer reconstructs its input.
+  const received = "b529cf9266d63c4c0a0408d402ead2570022a50a";
+  for (const file of ["server/app.js", "server/index.js"]) {
+    await writeFile(join(dir, file), execFileSync("git", ["show", `${received}:${file}`], { cwd: root }));
+  }
   execFileSync("git", ["apply", "--reverse", "--check", patch], { cwd: dir, timeout: 2000 });
   execFileSync("git", ["apply", "--reverse", patch], { cwd: dir, timeout: 2000 });
   execFileSync("git", ["apply", "--check", patch], { cwd: dir, timeout: 2000 });
   execFileSync("git", ["apply", patch], { cwd: dir, timeout: 2000 });
+  for (const file of ["server/app.js", "server/index.js"]) {
+    assert.deepEqual(await readFile(join(dir, file)), execFileSync("git", ["show", `${received}:${file}`], { cwd: root }));
+    await cp(join(root, file), join(dir, file));
+  }
+  const appSource = await readFile(join(dir, "server/app.js"), "utf8");
+  assert.ok(appSource.indexOf('app.set("s346HostedUsefulJourney"') < appSource.indexOf('app.use(express.json'));
   const portServer = net.createServer();
   await new Promise(resolve => portServer.listen(0, "127.0.0.1", resolve));
   const port = portServer.address().port; await new Promise(resolve => portServer.close(resolve));

@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "node",
+    "docs/receiving/root6908-gateway-availability/capture.mjs",
+    "after",
+    "/tmp/root6908-emitted-after"
+  ],
+  "exit": 0,
+  "startedAt": "2026-10-25T00:05:38Z",
+  "elapsedSeconds": 0.5815649032592773,
+  "sampledCommandTreePeakRSSKiB": 166944,
+  "samples": 11,
+  "sampleIntervalMs": 50,
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "UV_THREADPOOL_SIZE": "1",
+    "OMP_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": "1",
+    "NODE_ENV": "production",
+    "SAMEDAYDESK_CLIENT_DIST": null
+  }
+}

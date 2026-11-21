@@ -1,0 +1,35 @@
+{
+  "derived": true,
+  "fixtureLabel": "derived",
+  "derivation": "Derived nested execution document for the same stored manual execution 2. Metadata, Shape Capture Fields startTime, and title/status only. HTML body omitted. Not a second outside-use observation.",
+  "id": "2",
+  "workflowId": "eFUkVKYk8xXbM7LV",
+  "mode": "manual",
+  "status": "success",
+  "finished": true,
+  "startedAt": "2026-11-05T20:47:22.000Z",
+  "data": {
+    "resultData": {
+      "runData": {
+        "Shape Capture Fields": [
+          {
+            "startTime": 1793911643165,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "title": "Example Domain",
+                      "status": "ok"
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ type AuthState = {
 
 const Ctx = createContext<AuthState>({ user: null, session: null, loading: true, signOut: async () => {} });
 
+// eslint-disable-next-line react-refresh/only-export-components -- the hook belongs beside its provider
 export const useAuth = () => useContext(Ctx);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -19,6 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isAuthConfigured()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- no auth backend configured: settle loading once on mount
       setLoading(false);
       return;
     }

@@ -139,15 +139,15 @@ export const BUYER_SETUP_QUICKSTART = [
 ].join("\n");
 
 export const FOR_AGENTS_PATH = "/for-agents";
-export const FOR_AGENTS_TITLE = "Practical agent jobs | SameDayDesk";
+export const FOR_AGENTS_TITLE = "Fresh web data for agents, 0.01 USDC a batch | SameDayDesk";
 export const FOR_AGENTS_DESCRIPTION =
-  "Obtain bounded observations, compare or record already-held JSON, then optionally export a reuse reference. Schema-valid export is user-selected unverified evidence. Purchasing never requires publishing.";
+  "Your agent sends up to five web pages and the fields it wants and gets clean JSON back: 0.01 USDC a batch over x402, no key or account. Free local tools compare, map and reuse the results.";
 export const FOR_AGENTS_CANONICAL = `${SITE_ORIGIN}${FOR_AGENTS_PATH}`;
 
 export const X402_PATH = "/x402";
 export const X402_TITLE = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
 export const X402_DESCRIPTION =
-  "Call SameDayDesk machine services with x402 or native MPP on Base. Live HTTP, MCP, and x402 inventories are authoritative. Practical jobs start at /for-agents.";
+  "Web data and checks your AI agent can buy one call at a time: read the web, check a payment or seller, company and wallet profiles, lending positions on Base. From 0.002 USDC per call over x402 or MPP, no account or key.";
 export const X402_CANONICAL = `${SITE_ORIGIN}${X402_PATH}`;
 
 // Client-side navigation must update the same metadata as a direct route-shell load.
@@ -183,30 +183,19 @@ function inventoryListHtml() {
 }
 
 export const FOR_AGENTS_CRAWLER_HTML = `
-      <h1>Obtain observations, use offline jobs, or opt-in reuse</h1>
+      <h1>Fresh web data for your agent, and free tools to use it</h1>
       <p>
-        SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public HTTPS
-        URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON
-        artifacts is free, local, and does not fetch. Paid freshness and offline comparison stay
-        distinct. Installation grants no payment authority.
+        Your agent sends up to five public web pages and the fields it wants to <code>POST /extract/batch</code>, and gets them back as clean JSON. 0.01 USDC a batch, paid per call with x402: no key, account or subscription. Comparing, mapping and reusing what you already fetched is free and runs on your own machine.
       </p>
       <p>
-        Current paid HTTP and MCP inventories live on the merchant. This page does not freeze a
-        route count. Failed, partial, and missing rows stay visible. Observation freshness is unknown
-        unless you supply a clock and a horizon. <code>charged: true</code> is not useful output.
-        Current source labels are untrusted, not buyer proof. Purchasing never requires publishing
-        or referrals.
+        Every page you asked for comes back with a row, including the ones that failed, so your agent always knows what it has. The full list of paid HTTP and MCP tools is on the live gateway, linked below.
       </p>
-      <h2>Job 1. Obtain bounded extracted observations</h2>
+      <h2>Job 1. Fetch fields from up to five pages</h2>
       <p>
         Public customer example ${CUSTOMER_EXAMPLE_VERSION} at
         <a href="${MERCHANT_REPO}/tree/${MERCHANT_PIN}/${CUSTOMER_EXAMPLE_DIR}">${MERCHANT_REPO}/tree/${MERCHANT_PIN}/${CUSTOMER_EXAMPLE_DIR}</a>.
-        Requires Node.js 22.x and a full Git checkout, not a packed tarball.
-        Default commands are unpaid preflight against the live merchant, not an offline fixture. They
-        sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any <code>--approve</code>
-        purchase. Optional attempt receipt and read-only reconcile are separate.
-        Reconcile an unknown payment outcome instead of automatically retrying. This page includes
-        no keys, secret URLs, or purchase.
+        Needs Node.js 22 and a Git checkout. The default commands show the price and terms first and sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any <code>--approve</code>
+        purchase. If a payment's outcome is unknown, reconcile it rather than paying again.
       </p>
       <pre><code>${OBSERVE_QUICKSTART}</code></pre>
       <p>
@@ -215,10 +204,7 @@ export const FOR_AGENTS_CRAWLER_HTML = `
       </p>
       <h2>Job 2. Compare explicit fields from two already-held observations</h2>
       <p>
-        From the same <code>${CUSTOMER_EXAMPLE_DIR}</code> directory after <code>npm ci</code>. The
-        recipe does not fetch, pay, retry, or contact the merchant. Selected fields are required. An
-        absent selected field is coverage unknown, not deletion. Reordered rows with the same
-        source URL are order, not content change. Fixture output is owner proof, not buyer demand.
+        From the same <code>${CUSTOMER_EXAMPLE_DIR}</code> directory after <code>npm ci</code>. Free and local: name the fields you care about and see exactly what changed between two runs. Rows that only moved are reported as moved, not changed.
       </p>
       <pre><code>${COMPARE_QUICKSTART}</code></pre>
       <h2>Job 3. Map already-held JSON into buyer records</h2>
@@ -232,19 +218,12 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         <a href="${EXPLICIT_RECORD_SKILL}">Read the pinned explicit-record workflow</a>.
       </p>
       <pre><code>${RECORD_QUICKSTART}</code></pre>
-      <h2>Job 4. Opt-in reuse of an already produced result</h2>
+      <h2>Job 4. Save a result so the next agent can reuse it</h2>
       <p>
         From a SameDayDesk checkout, preview exactly which fields would be copied into a
         <code>neomorphic.task-memory.observation.v1</code> reference, then write only with
-        <code>--opt-in</code>. The helper does not fetch or pay. Default page-change and record
-        outputs stay intact. The projection uses a reviewed allowlist, not a harmlessness guarantee.
-        A schema-valid export is user-selected unverified evidence, never automatic public-safe certification.
-        Private source text, authorization, receipt secrets, and legal or customer identifiers are
-        omitted and cannot be selected. Failed and incomplete rows remain visible. The caller supplies
-        stable task, subject, revision sequence, and current UTC clock values; the helper does not invent
-        them. If an original evidence URL is missing, the export labels the recipe URL as a locator rather
-        than evidence.
-        Later task-memory import is a separate step.
+        <code>--opt-in</code>. It runs locally and copies only the fields you choose. Private source text, authorizations, receipt secrets and customer identifiers are left out. Failed and incomplete rows remain visible. The caller supplies
+        stable task, subject, revision sequence, and current UTC clock values; the helper never invents them.
       </p>
       <pre><code>${REUSE_QUICKSTART}</code></pre>
       <h2>Job 5. Recurring page, issue, and buyer-setup recipes</h2>
@@ -260,13 +239,7 @@ export const FOR_AGENTS_CRAWLER_HTML = `
         C34 extract-batch records use <code>${RECURRING_MERCHANT_CONTRACTS.C34.schemaVersion}</code>
         with skills at
         <a href="${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}">${RECURRING_MERCHANT_CONTRACTS.C34.skillsIndex}</a>.
-        <code>buyer-setup-trace</code> is live free inspection of the AgentCash/x402 runtime and
-        stops at unpaid 402 without signing or inferring wallet ownership from addresses.
-        Payment receipts are never automatically replayed.
-        Optional local observation export stays filesystem-local when shared mode is
-        undeployed. Offline runs avoid merchant charges; operator CPU and network remain
-        costs_unknown. Listed batch price 0.01 USDC is not invoked here. No cron is installed.
-        Owner QA issues are not demand.
+        <code>buyer-setup-trace</code> shows the AgentCash and x402 payment terms and stops before paying. Offline runs cost nothing; run them on your own schedule.
       </p>
       <pre><code>${RECURRING_QUICKSTART}</code></pre>
       <pre><code>${BUYER_SETUP_QUICKSTART}</code></pre>
@@ -274,31 +247,44 @@ export const FOR_AGENTS_CRAWLER_HTML = `
       <ul>
         ${inventoryListHtml()}
         <li><a href="${X402_CANONICAL}">Human storefront for other machine services</a></li>
-        <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller conformance proof</a></li>
-        <li><a href="${SITE_ORIGIN}/x402/verified">Inspected x402 route list</a></li>
+        <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller audit</a></li>
+        <li><a href="${SITE_ORIGIN}/x402/verified">Routes we checked</a></li>
       </ul>
+      <h2>Accepted query-key caller</h2>
+      <pre><code>
+Accepted work: ${SITE_ORIGIN}/api/neomorphic-contributor-journey/v1/market/accepted-work
+Query-key caller schema: cc0.query-key-caller.v4
+Query-key runner: query-key 1.1.0
+Query-key archive: https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
+Query-key archive sha256: 51b1b65766b68550b644e25f3d0653f9e09b8988f7ab36f0e649dce8f60405aa
+Query-key archive bytes: 14566
+Query-key acquire: curl -fsSL -o query-key.tar.gz https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz
+Query-key apply: node apply.mjs apply --artifact corpus.json --input examples/next-consumer.json
+Query-key source repository: https://github.com/epistemedeus/neomorphic-io
+Query-key source commit: bb78211863af9bfb9d18e71ecc32af4ecb0a0902
+Query-key source path: tools/query-key-1.1.0
+Query-key artifact path: value.publicArtifact
+Query-key artifact schema path: value.publicArtifact.schema
+Query-key artifact digest path: value.publicArtifactDigest
+Query-key list path: value.items
+</code></pre>
     `;
 
 export const X402_CRAWLER_HTML = `
-      <h1>Agents discover a service, call it, pay, and continue</h1>
+      <h1>AI agents pay for what they use, in the same request</h1>
       <p>
-        SameDayDesk machine services settle exact Base USDC through x402 or native MPP. No API
-        key, subscription, or account is required. Discovery is not authorization, settlement,
-        demand, or revenue. Live catalogs are authoritative; this page does not freeze a tool count.
+        Paid tools your agent can call and pay for in the same request: exact USDC on Base through x402 or native MPP. No API key, subscription or account.
       </p>
       <p>
         Practical jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
-        paid bounded <code>POST /extract/batch</code> observations, free offline comparison and
-        explicit buyer-record mapping, opt-in reuse of an already produced result, and one-shot
-        recurring page or record recipes with immutable priors.
-        Purchasing never requires publishing. Other named calls remain on the live inventory.
+        web extraction at 0.01 USDC a batch with <code>POST /extract/batch</code>, free local comparison and record mapping, reuse of results you already have, and recurring page and issue checks. Every other paid tool is in the live inventory.
       </p>
       <ul>
-        <li><a href="${FOR_AGENTS_CANONICAL}">Practical agent jobs</a></li>
+        <li><a href="${FOR_AGENTS_CANONICAL}">Web data and free tools for agents</a></li>
         ${inventoryListHtml()}
-        <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller conformance proof</a></li>
-        <li><a href="${SITE_ORIGIN}/x402/verified">Inspected x402 route list</a></li>
+        <li><a href="${SITE_ORIGIN}/x402/seller-conformance">Seller audit</a></li>
+        <li><a href="${SITE_ORIGIN}/x402/verified">Routes we checked</a></li>
         <li><a href="${SITE_ORIGIN}/docs/x402-sdk/">x402 SDK integration reference</a></li>
       </ul>
     `;

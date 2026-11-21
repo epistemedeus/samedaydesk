@@ -1,0 +1,13 @@
+{
+  "sourceHead": "ab0a7752780995421da5752d9d6811d56e6d3891",
+  "filesVerified": 226,
+  "allBytesMatchFrozenGitSource": true,
+  "migrationEnvAndRollbackHashesMatch": true,
+  "excludedReportFiles": [
+    "server/lib/machine-services/RESULT.md",
+    "server/lib/machine-services/deploy/DEPLOYMENT.json",
+    "server/lib/machine-services/deploy/SHA256SUMS",
+    "server/lib/machine-services/test/evidence"
+  ],
+  "sha256": "be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32"
+}

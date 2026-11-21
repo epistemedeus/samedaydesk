@@ -1,0 +1,31 @@
+{
+  "schema": "root4431.serial-test-resources.v1",
+  "exitCode": 0,
+  "elapsedSeconds": 8.071,
+  "sampleIntervalMs": 50,
+  "samples": 154,
+  "peakOwnedRssKiB": 521288,
+  "reserveKiB": 2097152,
+  "nativeIdentitiesObserved": [
+    558252,
+    558264
+  ],
+  "peakOwnedPids": [
+    558252,
+    558264,
+    569164,
+    569184,
+    569250,
+    569251,
+    569252,
+    569254,
+    569255,
+    569256,
+    569258,
+    569259,
+    569265,
+    569277
+  ],
+  "modelChildren": 0,
+  "limit": "Sampled RSS sum of exact admitted native/supervisor, test descendants and this run disposable PostgreSQL. RSS counts shared pages repeatedly; between-sample peaks and earlier setup are not measured."
+}

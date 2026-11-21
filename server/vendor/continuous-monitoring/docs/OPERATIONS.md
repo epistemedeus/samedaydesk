@@ -1,0 +1,66 @@
+# Service contract and operations
+
+All paths below are relative to an HTTPS origin forwarded to this service. Credentials are tenant-scoped. A monitor id never supplies tenant authority. An unknown id and another tenant's id both return 404. A separate `reader` bearer credential can inspect retained outputs; an `owner` credential creates/configures monitors and claims/acknowledges deliveries. Credentials are provisioned or revoked through the local administrative CLI, never through a public signup or request-supplied tenant id. Only token hashes enter SQLite.
+
+## Configuration and lifecycle
+
+`POST /v1/monitors`, JSON body and `Idempotency-Key`, creates a finite active monitor. The same key and same request return the original monitor, including its later status. A changed request with that key returns 409. Keys survive process restart and remain bound for the monitor's retention lifetime. The API accepts no worker trigger and no caller clock, private-address exception, provider credential, unbounded cron expression, arbitrary header or callback target.
+
+`POST /v1/monitors/{id}/pause`, `/resume`, `/cancel` accept `{}`. Pause/resume are repeatable. Cancel and expiry are terminal. Existing events remain readable and deliverable after these transitions. A lifecycle change increments a generation fence: an older in-flight observation cannot establish a baseline or event after pause, cancel or expiry. A running worker polls that fence every 50 ms to abort its own outstanding socket. An already dispatched GET may have reached the origin before cancellation; it cannot be unsent. Budgets include the work performed. Revoked credentials return 401. Entitlement expiry stops new work (403) and expires its monitors; retained outputs, inbox polling and acknowledgement remain available to the tenant until retention. Local maintenance continues to recover and prune its artifacts.
+
+`PATCH /v1/monitors/{id}` accepts `intervalMs`, `expiresAt`, `budget`, `retentionDays` only when paused and with no outstanding claim. Limits still apply; counters never reset and budgets cannot be set below accumulated usage. This preserves source identity and baseline. Changing source, mode or selected fields requires a new monitor and new baseline. Resume retains the revised next due time.
+
+Production cadence is at least 60 seconds, maximum interval seven days, maximum lifetime 30 days, and each monitor must expire within its entitlement. Free limits are three retained monitors, 100 checks, 8 MiB byte budget, 300,000 ms observation budget and 50 events per monitor, at most seven days. Paid-entitlement caps are 20 monitors, 1,000 checks, 64 MiB, 3,000,000 ms, 200 events and 30 days per monitor. Limits are ceilings, not promised utilization. The host ceiling is 200 monitors. Shared source gates permit one request per exact URL per minute across all tenants, plus one per origin per second. Colliding monitors are deferred; no catch-up burst is attempted. The request time bound is at most 10 seconds and the received body limit at most 256 KiB. A material projection is at most 16 KiB.
+
+A known complete response uses its actual measured bytes/runtime and refunds unused reservations. Any receive-chunk or deadline-scheduling overrun is charged at its actual measured value and can exhaust the remaining budget; it is never silently clamped out of usage. A claim reserves one check, its maximum body bytes plus 64 KiB receive-chunk headroom, and its request deadline before dispatch. A lost response keeps the full byte/time reservation and an unknown request upper bound. Expired claims known not to have dispatched refund bytes/time, but consume their check. Before admission the service checks both the monitor budget and lifetime tenant caps (free: 300 checks / 24 MiB / 900,000 ms; paid: 20,000 checks / 1,280 MiB / 60,000,000 ms). Pausing, recreating, rotating credentials or revising cannot reset tenant usage. There is no automatic top-up, renewal, billing-period reset or charge. An exhausted monitor is terminal.
+
+## Observation and recovery
+
+The receiving version requires an absolute database path with a private,
+canonical parent directory and a private regular file with one link. It checks
+SQLite application/schema identity before migrations or journal changes. An
+unaltered legacy monitoring schema is recognized exactly and adopted in place;
+its WAL history, counters and immutable outputs survive. An unrelated database
+is refused without adding service tables or changing its journal mode.
+
+Cancellation, pause, expiry and lease loss are checked again after DNS,
+immediately before socket creation. Revocation expires active and paused
+monitors and increments their generation in the same transaction; regranting
+credentials cannot resurrect those monitors or claims. Owner credentials are
+rechecked after reading mutation bodies, so a slow upload cannot retain a role
+that was removed while the body arrived.
+
+The HTTP deadline is checked against monotonic elapsed time at socket entry and
+response completion as well as by an abort timer. A stalled event loop cannot
+spend an already expired DNS budget by running its continuation before the timer.
+
+The worker makes a durable claim before a read and sets a separate dispatch phase before network work. A lease spans the configured request deadline plus five seconds; no second worker may reuse it. The schedule advances from the later of the previous slot or present time, with no backlog replay. A shared SQLite transaction chooses the claim, reserves usage and source cooldown, and advances the schedule. The store uses WAL, full synchronous commits, foreign keys and bounded busy time. It requires a local, durable filesystem shared by API and worker; multiple hosts and NFS are unsupported.
+
+A complete response is normalized and staged durably, then immutable evidence, event, inbox entry, usage and cursor commit together. A restart finishes a staged response without another HTTP read. A lease lost after dispatch without a staged result becomes `interrupted_unknown`, preserves the previous baseline and emits unavailable evidence when appropriate. The service never automatically fetches that same slot again. A known future scheduled slot may read again under the original budget and cooldown. Unknown is not success, zero content or a verified change. A stale worker token cannot stage after its lease expires; a cancelled or superseded generation cannot admit an observation.
+
+Conditional GET uses a saved ETag or Last-Modified only after a comparable baseline exists. A 304 with a sent validator confirms that baseline without replacing it. A 304 without one is unavailable. Redirects and HTTP 206 are refused, bodies must complete, and decompression is not performed. DNS results are validated again for each observation and all answers must be public. The selected validated address is used directly by the socket lookup; the hostname remains in TLS certificate validation and SNI. The service does not use proxy environment variables or retain cookies. HTTPS certificate failures become unavailable evidence. Full TLS/domain inventory, certificate-expiry scheduling and arbitrary HTML extraction are outside this implementation.
+
+## Consumer delivery
+
+Adapter failure codes are restricted to known factual codes. Unknown upstream
+strings become `source_unreachable`; malformed projection structures become
+`unsafe_material`. Empty/null metrics remain partial, and duplicate metric keys
+are unreadable evidence. These observations preserve the previous comparable
+baseline and use the normal unavailable-evidence delivery path.
+
+- `GET /v1/monitors/{id}/events?after=0&limit=25` reads immutable events without claiming deliveries. `nextCursor` is monotonic; each event contains stable identity, transition, before/after evidence ids, factual diff, capture origin and task disposition. Reader credentials can use this path.
+- `GET /v1/monitors/{id}/deliveries?limit=10` is owner-only and durably claims due inbox messages before replying. Each message has the immutable event, `deliveryId`, attempt number and retry time. A read alone reports `delivered: false`.
+- Consumer handles the event idempotently by `event.idempotencyKey`, then sends `POST /v1/monitors/{id}/deliveries/{deliveryId}/ack` with `{ "idempotencyKey": "<same event key>" }`. The committed first acknowledgement is immutable in meaning; a retry returns `replay: true` and the same timestamp.
+- `GET /v1/monitors/{id}/deliveries/{deliveryId}` reads delivery state and bounded attempt history after a lost reply or restart. It reports `delivered: true` only after acknowledgement. Unknown delivery ids return 404.
+
+A lost poll response leaves the stable event available after its visibility deadline, initially 30 seconds, then exponential backoff capped at one hour. At most eight claims are allowed; after that it becomes `exhausted`, with immutable event inspection still available until retention. A late valid acknowledgement of a previously read exhausted delivery can still record consumer acceptance. There are no webhook, email or third-party notification promises. Consumer polling plus acknowledgement is the actual implemented delivery mechanism. An acknowledgement attests to that authenticated consumer, not a human's reading or downstream execution.
+
+`GET /v1/monitors/{id}` returns status, configuration, evidence pointers and usage. `/usage` adds retained payload bytes and cost inputs. `/runs?limit=25` returns recent immutable run receipts; `/runs/{runId}` reads one. `/snapshots/{evidenceId}` reads the original immutable evidence. HTTP bodies are not retained in hash mode; JSON mode retains only selected fields and Observatory mode the existing material projection. Configure public, non-secret fields. URL queries, credentials, fragments, encoded/credential-like paths and opaque path segments are refused; arbitrary short path strings cannot be proven free of secrets. The API and CLI do not log request URLs, raw upstream errors, response bodies or credentials.
+
+## Retention, storage and economics
+
+Maintenance runs at the end of every tick and through `maintenance`. Run receipts retain at most 100 per monitor and at most the configured retention age. Events retain at most their configured event cap and retention age; deleting an event also deletes its inbox and attempts. Snapshot retention pins the original and current baseline plus evidence referenced by retained events. After a terminal monitor's original expiry plus its retention period, the monitor and all its artifacts are deleted. Tenant aggregate usage and credential hashes remain; de-enrollment is a local administrative data-management action. Pending, unacknowledged messages also expire under retention. A consumer must poll within this window.
+
+Event cursor `0` starts at the oldest retained event. A nonzero cursor older than the retained floor returns 410 `cursor_expired`; use `0` for an explicit resync and inspect `cursorFloor`. Individual purged artifacts return 404. Source gates expire after a day of inactivity. SQLite pages are reused; periodic `maintenance` truncates the WAL and incrementally vacuums free pages. Back up with SQLite's online backup API or stop API/worker before copying the database plus WAL consistently; copying a live `.sqlite` alone is not a backup. Test restore on another private directory before enabling a production timer.
+
+`/usage` reports reserved checks, known source requests, unknown request upper bound, known received bytes, known observation runtime, charged budget reservations, useful transition counts, delivery attempts, acknowledged events and retained payload bytes. These are cost inputs, not a price or profit calculation. DNS, TLS, HTTP headers, API CPU, disk/WAL overhead, backup, operations labor, provider quotas and data-transfer pricing are not fully measured. Values such as actual total cost, price and margin remain null. Run receipts may be pruned; cumulative counters persist. No model tokens or paid upstream requests are used. The committed mounted run measures useful delivery on this host, not production economics or demand.

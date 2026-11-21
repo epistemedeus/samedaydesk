@@ -1,0 +1,147 @@
+{
+  "schema": "sds.nov04.loaded-pulse-identity.v1",
+  "received": false,
+  "qualified": false,
+  "installed": false,
+  "hostSourceSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd",
+  "installedSourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+  "note": "Working-tree identities of the static pulse load path. Not an installed proof. hostSourceSha256 does not cover files whose inHostPin value is false.",
+  "files": [
+    {
+      "path": "server/index.js",
+      "sha256": "470c7efdfb3d5dc455dcb9235bf4fbef216ba2a9f35d4f0d30908c2149e91489",
+      "bytes": 1913,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/app.js",
+      "sha256": "08e0abac1c823b4b619eb8e3dd11dc655f62c8923d52c7548cff1c3849ee7f63",
+      "bytes": 11533,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/routes/pulse.js",
+      "sha256": "15ee44563aa5d1ea6a2591788a2d9ca5bd9997d69e6c97de56462add6e060aff",
+      "bytes": 1653,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "changed"
+    },
+    {
+      "path": "server/lib/pulse.js",
+      "sha256": "fbaaa3cba57de74ecf78dcc6aa5b0c18bf90bd33ed0cada1f55b214cd3751b49",
+      "bytes": 44952,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/schema.js",
+      "sha256": "3fe9c27d9017d05dc952cb2fff7e8f8496e0984e697bda32cb27fd25334695c5",
+      "bytes": 24415,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/index.js",
+      "sha256": "63f12c981ef1e043830de9f4c7b663571e3df1524797d05ff1e14a6fe5aab9b8",
+      "bytes": 1560,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/wal-schema.js",
+      "sha256": "db321b7cc59def607d0dfd5a160791da9e6f49a3662ae98a7548d8e5dc6cadbd",
+      "bytes": 7808,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/flush-error.js",
+      "sha256": "9449d8dfc5e87edc9864d6deb179204e6142f02eb3d55eab9bb5acb53151549a",
+      "bytes": 1777,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/mcp-outcomes.js",
+      "sha256": "ce9107dabeac32a02b1fcb80c4565421c7d7437e144b63d88acb61a0acf759d8",
+      "bytes": 10827,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/free-tool-outcomes.js",
+      "sha256": "33f2fb999a7af095516f5f61886771276cba8bb9e9a76fb3635dff391dd40201",
+      "bytes": 3356,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/file-fallback.js",
+      "sha256": "c3cd7b56be9edc5e508ae9912306cdc44d7f6f36a941bb8b540046c07b00b108",
+      "bytes": 6946,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/supabase-adapter.js",
+      "sha256": "9bdaa8b378ece00ac3f6f641e3aa49db0cbe689ba4d6e289b1f793de68d8d8b3",
+      "bytes": 2988,
+      "inHostPin": true,
+      "pinAgrees": true,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/atomic-write.js",
+      "sha256": "06b6234048d019580a7889f5a417aeaeab9663a0b7273826fce097c7dd5c47b4",
+      "bytes": 1183,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/pulse-store/wal-lock.js",
+      "sha256": "c17e55e9a6e64c75b5004cd5f521a41ad2f227c94c87b3fe5d26fd563a9218e0",
+      "bytes": 1632,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/mcp-admission.js",
+      "sha256": "b8e6d52564baf55db8d6d84ae189dfaa779c2ce8946ae14222f42d8e85762d74",
+      "bytes": 8234,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/lib/declaration-paths.js",
+      "sha256": "82a94511b4a77bd791be321c4e495c7df7ddfd3fbcdd4b32a5da0f98f5bd892f",
+      "bytes": 315,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "unchanged"
+    },
+    {
+      "path": "server/scripts/pulse-private-read.js",
+      "sha256": "344e8b34a78dbf6bff0c0fb80c9eb60718de23f52cd2c62304c17ec1ba65f215",
+      "bytes": 10245,
+      "inHostPin": false,
+      "pinAgrees": null,
+      "versusBase": "added"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "sourceHead": "cc85b7b59a46605090049be06431eebb7c873c24",
+  "sourceExport": "git archive cc85b7b59a46605090049be06431eebb7c873c24",
+  "coldProductionDependencies": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --offline",
+  "acceptance": "node server/lib/machine-services/test/run.mjs",
+  "environment": "sanitized disposable TLS PostgreSQL fixture only",
+  "testTreeRemoved": true,
+  "deployed": false
+}

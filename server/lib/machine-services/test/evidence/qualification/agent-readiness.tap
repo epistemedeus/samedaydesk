@@ -1,0 +1,1212 @@
+
+> samedaydesk@1.0.0 test:agent-readiness
+> node --test server/scripts/agent-readiness/*.test.js
+
+TAP version 13
+# Subtest: real benchmark data
+    # Subtest: is labeled real and kept apart from DEMO bundles
+    ok 1 - is labeled real and kept apart from DEMO bundles
+      ---
+      duration_ms: 0.490402
+      ...
+    # Subtest: surface points sum to 100
+    ok 2 - surface points sum to 100
+      ---
+      duration_ms: 0.10228
+      ...
+    # Subtest: records the observed surfaces
+    ok 3 - records the observed surfaces
+      ---
+      duration_ms: 0.197918
+      ...
+    # Subtest: scores unknown as zero, never as a pass
+    ok 4 - scores unknown as zero, never as a pass
+      ---
+      duration_ms: 0.116377
+      ...
+    1..4
+ok 1 - real benchmark data
+  ---
+  duration_ms: 1.520197
+  type: 'suite'
+  ...
+# Subtest: ranking
+    # Subtest: ranks by surface points with stable tie breaks
+    ok 1 - ranks by surface points with stable tie breaks
+      ---
+      duration_ms: 0.62615
+      ...
+    # Subtest: derives the factual note from the data
+    ok 2 - derives the factual note from the data
+      ---
+      duration_ms: 0.151045
+      ...
+    1..2
+ok 2 - ranking
+  ---
+  duration_ms: 0.925161
+  type: 'suite'
+  ...
+# Subtest: discovery checks
+    # Subtest: passes when llms.txt and skill.md exist and robots allows agents
+    ok 1 - passes when llms.txt and skill.md exist and robots allows agents
+      ---
+      duration_ms: 13.728559
+      ...
+    # Subtest: fails when the files are absent
+    ok 2 - fails when the files are absent
+      ---
+      duration_ms: 0.679947
+      ...
+    # Subtest: warns when llms.txt links only some surfaces
+    ok 3 - warns when llms.txt links only some surfaces
+      ---
+      duration_ms: 1.712031
+      ...
+    # Subtest: detects blocked AI agents in robots.txt
+    ok 4 - detects blocked AI agents in robots.txt
+      ---
+      duration_ms: 0.57462
+      ...
+    # Subtest: fails robots when an AI agent is disallowed
+    ok 5 - fails robots when an AI agent is disallowed
+      ---
+      duration_ms: 0.345684
+      ...
+    1..5
+ok 3 - discovery checks
+  ---
+  duration_ms: 17.732668
+  type: 'suite'
+  ...
+# Subtest: openapi checks
+    # Subtest: passes a complete 3.1 document
+    ok 1 - passes a complete 3.1 document
+      ---
+      duration_ms: 4.067487
+      ...
+    # Subtest: marks downstream checks not applicable without a document
+    ok 2 - marks downstream checks not applicable without a document
+      ---
+      duration_ms: 0.309271
+      ...
+    # Subtest: fails a swagger 2.0 document and warns on gaps
+    ok 3 - fails a swagger 2.0 document and warns on gaps
+      ---
+      duration_ms: 0.489235
+      ...
+    # Subtest: fails when the document is served but unparsable
+    ok 4 - fails when the document is served but unparsable
+      ---
+      duration_ms: 0.28193
+      ...
+    1..4
+ok 4 - openapi checks
+  ---
+  duration_ms: 5.417207
+  type: 'suite'
+  ...
+# Subtest: mcp checks
+    # Subtest: passes a modern server
+    ok 1 - passes a modern server
+      ---
+      duration_ms: 11.049509
+      ...
+    # Subtest: flags an old-only server, missing annotations and the wrong error code
+    ok 2 - flags an old-only server, missing annotations and the wrong error code
+      ---
+      duration_ms: 0.770002
+      ...
+    # Subtest: is not applicable when there is no MCP server
+    ok 3 - is not applicable when there is no MCP server
+      ---
+      duration_ms: 0.158891
+      ...
+    1..3
+ok 5 - mcp checks
+  ---
+  duration_ms: 12.090182
+  type: 'suite'
+  ...
+# Subtest: agent card checks
+    # Subtest: passes a card with skills and interfaces
+    ok 1 - passes a card with skills and interfaces
+      ---
+      duration_ms: 2.862917
+      ...
+    # Subtest: fails an empty skills list
+    ok 2 - fails an empty skills list
+      ---
+      duration_ms: 0.233561
+      ...
+    # Subtest: fails when no card is published
+    ok 3 - fails when no card is published
+      ---
+      duration_ms: 0.098374
+      ...
+    1..3
+ok 6 - agent card checks
+  ---
+  duration_ms: 3.272713
+  type: 'suite'
+  ...
+# Subtest: x402 checks
+    # Subtest: passes a non-empty manifest
+    ok 1 - passes a non-empty manifest
+      ---
+      duration_ms: 1.214743
+      ...
+    # Subtest: accepts a truthfully empty manifest
+    ok 2 - accepts a truthfully empty manifest
+      ---
+      duration_ms: 0.989449
+      ...
+    # Subtest: warns on a silently empty manifest
+    ok 3 - warns on a silently empty manifest
+      ---
+      duration_ms: 0.176824
+      ...
+    # Subtest: fails when absent
+    ok 4 - fails when absent
+      ---
+      duration_ms: 0.078921
+      ...
+    1..4
+ok 7 - x402 checks
+  ---
+  duration_ms: 2.569702
+  type: 'suite'
+  ...
+# Subtest: cors checks
+    # Subtest: passes with wildcard preflights
+    ok 1 - passes with wildcard preflights
+      ---
+      duration_ms: 0.566006
+      ...
+    # Subtest: fails when preflights are rejected
+    ok 2 - fails when preflights are rejected
+      ---
+      duration_ms: 1.47365
+      ...
+    1..2
+ok 8 - cors checks
+  ---
+  duration_ms: 2.116749
+  type: 'suite'
+  ...
+# Subtest: api-catalog checks
+    # Subtest: passes a linkset whose links resolve
+    ok 1 - passes a linkset whose links resolve
+      ---
+      duration_ms: 1.080408
+      ...
+    # Subtest: warns on the wrong content type and unresolved links
+    ok 2 - warns on the wrong content type and unresolved links
+      ---
+      duration_ms: 0.203649
+      ...
+    # Subtest: fails when absent
+    ok 3 - fails when absent
+      ---
+      duration_ms: 0.094254
+      ...
+    1..3
+ok 9 - api-catalog checks
+  ---
+  duration_ms: 1.454268
+  type: 'suite'
+  ...
+# Subtest: every demo bundle
+    # Subtest: produces a status for every check without throwing
+    ok 1 - produces a status for every check without throwing
+      ---
+      duration_ms: 2.235246
+      ...
+    1..1
+ok 10 - every demo bundle
+  ---
+  duration_ms: 2.290058
+  type: 'suite'
+  ...
+# Subtest: llms.txt link parsing
+    # Subtest: reads mcp-endpoint, mcp-catalog-json and webmcp-api keys
+    ok 1 - reads mcp-endpoint, mcp-catalog-json and webmcp-api keys
+      ---
+      duration_ms: 1.421563
+      ...
+    # Subtest: finds any URL ending in /mcp, including relative and other-host links
+    ok 2 - finds any URL ending in /mcp, including relative and other-host links
+      ---
+      duration_ms: 0.324109
+      ...
+    # Subtest: ignores URLs that are not MCP endpoints
+    ok 3 - ignores URLs that are not MCP endpoints
+      ---
+      duration_ms: 0.179569
+      ...
+    1..3
+ok 11 - llms.txt link parsing
+  ---
+  duration_ms: 2.503954
+  type: 'suite'
+  ...
+# Subtest: discovery from api-catalog and agent card
+    # Subtest: collects MCP links with every source that named them
+    ok 1 - collects MCP links with every source that named them
+      ---
+      duration_ms: 0.563898
+      ...
+    # Subtest: follows endpoints listed in a fetched MCP catalog JSON
+    ok 2 - follows endpoints listed in a fetched MCP catalog JSON
+      ---
+      duration_ms: 0.218977
+      ...
+    1..2
+ok 12 - discovery from api-catalog and agent card
+  ---
+  duration_ms: 0.885298
+  type: 'suite'
+  ...
+# Subtest: linked MCP servers
+    # Subtest: counts an MCP on another host when the site links it, and says where
+    ok 1 - counts an MCP on another host when the site links it, and says where
+      ---
+      duration_ms: 3.992735
+      ...
+    # Subtest: prefers the host's own answering /mcp
+    ok 2 - prefers the host's own answering /mcp
+      ---
+      duration_ms: 0.473366
+      ...
+    # Subtest: warns when a link exists but nothing answered
+    ok 3 - warns when a link exists but nothing answered
+      ---
+      duration_ms: 0.908796
+      ...
+    # Subtest: warns when a server answers but no discovery file links it
+    ok 4 - warns when a server answers but no discovery file links it
+      ---
+      duration_ms: 0.327892
+      ...
+    # Subtest: fails when there is no link and no server
+    ok 5 - fails when there is no link and no server
+      ---
+      duration_ms: 0.964785
+      ...
+    1..5
+ok 13 - linked MCP servers
+  ---
+  duration_ms: 6.9082
+  type: 'suite'
+  ...
+# Subtest: www fallback
+    # Subtest: falls back on redirects, empty bodies and no answer
+    ok 1 - falls back on redirects, empty bodies and no answer
+      ---
+      duration_ms: 0.137458
+      ...
+    # Subtest: does not fall back when the apex has content or already is www
+    ok 2 - does not fall back when the apex has content or already is www
+      ---
+      duration_ms: 0.047282
+      ...
+    # Subtest: is wired into the probe script, which never calls a real tool
+    ok 3 - is wired into the probe script, which never calls a real tool
+      ---
+      duration_ms: 0.389708
+      ...
+    1..3
+ok 14 - www fallback
+  ---
+  duration_ms: 0.647101
+  type: 'suite'
+  ...
+# Subtest: WebMCP detection
+    # Subtest: passes when llms.txt declares webmcp-api
+    ok 1 - passes when llms.txt declares webmcp-api
+      ---
+      duration_ms: 0.530161
+      ...
+    # Subtest: passes when a page registers navigator.modelContext
+    ok 2 - passes when a page registers navigator.modelContext
+      ---
+      duration_ms: 0.779475
+      ...
+    # Subtest: is informational and not a pass when absent
+    ok 3 - is informational and not a pass when absent
+      ---
+      duration_ms: 0.250425
+      ...
+    # Subtest: ignores modelContext in non-HTML JSON bodies
+    ok 4 - ignores modelContext in non-HTML JSON bodies
+      ---
+      duration_ms: 0.098922
+      ...
+    1..4
+ok 15 - WebMCP detection
+  ---
+  duration_ms: 1.803784
+  type: 'suite'
+  ...
+# Subtest: fix pack file lists
+    # Subtest: ein.llc
+    ok 1 - ein.llc
+      ---
+      duration_ms: 1.537955
+      ...
+    # Subtest: samedaydesk.com
+    ok 2 - samedaydesk.com
+      ---
+      duration_ms: 0.292656
+      ...
+    # Subtest: agents.samedaydesk.com
+    ok 3 - agents.samedaydesk.com
+      ---
+      duration_ms: 0.350565
+      ...
+    # Subtest: neomorphic.io
+    ok 4 - neomorphic.io
+      ---
+      duration_ms: 0.248231
+      ...
+    # Subtest: a site with no surfaces generates nothing and says why
+    ok 5 - a site with no surfaces generates nothing and says why
+      ---
+      duration_ms: 0.256653
+      ...
+    1..5
+ok 16 - fix pack file lists
+  ---
+  duration_ms: 3.276748
+  type: 'suite'
+  ...
+# Subtest: fix pack invariants
+    # Subtest: ein.llc: every URL comes from the bundle or is the api-catalog path
+    ok 1 - ein.llc: every URL comes from the bundle or is the api-catalog path
+      ---
+      duration_ms: 0.734324
+      ...
+    # Subtest: ein.llc: every file carries the review header
+    ok 2 - ein.llc: every file carries the review header
+      ---
+      duration_ms: 0.963368
+      ...
+    # Subtest: samedaydesk.com: every URL comes from the bundle or is the api-catalog path
+    ok 3 - samedaydesk.com: every URL comes from the bundle or is the api-catalog path
+      ---
+      duration_ms: 0.345767
+      ...
+    # Subtest: samedaydesk.com: every file carries the review header
+    ok 4 - samedaydesk.com: every file carries the review header
+      ---
+      duration_ms: 0.219017
+      ...
+    # Subtest: agents.samedaydesk.com: every URL comes from the bundle or is the api-catalog path
+    ok 5 - agents.samedaydesk.com: every URL comes from the bundle or is the api-catalog path
+      ---
+      duration_ms: 0.301857
+      ...
+    # Subtest: agents.samedaydesk.com: every file carries the review header
+    ok 6 - agents.samedaydesk.com: every file carries the review header
+      ---
+      duration_ms: 0.174221
+      ...
+    # Subtest: neomorphic.io: every URL comes from the bundle or is the api-catalog path
+    ok 7 - neomorphic.io: every URL comes from the bundle or is the api-catalog path
+      ---
+      duration_ms: 0.131483
+      ...
+    # Subtest: neomorphic.io: every file carries the review header
+    ok 8 - neomorphic.io: every file carries the review header
+      ---
+      duration_ms: 0.080623
+      ...
+    # Subtest: nothing.example: every URL comes from the bundle or is the api-catalog path
+    ok 9 - nothing.example: every URL comes from the bundle or is the api-catalog path
+      ---
+      duration_ms: 0.046586
+      ...
+    # Subtest: nothing.example: every file carries the review header
+    ok 10 - nothing.example: every file carries the review header
+      ---
+      duration_ms: 0.030363
+      ...
+    # Subtest: the MCP version note appears only for old-only servers
+    ok 11 - the MCP version note appears only for old-only servers
+      ---
+      duration_ms: 0.737518
+      ...
+    # Subtest: the CORS snippet never allows credentials
+    ok 12 - the CORS snippet never allows credentials
+      ---
+      duration_ms: 0.351563
+      ...
+    # Subtest: zips the README plus every file
+    ok 13 - zips the README plus every file
+      ---
+      duration_ms: 3.787886
+      ...
+    1..13
+ok 17 - fix pack invariants
+  ---
+  duration_ms: 8.247212
+  type: 'suite'
+  ...
+# Subtest: MCP, the agent card and verifier share the current inventory; discovery documents link to their interfaces
+ok 18 - MCP, the agent card and verifier share the current inventory; discovery documents link to their interfaces
+  ---
+  duration_ms: 30.430451
+  ...
+# Subtest: the page renders the score, the check table, the top fixes, and the fix pack
+ok 19 - the page renders the score, the check table, the top fixes, and the fix pack
+  ---
+  duration_ms: 9.995566
+  ...
+# Subtest: seeded private host is rejected by the page and the MCP tool
+ok 20 - seeded private host is rejected by the page and the MCP tool
+  ---
+  duration_ms: 12.534716
+  ...
+# Subtest: the page rate limit rejects the next check from the same client
+ok 21 - the page rate limit rejects the next check from the same client
+  ---
+  duration_ms: 8.133429
+  ...
+# Subtest: normalizeName
+    # Subtest: collapses camelCase, snake_case, kebab-case and spacing
+    ok 1 - collapses camelCase, snake_case, kebab-case and spacing
+      ---
+      duration_ms: 0.67019
+      ...
+    # Subtest: keeps different operations distinct
+    ok 2 - keeps different operations distinct
+      ---
+      duration_ms: 0.12151
+      ...
+    # Subtest: returns an empty string for junk
+    ok 3 - returns an empty string for junk
+      ---
+      duration_ms: 0.127464
+      ...
+    1..3
+ok 22 - normalizeName
+  ---
+  duration_ms: 1.448228
+  type: 'suite'
+  ...
+# Subtest: extractNamesFromText
+    # Subtest: finds backticked and camelCase identifiers
+    ok 1 - finds backticked and camelCase identifiers
+      ---
+      duration_ms: 0.431298
+      ...
+    # Subtest: ignores common noise words
+    ok 2 - ignores common noise words
+      ---
+      duration_ms: 0.080543
+      ...
+    1..2
+ok 23 - extractNamesFromText
+  ---
+  duration_ms: 0.615645
+  type: 'suite'
+  ...
+# Subtest: identity matrix
+    # Subtest: matches names across surfaces after normalization
+    ok 1 - matches names across surfaces after normalization
+      ---
+      duration_ms: 6.062484
+      ...
+    # Subtest: records a mismatch when a surface omits an operation
+    ok 2 - records a mismatch when a surface omits an operation
+      ---
+      duration_ms: 0.295988
+      ...
+    # Subtest: ignores surfaces that name nothing
+    ok 3 - ignores surfaces that name nothing
+      ---
+      duration_ms: 0.167257
+      ...
+    # Subtest: is empty with no input
+    ok 4 - is empty with no input
+      ---
+      duration_ms: 0.131784
+      ...
+    1..4
+ok 24 - identity matrix
+  ---
+  duration_ms: 6.943487
+  type: 'suite'
+  ...
+# Subtest: collectNamedOperations
+    # Subtest: reads all nine ein.llc operations out of the OpenAPI document
+    ok 1 - reads all nine ein.llc operations out of the OpenAPI document
+      ---
+      duration_ms: 0.694433
+      ...
+    # Subtest: reads MCP tool names and agent card skills
+    ok 2 - reads MCP tool names and agent card skills
+      ---
+      duration_ms: 0.260314
+      ...
+    # Subtest: lines up MCP tools with agent card skills and OpenAPI operations
+    ok 3 - lines up MCP tools with agent card skills and OpenAPI operations
+      ---
+      duration_ms: 0.295333
+      ...
+    1..3
+ok 25 - collectNamedOperations
+  ---
+  duration_ms: 1.852533
+  type: 'suite'
+  ...
+# Subtest: private, loopback, and link-local addresses are refused
+ok 26 - private, loopback, and link-local addresses are refused
+  ---
+  duration_ms: 5.577584
+  ...
+# Subtest: seeded loopback server is never contacted
+ok 27 - seeded loopback server is never contacted
+  ---
+  duration_ms: 3.628043
+  ...
+# Subtest: DNS that resolves to a private address is refused before connect
+ok 28 - DNS that resolves to a private address is refused before connect
+  ---
+  duration_ms: 1.191217
+  ...
+# Subtest: a redirect to a loopback address is refused and not fetched
+ok 29 - a redirect to a loopback address is refused and not fetched
+  ---
+  duration_ms: 1.813645
+  ...
+# Subtest: the probe calls only initialize, tools/list, and the unknown tool
+ok 30 - the probe calls only initialize, tools/list, and the unknown tool
+  ---
+  duration_ms: 2.349008
+  ...
+# Subtest: response bodies are capped
+ok 31 - response bodies are capped
+  ---
+  duration_ms: 10.684085
+  ...
+# Subtest: pinned lookup connects to the resolved address, not a second name
+ok 32 - pinned lookup connects to the resolved address, not a second name
+  ---
+  duration_ms: 2.467566
+  ...
+# Subtest: captured first-use defects
+    # Subtest: records the owner-qa false pass and the redirect misreport
+    ok 1 - records the owner-qa false pass and the redirect misreport
+      ---
+      duration_ms: 0.507171
+      ...
+    1..1
+ok 33 - captured first-use defects
+  ---
+  duration_ms: 1.073847
+  type: 'suite'
+  ...
+# Subtest: D1 llms.txt linkage
+    # Subtest: does not pass when the MCP link is negated and A2A is declared absent
+    ok 1 - does not pass when the MCP link is negated and A2A is declared absent
+      ---
+      duration_ms: 14.707142
+      ...
+    # Subtest: passes only when each linked target was fetched and is the declared kind
+    ok 2 - passes only when each linked target was fetched and is the declared kind
+      ---
+      duration_ms: 0.945131
+      ...
+    # Subtest: does not treat a bare MCP word, or an HTML target, as a valid MCP link
+    ok 3 - does not treat a bare MCP word, or an HTML target, as a valid MCP link
+      ---
+      duration_ms: 1.616167
+      ...
+    # Subtest: keeps a real same-origin MCP, OpenAPI and agent card link as a pass
+    ok 4 - keeps a real same-origin MCP, OpenAPI and agent card link as a pass
+      ---
+      duration_ms: 1.288336
+      ...
+    1..4
+ok 34 - D1 llms.txt linkage
+  ---
+  duration_ms: 18.779827
+  type: 'suite'
+  ...
+# Subtest: declared absence
+    # Subtest: reports MCP and the agent card as not applicable and keeps them out of top fixes
+    ok 1 - reports MCP and the agent card as not applicable and keeps them out of top fixes
+      ---
+      duration_ms: 3.700168
+      ...
+    # Subtest: does not turn a declared-absent line into a universal pass
+    ok 2 - does not turn a declared-absent line into a universal pass
+      ---
+      duration_ms: 0.560135
+      ...
+    1..2
+ok 35 - declared absence
+  ---
+  duration_ms: 4.477043
+  type: 'suite'
+  ...
+# Subtest: D3 redirects
+    # Subtest: records the redirect chain separately from the final status
+    ok 1 - records the redirect chain separately from the final status
+      ---
+      duration_ms: 7.903507
+      ...
+    # Subtest: keeps the chain on the probe response and does not fail a final document
+    ok 2 - keeps the chain on the probe response and does not fail a final document
+      ---
+      duration_ms: 3.09748
+      ...
+    # Subtest: still refuses a redirect to a private address
+    ok 3 - still refuses a redirect to a private address
+      ---
+      duration_ms: 0.714047
+      ...
+    # Subtest: does not treat a redirect followed by a real handshake as a failure
+    ok 4 - does not treat a redirect followed by a real handshake as a failure
+      ---
+      duration_ms: 0.309226
+      ...
+    1..4
+ok 36 - D3 redirects
+  ---
+  duration_ms: 12.224105
+  type: 'suite'
+  ...
+# Subtest: D4 x402 manifest entries
+    # Subtest: counts valid Bazaar items instead of saying the manifest has no resources
+    ok 1 - counts valid Bazaar items instead of saying the manifest has no resources
+      ---
+      duration_ms: 1.108061
+      ...
+    # Subtest: does not count invalid entries or object keys as resources
+    ok 2 - does not count invalid entries or object keys as resources
+      ---
+      duration_ms: 0.348441
+      ...
+    # Subtest: accepts an explicit empty declaration and still warns when the list is silently empty
+    ok 3 - accepts an explicit empty declaration and still warns when the list is silently empty
+      ---
+      duration_ms: 0.275425
+      ...
+    1..3
+ok 37 - D4 x402 manifest entries
+  ---
+  duration_ms: 1.864813
+  type: 'suite'
+  ...
+# Subtest: no-JS summary
+    # Subtest: reports visible text, whether it says what the product is, and machine links
+    ok 1 - reports visible text, whether it says what the product is, and machine links
+      ---
+      duration_ms: 2.504109
+      ...
+    # Subtest: counts noscript copy, which is what a no-JS client sees
+    ok 2 - counts noscript copy, which is what a no-JS client sees
+      ---
+      duration_ms: 1.090099
+      ...
+    # Subtest: ignores script text and passes a static sentence that links llms.txt
+    ok 3 - ignores script text and passes a static sentence that links llms.txt
+      ---
+      duration_ms: 0.413985
+      ...
+    # Subtest: uses a conservative discovery share and does not rescore an unprobed homepage
+    ok 4 - uses a conservative discovery share and does not rescore an unprobed homepage
+      ---
+      duration_ms: 1.098327
+      ...
+    1..4
+ok 38 - no-JS summary
+  ---
+  duration_ms: 5.260949
+  type: 'suite'
+  ...
+# Subtest: private peers and req.ip do not authorize forwarded client addresses by default
+ok 39 - private peers and req.ip do not authorize forwarded client addresses by default
+  ---
+  duration_ms: 5.591733
+  ...
+# Subtest: configured trust walks right to left and stops before spoofed prefixes
+ok 40 - configured trust walks right to left and stops before spoofed prefixes
+  ---
+  duration_ms: 1.166458
+  ...
+# Subtest: malformed forwarded addresses and malformed/trust-all policies fail closed
+ok 41 - malformed forwarded addresses and malformed/trust-all policies fail closed
+  ---
+  duration_ms: 0.586851
+  ...
+# Subtest: IPv4/mapped IPv6 and equivalent IPv6 forms share rate keys and SSRF classification
+ok 42 - IPv4/mapped IPv6 and equivalent IPv6 forms share rate keys and SSRF classification
+  ---
+  duration_ms: 0.812719
+  ...
+# Subtest: mounted readiness cannot rotate spoofed rate keys; configured clients retain separation
+ok 43 - mounted readiness cannot rotate spoofed rate keys; configured clients retain separation
+  ---
+  duration_ms: 33.555682
+  ...
+# Subtest: document retrieval diagnosis
+    # Subtest: keeps a genuine 404 as absence, with the existing publish action and score
+    ok 1 - keeps a genuine 404 as absence, with the existing publish action and score
+      ---
+      duration_ms: 8.113454
+      ...
+    # Subtest: passes a valid OpenAPI document with the existing scoring contract
+    ok 2 - passes a valid OpenAPI document with the existing scoring contract
+      ---
+      duration_ms: 1.093742
+      ...
+    # Subtest: keeps unobserved paths unknown rather than claiming documents are absent
+    ok 3 - keeps unobserved paths unknown rather than claiming documents are absent
+      ---
+      duration_ms: 0.856258
+      ...
+    # Subtest: refuses a parseable prefix when its connection failed after headers
+    ok 4 - refuses a parseable prefix when its connection failed after headers
+      ---
+      duration_ms: 1.348137
+      ...
+    # Subtest: rejects a seeded HTTP 403 challenge misread as a missing document
+    ok 5 - rejects a seeded HTTP 403 challenge misread as a missing document
+      ---
+      duration_ms: 2.475247
+      ...
+    # Subtest: distinguishes invalid JSON from a wrong content type and from a bad schema
+    ok 6 - distinguishes invalid JSON from a wrong content type and from a bad schema
+      ---
+      duration_ms: 1.228881
+      ...
+    # Subtest: calls a budget-limited body and a timeout a retrieval limit, not an invalid or missing file
+    ok 7 - calls a budget-limited body and a timeout a retrieval limit, not an invalid or missing file
+      ---
+      duration_ms: 0.583088
+      ...
+    # Subtest: keeps a useful partial result and changes the diagnosis when the refused document is corrected
+    ok 8 - keeps a useful partial result and changes the diagnosis when the refused document is corrected
+      ---
+      duration_ms: 1.206082
+      ...
+    # Subtest: does not call a later 403 absence when the first OpenAPI path is a real 404
+    ok 9 - does not call a later 403 absence when the first OpenAPI path is a real 404
+      ---
+      duration_ms: 0.423207
+      ...
+    # Subtest: treats a JSON 403 as a refusal without calling it a challenge page or a missing file
+    ok 10 - treats a JSON 403 as a refusal without calling it a challenge page or a missing file
+      ---
+      duration_ms: 0.470766
+      ...
+    # Subtest: does not let a challenged alternate path hide a valid document
+    ok 11 - does not let a challenged alternate path hide a valid document
+      ---
+      duration_ms: 0.406752
+      ...
+    # Subtest: leaves the demo bundle scores unchanged
+    ok 12 - leaves the demo bundle scores unchanged
+      ---
+      duration_ms: 6.500647
+      ...
+    1..12
+ok 44 - document retrieval diagnosis
+  ---
+  duration_ms: 25.655336
+  type: 'suite'
+  ...
+# Subtest: probe records retrieval limits
+    # Subtest: marks a body that exceeds the byte budget and a hung response as timeout
+    ok 1 - marks a body that exceeds the byte budget and a hung response as timeout
+      ---
+      duration_ms: 118.662933
+      ...
+    # Subtest: feeds the probe's truncated flag into the report instead of an invalid-JSON finding
+    ok 2 - feeds the probe's truncated flag into the report instead of an invalid-JSON finding
+      ---
+      duration_ms: 5.716922
+      ...
+    1..2
+ok 45 - probe records retrieval limits
+  ---
+  duration_ms: 124.491957
+  type: 'suite'
+  ...
+# Subtest: partial transport and byte-budget receiving
+    # Subtest: marks an aborted HTTP body as a connection failure even if its prefix is valid JSON
+    ok 1 - marks an aborted HTTP body as a connection failure even if its prefix is valid JSON
+      ---
+      duration_ms: 23.071887
+      ...
+    # Subtest: applies the existing body budget in bytes to supplied multibyte responses
+    ok 2 - applies the existing body budget in bytes to supplied multibyte responses
+      ---
+      duration_ms: 4.629995
+      ...
+    # Subtest: does not accept a partial MCP reply as a successful initialization
+    ok 3 - does not accept a partial MCP reply as a successful initialization
+      ---
+      duration_ms: 6.756047
+      ...
+    1..3
+ok 46 - partial transport and byte-budget receiving
+  ---
+  duration_ms: 34.582684
+  type: 'suite'
+  ...
+# Subtest: bundle validation
+    # Subtest: accepts every demo bundle
+    ok 1 - accepts every demo bundle
+      ---
+      duration_ms: 1.56151
+      ...
+    # Subtest: rejects non-JSON text
+    ok 2 - rejects non-JSON text
+      ---
+      duration_ms: 0.333398
+      ...
+    # Subtest: rejects a non-object
+    ok 3 - rejects a non-object
+      ---
+      duration_ms: 0.100689
+      ...
+    # Subtest: rejects the wrong schema
+    ok 4 - rejects the wrong schema
+      ---
+      duration_ms: 0.144848
+      ...
+    # Subtest: rejects a missing host
+    ok 5 - rejects a missing host
+      ---
+      duration_ms: 0.102831
+      ...
+    # Subtest: rejects a bad probedAt
+    ok 6 - rejects a bad probedAt
+      ---
+      duration_ms: 0.131072
+      ...
+    # Subtest: rejects missing responses
+    ok 7 - rejects missing responses
+      ---
+      duration_ms: 0.086566
+      ...
+    # Subtest: rejects a response without a status
+    ok 8 - rejects a response without a status
+      ---
+      duration_ms: 0.966391
+      ...
+    # Subtest: accepts optional retrieval fields and rejects a bad truncated flag
+    ok 9 - accepts optional retrieval fields and rejects a bad truncated flag
+      ---
+      duration_ms: 0.330975
+      ...
+    # Subtest: rejects an unknown response field
+    ok 10 - rejects an unknown response field
+      ---
+      duration_ms: 0.314464
+      ...
+    # Subtest: rejects a malformed mcp block
+    ok 11 - rejects a malformed mcp block
+      ---
+      duration_ms: 0.12474
+      ...
+    # Subtest: rejects a malformed corsPreflight entry
+    ok 12 - rejects a malformed corsPreflight entry
+      ---
+      duration_ms: 0.085947
+      ...
+    1..12
+ok 47 - bundle validation
+  ---
+  duration_ms: 5.146781
+  type: 'suite'
+  ...
+# Subtest: weights
+    # Subtest: sum to 100
+    ok 1 - sum to 100
+      ---
+      duration_ms: 0.457237
+      ...
+    # Subtest: maps statuses to values
+    ok 2 - maps statuses to values
+      ---
+      duration_ms: 0.112425
+      ...
+    1..2
+ok 48 - weights
+  ---
+  duration_ms: 1.117966
+  type: 'suite'
+  ...
+# Subtest: score weighting
+    # Subtest: awards the full category weight when all its checks pass
+    ok 1 - awards the full category weight when all its checks pass
+      ---
+      duration_ms: 0.268043
+      ...
+    # Subtest: awards half weight for all-warn categories
+    ok 2 - awards half weight for all-warn categories
+      ---
+      duration_ms: 0.106928
+      ...
+    1..2
+ok 49 - score weighting
+  ---
+  duration_ms: 0.55554
+  type: 'suite'
+  ...
+# Subtest: truthfulness
+    # Subtest: gives a site with no agent surfaces a near zero score
+    ok 1 - gives a site with no agent surfaces a near zero score
+      ---
+      duration_ms: 7.265219
+      ...
+    # Subtest: scores the demo bundles in the expected order
+    ok 2 - scores the demo bundles in the expected order
+      ---
+      duration_ms: 8.737033
+      ...
+    1..2
+ok 50 - truthfulness
+  ---
+  duration_ms: 16.296875
+  type: 'suite'
+  ...
+# Subtest: top fixes
+    # Subtest: lists at most three non-passing checks, worst first
+    ok 1 - lists at most three non-passing checks, worst first
+      ---
+      duration_ms: 0.672408
+      ...
+    # Subtest: is empty when everything passes
+    ok 2 - is empty when everything passes
+      ---
+      duration_ms: 0.416996
+      ...
+    # Subtest: puts failures ahead of warnings
+    ok 3 - puts failures ahead of warnings
+      ---
+      duration_ms: 0.126035
+      ...
+    1..3
+ok 51 - top fixes
+  ---
+  duration_ms: 1.507208
+  type: 'suite'
+  ...
+# Subtest: report shape
+    # Subtest: carries the report schema and host
+    ok 1 - carries the report schema and host
+      ---
+      duration_ms: 1.162786
+      ...
+    1..1
+ok 52 - report shape
+  ---
+  duration_ms: 1.224934
+  type: 'suite'
+  ...
+# Subtest: compare delta
+    # Subtest: reports a positive delta when the after bundle is stronger
+    ok 1 - reports a positive delta when the after bundle is stronger
+      ---
+      duration_ms: 2.608032
+      ...
+    # Subtest: reports a zero delta for the same bundle
+    ok 2 - reports a zero delta for the same bundle
+      ---
+      duration_ms: 0.931012
+      ...
+    # Subtest: reports a negative delta on regression
+    ok 3 - reports a negative delta on regression
+      ---
+      duration_ms: 1.925448
+      ...
+    1..3
+ok 53 - compare delta
+  ---
+  duration_ms: 5.578672
+  type: 'suite'
+  ...
+# Subtest: literal URLs cannot bypass pinned-address admission
+ok 54 - literal URLs cannot bypass pinned-address admission
+  ---
+  duration_ms: 7.29199
+  ...
+# Subtest: a second admission cannot reuse a socket to the previous address
+ok 55 - a second admission cannot reuse a socket to the previous address
+  ---
+  duration_ms: 11.418798
+  ...
+# Subtest: a public IPv6 literal uses its admitted socket address and bracketed Host
+ok 56 - a public IPv6 literal uses its admitted socket address and bracketed Host
+  ---
+  duration_ms: 3.234842
+  ...
+# Subtest: budget abort after response headers is a failure, never a successful prefix
+ok 57 - budget abort after response headers is a failure, never a successful prefix
+  ---
+  duration_ms: 102.023362
+  ...
+# Subtest: an incomplete HTTP body is rejected even when its prefix is valid
+ok 58 - an incomplete HTTP body is rejected even when its prefix is valid
+  ---
+  duration_ms: 22.577349
+  ...
+# Subtest: the raw deadline bounds a continuously active body
+ok 59 - the raw deadline bounds a continuously active body
+  ---
+  duration_ms: 82.064349
+  ...
+# Subtest: both consumers re-admit a redirect before making another socket
+ok 60 - both consumers re-admit a redirect before making another socket
+  ---
+  duration_ms: 4.121832
+  ...
+# Subtest: special-purpose IPv6 addresses are not public socket targets
+ok 61 - special-purpose IPv6 addresses are not public socket targets
+  ---
+  duration_ms: 0.711786
+  ...
+# Subtest: an expired budget and a pre-aborted signal start no DNS or socket work
+ok 62 - an expired budget and a pre-aborted signal start no DNS or socket work
+  ---
+  duration_ms: 0.350741
+  ...
+# Subtest: TLS pins the socket while validating the logical hostname and certificate
+ok 63 - TLS pins the socket while validating the logical hostname and certificate
+  ---
+  duration_ms: 85.442446
+  ...
+# Subtest: TLS refuses an untrusted certificate and releases the failed connections
+ok 64 - TLS refuses an untrusted certificate and releases the failed connections
+  ---
+  duration_ms: 76.946084
+  ...
+# Subtest: a budget cancels the actual DNS queries and leaves no query/timer handles
+ok 65 - a budget cancels the actual DNS queries and leaves no query/timer handles
+  ---
+  duration_ms: 154.438048
+  ...
+# Subtest: invalid input disposes the probe deadline before any connection
+ok 66 - invalid input disposes the probe deadline before any connection
+  ---
+  duration_ms: 50.227721
+  ...
+# Subtest: natural process exit after abort-body: no owned sockets, agents or timers
+ok 67 - natural process exit after abort-body: no owned sockets, agents or timers
+  ---
+  duration_ms: 154.347636
+  ...
+# Subtest: natural process exit after tls-hang: no owned sockets, agents or timers
+ok 68 - natural process exit after tls-hang: no owned sockets, agents or timers
+  ---
+  duration_ms: 152.246952
+  ...
+# Subtest: natural process exit after redirect: no owned sockets, agents or timers
+ok 69 - natural process exit after redirect: no owned sockets, agents or timers
+  ---
+  duration_ms: 57.76334
+  ...
+# Subtest: natural process exit after error: no owned sockets, agents or timers
+ok 70 - natural process exit after error: no owned sockets, agents or timers
+  ---
+  duration_ms: 59.975269
+  ...
+# Subtest: MCP usability lint
+    # Subtest: passes every rule for well-described tools
+    ok 1 - passes every rule for well-described tools
+      ---
+      duration_ms: 2.090373
+      ...
+    # Subtest: warns on short and overlong descriptions and names the tool
+    ok 2 - warns on short and overlong descriptions and names the tool
+      ---
+      duration_ms: 0.234383
+      ...
+    # Subtest: warns when a property lacks type or description
+    ok 3 - warns when a property lacks type or description
+      ---
+      duration_ms: 0.192665
+      ...
+    # Subtest: warns when required is not declared
+    ok 4 - warns when required is not declared
+      ---
+      duration_ms: 0.136362
+      ...
+    # Subtest: warns when a closed-set property has no enum
+    ok 5 - warns when a closed-set property has no enum
+      ---
+      duration_ms: 0.09885
+      ...
+    # Subtest: requires outputSchema on 2025-06-18+ and is n/a on older servers
+    ok 6 - requires outputSchema on 2025-06-18+ and is n/a on older servers
+      ---
+      duration_ms: 0.122738
+      ...
+    # Subtest: flags near-duplicate descriptions
+    ok 7 - flags near-duplicate descriptions
+      ---
+      duration_ms: 0.108308
+      ...
+    # Subtest: is n/a when there is no MCP server
+    ok 8 - is n/a when there is no MCP server
+      ---
+      duration_ms: 0.153209
+      ...
+    1..8
+ok 71 - MCP usability lint
+  ---
+  duration_ms: 3.917842
+  type: 'suite'
+  ...
+# Subtest: OpenAPI usability lint
+    # Subtest: passes every rule for a well-documented API
+    ok 1 - passes every rule for a well-documented API
+      ---
+      duration_ms: 1.558241
+      ...
+    # Subtest: warns when an example is missing and names the operation
+    ok 2 - warns when an example is missing and names the operation
+      ---
+      duration_ms: 0.568244
+      ...
+    # Subtest: warns when 4xx responses are missing or schemaless
+    ok 3 - warns when 4xx responses are missing or schemaless
+      ---
+      duration_ms: 1.022942
+      ...
+    # Subtest: warns when a mutating operation has no Idempotency-Key and no explanation
+    ok 4 - warns when a mutating operation has no Idempotency-Key and no explanation
+      ---
+      duration_ms: 0.416069
+      ...
+    # Subtest: warns when an array response has no pagination
+    ok 5 - warns when an array response has no pagination
+      ---
+      duration_ms: 0.286097
+      ...
+    # Subtest: is n/a without OpenAPI or without applicable operations
+    ok 6 - is n/a without OpenAPI or without applicable operations
+      ---
+      duration_ms: 0.226438
+      ...
+    1..6
+ok 72 - OpenAPI usability lint
+  ---
+  duration_ms: 4.287242
+  type: 'suite'
+  ...
+1..72
+# tests 185
+# suites 39
+# pass 185
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1689.61737

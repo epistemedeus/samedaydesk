@@ -1,0 +1,83 @@
+TAP version 13
+# Subtest: operation grant checks do not inherit a profile or a stale scope
+ok 1 - operation grant checks do not inherit a profile or a stale scope
+  ---
+  duration_ms: 0.962495
+  type: 'test'
+  ...
+# Subtest: historical authority is recomputed from the retained closure
+ok 2 - historical authority is recomputed from the retained closure
+  ---
+  duration_ms: 1.205095
+  type: 'test'
+  ...
+# Subtest: withOperation isolates concurrent rail intents and does not sign a replay
+ok 3 - withOperation isolates concurrent rail intents and does not sign a replay
+  ---
+  duration_ms: 40.109118
+  type: 'test'
+  ...
+# Subtest: a legacy signer without withOperation still signs once
+ok 4 - a legacy signer without withOperation still signs once
+  ---
+  duration_ms: 4.991621
+  type: 'test'
+  ...
+# Subtest: a fault after signature leaves an unknown reservation that is not signed again
+ok 5 - a fault after signature leaves an unknown reservation that is not signed again
+  ---
+  duration_ms: 4.616337
+  type: 'test'
+  ...
+# Subtest: an account signer that rejects after entry keeps the nonce and hold
+ok 6 - an account signer that rejects after entry keeps the nonce and hold
+  ---
+  duration_ms: 3.489333
+  type: 'test'
+  ...
+# Subtest: a refusal before the signer is called releases the reservation
+ok 7 - a refusal before the signer is called releases the reservation
+  ---
+  duration_ms: 3.084025
+  type: 'test'
+  ...
+# Subtest: an entered signer cannot release the reservation with signerEntered false
+ok 8 - an entered signer cannot release the reservation with signerEntered false
+  ---
+  duration_ms: 3.578722
+  type: 'test'
+  ...
+# Subtest: predecessor recovery proves the stored quote identity
+ok 9 - predecessor recovery proves the stored quote identity
+  ---
+  duration_ms: 621.243749
+  type: 'test'
+  ...
+# Subtest: a reserved row left before signer entry is not signed again
+ok 10 - a reserved row left before signer entry is not signed again
+  ---
+  duration_ms: 5.232241
+  type: 'test'
+  ...
+# Subtest: a lower native budget cannot keep or raise the stored remaining
+ok 11 - a lower native budget cannot keep or raise the stored remaining
+  ---
+  duration_ms: 0.466759
+  type: 'test'
+  ...
+# Subtest: qualified membership does not loosen the unfunded document
+ok 12 - qualified membership does not loosen the unfunded document
+  ---
+  duration_ms: 6.709347
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 708.513106
+EXIT:0

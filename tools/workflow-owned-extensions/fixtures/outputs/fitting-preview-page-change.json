@@ -1,0 +1,164 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-invocation.v1",
+  "ok": true,
+  "fitting": true,
+  "capabilityApplied": true,
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "extensionId": "dify-result-reuse",
+  "extensionVersion": "0.1.0",
+  "consumerKind": "workflow_runtime_embedding",
+  "tool": "preview_reuse",
+  "runtime": "dify",
+  "runtimeAvailable": false,
+  "runtimeProbed": false,
+  "runtimeCalled": false,
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "installationStatus": "source_only_not_installed",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "executionPath": "direct_sdk_fallback",
+  "message": "executed through tools/result-reuse because the runtime path is unavailable",
+  "usefulDirectRoute": {
+    "package": "tools/result-reuse",
+    "cli": "node tools/result-reuse/cli.mjs preview --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>",
+    "exportCli": "node tools/result-reuse/cli.mjs export --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --opt-in --out <observation.json>",
+    "decideCli": "node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in",
+    "requiredInput": "extract-batch, page-change brief, record report, or n45 page-change result JSON",
+    "note": "Neither Dify nor Ghost is required. The existing local result-reuse CLI is the useful direct path when a workflow runtime is unavailable or the task does not fit."
+  },
+  "sdk": {
+    "ok": true,
+    "mode": "preview",
+    "kind": "page_change_brief",
+    "incomplete": true,
+    "publicSafeCertified": false,
+    "evidenceKind": "user_selected_unverified",
+    "purchaseRequiresPublish": false,
+    "optInRequiredToWrite": true,
+    "included": [
+      "schema",
+      "kind",
+      "verdict",
+      "fields",
+      "freshness",
+      "claims",
+      "summary",
+      "rows",
+      "coverageUnknown",
+      "jobId",
+      "contentHash"
+    ],
+    "omitted": [],
+    "sourceDisclosure": {
+      "originalEvidenceUrlAvailable": true,
+      "sourceRole": "original_evidence_url"
+    },
+    "n45": {
+      "class": "observation",
+      "subject": "rfq-and-vendor-page-watch-result",
+      "correctsSequence": null
+    },
+    "observation": {
+      "schema": "neomorphic.task-memory.observation.v1",
+      "contractVersion": 1,
+      "observationId": "obs_b25fe69fa31f02952e542406b2f28797",
+      "revisionId": "rev_1",
+      "taskScope": {
+        "taskId": "rfq-and-vendor-page-watch",
+        "taskFamily": "samedaydesk.result-reuse",
+        "ownerScope": "samedaydesk.result-reuse"
+      },
+      "source": {
+        "uri": "https://rfq.example/widgets",
+        "version": "sha256:04d969b0808e5c8c95c923e820a62d566ee683e3f5884f2e4e9ebea7ef663ef3"
+      },
+      "epistemicStatus": "observed",
+      "lifecycleStatus": "active",
+      "statement": "reuse page_change_brief; incomplete_or_failed_rows_kept; verdict changed",
+      "payload": {
+        "schema": "pilot/page-change-brief/v1",
+        "kind": "merchant_extract_batch",
+        "verdict": "changed",
+        "fields": [
+          "title",
+          "description",
+          "headings"
+        ],
+        "freshness": "unknown",
+        "claims": {
+          "noChangeProven": false,
+          "contentUnchangedProven": false,
+          "comparable": true,
+          "complete": false,
+          "current": false,
+          "fresh": false,
+          "usefulOutputProven": true,
+          "paymentImpliesUsefulOutput": false
+        },
+        "summary": {
+          "matched": 2,
+          "missing": 1,
+          "failed": 1,
+          "unknown": 0,
+          "duplicates": 0,
+          "coverageUnknown": 1,
+          "semantic": 2,
+          "order": 1
+        },
+        "rows": {
+          "matched": [
+            {
+              "sourceKey": "https://rfq.example/widgets",
+              "status": "success"
+            },
+            {
+              "sourceKey": "https://research.example/vendor-alpha",
+              "status": "success"
+            }
+          ],
+          "missing": [
+            {
+              "sourceKey": "https://research.example/vendor-beta",
+              "status": "unknown",
+              "missingSide": "before"
+            }
+          ],
+          "failed": [
+            {
+              "sourceKey": "https://rfq.example/fasteners",
+              "beforeStatus": "success",
+              "afterStatus": "failure",
+              "errorCode": "http_error"
+            }
+          ]
+        },
+        "coverageUnknown": [
+          {
+            "sourceKey": "https://research.example/vendor-alpha",
+            "field": "description",
+            "reason": "absent_field_is_coverage_unknown_not_deletion"
+          }
+        ],
+        "jobId": "rfq-and-vendor-page-watch",
+        "contentHash": "sha256:04d969b0808e5c8c95c923e820a62d566ee683e3f5884f2e4e9ebea7ef663ef3",
+        "url": "https://rfq.example/widgets",
+        "reuseProvenance": {
+          "originalEvidenceUrlAvailable": true,
+          "sourceRole": "original_evidence_url"
+        }
+      },
+      "recordedAt": {
+        "instant": "2026-09-09T10:00:00.000Z",
+        "domain": "wall_utc"
+      },
+      "execute": false
+    },
+    "pins": {
+      "mapping": "n45 n49-adapter field map",
+      "observationSchema": "neomorphic.task-memory.observation.v1"
+    }
+  },
+  "recognizedKind": "page_change_brief",
+  "runtimeNote": "not yet executed on runtime"
+}

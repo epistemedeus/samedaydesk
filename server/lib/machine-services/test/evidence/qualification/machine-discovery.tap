@@ -1,0 +1,35 @@
+
+> samedaydesk@1.0.0 test:machine-discovery
+> node --test server/scripts/test-machine-discovery-journey.js
+
+TAP version 13
+# Subtest: discovery documents are acquired over HTTP and a free tool returns a useful plan
+ok 1 - discovery documents are acquired over HTTP and a free tool returns a useful plan
+  ---
+  duration_ms: 84.109936
+  ...
+# {"source":"server/lib/apex-declarations.js","responses":{"/openapi.json":{"status":200,"sha256":"c5db31b9040f5da4d51c78f3c3b214a152a05bb609ece321508ecb79d67a5d7d"},"/skill.md":{"status":200,"sha256":"e5aa826d4d1181f59d5a12404fa97ad17980dab4cba6d46eb313824e74b184da"},"/.well-known/api-catalog":{"status":200,"sha256":"5cad917c648659c5880216cb113b4c16348f32f99ebb6d90a76e9ac39594328b"}},"get_health":{"status":200,"sha256":"5d965489079d5ed770fadd1107c618d7137187fadabe58e0d21ee45b7597ddf3"},"mcp_initialize":{"status":200,"sha256":"9af0d5c9a15d78e9439652f6aea39478cb0abb53ea72ed923dc3b9f98607a44f"},"mcp_tools_list":{"status":200,"sha256":"cceb7240101f4f5acf903edd372d339171ce2f92ff4d2cb19293e9b6335fa58b"},"plan_taskmarket_delegation":{"status":200,"sha256":"b48119f0f1fd42c8774cd1fb3de528b8a63fd87edcdeb6ce1fc432917a5314a7"},"changedPlan":{"plan_id":"0d1396c7f1b53f0b375a28329b5e53740078ac996a5c85dae7a6f645126187c5","executed":false},"checker":{"warn":["discovery.robots: No response was recorded for /robots.txt. The robots.txt was not read, so this is not evidence it is absent or invalid. Agent rules are therefore unknown.","identity.consistency: 3 of 40 operations appear on every naming surface.","apiCatalog.links: 7 of 14 catalog links resolve inside this bundle.","usability.mcp.props: Properties missing a type or description: plan_taskmarket_delegation.mode, plan_taskmarket_delegation.tags, browse_taskmarket_tasks.status, browse_taskmarket_tasks.mode +1 more.","usability.mcp.required: Tools with inputs but no required array: browse_taskmarket_tasks.","usability.mcp.output: Tools without outputSchema: check_ai_readiness, generate_complete_fix_pack, plan_taskmarket_delegation, browse_taskmarket_tasks +2 more.","usability.openapi.errors: Operations with no 4xx response or a 4xx without schema: getHealth, describeMcpEndpoint, getAgentCard, getMcpRegistryAuth +6 more."],"fail":["discovery.llms: No response was recorded for /llms.txt. The document was not read, so this is not evidence it is absent or invalid.","x402.parses: No response was recorded for /.well-known/x402. The document was not read, so this is not evidence it is absent or invalid."]},"pulse":{"declarationFetchDelta":{"/openapi.json":1,"/skill.md":1,"/.well-known/api-catalog":1},"toolAttemptDelta":4,"humansUnchanged":true,"deliveryStoredInPulse":false}}
+# Subtest: published response variants match the actual HTTP transports
+ok 2 - published response variants match the actual HTTP transports
+  ---
+  duration_ms: 9.874003
+  ...
+# Subtest: production fallback keeps declarations out of the HTML shell and preserves old routes
+ok 3 - production fallback keeps declarations out of the HTML shell and preserves old routes
+  ---
+  duration_ms: 1381.556604
+  ...
+# Subtest: refusal and truncated retrieval stay distinct from a missing declaration
+ok 4 - refusal and truncated retrieval stay distinct from a missing declaration
+  ---
+  duration_ms: 0.913368
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1882.586271

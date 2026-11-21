@@ -1,0 +1,20 @@
+{
+  "schema": "pilot.root10940.acquisition-trust-anchor.v1",
+  "descriptorRepository": "epistemedeus/samedaydesk",
+  "descriptorCommit": "unreceived",
+  "descriptorPath": "docs/receiving/h145010-useful-tool-measurement-20261104/proposed-descriptor.json",
+  "descriptorSha256": "ce89812d7befe5f72d9de64fdf70c2471317a2c81a60a81f99790967d355a9f6",
+  "clientSha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+  "clientBytes": 28081,
+  "source": {
+    "repository": "epistemedeus/samedaydesk",
+    "commit": "e54f91e9d93f02cde6d2b281f0cc9b29ea87dfd9",
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs"
+  },
+  "requiredProfile": {
+    "money": "unfunded",
+    "participation": "voluntary-artifact-v1",
+    "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+    "hostSha256": "6fca4aaa8cd2332029be50506b5c414d8f7840c32d1cc1fd9c320671e9615abd"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "unknown-effort-example",
+  "requesterNote": "Fee terms are known, but no measured effort evidence was supplied.",
+  "tasks": [
+    {
+      "taskId": "inventory-list",
+      "title": "List public package names",
+      "summary": "Collect public package names from a declared file list.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "2500000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "package-list.txt"
+          }
+        }
+      },
+      "effort": {
+        "status": "costs_unknown",
+        "measured": false
+      }
+    },
+    {
+      "taskId": "license-scan",
+      "title": "Record declared licenses",
+      "summary": "Copy declared license identifiers from the same file list.",
+      "criteria": [
+        "public-example"
+      ],
+      "payableKinds": [
+        "usable"
+      ],
+      "terms": {
+        "feeBps": 500,
+        "feeBasis": "new_job_gross"
+      },
+      "grossAtomic": "2500000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "license-list.txt"
+          }
+        }
+      }
+    }
+  ]
+}

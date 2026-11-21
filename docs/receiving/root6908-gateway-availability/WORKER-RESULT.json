@@ -1,0 +1,99 @@
+{
+  "schema": "pilot.root6908.gateway-availability.result.v1",
+  "status": "source_build_fixture_accepted_hosted_unreceived",
+  "source": {
+    "repository": "https://github.com/epistemedeus/samedaydesk.git",
+    "branch": "codex/root6908-gateway-availability-20261024",
+    "base": "d310f4cf37fb190d850ac0cea71ec34787972162",
+    "baseTree": "8b79c1d8586c630f90a5241f52ce969fda641466",
+    "finalTestedProductCommit": "46a217f9665d004dd28a3b9000e36d6e72c83bcf",
+    "finalTestedProductTree": "dc035f6f70d8a0294fea2c4e4c149325d22fff70",
+    "finalExportIdentity": "task-root WORKER-EXPORT.json (written after evidence-only commit)",
+    "paths": "CHANGED-PATHS.json"
+  },
+  "received": {
+    "repository": "https://github.com/epistemedeus/pilot.git",
+    "commit": "0a5ebf5c93c32927a64fe4146c6848e1bf48c3c7",
+    "remoteDirectory": "overview/research/phase-20261024/gateway-availability/",
+    "input": "RECEIVED-STATE.json",
+    "boundInput": "RECEIVED-STATE.bound.json",
+    "onlyInputAmendment": "received.receipt bound to immutable Pilot URLs",
+    "state": "available",
+    "observedAt": "2026-10-24T23:56:22.400Z",
+    "merchantCommit": "e291d41c1f1763e638e2812568290ed176a31c49",
+    "merchantDeployment": "20aeb195-f95d-4e20-85f5-9edb4e181bd7",
+    "fivePredicatesPreserved": true,
+    "provenance": "INPUT-PROVENANCE.json"
+  },
+  "validation": {
+    "commands": "CHECKS.json",
+    "identities": "TEST-CASE-IDENTITIES.json",
+    "baselineTests": 41,
+    "finalReportedTests": 49,
+    "finalLeafIdentities": 48,
+    "finalParentIdentities": 1,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "normalBuildExit": 0,
+    "wholeSuiteRun": false,
+    "firstFailure": "first-final-build-attempt.txt: optional /usr/bin/time absent, exit127 before npm; no product test failures",
+    "installedLibrariesAndProjectorUnchanged": true
+  },
+  "emission": {
+    "comparison": "EMISSION-COMPARISON.json",
+    "files": 352,
+    "rawEqualFiles": 350,
+    "onlyChangedFiles": [
+      "discovery/paid-gateway.json",
+      "llms.txt"
+    ],
+    "rawEqualHumanHTML": 139,
+    "rawEqualAssets": 40,
+    "rawMachineBodies": [
+      "before/",
+      "after/"
+    ],
+    "allSixMachineConsumersQualified": true,
+    "dynamicSkillQualified": true,
+    "routerExecutionAuthorized": false,
+    "rawExport": "RAW-EXPORT.json",
+    "normalization": false
+  },
+  "resources": {
+    "declaredModel": "gpt-6.1-sol",
+    "effort": "high",
+    "parents": 1,
+    "modelChildren": 0,
+    "totalReserveKiB": 3145728,
+    "finalNodeHeapMiB": 768,
+    "UV_THREADPOOL_SIZE": 1,
+    "OMP_NUM_THREADS": 1,
+    "serial": true,
+    "sampledOwnedBuildPeakRSSKiB": 746632,
+    "sampledOwnedTestPeakRSSKiB": 635340,
+    "sampleIntervalMs": 50,
+    "hardAggregateCapOrBetweenSamplePeak": "not established",
+    "baselineHeapException": "Original baseline fixture overrode child to1280MiB; fixed to768MiB before all final validation.",
+    "nativeFinalLifecycle": "controller-owned"
+  },
+  "preservation": {
+    "humanEmissionByteEqual": true,
+    "MPPAndVibesOffUnchanged": true,
+    "otherUnqualifiedServicesUnchanged": true,
+    "financialAndContributorSourceUnchanged": true,
+    "immutableArchivesUnchanged": true,
+    "archivedUnknown": "preserved unresolved; expired active absence is valid; no replay/reinsert/retention patch",
+    "financialStoreAuditClaimed": false
+  },
+  "handoff": {
+    "releaseRollbackAndHostedCommands": "RELEASE-AND-ROLLBACK.md",
+    "hostedMachineRestorationReceived": false,
+    "hostedHumanPreservationReceived": false,
+    "customerOrRevenueEvidence": false,
+    "providerDeployDBEnvironmentOrPaymentMutations": 0,
+    "cleanup": "CLEANUP.json",
+    "checkpointBy": "2026-10-25T00:26:54.995Z",
+    "requiredUntil": "2026-10-25T00:41:54.995Z"
+  }
+}

@@ -1,0 +1,262 @@
+
+> samedaydesk@1.0.0 test:machine-services:regression
+> flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/scripts/test-hosted-startup.js server/scripts/test-spa-fallback.js server/scripts/test-correspondence-mount-disabled.js server/scripts/test-seller-repair-webhook.js server/scripts/test-foundry-listener-drain.js
+
+TAP version 13
+# Subtest: unconfigured correspondence leaves SDS health/MCP intact and exposes disabled healthz
+ok 1 - unconfigured correspondence leaves SDS health/MCP intact and exposes disabled healthz
+  ---
+  duration_ms: 376.921063
+  ...
+# Subtest: malformed correspondence config is disabled without breaking merchant health
+ok 2 - malformed correspondence config is disabled without breaking merchant health
+  ---
+  duration_ms: 5.036046
+  ...
+# Subtest: memory store is refused outside test even if URL and token are present
+ok 3 - memory store is refused outside test even if URL and token are present
+  ---
+  duration_ms: 0.393809
+  ...
+# Subtest: ordinary active HTTP response survives early drain before cleanup
+ok 4 - ordinary active HTTP response survives early drain before cleanup
+  ---
+  duration_ms: 763.994674
+  ...
+# Subtest: foundry active HTTP response survives early drain before cleanup
+ok 5 - foundry active HTTP response survives early drain before cleanup
+  ---
+  duration_ms: 758.275115
+  ...
+# Subtest: force deadline truncates stuck request and reports failure exactly once
+# sds_shutdown_close_failed { name: 'Error' }
+ok 6 - force deadline truncates stuck request and reports failure exactly once
+  ---
+  duration_ms: 152.598551
+  ...
+# Subtest: resource close failure cannot report graceful success
+ok 7 - resource close failure cannot report graceful success
+  ---
+  duration_ms: 0.762628
+  ...
+# Subtest: resource cleanup remains bounded and late completion cannot exit zero
+ok 8 - resource cleanup remains bounded and late completion cannot exit zero
+  ---
+  duration_ms: 50.296637
+  ...
+# Subtest: documented connection envelopes match executable budget
+ok 9 - documented connection envelopes match executable budget
+  ---
+  duration_ms: 0.400967
+  ...
+# Subtest: direct Node entry actually listens and serves health
+ok 10 - direct Node entry actually listens and serves health
+  ---
+  duration_ms: 380.091805
+  ...
+# Subtest: managed-host ESM loader actually listens and serves health
+ok 11 - managed-host ESM loader actually listens and serves health
+  ---
+  duration_ms: 342.987154
+  ...
+# Subtest: managed-host CommonJS loader actually listens and serves health
+ok 12 - managed-host CommonJS loader actually listens and serves health
+  ---
+  duration_ms: 296.747032
+  ...
+# Subtest: factory import remains unbound
+ok 13 - factory import remains unbound
+  ---
+  duration_ms: 349.205295
+  ...
+# Subtest: Stripe webhook isolates exact Neomorphic abandonment from fulfillment
+    # Subtest: expired unpaid exact-link session emits one bounded operator notice
+    ok 1 - expired unpaid exact-link session emits one bounded operator notice
+      ---
+      duration_ms: 16.413052
+      ...
+    # Subtest: optional buyer and target context is omitted when absent
+    ok 2 - optional buyer and target context is omitted when absent
+      ---
+      duration_ms: 3.188231
+      ...
+    # Subtest: foreign Payment Link
+    ok 3 - foreign Payment Link
+      ---
+      duration_ms: 2.370633
+      ...
+    # Subtest: missing finding
+    ok 4 - missing finding
+      ---
+      duration_ms: 1.859803
+      ...
+    # Subtest: regex-valid unknown finding
+    ok 5 - regex-valid unknown finding
+      ---
+      duration_ms: 2.061322
+      ...
+    # Subtest: malformed finding
+    ok 6 - malformed finding
+      ---
+      duration_ms: 1.804901
+      ...
+    # Subtest: array finding
+    ok 7 - array finding
+      ---
+      duration_ms: 1.745835
+      ...
+    # Subtest: non-string finding
+    ok 8 - non-string finding
+      ---
+      duration_ms: 1.687192
+      ...
+    # Subtest: wrong amount
+    ok 9 - wrong amount
+      ---
+      duration_ms: 3.088441
+      ...
+    # Subtest: wrong currency
+    ok 10 - wrong currency
+      ---
+      duration_ms: 3.269245
+      ...
+    # Subtest: paid expired state
+    ok 11 - paid expired state
+      ---
+      duration_ms: 1.345441
+      ...
+    # Subtest: expired event with non-expired state
+    ok 12 - expired event with non-expired state
+      ---
+      duration_ms: 1.374883
+      ...
+    # Subtest: unpaid non-expired event remains ignored
+    ok 13 - unpaid non-expired event remains ignored
+      ---
+      duration_ms: 1.477098
+      ...
+    # Subtest: bad signature rejects an otherwise attributed expired session
+    ok 14 - bad signature rejects an otherwise attributed expired session
+      ---
+      duration_ms: 2.112936
+      ...
+    1..14
+ok 14 - Stripe webhook isolates exact Neomorphic abandonment from fulfillment
+  ---
+  duration_ms: 52.272407
+  ...
+# Subtest: Stripe webhook admits only an exact paid Neomorphic seller-repair attribution
+    # Subtest: completed session preserves the finding and operator handoff context
+    ok 1 - completed session preserves the finding and operator handoff context
+      ---
+      duration_ms: 4.923911
+      ...
+    # Subtest: delayed-payment success uses the same attributed notification
+    ok 2 - delayed-payment success uses the same attributed notification
+      ---
+      duration_ms: 1.858719
+      ...
+    # Subtest: attributed notification still records a missing PaymentIntent explicitly
+    ok 3 - attributed notification still records a missing PaymentIntent explicitly
+      ---
+      duration_ms: 1.343596
+      ...
+    # Subtest: unpaid session
+    ok 4 - unpaid session
+      ---
+      duration_ms: 1.332987
+      ...
+    # Subtest: incomplete session
+    ok 5 - incomplete session
+      ---
+      duration_ms: 1.386799
+      ...
+    # Subtest: wrong amount
+    ok 6 - wrong amount
+      ---
+      duration_ms: 1.670809
+      ...
+    # Subtest: wrong currency
+    ok 7 - wrong currency
+      ---
+      duration_ms: 1.504103
+      ...
+    # Subtest: foreign Payment Link
+    ok 8 - foreign Payment Link
+      ---
+      duration_ms: 1.479747
+      ...
+    # Subtest: absent reference
+    ok 9 - absent reference
+      ---
+      duration_ms: 1.364337
+      ...
+    # Subtest: regex-valid unknown finding
+    ok 10 - regex-valid unknown finding
+      ---
+      duration_ms: 1.411352
+      ...
+    # Subtest: malformed finding
+    ok 11 - malformed finding
+      ---
+      duration_ms: 1.649189
+      ...
+    # Subtest: duplicate-reference input
+    ok 12 - duplicate-reference input
+      ---
+      duration_ms: 2.022647
+      ...
+    # Subtest: unsupported Checkout event type is ignored even if its fields look paid
+    ok 13 - unsupported Checkout event type is ignored even if its fields look paid
+      ---
+      duration_ms: 1.377512
+      ...
+    # Subtest: account-backed metadata fulfillment remains authoritative
+    ok 14 - account-backed metadata fulfillment remains authoritative
+      ---
+      duration_ms: 3.318525
+      ...
+    # Subtest: payment_intent.succeeded fulfillment remains unchanged
+    ok 15 - payment_intent.succeeded fulfillment remains unchanged
+      ---
+      duration_ms: 1.288461
+      ...
+    # Subtest: generic Payment Link notification remains generic
+    ok 16 - generic Payment Link notification remains generic
+      ---
+      duration_ms: 1.339014
+      ...
+    # Subtest: bad webhook signature is rejected at the existing boundary
+    ok 17 - bad webhook signature is rejected at the existing boundary
+      ---
+      duration_ms: 1.510874
+      ...
+    1..17
+ok 15 - Stripe webhook admits only an exact paid Neomorphic seller-repair attribution
+  ---
+  duration_ms: 33.808945
+  ...
+# Subtest: absent Neomorphic Link configuration defaults to generic handling
+ok 16 - absent Neomorphic Link configuration defaults to generic handling
+  ---
+  duration_ms: 4.17242
+  ...
+# Subtest: SPA history authority is the explicit App.tsx list, not any extensionless string
+ok 17 - SPA history authority is the explicit App.tsx list, not any extensionless string
+  ---
+  duration_ms: 1.661651
+  ...
+# Subtest: production-like static + fallback 200s declared React routes, 404s unknown HTML with SPA body, and plain-404s machine paths
+ok 18 - production-like static + fallback 200s declared React routes, 404s unknown HTML with SPA body, and plain-404s machine paths
+  ---
+  duration_ms: 46.605698
+  ...
+1..18
+# tests 49
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4355.501304

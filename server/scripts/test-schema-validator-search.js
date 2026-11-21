@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -27,10 +28,16 @@ test("the experiment preserves the route, offer, and client-only behavior", asyn
     html,
     /<link rel="canonical" href="https:\/\/samedaydesk\.com\/tools\/schema-validator\.html" \/>/,
   );
-  assert.match(html, /<strong>Fix Pack \(\$39\)<\/strong>/);
+  const historical = execFileSync("git", ["show", "46d8ff535e56dd461828fe2d8b38d1f8c7f5e73b:client/public/tools/schema-validator.html"], { encoding: "utf8" });
+  assert.match(historical, /<strong>Fix Pack \(\$39\)<\/strong>/);
+  assert.match(html, /<strong>Fix Pack \(39 USD\)<\/strong>/);
+  assert.match(
+    historical,
+    /href="https:\/\/buy\.stripe\.com\/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · \$39<\/a>/,
+  );
   assert.match(
     html,
-    /href="https:\/\/buy\.stripe\.com\/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · \$39<\/a>/,
+    /href="https:\/\/buy\.stripe\.com\/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · 39 USD<\/a>/,
   );
   assert.doesNotMatch(html, /\bfetch\s*\(/);
   assert.doesNotMatch(html, /XMLHttpRequest/);

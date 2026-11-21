@@ -1,0 +1,7 @@
+{
+  "id": "replace-with-tenant-id",
+  "token": "REPLACE_WITH_32_RANDOM_BYTES_BASE64URL",
+  "readerToken": "REPLACE_WITH_DISTINCT_32_RANDOM_BYTES_BASE64URL",
+  "plan": "free",
+  "entitlementUntil": "REPLACE_WITH_FINITE_ISO_8601_UTC_EXPIRY"
+}

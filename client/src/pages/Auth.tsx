@@ -5,6 +5,7 @@ import { useAuth } from "../lib/auth";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Auth.module.css";
+import { journey } from "../lib/journey";
 
 export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [params] = useSearchParams();
@@ -28,17 +29,19 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
   }, [loading, user]);
 
   async function google() {
+    journey("sign_in_started", { state: mode });
     setError(null);
     setBusy(true);
     try {
       const sb = await getSupabase();
-      if (!sb) throw new Error("Auth isn't configured in this environment yet.");
+      if (!sb) throw new Error("Sign-in could not open. Please try again.");
       const { error } = await sb.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}${dest()}` },
       });
       if (error) throw error; // on success the browser redirects to Google
     } catch (err) {
+      journey("sign_in_failed", { state: mode });
       setError(err instanceof Error ? err.message : "Could not start Google sign-in.");
       setBusy(false);
     }
@@ -46,17 +49,19 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    journey("sign_in_started", { state: mode });
     setError(null);
     setNotice(null);
     setBusy(true);
     try {
       const sb = await getSupabase();
-      if (!sb) throw new Error("Auth isn't configured in this environment yet.");
+      if (!sb) throw new Error("Sign-in could not open. Please try again.");
       const { data, error } =
         mode === "signup"
           ? await sb.auth.signUp({ email, password })
           : await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      journey("sign_in_completed", { state: mode });
       track(mode === "signup" ? "signup_completed" : "login", { offer: offerSlug });
       if (mode === "signup" && data.session) {
         authedFetch("/api/auth/welcome", { method: "POST" }).catch(() => {}); // best-effort
@@ -64,6 +69,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
       if (data.session) navigate(dest(), { replace: true });
       else setNotice("Almost there. Check your email to confirm your account.");
     } catch (err) {
+      journey("sign_in_failed", { state: mode });
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setBusy(false);
@@ -87,7 +93,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
         {offer && (
           <p className={styles.intent}>
-            You're starting <strong>{offer.name}</strong> · <span className="mono lime">${offer.price}</span>
+            You're starting <strong>{offer.name}</strong> · <span className="mono lime">{offer.price} USD</span>
           </p>
         )}
 
@@ -103,7 +109,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
         <div className={styles.divider}><span>or</span></div>
 
-        <form className={styles.form} onSubmit={submit} noValidate>
+        <form className={styles.form} onSubmit={submit}>
           <label className={styles.field}>
             <span>Email</span>
             <input
@@ -130,7 +136,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
           {error && <p className={styles.error} role="alert">{error}</p>}
           {notice && <p className={styles.notice} role="status">{notice}</p>}
-          {!isAuthConfigured() && <p className={styles.error}>Auth isn't configured in this environment.</p>}
+          {!isAuthConfigured() && <p className={styles.error}>Sign-in could not open. Please try again.</p>}
 
           <button className={styles.submit} disabled={busy} type="submit">
             {busy ? "One sec…" : mode === "signup" ? "Create account" : "Sign in"}

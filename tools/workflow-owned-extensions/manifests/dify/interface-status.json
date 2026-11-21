@@ -1,0 +1,19 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-interface.v1",
+  "id": "dify-result-reuse",
+  "version": "0.1.0",
+  "runtime": "dify",
+  "kind": "workflow_runtime_embedding",
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "authorOwnership": "workflow_author",
+  "installationStatus": "source_only_not_installed",
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "tools": [
+    "preview_reuse",
+    "export_reuse",
+    "decide_or_reuse"
+  ]
+}

@@ -20,7 +20,7 @@
 ]}
 </script>
 <style>
-  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --ok:#1c7c4a; --bad:#9e3b2e; --warn:#9a6b00; }
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --ok:#186d41; --bad:#9e3b2e; --warn:#9a6b00; }
   * { box-sizing:border-box; } html { background:var(--bg); }
   body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.6 Inter,system-ui,-apple-system,sans-serif; }
   .wrap { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
@@ -51,7 +51,7 @@
   <h1>Free JSON-LD Validator &amp; Schema Checker</h1>
   <p class="lead">Paste JSON-LD to catch invalid JSON, missing <code>@context</code> or <code>@type</code>, and missing recommended fields for common Schema.org types. The check runs in your browser. Free, no signup.</p>
 
-  <label>Your JSON-LD (paste the contents of your <code>&lt;script type="application/ld+json"&gt;</code> block)</label>
+  <label for="src">Your JSON-LD (paste the contents of your <code>&lt;script type="application/ld+json"&gt;</code> block)</label>
   <textarea id="src" rows="10" placeholder='{&#10;  "@context": "https://schema.org",&#10;  "@type": "Organization",&#10;  "name": "Acme Inc.",&#10;  "url": "https://acme.com"&#10;}'></textarea>
   <button class="act" id="run" type="button">Check JSON-LD</button>
 
@@ -59,8 +59,8 @@
 
   <div class="cta">
     <h2>Want valid structured data installed on your real pages?</h2>
-    <p>The <strong>Fix Pack ($39)</strong> ships correct JSON-LD for your actual site (Organization, plus Product/FAQ/LocalBusiness as relevant), a crawler-welcoming <code>robots.txt</code>, a sitemap, and clean meta/Open Graph tags, delivered today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
-    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <p>The <strong>Fix Pack (39 USD)</strong> ships correct JSON-LD for your actual site (Organization, plus Product/FAQ/LocalBusiness as relevant), a crawler-welcoming <code>robots.txt</code>, a sitemap, and clean meta/Open Graph tags. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · 39 USD</a>
     <a class="btn2" href="https://samedaydesk.com/tools/schema-generator.html">Generate schema</a>
   </div>
 

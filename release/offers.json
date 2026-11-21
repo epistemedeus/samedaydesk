@@ -1,0 +1,90 @@
+{
+  "site": "samedaydesk.com",
+  "lane": "SDS",
+  "stripeVersion": "2026-11-18.endive",
+  "port": 31871,
+  "webhookPath": "/api/stripe/webhook",
+  "events": [
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "checkout.session.async_payment_failed",
+    "checkout.session.expired",
+    "invoice.paid",
+    "invoice.payment_failed",
+    "customer.subscription.created",
+    "customer.subscription.updated",
+    "customer.subscription.deleted",
+    "charge.refunded",
+    "charge.dispute.created",
+    "radar.early_fraud_warning.created",
+    "payment_intent.succeeded",
+    "payment_intent.payment_failed"
+  ],
+  "offers": [
+    {
+      "id": "agent_front_door",
+      "offer": "agent_front_door",
+      "name": "One line for your customers' AI",
+      "cents": 24900,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/care/buy?offer=agent_front_door",
+      "endpoint": "POST /api/care/checkout"
+    },
+    {
+      "id": "machine_payment_route",
+      "offer": "machine_payment_route",
+      "name": "Get paid by AI agents",
+      "cents": 49900,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/care/buy?offer=machine_payment_route",
+      "endpoint": "POST /api/care/checkout"
+    },
+    {
+      "id": "agent_storefront",
+      "offer": "agent_storefront",
+      "name": "A shop AI agents can buy from",
+      "cents": 99900,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/care/buy?offer=agent_storefront",
+      "endpoint": "POST /api/care/checkout"
+    },
+    {
+      "id": "keep_it_working",
+      "offer": "keep_it_working",
+      "name": "Keep it working",
+      "cents": 10000,
+      "currency": "usd",
+      "mode": "subscription",
+      "interval": "month",
+      "entry": "/care/buy?offer=keep_it_working",
+      "endpoint": "POST /api/care/checkout",
+      "note": "Recurring: the lane adds one renewal through a test clock and one cancellation (16 \u00a73 C2)."
+    }
+  ],
+  "notInHarnessYet": [
+    {
+      "id": "task_quote",
+      "name": "Fixed quote for a requested task",
+      "cents": "set per quote",
+      "entry": "one-use Stripe payment link from server/scripts/issue-task-quote.mjs",
+      "why": "operator-issued link, no site checkout call; the lane adds an adapter case"
+    },
+    {
+      "id": "seller_conformance_report",
+      "name": "x402 seller report",
+      "cents": 49000,
+      "entry": "the report button, SDS_TEST_SELLER_CONFORMANCE_LINK in preview",
+      "why": "Stripe payment link; the lane adds an adapter case"
+    },
+    {
+      "id": "account_checkout",
+      "name": "Account checkout (/checkout)",
+      "cents": "per product",
+      "entry": "/checkout",
+      "why": "PaymentIntent fulfilment (server/lib/fulfill.js); the lane maps each product and adds it"
+    }
+  ]
+}

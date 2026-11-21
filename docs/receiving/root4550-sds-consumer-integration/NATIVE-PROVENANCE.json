@@ -1,0 +1,170 @@
+{
+  "root4550-sds-consumer-integration-20261023": {
+    "SPEC.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4550-sds-consumer-integration-20261023/SPEC.json",
+      "sha256": "0affff23acb01e7adfba9ab973c98af36b29dbef0712d67ea558657afd26da5f"
+    },
+    "RUN.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4550-sds-consumer-integration-20261023/RUN.json",
+      "sha256": "fd7a406e0b8b27175e591cca0920ce8cf934e81e39ad361cac92576ca7bad26d"
+    },
+    "nativeContext": {
+      "id": "ROOT-SOL-ROOT4550-261023",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "source": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+      "branch": "codex/root4550-sds-consumer-integration-20261023",
+      "state": "running",
+      "pid": 576692,
+      "nativeSessionId": null,
+      "nativeProcessReceipt": "/home/ubuntu/root-sol-window100337/root4550-sds-consumer-integration-20261023/admissions/e9eff0da-0436-4a7e-9281-df28f9e7a10a/NATIVE.json",
+      "startedAt": "2026-10-23T11:17:08.490Z",
+      "jobKiB": 4194304
+    },
+    "admissions/e9eff0da-0436-4a7e-9281-df28f9e7a10a/NATIVE.json": {
+      "sha256": "a0c7178fccb436f962a8975a0051b78b25e7d7ee934521e35277292f21197fcf",
+      "receipt": {
+        "schema": "pilot.native-sol-termination.v1",
+        "binding": "dcd355f9d036c0b45debf3c8f299738cceaf428673daa35da066bd014bdb3ada",
+        "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+        "supervisor": {
+          "pid": 576692,
+          "startTime": 11045201
+        },
+        "native": {
+          "pid": 576693,
+          "startTime": 11045205
+        }
+      }
+    }
+  },
+  "root4431-monitor-contract-20261023": {
+    "SPEC.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4431-monitor-contract-20261023/SPEC.json",
+      "sha256": "19ac415e8bcb05cb75fbec4169187f116317c535cb66bfe00a1022e2df34c9b2"
+    },
+    "RUN.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4431-monitor-contract-20261023/RUN.json",
+      "sha256": "8aa79c4887a5d2745eec1ae2a3c5a7ca00256c519e83fa8916c7e130303dc9e6"
+    },
+    "nativeContext": {
+      "id": "ROOT-SOL-ROOT4431-261023",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "source": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+      "branch": "codex/root4431-monitor-contract-20261023",
+      "state": "terminal",
+      "pid": 558264,
+      "nativeSessionId": null,
+      "nativeProcessReceipt": "/home/ubuntu/root-sol-window100337/root4431-monitor-contract-20261023/admissions/414ad8ee-7370-438d-9861-eb234c5845a2/NATIVE.json",
+      "startedAt": "2026-10-23T10:01:13.543Z",
+      "jobKiB": 2097152
+    },
+    "RESULT.md": {
+      "path": "/home/ubuntu/root-sol-window100337/root4431-monitor-contract-20261023/RESULT.md",
+      "sha256": "a0cf805288802345e777130301e98154589257d04afca99973aab061f23781e2"
+    },
+    "admissions/414ad8ee-7370-438d-9861-eb234c5845a2/NATIVE.json": {
+      "sha256": "e9ea095b01d3d2e632d8c5fabfa7d1735a4f500eb4904dc0aae96ce1b50bc33f",
+      "receipt": {
+        "schema": "pilot.native-sol-termination.v1",
+        "binding": "1b75d54fc50429d1e2d2670a964938cb8219379ea97aff16e0c94c04d6bffb82",
+        "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+        "supervisor": {
+          "pid": 558252,
+          "startTime": 10589707
+        },
+        "native": {
+          "pid": 558264,
+          "startTime": 10589709
+        }
+      }
+    }
+  },
+  "root4432-requester-proposals-20261023": {
+    "SPEC.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4432-requester-proposals-20261023/SPEC.json",
+      "sha256": "b1c6546cb4fb63c5574b3f714752488cfa18b640a4fabc726d7992044bbdf296"
+    },
+    "RUN.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4432-requester-proposals-20261023/RUN.json",
+      "sha256": "cfaf830a56f65ebf277d773b3128a8485417be3c399b5cd4011b279da742b0e1"
+    },
+    "nativeContext": {
+      "id": "ROOT-SOL-ROOT4432-261023",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "source": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+      "branch": "codex/root4432-requester-proposals-20261023",
+      "state": "terminal",
+      "pid": 559096,
+      "nativeSessionId": null,
+      "nativeProcessReceipt": "/home/ubuntu/root-sol-window100337/root4432-requester-proposals-20261023/admissions/9bd2f591-b606-4aab-87c7-d3df74ed5e9e/NATIVE.json",
+      "startedAt": "2026-10-23T10:01:13.883Z",
+      "jobKiB": 2097152
+    },
+    "RESULT.md": {
+      "path": "/home/ubuntu/root-sol-window100337/root4432-requester-proposals-20261023/RESULT.md",
+      "sha256": "6d82feac9b38386ae58647fdcb36ba4f44bc263ca2467090a5201571f88c568a"
+    },
+    "admissions/9bd2f591-b606-4aab-87c7-d3df74ed5e9e/NATIVE.json": {
+      "sha256": "82ff8c60651c26d475ea70b147635b10f97b775dc9bcf9e68f6c37eb776b951e",
+      "receipt": {
+        "schema": "pilot.native-sol-termination.v1",
+        "binding": "6d2d88e14386ee14901db4711b076c67be6e21cc921898ab78afd41e5fd9891b",
+        "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+        "supervisor": {
+          "pid": 559015,
+          "startTime": 10589743
+        },
+        "native": {
+          "pid": 559096,
+          "startTime": 10589746
+        }
+      }
+    }
+  },
+  "root4433-future-wallet-binding-20261023": {
+    "SPEC.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4433-future-wallet-binding-20261023/SPEC.json",
+      "sha256": "4b8bb8af14408797f04729179198a79e764010c116ce79f24645ea19a4c6642e"
+    },
+    "RUN.json": {
+      "path": "/home/ubuntu/root-sol-window100337/root4433-future-wallet-binding-20261023/RUN.json",
+      "sha256": "ede5e5d1cdb944776fec3742d038ea8a83cfb7c6a273b9e39ae4e9bd1779627f"
+    },
+    "nativeContext": {
+      "id": "ROOT-SOL-ROOT4433-261023",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "source": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+      "branch": "codex/root4433-future-wallet-binding-20261023",
+      "state": "terminal",
+      "pid": 558254,
+      "nativeSessionId": null,
+      "nativeProcessReceipt": "/home/ubuntu/root-sol-window100337/root4433-future-wallet-binding-20261023/admissions/a743a225-d7c2-4427-afc8-304c95e384bd/NATIVE.json",
+      "startedAt": "2026-10-23T10:01:13.520Z",
+      "jobKiB": 2097152
+    },
+    "RESULT.md": {
+      "path": "/home/ubuntu/root-sol-window100337/root4433-future-wallet-binding-20261023/RESULT.md",
+      "sha256": "a5544d096acb0fa3d0e16cb48852a83045271ade37006862e424637a60a03de9"
+    },
+    "admissions/a743a225-d7c2-4427-afc8-304c95e384bd/NATIVE.json": {
+      "sha256": "4d3394a712ec9e4843b7fbad93582e99ee767a74b2a433f400c41b8c8ac14606",
+      "receipt": {
+        "schema": "pilot.native-sol-termination.v1",
+        "binding": "94cabe6d75b06b1c96db4e30052cbed10f4078d0ecac9748cc6d6785d63ca0ea",
+        "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+        "supervisor": {
+          "pid": 558246,
+          "startTime": 10589706
+        },
+        "native": {
+          "pid": 558254,
+          "startTime": 10589708
+        }
+      }
+    }
+  }
+}

@@ -39,6 +39,7 @@ export async function withoutHostUtilities(args, { fresh = false, timeoutMs = 18
     return await runBounded("/usr/bin/unshare", ["--user", "--map-current-user", "--keep-caps", "--mount", "--",
       path.join(tools, "sh"), "-c", script, "namespace", tools, fresh ? "fresh" : "existing", directory, execution, process.execPath, ...args],
     { cwd: root, env: { PATH: `${tools}:${path.dirname(process.execPath)}`, HOME: directory, LANG: "C", LC_ALL: "C",
+      PULSE_PG_BIN: process.env.PULSE_PG_BIN,
       FOUNDRY_CPYTHON_TARBALL: "/tmp/cpython-standalone.tar.gz" }, capture: true, stdoutLimit: 512000,
       outputLimit: 2 * 1024 * 1024, timeoutMs });
   } finally { await rm(directory, { recursive: true, force: true }); }

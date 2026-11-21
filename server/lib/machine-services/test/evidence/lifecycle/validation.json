@@ -1,0 +1,106 @@
+{
+  "schema": "sds.machine-services.lifecycle-validation.v1",
+  "branch": "codex/ae18-host-integration-243001",
+  "receivedExport": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+  "receivedTestedImplementation": "cc85b7b59a46605090049be06431eebb7c873c24",
+  "implementationHead": "ab0a7752780995421da5752d9d6811d56e6d3891",
+  "failingFirst": {
+    "head": "a7c5490b08e589b7c610abf116be70166b6daf82",
+    "runtimeHead": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "controlsCommit": "a7c5490b08e589b7c610abf116be70166b6daf82",
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/lib/machine-services/test/lifecycle.test.mjs",
+    "tests": 18,
+    "pass": 12,
+    "fail": 6,
+    "evidence": "before.tap"
+  },
+  "owningCommands": [
+    {
+      "command": "npm run test:machine-services",
+      "tests": 63,
+      "pass": 63,
+      "pgIntegrationTests": 35,
+      "controlledLifecycleTests": 28,
+      "evidence": "machine.tap"
+    },
+    {
+      "command": "npm run test:machine-services:sqlite",
+      "tests": 95,
+      "pass": 95,
+      "evidence": "sqlite.tap"
+    },
+    {
+      "command": "npm run test:machine-services:regression",
+      "tests": 49,
+      "pass": 49,
+      "evidence": "regression.tap"
+    }
+  ],
+  "lock": "npm scripts acquire existing shared flock themselves; cold script uses one parent acquisition and direct node commands",
+  "coldExactSource": {
+    "head": "ab0a7752780995421da5752d9d6811d56e6d3891",
+    "sourceExport": "git archive ab0a7752780995421da5752d9d6811d56e6d3891",
+    "install": "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --offline",
+    "tests": 207,
+    "pass": 207,
+    "fixture": "owned disposable PostgreSQL 16, actual verify-full TLS, fresh CA, no production environment",
+    "receipt": "cold-source.json"
+  },
+  "observedLocal": [
+    "real TLS mounted HTTP concurrent first failure (actual PostgreSQL SQLSTATE 57P03) -> later caller -> useful free execution -> cold restart -> same receipt and one call",
+    "real TLS readiness failure -> one autonomous recovery -> persisted due work without another caller/arm; one successful monitor store",
+    "real TLS initial due-plan failure -> autonomous scheduled due work using the same successful store",
+    "real TLS committed monitor mutation remains acknowledged while scheduler-plan failure recovers and subsequent pause persists",
+    "cold useful free gateway CLI/replay and changing local HTTP monitor source -> event -> poll/duplicate ack -> cold app restart durable readback",
+    "all repaired upstream SQLite suites and retained runtime regressions passed from exact cold source"
+  ],
+  "controlledFixtures": [
+    "concurrent failed first open; one replacement active store; fixed public service errors",
+    "bounded 1/2/4/8/16/30-second attempts including repeated caller/arm pressure; no idle polling",
+    "initial/automatic/explicit/mutation planning and tick failure share recovery; no overlapping old/new ticks",
+    "close during opening, initialization/backoff, initial/automatic asynchronous planning and in-flight work; abort signal; no rearming; each store closed once even if another close fails",
+    "old tick completion cannot erase a permanent plan refusal; original connection failure survives failed cleanup",
+    "disabled/invalid/TLS/auth/schema/permanent modes do not retry; other API stays independent",
+    "synthetic authoritative 59-value environment baseline preserves every value and exact rollback"
+  ],
+  "notObservedHere": [
+    "private Hostinger installation/hostname",
+    "retained private 59-value environment payload",
+    "retained Supabase serving/recovery latency",
+    "paid rail qualification or payment movement"
+  ],
+  "priorReceiptsAndArchivesUnchanged": true,
+  "databaseAdapter": "postgres",
+  "nativeSqlite": "local bounded tests only",
+  "schemasEnvironmentAndDependenciesChanged": false,
+  "deployed": false,
+  "paymentsEnabled": false,
+  "package": {
+    "path": "/tmp/sds-ae18-lifecycle-ab0a7752-source.tgz",
+    "sha256": "be07725cd176f84ab0d49cd87d4b36d04f153a1d3679458c4edb69ad0af3dc32",
+    "bytes": 413442,
+    "patchSha256": "1dc564b671a7b347c5056aa643f60cfcbcf15f5509f4b2d816a5a180350a9efe"
+  },
+  "rollback": {
+    "head": "6440afe6c568fedc9425cda724aac2c4ce353b6d",
+    "disableFirst": "deploy/rollback.json",
+    "retainSchemasAndReceipts": true,
+    "preserveCompleteEnvironment": true
+  },
+  "evidenceSha256": {
+    "before.tap": "08f86fff41c97ee1d3384ac9487fca5b9156dfe3946727a3db076643d444a698",
+    "cold-install.log": "69fdc497093f6cd9fea696b3985f8e7db188d5d710ba907dcdc5fe7086be2841",
+    "cold-machine.tap": "bf06d3a8c00a3334c6e28f385843fce265533a8ac5f52d4c710676f594946a36",
+    "cold-regression.tap": "1999aa105f42315a059cbd7558b239dfa58641f50a0fc175f23d76f1a3cefff9",
+    "cold-source-verify.py": "debc68e01bf4e1d02edff466c3c34e8bfc2a1876bdd43c55a29b0662ff3f2fd7",
+    "cold-source.json": "d668a4dbc234e845c0c5bf7c546ae081fba90e541477d1a5bdceb4044819683e",
+    "cold-sqlite.tap": "e24992ba76aec083e04a81ae0a7720ebf735585ec85abc547d244d862669e201",
+    "controlled-after.tap": "4e651fb5f2deeeb8bf30ef926a5cb61ed5a70fdf77c65a5c4135ac4ed077cfae",
+    "machine.tap": "602ccddb90bc43dfabdae10de40210e95c03b48b51f427e5dce9605dfb414b16",
+    "regression.tap": "1dab0cf67a506bc4c95374a12f995d3126be2cca176a72fa337040c0f8d77da4",
+    "source.patch.gz": "d4d90a4ad197053fe313ddff8c8459674235ebf95b1c88882663ad44cfc2b8e7",
+    "sqlite.tap": "6ebd7b79a9cfeb6c762fb819f1f0f458c717d7ef4e859043d879209702468ae2",
+    "package-verification.json": "008d2a3d6845ab27422a22e7c3f43b3d5f59b2664ee58cb873b7a7e37d9ef37c"
+  },
+  "packageByteVerification": "package-verification.json"
+}

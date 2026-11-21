@@ -648,3 +648,101 @@ test("declaration GET is not a human page view, a tool attempt, or usefulness", 
   assert.equal(JSON.stringify(toolCall.after).includes("secret-deliverable-should-not-be-stored"), false);
   assert.match(toolCall.after.mcpProtocol.meaning, /Not unique agents/i);
 });
+
+test("pulse aggregate reads fail closed unless PULSE_TOKEN is configured", async (t) => {
+  const priorToken = Object.hasOwn(process.env, "PULSE_TOKEN") ? process.env.PULSE_TOKEN : undefined;
+  t.after(() => {
+    if (priorToken === undefined) delete process.env.PULSE_TOKEN;
+    else process.env.PULSE_TOKEN = priorToken;
+  });
+
+  const app = express();
+  app.use(express.json());
+  app.use("/api/pulse", pulseRouter);
+  const server = await new Promise((resolve) => {
+    const listening = app.listen(0, "127.0.0.1", () => resolve(listening));
+  });
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const address = server.address();
+  assert.equal(typeof address, "object");
+  const base = `http://127.0.0.1:${address.port}/api/pulse`;
+  const configured = "configured-pulse-read-test-token-32";
+  assert.ok(configured.length >= 32);
+
+  async function read(path) {
+    const response = await fetch(`${base}${path}`);
+    const body = await response.json();
+    return {
+      status: response.status,
+      body,
+      cache: response.headers.get("cache-control"),
+    };
+  }
+
+  async function expectUnconfigured(path) {
+    const result = await read(path);
+    assert.equal(result.status, 503);
+    assert.deepEqual(result.body, { error: "Pulse read unconfigured" });
+    assert.equal(Object.hasOwn(result.body, "classificationSchemaVersion"), false);
+    assert.equal(result.cache, "no-store");
+  }
+
+  delete process.env.PULSE_TOKEN;
+  await expectUnconfigured("");
+  await expectUnconfigured("?k=supplied-query-token");
+
+  process.env.PULSE_TOKEN = "";
+  await expectUnconfigured("");
+
+  process.env.PULSE_TOKEN = "   ";
+  await expectUnconfigured("");
+
+  const shortToken = "short-token-15c";
+  assert.equal(shortToken.length, 15);
+  process.env.PULSE_TOKEN = shortToken;
+  await expectUnconfigured("");
+
+  delete process.env.PULSE_TOKEN;
+  const write = await fetch(`${base}/event`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "seller_repair_brief_viewed",
+      props: {
+        finding_id: "hypernatt-liq-radar-20260830",
+        route_class: "paid_get",
+      },
+    }),
+  });
+  assert.equal(write.status, 204);
+
+  process.env.PULSE_TOKEN = configured;
+  const matched = await read(`?k=${encodeURIComponent(configured)}`);
+  assert.equal(matched.status, 200);
+  assert.equal(Object.hasOwn(matched.body, "classificationSchemaVersion"), true);
+  assert.equal(matched.cache, "no-store");
+
+  const missing = await read("");
+  assert.equal(missing.status, 404);
+  assert.deepEqual(missing.body, { error: "Not found" });
+
+  const sameLength = `${configured.slice(0, -1)}9`;
+  assert.equal(sameLength.length, configured.length);
+  assert.notEqual(sameLength, configured);
+  const wrongSame = await read(`?k=${encodeURIComponent(sameLength)}`);
+  assert.equal(wrongSame.status, 404);
+  assert.deepEqual(wrongSame.body, { error: "Not found" });
+
+  const wrongLength = await read(`?k=${encodeURIComponent(`${configured}x`)}`);
+  assert.equal(wrongLength.status, 404);
+  assert.deepEqual(wrongLength.body, { error: "Not found" });
+
+  const duplicate = await read(`?k=${encodeURIComponent(configured)}&k=${encodeURIComponent(configured)}`);
+  assert.equal(duplicate.status, 404);
+  assert.deepEqual(duplicate.body, { error: "Not found" });
+});
+
+test("pulse route source does not default PULSE_TOKEN", () => {
+  const source = readFileSync(new URL("../routes/pulse.js", import.meta.url), "utf8");
+  assert.equal(/PULSE_TOKEN\s*(\|\||\?\?)/.test(source), false);
+});

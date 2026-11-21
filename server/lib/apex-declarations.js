@@ -1,23 +1,74 @@
 // Apex machine declarations. Generated from the mounted MCP inventory and the
 // HTTP routes this process actually serves. Paid gateway documents stay on
-// agents.samedaydesk.com; this module only links the live canonical URLs.
+// agents.samedaydesk.com; canonical links do not establish availability.
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
+import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
+import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
+import { publicAcceptedWork, queryKeyDiscovery, queryKeyDiscoveryMarkdown } from "./query-key-discovery.mjs";
+import { indexWithStartGuide, START_GUIDE_LINK, START_GUIDE_PATH, startGuideMarkdown } from "./start-guide.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
+import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
 import {
   AGENT_READINESS_RATE_LIMIT_DEFAULT,
   AGENT_READINESS_RATE_WINDOW_MS_DEFAULT,
 } from "./agent-readiness/rate-limit.js";
 import { publicDeploymentBody } from "./public-readiness-mount.js";
 import { buildTaskMarketDelegationPlan } from "./taskmarket.js";
+import { parseNetworkInfo } from "./taskmarket-networks.js";
 import { SERVER_INFO, SUPPORTED_PROTOCOL_VERSIONS, TOOLS } from "../routes/mcp.js";
 import { MCP_BATCH_MIN, MCP_BATCH_MAX, MCP_BATCH_PROTOCOL_VERSIONS, MCP_BODY_LIMIT, rpcMessageSchema, rpcIdSchema, rpcBatchSchema } from "./mcp-admission.js";
 
 export const PAID_ORIGIN = "https://agents.samedaydesk.com";
 
-// Live canonical paid documents observed with anonymous GET on 2026-10-04.
+const DOCUMENTATION_READINESS_PATH = `/agent-readiness?host=example.com&format=${DOCUMENTATION_READINESS_FORMAT}`;
+const DOCUMENTATION_READINESS_RESPONSE = {
+  type: "object",
+  required: ["schema", "host", "origin", "free", "generatedAt", "checks", "topFixes", "evidence"],
+  not: { required: ["score"] },
+  properties: {
+    schema: { const: DOCUMENTATION_READINESS_SCHEMA },
+    host: { type: "string" },
+    origin: { type: "string" },
+    free: { const: true },
+    generatedAt: { type: "string", format: "date-time" },
+    checks: { type: "array", items: {
+      type: "object", required: ["id", "status", "reason"], properties: {
+        id: { type: "string" }, status: { enum: ["pass", "warn", "fail", "unknown"] },
+        reason: { type: "string" }, fix: { type: "string" },
+      },
+    } },
+    nextAction: {
+      description: "Optional caller-selected read of a same-origin text alternate declared by an over-cap homepage response. The target was not verified or fetched by this check.",
+      type: "object",
+      additionalProperties: false,
+      required: ["kind", "path", "mediaTypeHint", "verified"],
+      properties: {
+        kind: { const: "read-declared-alternate" },
+        path: { type: "string", maxLength: 1024, pattern: "^/(?!/)[^\\s?#\\\\]*$", description: "Resolve this path against the report origin." },
+        mediaTypeHint: { enum: ["text/plain", "text/markdown"] },
+        verified: { const: false },
+      },
+    },
+    topFixes: { type: "array", items: {
+      type: "object", required: ["id", "fix"], properties: { id: { type: "string" }, fix: { type: "string" } },
+    } },
+    evidence: { type: "array", items: {
+      type: "object", required: ["path", "httpStatus", "outcome", "contentType"], properties: {
+        path: { type: "string" }, httpStatus: { type: ["integer", "null"] },
+        outcome: { type: "string" }, contentType: { type: ["string", "null"] },
+      },
+    } },
+  },
+};
+
+// Historical canonical paid documents observed with anonymous GET on 2026-10-04.
 // /.well-known/api-catalog on that host was HTTP 404 and is not linked.
 // Do not copy route counts, prices, or payment addresses from those bodies.
 export const PAID_GATEWAY_LINKS = Object.freeze([
+  { rel: "status", href: `${APEX_ORIGIN}/discovery/paid-gateway.json`, type: "application/json", title: "Paid gateway availability" },
   { rel: "service-desc", href: `${PAID_ORIGIN}/openapi.json`, type: "application/json", title: "Paid gateway OpenAPI" },
   { rel: "service-desc", href: `${PAID_ORIGIN}/.well-known/x402`, type: "application/json", title: "Paid gateway x402 manifest" },
   { rel: "service-doc", href: `${PAID_ORIGIN}/llms.txt`, type: "text/plain", title: "Paid gateway llms.txt" },
@@ -52,7 +103,7 @@ const TOOL_AUTHORITY = Object.freeze({
   plan_taskmarket_delegation: {
     tier: "free",
     executesPayment: false,
-    network: "none",
+    network: "taskmarket-read",
     note: "Returns an approval plan. request.executed and official_cli.executed stay false.",
   },
   browse_taskmarket_tasks: {
@@ -75,6 +126,8 @@ const TOOL_AUTHORITY = Object.freeze({
 });
 
 const PLAN_ARGUMENTS = Object.freeze({
+  chain_id: 8453,
+  token_address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   request: "Compare the public status pages and list sections that changed",
   deliverable: "A markdown list of changed sections with URLs",
   acceptance_criteria: ["Each item names the section and the URL"],
@@ -92,7 +145,9 @@ export function planToolArguments() {
 }
 
 export function planToolResult(args = PLAN_ARGUMENTS, now = PLAN_EXAMPLE_NOW) {
-  return buildTaskMarketDelegationPlan(args, now);
+  // Illustrative declaration only, never runtime metadata or a creation default.
+  const metadata = parseNetworkInfo({ result: { data: { chains: [{ chainId: 8453, networkName: "Base", tokenAddress: PLAN_ARGUMENTS.token_address, tokenSymbol: "USDC", paymentProtocol: "x402", paymentMethod: "eip3009" }] } } }, PLAN_EXAMPLE_NOW.toISOString());
+  return buildTaskMarketDelegationPlan(args, now, metadata);
 }
 
 function jsonRpc(id, method, params) {
@@ -339,34 +394,41 @@ function apexPaths(catalog, skillMarkdown) {
     "/agent-readiness": {
       get: operation({
         operationId: "check_agent_readiness",
-        summary: "Free agent-readiness score or the HTML form",
-        description: `Without format=json this returns HTML for a person. With format=json and a public host it returns the score payload. format=fix-pack returns markdown. ${rate} A missing host with format=json is HTTP 400, not a signup wall. The checks array is bounded to the fixed checker and is not paginated. The probe never calls a real tool on the target.`,
+        summary: "Free agent-readiness score or documentation discovery report",
+        description: `Use format=json for the existing score, format=${DOCUMENTATION_READINESS_FORMAT} for an unscored public homepage, sitemap and llms.txt report, or format=fix-pack for Markdown. Omit format for HTML. ${rate} The named formats require a public host; missing host is HTTP 400. No account or payment is required. The bounded checks do not call tools on the target.`,
         parameters: [
           queryParam("host", { type: "string" }, "Public host, for example example.com"),
-          queryParam("format", { type: "string", enum: ["json", "fix-pack"] }, "json or fix-pack. Omit for HTML."),
+          queryParam("format", { type: "string", enum: ["json", "fix-pack", DOCUMENTATION_READINESS_FORMAT] }, "json for a score, documentation for unscored discovery, fix-pack for Markdown. Omit for HTML."),
         ],
         responses: {
           "200": {
-            description: "JSON score when format=json. HTML when format is omitted.",
+            description: "JSON score or documentation report as selected by format. Other representations are the HTML view and Markdown fix pack.",
             content: {
               "application/json": {
-                schema: {
+                schema: { oneOf: [{
                   type: "object",
                   required: ["host", "score", "checks"],
+                  not: { required: ["schema"], properties: { schema: { const: DOCUMENTATION_READINESS_SCHEMA } } },
                   properties: {
                     host: { type: "string" },
                     score: { type: "number" },
                     checks: { type: "array", items: { type: "object" } },
                     topFixes: { type: "array", items: { type: "object" } },
                   },
+                }, DOCUMENTATION_READINESS_RESPONSE] },
+                examples: {
+                  score: { value: { host: "example.com", score: 0, free: true, checks: [], topFixes: [] } },
+                  documentation: { value: {
+                    schema: DOCUMENTATION_READINESS_SCHEMA, host: "example.com", origin: "https://example.com",
+                    free: true, generatedAt: "2026-11-08T00:00:00Z", checks: [], topFixes: [], evidence: [],
+                  } },
                 },
-                example: { host: "example.com", score: 0, free: true, checks: [], topFixes: [] },
               },
               "text/html": { schema: { type: "string" }, example: "<!doctype html><html><body>Agent readiness checker</body></html>" },
               "text/markdown": { schema: { type: "string" }, example: "# Agent readiness fix pack\n\nHost: example.com\n" },
             },
           },
-          "400": { description: "format=json or format=fix-pack without a host, or a host the checker rejects. Other formats return HTML errors.", content: readinessErrorContent({ error: "Provide a host, for example example.com" }) },
+          "400": { description: "Missing or rejected public host. The json, documentation and fix-pack modes return a JSON error; the HTML view returns HTML.", content: readinessErrorContent({ error: "Provide a host, for example example.com" }) },
           "429": {
             description: "Client key exceeded the agent-readiness rate limit. Retry-After is set.",
             headers: { "Retry-After": { schema: { type: "string" } } },
@@ -436,8 +498,8 @@ function apexPaths(catalog, skillMarkdown) {
               ),
             },
           },
-          "413": { description: `MCP parser rejects a body larger than ${MCP_BODY_LIMIT} before execution.`, content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Request body exceeds ${MCP_BODY_LIMIT}` } }) },
-          "415": { description: "Unsupported JSON charset or content encoding.", content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: "Invalid request body" } }) },
+          "413": { description: `MCP parser rejects a body larger than ${MCP_BODY_LIMIT} before execution.`, content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: `Request body exceeds ${MCP_BODY_LIMIT}. Next: send one JSON-RPC body at or below ${MCP_BODY_LIMIT}. Do not retry with a payment header.` } }) },
+          "415": { description: "Unsupported JSON charset or content encoding.", content: jsonContent({ $ref: "#/components/schemas/JsonRpcError" }, { jsonrpc: "2.0", id: null, error: { code: -32000, message: "Invalid request body. Next: send Content-Type application/json with one JSON-RPC 2.0 object. Do not send a payment header." } }) },
         },
       }),
     },
@@ -478,7 +540,7 @@ function apexPaths(catalog, skillMarkdown) {
         responses: {
           "200": {
             description: "OpenAPI 3.1 document.",
-            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk apex", version: SERVER_INFO.version }, paths: {} } } },
+            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk tools", version: SERVER_INFO.version }, paths: {} } } },
           },
         },
       }),
@@ -588,12 +650,13 @@ function apexPaths(catalog, skillMarkdown) {
   };
 }
 
-export function apexApiCatalog() {
+export function apexApiCatalog(env = process.env) {
   const apexLinks = [
     { rel: "service-desc", href: `${APEX_ORIGIN}/openapi.json`, type: "application/openapi+json", title: "Apex OpenAPI" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/skill.md`, type: "text/markdown", title: "Apex skill" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/llms.txt`, type: "text/plain", title: "Apex llms.txt" },
     { rel: "describedby", href: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`, type: "application/json", title: "Original-task help descriptor" },
+    ...(publicAcceptedWork(env) ? [{ rel: "describedby", href: QUERY_KEY_CONSUMER.acceptedWork, type: "application/json", title: "Accepted work" }] : []),
     { rel: "service-meta", href: `${APEX_ORIGIN}/.well-known/agent-card.json`, type: "application/json", title: "Apex agent card" },
     { rel: "status", href: `${APEX_ORIGIN}/mcp`, type: "text/plain", title: "Apex MCP" },
     { rel: "status", href: `${APEX_ORIGIN}/api/health`, type: "application/json", title: "Apex health" },
@@ -601,7 +664,7 @@ export function apexApiCatalog() {
   return {
     linkset: [
       linksetEntry(`${APEX_ORIGIN}/.well-known/api-catalog`, apexLinks),
-      linksetEntry(`${PAID_ORIGIN}/`, PAID_GATEWAY_LINKS),
+      linksetEntry(`${PAID_ORIGIN}/`, PAID_GATEWAY_LINKS.map((link) => ({ ...link, title: `${link.title} (${gatewayAvailability().state})` }))),
     ],
   };
 }
@@ -717,6 +780,13 @@ export function usefulNegativeExamples() {
       headers: { accept: "application/json" },
       expect: { status: 400, equals: { error: "Provide a host, for example example.com" } },
     },
+    {
+      id: "documentation_readiness_without_host",
+      method: "GET",
+      path: `/agent-readiness?format=${DOCUMENTATION_READINESS_FORMAT}`,
+      headers: { accept: "application/json" },
+      expect: { status: 400, equals: { error: "Provide a host, for example example.com" } },
+    },
   ];
 }
 
@@ -724,13 +794,27 @@ export function apexSkillMarkdown() {
   const tools = mcpToolDeclarations();
   const plan = copyableNoKeyExamples().find((example) => example.id === "plan_taskmarket_delegation");
   const lines = [
-    "# SameDayDesk apex skills",
+    "# SameDayDesk tools",
     "",
-    `Authority: these instructions describe ${APEX_ORIGIN} only.`,
-    `Paid machine commerce is a different host, ${PAID_ORIGIN}.`,
-    "Its live OpenAPI, MCP, agent card, x402 manifest, health, and action catalog are the authority for payment.",
-    "This file does not copy route counts, prices, or payment addresses.",
-    "No account signup is required for the free examples below.",
+    "Check whether your customers' AI can read your website. Free. Receive each check and the fixes.",
+    "",
+    "## First action",
+    "",
+    `Run: curl -s "${APEX_ORIGIN}/api/tools/ai-readiness?url=https://example.com"`,
+    "",
+    `For MCP, POST to ${APEX_ORIGIN}/mcp with Content-Type application/json:`,
+    "",
+    "```json",
+    JSON.stringify(jsonRpc("check-1", "tools/call", { name: "check_ai_readiness", arguments: { url: "https://example.com" } }), null, 2),
+    "```",
+    "",
+    `Open ${APEX_ORIGIN}/tools/ai-readiness to use the form. For a fixed-price build, choose your offer at ${APEX_ORIGIN}/llms.txt.`,
+    `For web data priced per call in USDC, read the current prices and payment instructions at ${PAID_ORIGIN}/llms.txt.`,
+    "",
+    "## Free documentation discovery (HTTP)",
+    "",
+    `GET \`${APEX_ORIGIN}${DOCUMENTATION_READINESS_PATH}\`. Replace example.com with the public docs host.`,
+    "Checks initial HTML, sitemap discoverability and the optional llms.txt. Returns evidence and prioritized fixes without a score. It does not follow sitemap or index entries, invoke tools, sign up, or pay. This format is HTTP-only; the MCP checker remains scored.",
     "",
     "## Protocol",
     "",
@@ -768,38 +852,34 @@ export function apexSkillMarkdown() {
     lines.push("", "Input schema:", "", "```json", JSON.stringify(tool.inputSchema, null, 2), "```", "");
   }
   lines.push(
-    "## Optional mounts",
+    "## Send one public task",
     "",
-    "`GET /api/correspondence/healthz` is enabled false unless correspondence configuration is present. A disabled body is not a mailbox.",
-    "`GET /api/hosted-useful/healthz` can be mounted while `productionReady` and `publicationVerified` stay false. That is not a working hosted consumer. Do not send job admission here.",
-    "`GET /api/public-readiness/healthz` reports the vendored checker. `publicDeployment.activated` stays false.",
-    "`GET /discovery/original-task-correspondence.json` names one public original-task client archive. Fetching it does not submit a task, enroll a visitor, or promise delivery. That document is the next action for one public original task through the existing correspondence client. It is not an MCP tool, not a paid gateway call, and not a universal capability. Supported actions are to qualify that public task, then read the same private attempt. Refusals stay explicit for an unrelated surface, a spend request, hosted execution, a stale archive, a handle outside its private directory, and a source label placed on the task. A declared source is not authentication.",
+    "`GET /discovery/original-task-correspondence.json` returns the client download, digest and commands to send your public task and read its reply.",
     "",
-    "## Paid gateway links",
+    "## HTTP contracts and paid web data",
     "",
+    `HTTP inputs, outputs and errors: ${APEX_ORIGIN}/openapi.json`,
+    gatewayAvailability().summary,
+    `Next action: ${gatewayAvailability().nextAction}`,
   );
-  for (const link of PAID_GATEWAY_LINKS) lines.push(`- ${link.title}: ${link.href}`);
-  lines.push("", "No paid `/.well-known/api-catalog` is linked. That path is not a live canonical document on the paid host.", "");
+  if (gatewayAvailability().callable) for (const link of PAID_GATEWAY_LINKS) lines.push(`- ${link.title}: ${link.href}`);
+  lines.push("");
   return lines.join("\n");
 }
 
-export function apexOpenApiDocument() {
-  const catalog = apexApiCatalog();
+export function apexOpenApiDocument(env = process.env) {
+  const catalog = apexApiCatalog(env);
   const skillMarkdown = apexSkillMarkdown();
   return {
     openapi: "3.1.0",
     info: {
-      title: "SameDayDesk apex",
+      title: "SameDayDesk tools",
       version: SERVER_INFO.version,
       description: [
-        "Free apex HTTP and MCP tools on samedaydesk.com.",
-        `Paid machine commerce stays on ${PAID_ORIGIN}. This document links that host and does not copy its route count, prices, or payment authority.`,
-        "Account, checkout, upload, and webhook routes exist for signed-in people or provider signatures. They are not free tools and have no copyable example here.",
-        "GET /scan is an HTML proof page for people.",
-        "GET /api/observatory and GET /api/market-observations read fixed upstreams and can report those upstreams unavailable. They are not the free apex tools in /skill.md.",
-        "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
-        "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
-        "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
+        "Check whether your customers' AI can read your website. Free. Receive each check and the fixes.",
+        `Start with GET ${APEX_ORIGIN}/api/tools/ai-readiness?url=https://example.com or call check_ai_readiness through MCP.`,
+        `Choose a fixed-price build at ${APEX_ORIGIN}/llms.txt. For web data priced per call in USDC, use ${PAID_ORIGIN}/llms.txt.`,
+        "GET routes also answer HEAD with the same headers and an empty body. Declaration routes answer OPTIONS with CORS.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],
@@ -847,10 +927,11 @@ export function apexOpenApiDocument() {
     "x-copyable-no-key-examples": copyableNoKeyExamples(),
     "x-useful-negatives": usefulNegativeExamples(),
     "x-paid-gateway": {
-      origin: PAID_ORIGIN,
+      ...gatewayAvailability(),
       links: PAID_GATEWAY_LINKS.map((link) => ({ rel: link.rel, href: link.href, type: link.type })),
-      note: "Live documents are authoritative. No route count, price, or payment address is copied.",
+      note: "When available, gateway documents own current terms. Canonical links and historical launches do not establish availability.",
     },
+    "x-query-key-caller": queryKeyDiscovery(env),
   };
 }
 
@@ -968,6 +1049,7 @@ export function assertMachineDeclarationContract(openapi, skillMarkdown, catalog
 }
 
 const DECLARATION_TYPES = Object.freeze({
+  [START_GUIDE_PATH]: "text/markdown; charset=utf-8",
   "/openapi.json": "application/openapi+json; charset=utf-8",
   "/skill.md": "text/markdown; charset=utf-8",
   "/.well-known/api-catalog": 'application/linkset+json; charset=utf-8; profile="https://www.rfc-editor.org/info/rfc9727"',
@@ -996,11 +1078,17 @@ function sendDeclaration(req, res, body, contentType) {
   return res.end(payload);
 }
 
-export function mountApexDeclarations(app) {
+export function mountApexDeclarations(app, { env = process.env } = {}) {
+  app.get("/discovery/paid-gateway.json", (_req, res) => {
+    res.set("Cache-Control", "no-cache");
+    res.set("Access-Control-Allow-Origin", "*");
+    res.json(gatewayAvailability());
+  });
   const builders = {
-    "/openapi.json": () => JSON.stringify(apexOpenApiDocument()),
+    [START_GUIDE_PATH]: startGuideMarkdown,
+    "/openapi.json": () => JSON.stringify(apexOpenApiDocument(env)),
     "/skill.md": () => apexSkillMarkdown(),
-    "/.well-known/api-catalog": () => JSON.stringify(apexApiCatalog()),
+    "/.well-known/api-catalog": () => JSON.stringify(apexApiCatalog(env)),
   };
   for (const path of Object.keys(builders)) {
     if (!DECLARATION_FETCH_PATHS.includes(path)) throw new Error(`declaration path ${path} is not classified`);
@@ -1013,5 +1101,38 @@ export function mountApexDeclarations(app) {
     app.get(path, handler);
   }
   app.options("/.well-known/agent-card.json", (_req, res) => sendPreflight(res));
+  // Compose discovery and the accepted-work appendix from the retained index
+  // before production static. The managed client trees stay byte-identical.
+  const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
+  const sendLlms = (req, res) => {
+    const body = Buffer.from(indexWithStartGuide(readFileSync(llmsPath, "utf8")) + queryKeyDiscoveryMarkdown(env));
+    res.status(200);
+    res.set("Cache-Control", "no-cache");
+    res.set("Link", START_GUIDE_LINK);
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.set("Content-Length", String(body.length));
+    if (req.method === "HEAD") return res.end();
+    return res.end(body);
+  };
+  app.head("/llms.txt", sendLlms);
+  app.get("/llms.txt", sendLlms);
+  // Production keeps the SPA shell for /for-agents. A host without that client
+  // still returns the same crawler copy the shell places in the page.
+  if (process.env.NODE_ENV !== "production") {
+    const page = Buffer.from(
+      `<!doctype html><html><head><title>Practical agent jobs | SameDayDesk</title></head><body>${FOR_AGENTS_CRAWLER_HTML}</body></html>`,
+      "utf8",
+    );
+    const sendAgents = (req, res) => {
+      res.status(200);
+      res.set("Cache-Control", "no-cache");
+      res.set("Content-Type", "text/html; charset=utf-8");
+      res.set("Content-Length", String(page.length));
+      if (req.method === "HEAD") return res.end();
+      return res.end(page);
+    };
+    app.head("/for-agents", sendAgents);
+    app.get("/for-agents", sendAgents);
+  }
   return app;
 }

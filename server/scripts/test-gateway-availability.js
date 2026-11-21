@@ -1,0 +1,201 @@
+import assert from "node:assert/strict";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import express from "express";
+import test from "node:test";
+import { gatewayAvailability, gatewayGuideBlock, validateGatewayState } from "../lib/paid-gateway-availability.js";
+import { projectGatewayFiles, receiveGatewayState } from "./project-gateway-availability.js";
+import { routeJob } from "../../tools/offer-routing/route-job.mjs";
+
+const paused = { state: "paused", observedAt: "2026-10-22T01:50:00.000Z" };
+const restored = {
+  state: "available", observedAt: "2026-10-23T01:00:00.000Z",
+  received: {
+    sourceCommit: "a".repeat(40), deploymentId: "fixture-new-deployment", receipt: "fixture-new-receiving",
+    observedAt: "2026-10-23T01:00:00.000Z",
+    configuredRuntime: true, freshAuthority: true, oldAuthorityRefused: true, retainedState: true, sharedConsumers: true,
+  },
+};
+
+const dist = resolve(process.env.GATEWAY_TEST_DIST || "client/dist");
+test("emitted guide and descriptor match the validated received dependency state", () => {
+  const expected = gatewayAvailability();
+  const guide = readFileSync(resolve(dist, "llms.txt"), "utf8");
+  assert.ok(guide.includes(gatewayGuideBlock()));
+  const descriptor = JSON.parse(readFileSync(resolve(dist, "discovery/paid-gateway.json")));
+  assert.deepEqual(descriptor, expected);
+  assert.ok(guide.includes(descriptor.nextAction));
+});
+test("paused projection offers working local checks and preserves the dependency identity in data", () => {
+  const guide = readFileSync(resolve(dist, "llms.txt"), "utf8");
+  for (const path of ["https://samedaydesk.com/mcp", "/discovery/useful-jobs.json", "/discovery/record-repeat.json", "/discovery/original-task-correspondence.json"]) assert.ok(guide.includes(path), path);
+  assert.doesNotMatch(gatewayGuideBlock(paused), /https:\/\/agents\.samedaydesk\.com|Practical paid job|State received/);
+  const descriptor = gatewayAvailability(paused);
+  assert.equal(descriptor.alternatives.freeApexMcp, "https://samedaydesk.com/mcp");
+  assert.equal(descriptor.origin, "https://agents.samedaydesk.com");
+});
+test("unknown, malformed and unreceived available state cannot become callable", () => {
+  for (const input of [null, {}, { state: "unknown", observedAt: paused.observedAt }, { ...paused, state: "available" }, { ...restored, received: { ...restored.received, freshAuthority: false } }]) {
+    assert.equal(gatewayAvailability(input).callable, false);
+    assert.doesNotMatch(gatewayGuideBlock(input), /Practical paid job:/);
+  }
+});
+test("normal received availability emits inventory and paid next action", () => {
+  assert.equal(gatewayAvailability(restored).callable, true);
+  assert.match(gatewayGuideBlock(restored), /Practical paid job:/);
+  assert.match(gatewayAvailability(restored).nextAction, /\.well-known\/x402$/);
+});
+test("task selection shares received dependency state while offline jobs remain useful", () => {
+  for (const gatewayState of [paused, { state: "unknown", observedAt: paused.observedAt }, { ...paused, state: "available" }]) {
+    const result = routeJob({ type: "bounded_html_observation" }, { gatewayState });
+    assert.equal(result.ok, false);
+    assert.ok(result.rejected.some((row) => row.reason === "paid_gateway_unavailable"));
+    assert.match(result.nextAction, /offline tools/);
+    assert.equal(routeJob({ type: "page_change_evidence" }, { gatewayState }).ok, true);
+  }
+  const available = routeJob({ type: "bounded_html_observation" }, { gatewayState: restored });
+  assert.equal(available.selected.offerId, "sdd.paid_html_extract");
+  assert.equal(available.executionAuthorized, false);
+});
+test("restoration needs new configured runtime and authority receiving after pause", () => {
+  assert.deepEqual(receiveGatewayState(paused, restored), restored);
+  assert.throws(() => receiveGatewayState(restored, paused), /new receiving/);
+  assert.throws(() => receiveGatewayState(paused, { ...restored, observedAt: paused.observedAt, received: { ...restored.received, observedAt: paused.observedAt } }), /new receiving/);
+  for (const field of Object.keys(restored.received)) {
+    const received = { ...restored.received }; delete received[field];
+    assert.throws(() => validateGatewayState({ ...restored, received }), /requires received/);
+  }
+});
+test("projection replaces its owned block deterministically and preserves other guide bytes", () => {
+  const guide = "prefix\n<!-- paid-gateway:start -->old<!-- paid-gateway:end -->\nsuffix\n";
+  const result = projectGatewayFiles({ guide, state: paused });
+  assert.ok(result.guide.startsWith("prefix\n")); assert.ok(result.guide.endsWith("\nsuffix\n"));
+  assert.deepEqual(projectGatewayFiles({ guide: result.guide, state: paused }), result);
+  const recovery = projectGatewayFiles({ guide: result.guide, state: restored });
+  assert.equal(JSON.parse(recovery.descriptor).callable, true);
+  assert.match(recovery.guide, /Web data for AI agents/);
+  assert.throws(() => projectGatewayFiles({ guide: "missing", state: paused }), /block missing/);
+});
+
+test("the real update command emits restored, paused and unknown machine files in an isolated source fixture", (t) => {
+  const root = mkdtempSync(resolve(tmpdir(), "gateway-receiving-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const path of ["server/lib", "server/scripts", "server/config", "client/public/discovery"]) mkdirSync(resolve(root, path), { recursive: true });
+  for (const path of ["server/lib/paid-gateway-availability.js", "server/scripts/project-gateway-availability.js", "client/public/llms.txt"]) cpSync(resolve(path), resolve(root, path));
+  writeFileSync(resolve(root, "package.json"), '{"type":"module"}');
+  writeFileSync(resolve(root, "server/config/paid-gateway-availability.json"), JSON.stringify(paused));
+  const candidatePath = resolve(root, "received.json");
+  const invoke = (candidate) => {
+    writeFileSync(candidatePath, JSON.stringify(candidate));
+    return spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js"), "--receive", candidatePath], { encoding: "utf8", env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=768" } });
+  };
+  const before = readFileSync(resolve(root, "client/public/llms.txt"), "utf8");
+  assert.notEqual(invoke({ ...paused, state: "available" }).status, 0);
+  assert.equal(readFileSync(resolve(root, "client/public/llms.txt"), "utf8"), before);
+  assert.equal(invoke(restored).status, 0);
+  const descriptorPath = resolve(root, "client/public/discovery/paid-gateway.json");
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).callable, true);
+  assert.match(readFileSync(resolve(root, "client/public/llms.txt"), "utf8"), /Practical paid job:/);
+  assert.equal(invoke({ state: "paused", observedAt: "2026-10-24T01:00:00.000Z" }).status, 0);
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).callable, false);
+  assert.notEqual(invoke(restored).status, 0, "old restoration evidence must refuse after a new pause");
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).state, "paused");
+  const fresh = { ...restored, observedAt: "2026-10-24T01:30:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T01:30:00.000Z" } };
+  assert.equal(invoke(fresh).status, 0, "new receiving recovers after pause");
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).callable, true);
+  assert.equal(invoke({ state: "unknown", observedAt: "2026-10-24T02:00:00.000Z" }).status, 0);
+  assert.equal(JSON.parse(readFileSync(descriptorPath)).state, "unknown");
+  assert.doesNotMatch(readFileSync(resolve(root, "client/public/llms.txt"), "utf8"), /Practical paid job:/);
+});
+
+test("received transitions reach every apex machine consumer without a restart", async (t) => {
+  const root = mkdtempSync(resolve(tmpdir(), "gateway-consumers-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const path of ["server/lib", "server/routes", "server/config"]) cpSync(resolve(path), resolve(root, path), { recursive: true });
+  for (const path of ["vendor", "tools", "data", "node_modules", "server/vendor"]) symlinkSync(resolve(path), resolve(root, path), "dir");
+  mkdirSync(resolve(root, "server/scripts"), { recursive: true });
+  mkdirSync(resolve(root, "client/public/discovery"), { recursive: true });
+  cpSync(resolve("server/scripts/project-gateway-availability.js"), resolve(root, "server/scripts/project-gateway-availability.js"));
+  cpSync(resolve("client/public/llms.txt"), resolve(root, "client/public/llms.txt"));
+  cpSync(resolve("client/public/start.md"), resolve(root, "client/public/start.md"));
+  cpSync(resolve("client/src/data"), resolve(root, "client/src/data"), { recursive: true });
+  writeFileSync(resolve(root, "package.json"), '{"type":"module"}');
+  const config = resolve(root, "server/config/paid-gateway-availability.json");
+  writeFileSync(config, JSON.stringify(paused));
+  const { mountApexDeclarations } = await import(pathToFileURL(resolve(root, "server/lib/apex-declarations.js")));
+  const { apexAgentCard } = await import(pathToFileURL(resolve(root, "server/lib/apex-agent-card.js")));
+  const app = express();
+  app.get("/.well-known/agent-card.json", (_req, res) => res.json(apexAgentCard()));
+  mountApexDeclarations(app);
+  app.use(express.static(resolve(root, "client/public")));
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise(resolve => server.once("listening", resolve));
+  t.after(async () => { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); });
+  const invoke = candidate => {
+    const input = resolve(root, "received.json");
+    writeFileSync(input, JSON.stringify(candidate));
+    return spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js"), "--receive", input], { encoding: "utf8", env: process.env });
+  };
+  const qualify = async state => {
+    const expected = gatewayAvailability(state);
+    const get = async path => {
+      const response = await fetch(`http://127.0.0.1:${server.address().port}${path}`);
+      assert.equal(response.status, 200, path);
+      return response.text();
+    };
+    assert.deepEqual(JSON.parse(await get("/discovery/paid-gateway.json")), expected);
+    const openapi = JSON.parse(await get("/openapi.json"));
+    const card = JSON.parse(await get("/.well-known/agent-card.json"));
+    assert.equal(openapi["x-paid-gateway"].state, expected.state);
+    assert.equal(openapi["x-paid-gateway"].callable, expected.callable);
+    assert.equal(openapi["x-paid-gateway"].observedAt, expected.observedAt);
+    assert.deepEqual(card["x-paid-gateway"], expected);
+    const skill = await get("/skill.md");
+    assert.ok(skill.includes(expected.summary));
+    assert.ok(skill.includes(expected.nextAction));
+    assert.ok((await get("/.well-known/api-catalog")).includes(`Paid gateway MCP (${expected.state})`));
+    assert.ok((await get("/llms.txt")).includes(gatewayGuideBlock(state)));
+    const route = routeJob({ type: "bounded_html_observation" }, { gatewayState: state });
+    assert.equal(route.ok, expected.callable);
+    assert.equal(route.executionAuthorized, false);
+  };
+  await t.test("received available reaches descriptor, guide, skill, OpenAPI, catalog, card and router", async () => {
+    assert.equal(invoke(restored).status, 0); await qualify(restored);
+  });
+  const laterPause = { state: "paused", observedAt: "2026-10-24T01:00:00.000Z" };
+  await t.test("new pause reaches all consumers", async () => {
+    assert.equal(invoke(laterPause).status, 0); await qualify(laterPause);
+  });
+  await t.test("stale restoration refuses without changing any consumer", async () => {
+    assert.notEqual(invoke(restored).status, 0); await qualify(laterPause);
+  });
+  await t.test("health 200 and challenge 402 cannot replace any of the five evidence predicates", async () => {
+    for (const field of ["configuredRuntime", "freshAuthority", "oldAuthorityRefused", "retainedState", "sharedConsumers"]) {
+      const candidate = { ...restored, observedAt: "2026-10-24T02:00:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T02:00:00.000Z", [field]: false }, health: 200, challenge: 402 };
+      assert.notEqual(invoke(candidate).status, 0, field);
+      await qualify(laterPause);
+    }
+  });
+  const fresh = { ...restored, observedAt: "2026-10-24T03:00:00.000Z", received: { ...restored.received, observedAt: "2026-10-24T03:00:00.000Z" } };
+  await t.test("fresh full receiving restores every consumer", async () => {
+    assert.equal(invoke(fresh).status, 0); await qualify(fresh);
+  });
+  await t.test("missing and invalid config fail closed in dynamic consumers then recover", async () => {
+    for (const bytes of [null, '{invalid', JSON.stringify({ ...fresh, received: undefined })]) {
+      if (bytes === null) rmSync(config); else writeFileSync(config, bytes);
+      const project = () => spawnSync(process.execPath, [resolve(root, "server/scripts/project-gateway-availability.js")], { encoding: "utf8", env: process.env });
+      assert.equal(project().status, 0, "normal build fails closed while projecting invalid input");
+      await qualify(null);
+      writeFileSync(config, JSON.stringify(fresh));
+      assert.equal(project().status, 0);
+      await qualify(fresh);
+    }
+  });
+  const unknown = { state: "unknown", observedAt: "2026-10-24T04:00:00.000Z" };
+  await t.test("explicit unknown reprojects both static and dynamic consumers", async () => {
+    assert.equal(invoke(unknown).status, 0); await qualify(unknown);
+  });
+});

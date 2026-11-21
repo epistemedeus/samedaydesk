@@ -9,9 +9,12 @@
 /* ── Paper ground: a graphite hairline grid, like engineering paper ───────────── */
 [data-theme="drafting"] body {
   background-color: var(--bg);
+  /* Keep the paper grid visible without lowering small text below AA where a
+     hairline passes behind a glyph. Borders retain their existing line token. */
+  --paper-grid: color-mix(in srgb, var(--line) 25%, var(--bg));
   background-image:
-    linear-gradient(to right, var(--line) var(--hair), transparent var(--hair)),
-    linear-gradient(to bottom, var(--line) var(--hair), transparent var(--hair));
+    linear-gradient(to right, var(--paper-grid) var(--hair), transparent var(--hair)),
+    linear-gradient(to bottom, var(--paper-grid) var(--hair), transparent var(--hair));
   background-size: var(--grid-major) var(--grid-major);
   background-position: calc(var(--grid-major) / -2) calc(var(--grid-major) / -2);
 }

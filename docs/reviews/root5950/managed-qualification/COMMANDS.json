@@ -1,0 +1,500 @@
+{
+  "commands": [
+    {
+      "name": "baseline-financial-pair",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/check-financial-pair.mjs",
+        "/tmp/r6q-oec4g5lv/baseline"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 0.162,
+      "sampledOwnSupervisorTreeRssPeakKiB": 402968,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-financial-pair.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/baseline-financial-pair-stdout.txt",
+      "logSha256": "77c6c44c9bd7de4292b9185d306a3be5d7f659f22d5e836c11cd29ebcbe0019b"
+    },
+    {
+      "name": "baseline-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/baseline",
+      "exit": 0,
+      "elapsedSeconds": 10.045,
+      "sampledOwnSupervisorTreeRssPeakKiB": 901404,
+      "maxLiveProcesses": 17,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/baseline-managed-stdout.txt",
+      "logSha256": "f402e5c9f5acc73c96a3653a1f59bbd30f7c09419db2631ce81b496bdfd628b3"
+    },
+    {
+      "name": "baseline-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/baseline",
+      "exit": 0,
+      "elapsedSeconds": 2.867,
+      "sampledOwnSupervisorTreeRssPeakKiB": 648888,
+      "maxLiveProcesses": 7,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/baseline-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/baseline-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
+    },
+    {
+      "name": "bounded-source-stage-and-admit",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/source-phase-bounded.mjs"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 3.517,
+      "sampledOwnSupervisorTreeRssPeakKiB": 565552,
+      "maxLiveProcesses": 8,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/bounded-source-stage-and-admit.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/bounded-source-stage-and-admit-stdout.txt",
+      "logSha256": "46f892f41a842c542f6f9234975a5713718d341c1febee1d57baf4d8fac7f339"
+    },
+    {
+      "name": "candidate-financial-pair-refused",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/check-financial-pair.mjs",
+        "/tmp/r6q-oec4g5lv/candidate"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 2,
+      "elapsedSeconds": 0.109,
+      "sampledOwnSupervisorTreeRssPeakKiB": 384188,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-financial-pair-refused.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/candidate-financial-pair-refused-stdout.txt",
+      "logSha256": "dd15f1cd98ecbe1a41606fc00cc765a17b7efc13680ca4b898863c8cb1e026c9"
+    },
+    {
+      "name": "candidate-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/candidate",
+      "exit": 0,
+      "elapsedSeconds": 9.579,
+      "sampledOwnSupervisorTreeRssPeakKiB": 899896,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/candidate-managed-stdout.txt",
+      "logSha256": "d0a4c7ecb7838149ecee574321cd0d9f4980efb0a482820ad24d936d17a3b1ba"
+    },
+    {
+      "name": "candidate-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/candidate",
+      "exit": 0,
+      "elapsedSeconds": 2.578,
+      "sampledOwnSupervisorTreeRssPeakKiB": 716116,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/candidate-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/candidate-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
+    },
+    {
+      "name": "repaired-managed",
+      "command": [
+        "npm",
+        "run",
+        "build:managed-contributor"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 10.776,
+      "sampledOwnSupervisorTreeRssPeakKiB": 911884,
+      "maxLiveProcesses": 14,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-managed.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/repaired-managed-stdout.txt",
+      "logSha256": "ba3eadf80fe51daad52f6f51d9d49468eab58dbb4b8dcf577b3bcf12b190710e"
+    },
+    {
+      "name": "repaired-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/repaired"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 0.96,
+      "sampledOwnSupervisorTreeRssPeakKiB": 486596,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/repaired-package-stdout.txt",
+      "logSha256": "59fecc6e64df6252fb6792240867db2e8af8cf06ab44e5b1c81835908c98e831"
+    },
+    {
+      "name": "repaired-root-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--prefer-offline",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/repaired",
+      "exit": 0,
+      "elapsedSeconds": 2.654,
+      "sampledOwnSupervisorTreeRssPeakKiB": 658740,
+      "maxLiveProcesses": 7,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/repaired-root-ci.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/repaired-root-ci-stdout.txt",
+      "logSha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3"
+    },
+    {
+      "name": "source-stage-and-admit",
+      "command": [
+        "node",
+        "/tmp/r6q-oec4g5lv/source-phase.mjs"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 3.25,
+      "sampledOwnSupervisorTreeRssPeakKiB": 569508,
+      "maxLiveProcesses": 8,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/source-stage-and-admit.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/source-stage-and-admit-stdout.txt",
+      "logSha256": "05e5d4ffa31e004a9459e44d72563084c483f8a9c82f92bd50b3307c8830df36"
+    },
+    {
+      "name": "extracted-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/archive-check"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check",
+      "exit": 1,
+      "elapsedSeconds": 0.747,
+      "sampledOwnSupervisorTreeRssPeakKiB": 479832,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/extracted-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/extracted-package-stdout.txt",
+      "logSha256": "55150c5af8c3c02ced9e8437d811c25e308d8b337c389caeeb36107dc22a6df5"
+    },
+    {
+      "name": "portable-package-preserved",
+      "command": [
+        "python3",
+        "/tmp/r6q-oec4g5lv/package-preserved.py"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 13.861,
+      "sampledOwnSupervisorTreeRssPeakKiB": 526532,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/portable-package-preserved.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/portable-package-preserved-stdout.txt",
+      "logSha256": "706b7d83ac76da0941e28c0eb1e9286f5e07aebaf21d634acd2c5e1daa8c2a6b"
+    },
+    {
+      "name": "portable-package",
+      "command": [
+        "python3",
+        "/tmp/r6q-oec4g5lv/package.py"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv",
+      "exit": 0,
+      "elapsedSeconds": 15.185,
+      "sampledOwnSupervisorTreeRssPeakKiB": 567012,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/portable-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/portable-package-stdout.txt",
+      "logSha256": "c9787ad0b68d7629b71d8aa055620a6f2209d21e9c65b193d49c5d41e63308d4"
+    },
+    {
+      "name": "preserved-extracted-managed-probe",
+      "command": [
+        "npm",
+        "run",
+        "foundry:managed-probe"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check-preserved",
+      "exit": 0,
+      "elapsedSeconds": 0.589,
+      "sampledOwnSupervisorTreeRssPeakKiB": 535544,
+      "maxLiveProcesses": 9,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/preserved-extracted-managed-probe.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/preserved-extracted-managed-probe-stdout.txt",
+      "logSha256": "714ff2bf60455b7f818b4fd8405e9e419d51f540aea801d43d37bf76913137a4"
+    },
+    {
+      "name": "preserved-extracted-package",
+      "command": [
+        "node",
+        "docs/reviews/root5950/managed-qualification/check-package.mjs",
+        "/tmp/r6q-oec4g5lv/archive-check-preserved"
+      ],
+      "cwd": "/tmp/r6q-oec4g5lv/archive-check-preserved",
+      "exit": 0,
+      "elapsedSeconds": 0.861,
+      "sampledOwnSupervisorTreeRssPeakKiB": 491948,
+      "maxLiveProcesses": 6,
+      "reserveKiB": 2621440,
+      "sampleMs": 50,
+      "nodeHeapMiB": 384,
+      "modelChildren": 0,
+      "log": "/tmp/r6q-oec4g5lv/logs/preserved-extracted-package.log",
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=384",
+        "VITE_SUPABASE_URL": "",
+        "VITE_SUPABASE_ANON_KEY": "",
+        "VITE_STRIPE_PUBLISHABLE_KEY": "",
+        "VITE_POSTHOG_KEY": "",
+        "VITE_POSTHOG_HOST": "",
+        "RAYON_NUM_THREADS": "1",
+        "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+      },
+      "retainedLog": "evidence/preserved-extracted-package-stdout.txt",
+      "logSha256": "2899dad5851e3735d0a02ad33ebe5c625aec05f807f6e7ac6b300d99e0abba3d"
+    }
+  ],
+  "toolchain": {
+    "node": "v22.23.4",
+    "npm": "10.9.9",
+    "vite": "8.0.12",
+    "typescript": "6.0.2",
+    "cpython": "3.12.15",
+    "wasmtime": "49.0.0"
+  },
+  "samplingScope": "own admitted supervisor tree, shared RSS summed conservatively; 50ms sampled peak, not a hard-limit proof",
+  "maximumObservedRssKiB": 911884,
+  "nodeChildCaveat": "First source-phase (source-stage-and-admit) preceded explicit child-heap qualification. Canonical controller removes NODE_OPTIONS from child env. Final bounded-source phase uses the same pinned Node through bounded-node wrapper, with 384MiB explicitly on every child argv; old receipts retained."
+}

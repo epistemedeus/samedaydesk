@@ -1,0 +1,69 @@
+name: Keep it working, release check
+run-name: Keep it working ${{ inputs.receipt || 'release check' }}
+
+# Installs a named npm MCP server the way a user does, runs its own self-check, starts
+# it over stdio with the Claude Desktop and VS Code configurations, lists its tools and calls one
+# read-only tool on a sample folder. The plain-words report is the run's artifact. It reads and
+# runs only: no issue, comment or message is posted anywhere.
+on:
+  # The final qualified Sentinel push starts the one release matrix. The manual
+  # route remains available for paid periods after this workflow reaches main.
+  push:
+    branches: [keep-it-working/windows-release-check]
+    paths:
+      - 'tools/keep-it-working/windows/**'
+      - '.github/workflows/keep-it-working-windows.yml'
+  workflow_dispatch:
+    inputs:
+      receipt:
+        description: Opaque paid-period run reference
+        default: ''
+      package:
+        description: npm spec, as the user's configuration names it
+        default: sentinel-ir-mcp@0.5.13
+      self_check:
+        description: the package's own self-check arguments (empty for none)
+        default: doctor --client claude-desktop
+      tool:
+        description: one read-only tool to call
+        default: analyze_directory
+      tool_args:
+        description: its arguments as JSON; {folder} is the sample folder
+        default: '{"path":"{folder}","max_files":10}'
+
+permissions:
+  contents: read
+
+jobs:
+  release-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+      - name: Release check
+        shell: bash
+        env:
+          PACKAGE: ${{ inputs.package || 'sentinel-ir-mcp@0.5.13' }}
+          SELF_CHECK: ${{ inputs.self_check || 'doctor --client claude-desktop' }}
+          TOOL: ${{ inputs.tool || 'analyze_directory' }}
+          TOOL_ARGS: ${{ inputs.tool_args || '{"path":"{folder}","max_files":10}' }}
+        run: node tools/keep-it-working/windows/stdio-release-check.mjs --package "$PACKAGE" --self-check "$SELF_CHECK" --self-check-config --tool "$TOOL" --tool-args "$TOOL_ARGS" --out report
+      - name: Report
+        if: always()
+        shell: bash
+        run: if test -f report/REPORT.md; then cat report/REPORT.md >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-check-report-${{ matrix.os }}-attempt-${{ github.run_attempt }}
+          path: report/
+          if-no-files-found: error

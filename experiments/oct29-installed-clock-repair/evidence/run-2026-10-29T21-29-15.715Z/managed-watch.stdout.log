@@ -1,0 +1,101 @@
+
+> samedaydesk@1.0.0 test:managed-watch
+> node --test --test-concurrency=1 server/scripts/test-managed-watch.mjs
+
+TAP version 13
+# Subtest: grant hash matches correspondence and a tampered archive is refused before extract
+ok 1 - grant hash matches correspondence and a tampered archive is refused before extract
+  ---
+  duration_ms: 320.030207
+  ...
+# Subtest: feature-off preserves health and does not mount the watch
+ok 2 - feature-off preserves health and does not mount the watch
+  ---
+  duration_ms: 26.869511
+  ...
+# Subtest: mounted lifecycle, refusals before a read, and separate retrieval
+ok 3 - mounted lifecycle, refusals before a read, and separate retrieval
+  ---
+  duration_ms: 465.320121
+  ...
+# Subtest: negative cadence, expiry, budget, malformed input, SSRF and redirect refuse before the side effect
+ok 4 - negative cadence, expiry, budget, malformed input, SSRF and redirect refuse before the side effect
+  ---
+  duration_ms: 305.870434
+  ...
+# Subtest: restart, overlap, cancel, lost reply, and store failure use the disposable file store
+ok 5 - restart, overlap, cancel, lost reply, and store failure use the disposable file store
+  ---
+  duration_ms: 1605.175716
+  ...
+# Subtest: idle scheduler does not arm and the direct alternative records real exits
+ok 6 - idle scheduler does not arm and the direct alternative records real exits
+  ---
+  duration_ms: 772.337654
+  ...
+# Subtest: disposable postgres reuses grant rows and does not write foundry invocations
+ok 7 - disposable postgres reuses grant rows and does not write foundry invocations
+  ---
+  duration_ms: 959.450401
+  ...
+# Subtest: cold client retrieves a retained baseline from a different process
+ok 8 - cold client retrieves a retained baseline from a different process
+  ---
+  duration_ms: 310.972462
+  ...
+# Subtest: bounded source enforces byte, DNS, body, and cancel limits before a parse
+ok 9 - bounded source enforces byte, DNS, body, and cancel limits before a parse
+  ---
+  duration_ms: 997.213701
+  ...
+# direct-snapshot {"calls":1,"bytes":13898,"runtimeMs":794,"capture":"live","failure":null}
+# Subtest: scheduler caps a long cadence and does not spin an exhausted due
+ok 10 - scheduler caps a long cadence and does not spin an exhausted due
+  ---
+  duration_ms: 1.142815
+  ...
+# Subtest: http enrollment after an idle arm runs one due and reports scheduler state
+ok 11 - http enrollment after an idle arm runs one due and reports scheduler state
+  ---
+  duration_ms: 240.569225
+  ...
+# Subtest: pause, expiry, cancel, stale write, and foreign lease do not take a second read
+ok 12 - pause, expiry, cancel, stale write, and foreign lease do not take a second read
+  ---
+  duration_ms: 333.393198
+  ...
+# Subtest: idle process enrollment reads the public snapshot once and a restarted client retrieves it
+ok 13 - idle process enrollment reads the public snapshot once and a restarted client retrieves it
+  ---
+  duration_ms: 1316.898564
+  ...
+# scheduled-snapshot {"outcome":"evidence_unavailable","failureCode":"partial_metrics","capture":"live","sourceCalls":1,"sourceBytes":13901,"runtimeMs":180,"usefulChange":false,"publicSourceChanged":false,"providerMarginalCost":null}
+# Subtest: refusal cleanup cannot extend the source deadline
+ok 14 - refusal cleanup cannot extend the source deadline
+  ---
+  duration_ms: 2.562821
+  ...
+# Subtest: granted due recovery stays in its project; the internal scheduler may recover all
+ok 15 - granted due recovery stays in its project; the internal scheduler may recover all
+  ---
+  duration_ms: 0.443685
+  ...
+# Subtest: a due lease covers its caller read budget before crash recovery
+ok 16 - a due lease covers its caller read budget before crash recovery
+  ---
+  duration_ms: 0.135284
+  ...
+# Subtest: receive-time freshness classifies a delayed source at receipt
+ok 17 - receive-time freshness classifies a delayed source at receipt
+  ---
+  duration_ms: 3385.851876
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11491.442318

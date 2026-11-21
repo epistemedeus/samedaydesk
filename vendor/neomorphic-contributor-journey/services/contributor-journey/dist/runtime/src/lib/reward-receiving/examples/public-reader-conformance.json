@@ -1,0 +1,21 @@
+{
+  "evidenceClass": "fixture",
+  "schema": "neomorphic.reward-receiving.kernel-conformance.example.v1",
+  "reader": {
+    "kind": "unrelated_accepted_status_reader",
+    "presentsAcceptedBy": "root"
+  },
+  "expects": {
+    "readback": "none",
+    "authenticatedClaimant": false,
+    "reviewerIsClaimant": false,
+    "payoutRedirected": false,
+    "payoutTurnedOn": false,
+    "kernelPaid": false,
+    "kernelSettled": false,
+    "kernelTransfer": null,
+    "nextAction": "do_not_claim",
+    "fraudAlleged": false
+  },
+  "note": "A public accepted_by_root status is not a claim grant and does not redirect a payout. The earned kernel stays on the null nonpaying adapter."
+}

@@ -1,0 +1,196 @@
+{
+  "schema": "root4433.commands.v1",
+  "cwd": "/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023",
+  "serial": true,
+  "attempts": [
+    {
+      "log": "00-baseline-prerequisite.log",
+      "command": "node --test --test-concurrency=1 vendor/hosted-wallet-market/test/machine-profile-receiving.test.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "296eb4455806d575f3dfb42880ce9b2e3964be5942c31b080d0919cbddb47828",
+      "bytes": 1554,
+      "logLastWrittenAt": "2026-10-23T10:02:36.699797+00:00"
+    },
+    {
+      "log": "01-dependencies.log",
+      "command": "NODE_OPTIONS=--max-old-space-size=512 npm ci --ignore-scripts --no-audit --no-fund",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3",
+      "bytes": 26,
+      "logLastWrittenAt": "2026-10-23T10:02:50.775764+00:00"
+    },
+    {
+      "log": "02-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "9e21ab482e0fa4734190ce441bcdb108cbc0be9d647480844ae90de87ceced8e",
+      "bytes": 3783,
+      "logLastWrittenAt": "2026-10-23T10:07:16.527201+00:00"
+    },
+    {
+      "log": "03-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "24033677ed5bae3e03ddc9a214dcaabeb6fd884142a2ad1662df84ea8af92a10",
+      "bytes": 2726,
+      "logLastWrittenAt": "2026-10-23T10:07:40.079156+00:00"
+    },
+    {
+      "log": "04-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "3a0468a75a8c231a27ed19ddb44e2818bf12a95f230e3571f1603a0f5f17e401",
+      "bytes": 1446,
+      "logLastWrittenAt": "2026-10-23T10:08:09.095102+00:00"
+    },
+    {
+      "log": "05-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "027a7945b8485383f974dd12f49209bad3cd40e79b67c5f93ac0f51f8375bdf3",
+      "bytes": 1621,
+      "logLastWrittenAt": "2026-10-23T10:10:07.814891+00:00"
+    },
+    {
+      "log": "06-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "6a0092c79b8c3fe17536af27a39360ae42d57a10dc1681bcf10a6206a5b9a8b2",
+      "bytes": 2080,
+      "logLastWrittenAt": "2026-10-23T10:10:27.926856+00:00"
+    },
+    {
+      "log": "07-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "7e7e184da3a2f5cf60d10ed74140e53ebd5670ad01988c26de60f1e2e1d2e8b6",
+      "bytes": 2201,
+      "logLastWrittenAt": "2026-10-23T10:10:54.674811+00:00"
+    },
+    {
+      "log": "08-baseline-http-pg.log",
+      "command": "R4_WALLET_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "4c882bdd49d4f50a54e4b8c64b89b2a967f9453adef33032d06f65c16f29420a",
+      "bytes": 922,
+      "logLastWrittenAt": "2026-10-23T10:11:50.946718+00:00"
+    },
+    {
+      "log": "09-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "1509ac846eab33eafa2438f0498a682b69ad33dfda18c71178f957f6f20fc0fd",
+      "bytes": 45915,
+      "logLastWrittenAt": "2026-10-23T10:15:04.290414+00:00"
+    },
+    {
+      "log": "10-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "3c3ed0a85220462a9a9451078c31f60d93cd987f43a9bbe7834b9db8ab01ef78",
+      "bytes": 108399,
+      "logLastWrittenAt": "2026-10-23T10:15:57.726334+00:00"
+    },
+    {
+      "log": "11-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "9d27f7774f29478b3887786d086114aa6ddbb2b6582a9324d6c01521bd4184a9",
+      "bytes": 108674,
+      "logLastWrittenAt": "2026-10-23T10:17:20.682212+00:00"
+    },
+    {
+      "log": "12-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 1,
+      "acceptedRegressionEvidence": null,
+      "sha256": "a5c2092072811a7b8148269b7592f3912f2741587269db9c350f499fd05b391c",
+      "bytes": 3088,
+      "logLastWrittenAt": "2026-10-23T10:18:15.854133+00:00"
+    },
+    {
+      "log": "13-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "0519fad1746b7c76ee5300a064fd02795a0e83fd823aa60b7cff232bcf3e5e0a",
+      "bytes": 5369,
+      "logLastWrittenAt": "2026-10-23T10:20:50.025916+00:00"
+    },
+    {
+      "log": "14-continuation-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "cab6cf04637b05d2dd767e791886539db323587c546a7d3a96dbd3828026e841",
+      "bytes": 5914,
+      "logLastWrittenAt": "2026-10-23T10:21:58.873822+00:00"
+    },
+    {
+      "log": "15-original-retained-session-boundary.log",
+      "command": "R4_WALLET_HISTORY_BASELINE=1 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "ef80cdeec535c5bd7360afa4ebf360f8441f077e04a297181eb07d9e5d5c4323",
+      "bytes": 1911,
+      "logLastWrittenAt": "2026-10-23T10:23:02.697735+00:00"
+    },
+    {
+      "log": "16-account-profile-regressions.log",
+      "command": "R4_WALLET_REGRESSION=1 NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": false,
+      "sha256": "6f4bf640899092a0a9986ff593a0257679a06aaf9e81688d1c32d08fa69af62d",
+      "bytes": 722,
+      "logLastWrittenAt": "2026-10-23T10:24:07.853647+00:00"
+    },
+    {
+      "log": "17-final-http-pg.log",
+      "command": "AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "6e941c2b7bfefd6230fe55f6787ceaa8b7ebd3d04af0c37d76ea92c6249fd9d8",
+      "bytes": 6467,
+      "logLastWrittenAt": "2026-10-23T10:25:22.021549+00:00"
+    },
+    {
+      "log": "18-account-profile-regressions.log",
+      "command": "R4_WALLET_REGRESSION=1 NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "9470038346fa40cb606e6ca82df3e6273eb5bfa4ab1a8d1eb9ddbb1a82377212",
+      "bytes": 2943,
+      "logLastWrittenAt": "2026-10-23T10:26:12.789481+00:00"
+    },
+    {
+      "log": "19-final-http-pg-with-native-reserve.log",
+      "command": "R4_WALLET_OWNER_PIDS=558246,558254 AE14_PG_BIN=/tmp/root4000-pg/usr/lib/postgresql/16/bin LD_LIBRARY_PATH=/tmp/root4000-pg/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=384 node --test --test-concurrency=1 server/scripts/test-r4-wallet-continuation.mjs",
+      "exitCode": 0,
+      "acceptedRegressionEvidence": null,
+      "sha256": "f4cfd4932dd65c23e965372505694f52a47a256729f88f6217261ffdca2f3e18",
+      "bytes": 6499,
+      "logLastWrittenAt": "2026-10-23T10:28:09.197329+00:00"
+    },
+    {
+      "log": "operating-telemetry.log",
+      "command": "tools/ops/agent-status --json",
+      "exitCode": 127,
+      "acceptedRegressionEvidence": null,
+      "sha256": "2a6df18e4f8b17f94dd6bd9be9039d2f5e08b8bcf1a29a61fd2b18955bbbf7ee",
+      "bytes": 69,
+      "logLastWrittenAt": "2026-10-23T10:17:42.018182+00:00"
+    }
+  ]
+}

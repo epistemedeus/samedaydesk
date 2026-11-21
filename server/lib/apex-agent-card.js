@@ -1,5 +1,8 @@
 // Apex A2A card. Skill ids are the apex MCP tool inventory, not a second list.
+import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { MCP_TOOL_NAMES } from "./mcp-tool-inventory.js";
+import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
+import { publicAcceptedWork, queryKeyDiscovery } from "./query-key-discovery.mjs";
 
 export const APEX_ORIGIN = "https://samedaydesk.com";
 
@@ -13,11 +16,11 @@ const SKILL_TEXT = {
   project_funnel_evidence: "Free. Project one declared observation packet. No fetch, no customer query, no store, no spend.",
 };
 
-export function apexAgentCard() {
+export function apexAgentCard(env = process.env) {
   return {
     protocolVersion: "0.3.0",
     name: "SameDayDesk",
-    description: "Free apex agent tools for AI readiness and agent readiness. Paid machine-commerce tools stay on https://agents.samedaydesk.com/.well-known/agent-card.json. The original-task correspondence interface is a no-spend next action, not an MCP skill and not a payment tool.",
+    description: `Free apex agent tools for AI readiness and agent readiness. ${gatewayAvailability().summary} Paid gateway identity: https://agents.samedaydesk.com/.well-known/agent-card.json. The original-task correspondence interface is a no-spend next action, not an MCP skill and not a payment tool.`,
     url: `${APEX_ORIGIN}/mcp`,
     version: "1.2.0",
     interfaces: [
@@ -30,7 +33,14 @@ export function apexAgentCard() {
         url: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`,
         description: "No-spend original-task correspondence descriptor. Not an MCP skill and not a payment tool.",
       },
+      ...(publicAcceptedWork(env) ? [{
+        transport: "HTTP",
+        url: QUERY_KEY_CONSUMER.acceptedWork,
+        description: `Anonymous accepted work. Schema ${QUERY_KEY_CONSUMER.schema}. Runner ${QUERY_KEY_CONSUMER.runner.name} ${QUERY_KEY_CONSUMER.runner.version} archive ${QUERY_KEY_CONSUMER.runner.archive} sha256 ${QUERY_KEY_CONSUMER.runner.sha256} bytes ${QUERY_KEY_CONSUMER.runner.bytes}. Acquire: ${QUERY_KEY_CONSUMER.acquire}. Apply: ${QUERY_KEY_CONSUMER.apply}. Source ${QUERY_KEY_CONSUMER.source.repository} commit ${QUERY_KEY_CONSUMER.source.commit} path ${QUERY_KEY_CONSUMER.source.path}. Raw response paths: artifact ${QUERY_KEY_CONSUMER.extract.artifact}, schema ${QUERY_KEY_CONSUMER.extract.schema}, digest ${QUERY_KEY_CONSUMER.extract.digest}, list ${QUERY_KEY_CONSUMER.extract.list}.`,
+      }] : []),
     ],
+    "x-query-key-caller": queryKeyDiscovery(env),
+    "x-paid-gateway": gatewayAvailability(),
     skills: MCP_TOOL_NAMES.map((name) => ({
       id: name,
       name,

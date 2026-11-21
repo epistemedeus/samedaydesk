@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
@@ -7,17 +7,23 @@ import { once } from "node:events";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import express from "express";
+import Ajv2020 from "ajv/dist/2020.js";
+import { mountProductionClient } from "../lib/spa-client.js";
 import { classifyRetrieval } from "../lib/agent-readiness/retrieval.js";
 import { runChecks } from "../lib/agent-readiness/checks.js";
 import { publicDeploymentBody } from "../lib/public-readiness-mount.js";
-import { buildTaskMarketDelegationPlan } from "../lib/taskmarket.js";
+import { withNetworkInfo } from "./helpers/taskmarket-fixtures.js";
 import { NOT_FOUND_SHELL, ROUTE_SHELL_DIR, shellFileName } from "../lib/spa-route-shells.js";
 import { pulseSnapshot } from "../lib/pulse.js";
+import { gatewayAvailability } from "../lib/paid-gateway-availability.js";
 import { createSdsApp } from "../app.js";
 import {
   assertMachineDeclarationContract,
   machineDeclarationProblems,
+  mountApexDeclarations,
   planToolArguments,
+  planToolResult,
 } from "../lib/apex-declarations.js";
 import { TOOLS } from "../routes/mcp.js";
 
@@ -51,6 +57,48 @@ function lookup(value, path) {
   return String(path).split(".").reduce((current, key) => (current == null ? undefined : current[key]), value);
 }
 
+async function assertGuideRoute(t, dist, emitted) {
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+
+  for (const accept of ["text/plain", "text/html"]) {
+    const response = await request(port, { path: "/llms.txt", headers: { accept } });
+    assert.equal(response.status, 200);
+    assert.match(response.headers["content-type"], /^text\/plain/);
+    assert.equal(response.body, emitted);
+    assert.match(response.body, /^- Email: contact@samedaydesk\.com$/m);
+    assert.doesNotMatch(response.body, /contact@neomorphic\.io/);
+    assert.match(response.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
+  }
+  const head = await request(port, { method: "HEAD", path: "/llms.txt" });
+  assert.equal(head.status, 200);
+  assert.equal(head.body, "");
+  assert.equal(Number(head.headers["content-length"]), Buffer.byteLength(emitted));
+}
+
+test("machine guide source serves the active contact over the production static path", async (t) => {
+  // Runtime-only consumers install no client toolchain and need no prebuilt dist.
+  const dist = mkdtempSync(join(tmpdir(), "machine-guide-source-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>guide fixture</body></html>");
+  writeFileSync(join(dist, "llms.txt"), source);
+  await assertGuideRoute(t, dist, source);
+});
+
+test("explicit client build emits and serves the exact active machine guide", {
+  skip: !process.env.SAMEDAYDESK_CLIENT_DIST && "no explicit client build supplied; source/static transport is tested separately",
+}, async (t) => {
+  // Supplying an absent or stale build must fail, never fall back to the source fixture.
+  const dist = process.env.SAMEDAYDESK_CLIENT_DIST;
+  const emitted = readFileSync(join(dist, "llms.txt"), "utf8");
+  const source = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.equal(emitted, source, "rebuild the supplied client before checking its published guide");
+  await assertGuideRoute(t, dist, emitted);
+});
+
 function problemsFor(expect, response, openapi) {
   const problems = [];
   if (expect.status !== undefined && response.status !== expect.status) problems.push(`status ${response.status} != ${expect.status}`);
@@ -82,6 +130,9 @@ function problemsFor(expect, response, openapi) {
 }
 
 test("discovery documents are acquired over HTTP and a free tool returns a useful plan", async (t) => {
+  const savedFetch = globalThis.fetch;
+  globalThis.fetch = withNetworkInfo(savedFetch);
+  t.after(() => { globalThis.fetch = savedFetch; });
   const app = createSdsApp();
   const { server, port } = await listen(app);
   t.after(() => new Promise((resolve) => server.close(resolve)));
@@ -90,6 +141,9 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   const openapiResponse = await request(port, { path: "/openapi.json", headers: { accept: "application/json", "user-agent": "Mozilla/5.0 discovery-replay" } });
   const skillResponse = await request(port, { path: "/skill.md", headers: { accept: "text/markdown", "user-agent": "Mozilla/5.0 discovery-replay" } });
   const catalogResponse = await request(port, { path: "/.well-known/api-catalog", headers: { accept: "application/linkset+json", "user-agent": "Mozilla/5.0 discovery-replay" } });
+  const llmsResponse = await request(port, { path: "/llms.txt" });
+  assert.equal(llmsResponse.status, 200);
+  assert.match(llmsResponse.body, /https:\/\/samedaydesk\.com\/agent-readiness\?host=example\.com&format=documentation/);
   assert.equal(openapiResponse.status, 200);
   assert.match(openapiResponse.headers["content-type"], /^application\/openapi\+json/);
   assert.match(skillResponse.headers["content-type"], /^text\/markdown/);
@@ -115,7 +169,37 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   }
 
   const openapi = openapiResponse.json;
+  const readinessOperation = openapi.paths["/agent-readiness"].get;
+  assert.deepEqual(readinessOperation.parameters.find((parameter) => parameter.name === "format").schema.enum,
+    ["json", "fix-pack", "documentation"]);
+  const jsonReadiness = readinessOperation.responses["200"].content["application/json"];
+  const validateReadiness = new Ajv2020({ strict: false, validateFormats: false }).compile(jsonReadiness.schema);
+  assert.equal(validateReadiness(jsonReadiness.examples.score.value), true);
+  assert.equal(validateReadiness(jsonReadiness.examples.documentation.value), true);
+  assert.equal(validateReadiness({ ...jsonReadiness.examples.documentation.value, score: 82 }), false);
+  assert.match(skillResponse.body, /format=documentation/);
+  assert.match(skillResponse.body, /This format is HTTP-only; the MCP checker remains scored/);
   const catalog = catalogResponse.json;
+  const gateway = await request(port, { path: "/discovery/paid-gateway.json" });
+  assert.equal(gateway.status, 200);
+  const expectedGateway = gatewayAvailability();
+  assert.deepEqual(gateway.json, expectedGateway);
+  assert.equal(gateway.headers["cache-control"], "no-cache");
+  assert.equal(gateway.json.alternatives.freeApexMcp, "https://samedaydesk.com/mcp");
+  assert.equal(openapi["x-paid-gateway"].state, expectedGateway.state);
+  assert.equal(openapi["x-paid-gateway"].callable, expectedGateway.callable);
+  assert.ok(skillResponse.body.includes(expectedGateway.summary));
+  assert.ok(skillResponse.body.includes(expectedGateway.nextAction));
+  assert.ok(catalog.linkset.some((entry) => JSON.stringify(entry).includes(`Paid gateway MCP (${expectedGateway.state})`)));
+  const reuse = openapi["x-query-key-caller"];
+  assert.equal(new URL(reuse.runner.alternateArchive).origin, "https://raw.githubusercontent.com");
+  assert.notEqual(new URL(reuse.runner.archive).origin, new URL(reuse.runner.alternateArchive).origin);
+  assert.equal(reuse.reuse.license, "CC0-1.0");
+  assert.equal(reuse.reuse.artifactPathSuffix, "/{taskId}/artifact");
+  assert.match(reuse.reuse.applyCaller, /--input caller\.json$/);
+  const reuseLlms = (await request(port, { path: "/llms.txt" })).body;
+  assert.ok(reuseLlms.includes(reuse.runner.alternateArchive));
+  assert.ok(reuseLlms.includes(reuse.apply));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -151,13 +235,13 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   const changed = await request(port, { method: "POST", path: "/mcp", headers: { "content-type": "application/json" }, body: changedBody });
   assert.equal(changed.status, 200);
   const structured = changed.json?.result?.structuredContent;
-  const expectedPlan = buildTaskMarketDelegationPlan(changedArguments);
+  const expectedPlan = planToolResult(changedArguments);
   assert.equal(structured.plan_id, expectedPlan.plan_id);
   assert.equal(structured.request.executed, false);
   assert.equal(structured.official_cli.executed, false);
   assert.equal(structured.authorization.state, "approval_required");
   assert.match(structured.request.body.description, /CHANGED-INPUT-discovery-replay-1004/);
-  assert.notEqual(structured.plan_id, buildTaskMarketDelegationPlan(planToolArguments()).plan_id);
+  assert.notEqual(structured.plan_id, planToolResult(planToolArguments()).plan_id);
   acquisition.changedPlan = { plan_id: structured.plan_id, executed: structured.request.executed };
 
   const servedNegatives = new Map();
@@ -182,9 +266,19 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.equal(hosted.json.enabled, false);
   const readiness = await request(port, { path: "/api/public-readiness/healthz" });
   assert.deepEqual(readiness.json.publicDeployment, publicDeploymentBody());
-  assert.match(openapi.info.description, /not a hosted consumer|do not become a hosted consumer/i);
+  // Retain the immutable prior disclosure; the current document leads with the
+  // buyer action and keeps the same refusal in the machine-readable contract.
+  const historical = execFileSync("git", ["show", "b001d2a702550db6212c1e7af2ee54d854d68146:server/lib/apex-declarations.js"], { encoding: "utf8" });
+  assert.match(historical, /not a hosted consumer|do not become a hosted consumer/i);
+  const hostedSchema = openapi.paths["/api/hosted-useful/healthz"].get.responses["200"].content["application/json"].schema;
+  assert.equal(hostedSchema.properties.productionReady.const, false);
+  assert.equal(hostedSchema.properties.publicationVerified.const, false);
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
+  assert.equal(card.status, 200);
+  assert.deepEqual(card.json["x-query-key-caller"], reuse);
+  assert.deepEqual(card.json["x-paid-gateway"], expectedGateway);
+  assert.ok(card.json.skills.some((skill) => skill.id === "check_ai_readiness"));
   assert.equal(card.status, 200);
   assert.equal(card.json.skills.some((skill) => skill.id === "check_ai_readiness"), true);
   assert.match(card.json.description, /agents\.samedaydesk\.com/);
@@ -347,6 +441,7 @@ test("production fallback keeps declarations out of the HTML shell and preserves
   t.after(() => rmSync(dist, { recursive: true, force: true }));
   writeFileSync(join(dist, "index.html"), "<!doctype html><html><body>spa-shell</body></html>");
   writeFileSync(join(dist, "openapi.json"), "{\"openapi\":\"static-decoy\"}");
+  writeFileSync(join(dist, "llms.txt"), "static guide decoy\n");
   mkdirSync(join(dist, ROUTE_SHELL_DIR), { recursive: true });
   writeFileSync(
     join(dist, ROUTE_SHELL_DIR, shellFileName(NOT_FOUND_SHELL.path)),
@@ -364,6 +459,7 @@ test("production fallback keeps declarations out of the HTML shell and preserves
     env: {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
+      NODE_OPTIONS: process.env.NODE_OPTIONS,
       NODE_ENV: "production",
       SAMEDAYDESK_CLIENT_DIST: dist,
     },
@@ -387,6 +483,23 @@ test("production fallback keeps declarations out of the HTML shell and preserves
 
   const openapi = await request(port, { path: "/openapi.json" });
   assert.equal(openapi.status, 200);
+  const servedGuide = await request(port, { path: "/llms.txt" });
+  assert.equal(servedGuide.status, 200);
+  assert.match(servedGuide.headers["content-type"], /^text\/plain/);
+  const staticSource = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  assert.match(servedGuide.body, /\[[^\]]+\]\(https:\/\/samedaydesk\.com\/start\.md\)/);
+  assert.equal((servedGuide.body.match(/\]\(https:\/\/samedaydesk\.com\/start\.md\)/g) || []).length, 1);
+  assert.ok(servedGuide.body.startsWith(staticSource));
+  assert.match(servedGuide.body, /## Use query-key locally/);
+  assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 0);
+  const declaredReuse = openapi.json["x-query-key-caller"];
+  assert.equal(Object.hasOwn(declaredReuse, "acceptedWork"), false, "disabled public reads must not advertise a collection");
+  assert.ok(declaredReuse.runner.alternateArchive);
+  assert.ok(declaredReuse.reuse.applyCaller);
+  const headGuide = await request(port, { method: "HEAD", path: "/llms.txt" });
+  assert.equal(headGuide.status, 200);
+  assert.equal(headGuide.body, "");
+  assert.equal(Number(headGuide.headers["content-length"]), Buffer.byteLength(servedGuide.body));
   assert.equal(openapi.json.openapi, "3.1.0");
   assert.equal(openapi.body.includes("static-decoy"), false);
   const skill = await request(port, { path: "/skill.md" });
@@ -456,4 +569,63 @@ test("refusal and truncated retrieval stay distinct from a missing declaration",
   assert.match(refusedCheck.reason, /refused/);
   assert.match(refusedCheck.reason, /not evidence it is absent/);
   assert.equal(classifyRetrieval(refused.responses["/openapi.json"]).kind, "blocked");
+});
+
+
+test("public checkout cards retain the independently approved USD amounts and links", () => {
+  const html = readFileSync(new URL("../../client/public/ai-visibility-audit.html", import.meta.url), "utf8");
+  for (const [id, amount, link] of [
+    ["buy-audit", "199", "3cIbJ2gwy2bdgFFfYSeZ20u"],
+    ["buy-fix", "399", "3cI00kdkmeXZ6118wqeZ20v"],
+    ["buy-sprint", "499", "00w00k1BE9DF2OP282eZ20w"],
+  ]) {
+    const anchor = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(m => m[1].includes(`id="${id}"`));
+    assert.ok(anchor, id);
+    assert.ok(anchor[1].includes(`https://buy.stripe.com/${link}`));
+    assert.match(anchor[2], new RegExp(`\\b${amount} USD\\b`));
+  }
+  assert.doesNotMatch(html, /USD[0-9]/);
+});
+
+test("machine offer prices lead to the current checkout or durable task form", () => {
+  const text = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  for (const [amount, slug] of [[149,"agent_workflow"],[349,"agent_mcp_server"],[499,"machine_payment_route"],[999,"agent_storefront"],[249,"agent_front_door"],[100,"keep_it_working"]]) {
+    const line = text.split("\n").find(line => line.includes(`offer=${slug}`));
+    assert.ok(line, slug); assert.ok(line.includes(`${amount} USD`), slug);
+  }
+  assert.ok(text.includes("https://samedaydesk.com/#task"));
+  assert.doesNotMatch(text, /Ask by email|same[ -]day|\d+ to \d+ days|working this week/);
+});
+
+test("an apex client follows the homepage link to the live machine start guide", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "start-guide-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  const home = "<!doctype html><html><body>retained home fixture</body></html>";
+  writeFileSync(join(dist, "index.html"), home);
+  const app = express();
+  mountApexDeclarations(app);
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const link = '<https://samedaydesk.com/start.md>; rel="alternate"; type="text/markdown"';
+  const get = await request(port, { path: "/" });
+  assert.equal(get.status, 200);
+  assert.equal(get.headers.link, link);
+  assert.equal(get.body, home);
+  const head = await request(port, { method: "HEAD", path: "/" });
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.link, link);
+  assert.equal(head.body, "");
+  const index = await request(port, { path: "/llms.txt" });
+  assert.equal(index.headers.link, link);
+  assert.match(index.body, /\[[^\]]+\]\(https:\/\/samedaydesk\.com\/start\.md\)/);
+  const guide = await request(port, { path: "/start.md", headers: { accept: "text/html" } });
+  assert.equal(guide.status, 200);
+  assert.equal(guide.headers["content-type"], "text/markdown; charset=utf-8");
+  assert.equal(guide.body, readFileSync(new URL("../../client/public/start.md", import.meta.url), "utf8"));
+  assert.match(guide.body, /GET https:\/\/samedaydesk\.com\/api\/tools\/ai-readiness/);
+  const guideHead = await request(port, { method: "HEAD", path: "/start.md" });
+  assert.equal(guideHead.status, 200);
+  assert.equal(guideHead.body, "");
+  assert.equal(Number(guideHead.headers["content-length"]), Buffer.byteLength(guide.body));
 });

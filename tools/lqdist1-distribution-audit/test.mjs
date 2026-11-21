@@ -29,14 +29,9 @@ const commandsPath = join(DOCS_DIR, "COMMANDS.md");
 
 function mcpTools() {
   const src = readFileSync(mcpPath, "utf8");
-  const start = src.indexOf("const tools = [");
-  const end = src.indexOf("];", start);
-  assert.ok(start >= 0 && end > start, "Mcp.tsx tools array");
-  const block = src.slice(start, end);
-  const names = [...block.matchAll(/name:\s*"([^"]+)"/g)].map((m) => m[1]);
-  const prices = [...block.matchAll(/price:\s*"\$([0-9.]+)"/g)].map((m) => Number(m[1]));
-  assert.equal(names.length, prices.length, "name/price pairs");
-  return names.map((name, i) => ({ name, price: prices[i] }));
+  assert.match(src, /import board from "..\/data\/paidTools.json"/);
+  const groups = JSON.parse(readFileSync(join(ROOT, "client/src/data/paidTools.json"), "utf8"));
+  return groups.flatMap(group => group.tools.map(tool => ({ name: tool.name, price: Number(tool.price) })));
 }
 
 test("every canonical paid route has a three-surface result", () => {

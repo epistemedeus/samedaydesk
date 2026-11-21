@@ -1,0 +1,10 @@
+{
+  "name": "release-tools",
+  "private": true,
+  "description": "Browser tools for scripts/release/sweep.mjs and stripe-matrix.mjs. Installed on first use.",
+  "dependencies": {
+    "axe-core": "4.10.3",
+    "lighthouse": "13.6.0",
+    "puppeteer-core": "25.16.0"
+  }
+}

@@ -1,0 +1,186 @@
+TAP version 13
+# Subtest: later caller recovers a concurrent failed first open, with one new store and private errors
+not ok 1 - later caller recovers a concurrent failed first open, with one new store and private errors
+  ---
+  duration_ms: 13.644559
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: 'gateway_unavailable'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/mount.mjs:111:15
+  ...
+# Subtest: scheduler recovers readiness without another caller and installs one scheduler/store
+not ok 2 - scheduler recovers readiness without another caller and installs one scheduler/store
+  ---
+  duration_ms: 4.627354
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:73:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:81:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+not ok 3 - repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+  ---
+  duration_ms: 2.012633
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:89:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:96:30)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: initial scheduler plan failure recovers autonomously using the existing store
+not ok 4 - initial scheduler plan failure recovers autonomously using the existing store
+  ---
+  duration_ms: 2.668532
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:101:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:107:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: scheduled replan failure recovers and repeated tick errors use bounded backoff
+not ok 5 - scheduled replan failure recovers and repeated tick errors use bounded backoff
+  ---
+  duration_ms: 2.591274
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:110:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:115:38)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: close during initialization waits for and closes the returned store exactly once
+ok 6 - close during initialization waits for and closes the returned store exactly once
+  ---
+  duration_ms: 1.604511
+  ...
+# Subtest: close during backoff cancels autonomous recovery
+ok 7 - close during backoff cancels autonomous recovery
+  ---
+  duration_ms: 1.386739
+  ...
+# Subtest: close during asynchronous planning never installs a timer after shutdown
+not ok 8 - close during asynchronous planning never installs a timer after shutdown
+  ---
+  duration_ms: 1.486666
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:143:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    wait for owned planning query before ending its pool
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/lifecycle.test.mjs:148:25)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: close during in-flight work waits, aborts its signal and prevents rearming
+ok 9 - close during in-flight work waits, aborts its signal and prevents rearming
+  ---
+  duration_ms: 2.013949
+  ...
+# Subtest: disabled never retries or opens a store
+ok 10 - disabled never retries or opens a store
+  ---
+  duration_ms: 1.436661
+  ...
+# Subtest: flag never retries or opens a store
+ok 11 - flag never retries or opens a store
+  ---
+  duration_ms: 0.903212
+  ...
+# Subtest: schedulerFlag never retries or opens a store
+ok 12 - schedulerFlag never retries or opens a store
+  ---
+  duration_ms: 4.298095
+  ...
+# Subtest: sqliteProduction never retries or opens a store
+ok 13 - sqliteProduction never retries or opens a store
+  ---
+  duration_ms: 0.82972
+  ...
+# Subtest: missingDatabase never retries or opens a store
+ok 14 - missingDatabase never retries or opens a store
+  ---
+  duration_ms: 3.065081
+  ...
+# Subtest: weakTls never retries or opens a store
+ok 15 - weakTls never retries or opens a store
+  ---
+  duration_ms: 1.324802
+  ...
+# Subtest: invalidRuntime never retries or opens a store
+ok 16 - invalidRuntime never retries or opens a store
+  ---
+  duration_ms: 0.935707
+  ...
+# Subtest: scheduler disabled leaves request serving independent and opens no autonomous work
+ok 17 - scheduler disabled leaves request serving independent and opens no autonomous work
+  ---
+  duration_ms: 0.97727
+  ...
+# Subtest: permanent schema/authentication failures do not retry while the other service remains usable
+ok 18 - permanent schema/authentication failures do not retry while the other service remains usable
+  ---
+  duration_ms: 22.210629
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 12
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 232.039471

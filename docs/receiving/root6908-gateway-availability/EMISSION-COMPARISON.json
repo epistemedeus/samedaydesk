@@ -1,0 +1,59 @@
+{
+  "emittedFiles": 352,
+  "emittedBytesBefore": 59950551,
+  "changedPaths": [
+    "discovery/paid-gateway.json",
+    "llms.txt"
+  ],
+  "rawEqualFiles": 350,
+  "rawEqualHumanHTML": 139,
+  "rawEqualAssets": 40,
+  "allOtherEmittedFilesRawEqual": true,
+  "guideOutsideOwnedBlockRawEqual": true,
+  "machine": [
+    {
+      "name": "descriptor",
+      "beforeBytes": 660,
+      "afterBytes": 676,
+      "beforeSha256": "f4daaf5351f86a53b23f94a7460d64f650a3ae7b2876d1fd1d509f29584abb0a",
+      "afterSha256": "da11bee4fe7a03028216dee576d0bd2222c86b3f99007d69394f706818877fd2"
+    },
+    {
+      "name": "llms",
+      "beforeBytes": 8616,
+      "afterBytes": 8599,
+      "beforeSha256": "0414d70807f95709e0f00cc528641154644990a60b9dfb5ee4aa46eb4b161153",
+      "afterSha256": "4bee826a88bb60f94e67e2bc1b87e0506d5f605aba1ec3d2bb8280b5c19d2c1c"
+    },
+    {
+      "name": "skill",
+      "beforeBytes": 12541,
+      "afterBytes": 12555,
+      "beforeSha256": "3b256a0880774bb234083f77cc01d2fd8c11c714d4d63354049d71a5324c6e14",
+      "afterSha256": "4a4b5d8a062a6d28251d938ce7170203d05dda65bc649c55427acdbf9c176db3"
+    },
+    {
+      "name": "openapi",
+      "beforeBytes": 41565,
+      "afterBytes": 41622,
+      "beforeSha256": "0dd863326011e7573768de3d9e03a6b9e860903dae11415b9be23515adce0f5b",
+      "afterSha256": "9f0ee5168bde5dfa600a744d0f027eeae5b1c8e9b9b813e2283cb3a7a43fc2dd"
+    },
+    {
+      "name": "catalog",
+      "beforeBytes": 1957,
+      "afterBytes": 1981,
+      "beforeSha256": "cf7648054ecdcde53ef5cfdab7b17ed9ed37f9b4a3b97a0decd7a6747c0b78de",
+      "afterSha256": "f9661789e211aa92b3d0905fd31653e0fc630e800feb151df27722673ab96be0"
+    },
+    {
+      "name": "card",
+      "beforeBytes": 2747,
+      "afterBytes": 2780,
+      "beforeSha256": "184cc78c9b66b57b97f70ed3c2da29a933301522bd0d8a3aa481e8e1a99446aa",
+      "afterSha256": "e4720e6e397061a3e9f0204294b1d5bbb9e7d0b3cba15e4130e79aa4681e484d"
+    }
+  ],
+  "originalReceipt": "ROOT6904;see sibling ROOT-RECEIVING.md and its exact published Git source",
+  "receivedObservedAt": "2026-10-24T23:56:22.400Z"
+}

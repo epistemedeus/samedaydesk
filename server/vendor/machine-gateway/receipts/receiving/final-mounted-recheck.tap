@@ -1,0 +1,17 @@
+TAP version 13
+# (node:2241400) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: mounted monitoring observes a gateway authentication refusal without acquiring its tenant authority or executing work
+ok 1 - mounted monitoring observes a gateway authentication refusal without acquiring its tenant authority or executing work
+  ---
+  duration_ms: 259.947121
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 404.287498

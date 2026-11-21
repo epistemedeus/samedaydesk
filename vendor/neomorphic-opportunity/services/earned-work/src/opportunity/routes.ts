@@ -1,3 +1,4 @@
+import {mountOriginalContinuationRoutes} from "./continuation.js";
 import type { NextFunction, Request, Response } from "express";
 import { requireContributor, readBearer, type AuthedRequest } from "../auth.js";
 import { assertOwner, type ServiceConfig } from "../config.js";
@@ -36,6 +37,7 @@ function provenanceOf(value: unknown): Provenance {
 
 export function mountOpportunityRoutes(app: { post: Function; get: Function }, store: PostgresStore, config: ServiceConfig) {
   const opportunity = new OpportunityService(store, config.hostedDelivery);
+  mountOriginalContinuationRoutes(app,store,opportunity);
 
   app.post("/v1/opportunity-rounds", async (req: Request, res: Response, next: NextFunction) => {
     try {

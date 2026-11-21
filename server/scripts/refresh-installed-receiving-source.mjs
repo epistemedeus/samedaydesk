@@ -1,0 +1,100 @@
+// Mechanical source export for the interpreted installed debt consumer. Its
+// .mjs files are the maintained SDS source, not generated TypeScript output.
+// The Neo TypeScript runtime uses its separate declared runtime exporter first.
+import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {isDeepStrictEqual} from 'node:util';
+import {createHash} from 'node:crypto';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {installedSourceSha256,installedSourceFiles,hostSourceSha256} from '../../vendor/hosted-wallet-market/src/native-debt.mjs';
+import {verifyContributorRuntime} from '../lib/contributor-artifact.js';
+const root=fileURLToPath(new URL('../../',import.meta.url));
+const read=name=>readFile(path.join(root,name));
+// Receive explicitly named installed source, never infer it from a dirty export.
+// The same predecessor is idempotent; ordinary refresh adds no new descriptor.
+const args=process.argv.slice(2), predecessorRefs=[];
+let joinMeasurement=false, joinCareSchema=false;
+while(args.length){
+  const option=args.shift();
+  if(option==='--join-measurement-runtime'){joinMeasurement=true;continue;}
+  if(option==='--join-care-schema'){joinCareSchema=true;continue;}
+  const ref=args.shift();
+  if(option!=='--receive-caller-from'||!(/^[a-f0-9]{40}$/.test(ref??'')))throw Error('full predecessor commit required');
+  execFileSync('git',['merge-base','--is-ancestor',ref,'HEAD'],{cwd:root,stdio:'pipe'});
+  predecessorRefs.push(ref);
+}
+// These are the host-application bytes the free-tool measurement changed.
+// The full exporter still refuses every other drifted pin member.
+const measurementRuntime=['package.json','server/lib/pulse.js','server/lib/pulse-store/free-tool-outcomes.js','server/lib/pulse-store/schema.js','server/lib/pulse-store/supabase-adapter.js','server/lib/pulse-store/wal-schema.js','server/routes/tools.js','supabase/migrations/0010_pulse_free_tool_outcomes.sql'];
+const careRuntime=['server/lib/care-database.js','server/lib/care-store.js','server/lib/commerce-journey.js','server/lib/mail-events.js','server/lib/task-quotes.js','server/lib/task-requests.js'];
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const manifestName='vendor/hosted-wallet-market/SOURCE.json';
+const manifest=JSON.parse(await read(manifestName));
+const lateMembers=['bin/installed-debt.mjs','schema/012_late_native_discharge.sql','src/canonical-receiving.mjs',
+  'src/discharge-authority.mjs','src/late-discharge.mjs','src/migrate.mjs','src/native-debt.mjs','src/profile.mjs','src/server.mjs'];
+const installedFiles=installedSourceFiles();
+if(manifest.lateDischargeSource||installedFiles.includes('schema/012_late_native_discharge.sql')||
+    installedFiles.includes('src/late-discharge.mjs')){
+  const overlay=manifest.lateDischargeSource;
+  if(overlay?.schema!=='pilot.sds.hosted-late-discharge-source.v1'||
+      Object.keys(overlay.files??{}).length!==lateMembers.length)throw Error('late discharge overlay missing');
+  for(const name of lateMembers)if(sha(await read('vendor/hosted-wallet-market/'+name))!==overlay.files[name]){
+    throw Error('late discharge overlay drift: '+name);
+  }
+}
+manifest.installedSourceSha256=installedSourceSha256();
+manifest.receivingSource={repository:'epistemedeus/samedaydesk',baseCommit:'2ebdd605708d91d3638ecbc9c640e570a9ad483e',
+  predecessorConsumerSha256:'36dc4d34b003349ed5a6fd5ba5a50229ab4779291712ff84412e8e76125b451b',
+  exportCommand:'node server/scripts/refresh-installed-receiving-source.mjs',
+  scope:'interpreted native discharge reader; existing runtime dependencies preserved'};
+const manifestBytes=JSON.stringify(manifest,null,2)+'\n';
+const pinName='server/foundry/activation/private-control-pin.json';
+const pin=JSON.parse(await read(pinName));
+const received=[...(pin.receivedCallerClosures??[])];
+const digest=predecessorRefs.length?(await import('../foundry/private-pass-core.mjs')).digest:null;
+for(const ref of predecessorRefs){
+  const prior=JSON.parse(execFileSync('git',['show',ref+':'+pinName],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024}));
+  if(typeof prior.base!=='string'||!(/^[a-f0-9]{64}$/.test(prior.files?.['vendor/visitor-foundry-receiver/SOURCE-PIN.json']??'')))throw Error('invalid predecessor caller pin');
+  const descriptor={base:prior.base,sourcePinSha256:prior.files['vendor/visitor-foundry-receiver/SOURCE-PIN.json'],closureDigest:digest(prior)};
+  for(const candidate of [...(prior.receivedCallerClosures??[]),descriptor])
+    if(!received.some(saved=>isDeepStrictEqual(saved,candidate)))received.push(candidate);
+}
+const next={...pin.files};
+const hostOwned=new Set(['server/app.js','server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
+  'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
+  'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
+if(joinMeasurement||joinCareSchema){
+  if(joinMeasurement&&joinCareSchema)throw Error('select one explicit host runtime scope');
+  const joined=joinCareSchema?careRuntime:measurementRuntime;
+  const refreshable=new Set(joinCareSchema?[...careRuntime,'server/scripts/refresh-installed-receiving-source.mjs']:[...hostOwned,...measurementRuntime]);
+  for(const [name,expected] of Object.entries(pin.files)){
+    if(refreshable.has(name))continue;
+    if(sha(await read(name))!==expected)throw Error('unrelated source pin drift: '+name);
+  }
+  const ordered={};
+  for(const name of Object.keys(pin.files))ordered[name]=refreshable.has(name)?sha(await read(name)):pin.files[name];
+  for(const name of joined)if(!Object.hasOwn(ordered,name))ordered[name]=sha(await read(name));
+  await writeFile(path.join(root,pinName),JSON.stringify({...pin,receivedCallerClosures:received,files:ordered},null,2)+'\n');
+  process.stdout.write(JSON.stringify({joined,sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(root),qualified:false,installed:false})+'\n');
+  process.exit(0);
+}
+const neoPrefix='vendor/neomorphic-contributor-journey/';
+const neo=JSON.parse(await read(neoPrefix+'SOURCE.json'));
+await verifyContributorRuntime(path.join(root,neoPrefix),neo.sourceCommit);
+for(const name of Object.keys(next))if(name.startsWith(neoPrefix))delete next[name];
+for(const member of [...neo.files.map(file=>file.path),'SOURCE.json'])next[neoPrefix+member]=sha(await read(neoPrefix+member));
+for(const name of Object.keys(next)){
+  if(name===manifestName){next[name]=sha(manifestBytes);continue;}
+  const got=sha(await read(name));
+  if(name.startsWith('vendor/hosted-wallet-market/')||hostOwned.has(name)||measurementRuntime.includes(name))next[name]=got;
+  else if(next[name]!==got)throw Error('unrelated source pin drift: '+name);
+}
+for(const name of measurementRuntime)next[name]=sha(await read(name));
+// New additive migrations and modules join the complete host closure.
+for(const name of installedFiles)next['vendor/hosted-wallet-market/'+name]=sha(await read('vendor/hosted-wallet-market/'+name));
+// The read-only Root CLI entry and this source exporter are part of the host.
+for(const name of hostOwned)next[name]=sha(await read(name));
+await writeFile(path.join(root,manifestName),manifestBytes);
+await writeFile(path.join(root,pinName),JSON.stringify({...pin,receivedCallerClosures:received,files:next},null,2)+'\n');
+process.stdout.write(JSON.stringify({consumerSourceSha256:manifest.installedSourceSha256,hostMembers:Object.keys(next).length,qualified:false,installed:false})+'\n');

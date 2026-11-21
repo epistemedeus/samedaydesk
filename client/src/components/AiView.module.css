@@ -1,0 +1,6 @@
+/* Two reader panes, side by side on wide screens: plain text, as a model receives it. */
+.view { display: grid; gap: var(--space-s); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+.pane { min-width: 0; border: 1px solid var(--line-2); background: var(--bg-1); }
+.tag { margin: 0; padding: 0.6rem var(--space-s); border-bottom: 1px dashed var(--line-2); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+.read { margin: 0; padding: var(--space-s); font: 400 var(--step--1)/1.6 var(--font-mono); color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.pane:first-child .read { color: var(--ink-dim); }

@@ -5,6 +5,7 @@ import {
   credentialHits,
   isForbiddenKey,
   isPublicHttpUrl,
+  keyName,
   looksLikeFilesystemPath,
   sha256Json,
 } from "./omit.mjs";
@@ -336,4 +337,28 @@ function payloadWithoutHash(payload) {
   const copy = { ...payload };
   delete copy.contentHash;
   return copy;
+}
+
+// Top-level N45 `payment: false` is an origin marker the projection already
+// turns into originMarkedNoPayment. Every other forbidden key is a private field.
+export function findPrivateField(value, path = "") {
+  if (value == null || typeof value !== "object") return null;
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      const found = findPrivateField(value[index], `${path}/${index}`);
+      if (found) return found;
+    }
+    return null;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    const segment = safePathSegment(key);
+    const nextPath = joinPath(path, segment);
+    const paymentMarker = path === "" && keyName(key) === "payment" && typeof child === "boolean";
+    if (isForbiddenKey(key) && !paymentMarker) {
+      return { path: nextPath || segment };
+    }
+    const found = findPrivateField(child, nextPath);
+    if (found) return found;
+  }
+  return null;
 }

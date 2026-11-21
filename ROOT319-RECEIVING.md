@@ -1,0 +1,11 @@
+# ROOT319 paired SDS receiving
+
+This branch starts at SDS317 `2af32ac57750fdb4e855d3fde1e4303b1c6e0b5e`. Its runtime implementation checkpoint is `92d9e035f26939f24ae6bcd7d973753cbd9aaf3f`, paired with Pilot `e1596da73c449cb803b3dbef1f127307d99644d7`. Later commits add receiving records only. Neo stays `0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556`.
+
+The complete [Pilot receiving receipt](https://github.com/epistemedeus/pilot/blob/codex/root267-entitled-upgrade-receiving/tools/root71-hosted-wallet-market/ROOT319-RECEIVING.md) owns exact inputs, commands, 269 unique passing leaf tests, failure history, source/host hashes, private installation, rollback, machine-only publication and Root's next authenticated retained read. New draft PRs use frozen ROOT319 baseline branches; the earlier PRs are not reused.
+
+The artifact vendors the actual compiled foundation, rail and requester market, required schemas/ABI and runtime dependencies. The existing server mount adds source-qualified machine discovery and selected-party authority while retaining original private/no-header consumers. The optional machine capability is not required by the existing 88-key private environment. Missing proof columns refuse startup readiness. New client 0.2.0 is a separate immutable archive; no prior archive is replaced.
+
+Cold Git-archive receiving used verify-full PostgreSQL, TLS, actual contracts on a disposable chain and a freshly installed client. It received wallet proof and independent encrypted recovery, selected terms, actual funding/capture, exact 5% floor arithmetic, recovery/restart/races, durable incidents, current canonical holds, retained rights and old paid-source succession. Public source/code and asset qualification remain refused. No source was installed into the actual private application; there was no production account, signing, funding, transfer or activation.
+
+All 3,240 protected predecessor blobs match, including human assets/copy, unrelated service/client mounts and compiled Neo bytes. Only the owned wallet package, declared runtime dependencies/locks, its mount, source pin and Neo host-lock metadata change. Root installs through the current private release controller and preserves the original complete snapshot, enrollment, obligations, earned work, paid evidence, registry and pending operation journals.

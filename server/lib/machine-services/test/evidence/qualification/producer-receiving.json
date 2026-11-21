@@ -1,0 +1,15 @@
+{
+  "schema": "sds.contributor-producer-receiving.v1",
+  "producerHead": "872c4f3006db6c70b45d124480cd019e0af50e69",
+  "command": "node services/contributor-journey/export-runtime.mjs /absolute/isolated/recipient",
+  "producerBuild": "npm run build --prefix services/contributor-journey",
+  "compiledAndStaticMembersCompared": 437,
+  "compiledAndStaticChanges": 0,
+  "changedManifestFields": [
+    "hostLockSha256"
+  ],
+  "priorHostLockSha256": "b1967d7aab10dc77a308c4fff7e2adb892a2ea749c69e7ea434de58eff103e21",
+  "hostLockSha256": "9e9c21190b0db40f9905de8c0a5a01470125f4d73561ac8d1f70abcb4ca1a129",
+  "runtimeSourceAndSourceBindingsUnchanged": true,
+  "deploymentQualificationIssued": false
+}

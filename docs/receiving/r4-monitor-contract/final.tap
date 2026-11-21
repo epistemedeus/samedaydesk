@@ -1,0 +1,245 @@
+TAP version 13
+# Subtest: later caller recovers a concurrent failed first open, with one new store and private errors
+ok 1 - later caller recovers a concurrent failed first open, with one new store and private errors
+  ---
+  duration_ms: 88.793651
+  type: 'test'
+  ...
+# Subtest: scheduler recovers readiness without another caller and installs one scheduler/store
+ok 2 - scheduler recovers readiness without another caller and installs one scheduler/store
+  ---
+  duration_ms: 4.230106
+  type: 'test'
+  ...
+# Subtest: repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+ok 3 - repeated readiness failure backs off 1/2/4/8/16/30 seconds and caps at 30 seconds
+  ---
+  duration_ms: 7.252755
+  type: 'test'
+  ...
+# Subtest: initial scheduler plan failure recovers autonomously using the existing store
+ok 4 - initial scheduler plan failure recovers autonomously using the existing store
+  ---
+  duration_ms: 2.455956
+  type: 'test'
+  ...
+# Subtest: scheduled replan failure recovers and repeated tick errors use bounded backoff
+ok 5 - scheduled replan failure recovers and repeated tick errors use bounded backoff
+  ---
+  duration_ms: 4.153033
+  type: 'test'
+  ...
+# Subtest: close during initialization waits for and closes the returned store exactly once
+ok 6 - close during initialization waits for and closes the returned store exactly once
+  ---
+  duration_ms: 2.356361
+  type: 'test'
+  ...
+# Subtest: close during backoff cancels autonomous recovery
+ok 7 - close during backoff cancels autonomous recovery
+  ---
+  duration_ms: 1.517455
+  type: 'test'
+  ...
+# Subtest: close during asynchronous planning never installs a timer after shutdown
+ok 8 - close during asynchronous planning never installs a timer after shutdown
+  ---
+  duration_ms: 1.768665
+  type: 'test'
+  ...
+# Subtest: close during in-flight work waits, aborts its signal and prevents rearming
+ok 9 - close during in-flight work waits, aborts its signal and prevents rearming
+  ---
+  duration_ms: 2.238515
+  type: 'test'
+  ...
+# Subtest: disabled never retries or opens a store
+ok 10 - disabled never retries or opens a store
+  ---
+  duration_ms: 1.10361
+  type: 'test'
+  ...
+# Subtest: flag never retries or opens a store
+ok 11 - flag never retries or opens a store
+  ---
+  duration_ms: 0.823037
+  type: 'test'
+  ...
+# Subtest: schedulerFlag never retries or opens a store
+ok 12 - schedulerFlag never retries or opens a store
+  ---
+  duration_ms: 0.70115
+  type: 'test'
+  ...
+# Subtest: sqliteProduction never retries or opens a store
+ok 13 - sqliteProduction never retries or opens a store
+  ---
+  duration_ms: 1.018739
+  type: 'test'
+  ...
+# Subtest: missingDatabase never retries or opens a store
+ok 14 - missingDatabase never retries or opens a store
+  ---
+  duration_ms: 1.636025
+  type: 'test'
+  ...
+# Subtest: weakTls never retries or opens a store
+ok 15 - weakTls never retries or opens a store
+  ---
+  duration_ms: 1.312564
+  type: 'test'
+  ...
+# Subtest: invalidRuntime never retries or opens a store
+ok 16 - invalidRuntime never retries or opens a store
+  ---
+  duration_ms: 2.147756
+  type: 'test'
+  ...
+# Subtest: scheduler disabled leaves request serving independent and opens no autonomous work
+ok 17 - scheduler disabled leaves request serving independent and opens no autonomous work
+  ---
+  duration_ms: 1.241796
+  type: 'test'
+  ...
+# Subtest: permanent 42P01 failure does not retry while the other service remains usable
+ok 18 - permanent 42P01 failure does not retry while the other service remains usable
+  ---
+  duration_ms: 26.152361
+  type: 'test'
+  ...
+# Subtest: permanent 28P01 failure does not retry while the other service remains usable
+ok 19 - permanent 28P01 failure does not retry while the other service remains usable
+  ---
+  duration_ms: 24.995647
+  type: 'test'
+  ...
+# Subtest: permanent machine_schema_version_refused failure does not retry while the other service remains usable
+ok 20 - permanent machine_schema_version_refused failure does not retry while the other service remains usable
+  ---
+  duration_ms: 25.822173
+  type: 'test'
+  ...
+# Subtest: permanent CERT_HAS_EXPIRED failure does not retry while the other service remains usable
+ok 21 - permanent CERT_HAS_EXPIRED failure does not retry while the other service remains usable
+  ---
+  duration_ms: 29.184391
+  type: 'test'
+  ...
+# Subtest: invalid runtime and duplicate gateway authority are refused before the first DB open
+ok 22 - invalid runtime and duplicate gateway authority are refused before the first DB open
+  ---
+  duration_ms: 25.932974
+  type: 'test'
+  ...
+# Subtest: close is single flight and releases every pool even when one close rejects privately
+ok 23 - close is single flight and releases every pool even when one close rejects privately
+  ---
+  duration_ms: 26.661524
+  type: 'test'
+  ...
+# Subtest: a failed open retains its transient classification even if its pool close also fails
+ok 24 - a failed open retains its transient classification even if its pool close also fails
+  ---
+  duration_ms: 40.184647
+  type: 'test'
+  ...
+# Subtest: close during scheduler-plan backoff cancels its retry and keeps the store closed
+ok 25 - close during scheduler-plan backoff cancels its retry and keeps the store closed
+  ---
+  duration_ms: 2.452582
+  type: 'test'
+  ...
+# Subtest: close also waits for the scheduler automatic post-tick due query
+ok 26 - close also waits for the scheduler automatic post-tick due query
+  ---
+  duration_ms: 1.507423
+  type: 'test'
+  ...
+# Subtest: a plan failure while work awaits cannot overlap ticks or have its refusal erased by the old completion
+ok 27 - a plan failure while work awaits cannot overlap ticks or have its refusal erased by the old completion
+  ---
+  duration_ms: 1.879446
+  type: 'test'
+  ...
+# Subtest: a transient plan failure during work waits for that bounded tick before installing its successor
+ok 28 - a transient plan failure during work waits for that bounded tick before installing its successor
+  ---
+  duration_ms: 1.340433
+  type: 'test'
+  ...
+# Subtest: mounted PG contract journey: credential-free readiness and exact machine acquisition
+ok 29 - mounted PG contract journey: credential-free readiness and exact machine acquisition
+  ---
+  duration_ms: 931.410182
+  type: 'test'
+  ...
+# {"rowsPreserved":{"schema_identity":1,"tenants":4,"credentials":5,"monitors":3,"runs":1,"run_outputs":1,"snapshots":1,"events":1,"deliveries":1,"delivery_attempts":1,"source_gates":0,"gateway.schema_identity":1,"gateway.credentials":0,"gateway.quotes":0,"gateway.attempts":0,"gateway.usage":0},"artifactSha256":"036585d6c8147ce3b92cd7d51618360747d7f20d40ca1021470f825b5c4d5fcc","contractSha256":"18a25d6aec57b87de64d4145fd75bdf17d2e7c209ffbcbb8ea598912a5d5d272","source":{"status":"matched","scope":"local-monitor-runtime","sha256":"37cacd13c7f4b7d2ef830b29c719d27e1ee80c62f13ee1abe15de456cbb24a4f","providerBuildQualified":false},"scheduler":{"enabled":true,"armed":false,"nextDueAt":null},"postgresTLS":{"ssl":true,"version":"TLSv1.3"}}
+# Subtest: public acquisition grants no private read, tenant write or renewed lifetime capacity
+ok 30 - public acquisition grants no private read, tenant write or renewed lifetime capacity
+  ---
+  duration_ms: 57.250448
+  type: 'test'
+  ...
+# Subtest: wrong routes, traversal, malformed paths, methods, origins and queries expose no document or private material
+ok 31 - wrong routes, traversal, malformed paths, methods, origins and queries expose no document or private material
+  ---
+  duration_ms: 66.473731
+  type: 'test'
+  ...
+# Subtest: disabled, missing or invalid PG/config and unsupported stores cannot advertise ready
+ok 32 - disabled, missing or invalid PG/config and unsupported stores cannot advertise ready
+  ---
+  duration_ms: 86.670796
+  type: 'test'
+  ...
+# Subtest: missing/stale source evidence refuses availability; original evidence recovers without scheduler or grant
+ok 33 - missing/stale source evidence refuses availability; original evidence recovers without scheduler or grant
+  ---
+  duration_ms: 65.415279
+  type: 'test'
+  ...
+# Subtest: real PG outage and recovery retain one scheduler, store, grants, slots and exact restart contract
+ok 34 - real PG outage and recovery retain one scheduler, store, grants, slots and exact restart contract
+  ---
+  duration_ms: 1416.61518
+  type: 'test'
+  ...
+# Subtest: fresh schema identity is required even after a healthy store was cached
+ok 35 - fresh schema identity is required even after a healthy store was cached
+  ---
+  duration_ms: 38.88145
+  type: 'test'
+  ...
+# Subtest: close change during an actual blocked PG readiness query cannot retain availability
+ok 36 - close change during an actual blocked PG readiness query cannot retain availability
+  ---
+  duration_ms: 31.329773
+  type: 'test'
+  ...
+# Subtest: source change during an actual blocked PG readiness query cannot retain availability
+ok 37 - source change during an actual blocked PG readiness query cannot retain availability
+  ---
+  duration_ms: 24.787253
+  type: 'test'
+  ...
+# Subtest: cold exact source: missing files, inconsistent contracts, links and repinned unloaded bytes fail closed
+ok 38 - cold exact source: missing files, inconsistent contracts, links and repinned unloaded bytes fail closed
+  ---
+  duration_ms: 3970.042258
+  type: 'test'
+  ...
+# Subtest: paid-disabled gateway discovery and its stored authority remain intact
+ok 39 - paid-disabled gateway discovery and its stored authority remain intact
+  ---
+  duration_ms: 49.497795
+  type: 'test'
+  ...
+1..39
+# tests 39
+# suites 0
+# pass 39
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7779.571983

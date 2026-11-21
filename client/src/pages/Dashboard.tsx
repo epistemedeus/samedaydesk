@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { getSupabase, authedFetch } from "../lib/supabase";
@@ -14,15 +14,23 @@ export default function Dashboard() {
   const justPaid = params.get("paid") === "1";
   const [me, setMe] = useState<Me | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
+  const [ordersError, setOrdersError] = useState(false);
+  const loadOrders = useCallback(async () => {
+    setOrders(null); setOrdersError(false);
+    try {
+      const sb = await getSupabase();
+      if (!sb) throw new Error("Sign-in required");
+      const { data, error } = await sb.from("orders").select("id,label,amount,status,created_at").order("created_at", { ascending: false });
+      if (error) throw error;
+      setOrders(data ?? []);
+    } catch { setOrdersError(true); }
+  }, []);
 
   useEffect(() => {
     authedFetch("/api/auth/me").then((r) => (r.ok ? r.json() : null)).then(setMe).catch(() => {});
-    getSupabase().then(async (sb) => {
-      if (!sb) return;
-      const { data } = await sb.from("orders").select("id,label,amount,status,created_at").order("created_at", { ascending: false });
-      setOrders(data ?? []);
-    });
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the account and orders once on mount
+    void loadOrders();
+  }, [loadOrders]);
 
   return (
     <main className={styles.wrap}>
@@ -33,7 +41,7 @@ export default function Dashboard() {
         <button className={styles.signout} onClick={() => signOut()}>Sign out</button>
       </header>
 
-      {justPaid && <div className={styles.banner}>✓ Payment received. We will confirm the scope and acceptance checks by email.</div>}
+      {justPaid && <div className={styles.banner}>Open your order below to check payment and delivery.</div>}
 
       <h1 className={styles.h1}>Your desk</h1>
       <p className={styles.sub}>
@@ -43,14 +51,16 @@ export default function Dashboard() {
 
       <section className={styles.card}>
         <h2 className={styles.cardHead}>Orders</h2>
-        {orders && orders.length > 0 ? (
+        {ordersError ? <div role="alert"><p>Your orders could not open. Please try again.</p><button onClick={() => void loadOrders()}>Try again</button></div>
+        : orders === null ? <p role="status">Opening your orders</p>
+        : orders.length > 0 ? (
           <ul className={styles.orders}>
             {orders.map((o) => (
               <li key={o.id} className={styles.order}>
                 <div>
                   <p className={styles.orderLabel}>{o.label}</p>
                   <p className={styles.orderMeta}>
-                    <span className="mono">${(o.amount / 100).toFixed(0)}</span> · {new Date(o.created_at).toLocaleDateString()}
+                    <span className="mono">{(o.amount / 100).toFixed(0)} USD</span> · {new Date(o.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <span className={styles.status}>{o.status === "intake_required" ? "Paid · task intake needs review. Contact support before delivery." : o.status}</span>
@@ -63,7 +73,7 @@ export default function Dashboard() {
             <div className={styles.quick}>
               {CATEGORIES.flatMap((c) => c.offers).map((o) => (
                 <Link key={o.slug} to={`/checkout?offer=${o.slug}`} className={styles.quickItem} viewTransition>
-                  {o.name} <span className="mono lime">${o.price}</span>
+                  {o.name} <span className="mono lime">{o.price} USD</span>
                 </Link>
               ))}
             </div>

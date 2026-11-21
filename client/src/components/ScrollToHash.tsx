@@ -17,7 +17,9 @@ function headerOffset() {
 function scrollToId(id: string): boolean {
   const el = document.getElementById(id);
   if (!el) return false;
-  const target = Math.max(0, el.getBoundingClientRect().top + window.scrollY - headerOffset());
+  // An element that asks for more room above it (scroll-margin-top) gets it.
+  const offset = Math.max(headerOffset(), parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+  const target = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
   const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
   if (lenis && typeof lenis.scrollTo === "function") {
     lenis.scrollTo(target, { immediate: true });

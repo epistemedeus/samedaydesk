@@ -1,0 +1,22 @@
+TAP version 13
+# (node:2192261) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persisted deadline fences provider entry even before the event loop runs its timer
+ok 1 - persisted deadline fences provider entry even before the event loop runs its timer
+  ---
+  duration_ms: 88.215434
+  ...
+# Subtest: enrolled SDK response headers cannot print upstream payloads into the host output
+ok 2 - enrolled SDK response headers cannot print upstream payloads into the host output
+  ---
+  duration_ms: 110.732206
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 352.843874

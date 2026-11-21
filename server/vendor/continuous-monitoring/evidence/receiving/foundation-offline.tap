@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: projection failures, population gaps, and sums do not become numeric traffic
+ok 1 - projection failures, population gaps, and sums do not become numeric traffic
+  ---
+  duration_ms: 44.521716
+  ...
+# Subtest: a seeded mutation is one durable change and stays distinct from the captured baseline
+ok 2 - a seeded mutation is one durable change and stays distinct from the captured baseline
+  ---
+  duration_ms: 65.09232
+  ...
+# Subtest: a failed public read is source failure and not a zero row
+ok 3 - a failed public read is source failure and not a zero row
+  ---
+  duration_ms: 7.506886
+  ...
+# Subtest: fixture capture stays distinct and the vendored tree has no observatory page
+ok 4 - fixture capture stays distinct and the vendored tree has no observatory page
+  ---
+  duration_ms: 0.878556
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 258.995797

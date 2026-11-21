@@ -78,7 +78,10 @@ async function withFileLock(lockPath, fn) {
       } catch {
         info = null;
       }
-      if (!lockAlive(info)) {
+      // open(wx) claims the lock before its owner record is written. An empty
+      // or partial record is an initializing owner, not evidence of a dead PID.
+      // Reclaim only a complete owner record whose process is known to be gone.
+      if (info && Number.isInteger(info.pid) && info.pid > 0 && !lockAlive(info)) {
         await unlink(lockPath).catch(() => {});
         continue;
       }

@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-24T11:20:04.382288+00:00",
+  "checkpointBy": "2026-10-24T11:22:05.121Z",
+  "exportBy": "2026-10-24T12:17:05.121Z",
+  "branch": "codex/root5950-mcp-refusal-reasons-20261024",
+  "base": "f629597d9e865bd6709d4b10d96a9905cc9ea3c3",
+  "status": "Source and all selected qualification gates pass; final self-review/export remains.",
+  "tests": {
+    "pulse": 80,
+    "mcp": 46,
+    "focused": 19,
+    "selectedExistingSourceOutcomes": 7
+  },
+  "limits": {
+    "reserveKiB": 2621440,
+    "sampledRssPeakKiB": 736192,
+    "modelChildren": 0
+  },
+  "scope": "Source only. No live DB/provider/account/payment/signer/deployment/mail or public exchange."
+}

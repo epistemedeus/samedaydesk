@@ -1,0 +1,39 @@
+{
+  "schema": "neomorphic.machine-gateway.receiving.v1",
+  "branch": "codex/ae18-service-review-243002",
+  "gatewayBase": "7e5078bbf213ae3d1ff8d4638199ff8d1d1d81a8",
+  "baseline": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/machine-gateway",
+    "tests": 54,
+    "pass": 54,
+    "receipt": "baseline-tests.tap"
+  },
+  "final": {
+    "command": "flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/machine-gateway",
+    "tests": 59,
+    "pass": 59,
+    "receipt": "final-tests.tap"
+  },
+  "archive": {
+    "repositoryPath": "services/machine-gateway/releases/neomorphic-machine-gateway-0.1.1.tgz",
+    "sha256": "ee120eaac84f58f759d5857355220685cebcc53d739cead76700720a2821b53d",
+    "bytes": 49637,
+    "hostedDownloadVerified": false,
+    "sourceFilesCompared": 42,
+    "matchesAllShippedSource": true,
+    "exactArchiveColdInstallPassed": true,
+    "receipt": "exact-candidate-cold.tap"
+  },
+  "originalArchive": {
+    "file": "releases/neomorphic-machine-gateway-0.1.0.tgz",
+    "sha256": "730a959d3d8bd7398a68015cc8f3ca1746170c0177093d5bf0d03faa75c832d3",
+    "sourceFilesComparedBeforeRepairs": 42,
+    "matchedReceivedSourceBeforeRepairs": true,
+    "unchanged": true
+  },
+  "mountedPublicRead": "public-smoke.json",
+  "productionInstallationVerified": false,
+  "livePayments": 0,
+  "paymentEvidence": "unsigned local fixtures only",
+  "validatedImplementationHead": "4248874f2fa63636659fad164fb29ed193018104"
+}

@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { NOT_FOUND_SHELL, shellFilePath } from "./spa-route-shells.js";
+import { NOT_FOUND_SHELL, RECEIPT_ROUTE_SHELLS, shellFilePath } from "./spa-route-shells.js";
 
 // Declared React history routes from client/src/App.tsx. Route authority is
 // this explicit list, not "any extensionless string". Unknown HTML paths still
@@ -19,15 +19,21 @@ export const SPA_HISTORY_ROUTES = Object.freeze([
   "/for-agents/distribution-repair",
   "/for-agents/consumer-repeat",
   "/for-agents/useful-jobs",
+  "/receipts",
   "/login",
   "/signup",
   "/dashboard",
   "/checkout",
+  "/care/buy",
+  "/care/intake",
+  "/care/subscription",
   "/terms",
   "/privacy",
 ]);
 
-const SPA_HISTORY_ROUTE_SET = new Set(SPA_HISTORY_ROUTES);
+// Plus one page per tape entry (/receipts/<id>), listed from the receipts data, so an unknown
+// id is still a 404.
+const SPA_HISTORY_ROUTE_SET = new Set([...SPA_HISTORY_ROUTES, ...RECEIPT_ROUTE_SHELLS.map((route) => route.path)]);
 
 function requestPathname(pathname) {
   if (typeof pathname !== "string" || pathname.length === 0) return "";

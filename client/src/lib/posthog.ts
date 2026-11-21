@@ -22,6 +22,7 @@ function captureFirstParty(event: string, props?: Record<string, unknown>) {
 }
 
 export function initAnalytics() {
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/care/")) return;
   const key = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
   if (!key || loading) return;
   loading = import("posthog-js").then(({ default: posthog }) => {
@@ -32,6 +33,14 @@ export function initAnalytics() {
       capture_pageview: true,
       autocapture: false,
       disable_session_recording: true,
+      before_send: (event) => {
+        if (!event || window.location.pathname.startsWith("/care/")) return null;
+        for (const field of ["$current_url", "$referrer", "$initial_current_url"]) {
+          const value = event.properties?.[field];
+          if (typeof value === "string") event.properties![field] = value.split("#", 1)[0];
+        }
+        return event;
+      },
     });
     ph = posthog;
     pendingEvents.splice(0).forEach(({ event, props }) => posthog.capture(event, props));

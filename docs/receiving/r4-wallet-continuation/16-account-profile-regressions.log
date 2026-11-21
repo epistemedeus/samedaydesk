@@ -1,0 +1,19 @@
+TAP version 13
+# (node:570436) Warning: node:test run() is being called recursively within a test file. skipping running files.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+ok 1 - R4-J02 future binding through createSdsApp, verified HTTPS and PostgreSQL
+  ---
+  duration_ms: 584.863649
+  type: 'test'
+  ...
+# Candidate-only regression command: node --test --test-concurrency=1 vendor/hosted-wallet-market/test/account-delivery.test.mjs vendor/hosted-wallet-market/test/machine-profile-receiving.test.mjs
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 732.421935

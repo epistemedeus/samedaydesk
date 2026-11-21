@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
+import { gatewayGuideBlock, readGatewayState } from "../lib/paid-gateway-availability.js";
 import { spawn } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -10,6 +11,7 @@ import express from "express";
 import { mountProductionClient } from "../lib/spa-client.js";
 import { SPA_HISTORY_ROUTES } from "../lib/spa-fallback.js";
 import {
+  RECEIPT_ROUTE_SHELLS,
   HOME_CANONICAL,
   HOME_DESCRIPTION,
   HOME_TITLE,
@@ -18,6 +20,7 @@ import {
   applyRouteShell,
   generateRouteShellsFromIndex,
   inspectHtmlShell,
+  publicFirstRenderPath,
   writeRouteShells,
 } from "../lib/spa-route-shells.js";
 import {
@@ -44,10 +47,14 @@ const DECLARED_REACT_ROUTES = Object.freeze([
   "/for-agents/distribution-repair",
   "/for-agents/consumer-repeat",
   "/for-agents/useful-jobs",
+  "/receipts",
   "/login",
   "/signup",
   "/dashboard",
   "/checkout",
+  "/care/buy",
+  "/care/intake",
+  "/care/subscription",
   "/terms",
   "/privacy",
 ]);
@@ -57,7 +64,7 @@ const SOURCE_INDEX = readFileSync(join(here, "../../client/index.html"), "utf8")
 const LLMS_TXT = readFileSync(join(here, "../../client/public/llms.txt"), "utf8");
 const BUNDLE_SRC = "/assets/index-8f3a1b2c.js";
 const BUNDLE_CSS = "/assets/index-8f3a1b2c.css";
-const HOME_H1 = "SameDayDesk: make your service ready for agents";
+const HOME_H1 = "SameDayDesk: make your business usable by AI";
 
 test("sitemap lists canonical documentation introductions, not their duplicate directory indexes", () => {
   const publicDir = join(here, "../../client/public");
@@ -176,6 +183,7 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
     SPA_ROUTE_SHELLS.map((route) => route.path),
     [
       "/x402", "/x402/seller-conformance", "/x402/verified", "/tools/ai-readiness", "/for-agents",
+      "/receipts",
       "/for-agents/record-repeat",
       "/for-agents/distribution-repair",
       "/for-agents/consumer-repeat",
@@ -205,15 +213,17 @@ test("catalog is exact, unique, and sufficient to add another public SPA route",
 });
 
 test("apex machine documentation separates free and paid MCP and keeps homepage SKUs", () => {
-  assert.match(LLMS_TXT, /Free apex MCP readiness surface/);
+  assert.match(LLMS_TXT, /Free MCP server\]\(https:\/\/samedaydesk\.com\/mcp\)/);
+  assert.match(LLMS_TXT, /^- \[Start file for agents\]\(https:\/\/samedaydesk\.com\/start\.md\)/m);
   assert.match(LLMS_TXT, /https:\/\/agents\.samedaydesk\.com\/mcp/);
-  assert.match(LLMS_TXT, /GET https:\/\/agents\.samedaydesk\.com\/extract\?url=https:\/\/example\.com/);
-  assert.match(LLMS_TXT, /POST https:\/\/agents\.samedaydesk\.com\/extract\/batch/);
+  const gateway = readGatewayState();
+  assert.ok(LLMS_TXT.includes(gatewayGuideBlock(gateway)), "guide must use the received dependency state");
+  if (gateway.state !== "available") {
+    assert.doesNotMatch(LLMS_TXT, /Practical paid job:/);
+    assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/discovery\/useful-jobs\.json/);
+  }
   assert.match(LLMS_TXT, /https:\/\/samedaydesk\.com\/for-agents/);
-  assert.match(LLMS_TXT, /offline comparison/);
-  assert.match(LLMS_TXT, /user-selected unverified evidence/);
-  assert.match(LLMS_TXT, /not automatic public-safe certification/);
-  assert.match(LLMS_TXT, /Purchasing never requires publishing/);
+  assert.match(LLMS_TXT, /local comparison/);
   assert.equal(LLMS_TXT.includes("Twenty-two canonical"), false);
   for (const sku of ["Agent Workflow Integration", "Agent-Ready MCP Server", "Agent Commerce Storefront"]) {
     assert.match(LLMS_TXT, new RegExp(sku));
@@ -241,35 +251,29 @@ test("for-agents shell, React route, and machineEntry share one copy authority",
   assert.match(route.crawlerHtml, /npm ci/);
   assert.match(route.crawlerHtml, /npm start/);
   assert.match(route.crawlerHtml, /page-change/);
-  assert.match(route.crawlerHtml, /coverage unknown/);
-  assert.match(route.crawlerHtml, /charged: true/);
+  assert.match(route.crawlerHtml, /reconcile it rather than paying again/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/api\/actions/);
   assert.match(route.crawlerHtml, /https:\/\/agents\.samedaydesk\.com\/healthz/);
-  assert.match(route.crawlerHtml, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.match(route.crawlerHtml, /Job 4\. Save a result so the next agent can reuse it/);
   assert.match(route.crawlerHtml, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.match(route.crawlerHtml, /immutable prior/);
-  assert.match(route.crawlerHtml, /never automatically replayed/);
-  assert.match(route.crawlerHtml, /Purchasing never requires publishing/);
-  assert.match(route.crawlerHtml, /user-selected unverified evidence/);
-  assert.match(route.crawlerHtml, /never automatic public-safe\s+certification/);
+  assert.match(route.crawlerHtml, /copies only the fields you choose/);
   assert.match(route.crawlerHtml, /neomorphic\.task-memory\.observation\.v1/);
   assert.match(route.crawlerHtml, /--opt-in/);
   assert.equal(route.crawlerHtml.includes("Twenty-two"), false);
   assert.equal(route.crawlerHtml.includes("hasOfferCatalog"), false);
-  const app = readFileSync(join(here, "../../client/src/App.tsx"), "utf8");
-  assert.match(app, /path="\/for-agents" element=\{<ForAgents \/>\}/);
-  assert.equal(app.includes('path="/for-agents" element={<Mcp />}'), false);
+  const routes = readFileSync(join(here, "../../client/src/public-pages.ts"), "utf8");
+  assert.match(routes, /\["\/for-agents", "src\/pages\/ForAgents\.tsx", \(\) => import\("\.\/pages\/ForAgents"\)\]/);
   const react = readFileSync(join(here, "../../client/src/pages/ForAgents.tsx"), "utf8");
   for (const copy of [route.crawlerHtml, react]) {
-    assert.match(copy, /Node.js 22\.x/);
+    assert.match(copy, /Node\.js 22/);
     assert.match(copy, /organization\/contact examples/);
     assert.match(copy, /missing .*sku.*email.*optional/s);
     assert.match(copy, /required-field\s+example/);
     assert.match(copy, /writes.*three artifacts.*exits 1/s);
-    assert.match(copy, /against the live merchant, not an offline fixture/);
+    assert.match(copy, /show the price and terms first and sign nothing/);
     assert.match(copy, /fixtures\/authorization-batch.json/);
-    assert.match(copy, /Reconcile an unknown payment outcome instead of automatically retrying/);
-    assert.match(copy, /Purchasing never requires publishing/);
+    assert.match(copy, /reconcile it rather than paying again/);
     assert.doesNotMatch(copy, /untrusted until you reconcile|No-key fixture quickstart/);
   }
   assert.match(route.crawlerHtml, /node --version # must report v22\.x/);
@@ -327,14 +331,15 @@ test("generator derives route shells from the built index.html without rewriting
   const built = asBuiltIndex();
   writeFileSync(join(dist, "index.html"), built);
 
+  // The catalog, one shell per tape entry (/receipts/<id>), and the 404.
   const generated = generateRouteShellsFromIndex(built);
-  assert.equal(generated.length, SPA_ROUTE_SHELLS.length + 1);
+  assert.equal(generated.length, SPA_ROUTE_SHELLS.length + RECEIPT_ROUTE_SHELLS.length + 1);
   for (const item of generated) {
     assertRouteDocument(item.html, item.route);
   }
 
   const written = writeRouteShells(dist);
-  assert.equal(written.length, SPA_ROUTE_SHELLS.length + 1);
+  assert.equal(written.length, SPA_ROUTE_SHELLS.length + RECEIPT_ROUTE_SHELLS.length + 1);
   assert.equal(readFileSync(join(dist, "index.html"), "utf8"), built);
   const home = inspectHtmlShell(readFileSync(join(dist, "index.html"), "utf8"));
   assert.equal(home.title, HOME_TITLE);
@@ -344,16 +349,16 @@ test("generator derives route shells from the built index.html without rewriting
 
   const x402 = inspectHtmlShell(readFileSync(join(dist, written[0].relativeFile), "utf8"));
   assert.equal(x402.title, SPA_ROUTE_SHELLS[0].title);
-  assert.match(x402.noscript, /Live catalogs are authoritative/);
+  assert.match(x402.noscript, /No API key, subscription or account/);
   assert.match(x402.noscript, /for-agents/);
   const forAgents = written.find((entry) => entry.path === "/for-agents");
   const forAgentsHtml = inspectHtmlShell(readFileSync(join(dist, forAgents.relativeFile), "utf8"));
   assert.equal(forAgentsHtml.title, FOR_AGENTS_SHELL.title);
   assert.equal(forAgentsHtml.canonical, FOR_AGENTS_SHELL.canonical);
-  assert.match(forAgentsHtml.noscript, /Job 1\. Obtain bounded extracted observations/);
+  assert.match(forAgentsHtml.noscript, /Job 1\. Fetch fields from up to five pages/);
   assert.match(forAgentsHtml.noscript, /Job 2\. Compare explicit fields from two already-held observations/);
   assert.match(forAgentsHtml.noscript, /Job 3\. Map already-held JSON into buyer records/);
-  assert.match(forAgentsHtml.noscript, /Job 4\. Opt-in reuse of an already produced result/);
+  assert.match(forAgentsHtml.noscript, /Job 4\. Save a result so the next agent can reuse it/);
   assert.match(forAgentsHtml.noscript, /Job 5\. Recurring page, issue, and buyer-setup recipes/);
   assert.equal(forAgentsHtml.noscript.includes(REUSE_QUICKSTART), true);
   assert.equal(forAgentsHtml.noscript.includes(RECURRING_QUICKSTART), true);
@@ -364,9 +369,9 @@ test("generator derives route shells from the built index.html without rewriting
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("FAQPage"), false);
   assert.equal(forAgentsHtml.jsonLdRaw.join("").includes("Review"), false);
   const seller = inspectHtmlShell(readFileSync(join(dist, written[1].relativeFile), "utf8"));
-  assert.match(seller.noscript, /not a product, certificate, or runtime monitor/);
+  assert.match(seller.noscript, /Find out why AI agents can't pay you, and fix it/);
   const verified = inspectHtmlShell(readFileSync(join(dist, written[2].relativeFile), "utf8"));
-  assert.match(verified.noscript, /Inspected routes, not a certificate/);
+  assert.match(verified.noscript, /Every paid route, checked as an agent meets it/);
   const tool = inspectHtmlShell(readFileSync(join(dist, written[3].relativeFile), "utf8"));
   assert.match(tool.noscript, /No\s+email required/);
   for (const routePath of ["/login", "/signup", "/dashboard", "/checkout"]) {
@@ -462,6 +467,31 @@ test("production Express serves exact route shells, 200s every declared React ro
   assert.match(skillguard.body, /SkillGuard/);
 });
 
+test("canonical public HTML is selected without replacing query variants, private routes or 404s", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-first-render-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex());
+  writeRouteShells(dist);
+  for (const route of ["/", "/x402/seller-conformance", "/checkout"]) {
+    const target = publicFirstRenderPath(dist, route);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, `<html><head><meta name="sdd-public-first-render" content="${route}"></head></html>`);
+  }
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  for (const route of ["/", "/x402/seller-conformance"]) {
+    assert.match((await request(port, route)).body, /sdd-public-first-render/);
+    assert.doesNotMatch((await request(port, `${route}?resolved=example`)).body, /sdd-public-first-render/);
+  }
+  assert.doesNotMatch((await request(port, "/checkout")).body, /sdd-public-first-render/);
+  assert.equal((await request(port, "/route-shells/.public-first-render/home.html")).status, 404);
+  const missing = await request(port, "/no-such-public-route");
+  assert.equal(missing.status, 404);
+  assert.doesNotMatch(missing.body, /sdd-public-first-render/);
+});
+
 test("production entrypoint serves the apex A2A card from the tool inventory", async (t) => {
   const dist = mkdtempSync(join(tmpdir(), "route-shells-entrypoint-"));
   t.after(() => rmSync(dist, { recursive: true, force: true }));
@@ -495,4 +525,36 @@ test("production entrypoint serves the apex A2A card from the tool inventory", a
   assert.equal(body.skills.some((skill) => skill.id === "check_agent_readiness"), true);
   assert.equal(card.body.includes('"skills":[]'), false);
   assert.match(body.description, /agents\.samedaydesk\.com\/\.well-known\/agent-card\.json/);
+});
+
+
+test("published Rust references reach an emitted page and symbol", () => {
+  const dir = join(here, "../../client/dist/docs/rust-itertools");
+  const pages = new Map(readdirSync(dir).filter(name => name.endsWith(".html")).map(name => {
+    const html = readFileSync(join(dir, name), "utf8");
+    return [name, { html, ids: new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1])) }];
+  }));
+  for (const [name, { html }] of pages) for (const match of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
+    const url = new URL(match[1].replaceAll("&amp;", "&"), `https://samedaydesk.com/docs/rust-itertools/${name}`);
+    if (url.origin !== "https://samedaydesk.com" || !url.pathname.startsWith("/docs/rust-itertools/") || !url.pathname.endsWith(".html")) continue;
+    const target = pages.get(url.pathname.split("/").at(-1));
+    assert.ok(target, `${name}: missing page ${url.pathname}`);
+    if (url.hash) assert.ok(target.ids.has(decodeURIComponent(url.hash.slice(1))), `${name}: missing symbol ${url.href}`);
+  }
+});
+
+test("published seller-report slash URLs redirect once with their finding or result intact", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-report-redirect-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex()); writeRouteShells(dist);
+  const app = express(); mountProductionClient(app, dist);
+  const { server, port } = await listen(app); t.after(() => new Promise(resolve => server.close(resolve)));
+  for (const query of ["?finding=hypernatt-liq-radar-20260830", "?resolved=public-result", "?finding=encoded%2Fvalue%3Fextra%3D1"]) {
+    for (const method of ["GET", "HEAD"]) {
+      const old = await request(port, "/x402/seller-conformance/" + query, method);
+      assert.equal(old.status, 301); assert.equal(old.headers.location, "/x402/seller-conformance" + query);
+      assert.equal((await request(port, old.headers.location, method)).status, 200);
+    }
+  }
+  assert.notEqual((await request(port, "/x402/seller-conformance/?finding=public", "POST")).status, 301);
 });

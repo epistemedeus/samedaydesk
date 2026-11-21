@@ -1,0 +1,74 @@
+# Neomorphic
+
+> Neomorphic LLC operates the public laboratory at neomorphic.io and is the legal operator of SameDayDesk. It is not the CSS neumorphism design trend, a payment network, marketplace, custodian, certification authority, or production agent gateway.
+
+Canonical origin: https://neomorphic.io/
+Contact: mailto:contact@neomorphic.io
+Statement descriptor: NEOMORPHIC LLC
+
+## Public laboratory
+
+- [Documentation](https://neomorphic.io/docs/): Current public interfaces and their launch states.
+- [Publication status](https://neomorphic.io/status/): What exists in this release and what remains unlaunched.
+- [Laboratory](https://neomorphic.io/labs/): Current experiment release, live signal plates, and staged work.
+- [Private trial brief](https://neomorphic.io/labs/trial/): Browser-local builder for one public extraction, digest, or normalization request. Preview / private trial; not a paid API.
+- [Proof of execution](https://neomorphic.io/labs/proof-of-execution/): Practical patterns for published artifacts, content hashes, archive snapshots, signed attestations, reproducible builds, liveness probes, and witnesses.
+- [Task toolkit archive](https://neomorphic.io/labs/task-kit/): Versioned source-to-brief CLI archive. 0.1.0 is the live baseline. 0.1.2 in this origin tree adds continue capture, validate, compare, prepare, and consume. Hosted acquisition of 0.1.2 is not independently verified on live DNS until Root deploys this cohort. No npm registry release or execution authority.
+- [USDC escrow for machine work](https://neomorphic.io/labs/usdc-escrow-machine-work/): On-chain MoltEscrowV2 mechanics on Base — deposit, assign, release, refund, dispute, and named failure modes.
+- [Agent market field notes](https://neomorphic.io/labs/agent-market-field-notes/): Sourced comparison of five agent-earning platforms and a MoltJobs onboarding friction report. Auth boundaries stay labelled. Not a bid, claim, or payment.
+- [Market observations](https://neomorphic.io/labs/market-observations/): Loads public MoltJobs /v1/stats through the SameDayDesk bridge. Labels upstream and bridge. Static origin.
+- [Agent-economy observatory](https://neomorphic.io/labs/agent-economy-observatory/): Named-source observations (MoltJobs, x402stats, Smithery) through SameDayDesk. Not a total of the agent economy.
+- [Outside-operator first job](https://neomorphic.io/labs/outside-operator-first-job/): Two-client first-job walkthrough with an anonymous static source extract. A local fixture is not hosted correspondence; a delivered artifact is not accepted until a distinct acceptance event.
+- [MoltJobs × OpenAI Agents SDK](https://neomorphic.io/labs/moltjobs-openai-agents/): Public dryrun packing openai-agents==0.22.2 with ScriptedModel, blocked submit, and allowlisted source.zip.
+- [Correspondence MCP consumer](https://neomorphic.io/labs/correspondence-mcp/): Static stdio MCP consumer archive for an existing correspondence HTTP origin. Citation-only acceptance. Not npm publication and not an MCP protocol endpoint on this origin.
+- [External-job intake](https://neomorphic.io/labs/external-job-intake/): Anonymous public-read intake kit. Deterministic fixture CLI and labelled live GET. Never bid, claim, or pay. claimAuthority remains none.
+- [Exchange × TownSquare](https://neomorphic.io/labs/exchange-townsquare/): Caller-supplied Exchange delivery extract. TownSquare identity is synthetic-kit labelled. Local gate pass is not actual completion. claimAuthority remains none.
+- [Capability preflight](https://neomorphic.io/labs/capability-preflight/): Offline Node kit that compares requirements, declared evidence, supported checks, local prerequisites, and cost bounds. Fixture demo versus real caller --input. A matching digest is not actual execution. Origin tarball; not an npm registry package.
+- [Bounty discovery](https://neomorphic.io/labs/bounty-discovery/): Dated snapshot of public Superteam, Taskmarket, Gibwork, GoFrantic, and Agent Bounties listings compiled through C05, C06, and C07. Not a live feed. Not the owner bounty schedule. Machine JSON at https://neomorphic.io/api/bounty-discovery.json.
+- [Effort and evaluation workflow](https://neomorphic.io/labs/effort-workflow/): Local join of bounty evidence, a contributor effort receipt, and a separate useful or not-useful evaluation. The published example is synthetic. A local document may declare synthetic true or false; that flag is not verification, acceptance, or payment. Economics, when requested, are one existing-calculator card for the whole document, not a per-bounty payout. Supplied rates must be positive decimals; a missing rate is not 1. Not a fetch. Machine JSON at https://neomorphic.io/api/labs/effort-workflow.json.
+- [Project correspondence](https://neomorphic.io/correspondence/): Email concierge path and a browser workbench for a correspondence origin you already operate.
+- [Experiment register](https://neomorphic.io/experiments/): Five bounded tests with success events, evidence classes, review dates, and kill conditions.
+- [Signals](https://neomorphic.io/signals/): External-attributable public counters; internal and sponsored activity stays separate.
+- [Bounties](https://neomorphic.io/bounties/): Open and staged contribution schedules with acceptance and consideration boundaries.
+- [Network](https://neomorphic.io/network/): Public boundary between EIN.LLC, SameDayDesk, Neomorphic, and private Pilot control.
+- [Instruments](https://neomorphic.io/instruments/): Eight named instruments with publication state, method, and boundaries.
+- [Services](https://neomorphic.io/services/): Current service descriptions, scopes, and exclusions.
+- [Seller Conformance ($490)](https://neomorphic.io/services/seller-conformance/): Reviewed seller-side examination; $490 fixed public scope with hosted checkout.
+- [Buyer Mandate](https://neomorphic.io/services/buyer-mandate/): Scoped buyer-policy integration; not a one-click checkout.
+- [Readiness worksheet](https://neomorphic.io/readiness/): A local, no-upload worksheet that performs no live probe.
+- [Evidence Register](https://neomorphic.io/registry/): Signed, public-safe evidence records with explicit scope, dates, limitations, and static correction or revocation references. No real-time revocation feed is offered.
+- [Local verifier](https://neomorphic.io/verify/): Browser-side Ed25519 signature verification using the published evidence key.
+- [Commerce boundaries](https://neomorphic.io/commerce/): Custody, signer, payment, and engagement boundaries.
+- [MCP status](https://neomorphic.io/mcp/): Human documentation only; this path is not an MCP protocol endpoint.
+
+## Read-only machine interfaces
+
+- [Optional interval MCP stdio companion](https://neomorphic.io/machine/interval-native-stdio-0.1.1.json): Acquire the versioned offline transport for a host that already uses MCP. Read current availability, pinned source, dependency setup and direct-module controls.
+
+- [Supplied-HTML whole output](https://neomorphic.io/machine/html-whole-output-0.1.0.json): Anonymous versioned Python acquisition for a finite supplied-HTML heading table, with complete rows, explicit partials, source pins and direct commands.
+
+- [EIP-7702 interval reader](https://neomorphic.io/machine/eip7702-interval-0.1.1.json): Versioned Node archive and callable module for a supplied delegation interval, with explicit Ethereum and OP Stack profiles. Read its release status, descriptor and install commands; private Git access is not required.
+
+- [OpenAPI 3.1](https://neomorphic.io/openapi.json): Contract for the static read-only JSON interface.
+- [Organization index](https://neomorphic.io/api/v1/organization): Legal identity, statement descriptor, brand and related-site roles, and the two primary human engagements.
+- [Service index](https://neomorphic.io/api/v1/services): Static JSON generated from the same service records as the human engagement pages, including publication state and checkout eligibility.
+- [Instrument index](https://neomorphic.io/api/v1/instruments): Static JSON generated from the published instrument records.
+- [Registry index](https://neomorphic.io/api/v1/registry): Static JSON containing the signed public record envelopes.
+- [Verification description](https://neomorphic.io/api/v1/verify): Static JSON describing local verification; it does not perform server-side verification.
+- [Experiment manifests](https://neomorphic.io/api/experiments.json): Typed static JSON for every public experiment.
+- [Latest signals](https://neomorphic.io/api/signals/latest.json): Current public signal snapshot with evidence class attached.
+- [Bounty schedule](https://neomorphic.io/api/bounties.json): Current participation items and acceptance terms.
+- [Private trial request schema](https://neomorphic.io/api/trial-request.json): Schema and public examples for a browser-local trial brief. This origin does not accept the request over HTTP.
+- [Internal release receipt](https://neomorphic.io/api/receipts/lab-release-2026-09-01.json): Owner-QA receipt that explicitly does not establish external demand or payment.
+- [Evidence public key](https://neomorphic.io/.well-known/neomorphic-evidence-key.json): Active public Ed25519 verification key.
+- [x402scan compatibility manifest](https://neomorphic.io/.well-known/x402): Currently lists no payable resources.
+- [Security contact](https://neomorphic.io/.well-known/security.txt): RFC 9116 security contact.
+- [Agent reading guide](https://neomorphic.io/skill.md): Read-only guidance for consuming these public surfaces.
+
+## Reliance boundaries
+
+- A record signature proves origin and integrity, not truth beyond the record's stated method and scope.
+- Check observation time, limitations, the current static publication, expiry, supersession, and any later correction or revocation record before relying on any record.
+- Publication state is explicit. Research and preview material is not represented as a stable production service.
+- No A2A agent endpoint, MCP server, MPP payable discovery document, live x402 payable route, agents.neomorphic.io gateway, or api.neomorphic.io product origin is currently advertised.
+- Catalog presence, a payment challenge, or a public record is not evidence of adoption, settlement, or demand.

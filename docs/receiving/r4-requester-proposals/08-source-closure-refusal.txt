@@ -1,0 +1,17 @@
+file:///home/ubuntu/ae14-work/root4432-requester-proposals-20261023/vendor/hosted-wallet-market/src/native-debt.mjs:51
+const fail = (code = 'disposition_hold', http = 409) => { throw Object.assign(new Error(code), {http, codeName: code}); };
+                                                                              ^
+
+Error: binding_stale
+    at fail (file:///home/ubuntu/ae14-work/root4432-requester-proposals-20261023/vendor/hosted-wallet-market/src/native-debt.mjs:51:79)
+    at hostSourceSha256 (file:///home/ubuntu/ae14-work/root4432-requester-proposals-20261023/vendor/hosted-wallet-market/src/native-debt.mjs:95:86)
+    at file:///home/ubuntu/ae14-work/root4432-requester-proposals-20261023/[eval1]:1:95
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:282:26)
+    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:278:20)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  http: 409,
+  codeName: 'binding_stale'
+}
+
+Node.js v22.23.3

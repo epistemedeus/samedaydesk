@@ -1,0 +1,11 @@
+{
+  "schema": "sds.composed-caller.package-verification.v1",
+  "sourceHead": "bcb8d189f047f1781904c60a2f064bd6e0d19b35",
+  "archiveMembersComparedToExactGitSource": 232,
+  "mismatches": 0,
+  "amendmentBase": "1a55f55807e4cfef04dde3252619cdcbae0716dc",
+  "amendmentApplyCheck": true,
+  "gatewayArchivesUnchanged": true,
+  "adapter": "postgres",
+  "deployed": false
+}

@@ -2,10 +2,25 @@ import { Router } from "express";
 import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
-import { createSellerRepairCheckoutSession } from "../lib/seller-repair-checkout.js";
+import { createSellerRepairCheckoutSession, isValidSellerRepairFindingId } from "../lib/seller-repair-checkout.js";
 import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 
 const router = Router();
+
+// The same report link is already published on Neomorphic. Preview never sends
+// a user to that live link. The target is entered in Stripe's public-target field.
+router.get("/seller-conformance", (req, res) => {
+  res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+  const preview = process.env.SDS_PRIVATE_PREVIEW === "1";
+  const configured = preview ? process.env.SDS_TEST_SELLER_CONFORMANCE_LINK : "https://buy.stripe.com/7sY00keoqbLN899282eZ20F";
+  try {
+    const link = new URL(configured);
+    if (link.origin !== "https://buy.stripe.com" || link.username || link.password ||
+        link.pathname.startsWith("/test_") !== preview || link.search || link.hash) throw new Error("wrong Stripe link");
+    if (isValidSellerRepairFindingId(req.query.finding)) link.searchParams.set("client_reference_id", req.query.finding);
+    return res.redirect(303, link.href);
+  } catch { return res.status(503).json({ error: "The report checkout is not available." }); }
+});
 
 // Server-authoritative PaymentIntent. The client sends an offer SLUG only — the amount is
 // computed here and stamped into metadata, which fulfillment reads back (never the client).

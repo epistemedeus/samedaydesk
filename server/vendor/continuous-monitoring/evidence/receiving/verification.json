@@ -1,0 +1,47 @@
+{
+  "schema": "neomorphic.continuous-monitoring.receiving.v1",
+  "branch": "codex/ae18-service-review-243002",
+  "importedOnly": "services/continuous-monitoring",
+  "importedFrom": "0ad6691f79225cfba782971a910c0e79d371c8f3",
+  "baseline": {
+    "tests": 22,
+    "pass": 22,
+    "fail": 0
+  },
+  "final": {
+    "tests": 36,
+    "pass": 36,
+    "fail": 0
+  },
+  "offlineFoundation": {
+    "tests": 4,
+    "pass": 4,
+    "fail": 0
+  },
+  "fullInheritedFoundation": {
+    "tests": 5,
+    "pass": 4,
+    "fail": 1
+  },
+  "inheritedFailure": "live cold install expects comparable public metrics; current source remains partial",
+  "finalCommand": "flock /home/ubuntu/.cache/pilot-ae18-build.lock npm test --prefix services/continuous-monitoring",
+  "coldSourceDependencies": "only this service and existing packages/change-monitor/{package.json,src,vendor}; no node_modules",
+  "systemdPreview": {
+    "rendered": 3,
+    "verifyExit": 0,
+    "installed": false
+  },
+  "productionInstallationVerified": false,
+  "automaticCharges": 0,
+  "newModelJobs": 0,
+  "publicRead": {
+    "receipt": "public-read-final.json",
+    "outcome": "evidence_unavailable",
+    "failure": "partial_metrics",
+    "bytes": 33783,
+    "durationMs": 630,
+    "acknowledged": true,
+    "productionInstallation": false
+  },
+  "validatedImplementationHead": "4248874f2fa63636659fad164fb29ed193018104"
+}

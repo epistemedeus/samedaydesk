@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/discovery/paid-gateway.json",
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "bytes": 660,
+    "sha256": "f4daaf5351f86a53b23f94a7460d64f650a3ae7b2876d1fd1d509f29584abb0a"
+  },
+  {
+    "path": "/llms.txt",
+    "status": 200,
+    "contentType": "text/plain; charset=utf-8",
+    "bytes": 8616,
+    "sha256": "0414d70807f95709e0f00cc528641154644990a60b9dfb5ee4aa46eb4b161153"
+  },
+  {
+    "path": "/skill.md",
+    "status": 200,
+    "contentType": "text/markdown; charset=utf-8",
+    "bytes": 12541,
+    "sha256": "3b256a0880774bb234083f77cc01d2fd8c11c714d4d63354049d71a5324c6e14"
+  },
+  {
+    "path": "/openapi.json",
+    "status": 200,
+    "contentType": "application/openapi+json; charset=utf-8",
+    "bytes": 41565,
+    "sha256": "0dd863326011e7573768de3d9e03a6b9e860903dae11415b9be23515adce0f5b"
+  },
+  {
+    "path": "/.well-known/api-catalog",
+    "status": 200,
+    "contentType": "application/linkset+json; charset=utf-8; profile=\"https://www.rfc-editor.org/info/rfc9727\"",
+    "bytes": 1957,
+    "sha256": "cf7648054ecdcde53ef5cfdab7b17ed9ed37f9b4a3b97a0decd7a6747c0b78de"
+  },
+  {
+    "path": "/.well-known/agent-card.json",
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "bytes": 2747,
+    "sha256": "184cc78c9b66b57b97f70ed3c2da29a933301522bd0d8a3aa481e8e1a99446aa"
+  }
+]

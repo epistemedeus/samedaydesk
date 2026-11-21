@@ -1,13 +1,14 @@
 // Fetches the fixed discovery paths, follows MCP links named by those files,
 // and speaks only initialize, tools/list, and one unknown-tool call.
-import dns from "node:dns/promises";
+import net from "node:net";
 import http from "node:http";
 import https from "node:https";
 import { LATEST_MCP_VERSION } from "./checks.js";
 import { classifyRetrieval } from "./retrieval.js";
 import { discoverMcpLinks, needsWwwFallback, parseLlmsTxt } from "./discovery.js";
 import { PROBE_PATHS } from "./probeScript.js";
-import { PublicHostError, assertPublicHostname, resolvePublicAddresses } from "./ssrf.js";
+import { PublicHostError, assertPublicHostname, assertPublicUrl, isPrivateIp, normalizeIp, resolvePublicAddresses } from "./ssrf.js";
+import { createRequestBudget } from "./request-budget.js";
 
 export const FETCH_TIMEOUT_MS = 8000;
 export const MAX_BODY_BYTES = 200_000;
@@ -74,144 +75,163 @@ function headerMap(headers) {
   return out;
 }
 
-export function rawExchange(url, options = {}) {
+export async function rawExchange(url, options = {}) {
   const method = options.method || "GET";
-  const timeoutMs = options.timeoutMs ?? FETCH_TIMEOUT_MS;
   const maxBytes = options.maxBytes ?? MAX_BODY_BYTES;
-  const address = options.address;
+  const address = options.address?.address;
+  const empty = (error) => ({ status: 0, headers: {}, body: "", error });
+  let hostname;
+  try {
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) return empty("connection");
+    hostname = assertPublicHostname(url.hostname);
+    // Validate before opening any resource. An IP URL skips Node's lookup hook;
+    // it must neither bypass admission nor substitute a different pinned IP.
+    if (!net.isIP(address || "") || isPrivateIp(address)
+      || (net.isIP(hostname) && normalizeIp(hostname) !== normalizeIp(address))) return empty("connection");
+  } catch { return empty("connection"); }
+  if (options.signal?.aborted) return empty("aborted");
+
   const lib = url.protocol === "https:" ? https : http;
-  const headers = {
-    accept: "*/*",
-    "user-agent": USER_AGENT,
-  };
+  const headers = { accept: "*/*", "user-agent": USER_AGENT };
   for (const [key, value] of Object.entries(options.headers || {})) {
     const name = key.toLowerCase();
-    if (BLOCKED_REQUEST_HEADERS.has(name)) continue;
-    headers[name] = value;
+    if (!BLOCKED_REQUEST_HEADERS.has(name)) headers[name] = value;
   }
   headers["user-agent"] = USER_AGENT;
-  if (options.body && method !== "GET" && method !== "HEAD") {
-    headers["content-length"] = Buffer.byteLength(options.body);
-  }
+  headers.host = url.host; // logical authority, never the numeric socket target
+  if (options.body && method !== "GET" && method !== "HEAD") headers["content-length"] = Buffer.byteLength(options.body);
 
+  // One agent/socket per admitted hop. A global pooled connection is keyed by
+  // hostname, not the admission, and could bypass a later address decision.
+  const agent = new lib.Agent({ keepAlive: false, maxSockets: 1 });
+  const budget = createRequestBudget(options.timeoutMs ?? FETCH_TIMEOUT_MS, options.signal);
+  if (budget.exhausted) { budget.dispose(); agent.destroy(); return empty(options.signal?.aborted ? "aborted" : "timeout"); }
   return new Promise((resolve) => {
-    let settled = false;
-    let timedOut = false;
-    let truncated = false;
-    let sawResponse = false;
-    const finish = (result) => {
-      if (settled) return;
-      settled = true;
-      resolve(result);
+    let req;
+    let response;
+    let socket;
+    let requestClosed = false;
+    let socketClosed = false;
+    let result;
+    let size = 0;
+    const chunks = [];
+    const complete = () => {
+      if (result && requestClosed && (!socket || socketClosed)) resolve(result);
     };
-    const req = lib.request({
-      protocol: url.protocol,
-      hostname: url.hostname,
-      port: url.port || (url.protocol === "https:" ? 443 : 80),
-      path: `${url.pathname}${url.search}`,
-      method,
-      headers,
-      servername: url.hostname,
-      timeout: timeoutMs,
-      lookup(_hostname, lookupOptions, cb) {
-        if (typeof lookupOptions === "function") {
-          cb = lookupOptions;
-          lookupOptions = {};
-        }
-        if (!address) {
-          cb(new Error("missing pinned address"));
+    const finish = (value) => {
+      if (result) return;
+      result = value;
+      budget.signal.removeEventListener("abort", onAbort);
+      budget.dispose();
+      // Resolve only after the owned request AND socket have closed, including
+      // redirects, rejected bodies, byte caps, connect/TLS errors and aborts.
+      response?.destroy();
+      req?.destroy();
+      agent.destroy();
+      if (!req) requestClosed = true;
+      complete();
+    };
+    const snapshot = (extra = {}) => ({
+      status: response?.statusCode || 0,
+      headers: headerMap(response?.headers),
+      body: Buffer.concat(chunks, size).toString("utf8"),
+      ...extra,
+    });
+    const onAbort = () => finish(snapshot({ error: options.signal?.aborted ? "aborted" : "timeout" }));
+    budget.signal.addEventListener("abort", onAbort, { once: true });
+    try {
+      req = lib.request({
+        protocol: url.protocol,
+        // Connect to the admitted numeric address. No DNS callback or fallback
+        // resolver runs at connect time. TLS still verifies the URL's identity.
+        hostname: address,
+        family: net.isIP(address),
+        autoSelectFamily: false,
+        port: url.port || (url.protocol === "https:" ? 443 : 80),
+        path: `${url.pathname}${url.search}`,
+        method, headers, agent,
+        ...(url.protocol === "https:" ? { servername: net.isIP(hostname) ? "" : hostname } : {}),
+      }, (res) => {
+        response = res;
+        res.on("error", () => finish(snapshot({ error: "connection" })));
+        res.on("end", () => finish(snapshot()));
+        res.on("close", () => {
+          if (!res.complete) finish(snapshot({ error: "connection" }));
+        });
+        // Metadata only: do not wait on, retain or relay redirect/error bodies,
+        // including a final redirect at the hop limit or a never-ending 404.
+        if (res.statusCode >= 300) {
+          finish({ status: res.statusCode, headers: headerMap(res.headers), body: "", disposed: true });
           return;
         }
-        const family = address.family === 6 ? 6 : 4;
-        if (lookupOptions && lookupOptions.all) cb(null, [{ address: address.address, family }]);
-        else cb(null, address.address, family);
-      },
-    }, (res) => {
-      sawResponse = true;
-      const chunks = [];
-      let size = 0;
-      let responseError = null;
-      res.on("data", (chunk) => {
-        if (size >= maxBytes) {
-          truncated = true;
-          res.destroy();
-          return;
-        }
-        const room = maxBytes - size;
-        if (chunk.length > room) {
-          chunks.push(chunk.subarray(0, room));
-          size += room;
-          truncated = true;
-          res.destroy();
-          return;
-        }
-        chunks.push(chunk);
-        size += chunk.length;
+        res.on("data", (chunk) => {
+          const room = Math.max(0, maxBytes - size);
+          const kept = chunk.subarray(0, room);
+          chunks.push(kept); size += kept.length;
+          if (chunk.length > room) finish(snapshot({ truncated: true }));
+        });
       });
-      const done = () => finish({
-        status: res.statusCode || 0,
-        headers: headerMap(res.headers),
-        body: Buffer.concat(chunks).toString("utf8"),
-        ...(truncated ? { truncated: true } : {}),
-        ...(timedOut ? { error: "timeout" } : responseError ? { error: responseError } : {}),
+      req.on("socket", (s) => {
+        socket = s;
+        s.once("close", () => { socketClosed = true; complete(); });
+        if (result) s.destroy();
       });
-      res.on("end", done);
-      res.on("error", () => {
-        if (!truncated) responseError = "connection";
-        done();
+      req.on("close", () => {
+        requestClosed = true;
+        if (!result) finish(snapshot({ error: "connection" }));
+        complete();
       });
-      res.on("close", () => {
-        if (!res.complete && !truncated) responseError = "connection";
-        done();
-      });
-    });
-    req.on("timeout", () => {
-      timedOut = true;
-      req.destroy();
-    });
-    req.on("error", () => {
-      if (sawResponse) return;
-      finish({ status: 0, headers: {}, body: "", error: timedOut ? "timeout" : "connection" });
-    });
-    if (options.body && method !== "GET" && method !== "HEAD") req.write(options.body);
-    req.end();
+      req.on("error", () => finish(snapshot({ error: "connection" })));
+      if (options.body && method !== "GET" && method !== "HEAD") req.write(options.body);
+      req.end();
+    } catch {
+      finish(snapshot({ error: "connection" }));
+    }
   });
 }
 
 export async function guardedExchange(urlString, options = {}) {
-  const lookup = options.lookup || dns.lookup;
   const raw = options.rawExchange || rawExchange;
-  let current = new URL(urlString);
+  const budget = createRequestBudget(options.timeoutMs ?? FETCH_TIMEOUT_MS, options.signal);
+  let current;
   let method = options.method || "GET";
   let body = options.body ?? null;
-  for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
-    let addresses;
-    try {
-      addresses = await resolvePublicAddresses(current.hostname, lookup);
-    } catch (err) {
-      if (hop > 0 && err instanceof PublicHostError) {
-        throw new PublicHostError("Redirect target is not a public address");
+  const redirects = [];
+  try {
+    current = new URL(urlString);
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+      let addresses;
+      try {
+        ({ url: current, addresses } = await assertPublicUrl(current, options.lookup, { signal: budget.signal }));
+      } catch (err) {
+        if (budget.exhausted) return { status: 0, headers: {}, body: "", error: options.signal?.aborted ? "aborted" : "timeout", finalUrl: current.toString(), ...(redirects.length ? { redirects } : {}) };
+        if (hop > 0 && err instanceof PublicHostError) throw new PublicHostError("Redirect target is not a public address");
+        throw err;
       }
-      throw err;
+      const res = await raw(current, { ...options, method, body, address: addresses[0], signal: budget.signal, timeoutMs: Math.max(1, budget.remaining()), discardRedirectBody: true });
+      const location = res.headers?.location;
+      if (!res.error && res.status >= 300 && res.status < 400 && location && hop < MAX_REDIRECTS) {
+        const next = new URL(location, current);
+        if (next.protocol !== "http:" && next.protocol !== "https:") throw new PublicHostError("Redirect left http(s)");
+        if (next.username || next.password) throw new PublicHostError("Redirect included credentials");
+        redirects.push({ status: res.status, location: redirectLocation(current, next) });
+        if (res.status !== 307 && res.status !== 308) { method = "GET"; body = null; }
+        current = next;
+        continue;
+      }
+      return { ...res, ...(budget.exhausted ? { error: options.signal?.aborted ? "aborted" : "timeout" } : {}), finalUrl: current.toString(), ...(redirects.length ? { redirects } : {}) };
     }
-    const res = await raw(current, { ...options, method, body, address: addresses[0] });
-    const location = res.headers?.location;
-    if (res.status >= 300 && res.status < 400 && location && hop < MAX_REDIRECTS) {
-      const next = new URL(location, current);
-      if (next.protocol !== "http:" && next.protocol !== "https:") {
-        throw new PublicHostError("Redirect left http(s)");
-      }
-      if (next.username || next.password) throw new PublicHostError("Redirect included credentials");
-      if (res.status !== 307 && res.status !== 308) {
-        method = "GET";
-        body = null;
-      }
-      current = next;
-      continue;
-    }
-    return { ...res, finalUrl: current.toString() };
-  }
-  throw new PublicHostError("Too many redirects");
+    throw new PublicHostError("Too many redirects");
+  } finally { budget.dispose(); }
+}
+
+function redirectLocation(fromUrl, nextUrl) {
+  const port = (url) => url.port || (url.protocol === "https:" ? "443" : "80");
+  const same = nextUrl.hostname === fromUrl.hostname
+    && nextUrl.protocol === fromUrl.protocol
+    && port(nextUrl) === port(fromUrl);
+  if (same) return `${nextUrl.pathname}${nextUrl.search}`;
+  return nextUrl.toString();
 }
 
 function toResponse(got) {
@@ -223,6 +243,13 @@ function toResponse(got) {
   if (rawBody) entry.body = bodyBytes.subarray(0, MAX_BODY_BYTES).toString("utf8");
   if (got?.truncated || bodyBytes.length > MAX_BODY_BYTES) entry.truncated = true;
   if (got?.error) entry.error = String(got.error);
+  if (Array.isArray(got?.redirects)) {
+    const redirects = got.redirects
+      .filter((hop) => hop && typeof hop.status === "number" && typeof hop.location === "string" && hop.location)
+      .map((hop) => ({ status: hop.status, location: hop.location }));
+    if (redirects.length) entry.redirects = redirects;
+  }
+  if (typeof got?.finalUrl === "string" && got.finalUrl) entry.finalUrl = got.finalUrl;
   return entry;
 }
 
@@ -312,14 +339,15 @@ async function readPreflight(exchange, url) {
 }
 
 export async function probeHost(raw, deps = {}) {
-  const lookup = deps.lookup || dns.lookup;
+  const lookup = deps.lookup;
   const exchange = deps.exchange || ((url, options) => guardedExchange(url, { ...options, lookup, rawExchange: deps.rawExchange }));
   const input = normalizeHostInput(raw);
   let host = input.host;
   const protocol = input.protocol;
   await resolvePublicAddresses(host, lookup);
 
-  const root = await exchange(`${protocol}://${host}/`, { method: "GET" });
+  const authority = () => net.isIP(host) === 6 ? `[${host}]` : host;
+  const root = await exchange(`${protocol}://${authority()}/`, { method: "GET" });
   let wwwFallback;
   let redirectedToWww = false;
   try {
@@ -327,14 +355,14 @@ export async function probeHost(raw, deps = {}) {
   } catch {
     redirectedToWww = false;
   }
-  if (!host.startsWith("www.") && (redirectedToWww || needsWwwFallback(host, { status: root.status, body: root.body }))) {
+  if (!net.isIP(host) && !host.startsWith("www.") && (redirectedToWww || needsWwwFallback(host, { status: root.status, body: root.body }))) {
     const next = `www.${host}`;
     await resolvePublicAddresses(next, lookup);
     wwwFallback = { from: host, to: next };
     host = next;
   }
 
-  const base = `${protocol}://${host}`;
+  const base = `${protocol}://${authority()}`;
   const responses = {};
   const corsPreflight = {};
   await mapPool(PROBE_PATHS, 4, async (probePath) => {

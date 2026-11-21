@@ -1,0 +1,11 @@
+{
+  "mapping": [
+    {
+      "from": "external_id",
+      "to": "id"
+    }
+  ],
+  "version": 1,
+  "source": "export const normalize = value => value.trim();\n",
+  "reproduction": "https://example.org/public/mapping.json"
+}

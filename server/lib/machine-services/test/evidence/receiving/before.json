@@ -1,0 +1,19 @@
+{
+  "runtimeHead": "412010fb530c2ea3f4a2dfd53bd20915b14bb9f3",
+  "incomingSource": "667fba353e9082d8a0842437442dabc42843abf8",
+  "upstreamRepairedImplementation": "4248874f2fa63636659fad164fb29ed193018104",
+  "PG": {
+    "tests": 6,
+    "fail": 6,
+    "pass": 0
+  },
+  "focusedNative": {
+    "tests": 16,
+    "fail": 11,
+    "pass": 5
+  },
+  "commands": [
+    "flock /home/ubuntu/.cache/pilot-ae18-build.lock node --test --test-concurrency=1 server/vendor/machine-gateway/tests/receiving.test.mjs server/vendor/continuous-monitoring/test/05-receiving.test.mjs server/vendor/continuous-monitoring/test/06-mounted-boundaries.test.mjs",
+    "flock /home/ubuntu/.cache/pilot-ae18-build.lock node server/lib/machine-services/test/run.mjs --test-name-pattern=received\\ PG"
+  ]
+}

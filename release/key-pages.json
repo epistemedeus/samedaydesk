@@ -1,0 +1,173 @@
+{
+  "site": "samedaydesk.com",
+  "repository": "epistemedeus/samedaydesk",
+  "origin": "https://samedaydesk.com",
+  "preview": {
+    "build": "npm run build",
+    "start": "node server/index.js",
+    "port": 31881,
+    "ready": "/api/health",
+    "env": {
+      "NODE_ENV": "production",
+      "SDS_PRIVATE_PREVIEW": "1",
+      "SDS_PREVIEW_MAIL_OUTBOX": "{out}/preview-outbox.jsonl",
+      "ADMIN_EMAIL": "desk@example.test",
+      "SDS_RECEIPTS_SNAPSHOT_PATH": "{out}/receipt-snapshot.json"
+    }
+  },
+  "sitemaps": [
+    "/sitemap.xml"
+  ],
+  "machineFiles": [
+    "/llms.txt",
+    "/start.md",
+    "/.well-known/api-catalog",
+    "/.well-known/agent-card.json",
+    "/x402/verified.json",
+    "/receipts.json"
+  ],
+  "externalSkipHosts": [],
+  "ignoreConsole": [],
+  "cheapCommands": [
+    {
+      "name": "copy",
+      "run": "node scripts/check-public-copy.mjs"
+    }
+  ],
+  "pages": [
+    {
+      "name": "home",
+      "path": "/",
+      "why": "homepage"
+    },
+    {
+      "name": "x402",
+      "path": "/x402",
+      "why": "the x402 page and its paid route list"
+    },
+    {
+      "name": "for-agents",
+      "path": "/for-agents",
+      "why": "For AI agents"
+    },
+    {
+      "name": "receipts",
+      "path": "/receipts",
+      "why": "the receipts roll"
+    },
+    {
+      "name": "care-buy-once",
+      "path": "/care/buy?offer=agent_front_door",
+      "why": "checkout entry, one-time service (also machine_payment_route and agent_storefront, same template)"
+    },
+    {
+      "name": "care-buy-monthly",
+      "path": "/care/buy?offer=keep_it_working",
+      "why": "checkout entry, the monthly subscription"
+    },
+    {
+      "name": "care-intake",
+      "path": "/care/intake",
+      "why": "the buyer's receipt page",
+      "lighthouse": false,
+      "states": [
+        {
+          "name": "no-link",
+          "path": "/care/intake",
+          "fixture": "no capability in the fragment"
+        },
+        {
+          "name": "paid",
+          "fixture": "npm run release:stripe -- --cases success leaves its paid receipt link in release/out/stripe/<run>/; open it while the run's preview is up"
+        },
+        {
+          "name": "expired",
+          "fixture": "npm run release:stripe -- --cases expire"
+        },
+        {
+          "name": "refunded",
+          "fixture": "npm run release:stripe -- --cases success,refund"
+        }
+      ]
+    },
+    {
+      "name": "care-subscription",
+      "path": "/care/subscription",
+      "why": "cancel the monthly subscription",
+      "lighthouse": false
+    },
+    {
+      "name": "checkout",
+      "path": "/checkout",
+      "why": "the account checkout entry"
+    },
+    {
+      "name": "login",
+      "path": "/login",
+      "why": "sign in"
+    },
+    {
+      "name": "signup",
+      "path": "/signup",
+      "why": "sign up"
+    },
+    {
+      "name": "dashboard",
+      "path": "/dashboard",
+      "why": "signed-in dashboard",
+      "lighthouse": false,
+      "states": [
+        {
+          "name": "signed-out",
+          "path": "/dashboard",
+          "fixture": "no session: shows the sign-in step"
+        }
+      ],
+      "note": "Signed-in states need a test Supabase session; no fixture exists yet (lane: add one)."
+    },
+    {
+      "name": "not-found",
+      "path": "/this-page-does-not-exist",
+      "why": "404",
+      "lighthouse": false
+    },
+    {
+      "name": "guide",
+      "path": "/guides/get-cited-by-ai-search.html",
+      "why": "one guide (template)"
+    },
+    {
+      "name": "report",
+      "path": "/reports/ai-search-readiness-saas-2026.html",
+      "why": "one report (template)"
+    },
+    {
+      "name": "tool",
+      "path": "/tools/schema-generator.html",
+      "why": "one tool (template)"
+    },
+    {
+      "name": "agent-job",
+      "path": "/for-agents/useful-jobs",
+      "why": "one For agents subpage (template)"
+    },
+    {
+      "name": "sdk-doc",
+      "path": "/docs/x402-sdk/introduction.html",
+      "why": "one SDK doc page (template)"
+    }
+  ],
+  "internalExpected": {
+    "/api/checkout/seller-conformance": {
+      "status": 503,
+      "why": "preview only: the report's Stripe link is set by SDS_TEST_SELLER_CONFORMANCE_LINK, which the cheap sweep does not set"
+    }
+  },
+  "themeStorage": {
+    "key": "sdd-theme",
+    "values": {
+      "light": "drafting",
+      "dark": "dark"
+    }
+  }
+}

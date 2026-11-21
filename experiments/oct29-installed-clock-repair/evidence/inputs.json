@@ -1,0 +1,179 @@
+{
+  "schema": "h64334.input-receipt.v1",
+  "receivedAt": "2026-10-29T21:30:37Z",
+  "receiptSha256": "0f38170ccc2191c55681ad655fae781cbc12d711299cf4bcf9b1eaaf9d70de8e",
+  "receipt": {
+    "schema": "pilot.native-inputs.v1",
+    "binding": "7f9896476b67ff1a6d8641f5227abe01543a997b3f6c4fd7b0d158f56e6f6b88",
+    "directory": "/home/ubuntu/root64334-sds-clock-job/inputs",
+    "product": {
+      "repository": "https://github.com/epistemedeus/samedaydesk.git",
+      "commit": "c4ec17a891e19177d574ed79faaac25d295d2743"
+    },
+    "operating": {
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "account": "epistemedeus"
+    },
+    "assignment": {
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "account": "epistemedeus"
+    },
+    "members": [
+      {
+        "role": "instructions",
+        "path": "AGENTS.md",
+        "repository": "https://github.com/epistemedeus/pilot.git",
+        "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+        "blob": "8c02250380d8cfbdff2e4546527308f9dccefa77",
+        "bytes": 34522,
+        "sha256": "b362013824fd20f425e1c6d5823680707952db4dbc9c39819eb84b6912fb59bb"
+      },
+      {
+        "role": "state",
+        "path": "overview/STATE.md",
+        "repository": "https://github.com/epistemedeus/pilot.git",
+        "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+        "blob": "ef6eb97f2b02bbaaff5f2da076503b5a4942c097",
+        "bytes": 71445,
+        "sha256": "01e495734973e15a8d9a08c8e1c0e62daa11f4fbffd7c35446265acc12769c3b"
+      },
+      {
+        "role": "execution-plan",
+        "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+        "repository": "https://github.com/epistemedeus/pilot.git",
+        "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+        "blob": "1f0d5df3e06a4aa8ba15eb77c16d7ebccd64ee6f",
+        "bytes": 17189,
+        "sha256": "1c67671289a590821ba0fb42eb02246366312d9c137d6a13eec5248dc1060025"
+      },
+      {
+        "role": "assignment",
+        "path": "overview/remote-worker/assignments/H64334-SDS-INSTALLED-CLOCK-REPAIR-20261029.md",
+        "repository": "https://github.com/epistemedeus/pilot.git",
+        "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+        "blob": "456217589c6b5d19ce2bc93f693eb4f2dc50f586",
+        "bytes": 11137,
+        "sha256": "a0caff60a77a8eaccbb2bfcbe9a0fe3ce3604fe40de3a4f45fce1dca4a5496df"
+      }
+    ],
+    "at": "2026-10-29T21:25:40.925Z"
+  },
+  "verifiedMembers": [
+    {
+      "role": "instructions",
+      "path": "AGENTS.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "blob": "8c02250380d8cfbdff2e4546527308f9dccefa77",
+      "bytes": 34522,
+      "sha256": "b362013824fd20f425e1c6d5823680707952db4dbc9c39819eb84b6912fb59bb",
+      "verified": true
+    },
+    {
+      "role": "state",
+      "path": "overview/STATE.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "blob": "ef6eb97f2b02bbaaff5f2da076503b5a4942c097",
+      "bytes": 71445,
+      "sha256": "01e495734973e15a8d9a08c8e1c0e62daa11f4fbffd7c35446265acc12769c3b",
+      "verified": true
+    },
+    {
+      "role": "execution-plan",
+      "path": "overview/MACHINE-COMMERCE-EXECUTION-PLAN.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "blob": "1f0d5df3e06a4aa8ba15eb77c16d7ebccd64ee6f",
+      "bytes": 17189,
+      "sha256": "1c67671289a590821ba0fb42eb02246366312d9c137d6a13eec5248dc1060025",
+      "verified": true
+    },
+    {
+      "role": "assignment",
+      "path": "overview/remote-worker/assignments/H64334-SDS-INSTALLED-CLOCK-REPAIR-20261029.md",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "blob": "456217589c6b5d19ce2bc93f693eb4f2dc50f586",
+      "bytes": 11137,
+      "sha256": "a0caff60a77a8eaccbb2bfcbe9a0fe3ce3604fe40de3a4f45fce1dca4a5496df",
+      "verified": true
+    }
+  ],
+  "historicalReferences": [
+    {
+      "role": "installed-receiving",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "path": "overview/research/phase-20261027/public-machine-participation/root40100/ROOT-RECEIVING.md",
+      "blob": "af7248c6829149332135b689a365b51b90681fcf",
+      "bytes": 5678,
+      "sha256": "c85a0a63b3852f64fb3a62ba937fd74e75db9587b8c00f2b6ca713c6c4074eec",
+      "historicalReference": true
+    },
+    {
+      "role": "H31-receiving",
+      "repository": "https://github.com/epistemedeus/pilot.git",
+      "commit": "453273aacf7f27dc80ae1917c1ec66b38231b0d2",
+      "path": "overview/self-evaluations/2026-10-29-scalable-demand/H64331-COMPLETE-RECEIVING-2052.md",
+      "blob": "6ca9acbbf3172f7bed56288bd98d748377633f39",
+      "bytes": 13059,
+      "sha256": "c2aec94a1a4547b64322ce0c391a9996d65f0d1c9d427e7e880f217a1a207863",
+      "historicalReference": true
+    }
+  ],
+  "controller": [
+    {
+      "commit": "7c798f18c9f385b51139bcf4f03b1458dc928c56",
+      "path": "tools/ops/hostinger-contributor-qualification-cli.mjs",
+      "blob": "9b4e7e2508fb7c59c3619aa7a153036d644c807a",
+      "modified": false,
+      "executed": false
+    },
+    {
+      "commit": "7c798f18c9f385b51139bcf4f03b1458dc928c56",
+      "path": "tools/ops/hostinger-managed-release.mjs",
+      "blob": "7fe25af22264287053331679be57d1f1973f70f4",
+      "modified": false,
+      "executed": false
+    }
+  ],
+  "admission": {
+    "jobId": "ROOT-SOL-H64334-261029",
+    "model": "gpt-6.1-sol",
+    "effort": "xhigh",
+    "hostProvider": "cursor",
+    "bootId": "44c41f22-64a1-4f5f-921b-e4cbcdf95331",
+    "reservationKiB": 2097152,
+    "executionLifetime": {
+      "enrollment": {
+        "path": "/home/ubuntu/root70700-sds-release-bound/ROOT-LIFETIME-ENROLLMENT.json",
+        "sha256": "4a14ebdc5960b20ffb9679e80dcf6cff53c15e18ecdb6955a92850d602d952ab"
+      },
+      "host": {
+        "provider": "cursor",
+        "agentId": "bc-ebf954ca-4f11-4b86-8e48-7d95b46371a2",
+        "bootId": "44c41f22-64a1-4f5f-921b-e4cbcdf95331"
+      },
+      "operationId": "root64334-sds-clock-repair",
+      "route": "finite-foreground",
+      "requiredUntil": "2026-10-29T22:20:00.000Z",
+      "checkpointBy": "2026-10-29T22:05:00.000Z",
+      "expiresAt": "2026-10-29T22:23:35.981821Z",
+      "providerRetentionGuaranteed": false
+    }
+  },
+  "toolchain": {
+    "node": "v22.14.0",
+    "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "pgBin": "/usr/lib/postgresql/16/bin",
+    "machine": "x86_64"
+  },
+  "limitations": [
+    "No provider reads or mutations performed by this worker.",
+    "No CI acquisition packet decoded, fabricated or supplied by this worker.",
+    "Historical H31 receipts are references, not H34 execution evidence."
+  ]
+}

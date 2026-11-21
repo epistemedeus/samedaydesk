@@ -1,0 +1,31 @@
+{
+  "name": "baseline-root-ci",
+  "command": [
+    "npm",
+    "ci",
+    "--ignore-scripts",
+    "--prefer-offline",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "/tmp/r6q-oec4g5lv/baseline",
+  "exit": 0,
+  "elapsedSeconds": 2.867,
+  "sampledOwnSupervisorTreeRssPeakKiB": 648888,
+  "maxLiveProcesses": 7,
+  "reserveKiB": 2621440,
+  "sampleMs": 50,
+  "nodeHeapMiB": 384,
+  "modelChildren": 0,
+  "log": "/tmp/r6q-oec4g5lv/logs/baseline-root-ci.log",
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=384",
+    "VITE_SUPABASE_URL": "",
+    "VITE_SUPABASE_ANON_KEY": "",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "",
+    "VITE_POSTHOG_KEY": "",
+    "VITE_POSTHOG_HOST": "",
+    "RAYON_NUM_THREADS": "1",
+    "TMPDIR": "/tmp/r6q-oec4g5lv/socket"
+  }
+}

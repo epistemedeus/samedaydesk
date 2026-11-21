@@ -1,0 +1,179 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Neomorphic opportunity intake",
+    "version": "221800",
+    "description": "Sibling of the earned-work kernel for one configurable funded round. Claims reserve an atomic budget and, after owner acceptance, record an owed IOU on adapter null_nonpaying_v0. This service does not transfer USDC, fetch artifact refs, enroll production credentials from fixtures, or change a closed campaign's preserved promise. Legacy claimed counts claim rows, including owner imports, and is not holder conversion. A holder POST on an imported reservation is one acknowledgement, not another paid slot. Owner issuance and readback are not verified external activity. The kernel contract remains openapi.json. A waitlist is not a paid slot. Claims and the waitlist require a scoped holder. Email contact@neomorphic.io is the fallback. Anonymous registration is absent."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8791",
+      "description": "Local earned-work process. Not hosted escrow."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "OwnerBearer": { "type": "http", "scheme": "bearer" },
+      "ContributorBearer": { "type": "http", "scheme": "bearer" }
+    },
+    "parameters": {
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": { "type": "string", "minLength": 8, "maxLength": 200 }
+      },
+      "RoundKey": { "name": "roundKey", "in": "path", "required": true, "schema": { "type": "string" } },
+      "ClaimId": { "name": "claimId", "in": "path", "required": true, "schema": { "type": "string" } },
+      "Provenance": {
+        "name": "provenance",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string", "enum": ["test", "fixture", "production"] }
+      }
+    }
+  },
+  "paths": {
+    "/v1/opportunity-rounds": {
+      "post": {
+        "operationId": "createOpportunityRound",
+        "description": "Fixed terms include offer summary and ownerReservedSlots (optional, default 0, at most slotCount). This aggregate protects already sent personal capacity before private identity imports. Fixture imports are synthetic. Production admission and contributor grants require owner authorization.",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Round fixed" }, "200": { "description": "Idempotent replay" }, "409": { "description": "Terms already fixed or expected hash mismatch" } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}": {
+      "get": {
+        "operationId": "readOpportunityRound",
+        "description": "Local service inventory only. publicClaimConfigured and unreservedPublicSlots describe configuration. publicClaimable=false and publicRemainingSlots=0 for this round. deliveryState stays unconfigured unless the operator supplies an explicit hosted projection. A hosted projection names round-read, submission, and readback paths and does not open inventory, settle, or deliver grants. A claimant cannot declare readiness. remainingAtomic includes protectedPersonalAtomic; availableAtomic excludes that protection.",
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/Provenance" }],
+        "responses": { "200": { "description": "Public round view. Reading does not reserve a reward." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/imports": {
+      "post": {
+        "operationId": "importOpportunityClaim",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Personal reservation imported" }, "200": { "description": "Same import key replayed without a new token" } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/assignments": {
+      "post": {
+        "operationId": "assignOpportunityClaim",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Owner-assigned scope reserved" } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims": {
+      "get": {
+        "operationId": "listOpportunityClaims",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/Provenance" }],
+        "responses": { "200": { "description": "Owner claim index without credential secrets" } }
+      },
+      "post": {
+        "operationId": "claimOpportunityOffer",
+        "security": [{ "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "description": "A new public claim requires a scoped holder and still finds no paid public capacity on this round. A POST by the holder of an imported or owner-assigned reservation records one holder acknowledgement. Repeating it, including with a new Idempotency-Key, does not create another slot or count as verified external activity. Owner issuance and GET readback are not that acknowledgement.",
+        "responses": { "201": { "description": "New public reservation, or the first holder acknowledgement of an existing import or assignment. An acknowledgement adds no paid slot." }, "200": { "description": "Idempotent replay, or a repeated acknowledgement that does not create another event." }, "409": { "description": "Closed, full, mismatch, or oversubscribed. Body is a waitlist or next task, not a bare rejection and not an unbudgeted paid promise." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims/{claimId}": {
+      "get": {
+        "operationId": "readOpportunityClaim",
+        "security": [{ "OwnerBearer": [] }, { "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/Provenance" }],
+        "responses": { "200": { "description": "Holder or owner readback. Assigned scope stays with the holder." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims/{claimId}/submissions": {
+      "post": {
+        "operationId": "submitOpportunityEvidence",
+        "description": "Evidence is untrusted self-report, bounded and digest-bound. Discovery accepts kind and selfReport only. Workflow requires nonempty attempt, limitationOrResult and syntheticFailure=false, with optional versions/minimalInput/expectedResult. Verification and settlement fields are rejected. The idempotency body binds claimId.",
+        "security": [{ "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Evidence metadata stored. Ref is not fetched." }, "409": { "description": "Deferred start, late reservation, or different duplicate evidence" } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims/{claimId}/accept": {
+      "post": {
+        "operationId": "acceptOpportunityClaim",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Owed IOU. paid=false, transfer=null, adapter=null_nonpaying_v0." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims/{claimId}/start": {
+      "post": {
+        "operationId": "acknowledgeOpportunityStart",
+        "security": [{ "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "200": { "description": "Deferred start cleared by the holder. Still not a transfer." }, "409": { "description": "Unearned reservation expired or no longer open for work. Owed and submitted records are retained." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/claims/{claimId}/source": {
+      "post": {
+        "operationId": "recordOpportunitySource",
+        "description": "Authenticated server event ids and request path are retained separately from all volunteered source, provider, query and observed assertions. A current query or referrer is not the original encounter. Provider, source, and placement ids stay data. Claimant source assertions do not authenticate a provider or verify evidence. Operator observations and holder self-report are different fields.",
+        "security": [{ "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/ClaimId" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Self-report stored separately from observed request evidence." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/waitlist": {
+      "post": {
+        "operationId": "joinOpportunityWaitlist",
+        "security": [{ "ContributorBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "description": "Requires a scoped holder bearer. There is no anonymous registration. Email contact@neomorphic.io remains the fallback. A waitlist is not a paid slot.",
+        "responses": { "200": { "description": "Waitlist only. paidSlot=false and doNotStartWork=true." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/cohort": {
+      "get": {
+        "operationId": "readOpportunityCohort",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/Provenance" }],
+        "description": "Legacy claimed counts every claim row, including owner imports, and is not agent conversion. The funnel separates reservation rows, holder acknowledgement events and requests, submissions, acceptance, owed records, and separately observed settlement and retained use. Rows, requests, and unique recipients are distinct. External identity, delivery, and acquisition stay unknown.",
+        "responses": { "200": { "description": "Legacy counts plus the honest funnel. Paid obligation count stays 0. Contacted or Sent is not delivery." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/cohort-events": {
+      "post": {
+        "operationId": "recordOpportunityCohortEvent",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "description": "Optional channel is email, http, or operator. An absent channel stays unknown. The same event recorded on a different channel conflicts. Contacted or Sent is not delivery. A paid observation is not revenue and does not settle an obligation.",
+        "responses": { "201": { "description": "Denominator observation. Sent is not delivery. A paid observation is not revenue." }, "409": { "description": "The same observation is already recorded on a different channel." } }
+      }
+    },
+    "/v1/opportunity-rounds/{roundKey}/close": {
+      "post": {
+        "operationId": "closeOpportunityRound",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/RoundKey" }, { "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "200": { "description": "Round closed. Accepted obligations stay owed." } }
+      }
+    },
+    "/v1/opportunity-notices": {
+      "post": {
+        "operationId": "closeOpportunityNotice",
+        "security": [{ "OwnerBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }],
+        "responses": { "201": { "description": "Closed campaign notice with an immutable preserved promise" }, "409": { "description": "promise_immutable" } }
+      }
+    },
+    "/v1/opportunity-notices/{campaignKey}": {
+      "get": {
+        "operationId": "readOpportunityNotice",
+        "description": "Public fields are redacted, including retained legacy rows. Continuation path is null while delivery is unconfigured. An explicit hosted projection may name the round-read path and still does not reserve, settle, or open inventory. Immutable preserved promise is retained in storage.",
+        "parameters": [{ "name": "campaignKey", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Preserved promise and a non-paying continuation pointer" } }
+      }
+    }
+  }
+}

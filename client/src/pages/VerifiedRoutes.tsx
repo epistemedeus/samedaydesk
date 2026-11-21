@@ -3,9 +3,9 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import styles from "./VerifiedRoutes.module.css";
 
-const PAGE_TITLE = "Inspected x402 routes | SameDayDesk";
+const PAGE_TITLE = "Checked x402 routes | SameDayDesk";
 const PAGE_DESCRIPTION =
-  "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.";
+  "Every SameDayDesk paid route, checked the way a buying agent meets it: live 402 terms, contract hash, OpenAPI and CDP Bazaar listing, with a machine-readable feed.";
 const PAGE_URL = "https://samedaydesk.com/x402/verified";
 const FEED_URL = "/x402/verified.json";
 const SCHEMA_URL = "/x402/verified.schema.json";
@@ -115,16 +115,15 @@ export default function VerifiedRoutes() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Inspection list · unpaid 402 terms</p>
+          <p className="eyebrow">Paid routes · live 402 terms</p>
           <h1 className={styles.h1}>
-            Inspected routes, not a <span className="lime">certificate</span>
+            Every paid route, checked as <span className="lime">an agent meets it</span>
           </h1>
           <p className={styles.lead}>
-            Build-time list of current SameDayDesk routes from the existing seller-conformance
-            crawl. Each row has a live unpaid 402 check and contract hash. It records whether
-            the operation was observed in OpenAPI and whether a matching CDP Bazaar row was observed
-            within seven days of the crawl. The badge is verified, drift, or unverified. This page
-            is inspection evidence. It is not a product, guarantee, or runtime monitor.
+            Each row is one of our paid routes with its live 402 terms and contract hash, whether its
+            operation appears in our OpenAPI, and whether CDP Bazaar lists it within the last seven
+            days. The badge reads verified, drift or unverified. We run the same check on your
+            routes in a seller audit.
           </p>
           <div className={styles.actions}>
             <a className={styles.primary} href={FEED_URL}>
@@ -134,14 +133,14 @@ export default function VerifiedRoutes() {
               Read the schema
             </a>
             <a className={styles.secondary} href="/x402/seller-conformance">
-              Seller-conformance proof
+              Audit your routes
             </a>
           </div>
         </header>
 
         {error ? (
           <p className={styles.error} role="alert">
-            The inspection feed could not be loaded. {error}
+            The route feed could not be loaded. {error}
           </p>
         ) : null}
 
@@ -208,14 +207,9 @@ export default function VerifiedRoutes() {
                 </tbody>
               </table>
             </div>
-            <ul className={styles.notes}>
-              {feed.limitations.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
           </section>
         ) : error ? null : (
-          <p className={styles.prose}>Loading the inspection feed.</p>
+          <p className={styles.prose}>Loading the routes.</p>
         )}
       </main>
       <Footer />
