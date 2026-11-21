@@ -777,6 +777,10 @@ export function apexSkillMarkdown() {
     lines.push("", "Input schema:", "", "```json", JSON.stringify(tool.inputSchema, null, 2), "```", "");
   }
   lines.push(
+    "## Send one public task",
+    "",
+    "`GET /discovery/original-task-correspondence.json` returns the client download, digest and commands to send your public task and read its reply.",
+    "",
     "## HTTP contracts and paid web data",
     "",
     `HTTP inputs, outputs and errors: ${APEX_ORIGIN}/openapi.json`,
