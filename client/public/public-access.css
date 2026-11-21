@@ -27,3 +27,24 @@ html.dark #sourcey .godoc-field-doc,
 html.dark #sourcey .godoc-fields > summary { color: #c4c7cf; }
 /* The existing copy control has its own toolbar space above generated text. */
 .out > pre { padding-top: 3.5rem; }
+
+/* Search results and key hints convey navigation, including in the open dialog. */
+#sourcey .search-category,
+#sourcey .search-result-tag,
+#sourcey .search-footer-hint,
+#sourcey .search-footer kbd,
+#sourcey #search-open kbd { color: #555861; }
+html.dark #sourcey .search-category,
+html.dark #sourcey .search-result-tag,
+html.dark #sourcey .search-footer-hint,
+html.dark #sourcey .search-footer kbd,
+html.dark #sourcey #search-open kbd { color: #bfc3cb; }
+
+@media (prefers-reduced-motion: reduce) {
+  #sourcey *, #sourcey *::before, #sourcey *::after,
+  .mobile-nav-dialog, .mobile-nav-dialog::backdrop {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

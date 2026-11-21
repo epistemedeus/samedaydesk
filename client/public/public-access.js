@@ -22,6 +22,39 @@
     if (!scheduled) { scheduled = true; requestAnimationFrame(scan); }
   }).observe(document.body, { childList: true, subtree: true });
   scan();
+  // The generated documentation search hides its input on Escape. Return
+  // keyboard focus to the control that opened it before the input disappears.
+  const search = document.getElementById("search-dialog");
+  if (search) {
+    const triggers = [...document.querySelectorAll("#search-open, #search-open-mobile")];
+    let opener = null;
+    const visibleTrigger = () => triggers.find(element => element.getClientRects().length);
+    const remember = () => {
+      const active = document.activeElement;
+      opener = active && active !== document.body && active.getClientRects().length ? active : visibleTrigger();
+    };
+    const restore = () => requestAnimationFrame(() => {
+      if (search.classList.contains("open")) return;
+      const target = opener?.getClientRects().length ? opener : visibleTrigger();
+      target?.focus();
+    });
+    triggers.forEach(trigger => {
+      trigger.setAttribute("aria-controls", "search-dialog");
+      trigger.setAttribute("aria-haspopup", "dialog");
+    });
+    const reflect = () => triggers.forEach(trigger => trigger.setAttribute("aria-expanded", String(search.classList.contains("open"))));
+    new MutationObserver(reflect).observe(search, { attributes: true, attributeFilter: ["class"] });
+    reflect();
+    document.addEventListener("click", event => {
+      if (triggers.some(trigger => trigger.contains(event.target))) remember();
+      else if (event.target === search && search.classList.contains("open")) restore();
+    }, true);
+    document.addEventListener("keydown", event => {
+      const editing = /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName) || event.target.isContentEditable;
+      if (!editing && (event.key === "/" || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k"))) remember();
+      if (event.key === "Escape" && search.classList.contains("open")) restore();
+    }, true);
+  }
   if (!document.getElementById("root")) {
     void fetch("/api/pulse/journey", { method: "POST", keepalive: true,
       headers: { "Content-Type": "application/json" },
