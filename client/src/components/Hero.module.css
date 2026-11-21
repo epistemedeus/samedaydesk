@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding-top: calc(var(--nav-h) + var(--space-l));
-  padding-bottom: var(--space-xl);
+  padding-bottom: calc(var(--section) / 2);
   overflow: hidden;
   isolation: isolate;
 }
@@ -48,6 +48,11 @@
 }
 .line { display: block; }
 .lime { color: var(--lime); }
+@media (prefers-reduced-motion: no-preference) {
+  .line { animation: line-settle 540ms var(--ease-out) both; }
+  .line + .line { animation-delay: 80ms; }
+  @keyframes line-settle { from { transform: translateY(.22em); } to { transform: translateY(0); } }
+}
 
 .sub {
   margin-top: var(--space-m);
@@ -104,3 +109,16 @@
 @media (min-width: 880px) {
   .scrollcue { display: flex; }
 }
+/* The engineer's line, in small print under the buttons. */
+.fine {
+  margin-top: var(--space-s);
+  max-width: 60ch;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+}
+.alt { margin-top: 0.8rem; font-size: var(--step--1); }
+.alt a { color: var(--ink-dim); text-decoration: underline; text-underline-offset: 3px; }
+.alt a:hover { color: var(--ink); }

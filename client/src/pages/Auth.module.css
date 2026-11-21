@@ -120,7 +120,7 @@
 .notice { color: var(--lime); font-size: var(--step--1); }
 
 .alt { margin-top: var(--space-m); font-size: var(--step--1); color: var(--ink-dim); }
-.alt a { color: var(--lime); }
+.alt a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
 .alt a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .fine { margin-top: var(--space-s); font-size: var(--step--2); color: var(--ink-faint); }
 .fine a { color: var(--ink-dim); text-decoration: underline; text-underline-offset: 2px; }

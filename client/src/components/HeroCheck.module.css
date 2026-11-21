@@ -1,0 +1,55 @@
+/* The hero's free check: a drafting-sheet field with its button, then the result printed as a
+   receipt under the hero, torn edge at the foot like the tape's receipts. */
+.form { margin-top: var(--space-m); max-width: 36rem; }
+.label { display: block; margin-bottom: 0.5rem; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--ink-dim); }
+.row { display: flex; gap: 0.5rem; }
+.input {
+  flex: 1; min-width: 0; min-height: 52px; padding: 0 1rem;
+  border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--bg-1);
+  color: var(--ink); font: 500 var(--step-0) var(--font-mono);
+}
+.input:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+.go {
+  flex: none; min-height: 52px; padding: 0 1.25rem; border: 0; border-radius: 999px;
+  background: var(--lime); color: var(--lime-ink); font: 600 var(--step-0) var(--font-sans); cursor: pointer;
+}
+.go:hover { filter: brightness(1.08); }
+.go[disabled] { opacity: 0.7; cursor: progress; }
+@media (max-width: 520px) { .row { flex-direction: column; } .go { width: 100%; } }
+
+.wrap { padding: 0 var(--space-s) calc(var(--section) / 2); display: grid; justify-items: center; scroll-margin-top: calc(var(--nav-h) + 1rem); }
+.slip {
+  width: min(34rem, 100%); padding: var(--space-m) var(--space-m) calc(var(--space-m) + 10px);
+  background: var(--bg-1); border: 1px solid var(--line-2); border-bottom: 0;
+  font-size: var(--step--1);
+  -webkit-mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+  mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+}
+@media (prefers-reduced-motion: no-preference) { .slip { animation: feed 0.5s var(--ease-out) both; } }
+@keyframes feed { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.printing p { color: var(--ink-dim); }
+.head { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--line-2); color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.site { margin-top: 0.8rem; font-size: var(--step-1); font-weight: 600; overflow-wrap: anywhere; }
+.score { margin-top: 0.2rem; display: flex; align-items: baseline; gap: 0.4rem; }
+.score :global(.mono) { font-size: var(--step-4); line-height: 1; letter-spacing: -0.03em; }
+.of { color: var(--ink-dim); font-family: var(--font-mono); }
+.lines { margin: 0.9rem 0 0; padding: 0; list-style: none; border-top: 1px dashed var(--line-2); }
+.lines li { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.4rem; padding-block: 0.55rem; border-bottom: 1px dashed var(--line-2); color: var(--ink-dim); }
+.lines strong { color: var(--ink); font-weight: 600; }
+.mark { font-family: var(--font-mono); font-weight: 700; }
+.lines li[data-status="fail"] .mark { color: var(--reg, var(--lime)); }
+.lines li[data-status="warn"] .mark { color: var(--ink); }
+.lines li[data-status="pass"] .mark { color: var(--lime); }
+.more { margin-top: 0.6rem; color: var(--ink-dim); }
+.more a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.next { margin-top: var(--space-s); display: grid; gap: 0.7rem; }
+.next p { color: var(--ink); font-size: var(--step-0); }
+.buy {
+  justify-self: start; display: inline-flex; align-items: center; gap: 0.4em; min-height: 48px; padding: 0 1.2rem;
+  border-radius: 999px; background: var(--lime); color: var(--lime-ink); font-weight: 600; text-decoration: none;
+}
+.buy:hover { filter: brightness(1.08); }
+.err { color: var(--ink); }
+
+/* A jump to the field (from § 03) stops with its label clear of the fixed nav. */
+.input { scroll-margin-top: calc(var(--nav-h) + 4rem); }

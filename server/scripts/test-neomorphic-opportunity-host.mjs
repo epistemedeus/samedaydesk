@@ -108,12 +108,14 @@ function idem(name) {
   return `${name}-${keyN}-221600`;
 }
 
-function roundBody(roundKey, { reserve = false, claimTtlSeconds = 691200 } = {}) {
+function roundBody(roundKey, { reserve = false, claimTtlSeconds = 691200,
+  submissionDeadline = new Date(Date.now() + 8 * 86400_000).toISOString() } = {}) {
   return {
     ...fixture,
     roundKey,
     provenance: "test",
     productionAdmission: false,
+    submissionDeadline,
     claimTtlSeconds,
     offers: fixture.offers.map((offer) => {
       if (reserve) return { ...offer };
@@ -616,7 +618,9 @@ test("closure and expiry keep submitted and owed obligations unpaid", { timeout:
   const { port } = await boot(t, { clock: () => now });
   const roundKey = "h-lifecycle";
   const root = `${PREFIX}/v1/opportunity-rounds/${roundKey}`;
-  const created = await ownerPost(port, `${PREFIX}/v1/opportunity-rounds`, roundBody(roundKey, { claimTtlSeconds: 60 }));
+  const created = await ownerPost(port, `${PREFIX}/v1/opportunity-rounds`, roundBody(roundKey, {
+    claimTtlSeconds: 60, submissionDeadline: fixture.submissionDeadline,
+  }));
   assert.equal(created.status, 201, JSON.stringify(created.json));
   const first = await issueHolder(port, roundKey);
   const second = await ownerPost(port, `${root}/imports`, {

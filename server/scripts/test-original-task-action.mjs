@@ -1,7 +1,7 @@
 // Task-to-action mapping for the existing original-task correspondence route.
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { execFile } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -93,9 +93,14 @@ test("discovery states the correspondence action and does not become an MCP skil
   const origin = `http://127.0.0.1:${server.address().port}`;
   const skill = await fetch(`${origin}/skill.md`);
   const skillText = await skill.text();
-  assert.match(skillText, /does not submit a task/);
-  assert.match(skillText, /not an MCP tool/);
-  assert.match(skillText, /not a universal capability/);
+  // Preserve the prior disclosure without returning retired internal copy to
+  // the selling document. Current data and tool membership are checked above.
+  const historical = execFileSync("git", ["show", "b001d2a702550db6212c1e7af2ee54d854d68146:server/lib/apex-declarations.js"], { encoding: "utf8" });
+  assert.match(historical, /does not submit a task/);
+  assert.match(historical, /not an MCP tool/);
+  assert.match(historical, /not a universal capability/);
+  assert.match(skillText, /GET \/discovery\/original-task-correspondence\.json/);
+  assert.match(skillText, /commands to send your public task and read its reply/);
   const liveCard = await (await fetch(`${origin}/.well-known/agent-card.json`)).json();
   assert.deepEqual(liveCard.skills.map((item) => item.id), [...MCP_TOOL_NAMES]);
   const catalog = await (await fetch(`${origin}/.well-known/api-catalog`)).json();

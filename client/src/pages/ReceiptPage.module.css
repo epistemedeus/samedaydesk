@@ -1,0 +1,45 @@
+/* A single receipt: the tape's printed slip, at page size, torn at the foot. */
+.wrap { max-width: 40rem; margin-inline: auto; padding: calc(var(--nav-h) + var(--space-l)) var(--space-s) calc(var(--section) / 2); }
+.slip {
+  margin-top: var(--space-s); padding: var(--space-m) var(--space-m) calc(var(--space-m) + 10px);
+  background: var(--bg-1); border: 1px solid var(--line-2); border-bottom: 0;
+  -webkit-mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+  mask: linear-gradient(#000 calc(100% - 8px), transparent 0), conic-gradient(from 135deg at 50% calc(100% - 8px), #000 90deg, transparent 0) bottom / 16px 8px repeat-x;
+}
+.head { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--line-2); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.wrap h1.h1 { margin-top: var(--space-s); font-family: var(--font-display); font-size: var(--step-3); line-height: 1.12; letter-spacing: -0.02em; }
+.lines { margin: var(--space-s) 0 0; border-top: 1px dashed var(--line-2); }
+.lines > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; padding-block: 0.7rem; border-bottom: 1px dashed var(--line-2); }
+.lines dt { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+.lines dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.proof { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: var(--space-s); font-family: var(--font-mono); font-size: var(--step--1); }
+.ref { color: var(--ink-faint); overflow-wrap: anywhere; flex-basis: 100%; }
+.proof a, .back a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.back { margin-top: var(--space-m); font-family: var(--font-mono); font-size: var(--step--1); }
+@media (max-width: 520px) { .lines > div { grid-template-columns: 1fr; gap: 0.2rem; } }
+/* A paid call: the payment as Base recorded it, then the request to check it. */
+.wrap h2.h2 { margin-top: var(--space-m); font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+.mark { display: inline-block; margin-inline-start: 0.6rem; padding: 0.1rem 0.45rem; border: 1px solid var(--lime); color: var(--lime); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.note { display: block; margin-top: 0.25rem; color: var(--ink-dim); font-size: var(--step--1); }
+.verified { display: flex; align-items: center; gap: 0.6rem; margin-top: var(--space-xs); color: var(--ink); font-size: var(--step--1); }
+.seal { flex: none; width: 1.1rem; height: 1.1rem; border: 1.5px solid var(--lime); border-radius: 50%; background: radial-gradient(circle, var(--lime) 0 30%, transparent 34%); }
+.chain dd { font-size: var(--step--1); }
+.chain :global(.mono), .chain dd:global(.mono) { overflow-wrap: anywhere; }
+.auth { margin-top: var(--space-xs); }
+.auth dt { text-transform: none; letter-spacing: 0; font-size: var(--step--1); }
+.check { margin-top: var(--space-m); padding: var(--space-m); border: 1px solid var(--line-2); font-size: var(--step--1); }
+.check .h2 { margin-top: 0; }
+.check p { margin-top: var(--space-xs); color: var(--ink-dim); overflow-wrap: anywhere; }
+.check a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+.cmd { position: relative; margin-top: var(--space-xs); background: var(--bg-1); border: 1px solid var(--line-2); }
+.cmd pre { margin: 0; padding: var(--space-s); white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: var(--step--2); line-height: 1.6; color: var(--ink); }
+.copy { min-height: 32px; padding: 0 0.8rem; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+/* One block per line: a wrapped line continues at its own indent. */
+.cmdLine { display: block; }
+@media (max-width: 480px) { .check { padding: var(--space-s); } .cmd pre { padding: var(--space-xs); } }
+.copy:hover, .copy:focus-visible { border-color: var(--lime); color: var(--lime); }
+.cmdBar { display: flex; justify-content: space-between; align-items: center; margin: 0 !important; padding: 0.35rem 0.5rem 0.35rem var(--space-s); border-bottom: 1px solid var(--line-2); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+.chain > div { grid-template-columns: 8.5rem 1fr; }
+.caption { margin-top: var(--space-s); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+.caption + .auth { margin-top: 0.3rem; }
+@media (max-width: 520px) { .chain > div { grid-template-columns: 1fr; } }

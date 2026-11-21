@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { RECEIPT_ROUTE_SHELLS } from "../lib/spa-route-shells.js";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -27,10 +28,14 @@ test("SPA history authority is the explicit App.tsx list, not any extensionless 
     "/for-agents/distribution-repair",
     "/for-agents/consumer-repeat",
     "/for-agents/useful-jobs",
+    "/receipts",
     "/login",
     "/signup",
     "/dashboard",
     "/checkout",
+    "/care/buy",
+    "/care/intake",
+    "/care/subscription",
     "/terms",
     "/privacy",
   ]);
@@ -113,6 +118,13 @@ test("production-like static + fallback 200s declared React routes, 404s unknown
     assert.equal(spa.body, INDEX_HTML, route);
     assert.match(spa.type, /html/, route);
   }
+
+  // One page per tape entry: a real id is the app, an unknown id is a 404.
+  const receipt = await request(port, RECEIPT_ROUTE_SHELLS[0].path);
+  assert.equal(receipt.status, 200);
+  assert.equal(receipt.body, INDEX_HTML);
+  const unknownReceipt = await request(port, "/receipts/not-a-receipt");
+  assert.equal(unknownReceipt.status, 404);
 
   const robots = await request(port, "/robots.txt");
   assert.equal(robots.status, 200);

@@ -40,15 +40,10 @@ export function loadRuntime(name) {
 }
 
 export function mcpTools() {
-  const src = readFileSync(join(ROOT, "client/src/pages/Mcp.tsx"), "utf8");
-  const start = src.indexOf("const tools = [");
-  const end = src.indexOf("];", start);
-  if (start < 0 || end <= start) throw new Error("Mcp.tsx tools array not found");
-  const block = src.slice(start, end);
-  const names = [...block.matchAll(/name:\s*"([^"]+)"/g)].map((m) => m[1]);
-  const prices = [...block.matchAll(/price:\s*"\$([0-9.]+)"/g)].map((m) => Number(m[1]));
-  if (names.length !== prices.length) throw new Error("Mcp.tsx name/price pair mismatch");
-  return names.map((name, i) => ({ name, price: prices[i] }));
+  const source = readFileSync(join(ROOT, "client/src/pages/Mcp.tsx"), "utf8");
+  if (!source.includes('import board from "../data/paidTools.json"')) throw new Error("MCP price board is not bound to its data");
+  const groups = readJson(join(ROOT, "client/src/data/paidTools.json"));
+  return groups.flatMap(group => group.tools.map(tool => ({ name: tool.name, price: Number(tool.price) })));
 }
 
 export function evmAddr(value) {

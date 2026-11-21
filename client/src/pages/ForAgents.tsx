@@ -38,29 +38,30 @@ export default function ForAgents() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Machine jobs · acquire or work offline</p>
+          <p className="eyebrow">Paid web extraction · free local tools</p>
           <h1 className={styles.jobH1}>
-            Obtain observations, use offline jobs, or <span className="lime">opt-in reuse</span>
+            Fresh web data for your agent, and <span className="lime">free tools to use it</span>
           </h1>
           <p className={styles.lead}>
-            SameDayDesk sells a bounded <code>POST /extract/batch</code> attempt: one to five public
-            HTTPS URLs, caller-selected fields, 0.01 USDC. A later comparison of two already-held JSON
-            artifacts is free, local, and does not fetch. Paid freshness and offline comparison stay
-            distinct. Installation grants no payment authority.
+            Your agent names up to five web pages and the details it needs from them, and gets clean data
+            back for one cent. No key, no account. Comparing and reusing what it fetched is free.
+          </p>
+          <div className={styles.actions}>
+            <a className={styles.primary} href="#observe-title">Fetch your first pages →</a>
+          </div>
+          <h2 className={styles.engHead}>For engineers</h2>
+          <p className={styles.lead}>
+            Your agent sends up to five public web pages and the fields it wants to <code>POST /extract/batch</code>, and gets them back as clean JSON. 0.01 USDC a batch, paid per call with x402: no key, account or subscription. Comparing, mapping and reusing what you already fetched is free and runs on your own machine.
           </p>
           <p className={styles.lead}>
-            Current paid HTTP and MCP inventories live on the merchant. This page does not freeze a
-            route count. Failed, partial, and missing rows stay visible. Observation freshness is unknown
-            unless you supply a clock and a horizon. <code>charged: true</code> is not useful output.
-            Current source labels are untrusted, not buyer proof. Purchasing never requires publishing
-            or referrals.
+            Every page you asked for comes back with a row, including the ones that failed, so your agent always knows what it has. The full list of paid HTTP and MCP tools is on the live gateway, linked below.
           </p>
         </header>
 
         <section className={styles.section} aria-labelledby="observe-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 1 · paid observation</p>
-            <h2 id="observe-title">Obtain bounded extracted observations</h2>
+            <h2 id="observe-title">Fetch fields from up to five pages</h2>
           </div>
           <p className={styles.jobCopy}>
             Public customer example {CUSTOMER_EXAMPLE_VERSION} at{" "}
@@ -70,20 +71,16 @@ export default function ForAgents() {
             >
               {MERCHANT_REPO}/tree/{MERCHANT_PIN}/{CUSTOMER_EXAMPLE_DIR}
             </a>
-            . Requires Node.js 22.x and a full Git checkout, not a packed tarball.
-            Default commands are unpaid preflight against the live merchant, not an offline fixture. They
-            sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any{" "}
-            <code>--approve</code> purchase. Optional attempt receipt and read-only reconcile are
-            separate. Reconcile an unknown payment outcome instead of automatically retrying.
-            This page includes no keys, secret URLs, or purchase.
+            . Needs Node.js 22 and a Git checkout. The default commands show the price and terms first and sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any{" "}
+            <code>--approve</code> purchase. If a payment's outcome is unknown, reconcile it rather than paying again.
           </p>
           <ol className={styles.flow}>
             <li>Clone the public merchant and check out the pinned commit.</li>
             <li>Verify <code>node --version</code> reports v22.x, then run <code>npm ci</code>.</li>
             <li>Run <code>npm start</code> for unpaid batch preflight.</li>
-            <li>Inspect and edit the authorization file. Installation still has no payment authority.</li>
+            <li>Review the authorization file and set your limit.</li>
             <li>Purchase only with an explicit <code>--approve</code> and a wallet you inject.</li>
-            <li>Keep failed, partial, and missing rows. They are not a refund.</li>
+            <li>Read every row, including failed and partial ones.</li>
           </ol>
           <div className={styles.commands}>
             <div>
@@ -103,14 +100,11 @@ export default function ForAgents() {
             <h2 id="compare-title">Compare explicit fields from two already-held observations</h2>
           </div>
           <p className={styles.jobCopy}>
-            From the same <code>{CUSTOMER_EXAMPLE_DIR}</code> directory after <code>npm ci</code>. The
-            recipe does not fetch, pay, retry, or contact the merchant. Selected fields are required. An
-            absent selected field is coverage unknown, not deletion. Reordered rows with the same source
-            URL are order, not content change. Fixture output is owner proof, not buyer demand.
+            From the same <code>{CUSTOMER_EXAMPLE_DIR}</code> directory after <code>npm ci</code>. Free and local: name the fields you care about and see exactly what changed between two runs. Rows that only moved are reported as moved, not changed.
           </p>
           <div className={styles.commands}>
             <div>
-              <span>Copyable fixture comparison</span>
+              <span>Copy and run: compare two sample runs</span>
               <pre className={styles.jobPre}><code>{COMPARE_QUICKSTART}</code></pre>
             </div>
           </div>
@@ -145,19 +139,14 @@ export default function ForAgents() {
         <section className={styles.section} aria-labelledby="reuse-title">
           <div className={styles.sectionHead}>
             <p className="eyebrow">Job 4 · opt-in reuse</p>
-            <h2 id="reuse-title">Export a reviewed reuse reference from an already produced result</h2>
+            <h2 id="reuse-title">Save a result so the next agent can reuse it</h2>
           </div>
           <p className={styles.jobCopy}>
             From a SameDayDesk checkout, preview exactly which fields would be copied into a{" "}
             <code>neomorphic.task-memory.observation.v1</code> reference, then write only with{" "}
-            <code>--opt-in</code>. The helper does not fetch or pay. Default page-change and record
-            outputs stay intact. The projection uses a reviewed allowlist, not a harmlessness guarantee.
-            A schema-valid export is user-selected unverified evidence, never automatic public-safe
-            certification. Private source text, authorization, receipt secrets, and legal or customer
-            identifiers are omitted and cannot be selected. Failed and incomplete rows remain visible.
+            <code>--opt-in</code>. It runs locally and copies only the fields you choose. Private source text, authorizations, receipt secrets and customer identifiers are left out. Failed and incomplete rows remain visible.
             The caller supplies stable task, subject, revision sequence, and current UTC clock values;
-            the helper does not invent them. If an original evidence URL is missing, the export labels
-            the recipe URL as a locator rather than evidence. Later task-memory import is a separate step.
+            the helper never invents them.
           </p>
           <div className={styles.commands}>
             <div>
@@ -247,12 +236,7 @@ export default function ForAgents() {
             <code>buyer-setup-trace</code> for free AgentCash/x402 inspection.
             You supply schedule hint, clock, and sources. Outcomes are unchanged, changed,
             partial, stale baseline, timed out, or error. Priors stay immutable; write a new
-            sequenced artifact after review. Partial and failed rows stay visible. Payment
-            receipts are never automatically replayed. <code>buyer-setup-trace</code> stops at
-            unpaid 402 and never infers wallet ownership from addresses. Optional local
-            observation export stays filesystem-local when shared mode is undeployed.
-            Offline fixture dry-runs do not call the merchant. No cron is installed. Owner QA
-            is not demand.
+            sequenced artifact after review. Partial and failed rows stay visible. <code>buyer-setup-trace</code> shows the payment terms and stops before paying. Offline runs cost nothing; run them on your own schedule.
           </p>
           <div className={styles.commands}>
             <div>
@@ -269,7 +253,7 @@ export default function ForAgents() {
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
-            <h2 id="inventory-title">Counts come from the live merchant, not this page</h2>
+            <h2 id="inventory-title">Every paid tool, on the live gateway</h2>
             <p>
               Health, the HTTP catalog, the x402 manifest, OpenAPI, and MCP are the current inventories.
               Human Stripe offers stay on the homepage. This page does not sell those SKUs.
@@ -284,7 +268,7 @@ export default function ForAgents() {
                 Other machine services
               </Link>
               <Link className={styles.secondary} to="/x402/seller-conformance">
-                Seller conformance proof
+                Seller audit
               </Link>
               <Link
                 className={styles.secondary}

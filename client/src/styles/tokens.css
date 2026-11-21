@@ -6,7 +6,7 @@
   --bg-2:      #15181d; /* card */
   --ink:       #f4f4f0;
   --ink-dim:   #a7abb1;
-  --ink-faint: #6b7178;
+  --ink-faint: #92979e;
   --lime:      #ccff00;
   --lime-ink:  #0a0b0d; /* text on lime */
   --lime-soft: rgba(204, 255, 0, 0.14);
@@ -38,6 +38,8 @@
   --space-l:   clamp(2.50rem, 2.13rem + 1.85vw, 4.00rem);
   --space-xl:  clamp(4.00rem, 3.30rem + 3.50vw, 7.00rem);
   --space-2xl: clamp(6.00rem, 4.80rem + 6.00vw, 11.0rem);
+  /* One section step: each section pads half of it, so two sections meet one step apart. */
+  --section: var(--space-xl);
 
   /* ── Geometry ── */
   --maxw: 78rem;
@@ -81,7 +83,7 @@
   /* graphite ink */
   --ink:       #1a1a1a; /* headers + body */
   --ink-dim:   #55524c; /* captions, mono labels */
-  --ink-faint: #8a867e; /* decorative secondary */
+  --ink-faint: #625e58; /* secondary text, AA over paper grain and grid lines */
 
   /* signal slot re-bound to oxide-red (scarce annotation only, never body copy) */
   --lime:      #9e3b2e;

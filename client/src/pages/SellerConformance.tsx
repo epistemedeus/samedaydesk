@@ -6,7 +6,6 @@ import {
   findSellerRepairBrief,
   sellerRepairBriefs,
   sellerRepairBriefUrl,
-  sellerRepairScopeMailto,
 } from "../data/sellerRepairBriefs";
 import {
   findSellerResolvedCase,
@@ -14,12 +13,12 @@ import {
   sellerResolvedCases,
 } from "../data/sellerResolvedCases";
 import { track } from "../lib/posthog";
-import { sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
+import { sellerConformanceCheckout, sellerRepairFixedScopeUrl } from "../lib/sellerRepairHandoff";
 import styles from "./SellerConformance.module.css";
 
-const PAGE_TITLE = "Seller conformance proof | SameDayDesk";
+const PAGE_TITLE = "Seller audit: get paid by AI agents | SameDayDesk";
 const PAGE_DESCRIPTION =
-  "Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand.";
+  "We call your paid endpoint the way a buying AI agent does and show you what to fix. Live audit 0.01 USDC; one-route report 490 USD. Agent402 bought one audit and repaired 557 routes.";
 const PAGE_URL = "https://samedaydesk.com/x402/seller-conformance";
 const ACTION_SHA = "ef519956505b195454aa670230b0936258b451fb";
 const MERGE_SHA = "086163e979b6a91a73a8eb82664336ae6dbc5473";
@@ -35,8 +34,6 @@ const AGENT402_BUYER_GUARD_PR_URL = "https://github.com/MikeyPetrillo/Agent402/p
 const AGENT402_DEPLOYED_REPAIR_PR_URL = "https://github.com/MikeyPetrillo/Agent402/pull/1060";
 const VALIDATION_RECEIPT_URL =
   "/research/agent402-seller-integrity-validation-2026-08-29.json";
-const CTA_MAILTO =
-  "mailto:contact@samedaydesk.com?subject=Existing%20seller%20origin%20or%20repository&body=Existing%20seller%20origin%20or%20repository%3A%0A";
 
 function restoreAttribute(el: Element | null, attribute: string, previous: string | null) {
   if (previous !== null) el?.setAttribute(attribute, previous);
@@ -55,7 +52,7 @@ export default function SellerConformance() {
   const pageDescription = selectedBrief
     ? `${selectedBrief.seller}: inspect one credential-free finding for ${selectedBrief.method} ${selectedBrief.route}, the exact repair boundary, and the fixed one-route scope.`
     : selectedResolved
-      ? `${selectedResolved.seller}: inspect one resolved diagnostic for ${selectedResolved.method} ${selectedResolved.route}. Not a repair sale.`
+      ? `${selectedResolved.seller}: inspect one resolved diagnostic for ${selectedResolved.method} ${selectedResolved.route}, repaired in the open.`
       : PAGE_DESCRIPTION;
   const pageUrl = selectedBrief
     ? sellerRepairBriefUrl(selectedBrief.id)
@@ -65,6 +62,7 @@ export default function SellerConformance() {
 
   useEffect(() => {
     const previousTitle = document.title;
+    // eslint-disable-next-line react-hooks/immutability -- the page sets its own document title and restores it on unmount
     document.title = pageTitle;
 
     const description = document.querySelector('meta[name="description"]');
@@ -116,16 +114,14 @@ export default function SellerConformance() {
       <Nav />
       <main id="main" className={styles.wrap}>
         <header className={styles.hero}>
-          <p className="eyebrow">Inspection · unpaid 402 terms · pinned Action SHA</p>
+          <p className="eyebrow">Seller audit · paid endpoints · x402</p>
           <h1 className={styles.h1}>
-            Seller-conformance proof is <span className="lime">inspection</span>, not a guarantee
+            Find out why AI agents can&apos;t pay you, <span className="lime">and fix it</span>
           </h1>
           <p className={styles.lead}>
-            Existing SameDayDesk seller-conformance proof: inspect unpaid 402 terms, pin the
-            integrity Action SHA, and separate release verification from marketplace listing, merged
-            contract projection, deployment, settlement, demand, and revenue. This page is
-            human-auditable inspection evidence. It is not a product, certificate, or runtime
-            monitor.
+            We call your paid endpoint the way a buying agent does, read the payment terms it gets
+            back, and show you what to change. The live audit is 0.01 USDC a call. A written
+            report for one public route, with the recommended fixes, is 490 USD.
           </p>
           <div className={styles.actions}>
             <a
@@ -134,15 +130,13 @@ export default function SellerConformance() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Inspect the live unpaid 402
+              Run the live audit
             </a>
             <a
               className={styles.secondary}
-              href={CTA_MAILTO}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={sellerConformanceCheckout(null)}
             >
-              Send an existing seller origin or repository
+              Buy the one-route report · 490 USD
             </a>
           </div>
         </header>
@@ -192,13 +186,13 @@ export default function SellerConformance() {
             </div>
             <div className={styles.comparison}>
               <div>
-                <h3>Fixed one-route scope · $490</h3>
+                <h3>One-route report · 490 USD</h3>
                 <ul>
                   {selectedBrief.scope.map((item) => <li key={item}>{item}</li>)}
                 </ul>
               </div>
               <div>
-                <h3>Evidence boundary</h3>
+                <h3>What the repair covers</h3>
                 <ul>
                   {selectedBrief.boundaries.map((item) => <li key={item}>{item}</li>)}
                 </ul>
@@ -207,21 +201,19 @@ export default function SellerConformance() {
             <div className={styles.actions}>
               <a
                 className={styles.primary}
-                href={sellerRepairFixedScopeUrl(selectedBrief.id)}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={sellerConformanceCheckout(selectedBrief.id)}
               >
-                Open the fixed-scope page
+                Buy the one-route report
               </a>
               <a
                 className={styles.secondary}
-                href={sellerRepairScopeMailto(selectedBrief)}
+                href={sellerRepairFixedScopeUrl(selectedBrief.id)}
                 onClick={() => track("seller_repair_scope_clicked", {
                   finding_id: selectedBrief.id,
                   route_class: selectedBrief.routeClass,
                 })}
               >
-                Approve by email or change scope
+                Read the report scope
               </a>
               {selectedBrief.evidence.map((item) => (
                 <a
@@ -256,7 +248,7 @@ export default function SellerConformance() {
                 </div>
                 <div>
                   <dt>Status</dt>
-                  <dd>Repaired. Not a repair sale.</dd>
+                  <dd>Repaired</dd>
                 </div>
               </dl>
             </div>
@@ -269,7 +261,7 @@ export default function SellerConformance() {
                 </ul>
               </div>
               <div>
-                <h3>What this is not</h3>
+                <h3>Good to know</h3>
                 <ul>
                   {selectedResolved.distinctions.map((item) => <li key={item}>{item}</li>)}
                 </ul>
@@ -303,35 +295,66 @@ export default function SellerConformance() {
           </section>
         ) : null}
 
-        <section className={styles.section} aria-labelledby="resolved-index-title">
+        <section className={styles.section} aria-labelledby="get-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Resolved diagnostic cases</p>
-            <h2 id="resolved-index-title">Repaired public examples, not purchase leads</h2>
+            <p className="eyebrow">What you get</p>
+            <h2 id="get-title">Every gap a buying agent hits, and the fix for each</h2>
+          </div>
+          <ol className={styles.flow}>
+            <li>The payment terms your endpoint returns, read back as an agent sees them</li>
+            <li>Each gap named: price, asset, network, recipient, the output a buyer can count on</li>
+            <li>The exact change for each one, route by route</li>
+            <li>A GitHub check that catches drift on every release</li>
+            <li>One written report for a public route: 490 USD</li>
+          </ol>
+        </section>
+
+        <section className={styles.section} aria-labelledby="validation-receipt-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">A customer result</p>
+            <h2 id="validation-receipt-title">Agent402 bought one audit, then repaired 557 routes</h2>
           </div>
           <p className={styles.prose}>
-            These cases already have a maintainer repair. They are inspection evidence. They are
-            not $490 repair briefs and they do not start checkout.
+            Agent402&apos;s maintainer bought one 0.01-USDC Seller Integrity Audit of an Agent402 route
+            with their own x402 client and wallet. The audit found missing guarantees at{" "}
+            <code>current</code>, <code>history</code>, and <code>source</code>. Agent402 repaired the
+            seller contract, added a guard so buyer checks always state the result they expect, and
+            deployed a catalog repair after finding invalid payment challenges on 557 of 560
+            production routes.{" "}
+            <a href={VALIDATION_RECEIPT_URL}>Payment receipt.</a>{" "}
+            <a href={AGENT402_CUSTOMER_ISSUE_URL} target="_blank" rel="noopener noreferrer">
+              The customer&apos;s own write-up.
+            </a>{" "}
+            <a href={AGENT402_BUYER_GUARD_PR_URL} target="_blank" rel="noopener noreferrer">
+              The buyer guard.
+            </a>{" "}
+            <a href={AGENT402_DEPLOYED_REPAIR_PR_URL} target="_blank" rel="noopener noreferrer">
+              The deployed catalog repair.
+            </a>
           </p>
-          <ul className={styles.briefIndex}>
-            {sellerResolvedCases.map((item) => (
-              <li key={item.id}>
-                <a href={sellerResolvedCaseUrl(item.id)}>
-                  <strong>{item.seller}</strong>
-                  <span><code>{item.method} {item.route}</code> · resolved {item.observedAt}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+        </section>
+
+        <section className={styles.section} aria-labelledby="funnel-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">How it works</p>
+            <h2 id="funnel-title">Four steps, most of them ours</h2>
+          </div>
+          <ol className={styles.flow}>
+            <li>Send your endpoint or repository</li>
+            <li>We call it as a buying agent would and read the 402 terms</li>
+            <li>You get the findings and the fix, route by route</li>
+            <li>Add the check so every release is tested</li>
+          </ol>
         </section>
 
         <section className={styles.section} aria-labelledby="brief-index-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Public repair briefs</p>
-            <h2 id="brief-index-title">Reproduced route-level findings</h2>
+            <p className="eyebrow">Published findings</p>
+            <h2 id="brief-index-title">Live sellers we audited</h2>
           </div>
           <p className={styles.prose}>
-            Each brief freezes one credential-free observation and a bounded repair scope. It is
-            not proof of runtime delivery, settlement, demand, or seller acceptance.
+            Each finding names one route, what a buying agent sees there and the fix. Open one to
+            order a written report at a fixed 490 USD.
           </p>
           <ul className={styles.briefIndex}>
             {sellerRepairBriefs.map((brief) => (
@@ -345,199 +368,73 @@ export default function SellerConformance() {
           </ul>
         </section>
 
-        <section className={styles.section} aria-labelledby="funnel-title">
+        <section className={styles.section} aria-labelledby="resolved-index-title">
           <div className={styles.sectionHead}>
-            <p className="eyebrow">Inspection funnel</p>
-            <h2 id="funnel-title">Construct, inspect, then authorize separately</h2>
+            <p className="eyebrow">Fixed in the open</p>
+            <h2 id="resolved-index-title">Sellers who shipped the fix</h2>
           </div>
-          <p className={styles.prose}>
-            The funnel is inspection, not a guarantee. A buyer can construct a request, inspect the
-            exact unpaid payment terms, verify the buyer-required output, authorize separately,
-            validate paid delivery, and reconcile evidence. Authorization, delivery, and settlement
-            remain later, separate steps.
-          </p>
-          <ol className={styles.flow}>
-            <li>Construct request</li>
-            <li>Inspect exact unpaid payment terms</li>
-            <li>Verify buyer-required output</li>
-            <li>Authorize separately</li>
-            <li>Validate paid delivery</li>
-            <li>Reconcile evidence</li>
-          </ol>
+          <ul className={styles.briefIndex}>
+            {sellerResolvedCases.map((item) => (
+              <li key={item.id}>
+                <a href={sellerResolvedCaseUrl(item.id)}>
+                  <strong>{item.seller}</strong>
+                  <span><code>{item.method} {item.route}</code> · resolved {item.observedAt}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className={styles.sellerOffer} aria-labelledby="pin-title">
           <div>
-            <p className="eyebrow">Pinned integrity Action</p>
-            <h2 id="pin-title">Pin the exact SHA. Do not use a floating tag.</h2>
+            <p className="eyebrow">Check every release</p>
+            <h2 id="pin-title">One line in your GitHub workflow</h2>
             <p>
-              Production pin is integrity Action SHA {ACTION_SHA} (Prepare Marketplace-publishable
-              0.1.0-candidate.9). Do not use @main or a floating tag as the production pin.
-              Marketplace or tag syntax is discovery convenience only. The Action is unpublished on
-              npm. Marketplace listing is discovery, not a certification and not an npm release.
+              The Agent Payment Integrity Action reads your payment terms on every release and fails
+              the build when they drift from what buying agents need. Pin the commit shown here.
             </p>
             <p>
-              Policy reference: agent-payment-policy@0.15.1. Seller declarations are planning
-              evidence. A passing check does not prove runtime execution, settlement, buyer-valid
-              delivery, demand, adoption, or revenue.
+              It follows agent-payment-policy 0.15.1. Agent402 merged the same contract check
+              upstream (commit {MERGE_SHA}).
             </p>
           </div>
           <div className={styles.offerCard}>
-            <span>Exact SHA pin</span>
+            <span>Add to your workflow</span>
             <pre>
               <code>{`uses: ${ACTION_PIN}`}</code>
             </pre>
             <p>
-              Pin this commit. Marketplace listing and tag names do not replace the SHA.
+              <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer">Marketplace listing</a>
+              {" · "}
+              <a href={INTEGRITY_REPO_URL} target="_blank" rel="noopener noreferrer">Source</a>
+              {" · "}
+              <a href={POLICY_REPO_URL} target="_blank" rel="noopener noreferrer">Policy</a>
+              {" · "}
+              <a href={AGENT402_PR_URL} target="_blank" rel="noopener noreferrer">Agent402 PR 947</a>
             </p>
           </div>
-        </section>
-
-        <section className={styles.section} aria-labelledby="facts-title">
-          <div className={styles.sectionHead}>
-            <p className="eyebrow">Separate facts</p>
-            <h2 id="facts-title">These are not the same event</h2>
-          </div>
-          <dl className={styles.facts}>
-            <div>
-              <dt>Release verification</dt>
-              <dd>Unpaid contract check against a pinned Action SHA.</dd>
-            </div>
-            <div>
-              <dt>Marketplace distribution</dt>
-              <dd>Public listing exists for discovery.</dd>
-            </div>
-            <div>
-              <dt>Merged adoption</dt>
-              <dd>
-                Agent402 947 merged contract projection ({MERGE_SHA}).
-              </dd>
-            </div>
-            <div>
-              <dt>Deployment</dt>
-              <dd>
-                Live seller-integrity-audit 402 is reachable on agents.samedaydesk.com.
-              </dd>
-            </div>
-            <div>
-              <dt>Independent use</dt>
-              <dd>
-                The linked receipt proves one externally controlled runtime, recruited for a
-                bounded validation. It does not prove organic or unsolicited use.
-              </dd>
-            </div>
-            <div>
-              <dt>Settlement</dt>
-              <dd>
-                The linked receipt proves one 0.01-USDC settlement. The passing unpaid Action
-                check alone does not.
-              </dd>
-            </div>
-            <div>
-              <dt>Demand</dt>
-              <dd>One recruited validation event; organic and repeat demand remain unproved.</dd>
-            </div>
-            <div>
-              <dt>Revenue</dt>
-              <dd>One 0.01-USDC external validation receipt; recurring revenue is unproved.</dd>
-            </div>
-          </dl>
-        </section>
-
-        <section className={styles.section} aria-labelledby="validation-receipt-title">
-          <div className={styles.sectionHead}>
-            <p className="eyebrow">First customer outcome</p>
-            <h2 id="validation-receipt-title">One paid audit led to deployed upstream repairs</h2>
-          </div>
-          <p className={styles.prose}>
-            Agent402&apos;s maintainer used its maintained x402 client and externally controlled
-            canary wallet to buy one exact 0.01-USDC Seller Integrity Audit of an Agent402 route.
-            The delivered audit identified missing guarantees at <code>current</code>,{" "}
-            <code>history</code>, and <code>source</code>. The result then changed software:
-            Agent402 repaired the seller contract, prevented external smokes from starting without
-            an expected result, and deployed a follow-on catalog repair after independently
-            reproducing invalid protocol challenges on 557 of 560 production routes.
-          </p>
-          <p className={styles.prose}>
-            This is a bounded customer outcome: one recruited settlement, one delivered decision,
-            and one upstream repair loop. It does not prove unsolicited acquisition, full
-            buyer-owned schema enforcement, repeat demand, or a repair sale.{" "}
-            <a href={VALIDATION_RECEIPT_URL}>Read the machine-readable payment receipt.</a>{" "}
-            <a href={AGENT402_CUSTOMER_ISSUE_URL} target="_blank" rel="noopener noreferrer">
-              Read the customer trace.
-            </a>{" "}
-            <a href={AGENT402_BUYER_GUARD_PR_URL} target="_blank" rel="noopener noreferrer">
-              Inspect the buyer guard.
-            </a>{" "}
-            <a href={AGENT402_DEPLOYED_REPAIR_PR_URL} target="_blank" rel="noopener noreferrer">
-              Inspect the deployed catalog repair.
-            </a>
-          </p>
         </section>
 
         <section className={styles.sellerOffer} aria-labelledby="live-title">
           <div>
-            <p className="eyebrow">Live unpaid audit</p>
-            <h2 id="live-title">The live call returns unpaid HTTP 402</h2>
+            <p className="eyebrow">Try it now</p>
+            <h2 id="live-title">Run the live audit on our own route</h2>
             <p>
-              The existing /x402 seller section already prices this live{" "}
-              <code>seller-integrity-audit</code> call at 0.01 USDC. That is the only money figure
-              on this page. It uses no target credential, target wallet, target signature, seller
-              POST, or target payment.
-            </p>
-            <p>
-              Agent402 PR 947 is independent upstream adoption of contract projection, not
-              invocation, payment, settlement, or revenue. Maintainer merge commit {MERGE_SHA}.
+              The audit answers with HTTP 402 and its terms: 0.01 USDC on Base. Any x402 client can
+              pay it and receive the decision. It needs nothing from your side: no key, wallet or
+              login.
             </p>
             <div className={styles.actions}>
-              <a
-                className={styles.secondary}
-                href={CTA_MAILTO}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Send an existing seller origin or repository
+              <a className={styles.primary} href={LIVE_AUDIT_URL} target="_blank" rel="noopener noreferrer">
+                Run the live audit
+              </a>
+              <a className={styles.secondary} href="/x402/verified">
+                Routes we checked
+              </a>
+              <a className={styles.secondary} href={sellerConformanceCheckout(null)}>
+                Buy the one-route report · 490 USD
               </a>
             </div>
-          </div>
-          <div className={styles.offerCard}>
-            <span>Direct sources</span>
-            <ul>
-              <li>
-                <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer">
-                  Marketplace listing
-                </a>
-              </li>
-              <li>
-                <a href={INTEGRITY_REPO_URL} target="_blank" rel="noopener noreferrer">
-                  Integrity Action repository
-                </a>
-              </li>
-              <li>
-                <a href={POLICY_REPO_URL} target="_blank" rel="noopener noreferrer">
-                  agent-payment-policy
-                </a>
-              </li>
-              <li>
-                <a href={LIVE_AUDIT_URL} target="_blank" rel="noopener noreferrer">
-                  Live seller-integrity-audit
-                </a>
-              </li>
-              <li>
-                <a href="/x402/verified">Inspected route list</a>
-              </li>
-              <li>
-                <a href={AGENT402_PR_URL} target="_blank" rel="noopener noreferrer">
-                  Agent402 PR 947
-                </a>
-                {" · "}
-                {MERGE_SHA}
-              </li>
-            </ul>
-            <p>
-              Discovery, merge, and a reachable unpaid 402 are separate from settlement, demand, and
-              revenue.
-            </p>
           </div>
         </section>
       </main>

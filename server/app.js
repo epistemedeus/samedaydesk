@@ -11,9 +11,12 @@ import authRouter from "./routes/auth.js";
 import teaserRouter from "./routes/teaser.js";
 import toolsRouter from "./routes/tools.js";
 import scanRouter from "./routes/scan.js";
+import requestsRouter, { createRequestsRouter } from "./routes/requests.js";
 import checkoutRouter from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
-import stripeWebhookRouter from "./routes/stripe-webhook.js";
+import { createStripeWebhookRouter } from "./routes/stripe-webhook.js";
+import { createCareRouter } from "./routes/care.js";
+import { configuredCareService } from "./lib/care-service.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
 import pulseRouter from "./routes/pulse.js";
 import mcpRouter from "./routes/mcp.js";
@@ -24,6 +27,7 @@ import { apexAgentCard } from "./lib/apex-agent-card.js";
 import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
+import { createX402QuoteRouter } from "./routes/x402-quote.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
@@ -46,6 +50,8 @@ const CLIENT_DIST = process.env.SAMEDAYDESK_CLIENT_DIST
 
 export function createSdsApp(options = {}) {
 const app = express();
+const care = Object.hasOwn(options, "care") ? options.care : configuredCareService();
+app.set("sdsCare", care);
 app.disable("x-powered-by");
 
 // Include bearer-return redirects in the same cache/referrer protection as the
@@ -128,11 +134,14 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
+app.use("/api/care", createCareRouter(care));
+app.use("/api/requests", care?.taskRequests ? createRequestsRouter({ store: care.taskRequests }) : requestsRouter);
 app.use("/api/uploads", uploadsRouter);
-app.use("/api/stripe", stripeWebhookRouter);
+app.use("/api/stripe", createStripeWebhookRouter({ care }));
 app.use("/api/webhooks/resend", resendWebhookRouter);
 app.use("/api/market-observations", marketObservationsRouter);
 app.use("/api/observatory", observatoryRouter);
+app.use("/api/x402-quote", createX402QuoteRouter());
 // Optional public-readiness adapter. Vendored MIT checker, no private Git.
 // A disabled checker answers healthz and leaves every other route up.
 mountPublicReadiness(app, options.publicReadiness || {});
@@ -179,9 +188,30 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
   res.sendFile(originalTaskClientArchiveFile());
 });
 
+// The agent start file: the short path for an agent told one sentence. Same
+// bytes for every client, open CORS, linked from the page head and llms.txt.
+app.get("/start.md", (_req, res, next) => {
+  const file = path.join(CLIENT_DIST, "start.md");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Cache-Control", "public, max-age=300");
+  res.type("text/markdown; charset=utf-8");
+  res.sendFile(file, (err) => { if (err) next(); });
+});
+
+app.use((req, res, next) => {
+  if ((req.method === "GET" || req.method === "HEAD") && req.path === "/") {
+    res.append("Link", '</start.md>; rel="alternate"; type="text/markdown"; title="Start here"');
+  }
+  next();
+});
+
 // 4) Exact SPA route shells, then static files, then history fallback.
 //    Route shells run first so /x402 is not a directory redirect to /x402/.
 if (isProd) {
+  app.use("/care", (_req, res, next) => {
+    res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    next();
+  });
   mountProductionClient(app, CLIENT_DIST);
 }
 
