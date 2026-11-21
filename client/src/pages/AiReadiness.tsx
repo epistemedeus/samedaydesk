@@ -164,7 +164,7 @@ export default function AiReadiness() {
                   className={styles.ctaBtnSecondary}
                   onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_fixpack" })}
                 >
-                  Done-for-you Fix Pack · $39 →
+                  Done-for-you Fix Pack · 39 USD →
                 </a>
                 <a
                   href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u"

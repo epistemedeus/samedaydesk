@@ -76,7 +76,7 @@ export function HeroCheckReceipt({ result, err, busy }: { result: Result | null;
         <div className={styles.next}>
           <p>{open.length ? "The next step: one line that tells every AI how to use your service." : "AI can read your site. The next step: your service inside ChatGPT and Claude."}</p>
           <a className={styles.buy} href={PAYMENT_LINKS[next.slug]} onClick={() => track("offer_selected", { offer: next.slug, price: next.price, where: "hero_check" })}>
-            {next.plain} · ${next.price} <span aria-hidden="true">→</span>
+            {next.plain} · {next.price} USD <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>
